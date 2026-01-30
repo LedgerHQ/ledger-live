@@ -20,6 +20,8 @@ import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
 
+const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
   if (isTaprootDerivationMode(mode)) {
@@ -114,10 +116,8 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
               uniqueOperations.delete(existingOp.hash);
               txByInput.set(input, op);
             } else if ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1)) {
-              if (new Date(op.date) > new Date(existingOp.date)) {
-                uniqueOperations.delete(existingOp.hash);
-                txByInput.set(input, op);
-              } else if (new Date(op.date) < new Date(existingOp.date)) {
+              if (new Date(op.date) < new Date(existingOp.date)) {
+                uniqueOperations.set(op.hash, op);
                 continue; // If date is older, disregard
               } else {
                 // edge case, date equal, keep both
@@ -138,7 +138,14 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
     }
   }
 
-  return operations.filter(op => uniqueOperations.has(op.hash));
+  return operations.filter(
+    op =>
+      uniqueOperations.has(op.hash) &&
+      !(
+        (op.blockHeight === null || op.blockHeight === undefined) &&
+        Date.now() > new Date(op.date).getTime() + TWO_WEEKS_MS
+      ),
+  );
 };
 
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)

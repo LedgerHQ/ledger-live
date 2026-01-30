@@ -69,8 +69,13 @@ export const getEditTransactionStatus = ({
     transactionToUpdate,
   });
 
+  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
+
+  // copy errors object to avoid mutating the original one
+  const updatedErrors: Record<string, Error> = { ...errors };
+
   return {
     ...status,
-    errors: { ...status.errors, ...editTxErrors },
+    errors: updatedErrors,
   };
 };

@@ -1,4 +1,4 @@
-import type { BroadcastConfig } from "@ledgerhq/types-live";
+import { BroadcastConfig } from "@ledgerhq/types-live";
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
@@ -7,10 +7,11 @@ import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
-import { computeDustAmount, maxTxSizeCeil } from "./utils";
+import { computeDustAmount, maxTxSizeCeil, getIncrementalFeeFloorSatVb } from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
 import { Transaction } from "bitcoinjs-lib";
 import * as btc from "bitcoinjs-lib";
+import { Output } from "./storage/types";
 
 // names inside this class and discovery logic respect BIP32 standard
 class Xpub {
@@ -307,7 +308,7 @@ class Xpub {
         this.derivationMode,
       );
       fee = estimatedTxSize * feePerByte;
-      needChangeoutput = true; // We'll determine this later based on dust limit
+      needChangeoutput = true;
     } else {
       // now we select only the output needed to cover the amount + fee
       const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
@@ -316,19 +317,44 @@ class Xpub {
       fee = result.fee;
       needChangeoutput = result.needChangeoutput;
 
-      const txHexs = await Promise.all(
+      // Fetch transaction hex for selected UTXOs, handling failures gracefully
+      const txHexResults = await Promise.allSettled(
         unspentUtxoSelected.map(unspentUtxo => this.explorer.getTxHex(unspentUtxo.output_hash)),
       );
 
+      // Filter to only successfully fetched UTXOs
+      const successfulUtxos: Output[] = [];
+      const successfulTxHexs: string[] = [];
+      const failedUtxos: Output[] = [];
+      txHexResults.forEach((res, index) => {
+        if (res.status === "fulfilled") {
+          successfulUtxos.push(unspentUtxoSelected[index]);
+          successfulTxHexs.push(res.value);
+        } else {
+          failedUtxos.push(unspentUtxoSelected[index]);
+        }
+      });
+
+      // Recalculate total based on what we actually got
+      total = successfulUtxos.reduce(
+        (sum, utxo) => sum.plus(new BigNumber(utxo.value)),
+        new BigNumber(0),
+      );
+
+      // Check if we still have enough after filtering
+      // if (total.lt(amount.plus(fee))) {
+      //   throw new Error(`Insufficient funds after filtering unfetchable UTXOs. Need ${amount.plus(fee).toString()}, have ${total.toString()}. Try syncing your account.`);
+      // }
+
       const txs = await Promise.all(
-        unspentUtxoSelected.map(unspentUtxo =>
+        successfulUtxos.map(unspentUtxo =>
           this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
         ),
       );
 
-      inputs = unspentUtxoSelected.map((utxo, index) => {
+      inputs = successfulUtxos.map((utxo, index) => {
         return {
-          txHex: txHexs[index],
+          txHex: successfulTxHexs[index],
           value: utxo.value,
           address: utxo.address,
           output_hash: utxo.output_hash,
@@ -338,7 +364,7 @@ class Xpub {
         };
       });
 
-      associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
+      associatedDerivations = successfulUtxos.map((_utxo, index) => {
         if (!txs[index]) {
           throw new Error("Invalid index in txs[index]");
         }
@@ -347,7 +373,7 @@ class Xpub {
     }
 
     const txSize = maxTxSizeCeil(
-      inputs.length, // Use actual inputs length
+      inputs.length,
       outputs.map(o => o.script),
       true,
       this.crypto,
@@ -367,12 +393,65 @@ class Xpub {
     }
 
     const outputsValue: BigNumber = outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0));
+    const actualFee = total.minus(outputsValue).toNumber();
+
+    // For RBF transactions, validate that the absolute fee increase meets the minimum requirements
+    if (originalTxId) {
+      try {
+        const originalTxHex = await this.explorer.getTxHex(originalTxId);
+        const originalTxObj = Transaction.fromHex(originalTxHex);
+
+        // Calculate original transaction's fee
+        const originalInputValues = await Promise.all(
+          originalTxObj.ins.map(async input => {
+            const txid = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
+            const prevTxHex = await this.explorer.getTxHex(txid);
+            const prevTx = Transaction.fromHex(prevTxHex);
+            return prevTx.outs[input.index].value;
+          }),
+        );
+        const originalTotalInput = originalInputValues.reduce((a, b) => a + b, 0);
+        const originalTotalOutput = originalTxObj.outs.reduce((a, o) => a + o.value, 0);
+        const originalFee = originalTotalInput - originalTotalOutput;
+
+        const incrementalFeeRateSatVb = await getIncrementalFeeFloorSatVb(this.explorer);
+        const originalVsize = originalTxObj.virtualSize();
+        const minAbsoluteFeeIncrease = incrementalFeeRateSatVb
+          .times(originalVsize)
+          .integerValue(BigNumber.ROUND_CEIL)
+          .toNumber();
+
+        const actualFeeIncrease = actualFee - originalFee;
+
+        if (actualFeeIncrease < minAbsoluteFeeIncrease) {
+          // We need to increase the fee by reducing the change output
+          const additionalFeeNeeded = minAbsoluteFeeIncrease - actualFeeIncrease;
+
+          // Find and adjust the change output
+          const changeOutput = outputs.find(o => o.isChange);
+          if (changeOutput) {
+            const newChangeValue = changeOutput.value.minus(additionalFeeNeeded);
+
+            if (newChangeValue.lt(dustLimit)) {
+              // Change becomes dust, remove it entirely
+              const changeIndex = outputs.indexOf(changeOutput);
+              outputs.splice(changeIndex, 1);
+            } else {
+              changeOutput.value = newChangeValue;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("RBF fee validation failed:", error);
+        // Continue without validation if we can't fetch the original tx
+      }
+    }
 
     const result = {
       inputs,
       associatedDerivations,
       outputs,
-      fee: total.minus(outputsValue).toNumber(),
+      fee: total.minus(outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0))).toNumber(),
       changeAddress: changeAddress,
     };
     return result;
