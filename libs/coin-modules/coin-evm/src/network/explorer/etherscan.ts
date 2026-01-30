@@ -703,41 +703,19 @@ export const getOperations = makeLRUCache<
       // endpoint calls are sorted by likelyhood of having more operations than the next
       // todo internal operations on 3rd position
 
-      // coins
       const coinResult = await callEndpoint(getCoinOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
 
-      // internal operations
       const internalResult = await callEndpoint(getInternalOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
 
-      // tokens
       const tokenResult = await callEndpoint(getTokenOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
 
-      // nfts
       const nftResult = isNFTActive(currency)
         ? await callEndpoint(getNftOperations, currentBoundBlock)
         : EMPTY_RESULT;
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
-
-      // Drop operations that come after the boundBlock in pagination order
-      const dropOperations = (
-        operations: Operation[],
-        boundBlock: number | undefined,
-      ): Operation[] => {
-        if (boundBlock === undefined) return operations;
-        return operations.filter(op => {
-          const block = op.blockHeight;
-          return !(block === undefined || block === null) && cmp.isLessOrEqual(block, boundBlock);
-        });
-      };
-
-      // drop operations below/above the currentBoundBlock
-      coinResult.operations = dropOperations(coinResult.operations, currentBoundBlock);
-      internalResult.operations = dropOperations(internalResult.operations, currentBoundBlock);
-      tokenResult.operations = dropOperations(tokenResult.operations, currentBoundBlock);
-      nftResult.operations = dropOperations(nftResult.operations, currentBoundBlock);
 
       // All done when no endpoint has more pages to fetch
       const allDone = !(
@@ -747,13 +725,15 @@ export const getOperations = makeLRUCache<
         nftResult.hasMorePage
       );
 
-      const nextBoundBlock =
-        currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
+      const nextBoundBlock = currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
+      // drop operations below/above the currentBoundBlock
+      const respectsBoundBlock = (op: Operation) => (currentBoundBlock === undefined) || (op.blockHeight !== undefined && cmp.isLessOrEqual(op.blockHeight, currentBoundBlock));
+
       return {
-        lastCoinOperations: coinResult.operations,
-        lastTokenOperations: tokenResult.operations,
-        lastNftOperations: nftResult.operations,
-        lastInternalOperations: internalResult.operations,
+        lastCoinOperations: coinResult.operations.filter(respectsBoundBlock),
+        lastTokenOperations: tokenResult.operations.filter(respectsBoundBlock),
+        lastNftOperations: nftResult.operations.filter(respectsBoundBlock),
+        lastInternalOperations: internalResult.operations.filter(respectsBoundBlock),
         nextPagingToken: serializePagingToken(nextBoundBlock, allDone),
       };
     } catch (err) {
