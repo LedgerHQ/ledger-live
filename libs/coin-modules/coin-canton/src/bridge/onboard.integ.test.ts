@@ -164,7 +164,7 @@ describe("onboard (devnet)", () => {
       expect(finalResult.partyId).toEqual(expect.any(String));
 
       expect(mockSignerContext).toHaveBeenCalled();
-    }, 30000);
+    }, 90000);
 
     it.skip("should complete full onboarding flow with already onboarded account", async () => {
       // GIVEN
