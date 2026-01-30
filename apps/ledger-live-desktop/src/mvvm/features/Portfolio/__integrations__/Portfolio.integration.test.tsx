@@ -8,6 +8,7 @@ import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -141,6 +142,37 @@ describe("PortfolioView", () => {
 
       expect(screen.getByTestId("no-balance-title")).toBeVisible();
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+    });
+    it("should display discreet placeholders when discreet mode is enabled", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            discreetMode: true,
+          },
+        },
+      });
+
+      const balanceElement = screen.getByTestId("portfolio-total-balance");
+      expect(balanceElement).toHaveTextContent("••••");
+      expect(balanceElement).not.toHaveTextContent("$1,000.00");
+    });
+
+    it("should display actual balance when discreet mode is disabled", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            discreetMode: false,
+          },
+        },
+      });
+
+      const balanceElement = screen.getByTestId("portfolio-total-balance");
+      expect(balanceElement).toHaveTextContent("$1,000.00"); // Check for actual balance
+      expect(balanceElement).not.toHaveTextContent("••••"); // Ensure no placeholders
     });
   });
 

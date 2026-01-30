@@ -18,6 +18,7 @@ export class Layout extends Component {
   // topbar
   readonly topbarSynchronizeButton = this.page.getByTestId("topbar-synchronize-button");
   readonly topbarSettingsButton = this.page.getByTestId("topbar-settings-button");
+  readonly topbarDiscreetButton = this.page.getByTestId("topbar-discreet-button");
 
   @step("Go to Portfolio")
   async goToPortfolio() {
@@ -62,6 +63,11 @@ export class Layout extends Component {
   @step("synchronize accounts")
   async syncAccounts() {
     await this.topbarSynchronizeButton.click();
+  }
+
+  @step("toggle discreet mode")
+  async toggleDiscreetMode() {
+    await this.topbarDiscreetButton.click();
   }
 
   @step("Wait for accounts sync to be finished")
