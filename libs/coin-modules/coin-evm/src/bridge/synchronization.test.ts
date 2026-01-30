@@ -284,6 +284,7 @@ describe("EVM Family", () => {
               lastTokenOperations: [],
               lastNftOperations: [],
               lastInternalOperations: [],
+              nextPagingToken: "",
             }),
           );
           jest.spyOn(etherscanAPI?.default.explorerApi, "getOperations").mockImplementation(() =>
@@ -292,6 +293,7 @@ describe("EVM Family", () => {
               lastTokenOperations: [],
               lastNftOperations: [],
               lastInternalOperations: [],
+              nextPagingToken: "",
             }),
           );
         });
@@ -432,6 +434,7 @@ describe("EVM Family", () => {
               { ...internalOperations[1] },
               { ...internalOperations[2] },
             ],
+            nextPagingToken: "",
           });
           jest
             .spyOn(nodeApi, "getTokenBalance")
@@ -531,6 +534,7 @@ describe("EVM Family", () => {
               lastNftOperations: [],
               lastCoinOperations: [coinOperations[2]],
               lastInternalOperations: [],
+              nextPagingToken: "",
             }));
           const operations = [
             {
@@ -688,6 +692,7 @@ describe("EVM Family", () => {
               { ...internalOperations[1] },
               { ...internalOperations[2] },
             ],
+            nextPagingToken: "",
           });
           jest
             .spyOn(nodeApi, "getTokenBalance")

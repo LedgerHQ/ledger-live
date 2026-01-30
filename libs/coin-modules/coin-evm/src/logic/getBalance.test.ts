@@ -29,7 +29,7 @@ describe("getBalance", () => {
   it.each([
     [
       "native balance only", // test description
-      { lastTokenOperations: [] }, // operation
+      { lastTokenOperations: [], nextPagingToken: "" }, // operation
       {}, // token balances (empty)
       [
         {
@@ -53,6 +53,7 @@ describe("getBalance", () => {
       "native and token balances", // test description
       {
         lastTokenOperations: [{ contract: "0x123" }, { contract: "0x123" }, { contract: "0x456" }],
+        nextPagingToken: "",
       }, // operations
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
       [

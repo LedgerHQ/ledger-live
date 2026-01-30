@@ -1463,7 +1463,7 @@ describe("EVM Family", () => {
       });
     });
 
-    it("should not return NFT opperation", async () => {
+    it("should not return NFT operation", async () => {
       const response = await ETHERSCAN_API.getNftOperations({
         currency,
         address: account.freshAddress,
