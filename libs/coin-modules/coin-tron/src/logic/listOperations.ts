@@ -48,7 +48,6 @@ export async function listOperations(
 
   const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
 
-  // Cache blocks by height to avoid N+1 calls to getBlock
   const blocksByHeight = new Map<number, Awaited<ReturnType<typeof getBlock>>>();
   blocksByHeight.set(minHeight, block);
 
@@ -69,8 +68,7 @@ export async function listOperations(
 
   const operations = txs.map(tx => {
     const height = tx.blockHeight;
-    const txBlock =
-      typeof height === "number" ? blocksByHeight.get(height) ?? block : block;
+    const txBlock = typeof height === "number" ? blocksByHeight.get(height) ?? block : block;
     return fromTrongridTxInfoToOperation(tx, txBlock, address);
   });
   return [operations, ""];

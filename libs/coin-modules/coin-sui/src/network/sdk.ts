@@ -411,7 +411,8 @@ export function alpacaTransactionToOp(
   const hash = transaction.digest;
 
   const blockHeight = Number.parseInt(transaction.checkpoint || "0");
-  const blockHash = checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
+  const blockHash =
+    checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
   const op: Op = {
     id: hash,
