@@ -234,6 +234,7 @@
     "src/icons/providers/providers.ts",
     "src/icons/providers/sizes.ts",
     "src/load/speculos.ts",
+    "src/locale/index.ts",
     "src/logs/simple.ts",
     "src/manager/api.ts",
     "src/manager/hooks.ts",
