@@ -603,7 +603,8 @@ export const getOperations = makeLRUCache<
 >(
   async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
-      const paginationBlock = deserializePagingToken(pagingToken);
+      const pagingState = deserializePagingToken(pagingToken);
+      const paginationBlock = pagingState?.boundBlock;
       let currentBoundBlock: number | undefined = undefined;
 
       const cmp = createBlockComparator(order);
@@ -642,31 +643,35 @@ export const getOperations = makeLRUCache<
       }
 
       // endpoint calls are sorted by likelyhood of having more operations than the next
+      // Skip endpoints that have no more pages (optimization from paging state)
 
-      const coinResult = await callEndpoint(getCoinOperations, currentBoundBlock);
+      const coinResult =
+        pagingState && !pagingState.coinHasMorePage
+          ? EMPTY_RESULT
+          : await callEndpoint(getCoinOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
 
-      const internalResult = await callEndpoint(getInternalOperations, currentBoundBlock);
+      const internalResult =
+        pagingState && !pagingState.internalHasMorePage
+          ? EMPTY_RESULT
+          : await callEndpoint(getInternalOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
 
-      const tokenResult = await callEndpoint(getTokenOperations, currentBoundBlock);
+      const tokenResult =
+        pagingState && !pagingState.tokenHasMorePage
+          ? EMPTY_RESULT
+          : await callEndpoint(getTokenOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
 
-      const nftResult = isNFTActive(currency)
-        ? await callEndpoint(getNftOperations, currentBoundBlock)
-        : EMPTY_RESULT;
+      const nftResult =
+        !isNFTActive(currency) || (pagingState && !pagingState.nftHasMorePage)
+          ? EMPTY_RESULT
+          : await callEndpoint(getNftOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
-
-      // All done when no endpoint has more pages to fetch
-      const allDone = !(
-        coinResult.hasMorePage ||
-        internalResult.hasMorePage ||
-        tokenResult.hasMorePage ||
-        nftResult.hasMorePage
-      );
 
       const nextBoundBlock =
         currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
+
       // drop operations below/above the currentBoundBlock
       const respectsBoundBlock = (op: Operation): boolean =>
         currentBoundBlock === undefined ||
@@ -674,12 +679,23 @@ export const getOperations = makeLRUCache<
           op.blockHeight !== undefined &&
           cmp.isLessOrEqual(op.blockHeight, currentBoundBlock));
 
+      const coinOperations = coinResult.operations.filter(respectsBoundBlock);
+      const internalOperations = internalResult.operations.filter(respectsBoundBlock);
+      const tokenOperations = tokenResult.operations.filter(respectsBoundBlock);
+      const nftOperations = nftResult.operations.filter(respectsBoundBlock);
+
+
       return {
-        lastCoinOperations: coinResult.operations.filter(respectsBoundBlock),
-        lastTokenOperations: tokenResult.operations.filter(respectsBoundBlock),
-        lastNftOperations: nftResult.operations.filter(respectsBoundBlock),
-        lastInternalOperations: internalResult.operations.filter(respectsBoundBlock),
-        nextPagingToken: serializePagingToken(nextBoundBlock, allDone),
+        lastCoinOperations: coinOperations,
+        lastTokenOperations: tokenOperations,
+        lastNftOperations: nftOperations,
+        lastInternalOperations: internalOperations,
+        nextPagingToken: serializePagingToken(nextBoundBlock, {
+          coinHasMorePage: coinResult.hasMorePage || coinOperations.length !== coinResult.operations.length,
+          internalHasMorePage: internalResult.hasMorePage || internalOperations.length !== internalResult.operations.length,
+          tokenHasMorePage: tokenResult.hasMorePage || tokenOperations.length !== tokenResult.operations.length,
+          nftHasMorePage: nftResult.hasMorePage && nftOperations.length === nftResult.operations.length,
+        }),
       };
     } catch (err) {
       log("EVM getOperations", "Error while fetching data from Etherscan like API", err);

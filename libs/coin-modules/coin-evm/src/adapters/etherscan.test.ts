@@ -1673,6 +1673,19 @@ describe("EVM Family", () => {
     });
 
     describe("pagination helpers", () => {
+      const allHaveMore = {
+        coinHasMorePage: true,
+        internalHasMorePage: true,
+        tokenHasMorePage: true,
+        nftHasMorePage: true,
+      };
+      const noneHaveMore = {
+        coinHasMorePage: false,
+        internalHasMorePage: false,
+        tokenHasMorePage: false,
+        nftHasMorePage: false,
+      };
+
       describe("deserializePagingToken", () => {
         it("returns undefined when token is undefined", () => {
           expect(deserializePagingToken(undefined)).toBeUndefined();
@@ -1682,28 +1695,94 @@ describe("EVM Family", () => {
           expect(deserializePagingToken("")).toBeUndefined();
         });
 
-        it("throws when token is not a valid number", () => {
-          expect(() => deserializePagingToken("not-a-number")).toThrow("Invalid paging token");
+        it("throws when token is missing flags", () => {
+          expect(() => deserializePagingToken("1000")).toThrow("Invalid paging token: missing flags");
         });
 
-        it("deserializes valid token correctly", () => {
-          expect(deserializePagingToken("1000")).toBe(1000);
+        it("throws when boundBlock is invalid", () => {
+          expect(() => deserializePagingToken("abc-1111")).toThrow("Invalid paging token: invalid boundBlock");
+        });
+
+        it("throws when flags are invalid length", () => {
+          expect(() => deserializePagingToken("1000-11")).toThrow("Invalid paging token: invalid flags");
+        });
+
+        it("deserializes token with all flags true", () => {
+          expect(deserializePagingToken("1000-1111")).toEqual({
+            boundBlock: 1000,
+            coinHasMorePage: true,
+            internalHasMorePage: true,
+            tokenHasMorePage: true,
+            nftHasMorePage: true,
+          });
+        });
+
+        it("deserializes new format with mixed flags", () => {
+          expect(deserializePagingToken("1000-1010")).toEqual({
+            boundBlock: 1000,
+            coinHasMorePage: true,
+            internalHasMorePage: false,
+            tokenHasMorePage: true,
+            nftHasMorePage: false,
+          });
+        });
+
+        it("deserializes new format with all flags false", () => {
+          expect(deserializePagingToken("1000-0000")).toEqual({
+            boundBlock: 1000,
+            coinHasMorePage: false,
+            internalHasMorePage: false,
+            tokenHasMorePage: false,
+            nftHasMorePage: false,
+          });
         });
       });
 
       describe("serializePagingToken", () => {
-        it("returns NO_TOKEN when all done", () => {
-          expect(serializePagingToken(1000, true)).toBe(NO_TOKEN);
+        it("returns NO_TOKEN when all endpoints are done", () => {
+          expect(serializePagingToken(1000, noneHaveMore)).toBe(NO_TOKEN);
         });
 
-        it("returns stringified nextFromBlock when not done", () => {
-          expect(serializePagingToken(1000, false)).toBe("1000");
+        it("returns NO_TOKEN when boundBlock is undefined", () => {
+          expect(serializePagingToken(undefined, allHaveMore)).toBe(NO_TOKEN);
+        });
+
+        it("returns token with all flags true", () => {
+          expect(serializePagingToken(1000, allHaveMore)).toBe("1000-1111");
+        });
+
+        it("returns token with mixed flags", () => {
+          expect(serializePagingToken(1000, {
+            coinHasMorePage: true,
+            internalHasMorePage: false,
+            tokenHasMorePage: true,
+            nftHasMorePage: false,
+          })).toBe("1000-1010");
+        });
+
+        it("returns token with only coin having more", () => {
+          expect(serializePagingToken(1000, {
+            coinHasMorePage: true,
+            internalHasMorePage: false,
+            tokenHasMorePage: false,
+            nftHasMorePage: false,
+          })).toBe("1000-1000");
         });
 
         it("serializes and deserializes roundtrip correctly", () => {
-          const nextFromBlock = 12345;
-          const token = serializePagingToken(nextFromBlock, false);
-          expect(deserializePagingToken(token, 0)).toBe(nextFromBlock);
+          const boundBlock = 12345;
+          const state = {
+            coinHasMorePage: true,
+            internalHasMorePage: false,
+            tokenHasMorePage: true,
+            nftHasMorePage: false,
+          };
+          const token = serializePagingToken(boundBlock, state);
+          const result = deserializePagingToken(token);
+          expect(result).toEqual({
+            boundBlock,
+            ...state,
+          });
         });
       });
     });

@@ -295,25 +295,61 @@ export const etherscanInternalTransactionToOperations = (
   );
 };
 
-// TODO we can optimize the cursor by maintaining the "hasMorePage" flag for each endpoint
-// => that would avoid unnecessary calls to the API
+/**
+ * Represents the pagination state for all endpoints.
+ * Each flag indicates whether the corresponding endpoint has more pages to fetch.
+ */
+export type PagingState = {
+  boundBlock: number;
+  coinHasMorePage: boolean;
+  internalHasMorePage: boolean;
+  tokenHasMorePage: boolean;
+  nftHasMorePage: boolean;
+};
 
 /**
- * Serialize a paging token for the next page request
- * Returns NO_TOKEN if all endpoints are done
+ * Serialize a paging token for the next page request.
+ * Compact url-friendly format: "boundBlock|coinHasMore|internalHasMore|tokenHasMore|nftHasMore"
+ * where flags are encoded as 1 or 0.
+ * Returns NO_TOKEN if all endpoints are done.
  */
-export function serializePagingToken(boundBlock: number | undefined, allDone: boolean): string {
+export function serializePagingToken(
+  boundBlock: number | undefined,
+  state: {
+    coinHasMorePage: boolean;
+    internalHasMorePage: boolean;
+    tokenHasMorePage: boolean;
+    nftHasMorePage: boolean;
+  },
+): string {
+  const allDone =
+    !state.coinHasMorePage && !state.internalHasMorePage && !state.tokenHasMorePage && !state.nftHasMorePage;
   if (allDone || boundBlock === undefined) return NO_TOKEN;
-  return boundBlock.toString();
+  const flags = [state.coinHasMorePage, state.internalHasMorePage, state.tokenHasMorePage, state.nftHasMorePage]
+    .map(f => (f ? "1" : "0"))
+    .join("");
+  return `${boundBlock}-${flags}`;
 }
 
 /**
- * Deserialize a paging token to get the fromBlock for the current request
- * throws an
+ * Deserialize a paging token to get the pagination state.
+ * Returns undefined if token is empty or NO_TOKEN.
+ * Throws if token format is invalid.
  */
-export function deserializePagingToken(token: string | undefined): number | undefined {
+export function deserializePagingToken(token: string | undefined): PagingState | undefined {
   if (token === undefined || token === NO_TOKEN) return undefined;
-  const parsed = parseInt(token, 10);
-  if (isNaN(parsed)) throw new Error("Invalid paging token");
-  return parsed;
+
+  const [blockStr, flags] = token.split("-");
+  if (!flags) throw new Error("Invalid paging token: missing flags");
+  const boundBlock = parseInt(blockStr, 10);
+  if (isNaN(boundBlock)) throw new Error("Invalid paging token: invalid boundBlock");
+  if (flags.length !== 4) throw new Error("Invalid paging token: invalid flags");
+
+  return {
+    boundBlock,
+    coinHasMorePage: flags[0] === "1",
+    internalHasMorePage: flags[1] === "1",
+    tokenHasMorePage: flags[2] === "1",
+    nftHasMorePage: flags[3] === "1",
+  };
 }
