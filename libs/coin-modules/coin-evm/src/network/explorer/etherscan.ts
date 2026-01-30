@@ -629,7 +629,7 @@ export const getOperations = makeLRUCache<
       async function callEndpoint(
         endpoint: FetchOperations,
         boundBlock: number | undefined,
-        isDone: boolean,
+        isDone: boolean | undefined,
       ): Promise<{ result: EndpointResult; effectiveBoundBlock: number | undefined }> {
         if (isDone) {
           return { result: EMPTY_RESULT, effectiveBoundBlock: boundBlock };
