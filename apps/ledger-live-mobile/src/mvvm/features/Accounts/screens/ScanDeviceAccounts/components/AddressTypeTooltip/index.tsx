@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Text, Icons, Link, Flex, Button } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import useAddressTypeTooltipViewModel, { type Props } from "./useAddressTypeTooltipViewModel";

@@ -28,6 +28,7 @@ libs/identities/                                         @ledgerhq/live-hub
 libs/ledger-live-common/src/                             @ledgerhq/live-hub
 libs/live-countervalues-react/                           @ledgerhq/live-hub
 libs/live-countervalues/                                 @ledgerhq/live-hub
+libs/live-currency-format/                               @ledgerhq/live-hub
 libs/live-hooks/                                         @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub

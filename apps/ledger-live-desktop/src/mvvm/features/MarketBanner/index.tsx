@@ -1,13 +1,19 @@
 import React, { memo, useCallback } from "react";
 import SkeletonList from "./components/SkeletonList";
-import { useTranslation } from "react-i18next";
-import { InteractiveIcon } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
-import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import GenericError from "./components/GenericError";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
+import { MarketBannerHeader } from "./components/MarketBannerHeader";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { TRACKING_PAGE_NAME } from "./utils/constants";
+import {
+  MARKET_BANNER_TOP,
+  MARKET_BANNER_DATA_SORT_ORDER,
+  TIME_RANGE,
+} from "@ledgerhq/live-common/market/constants";
+import { track } from "~/renderer/analytics/segment";
 
 type MarketBannerViewProps = {
   readonly isLoading: boolean;
@@ -20,10 +26,13 @@ const MarketBannerView = memo(function MarketBannerView({
   isError,
   data,
 }: MarketBannerViewProps) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const goToMarket = useCallback(() => {
+    track("button_clicked", {
+      button: "Section Tile",
+      page: TRACKING_PAGE_NAME,
+    });
     navigate("/market");
   }, [navigate]);
 
@@ -38,17 +47,13 @@ const MarketBannerView = memo(function MarketBannerView({
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="flex items-center gap-2">
-        <span className="heading-4-semi-bold text-base">{t("marketBanner.title")}</span>
-        <InteractiveIcon
-          iconType="stroked"
-          aria-label="Interactive icon"
-          onClick={goToMarket}
-          data-testid="market-banner-button"
-        >
-          <ChevronRight size={16} />
-        </InteractiveIcon>
-      </div>
+      <TrackPage
+        category={TRACKING_PAGE_NAME}
+        sort={MARKET_BANNER_DATA_SORT_ORDER}
+        timeframe={TIME_RANGE}
+        countervalue={MARKET_BANNER_TOP}
+      />
+      <MarketBannerHeader onNavigate={goToMarket} />
       {content}
     </div>
   );

@@ -8,7 +8,7 @@ import CustomHeader from "./CustomHeader";
 import { useTheme } from "styled-components/native";
 import getAccountListKeyExtractor from "../../utils/getAccountListKeyExtractor";
 import AccountListEmpty from "../AccountListEmpty";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";

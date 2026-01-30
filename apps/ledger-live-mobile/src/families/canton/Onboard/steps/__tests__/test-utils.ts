@@ -185,6 +185,9 @@ export const getMockNativeUI = () => {
 
 export const getMockLocale = () => ({
   useLocale: () => ({ locale: "en" }),
+  useTranslation: () => ({ t: (key: string) => key }),
+  Trans: ({ i18nKey }: { i18nKey: string }) =>
+    React.createElement(View, { testID: `trans-${i18nKey}` }, i18nKey),
   LocaleProvider: ({ children }: any) => children,
 });
 

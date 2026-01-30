@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 type Props = {
   onClickConfirm: () => void;

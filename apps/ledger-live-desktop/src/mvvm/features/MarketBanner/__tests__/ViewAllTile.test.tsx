@@ -38,12 +38,4 @@ describe("ViewAllTile", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/market");
     }
   });
-
-  it("should have correct styling classes", () => {
-    const { container } = render(<ViewAllTile />);
-
-    const tile = container.querySelector(".w-\\[98px\\]");
-    expect(tile).toBeInTheDocument();
-    expect(tile).toHaveClass("justify-center", "self-stretch");
-  });
 });

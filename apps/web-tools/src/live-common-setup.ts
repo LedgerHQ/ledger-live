@@ -81,6 +81,11 @@ setSupportedCurrencies([
   "westend",
   "assethub_westend",
   "assethub_polkadot",
+  "avalanche_c_chain_fuji",
+  "bitlayer",
+  "klaytn_baobab",
+  "shape",
+  "story",
 ]);
 
 export function setupCryptoAssetsStore(): void {

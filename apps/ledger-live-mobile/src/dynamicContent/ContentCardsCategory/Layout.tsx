@@ -72,8 +72,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardCick = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_clicked", {
+      ...card.extras,
       page: card.location,
-      link: card.link,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -89,8 +89,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_dismissed", {
+      ...card.extras,
       page: card.location,
-      link: card.link || undefined,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -146,10 +146,12 @@ const Layout = ({ category, cards }: LayoutProps) => {
     case ContentCardsLayout.unique:
     default: {
       const item = items[0];
+      const card = cardsSorted[0];
       return (
         <LogContentCardWrapper
           id={item.props.metadata.id}
           displayedPosition={item.props.metadata.displayedPosition}
+          location={card?.location}
         >
           <Flex mx={6}>
             {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}

@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { ipcRenderer } from "electron";
+import { useEffect, useCallback } from "react";
+import { ipcRenderer, IpcRendererEvent } from "electron";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { areSettingsLoaded, deepLinkUrlSelector } from "~/renderer/reducers/settings";
@@ -11,17 +11,25 @@ function useDeeplink() {
   const openingDeepLink = useSelector(deepLinkUrlSelector);
   const loaded = useSelector(areSettingsLoaded);
   const { handler } = useDeepLinkHandler();
+
+  const handleBackgroundDeeplink = useCallback(
+    (_event: IpcRendererEvent, url: string) => handler(url, false),
+    [handler],
+  );
+
   useEffect(() => {
-    ipcRenderer.on("deep-linking", handler);
+    ipcRenderer.on("deep-linking", handleBackgroundDeeplink);
     return () => {
-      ipcRenderer.removeListener("deep-linking", handler);
+      ipcRenderer.removeListener("deep-linking", handleBackgroundDeeplink);
     };
-  }, [handler]);
+  }, [handleBackgroundDeeplink]);
+
   useEffect(() => {
     if (openingDeepLink && loaded) {
-      handler(null, openingDeepLink);
+      handler(openingDeepLink, true);
       dispatch(setDeepLinkUrl(null));
     }
   }, [loaded, openingDeepLink, dispatch, handler]);
 }
+
 export default useDeeplink;

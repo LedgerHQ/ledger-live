@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";

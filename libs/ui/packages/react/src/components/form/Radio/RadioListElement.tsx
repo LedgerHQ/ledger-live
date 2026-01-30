@@ -28,7 +28,7 @@ const Container = styled(Flex)<ElementState>`
   border-radius: ${p => `${p.theme.radii[2]}px`};
   padding: ${p => p.theme.space[6]}px;
 
-  :hover {
+  &:hover {
     border-color: ${p => (p.disabled || p.checked ? "" : p.theme.colors.primary.c80)};
   }
 `;

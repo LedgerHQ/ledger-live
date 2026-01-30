@@ -6,7 +6,7 @@ import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import styles from "~/navigation/styles";
 import type { PtxNavigatorParamList } from "./types/PtxNavigator";
 import type { StackNavigatorProps } from "./types/helpers";

@@ -282,11 +282,13 @@
     "advanced" : "Advanced",
     "custom" : "Benutzerdefiniert",
     "fast" : "Schnell",
+    "networkFees" : "Netzgebühren",
     "high" : "Hoch",
     "low" : "Niedrig",
     "slow" : "Langsam",
     "standard" : "Standart",
     "medium" : "Medium",
+    "coinControl" : "Coin-Kontrolle",
     "feesAmount" : "Gebührenbetrag"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "Gerät verbinden",
         "secondaryCta" : "Vielleicht später"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}}-Trend",
-      "buy" : "Kaufen",
-      "swap" : "Umtauschen",
-      "gainers" : "Gewinner",
-      "losers" : "Verlierer",
-      "error" : {
-        "title" : "Tut uns leid, die Trenddaten können gerade nicht abgerufen werden",
-        "description" : "Versuche es bitte später noch einmal"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "In den letzten {{trend}} konnten die Top {{count}} der Vermögenswerte keine Gewinne verzeichnen",
-          "description" : "Sieh dir doch die Krypto-Verlierer des Tages an oder komm später wieder"
-        },
-        "losers" : {
-          "title" : "Unter den Top {{count}} der Vermögenswerte gab es in den letzten {{trend}} keine Verluste",
-          "description" : "Sieh dir doch die Krypto-Gewinner des Tages an oder komm später wieder"
-        }
-      },
-      "trend" : {
-        "day" : "24 Stunden",
-        "week" : "7 Tagen",
-        "month" : "30 Tagen",
-        "year" : "Jahr",
-        "all" : "Jahr"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "Zu sendender Betrag in ({{currency}})",
     "coinToSend" : "Zu sendender Coin",
     "coinControlCustom" : "Eigene Coinauswahl",
+    "quickActions" : {
+      "quarter" : "25 %",
+      "half" : "50 %",
+      "threeQuarters" : "75 %",
+      "max" : "Max."
+    },
+    "reviewCta" : "Prüfen",
+    "getCta" : "{{currency}} erhalten",
+    "switchInputMode" : "Betragseingabemodus ändern",
     "aboveMaximum" : "Über dem maximalen Saldo",
     "transactionSigned" : "Transaktion signiert",
     "processingTransaction" : "Deine Transaktion wird verarbeitet",
     "sign" : {
       "title" : "Vorgang fortsetzen auf deinem Ledger {{wording}}",
       "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "Die Netzwerkgebühren können nicht neu geladen werden",
+      "warningDescription" : "Möglicherweise sind die Gebühren-Presets veraltet."
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "Halte dein Portfolio auf dem neuesten Stand, wenn du den Computer wechselst oder ein Handy nutzt.",
       "mevProtection" : "MEV-Schutz",
       "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern.",
-      "mevProtectionLearnMore" : "Datenschutzerklärung",
-      "marketPerformanceWidget" : "Marktperformance-Widget",
-      "marketPerformanceWidgetDesc" : "Aktiviere diese Funktion, um auf der Portfolioseite die größten Gewinner und Verlierer über ausgewählte Zeiträume anzuzeigen."
+      "mevProtectionLearnMore" : "Datenschutzerklärung"
     },
     "developer" : {
       "search" : "Suchen nach",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "Drawer öffnen",
         "debugDialog" : "Debug-Dialog",
         "debugDuplicates" : "Duplikate debuggen"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "Entwicklungstool für Wallet-Funktionen",
+        "description" : "Schaltet Wallet 4.0-Funktionen für Desktop ein/aus (Feature-Flag lwdWallet40).",
+        "enableAll" : "Alles aktivieren",
+        "disableAll" : "Alles deaktivieren",
+        "featureParameters" : "Funktionsparameter",
+        "showJson" : "JSON anzeigen",
+        "hideJson" : "JSON ausblenden"
       },
       "cryptoAssetsList" : {
         "title" : "Crypto Assets List (CAL)",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Wallet zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren."
     }
   },
+  "analytics" : {
+    "title" : "Analysen"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Schließen",
@@ -7825,10 +7822,31 @@
       "cta" : "Wiederholen"
     }
   },
+  "portfolio" : {
+    "title" : "Startseite",
+    "today" : "Heute"
+  },
   "marketBanner" : {
     "title" : "Markt erkunden",
     "genericError" : "Verbindung fehlgeschlagen",
-    "cta" : "Alles anzeigen"
+    "cta" : "Alles anzeigen",
+    "fearAndGreed" : {
+      "title" : "Stimmung"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Angst+",
+      "fear" : "Angst",
+      "neutral" : "Neutral",
+      "greed" : "Gier",
+      "extremeGreed" : "Gier+"
+    },
+    "dialog" : {
+      "title" : "Stimmungsindex",
+      "content" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+      "cta" : "Verstanden"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",

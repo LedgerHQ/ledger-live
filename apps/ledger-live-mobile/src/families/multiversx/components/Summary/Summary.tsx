@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useState, FC } from "react";
 import { ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 
 import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";

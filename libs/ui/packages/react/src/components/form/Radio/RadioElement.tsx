@@ -39,53 +39,53 @@ const Input = styled.input`
   }
 
   &[data-variant="default"] {
-    :hover {
+    &:hover {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.primary.c90};
     }
-    :active {
+    &:active {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.primary.c100};
     }
-    :checked,
-    :focus {
+    &:checked,
+    &:focus {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.primary.c80};
     }
-    :focus {
+    &:focus {
       box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.primary.c60, 0.48)};
     }
   }
 
   &[data-variant="main"] {
-    :hover {
+    &:hover {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.neutral.c90};
     }
-    :active,
-    :checked,
-    :focus {
+    &:active,
+    &:checked,
+    &:focus {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.neutral.c100};
     }
-    :focus {
+    &:focus {
       box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.neutral.c60, 0.48)};
     }
   }
 
   &[data-variant="success"] {
-    :hover,
-    :checked:not([disabled]),
-    :checked:not([disabled]) + ${Label}, :focus {
+    &:hover,
+    &:checked:not([disabled]),
+    &:checked:not([disabled]) + ${Label}, &:focus {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.success.c50};
     }
-    :focus {
+    &:focus {
       box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.success.c50, 0.48)};
     }
   }
 
   &[data-variant="error"] {
-    :hover,
-    :checked:not([disabled]),
-    :checked:not([disabled]) + ${Label}, :focus {
+    &:hover,
+    &:checked:not([disabled]),
+    &:checked:not([disabled]) + ${Label}, &:focus {
       --ledger-ui-checkbox-color: ${p => p.theme.colors.error.c50};
     }
-    :focus {
+    &:focus {
       box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.error.c50, 0.48)};
     }
   }
@@ -102,23 +102,24 @@ const outlinedCSS = css`
   border: 1px solid ${p => p.theme.colors.neutral.c50};
   border-radius: ${p => p.theme.radii[2]}px;
   &[data-variant="default"] {
-    :hover {
+    &:hover {
       border-color: ${p => p.theme.colors.primary.c90};
     }
-    &[data-checked] :active {
+    &[data-checked]:active {
       border-color: ${p => p.theme.colors.primary.c100};
     }
-    :focus {
+    &:focus {
       border-color: ${p => p.theme.colors.primary.c80};
     }
   }
 
   &[data-variant="main"] {
-    :hover {
+    &:hover {
       border-color: ${p => p.theme.colors.neutral.c90};
     }
     &[data-checked],
-    :active :focus {
+    &:active,
+    &:focus {
       border-color: ${p => p.theme.colors.neutral.c100};
     }
   }
@@ -127,7 +128,7 @@ const outlinedCSS = css`
     &[data-checked]:not([disabled]) {
       border-color: ${p => p.theme.colors.success.c50};
     }
-    :hover {
+    &:hover {
       border-color: ${p => p.theme.colors.success.c50};
     }
   }
@@ -136,7 +137,7 @@ const outlinedCSS = css`
     &[data-checked]:not([disabled]) {
       border-color: ${p => p.theme.colors.error.c50};
     }
-    :hover {
+    &:hover {
       border-color: ${p => p.theme.colors.error.c50};
     }
   }

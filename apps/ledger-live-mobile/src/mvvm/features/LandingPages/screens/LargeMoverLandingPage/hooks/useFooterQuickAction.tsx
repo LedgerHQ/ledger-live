@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { QuickActionButtonProps } from "@ledgerhq/native-ui";
 import { EntryOf } from "~/types/helpers";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

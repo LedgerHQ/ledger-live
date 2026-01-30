@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import CollapsibleStep from "./CollapsibleStep";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./types";

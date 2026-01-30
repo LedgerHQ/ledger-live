@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Touchable from "~/components/Touchable";
@@ -106,7 +106,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           flexShrink={1}
           textAlign="center"
           mr={3}
-          numberOfLines={2}
+          numberOfLines={1}
         >
           {t("tabs.portfolio")}
         </Text>

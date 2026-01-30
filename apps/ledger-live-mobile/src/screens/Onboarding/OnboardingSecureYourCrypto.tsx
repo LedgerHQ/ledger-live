@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { Flex, Text, SlideIndicator } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/core";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import NewSeedIllustration from "../SyncOnboarding/TwoStepStepper/NewSeedIllustration";
 import { setIsOnboardingFlow, setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";

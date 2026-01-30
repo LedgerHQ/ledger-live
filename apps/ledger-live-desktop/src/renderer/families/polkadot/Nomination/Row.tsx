@@ -27,10 +27,10 @@ const Wrapper = styled.div`
   padding: 16px 20px;
 `;
 
-const Column = styled(TableLine).attrs(() => ({
-  ff: "Inter|SemiBold",
-  color: "neutral.c80",
-  fontSize: 3,
+const Column = styled(TableLine).attrs<{ ff?: string; color?: string; fontSize?: number }>(p => ({
+  ff: p.ff || "Inter|SemiBold",
+  color: p.color || "neutral.c80",
+  fontSize: p.fontSize || 3,
 }))``;
 
 const IconContainer = styled.div`

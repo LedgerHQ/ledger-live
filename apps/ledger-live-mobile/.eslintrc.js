@@ -6,8 +6,7 @@ const commonImportRestrictions = [
   },
   {
     group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
-    message:
-      "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
+    message: "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
   },
 ];
 
@@ -29,6 +28,16 @@ const reactReduxImportRestrictions = [
     importNames: ["createStructuredSelector", "createSelector"],
     message:
       "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
+  },
+];
+
+// React-i18next import restrictions
+const reacti18nextImportRestrictions = [
+  {
+    name: "react-i18next",
+    importNames: ["useTranslation", "Trans"],
+    message:
+      "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance.",
   },
 ];
 
@@ -78,7 +87,11 @@ module.exports = {
       "error",
       {
         patterns: commonImportRestrictions,
-        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
+        paths: [
+          ...lodashImportRestriction,
+          ...reactReduxImportRestrictions,
+          ...reacti18nextImportRestrictions,
+        ],
       },
     ],
     "i18next/no-literal-string": [

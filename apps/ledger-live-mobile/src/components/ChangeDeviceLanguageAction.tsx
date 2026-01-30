@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import DeviceAction from "./DeviceAction";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";

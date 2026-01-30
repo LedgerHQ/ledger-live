@@ -1,7 +1,7 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icon, ProgressLoader, Text, Icons } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTheme } from "styled-components/native";
 import { RecoverBannerType } from "./types";
@@ -18,7 +18,12 @@ enum LedgerRecoverSubscriptionStateEnum {
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 
-function RecoverBanner() {
+type Props = {
+  readonly mb?: number;
+  readonly px?: number;
+};
+
+function RecoverBanner({ mb, px }: Props) {
   const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
     LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
   );
@@ -101,7 +106,7 @@ function RecoverBanner() {
   const isWarning = stepNumber > 2;
 
   return (
-    <Flex justifyContent="center" position="relative" mt={3}>
+    <Flex justifyContent="center" position="relative" mt={3} px={px} mb={mb}>
       <Flex
         position="relative"
         columnGap={12}

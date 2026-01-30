@@ -14,6 +14,7 @@ import {
   getCalTokensCached,
   getKey,
   SEPARATOR,
+  type TransferProposal,
 } from "../network/gateway";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
@@ -93,8 +94,13 @@ const filterOperations = (
   transactions: OperationInfo[],
   accountId: string,
   partyId: string,
+  pendingTransferProposals: TransferProposal[],
 ): Operation[] => {
-  return transactions.map(txInfoToOperationAdapter(accountId, partyId));
+  const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
+
+  return transactions
+    .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
+    .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
 export async function filterDisabledTokenAccounts(
@@ -258,7 +264,13 @@ export function makeGetAccountShape(
         cursor: startAt,
         limit: 100,
       });
-      const newOperations = filterOperations(transactionData.operations, accountId, xpubOrAddress);
+      const newOperations = filterOperations(
+        transactionData.operations,
+        accountId,
+        xpubOrAddress,
+        pendingTransferProposals,
+      );
+
       operations = mergeOps(oldOperations, newOperations);
     }
 

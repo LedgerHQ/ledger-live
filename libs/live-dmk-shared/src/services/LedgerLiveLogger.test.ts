@@ -2,15 +2,15 @@ import { log } from "@ledgerhq/logs";
 import { LedgerLiveLogger } from "./LedgerLiveLogger";
 import { LogLevel } from "@ledgerhq/device-management-kit";
 
-vi.mock("@ledgerhq/logs", () => ({
-  log: vi.fn(),
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
 }));
 
 describe("LedgerLiveLogger", () => {
   const options = { tag: "test", timestamp: Date.now(), data: { key: "value" } };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("logs a message when the log level is less than or equal to maxLevel", () => {

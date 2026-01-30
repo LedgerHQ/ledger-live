@@ -11,9 +11,11 @@ import GraphCardContainer from "./GraphCardContainer";
 
 type Props = {
   showAssets: boolean;
+  screenName: string;
+  hideGraph?: boolean;
 };
 
-const PortfolioGraphCard = ({ showAssets }: Props) => {
+const PortfolioGraphCard = ({ showAssets, screenName, hideGraph }: Props) => {
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
   const portfolio = usePortfolioAllAccounts();
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
@@ -35,6 +37,8 @@ const PortfolioGraphCard = ({ showAssets }: Props) => {
         showGraphCard={showAssets}
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
+        screenName={screenName}
+        hideGraph={hideGraph}
       />
     </Box>
   );

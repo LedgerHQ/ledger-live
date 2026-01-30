@@ -2,7 +2,7 @@ import React, { memo, useState } from "react";
 import styled from "styled-components";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
-import type { Account, DerivationMode } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";
 import { setAccountName as actionSetAccountName } from "@ledgerhq/live-wallet/store";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
@@ -49,25 +49,32 @@ function AccountSettingRenderBody(props: Props) {
 
   const handleChangeName = (value: string) => setAccountName(value);
 
-  const handleSubmit =
+  const submitAccount = (account: Account, onClose: () => void) => {
+    if (!accountName || !accountName.length) {
+      setAccountNameError(new AccountNameRequiredError());
+    } else {
+      const name = validateNameEdition(account, accountName);
+      dispatch(updateAccount(account));
+      dispatch(actionSetAccountName(account.id, name));
+      dispatch(
+        setDataModal("MODAL_SETTINGS_ACCOUNT", {
+          account,
+        }),
+      );
+      onClose();
+    }
+  };
+
+  const handleFormSubmit =
     (account: Account, onClose: () => void) =>
     (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
       e.preventDefault();
-
-      if (!accountName || !accountName.length) {
-        setAccountNameError(new AccountNameRequiredError());
-      } else {
-        const name = validateNameEdition(account, accountName);
-        dispatch(updateAccount(account));
-        dispatch(actionSetAccountName(account.id, name));
-        dispatch(
-          setDataModal("MODAL_SETTINGS_ACCOUNT", {
-            account,
-          }),
-        );
-        onClose();
-      }
+      submitAccount(account, onClose);
     };
+
+  const handleButtonClick = (account: Account, onClose: () => void) => {
+    submitAccount(account, onClose);
+  };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>, name: string) => {
     e.target.select();
@@ -103,11 +110,12 @@ function AccountSettingRenderBody(props: Props) {
     id: account.id,
     blockHeight: account.blockHeight,
   };
-  const onSubmit = onClose && handleSubmit(account, onClose);
+  const onSubmit = onClose && handleFormSubmit(account, onClose);
+  const onButtonClick = onClose ? () => handleButtonClick(account, onClose) : undefined;
   const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(account.currency, account.derivationMode as DerivationMode);
+    account.derivationMode !== undefined && account.derivationMode !== null
+      ? getTagDerivationMode(account.currency, account.derivationMode)
+      : undefined;
   return (
     <ModalBody
       onClose={onClose}
@@ -181,7 +189,7 @@ function AccountSettingRenderBody(props: Props) {
             data-testid="account-settings-apply-button"
             event="DoneEditingAccount"
             ml="auto"
-            onClick={onSubmit}
+            onClick={onButtonClick}
             primary
           >
             {t("common.apply")}

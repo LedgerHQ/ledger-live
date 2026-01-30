@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 

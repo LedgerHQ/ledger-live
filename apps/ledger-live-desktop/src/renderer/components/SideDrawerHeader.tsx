@@ -19,10 +19,10 @@ const TouchButton = styled.button`
   color: ${p => p.theme.colors.neutral.c80};
   transition: filter 150ms ease-out;
   cursor: pointer;
-  :hover {
+  &:hover {
     filter: opacity(0.8);
   }
-  :active {
+  &:active {
     filter: opacity(0.5);
   }
 `;

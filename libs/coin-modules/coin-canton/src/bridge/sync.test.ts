@@ -333,6 +333,56 @@ describe("makeGetAccountShape", () => {
     expect(shape.operations[0].value).toEqual(BigNumber(50)); // transfer value only, fees not added for TRANSFER_WITHDRAWN
   });
 
+  it("should filter out operations that match pending transfer proposals", async () => {
+    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+
+    mockedGetPendingTransferProposals.mockResolvedValue([
+      {
+        contract_id: "pending-proposal-uid",
+        sender: "sender-party",
+        receiver: "test-party-id",
+        amount: "100",
+        instrument_id: "Amulet",
+        instrument_admin: "native-admin",
+        memo: "Test proposal",
+        expires_at_micros: Date.now() + 100000,
+        update_id: "tx-pending",
+      },
+    ]);
+
+    mockedGetOperations.mockResolvedValue({
+      operations: [
+        createMockOperationView({
+          txHash: "tx-pending",
+          uid: "pending-proposal-uid",
+          type: "Receive",
+          value: "100",
+        }),
+        createMockOperationView({
+          txHash: "tx-completed",
+          uid: "completed-uid",
+          type: "Receive",
+          value: "200",
+        }),
+      ],
+    });
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+      paginationConfig: {},
+    });
+
+    expect(shape).toBeDefined();
+    expect(shape.operations.length).toBe(1);
+    expect(shape.operations[0].hash).toBe("tx-completed");
+    expect(shape.operations[0].value).toEqual(BigNumber(200));
+
+    expect(shape.cantonResources.pendingTransferProposals.length).toBe(1);
+    expect(shape.cantonResources.pendingTransferProposals[0].contract_id).toBe(
+      "pending-proposal-uid",
+    );
+  });
+
   it("should sync without device when account has xpub but no publicKey", async () => {
     mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
     mockedGetOperations.mockResolvedValue({

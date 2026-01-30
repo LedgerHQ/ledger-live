@@ -4,7 +4,7 @@ import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { useWithdrawableBalance } from "@ledgerhq/live-common/families/canton/react";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import React, { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { TFunction } from "i18next";
 import { ScrollView } from "react-native";

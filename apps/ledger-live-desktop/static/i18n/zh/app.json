@@ -282,11 +282,13 @@
     "advanced" : "高级",
     "custom" : "自定义",
     "fast" : "快",
+    "networkFees" : "网络费用",
     "high" : "高",
     "low" : "低",
     "slow" : "慢",
     "standard" : "标准",
     "medium" : "中",
+    "coinControl" : "币控制",
     "feesAmount" : "费用额度"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "连接设备",
         "secondaryCta" : "以后再说"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}} 趋势",
-      "buy" : "买入",
-      "swap" : "互换",
-      "gainers" : "获利者",
-      "losers" : "失利者",
-      "error" : {
-        "title" : "抱歉，无法加载趋势",
-        "description" : "请稍后重试"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "过去 {{trend}} 内，排名前 {{count}} 的资产中无一获利",
-          "description" : "考虑查看亏损最多的资产，或稍后再来查看"
-        },
-        "losers" : {
-          "title" : "过去 {{trend}} 内，排名前 {{count}} 的资产中无一亏损",
-          "description" : "考虑查看获利最多的资产，或稍后再来查看"
-        }
-      },
-      "trend" : {
-        "day" : "24 小时",
-        "week" : "7 天",
-        "month" : "30 天",
-        "year" : "年",
-        "all" : "年"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "发送数额为 ({{currency}})",
     "coinToSend" : "发送币种",
     "coinControlCustom" : "自定义币种选择",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "最大值"
+    },
+    "reviewCta" : "审核",
+    "getCta" : "获取 {{currency}}",
+    "switchInputMode" : "切换数额输入模式",
     "aboveMaximum" : "高于最大余额",
     "transactionSigned" : "交易已签署",
     "processingTransaction" : "您的交易正在处理中",
     "sign" : {
       "title" : "在您的 Ledger {{wording}} 上继续操作",
       "description" : "按照安全触摸屏上的指示进行操作。"
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "无法刷新网络费用",
+      "warningDescription" : "费用预设可能已过期。"
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "在您换用电脑或使用手机时，及时更新自己的资产组合",
       "mevProtection" : "MEV 保护",
       "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
-      "mevProtectionLearnMore" : "隐私声明",
-      "marketPerformanceWidget" : "市场表现小组件",
-      "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
+      "mevProtectionLearnMore" : "隐私声明"
     },
     "developer" : {
       "search" : "搜索",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "打开抽屉",
         "debugDialog" : "调试对话",
         "debugDuplicates" : "调试副本"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "钱包功能开发工具",
+        "description" : "切换桌面版 Wallet 4.0 功能（lwdWallet40 功能标帜）。",
+        "enableAll" : "全部启用",
+        "disableAll" : "全部禁用",
+        "featureParameters" : "功能参数",
+        "showJson" : "显示 JSON",
+        "hideJson" : "隐藏 JSON"
       },
       "cryptoAssetsList" : {
         "title" : "加密资产列表",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Wallet 的性能，优化应用程序并提升您的体验。"
     }
   },
+  "analytics" : {
+    "title" : "数据分析"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "关闭",
@@ -7825,10 +7822,31 @@
       "cta" : "请重试"
     }
   },
+  "portfolio" : {
+    "title" : "首页",
+    "today" : "今天"
+  },
   "marketBanner" : {
     "title" : "探索市场",
     "genericError" : "连接失败",
-    "cta" : "查看全部"
+    "cta" : "查看全部",
+    "fearAndGreed" : {
+      "title" : "情绪"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "恐惧+",
+      "fear" : "恐惧",
+      "neutral" : "中立",
+      "greed" : "贪婪",
+      "extremeGreed" : "贪婪+"
+    },
+    "dialog" : {
+      "title" : "情绪指数",
+      "content" : "情绪指数反映了市场的情绪状态。其数值范围为 0 至 100，数值越低表示越恐惧，数值越高表示越贪婪。",
+      "cta" : "知道了"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",

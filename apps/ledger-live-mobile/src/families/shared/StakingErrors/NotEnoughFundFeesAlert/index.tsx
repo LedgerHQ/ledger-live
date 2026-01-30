@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Alert, Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useSettings, useAccountUnit } from "~/hooks";
 import { NavigatorName, ScreenName } from "~/const";

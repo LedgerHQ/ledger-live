@@ -1,10 +1,15 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ScreenName } from "~/const";
 import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySelect";
 import MarketDetail from "LLM/features/Market/screens//MarketDetail";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import MarketList from "LLM/features/Market/screens/MarketList";
+import {
+  MarketListHeaderLeft,
+  MarketListHeaderTitle,
+} from "LLM/features/Market/components/MarketListHeader";
 
 export type MarketNavigatorStackParamList = {
   [ScreenName.MarketList]: { top100?: boolean };
@@ -23,6 +28,18 @@ export default function MarketNavigator({ Stack }: NavigatorProps) {
   const { t } = useTranslation();
   return (
     <Stack.Group>
+      <Stack.Screen
+        name={ScreenName.MarketList}
+        component={MarketList}
+        options={{
+          title: t("market.title"),
+          headerShown: true,
+          headerTitle: MarketListHeaderTitle,
+          headerTransparent: true,
+          headerLeft: MarketListHeaderLeft,
+          headerRight: () => null,
+        }}
+      />
       <Stack.Screen
         name={ScreenName.MarketCurrencySelect}
         component={MarketCurrencySelect}

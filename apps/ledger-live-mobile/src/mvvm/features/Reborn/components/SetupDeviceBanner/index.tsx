@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import BuyDeviceBanner, { IMAGE_PROPS_POST_PURCHASHE } from "../BuyDeviceBanner";
 
 type Props = {

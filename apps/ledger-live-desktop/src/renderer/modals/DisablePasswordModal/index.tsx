@@ -1,4 +1,4 @@
-import React, { useState, useCallback, SyntheticEvent } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -43,7 +43,7 @@ const DisablePasswordModal = () => {
     [setPassword, onClose],
   );
   const disablePassword = useCallback(
-    async (e: SyntheticEvent<HTMLFormElement>) => {
+    async (e?: React.SyntheticEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
       if (e) {
         e.preventDefault();
       }

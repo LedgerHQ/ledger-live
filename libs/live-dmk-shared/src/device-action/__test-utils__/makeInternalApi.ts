@@ -1,17 +1,15 @@
 import { type InternalApi } from "@ledgerhq/device-management-kit";
-import { type Mocked } from "vitest";
+const sendApduMock = jest.fn();
+const sendCommandMock = jest.fn();
+const apiGetDeviceModelMock = jest.fn();
+const apiGetDeviceSessionStateMock = jest.fn();
+const apiGetDeviceSessionStateObservableMock = jest.fn();
+const setDeviceSessionStateMock = jest.fn();
+const getManagerApiServiceMock = jest.fn();
+const getSecureChannelServiceMock = jest.fn();
+const disableRefresherMock = jest.fn();
 
-const sendApduMock = vi.fn();
-const sendCommandMock = vi.fn();
-const apiGetDeviceModelMock = vi.fn();
-const apiGetDeviceSessionStateMock = vi.fn();
-const apiGetDeviceSessionStateObservableMock = vi.fn();
-const setDeviceSessionStateMock = vi.fn();
-const getManagerApiServiceMock = vi.fn();
-const getSecureChannelServiceMock = vi.fn();
-const disableRefresherMock = vi.fn();
-
-export function makeDeviceActionInternalApiMock(): Mocked<InternalApi> {
+export function makeDeviceActionInternalApiMock(): jest.Mocked<InternalApi> {
   return {
     sendApdu: sendApduMock,
     sendCommand: sendCommandMock,

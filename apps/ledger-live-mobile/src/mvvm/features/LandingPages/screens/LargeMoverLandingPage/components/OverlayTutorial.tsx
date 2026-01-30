@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/index";
 import { BlurView } from "@react-native-community/blur";
 import { StyleSheet } from "react-native";

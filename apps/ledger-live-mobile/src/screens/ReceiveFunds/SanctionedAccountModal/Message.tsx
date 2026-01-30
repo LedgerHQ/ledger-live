@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";

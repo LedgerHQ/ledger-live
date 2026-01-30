@@ -1,6 +1,6 @@
 import merge from "lodash/merge";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, renderHook } from "@tests/test-renderer";

@@ -1,15 +1,12 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import Btc from "@ledgerhq/hw-app-btc";
 import { BitcoinAccount, Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import resolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
+import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import { BitcoinConfigInfo, setCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { BigNumber } from "bignumber.js";
-import { defaultNanoApp } from "../constants";
 import {
   loadWallet,
   mineToWalletAddress,
@@ -27,6 +24,7 @@ import {
   assertUtxoSpent,
   getNewChangeUtxos,
 } from "../assert";
+import { buildSigner } from "../signer";
 
 type BitcoinCoinConfig = {
   info: BitcoinConfigInfo;
@@ -269,13 +267,10 @@ const makeInternalScenarioTransactions = async () => {
 export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   name: "Ledger Live Basic Bitcoin Transactions",
   setup: async () => {
-    const [{ getOnSpeculosConfirmation, transport }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/BitcoinTest/app_${defaultNanoApp.version}.elf`),
-      spawnAtlas(),
-    ]);
+    await spawnAtlas();
 
-    const signerContext: SignerContext = (_, crypto, fn) =>
-      fn(new Btc({ transport, currency: BITCOIN.id }));
+    const signer: BitcoinSigner | null = await buildSigner();
+    const signerContext: SignerContext = (_, crypto, fn) => fn(signer);
 
     const coinConfig: BitcoinCoinConfig = {
       info: {
@@ -296,7 +291,6 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       },
     });
 
-    const onSignerConfirmation = getOnSpeculosConfirmation("Sign transaction");
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
     await currencyBridge.preload();
     const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
@@ -330,7 +324,6 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       accountBridge,
       currencyBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
       retryLimit: 0,
     };
   },
@@ -360,6 +353,6 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     await waitForExplorerSync();
   },
   teardown: async () => {
-    await Promise.all([killSpeculos(), killAtlas()]);
+    await killAtlas();
   },
 };

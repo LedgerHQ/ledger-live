@@ -19,7 +19,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Dimensions, Linking } from "react-native";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";

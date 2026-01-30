@@ -1,6 +1,6 @@
 import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-ui";
 import React, { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components/native";
 import {

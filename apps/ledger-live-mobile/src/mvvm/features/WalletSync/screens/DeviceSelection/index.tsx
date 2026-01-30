@@ -1,6 +1,6 @@
 import React, { useCallback, useState, memo } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Flex, Text } from "@ledgerhq/native-ui";

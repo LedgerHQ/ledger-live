@@ -1,6 +1,6 @@
 name: "[Mobile] E2E Only - Scheduled/Manual"
 run-name: >
-  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'Schedule' && 'scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 on:
   schedule:
@@ -152,6 +152,32 @@ jobs:
             apps/ledger-live-mobile
             e2e/mobile
           token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Write summary
+        run: |
+          FILTER_PATTERN="${{ inputs.test_filter || '' }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+          BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
+          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+          TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
+          TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          {
+          echo "## Workflow Context"
+          echo ""
+          echo "- **Workflow source branch:** ${{ github.ref_name }}"
+          echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
+          echo "- **Commit SHA:** ${{ github.sha }}"
+          echo "- **Device selected:** $DEVICE"
+          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
+          echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
+          echo "- **Firebase env to target:** $BUILD_TYPE"
+          echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          } >> $GITHUB_STEP_SUMMARY
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -762,7 +788,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -813,7 +839,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}

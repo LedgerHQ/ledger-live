@@ -22,7 +22,6 @@
     {
       "description": "Lumen UI React - version updates",
       "matchPackageNames": ["@ledgerhq/lumen-ui-react"],
-      "matchFileNames": ["apps/ledger-live-desktop/package.json"],
       "commitMessagePrefix": "chore(desktop):",
       "commitMessageTopic": "update {{depName}}",
       "commitMessageExtra": "to {{newVersion}}",
@@ -34,7 +33,6 @@
     {
       "description": "Lumen Design Core - Catalog updates",
       "matchPackageNames": ["@ledgerhq/lumen-design-core"],
-      "matchFileNames": ["pnpm-workspace.yaml"],
       "commitMessagePrefix": "chore:",
       "commitMessageTopic": "update {{depName}} catalog",
       "commitMessageExtra": "to {{newVersion}}",
@@ -46,7 +44,6 @@
     {
       "description": "Lumen UI RNative - version updates",
       "matchPackageNames": ["@ledgerhq/lumen-ui-rnative"],
-      "matchFileNames": ["apps/ledger-live-mobile/package.json"],
       "commitMessagePrefix": "chore(mobile):",
       "commitMessageTopic": "update {{depName}}",
       "commitMessageExtra": "to {{newVersion}}",

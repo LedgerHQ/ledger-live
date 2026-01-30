@@ -15,6 +15,28 @@ const storageWrapper = {
   },
 
   /**
+   * Enable or disable monitoring.
+   * When enabled all accessed keys will be recorded.
+   *
+   * @param enabled Whether to enable or disable monitoring
+   */
+  monitor(enabled: boolean) {
+    monitoredData.enabled = enabled;
+  },
+
+  /**
+   * Get and clear all accessed key value pairs
+   *
+   * @param keepMonitoring Whether to keep monitoring after the flush
+   */
+  flushAccessedKeys(keepMonitoring = false) {
+    const read = [...monitoredData.read];
+    monitoredData.read = [];
+    monitoredData.enabled = keepMonitoring;
+    return read;
+  },
+
+  /**
    * Get a one or more value for a key or array of keys from MMKV
    *
    * @param key A
@@ -23,12 +45,14 @@ const storageWrapper = {
   get<T>(key: string | string[]): (T | undefined) | T[] {
     if (!Array.isArray(key)) {
       const value = mmkv.getString(key);
+      saveRead(key, value);
       return value !== undefined ? (JSON.parse(value) as T) : undefined;
     }
 
     const data: T[] = [];
     for (const k of key) {
       const value = mmkv.getString(k);
+      saveRead(k, value);
       if (value !== undefined) {
         data.push(JSON.parse(value) as T);
       }
@@ -45,6 +69,7 @@ const storageWrapper = {
    */
   getString(key: string): string | null {
     const value = mmkv.getString(key);
+    saveRead(key, value);
     return value ?? null;
   },
 
@@ -171,6 +196,22 @@ const storageWrapper = {
 
     return JSON.stringify(data);
   },
+
+  /** Get the total storage size **/
+  size() {
+    return mmkv.size;
+  },
 };
+
+export type MMKVMonitoredRead = { key: string; value: string | undefined };
+const monitoredData: { enabled: boolean; read: MMKVMonitoredRead[] } = { enabled: false, read: [] };
+
+const MAX_MONITORED_READS = 1000;
+function saveRead(key: string, value: string | undefined) {
+  if (!monitoredData.enabled) return;
+  monitoredData.read.push({ key, value });
+  // For safety limit the number of stored reads
+  if (monitoredData.read.length > MAX_MONITORED_READS) monitoredData.read.shift();
+}
 
 export default storageWrapper;

@@ -1,6 +1,6 @@
 import { CommonActions, useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

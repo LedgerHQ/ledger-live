@@ -15,7 +15,7 @@ import {
 } from "react-native/Libraries/Types/CoreEventTypes";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
 import { type TabListType } from "./useListsAnimation";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { DEFAULT_HEIGHT } from "./useListsAnimation";
 
 export default function TabSection({

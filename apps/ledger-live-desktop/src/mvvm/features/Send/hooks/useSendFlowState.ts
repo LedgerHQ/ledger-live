@@ -25,6 +25,10 @@ export function useSendFlowBusinessLogic({
 }: UseSendFlowBusinessLogicParams): SendFlowBusinessContext {
   const [flowStatus, setFlowStatus] = useState(FLOW_STATUS.IDLE);
   const [recipientSearchValue, setRecipientSearchValue] = useState("");
+  const [recipient, setRecipient] = useState<RecipientData | null>(() => {
+    if (!initParams?.recipient) return null;
+    return { address: initParams.recipient };
+  });
 
   const accountHook = useSendFlowAccount({
     initialAccount: initParams?.account,
@@ -56,6 +60,7 @@ export function useSendFlowBusinessLogic({
 
   const handleRecipientSet = useCallback(
     (recipient: RecipientData) => {
+      setRecipient(recipient);
       transactionHook.actions.setRecipient(recipient);
     },
     [transactionHook.actions],
@@ -74,12 +79,12 @@ export function useSendFlowBusinessLogic({
     () => ({
       account: accountHook.state,
       transaction: transactionHook.state,
-      recipient: null,
+      recipient,
       operation: operationHook.state,
       isLoading: transactionHook.state.bridgePending,
       flowStatus,
     }),
-    [accountHook.state, transactionHook.state, operationHook.state, flowStatus],
+    [accountHook.state, transactionHook.state, recipient, operationHook.state, flowStatus],
   );
 
   const statusActions = useMemo(

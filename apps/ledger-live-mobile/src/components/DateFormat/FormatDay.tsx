@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "~/context/hooks";
 import { createSelector } from "~/context/selectors";
 import { differenceInCalendarDays } from "date-fns";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import compareDate from "~/logic/compareDate";
 import { dateFormatSelector, languageSelector } from "~/reducers/settings";
 import { ddmmyyyyFormatter, Format, genericFormatter, mmddyyyyFormatter } from "./formatter.util";

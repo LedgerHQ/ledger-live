@@ -10,6 +10,7 @@
 const { withRozenite } = require("@rozenite/metro");
 const { withRozeniteReduxDevTools } = require("@rozenite/redux-devtools-plugin/metro");
 const path = require("path");
+const fs = require("fs");
 const tsconfig = require("./tsconfig.json");
 
 const forcedDependencies = [
@@ -22,6 +23,8 @@ const forcedDependencies = [
   "react-native-safe-area-context",
   "@tanstack/react-query",
   "react-native-linear-gradient",
+  "@ledgerhq/lumen-ui-rnative",
+  "@ledgerhq/lumen-design-core",
 ];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
@@ -37,6 +40,31 @@ const buildTsAlias = (conf = {}) =>
   );
 
 const projectRootDir = path.join(__dirname, "..", "..");
+const featuresDir = path.join(projectRootDir, "features");
+
+/**
+ * Build dynamic aliases for all features in the features folder.
+ * Maps @features/<name> to features/<name>/src for each feature.
+ */
+function buildFeaturesAliases() {
+  const aliases = {};
+
+  if (!fs.existsSync(featuresDir)) {
+    return aliases;
+  }
+
+  const entries = fs.readdirSync(featuresDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const featureSrcPath = path.join(featuresDir, entry.name, "src");
+      if (fs.existsSync(featureSrcPath)) {
+        aliases[`@features/${entry.name}`] = featureSrcPath;
+      }
+    }
+  }
+
+  return aliases;
+}
 
 function forceDependency(moduleName, filters, nodeModulesPaths) {
   const matches = filters.some(
@@ -65,6 +93,8 @@ const nodeModulesPaths = [
 const metroConfig = {
   projectRoot: path.resolve(__dirname),
   watchFolders: [projectRootDir],
+  // Explicitly watch the features folder for hot reloading
+  // Metro will resolve .native.tsx/.native.ts files automatically for React Native
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -90,6 +120,8 @@ const metroConfig = {
       net: require.resolve("react-native-tcp-socket"),
       tls: require.resolve("tls"),
       ...buildTsAlias(tsconfig.compilerOptions.paths),
+      // @features/* aliases are dynamically generated for each feature
+      ...buildFeaturesAliases(),
     },
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {

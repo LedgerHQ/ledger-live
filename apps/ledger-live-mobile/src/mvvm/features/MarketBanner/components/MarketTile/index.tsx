@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Tile, TileContent, TileTitle, TileDescription, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 import { MarketTileProps } from "../../types";
 import MarketTileIcon from "../MarketTileIcon";

@@ -1,7 +1,7 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
 import { urls } from "~/utils/urls";

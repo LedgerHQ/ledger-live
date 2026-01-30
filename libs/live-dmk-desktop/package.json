@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-desktop",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -26,9 +26,9 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
@@ -41,18 +41,18 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
     "@types/node": "22.10.10",
-    "@vitejs/plugin-react": "4.3.4",
-    "@vitest/coverage-istanbul": "3.0.7",
-    "jsdom": "25.0.1",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "catalog:",
-    "vite": "6.0.7",
-    "vitest": "2.1.9",
     "ws": "catalog:"
   },
   "peerDependencies": {

@@ -10,14 +10,11 @@ import {
 import { useDispatch } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
-import {
-  useSendFlowActions,
-  useSendFlowData,
-  useSendFlowNavigation,
-} from "../../../context/SendFlowContext";
+import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
+import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 
 export function useSignatureViewModel() {
-  const { navigation } = useSendFlowNavigation();
+  const { navigation } = useFlowWizard();
   const { operation, status } = useSendFlowActions();
   const { state } = useSendFlowData();
   const reduxDispatch = useDispatch();

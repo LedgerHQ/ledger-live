@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation, useLocale } from "~/context/Locale";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import {

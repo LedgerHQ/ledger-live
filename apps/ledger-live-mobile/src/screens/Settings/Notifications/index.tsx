@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { capitalize } from "lodash/fp";
 import { Box, Switch, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
@@ -32,7 +32,7 @@ type NotificationRowProps = {
 function NotificationSettingsRow({ disabled, notificationKey, label }: NotificationRowProps) {
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
-  const { resetOptOutState, permissionStatus, optOutOfNotifications } = useNotifications();
+  const { markUserAsOptIn, permissionStatus, markUserAsOptOut } = useNotifications();
 
   const { t } = useTranslation();
 
@@ -49,13 +49,11 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
 
       if (notificationKey === "areNotificationsAllowed") {
         if (value === false) {
-          optOutOfNotifications();
+          markUserAsOptOut();
         }
 
-        if (value === true) {
-          if (permissionStatus === AuthorizationStatus.AUTHORIZED) {
-            resetOptOutState();
-          }
+        if (value === true && permissionStatus === AuthorizationStatus.AUTHORIZED) {
+          markUserAsOptIn();
         }
       }
 
@@ -75,9 +73,9 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
       notificationKey,
       capitalizedKey,
       notifications,
-      optOutOfNotifications,
+      markUserAsOptOut,
       permissionStatus,
-      resetOptOutState,
+      markUserAsOptIn,
     ],
   );
 

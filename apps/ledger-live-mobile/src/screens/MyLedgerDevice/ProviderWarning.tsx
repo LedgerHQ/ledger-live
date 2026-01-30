@@ -1,6 +1,6 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";

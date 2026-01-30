@@ -1,7 +1,7 @@
 import React from "react";
 import { Icons, Text, Flex } from "@ledgerhq/native-ui";
 import ActionRow from "LLM/components/ActionRow";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

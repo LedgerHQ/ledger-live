@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import QueuedDrawer from "~/components/QueuedDrawer";

@@ -5,7 +5,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { FeesNavigatorParamsList } from "./types/FeesNavigator";
 import { ScreenName } from "~/const";
 import StepHeader from "../StepHeader";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { FeesScreen } from "~/screens/Fees";
 import { Text } from "@ledgerhq/native-ui";
 

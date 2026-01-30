@@ -43,8 +43,10 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
     [inputValue, submitting],
   );
   const handleSubmit = useCallback(
-    async (e: React.SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
+    async (e?: React.SyntheticEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+      if (e) {
+        e.preventDefault();
+      }
       if (submitting) return;
       setSubmitting(true);
       try {
@@ -139,7 +141,6 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
                 <Button
                   onClick={handleSubmit}
                   primary
-                  flow={1}
                   style={{
                     width: 46,
                     height: 46,

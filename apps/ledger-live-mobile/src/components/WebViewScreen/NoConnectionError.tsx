@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import WebViewError from "./Error";
 import noConnectionImg from "~/images/noConnection.webp";

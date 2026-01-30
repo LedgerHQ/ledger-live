@@ -3,7 +3,6 @@ import { createAction as appCreateAction } from "@ledgerhq/live-common/hw/action
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as rawTransactionCreateAction } from "@ledgerhq/live-common/hw/actions/rawTransaction";
 import { createAction as startExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/startExchange";
-import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as managerCreateAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { createAction as signMessageCreateAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import { createAction as completeExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
@@ -19,14 +18,12 @@ import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
-import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import {
   connectAppExecMock,
-  initSwapExecMock,
   connectManagerExecMock,
   fetchImageExecMock,
   startExchangeExecMock,
@@ -70,18 +67,6 @@ export function useRawTransactionDeviceAction() {
       rawTransactionCreateAction(
         mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
       ),
-    [isLdmkConnectAppEnabled, mock],
-  );
-}
-
-export function useInitSwapDeviceAction() {
-  const mock = useEnv("MOCK");
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  return useMemo(
-    () =>
-      mock
-        ? initSwapCreateAction(connectAppExecMock, initSwapExecMock)
-        : initSwapCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), initSwap),
     [isLdmkConnectAppEnabled, mock],
   );
 }

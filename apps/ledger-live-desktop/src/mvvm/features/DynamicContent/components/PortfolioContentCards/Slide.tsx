@@ -21,6 +21,7 @@ function Slide({
   tag,
   image,
   index,
+  location,
   logSlideClick,
   dismissCard,
 }: Props) {
@@ -37,7 +38,7 @@ function Slide({
   };
 
   return (
-    <LogContentCardWrapper id={id}>
+    <LogContentCardWrapper id={id} location={location}>
       <Card
         title={title}
         cta={cta}

@@ -123,9 +123,9 @@ export default function AccountContextMenu({
           navigate("/swap", {
             state: {
               defaultCurrency: currency,
-              defaultAccount: account,
+              defaultAccountId: account.id,
               defaultAmountFrom: "0",
-              defaultParentAccount: parentAccount,
+              defaultParentAccountId: parentAccount?.id,
               from: location.pathname,
             },
           });

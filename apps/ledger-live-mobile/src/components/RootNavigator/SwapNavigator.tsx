@@ -1,9 +1,8 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import SwapHistory from "~/screens/Swap/History";
 import Touchable from "../Touchable";
 
@@ -12,25 +11,14 @@ import { useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import {
-  OperationDetails,
-  PendingOperation,
-  SelectFees,
-  SelectProvider,
-  SwapLoading,
-} from "~/screens/Swap/index";
+import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/index";
 import { SwapLiveApp } from "~/screens/Swap/LiveApp";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
-import StepHeader from "../StepHeader";
-import SwapFormNavigator from "./SwapFormNavigator";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
-import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
-import { SelectCurrency } from "~/screens/Swap/SubScreens/SelectCurrency";
-import { SelectAccount } from "~/screens/Swap/SubScreens/SelectAccount";
 
 // Constants for tracking sources
 const TRACKING_SOURCES = {
@@ -55,7 +43,7 @@ export default function SwapNavigator(
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const track = useTrack();
-  const navigation = useNavigation<StackNavigatorNavigation<SwapFormNavigatorParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
 
   const goToSwapHistory = useCallback(() => {
     track("button_clicked", {
@@ -99,82 +87,32 @@ export default function SwapNavigator(
     }
   }, [trackButtonClick, navigation]);
 
-  const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
-
-  const options = useMemo(() => {
-    return !ptxSwapLiveAppMobile?.enabled
-      ? {
-          ...("options" in noNanoBuyNanoWallScreenOptions
-            ? noNanoBuyNanoWallScreenOptions.options
-            : {}),
-          title: t("transfer.swap2.form.title"),
-          headerLeft: (): React.JSX.Element | null => null,
-        }
-      : {
-          ...("options" in noNanoBuyNanoWallScreenOptions
-            ? noNanoBuyNanoWallScreenOptions.options
-            : {}),
-          headerTitle: t("transfer.swap2.form.title"),
-          headerLeft: () => <NavigationHeaderBackButton />,
-
-          headerRight: () => (
-            <Flex p={6}>
-              <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={goToSwapHistory}>
-                <Icons.Clock color={"neutral.c100"} />
-              </Touchable>
-            </Flex>
-          ),
-        };
-  }, [goToSwapHistory, noNanoBuyNanoWallScreenOptions, ptxSwapLiveAppMobile?.enabled, t]);
+  const options = useMemo(
+    () => ({
+      ...("options" in noNanoBuyNanoWallScreenOptions
+        ? noNanoBuyNanoWallScreenOptions.options
+        : {}),
+      headerTitle: t("transfer.swap2.form.title"),
+      headerLeft: () => <NavigationHeaderBackButton />,
+      headerRight: () => (
+        <Flex p={6}>
+          <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={goToSwapHistory}>
+            <Icons.Clock color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
+      ),
+    }),
+    [goToSwapHistory, noNanoBuyNanoWallScreenOptions, t],
+  );
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: true }}>
       <Stack.Screen
         name={ScreenName.SwapTab}
-        component={ptxSwapLiveAppMobile?.enabled ? SwapLiveApp : SwapFormNavigator}
+        component={SwapLiveApp}
         {...noNanoBuyNanoWallScreenOptions}
         options={options}
         initialParams={params as Partial<SwapNavigatorParamList[ScreenName.SwapTab]>}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapSelectAccount}
-        component={SelectAccount}
-        options={({
-          route: {
-            params: { target },
-          },
-        }) => ({
-          headerTitle: () => <StepHeader title={t(`transfer.swap2.form.select.${target}.title`)} />,
-          headerRight: () => null,
-        })}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapSelectCurrency}
-        component={SelectCurrency}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap2.form.select.to.title")} />,
-          headerRight: () => null,
-        }}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapSelectProvider}
-        component={SelectProvider}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap2.form.details.label.provider")} />,
-          headerRight: () => null,
-        }}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapSelectFees}
-        component={SelectFees}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap2.form.details.label.fees")} />,
-          headerRight: () => null,
-        }}
       />
 
       <Stack.Screen
@@ -189,18 +127,11 @@ export default function SwapNavigator(
       <Stack.Screen
         name={ScreenName.SwapOperationDetails}
         component={OperationDetails}
-        options={({ route }) =>
-          ptxSwapLiveAppMobile?.enabled
-            ? {
-                headerTitle: t("transfer.swap2.history.title"),
-                headerLeft: () => <NavigationHeaderBackButton />,
-                headerRight: () => null,
-              }
-            : {
-                headerTitle: t("transfer.swap.title"),
-                headerLeft: route.params?.fromPendingOperation ? () => null : undefined,
-              }
-        }
+        options={{
+          headerTitle: t("transfer.swap2.history.title"),
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerRight: () => null,
+        }}
       />
 
       <Stack.Screen
@@ -220,16 +151,14 @@ export default function SwapNavigator(
         }}
       />
 
-      {ptxSwapLiveAppMobile?.enabled ? (
-        <Stack.Screen
-          name={ScreenName.SwapHistory}
-          component={SwapHistory}
-          options={{
-            headerTitle: t("transfer.swap2.history.title"),
-            headerRight: () => null,
-          }}
-        />
-      ) : null}
+      <Stack.Screen
+        name={ScreenName.SwapHistory}
+        component={SwapHistory}
+        options={{
+          headerTitle: t("transfer.swap2.history.title"),
+          headerRight: () => null,
+        }}
+      />
     </Stack.Navigator>
   );
 }

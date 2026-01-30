@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 const CircleWrapper = styled.View`
   background-color: ${p => p.theme.colors.opacityDefault.c05};

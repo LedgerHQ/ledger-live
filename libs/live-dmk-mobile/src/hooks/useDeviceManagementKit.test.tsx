@@ -1,5 +1,4 @@
 import React from "react";
-import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {

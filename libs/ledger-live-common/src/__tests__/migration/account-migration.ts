@@ -104,6 +104,13 @@ setSupportedCurrencies([
   "monad_testnet",
   "somnia",
   "zero_gravity",
+  "avalanche_c_chain_fuji",
+  "bitlayer",
+  "klaytn_baobab",
+  "shape",
+  "story",
+  "unichain",
+  "unichain_sepolia",
 ]);
 
 LiveConfig.setConfig(liveConfig);

@@ -3,7 +3,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";

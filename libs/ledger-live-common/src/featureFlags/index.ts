@@ -9,3 +9,4 @@ export * from "./FeatureFlagsContext";
 export * from "./useHasOverriddenFeatureFlags";
 export * from "./firebaseFeatureFlags";
 export * from "./helper";
+export * from "./walletFeaturesConfig";

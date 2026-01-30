@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 import { Linking, Platform } from "react-native";
 import { Icon } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
 import IsInDrawerContext from "~/context/IsInDrawerContext";

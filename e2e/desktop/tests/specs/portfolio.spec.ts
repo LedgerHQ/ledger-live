@@ -23,7 +23,6 @@ test.describe("Portfolio", () => {
       await app.portfolio.checkStakeButtonVisibility();
       await app.portfolio.checkSwapButtonVisibility();
       await app.portfolio.checkChartVisibility();
-      await app.portfolio.checkMarketPerformanceTrendVisibility();
       await app.portfolio.checkAssetAllocationSection();
     },
   );

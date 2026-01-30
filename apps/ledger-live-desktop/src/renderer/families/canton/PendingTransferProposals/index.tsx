@@ -480,13 +480,11 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
           {isIncoming ? (
             <>
               {!isExpired && (
-                <Button size="sm" onClick={handleAcceptClick}>
+                <Button onClick={handleAcceptClick}>
                   {t("families.canton.pendingTransactions.accept")}
                 </Button>
               )}
               <Button
-                size="sm"
-                appearance="no-background"
                 style={{ borderColor: "neutral.c100", borderWidth: 1 }}
                 onClick={handleRejectClick}
               >
@@ -495,8 +493,6 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
             </>
           ) : (
             <Button
-              size="sm"
-              appearance="no-background"
               style={{ borderColor: "neutral.c100", borderWidth: 1 }}
               onClick={handleWithdrawClick}
             >

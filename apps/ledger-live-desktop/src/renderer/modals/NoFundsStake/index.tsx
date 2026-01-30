@@ -94,8 +94,8 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     navigate("/swap", {
       state: {
         defaultCurrency: currency,
-        defaultAccount: account,
-        defaultParentAccount: parentAccount,
+        defaultAccountId: account.id,
+        defaultParentAccountId: parentAccount?.id,
         from: location.pathname,
       },
     });

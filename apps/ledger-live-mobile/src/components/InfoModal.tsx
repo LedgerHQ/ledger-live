@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import { useTheme } from "styled-components/native";
 import { IconsLegacy, IconBox, Flex } from "@ledgerhq/native-ui";

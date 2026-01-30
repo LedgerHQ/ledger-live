@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Trans, withTranslation, useTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Box, Flex, Slider, Text } from "@ledgerhq/native-ui";

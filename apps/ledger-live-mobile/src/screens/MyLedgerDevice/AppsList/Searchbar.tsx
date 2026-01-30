@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import { Platform, TouchableOpacity, TextInput } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 

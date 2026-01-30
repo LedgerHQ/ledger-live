@@ -104,11 +104,6 @@ jobs:
       matrix:
         chain: ${{ fromJson(needs.is-affected.outputs.matrix).chain }}
 
-    env:
-      SEED: chronic find success crew board merit elder life achieve scout gravity soul brief pen job
-      SPECULOS_API_PORT: 4040
-      SPECULOS_IMAGE: speculos
-
     steps:
       - uses: actions/checkout@v4
 
@@ -121,21 +116,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
-      - name: Checkout coin-apps
-        uses: actions/checkout@v4
-        with:
-          ref: generated/ledger-live-bot
-          repository: LedgerHQ/coin-apps
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
 
       - name: Login to Ledger Artifactory
         id: jfrog-login
@@ -156,5 +136,3 @@ jobs:
         uses: ./tools/actions/composites/run-coin-tester
         with:
           chain: ${{ matrix.chain }}
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}

@@ -15,12 +15,13 @@ describe("EVM Family", () => {
   describe("adapters", () => {
     describe("blockOperations", () => {
       describe("rpcTransactionToBlockOperations", () => {
-        it("should extract native ETH transfer operations from RPC transaction with value", () => {
-          const operations = rpcTransactionToBlockOperations(
-            "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            1000000000000000000n,
-            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-          );
+        it("should extract native ETH transfer operations from transaction with value", () => {
+          const operations = rpcTransactionToBlockOperations({
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            value: "1000000000000000000",
+            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            erc20Transfers: [],
+          });
           expect(operations).toEqual([
             {
               type: "transfer",
@@ -40,21 +41,23 @@ describe("EVM Family", () => {
         });
 
         it("should return empty array for transaction with zero value", () => {
-          const operations = rpcTransactionToBlockOperations(
-            "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            0n,
-            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-          );
+          const operations = rpcTransactionToBlockOperations({
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            value: "0",
+            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            erc20Transfers: [],
+          });
 
           expect(operations).toHaveLength(0);
         });
 
-        it("should handle transaction with null to address (contract creation)", () => {
-          const operations = rpcTransactionToBlockOperations(
-            "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            500000000000000000n,
-            undefined,
-          );
+        it("should handle transaction with undefined to address (contract creation)", () => {
+          const operations = rpcTransactionToBlockOperations({
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            value: "500000000000000000",
+            to: undefined,
+            erc20Transfers: [],
+          });
 
           expect(operations).toHaveLength(1);
           expect(operations[0]).toEqual({
@@ -66,12 +69,13 @@ describe("EVM Family", () => {
           expect(operations[0]).not.toHaveProperty("peer");
         });
 
-        it("should handle transaction with null from address", () => {
-          const operations = rpcTransactionToBlockOperations(
-            "",
-            2000000000000000000n,
-            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-          );
+        it("should handle transaction with empty from address", () => {
+          const operations = rpcTransactionToBlockOperations({
+            from: "",
+            value: "2000000000000000000",
+            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            erc20Transfers: [],
+          });
 
           expect(operations).toHaveLength(1);
           expect(operations[0]).toEqual({
@@ -84,9 +88,56 @@ describe("EVM Family", () => {
         });
 
         it("should handle invalid addresses gracefully", () => {
-          const operations = rpcTransactionToBlockOperations("0x0", 1000000000000000000n, "0x");
+          const operations = rpcTransactionToBlockOperations({
+            from: "0x0",
+            value: "1000000000000000000",
+            to: "0x",
+            erc20Transfers: [],
+          });
 
           expect(operations).toHaveLength(0);
+        });
+
+        it("should extract ERC20 transfers from erc20Transfers", () => {
+          const operations = rpcTransactionToBlockOperations({
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            value: "0",
+            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            erc20Transfers: [
+              {
+                asset: {
+                  type: "erc20",
+                  assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+                from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                value: "1000000",
+              },
+            ],
+          });
+
+          expect(operations).toEqual([
+            {
+              type: "transfer",
+              address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              asset: {
+                type: "erc20",
+                assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              },
+              amount: -1000000n,
+            },
+            {
+              type: "transfer",
+              address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              asset: {
+                type: "erc20",
+                assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              },
+              amount: 1000000n,
+            },
+          ]);
         });
       });
 

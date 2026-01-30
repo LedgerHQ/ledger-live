@@ -1,4 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 import { setEnv } from "@ledgerhq/live-env";
 import { ApplicationOptions } from "page";
 
@@ -51,6 +52,7 @@ export async function runCreateNewAccountAndDepositTest(
     it("should create new account and deposit", async () => {
       await app.transferMenuDrawer.open();
       await app.transferMenuDrawer.navigateToReceive();
+      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
       await app.modularDrawer.selectCurrencyByTicker(currentAccount.currency.ticker);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.receive.continueCreateAccount();
@@ -97,6 +99,7 @@ export async function runSelectCryptoNetworkTest(
       } else {
         await app.portfolioEmptyState.navigateToReceive();
       }
+      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.validateNetworksScreen(networks);
@@ -123,6 +126,7 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
     tags.forEach(tag => $Tag(tag));
     it(`should select crypto without network and account for ${account.currency.ticker}`, async () => {
       await app.portfolioEmptyState.navigateToReceive();
+      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
       await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
@@ -150,6 +154,7 @@ export async function runDepositInExistingAccountTest(
     tags.forEach(tag => $Tag(tag));
     it(`should deposit in existing account for ${account.currency.ticker}`, async () => {
       await app.portfolio.tapQuickActionReceiveButton();
+      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
       await app.modularDrawer.selectAsset(account);
       await app.receive.selectDontVerifyAddress();
       await app.receive.selectReconfirmDontVerify();

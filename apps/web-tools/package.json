@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.29.1",
+  "version": "0.30.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "rsbuild dev",
     "build": "rsbuild build",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
@@ -62,10 +63,10 @@
     "utf-8-validate": "^6.0.6"
   },
   "devDependencies": {
-    "@rsbuild/core": "1.7.2",
-    "@rsbuild/plugin-node-polyfill": "1.4.0",
-    "@rsbuild/plugin-react": "1.4.3",
-    "@rsbuild/plugin-styled-components": "1.6.1",
+    "@rsbuild/core": "catalog:",
+    "@rsbuild/plugin-node-polyfill": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@rsbuild/plugin-styled-components": "catalog:",
     "@rspack/core": "catalog:",
     "@types/invariant": "^2.2.37",
     "@types/lodash": "^4.17.21",

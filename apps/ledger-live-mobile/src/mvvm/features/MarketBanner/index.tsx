@@ -4,16 +4,8 @@ import MarketBannerView from "./components/MarketBannerView";
 import { MarketBannerProps } from "./types";
 
 const MarketBanner = ({ testID }: MarketBannerProps) => {
-  const {
-    items,
-    isError,
-    isEnabled,
-    range,
-    onTilePress,
-    onViewAllPress,
-    onSectionTitlePress,
-    onSwipe,
-  } = useMarketBannerViewModel();
+  const { items, isError, isEnabled, range, onTilePress, onViewAllPress, onSectionTitlePress } =
+    useMarketBannerViewModel();
 
   if (!isEnabled) {
     return null;
@@ -27,7 +19,6 @@ const MarketBanner = ({ testID }: MarketBannerProps) => {
       onTilePress={onTilePress}
       onViewAllPress={onViewAllPress}
       onSectionTitlePress={onSectionTitlePress}
-      onSwipe={onSwipe}
       testID={testID}
     />
   );

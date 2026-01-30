@@ -67,7 +67,7 @@ const stylesFn = <O, M extends boolean, G extends GroupBase<O>>(
   multiValueRemove: provided => ({
     ...provided,
     cursor: "pointer",
-    ":hover": {
+    "&:hover": {
       color: theme.colors.error.c50,
       backgroundColor: theme.colors.error.c30,
     },

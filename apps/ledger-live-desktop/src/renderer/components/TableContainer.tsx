@@ -41,14 +41,19 @@ export const TableRow = styled(Box)`
   cursor: pointer;
   display: flex;
   padding: 20px;
-  :hover {
+  &:hover {
     background: ${p => rgba(p.theme.colors.wallet, 0.04)};
   }
 `;
+
+// TODO: remove this if 'data-e2e' attribute is not required
+// Required for the 'data-e2e' attribute to be passed to the titleProps
+type E2EAttribute = { "data-e2e"?: string };
+
 type TableHeaderProps = {
   title?: React.ReactNode;
   children?: React.ReactNode;
-  titleProps?: React.ComponentProps<typeof TableHeaderTitle>;
+  titleProps?: React.ComponentProps<typeof TableHeaderTitle> & E2EAttribute;
   tooltip?: React.ReactNode;
 };
 const TableHeaderTooltip = ({ tooltip, title, titleProps }: TableHeaderProps) =>

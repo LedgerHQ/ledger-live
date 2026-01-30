@@ -6,6 +6,11 @@ import { AppUpdater } from "../../component/app.updater.component";
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
   env: { DEBUG_UPDATE: "true" },
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+  },
 });
 
 test("Updater", async ({ page }) => {
@@ -15,14 +20,14 @@ test("Updater", async ({ page }) => {
   await test.step("[idle] state should not be visible", async () => {
     await expect(layout.appUpdateBanner).toBeHidden();
     await expect.soft(page).toHaveScreenshot("app-updater-idle.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 
   await test.step("[checking] state should be visible", async () => {
     await appUpdater.setStatus("checking");
     await expect.soft(page).toHaveScreenshot("app-updater-layout.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 
@@ -44,7 +49,7 @@ test("Updater", async ({ page }) => {
   await test.step("[error] state should be visible", async () => {
     await appUpdater.setStatus("error");
     await expect.soft(page).toHaveScreenshot("app-updater-error-with-carousel.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 
@@ -52,7 +57,7 @@ test("Updater", async ({ page }) => {
     await layout.goToPortfolio();
     await layout.appUpdateBanner.isVisible();
     await expect.soft(page).toHaveScreenshot("app-updater-error-without-carousel.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 });
