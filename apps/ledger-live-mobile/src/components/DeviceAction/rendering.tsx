@@ -236,9 +236,10 @@ export function renderConfirmSwap({
   device,
   theme,
   provider,
+  transaction,
 }: RawProps & {
   device: Device;
-  transaction: Transaction;
+  transaction: Transaction & { sponsored?: boolean };
   provider: TermsProviders;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
@@ -263,7 +264,7 @@ export function renderConfirmSwap({
           </Text>
         </Wrapper>
       </Wrapper>
-      <TermsFooter provider={provider} />
+      <TermsFooter provider={provider} sponsored={transaction?.sponsored ?? false} />
       <ModalLock />
     </ScrollView>
   );

@@ -1115,7 +1115,7 @@ export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdating
 interface SwapConfirmationProps {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  transaction: Transaction;
+  transaction: Transaction & { sponsored?: boolean };
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string;
@@ -1315,7 +1315,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
         )}
       </ConfirmWrapper>
       <Separator />
-      <DrawerFooter provider={exchangeRate.provider} />
+      <DrawerFooter provider={exchangeRate.provider} sponsored={transaction?.sponsored ?? false} />
     </>
   );
 };
