@@ -65,7 +65,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   elrond: "erd1sqhjrtmsn5yjk6w85099p8v0ly0g8z9pxeqe5dvu5rlf2n7vq3vqytny9g",
   ethereum_classic: EVM_DEAD_ADDRESS,
   ethereum_sepolia: EVM_DEAD_ADDRESS,
-  ethereum_holesky: EVM_DEAD_ADDRESS,
   ethereum_hoodi: EVM_DEAD_ADDRESS,
   hedera: "0.0.163372",
   cardano_testnet:

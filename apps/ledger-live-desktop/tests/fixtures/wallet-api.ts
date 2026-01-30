@@ -593,15 +593,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "ethereum_holesky",
-    ticker: "ETH",
-    name: "Ethereum Holesky",
-    family: "ethereum",
-    color: "#00ff00",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "ethereum_hoodi",
     ticker: "ETH",
     name: "Ethereum Hoodi",
