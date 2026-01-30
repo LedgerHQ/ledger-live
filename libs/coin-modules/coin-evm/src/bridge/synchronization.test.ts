@@ -642,6 +642,7 @@ describe("EVM Family", () => {
             lastTokenOperations: [],
             lastNftOperations: [],
             lastInternalOperations: [],
+            nextPagingToken: "",
           });
         });
 

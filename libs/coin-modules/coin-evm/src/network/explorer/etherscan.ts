@@ -44,7 +44,7 @@ export type FetchOperationsParams = {
   // Inclusive upper bound of the block range. fromBlock <= toBlock whatever the sort order is.
   toBlock?: number;
   // Maximum number of operations to fetch. Enforced by the endpoint.
-  // It's a soft limit, we may fetch less than the limit (no more operations to fetch) 
+  // It's a soft limit, we may fetch less than the limit (no more operations to fetch)
   // or more than the limit (in case of heights spreading across pages for instance)
   limit?: number;
   // asc means lower blocks come first, results are sorted chronologically

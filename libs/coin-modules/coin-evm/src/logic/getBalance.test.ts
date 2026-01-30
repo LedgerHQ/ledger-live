@@ -158,7 +158,7 @@ describe("getBalance", () => {
     });
 
     mockGetExplorerApi.mockReturnValue({
-      getOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [] }),
+      getOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [], nextPagingToken: "" }),
     });
 
     // Mock getStakes to return empty stakes
