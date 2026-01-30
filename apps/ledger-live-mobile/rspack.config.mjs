@@ -101,10 +101,13 @@ export default withRozeniteUrlFix(
   withRozenite(
     Repack.defineRspackConfig(env => {
       const { mode, platform } = env;
+      const isRsdoctor = process.env.RSDOCTOR && process.env.RSDOCTOR !== "0";
       return {
         mode,
         context: __dirname,
         entry: "./index.js",
+        // When running rsdoctor, emit main bundle as .js so it's counted as JavaScript (not Other)
+        ...(isRsdoctor && { output: { filename: "[name].js" } }),
         optimization: {
           minimize: false,
         },
