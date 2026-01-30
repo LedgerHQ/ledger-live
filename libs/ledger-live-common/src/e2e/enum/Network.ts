@@ -36,4 +36,5 @@ export enum Network {
   HEDERA = "Hedera",
   SUI = "Sui",
   ZCASH = "Zcash",
+  ALEO = "Aleo",
 }

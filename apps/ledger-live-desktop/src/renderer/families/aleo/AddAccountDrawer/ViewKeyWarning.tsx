@@ -37,7 +37,12 @@ const ViewKeyWarning = ({ onAllow, onCancel }: Props) => {
         source={source}
         flow={ADD_ACCOUNT_FLOW_NAME}
       />
-      <Flex flexDirection="column" height="100%" alignItems="center">
+      <Flex
+        flexDirection="column"
+        height="100%"
+        alignItems="center"
+        data-testid="view-key-warning-step"
+      >
         <Flex flexDirection="column" alignItems="center" flexShrink={0} width={420}>
           <Text
             fontSize={24}

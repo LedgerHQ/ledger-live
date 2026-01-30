@@ -27,6 +27,7 @@ const currencies = [
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
+  { currency: Currency.ALEO, xrayTicket: "B2CQA-4450, B2CQA-4451, B2CQA-4452" },
 ];
 
 for (const currency of currencies) {
@@ -34,6 +35,11 @@ for (const currency of currencies) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: currency.currency.speculosApp,
+      featureFlags: {
+        currencyAleo: {
+          enabled: true,
+        },
+      },
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
@@ -42,12 +48,9 @@ for (const currency of currencies) {
       `[${currency.currency.name}] Add account`,
       {
         tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
+          ...(currency.currency === Currency.ALEO
+            ? ["@NanoSP", "@Flex"]
+            : ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"]),
           `@${currency.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
@@ -68,8 +71,18 @@ for (const currency of currencies) {
           await selector.validateItems();
           await selector.selectAssetByTicker(currency.currency);
           await selector.selectNetwork(currency.currency);
-          await app.scanAccountsDrawer.selectFirstAccount();
-          await app.scanAccountsDrawer.clickCloseButton();
+
+          if (currency.currency === Currency.ALEO) {
+            await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
+            await app.scanAccountsDrawer.clickAllowButton();
+            await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
+            await app.speculos.shareViewKey();
+            await app.scanAccountsDrawer.expectSuccessStepVisibility();
+            await app.scanAccountsDrawer.clickCloseButton();
+          } else {
+            await app.scanAccountsDrawer.selectFirstAccount();
+            await app.scanAccountsDrawer.clickCloseButton();
+          }
         } else {
           await app.addAccount.expectModalVisibility();
           await app.addAccount.selectCurrency(currency.currency);
