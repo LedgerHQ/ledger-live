@@ -50,22 +50,21 @@ const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", curren
 // Factory to create fetch utilities for isPageFull/hasMorePage tests
 const createFetchWithLimit =
   <T>(
-    apiFn: (
-      currency: CryptoCurrency,
-      address: string,
-      accountId: string,
-      fromBlock: number,
-      toBlock?: number,
-      limit?: number,
-      sort?: "asc" | "desc",
-    ) => Promise<ETHERSCAN_API.EndpointResult>,
+    apiFn: (params: ETHERSCAN_API.FetchOperationsParams) => Promise<ETHERSCAN_API.EndpointResult>,
   ) =>
-    async (ops: T[], limit: number | undefined, sort: "asc" | "desc" = "desc") => {
-      jest.spyOn(axios, "request").mockResolvedValueOnce({
-        data: { result: ops },
-      });
-      return apiFn(currency, account.freshAddress, account.id, 0, undefined, limit, sort);
-    };
+  async (ops: T[], limit: number | undefined, sort: "asc" | "desc" = "desc") => {
+    jest.spyOn(axios, "request").mockResolvedValueOnce({
+      data: { result: ops },
+    });
+    return apiFn({
+      currency,
+      address: account.freshAddress,
+      accountId: account.id,
+      fromBlock: 0,
+      limit,
+      sort,
+    });
+  };
 
 // Helper to extract pagination state for assertions
 const paginationState = (result: ETHERSCAN_API.EndpointResult) => ({
@@ -182,17 +181,17 @@ describe("EVM Family", () => {
       }));
 
       try {
-        await ETHERSCAN_API.getCoinOperations(
-          {
+        await ETHERSCAN_API.getCoinOperations({
+          currency: {
             ...currency,
             ethereumLikeInfo: {
               chainId: 1,
             },
           },
-          account.freshAddress,
-          account.id,
-          0,
-        );
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+        });
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -209,12 +208,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getCoinOperations(
+      const response = await ETHERSCAN_API.getCoinOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -244,12 +243,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getCoinOperations(
+      const response = await ETHERSCAN_API.getCoinOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -279,13 +278,13 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getCoinOperations(
+      const response = await ETHERSCAN_API.getCoinOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-        100,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+        toBlock: 100,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -409,17 +408,17 @@ describe("EVM Family", () => {
       }));
 
       try {
-        await ETHERSCAN_API.getTokenOperations(
-          {
+        await ETHERSCAN_API.getTokenOperations({
+          currency: {
             ...currency,
             ethereumLikeInfo: {
               chainId: 1,
             },
           },
-          account.freshAddress,
-          account.id,
-          0,
-        );
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+        });
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -436,12 +435,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getTokenOperations(
+      const response = await ETHERSCAN_API.getTokenOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -473,12 +472,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getTokenOperations(
+      const response = await ETHERSCAN_API.getTokenOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -510,13 +509,13 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getTokenOperations(
+      const response = await ETHERSCAN_API.getTokenOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-        100,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+        toBlock: 100,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -642,17 +641,17 @@ describe("EVM Family", () => {
       }));
 
       try {
-        await ETHERSCAN_API.getERC721Operations(
-          {
+        await ETHERSCAN_API.getERC721Operations({
+          currency: {
             ...currency,
             ethereumLikeInfo: {
               chainId: 1,
             },
           },
-          account.freshAddress,
-          account.id,
-          0,
-        );
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+        });
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -669,12 +668,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getERC721Operations(
+      const response = await ETHERSCAN_API.getERC721Operations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -706,12 +705,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getERC721Operations(
+      const response = await ETHERSCAN_API.getERC721Operations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -743,13 +742,13 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getERC721Operations(
+      const response = await ETHERSCAN_API.getERC721Operations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-        100,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+        toBlock: 100,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -875,17 +874,17 @@ describe("EVM Family", () => {
       }));
 
       try {
-        await ETHERSCAN_API.getERC1155Operations(
-          {
+        await ETHERSCAN_API.getERC1155Operations({
+          currency: {
             ...currency,
             ethereumLikeInfo: {
               chainId: 1,
             },
           },
-          account.freshAddress,
-          account.id,
-          0,
-        );
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+        });
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -902,12 +901,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getERC1155Operations(
+      const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -939,12 +938,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getERC1155Operations(
+      const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -976,13 +975,13 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getERC1155Operations(
+      const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-        100,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+        toBlock: 100,
+      });
 
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
@@ -1093,12 +1092,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getNftOperations(
+      const response = await ETHERSCAN_API.getNftOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
 
       // Verify operations are sorted by date descending
       const sortedOps = response.operations
@@ -1125,15 +1124,14 @@ describe("EVM Family", () => {
             result: params.url?.includes("tokennfttx") ? erc721Ops : erc1155Ops,
           },
         }));
-        return ETHERSCAN_API.getNftOperations(
+        return ETHERSCAN_API.getNftOperations({
           currency,
-          account.freshAddress,
-          account.id,
-          0,
-          undefined,
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
           limit,
           sort,
-        );
+        });
       };
 
       // etherscanERC721Operations (3) + etherscanERC1155Operations (3) => 8 processed ops
@@ -1197,15 +1195,13 @@ describe("EVM Family", () => {
               : etherscanERC1155Operations,
           },
         }));
-        return ETHERSCAN_API.getNftOperations(
+        return ETHERSCAN_API.getNftOperations({
           currency,
-          account.freshAddress,
-          account.id,
-          0,
-          undefined,
-          undefined,
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
           sort,
-        );
+        });
       };
 
       it("should pass sort parameter to both underlying API calls and sort combined results", async () => {
@@ -1243,17 +1239,17 @@ describe("EVM Family", () => {
       }));
 
       try {
-        await ETHERSCAN_API.getInternalOperations(
-          {
+        await ETHERSCAN_API.getInternalOperations({
+          currency: {
             ...currency,
             ethereumLikeInfo: {
               chainId: 1,
             },
           },
-          account.freshAddress,
-          account.id,
-          0,
-        );
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+        });
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -1270,12 +1266,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getInternalOperations(
+      const response = await ETHERSCAN_API.getInternalOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
 
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
@@ -1307,12 +1303,12 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getInternalOperations(
+      const response = await ETHERSCAN_API.getInternalOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+      });
 
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
@@ -1344,13 +1340,13 @@ describe("EVM Family", () => {
         },
       }));
 
-      const response = await ETHERSCAN_API.getInternalOperations(
+      const response = await ETHERSCAN_API.getInternalOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        50,
-        100,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 50,
+        toBlock: 100,
+      });
 
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
@@ -1466,12 +1462,12 @@ describe("EVM Family", () => {
     });
 
     it("should not return NFT opperation", async () => {
-      const response = await ETHERSCAN_API.getNftOperations(
+      const response = await ETHERSCAN_API.getNftOperations({
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+      });
       expect(response).toEqual({
         operations: [],
         hasMorePage: false,
@@ -2002,17 +1998,9 @@ describe("EVM Family", () => {
     // Smart mock that paginates based on the page and limit parameters
     const createPaginatedMock = (allBlockHeights: number[]) => {
       return jest.fn(
-        (
-          _currency: any,
-          _address: any,
-          _accountId: any,
-          _fromBlock: any,
-          _toBlock: any,
-          limit: number | undefined,
-          _sort: any,
-          page: number = 1,
-        ): Promise<ETHERSCAN_API.EndpointResult> => {
-          const pageLimit = limit ?? allBlockHeights.length;
+        (params: ETHERSCAN_API.FetchOperationsParams): Promise<ETHERSCAN_API.EndpointResult> => {
+          const page = params.page ?? 1;
+          const pageLimit = params.limit ?? allBlockHeights.length;
           const startIndex = (page - 1) * pageLimit;
           const pageBlockHeights = allBlockHeights.slice(startIndex, startIndex + pageLimit);
           const ops = createOps(pageBlockHeights);
@@ -2081,16 +2069,14 @@ describe("EVM Family", () => {
     ])("ops $ops", async ({ ops, expected }) => {
       const mockFetch = createPaginatedMock(ops);
 
-      const result = await ETHERSCAN_API.exhaustEndpoint(
-        mockFetch,
+      const result = await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
         currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        LIMIT,
-        "desc",
-      );
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        limit: LIMIT,
+        sort: "desc",
+      });
 
       expect({
         isPageFull: result.isPageFull,

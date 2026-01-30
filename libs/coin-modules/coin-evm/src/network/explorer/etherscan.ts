@@ -30,6 +30,20 @@ import {
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
+
+/**
+ * Common parameters for fetching operations from an endpoint
+ */
+export type FetchOperationsParams = {
+  currency: CryptoCurrency;
+  address: string;
+  accountId: string;
+  fromBlock: number;
+  toBlock?: number | undefined;
+  limit?: number | undefined;
+  sort?: "asc" | "desc" | undefined;
+  page?: number | undefined;
+};
 export const DEFAULT_RETRIES_API = 8;
 
 function boundBlockFromOperations(ops: Operation[]): number {
@@ -188,17 +202,8 @@ function computeEffectiveBoundBlock(
 /**
  * Get all the latest "normal" transactions (no tokens / NFTs)
  */
-export const getCoinOperations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort: "asc" | "desc" = "desc",
-  page: number = 1,
-): Promise<EndpointResult> => {
-  const config = getCoinConfig(currency).info;
+export const getCoinOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
+  const config = getCoinConfig(params.currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -206,30 +211,30 @@ export const getCoinOperations = async (
 
   const url =
     explorer.type === "corescan"
-      ? `${explorer.uri}/accounts/list_of_txs_by_address/${address}`
-      : `${explorer.uri}?module=account&action=txlist&address=${address}`;
+      ? `${explorer.uri}/accounts/list_of_txs_by_address/${params.address}`
+      : `${explorer.uri}?module=account&action=txlist&address=${params.address}`;
 
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
     url,
     params: {
       tag: "latest",
-      page,
-      ...(limit !== undefined && { offset: limit }),
-      sort,
-      startBlock: fromBlock,
-      endBlock: toBlock,
+      page: params.page ?? 1,
+      ...(params.limit !== undefined && { offset: params.limit }),
+      sort: params.sort ?? "desc",
+      startBlock: params.fromBlock,
+      endBlock: params.toBlock,
     },
   });
 
-  const operations = ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
+  const operations = ops.map(tx => etherscanOperationToOperations(params.accountId, tx)).flat();
   const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
-    hasMorePage: hasMorePage(limit, ops.length),
+    hasMorePage: hasMorePage(params.limit, ops.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(limit, ops.length),
+    isPageFull: isPageFull(params.limit, ops.length),
   };
 };
 
@@ -237,16 +242,9 @@ export const getCoinOperations = async (
  * Get all the latest ERC20 transactions
  */
 export const getTokenOperations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort: "asc" | "desc" = "desc",
-  page: number = 1,
+  params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(params.currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -254,19 +252,19 @@ export const getTokenOperations = async (
 
   const url =
     explorer.type === "corescan"
-      ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${address}`
-      : `${explorer.uri}?module=account&action=tokentx&address=${address}`;
+      ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${params.address}`
+      : `${explorer.uri}?module=account&action=tokentx&address=${params.address}`;
 
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
     url,
     params: {
       tag: "latest",
-      page,
-      ...(limit !== undefined && { offset: limit }),
-      sort,
-      startBlock: fromBlock,
-      endBlock: toBlock,
+      page: params.page ?? 1,
+      ...(params.limit !== undefined && { offset: params.limit }),
+      sort: params.sort ?? "desc",
+      startBlock: params.fromBlock,
+      endBlock: params.toBlock,
     },
   });
 
@@ -282,15 +280,17 @@ export const getTokenOperations = async (
   const opsByHash = groupByHash(ops);
 
   const operations = Object.values(opsByHash).flatMap(events =>
-    events.flatMap((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
+    events.flatMap((event, index) =>
+      etherscanERC20EventToOperations(params.accountId, event, index),
+    ),
   );
   const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
-    hasMorePage: hasMorePage(limit, ops.length),
+    hasMorePage: hasMorePage(params.limit, ops.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(limit, ops.length),
+    isPageFull: isPageFull(params.limit, ops.length),
   };
 };
 
@@ -298,16 +298,9 @@ export const getTokenOperations = async (
  * Get all the latest ERC721 transactions
  */
 export const getERC721Operations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort: "asc" | "desc" = "desc",
-  page: number = 1,
+  params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(params.currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -315,19 +308,19 @@ export const getERC721Operations = async (
 
   const url =
     explorer.type === "corescan"
-      ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${address}`
-      : `${explorer.uri}?module=account&action=tokennfttx&address=${address}`;
+      ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${params.address}`
+      : `${explorer.uri}?module=account&action=tokennfttx&address=${params.address}`;
 
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
     url,
     params: {
       tag: "latest",
-      page,
-      ...(limit !== undefined && { offset: limit }),
-      sort,
-      startBlock: fromBlock,
-      endBlock: toBlock,
+      page: params.page ?? 1,
+      ...(params.limit !== undefined && { offset: params.limit }),
+      sort: params.sort ?? "desc",
+      startBlock: params.fromBlock,
+      endBlock: params.toBlock,
     },
   });
 
@@ -343,15 +336,17 @@ export const getERC721Operations = async (
   const opsByHash = groupByHash(ops);
 
   const operations = Object.values(opsByHash).flatMap(events =>
-    events.flatMap((event, index) => etherscanERC721EventToOperations(accountId, event, index)),
+    events.flatMap((event, index) =>
+      etherscanERC721EventToOperations(params.accountId, event, index),
+    ),
   );
   const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
-    hasMorePage: hasMorePage(limit, ops.length),
+    hasMorePage: hasMorePage(params.limit, ops.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(limit, ops.length),
+    isPageFull: isPageFull(params.limit, ops.length),
   };
 };
 
@@ -359,16 +354,9 @@ export const getERC721Operations = async (
  * Get all the latest ERC1155 transactions
  */
 export const getERC1155Operations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort: "asc" | "desc" = "desc",
-  page: number = 1,
+  params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(params.currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -381,14 +369,14 @@ export const getERC1155Operations = async (
 
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=token1155tx&address=${address}`,
+    url: `${explorer.uri}?module=account&action=token1155tx&address=${params.address}`,
     params: {
       tag: "latest",
-      page,
-      ...(limit !== undefined && { offset: limit }),
-      sort,
-      startBlock: fromBlock,
-      endBlock: toBlock,
+      page: params.page ?? 1,
+      ...(params.limit !== undefined && { offset: params.limit }),
+      sort: params.sort ?? "desc",
+      startBlock: params.fromBlock,
+      endBlock: params.toBlock,
     },
   });
 
@@ -404,57 +392,33 @@ export const getERC1155Operations = async (
   const opsByHash = groupByHash(ops);
 
   const operations = Object.values(opsByHash).flatMap(events =>
-    events.flatMap((event, index) => etherscanERC1155EventToOperations(accountId, event, index)),
+    events.flatMap((event, index) =>
+      etherscanERC1155EventToOperations(params.accountId, event, index),
+    ),
   );
   const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
-    hasMorePage: hasMorePage(limit, ops.length),
+    hasMorePage: hasMorePage(params.limit, ops.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(limit, ops.length),
+    isPageFull: isPageFull(params.limit, ops.length),
   };
 };
 
 /**
  * Get all NFT related operations (ERC721 + ERC1155)
  */
-export const getNftOperations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort: "asc" | "desc" = "desc",
-  page: number = 1,
-): Promise<EndpointResult> => {
-  const config = getCoinConfig(currency).info;
+export const getNftOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
+  const config = getCoinConfig(params.currency).info;
   if (!config.showNfts) {
     return EMPTY_RESULT;
   }
 
-  const erc721Result = await getERC721Operations(
-    currency,
-    address,
-    accountId,
-    fromBlock,
-    toBlock,
-    limit,
-    sort,
-    page,
-  );
-  const erc1155Result = await getERC1155Operations(
-    currency,
-    address,
-    accountId,
-    fromBlock,
-    toBlock,
-    limit,
-    sort,
-    page,
-  );
+  const erc721Result = await getERC721Operations(params);
+  const erc1155Result = await getERC1155Operations(params);
 
+  const sort = params.sort ?? "desc";
   const operations = [...erc721Result.operations, ...erc1155Result.operations].sort(
     // sorting by date based on sort parameter
     (a, b) =>
@@ -474,16 +438,9 @@ export const getNftOperations = async (
  * Get all the latest internal transactions
  */
 export const getInternalOperations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort: "asc" | "desc" = "desc",
-  page: number = 1,
+  params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(params.currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -496,14 +453,14 @@ export const getInternalOperations = async (
 
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=txlistinternal&address=${address}`,
+    url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
     params: {
       tag: "latest",
-      page,
-      ...(limit !== undefined && { offset: limit }),
-      sort,
-      startBlock: fromBlock,
-      endBlock: toBlock,
+      page: params.page ?? 1,
+      ...(params.limit !== undefined && { offset: params.limit }),
+      sort: params.sort ?? "desc",
+      startBlock: params.fromBlock,
+      endBlock: params.toBlock,
     },
   });
 
@@ -517,32 +474,23 @@ export const getInternalOperations = async (
 
   const operations = Object.values(opsByHash).flatMap(internalTxs =>
     internalTxs.flatMap((internalTx, index) =>
-      etherscanInternalTransactionToOperations(accountId, internalTx, index),
+      etherscanInternalTransactionToOperations(params.accountId, internalTx, index),
     ),
   );
   const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
-    hasMorePage: hasMorePage(limit, ops.length),
+    hasMorePage: hasMorePage(params.limit, ops.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(limit, ops.length),
+    isPageFull: isPageFull(params.limit, ops.length),
   };
 };
 
 /**
  * Type for endpoint getter functions
  */
-export type FetchOperations = (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock?: number,
-  limit?: number,
-  sort?: "asc" | "desc",
-  page?: number,
-) => Promise<EndpointResult>;
+export type FetchOperations = (params: FetchOperationsParams) => Promise<EndpointResult>;
 
 /**
  * Fetches operations from an endpoint and exhausts the boundary block if the page is full.
@@ -560,16 +508,13 @@ export type FetchOperations = (
  */
 export async function exhaustEndpoint(
   fetchOperations: FetchOperations,
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-  toBlock: number | undefined,
-  limit: number | undefined,
-  sort: "asc" | "desc",
+  params: FetchOperationsParams,
 ): Promise<EndpointResult> {
-  const fetchPage = (page: number, limitOverride: number | undefined = limit): Promise<EndpointResult> =>
-    fetchOperations(currency, address, accountId, fromBlock, toBlock, limitOverride, sort, page);
+  const { limit } = params;
+  const fetchPage = (
+    page: number,
+    limitOverride: number | undefined = limit,
+  ): Promise<EndpointResult> => fetchOperations({ ...params, limit: limitOverride, page });
 
   // in unlimited mode, just let fetch the page
   if (limit === undefined) {
@@ -663,6 +608,16 @@ export const getOperations = makeLRUCache<
 
       const cmp = createBlockComparator(order);
 
+      const baseParams: FetchOperationsParams = {
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+        limit,
+        sort: order,
+      };
+
       // TODO remove the boundBlock parameter and use the currentBoundBlock instead in the closure
       async function callEndpoint(
         endpoint: FetchOperations,
@@ -672,36 +627,21 @@ export const getOperations = makeLRUCache<
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
         if (order === "asc") {
-          const from = paginationBlock || fromBlock;
-          const to = boundBlock || toBlock;
-          return await exhaustEndpoint(
-            endpoint,
-            currency,
-            address,
-            accountId,
-            from,
-            to,
-            limit,
-            order,
-          );
+          return await exhaustEndpoint(endpoint, {
+            ...baseParams,
+            fromBlock: paginationBlock || fromBlock,
+            toBlock: boundBlock || toBlock,
+          });
         } else {
-          const from = boundBlock || fromBlock;
-          const to = paginationBlock || toBlock;
-          return await exhaustEndpoint(
-            endpoint,
-            currency,
-            address,
-            accountId,
-            from,
-            to,
-            limit,
-            order,
-          );
+          return await exhaustEndpoint(endpoint, {
+            ...baseParams,
+            fromBlock: boundBlock || fromBlock,
+            toBlock: paginationBlock || toBlock,
+          });
         }
       }
 
       // endpoint calls are sorted by likelyhood of having more operations than the next
-      // todo internal operations on 3rd position
 
       const coinResult = await callEndpoint(getCoinOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
@@ -725,9 +665,14 @@ export const getOperations = makeLRUCache<
         nftResult.hasMorePage
       );
 
-      const nextBoundBlock = currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
+      const nextBoundBlock =
+        currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
       // drop operations below/above the currentBoundBlock
-      const respectsBoundBlock = (op: Operation) => (currentBoundBlock === undefined) || (op.blockHeight !== undefined && cmp.isLessOrEqual(op.blockHeight, currentBoundBlock));
+      const respectsBoundBlock = (op: Operation): boolean =>
+        currentBoundBlock === undefined ||
+        (op.blockHeight !== null &&
+          op.blockHeight !== undefined &&
+          cmp.isLessOrEqual(op.blockHeight, currentBoundBlock));
 
       return {
         lastCoinOperations: coinResult.operations.filter(respectsBoundBlock),
