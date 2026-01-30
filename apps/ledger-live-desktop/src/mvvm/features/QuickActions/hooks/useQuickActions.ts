@@ -1,12 +1,14 @@
 import { useCallback } from "react";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { openModal } from "~/renderer/actions/modals";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
-import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
+import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
+import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "../../ModularDrawer";
 
 export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
@@ -14,8 +16,13 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const hasAccount = useSelector(hasAccountsSelector);
-  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAccount;
+  const { hasAccount, hasFunds } = useAccountStatus();
+
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "quick_actions_receive",
+    "MODAL_RECEIVE",
+  );
 
   const push = useCallback(
     (pathname: string) => {
@@ -38,12 +45,12 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
     maybeRedirectToAccounts();
 
     if (!hasAccount) {
-      dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+      openAssetFlow();
       return;
     }
 
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts, hasAccount]);
+  }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow]);
 
   const onBuy = useCallback(() => {
     navigate("/exchange", {
@@ -88,7 +95,7 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
         title: t("quickActions.send"),
         onAction: onSend,
         icon: ArrowUp,
-        disabled: false,
+        disabled: !hasAccount,
         buttonAppearance: "transparent",
       },
     ],

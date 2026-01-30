@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -30,16 +30,20 @@ const Hide = ({
   ...rest
 }: { visible: boolean; children: React.ReactNode } & React.ComponentProps<
   typeof HideContainer
->) => (
-  <Transition in={visible} timeout={hideTransitionDuration}>
-    {state => (
-      <HideContainer
-        {...rest}
-        style={hideTransitionStyles[state as keyof typeof hideTransitionStyles]}
-      >
-        {children}
-      </HideContainer>
-    )}
-  </Transition>
-);
+>) => {
+  const nodeRef = useRef(null);
+  return (
+    <Transition in={visible} timeout={hideTransitionDuration} nodeRef={nodeRef}>
+      {state => (
+        <HideContainer
+          ref={nodeRef}
+          {...rest}
+          style={hideTransitionStyles[state as keyof typeof hideTransitionStyles]}
+        >
+          {children}
+        </HideContainer>
+      )}
+    </Transition>
+  );
+};
 export default Hide;

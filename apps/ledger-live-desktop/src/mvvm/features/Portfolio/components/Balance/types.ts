@@ -11,4 +11,6 @@ export interface BalanceViewProps {
   readonly handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
-export type BalanceViewModelResult = BalanceViewProps;
+export type BalanceViewModelResult = BalanceViewProps & {
+  readonly hasFunds: boolean;
+};

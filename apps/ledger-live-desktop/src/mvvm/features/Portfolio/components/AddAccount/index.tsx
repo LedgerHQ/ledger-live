@@ -1,15 +1,18 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 
 export const AddAccount = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "portfolio_add_account",
+  );
 
   const onAction = () => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+    openAssetFlow();
   };
 
   return (

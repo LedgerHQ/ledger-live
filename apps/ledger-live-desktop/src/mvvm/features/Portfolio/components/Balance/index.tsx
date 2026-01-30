@@ -1,9 +1,10 @@
 import React from "react";
 import { useBalanceViewModel } from "../../hooks/useBalanceViewModel";
 import { BalanceView } from "./BalanceView";
+import { NoBalanceView } from "./NoBalanceView";
 
 export const Balance = () => {
-  const viewModel = useBalanceViewModel();
+  const { hasFunds, ...viewModel } = useBalanceViewModel();
 
-  return <BalanceView {...viewModel} />;
+  return hasFunds ? <BalanceView {...viewModel} /> : <NoBalanceView />;
 };

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { toggleStarAction } from "~/renderer/actions/wallet";
@@ -32,12 +32,22 @@ export default function Star({ accountId, yellow, rounded }: Props) {
     [dispatch, accountId, refreshAccountsOrdering, isAccountStarred],
   );
   const MaybeButtonWrapper = yellow ? ButtonWrapper : FloatingWrapper;
+  const nodeRef = useRef(null);
   return (
     <MaybeButtonWrapper filled={isAccountStarred} rounded={rounded}>
       <StarWrapper id="account-star-button" onClick={toggleStar} tabIndex={-1} rounded={rounded}>
-        <Transition in={isAccountStarred} timeout={isAccountStarred ? startBurstTiming : 0}>
+        <Transition
+          in={isAccountStarred}
+          timeout={isAccountStarred ? startBurstTiming : 0}
+          nodeRef={nodeRef}
+        >
           {className => (
-            <StarIcon yellow={yellow} filled={isAccountStarred} className={className} />
+            <StarIcon
+              ref={nodeRef}
+              yellow={yellow}
+              filled={isAccountStarred}
+              className={className}
+            />
           )}
         </Transition>
       </StarWrapper>
@@ -59,16 +69,16 @@ type WrapperProps = {
 };
 
 const ButtonWrapper = styled.div<WrapperProps>`
-  height: ${p => (p.rounded ? 40 : 34)}px};
-  width: ${p => (p.rounded ? 40 : 34)}px};
-  border: 1px solid
-    ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c70)};
+  height: ${p => (p.rounded ? 40 : 34)}px;
+  width: ${p => (p.rounded ? 40 : 34)}px;
+  border: 1px solid ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c70)};
   border-radius: ${p => (p.rounded ? 20 : 4)}px;
   padding: ${p => (p.rounded ? 14 : 8)}px;
   text-align: center;
   background: ${p => (p.filled ? p.theme.colors.starYellow : "transparent")};
   &:hover {
-    background: ${p => (p.filled ? p.theme.colors.starYellow : rgba(p.theme.colors.neutral.c40, 0.2))};
+    background: ${p =>
+      p.filled ? p.theme.colors.starYellow : rgba(p.theme.colors.neutral.c40, 0.2)};
     border-color: ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c100)};
   }
 `;

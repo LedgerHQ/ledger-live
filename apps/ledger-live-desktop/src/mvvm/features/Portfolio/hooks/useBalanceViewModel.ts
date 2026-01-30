@@ -8,6 +8,7 @@ import {
   discreetModeSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
@@ -30,6 +31,7 @@ export const useBalanceViewModel = (
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const { hasFunds } = useAccountStatus();
 
   const range = useLegacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
 
@@ -74,5 +76,6 @@ export const useBalanceViewModel = (
     isAvailable,
     navigateToAnalytics,
     handleKeyDown,
+    hasFunds,
   };
 };

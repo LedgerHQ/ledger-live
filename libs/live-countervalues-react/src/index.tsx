@@ -4,7 +4,6 @@ import {
   importCountervalues,
   inferTrackingPairForAccounts,
   loadCountervalues,
-  trackingPairForTopCoins,
 } from "@ledgerhq/live-countervalues/logic";
 import type {
   CounterValuesState,
@@ -302,26 +301,6 @@ export function useSendAmount({
     [state, cryptoCurrency, fiatCurrency],
   );
   return { fiatAmount, fiatUnit, calculateCryptoAmount };
-}
-
-/**
- * Infer the tracking pairs for the top coins that the portfolio needs to display itself
- * if startDate is undefined, the feature is disabled
- */
-export function useTrackingPairsForTopCoins(
-  marketcapIds: string[],
-  countervalue: Currency,
-  size: number,
-  startDate: Date | undefined,
-) {
-  const dateTimestamp = startDate?.getTime();
-  return useMemo(
-    () =>
-      dateTimestamp
-        ? trackingPairForTopCoins(marketcapIds, size, countervalue, new Date(dateTimestamp))
-        : [],
-    [marketcapIds, countervalue, dateTimestamp, size],
-  );
 }
 
 export function useTrackingPairForAccounts(

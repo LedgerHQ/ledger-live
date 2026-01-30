@@ -1,5 +1,12 @@
 import React, { useCallback, useMemo } from "react";
-import { Tile, TileContent, TileTitle, TileDescription, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Tile,
+  TileContent,
+  TileTitle,
+  TileDescription,
+  Text,
+  TileSpot,
+} from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 import { MarketTileProps } from "../../types";
@@ -13,6 +20,11 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
   }, [item, onPress]);
 
   const priceChange = useMemo(() => getChangePercentage(item, range), [item, range]);
+
+  const renderIcon = useCallback(
+    () => <MarketTileIcon ledgerIds={item.ledgerIds} ticker={item.ticker} image={item.image} />,
+    [item.ledgerIds, item.ticker, item.image],
+  );
 
   const isPositive = priceChange >= 0;
   const changeSign = isPositive ? "+" : "";
@@ -34,7 +46,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
       accessibilityHint={t("marketBanner.tile.accessibilityHint")}
       accessibilityRole="button"
     >
-      <MarketTileIcon ledgerIds={item.ledgerIds} ticker={item.ticker} image={item.image} />
+      <TileSpot size={40} appearance="icon" icon={renderIcon} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
         <TileDescription>
