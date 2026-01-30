@@ -1,10 +1,10 @@
-import { Observable } from "rxjs";
+import { Observable, defer, from } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { CoinType, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { BitcoinAccount } from "./types";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
 import { SyncConfig } from "@ledgerhq/types-live";
-import { syncShielded } from "@ledgerhq/zcash-shielded";
 import type { ShieldedSyncResult } from "@ledgerhq/zcash-shielded";
 
 type FamilyConfig = {
@@ -16,9 +16,22 @@ type FamilyConfig = {
 
 const defaultFamilyConfig: FamilyConfig = {};
 
+let zcashShieldedModuleCache: Promise<typeof import("@ledgerhq/zcash-shielded")> | null = null;
+
+const getZcashShieldedModule = (): Promise<typeof import("@ledgerhq/zcash-shielded")> => {
+  if (!zcashShieldedModuleCache) {
+    zcashShieldedModuleCache = import("@ledgerhq/zcash-shielded");
+  }
+  return zcashShieldedModuleCache;
+};
+
+// Lazy load zcash-shielded only when needed for Zcash currency
+// The module is cached to avoid reloading on subsequent calls
 const zcashFamilyConfig: FamilyConfig = {
   sync: (acc: AccountShapeInfo<BitcoinAccount>, _syncConfig: SyncConfig) => {
-    return syncShielded(acc);
+    return defer(() =>
+      from(getZcashShieldedModule()).pipe(mergeMap(module => module.syncShielded(acc))),
+    );
   },
 };
 
