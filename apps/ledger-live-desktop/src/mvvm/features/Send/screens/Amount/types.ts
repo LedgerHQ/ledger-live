@@ -3,11 +3,13 @@ import type { FeePresetOption } from "./hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "./hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "./hooks/useFeePresetLegends";
 
-export type AmountScreenMessage = Readonly<{
-  type: "error" | "warning" | "info";
-  text: string;
-}>;
+// Re-export shared types
+export type {
+  AmountScreenMessage,
+  AmountScreenQuickAction as AmountScreenQuickActionCore,
+} from "@ledgerhq/live-common/flows/send/screens/amount";
 
+// Desktop-specific: uses onClick instead of onPress
 export type AmountScreenQuickAction = Readonly<{
   id: string;
   label: string;

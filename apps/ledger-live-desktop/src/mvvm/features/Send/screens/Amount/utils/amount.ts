@@ -1,5 +1,2 @@
-import { BigNumber } from "bignumber.js";
-
-export function areAmountsEqual(a: BigNumber, b: BigNumber, tolerance: BigNumber): boolean {
-  return a.minus(b).abs().lte(tolerance);
-}
+// Re-export from shared module
+export { areAmountsEqual } from "@ledgerhq/live-common/flows/send/screens/amount";
