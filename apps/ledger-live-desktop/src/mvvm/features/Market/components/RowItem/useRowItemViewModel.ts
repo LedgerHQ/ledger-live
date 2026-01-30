@@ -6,17 +6,13 @@ import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActio
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 
-type UseMarketRowItemViewModelProps = {
+type UseRowItemViewModelProps = {
   currency?: MarketCurrencyData | null;
   toggleStar: () => void;
   range?: string;
 };
 
-export function useMarketRowItemViewModel({
-  currency,
-  toggleStar,
-  range,
-}: UseMarketRowItemViewModelProps) {
+export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemViewModelProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
