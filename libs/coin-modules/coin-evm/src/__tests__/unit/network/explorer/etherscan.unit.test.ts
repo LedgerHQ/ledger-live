@@ -1981,74 +1981,105 @@ describe("EVM Family", () => {
   });
 
   describe("exhaustEndpoint", () => {
+    const LIMIT = 3;
+
+    const createOps = (blockHeights: number[]): ETHERSCAN_API.EndpointResult["operations"] =>
+      blockHeights.map((blockHeight, i) => ({
+        id: `op-${blockHeight}-${i}`,
+        hash: `0x${blockHeight}${i}`,
+        accountId: account.id,
+        blockHash: `0xblock${blockHeight}`,
+        blockHeight,
+        recipients: ["0x123"],
+        senders: ["0x456"],
+        value: new BigNumber(100),
+        fee: new BigNumber(10),
+        date: new Date(),
+        type: "OUT" as const,
+        extra: {},
+      }));
+
+    // Smart mock that paginates based on the page and limit parameters
+    const createPaginatedMock = (allBlockHeights: number[]) => {
+      return jest.fn(
+        (
+          _currency: any,
+          _address: any,
+          _accountId: any,
+          _fromBlock: any,
+          _toBlock: any,
+          limit: number | undefined,
+          _sort: any,
+          page: number = 1,
+        ): Promise<ETHERSCAN_API.EndpointResult> => {
+          const pageLimit = limit ?? allBlockHeights.length;
+          const startIndex = (page - 1) * pageLimit;
+          const pageBlockHeights = allBlockHeights.slice(startIndex, startIndex + pageLimit);
+          const ops = createOps(pageBlockHeights);
+          const isPageFull = ops.length >= pageLimit;
+          const hasMore = startIndex + pageLimit < allBlockHeights.length;
+
+          return Promise.resolve({
+            operations: ops,
+            hasMorePage: ops.length > 0 && isPageFull && hasMore,
+            boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
+            isPageFull,
+          });
+        },
+      );
+    };
+
     it.each([
       {
-        pages: [[1, 2, 3], [3, 3, 3], [3, 4, 5]],
-        expected: { blocks: [1, 2, 3, 3, 3, 3, 3], hasMorePage: true, isPageFull: true },
+        ops: [1, 2, 3, 4, 5, 6],
+        expected: { blocks: [1, 2, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[1, 2, 3], []],
-        expected: { blocks: [1, 2, 3], hasMorePage: false, isPageFull: true },
+        ops: [3, 3, 3, 3, 3, 3, 4, 5, 6],
+        expected: { blocks: [3, 3, 3, 3, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[1, 2, 3], [3, 3, 3], []],
-        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: false, isPageFull: true },
+        ops: [1, 2, 3, 3, 3, 3, 3, 4, 5],
+        expected: { blocks: [1, 2, 3, 3, 3, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[1, 2, 3], [3, 3, 3], [3, 3]],
-        expected: { blocks: [1, 2, 3, 3, 3, 3, 3, 3], hasMorePage: false, isPageFull: true },
+        ops: [1, 2, 3, 3, 3, 3],
+        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[1, 2, 3], [3, 3, 3], [4, 5]],
-        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: true, isPageFull: true },
+        ops: [1, 2, 3, 3, 3, 3, 3, 3],
+        expected: { blocks: [1, 2, 3, 3, 3, 3, 3, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[1, 2]],
-        expected: { blocks: [1, 2], hasMorePage: false, isPageFull: false },
+        ops: [1, 2, 3, 3, 3, 3, 4, 5],
+        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[]],
-        expected: { blocks: [], hasMorePage: false, isPageFull: false },
+        ops: [3, 3, 3],
+        expected: { blocks: [3, 3, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
       },
       {
-        pages: [[1, 2, 3], [3, 4, 5]],
-        expected: { blocks: [1, 2, 3, 3], hasMorePage: true, isPageFull: true },
+        ops: [1, 2, 3],
+        expected: { blocks: [1, 2, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
       },
-    ])("pages $pages", async ({ pages, expected }) => {
-      const LIMIT = 3;
-
-      const createOps = (blockHeights: number[]): ETHERSCAN_API.EndpointResult["operations"] =>
-        blockHeights.map((blockHeight, i) => ({
-          id: `op-${blockHeight}-${i}`,
-          hash: `0x${blockHeight}${i}`,
-          accountId: account.id,
-          blockHash: `0xblock${blockHeight}`,
-          blockHeight,
-          recipients: ["0x123"],
-          senders: ["0x456"],
-          value: new BigNumber(100),
-          fee: new BigNumber(10),
-          date: new Date(),
-          type: "OUT" as const,
-          extra: {},
-        }));
-
-      const pageResult = (blockHeights: number[]): ETHERSCAN_API.EndpointResult => {
-        const ops = createOps(blockHeights);
-        const isPageFull = blockHeights.length === LIMIT;
-        return {
-          operations: ops,
-          hasMorePage: ops.length > 0 && isPageFull,
-          boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
-          isPageFull,
-        };
-      };
-
-      const mockFetch = jest.fn<
-        Promise<ETHERSCAN_API.EndpointResult>,
-        [any, any, any, any, any, any, any, number?]
-      >();
-      pages.forEach(page => mockFetch.mockResolvedValueOnce(pageResult(page)));
+      {
+        ops: [1, 2],
+        expected: { blocks: [1, 2], hasMorePage: false, isPageFull: false, boundBlock: 2 },
+      },
+      {
+        ops: [5],
+        expected: { blocks: [5], hasMorePage: false, isPageFull: false, boundBlock: 5 },
+      },
+      {
+        ops: [],
+        expected: { blocks: [], hasMorePage: false, isPageFull: false, boundBlock: 0 },
+      },
+      {
+        ops: [1, 2, 3, 3, 4, 5],
+        expected: { blocks: [1, 2, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
+      },
+    ])("ops $ops", async ({ ops, expected }) => {
+      const mockFetch = createPaginatedMock(ops);
 
       const result = await ETHERSCAN_API.exhaustEndpoint(
         mockFetch,
@@ -2062,9 +2093,10 @@ describe("EVM Family", () => {
       );
 
       expect({
-        blocks: result.operations.map(op => op.blockHeight),
-        hasMorePage: result.hasMorePage,
         isPageFull: result.isPageFull,
+        hasMorePage: result.hasMorePage,
+        boundBlock: result.boundBlock,
+        blocks: result.operations.map(op => op.blockHeight),
       }).toEqual(expected);
     });
   });

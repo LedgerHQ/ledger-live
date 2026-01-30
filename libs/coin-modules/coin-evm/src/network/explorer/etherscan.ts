@@ -33,7 +33,7 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 export const ETHERSCAN_TIMEOUT = 4000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 2;
 
-function getBlockBoundFromOperations(ops: Operation[]): number {
+function boundBlockFromOperations(ops: Operation[]): number {
   if (ops.length === 0) return 0;
   // Results are already sorted
   // In asc mode [1, 2, 3], the bound is 3
@@ -64,7 +64,6 @@ export async function fetchWithRetries<T>(
   retries = DEFAULT_RETRIES_API,
 ): Promise<T> {
   try {
-    console.log("🦄 fetchWithRetries", params);
     const { data } = await axios.request<{
       status: string;
       message: string;
@@ -97,10 +96,10 @@ function isPageFull(limitParameter: number | undefined, operationCount: number):
 // Returns true when there might be more pages to fetch
 // This happens when the page is full AND we actually got results
 function hasMorePage(limitParameter: number | undefined, operationCount: number): boolean {
+  // the notion is close to isPageFull, but it handles unlimited pages
+  // also isPageFull accepts a 0 limit, while hasMorePage requires some results
   return (
-    !(limitParameter === undefined) &&
-    isPageFull(limitParameter, operationCount) &&
-    operationCount > 0
+    limitParameter !== undefined && isPageFull(limitParameter, operationCount) && operationCount > 0
   );
 }
 
@@ -162,7 +161,7 @@ function createBlockComparator(order: "asc" | "desc"): BlockComparator {
 // this function is used to optimize the fromBlock or toBlock for the next endpoint call
 // if the current enpoint call returns a full page, then it's unnecessary to call the next endpoint with a toBlock higher than the maxBlock of the current page
 // why ? because the operations must respect a total ordering by block height across pages
-function updateEffectiveBoundBlock(
+function computeEffectiveBoundBlock(
   limit: number | undefined,
   currentBoundBlock: number | undefined,
   result: EndpointResult,
@@ -225,7 +224,7 @@ export const getCoinOperations = async (
   });
 
   const operations = ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
-  const maxBlock = getBlockBoundFromOperations(operations);
+  const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
@@ -286,7 +285,7 @@ export const getTokenOperations = async (
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
   );
-  const maxBlock = getBlockBoundFromOperations(operations);
+  const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
@@ -347,7 +346,7 @@ export const getERC721Operations = async (
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) => etherscanERC721EventToOperations(accountId, event, index)),
   );
-  const maxBlock = getBlockBoundFromOperations(operations);
+  const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
@@ -408,7 +407,7 @@ export const getERC1155Operations = async (
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) => etherscanERC1155EventToOperations(accountId, event, index)),
   );
-  const maxBlock = getBlockBoundFromOperations(operations);
+  const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
@@ -522,7 +521,7 @@ export const getInternalOperations = async (
       etherscanInternalTransactionToOperations(accountId, internalTx, index),
     ),
   );
-  const maxBlock = getBlockBoundFromOperations(operations);
+  const maxBlock = boundBlockFromOperations(operations);
 
   return {
     operations,
@@ -570,24 +569,35 @@ export async function exhaustEndpoint(
   limit: number | undefined,
   sort: "asc" | "desc",
 ): Promise<EndpointResult> {
-  const fetchPage = (page: number): Promise<EndpointResult> =>
-    // TODO for the next page, we could narrow the block range to the boundBlock of the first page
-    fetchOperations(currency, address, accountId, fromBlock, toBlock, limit, sort, page);
+  const fetchPage = (page: number, limitOverride: number | undefined = limit): Promise<EndpointResult> =>
+    fetchOperations(currency, address, accountId, fromBlock, toBlock, limitOverride, sort, page);
+
+  // in unlimited mode, just let fetch the page
+  if (limit === undefined) {
+    return fetchPage(1);
+  }
 
   let currentPageNumber = 1;
-  const firstPage = await fetchPage(currentPageNumber);
-  console.log("🦄 firstPage", {
-    isPageFull: firstPage.isPageFull,
-    hasMorePage: firstPage.hasMorePage,
-    boundBlock: firstPage.boundBlock,
-    nbOperations: firstPage.operations.length,
-  });
+  // call first page with a limit + 1 to check if we need to fetch a 2nd page
+  const firstPage = await fetchPage(currentPageNumber, limit + 1);
+  // if the page is not full there is nothing to exhaust and the limit input is honored
+  if (!firstPage.isPageFull) {
+    // this is a bit hacky but we need to recompute isPageFull
+    // because the first page may have been fetched with a limit + 1
+    // in case we have ops.length == limit, then isPageFull should be true
+    return { ...firstPage, isPageFull: isPageFull(limit, firstPage.operations.length) };
+  }
 
-  // TODO see if we could converge isPageFull and hasMorePage into a single boolean
-
-  // if the page is not full or no mor pages, there is nothing to exhaust
-  if (!firstPage.isPageFull || !firstPage.hasMorePage) {
-    return firstPage;
+  // this is an optimization to avoid fetching the next page if the last 2 ops are not at the same block height (most likely case)
+  // if the last 2 ops are at the same block height, we need to fetch the next pages
+  // otherwise we can stop here (no heights spreading across pages)
+  const lastTwoOps = firstPage.operations.slice(-2);
+  if (lastTwoOps.length === 2 && lastTwoOps[0].blockHeight !== lastTwoOps[1].blockHeight) {
+    // return the first page with the last op removed to honor the limit
+    // and we also know there are more pages to fetch
+    const butLastOps = firstPage.operations.slice(0, -1);
+    const fixedBoundBlock = boundBlockFromOperations(butLastOps);
+    return { ...firstPage, hasMorePage: true, operations: butLastOps, boundBlock: fixedBoundBlock };
   }
 
   const allOperations = [...firstPage.operations];
@@ -595,62 +605,12 @@ export async function exhaustEndpoint(
   let nextPage: EndpointResult;
   let boundaryOps: EndpointResult["operations"];
 
-  // FIXME it possibly make a new page query where we ditch all the the operations from it in most cases
-  // so I suggest to keep every operations of 2nd page (or 3rd if all 2nd are at the boundary block height)
-  // except the ones at the boundary block height of the 2nd page
-  // with a limit of 3:
-  // - example: pages: [[1, 2, 3], [3, 3, 3], [3, 4, 5]]
-  // with present algorithm we keep [(1, 2, 3), (3, 3, 3), (3)] but we could keep [(1, 2, 3), (3, 3, 3), (3, 4)]
-  // - example pages: [[1, 2, 3], [3, 3, 3], []]
-  // with present algorithm we keep [(1, 2, 3), (3, 3, 3)], same with new algo
-  // -example pages: [[1, 2, 3], [3, 3, 3], [3, 3]]
-  // with present algorithm we keep [(1, 2, 3), (3, 3, 3), (3, 3)] same with new algo
-  // - example pages: [[1, 2, 3], [3, 3, 3], [4]]
-  // with present algorithm we keep [(1, 2, 3), (3, 3, 3)] same with new algo
-  // - example pages: [[1, 2, 3], [3, 3, 3], [4, 5]]
-  // with present algorithm we keep [(1, 2, 3), (3, 3)] but we could keep [(1, 2, 3), (3, 3, 3), (4, 5)]
-  // but this algo would defeat the cascading optimization of calls
-
-  // another fix to do: call first page with a limit + 1, and check if we need to fetch a 2nd page based on wether the last 2 ops are the same block height, keep only limit ops
-  // most of the time the 2 last ops won't be at the same block height, so we win a lot of calls
-  // example with limit=3:
-
-  // ops : [1 2 3 3, 3 3 3, 3 4 5]
-  // pages calls: [[1 2 3 3] [3 3 3] [3 4 5]]
-  // result: [(1 2 3 3) (3 3 3) (3)] isFullPage=true, hasMorePage=true
-
-  // ops : [1 2 3 4 5]
-  // pages calls: [[1 2 3 4]]
-  // result: [(1 2 3)] isFullPage=true, hasMorePage=true
-
-  // ops : [1 2 3 4 4 5]
-  // pages calls: [[1 2 3 4]]
-  // result: [(1 2 3)] isFullPage = true, hasMorePage=true
-
-  // ops : [1 2 3 3 4 5 6 7]
-  // pages calls: [[1 2 3 3] [4 5 6]]]
-  // result: [(1 2 3 3)] isFullPage=true, hasMorePage=true
-
-  // ops : [1 2]
-  // pages calls: [[1 2]]
-  // result: [(1 2)] isFullPage=true, hasMorePage=false
-
-  // ops : [1 2 3 3]
-  // pages calls: [[1 2 3 3] []]
-  // result: [(1 2 3 3)] isFullPage=true, hasMorePage=false
-
   do {
     currentPageNumber++;
-    nextPage = await fetchPage(currentPageNumber);
-    console.log("🦄 nextPage", {
-      isPageFull: nextPage.isPageFull,
-      hasMorePage: nextPage.hasMorePage,
-      boundBlock: nextPage.boundBlock,
-      nbOperations: nextPage.operations.length,
-    });
+    // here we call with limit + 1 so that endpoint pagination doesn't break
+    nextPage = await fetchPage(currentPageNumber, limit + 1);
 
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
-    console.log("🦄 boundaryOps", boundaryOps.length);
     allOperations.push(...boundaryOps);
     // Continue while all ops are at boundary block AND page is full (more pages might exist)
   } while (
@@ -745,26 +705,22 @@ export const getOperations = makeLRUCache<
       // todo internal operations on 3rd position
 
       // coins
-      console.log("🦄 callEndpoint getCoinOperations", paginationBlock, currentBoundBlock);
       const coinResult = await callEndpoint(getCoinOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
+      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
 
       // internal operations
-      console.log("🦄 callEndpoint getInternalOperations", paginationBlock, currentBoundBlock);
       const internalResult = await callEndpoint(getInternalOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
+      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
 
       // tokens
-      console.log("🦄 callEndpoint getTokenOperations", paginationBlock, currentBoundBlock);
       const tokenResult = await callEndpoint(getTokenOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
+      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
 
       // nfts
-      console.log("🦄 callEndpoint getNftOperations", paginationBlock, currentBoundBlock);
       const nftResult = isNFTActive(currency)
         ? await callEndpoint(getNftOperations, currentBoundBlock)
         : EMPTY_RESULT;
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
+      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
 
       // Drop operations that come after the boundBlock in pagination order
       const dropOperations = (
@@ -802,7 +758,6 @@ export const getOperations = makeLRUCache<
         nextPagingToken: serializePagingToken(nextBoundBlock, allDone),
       };
     } catch (err) {
-      console.log("🦄 getOperations error", err);
       log("EVM getOperations", "Error while fetching data from Etherscan like API", err);
       const message =
         typeof err === "string"

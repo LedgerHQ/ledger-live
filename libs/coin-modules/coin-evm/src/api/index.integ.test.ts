@@ -431,7 +431,6 @@ describe.each([
         expect(isOrdered(p1Ops, order)).toBe(true);
 
         // -- Page 2
-        console.log("🦄 fetching page 2 with pagingToken", p1Token);
 
         const [p2Ops, p2Token] = await module.listOperations(address, {
           minHeight: 200,
