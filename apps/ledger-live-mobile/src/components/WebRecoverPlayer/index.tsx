@@ -2,10 +2,8 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, BackHandler, Platform } from "react-native";
 import { useDispatch } from "~/context/hooks";
-import { ScopeProvider } from "jotai-scope";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
@@ -101,27 +99,25 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   }, [handleBypassOnboarding, webviewState]);
 
   return (
-    <ScopeProvider atoms={[currentAccountAtom]}>
-      <SafeAreaView style={[styles.root]} isFlex>
-        <Web3AppWebview
-          ref={webviewAPIRef}
-          manifest={manifest}
-          inputs={inputs}
-          onStateChange={setWebviewState}
-          allowsBackForwardNavigationGestures={false}
-          customHandlers={customDeeplinkHandlers}
-        />
-        <InfoPanel
-          name={manifest.name}
-          icon={manifest.icon}
-          url={manifest.homepageUrl}
-          uri={webviewState.url.toString()}
-          description={manifest.content.description}
-          isOpened={isInfoPanelOpened}
-          setIsOpened={setIsInfoPanelOpened}
-        />
-      </SafeAreaView>
-    </ScopeProvider>
+    <SafeAreaView style={[styles.root]} isFlex>
+      <Web3AppWebview
+        ref={webviewAPIRef}
+        manifest={manifest}
+        inputs={inputs}
+        onStateChange={setWebviewState}
+        allowsBackForwardNavigationGestures={false}
+        customHandlers={customDeeplinkHandlers}
+      />
+      <InfoPanel
+        name={manifest.name}
+        icon={manifest.icon}
+        url={manifest.homepageUrl}
+        uri={webviewState.url.toString()}
+        description={manifest.content.description}
+        isOpened={isInfoPanelOpened}
+        setIsOpened={setIsInfoPanelOpened}
+      />
+    </SafeAreaView>
   );
 };
 

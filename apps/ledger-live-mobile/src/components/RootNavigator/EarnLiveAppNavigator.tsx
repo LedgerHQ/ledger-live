@@ -2,8 +2,8 @@ import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/a
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "~/context/hooks";
+import React, { useEffect, useMemo, useRef } from "react";
+import { useSelector } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -27,8 +27,10 @@ type NavigationProps = BaseComposite<
 type EarnNavigation = NavigationProp<ParamListBase>;
 
 const Earn = (props: NavigationProps) => {
-  const dispatch = useDispatch();
   const paramAction = props.route.params?.action;
+  const paramAccountId = props.route.params?.accountId;
+  const paramCurrencyId = props.route.params?.currencyId;
+  const paramCryptoAssetId = props.route.params?.cryptoAssetId;
   const navigation: EarnNavigation = props.navigation as unknown as EarnNavigation;
   const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
@@ -43,6 +45,12 @@ const Earn = (props: NavigationProps) => {
     sourceScreenName: "earn_app_cta",
   });
 
+  // Store callbacks in refs to avoid effect re-runs when they change
+  const openStakingDrawerRef = useRef(openStakingDrawer);
+  const handleOpenStakeDrawerRef = useRef(handleOpenStakeDrawer);
+  openStakingDrawerRef.current = openStakingDrawer;
+  handleOpenStakeDrawerRef.current = handleOpenStakeDrawer;
+
   useEffect(() => {
     if (!paramAction) {
       return;
@@ -54,6 +62,7 @@ const Earn = (props: NavigationProps) => {
         action: undefined,
         accountId: undefined,
         currencyId: undefined,
+        cryptoAssetId: undefined,
       });
 
     function deeplinkRouting() {
@@ -65,18 +74,18 @@ const Earn = (props: NavigationProps) => {
               screen: ScreenName.Earn,
               params: {
                 intent: "deposit",
-                cryptoAssetId: props.route.params?.cryptoAssetId,
-                accountId: props.route.params?.accountId,
+                cryptoAssetId: paramCryptoAssetId,
+                accountId: paramAccountId,
               },
             },
           });
           break;
         }
         case "stake":
-          handleOpenStakeDrawer();
+          handleOpenStakeDrawerRef.current();
           break;
         case "stake-account": {
-          const walletId = props.route.params?.accountId;
+          const walletId = paramAccountId;
 
           if (!walletId) {
             // eslint-disable-next-line no-console
@@ -90,23 +99,21 @@ const Earn = (props: NavigationProps) => {
             const parent = isTokenAccount(account)
               ? getParentAccount(account, accounts)
               : undefined;
-            openStakingDrawer(account, parent);
+            openStakingDrawerRef.current(account, parent);
           } else {
             console.warn("no matching account found for given id.");
           }
           break;
         }
         case "get-funds": {
-          const currencyId = props.route.params?.currencyId;
-
-          if (!currencyId) {
+          if (!paramCurrencyId) {
             // eslint-disable-next-line no-console
             console.log('currencyId required for "get-funds" action.');
           } else {
             navigation.navigate(NavigatorName.StakeFlow, {
               screen: ScreenName.Stake,
               params: {
-                currencies: [currencyId],
+                currencies: [paramCurrencyId],
                 parentRoute: route,
                 // Stake flow will skip step 1 (select CryptoCurrency) and step 2 (select Account), and navigate straight to NoFunds flow:
                 alwaysShowNoFunds: true, // Navigate to NoFunds even if some funds available.
@@ -142,12 +149,12 @@ const Earn = (props: NavigationProps) => {
   }, [
     paramAction,
     props.route.params,
+    paramAccountId,
+    paramCurrencyId,
+    paramCryptoAssetId,
     accounts,
     navigation,
     route,
-    openStakingDrawer,
-    dispatch,
-    handleOpenStakeDrawer,
   ]);
 
   return (
