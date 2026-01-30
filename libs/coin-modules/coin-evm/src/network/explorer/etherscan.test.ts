@@ -6,7 +6,6 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
-import * as ETHERSCAN_API from "./etherscan";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
@@ -26,6 +25,7 @@ import {
   PagingState,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
+import * as ETHERSCAN_API from "./etherscan";
 
 setupMockCryptoAssetsStore({
   getTokensSyncHash: async () => "0",
@@ -37,7 +37,7 @@ jest.mock("@ledgerhq/live-promise");
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
 
-jest.mock("../../../../config");
+jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
