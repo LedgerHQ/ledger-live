@@ -43,6 +43,28 @@ const nodeModulesPaths = [
 
 const hermesParserPath = require.resolve("hermes-parser");
 
+/**
+ * When RSDOCTOR env is set (and not "0"), returns the RsdoctorRspackPlugin instance.
+ * In CI, uses brief mode + JSON output for web-infra-dev/rsdoctor-action.
+ * reportDir is set so the action gets a known path (per rsdoctor.dev/config/options/output).
+ */
+function getRsdoctorPlugin() {
+  if (!process.env.RSDOCTOR || process.env.RSDOCTOR === "0") return [];
+  const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+  const isCI = process.env.CI === "true" || process.env.CI === "1";
+  const options = isCI
+    ? {
+        disableClientServer: true,
+        output: {
+          mode: "brief",
+          options: { type: ["json"] },
+          reportDir: path.join(projectRootDir, "_rsdoctor-mobile"),
+        },
+      }
+    : undefined;
+  return [new RsdoctorRspackPlugin(options)];
+}
+
 const withRozeniteUrlFix = rozeniteConfig => {
   return async env => {
     const config = await rozeniteConfig(env);
@@ -79,10 +101,13 @@ export default withRozeniteUrlFix(
   withRozenite(
     Repack.defineRspackConfig(env => {
       const { mode, platform } = env;
+      const isRsdoctor = process.env.RSDOCTOR && process.env.RSDOCTOR !== "0";
       return {
         mode,
         context: __dirname,
         entry: "./index.js",
+        // When running rsdoctor, emit main bundle as .js so it's counted as JavaScript (not Other)
+        ...(isRsdoctor && { output: { filename: "[name].js" } }),
         optimization: {
           minimize: false,
         },
@@ -150,6 +175,7 @@ export default withRozeniteUrlFix(
             unstable_disableTransform: true,
           }),
           new ExpoModulesPlugin(),
+          ...getRsdoctorPlugin(),
         ],
       };
     }),

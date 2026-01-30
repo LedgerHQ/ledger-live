@@ -106,12 +106,26 @@ export { pkg, GIT_REVISION, PRERELEASE, CHANNEL, SENTRY_URL };
 /**
  * When RSDOCTOR env is set (and not "0"), returns the RsdoctorRspackPlugin instance
  * so build analysis runs for all bundles. By default rsdoctor is off.
+ * In CI, uses brief mode + JSON output for web-infra-dev/rsdoctor-action.
+ * reportDir is set so the action gets a known path (per rsdoctor.dev/config/options/output).
  */
 export function getRsdoctorPlugin(): Plugins {
   if (process.env.RSDOCTOR && process.env.RSDOCTOR !== "0") {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
-    return [new RsdoctorRspackPlugin()] as Plugins;
+    const isCI = process.env.CI === "true" || process.env.CI === "1";
+    const repoRoot = path.resolve(lldRoot, "..", "..");
+    const options = isCI
+      ? {
+          disableClientServer: true,
+          output: {
+            mode: "brief" as const,
+            options: { type: ["json" as const] },
+            reportDir: path.join(repoRoot, "_rsdoctor-desktop"),
+          },
+        }
+      : undefined;
+    return [new RsdoctorRspackPlugin(options)] as Plugins;
   }
   return [];
 }
