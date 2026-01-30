@@ -410,14 +410,8 @@ export function alpacaTransactionToOp(
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
 
-  if (!checkpointHash && transaction.checkpoint) {
-    throw new Error(
-      `Checkpoint hash is required for transaction ${hash} at checkpoint ${transaction.checkpoint}`,
-    );
-  }
-
   const blockHeight = Number.parseInt(transaction.checkpoint || "0");
-  const blockHash = checkpointHash || (blockHeight > 0 ? `synthetic-${blockHeight}` : "");
+  const blockHash = checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
   const op: Op = {
     id: hash,
@@ -726,22 +720,20 @@ export const getListOperations = async (
           checkpointHashMap.set(checkpoint, checkpointData.digest);
         } catch (error) {
           console.warn(
-            `Failed to fetch checkpoint ${checkpoint}, skipping associated operations:`,
+            `Failed to fetch checkpoint ${checkpoint}, will use synthetic hash for associated operations:`,
             error,
           );
         }
       }),
     );
 
-    const operations = sortedOps
-      .filter(t => !t.checkpoint || checkpointHashMap.has(t.checkpoint))
-      .map(t =>
-        alpacaTransactionToOp(
-          addr,
-          t,
-          t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
-        ),
-      );
+    const operations = sortedOps.map(t =>
+      alpacaTransactionToOp(
+        addr,
+        t,
+        t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
+      ),
+    );
 
     return {
       items: operations,
