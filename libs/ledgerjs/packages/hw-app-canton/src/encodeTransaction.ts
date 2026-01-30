@@ -1,22 +1,15 @@
-import * as protobuf from "protobufjs";
-import type { Root } from "protobufjs";
-import transactionProtoJson from "./types/transaction-proto.json";
 import type {
   CantonInputContract,
   CantonTransactionNode,
   CantonTransactionMetadata,
   CantonTransactionData,
 } from "./types";
+import { ProtobufTypes } from "./protobufRoot";
 
-const root: Root = protobuf.Root.fromJSON(transactionProtoJson);
-const DeviceDamlTransactionType = root.lookupType(
-  "com.daml.ledger.api.v2.interactive.DeviceDamlTransaction",
-);
-const InputContractType = root.lookupType(
-  "com.daml.ledger.api.v2.interactive.DeviceMetadata.InputContract",
-);
-const DeviceMetadataType = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceMetadata");
-const NodeType = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node");
+const DeviceDamlTransactionType = ProtobufTypes.DeviceDamlTransaction;
+const InputContractType = ProtobufTypes.InputContract;
+const DeviceMetadataType = ProtobufTypes.DeviceMetadata;
+const NodeType = ProtobufTypes.Node;
 
 const RESERVED_WORDS: Record<string, string> = {
   bool: "bool_",
