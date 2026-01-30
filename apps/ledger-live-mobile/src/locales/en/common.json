@@ -2706,6 +2706,18 @@
       "deposit": "Receive",
       "stake": "Stake"
     },
+    "quickActionsCtas": {
+      "transfer": "Transfer",
+      "swap": "Swap",
+      "buy": "Buy",
+      "transferDrawer": {
+        "title": "Transfer",
+        "receiveCrypto": "Receive crypto",
+        "sendCrypto": "Send crypto",
+        "bankTransfer": "Bank transfer",
+        "bankTransferDescription": "Receive stablecoin by sending cash"
+      }
+    },
     "recoverBanner": {
       "subscribeDone": {
         "title": "Reminder: Finish subscribing to Ledger Recover"
@@ -2965,6 +2977,7 @@
       "seeMore": "See more subaccounts",
       "seeLess": "See fewer subaccounts"
     },
+    "send": "Send",
     "receive": "Receive",
     "buy": "Buy",
     "walletconnect": "WalletConnect",
@@ -8419,7 +8432,8 @@
       "neutral": "Neutral",
       "greed": "Greed",
       "extremeGreed": "Greed+"
-    }
+    },
+    "tileTitle": "Mood"
   },
   "analyticsAllocation": {
     "header": {

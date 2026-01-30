@@ -1,6 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { useQuickActions } from "../hooks/useQuickActions";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useNavigate, useLocation } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -9,6 +10,7 @@ import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow");
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
@@ -17,8 +19,11 @@ jest.mock("react-router", () => ({
 
 const mockNavigate = jest.fn();
 const mockOpenSendFlow = jest.fn();
+const mockOpenAssetFlow = jest.fn();
+const mockOpenAddAccountFlow = jest.fn();
 
 const mockUseOpenSendFlow = useOpenSendFlow as jest.MockedFunction<typeof useOpenSendFlow>;
+const mockUseOpenAssetFlow = useOpenAssetFlow as jest.MockedFunction<typeof useOpenAssetFlow>;
 const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>;
 const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>;
 
@@ -53,6 +58,10 @@ describe("useQuickActions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseOpenSendFlow.mockReturnValue(mockOpenSendFlow);
+    mockUseOpenAssetFlow.mockReturnValue({
+      openAssetFlow: mockOpenAssetFlow,
+      openAddAccountFlow: mockOpenAddAccountFlow,
+    });
     mockUseNavigate.mockReturnValue(mockNavigate);
     mockUseLocation.mockReturnValue(createLocation("/accounts"));
   });
@@ -155,7 +164,19 @@ describe("useQuickActions", () => {
       });
     });
 
-    it("should open add accounts modal when user has no accounts", () => {
+    it("should call openAssetFlow when user has no accounts", () => {
+      const { result } = renderHook(() => useQuickActions(), {
+        initialState: { accounts: [] },
+      });
+
+      act(() => {
+        result.current.actionsList[0].onAction();
+      });
+
+      expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not open receive modal when user has no accounts", () => {
       const { result, store } = renderHook(() => useQuickActions(), {
         initialState: { accounts: [] },
       });
@@ -164,9 +185,7 @@ describe("useQuickActions", () => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(store.getState().modals).toMatchObject({
-        MODAL_ADD_ACCOUNTS: { isOpened: true },
-      });
+      expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
     });
 
     it("should not navigate when already on accounts page", () => {
@@ -271,6 +290,24 @@ describe("useQuickActions", () => {
 
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
       expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
+    });
+
+    it("should disable send action when no accounts exist", () => {
+      const { result } = renderHook(() => useQuickActions(), {
+        initialState: { accounts: [] },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(true);
+    });
+
+    it("should enable send action when all accounts are empty", () => {
+      const { result } = renderHook(() => useQuickActions(), {
+        initialState: { accounts: [createEmptyAccount()] },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(false);
     });
   });
 });

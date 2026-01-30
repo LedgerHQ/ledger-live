@@ -11,6 +11,8 @@ export default PortfolioContentCards;
 
 // Wrapper with animated padding that grows on hover so the content area shrinks to reveal arrows (Wallet 4.0 only)
 const CarouselWrapper = styled.div<{ $isWallet40Enabled: boolean }>`
+  overflow: hidden;
+
   ${({ $isWallet40Enabled }) =>
     $isWallet40Enabled &&
     `
@@ -48,6 +50,7 @@ function PortfolioContentCards() {
             index={index}
             logSlideClick={logSlideClick}
             dismissCard={dismissCard}
+            isWallet40Enabled={isWallet40Enabled}
           />
         ))}
       </Carousel>

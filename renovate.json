@@ -101,8 +101,14 @@
       "minimumReleaseAge": "2 days"
     },
     {
+      "description": "Expo monorepo grouping",
       "extends": ["monorepo:expo"],
       "groupName": null
+    },
+    {
+      "description": "Global npm minimum release age",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "2 days"
     }
   ],
   "prConcurrentLimit": 10,
