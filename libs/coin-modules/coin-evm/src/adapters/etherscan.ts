@@ -297,35 +297,33 @@ export const etherscanInternalTransactionToOperations = (
 
 /**
  * Represents the pagination state for all endpoints.
- * Each flag indicates whether the corresponding endpoint has more pages to fetch.
+ * Each flag indicates whether the corresponding endpoint is done (no more pages to fetch).
  */
 export type PagingState = {
   boundBlock: number;
-  coinHasMorePage: boolean;
-  internalHasMorePage: boolean;
-  tokenHasMorePage: boolean;
-  nftHasMorePage: boolean;
+  coinIsDone: boolean;
+  internalIsDone: boolean;
+  tokenIsDone: boolean;
+  nftIsDone: boolean;
 };
 
 /**
  * Serialize a paging token for the next page request.
- * Compact url-friendly format: "boundBlock|coinHasMore|internalHasMore|tokenHasMore|nftHasMore"
- * where flags are encoded as 1 or 0.
+ * Compact url-friendly format: "boundBlock-flags" where flags encode isDone state (1=done, 0=has more).
  * Returns NO_TOKEN if all endpoints are done.
  */
 export function serializePagingToken(
   boundBlock: number | undefined,
   state: {
-    coinHasMorePage: boolean;
-    internalHasMorePage: boolean;
-    tokenHasMorePage: boolean;
-    nftHasMorePage: boolean;
+    coinIsDone: boolean;
+    internalIsDone: boolean;
+    tokenIsDone: boolean;
+    nftIsDone: boolean;
   },
 ): string {
-  const allDone =
-    !state.coinHasMorePage && !state.internalHasMorePage && !state.tokenHasMorePage && !state.nftHasMorePage;
+  const allDone = state.coinIsDone && state.internalIsDone && state.tokenIsDone && state.nftIsDone;
   if (allDone || boundBlock === undefined) return NO_TOKEN;
-  const flags = [state.coinHasMorePage, state.internalHasMorePage, state.tokenHasMorePage, state.nftHasMorePage]
+  const flags = [state.coinIsDone, state.internalIsDone, state.tokenIsDone, state.nftIsDone]
     .map(f => (f ? "1" : "0"))
     .join("");
   return `${boundBlock}-${flags}`;
@@ -347,9 +345,9 @@ export function deserializePagingToken(token: string | undefined): PagingState |
 
   return {
     boundBlock,
-    coinHasMorePage: flags[0] === "1",
-    internalHasMorePage: flags[1] === "1",
-    tokenHasMorePage: flags[2] === "1",
-    nftHasMorePage: flags[3] === "1",
+    coinIsDone: flags[0] === "1",
+    internalIsDone: flags[1] === "1",
+    tokenIsDone: flags[2] === "1",
+    nftIsDone: flags[3] === "1",
   };
 }

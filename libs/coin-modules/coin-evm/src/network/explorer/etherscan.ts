@@ -58,7 +58,7 @@ function boundBlockFromOperations(ops: Operation[]): number {
 // Result type for individual endpoint fetches
 export type EndpointResult = {
   operations: Operation[];
-  hasMorePage: boolean;
+  isDone: boolean;
   boundBlock: number;
   // true when page returned exactly `limit` results, indicating more data may exist
   // used to compute effectiveMaxBlock for the next endpoint call
@@ -67,7 +67,7 @@ export type EndpointResult = {
 
 const EMPTY_RESULT: EndpointResult = {
   operations: [],
-  hasMorePage: false,
+  isDone: true,
   boundBlock: 0,
   isPageFull: false,
 };
@@ -106,14 +106,12 @@ function isPageFull(limitParameter: number | undefined, operationCount: number):
   return limitParameter === undefined || limitParameter === 0 || operationCount >= limitParameter;
 }
 
-// Returns true when there might be more pages to fetch
-// This happens when the page is full AND we actually got results
-function hasMorePage(limitParameter: number | undefined, operationCount: number): boolean {
-  // the notion is close to isPageFull, but it handles unlimited pages
-  // also isPageFull accepts a 0 limit, while hasMorePage requires some results
-  return (
-    limitParameter !== undefined && isPageFull(limitParameter, operationCount) && operationCount > 0
-  );
+// Returns true when there are no more pages to fetch
+// This happens when the page is NOT full OR we got no results
+function isDone(limitParameter: number | undefined, operationCount: number): boolean {
+  // the notion is close to !isPageFull, but it handles unlimited pages
+  // also isPageFull accepts a 0 limit, while isDone considers 0 results as done
+  return limitParameter === undefined || !isPageFull(limitParameter, operationCount) || operationCount === 0;
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -232,7 +230,7 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
 
   return {
     operations,
-    hasMorePage: hasMorePage(params.limit, ops.length),
+    isDone: isDone(params.limit, ops.length),
     boundBlock: maxBlock,
     isPageFull: isPageFull(params.limit, ops.length),
   };
@@ -288,7 +286,7 @@ export const getTokenOperations = async (
 
   return {
     operations,
-    hasMorePage: hasMorePage(params.limit, ops.length),
+    isDone: isDone(params.limit, ops.length),
     boundBlock: maxBlock,
     isPageFull: isPageFull(params.limit, ops.length),
   };
@@ -344,7 +342,7 @@ export const getERC721Operations = async (
 
   return {
     operations,
-    hasMorePage: hasMorePage(params.limit, ops.length),
+    isDone: isDone(params.limit, ops.length),
     boundBlock: maxBlock,
     isPageFull: isPageFull(params.limit, ops.length),
   };
@@ -400,7 +398,7 @@ export const getERC1155Operations = async (
 
   return {
     operations,
-    hasMorePage: hasMorePage(params.limit, ops.length),
+    isDone: isDone(params.limit, ops.length),
     boundBlock: maxBlock,
     isPageFull: isPageFull(params.limit, ops.length),
   };
@@ -428,7 +426,7 @@ export const getNftOperations = async (params: FetchOperationsParams): Promise<E
 
   return {
     operations,
-    hasMorePage: erc721Result.hasMorePage || erc1155Result.hasMorePage,
+    isDone: erc721Result.isDone && erc1155Result.isDone,
     boundBlock: maxBlock,
     isPageFull: erc721Result.isPageFull || erc1155Result.isPageFull,
   };
@@ -481,7 +479,7 @@ export const getInternalOperations = async (
 
   return {
     operations,
-    hasMorePage: hasMorePage(params.limit, ops.length),
+    isDone: isDone(params.limit, ops.length),
     boundBlock: maxBlock,
     isPageFull: isPageFull(params.limit, ops.length),
   };
@@ -538,10 +536,10 @@ export async function exhaustEndpoint(
   const lastTwoOps = firstPage.operations.slice(-2);
   if (lastTwoOps.length === 2 && lastTwoOps[0].blockHeight !== lastTwoOps[1].blockHeight) {
     // return the first page with the last op removed to honor the limit
-    // and we also know there are more pages to fetch
+    // and we also know there are more pages to fetch (not done)
     const butLastOps = firstPage.operations.slice(0, -1);
     const fixedBoundBlock = boundBlockFromOperations(butLastOps);
-    return { ...firstPage, hasMorePage: true, operations: butLastOps, boundBlock: fixedBoundBlock };
+    return { ...firstPage, isDone: false, operations: butLastOps, boundBlock: fixedBoundBlock };
   }
 
   const allOperations = [...firstPage.operations];
@@ -560,14 +558,14 @@ export async function exhaustEndpoint(
   } while (
     boundaryOps.length === nextPage.operations.length &&
     nextPage.isPageFull &&
-    nextPage.hasMorePage
+    !nextPage.isDone
   );
 
-  // hasMorePage = true if we found ops at other blocks, otherwise use last page's status
+  // isDone = false if we found ops at other blocks (more to fetch), otherwise use last page's status
   const hasOpsAtOtherBlocks = boundaryOps.length < nextPage.operations.length;
-  const hasMorePage = hasOpsAtOtherBlocks ? true : nextPage.hasMorePage;
+  const resultIsDone = hasOpsAtOtherBlocks ? false : nextPage.isDone;
 
-  return { ...firstPage, operations: allOperations, hasMorePage, isPageFull: firstPage.isPageFull };
+  return { ...firstPage, operations: allOperations, isDone: resultIsDone, isPageFull: firstPage.isPageFull };
 }
 
 /**
@@ -645,26 +643,23 @@ export const getOperations = makeLRUCache<
       // endpoint calls are sorted by likelyhood of having more operations than the next
       // Skip endpoints that have no more pages (optimization from paging state)
 
-      const coinResult =
-        pagingState && !pagingState.coinHasMorePage
-          ? EMPTY_RESULT
-          : await callEndpoint(getCoinOperations, currentBoundBlock);
+      const coinResult = pagingState?.coinIsDone
+        ? EMPTY_RESULT
+        : await callEndpoint(getCoinOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
 
-      const internalResult =
-        pagingState && !pagingState.internalHasMorePage
-          ? EMPTY_RESULT
-          : await callEndpoint(getInternalOperations, currentBoundBlock);
+      const internalResult = pagingState?.internalIsDone
+        ? EMPTY_RESULT
+        : await callEndpoint(getInternalOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
 
-      const tokenResult =
-        pagingState && !pagingState.tokenHasMorePage
-          ? EMPTY_RESULT
-          : await callEndpoint(getTokenOperations, currentBoundBlock);
+      const tokenResult = pagingState?.tokenIsDone
+        ? EMPTY_RESULT
+        : await callEndpoint(getTokenOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
 
       const nftResult =
-        !isNFTActive(currency) || (pagingState && !pagingState.nftHasMorePage)
+        !isNFTActive(currency) || pagingState?.nftIsDone
           ? EMPTY_RESULT
           : await callEndpoint(getNftOperations, currentBoundBlock);
       currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
@@ -691,10 +686,10 @@ export const getOperations = makeLRUCache<
         lastNftOperations: nftOperations,
         lastInternalOperations: internalOperations,
         nextPagingToken: serializePagingToken(nextBoundBlock, {
-          coinHasMorePage: coinResult.hasMorePage || coinOperations.length !== coinResult.operations.length,
-          internalHasMorePage: internalResult.hasMorePage || internalOperations.length !== internalResult.operations.length,
-          tokenHasMorePage: tokenResult.hasMorePage || tokenOperations.length !== tokenResult.operations.length,
-          nftHasMorePage: nftResult.hasMorePage && nftOperations.length === nftResult.operations.length,
+          coinIsDone: coinResult.isDone && coinOperations.length === coinResult.operations.length,
+          internalIsDone: internalResult.isDone && internalOperations.length === internalResult.operations.length,
+          tokenIsDone: tokenResult.isDone && tokenOperations.length === tokenResult.operations.length,
+          nftIsDone: nftResult.isDone || nftOperations.length !== nftResult.operations.length,
         }),
       };
     } catch (err) {

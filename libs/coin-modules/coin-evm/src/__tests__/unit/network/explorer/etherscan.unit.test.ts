@@ -49,7 +49,7 @@ const currency: CryptoCurrency = {
 
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
-// Factory to create fetch utilities for isPageFull/hasMorePage tests
+// Factory to create fetch utilities for isPageFull/isDone tests
 const createFetchWithLimit =
   <T>(
     apiFn: (params: ETHERSCAN_API.FetchOperationsParams) => Promise<ETHERSCAN_API.EndpointResult>,
@@ -71,7 +71,7 @@ const createFetchWithLimit =
 // Helper to extract pagination state for assertions
 const paginationState = (result: ETHERSCAN_API.EndpointResult) => ({
   isPageFull: result.isPageFull,
-  hasMorePage: result.hasMorePage,
+  isDone: result.isDone,
   nbOps: result.operations.length,
 });
 
@@ -222,7 +222,7 @@ describe("EVM Family", () => {
         operations: etherscanCoinOperations
           .map(op => etherscanOperationToOperations(account.id, op))
           .flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14923692,
         isPageFull: true,
       });
@@ -257,7 +257,7 @@ describe("EVM Family", () => {
         operations: etherscanCoinOperations
           .map(op => etherscanOperationToOperations(account.id, op))
           .flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14923692,
         isPageFull: true,
       });
@@ -293,7 +293,7 @@ describe("EVM Family", () => {
         operations: etherscanCoinOperations
           .map(op => etherscanOperationToOperations(account.id, op))
           .flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14923692,
         isPageFull: true,
       });
@@ -310,62 +310,62 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("isPageFull and hasMorePage", () => {
+    describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getCoinOperations);
 
       // etherscanCoinOperations: 3 raw ops => 4 processed ops (one self-send creates 2 ops)
       const expectedProcessedOpsCount = 4;
 
-      it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+      it("limit > nb ops => isPageFull = false, isDone = true", async () => {
         const result = await fetchWithLimit(
           etherscanCoinOperations,
           etherscanCoinOperations.length + 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: false,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit = nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanCoinOperations,
           etherscanCoinOperations.length,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit < nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanCoinOperations,
           etherscanCoinOperations.length - 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined (= unlimited page) with ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined (= unlimited page) with ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit(etherscanCoinOperations, undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined (= unlimited page) without ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined (= unlimited page) without ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit([], undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: 0,
         });
       });
@@ -451,7 +451,7 @@ describe("EVM Family", () => {
           etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
           etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 4764973,
         isPageFull: true,
       });
@@ -488,7 +488,7 @@ describe("EVM Family", () => {
           etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
           etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 4764973,
         isPageFull: true,
       });
@@ -526,7 +526,7 @@ describe("EVM Family", () => {
           etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
           etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 4764973,
         isPageFull: true,
       });
@@ -543,62 +543,62 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("isPageFull and hasMorePage", () => {
+    describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getTokenOperations);
 
       // etherscanTokenOperations: 3 raw ops => 4 processed ops
       const expectedProcessedOpsCount = 4;
 
-      it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+      it("limit > nb ops => isPageFull = false, isDone = true", async () => {
         const result = await fetchWithLimit(
           etherscanTokenOperations,
           etherscanTokenOperations.length + 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: false,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit = nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanTokenOperations,
           etherscanTokenOperations.length,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit < nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanTokenOperations,
           etherscanTokenOperations.length - 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined with ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit(etherscanTokenOperations, undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined without ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit([], undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: 0,
         });
       });
@@ -684,7 +684,7 @@ describe("EVM Family", () => {
           etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
           etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 4708161,
         isPageFull: true,
       });
@@ -721,7 +721,7 @@ describe("EVM Family", () => {
           etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
           etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 4708161,
         isPageFull: true,
       });
@@ -759,7 +759,7 @@ describe("EVM Family", () => {
           etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
           etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 4708161,
         isPageFull: true,
       });
@@ -776,62 +776,62 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("isPageFull and hasMorePage", () => {
+    describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getERC721Operations);
 
       // etherscanERC721Operations: 3 raw ops => 4 processed ops
       const expectedProcessedOpsCount = 4;
 
-      it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+      it("limit > nb ops => isPageFull = false, isDone = true", async () => {
         const result = await fetchWithLimit(
           etherscanERC721Operations,
           etherscanERC721Operations.length + 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: false,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit = nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanERC721Operations,
           etherscanERC721Operations.length,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit < nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanERC721Operations,
           etherscanERC721Operations.length - 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined with ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit(etherscanERC721Operations, undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined without ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit([], undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: 0,
         });
       });
@@ -917,7 +917,7 @@ describe("EVM Family", () => {
           etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
           etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14049909,
         isPageFull: true,
       });
@@ -954,7 +954,7 @@ describe("EVM Family", () => {
           etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
           etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14049909,
         isPageFull: true,
       });
@@ -992,7 +992,7 @@ describe("EVM Family", () => {
           etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
           etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14049909,
         isPageFull: true,
       });
@@ -1009,62 +1009,62 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("isPageFull and hasMorePage", () => {
+    describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getERC1155Operations);
 
       // etherscanERC1155Operations: 3 raw ops => 4 processed ops
       const expectedProcessedOpsCount = 4;
 
-      it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+      it("limit > nb ops => isPageFull = false, isDone = true", async () => {
         const result = await fetchWithLimit(
           etherscanERC1155Operations,
           etherscanERC1155Operations.length + 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: false,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit = nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanERC1155Operations,
           etherscanERC1155Operations.length,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit < nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanERC1155Operations,
           etherscanERC1155Operations.length - 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined with ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit(etherscanERC1155Operations, undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined without ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit([], undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: 0,
         });
       });
@@ -1108,13 +1108,13 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(8);
       expect(response).toEqual({
         operations: sortedOps,
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 14049909,
         isPageFull: true,
       });
     });
 
-    describe("isPageFull and hasMorePage", () => {
+    describe("isPageFull and isDone", () => {
       const fetchNftOperationsWithLimit = async (
         erc721Ops: typeof etherscanERC721Operations,
         erc1155Ops: typeof etherscanERC1155Operations,
@@ -1139,7 +1139,7 @@ describe("EVM Family", () => {
       // etherscanERC721Operations (3) + etherscanERC1155Operations (3) => 8 processed ops
       const expectedProcessedOpsCount = 8;
 
-      it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+      it("limit > nb ops => isPageFull = false, isDone = true", async () => {
         const result = await fetchNftOperationsWithLimit(
           etherscanERC721Operations,
           etherscanERC1155Operations,
@@ -1147,12 +1147,12 @@ describe("EVM Family", () => {
         );
         expect(paginationState(result)).toEqual({
           isPageFull: false,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit = nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchNftOperationsWithLimit(
           etherscanERC721Operations,
           etherscanERC1155Operations,
@@ -1160,12 +1160,12 @@ describe("EVM Family", () => {
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined with ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchNftOperationsWithLimit(
           etherscanERC721Operations,
           etherscanERC1155Operations,
@@ -1173,16 +1173,16 @@ describe("EVM Family", () => {
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined without ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchNftOperationsWithLimit([], [], undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: 0,
         });
       });
@@ -1282,7 +1282,7 @@ describe("EVM Family", () => {
           etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
           etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 15214745,
         isPageFull: true,
       });
@@ -1319,7 +1319,7 @@ describe("EVM Family", () => {
           etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
           etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 15214745,
         isPageFull: true,
       });
@@ -1357,7 +1357,7 @@ describe("EVM Family", () => {
           etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
           etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
         ].flat(),
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 15214745,
         isPageFull: true,
       });
@@ -1374,62 +1374,62 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("isPageFull and hasMorePage", () => {
+    describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getInternalOperations);
 
       // etherscanInternalOperations: 4 raw ops => 3 processed ops (self-send excluded)
       const expectedProcessedOpsCount = 3;
 
-      it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+      it("limit > nb ops => isPageFull = false, isDone = true", async () => {
         const result = await fetchWithLimit(
           etherscanInternalOperations,
           etherscanInternalOperations.length + 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: false,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit = nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanInternalOperations,
           etherscanInternalOperations.length,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+      it("limit < nb ops => isPageFull = true, isDone = false", async () => {
         const result = await fetchWithLimit(
           etherscanInternalOperations,
           etherscanInternalOperations.length - 1,
         );
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: true,
+          isDone: false,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined with ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit(etherscanInternalOperations, undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: expectedProcessedOpsCount,
         });
       });
 
-      it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+      it("limit undefined without ops => isPageFull = true, isDone = true", async () => {
         const result = await fetchWithLimit([], undefined);
         expect(paginationState(result)).toEqual({
           isPageFull: true,
-          hasMorePage: false,
+          isDone: true,
           nbOps: 0,
         });
       });
@@ -1472,7 +1472,7 @@ describe("EVM Family", () => {
       });
       expect(response).toEqual({
         operations: [],
-        hasMorePage: false,
+        isDone: true,
         boundBlock: 0,
         isPageFull: false,
       });
@@ -1630,16 +1630,16 @@ describe("EVM Family", () => {
       return { ops, pagingState };
     };
 
-    // Helper to create expected paging state (nft is always false in tests)
+    // Helper to create expected paging state (nft is always true/done in tests)
     const paging = (
       boundBlock: number,
       flags: { coin: boolean; internal: boolean; token: boolean },
     ): PagingState => ({
       boundBlock,
-      coinHasMorePage: flags.coin,
-      internalHasMorePage: flags.internal,
-      tokenHasMorePage: flags.token,
-      nftHasMorePage: false,
+      coinIsDone: flags.coin,
+      internalIsDone: flags.internal,
+      tokenIsDone: flags.token,
+      nftIsDone: true,
     });
 
     describe("desc mode", () => {
@@ -1652,7 +1652,7 @@ describe("EVM Family", () => {
           // Result: only I6s kept, coin ops dropped (below boundBlock=6)
           expect(summarize(result)).toEqual({
             ops: ops(I6, I6, I6),
-            pagingState: paging(5, { coin: true, internal: true, token: false }),
+            pagingState: paging(5, { coin: false, internal: false, token: true }),
           });
         });
 
@@ -1664,7 +1664,7 @@ describe("EVM Family", () => {
           // Result: T7 + I6s kept, coin ops dropped (below boundBlock=6)
           expect(summarize(result)).toEqual({
             ops: ops(T7, I6, I6, I6),
-            pagingState: paging(5, { coin: true, internal: true, token: false }),
+            pagingState: paging(5, { coin: false, internal: false, token: true }),
           });
         });
 
@@ -1676,7 +1676,7 @@ describe("EVM Family", () => {
           // Result: only T9/T8/T7 kept, coin+internal ops dropped (below boundBlock=7)
           expect(summarize(result)).toEqual({
             ops: ops(T9, T8, T7),
-            pagingState: paging(6, { coin: true, internal: true, token: false }),
+            pagingState: paging(6, { coin: false, internal: false, token: true }),
           });
         });
 
@@ -1688,7 +1688,7 @@ describe("EVM Family", () => {
           // Result: ops >= 7 kept, lower ops dropped (below boundBlock=7)
           expect(summarize(result)).toEqual({
             ops: ops(T9, I8, T8, C7, I7, T7),
-            pagingState: paging(6, { coin: true, internal: true, token: true }),
+            pagingState: paging(6, { coin: false, internal: false, token: false }),
           });
         });
       });
@@ -1702,7 +1702,7 @@ describe("EVM Family", () => {
           // Result: all ops kept, boundBlock stays at 1 because subsequent pages not full
           expect(summarize(result)).toEqual({
             ops: ops(I6, I6, T5, C4, C3, C2),
-            pagingState: paging(1, { coin: true, internal: false, token: false }),
+            pagingState: paging(1, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1723,7 +1723,7 @@ describe("EVM Family", () => {
           // Result: coin ops kept, nextPagingToken=1 for remaining C1
           expect(summarize(result)).toEqual({
             ops: ops(C4, C3, C2),
-            pagingState: paging(1, { coin: true, internal: false, token: false }),
+            pagingState: paging(1, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1735,7 +1735,7 @@ describe("EVM Family", () => {
           // Result: token ops kept, nextPagingToken=1 for remaining T1
           expect(summarize(result)).toEqual({
             ops: ops(T4, T3, T2),
-            pagingState: paging(1, { coin: false, internal: false, token: true }),
+            pagingState: paging(1, { coin: true, internal: true, token: false }),
           });
         });
 
@@ -1747,7 +1747,7 @@ describe("EVM Family", () => {
           // Result: all ops >= 3 kept, interleaved blocks don't cause drops
           expect(summarize(result)).toEqual({
             ops: ops(T6, C5, I5, C4, I4, C3),
-            pagingState: paging(2, { coin: true, internal: false, token: false }),
+            pagingState: paging(2, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1759,7 +1759,7 @@ describe("EVM Family", () => {
           // Result: all ops >= 3 kept, boundBlock from internal applies
           expect(summarize(result)).toEqual({
             ops: ops(I6, T6, C5, C4, I4, I3),
-            pagingState: paging(2, { coin: false, internal: true, token: false }),
+            pagingState: paging(2, { coin: true, internal: false, token: true }),
           });
         });
 
@@ -1771,7 +1771,7 @@ describe("EVM Family", () => {
           // Result: coin + internal ops kept
           expect(summarize(result)).toEqual({
             ops: ops(I6, C5, C4, I4, I3),
-            pagingState: paging(2, { coin: false, internal: true, token: false }),
+            pagingState: paging(2, { coin: true, internal: false, token: true }),
           });
         });
 
@@ -1783,7 +1783,7 @@ describe("EVM Family", () => {
           // Result: all 9 ops at block 4 kept, all at boundBlock=4
           expect(summarize(result)).toEqual({
             ops: ops(C4, C4, C4, I4, I4, I4, T4, T4, T4),
-            pagingState: paging(3, { coin: true, internal: false, token: false }),
+            pagingState: paging(3, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1799,9 +1799,9 @@ describe("EVM Family", () => {
 
       describe("with pagination token", () => {
         
-        it("skips coin endpoint when there is no more pages", async () => {
+        it("skips coin endpoint when it is done", async () => {
           const result = await callGetOperations("desc")([C1], {
-            pagingState: paging(5, { coin: false, internal: true, token: true }),
+            pagingState: paging(5, { coin: true, internal: false, token: false }),
           });
           expect(summarize(result)).toEqual({
             ops: ops(),
@@ -1809,9 +1809,9 @@ describe("EVM Family", () => {
           });
         });
 
-        it("skips internal endpoint when there is no more pages", async () => {
+        it("skips internal endpoint when it is done", async () => {
           const result = await callGetOperations("desc")([I1], {
-            pagingState: paging(5, { coin: true, internal: false, token: true }),
+            pagingState: paging(5, { coin: false, internal: true, token: false }),
           });
           expect(summarize(result)).toEqual({
             ops: ops(),
@@ -1819,9 +1819,9 @@ describe("EVM Family", () => {
           });
         });
 
-        it("skips token endpoint when there is no more pages", async () => {
+        it("skips token endpoint when it is done", async () => {
           const result = await callGetOperations("desc")([T1], {
-            pagingState: paging(5, { coin: true, internal: true, token: false }),
+            pagingState: paging(5, { coin: false, internal: false, token: true }),
           });
           expect(summarize(result)).toEqual({
             ops: ops(),
@@ -1831,7 +1831,7 @@ describe("EVM Family", () => {
 
         it("uses token as toBlock for all calls", async () => {
           const result = await callGetOperations("desc")([T6, I6, C6, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
-            pagingState: paging(5, { coin: true, internal: true, token: true }),
+            pagingState: paging(5, { coin: false, internal: false, token: false }),
           });
           // pagingState.boundBlock=5 acts as toBlock for all endpoints
           // - coin([Ø, 5])       [C5 C4 C3]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
@@ -1840,7 +1840,7 @@ describe("EVM Family", () => {
           // Result: C5/C4/C3 + I5/I4 kept, T6/I6/C6 excluded by pagingToken
           expect(summarize(result)).toEqual({
             ops: ops(C5, I5, C4, I4, C3),
-            pagingState: paging(2, { coin: true, internal: false, token: false }),
+            pagingState: paging(2, { coin: false, internal: true, token: true }),
           });
         });
       });
@@ -1858,7 +1858,7 @@ describe("EVM Family", () => {
           // Result: ops in [3, 6] kept, T7/I7/C7 excluded by toBlock
           expect(summarize(result)).toEqual({
             ops: ops(C5, I5, C4, I4, C3),
-            pagingState: paging(2, { coin: true, internal: false, token: false }),
+            pagingState: paging(2, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1888,7 +1888,7 @@ describe("EVM Family", () => {
           // Result: only I2s and I3 kept, coin ops dropped (above boundBlock=3)
           expect(summarize(result)).toEqual({
             ops: ops(I3, I2, I2),
-            pagingState: paging(4, { coin: true, internal: true, token: false }),
+            pagingState: paging(4, { coin: false, internal: false, token: true }),
           });
         });
 
@@ -1901,7 +1901,7 @@ describe("EVM Family", () => {
           // Result: T1 + I2s + I3 kept, coin ops dropped (above boundBlock=3)
           expect(summarize(result)).toEqual({
             ops: ops(I3, I2, I2, T1),
-            pagingState: paging(4, { coin: true, internal: true, token: false }),
+            pagingState: paging(4, { coin: false, internal: false, token: true }),
           });
         });
 
@@ -1913,7 +1913,7 @@ describe("EVM Family", () => {
           // Result: only T1/T2/T3 kept, coin+internal ops dropped (above boundBlock=4)
           expect(summarize(result)).toEqual({
             ops: ops(T3, T2, T1),
-            pagingState: paging(4, { coin: true, internal: true, token: false }),
+            pagingState: paging(4, { coin: false, internal: false, token: true }),
           });
         });
 
@@ -1925,7 +1925,7 @@ describe("EVM Family", () => {
           // Result: ops <= 3 kept, higher ops dropped (above boundBlock=4)
           expect(summarize(result)).toEqual({
             ops: ops(C3, I3, T3, I2, T2, T1),
-            pagingState: paging(4, { coin: true, internal: true, token: true }),
+            pagingState: paging(4, { coin: false, internal: false, token: false }),
           });
         });
       });
@@ -1939,7 +1939,7 @@ describe("EVM Family", () => {
           // Result: all ops kept, boundBlock stays at 8 because subsequent pages not full
           expect(summarize(result)).toEqual({
             ops: ops(C7, C6, C5, T4, I2, I2),
-            pagingState: paging(8, { coin: true, internal: false, token: false }),
+            pagingState: paging(8, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1960,7 +1960,7 @@ describe("EVM Family", () => {
           // Result: coin ops kept, nextPagingToken=8 for remaining C8
           expect(summarize(result)).toEqual({
             ops: ops(C7, C6, C5),
-            pagingState: paging(8, { coin: true, internal: false, token: false }),
+            pagingState: paging(8, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1972,7 +1972,7 @@ describe("EVM Family", () => {
           // Result: token ops kept, nextPagingToken=8 for remaining T8
           expect(summarize(result)).toEqual({
             ops: ops(T7, T6, T5),
-            pagingState: paging(8, { coin: false, internal: false, token: true }),
+            pagingState: paging(8, { coin: true, internal: true, token: false }),
           });
         });
 
@@ -1984,7 +1984,7 @@ describe("EVM Family", () => {
           // Result: all ops <= 6 kept, interleaved blocks don't cause drops
           expect(summarize(result)).toEqual({
             ops: ops(C6, C5, I5, C4, I4, T2),
-            pagingState: paging(7, { coin: true, internal: false, token: false }),
+            pagingState: paging(7, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -1996,7 +1996,7 @@ describe("EVM Family", () => {
           // Result: all ops <= 6 kept, boundBlock from internal applies
           expect(summarize(result)).toEqual({
             ops: ops(I6, C5, I5, C4, I2, T2),
-            pagingState: paging(7, { coin: false, internal: true, token: false }),
+            pagingState: paging(7, { coin: true, internal: false, token: true }),
           });
         });
 
@@ -2008,7 +2008,7 @@ describe("EVM Family", () => {
           // Result: coin + internal ops kept
           expect(summarize(result)).toEqual({
             ops: ops(I6, C5, I5, C4, I2),
-            pagingState: paging(7, { coin: false, internal: true, token: false }),
+            pagingState: paging(7, { coin: true, internal: false, token: true }),
           });
         });
 
@@ -2020,7 +2020,7 @@ describe("EVM Family", () => {
           // Result: all 9 ops at block 5 kept, all below boundBlock=6
           expect(summarize(result)).toEqual({
             ops: ops(C5, C5, C5, I5, I5, I5, T5, T5, T5),
-            pagingState: paging(6, { coin: true, internal: false, token: false }),
+            pagingState: paging(6, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -2037,7 +2037,7 @@ describe("EVM Family", () => {
       describe("with pagination token", () => {
         it("uses token as fromBlock for all calls", async () => {
           const result = await callGetOperations("asc")([T2, I2, C2, C4, I4, C5, I5, C6, I7, I8, C8, T8], {
-            pagingState: paging(4, { coin: true, internal: true, token: true }),
+            pagingState: paging(4, { coin: false, internal: false, token: false }),
           });
           // pagingState.boundBlock=4 acts as fromBlock for all endpoints
           // - coin([4, Ø])       [C4 C5 C6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
@@ -2046,7 +2046,7 @@ describe("EVM Family", () => {
           // Result: C4/C5/C6 + I4/I5 kept, T2/I2/C2 excluded by pagingToken
           expect(summarize(result)).toEqual({
             ops: ops(C6, C5, I5, C4, I4),
-            pagingState: paging(7, { coin: true, internal: false, token: false }),
+            pagingState: paging(7, { coin: false, internal: true, token: true }),
           });
         });
       });
@@ -2065,7 +2065,7 @@ describe("EVM Family", () => {
           // Result: ops in [3, 6] kept, C7/I7/T1/I1/C1 excluded
           expect(summarize(result)).toEqual({
             ops: ops(C6, C5, I5, C4, I4),
-            pagingState: paging(7, { coin: true, internal: false, token: false }),
+            pagingState: paging(7, { coin: false, internal: true, token: true }),
           });
         });
 
@@ -2118,7 +2118,7 @@ describe("EVM Family", () => {
 
           return Promise.resolve({
             operations: ops,
-            hasMorePage: ops.length > 0 && isPageFull && hasMore,
+            isDone: ops.length === 0 || !isPageFull || !hasMore,
             boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
             isPageFull,
           });
@@ -2129,51 +2129,51 @@ describe("EVM Family", () => {
     it.each([
       {
         ops: [1, 2, 3, 4, 5, 6],
-        expected: { blocks: [1, 2, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3], isDone: false, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [3, 3, 3, 3, 3, 3, 4, 5, 6],
-        expected: { blocks: [3, 3, 3, 3, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [3, 3, 3, 3, 3, 3], isDone: false, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [1, 2, 3, 3, 3, 3, 3, 4, 5],
-        expected: { blocks: [1, 2, 3, 3, 3, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3, 3, 3, 3, 3], isDone: false, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [1, 2, 3, 3, 3, 3],
-        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3, 3, 3, 3], isDone: true, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [1, 2, 3, 3, 3, 3, 3, 3],
-        expected: { blocks: [1, 2, 3, 3, 3, 3, 3, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3, 3, 3, 3, 3, 3], isDone: true, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [1, 2, 3, 3, 3, 3, 4, 5],
-        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3, 3, 3, 3], isDone: false, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [3, 3, 3],
-        expected: { blocks: [3, 3, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [3, 3, 3], isDone: true, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [1, 2, 3],
-        expected: { blocks: [1, 2, 3], hasMorePage: false, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3], isDone: true, isPageFull: true, boundBlock: 3 },
       },
       {
         ops: [1, 2],
-        expected: { blocks: [1, 2], hasMorePage: false, isPageFull: false, boundBlock: 2 },
+        expected: { blocks: [1, 2], isDone: true, isPageFull: false, boundBlock: 2 },
       },
       {
         ops: [5],
-        expected: { blocks: [5], hasMorePage: false, isPageFull: false, boundBlock: 5 },
+        expected: { blocks: [5], isDone: true, isPageFull: false, boundBlock: 5 },
       },
       {
         ops: [],
-        expected: { blocks: [], hasMorePage: false, isPageFull: false, boundBlock: 0 },
+        expected: { blocks: [], isDone: true, isPageFull: false, boundBlock: 0 },
       },
       {
         ops: [1, 2, 3, 3, 4, 5],
-        expected: { blocks: [1, 2, 3, 3], hasMorePage: true, isPageFull: true, boundBlock: 3 },
+        expected: { blocks: [1, 2, 3, 3], isDone: false, isPageFull: true, boundBlock: 3 },
       },
     ])("ops $ops", async ({ ops, expected }) => {
       const mockFetch = createPaginatedMock(ops);
@@ -2189,7 +2189,7 @@ describe("EVM Family", () => {
 
       expect({
         isPageFull: result.isPageFull,
-        hasMorePage: result.hasMorePage,
+        isDone: result.isDone,
         boundBlock: result.boundBlock,
         blocks: result.operations.map(op => op.blockHeight),
       }).toEqual(expected);
