@@ -444,11 +444,11 @@ describe.each([
 
         const allOps = [...p1Ops, ...p2Ops];
 
-        // check that each page has no height bounds in commmon
+        // check that each page has no height bounds in common
         expect(p1Ops[0]).not.toBe(p2Ops[p2NbOps - 1]);
         expect(p1Ops[p1NbOps - 1]).not.toBe(p2Ops[0]);
 
-        // Check mo page overlapping
+        // Check no page overlapping
         const p1Heights = new Set(p1Ops.map(op => op.tx.block.height));
         const p2Heights = new Set(p2Ops.map(op => op.tx.block.height));
         expect(p1Heights.intersection(p2Heights).size).toBe(0);
