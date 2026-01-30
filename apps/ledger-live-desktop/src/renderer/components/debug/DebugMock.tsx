@@ -13,10 +13,7 @@ import {
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 import { AppType, DeviceInfo } from "@ledgerhq/types-live";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-// @ts-ignore should move mocks inside project and import in tests
-import { addMockAnnouncement } from "../../../../tests/mocks/notificationsHelpers";
 // @ts-ignore should move mocks inside project and import in tests
 import { toggleMockIncident } from "../../../../tests/mocks/serviceStatusHelpers";
 import useInterval from "~/renderer/hooks/useInterval";
@@ -24,7 +21,6 @@ import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { AnnouncementDeviceModelId } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import { getAllEnvs } from "@ledgerhq/live-env";
 import { ipcRenderer } from "electron";
@@ -341,16 +337,6 @@ const DebugMock = () => {
   const [expandedQuick, setExpandedQuick] = useState(false);
   const [expandedHistory, setExpandedHistory] = useState(true);
   const [expandedNotif, setExpandedNotif] = useState(false);
-  const [notifPlatform, setNotifPlatform] = useState("");
-  const [notifAppVersions, setNotifAppVersions] = useState("");
-  const [notifLiveCommonVersions, setNotifLiveCommonVersions] = useState("");
-  const [notifCurrencies, setNotifCurrencies] = useState("");
-  const [notifDeviceVersion, setNotifDeviceVersion] = useState("");
-  const [notifDeviceModelId, setNotifDeviceModelId] = useState("");
-  const [notifDeviceApps, setNotifDeviceApps] = useState("");
-  const [notifLanguages, setNotifLanguages] = useState("");
-  const [notifExtra, setNotifExtra] = useState("");
-  const { updateCache } = useAnnouncements();
   const { updateData } = useFilteredServiceStatus();
   useInterval(() => {
     setQueue(window.mock.events.queue);
@@ -383,64 +369,6 @@ const DebugMock = () => {
       setQueue(window.mock.events.queue);
     },
     [setQueue],
-  );
-  const formatInputValue = useCallback((inputValue: string): string[] | undefined | null => {
-    const val: string[] = inputValue.replace(/\s/g, "").split(",").filter(Boolean);
-    return val.length > 0 ? val : undefined;
-  }, []);
-  const onNotifClick = useCallback(() => {
-    const params = {
-      currencies: formatInputValue(notifCurrencies),
-      platforms: formatInputValue(notifPlatform),
-      appVersions: formatInputValue(notifAppVersions),
-      liveCommonVersions: formatInputValue(notifLiveCommonVersions),
-      languages: formatInputValue(notifLanguages),
-    };
-    const keys = Object.keys(params) as (keyof typeof params)[];
-    const formattedParams = keys
-      .filter(k => !!params[k] && params[k]!.length > 0)
-      .reduce(
-        (sum, k) => ({
-          ...sum,
-          [k]: params[k],
-        }),
-        {},
-      );
-    let extra = {};
-    try {
-      extra = JSON.parse(notifExtra) || {};
-    } catch (e) {
-      console.error(e);
-    }
-    addMockAnnouncement({
-      ...formattedParams,
-      device: {
-        modelIds: formatInputValue(notifDeviceModelId) as AnnouncementDeviceModelId,
-        versions: formatInputValue(notifDeviceVersion) as string[],
-        apps: formatInputValue(notifDeviceApps) as string[],
-      },
-      ...extra,
-    });
-    updateCache();
-  }, [
-    formatInputValue,
-    notifCurrencies,
-    notifDeviceApps,
-    notifDeviceModelId,
-    notifDeviceVersion,
-    notifExtra,
-    notifLanguages,
-    notifPlatform,
-    notifAppVersions,
-    notifLiveCommonVersions,
-    updateCache,
-  ]);
-
-  const setValue = useCallback(
-    (setter: (value: string) => void) =>
-      (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-        setter(evt.target.value),
-    [],
   );
   return (
     <MockContainer id={`${nonce}`}>
@@ -593,82 +521,18 @@ const DebugMock = () => {
               {expandedNotif ? "[ - ]" : "[ + ]"}
             </Text>
             {expandedNotif ? (
-              <>
-                <input
-                  type="text"
-                  placeholder="currencies separated by ','"
-                  value={notifCurrencies}
-                  onChange={setValue(setNotifCurrencies)}
-                />
-                <input
-                  type="text"
-                  placeholder="platforms separated by ','"
-                  value={notifPlatform}
-                  onChange={setValue(setNotifPlatform)}
-                />
-                <input
-                  type="text"
-                  placeholder="languages separated by ','"
-                  value={notifLanguages}
-                  onChange={setValue(setNotifLanguages)}
-                />
-                <input
-                  type="text"
-                  placeholder="device modelIds separated by ','"
-                  value={notifDeviceModelId}
-                  onChange={setValue(setNotifDeviceModelId)}
-                />
-                <input
-                  type="text"
-                  placeholder="device versions separated by ','"
-                  value={notifDeviceVersion}
-                  onChange={setValue(setNotifDeviceVersion)}
-                />
-                <input
-                  type="text"
-                  placeholder="device apps separated by ','"
-                  value={notifDeviceApps}
-                  onChange={setValue(setNotifDeviceApps)}
-                />
-                <input
-                  type="text"
-                  placeholder="app versions separated by ','"
-                  value={notifAppVersions}
-                  onChange={setValue(setNotifAppVersions)}
-                />
-                <input
-                  type="text"
-                  placeholder="live-common versions separated by ','"
-                  value={notifLiveCommonVersions}
-                  onChange={setValue(setNotifLiveCommonVersions)}
-                />
-                <textarea
-                  placeholder="override notif data as JSON"
-                  value={notifExtra}
-                  onChange={setValue(setNotifExtra)}
-                />
-                <Text
-                  ff="Inter|Regular"
-                  color="neutral.c100"
-                  fontSize={3}
-                  mb={2}
-                  onClick={onNotifClick}
-                >
-                  {"↳ Mock notif"}
-                </Text>
-                <Text
-                  ff="Inter|Regular"
-                  color="neutral.c100"
-                  mb={2}
-                  fontSize={3}
-                  onClick={() => {
-                    toggleMockIncident();
-                    updateData();
-                  }}
-                >
-                  {"Toggle service status"}
-                </Text>
-              </>
+              <Text
+                ff="Inter|Regular"
+                color="neutral.c100"
+                mb={2}
+                fontSize={3}
+                onClick={() => {
+                  toggleMockIncident();
+                  updateData();
+                }}
+              >
+                {"Toggle service status"}
+              </Text>
             ) : null}
           </Box>
         </>
