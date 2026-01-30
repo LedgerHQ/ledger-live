@@ -3352,6 +3352,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-canton':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-canton
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
