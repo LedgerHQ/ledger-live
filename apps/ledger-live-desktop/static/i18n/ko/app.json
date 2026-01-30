@@ -282,11 +282,13 @@
     "advanced" : "고급",
     "custom" : "커스텀",
     "fast" : "빠름",
+    "networkFees" : "네트워크 수수료",
     "high" : "높음",
     "low" : "낮음",
     "slow" : "느림",
     "standard" : "스탠다드",
     "medium" : "Medium",
+    "coinControl" : "코인 컨트롤",
     "feesAmount" : "수수료 비용"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "장치 연결",
         "secondaryCta" : "다음에 결정하기"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}} 트렌드",
-      "buy" : "구매",
-      "swap" : "스왑",
-      "gainers" : "상승 코인",
-      "losers" : "하락 코인",
-      "error" : {
-        "title" : "죄송합니다. 트렌드를 로드할 수 없습니다.",
-        "description" : "나중에 다시 시도해 주세요"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "지난 {{trend}} 동안 상위 {{count}}개 자산 중 수익을 낸 자산이 없습니다",
-          "description" : "최하위 수익 창출 자산을 확인하거나 나중에 다시 방문하세요."
-        },
-        "losers" : {
-          "title" : "지난 {{trend}} 동안 상위 {{count}}개 자산 중 수익을 낸 자산이 없습니다",
-          "description" : "최상위 수익 창출 자산을 확인하거나 나중에 다시 방문해 보세요."
-        }
-      },
-      "trend" : {
-        "day" : "24시간",
-        "week" : "7일",
-        "month" : "30일",
-        "year" : "년",
-        "all" : "년"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "보낼 수량({{currency}})",
     "coinToSend" : "보낼 코인",
     "coinControlCustom" : "코인 직접 선택",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "최대"
+    },
+    "reviewCta" : "검토",
+    "getCta" : "{{currency}} 받기",
+    "switchInputMode" : "입력 모드 전환",
     "aboveMaximum" : "최대 수량 초과",
     "transactionSigned" : "트랜잭션 서명 완료",
     "processingTransaction" : "트랜잭션을 처리 중입니다",
     "sign" : {
       "title" : "Ledger {{wording}}에서 계속하기",
       "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "네트워크 수수료를 새로고침할 수 없습니다",
+      "warningDescription" : "수수료 설정값이 최신 상태가 아닐 수 있습니다."
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
-      "mevProtectionLearnMore" : "개인정보 관련 고지",
-      "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
-      "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
+      "mevProtectionLearnMore" : "개인정보 관련 고지"
     },
     "developer" : {
       "search" : "검색",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "Drawer 열기",
         "debugDialog" : "디버그 대화상자",
         "debugDuplicates" : "중복 항목 디버그"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "지갑 기능 개발 툴",
+        "description" : "데스크탑용 지갑 4.0 기능 토글(lwdWallet40 기능 플래그).",
+        "enableAll" : "모두 활성화",
+        "disableAll" : "모두 비활성화",
+        "featureParameters" : "기능 파라미터",
+        "showJson" : "JSON 표시",
+        "hideJson" : "JSON 감추기"
       },
       "cryptoAssetsList" : {
         "title" : "암호화폐 목록",
@@ -5383,8 +5377,8 @@
           },
           "genuineCheck" : {
             "success" : {
-              "title" : "확인되었습니다!",
-              "desc" : "사용자의 Ledger {{deviceName}} 는 정품이며 Ledger Wallet을 바로 사용할 수 있습니다"
+              "title" : "확인 완료!",
+              "desc" : "Ledger 장치({{deviceName}}) 는 정품입니다. Ledger Wallet과 연결해 바로 사용해 보세요"
             },
             "buttons" : {
               "next" : "계속",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "Ledger의 앱 사용 데이터를 수집을 허용하면 Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
     }
   },
+  "analytics" : {
+    "title" : "애널리틱스"
+  },
   "walletSync" : {
     "title" : "Ledger 동기화",
     "close" : "닫기",
@@ -7825,10 +7822,31 @@
       "cta" : "다시 시도하세요"
     }
   },
+  "portfolio" : {
+    "title" : "홈",
+    "today" : "오늘"
+  },
   "marketBanner" : {
     "title" : "시장 탐색하기",
     "genericError" : "연결에 실패했습니다",
-    "cta" : "모두 보기"
+    "cta" : "모두 보기",
+    "fearAndGreed" : {
+      "title" : "시장 심리"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "공포+",
+      "fear" : "공포",
+      "neutral" : "중립",
+      "greed" : "탐욕",
+      "extremeGreed" : "탐욕+"
+    },
+    "dialog" : {
+      "title" : "시장 심리 지수",
+      "content" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
+      "cta" : "확인"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
