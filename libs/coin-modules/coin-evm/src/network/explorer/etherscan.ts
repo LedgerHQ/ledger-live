@@ -111,7 +111,11 @@ function isPageFull(limitParameter: number | undefined, operationCount: number):
 function isDone(limitParameter: number | undefined, operationCount: number): boolean {
   // the notion is close to !isPageFull, but it handles unlimited pages
   // also isPageFull accepts a 0 limit, while isDone considers 0 results as done
-  return limitParameter === undefined || !isPageFull(limitParameter, operationCount) || operationCount === 0;
+  return (
+    limitParameter === undefined ||
+    !isPageFull(limitParameter, operationCount) ||
+    operationCount === 0
+  );
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -565,7 +569,12 @@ export async function exhaustEndpoint(
   const hasOpsAtOtherBlocks = boundaryOps.length < nextPage.operations.length;
   const resultIsDone = hasOpsAtOtherBlocks ? false : nextPage.isDone;
 
-  return { ...firstPage, operations: allOperations, isDone: resultIsDone, isPageFull: firstPage.isPageFull };
+  return {
+    ...firstPage,
+    operations: allOperations,
+    isDone: resultIsDone,
+    isPageFull: firstPage.isPageFull,
+  };
 }
 
 /**
@@ -621,24 +630,25 @@ export const getOperations = makeLRUCache<
         endpoint: FetchOperations,
         boundBlock: number | undefined,
         isDone: boolean,
-      ): Promise<{ result: EndpointResult, effectiveBoundBlock: number | undefined }> {
+      ): Promise<{ result: EndpointResult; effectiveBoundBlock: number | undefined }> {
         if (isDone) {
           return { result: EMPTY_RESULT, effectiveBoundBlock: boundBlock };
         }
         // in asc mode, the cursor is the toBlock
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
-        const params = (order === "asc") ?
-          {
-            ...baseParams,
-            fromBlock: paginationBlock || fromBlock,
-            toBlock: boundBlock || toBlock,
-          }
-          : {
-            ...baseParams,
-            fromBlock: boundBlock || fromBlock,
-            toBlock: paginationBlock || toBlock,
-          };
+        const params =
+          order === "asc"
+            ? {
+                ...baseParams,
+                fromBlock: paginationBlock || fromBlock,
+                toBlock: boundBlock || toBlock,
+              }
+            : {
+                ...baseParams,
+                fromBlock: boundBlock || fromBlock,
+                toBlock: paginationBlock || toBlock,
+              };
         const result = await exhaustEndpoint(endpoint, params);
         const effectiveBoundBlock = computeEffectiveBoundBlock(limit, boundBlock, result, cmp);
         return { result: result, effectiveBoundBlock: effectiveBoundBlock };
@@ -649,11 +659,23 @@ export const getOperations = makeLRUCache<
 
       const coins = await callEndpoint(getCoinOperations, undefined, pagingState?.coinIsDone);
 
-      const internals = await callEndpoint(getInternalOperations, coins.effectiveBoundBlock, pagingState?.internalIsDone);
+      const internals = await callEndpoint(
+        getInternalOperations,
+        coins.effectiveBoundBlock,
+        pagingState?.internalIsDone,
+      );
 
-      const tokens = await callEndpoint(getTokenOperations, internals.effectiveBoundBlock, pagingState?.tokenIsDone);
+      const tokens = await callEndpoint(
+        getTokenOperations,
+        internals.effectiveBoundBlock,
+        pagingState?.tokenIsDone,
+      );
 
-      const nfts = await callEndpoint(getNftOperations, tokens.effectiveBoundBlock, !isNFTActive(currency) || pagingState?.nftIsDone);
+      const nfts = await callEndpoint(
+        getNftOperations,
+        tokens.effectiveBoundBlock,
+        !isNFTActive(currency) || pagingState?.nftIsDone,
+      );
 
       const effectiveBoundBlock = nfts.effectiveBoundBlock;
       const nextBoundBlock =
@@ -666,7 +688,12 @@ export const getOperations = makeLRUCache<
           op.blockHeight !== undefined &&
           cmp.isLessOrEqual(op.blockHeight, effectiveBoundBlock));
 
-      const [coinsResult, internalsResult, tokensResult, nftsResult] = [coins.result, internals.result, tokens.result, nfts.result].map(result => {
+      const [coinsResult, internalsResult, tokensResult, nftsResult] = [
+        coins.result,
+        internals.result,
+        tokens.result,
+        nfts.result,
+      ].map(result => {
         const filteredOperations = result.operations.filter(respectsBoundBlock);
         const fixedIsDone = result.isDone && filteredOperations.length === result.operations.length;
         return { ...result, operations: filteredOperations, isDone: fixedIsDone };

@@ -1696,15 +1696,21 @@ describe("EVM Family", () => {
         });
 
         it("throws when token is missing flags", () => {
-          expect(() => deserializePagingToken("1000")).toThrow("Invalid paging token: missing flags");
+          expect(() => deserializePagingToken("1000")).toThrow(
+            "Invalid paging token: missing flags",
+          );
         });
 
         it("throws when boundBlock is invalid", () => {
-          expect(() => deserializePagingToken("abc-1111")).toThrow("Invalid paging token: invalid boundBlock");
+          expect(() => deserializePagingToken("abc-1111")).toThrow(
+            "Invalid paging token: invalid boundBlock",
+          );
         });
 
         it("throws when flags are invalid length", () => {
-          expect(() => deserializePagingToken("1000-11")).toThrow("Invalid paging token: invalid flags");
+          expect(() => deserializePagingToken("1000-11")).toThrow(
+            "Invalid paging token: invalid flags",
+          );
         });
 
         it("deserializes token with all flags true (all done)", () => {
@@ -1752,21 +1758,25 @@ describe("EVM Family", () => {
         });
 
         it("returns token with mixed flags", () => {
-          expect(serializePagingToken(1000, {
-            coinIsDone: true,
-            internalIsDone: false,
-            tokenIsDone: true,
-            nftIsDone: false,
-          })).toBe("1000-1010");
+          expect(
+            serializePagingToken(1000, {
+              coinIsDone: true,
+              internalIsDone: false,
+              tokenIsDone: true,
+              nftIsDone: false,
+            }),
+          ).toBe("1000-1010");
         });
 
         it("returns token with only coin done", () => {
-          expect(serializePagingToken(1000, {
-            coinIsDone: true,
-            internalIsDone: false,
-            tokenIsDone: false,
-            nftIsDone: false,
-          })).toBe("1000-1000");
+          expect(
+            serializePagingToken(1000, {
+              coinIsDone: true,
+              internalIsDone: false,
+              tokenIsDone: false,
+              nftIsDone: false,
+            }),
+          ).toBe("1000-1000");
         });
 
         it("serializes and deserializes roundtrip correctly", () => {
