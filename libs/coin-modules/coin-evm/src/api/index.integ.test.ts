@@ -465,11 +465,14 @@ describe.each([
         expect(isOrdered(allOps, order)).toBe(true);
       });
 
-      // Cache test only makes sense for etherscan-like explorers that have
-      // pagination parameters affecting cache keys.
       // Note: We only verify functional behavior (different params = different results),
       // not timing, as timing-based tests are inherently flaky in integration tests.
-      (isEtherscanLike ? it : it.skip)("cache key includes pagination parameters", async () => {
+      it("cache key includes pagination parameters", async () => {
+        // Cache test only makes sense for etherscan-like explorers that have
+        if (!isEtherscanLike) {
+          return;
+        }
+
         const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
 
         // First call
