@@ -2668,9 +2668,6 @@ importers:
       command-line-args:
         specifier: 6.0.1
         version: 6.0.1
-      msw:
-        specifier: 'catalog:'
-        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
