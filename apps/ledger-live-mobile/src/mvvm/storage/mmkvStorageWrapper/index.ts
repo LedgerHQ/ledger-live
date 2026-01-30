@@ -1,6 +1,7 @@
 import { MMKV } from "react-native-mmkv";
 import merge from "lodash/merge";
 import { CONFIG_PARAMS } from "./constants";
+import { monitorWrite } from "./monitor";
 
 /** Singleton instance of MMKV storage */
 export const mmkv = new MMKV({
@@ -85,14 +86,18 @@ const storageWrapper = {
   save<T>(key: string | [string, T][], value?: T) {
     if (!Array.isArray(key)) {
       if (value !== undefined) {
-        mmkv.set(key, JSON.stringify(value));
+        monitorWrite(key, () => {
+          mmkv.set(key, JSON.stringify(value));
+        });
       }
     } else {
-      for (const [k, v] of key) {
-        if (v !== undefined) {
-          mmkv.set(k, JSON.stringify(v));
+      monitorWrite(key, () => {
+        for (const [k, v] of key) {
+          if (v !== undefined) {
+            mmkv.set(k, JSON.stringify(v));
+          }
         }
-      }
+      });
     }
   },
 
@@ -106,7 +111,9 @@ const storageWrapper = {
    * The value to save
    */
   saveString(key: string, value: string) {
-    mmkv.set(key, value);
+    monitorWrite(key, () => {
+      mmkv.set(key, value);
+    });
   },
 
   /**
