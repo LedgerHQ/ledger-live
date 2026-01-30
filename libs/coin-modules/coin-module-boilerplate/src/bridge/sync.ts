@@ -13,7 +13,7 @@ const operationAdapter =
   (accountId: string, address: string) =>
   ({
     meta: { delivered_amount },
-    tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
+    tx: { Fee, hash, inLedger, Account, Destination, Sequence },
   }: BoilerplateOperation) => {
     const type = Account === address ? "OUT" : "IN";
     let value =
