@@ -30,6 +30,7 @@ import {
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
+export const DEFAULT_RETRIES_API = 8;
 
 /**
  * Common parameters for fetching operations from an endpoint
@@ -38,13 +39,20 @@ export type FetchOperationsParams = {
   currency: CryptoCurrency;
   address: string;
   accountId: string;
+  // Inclusive lower bound of the block range. fromBlock <= toBlock whatever the sort order is.
   fromBlock: number;
+  // Inclusive upper bound of the block range. fromBlock <= toBlock whatever the sort order is.
   toBlock?: number;
+  // Maximum number of operations to fetch. Enforced by the endpoint.
+  // It's a soft limit, we may fetch less than the limit (no more operations to fetch) 
+  // or more than the limit (in case of heights spreading across pages for instance)
   limit?: number;
+  // asc means lower blocks come first, results are sorted chronologically
+  // desc means higher blocks come first, results are sorted reverse chronologically
   sort?: "asc" | "desc";
+  // page number. Used by the endpoint to paginate the results.
   page?: number;
 };
-export const DEFAULT_RETRIES_API = 8;
 
 function boundBlockFromOperations(ops: Operation[]): number {
   if (ops.length === 0) return 0;
@@ -58,10 +66,12 @@ function boundBlockFromOperations(ops: Operation[]): number {
 // Result type for individual endpoint fetches
 export type EndpointResult = {
   operations: Operation[];
+  // true when there are no more operations to fetch at all
   isDone: boolean;
+  // the block number that is a max bound (inclusive) for the next endpoint call
   boundBlock: number;
   // true when page returned exactly `limit` results, indicating more data may exist
-  // used to compute effectiveMaxBlock for the next endpoint call
+  // used to compute an effective max bound block for the next endpoint call
   isPageFull: boolean;
 };
 
@@ -70,7 +80,7 @@ const EMPTY_RESULT: EndpointResult = {
   isDone: true,
   boundBlock: 0,
   isPageFull: false,
-};
+} as const;
 
 export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
@@ -173,9 +183,8 @@ function createBlockComparator(order: "asc" | "desc"): BlockComparator {
   };
 }
 
-// this function is used to optimize the fromBlock or toBlock for the next endpoint call
-// if the current enpoint call returns a full page, then it's unnecessary to call the next endpoint with a toBlock higher than the maxBlock of the current page
-// why ? because the operations must respect a total ordering by block height across pages
+// this function is used to optimize the block range query for the next endpoint call
+// why ? because the operations must respect a total ordering by block height across pages, it's unnecessary to query blocks higher than the max block of the current page
 function computeEffectiveBoundBlock(
   limit: number | undefined,
   currentBoundBlock: number | undefined,
@@ -202,7 +211,7 @@ function computeEffectiveBoundBlock(
 }
 
 /**
- * Get all the latest "normal" transactions (no tokens / NFTs)
+ * Get all the "normal" transactions (no tokens / NFTs)
  */
 export const getCoinOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
   const config = getCoinConfig(params.currency).info;
@@ -241,7 +250,7 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
 };
 
 /**
- * Get all the latest ERC20 transactions
+ * Get all the  ERC20 transactions
  */
 export const getTokenOperations = async (
   params: FetchOperationsParams,
@@ -297,7 +306,7 @@ export const getTokenOperations = async (
 };
 
 /**
- * Get all the latest ERC721 transactions
+ * Get all the  ERC721 transactions
  */
 export const getERC721Operations = async (
   params: FetchOperationsParams,
@@ -353,7 +362,7 @@ export const getERC721Operations = async (
 };
 
 /**
- * Get all the latest ERC1155 transactions
+ * Get all the  ERC1155 transactions
  */
 export const getERC1155Operations = async (
   params: FetchOperationsParams,
@@ -437,7 +446,7 @@ export const getNftOperations = async (params: FetchOperationsParams): Promise<E
 };
 
 /**
- * Get all the latest internal transactions
+ * Get all the internal transactions
  */
 export const getInternalOperations = async (
   params: FetchOperationsParams,
@@ -534,7 +543,7 @@ export async function exhaustEndpoint(
   // if the page is not full there is nothing to exhaust and the limit input is honored
   if (!firstPage.isPageFull) {
     // this is a bit hacky but we need to recompute isPageFull
-    // because the first page may have been fetched with a limit + 1
+    // because the first page has been fetched with a limit + 1
     // in case we have ops.length == limit, then isPageFull should be true
     return { ...firstPage, isPageFull: isPageFull(limit, firstPage.operations.length) };
   }
@@ -542,6 +551,7 @@ export async function exhaustEndpoint(
   // this is an optimization to avoid fetching the next page if the last 2 ops are not at the same block height (most likely case)
   // if the last 2 ops are at the same block height, we need to fetch the next pages
   // otherwise we can stop here (no heights spreading across pages)
+  // example: with limit = 3, if I fetch 4 ops with heights [1, 2, 3, 4], I know I have all the blocks at height 3.
   const lastTwoOps = firstPage.operations.slice(-2);
   if (lastTwoOps.length === 2 && lastTwoOps[0].blockHeight !== lastTwoOps[1].blockHeight) {
     // return the first page with the last op removed to honor the limit
@@ -655,8 +665,7 @@ export const getOperations = makeLRUCache<
         return { result: result, effectiveBoundBlock: effectiveBoundBlock };
       }
 
-      // endpoint calls are sorted by likelyhood of having more operations than the next
-      // Skip endpoints that have no more pages (optimization from paging state)
+      // endpoint calls are sorted by likelihood of having more operations than the next
 
       const coins = await callEndpoint(getCoinOperations, undefined, pagingState?.coinIsDone);
 

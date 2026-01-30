@@ -295,12 +295,10 @@ export const etherscanInternalTransactionToOperations = (
   );
 };
 
-/**
- * Represents the pagination state for all endpoints.
- * Each flag indicates whether the corresponding endpoint is done (no more pages to fetch).
- */
 export type PagingState = {
+  // The block number to start fetching operations from (inclusive)
   boundBlock: number;
+  // Each flag indicates whether the corresponding endpoint is done (no more pages to fetch).
   coinIsDone: boolean;
   internalIsDone: boolean;
   tokenIsDone: boolean;
