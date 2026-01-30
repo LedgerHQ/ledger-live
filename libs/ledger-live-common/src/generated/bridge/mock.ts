@@ -1,3 +1,4 @@
+import aleo from "../../families/aleo/bridge/mock";
 import algorand from "../../families/algorand/bridge/mock";
 import bitcoin from "../../families/bitcoin/bridge/mock";
 import canton from "../../families/canton/bridge/mock";
@@ -15,6 +16,7 @@ import tron from "../../families/tron/bridge/mock";
 import xrp from "../../families/xrp/bridge/mock";
 
 export default {
+  aleo,
   algorand,
   bitcoin,
   canton,

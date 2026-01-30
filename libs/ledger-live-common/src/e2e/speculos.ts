@@ -371,6 +371,13 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Zcash",
     },
+  },
+  Aleo: {
+    currency: getCryptoCurrencyById("aleo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Aleo",
+    },
     dependencies: [],
   },
 };
@@ -793,6 +800,17 @@ export const goToSettings = withDeviceController(({ getButtonsController }) => a
 export const providePublicKey = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
   await buttons.right();
+});
+
+export const shareViewKey = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
+    await buttons.both();
+  }
 });
 
 type DeviceLabelsReturn = {

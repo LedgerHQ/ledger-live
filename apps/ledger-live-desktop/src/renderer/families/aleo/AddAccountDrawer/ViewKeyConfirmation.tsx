@@ -44,7 +44,7 @@ const ViewKeyConfirmation = ({
   };
 
   return (
-    <Flex height="100%" flexDirection="column">
+    <Flex height="100%" flexDirection="column" data-testid="view-key-confirmation-step">
       <Box height="100%" overflowY="auto" pb={120}>
         <Animation animation={getDeviceAnimation(device.modelId, theme, "verify")} />
         <DeviceBlocker />
