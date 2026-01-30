@@ -104,7 +104,6 @@ for (const token of subAccounts) {
   });
 }
 
-//Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
 for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
