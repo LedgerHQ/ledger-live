@@ -1,23 +1,20 @@
-import * as protobuf from "protobufjs";
-import type { Root, Type } from "protobufjs";
-import transactionProtoJson from "./types/transaction-proto.json";
-
-const root: Root = protobuf.Root.fromJSON(transactionProtoJson);
+import type { Type } from "protobufjs";
+import { ProtobufTypes, lookupProtobufType } from "./protobufRoot";
 
 function getDeviceDamlTransactionType(): Type {
-  return root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction");
+  return ProtobufTypes.DeviceDamlTransaction;
 }
 
 function getDeviceMetadataType(): Type {
-  return root.lookupType("com.daml.ledger.api.v2.interactive.DeviceMetadata");
+  return ProtobufTypes.DeviceMetadata;
 }
 
 function getNodeType(): Type {
-  return root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node");
+  return ProtobufTypes.Node;
 }
 
 function getInputContractType(): Type {
-  return root.lookupType("com.daml.ledger.api.v2.interactive.DeviceMetadata.InputContract");
+  return ProtobufTypes.InputContract;
 }
 
 export function decodeDeviceDamlTransaction(data: Uint8Array): any {
@@ -37,5 +34,5 @@ export function decodeInputContract(data: Uint8Array): any {
 }
 
 export function lookupType(typeName: string): Type | null {
-  return root.lookupType(typeName) || null;
+  return lookupProtobufType(typeName);
 }
