@@ -85,6 +85,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
   let latestAccountPrivateOperations: Operation<AleoOperationExtra>[] = [];
 
+  console.log(provableApi, uuid, viewKey, apiKey, jwt.token);
   if (provableApi && uuid && viewKey && apiKey && jwt.token) {
     const res = await listPrivateOperations({
       currency,
@@ -97,6 +98,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     });
 
     latestAccountPrivateOperations = res.privateOperations;
+    console.log({ res });
   }
 
   const latestAccountOperations = await listOperations({
@@ -114,6 +116,9 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   // sort by date desc
   latestAccountOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
+  // sort by date desc
+  latestAccountPrivateOperations.sort((a, b) => b.date.getTime() - a.date.getTime());
+
   // merge old and new operations
   const operations = shouldSyncFromScratch
     ? latestAccountOperations.operations
@@ -125,8 +130,8 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     balance: spendableBalance,
     spendableBalance: spendableBalance,
     blockHeight: latestBlock.height,
-    operations: [...operations, ...latestAccountPrivateOperations],
-    operationsCount: operations.length + latestAccountPrivateOperations.length,
+    operations: [...latestAccountPrivateOperations],
+    operationsCount: latestAccountPrivateOperations.length,
     lastSyncDate: new Date(),
     aleoResources: {
       provableApi: {
@@ -143,4 +148,5 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
 
 export const sync = makeSync({
   getAccountShape,
+  shouldMergeOps: false,
 });

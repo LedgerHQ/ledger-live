@@ -18,13 +18,10 @@ async function parseOperation({
   ledgerAccountId: string;
   viewKey: string;
 }): Promise<AleoOperation> {
-  const timestamp = new Date(Number(rawTx.block_timestamp) * 1000);
-  const hasFailed = rawTx.status !== "Accepted";
-
-  const { fee_value, block_hash, execution } = await apiClient.getTransactionById(
-    currency,
-    rawTx.transaction_id,
-  );
+  const { fee_value, block_hash, execution, status, block_timestamp } =
+    await apiClient.getTransactionById(currency, rawTx.transaction_id);
+  const timestamp = new Date(Number(block_timestamp) * 1000);
+  const hasFailed = status !== "Accepted";
   const [receiverOutput, senderOutput] = execution.transitions[0].outputs;
   const receiver = await apiClient
     .decryptCiphertext<AleoDecryptedTransactionValueResponse>(receiverOutput?.value, viewKey)
@@ -32,18 +29,43 @@ async function parseOperation({
   const sender = await apiClient
     .decryptCiphertext<AleoDecryptedTransactionValueResponse>(senderOutput?.value, viewKey)
     .catch(e => console.log(`Failed to decrypt sender output: ${e}`));
-  const type = receiver?.owner === address ? "IN" : "OUT";
-  const value = receiver?.data?.microcredits ?? sender?.data?.microcredits ?? "0.0";
+  const senderAddress = sender?.owner?.split(".")[0] ?? "";
+  const receiverAddress = receiver?.owner?.split(".")[0] ?? "";
+  const type = receiverAddress === address ? "IN" : "OUT";
+  const value = receiver?.data?.microcredits ?? sender?.data?.microcredits ?? "0u0";
+
+  await apiClient
+    .getTransactionById(currency, rawTx.transaction_id)
+    .then(res =>
+      console.log(rawTx, res, {
+        id: encodeOperationId(ledgerAccountId, rawTx.transition_id, rawTx.function_name),
+        senders: senderAddress === "" ? [] : [senderAddress],
+        recipients: receiverAddress === "" ? [] : [receiverAddress],
+        value: new BigNumber(value.split("u")[0]),
+        type,
+        hasFailed,
+        hash: rawTx.transaction_id,
+        fee: new BigNumber(fee_value),
+        blockHeight: rawTx.block_height,
+        blockHash: block_hash,
+        accountId: ledgerAccountId,
+        date: timestamp,
+        extra: {
+          functionId: rawTx.function_name,
+        },
+      }),
+    )
+    .catch(() => {});
 
   return {
     id: encodeOperationId(ledgerAccountId, rawTx.transition_id, rawTx.function_name),
-    senders: [sender?.owner ?? ""],
-    recipients: [receiver?.owner ?? ""],
-    value: new BigNumber(value.split(".")[0]),
+    senders: senderAddress === "" ? [] : [senderAddress],
+    recipients: receiverAddress === "" ? [] : [receiverAddress],
+    value: new BigNumber(value.split("u")[0]),
     type,
     hasFailed,
     hash: rawTx.transaction_id,
-    fee: BigNumber(fee_value),
+    fee: new BigNumber(fee_value),
     blockHeight: rawTx.block_height,
     blockHash: block_hash,
     accountId: ledgerAccountId,
@@ -75,7 +97,10 @@ export async function listPrivateOperations({
   const mirrorResult = await apiClient.getAccountOwnedRecords(jwtToken, uuid, apiKey);
 
   // currently we only support native aleo coin operations & ignore rest
-  const nativePrivateTransactions = mirrorResult.filter(tx => tx.program_name === "credits.aleo");
+  const nativePrivateTransactions = mirrorResult.filter(
+    ({ program_name, function_name }) =>
+      program_name === "credits.aleo" && function_name === "transfer_private",
+  );
 
   for (const rawTx of nativePrivateTransactions) {
     const parsedOperation = await parseOperation({
@@ -88,6 +113,8 @@ export async function listPrivateOperations({
 
     privateOperations.push(parsedOperation);
   }
+
+  console.log({ privateOperations });
 
   return {
     privateOperations,
