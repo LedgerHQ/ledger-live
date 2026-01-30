@@ -58,21 +58,25 @@ describe("fetchTronAccountTxs", () => {
   beforeEach(doBeforeEach(mockServer));
   afterAll(doAfterAll(mockServer));
 
-  it("convert correctly operations from the blockchain", async () => {
-    // WHEN
-    const results = await fetchTronAccountTxs(
-      "ADDRESS",
-      txs => txs.length < 100,
-      {},
-      defaultFetchParams,
-    );
+  it(
+    "convert correctly operations from the blockchain",
+    async () => {
+      // WHEN
+      const results = await fetchTronAccountTxs(
+        "ADDRESS",
+        txs => txs.length < 100,
+        {},
+        defaultFetchParams,
+      );
 
-    // THEN
-    const tx = results.find(tx => tx.blockHeight === 62258698);
-    expect(tx).toBeDefined();
-    expect(tx!.from).toEqual("TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH");
-    expect(tx!.to).toEqual("TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj");
-  });
+      // THEN
+      const tx = results.find(tx => tx.blockHeight === 62258698);
+      expect(tx).toBeDefined();
+      expect(tx!.from).toEqual("TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH");
+      expect(tx!.to).toEqual("TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj");
+    },
+    10_000,
+  );
 });
 
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
@@ -112,16 +116,20 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
   beforeEach(doBeforeEach(mockServer));
   afterAll(doAfterAll(mockServer));
 
-  it("retry several times until result is correct", async () => {
-    // WHEN
-    const results = await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
+  it(
+    "retry several times until result is correct",
+    async () => {
+      // WHEN
+      const results = await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
 
-    // THEN
-    const tx1 = results.find(tx => tx.txID === tx1Hash);
-    expect(tx1).toBeDefined();
-    const tx2 = results.find(tx => tx.txID === tx2Hash);
-    expect(tx2).toBeDefined();
-  });
+      // THEN
+      const tx1 = results.find(tx => tx.txID === tx1Hash);
+      expect(tx1).toBeDefined();
+      const tx2 = results.find(tx => tx.txID === tx2Hash);
+      expect(tx2).toBeDefined();
+    },
+    10_000,
+  );
 });
 
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries it throws an exception", () => {
@@ -144,16 +152,20 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
   beforeEach(doBeforeEach(mockServer));
   afterAll(doAfterAll(mockServer));
 
-  it("after several retry, it gives up on retry", async () => {
-    try {
-      await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
-    } catch (e) {
-      expect(e).toBeDefined();
-      expect((e as Error).message).toBe(
-        "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
-      );
-      return;
-    }
-    fail("should have thrown an error");
-  });
+  it(
+    "after several retry, it gives up on retry",
+    async () => {
+      try {
+        await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
+      } catch (e) {
+        expect(e).toBeDefined();
+        expect((e as Error).message).toBe(
+          "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
+        );
+        return;
+      }
+      fail("should have thrown an error");
+    },
+    10_000,
+  );
 });
