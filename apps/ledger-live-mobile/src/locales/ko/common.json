@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Ledger Flex와 같은 최신 장치로 Ledger Nano S를 업그레이드하여 더 커진 메모리, 최신 보안 업데이트, 새로운 기능, 20% 독점 할인 혜택까지 모두 누려보세요. ",
+      "title" : "Ledger Nano S™ 업그레이드 찬스",
+      "description" : "단독 기회! 최신 Ledger 사이너를 20% 할인된 가격에 만나보세요.",
       "cta" : "내 Ledger 업그레이드"
     },
     "opted_out" : {
-      "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
+      "title" : "Ledger Nano S™ 업그레이드",
+      "description" : "Ledger Nano S의 메모리 용량 한계로 최신 기능, 블록체인 변경 사항 및 보안 업데이트 이용 및 액세스가 제한됩니다.",
       "cta" : "자세히 알아보기"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "시장 탐색하기",
     "viewAll" : "모두 보기",
     "viewAllAccessibilityHint" : "두 번 탭하면 모든 시장 자산이 표시됩니다",
+    "connectionFailed" : "연결에 실패했습니다",
+    "errorAccessibilityHint" : "시장 데이터를 로드할 수 없습니다. 나중에 다시 시도해 주세요.",
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "두 번 탭하면 시장 상세 정보가 표시됩니다"
@@ -8352,6 +8356,17 @@
       "neutral" : "중립",
       "greed" : "탐욕",
       "extremeGreed" : "탐욕+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "애널리틱스"
+    },
+    "allocation" : {
+      "title" : "자산 비중"
+    },
+    "actions" : {
+      "swap" : "스왑"
     }
   }
 }
