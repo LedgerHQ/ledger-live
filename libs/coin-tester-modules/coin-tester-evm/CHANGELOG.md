@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.15.0
+
+### Minor Changes
+
+- [#13874](https://github.com/LedgerHQ/ledger-live/pull/13874) [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-bitcoin): add local signer
+
+### Patch Changes
+
+- Updated dependencies [[`fb7eafc`](https://github.com/LedgerHQ/ledger-live/commit/fb7eafc3f1f1fb408d96d4179b8c3bf352ece6cc), [`ed6c327`](https://github.com/LedgerHQ/ledger-live/commit/ed6c32745d607d339eee3159e7234e42bfdf20ce), [`a9e7653`](https://github.com/LedgerHQ/ledger-live/commit/a9e7653027ef350dc854051ee836a7d977f53092), [`dd1122e`](https://github.com/LedgerHQ/ledger-live/commit/dd1122eeb6e9c582541446ff82a488928fa340c2), [`7a3085a`](https://github.com/LedgerHQ/ledger-live/commit/7a3085a9e448079425a71372713240f8e65b1b61), [`52c5265`](https://github.com/LedgerHQ/ledger-live/commit/52c5265b2825bfa4ba27587e9306182c024c7126), [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b), [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983), [`2b6d179`](https://github.com/LedgerHQ/ledger-live/commit/2b6d1797dcefa9f642c2a37efcd4f6ae8fe79557), [`5a3332f`](https://github.com/LedgerHQ/ledger-live/commit/5a3332f7f701ca31d6f0808575816891101450cb), [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d), [`1d2d196`](https://github.com/LedgerHQ/ledger-live/commit/1d2d19635c28db69adb04dcd21219b51836186f5), [`99f92ce`](https://github.com/LedgerHQ/ledger-live/commit/99f92cee9bbfb433eda7c3d4f1a4752401f3aa44), [`21191ce`](https://github.com/LedgerHQ/ledger-live/commit/21191cefd8b3b10153c5532376d4a7eacb6fbbe6), [`1f3a159`](https://github.com/LedgerHQ/ledger-live/commit/1f3a159e950dcb81b8e23aaa9e411db816e657d4), [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5), [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81)]:
+  - @ledgerhq/live-common@34.59.0
+  - @ledgerhq/coin-framework@6.14.0
+  - @ledgerhq/coin-tester@0.17.0
+  - @ledgerhq/cryptoassets@13.38.0
+  - @ledgerhq/types-live@6.95.0
+  - @ledgerhq/coin-evm@2.41.0
+
 ## 1.15.0-next.0
 
 ### Minor Changes

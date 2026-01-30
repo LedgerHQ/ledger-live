@@ -1,5 +1,29 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.15.0
+
+### Minor Changes
+
+- [#13891](https://github.com/LedgerHQ/ledger-live/pull/13891) [`6ebfba6`](https://github.com/LedgerHQ/ledger-live/commit/6ebfba64155eeee9c017f843b71df86b72e9e027) Thanks [@gre-ledger](https://github.com/gre-ledger)! - introduce userData file cleanup mecanism at boot and cleanup unwanted app.json.\* left over files.
+
+- [#13893](https://github.com/LedgerHQ/ledger-live/pull/13893) [`df8c49d`](https://github.com/LedgerHQ/ledger-live/commit/df8c49dfcde22f381d7df4ee169531c37440f175) Thanks [@CremaFR](https://github.com/CremaFR)! - fix swap E2E with the removal of fee drawer
+
+- [#13879](https://github.com/LedgerHQ/ledger-live/pull/13879) [`2eef302`](https://github.com/LedgerHQ/ledger-live/commit/2eef302806d0955aba4c21e543d6b5cffe4f278f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide Market Banner from DDD
+
+- [#13369](https://github.com/LedgerHQ/ledger-live/pull/13369) [`019ca56`](https://github.com/LedgerHQ/ledger-live/commit/019ca5617b19cf7a73abada87a8c49bdd2f83297) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Updated e2e tests to support noah flow
+
+- [#13856](https://github.com/LedgerHQ/ledger-live/pull/13856) [`99ea6a6`](https://github.com/LedgerHQ/ledger-live/commit/99ea6a66290e723f03d6501f8ce246be40f9864d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Market Banner e2e
+
+- [#13833](https://github.com/LedgerHQ/ledger-live/pull/13833) [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove MarketWidget feature
+
+### Patch Changes
+
+- Updated dependencies [[`fb7eafc`](https://github.com/LedgerHQ/ledger-live/commit/fb7eafc3f1f1fb408d96d4179b8c3bf352ece6cc), [`ed6c327`](https://github.com/LedgerHQ/ledger-live/commit/ed6c32745d607d339eee3159e7234e42bfdf20ce), [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c), [`a9e7653`](https://github.com/LedgerHQ/ledger-live/commit/a9e7653027ef350dc854051ee836a7d977f53092), [`dd1122e`](https://github.com/LedgerHQ/ledger-live/commit/dd1122eeb6e9c582541446ff82a488928fa340c2), [`7a3085a`](https://github.com/LedgerHQ/ledger-live/commit/7a3085a9e448079425a71372713240f8e65b1b61), [`52c5265`](https://github.com/LedgerHQ/ledger-live/commit/52c5265b2825bfa4ba27587e9306182c024c7126), [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983), [`2b6d179`](https://github.com/LedgerHQ/ledger-live/commit/2b6d1797dcefa9f642c2a37efcd4f6ae8fe79557), [`5a3332f`](https://github.com/LedgerHQ/ledger-live/commit/5a3332f7f701ca31d6f0808575816891101450cb), [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d), [`1d2d196`](https://github.com/LedgerHQ/ledger-live/commit/1d2d19635c28db69adb04dcd21219b51836186f5), [`21191ce`](https://github.com/LedgerHQ/ledger-live/commit/21191cefd8b3b10153c5532376d4a7eacb6fbbe6), [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5), [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81)]:
+  - @ledgerhq/live-common@34.59.0
+  - @ledgerhq/live-cli@24.32.0
+  - @ledgerhq/types-live@6.95.0
+  - @ledgerhq/live-wallet@0.20.1
+
 ## 0.15.0-next.0
 
 ### Minor Changes

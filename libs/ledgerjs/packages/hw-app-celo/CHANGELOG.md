@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.37.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.3.2
+
 ## 6.37.2-next.0
 
 ### Patch Changes

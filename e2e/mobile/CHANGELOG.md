@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.12.0
+
+### Minor Changes
+
+- [#13893](https://github.com/LedgerHQ/ledger-live/pull/13893) [`df8c49d`](https://github.com/LedgerHQ/ledger-live/commit/df8c49dfcde22f381d7df4ee169531c37440f175) Thanks [@CremaFR](https://github.com/CremaFR)! - fix swap E2E with the removal of fee drawer
+
+- [#13833](https://github.com/LedgerHQ/ledger-live/pull/13833) [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove MarketWidget feature
+
 ## 0.12.0-next.0
 
 ### Minor Changes

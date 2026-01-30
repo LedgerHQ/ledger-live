@@ -1,5 +1,25 @@
 # @ledgerhq/coin-evm
 
+## 2.41.0
+
+### Minor Changes
+
+- [#13782](https://github.com/LedgerHQ/ledger-live/pull/13782) [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983) Thanks [@acewf](https://github.com/acewf)! - Add unichain network config
+
+- [#13871](https://github.com/LedgerHQ/ledger-live/pull/13871) [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - add EVM currencies avalanche_c_chain_fuji, bitlayer, klaytn_baobab, shape, story
+
+- [#13781](https://github.com/LedgerHQ/ledger-live/pull/13781) [`99f92ce`](https://github.com/LedgerHQ/ledger-live/commit/99f92cee9bbfb433eda7c3d4f1a4752401f3aa44) Thanks [@jprudent](https://github.com/jprudent)! - EVM coin module getBlock returns ERC20 operations
+
+- [#13930](https://github.com/LedgerHQ/ledger-live/pull/13930) [`1f3a159`](https://github.com/LedgerHQ/ledger-live/commit/1f3a159e950dcb81b8e23aaa9e411db816e657d4) Thanks [@jprudent](https://github.com/jprudent)! - fix: Optimism can fetch blocks with more than 10 txs
+
+### Patch Changes
+
+- Updated dependencies [[`dd1122e`](https://github.com/LedgerHQ/ledger-live/commit/dd1122eeb6e9c582541446ff82a488928fa340c2), [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983), [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d), [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5)]:
+  - @ledgerhq/coin-framework@6.14.0
+  - @ledgerhq/cryptoassets@13.38.0
+  - @ledgerhq/domain-service@1.6.2
+  - @ledgerhq/evm-tools@1.10.1
+
 ## 2.41.0-next.0
 
 ### Minor Changes
