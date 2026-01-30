@@ -15,7 +15,6 @@ export async function getBlockInfo(currency: CryptoCurrency, height: number): Pr
   if (
     height > 0 &&
     result.parentHash &&
-    result.parentHash !== "" &&
     !/^0x0+$/.test(result.parentHash)
   ) {
     blockInfo.parent = {

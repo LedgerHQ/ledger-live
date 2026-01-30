@@ -450,7 +450,7 @@ export function alpacaTransactionToOp(
  *
  * @param checkpoint SUI RPC checkpoint info
  */
-export async function toBlockInfo(checkpoint: Checkpoint): Promise<BlockInfo> {
+export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
@@ -832,7 +832,7 @@ export const getBlock = async (id: string): Promise<Block> =>
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
     return {
-      info: await toBlockInfo(checkpoint),
+      info: toBlockInfo(checkpoint),
       transactions: rawTxs.map(toBlockTransaction),
     };
   });

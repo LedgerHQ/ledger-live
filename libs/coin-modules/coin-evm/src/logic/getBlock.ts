@@ -17,7 +17,6 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   if (
     height > 0 &&
     result.parentHash &&
-    result.parentHash !== "" &&
     !/^0x0+$/.test(result.parentHash)
   ) {
     info.parent = {
