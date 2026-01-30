@@ -5,16 +5,16 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
-import * as ETHERSCAN_API from "../../../../network/explorer/etherscan";
-import { makeAccount } from "../../../../fixtures/common.fixtures";
+import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import * as ETHERSCAN_API from "./etherscan";
+import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
   etherscanERC1155Operations,
   etherscanERC721Operations,
   etherscanInternalOperations,
   etherscanTokenOperations,
-} from "../../../../fixtures/etherscan.fixtures";
+} from "../../fixtures/etherscan.fixtures";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
@@ -24,8 +24,8 @@ import {
   deserializePagingToken,
   serializePagingToken,
   PagingState,
-} from "../../../../adapters";
-import { getCoinConfig } from "../../../../config";
+} from "../../adapters";
+import { getCoinConfig } from "../../config";
 
 setupMockCryptoAssetsStore({
   getTokensSyncHash: async () => "0",
