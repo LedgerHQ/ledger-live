@@ -16,7 +16,6 @@ async function getAmountAndRecipient(
   knownRecipient?: string,
 ) {
   const network = walletAccount.xpub.crypto.network;
-
   // If we already know the recipient from the pending transaction,
   // use it directly to find the correct output
   if (knownRecipient) {
@@ -58,7 +57,7 @@ async function getAmountAndRecipient(
 
   const amountSent = externalOutputs.reduce((sum, out) => sum + out.value, 0);
   if (externalOutputs.length === 0) {
-    throw new Error("Cannot find recipient (no external outputs found)");
+    return { amountSent: 0, recipient: "" };
   }
   const recipient = externalOutputs[0].address;
 
@@ -103,10 +102,10 @@ const resolveFeesStrategy = (
 
 const getRbfContext = async (account: Account, originalTxId: string): Promise<RbfTxContext> => {
   const walletAccount = getWalletAccount(account);
-
   let hexTx: string;
   try {
     hexTx = await walletAccount.xpub.explorer.getTxHex(originalTxId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     // Check if this transaction was recently confirmed or replaced
     const confirmedTx = account.operations.find(op => op.hash === originalTxId);
@@ -115,8 +114,9 @@ const getRbfContext = async (account: Account, originalTxId: string): Promise<Rb
         `Transaction ${originalTxId.slice(0, 8)}... has already been confirmed in block ${confirmedTx.blockHeight}. Confirmed transactions cannot be replaced.`,
       );
     }
-
-    throw new Error(error instanceof Error ? error.message : String(error));
+    throw new Error(
+      `Transaction ${originalTxId.slice(0, 8)}... not found. It may have been replaced by another transaction or is not yet available from the explorer. Please wait a moment and try again.`,
+    );
   }
 
   const originalTx = Transaction.fromHex(hexTx);
@@ -200,7 +200,7 @@ export async function buildRbfCancelTx(
   return {
     family: "bitcoin",
     recipient: changeAddress.address,
-    amount: new BigNumber(amountSent), // Send the same amount as original, but to ourselves
+    amount: new BigNumber(amountSent),
     feesStrategy: resolveFeesStrategy(feePerByte, networkInfo),
     utxoStrategy,
     rbf: true,
