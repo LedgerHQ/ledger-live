@@ -102,13 +102,13 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-canton": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
-    "protobufjs": "7.5.4",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -119,7 +119,6 @@
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
-    "protobufjs-cli": "1.1.2",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "typescript": "^5.4.5"
