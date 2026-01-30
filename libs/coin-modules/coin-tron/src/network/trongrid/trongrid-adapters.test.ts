@@ -48,7 +48,7 @@ describe("fromTrongridTxInfoToOperation", () => {
         hash: "tx123",
         block: { height: 10, hash: "blockHash123", time: new Date(1627843345000) },
         fees: BigInt(1000),
-        date: 1627843345,
+        date: new Date(1627843345000),
         failed: false,
       },
       type: "OUT",
