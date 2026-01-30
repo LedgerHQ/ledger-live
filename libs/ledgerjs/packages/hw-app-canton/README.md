@@ -40,6 +40,7 @@ For a smooth and quick integration:
     *   [Parameters](#parameters-5)
 *   [encodeNode](#encodenode)
     *   [Parameters](#parameters-6)
+*   [rootInstance](#rootinstance)
 *   [splitTransaction](#splittransaction)
     *   [Parameters](#parameters-7)
 *   [CantonTransactionJson](#cantontransactionjson)
@@ -122,6 +123,15 @@ Encode transaction node to protobuf bytes
 *   `node` **CantonTransactionNode**&#x20;
 
 Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+### rootInstance
+
+Shared protobuf root instance.
+Created once at module load time to avoid expensive re-parsing of the JSON schema.
+The protobuf Root.fromJSON operation is expensive as it parses and validates
+the entire schema, so we memoize it at module level.
+
+Type: (Root | null)
 
 ### splitTransaction
 
