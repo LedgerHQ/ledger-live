@@ -12,7 +12,7 @@ const testConfig = {
   tmsLinks: ["B2CQA-3523"],
   provider: Provider.MOONPAY,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, `@family-evm`],
 };
 
 runQueryParametersTest(

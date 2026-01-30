@@ -30,16 +30,16 @@ describe("Analytics", () => {
     render(<Analytics />);
 
     expect(screen.getByText("analytics.title")).toBeVisible();
-    expect(screen.getByTestId("portfolio-balance-summary")).toBeVisible();
+    expect(screen.getByTestId("analytics-chart")).toBeVisible();
   });
 
   it("should call navigateToDashboard when back button is clicked", async () => {
     const { user } = render(<Analytics />);
 
-    const pageHeader = screen.getByTestId("page-header");
-    expect(pageHeader).toBeInTheDocument();
+    const backButton = screen.getByRole("button");
+    expect(backButton).toBeInTheDocument();
 
-    await user.click(pageHeader);
+    await user.click(backButton);
 
     expect(mockNavigateToDashboard).toHaveBeenCalledTimes(1);
   });

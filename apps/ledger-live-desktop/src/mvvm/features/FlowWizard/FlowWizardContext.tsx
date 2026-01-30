@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useMemo, type ReactNode } from "react";
-import type {
-  FlowStep,
-  FlowNavigationActions,
-  FlowNavigationDirection,
-  FlowStepConfig,
-  StepRenderer,
-} from "./types";
+import type { FlowStep, FlowStepConfig } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowWizardContextValue } from "./types";
 
 /**
  * FlowWizardContext
@@ -15,33 +10,30 @@ import type {
  *
  */
 
-type FlowWizardContextValue<
-  TStep extends FlowStep = FlowStep,
-  TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
-> = Readonly<{
-  navigation: FlowNavigationActions<TStep>;
-  currentStep: TStep;
-  direction: FlowNavigationDirection;
-  currentStepConfig: TStepConfig;
-  currentStepRenderer: StepRenderer | null;
-  stepHistory: readonly TStep[];
-}>;
-
-const FlowWizardContext = createContext<FlowWizardContextValue | null>(null);
+const FlowWizardContext = createContext<FlowWizardContextValue<
+  FlowStep,
+  unknown,
+  FlowStepConfig
+> | null>(null);
 
 type FlowWizardProviderProps<
   TStep extends FlowStep,
+  TContextValue,
   TStepConfig extends FlowStepConfig<TStep>,
 > = Readonly<{
-  value: FlowWizardContextValue<TStep, TStepConfig>;
+  value: FlowWizardContextValue<TStep, TContextValue, TStepConfig>;
   children: ReactNode;
 }>;
 
 export function FlowWizardProvider<
   TStep extends FlowStep,
+  TContextValue,
   TStepConfig extends FlowStepConfig<TStep>,
->({ value, children }: FlowWizardProviderProps<TStep, TStepConfig>) {
-  const memoizedValue = useMemo(() => value as unknown as FlowWizardContextValue, [value]);
+>({ value, children }: FlowWizardProviderProps<TStep, TContextValue, TStepConfig>) {
+  const memoizedValue = useMemo(
+    () => value as unknown as FlowWizardContextValue<FlowStep, unknown, FlowStepConfig>,
+    [value],
+  );
 
   return <FlowWizardContext.Provider value={memoizedValue}>{children}</FlowWizardContext.Provider>;
 }
@@ -57,11 +49,12 @@ export function FlowWizardProvider<
  */
 export function useFlowWizard<
   TStep extends FlowStep = FlowStep,
+  TContextValue = unknown,
   TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
->(): FlowWizardContextValue<TStep, TStepConfig> {
+>(): FlowWizardContextValue<TStep, TContextValue, TStepConfig> {
   const context = useContext(FlowWizardContext);
   if (!context) {
     throw new Error("useFlowWizard must be used within a FlowWizardOrchestrator");
   }
-  return context as unknown as FlowWizardContextValue<TStep, TStepConfig>;
+  return context as unknown as FlowWizardContextValue<TStep, TContextValue, TStepConfig>;
 }

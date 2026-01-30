@@ -20,6 +20,11 @@ export class PortfolioPage extends AppPage {
   private totalBalance = this.page.getByTestId("total-balance");
   private balanceDiff = this.page.getByTestId("balance-diff");
 
+  // Wallet 4.0 elements
+  private portfolioBalance = this.page.getByTestId("portfolio-balance");
+  private portfolioTotalBalance = this.page.getByTestId("portfolio-total-balance");
+  private portfolioTrend = this.page.getByTestId("portfolio-trend");
+
   @step("Open `Add account` modal")
   async openAddAccountModal() {
     await this.addAccountButton.click();
@@ -155,5 +160,27 @@ export class PortfolioPage extends AppPage {
   @step("Wait for balance to be visible")
   async expectBalanceVisibility() {
     await this.totalBalance.waitFor({ state: "visible" });
+  }
+
+  // Wallet 4.0 methods
+  @step("Check portfolio total balance visibility")
+  async checkPortfolioTotalBalanceVisibility() {
+    await expect(this.portfolioTotalBalance).toBeVisible();
+  }
+
+  @step("Check one-day performance indicator visibility")
+  async checkOneDayPerformanceIndicatorVisibility() {
+    await expect(this.portfolioTrend).toBeVisible();
+  }
+
+  @step("Click on performance pill to navigate to analytics")
+  async clickOnPerformancePill() {
+    await expect(this.portfolioTrend).toBeVisible();
+    await this.portfolioTrend.click();
+  }
+
+  @step("Expect portfolio screen to be visible")
+  async expectPortfolioScreenToBeVisible() {
+    await expect(this.portfolioBalance).toBeVisible();
   }
 }

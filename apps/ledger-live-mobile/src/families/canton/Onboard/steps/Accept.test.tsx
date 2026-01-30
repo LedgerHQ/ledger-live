@@ -1,21 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { render } from "@testing-library/react-native";
+import { render, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { View } from "react-native";
-import Accept from "./Accept";
+import Accept, { ErrorSection } from "./Accept";
 import {
   createMockAccount,
   createMockNavigation,
   createMockRouteParams,
 } from "./__tests__/test-utils";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 
 const mockObservable = () => ({ pipe: jest.fn(() => ({ subscribe: jest.fn() })) });
 
+const mockOnboardAccount = jest.fn(mockObservable);
+const mockAuthorizePreapproval = jest.fn(mockObservable);
+
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: jest.fn(mockObservable),
-    authorizePreapproval: jest.fn(mockObservable),
+    onboardAccount: mockOnboardAccount,
+    authorizePreapproval: mockAuthorizePreapproval,
   })),
 }));
 
@@ -28,8 +32,19 @@ jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
 }));
 
 jest.mock("@ledgerhq/native-ui", () => {
+  const React = jest.requireActual("react");
+  const { View } = jest.requireActual("react-native");
   const { getMockNativeUI } = jest.requireActual("./__tests__/test-utils");
-  return getMockNativeUI();
+  const mockUI = getMockNativeUI();
+  return {
+    ...mockUI,
+    InfiniteLoader: ({ size, testID }: { size?: number; testID?: string }) =>
+      React.createElement(
+        View,
+        { testID: testID || "infinite-loader" },
+        `Loading (${size || 40}px)`,
+      ),
+  };
 });
 
 jest.mock("react-i18next", () => {
@@ -76,6 +91,25 @@ jest.mock("~/hooks/deviceActions", () => ({
 
 jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   useFeature: jest.fn(() => ({ enabled: false })),
+}));
+
+jest.mock("@ledgerhq/coin-canton/types", () => ({
+  OnboardStatus: {
+    INIT: 0,
+    PREPARE: 1,
+    SIGN: 2,
+    SUBMIT: 3,
+    SUCCESS: 4,
+    ERROR: 5,
+  },
+  AuthorizeStatus: {
+    INIT: 0,
+    PREPARE: 1,
+    SIGN: 2,
+    SUBMIT: 3,
+    SUCCESS: 4,
+    ERROR: 5,
+  },
 }));
 
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({
@@ -215,5 +249,163 @@ describe("Accept Component", () => {
     });
 
     expect(() => renderComponent(routeParams)).not.toThrow();
+  });
+
+  describe("ui states", () => {
+    const OnboardStatusMock = {
+      INIT: 0,
+      PREPARE: 1,
+      SIGN: 2,
+      SUBMIT: 3,
+      SUCCESS: 4,
+      ERROR: 5,
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should show ProcessingScreen during network submission (SUBMIT status)", async () => {
+      const mockSubscribe = jest.fn((observer: any) => {
+        observer.next({ status: OnboardStatusMock.SUBMIT });
+        return { unsubscribe: jest.fn() };
+      });
+
+      const mockObservable = {
+        pipe: jest.fn(function (this: any) {
+          return this;
+        }),
+        subscribe: mockSubscribe,
+      };
+
+      mockOnboardAccount.mockReturnValue(mockObservable);
+
+      const routeParams = createMockRouteParams();
+      const { queryByTestId } = renderComponent(routeParams);
+
+      await waitFor(() => {
+        expect(queryByTestId("processing-screen")).toBeDefined();
+      });
+      expect(queryByTestId("device-action-modal")).toBeNull();
+    });
+
+    it("should show DeviceActionModal during device signing (SIGN status)", async () => {
+      const mockSubscribe = jest.fn((observer: any) => {
+        observer.next({ status: OnboardStatusMock.SIGN });
+        return { unsubscribe: jest.fn() };
+      });
+
+      const mockObservable = {
+        pipe: jest.fn(function (this: any) {
+          return this;
+        }),
+        subscribe: mockSubscribe,
+      };
+
+      mockOnboardAccount.mockReturnValue(mockObservable);
+
+      const routeParams = createMockRouteParams();
+      const { queryByTestId } = renderComponent(routeParams);
+
+      await waitFor(() => {
+        expect(queryByTestId("device-action-modal")).toBeDefined();
+      });
+      expect(queryByTestId("processing-screen")).toBeNull();
+    });
+  });
+});
+
+describe("ErrorSection Component", () => {
+  const mockOnRetry = jest.fn();
+
+  const renderErrorSection = (error: Error | null, disabled = false) => {
+    return render(<ErrorSection error={error} disabled={disabled} onRetry={mockOnRetry} />);
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("getErrorTitle", () => {
+    it("should return generic error title when error is null", () => {
+      const { toJSON } = renderErrorSection(null);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain("trans:errors.generic.title");
+    });
+
+    it("should use error.name in translation key for UserRefusedOnDevice", () => {
+      const error = new UserRefusedOnDevice();
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain(`trans:errors.${error.name}.title`);
+    });
+
+    it("should use error.name in translation key for LockedDeviceError", () => {
+      const error = new LockedDeviceError();
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain(`trans:errors.${error.name}.title`);
+    });
+
+    it("should return custom translation for quota exceeded error (429)", () => {
+      const error = Object.assign(new Error("Rate limit exceeded"), { status: 429 });
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain("trans:canton.onboard.error429");
+    });
+
+    it("should return error message for generic errors", () => {
+      const error = new Error("Custom error message");
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain("Custom error message");
+    });
+
+    it("should return generic error title when error has no message", () => {
+      const error = new Error();
+      error.message = "";
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain("trans:errors.generic.title");
+    });
+  });
+
+  describe("getErrorDescription", () => {
+    it("should return null when error is null", () => {
+      const { toJSON } = renderErrorSection(null);
+      const output = JSON.stringify(toJSON());
+      expect(output).not.toContain("errors.UserRefusedOnDevice.description");
+      expect(output).not.toContain("errors.LockedDeviceError.description");
+    });
+
+    it("should use error.name in translation key for UserRefusedOnDevice", () => {
+      const error = new UserRefusedOnDevice();
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain(`trans:errors.${error.name}.description`);
+    });
+
+    it("should use error.name in translation key for LockedDeviceError", () => {
+      const error = new LockedDeviceError();
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain(`trans:errors.${error.name}.description`);
+    });
+
+    it("should return null for quota exceeded error (429)", () => {
+      const error = Object.assign(new Error("Rate limit exceeded"), { status: 429 });
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain("canton.onboard.error429");
+      expect(output).not.toContain("description");
+    });
+
+    it("should return null for generic errors", () => {
+      const error = new Error("Some generic error");
+      const { toJSON } = renderErrorSection(error);
+      const output = JSON.stringify(toJSON());
+      expect(output).toContain("Some generic error");
+      expect(output).not.toContain("errors.generic.description");
+    });
   });
 });

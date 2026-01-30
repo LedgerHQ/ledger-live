@@ -33,6 +33,8 @@ import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import type { SendFlowState } from "./sendFlow";
+import type { TransferDrawerState } from "./transferDrawer";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
@@ -282,6 +284,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  hasSeenWalletV4Tour: boolean;
 };
 
 export type NotificationsSettings = {
@@ -376,10 +379,12 @@ export type State = LLMRTKApiState & {
   market: MarketState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
+  transferDrawer: TransferDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   ratings: RatingsState;
+  sendFlow: SendFlowState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;

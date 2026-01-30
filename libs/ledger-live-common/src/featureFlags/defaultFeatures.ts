@@ -770,6 +770,7 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      tour: true,
     },
   },
   lwdWallet40: {

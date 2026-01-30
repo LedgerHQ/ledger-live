@@ -60,13 +60,13 @@
     }
   },
   "devDependencies": {
+    "@rspack/core": "catalog:",
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
     "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.1",
-    "esbuild": "^0.19.0",
     "glob": "^7.2.0",
     "react": "catalog:",
     "react-native-svg": "catalog:",

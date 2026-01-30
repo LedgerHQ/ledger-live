@@ -1,4 +1,8 @@
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-framework/config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type BoilerplateConfig = {
   nodeUrl: string;
@@ -7,6 +11,9 @@ export type BoilerplateConfig = {
 
 export type BoilerplateCoinConfig = CurrencyConfig & BoilerplateConfig;
 
-const coinConfig = buildCoinConfig<BoilerplateCoinConfig>();
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<BoilerplateCoinConfig>) => void;
+  getCoinConfig: (currency?: CryptoCurrency) => BoilerplateCoinConfig;
+} = buildCoinConfig<BoilerplateCoinConfig>();
 
 export default coinConfig;

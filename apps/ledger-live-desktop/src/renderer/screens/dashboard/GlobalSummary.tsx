@@ -16,8 +16,14 @@ type Props = {
   counterValue: Currency;
   chartColor: string;
   range: PortfolioRange;
+  isWallet40?: boolean;
 };
-export default function PortfolioBalanceSummary({ range, chartColor, counterValue }: Props) {
+export default function PortfolioBalanceSummary({
+  range,
+  chartColor,
+  counterValue,
+  isWallet40,
+}: Props) {
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
   const renderTickY = useCallback(
@@ -42,8 +48,8 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     ),
     [counterValue, dayFormatter, hourFormatter],
   );
-  return (
-    <Card p={0} py={5} grow>
+  const content = (
+    <>
       <Box px={6}>
         <BalanceInfos
           counterValueId={counterValue.type !== "FiatCurrency" ? counterValue.id : undefined}
@@ -85,6 +91,20 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
           />
         )}
       </Box>
+    </>
+  );
+
+  if (isWallet40) {
+    return (
+      <div className="flex flex-1 flex-col py-20" style={{ overflow: "visible" }}>
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Card p={0} py={5} grow>
+      {content}
     </Card>
   );
 }

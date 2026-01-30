@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import { FlowStatus } from "LLD/features/FlowWizard/types";
+import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 
 interface ButtonConfig {
   label: string;
@@ -24,7 +24,7 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
   t,
 }) => {
   const buttonConfig: Record<FlowStatus, ButtonConfig[]> = {
-    success: [
+    [FLOW_STATUS.SUCCESS]: [
       {
         label: t("send.steps.confirmation.success.cta"),
         onClick: onViewDetails,
@@ -32,11 +32,11 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
       },
       { label: t("common.close"), onClick: onClose, appearance: "base" },
     ],
-    idle: [
+    [FLOW_STATUS.IDLE]: [
       { label: t("common.tryAgain"), onClick: onRetry, appearance: "gray" },
       { label: t("common.close"), onClick: onClose, appearance: "base" },
     ],
-    error: [
+    [FLOW_STATUS.ERROR]: [
       { label: t("common.close"), onClick: onClose, appearance: "gray" },
       { label: t("common.tryAgain"), onClick: onRetry, appearance: "base" },
     ],

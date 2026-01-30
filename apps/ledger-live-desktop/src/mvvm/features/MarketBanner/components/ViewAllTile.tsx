@@ -19,7 +19,7 @@ export const ViewAllTile = () => {
       onClick={goToMarket}
       data-testid="market-banner-view-all"
     >
-      <TileSpot appearance="icon" icon={ChevronRight} />
+      <TileSpot appearance="icon" icon={ChevronRight} size={40} />
       <TileContent>
         <TileTitle>{t("marketBanner.cta")}</TileTitle>
       </TileContent>

@@ -38,7 +38,7 @@ export const ModularDialogContent = ({
         onClose={handleClose}
         onBack={handleBack}
       />
-      <DialogBody className="!px-16">
+      <DialogBody className="px-16!">
         <AnimatedScreenWrapper
           key={`${currentStep}-${navigationDirection}`}
           screenKey={currentStep}

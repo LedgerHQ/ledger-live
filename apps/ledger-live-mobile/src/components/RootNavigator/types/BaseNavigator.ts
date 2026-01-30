@@ -1,5 +1,4 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   Account,
   AccountLike,
@@ -154,11 +153,6 @@ export type BaseNavigatorStackParamList = {
     isSubOperation?: boolean;
     key?: string;
   };
-  [ScreenName.PairDevices]: {
-    onDone?: ((_: Device) => void) | null;
-    hasError?: boolean;
-    deviceModelIds?: DeviceModelId[];
-  };
   [ScreenName.EditDeviceName]: {
     device: Device;
     deviceName: string;
@@ -211,6 +205,17 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
+  [NavigatorName.SendFlow]: {
+    onClose?: () => void;
+    params?: {
+      account?: AccountLike;
+      parentAccount?: Account;
+      recipient?: string;
+      amount?: string;
+      memo?: string;
+      fromMAD?: boolean;
+    };
+  };
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };

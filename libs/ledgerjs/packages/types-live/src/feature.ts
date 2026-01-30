@@ -796,18 +796,15 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
+  tour?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<
   {
-    // Add specific LWM params
+    tour: boolean;
   } & Feature_Wallet40_Params
 >;
-export type Feature_LwdWallet40 = Feature<
-  {
-    //  Add specific LWD params
-  } & Feature_Wallet40_Params
->;
+export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
   variant: ABTestingVariants;
 }>;

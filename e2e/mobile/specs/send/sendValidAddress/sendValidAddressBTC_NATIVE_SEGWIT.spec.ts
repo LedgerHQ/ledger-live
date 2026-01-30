@@ -7,4 +7,13 @@ const transaction = new Transaction(
   "0.00001",
   Fee.MEDIUM,
 );
-runSendValidAddressTest(transaction, ["B2CQA-2724"], "Native Segwit");
+runSendValidAddressTest(transaction, ["B2CQA-2724"], "Native Segwit", [
+  "@NanoSP",
+  "@LNS",
+  "@NanoX",
+  "@Stax",
+  "@Flex",
+  "@NanoGen5",
+  "@bitcoin",
+  "@family-bitcoin",
+]);

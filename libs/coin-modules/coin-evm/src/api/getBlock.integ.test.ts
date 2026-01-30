@@ -16,7 +16,8 @@ describe("getBlock ERC20 transfers", () => {
     setupCalClientStore();
   });
 
-  describe("External RPC Node (Velas EVM)", () => {
+  // TODO: unskip when Velas nodes are up again
+  describe.skip("External RPC Node (Velas EVM)", () => {
     // Real data from Velas EVM:
     // - Block: 69733298
     // - TX: 0x23f9232e929f9a13f4f2d6d4e9bf27d717a2b1250d207c030fc66565c4e205e1

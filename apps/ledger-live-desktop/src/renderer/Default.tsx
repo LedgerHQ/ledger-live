@@ -23,7 +23,8 @@ import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
-import Page from "~/renderer/components/Page";
+import Page from "LLD/components/Page";
+import { isWallet40Page } from "LLD/components/Page/utils";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -246,16 +247,13 @@ const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBann
   </>
 );
 
-// Pages that should use the new Tailwind design
-const TAILWIND_SET_PAGES = new Set(["/", "/market", "/analytics"]);
-
 // Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
   const { pathname } = useLocation();
   const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
     useWalletFeaturesConfig("desktop");
 
-  const useTailwindLayout = isWallet40Enabled && TAILWIND_SET_PAGES.has(pathname);
+  const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
   return (
     <>
       <IsNewVersion />
@@ -263,7 +261,7 @@ const MainAppLayout = () => {
       <IsTermOfUseUpdated />
       <SyncNewAccounts priority={2} />
 
-      {useTailwindLayout ? (
+      {useWallet40Layout ? (
         <div className="flex size-full grow flex-row bg-canvas">
           <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
         </div>
