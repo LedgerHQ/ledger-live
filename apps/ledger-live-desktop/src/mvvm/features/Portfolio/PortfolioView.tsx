@@ -10,6 +10,7 @@ import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
 import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
 import { AddAccount } from "./components/AddAccount";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "./utils/constants";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -30,7 +31,7 @@ export const PortfolioView = memo(function PortfolioView({
     <>
       <BannerSection isWallet40Enabled={isWallet40Enabled} />
       <TrackPage
-        category="Portfolio"
+        category={PORTFOLIO_TRACKING_PAGE_NAME}
         totalAccounts={totalAccounts}
         totalOperations={totalOperations}
         totalCurrencies={totalCurrencies}
@@ -42,7 +43,9 @@ export const PortfolioView = memo(function PortfolioView({
           <div className="flex flex-col gap-24">
             <PageHeader title={t("portfolio.title")} />
             {shouldDisplayGraphRework && <Balance />}
-            {shouldDisplayQuickActionCtas && <QuickActions />}
+            {shouldDisplayQuickActionCtas && (
+              <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
+            )}
             {shouldDisplayMarketBanner && <MarketBanner />}
             {shouldDisplayAddAccountCta && <AddAccount />}
           </div>
