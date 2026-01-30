@@ -796,6 +796,7 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
+  mainNavigation: boolean;
   tour?: boolean;
 };
 
