@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "قم بترقية Ledger Nano S الخاصة بك إلى جهاز Ledger جديد — مثل Ledger Flex — من أجل المزيد من الذاكرة، وأحدث تحسينات الأمان، وميزات جديدة، وخصم حصري %20. ",
+      "title" : "قم بترقية جهازك ™Ledger Nano S",
+      "description" : "احصل على خصم %20 حصري على أحدث أجهزة توقيع Ledger.",
       "cta" : "ترقية جهاز Ledger الخاص بي"
     },
     "opted_out" : {
-      "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
+      "title" : "قم بترقية جهازك ™Ledger Nano S",
+      "description" : "الذاكرة المحدودة في Ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل (بلوكتشين)، وتحسينات الأمان.",
       "cta" : "تعرّف على المزيد"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "استكشف السوق",
     "viewAll" : "عرض الكل",
     "viewAllAccessibilityHint" : "انقر نقراً مزدوجاً لعرض كل أصول السوق",
+    "connectionFailed" : "فشل الاتصال",
+    "errorAccessibilityHint" : "تعذر تحميل بيانات السوق. يُرجى إعادة المحاولة لاحقاً.",
     "tile" : {
       "accessibilityLabel" : "{{name}}، {{change}}",
       "accessibilityHint" : "انقر نقراً مزدوجاً لعرض تفاصيل السوق"
@@ -8352,6 +8356,17 @@
       "neutral" : "محايد",
       "greed" : "طمع",
       "extremeGreed" : "طمع+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "التحليلات"
+    },
+    "allocation" : {
+      "title" : "توزيع الأصول"
+    },
+    "actions" : {
+      "swap" : "مبادلة"
     }
   }
 }
