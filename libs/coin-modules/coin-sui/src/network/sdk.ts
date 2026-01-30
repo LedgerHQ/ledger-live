@@ -454,7 +454,6 @@ export function alpacaTransactionToOp(
  * Convert a SUI RPC checkpoint info to a {@link BlockInfo}.
  *
  * @param checkpoint SUI RPC checkpoint info
- * @param api Optional SuiClient API to fetch parent checkpoint if needed
  */
 export async function toBlockInfo(checkpoint: Checkpoint): Promise<BlockInfo> {
   const info: BlockInfo = {

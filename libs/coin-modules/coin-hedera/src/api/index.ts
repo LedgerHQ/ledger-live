@@ -124,7 +124,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             date: liveOp.date,
             block: {
               height: liveOp.blockHeight ?? 10,
-              hash: (liveOp as any).blockHash ?? getBlockHash(liveOp.blockHeight ?? 10),
+              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? 10),
               time: liveOp.date,
             },
             failed: liveOp.hasFailed ?? false,

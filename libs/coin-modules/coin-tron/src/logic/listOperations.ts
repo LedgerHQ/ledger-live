@@ -47,10 +47,11 @@ export async function listOperations(
   const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < softLimit;
 
   const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
-  return [
-    txs
-      // TODO: adapt directly in network calls
-      .map(tx => fromTrongridTxInfoToOperation(tx, block, address)),
-    "",
-  ];
+  const operations = await Promise.all(
+    txs.map(async tx => {
+      const txBlock = tx.blockHeight !== undefined ? await getBlock(tx.blockHeight) : block;
+      return fromTrongridTxInfoToOperation(tx, txBlock, address);
+    }),
+  );
+  return [operations, ""];
 }
