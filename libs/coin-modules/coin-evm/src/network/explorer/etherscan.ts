@@ -603,7 +603,6 @@ export const getOperations = makeLRUCache<
     try {
       const pagingState = deserializePagingToken(pagingToken);
       const paginationBlock = pagingState?.boundBlock;
-      let currentBoundBlock: number | undefined = undefined;
 
       const cmp = createBlockComparator(order);
 
@@ -621,75 +620,68 @@ export const getOperations = makeLRUCache<
       async function callEndpoint(
         endpoint: FetchOperations,
         boundBlock: number | undefined,
-      ): Promise<EndpointResult> {
+        isDone: boolean,
+      ): Promise<{ result: EndpointResult, effectiveBoundBlock: number | undefined }> {
+        if (isDone) {
+          return { result: EMPTY_RESULT, effectiveBoundBlock: boundBlock };
+        }
         // in asc mode, the cursor is the toBlock
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
-        if (order === "asc") {
-          return await exhaustEndpoint(endpoint, {
+        const params = (order === "asc") ?
+          {
             ...baseParams,
             fromBlock: paginationBlock || fromBlock,
             toBlock: boundBlock || toBlock,
-          });
-        } else {
-          return await exhaustEndpoint(endpoint, {
+          }
+          : {
             ...baseParams,
             fromBlock: boundBlock || fromBlock,
             toBlock: paginationBlock || toBlock,
-          });
-        }
+          };
+        const result = await exhaustEndpoint(endpoint, params);
+        const effectiveBoundBlock = computeEffectiveBoundBlock(limit, boundBlock, result, cmp);
+        return { result: result, effectiveBoundBlock: effectiveBoundBlock };
       }
 
       // endpoint calls are sorted by likelyhood of having more operations than the next
       // Skip endpoints that have no more pages (optimization from paging state)
 
-      const coinResult = pagingState?.coinIsDone
-        ? EMPTY_RESULT
-        : await callEndpoint(getCoinOperations, currentBoundBlock);
-      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
+      const coins = await callEndpoint(getCoinOperations, undefined, pagingState?.coinIsDone);
 
-      const internalResult = pagingState?.internalIsDone
-        ? EMPTY_RESULT
-        : await callEndpoint(getInternalOperations, currentBoundBlock);
-      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
+      const internals = await callEndpoint(getInternalOperations, coins.effectiveBoundBlock, pagingState?.internalIsDone);
 
-      const tokenResult = pagingState?.tokenIsDone
-        ? EMPTY_RESULT
-        : await callEndpoint(getTokenOperations, currentBoundBlock);
-      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
+      const tokens = await callEndpoint(getTokenOperations, internals.effectiveBoundBlock, pagingState?.tokenIsDone);
 
-      const nftResult =
-        !isNFTActive(currency) || pagingState?.nftIsDone
-          ? EMPTY_RESULT
-          : await callEndpoint(getNftOperations, currentBoundBlock);
-      currentBoundBlock = computeEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
+      const nfts = await callEndpoint(getNftOperations, tokens.effectiveBoundBlock, !isNFTActive(currency) || pagingState?.nftIsDone);
 
+      const effectiveBoundBlock = nfts.effectiveBoundBlock;
       const nextBoundBlock =
-        currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
+        effectiveBoundBlock !== undefined ? cmp.next(effectiveBoundBlock) : undefined;
 
       // drop operations below/above the currentBoundBlock
       const respectsBoundBlock = (op: Operation): boolean =>
-        currentBoundBlock === undefined ||
+        effectiveBoundBlock === undefined ||
         (op.blockHeight !== null &&
           op.blockHeight !== undefined &&
-          cmp.isLessOrEqual(op.blockHeight, currentBoundBlock));
+          cmp.isLessOrEqual(op.blockHeight, effectiveBoundBlock));
 
-      const coinOperations = coinResult.operations.filter(respectsBoundBlock);
-      const internalOperations = internalResult.operations.filter(respectsBoundBlock);
-      const tokenOperations = tokenResult.operations.filter(respectsBoundBlock);
-      const nftOperations = nftResult.operations.filter(respectsBoundBlock);
-
+      const [coinsResult, internalsResult, tokensResult, nftsResult] = [coins.result, internals.result, tokens.result, nfts.result].map(result => {
+        const filteredOperations = result.operations.filter(respectsBoundBlock);
+        const fixedIsDone = result.isDone && filteredOperations.length === result.operations.length;
+        return { ...result, operations: filteredOperations, isDone: fixedIsDone };
+      });
 
       return {
-        lastCoinOperations: coinOperations,
-        lastTokenOperations: tokenOperations,
-        lastNftOperations: nftOperations,
-        lastInternalOperations: internalOperations,
+        lastCoinOperations: coinsResult.operations,
+        lastTokenOperations: tokensResult.operations,
+        lastNftOperations: nftsResult.operations,
+        lastInternalOperations: internalsResult.operations,
         nextPagingToken: serializePagingToken(nextBoundBlock, {
-          coinIsDone: coinResult.isDone && coinOperations.length === coinResult.operations.length,
-          internalIsDone: internalResult.isDone && internalOperations.length === internalResult.operations.length,
-          tokenIsDone: tokenResult.isDone && tokenOperations.length === tokenResult.operations.length,
-          nftIsDone: nftResult.isDone || nftOperations.length !== nftResult.operations.length,
+          coinIsDone: coinsResult.isDone,
+          internalIsDone: internalsResult.isDone,
+          tokenIsDone: tokensResult.isDone,
+          nftIsDone: nftsResult.isDone,
         }),
       };
     } catch (err) {
