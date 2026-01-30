@@ -29,9 +29,8 @@ import {
 } from "../../types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
-// TODO exclude this change in commits
-export const ETHERSCAN_TIMEOUT = 4000; // 5 seconds between 2 calls
-export const DEFAULT_RETRIES_API = 2;
+export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
+export const DEFAULT_RETRIES_API = 8;
 
 function boundBlockFromOperations(ops: Operation[]): number {
   if (ops.length === 0) return 0;
