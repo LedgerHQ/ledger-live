@@ -86,7 +86,8 @@ const StepMethod = ({
   }, [canCancel, setEditType]);
 
   const handleLearnMoreClick = useCallback(() => {
-    openURL(urls.editEvmTx.learnMore);
+    // TODO: add bitcoin learn more url
+    openURL(urls.editBitcoinTx.learnMore);
   }, []);
 
   return (

@@ -17,7 +17,7 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
+import { isOldestBitcoinPendingOperation } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
@@ -243,7 +243,7 @@ const Body = ({
     return () => {
       clearInterval(intervalId);
     };
-  }, [mainAccount.currency, params.transactionHash]);
+  }, [mainAccount, mainAccount.currency, params.transactionHash]);
 
   const [haveFundToCancel, setHaveFundToCancel] = useState(false);
   const [haveFundToSpeedup, setHaveFundToSpeedup] = useState(false);
@@ -272,8 +272,8 @@ const Body = ({
   const pendingOperation = mainAccount.pendingOperations.find(
     pendingOp => pendingOp.hash === params.transactionHash,
   );
-  const isOldestEditableOperation = pendingOperation?.transactionSequenceNumber
-    ? isOldestPendingOperation(mainAccount, pendingOperation.transactionSequenceNumber)
+  const isOldestEditableOperation = pendingOperation?.date
+    ? isOldestBitcoinPendingOperation(mainAccount, pendingOperation.date)
     : false;
 
   const derivedEditType: StepProps["editType"] =
@@ -282,14 +282,19 @@ const Body = ({
       : haveFundToCancel
         ? "cancel"
         : undefined;
-  const [editType, setEditType] = useState<StepProps["editType"]>(undefined);
-  useEffect(() => {
-    setEditType(current => current ?? derivedEditType);
-  }, [derivedEditType]);
-  const handleSetEditType: StepProps["setEditType"] = useCallback(
-    editType => setEditType(editType),
-    [],
-  );
+
+  // Track if user has manually selected an edit type
+  const [userSelectedEditType, setUserSelectedEditType] =
+    useState<StepProps["editType"]>(undefined);
+
+  // Use user selection if available, otherwise use derived value
+  const editType = userSelectedEditType ?? derivedEditType;
+
+  useEffect(() => {}, [editType, derivedEditType, userSelectedEditType]);
+
+  const handleSetEditType: StepProps["setEditType"] = useCallback(newEditType => {
+    setUserSelectedEditType(newEditType);
+  }, []);
 
   /**
    * In order to display the relevant informations in the summary step, regarding

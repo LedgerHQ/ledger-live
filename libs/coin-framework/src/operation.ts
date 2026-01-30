@@ -261,7 +261,7 @@ export const isOldestPendingOperation = (account: Account, nonce: BigNumber): bo
    */
   return !account.pendingOperations.some(pendingOp => {
     /**
-     * the pending operation must have a transactionSequenceNumberat this stage
+     * the pending operation must have a transactionSequenceNumber at this stage
      * since it should have previously been broadcasted
      */
     invariant(
@@ -270,5 +270,25 @@ export const isOldestPendingOperation = (account: Account, nonce: BigNumber): bo
     );
 
     return pendingOp.transactionSequenceNumber < nonce;
+  });
+};
+
+/**
+ * @param account The account of the transaction to edit
+ * @param date The date of the transaction to edit
+ * @returns true if the date corresponds to the oldest pending operation
+ */
+export const isOldestBitcoinPendingOperation = (account: Account, date: Date): boolean => {
+  /**
+   * The selected pending operation is the oldest if there is no pending
+   * operation with a lower date
+   */
+  return !account.pendingOperations.some(pendingOp => {
+    /**
+     * the pending operation must have a date at this stage
+     * since it should have previously been broadcasted
+     */
+    invariant(pendingOp.date !== undefined, "date required");
+    return pendingOp.date.getTime() < date.getTime();
   });
 };

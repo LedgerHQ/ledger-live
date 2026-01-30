@@ -251,16 +251,20 @@ const OperationD = (props: Props) => {
     : undefined;
 
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const { enabled: isEditBitcoinTxEnabled, params: bitcoinParams } =
+    useFeature("editBitcoinTx") ?? {};
   const currencyFamily = mainAccount.currency.family;
-  
+
   // Determine if transaction editing is supported and which modal to use
   const editConfig = useMemo(() => {
     // Check for Bitcoin RBF support
     if (currencyFamily === "bitcoin") {
       // RBF only works for unconfirmed (pending) transactions
-      const isPending = !operation.blockHeight;
-      
-      if (!isPending) {
+      const isEditable = isEditableOperation({ account: mainAccount, operation });
+      if (
+        !isEditable ||
+        !bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
+      ) {
         return null;
       }
 
@@ -273,19 +277,23 @@ const OperationD = (props: Props) => {
           rbf?: boolean;
           replaceTxId?: string;
         };
-        
         // RBF is supported if rbf is not explicitly false
         const isRbfDisabled = bitcoinTxRaw.rbf === false;
-        
+
         if (isRbfDisabled) {
           return null;
         }
       }
-      
-      return {
-        modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
-        isSupported: true,
-      };
+      if (
+        isEditBitcoinTxEnabled &&
+        bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
+      ) {
+        return {
+          modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
+          isSupported: true,
+        };
+      }
+      return null;
     }
 
     // For EVM, transactionRaw is required
@@ -293,12 +301,11 @@ const OperationD = (props: Props) => {
       return null;
     }
 
-    const transactionRaw = operation.transactionRaw;
-
     // Check for EVM support
     if (currencyFamily === "evm") {
       const isCurrencySupported =
-        params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+        params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) ||
+        false;
       const isEditable = isEditableOperation({ account: mainAccount, operation });
 
       if (isEditEvmTxEnabled && isCurrencySupported && isEditable) {
@@ -311,7 +318,15 @@ const OperationD = (props: Props) => {
     }
 
     return null;
-  }, [operation.transactionRaw, operation.blockHeight, operation.id, operation.hash, currencyFamily, isEditEvmTxEnabled, params, mainAccount, operation]);
+  }, [
+    currencyFamily,
+    isEditEvmTxEnabled,
+    params,
+    mainAccount,
+    operation,
+    bitcoinParams?.supportedCurrencyIds,
+    isEditBitcoinTxEnabled,
+  ]);
 
   const editable = editConfig?.isSupported ?? false;
 
@@ -365,7 +380,16 @@ const OperationD = (props: Props) => {
         }),
       );
     }
-  }, [dispatch, editConfig, currencyFamily, account, parentAccount, operation.transactionRaw, operation.hash]);
+  }, [
+    dispatch,
+    mainAccount.freshAddress,
+    editConfig,
+    currencyFamily,
+    account,
+    parentAccount,
+    operation.transactionRaw,
+    operation.hash,
+  ]);
 
   const isStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
