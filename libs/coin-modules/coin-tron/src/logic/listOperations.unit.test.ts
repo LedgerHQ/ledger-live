@@ -153,9 +153,7 @@ describe("listOperations", () => {
     ];
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock)
-      .mockResolvedValueOnce(mockBlock50)
-      .mockResolvedValueOnce(mockBlock100);
+    (getBlock as jest.Mock).mockResolvedValueOnce(mockBlock50).mockResolvedValueOnce(mockBlock100);
 
     const operationBlocks: Array<{ height: number; hash: string }> = [];
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
@@ -190,9 +188,7 @@ describe("listOperations", () => {
     const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock)
-      .mockResolvedValueOnce(mockBlock0)
-      .mockResolvedValueOnce(mockBlock100);
+    (getBlock as jest.Mock).mockResolvedValueOnce(mockBlock0).mockResolvedValueOnce(mockBlock100);
 
     const operationBlocks: Array<{ height: number; hash: string }> = [];
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
