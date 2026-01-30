@@ -134,31 +134,27 @@ function createCallCounter(): CallCounter {
     started = true;
   }
 
+  function bump(url: string): void {
+    const key = new URL(url).hostname;
+    counters[key] = (counters[key] ?? 0) + 1;
+  }
+
   const patchedRequestOnHttp: typeof http.request = (...args: unknown[]) => {
     const request: ClientRequest = originalHttpRequest.apply(http, args as never);
-    const key = new URL(request.protocol + "//" + request.host + request.path).hostname;
-    counters[key] = (counters[key] ?? 0) + 1;
+    bump(request.protocol + "//" + request.host + request.path);
     return request;
   };
 
   const patchedRequestOnHttps: typeof https.request = (...args: unknown[]) => {
     const request: ClientRequest = originalHttpsRequest.apply(https, args as never);
-    const key = new URL(request.protocol + "//" + request.host + request.path).hostname;
-    counters[key] = (counters[key] ?? 0) + 1;
+    bump(request.protocol + "//" + request.host + request.path);
     return request;
   };
 
   const patchedFetch: typeof globalThis.fetch = (input, init) => {
     const url =
-      typeof input === "string"
-        ? input
-        : input instanceof Request
-          ? input.url
-          : (input as URL).href;
-
-    const key = new URL(url).hostname;
-    counters[key] = (counters[key] ?? 0) + 1;
-
+      typeof input === "string" ? input : input instanceof Request ? input.url : input.href;
+    bump(url);
     return originalFetch(input, init);
   };
 
