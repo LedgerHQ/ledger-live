@@ -106,10 +106,7 @@ const Earn = (props: NavigationProps) => {
           break;
         }
         case "get-funds": {
-          if (!paramCurrencyId) {
-            // eslint-disable-next-line no-console
-            console.log('currencyId required for "get-funds" action.');
-          } else {
+          if (paramCurrencyId) {
             navigation.navigate(NavigatorName.StakeFlow, {
               screen: ScreenName.Stake,
               params: {
@@ -120,6 +117,9 @@ const Earn = (props: NavigationProps) => {
                 entryPoint: "get-funds",
               },
             });
+          } else {
+            // eslint-disable-next-line no-console
+            console.log('currencyId required for "get-funds" action.');
           }
           break;
         }
