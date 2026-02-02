@@ -20,7 +20,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
     runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the caches
