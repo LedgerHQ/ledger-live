@@ -164,6 +164,7 @@ function View({
         colors={[colors.primary.c80]}
         tintColor={colors.primary.c80}
         onRefresh={handlePullToRefresh}
+        progressViewOffset={isMarketBannerEnabled ? headerSpacerHeight : undefined}
       />
     ),
   };
