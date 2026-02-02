@@ -1,7 +1,5 @@
 import {
   Api,
-  Block,
-  BlockInfo,
   Cursor,
   ListOperationsOptions as ApiListOperationsOptions,
   Page,
@@ -22,8 +20,10 @@ import {
   craftTransaction,
   craftRawTransaction,
   estimateFees,
-  getBalance,
   getAccountInfo,
+  getBalance,
+  getBlock,
+  getBlockInfo,
   getNextValidSequence,
   lastBlock,
   listOperations,
@@ -45,12 +45,8 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getSequence: async (address: string) => {
       const accountInfo = await getAccountInfo(address);
       return BigInt(accountInfo.sequence);

@@ -107,7 +107,7 @@ jobs:
         with:
           install-proto: true
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
+          skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -200,7 +200,7 @@ jobs:
           install-proto: "true"
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
+          skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -226,10 +226,14 @@ jobs:
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p android --bundle
 
+      - name: Build minified JS Bundle for size analysis
+        run: pnpm mobile e2e:ci -p android --bundle-size
+
       - name: Output bundle size for analysis
         id: output-js-bundle-size
         run: |
-          echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5` >> $GITHUB_OUTPUT
+          # Report the minified bundle size for comparison with other branches
+          echo size=`ls -l apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop

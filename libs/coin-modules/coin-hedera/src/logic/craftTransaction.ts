@@ -12,7 +12,11 @@ import {
   TransferTransaction,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
+import {
+  DEFAULT_GAS_LIMIT,
+  HEDERA_TRANSACTION_MODES,
+  TRANSACTION_VALID_DURATION_SECONDS,
+} from "../constants";
 import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
 import { hasSpecificIntentData, serializeTransaction, toEVMAddress } from "./utils";
@@ -71,6 +75,7 @@ async function buildUnsignedCoinTransaction({
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
 
   const tx = new TransferTransaction()
+    .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .addHbarTransfer(accountId, hbarAmount.negated())
@@ -80,7 +85,7 @@ async function buildUnsignedCoinTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance());
 }
 
 async function buildUnsignedHTSTokenTransaction({
@@ -94,6 +99,7 @@ async function buildUnsignedHTSTokenTransaction({
   const tokenId = transaction.tokenAddress;
 
   const tx = new TransferTransaction()
+    .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
@@ -103,7 +109,7 @@ async function buildUnsignedHTSTokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance());
 }
 
 async function buildUnsignedERC20TokenTransaction({
@@ -126,6 +132,7 @@ async function buildUnsignedERC20TokenTransaction({
     .addUint256(transaction.amount.toNumber());
 
   const tx = new ContractExecuteTransaction()
+    .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setContractId(contractId)
@@ -136,7 +143,7 @@ async function buildUnsignedERC20TokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance());
 }
 
 async function buildTokenAssociateTransaction({
@@ -149,6 +156,7 @@ async function buildTokenAssociateTransaction({
   const accountId = account.accountId;
 
   const tx = new TokenAssociateTransaction()
+    .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .setAccountId(accountId)
@@ -158,7 +166,7 @@ async function buildTokenAssociateTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance());
 }
 
 async function buildUnsignedUpdateAccountTransaction({
@@ -171,6 +179,7 @@ async function buildUnsignedUpdateAccountTransaction({
   const accountId = account.accountId;
 
   const tx = new AccountUpdateTransaction()
+    .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId);
@@ -187,7 +196,7 @@ async function buildUnsignedUpdateAccountTransaction({
     tx.clearStakedNodeId();
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance());
 }
 
 export async function craftTransaction(

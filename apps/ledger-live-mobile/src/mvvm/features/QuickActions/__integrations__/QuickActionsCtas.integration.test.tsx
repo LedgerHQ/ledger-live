@@ -8,6 +8,7 @@ import {
   getCtaButtons,
 } from "./shared";
 import { QUICK_ACTIONS_TEST_IDS } from "../testIds";
+import { State } from "~/reducers/types";
 
 const { transferDrawer } = QUICK_ACTIONS_TEST_IDS;
 
@@ -97,6 +98,26 @@ describe("QuickActionsCtas Integration Tests", () => {
       expect(transferButton).toBeDisabled();
       expect(swapButton).toBeDisabled();
       expect(buyButton).toBeDisabled();
+    });
+
+    it("should not display bank transfer option in transfer drawer when noah feature flag is disabled", async () => {
+      const { user } = render(<TestQuickActionsWrapper />, {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              ...state.settings.overriddenFeatureFlags,
+              noah: { enabled: false },
+            },
+          },
+        }),
+      });
+
+      const { transferButton } = await getCtaButtons();
+      await user.press(transferButton);
+
+      expect(screen.queryByTestId(transferDrawer.bankTransfer)).not.toBeVisible();
     });
   });
 });

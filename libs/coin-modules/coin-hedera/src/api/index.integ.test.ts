@@ -24,8 +24,8 @@ describe("createApi", () => {
     setupCalClientStore();
   });
 
-  afterAll(() => {
-    rpcClient._resetInstance();
+  afterAll(async () => {
+    await rpcClient._resetInstance();
   });
 
   describe("craftTransaction", () => {

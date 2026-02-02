@@ -13,6 +13,7 @@ import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { TransferAction } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
+import { useReceiveNoahEntry } from "LLM/features/Noah/useNoahEntryPoint";
 
 interface TransferDrawerViewModel {
   isOpen: boolean;
@@ -33,7 +34,10 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName,
+    fromMenu: true,
   });
+
+  const { showNoahMenu: showNoahOption } = useReceiveNoahEntry();
 
   const handleReceivePress = useCallback(() => {
     track("button_clicked", {
@@ -90,22 +94,27 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
         onPress: handleSendPress,
         testID: QUICK_ACTIONS_TEST_IDS.transferDrawer.send,
       },
-      {
-        id: "bank_transfer",
-        title: t("portfolio.quickActionsCtas.transferDrawer.bankTransfer"),
-        description: t("portfolio.quickActionsCtas.transferDrawer.bankTransferDescription"),
-        icon: Bank,
-        disabled: readOnlyModeEnabled,
-        onPress: handleBankTransferPress,
-        testID: QUICK_ACTIONS_TEST_IDS.transferDrawer.bankTransfer,
-      },
+      ...(showNoahOption
+        ? [
+            {
+              id: "bank_transfer" as const,
+              title: t("portfolio.quickActionsCtas.transferDrawer.bankTransfer"),
+              description: t("portfolio.quickActionsCtas.transferDrawer.bankTransferDescription"),
+              icon: Bank,
+              disabled: readOnlyModeEnabled,
+              onPress: handleBankTransferPress,
+              testID: QUICK_ACTIONS_TEST_IDS.transferDrawer.bankTransfer,
+            },
+          ]
+        : []),
     ],
     [
       t,
       readOnlyModeEnabled,
-      hasFunds,
       handleReceivePress,
+      hasFunds,
       handleSendPress,
+      showNoahOption,
       handleBankTransferPress,
     ],
   );

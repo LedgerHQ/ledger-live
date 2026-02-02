@@ -313,6 +313,7 @@
     "jest-environment-jsdom": "catalog:",
     "jest-file-snapshot": "catalog:",
     "mkdirp": "1.0.4",
+    "msw": "catalog:",
     "nock": "^13.0.5",
     "react": "catalog:",
     "react-dom": "catalog:",

@@ -2,12 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { TextDecoder, TextEncoder } from "util";
-
-// Polyfill for TextDecoder/TextEncoder required by Cardano dependencies
-global.TextDecoder = TextDecoder as any;
-global.TextEncoder = TextEncoder as any;
-
 // Mock the deviceTransactionConfig module before importing anything else
 jest.mock("../transaction/deviceTransactionConfig", () => ({
   getDeviceTransactionConfig: jest.fn(),

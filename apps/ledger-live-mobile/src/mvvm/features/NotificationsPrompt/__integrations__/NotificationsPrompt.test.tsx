@@ -9,6 +9,29 @@ import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { NotificationsPromptDrawer } from "../screens/NotificationsPromptDrawer";
 import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 
+// Mock QueuedDrawer to bypass animation issues with Reanimated 4 in tests
+jest.mock("~/components/QueuedDrawer", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require("react");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { View, Pressable } = require("react-native");
+  return {
+    __esModule: true,
+    default: (props: Record<string, unknown>) => {
+      if (!props.isRequestingToBeOpened) return React.createElement(View, null);
+      return React.createElement(
+        View,
+        null,
+        React.createElement(Pressable, {
+          testID: "drawer-backdrop",
+          onPress: props.onBackdropPress,
+        }),
+        props.children,
+      );
+    },
+  };
+});
+
 const AuthorizationStatus = {
   NOT_DETERMINED: -1,
   DENIED: 0,

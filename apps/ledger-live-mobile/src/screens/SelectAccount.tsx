@@ -2,13 +2,9 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { accountWithMandatoryTokens, flattenAccounts } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  isAccountEmpty,
-  getAccountSpendableBalance,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty, getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { ScreenName, NavigatorName } from "~/const";
+import { ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import AccountSelector from "~/components/AccountSelector";
@@ -18,7 +14,6 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import SafeAreaView from "~/components/SafeAreaView";
 import { AccountLike } from "@ledgerhq/types-live";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>;
 
@@ -62,8 +57,6 @@ function ReceiveFunds({ navigation, route }: Props) {
     ? enhancedAccounts.filter(account => !isAccountEmpty(account))
     : enhancedAccounts;
 
-  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
-
   const handleSelectAccount = useCallback(
     (account: AccountLike) => {
       const balance = getAccountSpendableBalance(account);
@@ -71,28 +64,6 @@ function ReceiveFunds({ navigation, route }: Props) {
       if (typeof minBalance !== "undefined" && !isNaN(minBalance) && balance.lte(minBalance)) {
         setError(new NotEnoughBalance());
       } else {
-        // If navigating to Send flow, check if new flow is enabled for this account's family
-        if (next === ScreenName.SendSelectRecipient) {
-          const accountFamily = getFamilyFromAccount(account, undefined);
-          const shouldUseNewFlow = isEnabledForFamily(accountFamily);
-
-          if (shouldUseNewFlow) {
-            // New flow: Navigate to SendFlow with account params
-            const mainAccount = getMainAccount(account, undefined);
-            // @ts-expect-error navigation types for nested navigators
-            navigation.navigate(NavigatorName.SendFlow, {
-              params: {
-                account,
-                parentAccount: mainAccount === account ? undefined : mainAccount,
-              },
-            });
-            return;
-          }
-        }
-
-        // Determine navigation target for old flows or non-Send flows
-        const targetScreen = next || ScreenName.ReceiveConnectDevice;
-
         // FIXME: Double check if this works because it seems very weird.
         // 1) "next" does not seem to be passed as a param anywhere
         // 2) This component belongs to "SendFundsNavigator", but ReceiveConnectDevice does not.
@@ -100,7 +71,7 @@ function ReceiveFunds({ navigation, route }: Props) {
         // Update: next is never passed as a dynamic param, it is only defined as an initial param
         // Thus, next is always defined and the || condition seems to be kinda stupid.
         // @ts-expect-error this seems impossible to type correctly…
-        navigation.navigate(targetScreen, {
+        navigation.navigate(next || ScreenName.ReceiveConnectDevice, {
           ...route.params,
           account,
           accountId: account.id,
@@ -108,7 +79,7 @@ function ReceiveFunds({ navigation, route }: Props) {
         });
       }
     },
-    [minBalance, navigation, next, route.params, isEnabledForFamily, getFamilyFromAccount],
+    [minBalance, navigation, next, route.params],
   );
 
   return (

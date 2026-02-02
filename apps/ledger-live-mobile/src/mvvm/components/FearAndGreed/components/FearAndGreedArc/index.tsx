@@ -5,9 +5,9 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   useDerivedValue,
-  runOnJS,
   Easing,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import Svg, { Path, Defs, LinearGradient, Stop, Text as SvgText, Circle } from "react-native-svg";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 
@@ -65,9 +65,9 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
     const rounded = Math.round(animatedValue.value);
     if (rounded !== lastDisplayValue.value) {
       lastDisplayValue.value = rounded;
-      runOnJS(setDisplayValue)(rounded);
+      scheduleOnRN(setDisplayValue, rounded);
     }
-  });
+  }, [animatedValue, lastDisplayValue]);
 
   const cursorStyle = useAnimatedStyle(() => {
     "worklet";

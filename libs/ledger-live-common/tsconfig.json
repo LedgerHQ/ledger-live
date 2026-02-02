@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "react": ["../../node_modules/@types/react"],
-      "@types/react": ["../../node_modules/@types/react"]
+      "@types/react": ["../../node_modules/@types/react"],
+      "@tests/*": ["src/__tests__/*"]
     }
   },
   "files": [

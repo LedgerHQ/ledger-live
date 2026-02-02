@@ -51,6 +51,7 @@ export const overrideStateWithFunds = (state: State): State => {
       readOnlyModeEnabled: false,
       overriddenFeatureFlags: {
         ptxServiceCtaExchangeDrawer: { enabled: true },
+        noah: { enabled: true },
       },
     },
   };
@@ -67,6 +68,7 @@ export const overrideStateWithoutFunds = (state: State): State => ({
     readOnlyModeEnabled: false,
     overriddenFeatureFlags: {
       ptxServiceCtaExchangeDrawer: { enabled: true },
+      noah: { enabled: true },
     },
   },
 });
@@ -85,6 +87,7 @@ export const overrideStateReadOnly = (state: State): State => {
       readOnlyModeEnabled: true,
       overriddenFeatureFlags: {
         ptxServiceCtaExchangeDrawer: { enabled: true },
+        noah: { enabled: true },
       },
     },
   };
