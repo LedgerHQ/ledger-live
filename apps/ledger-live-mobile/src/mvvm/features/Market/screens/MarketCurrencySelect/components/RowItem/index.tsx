@@ -18,11 +18,7 @@ function RowItem({ item, index, counterCurrency, onSelectCurrency }: RowItemProp
   const color = isChecked ? "primary.c80" : "neutral.c100";
   const labelColor = isChecked ? "primary.c80" : "neutral.c80";
   return (
-    <TouchableOpacity
-      key={index}
-      onPress={() => onSelectCurrency(item.value)}
-      testID={`market-currency-select-row-${item.value}`}
-    >
+    <TouchableOpacity key={index} onPress={() => onSelectCurrency(item.value)}>
       <Flex
         flexDirection="row"
         justifyContent="space-between"

@@ -6,13 +6,6 @@ export default class MarketPage {
   marketFilterSortButton = () => getElementById("market-filter-sort");
   marketFilterTimeButton = () => getElementById("market-filter-time");
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
-  marketFilterTopGainersButton = () => getElementById("market-filter-top-gainers");
-  marketFilterTopLosersButton = () => getElementById("market-filter-top-losers");
-  marketFilterMarketCapAscButton = () => getElementById("market-filter-market-cap-asc");
-  marketFilterMarketCapDescButton = () => getElementById("market-filter-market-cap-desc");
-  marketFilterTimeWeeklyButton = () => getElementById("market-filter-time-7d");
-  marketCurrencySelectRowButton = (currency: string) =>
-    getElementById(`market-currency-select-row-${currency}`);
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
   assetDetailBackBtn = () => getElementById("market-back-btn");
@@ -77,34 +70,10 @@ export default class MarketPage {
     await tapByElement(this.marketQuickActionButton(action));
   }
 
-  @Step("Tap on market filter sort button")
-  async tapOnMarketFilterSortButton() {
-    await tapByElement(this.marketFilterSortButton());
-  }
-
   @Step("Expect filters visible")
   async expectFiltersVisible() {
     await detoxExpect(this.marketFilterSortButton()).toBeVisible();
     await detoxExpect(this.marketFilterTimeButton()).toBeVisible();
     await detoxExpect(this.marketFilterCurrencyButton()).toBeVisible();
-  }
-
-  @Step("Sort by desc rank")
-  async sortByDescRank() {
-    await detoxExpect(this.marketFilterTopGainersButton()).toBeVisible();
-    await detoxExpect(this.marketFilterTopLosersButton()).toBeVisible();
-    await detoxExpect(this.marketFilterMarketCapAscButton()).toBeVisible();
-    await detoxExpect(this.marketFilterMarketCapDescButton()).toBeVisible();
-    await tapByElement(this.marketFilterMarketCapDescButton());
-  }
-
-  @Step("Tap on market filter time button")
-  async tapOnMarketFilterTimeButton() {
-    await tapByElement(this.marketFilterTimeButton());
-  }
-
-  @Step("Select weekly time range")
-  async selectWeeklyTimeRange() {
-    await tapByElement(this.marketFilterTimeWeeklyButton());
   }
 }

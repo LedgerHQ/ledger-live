@@ -34,7 +34,6 @@ export default class PortfolioPage {
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
   tabBarEarnButton = "tab-bar-earn";
-  portfolioOperationHistorySection = "portfolio-operation-history-section";
   marketBannerList = "market-banner-list";
   marketBannerTileBase = "market-banner-tile-";
   marketBannerViewAll = "market-banner-view-all";
@@ -42,7 +41,6 @@ export default class PortfolioPage {
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "drawer-close-button";
   accountsList = "portfolio-assets-layout";
-  marketBannerViewAllTitle = "market-banner-view-all-title";
   marketBannerTitle = "market-banner-title";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
