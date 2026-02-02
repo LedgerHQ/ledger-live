@@ -44,64 +44,36 @@ log_step() {
 check_dependencies() {
 	log_info "Checking environment for Magisk patching..."
 
-	# Handle both ANDROID_SDK_ROOT and ANDROID_HOME
-	if [[ -z "${ANDROID_SDK_ROOT}" && -n "${ANDROID_HOME}" ]]; then
-		export ANDROID_SDK_ROOT="${ANDROID_HOME}"
-		log_info "Using ANDROID_HOME as ANDROID_SDK_ROOT: ${ANDROID_HOME}"
-	fi
-
+	# Check if Android SDK is set (GitHub Actions sets ANDROID_SDK_ROOT)
 	if [[ -z "${ANDROID_SDK_ROOT}" ]]; then
-		log_error "Neither ANDROID_SDK_ROOT nor ANDROID_HOME is set"
+		log_error "ANDROID_SDK_ROOT is not set"
 		exit 1
 	fi
 
-	# Verify the SDK directory actually exists
+	# Debug: Show actual variable value
+	log_info "ANDROID_SDK_ROOT value: ${ANDROID_SDK_ROOT}"
+	log_info "ANDROID_SDK_ROOT exists: $([[ -d "${ANDROID_SDK_ROOT}" ]] && echo "YES" || echo "NO")"
+
+	# Verify: SDK directory actually exists
 	if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
 		log_error "Android SDK directory does not exist: ${ANDROID_SDK_ROOT}"
 		exit 1
 	fi
 
-	# Add common Android SDK paths to search (literal paths)
-	local sdk_root="${ANDROID_SDK_ROOT}"
-	local found_sdk=""
-
-	# Try to find the actual Android SDK with system-images
-	if [[ ! -d "${sdk_root}/system-images" ]]; then
-		# Common Android SDK installation paths
-		local common_paths=(
-			"/usr/local/lib/android/sdk"
-			"/usr/local/lib/android-sdk"
-			"${ANDROID_HOME}"
-			"$HOME/Android/Sdk"
-			"$HOME/Library/Android/sdk"
-		)
-
-		for path in "${common_paths[@]}"; do
-			if [[ -d "${path}" && -d "${path}/system-images" ]]; then
-				found_sdk="$path"
-				break
-			fi
-		done
-
-		if [[ -n "$found_sdk" ]]; then
-			log_warn "Using detected Android SDK path: $found_sdk"
-			sdk_root="$found_sdk"
-		else
-			log_error "Could not find Android SDK with system-images"
-			log_info "Searched paths:"
-			printf '  %s\n' "${common_paths[@]}"
-			exit 1
-		fi
+	# Verify: system-images directory exists
+	if [[ ! -d "${ANDROID_SDK_ROOT}/system-images" ]]; then
+		log_error "system-images directory not found in: ${ANDROID_SDK_ROOT}"
+		exit 1
 	fi
 
-	export ANDROID_SDK_ROOT="$sdk_root"
+	# Set final SDK root variable
+	local sdk_root="${ANDROID_SDK_ROOT}"
 
 	# Check if AVD system image exists (this is what we actually need)
-	local system_image_base="${ANDROID_SDK_ROOT}/system-images"
+	local system_image_base="${sdk_root}/system-images"
 	local system_image_dir="${system_image_base}/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}/"
 	local ramdisk_path="${system_image_dir}/ramdisk.img"
 
-	log_info "Final Android SDK path: ${ANDROID_SDK_ROOT}"
 	log_info "Looking for system image in: ${system_image_dir}"
 
 	if [[ ! -f "$ramdisk_path" ]]; then
@@ -124,7 +96,7 @@ check_dependencies() {
 	fi
 
 	# Add Android tools to PATH
-	export PATH="${ANDROID_SDK_ROOT}/emulator:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
+	export PATH="${sdk_root}/emulator:${sdk_root}/platform-tools:${sdk_root}/tools:$PATH"
 
 	log_info "Environment check passed"
 	log_info "System image: $ramdisk_path"
@@ -153,12 +125,12 @@ download_magisk() {
 
 # Find ramdisk.img
 find_ramdisk() {
-	local system_image_dir="${ANDROID_SDK_ROOT}/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
+	local system_image_dir="${sdk_root}/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
 	local ramdisk_path="${system_image_dir}/ramdisk.img"
 
 	log_info "Looking for ramdisk.img at ${ramdisk_path}..."
 
-	if [[ ! -f "${ramdisk_path}" ]]; then
+	if [[ ! -f "$ramdisk_path" ]]; then
 		log_error "ramdisk.img not found at ${ramdisk_path}"
 		log_error "Please ensure the AVD system image is installed"
 		exit 1
