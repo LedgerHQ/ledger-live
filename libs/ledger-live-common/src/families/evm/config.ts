@@ -934,6 +934,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_arbitrum_sepolia: {
     type: "object",
     default: {
+      status: { type: "active" },
       node: { type: "external", uri: "https://sepolia-rollup.arbitrum.io/rpc" },
       explorer: {
         type: "etherscan",
