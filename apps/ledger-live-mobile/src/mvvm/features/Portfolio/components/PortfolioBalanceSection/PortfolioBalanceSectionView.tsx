@@ -16,12 +16,7 @@ const containerStyle: LumenViewStyle = {
   alignItems: "center",
   justifyContent: "center",
   paddingTop: "s56",
-};
-
-const rowStyle: LumenViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  marginTop: "s12",
+  paddingBottom: "s64",
 };
 
 export const PortfolioBalanceSectionView = ({
@@ -45,16 +40,16 @@ export const PortfolioBalanceSectionView = ({
     [unit, locale],
   );
 
-  const getBalanceIndicator = () => {
-    if (!isBalanceAvailable) {
-      return <InfiniteLoader size={20} />;
+  const getTestId = (): string => {
+    if (state === "noSigner" || state === "noFund") {
+      return `portfolio-balance-${state}`;
     }
-    return <AnalyticPill valueChange={countervalueChange} />;
+    return isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading";
   };
 
-  if (state === "noSigner" || state === "noFund") {
-    return (
-      <Box lx={containerStyle} testID={`portfolio-balance-${state}`}>
+  const renderContent = () => {
+    if (state === "noSigner" || state === "noFund") {
+      return (
         <Text
           typography="heading1SemiBold"
           lx={{ color: "base", textAlign: "center" }}
@@ -63,30 +58,44 @@ export const PortfolioBalanceSectionView = ({
         >
           {t(`portfolio.balance.${state}`)}
         </Text>
-      </Box>
+      );
+    }
+
+    return (
+      <>
+        <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
+          <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s4" }}>
+            <AmountDisplay
+              key={unit.code}
+              value={isBalanceAvailable ? balance : 0}
+              formatter={formatter}
+              hidden={!isBalanceAvailable || discreet}
+              testID="portfolio-balance-amount"
+            />
+            {discreet && <DiscreetModeIcon />}
+          </Box>
+        </Pressable>
+        <Box
+          lx={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: "s12",
+            minHeight: isBalanceAvailable ? undefined : "s24",
+          }}
+        >
+          {isBalanceAvailable ? (
+            <AnalyticPill valueChange={countervalueChange} />
+          ) : (
+            <InfiniteLoader size={20} />
+          )}
+        </Box>
+      </>
     );
-  }
+  };
 
   return (
-    <Box
-      lx={{ ...containerStyle, paddingBottom: "s64" }}
-      testID={isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading"}
-    >
-      <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
-        <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-          <AmountDisplay
-            key={unit.code}
-            value={isBalanceAvailable ? balance : 0}
-            formatter={formatter}
-            hidden={!isBalanceAvailable || discreet}
-            testID="portfolio-balance-amount"
-          />
-          {discreet && <DiscreetModeIcon />}
-        </Box>
-      </Pressable>
-      <Box lx={{ ...rowStyle, ...(!isBalanceAvailable && { minHeight: "s24" }) }}>
-        {getBalanceIndicator()}
-      </Box>
+    <Box lx={containerStyle} testID={getTestId()}>
+      {renderContent()}
     </Box>
   );
 };
