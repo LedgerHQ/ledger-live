@@ -370,6 +370,9 @@ export class SwapPage extends AppPage {
 
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
+
+    // Blur the input to trigger quote refresh
+    await amountInput.blur();
   }
 
   @step("Select currency to swap to: $1")
