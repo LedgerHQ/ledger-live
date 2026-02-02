@@ -1,11 +1,12 @@
-import { UseQueryResult, useQueries, useQuery } from "@tanstack/react-query";
-import { fetchCurrency, fetchList } from "../api";
+import { UseQueryResult, useQueries } from "@tanstack/react-query";
+import { fetchList } from "../api";
 import {
   useGetSupportedCoinsListQuery,
   useGetSupportedCounterCurrenciesQuery,
   useGetCurrencyChartDataQuery,
+  useGetCurrencyDataQuery,
 } from "../state-manager/api";
-import { currencyFormatter, format } from "../utils/currencyFormatter";
+import { currencyFormatter } from "../utils/currencyFormatter";
 import { QUERY_KEY } from "../utils/queryKeys";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
 import {
@@ -47,13 +48,12 @@ export const useSupportedCurrencies = () =>
   });
 
 export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestParams) =>
-  useQuery({
-    queryKey: [QUERY_KEY.CurrencyDataRaw, id, counterCurrency],
-    queryFn: () => fetchCurrency({ id, counterCurrency }),
-    refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    select: data => format(data),
-  });
+  useGetCurrencyDataQuery(
+    { id, counterCurrency },
+    {
+      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    },
+  );
 
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
   const search = props.search?.toLowerCase() ?? "";
