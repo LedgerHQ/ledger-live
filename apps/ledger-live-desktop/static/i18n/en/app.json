@@ -2206,6 +2206,19 @@
       "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
+  "newReceive": {
+    "steps": {
+      "options": {
+        "fromBank": {
+          "title": "Bank transfer",
+          "description": "Receive stablecoin by sending cash"
+        },
+        "fromCrypto": {
+          "title": "Receive crypto"
+        }
+      }
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
