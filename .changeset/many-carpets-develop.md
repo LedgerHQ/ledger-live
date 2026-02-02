@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-feat: only show generic illustration for onboarding
+Rename notifications prompt illustrations (NotificationsBell, NotificationsPerformanceChart) and show by drawer source
