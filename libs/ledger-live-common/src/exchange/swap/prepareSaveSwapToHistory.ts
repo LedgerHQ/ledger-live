@@ -37,11 +37,11 @@ export function prepareSaveSwapToHistory(
   const toAccount = accounts.find(acc => acc.id === toAccountId);
 
   if (!fromAccount) {
-    throw new Error(`fromAccount ${fromAccountId} unknown`);
+    throw new Error(`accountId ${fromAccountId} unknown`);
   }
 
   if (!toAccount) {
-    throw new Error(`toAccount ${toAccountId} unknown`);
+    throw new Error(`accountId ${toAccountId} unknown`);
   }
 
   const accountId =

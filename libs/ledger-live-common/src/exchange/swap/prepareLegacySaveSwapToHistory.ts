@@ -21,8 +21,12 @@ export function prepareLegacySaveSwapToHistory({
 
   const fromAccount = accounts.find(acc => acc.id === fromId);
   const toAccount = accounts.find(acc => acc.id === toId);
-  if (!fromAccount || !toAccount) {
+  if (!fromAccount) {
     throw new Error(`accountId ${fromId} unknown`);
+  }
+
+  if (!toAccount) {
+    throw new Error(`accountId ${toId} unknown`);
   }
 
   return prepareSaveSwapToHistory(accounts, {
