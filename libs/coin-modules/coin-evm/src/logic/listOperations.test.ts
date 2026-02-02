@@ -220,7 +220,13 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    expect(await listOperations({} as CryptoCurrency, "address", 5, "asc")).toEqual([
+    expect(
+      await listOperations({} as CryptoCurrency, "address", {
+        minHeight: 0,
+        limit: 5,
+        order: "asc",
+      }),
+    ).toEqual([
       [
         {
           id: "coin-op-1",
@@ -431,6 +437,7 @@ describe("listOperations", () => {
             block: {
               hash: "",
               height: 25,
+              time: new Date("2025-02-25"),
             },
             date: new Date("2025-02-25"),
             failed: false,
