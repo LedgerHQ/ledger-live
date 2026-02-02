@@ -485,7 +485,7 @@ describe("listOperations", () => {
       [
         {
           id: "token-op-erc20",
-          type: "FEES",
+          type: "OUT",
           senders: ["address1"],
           recipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
           value: 666n,
