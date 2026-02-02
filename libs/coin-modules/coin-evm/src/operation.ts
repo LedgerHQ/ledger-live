@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
- * Return weather an operation is editable or not.
+ * Return whether an operation is editable or not.
  */
 export const isEditableOperation = (
   account: Account,
