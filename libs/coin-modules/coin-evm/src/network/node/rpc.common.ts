@@ -13,7 +13,7 @@ import { getSerializedTransaction } from "../../transaction";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { getCoinConfig } from "../../config";
 import { FeeHistory } from "../../types";
-import { safeEncodeEIP55 } from "../../utils";
+import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { NodeApi, isExternalNodeConfig, ERC20Transfer } from "./types";
 
 /**
@@ -149,7 +149,7 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
  */
 export const getCoinBalance: NodeApi["getCoinBalance"] = (currency, address) =>
   withApi(currency, async api => {
-    const balance = await api.getBalance(address);
+    const balance = await api.getBalance(normalizeAddress(address));
     return new BigNumber(balance.toString());
   });
 
@@ -158,8 +158,8 @@ export const getCoinBalance: NodeApi["getCoinBalance"] = (currency, address) =>
  */
 export const getTokenBalance: NodeApi["getTokenBalance"] = (currency, address, contractAddress) =>
   withApi(currency, async api => {
-    const erc20 = new ethers.Contract(contractAddress, ERC20Abi, api);
-    const balance = await erc20.balanceOf(address);
+    const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
+    const balance = await erc20.balanceOf(normalizeAddress(address));
     return new BigNumber(balance.toString());
   });
 
@@ -168,7 +168,7 @@ export const getTokenBalance: NodeApi["getTokenBalance"] = (currency, address, c
  */
 export const getTransactionCount: NodeApi["getTransactionCount"] = (currency, address) =>
   withApi(currency, async api => {
-    return api.getTransactionCount(address, "pending");
+    return api.getTransactionCount(normalizeAddress(address), "pending");
   });
 
 /**
@@ -178,14 +178,14 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
   withApi(
     account.currency,
     async api => {
-      const to = transaction.recipient;
+      const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
       const value = BigInt(transaction.amount.toFixed(0));
       const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
 
       try {
         const gasEstimation = await api.estimateGas({
           ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
-          from: account.freshAddress, // Necessary as no signature to infer the sender
+          from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
           value,
           data,
         });
