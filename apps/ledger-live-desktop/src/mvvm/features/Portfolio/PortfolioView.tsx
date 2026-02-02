@@ -11,6 +11,7 @@ import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
 import { AddAccount } from "./components/AddAccount";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "./utils/constants";
+import { Divider } from "@ledgerhq/lumen-ui-react";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -46,6 +47,7 @@ export const PortfolioView = memo(function PortfolioView({
             {shouldDisplayQuickActionCtas && (
               <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
             )}
+            {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" />}
             {shouldDisplayMarketBanner && <MarketBanner />}
             {shouldDisplayAddAccountCta && <AddAccount />}
           </div>
