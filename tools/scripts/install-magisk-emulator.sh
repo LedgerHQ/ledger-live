@@ -12,6 +12,11 @@ AVD_API="${AVD_API:-35}"
 AVD_ARCH="${AVD_ARCH:-x86_64}"
 AVD_TARGET="${AVD_TARGET:-google_apis}"
 
+# Set defaults if not provided
+if [[ -z "${AVD_API}" ]]; then AVD_API="35"; fi
+if [[ -z "${AVD_ARCH}" ]]; then AVD_ARCH="x86_64"; fi
+if [[ -z "${AVD_TARGET}" ]]; then AVD_TARGET="google_apis"; fi
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -35,24 +40,46 @@ log_step() {
 	echo -e "${BLUE}[STEP]${NC} $1"
 }
 
-# Check dependencies
+# Check dependencies (minimal for patching)
 check_dependencies() {
-	log_info "Checking dependencies..."
+	log_info "Checking environment for Magisk patching..."
 
-	local deps=("adb" "emulator" "avdmanager")
-	for dep in "${deps[@]}"; do
-		if ! command -v "$dep" >/dev/null 2>&1; then
-			log_error "$dep is not installed or not in PATH"
-			exit 1
-		fi
-	done
+	# Handle both ANDROID_SDK_ROOT and ANDROID_HOME
+	if [[ -z "${ANDROID_SDK_ROOT}" && -n "${ANDROID_HOME}" ]]; then
+		export ANDROID_SDK_ROOT="${ANDROID_HOME}"
+		log_info "Using ANDROID_HOME as ANDROID_SDK_ROOT: ${ANDROID_HOME}"
+	fi
 
 	if [[ -z "${ANDROID_SDK_ROOT}" ]]; then
-		log_error "ANDROID_SDK_ROOT is not set"
+		log_error "Neither ANDROID_SDK_ROOT nor ANDROID_HOME is set"
 		exit 1
 	fi
 
-	log_info "Dependencies check passed"
+	# Check if AVD system image exists (this is what we actually need)
+	local system_image_dir="${ANDROID_SDK_ROOT}/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}/"
+	local ramdisk_path="${system_image_dir}/ramdisk.img"
+
+	if [[ ! -f "$ramdisk_path" ]]; then
+		log_error "System image not found at: ${system_image_dir}"
+		log_error "Please ensure AVD system image is installed"
+		exit 1
+	fi
+
+	# Check if required tools are available
+	if ! command -v "avdmanager" >/dev/null 2>&1; then
+		log_warn "avdmanager not found, but continuing..."
+	fi
+
+	if ! command -v "adb" >/dev/null 2>&1; then
+		log_warn "adb not found, but continuing with patch..."
+		# ADB is only needed for verification, not patching
+	fi
+
+	# Add Android tools to PATH
+	export PATH="${ANDROID_SDK_ROOT}/emulator:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
+
+	log_info "Environment check passed"
+	log_info "System image: $ramdisk_path"
 }
 
 # Download Magisk

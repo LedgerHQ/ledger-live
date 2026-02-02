@@ -532,6 +532,22 @@ jobs:
       - name: Install Magisk on Emulator
         run: |
           # Install Magisk to enable system certificate installation
+          # This patches the system image to allow module installation
+          echo "🔧 Android SDK location: $ANDROID_HOME"
+          echo "📱 AVD Configuration:"
+          echo "  - API Level: ${{ env.AVD_API }}"
+          echo "  - Architecture: ${{ env.AVD_ARCH }}"
+          echo "  - Target: ${{ env.AVD_TARGET }}"
+          echo "  - Name: ${{ env.AVD_NAME }}"
+
+          # Debug Android SDK structure
+          ls -la "$ANDROID_HOME/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/" 2>/dev/null || {
+            echo "❌ System image directory not found"
+            echo "Available API levels:"
+            ls "$ANDROID_HOME/system-images/" 2>/dev/null || echo "No system images found"
+            exit 1
+          }
+
           ./tools/scripts/install-magisk-emulator.sh
         env:
           AVD_API: ${{ env.AVD_API }}
