@@ -231,7 +231,7 @@
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "chalk": "4.1.2",
-    "eslint": "8.57.0",
+    "eslint": "9.26.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-prettier": "5.1.3",

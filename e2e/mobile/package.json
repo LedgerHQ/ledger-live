@@ -54,7 +54,7 @@
     "cors": "2.8.5",
     "detox": "20.46.0",
     "detox-allure2-adapter": "1.0.0-alpha.42",
-    "eslint": "8.57.0",
+    "eslint": "9.26.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-prettier": "5.1.3",
