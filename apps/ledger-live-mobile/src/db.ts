@@ -110,18 +110,9 @@ async function unsafeGetAccounts(): Promise<{
   const keys = await storage.keys();
   const accountKeys = onlyAccountsKeys(keys);
 
-  // if some account keys, we retrieve them and return
+  // if some account keys, we retrieve them and return (order from storage)
   if (accountKeys && accountKeys.length > 0) {
-    let active = (await storage.get(accountKeys)) as { data: AccountRaw }[];
-
-    if (keys.includes(ACCOUNTS_KEY_SORT)) {
-      const ids = (await storage.get(ACCOUNTS_KEY_SORT)) as string[];
-      active = active
-        .map<[{ data: AccountRaw }, number]>(a => [a, ids.indexOf(a.data.id)])
-        .sort((a, b) => a[1] - b[1])
-        .map(a => a[0]);
-    }
-
+    const active = (await storage.get(accountKeys)) as { data: AccountRaw }[];
     return {
       active,
     };
@@ -161,21 +152,29 @@ async function unsafeSaveAccounts(
     },
   ]);
 
+  const newAccountKeysSet = new Set(dbData.map(([k]) => k));
   /** Find current DB accounts keys diff with app state to remove them */
   const deletedKeys =
-    currentAccountKeys && currentAccountKeys.length
-      ? currentAccountKeys.filter(key => dbData.every(([accountKey]) => accountKey !== key))
+    currentAccountKeys.length > 0
+      ? currentAccountKeys.filter(key => !newAccountKeysSet.has(key))
       : [];
+
   // we only save those who effectively changed
-  const dbDataWithOnlyChanges = !stats
+  const changedIdsSet = stats ? new Set(stats.changed) : null;
+  const dbDataWithOnlyChanges: Array<[string, unknown]> = !changedIdsSet
     ? dbData
-    : dbData.filter(([_key, { data }]) => stats.changed.includes(data.id));
+    : dbData.filter(([_key, { data }]) => changedIdsSet.has(data.id));
+  const toSave = [...dbDataWithOnlyChanges];
+
+  // only persist sort when we're already saving account data or deletions
+  if (dbDataWithOnlyChanges.length > 0 || deletedKeys.length > 0) {
+    toSave.push([ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)]);
+  }
 
   /** persist store data to DB */
-  await storage.save([
-    ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
-    [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
-  ] as [string, string | { data: AccountRaw; version: number }][]);
+  if (toSave.length > 0) {
+    await storage.save(toSave);
+  }
 
   /** then delete potential removed keys */
   if (deletedKeys.length > 0) {
