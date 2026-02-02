@@ -30,6 +30,14 @@ describe("getInstance", () => {
     expect(client1).toBe(mockClient);
     expect(client2).toBe(client1);
   });
+
+  it("handles concurrent calls without creating multiple clients", async () => {
+    const promises = [...Array(10)].map(() => rpcClient.getInstance());
+    const clients = await Promise.all(promises);
+
+    expect(Client.forMainnetAsync).toHaveBeenCalledTimes(1);
+    expect(clients.every(c => c === clients[0])).toBe(true);
+  });
 });
 
 describe("broadcastTransaction", () => {
