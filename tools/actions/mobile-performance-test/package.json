@@ -1,6 +1,6 @@
 {
   "name": "@actions/mobile-performance-test",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Run a performance test on mobile",
   "license": "MIT",
   "private": true,

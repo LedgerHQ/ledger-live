@@ -282,11 +282,13 @@
     "advanced" : "Дополнительно",
     "custom" : "Пользовательская",
     "fast" : "Быстро",
+    "networkFees" : "Комиссия сети",
     "high" : "Высокая",
     "low" : "Низкая",
     "slow" : "Медленно",
     "standard" : "Обычная",
     "medium" : "Средне",
+    "coinControl" : "Контроль монет",
     "feesAmount" : "Размер комиссии"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "Подключить устройство",
         "secondaryCta" : "Не сейчас"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "Топ за {{time}}",
-      "buy" : "Покупка",
-      "swap" : "Обмен",
-      "gainers" : "Прибыльные",
-      "losers" : "Убыточные",
-      "error" : {
-        "title" : "Не удалось загрузить трендовые криптоактивы",
-        "description" : "Попробуйте позже"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "Ни один актив из {{count}} крупнейших не вырос за {{trend}}",
-          "description" : "Посмотрите самые убыточные монеты или обновите данные позже"
-        },
-        "losers" : {
-          "title" : "Ни один актив из {{count}} крупнейших не упал за {{trend}}",
-          "description" : "Посмотрите самые прибыльные монеты или обновите данные позже"
-        }
-      },
-      "trend" : {
-        "day" : "24 часа",
-        "week" : "7 дней",
-        "month" : "30 дней",
-        "year" : "Год",
-        "all" : "Год"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "Сумма к отправке в ({{currency}})",
     "coinToSend" : "Монета для отправки",
     "coinControlCustom" : "Ручной выбор монет",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "Макс."
+    },
+    "reviewCta" : "Просмотреть",
+    "getCta" : "Получить {{currency}}",
+    "switchInputMode" : "Переключить режим ввода суммы",
     "aboveMaximum" : "Больше максимального баланса",
     "transactionSigned" : "Транзакция подписана",
     "processingTransaction" : "Ваша транзакция обрабатывается",
     "sign" : {
       "title" : "Продолжите на вашем Ledger {{wording}}",
       "description" : "Следуйте руководству на защищённом сенсорном экране."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "Не удалось обновить комиссии сети",
+      "warningDescription" : "Заранее установленная комиссия может быть устаревшей."
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "Держите портфель в актуальном состоянии, переключаясь между ПК или смартфонами",
       "mevProtection" : "Защита от MEV",
       "mevProtectionDesc" : "Активируйте защиту от MEV для комфортных транзакций в Эфириуме.",
-      "mevProtectionLearnMore" : "Уведомление о конфиденциальности",
-      "marketPerformanceWidget" : "Виджет динамики рынка",
-      "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
+      "mevProtectionLearnMore" : "Уведомление о конфиденциальности"
     },
     "developer" : {
       "search" : "Поиск",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "Открыть плашку",
         "debugDialog" : "Окно отладки",
         "debugDuplicates" : "Отладка дубликатов"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "Инструменты разработчика функций кошелька",
+        "description" : "Переключение функций Wallet 4.0 для ПК (фича-флаг lwdWallet40).",
+        "enableAll" : "Включить все",
+        "disableAll" : "Отключить все",
+        "featureParameters" : "Параметры функции",
+        "showJson" : "Показывать JSON",
+        "hideJson" : "Скрыть JSON"
       },
       "cryptoAssetsList" : {
         "title" : "Список криптоактивов",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "Позволяет Ledger собирать данные об использовании приложения для оценки производительности Ledger Wallet, а также улучшения приложения и вашего опыта взаимодействия."
     }
   },
+  "analytics" : {
+    "title" : "Аналитика"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Закрыть",
@@ -7825,10 +7822,31 @@
       "cta" : "Попробовать ещё раз"
     }
   },
+  "portfolio" : {
+    "title" : "Главная",
+    "today" : "Сегодня"
+  },
   "marketBanner" : {
     "title" : "Исследуйте рынок",
     "genericError" : "Сбой подключения",
-    "cta" : "Посмотреть всё"
+    "cta" : "Посмотреть всё",
+    "fearAndGreed" : {
+      "title" : "Настроение"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Страх+",
+      "fear" : "Страх",
+      "neutral" : "Нейтральное",
+      "greed" : "Жадность",
+      "extremeGreed" : "Жадность+"
+    },
+    "dialog" : {
+      "title" : "Настроения",
+      "content" : "Индекс настроений отражает эмоциональное состояние рынка. Его значение варьируется от 0 до 100. Более низкий показатель означает крайний страх, а более высокий — крайнюю жадность.",
+      "cta" : "Понятно"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Ваши NFT",

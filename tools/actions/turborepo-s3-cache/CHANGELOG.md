@@ -1,5 +1,17 @@
 # @actions/turborepo-s3-cache
 
+## 1.3.0
+
+### Minor Changes
+
+- [#13946](https://github.com/LedgerHQ/ledger-live/pull/13946) [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - move from tsup to @rslib/core
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#13946](https://github.com/LedgerHQ/ledger-live/pull/13946) [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - move from tsup to @rslib/core
+
 ## 1.2.0
 
 ### Minor Changes

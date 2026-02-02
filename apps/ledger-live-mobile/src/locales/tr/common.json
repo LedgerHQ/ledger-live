@@ -7349,7 +7349,7 @@
         "actions" : {
           "redelegate" : "Yetki devret",
           "claim-rewards" : "Ödülleri topla",
-          "undelegate" : "Yetki devrini sonlandır"
+          "undelegate" : "Yetki devrini iptal et"
         }
       }
     },
@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve %20 oranında özel bir indirim için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin. ",
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "En yeni Ledger imzalayıcılarda %20 özel indirimden faydalanın.",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
-      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar.",
       "cta" : "Daha fazla bilgi"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "Piyasayı keşfedin",
     "viewAll" : "Tümünü gör",
     "viewAllAccessibilityHint" : "Piyasadaki tüm varlıkları görüntülemek için çift dokunun",
+    "connectionFailed" : "Bağlantı başarısız oldu",
+    "errorAccessibilityHint" : "Piyasa verileri yüklenemiyor. Lütfen daha sonra tekrar deneyin.",
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "Piyasa bilgilerini görüntülemek için çift dokunun"
@@ -8352,6 +8356,17 @@
       "neutral" : "Nötr",
       "greed" : "Açgözlülük",
       "extremeGreed" : "Aşırı Açgözlülük"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Analiz"
+    },
+    "allocation" : {
+      "title" : "Varlık Dağılımı"
+    },
+    "actions" : {
+      "swap" : "Takas et"
     }
   }
 }
