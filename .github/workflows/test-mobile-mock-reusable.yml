@@ -467,6 +467,18 @@ jobs:
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
 
+          # Install additional tools for Magisk setup
+          sudo apt-get update
+          sudo apt-get install -y unzip openssl
+
+          # Ensure scripts are executable
+          chmod +x tools/scripts/install-magisk-emulator.sh
+          chmod +x tools/scripts/build-mitmproxy-magisk-module.sh
+
+          # Verify scripts are present
+          ls -la tools/scripts/install-magisk-emulator.sh
+          ls -la tools/scripts/build-mitmproxy-magisk-module.sh
+
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
@@ -485,6 +497,18 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Install Magisk on Emulator System
+        run: |
+          # Install Magisk before starting emulator
+          # This patches the system image to enable root and module installation
+          ./tools/scripts/install-magisk-emulator.sh
+        env:
+          AVD_API: ${{ env.AVD_API }}
+          AVD_ARCH: ${{ env.AVD_ARCH }}
+          AVD_TARGET: ${{ env.AVD_TARGET }}
+          AVD_NAME: ${{ env.AVD_NAME }}
+          ANDROID_SDK_ROOT: $ANDROID_HOME
 
       - name: Download android emulator
         timeout-minutes: 5
@@ -516,12 +540,33 @@ jobs:
             mitmproxy = "{{ get_env(name='MIMTPROXY_VERSION', default='12.2.1') }}"
           github_token: ${{ secrets.GITHUB_TOKEN }} # [default: ${{ github.token }}] GitHub token for API authentication
 
-      - name: Generate mitmproxy certificate
+      - name: Install Magisk on Emulator
         run: |
-          mitmdump --listen-host 127.0.0.1 &
-          sleep 2
+          # Install Magisk to enable system certificate installation
+          ./tools/scripts/install-magisk-emulator.sh
+        env:
+          AVD_API: ${{ env.AVD_API }}
+          AVD_ARCH: ${{ env.AVD_ARCH }}
+          AVD_TARGET: ${{ env.AVD_TARGET }}
+          AVD_NAME: ${{ env.AVD_NAME }}
+          ANDROID_SDK_ROOT: $ANDROID_HOME
 
-      - name: create AVD and generate snapshot for caching
+      - name: Generate mitmproxy certificate and build Magisk module
+        run: |
+          # Generate mitmproxy certificate
+          mitmdump --listen-host 127.0.0.1 &
+          MITMDUMP_PID=$!
+          sleep 3
+          kill $MITMDUMP_PID 2>/dev/null || true
+          wait $MITMDUMP_PID 2>/dev/null || true
+
+          # Build Magisk module with certificate
+          ./tools/scripts/build-mitmproxy-magisk-module.sh
+
+          # Verify module was created
+          ls -la tools/scripts/mitmproxy-cert.zip
+
+      - name: create AVD with cold boot and generate snapshot for caching
         # if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         id: create-avd
@@ -536,15 +581,116 @@ jobs:
           ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }} -writable-system
-          script: ./tools/scripts/wait_emulator_idle.sh
+          script: |
+            # Start with cold boot to use patched Magisk image
+            ./tools/scripts/wait_emulator_idle.sh
 
-      - name: run AVD commands to provision cert
+      - name: Install mitmproxy certificate via Magisk
         run: |
-          adb ${{steps.create-avd.outputs.avd-name}}
-          adb remount
-          adb push ~/.mitmproxy/mitmproxy-ca.pem /sdcard/
-          adb shell "mv /sdcard/mitmproxy-ca.pem /system/etc/security/cacerts/"
-          adb shell "chmod 644 /system/etc/security/cacerts/mitmproxy-ca.pem"
+          # Function to retry adb commands
+          retry_adb() {
+            local retries=$1
+            local delay=$2
+            local command="$3"
+            
+            for ((i=1; i<=retries; i++)); do
+              if eval "$command"; then
+                return 0
+              else
+                echo "Attempt $i failed, retrying in $delay seconds..."
+                sleep $delay
+              fi
+            done
+            echo "Command failed after $retries attempts: $command"
+            return 1
+          }
+
+          # Wait for emulator to be ready after cold boot
+          echo "⏳ Waiting for emulator to initialize..."
+          sleep 20
+
+          # Wait for boot completion
+          if ! timeout 120 bash -c 'until adb shell getprop sys.boot_completed | grep -q "1"; do sleep 2; done'; then
+            echo "❌ Emulator failed to boot properly"
+            exit 1
+          fi
+
+          # Additional wait for system stability
+          sleep 15
+
+          # Check if Magisk is installed and working
+          if ! adb shell "command -v magisk" >/dev/null 2>&1; then
+            echo "❌ Magisk not found after restart"
+            echo "Listing ADB devices:"
+            adb devices
+            echo "Checking boot status:"
+            adb shell getprop sys.boot_completed || echo "Boot status unavailable"
+            exit 1
+          fi
+
+          # Verify Magisk is working
+          echo "🔍 Checking Magisk status..."
+          adb shell "magisk -v" || {
+            echo "❌ Magisk not responding"
+            exit 1
+          }
+
+          # Push and install mitmproxy certificate module
+          echo "📦 Installing mitmproxy certificate via Magisk module..."
+          retry_adb 3 2 "adb push tools/scripts/mitmproxy-cert.zip /sdcard/Download/"
+
+          # Install module using Magisk
+          retry_adb 3 2 "adb shell su -c 'magisk --install-module /sdcard/Download/mitmproxy-cert.zip'"
+
+          # Reboot to apply module
+          echo "🔄 Rebooting to apply certificate module..."
+          adb shell reboot
+
+          # Wait for reboot and system ready
+          echo "⏳ Waiting for reboot..."
+          sleep 30
+
+          if ! timeout 120 bash -c 'until adb shell getprop sys.boot_completed | grep -q "1"; do sleep 2; done'; then
+            echo "❌ Emulator failed to boot after reboot"
+            exit 1
+          fi
+
+          # Additional wait for Magisk modules to load
+          sleep 15
+
+          # Verify certificate installation
+          echo "🔍 Verifying certificate installation..."
+
+          # Check if module is active
+          if adb shell "su -c 'magisk --list-modules'" | grep -q mitmproxy; then
+            echo "✅ mitmproxy Magisk module is active"
+          else
+            echo "⚠️  Module not found in active modules, listing all:"
+            adb shell "su -c 'magisk --list-modules'" || echo "Failed to list modules"
+          fi
+
+          # Test certificate trust by checking if mitmproxy can intercept
+          echo "🔒 Testing certificate installation..."
+          adb shell "su -c 'ls /system/etc/security/cacerts/ | head -5'"
+
+          # Verify mitmproxy certificate is in system store
+          CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.cer | head -1)
+          echo "Certificate hash: $CERT_HASH"
+
+          if adb shell "test -f /system/etc/security/cacerts/${CERT_HASH}.0"; then
+            echo "✅ mitmproxy certificate successfully installed in system trust store"
+          else
+            echo "⚠️  Certificate may not be properly installed"
+            # List available certificates for debugging
+            echo "Available certificates (first 10):"
+            adb shell "ls /system/etc/security/cacerts/ | grep -E '^[0-9a-f]' | head -10" || echo "Failed to list certificates"
+            
+            # Check module directory
+            echo "Checking module installation path..."
+            adb shell "ls -la /data/adb/modules/ | grep mitmproxy" || echo "Module directory not found"
+          fi
+
+          echo "🎉 Certificate installation process completed"
 
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -560,6 +706,40 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+
+      - name: Final verification before tests
+        run: |
+          echo "🔍 Final verification before running tests..."
+
+          # Check emulator is running
+          if ! adb shell getprop sys.boot_completed | grep -q "1"; then
+            echo "❌ Emulator not ready for testing"
+            exit 1
+          fi
+
+          # Check Magisk is working
+          if adb shell "command -v magisk" >/dev/null 2>&1; then
+            echo "✅ Magisk is available: $(adb shell magisk -v 2>/dev/null || echo 'version unknown')"
+          else
+            echo "⚠️  Magisk not available, tests may fail"
+          fi
+
+          # Check mitmproxy certificate is installed
+          CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.cer | head -1)
+          if adb shell "test -f /system/etc/security/cacerts/${CERT_HASH}.0"; then
+            echo "✅ mitmproxy certificate is installed in system trust store"
+          else
+            echo "⚠️  mitmproxy certificate not found, HTTPS interception may not work"
+          fi
+
+          # Test network connectivity
+          if adb shell "ping -c 1 8.8.8.8" >/dev/null 2>&1; then
+            echo "✅ Network connectivity is working"
+          else
+            echo "⚠️  Network connectivity issues detected"
+          fi
+
+          echo "🚀 Ready to run Android tests"
 
       - name: Run Android Tests
         id: detox
