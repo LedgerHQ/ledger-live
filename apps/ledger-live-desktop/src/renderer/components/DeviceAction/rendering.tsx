@@ -1317,7 +1317,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
       <Separator />
       <DrawerFooter
         provider={exchangeRate.provider}
-        sponsored={transaction.family === "evm" && transaction?.sponsored}
+        sponsored={transaction.family === "evm" && transaction.sponsored}
       />
     </>
   );
