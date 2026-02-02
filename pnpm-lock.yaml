@@ -6535,6 +6535,9 @@ importers:
       mkdirp:
         specifier: 1.0.4
         version: 1.0.4
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       nock:
         specifier: ^13.0.5
         version: 13.5.4
