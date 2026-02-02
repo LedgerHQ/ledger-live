@@ -21,8 +21,7 @@ function extractStandard(op: LiveOperation): string {
 }
 
 function extractType(asset: AssetConfig, op: LiveOperation): OperationType {
-  if (asset.type === "native") return op.type;
-  if (op.hash in asset.parents) return asset.parents[op.hash].type;
+  if (asset.type === "native" || asset.type === "token") return op.type;
 
   return "NONE";
 }
