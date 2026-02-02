@@ -1115,7 +1115,7 @@ export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdating
 interface SwapConfirmationProps {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  transaction: Transaction & { sponsored?: boolean };
+  transaction: Transaction;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string;

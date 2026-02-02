@@ -80,7 +80,7 @@ const TermsFooter: React.FC<{
             key={`external-link-${idx}`}
           />
         ))}
-      />
+      />{" "}
       {sponsored && <Trans i18nKey="DeviceAction.confirmSwap.acceptTermsSponsored" />}
     </CenteredText>
   );

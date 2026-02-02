@@ -239,7 +239,7 @@ export function renderConfirmSwap({
   transaction,
 }: RawProps & {
   device: Device;
-  transaction: Transaction & { sponsored?: boolean };
+  transaction: Transaction;
   provider: TermsProviders;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
@@ -264,7 +264,10 @@ export function renderConfirmSwap({
           </Text>
         </Wrapper>
       </Wrapper>
-      <TermsFooter provider={provider} sponsored={transaction?.sponsored ?? false} />
+      <TermsFooter
+        provider={provider}
+        sponsored={transaction.family === "evm" && transaction?.sponsored}
+      />
       <ModalLock />
     </ScrollView>
   );

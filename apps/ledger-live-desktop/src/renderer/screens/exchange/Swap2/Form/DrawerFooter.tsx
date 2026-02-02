@@ -18,7 +18,7 @@ const Terms = styled(Text).attrs({
   fontSize: 13,
 })``;
 
-export function DrawerFooter({ provider, sponsored }: { provider: string; sponsored: boolean }) {
+export function DrawerFooter({ provider, sponsored }: { provider: string; sponsored?: boolean }) {
   const [providerData, setproviderData] = useState<AdditionalProviderConfig>();
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export function DrawerFooter({ provider, sponsored }: { provider: string; sponso
               style={{ textDecoration: "underline" }}
             />
           ))}
-        />
+        />{" "}
         {sponsored && <Trans i18nKey="DeviceAction.swap.acceptTermsSponsored" />}
       </Terms>
     </Box>
