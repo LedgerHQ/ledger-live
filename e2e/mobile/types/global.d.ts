@@ -68,6 +68,7 @@ declare global {
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var tapByElement: typeof NativeElementHelpers.tapByElement;
   var tapById: typeof NativeElementHelpers.tapById;
+  var tapByIdOptional: typeof NativeElementHelpers.tapByIdOptional;
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var typeTextById: typeof NativeElementHelpers.typeTextById;
@@ -75,6 +76,7 @@ declare global {
   var waitForElementById: typeof NativeElementHelpers.waitForElementById;
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
+  var waitForAnimation: typeof NativeElementHelpers.waitForAnimation;
 
   var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
   var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;

@@ -7,6 +7,8 @@ import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
+const DEFAULT_ANIMATION_DELAY = 500;
+
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
 }
@@ -167,8 +169,20 @@ export const NativeElementHelpers = {
     }
   },
 
+  async waitForAnimation(delay: number = DEFAULT_ANIMATION_DELAY): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, delay));
+  },
+
   async tapById(id: string | RegExp, index = 0) {
     return await NativeElementHelpers.getElementById(id, index).tap();
+  },
+
+  async tapByIdOptional(id: string | RegExp, options?: { onlyIfVisible?: boolean }): Promise<void> {
+    if (options?.onlyIfVisible && !(await NativeElementHelpers.isIdVisible(id))) {
+      return;
+    }
+    await NativeElementHelpers.waitForElementById(id);
+    await NativeElementHelpers.tapById(id);
   },
 
   async tapByText(text: string | RegExp, index = 0) {
@@ -339,7 +353,11 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
-  async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT, throwOnTimeout = true): Promise<WebElement | undefined> {
+  async waitWebElementByTestId(
+    id: string,
+    timeout = DEFAULT_TIMEOUT,
+    throwOnTimeout = true,
+  ): Promise<WebElement | undefined> {
     const start = Date.now();
     let lastErr: Error | undefined;
     while (Date.now() - start < timeout) {

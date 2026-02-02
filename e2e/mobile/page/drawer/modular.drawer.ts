@@ -177,11 +177,8 @@ export default class ModularDrawer {
 
   @Step("Tap on drawer close button")
   async tapDrawerCloseButton(options?: { onlyIfVisible: boolean }) {
-    options = options ?? { onlyIfVisible: false };
-    if (options.onlyIfVisible && !(await IsIdVisible(this.drawerCloseButtonId))) {
-      return;
-    }
-    await waitForElementById(this.drawerCloseButtonId);
-    await tapById(this.drawerCloseButtonId);
+    await tapByIdOptional(this.drawerCloseButtonId, {
+      onlyIfVisible: options?.onlyIfVisible ?? false,
+    });
   }
 }

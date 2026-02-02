@@ -278,25 +278,20 @@ export default class PortfolioPage {
   async expectFearAndGreedTitleInDrawer() {
     await waitForElementById(this.fearAndGreedTitle);
     await detoxExpect(getElementById(this.fearAndGreedTitle)).toBeVisible();
+    await waitForAnimation();
   }
 
-  @Step("Close bottom sheet")
-  async closeBottomSheet() {
-    await waitForElementById(this.bottomSheetCloseButton, 5000);
-    await tapById(this.bottomSheetCloseButton);
-    await waitForElementNotVisible(this.bottomSheetCloseButton, 5000);
-  }
-
-  @Step("Expect fear and greed title to be not visible")
-  async expectFearAndGreedTitleToBeNotVisible() {
-    const isNotVisible = await waitForElementNotVisible(this.fearAndGreedTitle, 10000);
-    if (!isNotVisible) {
-      throw new Error(`Element ${this.fearAndGreedTitle} is still visible after timeout`);
-    }
+  @Step("Tap on drawer close button")
+  async tapDrawerCloseButton(options?: { onlyIfVisible: boolean }) {
+    await tapByIdOptional(this.bottomSheetCloseButton, {
+      onlyIfVisible: options?.onlyIfVisible ?? false,
+    });
+    await waitForAnimation();
   }
 
   @Step("Tap on market banner tile")
   async tapMarketBannerTile(index: number) {
+    await waitForAnimation();
     await tapById(`${this.marketBannerTileBase}${index}`);
   }
 

@@ -85,6 +85,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       scrollToText: NativeElementHelpers.scrollToText,
       tapByElement: NativeElementHelpers.tapByElement,
       tapById: NativeElementHelpers.tapById,
+      tapByIdOptional: NativeElementHelpers.tapByIdOptional,
       tapByText: NativeElementHelpers.tapByText,
       typeTextByElement: NativeElementHelpers.typeTextByElement,
       typeTextById: NativeElementHelpers.typeTextById,
@@ -92,6 +93,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       waitForElementById: NativeElementHelpers.waitForElementById,
       waitForElementByText: NativeElementHelpers.waitForElementByText,
       waitForElementNotVisible: NativeElementHelpers.waitForElementNotVisible,
+      waitForAnimation: NativeElementHelpers.waitForAnimation,
     };
 
     const webHelpers = {
