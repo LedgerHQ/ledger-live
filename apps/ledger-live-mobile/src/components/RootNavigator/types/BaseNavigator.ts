@@ -206,17 +206,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
-  [NavigatorName.SendFlow]: {
-    onClose?: () => void;
-    params?: {
-      account?: AccountLike;
-      parentAccount?: Account;
-      recipient?: string;
-      amount?: string;
-      memo?: string;
-      fromMAD?: boolean;
-    };
-  };
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };
