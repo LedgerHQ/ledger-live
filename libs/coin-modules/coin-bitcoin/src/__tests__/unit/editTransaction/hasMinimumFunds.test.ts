@@ -1,4 +1,4 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction as BtcTransaction } from "../../../types";
 import { getAdditionalFeeRequiredForRbf } from "../../../rbfHelpers";
@@ -67,8 +67,6 @@ describe("hasMinimumFunds", () => {
         balance: new BigNumber(500),
         spendableBalance: new BigNumber(500),
       } as unknown as Account;
-
-      const accountLike = {} as AccountLike;
 
       const result = await hasMinimumFundsToSpeedUp({
         mainAccount,

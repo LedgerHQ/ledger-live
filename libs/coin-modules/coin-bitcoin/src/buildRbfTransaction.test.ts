@@ -113,7 +113,7 @@ describe("buildRbfTransaction", () => {
       },
     ]);
 
-    const result = await buildRbfSpeedUpTx({} as any, "orig-txid");
+    const result = await buildRbfSpeedUpTx({ pendingOperations: [] } as any, "orig-txid");
 
     expect(result.recipient).toBe("external-1");
     expect(result.amount.isEqualTo(50000)).toBe(true);
@@ -151,7 +151,7 @@ describe("buildRbfTransaction", () => {
       },
     });
 
-    const result = await buildRbfCancelTx({} as any, "orig-txid");
+    const result = await buildRbfCancelTx({ pendingOperations: [] } as any, "orig-txid");
 
     expect(result.recipient).toBe("change-addr");
     expect(result.useAllAmount).toBeUndefined();
