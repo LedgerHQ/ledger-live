@@ -785,6 +785,7 @@ export const DEFAULT_FEATURES: Features = {
       graphRework: true,
       quickActionCtas: true,
       tour: true,
+      mainNavigation: true,
     },
   },
   lwdWallet40: {
@@ -793,6 +794,7 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      mainNavigation: true,
     },
   },
 };
