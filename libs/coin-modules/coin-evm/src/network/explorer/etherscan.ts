@@ -704,6 +704,8 @@ export const getOperations = makeLRUCache<
         tokens.result,
         nfts.result,
       ].map(result => {
+        // drop operations below/above the currentBoundBlock
+        // the isDone flag is recomputed because of that filtering
         const filteredOperations = result.operations.filter(respectsBoundBlock);
         const fixedIsDone = result.isDone && filteredOperations.length === result.operations.length;
         return { ...result, operations: filteredOperations, isDone: fixedIsDone };
