@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -17,15 +17,24 @@ export const FearAndGreedView = ({
 }: FearAndGreedViewProps) => {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const [debugMode, setDebugMode] = useState("not called");
+
+  const onClose = useCallback(() => {
+    setDebugMode("it hasbeen called");
+    handleCloseDrawer();
+  }, [handleCloseDrawer]);
 
   if (!data || isError) return null;
 
   return (
     <>
       <FearAndGreedCard data={data} onPress={handleOpenDrawer} />
+      <Text typography="body1" lx={{ color: "warning" }}>
+        {debugMode}
+      </Text>
       <QueuedDrawerGorhom
         isRequestingToBeOpened={isDrawerOpen}
-        onClose={handleCloseDrawer}
+        onClose={onClose}
         enableDynamicSizing
       >
         <BottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
