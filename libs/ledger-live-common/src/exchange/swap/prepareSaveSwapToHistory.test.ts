@@ -53,7 +53,7 @@ describe("prepareSaveSwapToHistory", () => {
   it("should throw error when accounts not found", () => {
     const props = { ...validProps, fromAccountId: "unknown-account" };
     expect(() => prepareSaveSwapToHistory(accounts, props)).toThrow(
-      "accountId unknown-account unknown",
+      "fromAccount unknown-account unknown",
     );
   });
 
