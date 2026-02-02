@@ -1807,6 +1807,9 @@ importers:
       '@babel/runtime':
         specifier: 7.28.4
         version: 7.28.4
+      '@datadog/datadog-ci':
+        specifier: 3.22.0
+        version: 3.22.0
       '@features/market-banner':
         specifier: workspace:^
         version: link:../../features/market-banner
@@ -10941,6 +10944,9 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
+  '@antfu/install-pkg@1.1.0':
+    resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
+
   '@apollo/cache-control-types@1.0.3':
     resolution: {integrity: sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==}
     peerDependencies:
@@ -11503,6 +11509,10 @@ packages:
     resolution: {integrity: sha512-Znroqdai1a90TlxGaJ+FK1lwC0fHpo97Xjsp5UKGR5JODYm7f9+/fF17ebO1KdoBr/Rm0UIFiF5VmI8ts9F1eA==}
     engines: {node: '>=18.0.0'}
 
+  '@aws-sdk/types@3.973.1':
+    resolution: {integrity: sha512-DwHBiMNOB468JiX6+i34c+THsKHErYUdNQ3HexeXZvVn4zouLjgaS4FejiGSi2HyBuzuyHg7SuOPmjSvoU9NRg==}
+    engines: {node: '>=20.0.0'}
+
   '@aws-sdk/util-arn-parser@3.535.0':
     resolution: {integrity: sha512-smVo29nUPAOprp8Z5Y3GHuhiOtw6c8/EtLCm5AVMtRsTPw4V414ZXL2H66tzmb5kEeSzQlbfBSBEdIFZoxO9kg==}
     engines: {node: '>=14.0.0'}
@@ -11592,6 +11602,10 @@ packages:
 
   '@azure/arm-appservice@16.0.0':
     resolution: {integrity: sha512-oJBb1kpI6okJouyGKBqA9Kp1Em6CutdqbI+Q74pQz7ssv6zBoxIC9BCg15jvHOdK14JE16lbuf3nGqUZ6AyNbw==}
+    engines: {node: '>=18.0.0'}
+
+  '@azure/arm-resources@6.1.0':
+    resolution: {integrity: sha512-gGz03vSYd2x7bctxl1Ni6FU5DhwATS5k+H4y3ngqwmCsKi5tshvU8FSLPtbwU0XA3AVTvm4P7XrNyQeD3UXdRw==}
     engines: {node: '>=18.0.0'}
 
   '@azure/core-asynciterator-polyfill@1.0.2':
@@ -13064,8 +13078,98 @@ packages:
     resolution: {integrity: sha512-zQdbrvxd3gcnCigetEKOn30lkvDMo1FKXDFzHLTdtcEDbbkMzTLn5BKwJQ+2DtRBjrSTxaqzIWsZX9pkYFWvZQ==}
     engines: {node: '>=18.0.0'}
 
+  '@datadog/datadog-ci-base@3.22.0':
+    resolution: {integrity: sha512-pZ+y+TSez9FlAXqQMtd/wt0IQo4D89l5r4/sls+UbGX+h+POIQ4L308xFveaSwv9tbglM2sB7qBQc9LgLiEq+Q==}
+    peerDependencies:
+      '@datadog/datadog-ci-plugin-aas': 3.22.0
+      '@datadog/datadog-ci-plugin-cloud-run': 3.22.0
+      '@datadog/datadog-ci-plugin-deployment': 3.22.0
+      '@datadog/datadog-ci-plugin-dora': 3.22.0
+      '@datadog/datadog-ci-plugin-gate': 3.22.0
+      '@datadog/datadog-ci-plugin-lambda': 3.22.0
+      '@datadog/datadog-ci-plugin-sarif': 3.22.0
+      '@datadog/datadog-ci-plugin-sbom': 3.22.0
+      '@datadog/datadog-ci-plugin-stepfunctions': 3.22.0
+      '@datadog/datadog-ci-plugin-synthetics': 3.22.0
+    peerDependenciesMeta:
+      '@datadog/datadog-ci-plugin-aas':
+        optional: true
+      '@datadog/datadog-ci-plugin-cloud-run':
+        optional: true
+      '@datadog/datadog-ci-plugin-deployment':
+        optional: true
+      '@datadog/datadog-ci-plugin-dora':
+        optional: true
+      '@datadog/datadog-ci-plugin-gate':
+        optional: true
+      '@datadog/datadog-ci-plugin-lambda':
+        optional: true
+      '@datadog/datadog-ci-plugin-sarif':
+        optional: true
+      '@datadog/datadog-ci-plugin-sbom':
+        optional: true
+      '@datadog/datadog-ci-plugin-stepfunctions':
+        optional: true
+      '@datadog/datadog-ci-plugin-synthetics':
+        optional: true
+
+  '@datadog/datadog-ci-plugin-aas@3.22.0':
+    resolution: {integrity: sha512-0uAH72cxFOOXqTQJDrOmiY9jGtFEFBGxFvyrONQq8HbPoc+I8BrV29YqYBbcUTuOEFEnWyA441A97qKhumCgvg==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-cloud-run@3.22.0':
+    resolution: {integrity: sha512-+3ZXoK5QzS5wgIcbe1BPgECWPJ4MO5/HpVsHfEArk8gC1veKhlVcIab3aJneDrgEZqMZxDKxnOhMpIkEs+xMlQ==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-deployment@3.22.0':
+    resolution: {integrity: sha512-kZMk1Q5SHUF12ppT+PfovnLgNZwNTD/NoY8pALruCv6BQv4ls/9Hlag2IjJnkelr+u36vjDcUFJTkGGZSKPBkg==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-dora@3.22.0':
+    resolution: {integrity: sha512-SqzZW4vSH6udZAqbmll8NEfrIjET0rVwzvol0xG2VMOdvYjT2ZpAFv7PWwh5PR0GPnI+sqbGHp83E0KOWWb85A==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-gate@3.22.0':
+    resolution: {integrity: sha512-b6CnTapEi+uS/0K1yMfHIEwqYEAEofbCX+3VktdTuKLgrTkbk1jv0jxp6tnzwM2im7e1FLjwFm4vOlVz3Z80Jw==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-lambda@3.22.0':
+    resolution: {integrity: sha512-UZGIV6jlKA54H/yZaY9O5rVeZ3mVA5ToCcCWfVciaG8rQd2Cg1qSW9bYTqjFZJdYsrku9bEGYT/TK2zPPKSIoQ==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-sarif@3.22.0':
+    resolution: {integrity: sha512-5ff53cgHKCPNUB/elrwM+0usmYtWtCg0DyFs+s3POLjL0WymupJY6r1Ima0gdu3KQoRlt6C9nVc2vDEvxx/umg==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-sbom@3.22.0':
+    resolution: {integrity: sha512-a73/qiJekYa/vTK4lZ7o9VjUGPxLaJ98AmU026DMSrdf29nkIlGnWXN1dyrhEAZj4EyZ5vC1HoUWMg1MK23NsQ==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-stepfunctions@3.22.0':
+    resolution: {integrity: sha512-3CabSE2Ug1iGsH8jMoLkCDB35fHebPxO2XrfkehClKkxohFz3mMP4J4Qb80lUO1bhY9UqJC0MA5YBxtumra7wg==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
+  '@datadog/datadog-ci-plugin-synthetics@3.22.0':
+    resolution: {integrity: sha512-XwS4BnDE2A7pKA3RD45MqQF9VCYYi5FXl/qX2e4CMw1rChzigSJZwFNU3JLwkyrMnJJx1Sj2uqLglGh/5GOKAQ==}
+    peerDependencies:
+      '@datadog/datadog-ci-base': 3.22.0
+
   '@datadog/datadog-ci@3.11.0':
     resolution: {integrity: sha512-zRpCKr/sVTju8/c52IAWLilE9mwX+tj6TYi5izUBrOex0w56ztFqMYG5aiJPnYjdcO7l1P+A13NJxmVp3wrBEQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@datadog/datadog-ci@3.22.0':
+    resolution: {integrity: sha512-5ZEcRP0sdi+6tB6LJctFPbks0k+93HiNSK0aQCL+9oqK7XtV4FFbyENzzJU0W1ytYdNXma4yURdWPwD6m+yjyA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -14364,6 +14468,10 @@ packages:
     resolution: {integrity: sha512-4SHyaRMOIHc/EwaiDbi6mtBsTxBmxQTN4VHe3Yp7EHVfodSIY8YJThya3YJkGR1eayyWGmfYFoW6qiepLEmP2g==}
     engines: {node: '>=14.0.0'}
 
+  '@google-cloud/run@3.2.0':
+    resolution: {integrity: sha512-R6nJmPYcSjl8irkZo8GKQeyEYZ2JXsboGaVLJteZlMp55s7BR6P8pKVnAgomBXH7nlBscAvWfhtE5WEl6Yn9RA==}
+    engines: {node: '>=18'}
+
   '@gorhom/bottom-sheet@5.2.6':
     resolution: {integrity: sha512-vmruJxdiUGDg+ZYcDmS30XDhq/h/+QkINOI5LY/uGjx8cPGwgJW0H6AB902gNTKtccbiKe/rr94EwdmIEz+LAQ==}
     peerDependencies:
@@ -14447,6 +14555,11 @@ packages:
 
   '@grpc/proto-loader@0.7.15':
     resolution: {integrity: sha512-tMXdRCfYVixjuFK+Hk0Q1s38gV9zDiDJfWL3h1rv4Qc39oILCu1TRTDt7+fGUI8K4G1Fj125Hx/ru3azECWTyQ==}
+    engines: {node: '>=6'}
+    hasBin: true
+
+  '@grpc/proto-loader@0.8.0':
+    resolution: {integrity: sha512-rc1hOQtjIWGxcxpb9aHAfLpIctjEnsDehj0DAiVfBlmT84uvR0uUtN2hEi/ecvWVjXUGf5qPF4qEgiLOx1YIMQ==}
     engines: {node: '>=6'}
     hasBin: true
 
@@ -17506,6 +17619,10 @@ packages:
     resolution: {integrity: sha512-0shOWSg/pnFXPcsSU8ZbaJ4JBHZJPPzLCJxafJvbMVFo9l1w81CqpgUqjlKGNHVrVB7fhIs+WS82JDTyzaLyLA==}
     engines: {node: '>=16.0.0'}
 
+  '@smithy/types@4.12.0':
+    resolution: {integrity: sha512-9YcuJVTOBDjg9LWo23Qp0lTQ3D7fQsQtwle0jVfpbUHy9qBwCEgKuVH4FqFB3VYu0nwdHKiEMA+oXz7oV8X1kw==}
+    engines: {node: '>=18.0.0'}
+
   '@smithy/types@4.3.1':
     resolution: {integrity: sha512-UqKOQBL2x6+HWl3P+3QqFD4ncKq0I8Nuz9QItGv5WuKuMHuuwlhvqcZCoXGfc+P1QmfJE7VieykoYYmrOoFJxA==}
     engines: {node: '>=18.0.0'}
@@ -18443,7 +18560,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -20668,7 +20785,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -24793,9 +24910,17 @@ packages:
     resolution: {integrity: sha512-LDODD4TMYx7XXdpwxAVRAIAuB0bzv0s+ywFonY46k126qzQHT9ygyoa9tncmOiQmmDrik65UYsEkv3lbfqQ3yQ==}
     engines: {node: '>=14'}
 
+  gaxios@7.1.3:
+    resolution: {integrity: sha512-YGGyuEdVIjqxkxVH1pUTMY/XtmmsApXrCVv5EU25iX6inEPbV+VakJfLealkBtJN69AQmh1eGOdCl9Sm1UP6XQ==}
+    engines: {node: '>=18'}
+
   gcp-metadata@6.1.1:
     resolution: {integrity: sha512-a4tiq7E0/5fTjxPAaH4jpjkSv/uCaU2p5KC6HVGrvl0cDjA8iBZv4vv1gyzlmK0ZUKqwpOyQMKzZQe3lTit77A==}
     engines: {node: '>=14'}
+
+  gcp-metadata@8.1.2:
+    resolution: {integrity: sha512-zV/5HKTfCeKWnxG0Dmrw51hEWFGfcF2xiXqcA3+J90WDuP0SvoiSO5ORvcBsifmx/FoIjgQN3oNOGaQ5PhLFkg==}
+    engines: {node: '>=18'}
 
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -25005,6 +25130,10 @@ packages:
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
+  google-auth-library@10.5.0:
+    resolution: {integrity: sha512-7ABviyMOlX5hIVD60YOfHw4/CxOfBhyduaYB+wbFWCWoni4N7SLcV46hrVRktuBbZjFC9ONyqamZITN7q3n32w==}
+    engines: {node: '>=18'}
+
   google-auth-library@9.15.1:
     resolution: {integrity: sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng==}
     engines: {node: '>=14'}
@@ -25013,8 +25142,16 @@ packages:
     resolution: {integrity: sha512-V6eky/xz2mcKfAd1Ioxyd6nmA61gao3n01C+YeuIwu3vzM9EDR6wcVzMSIbLMDXWeoi9SHYctXuKYC5uJUT3eQ==}
     engines: {node: '>=14'}
 
+  google-gax@5.0.6:
+    resolution: {integrity: sha512-1kGbqVQBZPAAu4+/R1XxPQKP0ydbNYoLAr4l0ZO2bMV0kLyLW4I1gAk++qBLWt7DPORTzmWRMsCZe86gDjShJA==}
+    engines: {node: '>=18'}
+
   google-logging-utils@0.0.2:
     resolution: {integrity: sha512-NEgUnEcBiP5HrPzufUkBzJOD/Sxsco3rLNo1F1TNf7ieU8ryUzBhqba8r756CjLX7rn3fHl6iLEwPYuqpoKgQQ==}
+    engines: {node: '>=14'}
+
+  google-logging-utils@1.1.3:
+    resolution: {integrity: sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==}
     engines: {node: '>=14'}
 
   gopd@1.0.1:
@@ -25065,6 +25202,10 @@ packages:
   gtoken@7.1.0:
     resolution: {integrity: sha512-pCcEwRi+TKpMlxAQObHDQ56KawURgyAf6jtIY046fJ5tIv3zDe/LEIubckAO8fj6JnAxLdmWkUfNyulQ2iKdEw==}
     engines: {node: '>=14.0.0'}
+
+  gtoken@8.0.0:
+    resolution: {integrity: sha512-+CqsMbHPiSTdtSO14O51eMNlrp9N79gmeqmXeouJOhfucAedHw9noVe/n5uJk3tbKE6a+6ZCQg3RPhVhHByAIw==}
+    engines: {node: '>=18'}
 
   gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
@@ -28822,6 +28963,9 @@ packages:
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
 
+  package-manager-detector@1.6.0:
+    resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
+
   packageurl-js@2.0.1:
     resolution: {integrity: sha512-N5ixXjzTy4QDQH0Q9YFjqIWd6zH6936Djpl2m9QNFmDv5Fum8q8BjkpAcHNMzOFE0IwQrFhJWex3AN6kS0OSwg==}
 
@@ -29759,6 +29903,10 @@ packages:
     resolution: {integrity: sha512-SAzp/O4Yh02jGdRc+uIrGoe87dkN/XtwxfZ4ZyafJHymd79ozp5VG5nyZ7ygqPM5+cpLDjjGnYFUkngonyDPOQ==}
     engines: {node: '>=14.0.0'}
 
+  proto3-json-serializer@3.0.4:
+    resolution: {integrity: sha512-E1sbAYg3aEbXrq0n1ojJkRHQJGE1kaE/O6GLA94y8rnJBfgvOPTOd1b9hOceQK1FFZI9qMh1vBERCyO2ifubcw==}
+    engines: {node: '>=18'}
+
   protobufjs-cli@1.1.2:
     resolution: {integrity: sha512-8ivXWxT39gZN4mm4ArQyJrRgnIwZqffBWoLDsE21TmMcKI3XwJMV4lEF2WU02C4JAtgYYc2SfJIltelD8to35g==}
     engines: {node: '>=12.0.0'}
@@ -29863,6 +30011,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -30093,7 +30242,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -30889,6 +31038,10 @@ packages:
   retry-request@7.0.2:
     resolution: {integrity: sha512-dUOvLMJ0/JJYEn8NrpOaGNE7X3vpI5XlZS/u0ANjqtcZVKnIxP7IgCFwrKTxENw29emmwug53awKtaMm4i9g5w==}
     engines: {node: '>=14'}
+
+  retry-request@8.0.2:
+    resolution: {integrity: sha512-JzFPAfklk1kjR1w76f0QOIhoDkNkSqW8wYKT08n9yysTmZfB+RQ2QoXoTAeOi1HD9ZipTyTAZg3c4pM/jeqgSw==}
+    engines: {node: '>=18'}
 
   retry@0.12.0:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
@@ -32125,6 +32278,10 @@ packages:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
     engines: {node: '>=8.0.0'}
 
+  teeny-request@10.1.0:
+    resolution: {integrity: sha512-3ZnLvgWF29jikg1sAQ1g0o+lr5JX6sVgYvfUJazn7ZjJroDBUTWp44/+cFVX0bULjv4vci+rBD+oGVAkWqhUbw==}
+    engines: {node: '>=18'}
+
   teeny-request@9.0.0:
     resolution: {integrity: sha512-resvxdc6Mgb7YEThw6G6bExlXKkv6+YbuzGg9xuXxSgxJF7Ozs+o8Y9+2R3sArdWdW8nOokoQb1yrpFB0pQK2g==}
     engines: {node: '>=14'}
@@ -32277,6 +32434,10 @@ packages:
 
   tinycolor2@1.6.0:
     resolution: {integrity: sha512-XPaBkWQJdsf3pLKJV9p4qN/S+fm2Oj8AIPo1BTUhg5oxkvm9+SVEGFdhyOz7tTdUTfvxMiAs4sp6/eZO2Ew+pw==}
+
+  tinyexec@1.0.2:
+    resolution: {integrity: sha512-W/KYk+NFhkmsYpuHq5JykngiOCnxeVL8v8dFnqxSD8qEEdRfXk1SDM6JzNqcERbcGYj9tMrDQBYV9cjgnunFIg==}
+    engines: {node: '>=18'}
 
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
@@ -34033,6 +34194,11 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
+  '@antfu/install-pkg@1.1.0':
+    dependencies:
+      package-manager-detector: 1.6.0
+      tinyexec: 1.0.2
+
   '@apollo/cache-control-types@1.0.3(graphql@16.11.0)':
     dependencies:
       graphql: 16.11.0
@@ -34245,25 +34411,25 @@ snapshots:
   '@aws-crypto/crc32@3.0.0':
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.821.0
       tslib: 2.6.2
 
   '@aws-crypto/crc32@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.821.0
       tslib: 2.6.2
 
   '@aws-crypto/crc32c@3.0.0':
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.821.0
       tslib: 2.6.2
 
   '@aws-crypto/crc32c@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.821.0
       tslib: 2.6.2
 
   '@aws-crypto/ie11-detection@3.0.0':
@@ -34332,13 +34498,13 @@ snapshots:
 
   '@aws-crypto/util@3.0.0':
     dependencies:
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.821.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 2.6.2
 
   '@aws-crypto/util@5.2.0':
     dependencies:
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.821.0
       '@smithy/util-utf8': 2.3.0
       tslib: 2.6.2
 
@@ -35696,6 +35862,11 @@ snapshots:
       '@smithy/types': 4.3.1
       tslib: 2.6.2
 
+  '@aws-sdk/types@3.973.1':
+    dependencies:
+      '@smithy/types': 4.12.0
+      tslib: 2.6.2
+
   '@aws-sdk/util-arn-parser@3.535.0':
     dependencies:
       tslib: 2.6.2
@@ -35804,6 +35975,18 @@ snapshots:
       tslib: 2.6.2
 
   '@azure/arm-appservice@16.0.0':
+    dependencies:
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-auth': 1.9.0
+      '@azure/core-client': 1.9.4
+      '@azure/core-lro': 2.7.1
+      '@azure/core-paging': 1.6.2
+      '@azure/core-rest-pipeline': 1.21.0
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/arm-resources@6.1.0':
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-auth': 1.9.0
@@ -38211,6 +38394,175 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@datadog/datadog-ci-base@3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)':
+    dependencies:
+      '@antfu/install-pkg': 1.1.0
+      '@types/datadog-metrics': 0.6.1
+      async-retry: 1.3.1
+      axios: 1.13.2
+      chalk: 3.0.0
+      clipanion: 3.2.1
+      datadog-metrics: 0.9.3
+      debug: 4.4.3
+      deep-extend: 0.6.0
+      fast-xml-parser: 4.4.1
+      form-data: 4.0.5
+      glob: 10.4.5
+      inquirer: 8.2.6
+      jszip: 3.10.1
+      proxy-agent: 6.5.0
+      semver: 7.7.3
+      simple-git: 3.16.0
+      terminal-link: 2.1.1
+      tiny-async-pool: 2.1.0
+      typanion: 3.14.0
+      upath: 2.0.1
+    optionalDependencies:
+      '@datadog/datadog-ci-plugin-aas': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-cloud-run': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-deployment': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-dora': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-gate': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-lambda': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-sarif': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-sbom': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-stepfunctions': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-synthetics': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-aas@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@azure/arm-appservice': 16.0.0
+      '@azure/arm-resources': 6.1.0
+      '@azure/identity': 4.10.1
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      chalk: 3.0.0
+      fast-deep-equal: 3.1.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-cloud-run@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      '@google-cloud/logging': 11.2.0
+      '@google-cloud/run': 3.2.0
+      chalk: 3.0.0
+      google-auth-library: 10.5.0
+      inquirer: 8.2.6
+      inquirer-checkbox-plus-prompt: 1.4.2(inquirer@8.2.6)
+      jest-diff: 30.2.0
+      ora: 5.4.1
+      upath: 2.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-deployment@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      axios: 1.13.2
+      chalk: 3.0.0
+      simple-git: 3.16.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-dora@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      axios: 1.13.2
+      chalk: 3.0.0
+      simple-git: 3.16.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-gate@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      '@types/uuid': 9.0.8
+      axios: 1.13.2
+      chalk: 3.0.0
+      uuid: 9.0.1
+
+  '@datadog/datadog-ci-plugin-lambda@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@aws-sdk/client-cloudwatch-logs': 3.839.0
+      '@aws-sdk/client-lambda': 3.839.0
+      '@aws-sdk/credential-provider-ini': 3.839.0
+      '@aws-sdk/credential-providers': 3.839.0
+      '@aws-sdk/types': 3.973.1
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      '@smithy/property-provider': 2.2.0
+      '@smithy/util-retry': 2.2.0
+      chalk: 3.0.0
+      fuzzy: 0.1.3
+      inquirer: 8.2.6
+      inquirer-checkbox-plus-prompt: 1.4.2(inquirer@8.2.6)
+      ora: 5.4.1
+      typanion: 3.14.0
+      upath: 2.0.1
+    transitivePeerDependencies:
+      - aws-crt
+
+  '@datadog/datadog-ci-plugin-sarif@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      ajv: 8.17.1
+      ajv-formats: 2.1.1
+      axios: 1.13.2
+      chalk: 3.0.0
+      form-data: 4.0.5
+      simple-git: 3.16.0
+      upath: 2.0.1
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-sbom@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      ajv: 8.17.1
+      ajv-formats: 2.1.1
+      axios: 1.13.2
+      chalk: 3.0.0
+      packageurl-js: 2.0.1
+      simple-git: 3.16.0
+      upath: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@datadog/datadog-ci-plugin-stepfunctions@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@aws-sdk/client-cloudwatch-logs': 3.839.0
+      '@aws-sdk/client-iam': 3.839.0
+      '@aws-sdk/client-sfn': 3.839.0
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      deep-object-diff: 1.1.9
+    transitivePeerDependencies:
+      - aws-crt
+
+  '@datadog/datadog-ci-plugin-synthetics@3.22.0(@datadog/datadog-ci-base@3.22.0)':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      axios: 1.13.2
+      chalk: 3.0.0
+      debug: 4.4.3
+      deep-extend: 0.6.0
+      fast-levenshtein: 3.0.0
+      get-value: 4.0.1
+      ora: 5.4.1
+      set-value: 4.1.0
+      ssh2: 1.16.0
+      sshpk: 1.16.1
+      upath: 2.0.1
+      ws: 7.5.10
+      xml2js: 0.5.0
+      yamux-js: 0.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@datadog/datadog-ci@3.11.0(patch_hash=b450ce3a710107fd8d0dc3a43f33daffc0fe5ccc92344c98744b9ba421db33ae)':
     dependencies:
       '@aws-sdk/client-cloudwatch-logs': 3.839.0
@@ -38265,6 +38617,37 @@ snapshots:
       ws: 7.5.10
       xml2js: 0.5.0
       yamux-js: 0.1.2
+    transitivePeerDependencies:
+      - aws-crt
+      - bufferutil
+      - encoding
+      - supports-color
+      - utf-8-validate
+
+  '@datadog/datadog-ci@3.22.0':
+    dependencies:
+      '@datadog/datadog-ci-base': 3.22.0(@datadog/datadog-ci-plugin-aas@3.22.0)(@datadog/datadog-ci-plugin-cloud-run@3.22.0)(@datadog/datadog-ci-plugin-deployment@3.22.0)(@datadog/datadog-ci-plugin-dora@3.22.0)(@datadog/datadog-ci-plugin-gate@3.22.0)(@datadog/datadog-ci-plugin-lambda@3.22.0)(@datadog/datadog-ci-plugin-sarif@3.22.0)(@datadog/datadog-ci-plugin-sbom@3.22.0)(@datadog/datadog-ci-plugin-stepfunctions@3.22.0)(@datadog/datadog-ci-plugin-synthetics@3.22.0)
+      '@datadog/datadog-ci-plugin-aas': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-cloud-run': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-deployment': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-dora': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-gate': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-lambda': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-sarif': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-sbom': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-stepfunctions': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      '@datadog/datadog-ci-plugin-synthetics': 3.22.0(@datadog/datadog-ci-base@3.22.0)
+      axios: 1.13.2
+      chalk: 3.0.0
+      clipanion: 3.2.1
+      fast-xml-parser: 4.4.1
+      form-data: 4.0.5
+      js-yaml: 3.13.1
+      semver: 7.7.3
+      simple-git: 3.16.0
+      typanion: 3.14.0
+      upath: 2.0.1
+      uuid: 9.0.1
     transitivePeerDependencies:
       - aws-crt
       - bufferutil
@@ -40387,6 +40770,12 @@ snapshots:
       - encoding
       - supports-color
 
+  '@google-cloud/run@3.2.0':
+    dependencies:
+      google-gax: 5.0.6
+    transitivePeerDependencies:
+      - supports-color
+
   '@gorhom/bottom-sheet@5.2.6(@types/react@18.2.73)(react-native-reanimated@3.19.5(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@gorhom/portal': 1.0.14(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -40496,6 +40885,13 @@ snapshots:
       yargs: 16.2.0
 
   '@grpc/proto-loader@0.7.15':
+    dependencies:
+      lodash.camelcase: 4.3.0
+      long: 5.3.1
+      protobufjs: 7.5.4
+      yargs: 17.7.2
+
+  '@grpc/proto-loader@0.8.0':
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.3.1
@@ -45878,6 +46274,10 @@ snapshots:
       tslib: 2.6.2
 
   '@smithy/types@3.4.0':
+    dependencies:
+      tslib: 2.6.2
+
+  '@smithy/types@4.12.0':
     dependencies:
       tslib: 2.6.2
 
@@ -55615,6 +56015,15 @@ snapshots:
       - encoding
       - supports-color
 
+  gaxios@7.1.3:
+    dependencies:
+      extend: 3.0.2
+      https-proxy-agent: 7.0.6
+      node-fetch: 3.3.2
+      rimraf: 5.0.10
+    transitivePeerDependencies:
+      - supports-color
+
   gcp-metadata@6.1.1:
     dependencies:
       gaxios: 6.7.1
@@ -55622,6 +56031,14 @@ snapshots:
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - encoding
+      - supports-color
+
+  gcp-metadata@8.1.2:
+    dependencies:
+      gaxios: 7.1.3
+      google-logging-utils: 1.1.3
+      json-bigint: 1.0.0
+    transitivePeerDependencies:
       - supports-color
 
   gensync@1.0.0-beta.2: {}
@@ -55869,6 +56286,18 @@ snapshots:
 
   globrex@0.1.2: {}
 
+  google-auth-library@10.5.0:
+    dependencies:
+      base64-js: 1.5.1
+      ecdsa-sig-formatter: 1.0.11
+      gaxios: 7.1.3
+      gcp-metadata: 8.1.2
+      google-logging-utils: 1.1.3
+      gtoken: 8.0.0
+      jws: 4.0.0
+    transitivePeerDependencies:
+      - supports-color
+
   google-auth-library@9.15.1:
     dependencies:
       base64-js: 1.5.1
@@ -55899,7 +56328,25 @@ snapshots:
       - encoding
       - supports-color
 
+  google-gax@5.0.6:
+    dependencies:
+      '@grpc/grpc-js': 1.13.4
+      '@grpc/proto-loader': 0.8.0
+      duplexify: 4.1.3
+      google-auth-library: 10.5.0
+      google-logging-utils: 1.1.3
+      node-fetch: 3.3.2
+      object-hash: 3.0.0
+      proto3-json-serializer: 3.0.4
+      protobufjs: 7.5.4
+      retry-request: 8.0.2
+      rimraf: 5.0.10
+    transitivePeerDependencies:
+      - supports-color
+
   google-logging-utils@0.0.2: {}
+
+  google-logging-utils@1.1.3: {}
 
   gopd@1.0.1:
     dependencies:
@@ -55982,6 +56429,13 @@ snapshots:
       jws: 4.0.0
     transitivePeerDependencies:
       - encoding
+      - supports-color
+
+  gtoken@8.0.0:
+    dependencies:
+      gaxios: 7.1.3
+      jws: 4.0.0
+    transitivePeerDependencies:
       - supports-color
 
   gzip-size@6.0.0:
@@ -62022,6 +62476,8 @@ snapshots:
 
   package-json-from-dist@1.0.1: {}
 
+  package-manager-detector@1.6.0: {}
+
   packageurl-js@2.0.1: {}
 
   pako@1.0.11: {}
@@ -63036,6 +63492,10 @@ snapshots:
   property-information@6.4.1: {}
 
   proto3-json-serializer@2.0.2:
+    dependencies:
+      protobufjs: 7.5.4
+
+  proto3-json-serializer@3.0.4:
     dependencies:
       protobufjs: 7.5.4
 
@@ -64737,6 +65197,13 @@ snapshots:
       teeny-request: 9.0.0
     transitivePeerDependencies:
       - encoding
+      - supports-color
+
+  retry-request@8.0.2:
+    dependencies:
+      extend: 3.0.2
+      teeny-request: 10.1.0
+    transitivePeerDependencies:
       - supports-color
 
   retry@0.12.0: {}
@@ -66572,6 +67039,15 @@ snapshots:
 
   tarn@3.0.2: {}
 
+  teeny-request@10.1.0:
+    dependencies:
+      http-proxy-agent: 5.0.0
+      https-proxy-agent: 5.0.1
+      node-fetch: 3.3.2
+      stream-events: 1.0.5
+    transitivePeerDependencies:
+      - supports-color
+
   teeny-request@9.0.0:
     dependencies:
       http-proxy-agent: 5.0.0
@@ -66726,6 +67202,8 @@ snapshots:
   tiny-typed-emitter@2.1.0: {}
 
   tinycolor2@1.6.0: {}
+
+  tinyexec@1.0.2: {}
 
   tinyglobby@0.2.15:
     dependencies:
