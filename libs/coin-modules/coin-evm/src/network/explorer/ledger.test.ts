@@ -175,7 +175,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastOperations", () => {
+    describe("getOperations", () => {
       it("should throw if the explorer is misconfigured", async () => {
         mockGetConfig.mockImplementationOnce((): any => {
           return {
@@ -196,7 +196,7 @@ describe("EVM Family", () => {
         } as CryptoCurrency;
 
         try {
-          await LEDGER_API.getLastOperations(
+          await LEDGER_API.getOperations(
             badCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             accountId,
@@ -225,7 +225,7 @@ describe("EVM Family", () => {
         }));
         const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
 
-        await LEDGER_API.getLastOperations(
+        await LEDGER_API.getOperations(
           fakeCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           accountId,
@@ -244,7 +244,7 @@ describe("EVM Family", () => {
           data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },
         }));
 
-        const response = await LEDGER_API.getLastOperations(
+        const response = await LEDGER_API.getOperations(
           fakeCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           accountId,
@@ -428,10 +428,11 @@ describe("EVM Family", () => {
               value: new BigNumber(coinOperation2.actions[0].value),
             },
           ],
+          nextPagingToken: "",
         });
       });
 
-      describe("getLastOperations without nft", () => {
+      describe("getOperations without nft", () => {
         beforeEach(() => {
           mockGetConfig.mockImplementation((): any => {
             return {
@@ -451,7 +452,7 @@ describe("EVM Family", () => {
             data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },
           }));
 
-          const response = await LEDGER_API.getLastOperations(
+          const response = await LEDGER_API.getOperations(
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             accountId,
