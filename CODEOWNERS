@@ -180,6 +180,7 @@ libs/**/react-native-*/                                            @ledgerhq/liv
 libs/**/swift-*/                                                   @ledgerhq/live-devices
 libs/**/types-devices/                                             @ledgerhq/live-devices
 libs/ledger-live-common/src/apps/                                  @ledgerhq/live-devices
+libs/ledger-live-common/src/apps/config.ts                         @ledgerhq/coin-integration
 libs/ledger-live-common/src/hw/                                    @ledgerhq/live-devices
 libs/ledger-live-common/src/manager/                               @ledgerhq/live-devices
 libs/ledger-live-common/src/device/                                @ledgerhq/live-devices
