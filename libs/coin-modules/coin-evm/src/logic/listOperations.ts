@@ -179,16 +179,17 @@ export async function listOperations(
   >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
   const internalOperations = lastInternalOperations
     .filter(op => op.hash in parents)
-    .map<Operation<MemoNotSupported>>(op =>
-      toOperation(
+    .map<Operation<MemoNotSupported>>(op => {
+      const parent = parents[op.hash];
+      return toOperation(
         currency.id,
         address,
         { type: "native", internal: true },
         // Explorers don't provide block hash and fees for internal operations.
         // We take this values from their parent.
-        { ...op, fee: parents[op.hash].fee, blockHash: parents[op.hash].blockHash },
-      ),
-    );
+        { ...op, fee: parent.fee, blockHash: parent.blockHash },
+      );
+    });
 
   const hasValidType = (operation: Operation): boolean =>
     [
@@ -203,10 +204,14 @@ export async function listOperations(
       "NFT_OUT",
     ].includes(operation.type);
 
+  const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean =>
+    op.senders.includes(address) || op.recipients.includes(address);
+
   const operations = nativeOperations
     .concat(tokenOperations)
     .concat(internalOperations)
     .filter(hasValidType)
+    .filter(isAddressInvolved)
     .sort((a, b) =>
       pagination.order === "asc"
         ? a.tx.date.getTime() - b.tx.date.getTime()
