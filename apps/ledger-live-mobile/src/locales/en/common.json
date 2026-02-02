@@ -2985,6 +2985,7 @@
     "yield": "Yield",
     "sell": "Sell",
     "swap": "Swap",
+    "perps": "Perps",
     "manage": "Manage",
     "lastTransactions": "Last transactions",
     "emptyState": {
@@ -3671,6 +3672,10 @@
     "stake": {
       "title": "Stake",
       "description": "Get rewards on your crypto."
+    },
+    "perps": {
+      "title": "Perps",
+      "description": "Trade perpetuals on crypto."
     },
     "swap": {
       "title": "Swap",
@@ -8434,6 +8439,9 @@
       "extremeGreed": "Greed+"
     },
     "tileTitle": "Mood"
+  },
+  "perps": {
+    "title": "Perps"
   },
   "analyticsAllocation": {
     "header": {
