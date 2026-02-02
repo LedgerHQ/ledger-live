@@ -541,10 +541,33 @@ jobs:
           echo "  - Name: ${{ env.AVD_NAME }}"
 
           # Debug Android SDK structure
-          ls -la "$ANDROID_HOME/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/" 2>/dev/null || {
-            echo "❌ System image directory not found"
-            echo "Available API levels:"
-            ls "$ANDROID_HOME/system-images/" 2>/dev/null || echo "No system images found"
+          echo "🔍 Debugging Android SDK:"
+          echo "  ANDROID_HOME: $ANDROID_HOME"
+          echo "  Looking for: $ANDROID_HOME/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/"
+
+          # Check actual SDK path that script will use
+          ACTUAL_SDK_PATH="$ANDROID_HOME"
+          if [[ -d "/usr/local/lib/android/sdk/system-images" ]]; then
+            ACTUAL_SDK_PATH="/usr/local/lib/android/sdk"
+            echo "  📱 Using actual SDK path: $ACTUAL_SDK_PATH"
+          fi
+
+          # Check if directory exists
+          if [[ -d "$ACTUAL_SDK_PATH/system-images" ]]; then
+            echo "  Available APIs in system-images:"
+            ls "$ACTUAL_SDK_PATH/system-images/" 2>/dev/null || echo "    No system-images found"
+          else
+            echo "  ❌ system-images directory not found in: $ACTUAL_SDK_PATH"
+            echo "  Available in ANDROID_HOME:"
+            ls -la "$ANDROID_HOME/" 2>/dev/null || echo "    Cannot list ANDROID_HOME"
+          fi
+
+          # Test the actual path
+          TEST_DIR="$ACTUAL_SDK_PATH/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/"
+          ls -la "$TEST_DIR" 2>/dev/null || {
+            echo "❌ System image directory not found at: $TEST_DIR"
+            echo "Available API levels in $ACTUAL_SDK_PATH/system-images/:"
+            ls "$ACTUAL_SDK_PATH/system-images/" 2>/dev/null || echo "No system images found"
             exit 1
           }
 

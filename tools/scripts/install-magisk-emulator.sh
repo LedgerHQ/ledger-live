@@ -55,13 +55,61 @@ check_dependencies() {
 		exit 1
 	fi
 
+	# Verify the SDK directory actually exists
+	if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
+		log_error "Android SDK directory does not exist: ${ANDROID_SDK_ROOT}"
+		exit 1
+	fi
+
+	# Add common Android SDK paths to search (literal paths)
+	local sdk_root="${ANDROID_SDK_ROOT}"
+	local found_sdk=""
+
+	# Try to find the actual Android SDK with system-images
+	if [[ ! -d "${sdk_root}/system-images" ]]; then
+		# Common Android SDK installation paths
+		local common_paths=(
+			"/usr/local/lib/android/sdk"
+			"/usr/local/lib/android-sdk"
+			"${ANDROID_HOME}"
+			"$HOME/Android/Sdk"
+			"$HOME/Library/Android/sdk"
+		)
+
+		for path in "${common_paths[@]}"; do
+			if [[ -d "${path}" && -d "${path}/system-images" ]]; then
+				found_sdk="$path"
+				break
+			fi
+		done
+
+		if [[ -n "$found_sdk" ]]; then
+			log_warn "Using detected Android SDK path: $found_sdk"
+			sdk_root="$found_sdk"
+		else
+			log_error "Could not find Android SDK with system-images"
+			log_info "Searched paths:"
+			printf '  %s\n' "${common_paths[@]}"
+			exit 1
+		fi
+	fi
+
+	export ANDROID_SDK_ROOT="$sdk_root"
+
 	# Check if AVD system image exists (this is what we actually need)
-	local system_image_dir="${ANDROID_SDK_ROOT}/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}/"
+	local system_image_base="${ANDROID_SDK_ROOT}/system-images"
+	local system_image_dir="${system_image_base}/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}/"
 	local ramdisk_path="${system_image_dir}/ramdisk.img"
+
+	log_info "Final Android SDK path: ${ANDROID_SDK_ROOT}"
+	log_info "Looking for system image in: ${system_image_dir}"
 
 	if [[ ! -f "$ramdisk_path" ]]; then
 		log_error "System image not found at: ${system_image_dir}"
-		log_error "Please ensure AVD system image is installed"
+		log_error "Expected ramdisk.img at: $ramdisk_path"
+		log_info "Available system images:"
+		ls -la "${system_image_base}/" 2>/dev/null || log_info "No system images directory found"
+		ls -la "${system_image_base}/android-${AVD_API}/" 2>/dev/null || log_info "No images for API ${AVD_API}"
 		exit 1
 	fi
 
