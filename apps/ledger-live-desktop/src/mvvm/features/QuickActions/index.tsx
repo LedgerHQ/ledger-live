@@ -11,8 +11,8 @@ const QuickActionsView = memo(function QuickActionsView({ actionsList }: QuickAc
   return <ActionsList actionsList={actionsList} />;
 });
 
-const QuickActions = () => {
-  const { actionsList } = useQuickActions();
+const QuickActions = ({ trackingPageName }: { trackingPageName: string }) => {
+  const { actionsList } = useQuickActions(trackingPageName);
   return <QuickActionsView actionsList={actionsList} />;
 };
 

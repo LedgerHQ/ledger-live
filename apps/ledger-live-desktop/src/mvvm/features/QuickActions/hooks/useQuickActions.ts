@@ -9,8 +9,9 @@ import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../ModularDrawer";
+import { track } from "~/renderer/analytics/segment";
 
-export const useQuickActions = (): { actionsList: QuickAction[] } => {
+export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -37,11 +38,21 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
   }, [location.pathname, push]);
 
   const onSend = useCallback(() => {
+    track("button_clicked", {
+      button: "quick_action",
+      flow: "send",
+      page: trackingPageName,
+    });
     maybeRedirectToAccounts();
     openSendFlow();
-  }, [maybeRedirectToAccounts, openSendFlow]);
+  }, [maybeRedirectToAccounts, openSendFlow, trackingPageName]);
 
   const onReceive = useCallback(() => {
+    track("button_clicked", {
+      button: "quick_action",
+      flow: "receive",
+      page: trackingPageName,
+    });
     maybeRedirectToAccounts();
 
     if (!hasAccount) {
@@ -50,23 +61,33 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
     }
 
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow]);
+  }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow, trackingPageName]);
 
   const onBuy = useCallback(() => {
+    track("button_clicked", {
+      button: "quick_action",
+      flow: "buy",
+      page: trackingPageName,
+    });
     navigate("/exchange", {
       state: {
         mode: "buy",
       },
     });
-  }, [navigate]);
+  }, [navigate, trackingPageName]);
 
   const onSell = useCallback(() => {
+    track("button_clicked", {
+      button: "quick_action",
+      flow: "sell",
+      page: trackingPageName,
+    });
     navigate("/exchange", {
       state: {
         mode: "sell",
       },
     });
-  }, [navigate]);
+  }, [navigate, trackingPageName]);
 
   return {
     actionsList: [
