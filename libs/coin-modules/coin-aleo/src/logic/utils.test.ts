@@ -19,8 +19,20 @@ describe("logic utils", () => {
       expect(result).toBe("1000000");
     });
 
+    it("should parse valid private microcredits string and remove u64.private suffix", () => {
+      const result = parseMicrocredits("1000000u64.private");
+
+      expect(result).toBe("1000000");
+    });
+
     it("should parse zero microcredits", () => {
       const result = parseMicrocredits("0u64");
+
+      expect(result).toBe("0");
+    });
+
+    it("should parse zero private microcredits", () => {
+      const result = parseMicrocredits("0u64.private");
 
       expect(result).toBe("0");
     });
@@ -31,14 +43,31 @@ describe("logic utils", () => {
       expect(result).toBe("999999999999999");
     });
 
-    it("should throw error when u64 suffix is missing", () => {
+    it("should parse large private microcredits values", () => {
+      const result = parseMicrocredits("999999999999999u64.private");
+
+      expect(result).toBe("999999999999999");
+    });
+
+    it("should throw error when u64 or u64.private suffix is missing", () => {
       const value = "1000000";
-      expect(() => parseMicrocredits(value)).toThrow(`aleo: invalid balance format (${value})`);
+      expect(() => parseMicrocredits(value)).toThrow(
+        `aleo: invalid microcredits format (${value})`,
+      );
     });
 
     it("should throw error for invalid format", () => {
       const value = "1000000u32";
-      expect(() => parseMicrocredits(value)).toThrow(`aleo: invalid balance format (${value})`);
+      expect(() => parseMicrocredits(value)).toThrow(
+        `aleo: invalid microcredits format (${value})`,
+      );
+    });
+
+    it("should throw error for invalid private format", () => {
+      const value = "1000000u32.private";
+      expect(() => parseMicrocredits(value)).toThrow(
+        `aleo: invalid microcredits format (${value})`,
+      );
     });
   });
 

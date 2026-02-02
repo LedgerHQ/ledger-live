@@ -8,7 +8,10 @@ import {
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { accessProvableApi } from "../logic/accessProvableApi";
-import type { AleoAccount, ProvableApi } from "../types";
+import type { AleoAccount, AleoOperation, ProvableApi } from "../types";
+import { listPrivateOperations } from "../logic/listPrivateOperations";
+import { patchPublicOperations } from "../logic/utils";
+import { AleoPrivateRecord } from "../types/api";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
@@ -55,7 +58,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
   const latestOperation = oldOperations[0];
   const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
-  const latestAccountOperations = await listOperations({
+  const latestAccountPublicOperations = await listOperations({
     currency,
     address,
     ledgerAccountId,
@@ -67,13 +70,48 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     },
   });
 
+  const oldPrivateRecords: AleoPrivateRecord[] = initialAccount?.aleoResources.privateRecords ?? [];
+  const latestAccountPrivateRecord = oldPrivateRecords[0];
+  let latestAccountPrivateOperations: AleoOperation[] = [];
+  let privateRecords: AleoPrivateRecord[] = [];
+
+  if (provableApi && provableApi.uuid && viewKey && provableApi.apiKey && provableApi.jwt?.token) {
+    const res = await listPrivateOperations({
+      currency,
+      jwtToken: provableApi.jwt.token,
+      uuid: provableApi.uuid,
+      apiKey: provableApi.apiKey,
+      viewKey,
+      address,
+      ledgerAccountId,
+      start: latestAccountPrivateRecord ? latestAccountPrivateRecord.block_height + 1 : 0,
+    });
+    latestAccountPrivateOperations = res.privateOperations;
+    privateRecords = [...oldPrivateRecords, ...res.privateRecords];
+  }
+
   // sort by date desc
-  latestAccountOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+  latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   // merge old and new operations
-  const operations = shouldSyncFromScratch
-    ? latestAccountOperations.operations
-    : mergeOps(oldOperations, latestAccountOperations.operations);
+  const mergedPublicOperations = shouldSyncFromScratch
+    ? latestAccountPublicOperations.operations
+    : mergeOps(oldOperations, latestAccountPublicOperations.operations);
+
+  const publicOperations =
+    privateRecords.length > 0
+      ? await patchPublicOperations(
+          mergedPublicOperations as AleoOperation[],
+          privateRecords,
+          address,
+          ledgerAccountId,
+        )
+      : mergedPublicOperations;
+
+  // FIXME: temp operations merging, we should handle incremental sync for private operations as well instead of fetching all and merging every time
+  const operations = [...publicOperations, ...latestAccountPrivateOperations].sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
 
   return {
     type: "Account",
@@ -88,6 +126,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       transparentBalance,
       privateBalance,
       provableApi,
+      privateRecords: privateRecords,
       lastPrivateSyncDate: provableApi?.scannerStatus?.synced
         ? new Date()
         : initialAccount?.aleoResources.lastPrivateSyncDate || null,

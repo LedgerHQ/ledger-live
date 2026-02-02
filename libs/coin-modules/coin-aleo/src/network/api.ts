@@ -5,8 +5,11 @@ import aleoConfig from "../config";
 import { PROGRAM_ID } from "../constants";
 import {
   AleoAccountJWTResponse,
+  AleoDecryptedCiphertextResponse,
+  AleoDecryptedRecordResponse,
   AleoJWT,
   AleoLatestBlockResponse,
+  AleoPrivateRecord,
   AleoPublicTransactionDetailsResponse,
   AleoPublicTransactionsResponse,
   AleoRecordScannerStatusResponse,
@@ -76,6 +79,49 @@ async function getAccountPublicTransactions({
   const res: LiveNetworkResponse<AleoPublicTransactionsResponse> = await network({
     method: "GET",
     url: `${getNodeUrl(currency)}/transactions/address/${address}?${params.toString()}`,
+  });
+
+  return res.data;
+}
+
+async function getAccountOwnedRecords({
+  jwtToken,
+  apiKey,
+  uuid,
+  unspent,
+  start,
+}: {
+  jwtToken: string;
+  apiKey: string;
+  uuid: string;
+  unspent?: boolean;
+  start?: number;
+}): Promise<AleoPrivateRecord[]> {
+  const res = await network<AleoPrivateRecord[]>({
+    method: "POST",
+    url: "https://api.provable.com/scanner/mainnet/records/owned",
+    headers: {
+      Authorization: jwtToken,
+      "X-Provable-API-Key": apiKey,
+    },
+    data: {
+      ...(unspent !== undefined && { unspent }),
+      ...(start !== undefined && { filter: { start } }),
+      uuid,
+    },
+  });
+
+  return res.data;
+}
+
+async function decryptRecord(
+  ciphertext: string,
+  viewKey: string,
+): Promise<AleoDecryptedRecordResponse> {
+  const res = await network<AleoDecryptedRecordResponse>({
+    method: "POST",
+    url: "https://aleo-backend.api.live.ledger.com/network/mainnet/decrypt",
+    data: { ciphertext, view_key: viewKey },
   });
 
   return res.data;
@@ -151,13 +197,50 @@ export const getRecordScannerStatus = async (
   return res.data;
 };
 
+async function decryptCiphertext({
+  ciphertext,
+  tpk,
+  viewKey,
+  programId,
+  functionName,
+  outputIndex,
+}: {
+  ciphertext: string;
+  tpk: string;
+  viewKey: string;
+  programId: string;
+  functionName: string;
+  outputIndex: number;
+}): Promise<AleoDecryptedCiphertextResponse> {
+  const res = await network<AleoDecryptedCiphertextResponse>({
+    method: "POST",
+    url: "https://aleo-backend.api.live.ledger-test.com/network/mainnet/symmetric_decrypt",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: {
+      index: outputIndex,
+      ciphertext: ciphertext,
+      transition_public_key: tpk,
+      view_key: viewKey,
+      program: programId,
+      function_name: functionName,
+    },
+  });
+
+  return res.data;
+}
+
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
+  getAccountOwnedRecords,
   getTransactionById,
   getAccountPublicTransactions,
   getAccountJWT,
   registerNewAccount,
   getRecordScannerStatus,
+  decryptRecord,
+  decryptCiphertext,
   registerForScanningAccountRecords,
 };
