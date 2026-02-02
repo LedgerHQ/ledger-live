@@ -146,8 +146,9 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+
+        Loader={() => <Loading backgroundColor="transparent" /> }
       />
-      {webviewState.loading ? <Loading /> : null}
     </SafeAreaView>
   );
 };

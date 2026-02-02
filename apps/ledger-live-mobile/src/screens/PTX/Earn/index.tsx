@@ -12,7 +12,8 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { Fragment, memo, useMemo } from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -25,6 +26,7 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+import { EarnBackground } from "./EarnBackground";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
@@ -34,6 +36,9 @@ const appManifestNotFoundError = new Error("Earn App not found");
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
+
+/** Persists across remounts (e.g. Strict Mode in dev) to avoid loader flicker when provider rehydrates. */
+let lastKnownManifest: LiveAppManifest | undefined;
 
 export const EarnScreen = memo(Earn);
 
@@ -62,6 +67,11 @@ function Earn({ route }: Props) {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
+
+  if (manifest) {
+    lastKnownManifest = manifest;
+  }
+
   const countryLocale = getCountryLocale();
 
   const stakePrograms = useVersionedStakePrograms();
@@ -80,33 +90,114 @@ function Earn({ route }: Props) {
   }
 
   const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
+  const isPtxUiV2 = earnUiVersion === "v2" || earnUiVersion === "2";
+  const insets = useSafeAreaInsets();
 
-  return manifest ? (
-    <Container>
-      <TrackScreen category="EarnDashboard" name="Earn" />
-      <EarnWebview
-        manifest={manifest}
-        inputs={{
-          theme,
-          lang: language,
-          locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
-          countryLocale,
-          currencyTicker,
-          devMode,
-          discreetMode: discreet ? "true" : "false",
-          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
-          stakeCurrenciesParam: stakeCurrenciesParam?.length
-            ? JSON.stringify(stakeCurrenciesParam)
-            : undefined,
-          OS: Platform.OS,
-          ethDepositCohort,
-          uiVersion: earnUiVersion,
-          ...params,
-          ...Object.fromEntries(searchParams.entries()),
-        }}
-      />
-    </Container>
-  ) : (
+  const webviewInputs = useMemo(
+    () => ({
+      theme,
+      lang: language,
+      locale: language,
+      countryLocale,
+      currencyTicker,
+      devMode,
+      discreetMode: discreet ? "true" : "false",
+      stakeProgramsParam: stakeProgramsParam
+        ? JSON.stringify(stakeProgramsParam)
+        : undefined,
+      stakeCurrenciesParam: stakeCurrenciesParam?.length
+        ? JSON.stringify(stakeCurrenciesParam)
+        : undefined,
+      OS: Platform.OS,
+      ethDepositCohort,
+      uiVersion: earnUiVersion,
+      ...params,
+      ...Object.fromEntries(searchParams.entries()),
+    }),
+    [
+      theme,
+      language,
+      countryLocale,
+      currencyTicker,
+      devMode,
+      discreet,
+      stakeProgramsParam,
+      stakeCurrenciesParam,
+      ethDepositCohort,
+      earnUiVersion,
+      params,
+      searchParams,
+    ],
+  );
+
+  /** V2: single shell (background + content). Use lastKnownManifest whenever manifest is missing so remount (e.g. dev Strict Mode) keeps showing webview instead of loader. */
+  if (isPtxUiV2) {
+    const displayManifest = manifest ?? lastKnownManifest;
+    if (!displayManifest && !remoteLiveAppState.isLoading && remoteLiveAppState.error) {
+      lastKnownManifest = undefined;
+    }
+    return (
+      <View style={{ flex: 1, overflow: "visible" }}>
+        <View
+          style={{
+            position: "absolute",
+            top: -insets.top,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 0,
+          }}
+          pointerEvents="none"
+        >
+          <EarnBackground />
+        </View>
+        <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
+          {displayManifest ? (
+            hideMainNavigator ? (
+              <Container>
+                <TrackScreen category="EarnDashboard" name="Earn" />
+                <EarnWebview manifest={displayManifest} inputs={webviewInputs} />
+              </Container>
+            ) : (
+              <Container edges={["left", "right", "bottom"]}>
+                <TrackScreen category="EarnDashboard" name="Earn" />
+                <EarnWebview manifest={displayManifest} inputs={webviewInputs} />
+              </Container>
+            )
+          ) : remoteLiveAppState.isLoading ? (
+            <Flex flex={1} justifyContent="center" alignItems="center">
+              <InfiniteLoader />
+            </Flex>
+          ) : (
+            <Flex flex={1} p={10} justifyContent="center" alignItems="center">
+              <GenericErrorView error={appManifestNotFoundError} />
+            </Flex>
+          )}
+        </View>
+      </View>
+    );
+  }
+  /** V1: no background */
+  if (manifest) {
+    return (
+      <View style={{ flex: 1 }}>
+        {hideMainNavigator ? (
+          <Container>
+            <TrackScreen category="EarnDashboard" name="Earn" />
+            <EarnWebview manifest={manifest} inputs={webviewInputs} />
+          </Container>
+        ) : (
+          <Container>
+            <TrackScreen category="EarnDashboard" name="Earn" />
+            <EarnWebview manifest={manifest} inputs={webviewInputs} />
+          </Container>
+        )}
+      </View>
+    );
+  }
+
+  /** V1: no manifest yet, loader or error without background */
+  return (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (
         <InfiniteLoader />
