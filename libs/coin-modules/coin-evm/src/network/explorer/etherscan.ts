@@ -75,12 +75,12 @@ export type EndpointResult = {
   isPageFull: boolean;
 };
 
-const EMPTY_RESULT: EndpointResult = {
+const EMPTY_RESULT: Readonly<EndpointResult> = {
   operations: [],
   isDone: true,
   boundBlock: 0,
   isPageFull: false,
-} as const;
+};
 
 export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
