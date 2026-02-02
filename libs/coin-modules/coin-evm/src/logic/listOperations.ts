@@ -199,10 +199,14 @@ export async function listOperations(
       "NFT_OUT",
     ].includes(operation.type);
 
+  const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean =>
+    op.senders.includes(address) || op.recipients.includes(address);
+
   const operations = nativeOperations
     .concat(tokenOperations)
     .concat(internalOperations)
     .filter(hasValidType)
+    .filter(isAddressInvolved)
     .sort((a, b) =>
       pagination.order === "asc"
         ? a.tx.date.getTime() - b.tx.date.getTime()
