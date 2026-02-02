@@ -43,7 +43,6 @@ async function getExcludeUTXOsFromUnfetchable(
     const txHash = uniqueTxHashes[index];
     if (res.status === "rejected") {
       const utxosFromTx = txHashToUtxos.get(txHash)!;
-      // console.log("Transaction", txHash, "not found - excluding", utxosFromTx.length, "UTXOs");
       excludeUTXOs.push(...utxosFromTx);
     }
   });
