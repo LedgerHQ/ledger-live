@@ -1044,7 +1044,7 @@ test.describe("Swap flow from different entry point", () => {
   });
 
   test(
-    "Entry Point - Portfolio page",
+    "Embedded Swap - Portfolio page",
     {
       tag: [
         "@NanoSP",
@@ -1066,7 +1066,7 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
-      await app.swap.goAndWaitForSwapToBeReady(() => app.portfolio.clickSwapButton());
+      await app.portfolio.waitForEmbeddedSwapWebviewReady();
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );

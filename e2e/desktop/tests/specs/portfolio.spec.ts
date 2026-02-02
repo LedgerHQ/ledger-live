@@ -23,7 +23,7 @@ test.describe("Portfolio", () => {
       await app.layout.goToPortfolio();
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
-      await app.portfolio.checkSwapButtonVisibility();
+      await app.portfolio.waitForEmbeddedSwapWebviewReady();
       await app.portfolio.checkChartVisibility();
       await app.portfolio.checkAssetAllocationSection();
     },
