@@ -1,4 +1,9 @@
-import { AssetInfo, MemoNotSupported, Operation, Pagination, } from "@ledgerhq/coin-framework/api/types";
+import {
+  AssetInfo,
+  MemoNotSupported,
+  Operation,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
