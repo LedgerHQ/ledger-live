@@ -1,4 +1,5 @@
-import { normalizeLastUsedTimestamp, formatRelativeDate } from "../dateFormatter";
+import { normalizeLastUsedTimestamp } from "../dateFormatter";
+import { formatRelativeDate } from "@ledgerhq/live-common/flows/send/recipient/utils/dateFormatter";
 
 describe("dateFormatter utils", () => {
   describe("normalizeLastUsedTimestamp", () => {
