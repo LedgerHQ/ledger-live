@@ -57,7 +57,7 @@
     "mock-android": "pnpm android:mock && pnpm android:install",
     "staging-android": "pnpm android:staging && pnpm android:install",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "lint": "eslint src e2e --ext .js,.json,.ts,.tsx --cache",
+    "lint": "eslint src e2e --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test:env": "node ./scripts/mobile-env-md.mjs",

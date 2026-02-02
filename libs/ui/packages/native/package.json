@@ -44,7 +44,7 @@
     "clean": "rimraf lib",
     "eject": "expo eject",
     "ios": "expo start --ios",
-    "lint": "eslint src storybook --ext .ts,.tsx,.js,.jsx --cache",
+    "lint": "eslint src storybook --cache",
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}'",
     "release": "yarn publish ./lib --access public",

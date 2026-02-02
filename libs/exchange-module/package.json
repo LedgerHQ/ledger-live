@@ -30,7 +30,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern",
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {

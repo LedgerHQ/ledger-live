@@ -15,7 +15,7 @@
     "watch": "tsc --watch",
     "dev": "nodemon",
     "start": "probot run ./lib/index.js",
-    "lint": "eslint src --ext .json,.ts,.tsx --cache",
+    "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "_test": "jest"
   },

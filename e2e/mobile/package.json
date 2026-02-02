@@ -3,7 +3,7 @@
   "version": "0.12.0",
   "private": true,
   "scripts": {
-    "lint": "eslint . --ext .ts,.tsx --cache",
+    "lint": "eslint . --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "node ./scripts/typecheck.js",
     "test:detox": "pnpm detox test",

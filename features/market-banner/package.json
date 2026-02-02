@@ -6,7 +6,7 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
+    "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test:watch": "jest --watch",

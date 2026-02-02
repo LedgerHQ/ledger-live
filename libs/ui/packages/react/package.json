@@ -66,7 +66,7 @@
     "build:storybook": "storybook build",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
+    "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "typecheck": "tsc --p . --noEmit",

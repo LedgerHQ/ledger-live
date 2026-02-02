@@ -30,7 +30,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc --emitDeclarationOnly && node scripts/build-umd-json.mjs",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"

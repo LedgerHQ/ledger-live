@@ -55,7 +55,7 @@
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache --ignore-pattern '**/setupTests.ts'",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --cache --ignore-pattern '**/setupTests.ts'",
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts --runInBand",
     "test-integ": "jest --config=jest.integ.config.ts",

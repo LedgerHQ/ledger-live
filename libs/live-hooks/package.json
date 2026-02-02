@@ -41,7 +41,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-hooks",
