@@ -1,22 +1,37 @@
 import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
 import { Client } from "@hashgraph/sdk";
 
-function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
-  return transaction.execute(getInstance());
+let _hederaClientPromise: Promise<Client> | null = null;
+
+async function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
+  return transaction.execute(await getInstance());
 }
 
-let _hederaClient: Client | null = null;
+async function createClient(): Promise<Client> {
+  const client = await Client.forMainnetAsync();
+  client.setMaxNodesPerTransaction(1);
+  return client;
+}
 
-function getInstance(): Client {
-  _hederaClient ??= Client.forMainnet().setMaxNodesPerTransaction(1);
+async function getInstance(): Promise<Client> {
+  _hederaClientPromise ??= createClient().catch(error => {
+    _hederaClientPromise = null;
+    throw error;
+  });
 
-  return _hederaClient;
+  return _hederaClientPromise;
 }
 
 // for testing purposes only, used to reset singleton client instance
-function _resetInstance() {
-  _hederaClient?.close();
-  _hederaClient = null;
+async function _resetInstance() {
+  try {
+    const client = await _hederaClientPromise;
+    client?.close();
+  } catch {
+    // intentionally ignored during clean up
+  } finally {
+    _hederaClientPromise = null;
+  }
 }
 
 export const rpcClient = {
