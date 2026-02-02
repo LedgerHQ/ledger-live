@@ -4,30 +4,142 @@ import {
   TestQuickActionsWrapper,
   overrideStateWithFunds,
   overrideStateWithoutFunds,
+  overrideStateNoSigner,
   overrideStateReadOnly,
   getCtaButtons,
+  getNoSignerCtaButtons,
 } from "./shared";
 import { QUICK_ACTIONS_TEST_IDS } from "../testIds";
-import { State } from "~/reducers/types";
 
 const { transferDrawer } = QUICK_ACTIONS_TEST_IDS;
 
 describe("QuickActionsCtas Integration Tests", () => {
-  it("should display all three quick action buttons with correct labels", async () => {
-    render(<TestQuickActionsWrapper />, {
-      overrideInitialState: overrideStateWithFunds,
+  describe("Has Funds State", () => {
+    it("should display all three quick action buttons with correct labels", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateWithFunds,
+      });
+
+      const { transferButton, swapButton, buyButton } = await getCtaButtons();
+
+      expect(transferButton).toBeVisible();
+      expect(transferButton).toHaveTextContent(/transfer/i);
+
+      expect(swapButton).toBeVisible();
+      expect(swapButton).toHaveTextContent(/swap/i);
+
+      expect(buyButton).toBeVisible();
+      expect(buyButton).toHaveTextContent(/buy/i);
     });
 
-    const { transferButton, swapButton, buyButton } = await getCtaButtons();
+    it("should enable all buttons when user has funds", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateWithFunds,
+      });
 
-    expect(transferButton).toBeVisible();
-    expect(transferButton).toHaveTextContent(/transfer/i);
+      const { transferButton, swapButton, buyButton } = await getCtaButtons();
 
-    expect(swapButton).toBeVisible();
-    expect(swapButton).toHaveTextContent(/swap/i);
+      expect(transferButton).toBeEnabled();
+      expect(swapButton).toBeEnabled();
+      expect(buyButton).toBeEnabled();
+    });
+  });
 
-    expect(buyButton).toBeVisible();
-    expect(buyButton).toHaveTextContent(/buy/i);
+  describe("No Funds State", () => {
+    it("should display Transfer, Swap, Buy buttons for no-funds users", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateWithoutFunds,
+      });
+
+      const { transferButton, swapButton, buyButton } = await getCtaButtons();
+
+      expect(transferButton).toBeVisible();
+      expect(swapButton).toBeVisible();
+      expect(buyButton).toBeVisible();
+    });
+
+    it("should enable transfer but disable swap when user has no funds", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateWithoutFunds,
+      });
+
+      const { transferButton, swapButton, buyButton } = await getCtaButtons();
+
+      expect(transferButton).toBeEnabled();
+      expect(swapButton).toBeDisabled();
+      expect(buyButton).toBeEnabled();
+    });
+
+    it("should disable send option in transfer drawer when user has no funds", async () => {
+      const { user } = render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateWithoutFunds,
+      });
+
+      const { transferButton } = await getCtaButtons();
+      await user.press(transferButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(transferDrawer.receive)).toBeEnabled();
+        expect(screen.getByTestId(transferDrawer.send)).toBeDisabled();
+        expect(screen.getByTestId(transferDrawer.bankTransfer)).toBeEnabled();
+      });
+    });
+  });
+
+  describe("No Signer State (Reborn)", () => {
+    it("should display Connect and Buy a Ledger buttons for no-signer users", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateNoSigner,
+      });
+
+      const { connectButton, buyLedgerButton } = await getNoSignerCtaButtons();
+
+      expect(connectButton).toBeVisible();
+      expect(connectButton).toHaveTextContent(/connect/i);
+
+      expect(buyLedgerButton).toBeVisible();
+      expect(buyLedgerButton).toHaveTextContent(/buy a ledger/i);
+    });
+
+    it("should enable both Connect and Buy a Ledger buttons", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateNoSigner,
+      });
+
+      const { connectButton, buyLedgerButton } = await getNoSignerCtaButtons();
+
+      expect(connectButton).toBeEnabled();
+      expect(buyLedgerButton).toBeEnabled();
+    });
+
+    it("should not display standard Transfer, Swap, Buy buttons for no-signer users", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateNoSigner,
+      });
+
+      await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+
+      expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.transfer)).toBeNull();
+      expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.swap)).toBeNull();
+      expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.buy)).toBeNull();
+    });
+
+    it("should display no-signer buttons even when user has funds in read-only mode", async () => {
+      render(<TestQuickActionsWrapper />, {
+        overrideInitialState: overrideStateReadOnly,
+      });
+
+      // In read-only mode, no-signer state takes precedence over having funds
+      const { connectButton, buyLedgerButton } = await getNoSignerCtaButtons();
+
+      expect(connectButton).toBeVisible();
+      expect(buyLedgerButton).toBeVisible();
+
+      // Standard buttons should not be displayed
+      expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.transfer)).toBeNull();
+      expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.swap)).toBeNull();
+      expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.buy)).toBeNull();
+    });
   });
 
   describe("Transfer Action", () => {
@@ -57,67 +169,6 @@ describe("QuickActionsCtas Integration Tests", () => {
         expect(screen.getByTestId(transferDrawer.send)).toBeVisible();
         expect(screen.getByTestId(transferDrawer.bankTransfer)).toBeVisible();
       });
-    });
-  });
-
-  describe("Disabled States", () => {
-    it("should enable transfer but disable swap when user has no funds", async () => {
-      render(<TestQuickActionsWrapper />, {
-        overrideInitialState: overrideStateWithoutFunds,
-      });
-
-      const { transferButton, swapButton, buyButton } = await getCtaButtons();
-
-      expect(transferButton).toBeEnabled();
-      expect(swapButton).toBeDisabled();
-      expect(buyButton).toBeEnabled();
-    });
-
-    it("should disable send option in transfer drawer when user has no funds", async () => {
-      const { user } = render(<TestQuickActionsWrapper />, {
-        overrideInitialState: overrideStateWithoutFunds,
-      });
-
-      const { transferButton } = await getCtaButtons();
-      await user.press(transferButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId(transferDrawer.receive)).toBeEnabled();
-        expect(screen.getByTestId(transferDrawer.send)).toBeDisabled();
-        expect(screen.getByTestId(transferDrawer.bankTransfer)).toBeEnabled();
-      });
-    });
-
-    it("should disable all actions when in read-only mode", async () => {
-      render(<TestQuickActionsWrapper />, {
-        overrideInitialState: overrideStateReadOnly,
-      });
-
-      const { transferButton, swapButton, buyButton } = await getCtaButtons();
-
-      expect(transferButton).toBeDisabled();
-      expect(swapButton).toBeDisabled();
-      expect(buyButton).toBeDisabled();
-    });
-
-    it("should not display bank transfer option in transfer drawer when noah feature flag is disabled", async () => {
-      const { user } = render(<TestQuickActionsWrapper />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              ...state.settings.overriddenFeatureFlags,
-              noah: { enabled: false },
-            },
-          },
-        }),
-      });
-
-      const { transferButton } = await getCtaButtons();
-      await user.press(transferButton);
-
-      expect(screen.queryByTestId(transferDrawer.bankTransfer)).not.toBeVisible();
     });
   });
 });

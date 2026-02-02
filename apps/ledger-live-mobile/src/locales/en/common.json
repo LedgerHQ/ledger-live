@@ -2713,6 +2713,8 @@
       "transfer": "Transfer",
       "swap": "Swap",
       "buy": "Buy",
+      "connect": "Connect",
+      "buyLedger": "Buy a Ledger",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive crypto",
