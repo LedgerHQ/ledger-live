@@ -47,10 +47,29 @@ export async function listOperations(
   const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < softLimit;
 
   const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
-  return [
-    txs
-      // TODO: adapt directly in network calls
-      .map(tx => fromTrongridTxInfoToOperation(tx, address)),
-    "",
-  ];
+
+  const blocksByHeight = new Map<number, Awaited<ReturnType<typeof getBlock>>>();
+  blocksByHeight.set(minHeight, block);
+
+  const uniqueHeights = Array.from(
+    new Set(
+      txs
+        .map(tx => tx.blockHeight)
+        .filter((h): h is number => typeof h === "number" && h !== minHeight),
+    ),
+  );
+
+  await Promise.all(
+    uniqueHeights.map(async height => {
+      const fetchedBlock = await getBlock(height);
+      blocksByHeight.set(height, fetchedBlock);
+    }),
+  );
+
+  const operations = txs.map(tx => {
+    const height = tx.blockHeight;
+    const txBlock = typeof height === "number" ? blocksByHeight.get(height) ?? block : block;
+    return fromTrongridTxInfoToOperation(tx, txBlock, address);
+  });
+  return [operations, ""];
 }

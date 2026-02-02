@@ -591,7 +591,11 @@ describe("SDK Functions", () => {
       ],
     };
 
-    const operation = sdk.alpacaTransactionToOp(address, tokenTx as SuiTransactionBlockResponse);
+    const operation = sdk.alpacaTransactionToOp(
+      address,
+      tokenTx as SuiTransactionBlockResponse,
+      "mockCheckpointHash",
+    );
     expect(operation.id).toEqual("DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt");
     expect(operation.type).toEqual("IN");
     expect(operation.senders).toEqual([
@@ -604,10 +608,12 @@ describe("SDK Functions", () => {
     expect(operation.asset).toEqual({ type: "token", assetReference: "0x123::test::TOKEN" });
     expect(operation.memo).toBeUndefined();
     expect(operation.details).toBeUndefined();
-    expect(operation.tx.block.hash).toBeUndefined();
+    expect(operation.tx.block.hash).toBe("mockCheckpointHash");
     expect(operation.tx).toMatchObject({
       hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
-      block: {},
+      block: {
+        hash: "mockCheckpointHash",
+      },
       fees: 1009880n,
       date: new Date("2025-03-18T10:40:54.878Z"),
     });
@@ -916,7 +922,11 @@ describe("Staking Operations", () => {
     test("transactionToOp should map staking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1001050000"));
+      const operation = sdk.alpacaTransactionToOp(
+        address,
+        mockStakingTx(address, "-1001050000"),
+        "mockCheckpointHash",
+      );
 
       expect(operation).toMatchObject({
         id: "delegate_tx_digest_123",
@@ -935,7 +945,11 @@ describe("Staking Operations", () => {
     test("transactionToOp should map unstaking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx(address, "998950000"));
+      const operation = sdk.alpacaTransactionToOp(
+        address,
+        mockUnstakingTx(address, "998950000"),
+        "mockCheckpointHash",
+      );
       expect(operation).toMatchObject({
         id: "undelegate_tx_digest_456",
         type: "UNDELEGATE",
@@ -1989,26 +2003,25 @@ describe("filterOperations", () => {
       ]);
     });
 
-    test("toBlockInfo should map checkpoints correctly", () => {
-      expect(
-        sdk.toBlockInfo({
-          checkpointCommitments: [],
-          digest: "0xaaaaaaaaa",
-          previousDigest: "0xbbbbbbbbbb",
-          epoch: "",
-          epochRollingGasCostSummary: {
-            computationCost: "",
-            nonRefundableStorageFee: "",
-            storageCost: "",
-            storageRebate: "",
-          },
-          networkTotalTransactions: "",
-          sequenceNumber: "42",
-          timestampMs: "1751696298663",
-          transactions: [],
-          validatorSignature: "",
-        }),
-      ).toEqual({
+    test("toBlockInfo should map checkpoints correctly", async () => {
+      const result = await sdk.toBlockInfo({
+        checkpointCommitments: [],
+        digest: "0xaaaaaaaaa",
+        previousDigest: "0xbbbbbbbbbb",
+        epoch: "",
+        epochRollingGasCostSummary: {
+          computationCost: "",
+          nonRefundableStorageFee: "",
+          storageCost: "",
+          storageRebate: "",
+        },
+        networkTotalTransactions: "",
+        sequenceNumber: "42",
+        timestampMs: "1751696298663",
+        transactions: [],
+        validatorSignature: "",
+      });
+      expect(result).toEqual({
         height: 42,
         hash: "0xaaaaaaaaa",
         time: new Date(1751696298663),

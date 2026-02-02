@@ -214,6 +214,7 @@ describe("listOperations", () => {
             block: {
               height: 10,
               hash: "coin-op-1-block-hash",
+              time: new Date("2025-02-12"),
             },
             fees: 20n,
             date: new Date("2025-02-12"),
@@ -233,6 +234,7 @@ describe("listOperations", () => {
             block: {
               height: 20,
               hash: "coin-op-2-block-hash",
+              time: new Date("2025-02-20"),
             },
             fees: 20n,
             date: new Date("2025-02-20"),
@@ -252,6 +254,7 @@ describe("listOperations", () => {
             block: {
               height: 20,
               hash: "coin-op-6-block-hash",
+              time: new Date("2025-02-20"),
             },
             fees: 0n,
             date: new Date("2025-02-20"),
@@ -271,6 +274,7 @@ describe("listOperations", () => {
             block: {
               height: 20,
               hash: "token-op-1-block-hash",
+              time: new Date("2025-02-20"),
             },
             fees: 20n,
             date: new Date("2025-02-20"),
@@ -302,6 +306,7 @@ describe("listOperations", () => {
             block: {
               hash: "token-op-2-block-hash",
               height: 20,
+              time: new Date("2025-02-20"),
             },
             date: new Date("2025-02-20"),
             fees: 20n,
@@ -329,6 +334,7 @@ describe("listOperations", () => {
             block: {
               height: 20,
               hash: "token-op-3-block-hash",
+              time: new Date("2025-02-20"),
             },
             fees: 20n,
             date: new Date("2025-02-20"),
@@ -355,6 +361,7 @@ describe("listOperations", () => {
             block: {
               hash: "coin-op-3-block-hash",
               height: 20,
+              time: new Date("2025-02-20"),
             },
             date: new Date("2025-02-20"),
             failed: false,
@@ -377,6 +384,7 @@ describe("listOperations", () => {
             block: {
               hash: "coin-op-6-block-hash",
               height: 20,
+              time: new Date("2025-02-20"),
             },
             date: new Date("2025-02-20"),
             failed: false,
