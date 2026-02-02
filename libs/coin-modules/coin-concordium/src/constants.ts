@@ -12,3 +12,22 @@ export const CONCORDIUM_ID_APP_MOBILE_HOST = "concordiumidapp://";
 // Maximum memo size is 254 bytes to fit within DataBlob's 256-byte limit
 // after CBOR encoding overhead (254 bytes memo + 2 bytes CBOR header = 256 bytes total)
 export const MAX_MEMO_SIZE = 254;
+
+/**
+ * Energy costs for Concordium transactions.
+ * Based on: https://docs.concordium.com/en/mainnet/docs/protocol/transaction-fees.html
+ *
+ * Formula: energy = 100*signatureCount + (headerSize + payloadSize) + baseEnergyCost
+ * - Simple transfer: 501 NRG (payload 41 bytes, base cost 300)
+ * - Transfer with memo: 503 + memo_length NRG
+ */
+export const CONCORDIUM_ENERGY = {
+  /** Fixed energy cost for simple transfers without memo */
+  SIMPLE_TRANSFER: BigInt(501),
+  /** Default fallback energy (same as simple transfer) */
+  DEFAULT: BigInt(501),
+  /** Maximum energy for TransferWithMemo: 503 (base) + 256 (max memo with CBOR) = 759 */
+  TRANSFER_WITH_MEMO_MAX: BigInt(759),
+  /** Default fallback cost in microCCD when estimation fails */
+  DEFAULT_COST: BigInt(1000000),
+} as const;

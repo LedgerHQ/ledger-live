@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountTransactionType } from "@ledgerhq/concordium-sdk-adapter";
+import { CONCORDIUM_ENERGY } from "../../constants";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
 import { combine } from "./combine";
@@ -204,8 +205,8 @@ describe("common-logic/transaction", () => {
 
       const result = await estimateFees("", currency, AccountTransactionType.Transfer);
 
-      // Simple transfer has fixed energy cost of 501
-      expect(result.energy).toBe(BigInt(501));
+      // Simple transfer has fixed energy cost
+      expect(result.energy).toBe(CONCORDIUM_ENERGY.SIMPLE_TRANSFER);
     });
 
     it("should calculate energy for transfer with payload", async () => {
@@ -230,9 +231,27 @@ describe("common-logic/transaction", () => {
 
       const result = await estimateFees("", currency, AccountTransactionType.Transfer);
 
-      // Should return defaults: cost=1000000, energy=501
-      expect(result.cost).toBe(BigInt(1000000));
-      expect(result.energy).toBe(BigInt(501));
+      // Should return defaults for simple transfer
+      expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
+      expect(result.energy).toBe(CONCORDIUM_ENERGY.DEFAULT);
+    });
+
+    it("should return higher default energy for TransferWithMemo when fetch fails", async () => {
+      const { getBlockChainParameters } = jest.requireMock("../../network/grpcClient");
+      getBlockChainParameters.mockRejectedValueOnce(new Error("Network error"));
+
+      const currency = createMockCurrency();
+
+      const result = await estimateFees(
+        "",
+        currency,
+        AccountTransactionType.TransferWithMemo,
+        {} as any, // payload required but won't be used due to error
+      );
+
+      // Should return max memo energy for TransferWithMemo to avoid silent failures
+      expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
+      expect(result.energy).toBe(CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX);
     });
 
     it("should call getBlockChainParameters with currency", async () => {

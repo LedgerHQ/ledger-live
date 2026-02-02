@@ -6,11 +6,22 @@ import {
   getEnergyCost,
 } from "@ledgerhq/concordium-sdk-adapter";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CONCORDIUM_ENERGY } from "../../constants";
 import { getBlockChainParameters } from "../../network/grpcClient";
 
-const SIMPLE_TRANSFER_ENERGY_TOTAL_COST = BigInt(501);
-const DEFAULT_ENERGY = BigInt(501);
-const DEFAULT_COST = BigInt(1000000);
+/**
+ * Returns the default fallback energy for a given transaction type.
+ * Used when fee estimation fails (network error, rate limiting, etc.)
+ * to ensure transactions have sufficient energy to be processed.
+ */
+function getDefaultEnergy(transactionType: AccountTransactionType): bigint {
+  switch (transactionType) {
+    case AccountTransactionType.TransferWithMemo:
+      return CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX;
+    default:
+      return CONCORDIUM_ENERGY.DEFAULT;
+  }
+}
 
 /**
  * Fee estimation result.
@@ -46,7 +57,7 @@ export async function estimateFees(
 
     // For simple transfers without payload energy cost is fixed
     if (transactionType === AccountTransactionType.Transfer && !payload) {
-      energy = Energy.create(SIMPLE_TRANSFER_ENERGY_TOTAL_COST);
+      energy = Energy.create(CONCORDIUM_ENERGY.SIMPLE_TRANSFER);
     } else {
       // For other transaction types or transfers with payload, calculate energy cost
       if (!payload) {
@@ -63,8 +74,8 @@ export async function estimateFees(
     };
   } catch (_e) {
     return {
-      cost: DEFAULT_COST,
-      energy: DEFAULT_ENERGY,
+      cost: CONCORDIUM_ENERGY.DEFAULT_COST,
+      energy: getDefaultEnergy(transactionType),
     };
   }
 }
