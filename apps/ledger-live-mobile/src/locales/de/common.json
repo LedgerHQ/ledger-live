@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Führe ein Upgrade deiner Ledger Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und einem exklusiven Rabatt in Höhe von 20 %. ",
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Erhalte exklusiv 20 % Rabatt auf die aktuellen Ledger-Signer.",
       "cta" : "Ledger-Upgrade durchführen"
     },
     "opted_out" : {
-      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein.",
       "cta" : "Weitere Informationen"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "Markt erkunden",
     "viewAll" : "Alles anzeigen",
     "viewAllAccessibilityHint" : "Doppeltippen, um alle Assets anzuzeigen",
+    "connectionFailed" : "Verbindung fehlgeschlagen",
+    "errorAccessibilityHint" : "Die Marktdaten können nicht geladen werden. Versuche es bitte später noch einmal.",
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "Doppeltippen, um Marktdetails anzuzeigen"
@@ -8352,6 +8356,17 @@
       "neutral" : "Neutral",
       "greed" : "Gier",
       "extremeGreed" : "Gier+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Analysen"
+    },
+    "allocation" : {
+      "title" : "Vermögensaufteilung"
+    },
+    "actions" : {
+      "swap" : "Swappen"
     }
   }
 }

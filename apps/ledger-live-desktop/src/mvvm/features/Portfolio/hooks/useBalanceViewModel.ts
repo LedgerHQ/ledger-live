@@ -14,6 +14,8 @@ import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/ind
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
+import { track } from "~/renderer/analytics/segment";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
 
 const NEW_FLOW_RANGE = "day" as const;
 
@@ -47,7 +49,13 @@ export const useBalanceViewModel = (
   const isAvailable = portfolio.balanceAvailable;
   const valueChange = portfolio.countervalueChange;
 
-  const navigateToAnalytics = useCallback(() => navigate("/analytics"), [navigate]);
+  const navigateToAnalytics = useCallback(() => {
+    track("button_clicked", {
+      button: "analytics_page",
+      page: PORTFOLIO_TRACKING_PAGE_NAME,
+    });
+    navigate("/analytics");
+  }, [navigate]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
