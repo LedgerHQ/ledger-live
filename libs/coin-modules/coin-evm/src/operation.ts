@@ -5,7 +5,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 
 /**
- * Return weather an operation is editable or not.
+ * Return whether an operation is editable or not.
  */
 export const isEditableOperation = (
   account: Account,
