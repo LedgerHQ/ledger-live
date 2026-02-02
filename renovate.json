@@ -10,10 +10,19 @@
   },
   "packageRules": [
     {
-      "description": "GitHub Actions (CI)",
+      "description": "GitHub Actions Internal (CI)",
       "matchManagers": ["github-actions"],
       "matchPackageNames": ["LedgerHQ/*", "ledgerhq/*"],
       "pinDigests": false,
+      "labels": ["dependencies", "github_actions"],
+      "reviewers": ["team:wallet-ci"],
+      "assignees": ["team:wallet-ci"]
+    },
+    {
+      "description": "GitHub Actions External (CI)",
+      "matchManagers": ["github-actions"],
+      "excludePackagePatterns": ["^LedgerHQ/.*", "^ledgerhq/.*"],
+      "pinDigests": true,
       "minimumReleaseAge": "15 days",
       "labels": ["dependencies", "github_actions"],
       "reviewers": ["team:wallet-ci"],
