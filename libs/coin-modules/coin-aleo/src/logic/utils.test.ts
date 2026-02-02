@@ -19,8 +19,20 @@ describe("logic utils", () => {
       expect(result).toBe("1000000");
     });
 
+    it("should parse valid private microcredits string and remove u64.private suffix", () => {
+      const result = parseMicrocredits("1000000u64.private");
+
+      expect(result).toBe("1000000");
+    });
+
     it("should parse zero microcredits", () => {
       const result = parseMicrocredits("0u64");
+
+      expect(result).toBe("0");
+    });
+
+    it("should parse zero private microcredits", () => {
+      const result = parseMicrocredits("0u64.private");
 
       expect(result).toBe("0");
     });

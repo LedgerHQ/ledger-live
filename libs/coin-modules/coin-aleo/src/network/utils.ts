@@ -2,9 +2,9 @@ import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { PROGRAM_ID } from "../constants";
-import { determineTransactionType } from "../logic/utils";
-import type { AleoOperation, AleoPublicTransaction } from "../types";
+import { AMOUNT_ARG_INDEX, PROGRAM_ID, RECIPIENT_ARG_INDEX } from "../constants";
+import { determineTransactionType, parseMicrocredits } from "../logic/utils";
+import type { AleoOperation, AleoPrivateRecord, AleoPublicTransaction } from "../types";
 import { apiClient } from "./api";
 
 function limitTransactions(
@@ -145,6 +145,82 @@ export async function parseOperation({
     extra: {
       functionId: rawTx.function_id,
       transactionType,
+    },
+  };
+}
+
+export async function parsePrivateOperation({
+  currency,
+  rawTx,
+  address,
+  ledgerAccountId,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  rawTx: AleoPrivateRecord;
+  address: string;
+  ledgerAccountId: string;
+  viewKey: string;
+}): Promise<AleoOperation> {
+  const { fee_value, block_hash, execution, status, block_timestamp } =
+    await apiClient.getTransactionById(currency, rawTx.transaction_id);
+
+  const timestamp = new Date(Number(block_timestamp) * 1000);
+  const hasFailed = status !== "Accepted";
+
+  let recipient = "";
+  let sender = "";
+  let value = new BigNumber(0);
+
+  const outputRecord = await apiClient.decryptRecord(rawTx.record_ciphertext, viewKey);
+
+  // PROGRAM INPUTS, BASED ON TRANSITION INDEX
+  const recordTransition = execution.transitions[rawTx.transition_index];
+
+  try {
+    // DECRYPT RECIPIENT & AMOUNT
+    // ONLY THE SENDER CAN DECRYPT THESE VALUES
+    const recipientData = await apiClient.decryptCiphertext({
+      ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+      tpk: recordTransition.tpk,
+      viewKey,
+      programId: rawTx.program_name,
+      functionName: rawTx.function_name,
+      outputIndex: RECIPIENT_ARG_INDEX,
+    });
+    const amountData = await apiClient.decryptCiphertext({
+      ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+      tpk: recordTransition.tpk,
+      viewKey,
+      programId: rawTx.program_name,
+      functionName: rawTx.function_name,
+      outputIndex: AMOUNT_ARG_INDEX,
+    });
+    sender = address;
+    recipient = recipientData.plaintext;
+    value = new BigNumber(parseMicrocredits(amountData.plaintext));
+  } catch {
+    sender = rawTx.sender ?? "";
+    recipient = address;
+    value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
+  }
+
+  return {
+    id: encodeOperationId(ledgerAccountId, rawTx.transition_id, rawTx.function_name),
+    senders: [sender],
+    recipients: [recipient],
+    value,
+    type: recipient === address ? "IN" : "OUT",
+    hasFailed,
+    hash: rawTx.transaction_id,
+    fee: new BigNumber(fee_value),
+    blockHeight: rawTx.block_height,
+    blockHash: block_hash,
+    accountId: ledgerAccountId,
+    date: timestamp,
+    extra: {
+      functionId: rawTx.function_name,
+      transactionType: "private",
     },
   };
 }

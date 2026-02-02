@@ -9,6 +9,7 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     lastPrivateSyncDate: resources.lastPrivateSyncDate
       ? resources.lastPrivateSyncDate.toISOString()
       : null,
+    privateRecords: resources.privateRecords ? JSON.stringify(resources.privateRecords) : null,
     provableApi: resources.provableApi ? JSON.stringify(resources.provableApi) : null,
   };
 }
@@ -20,6 +21,7 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
     lastPrivateSyncDate: rawResources.lastPrivateSyncDate
       ? new Date(rawResources.lastPrivateSyncDate)
       : null,
+    privateRecords: rawResources.privateRecords ? JSON.parse(rawResources.privateRecords) : null,
     provableApi: rawResources.provableApi ? JSON.parse(rawResources.provableApi) : null,
   };
 }
