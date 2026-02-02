@@ -260,7 +260,7 @@ describe("listOperations", () => {
         },
         {
           id: "token-op-1",
-          type: "FEES",
+          type: "OUT",
           senders: ["address"],
           recipients: ["address1"],
           value: 1n, // token transfer value
@@ -287,7 +287,7 @@ describe("listOperations", () => {
         },
         {
           id: "token-op-2",
-          type: "NONE",
+          type: "IN",
           senders: ["address"],
           recipients: ["address2"],
           value: 2n, // token transfer value
@@ -318,7 +318,7 @@ describe("listOperations", () => {
         },
         {
           id: "token-op-3",
-          type: "FEES",
+          type: "OUT",
           senders: ["address"],
           recipients: ["address1"],
           value: 1n, // token transfer value
@@ -445,7 +445,7 @@ describe("listOperations", () => {
       [
         {
           id: "token-op-erc20",
-          type: "FEES",
+          type: "OUT",
           senders: ["address1"],
           recipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
           value: 666n,
