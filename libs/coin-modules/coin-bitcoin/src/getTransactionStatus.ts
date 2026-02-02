@@ -10,13 +10,7 @@ import {
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
-import type {
-  BitcoinInput,
-  BitcoinOutput,
-  Transaction,
-  TransactionStatus,
-  BitcoinAccount,
-} from "./types";
+import type { BitcoinInput, BitcoinOutput, Transaction, TransactionStatus } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
