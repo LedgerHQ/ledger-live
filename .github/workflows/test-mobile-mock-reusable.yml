@@ -464,20 +464,7 @@ jobs:
         run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
-
-          # Install additional tools for Magisk setup
-          sudo apt-get update
-          sudo apt-get install -y unzip openssl
-
-          # Ensure scripts are executable
-          chmod +x tools/scripts/install-magisk-emulator.sh
-          chmod +x tools/scripts/build-mitmproxy-magisk-module.sh
-
-          # Verify scripts are present
-          ls -la tools/scripts/install-magisk-emulator.sh
-          ls -la tools/scripts/build-mitmproxy-magisk-module.sh
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
@@ -497,18 +484,6 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Install Magisk on Emulator System
-        run: |
-          # Install Magisk before starting emulator
-          # This patches the system image to enable root and module installation
-          ./tools/scripts/install-magisk-emulator.sh
-        env:
-          AVD_API: ${{ env.AVD_API }}
-          AVD_ARCH: ${{ env.AVD_ARCH }}
-          AVD_TARGET: ${{ env.AVD_TARGET }}
-          AVD_NAME: ${{ env.AVD_NAME }}
-          ANDROID_SDK_ROOT: $ANDROID_HOME
 
       - name: Download android emulator
         timeout-minutes: 5
@@ -539,6 +514,20 @@ jobs:
             python = "{{ get_env(name='PYTHON_VERSION', default='3.11') }}"
             mitmproxy = "{{ get_env(name='MIMTPROXY_VERSION', default='12.2.1') }}"
           github_token: ${{ secrets.GITHUB_TOKEN }} # [default: ${{ github.token }}] GitHub token for API authentication
+
+      - name: Install Magisk dependencies
+        run: |
+          # Install additional tools for Magisk setup
+          sudo apt-get update
+          sudo apt-get install -y unzip openssl
+
+          # Ensure scripts are executable
+          chmod +x tools/scripts/install-magisk-emulator.sh
+          chmod +x tools/scripts/build-mitmproxy-magisk-module.sh
+
+          # Verify scripts are present
+          ls -la tools/scripts/install-magisk-emulator.sh
+          ls -la tools/scripts/build-mitmproxy-magisk-module.sh
 
       - name: Install Magisk on Emulator
         run: |
