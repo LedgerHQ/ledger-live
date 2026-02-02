@@ -317,7 +317,7 @@ describe.each([
           minHeight: 200,
           order: "asc",
         }),
-      ).toEqual([[], ""]);
+      ).toEqual({ items: [], next: undefined });
     });
 
     it.each([
@@ -336,10 +336,10 @@ describe.each([
     ] as const)(
       "lists operations for an address with %s order",
       async (_s, order, isCorrectlyOrdered) => {
-        const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
-          minHeight: 200,
-          order,
-        });
+        const { items: result } = await module.listOperations(
+          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+          { minHeight: 200, order },
+        );
         expect(result.length).toBeGreaterThanOrEqual(52);
         result.forEach(op => {
           expect([

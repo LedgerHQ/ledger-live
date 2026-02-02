@@ -3,11 +3,11 @@ import {
   Block,
   BlockInfo,
   Cursor,
+  ListOperationsOptions,
   Page,
   Validator,
   FeeEstimation,
   Operation,
-  Pagination,
   Reward,
   Stake,
   TransactionIntent,
@@ -85,8 +85,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
-  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
-  return [ops, JSON.stringify(nextHeight)];
+  { minHeight }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  const [items, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
+  return { items, next: nextHeight ? JSON.stringify(nextHeight) : undefined };
 }

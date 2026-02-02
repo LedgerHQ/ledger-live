@@ -127,7 +127,7 @@ describe("listOperations", () => {
     const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
-    const [results, _] = await api.listOperations("src", { minHeight: 0, order: "asc" });
+    const { items: results } = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
     // called 1 times because the client is expected to do the pagination itself
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
@@ -142,7 +142,10 @@ describe("listOperations", () => {
       .mockReturnValueOnce(mockNetworkTxs(txs, defaultMarker))
       .mockReturnValueOnce(mockNetworkTxs(txs, undefined));
 
-    const [results, token] = await api.listOperations("src", { minHeight: 0, order: "asc" });
+    const { items: results, next: token } = await api.listOperations("src", {
+      minHeight: 0,
+      order: "asc",
+    });
 
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockGetTransactions).toHaveBeenCalledTimes(1);
@@ -154,7 +157,7 @@ describe("listOperations", () => {
       forward: true,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(1, "src", baseOptions);
-    await api.listOperations("src", { minHeight: 0, order: "asc", lastPagingToken: token });
+    await api.listOperations("src", { minHeight: 0, cursor: token, order: "asc" });
     const optionsWithToken = {
       ...baseOptions,
       marker: defaultMarker,
@@ -191,7 +194,7 @@ describe("listOperations", () => {
       mockGetTransactions.mockResolvedValue(mockNetworkTxs([], undefined));
 
       // When
-      const [results, _] = await api.listOperations(address, { minHeight: 0, order: "asc" });
+      const { items: results } = await api.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);

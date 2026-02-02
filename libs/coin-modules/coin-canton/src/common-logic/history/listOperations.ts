@@ -1,23 +1,27 @@
-import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
+import type { Cursor, Operation, Page } from "@ledgerhq/coin-framework/api/index";
 import { getOperations } from "../../network/gateway";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Returns list of operations associated to an account.
  * @param partyId Account partyId
- * @param pagination Pagination options
- * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
- * Impl to finalize when backend is ready
+ * @param minHeight Minimum block height
+ * @param cursor Pagination cursor
+ * @param limit Max number of operations
+ * @returns Operations found and the next cursor for pagination.
  */
 export async function listOperations(
   currency: CryptoCurrency,
   partyId: string,
-  page: Pagination,
-): Promise<[Operation[], string]> {
+  minHeight: number,
+  cursor?: Cursor,
+  limit?: number,
+  _order?: "asc" | "desc",
+): Promise<Page<Operation>> {
   const { operations, next } = await getOperations(currency, partyId, {
-    cursor: page.pagingToken !== undefined ? parseInt(page.pagingToken) : undefined,
-    minOffset: page.minHeight,
-    limit: page.limit,
+    cursor: cursor !== undefined ? parseInt(cursor) : undefined,
+    minOffset: minHeight,
+    limit: limit,
   });
   const ops: Operation[] = [];
   for (const tx of operations) {
@@ -43,5 +47,5 @@ export async function listOperations(
       });
     }
   }
-  return [ops, next + ""];
+  return { items: ops, next: next ? next + "" : undefined };
 }
