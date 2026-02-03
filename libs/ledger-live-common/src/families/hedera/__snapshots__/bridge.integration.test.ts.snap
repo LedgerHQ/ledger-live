@@ -25,7 +25,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "1066802",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": true,
   },
   {
@@ -84,7 +83,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "38038675",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": true,
   },
   {
@@ -132,7 +130,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "80189",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": true,
   },
   {
@@ -158,7 +155,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "99442073",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": true,
   },
   {
@@ -184,7 +180,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "333985159",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": true,
   },
   {
@@ -232,7 +227,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "36243023",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": true,
   },
   {
@@ -280,7 +274,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "0",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x2ddfbcd0",
     "used": false,
   },
 ]
