@@ -88,5 +88,5 @@ async function operations(
   { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   const [items, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
-  return { items, next: nextHeight ? JSON.stringify(nextHeight) : undefined };
+  return { items, next: nextHeight != null ? JSON.stringify(nextHeight) : undefined };
 }
