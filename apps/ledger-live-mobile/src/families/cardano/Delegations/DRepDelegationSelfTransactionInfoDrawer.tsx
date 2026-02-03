@@ -9,7 +9,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import Button from "~/components/wrappedUi/Button";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import BigNumber from "bignumber.js";
