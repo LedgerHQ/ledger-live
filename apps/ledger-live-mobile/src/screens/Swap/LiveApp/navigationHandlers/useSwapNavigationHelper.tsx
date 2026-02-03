@@ -29,6 +29,7 @@ export function useSwapNavigationHelper({ navigation }: { navigation: Navigation
         let canGoBack = canGoBackFromEvent;
 
         const isTwoStepFlow =
+          urlFromEvent.includes("multi-step-transaction") ||
           urlFromEvent.includes("two-step-approval") ||
           urlFromEvent.includes("rfq-approval") ||
           urlFromEvent.includes("eth-app-flow");
