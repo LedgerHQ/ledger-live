@@ -272,13 +272,13 @@ export default class PortfolioPage {
   @Step("Tap on fear and greed card")
   async tapFearAndGreedCard() {
     await tapById(this.fearAndGreedCard);
+    await waitForAnimation();
   }
 
   @Step("Expect fear and greed title in drawer")
   async expectFearAndGreedTitleInDrawer() {
     await waitForElementById(this.fearAndGreedTitle);
     await detoxExpect(getElementById(this.fearAndGreedTitle)).toBeVisible();
-    await waitForAnimation();
   }
 
   @Step("Tap on drawer close button")
@@ -291,7 +291,6 @@ export default class PortfolioPage {
 
   @Step("Tap on market banner tile")
   async tapMarketBannerTile(index: number) {
-    await waitForAnimation();
     await tapById(`${this.marketBannerTileBase}${index}`);
   }
 
