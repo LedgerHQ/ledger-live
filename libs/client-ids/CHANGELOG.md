@@ -1,5 +1,17 @@
 # @ledgerhq/client-ids
 
+## 0.5.0
+
+### Minor Changes
+
+- [#13808](https://github.com/LedgerHQ/ledger-live/pull/13808) [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump reduxjs/toolkit
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#13808](https://github.com/LedgerHQ/ledger-live/pull/13808) [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump reduxjs/toolkit
+
 ## 0.4.1
 
 ### Patch Changes

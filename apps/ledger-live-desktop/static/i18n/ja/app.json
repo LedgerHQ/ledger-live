@@ -282,11 +282,13 @@
     "advanced" : "アドバンス",
     "custom" : "カスタム",
     "fast" : "高速",
+    "networkFees" : "ネットワーク手数料",
     "high" : "高速",
     "low" : "低速",
     "slow" : "低速",
     "standard" : "標準",
     "medium" : "標準",
+    "coinControl" : "コインコントロール",
     "feesAmount" : "手数料"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "デバイスを接続",
         "secondaryCta" : "後で"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}}トレンド",
-      "buy" : "購入",
-      "swap" : "スワップ",
-      "gainers" : "上昇",
-      "losers" : "下降",
-      "error" : {
-        "title" : "申し訳ありませんが、トレンドを読み込むことができません",
-        "description" : "再度お試しください。"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "上位{{count}}資産で過去{{trend}}に上昇したものはありません",
-          "description" : "上位敗者を表示するか、後でまたご確認ください"
-        },
-        "losers" : {
-          "title" : "上位{{count}}資産で過去{{trend}}に下落したものはありません",
-          "description" : "上位勝者を表示するか、後でまたご確認ください"
-        }
-      },
-      "trend" : {
-        "day" : "24時間",
-        "week" : "7日間",
-        "month" : "30日間",
-        "year" : "年",
-        "all" : "年"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "送金金額 ({{currency}})",
     "coinToSend" : "送付するコイン",
     "coinControlCustom" : "コインセレクションをカスタマイズ",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "最大"
+    },
+    "reviewCta" : "確認",
+    "getCta" : "{{currency}}を受け取る",
+    "switchInputMode" : "入力モードを切り替え",
     "aboveMaximum" : "残高上限超過",
     "transactionSigned" : "取引に署名済み",
     "processingTransaction" : "トランザクションを処理中です",
     "sign" : {
       "title" : "Ledger {{wording}}で続ける",
       "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "ネットワーク手数料を更新できません",
+      "warningDescription" : "手数料のプリセット（設定値）が古い可能性があります。"
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
       "mevProtection" : "MEV保護",
       "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
-      "mevProtectionLearnMore" : "プライバシーに関する通知",
-      "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
-      "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
+      "mevProtectionLearnMore" : "プライバシーに関する通知"
     },
     "developer" : {
       "search" : "検索",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "ドロワーを開く",
         "debugDialog" : "ダイアログのデバッグ",
         "debugDuplicates" : "重複のデバッグ"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "ウォレット機能開発ツール",
+        "description" : "デスクトップ版のWallet 4.0機能を切り替えます（lwdWallet40機能フラグ）。",
+        "enableAll" : "すべて有効にする",
+        "disableAll" : "すべて無効にする",
+        "featureParameters" : "機能パラメータ",
+        "showJson" : "JSONを表示",
+        "hideJson" : "JSONを非表示"
       },
       "cryptoAssetsList" : {
         "title" : "暗号資産リスト",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "Ledgerがアプリの使用状況データを収集できるようにし、Ledger Walletのパフォーマンスを測定し、アプリと体験の両方を向上させます。"
     }
   },
+  "analytics" : {
+    "title" : "アナリティクス"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "閉じる",
@@ -7825,10 +7822,31 @@
       "cta" : "再試行"
     }
   },
+  "portfolio" : {
+    "title" : "ホーム",
+    "today" : "今日"
+  },
   "marketBanner" : {
     "title" : "市場を見る",
     "genericError" : "接続に失敗",
-    "cta" : "すべて表示"
+    "cta" : "すべて表示",
+    "fearAndGreed" : {
+      "title" : "市場ムード"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "極度の恐怖",
+      "fear" : "恐怖",
+      "neutral" : "中立",
+      "greed" : "貪欲",
+      "extremeGreed" : "極度の貪欲"
+    },
+    "dialog" : {
+      "title" : "市場ムード指数",
+      "content" : "市場ムード指数は、市場の心理状態を示しています。0から100の範囲で推移し、数値が低いほど「極度の恐怖」を、高いほど「極度の貪欲」を示します。",
+      "cta" : "了解"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",

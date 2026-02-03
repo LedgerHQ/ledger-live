@@ -53,6 +53,7 @@ function useDBSaveEffect<D, S>({
   const state: MaybeState = useSelector(identity);
   const forceSave = useRef(saveAtStart);
   const lastSavedState = useRef(state);
+  const isSaving = useRef(false);
   // we keep an updated version of current props in "latestProps" ref
   const latestProps = useRef({
     lense,
@@ -64,12 +65,18 @@ function useDBSaveEffect<D, S>({
     () =>
       // throttle allow to not spam lense and save too much because they are costly
       // nb it does not prevent race condition here. save must be idempotent and atomic
-      throttleFn(async () => {
+      throttleFn(async (): Promise<void> => {
+        if (isSaving.current) return checkForSave(); // if we are already saving, we re-schedule
         const { lense, save, state, getChangesStats } = latestProps.current;
         if (lastSavedState?.current && state) {
           const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
           if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
-          await save(lense(state), changedStats); // we save it for real
+          isSaving.current = true;
+          try {
+            await save(lense(state), changedStats); // we save it for real
+          } finally {
+            isSaving.current = false;
+          }
           lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
           forceSave.current = false;
         }
@@ -133,6 +140,10 @@ const getAccountsChanged = (
   return null;
 };
 const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
+
+const getPostOnboardingStateChanged = (a: State, b: State) =>
+  !isEqual(a.postOnboarding, b.postOnboarding);
+
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const compareWalletState = (a: State, b: State) =>
@@ -149,20 +160,20 @@ const extractIdentitiesForPersistence = (state: State) =>
   exportIdentitiesForPersistence(state.identities);
 
 export const ConfigureDBSaveEffects = () => {
-  const getPostOnboardingStateChanged = useCallback(
-    (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
-    [],
-  );
-
   const trackingPairs = useTrackingPairs();
   const state = useCountervaluesState();
   const rawState = useMemo(() => exportCountervalues(state, trackingPairs), [state, trackingPairs]);
-
-  const countervaluesChangesStats = useCallback(
-    () => ({ changed: !!Object.keys(rawState.status).length }),
-    [rawState],
-  );
+  const lastRawState = useRef(rawState);
+  const countervaluesChangesStats = useCallback(() => {
+    const changed = lastRawState.current !== rawState;
+    const isEmptyState = !Object.keys(rawState.status).length;
+    if (!changed || isEmptyState) return false;
+    const prev = lastRawState.current;
+    lastRawState.current = rawState;
+    return !isEqual(prev, rawState);
+  }, [rawState]);
   const countervaluesRawState = useCallback(() => rawState, [rawState]);
+
   useDBSaveEffect({
     save: saveCountervalues,
     throttle: 2000,

@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "お持ちのLedger Nano Sを最新のLedger（Ledger Flexなど）にアップグレードしていただくと、より多くのメモリ、最新のセキュリティ強化、複数の新機能をお楽しみいただけます。また、今なら、20%オフの限定特典をご利用いただけます。 ",
+      "title" : "Ledger Nano S™をアップグレード",
+      "description" : "限定特典、最新のLedger署名用デバイスが20%OFF。",
       "cta" : "Ledgerをアップグレード"
     },
     "opted_out" : {
-      "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
+      "title" : "Ledger Nano S™をアップグレード",
+      "description" : "Ledger Nano Sの限られたメモリでは、最新機能やブロックチェーンの変更、セキュリティ強化が制限されます。",
       "cta" : "詳細はこちら"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "市場を見る",
     "viewAll" : "すべて表示",
     "viewAllAccessibilityHint" : "ダブルタップですべての市場資産を表示",
+    "connectionFailed" : "接続に失敗しました",
+    "errorAccessibilityHint" : "市場データを読み込めません。しばらくしてから、もう一度お試しください。",
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "ダブルタップで市場の詳細を表示"
@@ -8352,6 +8356,17 @@
       "neutral" : "中立",
       "greed" : "貪欲",
       "extremeGreed" : "極度の貪欲"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "アナリティクス"
+    },
+    "allocation" : {
+      "title" : "資産配分"
+    },
+    "actions" : {
+      "swap" : "スワップ"
     }
   }
 }

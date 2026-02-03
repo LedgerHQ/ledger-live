@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { cn } from "LLD/utils/cn";
+import { RIGHT_PANEL_WIDTH } from "LLD/components/Page/constants";
 
 interface Wallet40LayoutProps {
   readonly children: React.ReactNode;
@@ -18,8 +18,11 @@ export const Wallet40Layout = memo(function Wallet40Layout({
   rightPanel,
 }: Wallet40LayoutProps) {
   return (
-    <div className={cn("flex flex-1 gap-32 overflow-hidden px-32")}>
-      <div id="scroll-area" className="relative flex flex-1 flex-col overflow-hidden">
+    <div
+      className="grid flex-1 gap-32 overflow-hidden px-32"
+      style={rightPanel ? { gridTemplateColumns: `1fr ${RIGHT_PANEL_WIDTH}px` } : undefined}
+    >
+      <div id="scroll-area" className="relative flex min-w-0 flex-col overflow-hidden">
         <div
           id="page-scroller"
           ref={scrollerRef}

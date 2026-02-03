@@ -9,13 +9,15 @@ import {
   UsePortfolioBalanceSectionViewModelResult,
 } from "./types";
 
+const DEFAULT_RANGE = "day";
+
 export const usePortfolioBalanceSectionViewModel = ({
   showAssets,
   isReadOnlyMode,
 }: PortfolioBalanceSectionProps): UsePortfolioBalanceSectionViewModelResult => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
-  const portfolio = usePortfolioAllAccounts();
+  const portfolio = usePortfolioAllAccounts({ range: DEFAULT_RANGE });
 
   const { countervalueChange, balanceHistory, balanceAvailable } = portfolio;
   const lastItem = balanceHistory[balanceHistory.length - 1];

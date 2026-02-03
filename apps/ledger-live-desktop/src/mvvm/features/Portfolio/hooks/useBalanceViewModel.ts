@@ -8,11 +8,14 @@ import {
   discreetModeSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
+import { track } from "~/renderer/analytics/segment";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
 
 const NEW_FLOW_RANGE = "day" as const;
 
@@ -30,6 +33,7 @@ export const useBalanceViewModel = (
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const { hasFunds } = useAccountStatus();
 
   const range = useLegacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
 
@@ -45,7 +49,13 @@ export const useBalanceViewModel = (
   const isAvailable = portfolio.balanceAvailable;
   const valueChange = portfolio.countervalueChange;
 
-  const navigateToAnalytics = useCallback(() => navigate("/analytics"), [navigate]);
+  const navigateToAnalytics = useCallback(() => {
+    track("button_clicked", {
+      button: "analytics_page",
+      page: PORTFOLIO_TRACKING_PAGE_NAME,
+    });
+    navigate("/analytics");
+  }, [navigate]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -74,5 +84,6 @@ export const useBalanceViewModel = (
     isAvailable,
     navigateToAnalytics,
     handleKeyDown,
+    hasFunds,
   };
 };

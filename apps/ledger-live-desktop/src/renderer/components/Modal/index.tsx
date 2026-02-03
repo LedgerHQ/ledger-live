@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { createPortal } from "react-dom";
 import { connect } from "react-redux";
 import styled, { CSSProperties, DefaultTheme } from "styled-components";
@@ -149,6 +149,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   state = {
     directlyClickedBackdrop: false,
   };
+  nodeRef = createRef<HTMLDivElement>();
 
   componentDidMount() {
     document.addEventListener("keyup", this.handleKeyup);
@@ -244,10 +245,12 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
           enter: 100,
           exit: 200,
         }}
+        nodeRef={this.nodeRef}
       >
         {state => {
           return (
             <Container
+              ref={this.nodeRef}
               data-testid="modal-backdrop"
               state={state}
               centered={centered}

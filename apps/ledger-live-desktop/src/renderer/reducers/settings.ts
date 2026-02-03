@@ -286,23 +286,45 @@ type HandlersPayloads = {
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
+/**
+ * Filters imported settings to only include valid SettingsState keys.
+ * This prevents unknown/obsolete fields (like nftCollectionsStatusByNetwork) from being imported.
+ */
+function isValidSettingsKey(key: string): key is keyof SettingsState {
+  return key in INITIAL_STATE;
+}
+
+export function filterValidSettings(
+  importedSettings: Partial<SettingsState>,
+): Partial<SettingsState> {
+  const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
+
+  return Object.fromEntries(
+    Object.entries(importedSettings).filter(
+      ([key]) => validKeys.has(key) && isValidSettingsKey(key),
+    ),
+  ) as Partial<SettingsState>;
+}
+
 const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
+    const filteredPayload = filterValidSettings(payload);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(payload) as (keyof typeof payload)[]).some(
-      key => payload[key] !== state[key],
+    const changed = (Object.keys(filteredPayload) as (keyof typeof filteredPayload)[]).some(
+      key => filteredPayload[key] !== state[key],
     );
     if (!changed) return state;
     return {
       ...state,
-      ...payload,
+      ...filteredPayload,
     };
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
+    const filteredSettings = filterValidSettings(settings);
     return {
       ...state,
-      ...settings,
+      ...filteredSettings,
       loaded: true,
     };
   },

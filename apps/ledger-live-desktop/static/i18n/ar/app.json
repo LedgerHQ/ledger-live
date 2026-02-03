@@ -282,11 +282,13 @@
     "advanced" : "مُتَقدم",
     "custom" : "مُخصّص",
     "fast" : "سريع",
+    "networkFees" : "رسوم الشبكة",
     "high" : "مرتفعة",
     "low" : "منخفضة",
     "slow" : "بطيء",
     "standard" : "اعتيادية",
     "medium" : "متوسط",
+    "coinControl" : "التحكم في العملات",
     "feesAmount" : "قيمة الرسوم"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "توصيل الجهاز",
         "secondaryCta" : "ربّما في وقت لاحق"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "اتجاه {{time}}",
-      "buy" : "شراء",
-      "swap" : "مبادلة",
-      "gainers" : "الرابحون",
-      "losers" : "الخاسرون",
-      "error" : {
-        "title" : "عذراً، لم نتمكن من تحميل الاتجاه",
-        "description" : "يُرجى إعادة المحاولة لاحقاً"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "ليس هناك أصول بين أعلى {{count}} حققت مكاسب خلال آخر {{trend}}",
-          "description" : "فكِّر في عرض أعلى الخاسرين أو عُد مرةً أخرى لاحقاً"
-        },
-        "losers" : {
-          "title" : "ليس هناك أصول بين أعلى {{count}} حققت خسائر خلال آخر {{trend}}",
-          "description" : "فكِّر في عرض أعلى الرابحين أو عُد مرةً أخرى لاحقاً"
-        }
-      },
-      "trend" : {
-        "day" : "24 ساعة",
-        "week" : "7 أيام",
-        "month" : "30 يوماً",
-        "year" : "سنة",
-        "all" : "سنة"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "المبلغ المراد إرساله بعملة ({{currency}})",
     "coinToSend" : "العملة المراد إرسالها",
     "coinControlCustom" : "اختيار عملات مخصص",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "الحد الأقصى"
+    },
+    "reviewCta" : "مراجعة",
+    "getCta" : "احصل على {{currency}}",
+    "switchInputMode" : "تبديل وضع إدخال المبلغ",
     "aboveMaximum" : "أعلى من الحد الأقصى للرصيد",
     "transactionSigned" : "تم توقيع المعاملة",
     "processingTransaction" : "معاملتك قيد المعالجة.",
     "sign" : {
       "title" : "تابع على جهازك Ledger {{wording}}",
       "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "تعذر تحديث رسوم الشبكة",
+      "warningDescription" : "الإعدادات المسبقة للرسوم قد تكون غير حديثة."
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف",
       "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
       "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم.",
-      "mevProtectionLearnMore" : "إشعار الخصوصية",
-      "marketPerformanceWidget" : "أداة أداء السوق",
-      "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
+      "mevProtectionLearnMore" : "إشعار الخصوصية"
     },
     "developer" : {
       "search" : "بحث",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "فتح الشريط",
         "debugDialog" : "حوار تصحيح الأخطاء",
         "debugDuplicates" : "تصحيح أخطاء النسخ المماثلة"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "أداة المطورين لميزات Wallet",
+        "description" : "تبديل ميزات Wallet 4.0 لكمبيوتر سطح المكتب (علامة الميزة lwdWallet40).",
+        "enableAll" : "تمكين الكل",
+        "disableAll" : "تعطيل الكل",
+        "featureParameters" : "مُعلّمات الميزات",
+        "showJson" : "عرض JSON",
+        "hideJson" : "إخفاء JSON"
       },
       "cryptoAssetsList" : {
         "title" : "قائمة الأصول المشفرة",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق للمساعدة في قياس أداء Ledger Wallet وتحسين كلٍ من التطبيق وتجربتك."
     }
   },
+  "analytics" : {
+    "title" : "التحليلات"
+  },
   "walletSync" : {
     "title" : "مزامنة Ledger",
     "close" : "إغلاق",
@@ -7825,10 +7822,31 @@
       "cta" : "إعادة المحاولة"
     }
   },
+  "portfolio" : {
+    "title" : "الصفحة الرئيسية",
+    "today" : "اليوم"
+  },
   "marketBanner" : {
     "title" : "استكشف السوق",
     "genericError" : "فشل الاتصال",
-    "cta" : "عرض الكل"
+    "cta" : "عرض الكل",
+    "fearAndGreed" : {
+      "title" : "الحالة المزاجية"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "خوف+",
+      "fear" : "خوف",
+      "neutral" : "محايد",
+      "greed" : "طمع",
+      "extremeGreed" : "طمع+"
+    },
+    "dialog" : {
+      "title" : "مؤشر الحالة المزاجية",
+      "content" : "مؤشر الحالة المزاجية يشير إلى الحالة العاطفية للسوق. يتراوح بين 0 و 100، حيث تشير القيمة الأقل إلى الخوف الشديد، والقيمة الأعلى إلى الطمع الشديد.",
+      "cta" : "فهمت ذلك"
+    }
   },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",

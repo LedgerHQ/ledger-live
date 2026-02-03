@@ -10,13 +10,13 @@ export const AssetIcon = ({
   getCapitalizedTicker: (item: MarketItemPerformer) => string;
 }) => {
   if (item.ledgerIds && item.ledgerIds.length > 0 && item.ticker) {
-    return <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="48px" />;
+    return <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="40px" />;
   }
 
   return (
     <img
-      width={48}
-      height={48}
+      width={40}
+      height={40}
       className="overflow-hidden rounded-full"
       src={item.image}
       alt={`${getCapitalizedTicker(item)} logo`}

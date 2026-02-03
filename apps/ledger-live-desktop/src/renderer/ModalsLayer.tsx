@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { connect } from "react-redux";
@@ -44,6 +44,7 @@ function renderFirst(modalsState: ModalsState) {
 
 const ModalsLayer = ({ modalsState }: { modalsState: ModalsState }) => {
   const first = renderFirst(modalsState);
+  const nodeRef = useRef(null);
   return (
     <Transition
       in={!!first}
@@ -55,8 +56,13 @@ const ModalsLayer = ({ modalsState }: { modalsState: ModalsState }) => {
         enter: 100,
         exit: 200,
       }}
+      nodeRef={nodeRef}
     >
-      {state => <BackDrop state={state}>{first || null}</BackDrop>}
+      {state => (
+        <BackDrop ref={nodeRef} state={state}>
+          {first || null}
+        </BackDrop>
+      )}
     </Transition>
   );
 };

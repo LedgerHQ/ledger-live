@@ -303,6 +303,7 @@ export enum SettingsActionTypes {
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
+  SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -390,6 +391,7 @@ export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTerms
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
@@ -456,7 +458,8 @@ export type SettingsPayload =
   | SettingsSetMevProtectionPayload
   | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
-  | SettingsRemoveStarredMarketcoinsPayload;
+  | SettingsRemoveStarredMarketcoinsPayload
+  | SettingsSetHasSeenWalletV4TourPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

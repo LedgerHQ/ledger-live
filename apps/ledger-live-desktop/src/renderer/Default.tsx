@@ -79,6 +79,7 @@ const Earn = lazy(() => import("~/renderer/screens/earn"));
 const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
+const Perps = lazy(() => import("LLD/features/Perps"));
 const Market40 = lazy(() => import("LLD/features/Market"));
 const Market = lazy(() => import("~/renderer/screens/market"));
 
@@ -233,6 +234,7 @@ const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBann
         <Route path="/account/:id/*" element={withSuspense(Account)({})} />
         <Route path="/asset/*" element={withSuspense(Asset)({})} />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
+        <Route path="/perps/*" element={withSuspense(Perps)({})} />
         <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
         <Route
           path="/market"

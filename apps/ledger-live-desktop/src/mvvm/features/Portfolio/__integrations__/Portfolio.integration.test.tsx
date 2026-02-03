@@ -7,6 +7,8 @@ import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
+import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -104,7 +106,11 @@ describe("PortfolioView", () => {
 
   describe("Balance", () => {
     it("should render Balance with total balance when shouldDisplayGraphRework is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />);
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+        },
+      });
 
       expect(screen.getByTestId("portfolio-balance")).toBeVisible();
       expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
@@ -116,11 +122,57 @@ describe("PortfolioView", () => {
     });
 
     it("should navigate to analytics when clicking on balance", async () => {
-      const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+      const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+        },
+      });
 
       await user.click(screen.getByTestId("portfolio-balance"));
 
       expect(mockNavigate).toHaveBeenCalledWith("/analytics");
+    });
+
+    it("should render NoBalanceView when user has no accounts", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [],
+        },
+      });
+
+      expect(screen.getByTestId("no-balance-title")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+    });
+    it("should display discreet placeholders when discreet mode is enabled", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            discreetMode: true,
+          },
+        },
+      });
+
+      const balanceElement = screen.getByTestId("portfolio-total-balance");
+      expect(balanceElement).toHaveTextContent("••••");
+      expect(balanceElement).not.toHaveTextContent("$1,000.00");
+    });
+
+    it("should display actual balance when discreet mode is disabled", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            discreetMode: false,
+          },
+        },
+      });
+
+      const balanceElement = screen.getByTestId("portfolio-total-balance");
+      expect(balanceElement).toHaveTextContent("$1,000.00"); // Check for actual balance
+      expect(balanceElement).not.toHaveTextContent("••••"); // Ensure no placeholders
     });
   });
 
@@ -128,7 +180,11 @@ describe("PortfolioView", () => {
     it("should render Trend with positive percentage and display separator with Today label", () => {
       mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0.0542, value: 5000 }));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+        },
+      });
 
       expect(screen.getByTestId("portfolio-trend")).toBeVisible();
       expect(screen.getByText("+5.42%")).toBeVisible();
@@ -138,7 +194,11 @@ describe("PortfolioView", () => {
     it("should render Trend with negative percentage", () => {
       mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: -0.0315, value: -3000 }));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+        },
+      });
 
       expect(screen.getByTestId("portfolio-trend")).toBeVisible();
       expect(screen.getByText("-3.15%")).toBeVisible();
@@ -147,7 +207,11 @@ describe("PortfolioView", () => {
     it("should show 0% when percentage is zero", () => {
       mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+        },
+      });
 
       expect(screen.getByTestId("portfolio-trend")).toBeVisible();
       expect(screen.getByTestId("portfolio-trend-percentage")).toBeVisible();

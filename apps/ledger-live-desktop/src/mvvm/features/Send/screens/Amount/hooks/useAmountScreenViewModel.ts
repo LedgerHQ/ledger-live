@@ -3,7 +3,10 @@ import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowUiConfig, SendFlowTransactionActions } from "../../../types";
+import type {
+  SendFlowTransactionActions,
+  SendFlowUiConfig,
+} from "@ledgerhq/live-common/flows/send/types";
 import type { AmountScreenViewModel } from "../types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";

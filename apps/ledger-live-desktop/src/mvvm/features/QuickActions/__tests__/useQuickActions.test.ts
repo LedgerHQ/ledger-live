@@ -1,192 +1,201 @@
 import { renderHook, act } from "tests/testSetup";
 import { useQuickActions } from "../hooks/useQuickActions";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useNavigate, useLocation } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
-import { hasAccountsSelector, areAccountsEmptySelector } from "~/renderer/reducers/accounts";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import BigNumber from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
-jest.mock("~/renderer/actions/modals", () => ({
-  openModal: jest.fn((name, data) => ({ type: "OPEN_MODAL", name, data })),
-}));
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow");
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
   useLocation: jest.fn(),
 }));
-jest.mock("LLD/hooks/redux", () => ({
-  ...jest.requireActual("LLD/hooks/redux"),
-  useDispatch: jest.fn(),
-  useSelector: jest.fn(),
-}));
 
 const mockNavigate = jest.fn();
-const mockDispatch = jest.fn();
 const mockOpenSendFlow = jest.fn();
+const mockOpenAssetFlow = jest.fn();
+const mockOpenAddAccountFlow = jest.fn();
 
-const mockUseDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>;
 const mockUseOpenSendFlow = useOpenSendFlow as jest.MockedFunction<typeof useOpenSendFlow>;
+const mockUseOpenAssetFlow = useOpenAssetFlow as jest.MockedFunction<typeof useOpenAssetFlow>;
 const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>;
 const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>;
-const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
+
+// Fixtures & Factories
+const ethereumCurrency = getCryptoCurrencyById("ethereum");
+
+const createAccountWithFunds = (id = "eth-with-funds"): Account =>
+  genAccount(id, {
+    currency: ethereumCurrency,
+    operationsSize: 1,
+  });
+
+const createEmptyAccount = (id = "eth-empty"): Account => {
+  const account = genAccount(id, {
+    currency: ethereumCurrency,
+    operationsSize: 0,
+  });
+  account.balance = new BigNumber(0);
+  account.spendableBalance = new BigNumber(0);
+  return account;
+};
+
+const createLocation = (pathname: string) => ({
+  pathname,
+  state: null,
+  key: "default",
+  search: "",
+  hash: "",
+});
 
 describe("useQuickActions", () => {
+  const trackingPageName = "test_page";
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseDispatch.mockReturnValue(mockDispatch);
     mockUseOpenSendFlow.mockReturnValue(mockOpenSendFlow);
+    mockUseOpenAssetFlow.mockReturnValue({
+      openAssetFlow: mockOpenAssetFlow,
+      openAddAccountFlow: mockOpenAddAccountFlow,
+    });
     mockUseNavigate.mockReturnValue(mockNavigate);
-    mockUseLocation.mockReturnValue({
-      pathname: "/accounts",
-      state: null,
-      key: "default",
-      search: "",
-      hash: "",
-    });
-    // Default: has accounts and has funds
-    mockUseSelector.mockImplementation(selector => {
-      if (selector === hasAccountsSelector) {
-        return true;
-      }
-      if (selector === areAccountsEmptySelector) {
-        return false;
-      }
-      return false;
-    });
+    mockUseLocation.mockReturnValue(createLocation("/accounts"));
   });
 
   describe("actions structure", () => {
-    it("should return receive action with correct properties", () => {
-      const { result } = renderHook(() => useQuickActions());
+    it("should return receive action with ArrowDown icon", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       const receiveAction = result.current.actionsList[0];
       expect(receiveAction.title).toBe("Receive");
       expect(receiveAction.icon).toBe(ArrowDown);
       expect(receiveAction.disabled).toBe(false);
-      expect(typeof receiveAction.onAction).toBe("function");
     });
 
-    it("should return buy action with correct properties", () => {
-      const { result } = renderHook(() => useQuickActions());
+    it("should return buy action with Plus icon", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       const buyAction = result.current.actionsList[1];
       expect(buyAction.title).toBe("Buy");
       expect(buyAction.icon).toBe(Plus);
       expect(buyAction.disabled).toBe(false);
-      expect(typeof buyAction.onAction).toBe("function");
     });
 
-    it("should return sell action with correct properties", () => {
-      const { result } = renderHook(() => useQuickActions());
+    it("should return sell action with Minus icon", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       const sellAction = result.current.actionsList[2];
       expect(sellAction.title).toBe("Sell");
       expect(sellAction.icon).toBe(Minus);
-      expect(sellAction.disabled).toBe(false);
-      expect(typeof sellAction.onAction).toBe("function");
     });
 
-    it("should return send action with correct properties", () => {
-      const { result } = renderHook(() => useQuickActions());
+    it("should return send action with ArrowUp icon", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       const sendAction = result.current.actionsList[3];
       expect(sendAction.title).toBe("Send");
       expect(sendAction.icon).toBe(ArrowUp);
       expect(sendAction.disabled).toBe(false);
-      expect(typeof sendAction.onAction).toBe("function");
     });
   });
 
   describe("sell action disabled state", () => {
-    it("should enable sell action when accounts have funds", () => {
-      mockUseSelector.mockImplementation(selector => {
-        if (selector === hasAccountsSelector) {
-          return true;
-        }
-        return false; // areAccountsEmpty = false
+    it("should disable sell action when no accounts exist", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [] },
       });
 
-      const { result } = renderHook(() => useQuickActions());
+      const sellAction = result.current.actionsList[2];
+      expect(sellAction.disabled).toBe(true);
+    });
+
+    it("should disable sell action when all accounts are empty", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createEmptyAccount()] },
+      });
+
+      const sellAction = result.current.actionsList[2];
+      expect(sellAction.disabled).toBe(true);
+    });
+
+    it("should enable sell action when accounts have funds", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       const sellAction = result.current.actionsList[2];
       expect(sellAction.disabled).toBe(false);
     });
 
-    it("should disable sell action when accounts are empty", () => {
-      mockUseSelector.mockImplementation(selector => {
-        if (selector === hasAccountsSelector) {
-          return true;
-        }
-        return true; // areAccountsEmpty = true
+    it("should enable sell action when at least one account has funds", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createEmptyAccount(), createAccountWithFunds()] },
       });
 
-      const { result } = renderHook(() => useQuickActions());
-
       const sellAction = result.current.actionsList[2];
-      expect(sellAction.disabled).toBe(true);
+      expect(sellAction.disabled).toBe(false);
     });
   });
 
   describe("onReceive action", () => {
-    it("should dispatch openModal with MODAL_RECEIVE when has accounts", () => {
-      mockUseSelector.mockImplementation(selector => {
-        if (selector === hasAccountsSelector) {
-          return true; // hasAccount = true
-        }
-        if (selector === areAccountsEmptySelector) {
-          return false;
-        }
-        return false;
+    it("should open receive modal when user has accounts", () => {
+      const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
       });
-
-      const { result } = renderHook(() => useQuickActions());
 
       act(() => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
-        type: "OPEN_MODAL",
-        name: "MODAL_RECEIVE",
-        data: undefined,
+      expect(store.getState().modals).toMatchObject({
+        MODAL_RECEIVE: { isOpened: true },
       });
     });
 
-    it("should open MODAL_ADD_ACCOUNTS when no accounts", () => {
-      mockUseSelector.mockImplementation(selector => {
-        if (selector === hasAccountsSelector) {
-          return false; // hasAccount = false
-        }
-        if (selector === areAccountsEmptySelector) {
-          return true;
-        }
-        return false;
+    it("should call openAssetFlow when user has no accounts", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [] },
       });
-
-      const { result } = renderHook(() => useQuickActions());
 
       act(() => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
-        type: "OPEN_MODAL",
-        name: "MODAL_ADD_ACCOUNTS",
-        data: undefined,
+      expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not open receive modal when user has no accounts", () => {
+      const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [] },
       });
+
+      act(() => {
+        result.current.actionsList[0].onAction();
+      });
+
+      expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
     });
 
     it("should not navigate when already on accounts page", () => {
-      mockUseLocation.mockReturnValue({
-        pathname: "/accounts",
-        state: null,
-        key: "default",
-        search: "",
-        hash: "",
-      });
+      mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
-      const { result } = renderHook(() => useQuickActions());
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[0].onAction();
@@ -196,70 +205,57 @@ describe("useQuickActions", () => {
     });
 
     it("should navigate to accounts when on manager page", () => {
-      mockUseSelector.mockImplementation(selector => {
-        if (selector === hasAccountsSelector) {
-          return true;
-        }
-        return false; // areAccountsEmpty = true
-      });
-      mockUseLocation.mockReturnValue({
-        pathname: "/manager",
-        state: null,
-        key: "default",
-        search: "",
-        hash: "",
-      });
+      mockUseLocation.mockReturnValue(createLocation("/manager"));
 
-      const { result } = renderHook(() => useQuickActions());
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[0].onAction();
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
-      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
-        type: "OPEN_MODAL",
-        name: "MODAL_RECEIVE",
-        data: undefined,
-      });
     });
   });
 
   describe("onBuy action", () => {
     it("should navigate to exchange with buy mode", () => {
-      const { result } = renderHook(() => useQuickActions());
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[1].onAction();
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: {
-          mode: "buy",
-        },
+        state: { mode: "buy" },
       });
     });
   });
 
   describe("onSell action", () => {
     it("should navigate to exchange with sell mode", () => {
-      const { result } = renderHook(() => useQuickActions());
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[2].onAction();
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: {
-          mode: "sell",
-        },
+        state: { mode: "sell" },
       });
     });
   });
 
   describe("onSend action", () => {
-    it("should call openSendFlow when called", () => {
-      const { result } = renderHook(() => useQuickActions());
+    it("should open send flow when triggered", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[3].onAction();
@@ -269,15 +265,11 @@ describe("useQuickActions", () => {
     });
 
     it("should not navigate when already on accounts page", () => {
-      mockUseLocation.mockReturnValue({
-        pathname: "/accounts",
-        state: null,
-        key: "default",
-        search: "",
-        hash: "",
-      });
+      mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
-      const { result } = renderHook(() => useQuickActions());
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[3].onAction();
@@ -288,15 +280,11 @@ describe("useQuickActions", () => {
     });
 
     it("should navigate to accounts when on manager page", () => {
-      mockUseLocation.mockReturnValue({
-        pathname: "/manager",
-        state: null,
-        key: "default",
-        search: "",
-        hash: "",
-      });
+      mockUseLocation.mockReturnValue(createLocation("/manager"));
 
-      const { result } = renderHook(() => useQuickActions());
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createAccountWithFunds()] },
+      });
 
       act(() => {
         result.current.actionsList[3].onAction();
@@ -305,39 +293,23 @@ describe("useQuickActions", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
       expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
     });
-  });
 
-  describe("memoization", () => {
-    it("should return stable action callbacks when dependencies don't change", () => {
-      const { result, rerender } = renderHook(() => useQuickActions());
-
-      const firstRender = result.current.actionsList;
-      rerender();
-      const secondRender = result.current.actionsList;
-
-      expect(firstRender[0].onAction).toBe(secondRender[0].onAction);
-      expect(firstRender[1].onAction).toBe(secondRender[1].onAction);
-      expect(firstRender[2].onAction).toBe(secondRender[2].onAction);
-      expect(firstRender[3].onAction).toBe(secondRender[3].onAction);
-    });
-
-    it("should update callbacks when location changes", () => {
-      const { result, rerender } = renderHook(() => useQuickActions());
-
-      const firstRender = result.current.actionsList;
-
-      mockUseLocation.mockReturnValue({
-        pathname: "/manager",
-        state: null,
-        key: "different",
-        search: "",
-        hash: "",
+    it("should disable send action when no accounts exist", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [] },
       });
 
-      rerender();
-      const secondRender = result.current.actionsList;
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(true);
+    });
 
-      expect(firstRender[0].onAction).not.toBe(secondRender[0].onAction);
+    it("should enable send action when all accounts are empty", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: { accounts: [createEmptyAccount()] },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(false);
     });
   });
 });

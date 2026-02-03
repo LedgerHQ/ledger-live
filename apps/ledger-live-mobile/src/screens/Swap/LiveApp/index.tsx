@@ -106,7 +106,7 @@ export function SwapLiveApp({
     if (isWebviewError) return APP_FAILED_TO_LOAD;
     if (!manifest) return APP_MANIFEST_NOT_FOUND_ERROR;
 
-    return error;
+    return null;
   }, [manifest, isWebviewError, isConnected, t]);
 
   if (error) {

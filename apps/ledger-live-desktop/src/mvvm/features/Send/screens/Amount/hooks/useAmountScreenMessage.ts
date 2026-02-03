@@ -24,18 +24,17 @@ export function useAmountScreenMessage(params: {
   const recipientErrorRaw = getStatusError(params.status.errors, "recipient");
   const recipientError = useTranslatedBridgeError(recipientErrorRaw);
 
-  const otherBlockingErrorRaw = useMemo(
-    () => pickBlockingError(params.status.errors),
-    [params.status.errors],
-  );
+  const otherBlockingErrorRaw = useMemo(() => {
+    const candidate = pickBlockingError(params.status.errors);
+    return candidate?.name === "AmountRequired" ? undefined : candidate;
+  }, [params.status.errors]);
   const otherBlockingError = useTranslatedBridgeError(otherBlockingErrorRaw);
 
-  const shouldHideAmountRequired =
-    params.amountComputationPending &&
-    params.status.errors?.amount?.name === "AmountRequired" &&
-    !params.hasRawAmount;
+  // Always hide "AmountRequired" error - the Review button is already disabled when there's no amount,
+  // so this error message provides no value and causes visual glitches during input
+  const isAmountRequiredError = params.status.errors?.amount?.name === "AmountRequired";
 
-  const amountErrorTitle = amountError && !shouldHideAmountRequired ? amountError.title : undefined;
+  const amountErrorTitle = amountError && !isAmountRequiredError ? amountError.title : undefined;
   const amountWarningTitle = amountWarning ? amountWarning.title : undefined;
 
   const isFeeTooHigh =

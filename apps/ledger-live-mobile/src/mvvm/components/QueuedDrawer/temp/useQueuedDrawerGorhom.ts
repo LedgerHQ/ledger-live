@@ -62,8 +62,8 @@ const useQueuedDrawerGorhom = ({
 
   const handleUserClose = useCallback(() => {
     logDrawer("User initiated close");
-    bottomSheetRef.current?.dismiss();
-  }, []);
+    handleClose();
+  }, [handleClose]);
 
   const handleDismiss = useCallback(() => {
     logDrawer("BottomSheet dismissed");

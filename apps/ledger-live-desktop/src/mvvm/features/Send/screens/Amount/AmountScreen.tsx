@@ -1,17 +1,14 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
-import {
-  useSendFlowActions,
-  useSendFlowData,
-  useSendFlowNavigation,
-} from "../../context/SendFlowContext";
+import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { AmountScreenInner } from "./components/AmountScreenInner";
+import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 
 export function AmountScreen() {
   const { state, uiConfig } = useSendFlowData();
   const { transaction: transactionActions, close } = useSendFlowActions();
-  const { navigation } = useSendFlowNavigation();
+  const { navigation } = useFlowWizard();
   const navigate = useNavigate();
 
   const { account, parentAccount } = state.account;

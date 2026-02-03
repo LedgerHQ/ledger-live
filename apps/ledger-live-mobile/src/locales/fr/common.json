@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et -20% en exclusivité. ",
+      "title" : "Passez du Ledger Nano S™ à un modèle plus récent",
+      "description" : "Profitez d’une réduction exclusive de 20% sur les derniers signers Ledger.",
       "cta" : "Choisir mon Ledger"
     },
     "opted_out" : {
-      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un appareil Ledger plus récent.",
+      "title" : "Passer au niveau supérieur",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité.",
       "cta" : "En savoir plus"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "Explorer le marché",
     "viewAll" : "Afficher tout",
     "viewAllAccessibilityHint" : "Appuyez deux fois pour afficher tous les actifs",
+    "connectionFailed" : "Échec de la connexion",
+    "errorAccessibilityHint" : "Impossible de charger les données du marché. Veuillez réessayer plus tard.",
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "Appuyez deux fois pour afficher les détails"
@@ -8352,6 +8356,17 @@
       "neutral" : "Neutre",
       "greed" : "Cupidité",
       "extremeGreed" : "Cupidité+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Statistiques"
+    },
+    "allocation" : {
+      "title" : "Répartition des actifs"
+    },
+    "actions" : {
+      "swap" : "Échanger"
     }
   }
 }

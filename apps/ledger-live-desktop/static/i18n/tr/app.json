@@ -282,11 +282,13 @@
     "advanced" : "Gelişmiş",
     "custom" : "Özel",
     "fast" : "Hızlı",
+    "networkFees" : "Ağ ücretleri",
     "high" : "Yüksek",
     "low" : "Düşük",
     "slow" : "Yavaş",
     "standard" : "Standart",
     "medium" : "Orta",
+    "coinControl" : "Coin Yönetimi",
     "feesAmount" : "Ücret Tutarı"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "Cihazı bağlayın",
         "secondaryCta" : "Belki sonra"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}} trendi",
-      "buy" : "Satın Al",
-      "swap" : "Takas et",
-      "gainers" : "Yükselenler",
-      "losers" : "Düşenler",
-      "error" : {
-        "title" : "Ne yazık ki trendi yükleyemiyoruz",
-        "description" : "Lütfen daha sonra tekrar deneyin"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "İlk {{count}} arasındaki hiçbir varlık, son {{trend}} değer artışı yaşamadı",
-          "description" : "En çok düşenleri görüntüleyebilir veya daha sonra tekrar gelebilirsiniz"
-        },
-        "losers" : {
-          "title" : "İlk {{count}} arasındaki hiçbir varlık, son {{trend}} değer kaybı yaşamadı",
-          "description" : "En çok yükselenleri görüntüleyebilir veya daha sonra tekrar gelebilirsiniz"
-        }
-      },
-      "trend" : {
-        "day" : "24 saatte",
-        "week" : "7 günde",
-        "month" : "30 günde",
-        "year" : "yılda",
-        "all" : "yılda"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "({{currency}}) olarak gönderilecek tutar",
     "coinToSend" : "Gönderilecek coin",
     "coinControlCustom" : "Özel coin seçimi",
+    "quickActions" : {
+      "quarter" : "%25",
+      "half" : "%50",
+      "threeQuarters" : "%75",
+      "max" : "Maks."
+    },
+    "reviewCta" : "İncele",
+    "getCta" : "{{currency}} al",
+    "switchInputMode" : "Miktar girme modunu değiştir",
     "aboveMaximum" : "Maksimum bakiyenin üzerinde",
     "transactionSigned" : "İşlem imzalandı",
     "processingTransaction" : "İşleminiz gerçekleştiriliyor",
     "sign" : {
       "title" : "Ledger {{wording}} üzerinde devam edin",
       "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "Ağ ücretleri yenilenemiyor",
+      "warningDescription" : "Önceden belirlenmiş ücretler eski olabilir."
     }
   },
   "releaseNotes" : {
@@ -4243,7 +4230,7 @@
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
-      "unstake" : "Yetki devrini sonlandır",
+      "unstake" : "Yetki devrini iptal et",
       "activeTooltip" : "Yetkisi devredilen tutar ödül üretiyor",
       "inactiveTooltip" : "Yetkisi devredilen tutar ödül üretmiyor",
       "commission" : "Komisyon",
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "Farklı bilgisayarlar arasında geçiş yaparken veya bir telefon kullanırken portföyünüzün güncel kalmasını sağlayın",
       "mevProtection" : "MEV Koruması",
       "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
-      "mevProtectionLearnMore" : "Gizlilik bildirimi",
-      "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
-      "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
+      "mevProtectionLearnMore" : "Gizlilik bildirimi"
     },
     "developer" : {
       "search" : "Ara",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "Çekmeceyi Aç",
         "debugDialog" : "Diyaloğu Ayıkla",
         "debugDuplicates" : "Yinelemeleri Ayıkla"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "Wallet Özellikleri Geliştirme Aracı",
+        "description" : "Masaüstü sürümü için Wallet 4.0 özelliklerini açın/kapatın (lwdWallet40 özellik bayrağı).",
+        "enableAll" : "Tümünü Etkinleştir",
+        "disableAll" : "Tümünü Devre Dışı Bırak",
+        "featureParameters" : "Özellik Parametreleri",
+        "showJson" : "JSON’u göster",
+        "hideJson" : "JSON’u gizle"
       },
       "cryptoAssetsList" : {
         "title" : "Kripto Varlık Listesi",
@@ -7232,7 +7226,7 @@
           },
           "actions" : {
             "redelegation" : "Yetki devret",
-            "undelegation" : "Yetki devrini sonlandır",
+            "undelegation" : "Yetki devrini iptal et",
             "claimRewards" : "Ödüllerinizi alın"
           }
         }
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "Ledger Wallet'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin."
     }
   },
+  "analytics" : {
+    "title" : "Analiz"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Kapat",
@@ -7825,10 +7822,31 @@
       "cta" : "Tekrar dene"
     }
   },
+  "portfolio" : {
+    "title" : "Ana Sayfa",
+    "today" : "Bugün"
+  },
   "marketBanner" : {
     "title" : "Piyasayı keşfedin",
     "genericError" : "Bağlantı başarısız oldu",
-    "cta" : "Tümünü gör"
+    "cta" : "Tümünü gör",
+    "fearAndGreed" : {
+      "title" : "Duygu"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Aşırı Korku",
+      "fear" : "Korku",
+      "neutral" : "Nötr",
+      "greed" : "Açgözlülük",
+      "extremeGreed" : "Aşırı Açgözlülük"
+    },
+    "dialog" : {
+      "title" : "Duygu endeksi",
+      "content" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı açgözlülük anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
+      "cta" : "Anladım"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",

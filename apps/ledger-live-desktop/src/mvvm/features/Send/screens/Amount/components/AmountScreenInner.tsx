@@ -1,7 +1,10 @@
 import React, { useCallback } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowUiConfig, SendFlowTransactionActions } from "../../../types";
+import type {
+  SendFlowTransactionActions,
+  SendFlowUiConfig,
+} from "@ledgerhq/live-common/flows/send/types";
 import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
 import { AmountPluginsHost } from "./AmountPluginsHost";

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import type { SendFlowTransactionActions } from "../../../../types";
+import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { EvmGasOptionsSync } from "../Fees/EvmGasOptionsSync";
 

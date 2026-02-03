@@ -8085,11 +8085,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "将您的 Ledger Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受 20% 专属折扣，解锁更多内存、全新功能和最新增强安全保护。 ",
+      "title" : "升级您的 Ledger Nano S™",
+      "description" : "购买最新 Ledger 签署设备可享八折专属优惠。",
       "cta" : "升级 Ledger 设备"
     },
     "opted_out" : {
-      "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
+      "title" : "升级您的 Ledger Nano S™",
+      "description" : "由于 Ledger Nano S 的存储容量有限，您将无法全面体验最新功能、区块链升级及安全增强。",
       "cta" : "了解更多"
     }
   },
@@ -8097,6 +8099,8 @@
     "title" : "探索市场",
     "viewAll" : "查看全部",
     "viewAllAccessibilityHint" : "双击查看全部市场资产",
+    "connectionFailed" : "连接失败",
+    "errorAccessibilityHint" : "无法加载市场数据。请稍后重试。",
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "双击查看市场详情"
@@ -8352,6 +8356,17 @@
       "neutral" : "中立",
       "greed" : "贪婪",
       "extremeGreed" : "贪婪+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "数据分析"
+    },
+    "allocation" : {
+      "title" : "资产配置"
+    },
+    "actions" : {
+      "swap" : "互换"
     }
   }
 }

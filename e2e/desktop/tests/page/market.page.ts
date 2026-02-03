@@ -69,16 +69,16 @@ export class MarketPage extends AppPage {
 
   @step("Star coin $0")
   async starCoin(ticker: string) {
-    await this.starButton(ticker).click();
+    await this.starButton(ticker.toLowerCase()).click();
   }
 
   @step("Expect coin $0 to be visible")
   async expectCoinToBeVisible(ticker: string) {
-    await expect(this.coinRow(ticker)).toBeVisible();
+    await expect(this.coinRow(ticker.toLowerCase())).toBeVisible();
   }
 
   @step("Expect coin $0 to not be visible")
   async expectCoinToNotBeVisible(ticker: string) {
-    await expect(this.coinRow(ticker)).not.toBeVisible();
+    await expect(this.coinRow(ticker.toLowerCase())).not.toBeVisible();
   }
 }

@@ -14,7 +14,7 @@ export function StatusMessage({ text, dataTestId }: StatusMessageProps) {
       data-testid={dataTestId}
     >
       <Spot appearance="icon" icon={Search} size={72} />
-      <p className="mt-6 text-center text-[20px] font-[600] leading-[28px] tracking-[-1px] text-base">
+      <p className="mt-6 text-center text-[20px] leading-[28px] font-[600] tracking-[-1px] text-base">
         {text}
       </p>
     </div>

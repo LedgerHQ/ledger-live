@@ -30,7 +30,6 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "no-empty-pattern": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
     "import/no-cycle": ["error"],
     "import/order": ["error"],
   },
