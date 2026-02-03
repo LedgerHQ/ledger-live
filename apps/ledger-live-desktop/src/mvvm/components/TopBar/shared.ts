@@ -24,11 +24,8 @@ export const ItemContainer = styled(Tabbable).attrs<ItemProps>(p => ({
   position: relative;
   pointer-events: ${p => (p.disabled ? "none" : "unset")};
   cursor: ${p => (p.isInteractive ? "pointer" : "initial")};
-
-  &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.05))};
-  }
+  color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
+  background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.05))};
 
   &:active {
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.1))};
