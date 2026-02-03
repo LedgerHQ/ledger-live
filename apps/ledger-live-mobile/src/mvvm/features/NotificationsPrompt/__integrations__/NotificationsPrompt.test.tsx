@@ -66,92 +66,10 @@ jest.mock("@react-native-firebase/messaging", () => {
   };
 });
 
-const REPROMPT_SCHEDULE = [{ days: 7 }, { days: 30 }, { days: 90 }] as const;
-const INACTIVITY_REPROMPT = { months: 6 } as const;
-
-jest.mock("@ledgerhq/live-common/featureFlags/useFeature", () => {
-  return jest.fn(name => {
-    if (name === "brazePushNotifications") {
-      return {
-        enabled: true,
-        params: {
-          action_events: {
-            complete_onboarding: {
-              enabled: true,
-              timer: 0,
-            },
-
-            add_favorite_coin: {
-              enabled: true,
-              timer: 0,
-            },
-
-            send: {
-              enabled: true,
-              timer: 0,
-            },
-            receive: {
-              enabled: true,
-              timer: 0,
-            },
-            buy: {
-              enabled: true,
-              timer: 0,
-            },
-            swap: {
-              enabled: true,
-              timer: 0,
-            },
-            stake: {
-              enabled: true,
-              timer: 0,
-            },
-          },
-          reprompt_schedule: REPROMPT_SCHEDULE,
-
-          notificationsCategories: [
-            {
-              displayed: true,
-              category: "announcementsCategory",
-            },
-            {
-              displayed: true,
-              category: "recommendationsCategory",
-            },
-            {
-              displayed: true,
-              category: "largeMoverCategory",
-            },
-            {
-              displayed: true,
-              category: "transactionsAlertsCategory",
-            },
-          ],
-
-          inactivity_enabled: true,
-          inactivity_reprompt: INACTIVITY_REPROMPT,
-        },
-      };
-    }
-
-    if (name === "lwmNewWordingOptInNotificationsDrawer") {
-      return {
-        enabled: true,
-        params: {
-          variant: ABTestingVariants.variantA,
-        },
-      };
-    }
-
-    console.warn(`Unhandled feature flag: ${name}`);
-
-    return {
-      enabled: true,
-    };
-  });
-});
-
 describe("NotificationsPrompt Integration", () => {
+  const REPROMPT_SCHEDULE = [{ days: 7 }, { days: 30 }, { days: 90 }] as const;
+  const INACTIVITY_REPROMPT = { months: 6 } as const;
+
   async function setup({
     osPermission,
     appNotifications,
@@ -214,6 +132,74 @@ describe("NotificationsPrompt Integration", () => {
       {
         overrideInitialState: state => {
           state.settings.notifications.areNotificationsAllowed = appNotifications;
+          state.settings.overriddenFeatureFlags = {
+            brazePushNotifications: {
+              enabled: true,
+              params: {
+                action_events: {
+                  complete_onboarding: {
+                    enabled: true,
+                    timer: 0,
+                  },
+
+                  add_favorite_coin: {
+                    enabled: true,
+                    timer: 0,
+                  },
+
+                  send: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  receive: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  buy: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  swap: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  stake: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                },
+                reprompt_schedule: REPROMPT_SCHEDULE,
+
+                notificationsCategories: [
+                  {
+                    displayed: true,
+                    category: "announcementsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "recommendationsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "largeMoverCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "transactionsAlertsCategory",
+                  },
+                ],
+
+                inactivity_enabled: true,
+                inactivity_reprompt: INACTIVITY_REPROMPT,
+              },
+            },
+            lwmNewWordingOptInNotificationsDrawer: {
+              enabled: true,
+              params: {
+                variant: ABTestingVariants.variantA,
+              },
+            },
+          };
           return state;
         },
       },
