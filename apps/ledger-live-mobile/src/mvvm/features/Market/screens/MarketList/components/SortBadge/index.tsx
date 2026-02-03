@@ -44,14 +44,13 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
         </StyledBadge>
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer} title={label}>
-        {options.map(({ label, value: optValue, requestParam, testID }: Option, index) => (
+        {options.map(({ label, value: optValue, requestParam }: Option, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
               onChange(requestParam);
               closeDrawer();
             }}
-            testID={testID}
           >
             <Flex
               flexDirection="row"

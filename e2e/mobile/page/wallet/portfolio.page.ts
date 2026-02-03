@@ -291,6 +291,7 @@ export default class PortfolioPage {
 
   @Step("Tap on market banner tile")
   async tapMarketBannerTile(index: number) {
+    await detoxExpect(getElementById(`${this.marketBannerTileBase}${index}`)).toBeVisible();
     await tapById(`${this.marketBannerTileBase}${index}`);
   }
 

@@ -7,7 +7,7 @@ import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
-const DEFAULT_ANIMATION_DELAY = 500;
+const DEFAULT_ANIMATION_DELAY = 1500;
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
