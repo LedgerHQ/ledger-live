@@ -56,6 +56,7 @@ const ViewKeyWarning = ({ onAllow, onCancel }: Props) => {
           <Text mb={6} fontSize={14} color="neutral.c70" lineHeight="20px" textAlign="left">
             <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.description">
               <Link
+                data-testid="learn-more-link"
                 color="primary.c80"
                 textProps={{ fontWeight: "medium" }}
                 onClick={() => openURL(viewKeyLearnMoreUrl)}

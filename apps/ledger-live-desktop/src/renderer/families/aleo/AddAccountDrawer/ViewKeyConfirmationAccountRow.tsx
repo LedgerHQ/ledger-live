@@ -39,7 +39,7 @@ const ViewKeyConfirmationAccountRow = ({ account, status }: AccountRowProps) => 
   const statusIcon = mapStatusToIcon[status];
 
   return (
-    <AccountItem>
+    <AccountItem data-testid="confirmation-account-row" data-status={status}>
       <Text fontSize={4} color="neutral.c80">
         {accountName}
       </Text>

@@ -29,7 +29,7 @@ export const getAccountShape: GetAccountShape<Account> = async infos => {
   const operations: Operation[] = [];
   const blockHeight = 1;
 
-  // mock some operations for the first account to allow e2e test
+  // mock some operations in first account for e2e test
   if (index === 0) {
     balance = balance.plus(1);
     const mockHash = "mockmockmockmockmockmockmockmockmockmock";

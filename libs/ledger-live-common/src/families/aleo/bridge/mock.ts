@@ -26,7 +26,7 @@ const estimateFees = (_a, _t: Transaction) => new BigNumber(50000);
 
 const createTransaction = (): Transaction => ({
   family: "aleo",
-  amount: new BigNumber(10000000000),
+  amount: new BigNumber(100000),
   recipient: "",
   useAllAmount: false,
 });
@@ -34,7 +34,7 @@ const createTransaction = (): Transaction => ({
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   if (parentAccount) return Promise.resolve(account.balance);
   const mainAccount = getMainAccount(account, parentAccount);
-  let estimatedFees = new BigNumber(1000000000000);
+  let estimatedFees = new BigNumber(50000);
   if (transaction) {
     estimatedFees = estimateFees(mainAccount, transaction);
   }
@@ -82,7 +82,7 @@ const getTransactionStatus = (account, transaction) => {
 const prepareTransaction = async (_a, t) => {
   return {
     ...t,
-    fees: new BigNumber(50),
+    fees: new BigNumber(50000),
   };
 };
 

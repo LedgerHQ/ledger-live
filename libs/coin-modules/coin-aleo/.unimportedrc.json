@@ -2,6 +2,7 @@
   "entry": [
     "src/api/index.ts",
     "src/logic/index.ts",
+    "src/logic/utils.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/signer/index.ts",

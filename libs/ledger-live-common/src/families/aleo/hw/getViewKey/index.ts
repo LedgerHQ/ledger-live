@@ -25,7 +25,7 @@ type BaseState = {
   };
 };
 
-type State = AppState & BaseState;
+export type State = AppState & BaseState;
 
 export type ViewKeyProgress = {
   viewKeys: NonNullable<ViewKeysByAccountId>;
