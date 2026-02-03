@@ -45,11 +45,12 @@ describe("getBlockInfo", () => {
     // When
     const resultZero = await getBlockInfo(0);
     const resultNegative = await getBlockInfo(-1);
+    const epoch = new Date(0);
 
     // Then
     expect(mockGetLedgerInfoByIndex).not.toHaveBeenCalled();
-    expect(resultZero).toEqual({ height: 0 });
-    expect(resultNegative).toEqual({ height: -1 });
+    expect(resultZero).toEqual({ height: 0, hash: "", time: epoch });
+    expect(resultNegative).toEqual({ height: -1, hash: "", time: epoch });
   });
 
   it("correctly calculates parent height as current height minus one", async () => {
