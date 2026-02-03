@@ -115,14 +115,8 @@ export const removeReplaced = (operations: BtcOperation[], now = Date.now()): Bt
               uniqueOperations.delete(existingOp.hash);
               txByInput.set(input, op);
             } else if ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1)) {
-              if (new Date(op.date) < new Date(existingOp.date)) {
-                uniqueOperations.set(op.hash, op);
-                continue; // If date is older, disregard
-              } else {
-                // edge case, date equal, keep both
-                uniqueOperations.set(op.hash, op);
-                continue;
-              }
+              uniqueOperations.set(op.hash, op);
+              continue; // If date is older, disregard
             }
           }
         } else {
