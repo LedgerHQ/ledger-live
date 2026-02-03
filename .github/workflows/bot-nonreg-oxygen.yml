@@ -2,10 +2,8 @@ name: "[Coin] - Weekly non-reg with 'Oxygen' - Scheduled"
 on:
   schedule:
     - cron: "9 5 * * 4" # Thursday – weekly non-reg
-
 concurrency:
   group: bot-seed5
-
 jobs:
   run-bot:
     runs-on: [ledger-live-medium]

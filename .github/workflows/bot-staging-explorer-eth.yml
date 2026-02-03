@@ -3,10 +3,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: 0 8 * * 3
-
 concurrency:
   group: bot-seed2
-
 jobs:
   run-bot:
     runs-on: [ledger-live-medium]

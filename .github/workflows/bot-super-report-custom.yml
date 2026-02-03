@@ -10,11 +10,9 @@ on:
         description: number of days to take
       slackChannel:
         description: channel to use for the report
-
 permissions:
   id-token: write
   contents: read
-
 jobs:
   main:
     runs-on: ubuntu-22.04
@@ -31,7 +29,6 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i --filter='!./apps/**'
-
       - name: generate super report
         uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@develop
         with:
