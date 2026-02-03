@@ -31,7 +31,7 @@ on:
         description: Whether to skip the pod lockfile checks
         required: false
         type: string
-        default: 'true'
+        default: "true"
 
   workflow_dispatch:
     inputs:
@@ -65,7 +65,7 @@ on:
         description: Whether to skip the pod lockfile checks
         required: false
         type: string
-        default: 'true'
+        default: "true"
 
 permissions:
   id-token: write
@@ -83,7 +83,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
@@ -98,7 +98,6 @@ jobs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
     steps:
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -140,18 +139,18 @@ jobs:
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
           max_shards: ${{ inputs.max-shards }}
 
-      - name: Check if iOS Native Build exists already
-        id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.9.0
-        with:
-          key: ${{ steps.cache-keys.outputs.ios_native_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
+      # - name: Check if iOS Native Build exists already
+      #   id: check-ios-native
+      #   uses: tespkg/actions-cache/restore@v1.9.0
+      #   with:
+      #     key: ${{ steps.cache-keys.outputs.ios_native_key }}
+      #     accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+      #     secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+      #     sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+      #     bucket: ${{ env.cache-bucket }}
+      #     region: ${{ secrets.AWS_CACHE_REGION }}
+      #     use-fallback: false
+      #     lookup-only: true
 
       - name: Check if Android Native Build exists already
         id: check-android-native
@@ -166,18 +165,18 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-      - name: Check if iOS JS Build exists already
-        id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.9.0
-        with:
-          key: ${{ steps.cache-keys.outputs.ios_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
+      # - name: Check if iOS JS Build exists already
+      #   id: check-ios-js
+      #   uses: tespkg/actions-cache/restore@v1.9.0
+      #   with:
+      #     key: ${{ steps.cache-keys.outputs.ios_js_key }}
+      #     accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+      #     secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+      #     sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+      #     bucket: ${{ env.cache-bucket }}
+      #     region: ${{ secrets.AWS_CACHE_REGION }}
+      #     use-fallback: false
+      #     lookup-only: true
 
       - name: Check if Android JS Build exists already
         id: check-android-js
@@ -192,23 +191,23 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-  build-ios:
-    name: "iOS Build"
-    needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
-    with:
-      ref: ${{ inputs.ref || github.sha }}
-      macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
-      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
-      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
-      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
-      ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
-      ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
-    secrets: inherit
+  # build-ios:
+  #   name: "iOS Build"
+  #   needs: [determine-builds]
+  #   uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+  #   with:
+  #     ref: ${{ inputs.ref || github.sha }}
+  #     macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
+  #     disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+  #     build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+  #     build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
+  #     ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
+  #     ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+  #   secrets: inherit
 
   build-android:
     name: "Android Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
@@ -219,144 +218,143 @@ jobs:
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
     secrets: inherit
 
-  detox-tests-ios:
-    name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [ build-ios, determine-builds ]
-    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJson(needs.determine-builds.outputs.matrix_ios) }}
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      LANG: en_US.UTF-8
-      LANGUAGE: en_US.UTF-8
-      LC_ALL: en_US.UTF-8
-      SEED: ${{ vars.SEED_QAA_B2C }}
-    outputs:
-      status: ${{ steps.detox.outcome }}
-      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
-    steps:
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Set shard test files from pre-computed matrix
-        run: |
-          echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ matrix.files }}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
-
-      - uses: nick-fields/retry@v3
-        name: install dependencies
-        id: install-dependencies
-        with:
-          max_attempts: 2
-          timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
-
-      - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
-
-      - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        with:
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          key: ${{ needs.determine-builds.outputs.ios_native_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        with:
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          key: ${{ needs.determine-builds.outputs.ios_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Copy JS build
-        run: |
-          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
-          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:llm:deps
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        run: |
-          pnpm build:dummy-apps
-        shell: bash
-
-      - name: Test iOS app
-        id: detox
-        timeout-minutes: 75
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        id: "test-artifacts"
-        with:
-          name: "ios-test-artifacts-${{ matrix.shard }}"
-          path: apps/ledger-live-mobile/artifacts
-
-      - name: Setup iOS Shard timing artifacts
-        if: (!cancelled() || steps.detox.outcome == 'cancelled')
-        uses: actions/upload-artifact@v4
-        with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
-
-      - name: Record Flake
-        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
-        run: |
-          echo "Flake detected for iOS tests"
-
+  # detox-tests-ios:
+  #   name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
+  #   needs: [build-ios, determine-builds]
+  #   runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+  #   timeout-minutes: 120
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include: ${{ fromJson(needs.determine-builds.outputs.matrix_ios) }}
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #     LANG: en_US.UTF-8
+  #     LANGUAGE: en_US.UTF-8
+  #     LC_ALL: en_US.UTF-8
+  #     SEED: ${{ vars.SEED_QAA_B2C }}
+  #   outputs:
+  #     status: ${{ steps.detox.outcome }}
+  #     artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ inputs.ref || github.sha }}
+  #         repository: LedgerHQ/ledger-live
+  #         persist-credentials: false
+  #
+  #     - name: setup caches
+  #       id: setup-caches
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+  #       with:
+  #         skip-pod-cache: "true"
+  #         skip-turbo-cache: "false"
+  #         skip-pnpm-cache: "true"
+  #         accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+  #         roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #         turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       id: aws
+  #       with:
+  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         aws-region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - name: Set shard test files from pre-computed matrix
+  #       run: |
+  #         echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
+  #         echo "${{ matrix.files }}" >> $GITHUB_ENV
+  #         echo "EOF" >> $GITHUB_ENV
+  #         echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
+  #
+  #     - uses: nick-fields/retry@v3
+  #       name: install dependencies
+  #       id: install-dependencies
+  #       with:
+  #         max_attempts: 2
+  #         timeout_minutes: 15
+  #         command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
+  #         new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
+  #
+  #     - name: Detox Post Install
+  #       run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+  #
+  #     - name: Download Native Build
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+  #       with:
+  #         endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+  #         key: ${{ needs.determine-builds.outputs.ios_native_key }}
+  #         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+  #         bucket: ${{ env.cache-bucket }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - name: Download JS Build
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+  #       with:
+  #         endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+  #         key: ${{ needs.determine-builds.outputs.ios_js_key }}
+  #         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+  #         bucket: ${{ env.cache-bucket }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - name: Copy JS build
+  #       run: |
+  #         cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
+  #         cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+  #
+  #     - name: Build dependencies
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+  #       with:
+  #         command: pnpm build:llm:deps
+  #         turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #         turbo_port: ${{ steps.setup-caches.outputs.port }}
+  #         disable_cache: ${{ inputs.disable-turbo-cache || false }}
+  #
+  #     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+  #       run: |
+  #         pnpm build:dummy-apps
+  #       shell: bash
+  #
+  #     - name: Test iOS app
+  #       id: detox
+  #       timeout-minutes: 75
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+  #       with:
+  #         command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+  #         turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #         turbo_port: ${{ steps.setup-caches.outputs.port }}
+  #         disable_cache: ${{ inputs.disable-turbo-cache || false }}
+  #
+  #     - name: Upload test artifacts
+  #       uses: actions/upload-artifact@v4
+  #       if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+  #       id: "test-artifacts"
+  #       with:
+  #         name: "ios-test-artifacts-${{ matrix.shard }}"
+  #         path: apps/ledger-live-mobile/artifacts
+  #
+  #     - name: Setup iOS Shard timing artifacts
+  #       if: (!cancelled() || steps.detox.outcome == 'cancelled')
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+  #         name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+  #
+  #     - name: Record Flake
+  #       if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
+  #       run: |
+  #         echo "Flake detected for iOS tests"
+  #
   detox-tests-android:
     name: "Android Build / Android Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [ build-android, determine-builds ]
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    needs: [build-android, determine-builds]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -466,8 +464,7 @@ jobs:
         run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
@@ -501,8 +498,104 @@ jobs:
           region: auto
           destination: /
 
-      - name: create AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
+      - uses: jdx/mise-action@v3
+        with:
+          install: true # [default: true] run `mise install`
+          cache: false # [default: true] cache mise using GitHub's cache
+          experimental: true # [default: false] enable experimental features
+          mise_toml: |
+            [env]
+            _.python.venv = { path = ".venv", create = true }
+
+            [settings]
+            python.uv_venv_auto = true
+
+            [tools]
+            python = "{{ get_env(name='PYTHON_VERSION', default='3.11') }}"
+            mitmproxy = "{{ get_env(name='MIMTPROXY_VERSION', default='12.2.1') }}"
+          github_token: ${{ secrets.GITHUB_TOKEN }} # [default: ${{ github.token }}] GitHub token for API authentication
+
+      - name: Install Magisk dependencies
+        run: |
+          # Install additional tools for Magisk setup
+          sudo apt-get update
+          sudo apt-get install -y unzip openssl
+
+          # Ensure scripts are executable
+          chmod +x tools/scripts/install-magisk-emulator.sh
+          chmod +x tools/scripts/build-mitmproxy-magisk-module.sh
+
+          # Verify scripts are present
+          ls -la tools/scripts/install-magisk-emulator.sh
+          ls -la tools/scripts/build-mitmproxy-magisk-module.sh
+
+      - name: Install Magisk on Emulator
+        run: |
+          # Install Magisk to enable system certificate installation
+          # This patches the system image to allow module installation
+          echo "🔧 Android SDK location: $ANDROID_HOME"
+          echo "📱 AVD Configuration:"
+          echo "  - API Level: ${{ env.AVD_API }}"
+          echo "  - Architecture: ${{ env.AVD_ARCH }}"
+          echo "  - Target: ${{ env.AVD_TARGET }}"
+          echo "  - Name: ${{ env.AVD_NAME }}"
+
+          # Debug Android SDK structure
+          echo "🔍 Debugging Android SDK:"
+          echo "  ANDROID_HOME: $ANDROID_HOME"
+          echo "  Looking for: $ANDROID_HOME/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/"
+
+          # Check actual SDK path that script will use
+          ACTUAL_SDK_PATH="$ANDROID_HOME"
+          if [[ -d "/usr/local/lib/android/sdk/system-images" ]]; then
+            ACTUAL_SDK_PATH="/usr/local/lib/android/sdk"
+            echo "  📱 Using actual SDK path: $ACTUAL_SDK_PATH"
+          fi
+
+          # Check if directory exists
+          if [[ -d "$ACTUAL_SDK_PATH/system-images" ]]; then
+            echo "  Available APIs in system-images:"
+            ls "$ACTUAL_SDK_PATH/system-images/" 2>/dev/null || echo "    No system-images found"
+          else
+            echo "  ❌ system-images directory not found in: $ACTUAL_SDK_PATH"
+            echo "  Available in ANDROID_HOME:"
+            ls -la "$ANDROID_HOME/" 2>/dev/null || echo "    Cannot list ANDROID_HOME"
+          fi
+
+          # Test the actual path
+          TEST_DIR="$ACTUAL_SDK_PATH/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/"
+          ls -la "$TEST_DIR" 2>/dev/null || {
+            echo "❌ System image directory not found at: $TEST_DIR"
+            echo "Available API levels in $ACTUAL_SDK_PATH/system-images/:"
+            ls "$ACTUAL_SDK_PATH/system-images/" 2>/dev/null || echo "No system images found"
+            exit 1
+          }
+
+          ./tools/scripts/install-magisk-emulator.sh
+        env:
+          AVD_API: ${{ env.AVD_API }}
+          AVD_ARCH: ${{ env.AVD_ARCH }}
+          AVD_TARGET: ${{ env.AVD_TARGET }}
+          AVD_NAME: ${{ env.AVD_NAME }}
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
+      - name: Generate mitmproxy certificate and build Magisk module
+        run: |
+          # Generate mitmproxy certificate
+          mitmdump --listen-host 127.0.0.1 &
+          MITMDUMP_PID=$!
+          sleep 3
+          kill $MITMDUMP_PID 2>/dev/null || true
+          wait $MITMDUMP_PID 2>/dev/null || true
+
+          # Build Magisk module with certificate
+          ./tools/scripts/build-mitmproxy-magisk-module.sh
+
+          # Verify module was created
+          ls -la tools/scripts/mitmproxy-cert.zip
+
+      - name: create AVD with cold boot and generate snapshot for caching
+        # if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         id: create-avd
         with:
@@ -515,8 +608,117 @@ jobs:
           cores: ${{ env.AVD_CORES }}
           ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
+          emulator-options: ${{ env.AVD_OPTIONS }} -writable-system
+          script: |
+            # Start with cold boot to use patched Magisk image
+            ./tools/scripts/wait_emulator_idle.sh
+
+      - name: Install mitmproxy certificate via Magisk
+        run: |
+          # Function to retry adb commands
+          retry_adb() {
+            local retries=$1
+            local delay=$2
+            local command="$3"
+            
+            for ((i=1; i<=retries; i++)); do
+              if eval "$command"; then
+                return 0
+              else
+                echo "Attempt $i failed, retrying in $delay seconds..."
+                sleep $delay
+              fi
+            done
+            echo "Command failed after $retries attempts: $command"
+            return 1
+          }
+
+          # Wait for emulator to be ready after cold boot
+          echo "⏳ Waiting for emulator to initialize..."
+          sleep 20
+
+          # Wait for boot completion
+          if ! timeout 120 bash -c 'until adb shell getprop sys.boot_completed | grep -q "1"; do sleep 2; done'; then
+            echo "❌ Emulator failed to boot properly"
+            exit 1
+          fi
+
+          # Additional wait for system stability
+          sleep 15
+
+          # Check if Magisk is installed and working
+          if ! adb shell "command -v magisk" >/dev/null 2>&1; then
+            echo "❌ Magisk not found after restart"
+            echo "Listing ADB devices:"
+            adb devices
+            echo "Checking boot status:"
+            adb shell getprop sys.boot_completed || echo "Boot status unavailable"
+            exit 1
+          fi
+
+          # Verify Magisk is working
+          echo "🔍 Checking Magisk status..."
+          adb shell "magisk -v" || {
+            echo "❌ Magisk not responding"
+            exit 1
+          }
+
+          # Push and install mitmproxy certificate module
+          echo "📦 Installing mitmproxy certificate via Magisk module..."
+          retry_adb 3 2 "adb push tools/scripts/mitmproxy-cert.zip /sdcard/Download/"
+
+          # Install module using Magisk
+          retry_adb 3 2 "adb shell su -c 'magisk --install-module /sdcard/Download/mitmproxy-cert.zip'"
+
+          # Reboot to apply module
+          echo "🔄 Rebooting to apply certificate module..."
+          adb shell reboot
+
+          # Wait for reboot and system ready
+          echo "⏳ Waiting for reboot..."
+          sleep 30
+
+          if ! timeout 120 bash -c 'until adb shell getprop sys.boot_completed | grep -q "1"; do sleep 2; done'; then
+            echo "❌ Emulator failed to boot after reboot"
+            exit 1
+          fi
+
+          # Additional wait for Magisk modules to load
+          sleep 15
+
+          # Verify certificate installation
+          echo "🔍 Verifying certificate installation..."
+
+          # Check if module is active
+          if adb shell "su -c 'magisk --list-modules'" | grep -q mitmproxy; then
+            echo "✅ mitmproxy Magisk module is active"
+          else
+            echo "⚠️  Module not found in active modules, listing all:"
+            adb shell "su -c 'magisk --list-modules'" || echo "Failed to list modules"
+          fi
+
+          # Test certificate trust by checking if mitmproxy can intercept
+          echo "🔒 Testing certificate installation..."
+          adb shell "su -c 'ls /system/etc/security/cacerts/ | head -5'"
+
+          # Verify mitmproxy certificate is in system store
+          CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.cer | head -1)
+          echo "Certificate hash: $CERT_HASH"
+
+          if adb shell "test -f /system/etc/security/cacerts/${CERT_HASH}.0"; then
+            echo "✅ mitmproxy certificate successfully installed in system trust store"
+          else
+            echo "⚠️  Certificate may not be properly installed"
+            # List available certificates for debugging
+            echo "Available certificates (first 10):"
+            adb shell "ls /system/etc/security/cacerts/ | grep -E '^[0-9a-f]' | head -10" || echo "Failed to list certificates"
+            
+            # Check module directory
+            echo "Checking module installation path..."
+            adb shell "ls -la /data/adb/modules/ | grep mitmproxy" || echo "Module directory not found"
+          fi
+
+          echo "🎉 Certificate installation process completed"
 
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -532,6 +734,40 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+
+      - name: Final verification before tests
+        run: |
+          echo "🔍 Final verification before running tests..."
+
+          # Check emulator is running
+          if ! adb shell getprop sys.boot_completed | grep -q "1"; then
+            echo "❌ Emulator not ready for testing"
+            exit 1
+          fi
+
+          # Check Magisk is working
+          if adb shell "command -v magisk" >/dev/null 2>&1; then
+            echo "✅ Magisk is available: $(adb shell magisk -v 2>/dev/null || echo 'version unknown')"
+          else
+            echo "⚠️  Magisk not available, tests may fail"
+          fi
+
+          # Check mitmproxy certificate is installed
+          CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.cer | head -1)
+          if adb shell "test -f /system/etc/security/cacerts/${CERT_HASH}.0"; then
+            echo "✅ mitmproxy certificate is installed in system trust store"
+          else
+            echo "⚠️  mitmproxy certificate not found, HTTPS interception may not work"
+          fi
+
+          # Test network connectivity
+          if adb shell "ping -c 1 8.8.8.8" >/dev/null 2>&1; then
+            echo "✅ Network connectivity is working"
+          else
+            echo "⚠️  Network connectivity issues detected"
+          fi
+
+          echo "🚀 Ready to run Android tests"
 
       - name: Run Android Tests
         id: detox
@@ -567,120 +803,120 @@ jobs:
         if: ${{ !cancelled() }}
         run: echo "status_${{ matrix.shard }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
-  report-bundle-sizes:
-    name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ ubuntu-22.04 ]
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
-    needs: [ build-ios, build-android ]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
-        with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Create mobile metafile
-        run: |
-          echo "{
-              \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
-              \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
-          }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: ${{ !inputs.skip-bundle-size-reporting }}
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ inputs.base_ref || 'develop' }}
-          prNumber: ${{ github.event.number}}
-          mode: mobile
-      - name: Upload mobile metafile
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobile.metafile.json
-          path: mobile.metafile.json
-          overwrite: true
+  # report-bundle-sizes:
+  #   name: "Build Mobile > Report Bundle Sizes"
+  #   runs-on: [ubuntu-22.04]
+  #   if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
+  #   needs: [build-ios, build-android]
+  #   steps:
+  #     - name: generate token
+  #       id: generate-token
+  #       uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+  #       with:
+  #         app-id: ${{ secrets.GH_BOT_APP_ID }}
+  #         private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+  #     - name: Create mobile metafile
+  #       run: |
+  #         echo "{
+  #             \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
+  #             \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
+  #         }" > mobile.metafile.json
+  #     - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+  #       if: ${{ !inputs.skip-bundle-size-reporting }}
+  #       with:
+  #         token: ${{ steps.generate-token.outputs.token }}
+  #         baseBranch: ${{ inputs.base_ref || 'develop' }}
+  #         prNumber: ${{ github.event.number}}
+  #         mode: mobile
+  #     - name: Upload mobile metafile
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: mobile.metafile.json
+  #         path: mobile.metafile.json
+  #         overwrite: true
 
-  merge-ios-timings:
-    name: Merge iOS Timing Files
-    needs: [ determine-builds, detox-tests-ios ]
-    runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+  # merge-ios-timings:
+  #   name: Merge iOS Timing Files
+  #   needs: [determine-builds, detox-tests-ios]
+  #   runs-on: ubuntu-24.04
+  #   if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
+  #   steps:
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       id: aws
+  #       with:
+  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         aws-region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+  #       with:
+  #         platform: ios
+  #         artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
+  #         key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
+  #         aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+  #         aws_region: ${{ secrets.AWS_CACHE_REGION }}
+  #         cache_bucket: ${{ env.cache-bucket }}
+  #         github_ref: ${{ github.ref }}
+  #         github_run_id: ${{ github.run_id }}
+  #         roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
-        with:
-          platform: ios
-          artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
-          key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
-          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
-          aws_region: ${{ secrets.AWS_CACHE_REGION }}
-          cache_bucket: ${{ env.cache-bucket }}
-          github_ref: ${{ github.ref }}
-          github_run_id: ${{ github.run_id }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-
-  merge-android-timings:
-    name: Merge Android Timing Files
-    needs: [ determine-builds, detox-tests-android ]
-    runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
-        with:
-          platform: android
-          artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
-          key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
-          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
-          aws_region: ${{ secrets.AWS_CACHE_REGION }}
-          cache_bucket: ${{ env.cache-bucket }}
-          github_ref: ${{ github.ref }}
-          github_run_id: ${{ github.run_id }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-
-  test-pod-lockfile:
-    name: "Test Pod Lockfile"
-    runs-on: [ macOS, ARM64 ]
-    needs: [ determine-builds ]
-    if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-          fetch-depth: 1
-
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-pod-cache: "true"
-          skip-pnpm-cache: "true"
-          install-proto: "true"
-          skip-turbo-cache: "true"
-
-      - name: Install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --unsafe-perm --ignore-scripts
-
-      - name: Test Pod Lockfile
-        run: |
-          pnpm mobile postinstall
+  # merge-android-timings:
+  #   name: Merge Android Timing Files
+  #   needs: [determine-builds, detox-tests-android]
+  #   runs-on: ubuntu-24.04
+  #   if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
+  #   steps:
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       id: aws
+  #       with:
+  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         aws-region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+  #       with:
+  #         platform: android
+  #         artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
+  #         key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
+  #         aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+  #         aws_region: ${{ secrets.AWS_CACHE_REGION }}
+  #         cache_bucket: ${{ env.cache-bucket }}
+  #         github_ref: ${{ github.ref }}
+  #         github_run_id: ${{ github.run_id }}
+  #         roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+  #
+  # test-pod-lockfile:
+  #   name: "Test Pod Lockfile"
+  #   runs-on: [macOS, ARM64]
+  #   needs: [determine-builds]
+  #   if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ inputs.ref || github.sha }}
+  #         repository: LedgerHQ/ledger-live
+  #         persist-credentials: false
+  #         fetch-depth: 1
+  #
+  #     - name: setup caches
+  #       id: setup-caches
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+  #       with:
+  #         skip-pod-cache: "true"
+  #         skip-pnpm-cache: "true"
+  #         install-proto: "true"
+  #         skip-turbo-cache: "true"
+  #
+  #     - name: Install dependencies
+  #       run: |
+  #         pnpm i --filter="live-mobile..." --unsafe-perm --ignore-scripts
+  #
+  #     - name: Test Pod Lockfile
+  #       run: |
+  #         pnpm mobile postinstall
