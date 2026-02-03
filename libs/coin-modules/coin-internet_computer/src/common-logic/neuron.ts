@@ -1,9 +1,72 @@
-import { ICPAccount } from "../types";
 import { getTimeUntil } from "@zondax/ledger-live-icp/utils";
+import { ICPAccount, ICPNeuron } from "../types";
 
 import { LAST_SYNC_THRESHOLD_IN_DAYS } from "../consts";
 
 import { votingPowerNeedsRefresh } from "@zondax/ledger-live-icp/neurons";
+
+/**
+ * Neuron action permissions based on dissolve state
+ */
+export type NeuronActionPermissions = {
+  canDisburse: boolean;
+  canStartDissolving: boolean;
+  canStopDissolving: boolean;
+};
+
+/**
+ * Get neuron action permissions based on its dissolve state
+ * @param neuron - The neuron to check
+ * @returns Object with boolean flags for each action
+ */
+export function getNeuronActionPermissions(neuron: ICPNeuron): NeuronActionPermissions {
+  const basePermissions: NeuronActionPermissions = {
+    canDisburse: false,
+    canStartDissolving: false,
+    canStopDissolving: false,
+  };
+
+  const dissolveState = neuron.dissolveState;
+  if (!dissolveState) return basePermissions;
+
+  switch (dissolveState) {
+    case "Locked":
+      return {
+        ...basePermissions,
+        canStartDissolving: true,
+      };
+    case "Dissolving":
+      return {
+        ...basePermissions,
+        canStopDissolving: true,
+      };
+    case "Unlocked":
+      return {
+        ...basePermissions,
+        canDisburse: true,
+      };
+    default:
+      return basePermissions;
+  }
+}
+
+/**
+ * Check if neuron is unlocked (can set dissolve delay vs increase)
+ * @param neuron - The neuron to check
+ * @returns true if neuron is unlocked and dissolve delay should be "set", false if it should be "increased"
+ */
+export function isNeuronUnlocked(neuron: ICPNeuron): boolean {
+  return neuron.dissolveState === "Unlocked";
+}
+
+/**
+ * Check if neuron has any followees configured
+ * @param neuron - The neuron to check
+ * @returns true if neuron has at least one followee
+ */
+export function hasFollowees(neuron: ICPNeuron): boolean {
+  return neuron.followees.length > 0;
+}
 
 type BannerState = "confirmFollowing" | "syncNeurons" | "lockNeurons" | "addFollowees" | "stakeICP";
 interface getBannerStateReturn {
@@ -45,9 +108,7 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
   }
 
   // Check Lock Neurons (Priority 3)
-  const hasUnlockedNeurons = account.neurons.fullNeurons.some(
-    neuron => neuron.dissolveState === "Unlocked",
-  );
+  const hasUnlockedNeurons = account.neurons.fullNeurons.some(isNeuronUnlocked);
   if (hasUnlockedNeurons) {
     return {
       state: "lockNeurons",
@@ -56,7 +117,7 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
 
   // Check Add Followees (Priority 4)
   const hasNeuronsWithoutFollowees = account.neurons.fullNeurons.some(
-    neuron => neuron.followees.length === 0,
+    neuron => !hasFollowees(neuron),
   );
   if (hasNeuronsWithoutFollowees) {
     return {
@@ -78,17 +139,18 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
 };
 
 export {
-  neuronPotentialVotingPower,
-  getNeuronDissolveDuration,
-  getSecondsTillVotingPowerExpires,
-  getNeuronVotingPower,
-  getNeuronAgeBonus,
-  getMinDissolveDelay,
-  getNeuronDissolveDelayBonus,
-  canSplitNeuron,
   canSpawnNeuron,
+  canSplitNeuron,
   canStakeMaturity,
-  maxAllowedSplitAmount,
+  getMinDissolveDelay,
+  getNeuronAgeBonus,
+  getNeuronDissolveDelayBonus,
+  getNeuronDissolveDuration,
+  getNeuronVotingPower,
+  getSecondsTillVotingPowerExpires,
   isDeviceControlledNeuron,
+  maxAllowedSplitAmount,
+  neuronPotentialVotingPower,
   NeuronsData,
+  votingPowerNeedsRefresh,
 } from "@zondax/ledger-live-icp/neurons";

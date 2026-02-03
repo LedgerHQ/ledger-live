@@ -5,10 +5,30 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { getNeuronDissolveDurationSeconds } from "@zondax/ledger-live-icp/neurons";
 import { validateAddress, validateMemo, validatePrincipal } from "@zondax/ledger-live-icp/utils";
-import { getAddress } from "./bridgeHelpers/addresses";
+import BigNumber from "bignumber.js";
+import { maxAllowedSplitAmount } from "../common-logic/neuron";
+import {
+  ICP_FEES,
+  ICP_MIN_STAKING_AMOUNT,
+  MAX_DISSOLVE_DELAY,
+  MIN_DISSOLVE_DELAY,
+} from "../consts";
+import {
+  ICPCreateNeuronWarning,
+  ICPDissolveDelayGTMax,
+  ICPDissolveDelayLTCurrent,
+  ICPDissolveDelayLTMin,
+  ICPHotKeyAlreadyExists,
+  ICPIncreaseStakeWarning,
+  ICPInvalidHotKey,
+  ICPNeuronNotFound,
+  ICPSplitNotAllowed,
+  InvalidMemoICP,
+  NotEnoughTransferAmount,
+} from "../errors";
 import {
   ICPAccount,
   ICPAccountRaw,
@@ -16,27 +36,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "../types";
-import {
-  ICPDissolveDelayGTMax,
-  ICPDissolveDelayLTCurrent,
-  ICPDissolveDelayLTMin,
-  InvalidMemoICP,
-  ICPNeuronNotFound,
-  NotEnoughTransferAmount,
-  ICPInvalidHotKey,
-  ICPHotKeyAlreadyExists,
-  ICPSplitNotAllowed,
-  ICPIncreaseStakeWarning,
-  ICPCreateNeuronWarning,
-} from "../errors";
-import {
-  ICP_FEES,
-  ICP_MIN_STAKING_AMOUNT,
-  MAX_DISSOLVE_DELAY,
-  MIN_DISSOLVE_DELAY,
-} from "../consts";
-import { getNeuronDissolveDurationSeconds } from "@zondax/ledger-live-icp/neurons";
-import { maxAllowedSplitAmount } from "../common-logic/neuron";
+import { getAddress } from "./bridgeHelpers/addresses";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -108,17 +108,22 @@ export const getTransactionStatus: AccountBridge<
     }
   }
 
-  // If the recipient is invalid, add an error
-  if (!recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (!validateAddress(recipient).isValid) {
-    // If the recipient is invalid, add an error
-    errors.recipient = new InvalidAddress("", {
-      currencyName: account.currency.name,
-    });
-  } else if (recipient.toLowerCase() === address.toLowerCase()) {
-    // If the recipient is the same as the sender, add an error
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  // Only validate recipient for transaction types that require it
+  const requiresRecipient =
+    type === "send" || type === "create_neuron" || type === "increase_stake";
+
+  if (requiresRecipient) {
+    if (!recipient) {
+      errors.recipient = new RecipientRequired();
+    } else if (!validateAddress(recipient).isValid) {
+      // If the recipient is invalid, add an error
+      errors.recipient = new InvalidAddress("", {
+        currencyName: account.currency.name,
+      });
+    } else if (recipient.toLowerCase() === address.toLowerCase()) {
+      // If the recipient is the same as the sender, add an error
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
   }
 
   if (!(await validateAddress(address)).isValid) {
@@ -170,6 +175,10 @@ export const getTransactionStatus: AccountBridge<
 
   let totalSpent: BigNumber;
 
+  // Transaction types that require an amount from the account balance
+  // Note: stake_maturity and spawn_neuron use neuron maturity, not account balance
+  const requiresAmount = type === "send" || type === "create_neuron" || type === "increase_stake";
+
   // If useAllAmount is true, we use the spendable balance as the total spent
   // If useAllAmount is false, we use the amount as the total spent
   if (useAllAmount) {
@@ -178,13 +187,16 @@ export const getTransactionStatus: AccountBridge<
     if (amount.lte(0) || totalSpent.gt(balance)) {
       errors.amount = new NotEnoughBalance();
     }
-  } else {
+  } else if (requiresAmount) {
     totalSpent = amount.plus(estimatedFees);
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
     } else if (totalSpent.gt(account.spendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
+  } else {
+    // For transactions that don't require amount, just set totalSpent to fees
+    totalSpent = estimatedFees;
   }
 
   return {

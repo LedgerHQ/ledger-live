@@ -1,7 +1,7 @@
+import { InternetComputerOperation } from "@ledgerhq/live-common/families/internet_computer/types";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import Section from "~/screens/OperationDetails/Section";
-import { InternetComputerOperation } from "@ledgerhq/live-common/families/internet_computer/types";
 
 type Props = {
   operation: InternetComputerOperation;

@@ -257,6 +257,10 @@ export const urls = {
     evmAddressVerification: "https://ledger.com/e14",
     staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
   },
+  internetComputer: {
+    stakingRewards:
+      "https://internetcomputer.org/docs/building-apps/governing-apps/nns/concepts/neurons/staking-voting-rewards",
+  },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
