@@ -18,7 +18,7 @@ interface BannerVisibilityState {
   /** True if portfolio content cards are visible */
   isPortfolioContentCardsVisible: boolean;
   /** True if at least one banner or content card is visible */
-  hasAnyBannerVisible: boolean;
+  hasAnyContentBannerVisible: boolean;
 }
 
 /**
@@ -48,8 +48,8 @@ export function useBannersVisibility(): BannerVisibilityState {
   const isPortfolioContentCardsVisible = portfolioCards.length > 0;
 
   // Combined check: at least one banner or content card is visible
-  const hasAnyBannerVisible =
-    isClearCacheBannerVisible ||
+
+  const hasAnyContentBannerVisible =
     isPostOnboardingBannerVisible ||
     isActionCardsVisible ||
     isLNSUpsellBannerVisible ||
@@ -61,6 +61,6 @@ export function useBannersVisibility(): BannerVisibilityState {
     isActionCardsVisible,
     isLNSUpsellBannerVisible,
     isPortfolioContentCardsVisible,
-    hasAnyBannerVisible,
+    hasAnyContentBannerVisible,
   };
 }

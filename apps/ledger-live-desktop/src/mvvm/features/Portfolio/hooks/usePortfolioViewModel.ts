@@ -8,6 +8,7 @@ import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/operation"
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
+import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 
 export interface PortfolioViewModelResult {
   readonly totalAccounts: number;
@@ -21,6 +22,7 @@ export interface PortfolioViewModelResult {
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
   readonly t: TFunction;
+  readonly isClearCacheBannerVisible: boolean;
 }
 
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
@@ -56,6 +58,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   );
 
   const hasExchangeBannerCTA = !!portfolioExchangeBanner?.enabled;
+  const isClearCacheBannerVisible = useSelector(showClearCacheBannerSelector);
 
   return {
     totalAccounts,
@@ -69,5 +72,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     filterOperations,
     accounts,
     t,
+    isClearCacheBannerVisible,
   };
 };

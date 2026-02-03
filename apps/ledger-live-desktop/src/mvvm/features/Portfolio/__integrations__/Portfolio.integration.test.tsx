@@ -26,9 +26,15 @@ jest.mock("~/renderer/screens/dashboard/components/SwapWebViewEmbedded", () => (
   default: () => <div data-testid="swap-webview-embedded">SwapWebViewEmbedded</div>,
 }));
 
-jest.mock("~/renderer/screens/dashboard/components/BannerSection", () => ({
+jest.mock("~/renderer/screens/dashboard/components/Banners/BannerSection", () => ({
   __esModule: true,
   default: () => <div data-testid="banner-section">BannerSection</div>,
+}));
+
+jest.mock("~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent", () => ({
+  PortfolioBannerContent: () => (
+    <div data-testid="portfolio-banner-content">PortfolioBannerContent</div>
+  ),
 }));
 
 // Mock RampCatalog provider - returns all currencies as available
@@ -78,6 +84,7 @@ describe("PortfolioView", () => {
     shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
+    isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

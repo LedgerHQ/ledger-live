@@ -72,7 +72,7 @@ describe("useBannersVisibility", () => {
     expect(result.current.isActionCardsVisible).toBe(false);
     expect(result.current.isLNSUpsellBannerVisible).toBe(false);
     expect(result.current.isPortfolioContentCardsVisible).toBe(false);
-    expect(result.current.hasAnyBannerVisible).toBe(false);
+    expect(result.current.hasAnyContentBannerVisible).toBe(false);
   });
 
   it("should return true for isClearCacheBannerVisible when showClearCacheBanner is true", () => {
@@ -89,7 +89,7 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isClearCacheBannerVisible).toBe(true);
-    expect(result.current.hasAnyBannerVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(false);
   });
 
   it("should return true for isPostOnboardingBannerVisible when post-onboarding is visible", () => {
@@ -100,7 +100,7 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isPostOnboardingBannerVisible).toBe(true);
-    expect(result.current.hasAnyBannerVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
   it("should return true for isActionCardsVisible when action cards campaign is running and feature is enabled", () => {
@@ -123,7 +123,7 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isActionCardsVisible).toBe(true);
-    expect(result.current.hasAnyBannerVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
   it("should return false for isActionCardsVisible when action cards exist but feature is disabled", () => {
@@ -138,7 +138,7 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isActionCardsVisible).toBe(false);
-    expect(result.current.hasAnyBannerVisible).toBe(false);
+    expect(result.current.hasAnyContentBannerVisible).toBe(false);
   });
 
   it("should return true for isLNSUpsellBannerVisible when LNS upsell banner is shown", () => {
@@ -153,7 +153,7 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isLNSUpsellBannerVisible).toBe(true);
-    expect(result.current.hasAnyBannerVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
   it("should return true for isPortfolioContentCardsVisible when portfolio cards exist", () => {
@@ -169,10 +169,10 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isPortfolioContentCardsVisible).toBe(true);
-    expect(result.current.hasAnyBannerVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
-  it("should return true for hasAnyBannerVisible when multiple banners are visible", () => {
+  it("should return true for hasAnyContentBannerVisible when multiple banners are visible", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: true,
@@ -195,6 +195,6 @@ describe("useBannersVisibility", () => {
     expect(result.current.isClearCacheBannerVisible).toBe(true);
     expect(result.current.isPostOnboardingBannerVisible).toBe(true);
     expect(result.current.isLNSUpsellBannerVisible).toBe(true);
-    expect(result.current.hasAnyBannerVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 });
