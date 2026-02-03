@@ -577,7 +577,7 @@ jobs:
           AVD_ARCH: ${{ env.AVD_ARCH }}
           AVD_TARGET: ${{ env.AVD_TARGET }}
           AVD_NAME: ${{ env.AVD_NAME }}
-          ANDROID_SDK_ROOT: $ANDROID_HOME
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
       - name: Generate mitmproxy certificate and build Magisk module
         run: |
