@@ -60,16 +60,15 @@ export default function DashboardPage() {
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount &&
-        isAddressPoisoningOperation(
-          operation,
-          account,
-          addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-        );
+      const isOperationPoisoned = isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      );
 
-      return !removeZeroAmountTokenOp;
+      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
+
+      return shouldFilterOperation;
     },
     [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
   );
