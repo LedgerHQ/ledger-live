@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.16.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.60.0-next.1
+
 ## 1.16.0-next.0
 
 ### Minor Changes

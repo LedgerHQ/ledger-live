@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.60.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`62f9834`](https://github.com/LedgerHQ/ledger-live/commit/62f9834ae78b21ac387270c7f64f9068c43352da)]:
+  - @ledgerhq/live-wallet@0.21.0-next.1
+
 ## 34.60.0-next.0
 
 ### Minor Changes
