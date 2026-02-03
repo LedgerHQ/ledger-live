@@ -1,4 +1,5 @@
 import { Operation } from "@ledgerhq/coin-framework/api/index";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import {
   defaultFetchParams,
   fetchTronAccountTxs,
@@ -59,12 +60,10 @@ export async function listOperations(
     ),
   );
 
-  await Promise.all(
-    uniqueHeights.map(async height => {
-      const fetchedBlock = await getBlock(height);
-      blocksByHeight.set(height, fetchedBlock);
-    }),
-  );
+  await promiseAllBatched(5, uniqueHeights, async height => {
+    const fetchedBlock = await getBlock(height);
+    blocksByHeight.set(height, fetchedBlock);
+  });
 
   const operations = txs.map(tx => {
     const height = tx.blockHeight;
