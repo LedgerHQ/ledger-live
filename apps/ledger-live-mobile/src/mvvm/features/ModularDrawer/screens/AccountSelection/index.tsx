@@ -1,5 +1,5 @@
 import { FlatList } from "react-native";
-import { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
+import { BottomSheetVirtualizedList } from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import {
   TrackDrawerScreen,
   EVENTS_NAME,

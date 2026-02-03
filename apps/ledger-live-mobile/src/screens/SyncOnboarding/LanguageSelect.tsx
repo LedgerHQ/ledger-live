@@ -14,9 +14,9 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import i18next from "i18next";
 import Button from "~/components/Button";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
-import QueuedDrawerGorhom, {
+import QueuedDrawerBottomSheet, {
   BottomSheetScrollView,
-} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+} from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 
 type UiDrawerStatus = "none" | "language-selection" | "firmware-language-update";
 
@@ -124,14 +124,11 @@ const LanguageSelect = () => {
         </Flex>
       </Pressable>
 
-      <QueuedDrawerGorhom
+      <QueuedDrawerBottomSheet
         isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
         onClose={handleLanguageSelectOnClose}
-        enableBlurKeyboardOnGesture={true}
         snapPoints={SNAP_POINTS}
         preventBackdropClick
-        enablePanDownToClose
-        keyboardBehavior="extend"
       >
         <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="center">
           <Text
@@ -156,7 +153,7 @@ const LanguageSelect = () => {
             ))}
           </SelectableList>
         </ScrollViewContainer>
-      </QueuedDrawerGorhom>
+      </QueuedDrawerBottomSheet>
 
       <QueuedDrawer
         isRequestingToBeOpened={isRestartPromptOpened}

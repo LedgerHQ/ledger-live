@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Keyboard } from "react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
-import { DrawerInQueue, useQueuedDrawerContext } from "../QueuedDrawersContext";
-import { logDrawer } from "../utils/logDrawer";
+import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
+import { logDrawer } from "./utils/logDrawer";
 
-interface UseQueuedDrawerGorhomProps {
+interface UseQueuedDrawerBottomSheetProps {
   isRequestingToBeOpened?: boolean;
   isForcingToBeOpened?: boolean;
   onClose?: () => void;
@@ -16,17 +16,17 @@ interface UseQueuedDrawerGorhomProps {
   preventBackdropClick?: boolean;
 }
 
-const useQueuedDrawerGorhom = ({
+const useQueuedDrawerBottomSheet = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
   onBack,
   onModalHide,
   preventBackdropClick,
-}: UseQueuedDrawerGorhomProps) => {
+}: UseQueuedDrawerBottomSheetProps) => {
   const { addDrawerToQueue } = useQueuedDrawerContext();
   const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const bottomSheetRef = useBottomSheetRef();
   const isFocused = useIsFocused();
   const areDrawersLocked = useSelector(isModalLockedSelector);
 
@@ -48,7 +48,7 @@ const useQueuedDrawerGorhom = ({
     logDrawer("Opening drawer");
     isClosedRef.current = false;
     bottomSheetRef.current?.present();
-  }, []);
+  }, [bottomSheetRef]);
 
   const handleClose = useCallback(() => {
     if (isClosedRef.current) return;
@@ -58,12 +58,12 @@ const useQueuedDrawerGorhom = ({
     bottomSheetRef.current?.dismiss();
     cleanupQueue();
     onCloseRef.current?.();
-  }, [cleanupQueue]);
+  }, [cleanupQueue, bottomSheetRef]);
 
   const handleUserClose = useCallback(() => {
     logDrawer("User initiated close");
     bottomSheetRef.current?.dismiss();
-  }, []);
+  }, [bottomSheetRef]);
 
   const handleDismiss = useCallback(() => {
     logDrawer("BottomSheet dismissed");
@@ -128,4 +128,4 @@ const useQueuedDrawerGorhom = ({
   };
 };
 
-export default useQueuedDrawerGorhom;
+export default useQueuedDrawerBottomSheet;
