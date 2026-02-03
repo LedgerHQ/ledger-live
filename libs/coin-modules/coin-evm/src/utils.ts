@@ -80,6 +80,22 @@ export function isEthAddress(address: string): boolean {
 }
 
 /**
+ * Normalizes an Ethereum address to lowercase to avoid checksum validation issues.
+ *
+ * Some chains like RSK use EIP-1191 (chain-specific checksum) instead of EIP-55.
+ * When an address has a valid EIP-1191 checksum but not a valid EIP-55 checksum,
+ * ethers.js will throw "bad address checksum" error.
+ *
+ * Converting the address to lowercase bypasses checksum validation in ethers.js
+ * since lowercase addresses are treated as not checksummed.
+ *
+ * @see https://github.com/rsksmart/RSKIPs/blob/master/IPs/RSKIP60.md
+ */
+export function normalizeAddress(address: string): string {
+  return address.toLowerCase();
+}
+
+/**
  * Safely converts a value to BigInt, returning 0n if conversion fails
  */
 export const safeBigInt = (value: string | number | bigint): bigint => {
