@@ -47,5 +47,5 @@ export async function listOperations(
       });
     }
   }
-  return { items: ops, next: next ? next + "" : undefined };
+  return { items: ops, next: next !== undefined ? next + "" : undefined };
 }
