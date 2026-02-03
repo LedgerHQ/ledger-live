@@ -8,7 +8,7 @@ register({
 
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
-import { session as detoxSession } from "detox/internals";
+import { session as detoxSession, config as detoxConfig } from "detox/internals";
 import * as fs from "fs/promises";
 import * as path from "path";
 import { exec } from "child_process";
@@ -35,8 +35,6 @@ export default async function setup(): Promise<void> {
   await globalSetup();
 
   const testSessionIndex = detoxSession.testSessionIndex ?? 0;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const detoxConfig = require("./detox.config.js");
   const maxRetries = detoxConfig.testRunner?.retries ?? 0;
   const isLastRetry = maxRetries > 0 && testSessionIndex >= maxRetries;
 

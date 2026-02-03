@@ -1,6 +1,6 @@
 --- a/dist/listener.js
 +++ b/dist/listener.js
-@@ -75,8 +75,20 @@
+@@ -75,8 +75,21 @@
                  onError,
              });
          }
@@ -15,11 +15,21 @@
 +            // If enabled via env var, check for JSON options or use defaults
 +            if (enableVideoFromEnv) {
 +                try {
-+                    baseOptions = process.env.DETOX_VIDEO_OPTIONS ? JSON.parse(process.env.DETOX_VIDEO_OPTIONS) : { android: { recording: { bitRate: 1000000, maxSize: 720, codec: 'h264' }, audio: false, window: false }, ios: { codec: 'hevc' } };
++                    baseOptions = process.env.DETOX_VIDEO_OPTIONS ? JSON.parse(process.env.DETOX_VIDEO_OPTIONS) : {};
 +                } catch (e) {
++                    console.warn('Failed to parse DETOX_VIDEO_OPTIONS:', e instanceof Error ? e.message : String(e));
 +                    baseOptions = {};
 +                }
 +            }
              videoManager = new video_1.VideoManager({ device, options: baseOptions, onError });
          }
          if (deviceViewHierarchy && viewHierarchyFactory) {
+@@ -152,7 +165,7 @@
+     })
+         .on('test_fn_failure', async () => {
+         failing = true;
+-        await Promise.all([logs?.attachAfterFailure(api_1.allure), screenshots?.attachFailure(api_1.allure)]);
++        await Promise.all([logs?.attachAfterFailure(api_1.allure), screenshots?.attachFailure(api_1.allure), videoManager?.stopAndAttach($test, failing)]);
+     })
+         .on('test_fn_success', async () => {
+         await Promise.all([logs?.attachAfterSuccess(api_1.allure), screenshots?.attachSuccess(api_1.allure)]);
