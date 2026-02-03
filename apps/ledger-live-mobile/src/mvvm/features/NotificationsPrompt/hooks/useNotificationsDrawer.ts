@@ -190,21 +190,17 @@ export const useNotificationsDrawer = ({
 
   const trackButtonClicked = useCallback(
     (eventName: string) => {
-      const canShowVariant =
-        drawerSource === "onboarding" && featureNewWordingNotificationsDrawer?.enabled;
-
       track("button_clicked", {
         button: eventName,
         page: "Drawer push notification opt-in",
         source: drawerSource,
         repromptDelay: nextRepromptDelay,
         dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
-        variant: canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined,
+        variant: featureNewWordingNotificationsDrawer?.params?.variant,
       });
     },
     [
       drawerSource,
-      featureNewWordingNotificationsDrawer?.enabled,
       featureNewWordingNotificationsDrawer?.params?.variant,
       nextRepromptDelay,
       pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
