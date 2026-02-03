@@ -58,6 +58,11 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
+      smoke_tests:
+        description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -85,6 +90,11 @@ on:
         default: false
       enable_broadcast:
         description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      smoke_tests:
+        description: "Run smoke tests"
         required: false
         type: boolean
         default: false
@@ -122,6 +132,7 @@ jobs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
+      test_filter: ${{ steps.test-filter.outputs.filter }}
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
@@ -162,6 +173,7 @@ jobs:
           DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
           BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
           BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+          SMOKE_TESTS="${{ inputs.smoke_tests }}"
           TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
           TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
 
@@ -176,6 +188,7 @@ jobs:
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **Device selected:** $DEVICE"
           echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
@@ -200,12 +213,32 @@ jobs:
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
+      - name: Prepare test filter
+        id: test-filter
+        run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
+          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
+            if [ -n "$BASE_FILTER" ]; then
+              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
+            else
+              echo "filter=@smoke" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Generate shards matrix and test files
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: e2e/mobile
-          test_filter: ${{ inputs.test_filter || '' }}
+          test_filter: ${{ steps.test-filter.outputs.filter }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
@@ -498,18 +531,6 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
-      - name: Prepare test filter
-        id: test-filter
-        run: |
-          BASE_FILTER="${{ inputs.test_filter }}"
-
-          if [ -n "$BASE_FILTER" ]; then
-            BASE_FILTER="${BASE_FILTER//,/|}"
-          fi
-
-          echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
-        shell: bash
-
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -525,7 +546,7 @@ jobs:
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ steps.test-filter.outputs.filter }}
+          INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -738,18 +759,6 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
-      - name: Prepare test filter
-        id: test-filter
-        run: |
-          BASE_FILTER="${{ inputs.test_filter }}"
-
-          if [ -n "$BASE_FILTER" ]; then
-            BASE_FILTER="${BASE_FILTER//,/|}"
-          fi
-
-          echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
-        shell: bash
-
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
@@ -765,7 +774,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ steps.test-filter.outputs.filter }}
+          INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -984,7 +993,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
+                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                   "emoji": true
                 }
               },

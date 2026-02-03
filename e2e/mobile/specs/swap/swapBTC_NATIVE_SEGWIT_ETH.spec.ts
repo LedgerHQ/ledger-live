@@ -12,6 +12,7 @@ runSwapTest(
     "@Stax",
     "@Flex",
     "@NanoGen5",
+    "@smoke",
     "@bitcoin",
     "@family-bitcoin",
     "@ethereum",

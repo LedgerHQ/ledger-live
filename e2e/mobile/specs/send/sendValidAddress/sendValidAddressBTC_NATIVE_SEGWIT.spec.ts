@@ -14,6 +14,7 @@ runSendValidAddressTest(transaction, ["B2CQA-2724"], "Native Segwit", [
   "@Stax",
   "@Flex",
   "@NanoGen5",
+  "@smoke",
   "@bitcoin",
   "@family-bitcoin",
 ]);
