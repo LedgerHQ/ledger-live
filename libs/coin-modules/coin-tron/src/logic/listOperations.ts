@@ -6,6 +6,7 @@ import {
   FetchTxsStopPredicate as FetchTxsContinuePredicate,
   getBlock,
 } from "../network";
+import { Block } from "../network/types";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 
 export type Options = {
