@@ -138,6 +138,7 @@ jobs:
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          max_shards: ${{ inputs.max-shards }}
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
