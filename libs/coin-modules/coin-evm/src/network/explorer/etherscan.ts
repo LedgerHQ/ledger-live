@@ -86,7 +86,6 @@ export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
   retries = DEFAULT_RETRIES_API,
 ): Promise<T> {
-  console.log("🦄 fetchWithRetries", params);
   try {
     const { data } = await axios.request<{
       status: string;
@@ -94,19 +93,13 @@ export async function fetchWithRetries<T>(
       result: T;
     }>(params);
 
-    if (
-      !Number(data.status) &&
-      (data.message === "NOTOK" ||
-        // case of arbitrum sepolia
-        data.message.includes("Query Timeout"))
-    ) {
+    if (!Number(data.status) && data.message === "NOTOK") {
       throw new EtherscanAPIError("Error while fetching data from Etherscan like API", {
         params,
         data,
       });
     }
 
-    console.log("🦄 fetchWithRetries message", data.message);
     return data.result;
   } catch (e) {
     if (retries) {
@@ -245,7 +238,6 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
     },
   });
 
-  console.log("🦄 getCoinOperations success", ops);
   const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
   const maxBlock = boundBlockFromOperations(operations);
 
@@ -732,7 +724,6 @@ export const getOperations = makeLRUCache<
         }),
       };
     } catch (err) {
-      console.log("🦄 getOperations error", err);
       log("EVM getOperations", "Error while fetching data from Etherscan like API", err);
       const message =
         typeof err === "string"
