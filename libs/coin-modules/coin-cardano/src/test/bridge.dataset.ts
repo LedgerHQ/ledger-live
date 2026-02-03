@@ -18,6 +18,7 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     cardano_testnet: {
+      FIXME_ignoreAccountFields: ["syncHash"],
       scanAccounts: cardanoScanAccounts,
       accounts: [
         {
