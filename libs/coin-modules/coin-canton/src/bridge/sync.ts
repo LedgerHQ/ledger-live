@@ -197,12 +197,16 @@ export function makeGetAccountShape(
       });
     }
 
+    const calTokens = await getCalTokensCached(currency);
+    const tokenIdentifierToId = new Map<string, string>();
+    for (const [tokenId, tokenIdentifier] of calTokens.entries()) {
+      tokenIdentifierToId.set(tokenIdentifier, tokenId);
+    }
+
     const tokensByKey = new Map<string, TokenCurrency>();
     for await (const balance of balances) {
-      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-        balance.adminId,
-        currency.id,
-      );
+      const tokenId = tokenIdentifierToId.get(balance.instrumentId) ?? "";
+      const token = await getCryptoAssetsStore().findTokenById(tokenId);
       if (!token) continue;
       tokensByKey.set(getKey(balance.instrumentId, balance.adminId), token);
     }
@@ -281,9 +285,6 @@ export function makeGetAccountShape(
     });
 
     // Build sub-accounts for tokens with their filtered operations
-
-    const calTokens = await getCalTokensCached(currency);
-
     const subAccounts = buildSubAccounts({
       accountId,
       tokenBalances,

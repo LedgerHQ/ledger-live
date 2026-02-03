@@ -1,9 +1,8 @@
-import { StoryFn } from "@storybook/react";
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/react";
 import Text from "../../../src/components/Text";
 import { textVariants } from "../../../src/styles/theme";
 
-export default {
+const meta = {
   title: "Text",
   component: Text,
   argTypes: {
@@ -20,16 +19,18 @@ export default {
       control: { type: "select" },
     },
   },
-};
+} satisfies Meta<typeof Text>;
 
-export const Default: StoryFn<typeof Text> = (args: typeof DefaultArgs) => (
-  <Text {...args}>{args.label}</Text>
-);
-const DefaultArgs = {
-  variant: "h1" as const,
-  fontWeight: "medium" as const,
-  color: "neutral.c100",
-  bracket: false,
-  label: "Ledger",
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    variant: "h1",
+    fontWeight: "medium",
+    color: "neutral.c100",
+    bracket: false,
+    children: "Ledger",
+  },
 };
-Default.args = DefaultArgs;

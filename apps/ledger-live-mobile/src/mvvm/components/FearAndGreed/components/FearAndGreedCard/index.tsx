@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Tile, TileContent, TileTitle, TileDescription } from "@ledgerhq/lumen-ui-rnative";
+import { Tile, TileContent, TileTitle, TileDescription, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import {
   getFearAndGreedColorKey,
@@ -18,9 +18,11 @@ function FearAndGreedCard({ data, onPress }: FearAndGreedCardProps) {
 
   return (
     <Tile appearance="card" lx={{ width: "s96", flexGrow: 1 }} onPress={onPress}>
-      <FearAndGreedArc value={value} />
+      <Box lx={{ height: "s40", justifyContent: "center", alignItems: "center" }}>
+        <FearAndGreedArc value={value} />
+      </Box>
       <TileContent>
-        <TileTitle>{t("fearAndGreed.title")}</TileTitle>
+        <TileTitle>{t("fearAndGreed.tileTitle")}</TileTitle>
         <TileDescription
           style={{
             // will be fixed with the new folder structure

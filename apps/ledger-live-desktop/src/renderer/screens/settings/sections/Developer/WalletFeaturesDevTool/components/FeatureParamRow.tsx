@@ -15,7 +15,7 @@ export const FeatureParamRow = ({
   >
     <div className="flex items-center gap-4">
       <span className="body-3">{label}</span>
-      {isSelected && <Tag appearance="success" size="sm" icon={Check} label="" />}
+      {isSelected && <Tag appearance="success" size="sm" icon={Check} label="ON" />}
     </div>
     <Switch
       name={`wallet-feature-${paramKey}`}

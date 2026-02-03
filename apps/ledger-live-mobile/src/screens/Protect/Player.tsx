@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -16,7 +16,12 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { getCountryCodeFromLocale } from "@ledgerhq/live-common/locale/index";
+import {
+  counterValueCurrencySelector,
+  knownDeviceModelIdsSelector,
+  localeSelector,
+} from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
@@ -40,6 +45,10 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const currencySettings = useSelector(counterValueCurrencySelector);
   const currency = currencySettings.ticker;
   const manifest = localManifest || remoteManifest;
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+  const hasConnectedNanoS = knownDeviceModelIds.nanoS;
+  const userLocale = useSelector(localeSelector);
+  const countryCode = useMemo(() => getCountryCodeFromLocale(userLocale), [userLocale]);
 
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
@@ -91,6 +100,8 @@ export function RecoverPlayer({ navigation, route }: Props) {
           currency,
           deviceId: device?.deviceId,
           deviceModelId: device?.modelId,
+          hasConnectedNanoS: hasConnectedNanoS.toString(),
+          countryCode,
           ...params,
         }}
       />

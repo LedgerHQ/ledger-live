@@ -138,6 +138,7 @@ jobs:
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          max_shards: ${{ inputs.max-shards }}
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -447,7 +448,7 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-pnpm-cache: "true"
+          skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -574,10 +575,10 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Create mobile metafile
         run: |
           echo "{

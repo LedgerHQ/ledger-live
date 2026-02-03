@@ -12,6 +12,10 @@ inputs:
   event_name:
     description: "GitHub event name (workflow_dispatch or schedule)"
     required: true
+  max_shards:
+    description: "Maximum number of shards (optional)"
+    required: false
+    default: "0"
   ref:
     description: "Branch ref"
     required: true
@@ -71,6 +75,15 @@ runs:
           SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
           SHARD_COUNT_IOS=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
           SHARD_COUNT_ANDROID=$(( SHARD_COUNT > 12 ? 12 : SHARD_COUNT ))
+        fi
+        
+        if [ "${{ inputs.max_shards }}" -gt 0 ]; then
+          if [ "$SHARD_COUNT_IOS" -gt "${{ inputs.max_shards }}" ]; then
+            SHARD_COUNT_IOS=${{ inputs.max_shards }}
+          fi
+          if [ "$SHARD_COUNT_ANDROID" -gt "${{ inputs.max_shards }}" ]; then
+            SHARD_COUNT_ANDROID=${{ inputs.max_shards }}
+          fi
         fi
 
         echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"

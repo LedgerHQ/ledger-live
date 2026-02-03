@@ -21,8 +21,7 @@ const createMockResponse = (value: number, classification: string) => ({
   },
 });
 
-// REACT19: Skipped until @ledgerhq/lumen-ui-rnative is fully compatible with React 19 test renderer
-describe.skip("FearAndGreed Integration", () => {
+describe("FearAndGreed Integration", () => {
   afterEach(() => {
     server.resetHandlers();
   });

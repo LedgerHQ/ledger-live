@@ -94,7 +94,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
       opacity,
       marginBottom,
     };
-  });
+  }, [openState]);
 
   const notificationProps =
     type === "success"

@@ -72,7 +72,7 @@ describe("fetchTronAccountTxs", () => {
     expect(tx).toBeDefined();
     expect(tx!.from).toEqual("TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH");
     expect(tx!.to).toEqual("TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj");
-  });
+  }, 10_000);
 });
 
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
@@ -121,7 +121,7 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
     expect(tx1).toBeDefined();
     const tx2 = results.find(tx => tx.txID === tx2Hash);
     expect(tx2).toBeDefined();
-  });
+  }, 10_000);
 });
 
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries it throws an exception", () => {
@@ -155,5 +155,5 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
       return;
     }
     fail("should have thrown an error");
-  });
+  }, 10_000);
 });

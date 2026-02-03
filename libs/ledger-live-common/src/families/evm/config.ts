@@ -702,7 +702,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://mainnet.telos.net/evm",
+        uri: "https://rpc.telos.net",
       },
       explorer: {
         type: "teloscan",

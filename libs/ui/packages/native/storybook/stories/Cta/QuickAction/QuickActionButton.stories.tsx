@@ -1,4 +1,3 @@
-import { action } from "@storybook/addon-actions";
 import React, { type JSX } from "react";
 import {
   PlusMedium,
@@ -28,8 +27,8 @@ export const Regular = (args: typeof RegularArgs): JSX.Element => (
   <QuickActionButton
     Icon={iconOptions[args.iconOption]}
     disabled={args.disabled}
-    onPress={action("onPress")}
-    onPressWhenDisabled={args.onPressWhenDisabled ? action("onPressWhenDisabled") : undefined}
+    onPress={() => {}}
+    onPressWhenDisabled={args.onPressWhenDisabled ? () => {} : undefined}
   >
     {args.label}
   </QuickActionButton>

@@ -16,7 +16,7 @@ export default {
   },
 } as Meta<typeof InformativeCard>;
 
-export const InformativeCardStory: StoryFn<typeof InformativeCard> = (
+export const InformativeCardStory: StoryFn<typeof InformativeCardStoryArgs> = (
   args: typeof InformativeCardStoryArgs,
 ) => {
   return (

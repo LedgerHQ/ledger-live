@@ -4,10 +4,10 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PerformanceIndicator } from "./PerformanceIndicator";
 import { useNavigate } from "react-router";
 import { ViewAllTile } from "./ViewAllTile";
-import FearAndGreed from "./FearAndGreed";
 import { AssetIcon } from "./AssetIcon";
 import { track } from "~/renderer/analytics/segment";
 import { TRACKING_PAGE_NAME } from "../utils/constants";
+import FearAndGreed from "LLD/features/FearAndGreed";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -46,6 +46,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
             data-testid={`market-banner-asset-${item.id}`}
           >
             <TileSpot
+              size={40}
               appearance="icon"
               icon={() => <AssetIcon item={item} getCapitalizedTicker={getCapitalizedTicker} />}
             />

@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
+import { atomFamily } from "jotai-family";
 import { AppManifest, DAppTrackingData, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
@@ -71,10 +72,17 @@ function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
   };
 }
 
-export const currentAccountAtom = atom<AccountLike | null>(null);
+// Atom family for manifest-scoped account state - each manifest gets its own isolated atom
+export const currentAccountAtomFamily = atomFamily((_manifestId: string) =>
+  atom<AccountLike | null>(null),
+);
 
-export function useDappCurrentAccount(currentAccountHistDb?: CurrentAccountHistDB) {
-  const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
+export function useDappCurrentAccount(
+  manifestId: string,
+  currentAccountHistDb?: CurrentAccountHistDB,
+) {
+  const atomToUse = currentAccountAtomFamily(manifestId);
+  const [currentAccount, setCurrentAccount] = useAtom(atomToUse);
 
   // prefer using this setter when the user manually sets a current account
   const setCurrentAccountHist = useCallback(
@@ -99,7 +107,7 @@ export function useDappCurrentAccount(currentAccountHistDb?: CurrentAccountHistD
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
-const globCurrencies = ["**"];
+const emptyArray: string[] = [];
 
 function useDappAccountLogic({
   manifest,
@@ -113,9 +121,13 @@ function useDappAccountLogic({
   initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
-  const currencyIds = manifest.currencies === "*" ? globCurrencies : manifest.currencies;
-  const { currentAccount, setCurrentAccount, setCurrentAccountHist } =
-    useDappCurrentAccount(currentAccountHistDb);
+  // If the manifest has a wildcard currencyId, we use an empty array to avoid any issues
+  // For dApps, currencies need to be specified explicitly
+  const currencyIds = manifest.currencies === "*" ? emptyArray : manifest.currencies;
+  const { currentAccount, setCurrentAccount, setCurrentAccountHist } = useDappCurrentAccount(
+    manifest.id,
+    currentAccountHistDb,
+  );
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
@@ -123,9 +135,6 @@ function useDappAccountLogic({
   }, [currentAccount, accounts]);
 
   const firstAccountAvailable = useMemo(() => {
-    // Return an account for manifests with wildcard currencyIds
-    if (currencyIds.includes("**") && accounts.length)
-      return getParentAccount(accounts[0], accounts);
     const account = accounts.find(account => {
       if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
         return account;

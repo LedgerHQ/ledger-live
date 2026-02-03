@@ -6,7 +6,6 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",

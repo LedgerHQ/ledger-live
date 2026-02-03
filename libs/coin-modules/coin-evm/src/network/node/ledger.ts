@@ -316,30 +316,38 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   }
 
   if (blockHeight === "latest") {
-    const { hash, height, time, txs } = await fetchWithRetries<{
+    const { hash, height, time, txs, prevHash } = await fetchWithRetries<{
       hash: string;
       height: number;
       time: string;
       txs: string[];
+      prevHash?: string;
     }>({
       method: "GET",
       url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
     });
 
-    return { hash, height, timestamp: new Date(time).getTime(), transactionHashes: txs };
+    return {
+      hash,
+      height,
+      timestamp: new Date(time).getTime(),
+      parentHash: prevHash || "",
+      transactionHashes: txs,
+    };
   }
 
   /**
    * for some reason, this explorer endpoint doesn't return the block object
    * but an array of one element with the requested block
    */
-  const [{ hash, height, time, txs }] = await fetchWithRetries<
+  const [{ hash, height, time, txs, prevHash }] = await fetchWithRetries<
     [
       {
         hash: string;
         height: number;
         time: string;
         txs: string[];
+        prevHash?: string;
       },
     ]
   >({
@@ -351,6 +359,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
     hash,
     height,
     timestamp: new Date(time).getTime(),
+    parentHash: prevHash || "",
     transactionHashes: txs,
   };
 };

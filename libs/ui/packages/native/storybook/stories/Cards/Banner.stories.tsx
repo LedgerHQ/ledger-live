@@ -1,11 +1,18 @@
 import React from "react";
-import type { Meta, StoryFn } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import BannerCard from "../../../src/components/Cards/BannerCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { descriptionBannerCard } from "./descriptionsCards";
 import { WalletConnectMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
-export default {
+type BannerCardStoryArgs = {
+  width: number;
+  title: string;
+  typeOfRightIcon: "close" | "arrow";
+  hadBackdropFilter: boolean;
+};
+
+const meta = {
   title: "Cards",
   component: BannerCard,
   parameters: {
@@ -15,37 +22,39 @@ export default {
       },
     },
   },
-} as Meta<typeof BannerCard>;
+  argTypes: {
+    typeOfRightIcon: {
+      options: ["close", "arrow"],
+      control: { type: "radio" },
+    },
+  },
+} satisfies Meta<BannerCardStoryArgs>;
 
-export const BannerCardStory: StoryFn<typeof BannerCard> = (args: typeof BannerCardStoryArgs) => {
-  return (
+export default meta;
+
+type Story = StoryObj<BannerCardStoryArgs>;
+
+export const BannerCardStory: Story = {
+  name: "BannerCard",
+  args: {
+    width: 350,
+    title:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
+    typeOfRightIcon: "close",
+    hadBackdropFilter: false,
+  },
+  render: (args) => (
     <Flex backgroundColor="primary.c70" alignItems="center" justifyContent="center" p="70px">
       <Flex width={args.width}>
-        {args.hadBackdropFilter && (
-          <Flex bg={"red"} width={200} height={100} position={"absolute"} />
-        )}
+        {args.hadBackdropFilter && <Flex bg="red" width={200} height={100} position="absolute" />}
         <BannerCard
           title={args.title}
           onPress={() => {}}
           onPressDismiss={() => {}}
           LeftElement={<WalletConnectMedium />}
-          typeOfRightIcon={args.typeOfRightIcon || "close"}
+          typeOfRightIcon={args.typeOfRightIcon}
         />
       </Flex>
     </Flex>
-  );
-};
-BannerCardStory.storyName = "BannerCard";
-const BannerCardStoryArgs = {
-  width: 350,
-  title:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
-  typeOfRightIcon: undefined,
-  hadBackdropFilter: false,
-};
-BannerCardStory.args = BannerCardStoryArgs;
-BannerCardStory.argTypes = {
-  typeOfRightIcon: {
-    options: ["close", "arrow"],
-  },
+  ),
 };

@@ -10,9 +10,13 @@ import {
   CryptoCurrencyIconWrapper,
   EllipsisText,
   TooltipContainer,
-} from "LLD/features/Market/components/MarketRowItem/styles";
-import { MarketRowItemViewProps } from "LLD/features/Market/components/MarketRowItem/types";
+} from "LLD/features/Market/components/RowItem/styles";
+import { RowItemViewProps } from "LLD/features/Market/components/RowItem/types";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+
+type MarketRowItemViewProps = RowItemViewProps & {
+  loading: boolean;
+};
 
 export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRowItemView({
   style,

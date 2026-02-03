@@ -17,6 +17,7 @@ const Nav = styled.nav`
   margin: 0 auto;
   font-size: 14px;
   line-height: 1em;
+  padding-top: 16px;
 `;
 
 /*

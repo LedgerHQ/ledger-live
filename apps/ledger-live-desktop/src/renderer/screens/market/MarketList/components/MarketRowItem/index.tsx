@@ -1,7 +1,11 @@
 import React, { memo } from "react";
 import { MarketRowItemView } from "./MarketRowItemView";
-import { useMarketRowItemViewModel } from "LLD/features/Market/components/MarketRowItem/useMarketRowItemViewModel";
-import { MarketRowItemContainerProps } from "LLD/features/Market/components/MarketRowItem/types";
+import { useRowItemViewModel } from "LLD/features/Market/components/RowItem/useRowItemViewModel";
+import { RowItemContainerProps } from "LLD/features/Market/components/RowItem/types";
+
+type MarketRowItemContainerProps = RowItemContainerProps & {
+  loading: boolean;
+};
 
 export const MarketRowItem = memo<MarketRowItemContainerProps>(function MarketRowItem({
   style,
@@ -13,7 +17,7 @@ export const MarketRowItem = memo<MarketRowItemContainerProps>(function MarketRo
   toggleStar,
   range,
 }: MarketRowItemContainerProps) {
-  const viewModel = useMarketRowItemViewModel({
+  const viewModel = useRowItemViewModel({
     currency,
     toggleStar,
     range,

@@ -1,5 +1,6 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
+import { AnalyticsPage } from "./analytics.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetPage } from "./asset.page";
@@ -37,6 +38,7 @@ import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
   public accounts = new AccountsPage(this.page);
+  public analytics = new AnalyticsPage(this.page);
   public addAccount = new AddAccountModal(this.page);
   public assetDrawer = new AssetDrawer(this.page);
   public assetPage = new AssetPage(this.page);

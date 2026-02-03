@@ -6,7 +6,7 @@ runSendValidAddressTest(
   transaction,
   ["B2CQA-2717"],
   "lower case",
-  undefined,
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
   undefined,
   "Auto-verification not available: carefully verify the address.",
 );

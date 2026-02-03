@@ -20,5 +20,8 @@ export const getWallet40Attributes = (
     marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
     graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
     quickActionCtas: wallet40FeatureFlag?.params?.quickActionCtas ?? false,
+    tour: wallet40FeatureFlag?.params?.tour ?? false,
+    mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
+    newReceiveDialog: wallet40FeatureFlag?.params?.newReceiveDialog ?? false,
   };
 };

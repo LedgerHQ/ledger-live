@@ -10,11 +10,9 @@ import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
-import PairDevices from "~/screens/PairDevices";
 import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
@@ -32,6 +30,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
+import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -263,6 +262,11 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name={NavigatorName.Perps}
+          component={PerpsNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name={NavigatorName.Freeze}
           component={FreezeNavigator}
           options={{ headerShown: false }}
@@ -354,19 +358,6 @@ export default function BaseNavigator() {
           name={NavigatorName.AccountSettings}
           component={AccountSettingsNavigator}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.PairDevices}
-          component={PairDevices}
-          options={({ navigation, route }) => ({
-            title: "",
-            headerRight: () => {
-              const nav = navigation;
-              return <ErrorHeaderInfo route={route} navigation={nav} />;
-            },
-            headerShown: true,
-            headerStyle: styles.headerNoShadow,
-          })}
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}

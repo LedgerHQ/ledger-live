@@ -1,9 +1,11 @@
-declare enum Order {
+import { PortfolioRange } from "@ledgerhq/types-live";
+
+enum Order {
   asc = "asc",
   desc = "desc",
 }
-export declare const MARKET_BANNER_TOP = 100;
-export declare const MARKET_BANNER_REFRESH_RATE = 1000;
-export declare const MARKET_PERFORMERS_SUPPORTED = true;
-export declare const MARKET_BANNER_DATA_SORT_ORDER = Order.asc;
-export declare const TIME_RANGE = "day";
+export const MARKET_BANNER_TOP = 100;
+export const MARKET_BANNER_REFRESH_RATE = 3;
+export const MARKET_PERFORMERS_SUPPORTED = true;
+export const MARKET_BANNER_DATA_SORT_ORDER = Order.asc;
+export const TIME_RANGE: PortfolioRange = "day";

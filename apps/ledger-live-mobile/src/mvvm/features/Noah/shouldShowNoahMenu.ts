@@ -1,17 +1,19 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-export type NoahParams = {
-  fromMenu?: boolean;
-  currency?: string | CryptoOrTokenCurrency;
-};
+export type NoahParams =
+  | {
+      fromMenu?: boolean;
+      currency?: string | CryptoOrTokenCurrency;
+    }
+  | undefined;
 
 export function shouldShowNoahMenu(
   params: NoahParams,
   noahFlagEnabled: boolean,
   activeCurrencyIds: string[],
 ) {
-  const fromMenu = params.fromMenu;
-  const currency = params.currency;
+  const fromMenu = params?.fromMenu;
+  const currency = params?.currency;
   let hasValidCurrency = true;
 
   if (currency) {

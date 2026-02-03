@@ -28,6 +28,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
       fees: BigInt(fee.toString()),
       block: {
         height: blockHeight ?? 0,
+        hash: operation.blockHash ?? "",
         time: date,
       },
       date: date,

@@ -1,5 +1,5 @@
 import React from "react";
-import { useArgs } from "@storybook/manager-api";
+import { useArgs } from "storybook/manager-api";
 
 import Button from "../../cta/Button";
 import Drawer, { DrawerProps } from "./index";

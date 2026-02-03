@@ -41,7 +41,14 @@
         "src/webviewPreloader/dappPreloader.ts",
         "src/webviewPreloader/index.ts"
       ],
-      "ignore": [".storybook/stub.ts", "src/renderer/mockServiceWorker.js", "src/mvvm/utils/cn.ts"],
+      "ignore": [
+        ".storybook/stub.ts",
+        ".storybook/electronStub.js",
+        ".storybook/fsStub.js",
+        ".storybook/settingsMock.ts",
+        "src/renderer/mockServiceWorker.js",
+        "src/mvvm/utils/cn.ts"
+      ],
       "ignoreDependencies": [
         "prop-types",
         "allure-commandline",
@@ -50,7 +57,10 @@
         "ws",
         "@electron/fuses",
         "@reduxjs/toolkit",
-        "class-variance-authority"
+        "class-variance-authority",
+        "embla-carousel-autoplay",
+        "embla-carousel-react",
+        "events"
       ]
     },
     "./apps/ledger-live-mobile": {

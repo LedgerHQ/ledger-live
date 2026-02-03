@@ -14,7 +14,7 @@ export default {
   },
 };
 
-export const Default: StoryFn<typeof IconBoxList> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => {
   return (
     <IconBoxList
       items={[

@@ -85,6 +85,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       block: {
         height: op.blockHeight ?? 0,
         hash: op.blockHash ?? "",
+        time: op.date,
       },
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,

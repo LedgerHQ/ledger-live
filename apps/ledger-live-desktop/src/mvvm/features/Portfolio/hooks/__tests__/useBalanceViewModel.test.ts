@@ -44,8 +44,10 @@ describe("useBalanceViewModel", () => {
   it("should return portfolio data correctly", () => {
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(result.current.balanceParts).toBeDefined();
-    expect(result.current.balanceParts.integerPart).toContain("15");
+    expect(result.current.formatter).toBeDefined();
+    expect(result.current.balance).toBe(1500);
+    const formatted = result.current.formatter(result.current.balance);
+    expect(formatted.integerPart).toContain("15");
     expect(result.current.isAvailable).toBe(true);
     expect(result.current.valueChange).toEqual(mockPortfolio.countervalueChange);
   });
@@ -58,7 +60,9 @@ describe("useBalanceViewModel", () => {
 
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(result.current.balanceParts.integerPart).toContain("0");
+    expect(result.current.balance).toBe(0);
+    const formatted = result.current.formatter(result.current.balance);
+    expect(formatted.integerPart).toContain("0");
   });
 
   it("should use 'day' range by default", () => {

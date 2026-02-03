@@ -10,5 +10,7 @@ const useGateway = (currency: CryptoCurrency) =>
 export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
   return {
     height: useGateway(currency) ? await getLedgerEnd(currency) : await nodeGetLedgerEnd(),
+    hash: "",
+    time: new Date(),
   };
 }

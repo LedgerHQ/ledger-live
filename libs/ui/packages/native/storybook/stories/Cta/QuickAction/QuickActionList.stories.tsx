@@ -6,7 +6,6 @@ import {
   MinusMedium,
   PlusMedium,
 } from "@ledgerhq/icons-ui/nativeLegacy";
-import { action } from "@storybook/addon-actions";
 import React, { type JSX } from "react";
 import Box from "../../../../src/components/Layout/Box";
 import { QuickActionButtonProps } from "../../../../src/components/cta/QuickAction/QuickActionButton";
@@ -21,34 +20,34 @@ const DATA: QuickActionButtonProps[] = [
   {
     Icon: PlusMedium,
     children: "Buy",
-    onPress: action("onPress"),
+    onPress: () => {},
   },
   {
     Icon: ArrowBottomMedium,
     children: "Receive",
-    onPress: action("onPress"),
+    onPress: () => {},
   },
   {
     Icon: LendMedium,
     children: "Earn",
-    onPress: action("onPress"),
+    onPress: () => {},
   },
   {
     Icon: MinusMedium,
     children: "Sell",
-    onPress: action("onPress"),
+    onPress: () => {},
   },
   {
     Icon: ArrowTopMedium,
     children: "Send",
     disabled: true,
-    onPress: action("onPress"),
+    onPress: () => {},
   },
   {
     Icon: DelegateMedium,
     children: "Convert",
     disabled: true,
-    onPress: action("onPress"),
+    onPress: () => {},
   },
 ];
 

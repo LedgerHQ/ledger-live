@@ -92,9 +92,11 @@ export class CosmosAPI {
     } catch (e) {
       const error = e as AxiosError;
       if (error.isAxiosError) {
-        throw new Error(`"Error during ${currency.id} synchronization: "${error.toJSON()}`);
+        throw new Error(
+          `Error during ${currency.id} synchronization: ${JSON.stringify(error.toJSON())}`,
+        );
       } else {
-        throw new Error(`"Error during ${currency.id} synchronization: "${error.message}`);
+        throw new Error(`Error during ${currency.id} synchronization: ${error.message}`);
       }
     }
   };

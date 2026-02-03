@@ -4,7 +4,7 @@ import { runDepositInExistingAccountTest } from "./deposit";
 const testConfig = {
   account: Account.ETH_1,
   tmsLinks: ["B2CQA-1898"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, `@family-evm`],
 };
 
 runDepositInExistingAccountTest(testConfig.account, testConfig.tmsLinks, testConfig.tags);

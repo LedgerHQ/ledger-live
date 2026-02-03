@@ -7,6 +7,7 @@ import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 import { getStakeAccountAddressWithSeed } from "./network/chain/web3";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
+import { UserInputType } from "./signer";
 
 const DEFAULT_TX_FEE = 5000;
 
@@ -184,7 +185,7 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
             walletAddress: randomAddresses[1],
             tokenAccAddress: randomAddresses[2],
             shouldCreateAsAssociatedTokenAccount: true,
-            userInputType: "sol",
+            userInputType: UserInputType.SOL,
           },
           tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
         },
@@ -209,7 +210,7 @@ const createDummyTokenApproveTx = (address: string): Transaction => {
             walletAddress: randomAddresses[1],
             tokenAccAddress: randomAddresses[2],
             shouldCreateAsAssociatedTokenAccount: true,
-            userInputType: "sol",
+            userInputType: UserInputType.SOL,
           },
           owner: address,
           amount: 0,

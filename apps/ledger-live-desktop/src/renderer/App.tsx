@@ -21,7 +21,7 @@ import { CountervaluesBridgedProvider } from "~/renderer/components/Countervalue
 import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
-import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
+import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatusProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
@@ -84,7 +84,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                     <CountervaluesMarketcapBridgedProvider>
                       <CountervaluesBridgedProvider initialState={initialCountervalues}>
                         <ToastProvider>
-                          <AnnouncementProviderWrapper>
+                          <ServiceStatusProviderWrapper>
                             <Router>
                               <PostOnboardingProviderWrapped>
                                 <PlatformAppProviderWrapper>
@@ -97,7 +97,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                                 </PlatformAppProviderWrapper>
                               </PostOnboardingProviderWrapped>
                             </Router>
-                          </AnnouncementProviderWrapper>
+                          </ServiceStatusProviderWrapper>
                         </ToastProvider>
                       </CountervaluesBridgedProvider>
                     </CountervaluesMarketcapBridgedProvider>
