@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import { getExplorerApi } from "../network/explorer";
 
 type AssetConfig =
@@ -46,7 +47,23 @@ function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
   return op.hasFailed ?? false;
 }
 
-function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSupported> {
+function toOperation(
+  currency: string,
+  address: string,
+  asset: AssetConfig,
+  op: LiveOperation,
+): Operation<MemoNotSupported> {
+  if (op.value.isNaN() || op.fee.isNaN()) {
+    log("evm/listOperations", "Found NaN value on operation", {
+      currency,
+      address,
+      operation: op.hash,
+      assetType: asset.type,
+      assetIsInternal: asset.type === "native" && !!asset.internal,
+      ...(op.contract ? { assetReference: op.contract } : {}),
+    });
+  }
+
   const assetInfo: AssetInfo = { type: asset.type };
 
   if (asset.type === "token") {
@@ -129,17 +146,19 @@ export async function listOperations(
     }
 
     if (isNativeOperation(coinOperation)) {
-      nativeOperations.push(toOperation({ type: "native" }, coinOperation));
+      nativeOperations.push(toOperation(currency.id, address, { type: "native" }, coinOperation));
     }
   }
 
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
-  >(op => toOperation({ type: "token", owner: address, parents }, op));
+  >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
   const internalOperations = lastInternalOperations
     .filter(op => op.hash in parents)
     .map<Operation<MemoNotSupported>>(op =>
       toOperation(
+        currency.id,
+        address,
         { type: "native", internal: true },
         // Explorers don't provide block hash and fees for internal operations.
         // We take this values from their parent.
