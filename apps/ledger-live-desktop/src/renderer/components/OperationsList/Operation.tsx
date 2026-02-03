@@ -16,6 +16,7 @@ import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
@@ -69,6 +70,11 @@ function OperationComponent({
   const currency = getAccountCurrency(account);
 
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
+
+  const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+  const specific = getLLDCoinFamily(cryptoCurrency.family);
+  const CustomMetadataCell = specific ? specific.CustomMetadataCell : null;
+
   return (
     <OperationRow
       isOptimistic={isOptimistic}
@@ -91,6 +97,7 @@ function OperationComponent({
       />
       {withAccount && <AccountCell accountName={accountName} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} currency={currency} /> : <Box flex="1" />}
+      {CustomMetadataCell && <CustomMetadataCell operation={operation} />}
       <AmountCell operation={operation} currency={currency} unit={unit} isConfirmed={isConfirmed} />
     </OperationRow>
   );

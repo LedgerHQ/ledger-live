@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import type { Operation } from "@ledgerhq/types-live";
+import type { AleoOperation } from "../../types";
 
-export function getMockedOperation(overrides?: Partial<Operation>): Operation {
+export function getMockedOperation(overrides?: Partial<AleoOperation>): AleoOperation {
   return {
     id: "js:2:aleo:aleo1test:op1-OUT",
     hash: "at1mockhashmockhashmockhashmockhash",
@@ -16,7 +16,10 @@ export function getMockedOperation(overrides?: Partial<Operation>): Operation {
     date: new Date("2024-01-01T00:00:00.000Z"),
     transactionSequenceNumber: new BigNumber(0),
     hasFailed: false,
-    extra: {},
+    extra: {
+      functionId: "transfer_public",
+      transactionType: "public",
+    },
     ...overrides,
   };
 }

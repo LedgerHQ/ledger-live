@@ -1,4 +1,8 @@
+import type BigNumber from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -16,3 +20,30 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export interface AleoResources {
+  transparentBalance: BigNumber;
+  privateBalance: BigNumber | null;
+}
+
+export interface AleoResourcesRaw {
+  transparentBalance: string;
+  privateBalance: string | null;
+}
+
+export type AleoAccount = Account & {
+  aleoResources: AleoResources;
+};
+
+export type AleoAccountRaw = AccountRaw & {
+  aleoResources: AleoResourcesRaw;
+};
+
+export type AleoTransactionType = "public" | "private";
+
+export type AleoOperationExtra = {
+  functionId: string;
+  transactionType: AleoTransactionType;
+};
+
+export type AleoOperation = Operation<AleoOperationExtra>;

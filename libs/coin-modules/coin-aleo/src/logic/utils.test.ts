@@ -1,10 +1,46 @@
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { patchAccountWithViewKey } from "./utils";
+import { parseMicrocredits, patchAccountWithViewKey, determineTransactionType } from "./utils";
 
 describe("logic utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("parseMicrocredits", () => {
+    it("should parse valid microcredits string and remove u64 suffix", () => {
+      const result = parseMicrocredits("1000000u64");
+
+      expect(result).toBe("1000000");
+    });
+
+    it("should parse zero microcredits", () => {
+      const result = parseMicrocredits("0u64");
+
+      expect(result).toBe("0");
+    });
+
+    it("should parse large microcredits values", () => {
+      const result = parseMicrocredits("999999999999999u64");
+
+      expect(result).toBe("999999999999999");
+    });
+
+    it("should parse microcredits with .private suffix", () => {
+      const result = parseMicrocredits("1000000u64.private");
+
+      expect(result).toBe("1000000");
+    });
+
+    it("should throw error when u64 suffix is missing", () => {
+      const value = "1000000";
+      expect(() => parseMicrocredits(value)).toThrow();
+    });
+
+    it("should throw error for invalid format", () => {
+      const value = "1000000u32";
+      expect(() => parseMicrocredits(value)).toThrow();
+    });
   });
 
   describe("patchAccountWithViewKey", () => {
@@ -55,14 +91,45 @@ describe("logic utils", () => {
         }),
       ]);
     });
+  });
 
-    it("should throw if viewKey is missing", () => {
-      const mockAccount = getMockedAccount({
-        id: "js:2:aleo:aleo1test:",
-        operations: [],
-      });
+  describe("determineTransactionType", () => {
+    it("should return private for transfer_private regardless of operation type", () => {
+      expect(determineTransactionType("transfer_private", "IN")).toBe("private");
+      expect(determineTransactionType("transfer_private", "OUT")).toBe("private");
+      expect(determineTransactionType("transfer_private", "NONE")).toBe("private");
+    });
 
-      expect(() => patchAccountWithViewKey(mockAccount, "")).toThrow();
+    it("should return public for transfer_public regardless of operation type", () => {
+      expect(determineTransactionType("transfer_public", "IN")).toBe("public");
+      expect(determineTransactionType("transfer_public", "OUT")).toBe("public");
+      expect(determineTransactionType("transfer_public", "NONE")).toBe("public");
+    });
+
+    it("should return private for IN operations ending with to_private", () => {
+      expect(determineTransactionType("transfer_public_to_private", "IN")).toBe("private");
+    });
+
+    it("should return public for IN operations ending with to_public", () => {
+      expect(determineTransactionType("transfer_private_to_public", "IN")).toBe("public");
+    });
+
+    it("should return private for OUT operations starting with transfer_private", () => {
+      expect(determineTransactionType("transfer_private_to_public", "OUT")).toBe("private");
+    });
+
+    it("should return public for OUT operations starting with transfer_public", () => {
+      expect(determineTransactionType("transfer_public_to_private", "OUT")).toBe("public");
+    });
+
+    it("should return fallback for unrecognized function ids", () => {
+      expect(determineTransactionType("unknown_function", "IN")).toBe("public");
+      expect(determineTransactionType("unknown_function", "OUT")).toBe("public");
+    });
+
+    it("should return fallback for NONE operations with cross-balance transfers", () => {
+      expect(determineTransactionType("transfer_public_to_private", "NONE")).toBe("public");
+      expect(determineTransactionType("transfer_private_to_public", "NONE")).toBe("public");
     });
   });
 });

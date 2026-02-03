@@ -1,20 +1,29 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { type GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  type GetAccountShape,
+  makeSync,
+  mergeOps,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import { getBalance, lastBlock, listOperations } from "../logic";
+import type { AleoAccount } from "../types";
 
-export const getAccountShape: GetAccountShape<Account> = async infos => {
-  const { initialAccount, address, derivationMode, currency, index } = infos;
+export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
+  const { initialAccount, address, derivationMode, currency } = infos;
   let viewKey: string | undefined;
 
   if (initialAccount) {
     viewKey = decodeAccountId(initialAccount.id).customData;
-    invariant(viewKey, `aleo: viewKey is missing in ${address} initialAccount`);
+    invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
   }
 
-  const accountId = encodeAccountId({
+  const [latestBlock, balances] = await Promise.all([
+    lastBlock(currency),
+    getBalance(currency, address),
+  ]);
+
+  const ledgerAccountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
@@ -25,41 +34,48 @@ export const getAccountShape: GetAccountShape<Account> = async infos => {
     }),
   });
 
-  let balance = new BigNumber(0);
-  const operations: Operation[] = [];
-  const blockHeight = 1;
+  const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
+  const transparentBalance = new BigNumber(nativeBalance.toString());
+  const privateBalance = null;
+  const spendableBalance = transparentBalance.plus(privateBalance ?? 0);
 
-  // mock some operations in first account for e2e test
-  if (index === 0) {
-    balance = balance.plus(1);
-    const mockHash = "mockmockmockmockmockmockmockmockmockmock";
-    const type = "IN";
+  const shouldSyncFromScratch = !initialAccount;
+  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const latestOperation = oldOperations[0];
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+  const latestAccountOperations = await listOperations({
+    currency,
+    address,
+    ledgerAccountId,
+    fetchAllPages: true,
+    pagination: {
+      minHeight: 0,
+      order: "asc",
+      ...(lastBlockHeight > 0 && { lastPagingToken: lastBlockHeight.toString() }),
+    },
+  });
 
-    operations.push({
-      id: encodeOperationId(accountId, mockHash, type),
-      accountId,
-      type,
-      hash: mockHash,
-      senders: ["aleo1mock"],
-      recipients: [address],
-      date: new Date(),
-      blockHeight,
-      blockHash: "abc",
-      fee: new BigNumber(0),
-      value: new BigNumber(1),
-      extra: {},
-    });
-  }
+  // sort by date desc
+  latestAccountOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // merge old and new operations
+  const operations = shouldSyncFromScratch
+    ? latestAccountOperations.operations
+    : mergeOps(oldOperations, latestAccountOperations.operations);
 
   return {
     type: "Account",
-    id: accountId,
-    balance,
-    spendableBalance: balance,
-    blockHeight,
+    id: ledgerAccountId,
+    balance: spendableBalance,
+    spendableBalance: spendableBalance,
+    blockHeight: latestBlock.height,
     operations,
     operationsCount: operations.length,
     lastSyncDate: new Date(),
+    aleoResources: {
+      transparentBalance,
+      privateBalance,
+    },
   };
 };
 

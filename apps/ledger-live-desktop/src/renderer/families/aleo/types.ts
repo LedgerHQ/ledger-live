@@ -1,5 +1,9 @@
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/aleo/types";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type {
+  AleoAccount,
+  AleoOperation,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/aleo/types";
 import type { LLDCoinFamily } from "../types";
 
-export type AleoFamily = LLDCoinFamily<Account, Transaction, TransactionStatus, Operation>;
+export type AleoFamily = LLDCoinFamily<AleoAccount, Transaction, TransactionStatus, AleoOperation>;
