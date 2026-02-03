@@ -6,7 +6,7 @@ const testPathIgnorePatterns = [
   "lib-es/",
   ".yalc",
   "cli/",
-  "test-helpers/",
+  "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
 ];
 
 const esmDeps = ["ky"];
@@ -80,6 +80,10 @@ const defaultConfig = {
   },
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
+  moduleNameMapper: {
+    "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",
+    "^@tests$": "<rootDir>/src/__tests__/server",
+  },
   /**
    * Added because of this error happening when using toMatchInlineSnapshot:
    *     TypeError: prettier.resolveConfig.sync is not a function

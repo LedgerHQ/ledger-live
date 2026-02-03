@@ -1,7 +1,6 @@
 import React from "react";
 import { StoryFn } from "@storybook/react";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
-import { action } from "@storybook/addon-actions";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 
@@ -15,8 +14,8 @@ export default {
  ** value once the configuration will be fix to allow using
  ** hooks from our stories
  */
-export const Default: StoryFn<typeof ScrollContainer> = (args: typeof DefaultArgs) => (
-  <ScrollContainer width="100%" horizontal={args.horizontal} onScroll={action("scroll")}>
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => (
+  <ScrollContainer width="100%" horizontal={args.horizontal} onScroll={() => {}}>
     {Array(20)
       .fill(0)
       .map((_, i) => (

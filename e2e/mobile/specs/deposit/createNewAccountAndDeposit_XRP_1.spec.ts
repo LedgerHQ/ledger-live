@@ -5,7 +5,7 @@ const testConfig = {
   currentAccount: Account.XRP_1,
   newAccount: Account.XRP_2,
   tmsLinks: ["B2CQA-1861"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ripple`, `@family-xrp`],
 };
 
 runCreateNewAccountAndDepositTest(

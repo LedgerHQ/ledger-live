@@ -1,8 +1,8 @@
 import React from "react";
-import { FlowStatus } from "LLD/features/FlowWizard/types";
 import { SuccessContent } from "./Content/SuccessContent";
 import { InfoContent } from "./Content/InfoContent";
 import { ErrorContent } from "./Content/ErrorContent";
+import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 
 interface ConfirmationBodyProps {
   status: FlowStatus;
@@ -12,16 +12,16 @@ interface ConfirmationBodyProps {
 export const ConfirmationBody: React.FC<ConfirmationBodyProps> = ({ status, transactionError }) => {
   return (
     <div className="flex flex-col items-center gap-24">
-      {status === "success" && <SuccessContent />}
+      {status === FLOW_STATUS.SUCCESS && <SuccessContent />}
 
-      {status === "idle" && (
+      {status === FLOW_STATUS.IDLE && (
         <InfoContent
           titleKey="errors.UserRefusedOnDevice.title"
           descriptionKey="errors.UserRefusedOnDevice.description"
         />
       )}
 
-      {status === "error" && <ErrorContent error={transactionError} />}
+      {status === FLOW_STATUS.ERROR && <ErrorContent error={transactionError} />}
     </div>
   );
 };

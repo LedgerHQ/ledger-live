@@ -149,8 +149,8 @@ export const getMockReactRedux = () => {
 
 export const getMockReactI18next = () => ({
   Trans: ({ i18nKey }: { i18nKey: string }) =>
-    React.createElement(View, { testID: `trans-${i18nKey}` }, i18nKey),
-  useTranslation: () => ({ t: (key: string) => key }),
+    React.createElement(View, { testID: `trans-${i18nKey}` }, `trans:${i18nKey}`),
+  useTranslation: () => ({ t: (key: string) => `trans:${key}` }),
   initReactI18next: {
     type: "languageDetector",
     async: false,
@@ -163,20 +163,33 @@ export const getMockReactI18next = () => ({
 export const getMockNativeUI = () => {
   const mockViewComponentFn = ({ children, testID, ...props }: any) =>
     React.createElement(View, { testID, ...props }, children);
+  const AlertComponent = ({ children, testID, type, ...props }: any) =>
+    React.createElement(View, { testID: testID || "alert", type, ...props }, children);
+  (AlertComponent as any).UnderlinedText = mockViewComponentFn;
   return {
     Flex: mockViewComponentFn,
-    Text: mockViewComponentFn,
+    Text: ({ children, testID, ...props }: any) => {
+      if (typeof children === "string") {
+        return children;
+      }
+      return React.createElement(View, { testID, ...props }, children);
+    },
     Button: ({ children, onPress, testID, disabled, iconName, ...props }: any) =>
       React.createElement(
         Pressable,
-        { testID, onPress: disabled ? undefined : onPress, disabled, ...props },
-        React.createElement(View, {}, children),
+        {
+          testID: testID || "button",
+          onPress: disabled ? undefined : onPress,
+          disabled,
+          ...props,
+        },
+        children,
       ),
     Checkbox: ({ checked, testID, ...props }: any) =>
       React.createElement(TextInput, { testID, value: checked ? "checked" : "", ...props }),
     IconBox: ({ Icon, testID, ...props }: any) =>
       React.createElement(View, { testID, ...props }, React.createElement(Icon)),
-    Alert: mockViewComponentFn,
+    Alert: AlertComponent,
     IconsLegacy: {
       InfoMedium: () => React.createElement(View, { testID: "info-medium-icon" }, "InfoMedium"),
     },

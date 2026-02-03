@@ -10,14 +10,23 @@
   },
   "packageRules": [
     {
-      "description": "GitHub Actions (CI)",
+      "description": "GitHub Actions Internal (CI)",
       "matchManagers": ["github-actions"],
       "matchPackageNames": ["LedgerHQ/*", "ledgerhq/*"],
       "pinDigests": false,
-      "minimumReleaseAge": "15 days",
       "labels": ["dependencies", "github_actions"],
       "reviewers": ["team:wallet-ci"],
       "assignees": ["team:wallet-ci"]
+    },
+    {
+      "description": "GitHub Actions External (CI)",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true,
+      "minimumReleaseAge": "15 days",
+      "labels": ["dependencies", "github_actions"],
+      "reviewers": ["team:wallet-ci"],
+      "assignees": ["team:wallet-ci"],
+      "matchPackageNames": ["!/^LedgerHQ/.*/", "!/^ledgerhq/.*/"]
     },
     {
       "description": "Lumen UI React - version updates",
@@ -66,7 +75,8 @@
         "/typescript/",
         "/vite/",
         "/zx/"
-      ]
+      ],
+      "minimumReleaseAge": "2 days"
     },
     {
       "description": "Electron linked updates",
@@ -80,7 +90,8 @@
         "!electron-context-menu",
         "!electron-store",
         "!vite-plugin-electron"
-      ]
+      ],
+      "minimumReleaseAge": "2 days"
     },
     {
       "description": "Metro linked updates",
@@ -95,11 +106,18 @@
       ],
       "groupName": "metro",
       "reviewers": ["team:live-hub"],
-      "assignees": ["team:live-hub"]
+      "assignees": ["team:live-hub"],
+      "minimumReleaseAge": "2 days"
     },
     {
+      "description": "Expo monorepo grouping",
       "extends": ["monorepo:expo"],
       "groupName": null
+    },
+    {
+      "description": "Global npm minimum release age",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "2 days"
     }
   ],
   "prConcurrentLimit": 10,

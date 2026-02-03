@@ -299,6 +299,7 @@
     "manager": "My Ledger",
     "earn": "Earn",
     "exchange": "Buy / Sell",
+    "perps": "Perps",
     "swap": "Swap",
     "refer": "Refer a friend",
     "lend": "Lend",
@@ -4455,7 +4456,7 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
-      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice"
@@ -4531,6 +4532,10 @@
           "title": "Quick generation",
           "desc": "Generate 10 random accounts with random currencies"
         },
+        "emptyGenerate": {
+          "title": "Empty generation",
+          "desc": "Generate an empty account"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -4546,7 +4551,8 @@
         "buttons": {
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
-          "generateAccountsQuick": "Generate {{count}} accounts"
+          "generateAccountsQuick": "Generate {{count}} accounts",
+          "generateEmptyAccount": "Generate empty account"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -4592,6 +4598,7 @@
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
         "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "mainFeatureToggle": "Main Feature Toggle",
         "enableAll": "Enable All",
         "disableAll": "Disable All",
         "featureParameters": "Feature Parameters",
@@ -6364,7 +6371,7 @@
     },
     "TransactionCannotBeCreated": {
       "title": "Processing Error",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity": {
       "title": "Partner unavailable",
@@ -6662,7 +6669,7 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+      "title": "Enable Blind signing or Contract data in Ethereum app"
     },
     "CeloAppPleaseEnableContractData": {
       "title": "Please enable Contract data in the Celo app Settings"
@@ -7576,7 +7583,7 @@
     "close": "Close",
     "banner": {
       "title": "Your wallet isn't synced",
-      "description": "Keep your portfolio up to date when switching computers or use a phone",
+      "description": "Keep your portfolio up to date when switching computers or using a phone",
       "cta": "Sync my wallet"
     },
     "activate": {
@@ -7586,7 +7593,7 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?",
       "titleModal": "Sync your wallet",
-      "descriptionModal": "Keep your portfolio up to date when switching computers or use a phone — all secured by your Ledger device.",
+      "descriptionModal": "Keep your portfolio up to date when switching computers or using a phone — all secured by your Ledger device.",
       "ctaModal": "Continue"
     },
     "entryPoints": {
@@ -7850,7 +7857,9 @@
   },
   "portfolio": {
     "title": "Home",
-    "today": "Today"
+    "today": "Today",
+    "addAccountCta": "Add crypto account",
+    "noBalanceTitle": "Secure your crypto"
   },
   "marketBanner": {
     "title": "Explore market",
@@ -7873,6 +7882,14 @@
       "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
       "cta": "Got it"
     }
+  },
+  "quickActions": {
+    "send": "Send",
+    "receive": "Receive",
+    "buy": "Buy",
+    "sell": "Sell",
+    "connect": "Connect",
+    "buyALedger": "Buy a Ledger"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

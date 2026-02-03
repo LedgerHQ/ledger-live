@@ -30,7 +30,7 @@ export default {
   },
 };
 
-export const Default: StoryFn<typeof List> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => {
   return (
     <List
       items={[
@@ -61,7 +61,7 @@ const DefaultArgs = {
 Default.args = DefaultArgs;
 
 const Check = <IconsLegacy.CheckAloneMedium size={20} color={"#6EC85C"} />;
-export const Bullets: StoryFn<typeof List> = (args: typeof BulletArgs) => {
+export const Bullets: StoryFn<typeof BulletArgs> = (args: typeof BulletArgs) => {
   return (
     <List
       items={[

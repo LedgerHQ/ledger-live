@@ -12,6 +12,7 @@ import {
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -358,6 +359,7 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -630,6 +632,19 @@ export const DeeplinksProvider = ({
               url.pathname = `/${validatedCurrencyId}`;
               return getStateFromPath(url.href?.split("://")[1], config);
             }
+            if (shouldDisplayMarketBanner) {
+              return {
+                routes: [
+                  {
+                    name: NavigatorName.Base,
+                    state: {
+                      routes: [{ name: ScreenName.MarketList }],
+                    },
+                  },
+                ],
+              };
+            }
+            return getStateFromPath("market", config);
           }
 
           // Handle asset deeplink - validate currencyId before navigation
@@ -761,11 +776,12 @@ export const DeeplinksProvider = ({
     llmAccountListUI?.enabled,
     AccountsListScreenName,
     userAcceptedTerms,
+    onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
+    shouldDisplayMarketBanner,
     liveAppProviderInitialized,
     manifests,
-    onDeeplinkReceived,
   ]);
   const [isReady, setIsReady] = React.useState(false);
 

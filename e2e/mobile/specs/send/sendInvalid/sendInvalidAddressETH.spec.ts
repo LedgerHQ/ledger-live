@@ -13,4 +13,5 @@ runSendInvalidAddressTest(
   "This is not a valid Ethereum address",
   Addresses.BTC_NATIVE_SEGWIT_1,
   ["B2CQA-2709"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 );

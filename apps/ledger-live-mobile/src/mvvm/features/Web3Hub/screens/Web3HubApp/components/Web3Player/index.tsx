@@ -2,11 +2,9 @@ import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useStat
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";
-import { ScopeProvider } from "jotai-scope";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
 import {
@@ -80,35 +78,33 @@ const WebPlatformPlayer = ({
   }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers]);
 
   return (
-    <ScopeProvider atoms={[currentAccountAtom]}>
-      <View style={styles.root}>
-        <Web3AppWebview
-          ref={webviewAPIRef}
-          onScroll={onScroll}
-          manifest={manifest}
-          currentAccountHistDb={currentAccountHistDb}
-          inputs={inputs}
-          onStateChange={setWebviewState}
-          customHandlers={customHandlers}
-        />
-        <BottomBar
-          manifest={manifest}
-          currentAccountHistDb={currentAccountHistDb}
-          webviewAPIRef={webviewAPIRef}
-          webviewState={webviewState}
-          layoutY={layoutY}
-        />
-        <InfoPanel
-          name={manifest.name}
-          icon={manifest.icon}
-          url={manifest.homepageUrl}
-          uri={webviewState.url.toString()}
-          description={manifest.content.description}
-          isOpened={isInfoPanelOpened}
-          setIsOpened={setIsInfoPanelOpened}
-        />
-      </View>
-    </ScopeProvider>
+    <View style={styles.root}>
+      <Web3AppWebview
+        ref={webviewAPIRef}
+        onScroll={onScroll}
+        manifest={manifest}
+        currentAccountHistDb={currentAccountHistDb}
+        inputs={inputs}
+        onStateChange={setWebviewState}
+        customHandlers={customHandlers}
+      />
+      <BottomBar
+        manifest={manifest}
+        currentAccountHistDb={currentAccountHistDb}
+        webviewAPIRef={webviewAPIRef}
+        webviewState={webviewState}
+        layoutY={layoutY}
+      />
+      <InfoPanel
+        name={manifest.name}
+        icon={manifest.icon}
+        url={manifest.homepageUrl}
+        uri={webviewState.url.toString()}
+        description={manifest.content.description}
+        isOpened={isInfoPanelOpened}
+        setIsOpened={setIsInfoPanelOpened}
+      />
+    </View>
   );
 };
 

@@ -3,7 +3,17 @@ import { launchApp } from "../../helpers/commonHelpers";
 import { device } from "detox";
 
 $TmsLink("B2CQA-2996");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
+
+const tags: string[] = [
+  "@NanoSP",
+  "@LNS",
+  "@NanoX",
+  "@Stax",
+  "@Flex",
+  "@NanoGen5",
+  `@bitcoin`,
+  `@family-bitcoin`,
+];
 tags.forEach(tag => $Tag(tag));
 describe.skip("Account name change", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;

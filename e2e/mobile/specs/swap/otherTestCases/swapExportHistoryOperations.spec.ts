@@ -10,7 +10,18 @@ const swapHistoryTestConfig = {
   addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
   addressTo: Addresses.SWAP_HISTORY_ETH_TO,
   tmsLinks: ["B2CQA-604"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@solana",
+    "@family-solana",
+    "@ethereum",
+    "@family-evm",
+  ],
 };
 
 runExportSwapHistoryOperationsTest(
