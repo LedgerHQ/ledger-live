@@ -26,9 +26,9 @@ catalog:
   "@ledgerhq/device-transport-kit-speculos": 1.1.3
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.0.45
-  "@ledgerhq/lumen-ui-react": 0.0.74
-  "@ledgerhq/lumen-ui-rnative": 0.0.61
+  "@ledgerhq/lumen-design-core": 0.0.46
+  "@ledgerhq/lumen-ui-react": 0.0.76
+  "@ledgerhq/lumen-ui-rnative": 0.0.65
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
