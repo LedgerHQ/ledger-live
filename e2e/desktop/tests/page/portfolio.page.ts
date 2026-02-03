@@ -11,6 +11,8 @@ export class PortfolioPage extends AppPage {
   private stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private chart = this.page.getByTestId("chart-container");
   private operationList = this.page.locator("#operation-list");
+  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
+  private embeddedSwapContainerLoader = this.page.getByTestId("embedded-swap-container-loader");
   private assetAllocationTitle = this.page.getByText("Asset allocation");
   private assetRowElements = this.page.locator("[data-testid^='asset-row-']");
   private showAllButton = this.page.getByText("Show all");
@@ -51,14 +53,28 @@ export class PortfolioPage extends AppPage {
     await this.buySellEntryButton.click();
   }
 
-  @step("Check 'Swap' button visibility")
-  async checkSwapButtonVisibility() {
-    await this.checkVisibility(this.swapEntryButton);
+  @step("Check embedded swap webview is loaded")
+  async checkEmbeddedSwapWebviewLoaded() {
+    // Wait for the loader to disappear (if present)
+    await this.embeddedSwapContainerLoader.waitFor({ state: "hidden", timeout: 5000 }).catch(() => {
+      // Loader might not appear if manifest is already cached
+    });
+    // Check that the swap container is visible
+    await expect(this.embeddedSwapContainer).toBeVisible();
   }
 
-  @step("Click on swap button")
-  async clickSwapButton() {
-    await this.swapEntryButton.click();
+  @step("Wait for embedded swap webview to be ready")
+  async waitForEmbeddedSwapWebviewReady() {
+    const appReadyPromise = new Promise<void>(resolve => {
+      this.page.on("console", msg => {
+        if (msg.type() === "info" && msg.text().includes("Swap Live App Loaded")) {
+          resolve();
+        }
+      });
+    });
+
+    await this.checkEmbeddedSwapWebviewLoaded();
+    await appReadyPromise;
   }
 
   @step("Check 'Stake' button visibility")
