@@ -5,5 +5,5 @@ const delegation = new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.
 runDelegateTest(
   delegation,
   ["B2CQA-2741"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@near`, `@family-near`],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke", "@near", "@family-near"],
 );
