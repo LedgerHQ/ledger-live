@@ -47,7 +47,7 @@ export const PortfolioView = memo(function PortfolioView({
             {shouldDisplayQuickActionCtas && (
               <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
             )}
-            {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" />}
+            {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" className="mb-16" />}
             {shouldDisplayMarketBanner && <MarketBanner />}
             {shouldDisplayAddAccountCta && <AddAccount />}
           </div>
