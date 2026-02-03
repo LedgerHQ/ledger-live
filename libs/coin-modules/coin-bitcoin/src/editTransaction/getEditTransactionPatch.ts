@@ -25,10 +25,10 @@ const getSpeedupPatch = async ({
   // Build a baseline RBF replacement intent (min replacement feerate + inputs overlap etc.)
   const nextTx = await buildRbfSpeedUpTx(account, originalTxId);
 
-  // /**
-  //  * Ensure the default fee rate is not only "RBF-minimum", but also not below
-  //  * current network conditions (otherwise the replacement could still be stuck).
-  //  */
+  /**
+   * Ensure the default fee rate is not only "RBF-minimum", but also not below
+   * current network conditions (otherwise the replacement could still be stuck).
+   */
   const fastFeePerByte = getNetworkFastFeePerByte(nextTx);
 
   if (fastFeePerByte === null) {
@@ -49,7 +49,7 @@ const getSpeedupPatch = async ({
   };
 };
 
-// TODO: cancel is not the same as speedup: it must send funds back to self instead of the original recipient.
+// Cancel differs from speedup: it sends funds back to the account's change address instead of the original recipient.
 const getCancelPatch = async ({
   transaction,
   account,

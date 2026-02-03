@@ -1,5 +1,5 @@
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
-import { DerivationModes as WalletDerivationModes } from "./wallet-btc";
+import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -13,7 +13,6 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic } from "./logic";
-import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -79,7 +78,7 @@ export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>)
  * @returns A filtered array of operations with replaced transactions removed.
  *  The original order of operations is preserved.
  */
-export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
+export const removeReplaced = (operations: BtcOperation[], now = Date.now()): BtcOperation[] => {
   // used to track the most recent operation for each input.
   const txByInput = new Map<string, BtcOperation>();
 
@@ -143,7 +142,7 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
       uniqueOperations.has(op.hash) &&
       !(
         (op.blockHeight === null || op.blockHeight === undefined) &&
-        Date.now() > new Date(op.date).getTime() + TWO_WEEKS_MS
+        now > new Date(op.date).getTime() + TWO_WEEKS_MS
       ),
   );
 };

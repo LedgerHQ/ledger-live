@@ -10,13 +10,12 @@ import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
 import Xpub from "./xpub";
 import { IExplorer } from "./explorer/types";
-import { Output } from "./storage/types";
 import BitcoinLikeStorage from "./storage";
 import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
-import { TX, Address } from "./storage/types";
+import { TX, Address, Output } from "./storage/types";
 import { blockchainBaseURL } from "../explorer";
 import { BitcoinSigner, SignerTransaction } from "../signer";
 

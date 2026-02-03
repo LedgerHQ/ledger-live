@@ -1,23 +1,25 @@
-import { Account } from "../wallet-btc";
-import wallet from "../wallet-btc";
+import wallet, { Account } from "../wallet-btc";
 
 /**
- * Check if a BTC transaction is confirmed using txid.
- * If the tx is not found or has no blockHeight, it is unconfirmed.
+ * Best-effort local check for BTC transaction confirmation.
+ *
+ * Returns true **only if** the transaction is known to be confirmed
+ * in the locally-synced account data.
+ *
+ * Returns false if:
+ * - the transaction is unconfirmed
+ * - the transaction is not found locally
+ * - the account data could not be retrieved
+ *
+ * This function does NOT guarantee on-chain confirmation.
  */
 export async function isTransactionConfirmed(account: Account, txId: string): Promise<boolean> {
   try {
     const { txs: transactions } = await wallet.getAccountTransactions(account);
 
     const transaction = transactions.find(tx => tx.hash === txId);
-    if (transaction && transaction.block?.height && transaction.block.height > 0) {
-      return true;
-    }
+    return Boolean(transaction?.block?.height && transaction.block.height > 0);
+  } catch {
     return false;
-  } catch (err: any) {
-    if (err.message.includes("not found")) {
-      return false;
-    }
-    throw err;
   }
 }

@@ -1,13 +1,12 @@
 import * as btc from "bitcoinjs-lib";
+import { BigNumber } from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
 import { bitcoinPickingStrategy, UtxoStrategy } from "./types";
-import { getWalletAccount, Account as WalletAccount } from "./wallet-btc";
+import wallet, { getWalletAccount, Account as WalletAccount } from "./wallet-btc";
 import { Account } from "@ledgerhq/types-live";
 import { fromWalletUtxo } from "./synchronisation";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
-import wallet from "./wallet-btc";
 import type { Transaction as BtcTransaction } from "./types";
-import { BigNumber } from "bignumber.js";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfHelpers";
 
 async function getAmountAndRecipient(
@@ -106,17 +105,8 @@ const getRbfContext = async (account: Account, originalTxId: string): Promise<Rb
   try {
     hexTx = await walletAccount.xpub.explorer.getTxHex(originalTxId);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    // Check if this transaction was recently confirmed or replaced
-    const confirmedTx = account.operations.find(op => op.hash === originalTxId);
-    if (confirmedTx && confirmedTx.blockHeight) {
-      throw new Error(
-        `Transaction ${originalTxId.slice(0, 8)}... has already been confirmed in block ${confirmedTx.blockHeight}. Confirmed transactions cannot be replaced.`,
-      );
-    }
-    throw new Error(
-      `Transaction ${originalTxId.slice(0, 8)}... not found. It may have been replaced by another transaction or is not yet available from the explorer. Please wait a moment and try again.`,
-    );
+  } catch (e) {
+    throw new Error(`Original transaction ${originalTxId} could not be fetched`);
   }
 
   const originalTx = Transaction.fromHex(hexTx);

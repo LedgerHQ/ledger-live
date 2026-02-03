@@ -2,8 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Transaction as BitcoinTransaction, address as bitcoinAddress } from "bitcoinjs-lib";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 import { bitcoinPickingStrategy } from "./types";
-import { getWalletAccount } from "./wallet-btc";
-import wallet from "./wallet-btc";
+import wallet, { getWalletAccount } from "./wallet-btc";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import { getMinReplacementFeeRateSatVb } from "./rbfHelpers";
 
