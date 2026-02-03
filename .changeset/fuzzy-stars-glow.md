@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Fix star button CSS typo causing visual misalignment in account header

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-sui": patch
+"@ledgerhq/coin-sui": minor
 ---
 
 Fix last optimistic transaction replacing previous one

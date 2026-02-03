@@ -1,6 +1,6 @@
 ---
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 Remove legacy React Native BLE transport code
