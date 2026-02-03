@@ -48,7 +48,7 @@ export async function listOperations(
 
   const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
 
-  const blocksByHeight = new Map<number, Awaited<ReturnType<typeof getBlock>>>();
+  const blocksByHeight = new Map<number, Block>();
   blocksByHeight.set(minHeight, block);
 
   const uniqueHeights = Array.from(
