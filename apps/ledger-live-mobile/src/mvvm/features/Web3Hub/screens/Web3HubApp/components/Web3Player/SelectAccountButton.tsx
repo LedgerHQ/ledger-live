@@ -18,7 +18,7 @@ export default function SelectAccountButton({
   manifest,
   currentAccountHistDb,
 }: SelectAccountButtonProps) {
-  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const { currentAccount } = useDappCurrentAccount(manifest.id, currentAccountHistDb);
 
   const currentAccountName = useMaybeAccountName(currentAccount);
 

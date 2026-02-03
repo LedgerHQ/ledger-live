@@ -30,6 +30,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
+import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -258,6 +259,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Swap}
           component={SwapNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.Perps}
+          component={PerpsNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen

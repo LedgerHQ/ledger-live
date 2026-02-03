@@ -55,6 +55,8 @@ const createLocation = (pathname: string) => ({
 });
 
 describe("useQuickActions", () => {
+  const trackingPageName = "test_page";
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseOpenSendFlow.mockReturnValue(mockOpenSendFlow);
@@ -68,7 +70,7 @@ describe("useQuickActions", () => {
 
   describe("actions structure", () => {
     it("should return receive action with ArrowDown icon", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -79,7 +81,7 @@ describe("useQuickActions", () => {
     });
 
     it("should return buy action with Plus icon", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -90,7 +92,7 @@ describe("useQuickActions", () => {
     });
 
     it("should return sell action with Minus icon", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -100,7 +102,7 @@ describe("useQuickActions", () => {
     });
 
     it("should return send action with ArrowUp icon", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -113,7 +115,7 @@ describe("useQuickActions", () => {
 
   describe("sell action disabled state", () => {
     it("should disable sell action when no accounts exist", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [] },
       });
 
@@ -122,7 +124,7 @@ describe("useQuickActions", () => {
     });
 
     it("should disable sell action when all accounts are empty", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createEmptyAccount()] },
       });
 
@@ -131,7 +133,7 @@ describe("useQuickActions", () => {
     });
 
     it("should enable sell action when accounts have funds", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -140,7 +142,7 @@ describe("useQuickActions", () => {
     });
 
     it("should enable sell action when at least one account has funds", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createEmptyAccount(), createAccountWithFunds()] },
       });
 
@@ -151,7 +153,7 @@ describe("useQuickActions", () => {
 
   describe("onReceive action", () => {
     it("should open receive modal when user has accounts", () => {
-      const { result, store } = renderHook(() => useQuickActions(), {
+      const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -165,7 +167,7 @@ describe("useQuickActions", () => {
     });
 
     it("should call openAssetFlow when user has no accounts", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [] },
       });
 
@@ -177,7 +179,7 @@ describe("useQuickActions", () => {
     });
 
     it("should not open receive modal when user has no accounts", () => {
-      const { result, store } = renderHook(() => useQuickActions(), {
+      const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [] },
       });
 
@@ -191,7 +193,7 @@ describe("useQuickActions", () => {
     it("should not navigate when already on accounts page", () => {
       mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -205,7 +207,7 @@ describe("useQuickActions", () => {
     it("should navigate to accounts when on manager page", () => {
       mockUseLocation.mockReturnValue(createLocation("/manager"));
 
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -219,7 +221,7 @@ describe("useQuickActions", () => {
 
   describe("onBuy action", () => {
     it("should navigate to exchange with buy mode", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -235,7 +237,7 @@ describe("useQuickActions", () => {
 
   describe("onSell action", () => {
     it("should navigate to exchange with sell mode", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -251,7 +253,7 @@ describe("useQuickActions", () => {
 
   describe("onSend action", () => {
     it("should open send flow when triggered", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -265,7 +267,7 @@ describe("useQuickActions", () => {
     it("should not navigate when already on accounts page", () => {
       mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -280,7 +282,7 @@ describe("useQuickActions", () => {
     it("should navigate to accounts when on manager page", () => {
       mockUseLocation.mockReturnValue(createLocation("/manager"));
 
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createAccountWithFunds()] },
       });
 
@@ -293,7 +295,7 @@ describe("useQuickActions", () => {
     });
 
     it("should disable send action when no accounts exist", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [] },
       });
 
@@ -302,7 +304,7 @@ describe("useQuickActions", () => {
     });
 
     it("should enable send action when all accounts are empty", () => {
-      const { result } = renderHook(() => useQuickActions(), {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: { accounts: [createEmptyAccount()] },
       });
 

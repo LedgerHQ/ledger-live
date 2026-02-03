@@ -282,11 +282,13 @@
     "advanced" : "ขั้นสูง",
     "custom" : "กำหนดเอง",
     "fast" : "เร็ว",
+    "networkFees" : "ค่าธรรมเนียมเครือข่าย",
     "high" : "สูง",
     "low" : "ต่ำ",
     "slow" : "ช้า",
     "standard" : "มาตรฐาน",
     "medium" : "กลาง",
+    "coinControl" : "Coin Control",
     "feesAmount" : "ค่าธรรมเนียม"
   },
   "sidebar" : {
@@ -1477,34 +1479,6 @@
         "primaryCta" : "เชื่อมต่ออุปกรณ์",
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "แนวโน้ม {{time}}",
-      "buy" : "ซื้อ",
-      "swap" : "สวอป",
-      "gainers" : "สินทรัพย์ที่ปรับตัวขึ้น",
-      "losers" : "สินทรัพย์ที่ปรับตัวลง",
-      "error" : {
-        "title" : "ขออภัย เราไม่สามารถโหลดแนวโน้มได้",
-        "description" : "โปรดลองอีกครั้งในภายหลัง"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "ไม่มีสินทรัพย์ใดในกลุ่ม Top {{count}} ที่ได้กำไรในช่วง {{trend}} ที่ผ่านมา",
-          "description" : "ลองพิจารณา Top Losers ดูหรือกลับมาในภายหลัง"
-        },
-        "losers" : {
-          "title" : "ไม่มีสินทรัพย์ใดในกลุ่ม Top {{count}} ที่ขาดทุนในช่วง {{trend}} ที่ผ่านมา",
-          "description" : "ลองพิจารณา Top Gainers ดูหรือกลับมาในภายหลัง"
-        }
-      },
-      "trend" : {
-        "day" : "24 ชั่วโมง",
-        "week" : "7 วัน",
-        "month" : "30 วัน",
-        "year" : "ปี",
-        "all" : "ปี"
-      }
     }
   },
   "currentAddress" : {
@@ -2389,12 +2363,25 @@
     "amountToSend" : "จำนวนที่จะส่งใน {{currency}}",
     "coinToSend" : "เหรียญที่จะส่ง",
     "coinControlCustom" : "การเลือกเหรียญเฉพาะที่กำหนดเอง",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "สูงสุด"
+    },
+    "reviewCta" : "ตรวจสอบ",
+    "getCta" : "รับ {{currency}}",
+    "switchInputMode" : "สลับโหมดป้อนจำนวน",
     "aboveMaximum" : "เกินยอดคงเหลือสูงสุด",
     "transactionSigned" : "ลงนามธุรกรรมสำเร็จแล้ว",
     "processingTransaction" : "กำลังประมวลผลธุรกรรมของคุณ",
     "sign" : {
       "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
       "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่าย",
+      "warningDescription" : "การตั้งค่าค่าธรรมเนียมล่วงหน้าอาจตกรุ่น"
     }
   },
   "releaseNotes" : {
@@ -4447,9 +4434,7 @@
       "walletSyncDescription" : "พอร์ตของคุณจะอัปเดตเสมอ ไม่ว่าจะดูบนคอมหรือมือถือ",
       "mevProtection" : "MEV Protection",
       "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
-      "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว",
-      "marketPerformanceWidget" : "วิดเจ็ตประสิทธิภาพของตลาด",
-      "marketPerformanceWidgetDesc" : "เปิดใช้งานคุณสมบัตินี้เพื่อดู Top Gainers และ Losers ในกรอบเวลาที่เลือกในหน้าพอร์ตโฟลิโอ"
+      "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว"
     },
     "developer" : {
       "search" : "ค้นหา",
@@ -4578,6 +4563,15 @@
         "openDrawer" : "เปิดลิ้นชัก",
         "debugDialog" : "กล่องข้อความจากการ Debug",
         "debugDuplicates" : "สำเนาของการ Debug"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "เครื่องมือพัฒนาฟีเจอร์วอลเล็ต",
+        "description" : "เปิด/ปิดฟีเจอร์วอลเล็ต 4.0 สำหรับเดสก์ท็อป (แฟล็กฟีเจอร์ lwdWallet40)",
+        "enableAll" : "เปิดใช้งานทั้งหมด",
+        "disableAll" : "ปิดใช้งานทั้งหมด",
+        "featureParameters" : "พารามิเตอร์ฟีเจอร์",
+        "showJson" : "แสดง JSON",
+        "hideJson" : "ซ่อน JSON"
       },
       "cryptoAssetsList" : {
         "title" : "รายการสินทรัพย์คริปโต",
@@ -7546,6 +7540,9 @@
       "analyticsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อวัดประสิทธิภาพของแอป Ledger Wallet และปรับปรุงการใช้งานแอปและประสบการณ์ของคุณ"
     }
   },
+  "analytics" : {
+    "title" : "การวิเคราะห์"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "ปิด",
@@ -7825,10 +7822,31 @@
       "cta" : "ลองอีกครั้ง"
     }
   },
+  "portfolio" : {
+    "title" : "หน้าหลัก",
+    "today" : "วันนี้"
+  },
   "marketBanner" : {
     "title" : "สำรวจตลาด",
     "genericError" : "การเชื่อมต่อล้มเหลว",
-    "cta" : "ดูทั้งหมด"
+    "cta" : "ดูทั้งหมด",
+    "fearAndGreed" : {
+      "title" : "อารมณ์"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "กลัวขั้นสุด",
+      "fear" : "กลัว",
+      "neutral" : "ปกติ",
+      "greed" : "โลภ",
+      "extremeGreed" : "โลภขั้นสุด"
+    },
+    "dialog" : {
+      "title" : "ดัชนีวัดอารมณ์",
+      "content" : "ดัชนีวัดอารมณ์บ่งชี้ถึงสภาวะทางอารมณ์ของตลาด โดยมีช่วงตั้งแต่ 0 ถึง 100 โดยมูลค่าที่ต่ำกว่าแสดงถึงความกลัวขั้นสุด และมูลค่าที่สูงกว่าแสดงถึงความโลภขั้นสุด",
+      "cta" : "เข้าใจแล้ว"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",

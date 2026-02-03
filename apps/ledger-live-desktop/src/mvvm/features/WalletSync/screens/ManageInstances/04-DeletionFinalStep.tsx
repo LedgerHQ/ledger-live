@@ -1,5 +1,5 @@
 import React from "react";
-import { Success } from "../../components/Success";
+import { GenericStatusDisplay } from "../../components/GenericStatusDisplay";
 import { useTranslation } from "react-i18next";
 import { FinalStepProps } from "./04-DeletionFinalErrorStep";
 import {
@@ -26,13 +26,14 @@ export default function DeletionFinalStep({ instance }: FinalStepProps) {
     });
   };
   return (
-    <Success
+    <GenericStatusDisplay
       title={t(title, {
         instanceName: instance?.name,
       })}
       analyticsPage={AnalyticsPage.InstanceRemovalSuccess}
       withClose
       onClose={onClose}
+      type="success"
     />
   );
 }

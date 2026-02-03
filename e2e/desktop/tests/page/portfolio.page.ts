@@ -1,6 +1,8 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { expect } from "@playwright/test";
+import { expect, Locator } from "@playwright/test";
+
+type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
 export class PortfolioPage extends AppPage {
   private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
@@ -24,6 +26,14 @@ export class PortfolioPage extends AppPage {
   private portfolioBalance = this.page.getByTestId("portfolio-balance");
   private portfolioTotalBalance = this.page.getByTestId("portfolio-total-balance");
   private portfolioTrend = this.page.getByTestId("portfolio-trend");
+  private noBalanceTitle = this.page.getByTestId("no-balance-title");
+  private quickActionButton = (action: QuickActionButton) =>
+    this.page.getByTestId(`quick-action-button-${action}`);
+  private portfolioAddAccountButton = this.page.getByTestId("portfolio-add-account-button");
+
+  private async checkVisibility(locator: Locator) {
+    await expect(locator).toBeVisible();
+  }
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
@@ -32,7 +42,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Check 'Buy/Sell' button visibility")
   async checkBuySellButtonVisibility() {
-    await expect(this.buySellEntryButton).toBeVisible();
+    await this.checkVisibility(this.buySellEntryButton);
   }
 
   @step("Click on 'Buy/Sell' button")
@@ -43,7 +53,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Check 'Swap' button visibility")
   async checkSwapButtonVisibility() {
-    await expect(this.swapEntryButton).toBeVisible();
+    await this.checkVisibility(this.swapEntryButton);
   }
 
   @step("Click on swap button")
@@ -53,19 +63,19 @@ export class PortfolioPage extends AppPage {
 
   @step("Check 'Stake' button visibility")
   async checkStakeButtonVisibility() {
-    await expect(this.stakeEntryButton).toBeVisible();
+    await this.checkVisibility(this.stakeEntryButton);
   }
 
   @step("Check chart visibility")
   async checkChartVisibility() {
-    await expect(this.chart).toBeVisible();
+    await this.checkVisibility(this.chart);
   }
 
   @step("Check asset allocation section")
   async checkAssetAllocationSection() {
-    await expect(this.assetAllocationTitle).toBeVisible();
+    await this.checkVisibility(this.assetAllocationTitle);
     await expect(this.assetRowElements).toHaveCount(6);
-    await expect(this.showAllButton).toBeVisible();
+    await this.checkVisibility(this.showAllButton);
     await this.showAllButton.click();
     // Wait for the number of asset row elements to increase after clicking on show more button
     await this.page.waitForFunction(() => {
@@ -100,7 +110,7 @@ export class PortfolioPage extends AppPage {
   @step("check operation history")
   async checkOperationHistory() {
     await this.operationList.scrollIntoViewIfNeeded();
-    await expect(this.operationList).toBeVisible();
+    await this.checkVisibility(this.operationList);
 
     const numberOfOperationsBefore = await this.operationRows.count();
 
@@ -113,7 +123,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect total balance to be visible")
   async expectTotalBalanceToBeVisible() {
-    await expect(this.totalBalance).toBeVisible();
+    await this.checkVisibility(this.totalBalance);
   }
 
   @step("Expect total balance to have the correct counter value $0")
@@ -124,7 +134,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect balance diff to be visible")
   async expectBalanceDiffToBeVisible() {
-    await expect(this.balanceDiff).toBeVisible();
+    await this.checkVisibility(this.balanceDiff);
   }
 
   @step("Expect balance diff to have the correct counter value $0")
@@ -165,22 +175,78 @@ export class PortfolioPage extends AppPage {
   // Wallet 4.0 methods
   @step("Check portfolio total balance visibility")
   async checkPortfolioTotalBalanceVisibility() {
-    await expect(this.portfolioTotalBalance).toBeVisible();
+    await this.checkVisibility(this.portfolioTotalBalance);
   }
 
   @step("Check one-day performance indicator visibility")
   async checkOneDayPerformanceIndicatorVisibility() {
-    await expect(this.portfolioTrend).toBeVisible();
+    await this.checkVisibility(this.portfolioTrend);
   }
 
   @step("Click on performance pill to navigate to analytics")
   async clickOnPerformancePill() {
-    await expect(this.portfolioTrend).toBeVisible();
+    await this.checkVisibility(this.portfolioTrend);
     await this.portfolioTrend.click();
   }
 
   @step("Expect portfolio screen to be visible")
   async expectPortfolioScreenToBeVisible() {
-    await expect(this.portfolioBalance).toBeVisible();
+    await this.checkVisibility(this.portfolioBalance);
+  }
+
+  // Zero balance / No funds methods
+  @step("Check no balance title is visible")
+  async checkNoBalanceTitleVisibility() {
+    await this.checkVisibility(this.noBalanceTitle);
+  }
+
+  @step("Expect portfolio total balance to not be visible")
+  async expectPortfolioTotalBalanceNotVisible() {
+    await expect(this.portfolioTotalBalance).not.toBeVisible();
+  }
+
+  @step("Expect one-day performance indicator to not be visible")
+  async expectOneDayPerformanceIndicatorNotVisible() {
+    await expect(this.portfolioTrend).not.toBeVisible();
+  }
+
+  @step("Check receive button is visible")
+  async checkReceiveButtonVisibility() {
+    await this.checkVisibility(this.quickActionButton("receive"));
+  }
+
+  @step("Check buy button is visible")
+  async checkBuyButtonVisibility() {
+    await this.checkVisibility(this.quickActionButton("buy"));
+  }
+
+  @step("Check sell button is disabled")
+  async checkSellButtonDisabled() {
+    await expect(this.quickActionButton("sell")).toBeDisabled();
+  }
+
+  @step("Check send button is disabled")
+  async checkSendButtonDisabled() {
+    await expect(this.quickActionButton("send")).toBeDisabled();
+  }
+
+  @step("Check sell button is enabled")
+  async checkSellButtonEnabled() {
+    await expect(this.quickActionButton("sell")).toBeEnabled();
+  }
+
+  @step("Check send button is enabled")
+  async checkSendButtonEnabled() {
+    await expect(this.quickActionButton("send")).toBeEnabled();
+  }
+
+  @step("Check add account button visibility")
+  async checkAddAccountButtonVisibility() {
+    await this.checkVisibility(this.portfolioAddAccountButton);
+  }
+
+  @step("Click add account button")
+  async clickAddAccountButton() {
+    await this.portfolioAddAccountButton.click();
   }
 }

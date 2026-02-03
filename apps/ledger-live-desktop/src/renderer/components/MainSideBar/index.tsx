@@ -257,8 +257,9 @@ const MainSideBar = () => {
   } = useWalletFeaturesConfig("desktop");
 
   /**
-   * Auto-collapse/expand sidebar when wallet40 is enabled based on window width.
+   * Auto-collapse sidebar when wallet40 is enabled and window width becomes narrow.
    * Uses the same threshold as the AssetDistribution responsive layout.
+   * Note: Does not auto-expand when window becomes wider; user must manually reopen.
    */
   const wasNarrowRef = useRef<boolean | null>(null);
 
@@ -270,7 +271,9 @@ const MainSideBar = () => {
 
       if (wasNarrowRef.current !== isNarrow) {
         wasNarrowRef.current = isNarrow;
-        dispatch(setSidebarCollapsed(isNarrow));
+        if (isNarrow) {
+          dispatch(setSidebarCollapsed(true));
+        }
       }
     };
 
@@ -338,6 +341,10 @@ const MainSideBar = () => {
   const handleClickSwap = useCallback(() => {
     push("/swap");
     trackEntry("swap");
+  }, [push, trackEntry]);
+  const handleClickPerps = useCallback(() => {
+    push("/perps");
+    trackEntry("perps");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
@@ -493,6 +500,18 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
+                <FeatureToggle featureId="ptxPerpsLiveApp">
+                  <SideBarListItem
+                    id={"perps"}
+                    label={t("sidebar.perps")}
+                    icon={Icons.GraphAsc}
+                    iconActiveColor="wallet"
+                    onClick={handleClickPerps}
+                    isActive={location.pathname.startsWith("/perps")}
+                    disabled={noAccounts}
+                    collapsed={secondAnim}
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"earn"}
                   label={earnLabel}

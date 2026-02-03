@@ -186,7 +186,7 @@ const convertToCoreOperation =
       type: type,
       value,
       senders: [Account],
-      recipients: [Destination],
+      recipients: Destination ? [Destination] : [],
     };
 
     if (Object.keys(details).length !== 0) {

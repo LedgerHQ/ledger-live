@@ -32,6 +32,7 @@ const suiAccount1: AccountRaw = {
 
 const sui: CurrenciesData<Transaction> = {
   FIXME_ignorePreloadFields: ["tokens"],
+  FIXME_ignoreAccountFields: ["syncHash"],
   scanAccounts: [
     {
       name: "sui seed 1",

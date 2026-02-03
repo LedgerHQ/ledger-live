@@ -475,6 +475,20 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxPerpsLiveApp: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
+  ptxPerpsLiveAppMobile: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {
@@ -771,6 +785,7 @@ export const DEFAULT_FEATURES: Features = {
       graphRework: true,
       quickActionCtas: true,
       tour: true,
+      mainNavigation: true,
     },
   },
   lwdWallet40: {
@@ -779,6 +794,8 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      mainNavigation: true,
+      newReceiveDialog: true,
     },
   },
 };

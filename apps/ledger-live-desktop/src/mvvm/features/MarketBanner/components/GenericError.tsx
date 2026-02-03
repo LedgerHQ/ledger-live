@@ -1,18 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Tile, TileSpot, TileContent, TileTitle } from "@ledgerhq/lumen-ui-react";
+import { Spot } from "@ledgerhq/lumen-ui-react";
 import { Warning } from "@ledgerhq/lumen-ui-react/symbols";
 
 const GenericError = () => {
   const { t } = useTranslation();
 
   return (
-    <Tile data-testid="generic-error">
-      <TileSpot appearance="icon" icon={Warning} />
-      <TileContent>
-        <TileTitle>{t("marketBanner.genericError")}</TileTitle>
-      </TileContent>
-    </Tile>
+    <div className="flex flex-col items-center justify-center gap-8" data-testid="generic-error">
+      <Spot appearance="icon" icon={Warning} />
+      <span className="body-2-semi-bold text-base">{t("marketBanner.genericError")}</span>
+    </div>
   );
 };
 
