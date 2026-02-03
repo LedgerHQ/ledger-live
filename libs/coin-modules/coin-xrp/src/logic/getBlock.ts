@@ -104,8 +104,9 @@ function mapBlockInfo(result: LedgerTxResponse): BlockInfo {
 }
 
 export async function getBlock(index: number): Promise<Block> {
+  const epoch = new Date(0);
   if (index <= 0) {
-    return { info: { height: index }, transactions: [] };
+    return { info: { height: index, hash: "", time: epoch }, transactions: [] };
   }
 
   const result = await getLedgerByIndex(index);

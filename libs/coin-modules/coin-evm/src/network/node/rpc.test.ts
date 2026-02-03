@@ -664,6 +664,7 @@ describe("EVM Family", () => {
         // thetestsuite) is rounded to the second
         timestamp: Math.floor(Date.now() / 1000) * 1000,
         height: 1,
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
       });
     });
   });

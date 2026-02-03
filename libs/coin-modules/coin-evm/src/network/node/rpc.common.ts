@@ -300,13 +300,22 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
   withApi(currency, async api => {
     const block = await api.getBlock(blockHeight);
 
-    const transactionHashes = block?.transactions as string[] | undefined;
+    if (!block) {
+      throw new Error(`Block ${blockHeight} not found`);
+    }
+
+    if (!block.hash) {
+      throw new Error(`Block ${blockHeight} is missing hash`);
+    }
+
+    const transactionHashes = block.transactions as string[] | undefined;
 
     return {
-      hash: block?.hash || "",
-      height: block?.number ?? 0,
+      hash: block.hash,
+      height: block.number ?? 0,
       // timestamp is returned in seconds by getBlock, we need milliseconds
-      timestamp: (block?.timestamp ?? 0) * 1000,
+      timestamp: block.timestamp * 1000,
+      parentHash: block.parentHash,
       ...(transactionHashes !== undefined && { transactionHashes }),
     };
   });
