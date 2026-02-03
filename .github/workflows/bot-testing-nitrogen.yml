@@ -17,10 +17,8 @@ on:
         type: boolean
         required: false
         default: false
-
 concurrency:
   group: bot-seed7
-
 jobs:
   run-bot:
     runs-on: [ledger-live-4xlarge]

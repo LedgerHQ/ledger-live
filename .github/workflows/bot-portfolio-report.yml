@@ -17,11 +17,9 @@ on:
       - support/bots-portfolio-*
   schedule:
     - cron: "30 5 * * *"
-
 permissions:
   id-token: write
   contents: read
-
 jobs:
   portfolio:
     runs-on: [ledger-live-medium]
@@ -81,7 +79,6 @@ jobs:
           cd libs/ledger-live-common
           node lib/bot/portfolio/process-main.js
         shell: bash
-
       - name: upload reports
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:

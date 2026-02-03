@@ -14,10 +14,8 @@ on:
         type: boolean
         required: false
         default: false
-
 concurrency:
   group: bot-seed6
-
 jobs:
   run-bot:
     runs-on: [ledger-live-medium]
