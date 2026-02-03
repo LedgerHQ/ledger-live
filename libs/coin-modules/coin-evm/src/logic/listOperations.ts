@@ -105,6 +105,10 @@ export async function listOperations(
   pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
+  // pagination introduced the limit and order parameters that are effectively used to query the explorer
+  // before that change, the explorer was always queried in descending order
+  // to mimic the previous behavior while honoring explicit user input, we default to "desc" only when no order is provided
+  const explorerOrder = pagination.order ?? "desc";
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -119,7 +123,7 @@ export async function listOperations(
     undefined,
     pagination.pagingToken,
     pagination.limit,
-    pagination.order,
+    explorerOrder,
   );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
