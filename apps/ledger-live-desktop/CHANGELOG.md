@@ -153,6 +153,18 @@
   - @ledgerhq/live-dmk-speculos@0.5.2-next.0
   - @ledgerhq/live-network@2.2.2-next.0
 
+## 2.139.1
+
+### Patch Changes
+
+- [#14195](https://github.com/LedgerHQ/ledger-live/pull/14195) [`c4d10fa`](https://github.com/LedgerHQ/ledger-live/commit/c4d10face354afb721fd156f3241dd15057d97b4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Allow ledgerlive: and ledgerwallet: in urlSafety for portfolio content cards deeplinks
+
+## 2.139.1-hotfix.0
+
+### Patch Changes
+
+- [#14195](https://github.com/LedgerHQ/ledger-live/pull/14195) [`c4d10fa`](https://github.com/LedgerHQ/ledger-live/commit/c4d10face354afb721fd156f3241dd15057d97b4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Allow ledgerlive: and ledgerwallet: in urlSafety for portfolio content cards deeplinks
+
 ## 2.139.0
 
 ### Minor Changes

@@ -13,6 +13,18 @@ describe("isUrlSafe", () => {
       expect(isUrlSafe("https://ledger.com/support")).toBe(true);
       expect(isUrlSafe("https://api.example.com/v1/data?query=test")).toBe(true);
     });
+
+    it("should return true for ledgerlive: URLs", () => {
+      expect(isUrlSafe("ledgerlive://")).toBe(true);
+      expect(isUrlSafe("ledgerlive://some-path")).toBe(true);
+      expect(isUrlSafe("ledgerlive://request?params=value")).toBe(true);
+    });
+
+    it("should return true for ledgerwallet: URLs", () => {
+      expect(isUrlSafe("ledgerwallet://")).toBe(true);
+      expect(isUrlSafe("ledgerwallet://some-path")).toBe(true);
+      expect(isUrlSafe("ledgerwallet://request?params=value")).toBe(true);
+    });
   });
 
   describe("blocked protocols (RCE prevention)", () => {

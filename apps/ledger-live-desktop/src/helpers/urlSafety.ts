@@ -1,7 +1,7 @@
-const ALLOWED_PROTOCOLS = ["http:", "https:"];
+const ALLOWED_PROTOCOLS = ["http:", "https:", "ledgerlive:", "ledgerwallet:"];
 
 /**
- * Validates that a URL uses a safe protocol (http or https only).
+ * Validates that a URL uses a safe protocol (http or https only) or LW deeplink protocols.
  * This prevents RCE attacks via dangerous protocols like file://, smb://, etc.
  * @see https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-openexternal-with-untrusted-content
  */
