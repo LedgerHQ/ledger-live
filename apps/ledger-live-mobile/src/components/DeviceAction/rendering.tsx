@@ -266,7 +266,7 @@ export function renderConfirmSwap({
       </Wrapper>
       <TermsFooter
         provider={provider}
-        sponsored={transaction.family === "evm" && transaction?.sponsored}
+        sponsored={transaction.family === "evm" && transaction.sponsored}
       />
       <ModalLock />
     </ScrollView>
