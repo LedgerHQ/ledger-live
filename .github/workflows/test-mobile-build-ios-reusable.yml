@@ -242,9 +242,14 @@ jobs:
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p ios --bundle
 
+      - name: Build minified JS Bundle for size analysis
+        run: pnpm mobile e2e:ci -p ios --bundle-size
+
       - name: Output bundle size for analysis
         id: output-js-bundle-size
-        run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
+        run: |
+          # Report the minified bundle size for comparison with other branches
+          echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
