@@ -4,7 +4,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 import * as gateway from "../network/gateway";
 import * as signTransactionModule from "../common-logic/transaction/sign";
-import { createMockAccount } from "../test/fixtures";
+import { createMockCantonAccount } from "../test/fixtures";
 import type { CantonSigner, CantonSignature } from "../types";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
 
@@ -94,7 +94,7 @@ describe("onboard", () => {
 
     it("should skip submission when account is onboarded on network but has no local xpub", async () => {
       // GIVEN
-      const account = createMockAccount({ xpub: undefined });
+      const account = createMockCantonAccount({ xpub: undefined });
       mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: mockPartyId });
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
@@ -117,7 +117,7 @@ describe("onboard", () => {
     it("should proceed with submission when account has xpub (re-onboarding scenario)", async () => {
       // GIVEN - account already has xpub (re-onboarding)
       const existingPartyId = "existing-party-id";
-      const account = createMockAccount({ xpub: existingPartyId });
+      const account = createMockCantonAccount({ xpub: existingPartyId });
       const newPartyId = "new-party-id";
 
       mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: existingPartyId });

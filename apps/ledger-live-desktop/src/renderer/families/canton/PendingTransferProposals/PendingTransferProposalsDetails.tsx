@@ -63,6 +63,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
       ...found,
       isExpired,
       amount: new BigNumber(found.amount),
+      memo: found.memo ?? "",
     };
   }, [cantonAccount, contractId]);
 

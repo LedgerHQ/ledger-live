@@ -127,8 +127,9 @@ const createMockOperationView = (
       hash: "blockhash1",
     },
     asset: {
+      type: "native",
       instrumentId: overrides.instrumentId ?? "Amulet",
-      instrumentAdmin: overrides.instrumentAdmin ?? null,
+      instrumentAdmin: overrides.instrumentAdmin ?? "AmuletAdmin",
     },
     details: {
       operationType: overrides.operationType ?? "transfer",

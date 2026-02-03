@@ -9,7 +9,7 @@ import { Transaction } from "../types";
 import { craftTransaction } from "../common-logic";
 import prepareTransferMock from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
-import { createMockAccount } from "../test/fixtures";
+import { createMockCantonAccount } from "../test/fixtures";
 
 jest.mock("../common-logic", () => {
   const actual = jest.requireActual("../common-logic");
@@ -61,7 +61,7 @@ describe("buildSignOperation", () => {
     mockCraftTransaction.mockReset();
   });
 
-  const mockAccount = createMockAccount({
+  const mockAccount = createMockCantonAccount({
     id: "js:2:canton_network:test-party-id:",
     freshAddress: "test-address",
     freshAddressPath: mockDerivationPath,

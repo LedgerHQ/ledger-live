@@ -3,7 +3,6 @@
     "src/api/index.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
-    "src/datasets/dataset-1.ts",
     "src/signer/index.ts",
     "src/test/index.ts",
     "src/index.ts"
@@ -26,12 +25,11 @@
     "src/network/gateway.ts",
     "src/network/indexer.ts",
     "src/network/mock-network.ts",
+    "src/network/types.ts",
     "src/test/bot-specs.ts",
     "src/test/cantonTestUtils.ts",
     "src/test/fixtures.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/devices"
-  ]
+  "ignoreUnused": ["@ledgerhq/devices", "protobufjs"]
 }

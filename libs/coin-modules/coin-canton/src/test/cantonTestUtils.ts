@@ -8,9 +8,12 @@
  * The mock signer implements canonical hash algorithm used by the Canton app.
  */
 
+// TODO: This import will be available after PR #2 is merged
+// import * as transactionProto from "@ledgerhq/hw-app-canton/lib/types/transaction-proto.json";
 import crypto from "crypto";
 import * as protobuf from "protobufjs";
 import { CantonPreparedTransaction, CantonUntypedVersionedMessage } from "../types/signer";
+// Temporary fallback - will be removed after PR #2
 import * as transactionProto from "../types/transaction-proto.json";
 
 const root: { [key: string]: any } = protobuf.Root.fromJSON(transactionProto) || {};

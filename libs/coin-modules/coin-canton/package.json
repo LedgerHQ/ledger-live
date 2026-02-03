@@ -126,7 +126,6 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "generate-proto": "node scripts/generate.js",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
