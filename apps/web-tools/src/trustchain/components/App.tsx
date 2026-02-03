@@ -328,6 +328,8 @@ const App = () => {
   );
 };
 
-const AppAccountsSync = React.lazy(() => import("./AppAccountsSync"));
+const AppAccountsSync = React.lazy(
+  () => import("./AppAccountsSync.js") as unknown as Promise<{ default: React.ComponentType<any> }>,
+);
 
 export default App;

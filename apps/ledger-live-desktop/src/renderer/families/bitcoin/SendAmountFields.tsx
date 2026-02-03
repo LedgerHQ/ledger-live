@@ -119,12 +119,12 @@ const Fields: Props = ({
               <Box grow />
               <Box horizontal alignItems="center">
                 {canNext ? (
-                  <Button secondary onClick={onCoinControlOpen} disabled={!canNext}>
+                  <Button onClick={onCoinControlOpen} disabled={!canNext}>
                     {t("bitcoin.coincontrol")}
                   </Button>
                 ) : (
                   <Tooltip content={t("bitcoin.ctaDisabled")}>
-                    <Button secondary onClick={onCoinControlOpen} disabled={!canNext}>
+                    <Button onClick={onCoinControlOpen} disabled={!canNext}>
                       {t("bitcoin.coincontrol")}
                     </Button>
                   </Tooltip>

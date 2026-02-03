@@ -80,19 +80,7 @@ const useDynamicContent = () => {
   const trackContentCardEvent = useCallback(
     (
       event: "contentcard_clicked" | "contentcard_dismissed",
-      params: {
-        campaign?: string;
-        screen?: string;
-        page?: string;
-        link?: string;
-        contentcard?: string;
-        type?: string;
-        layout?: string;
-        location?: string;
-        landingPage?: string;
-        displayedPosition?: number;
-        campaignName?: string;
-      },
+      params: Record<string, string | number | undefined>,
     ) => {
       track(event, params);
     },

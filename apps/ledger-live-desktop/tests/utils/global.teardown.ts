@@ -8,8 +8,16 @@ const environmentFilePath = "allure-results/environment.properties";
 
 export default async function globalTeardown() {
   if (process.env.CI) {
+    // Hardcode specific feature flags for teardown
+    const hardcodedFeatureFlags = {
+      welcomeScreenVideoCarousel: { enabled: false },
+      noah: { enabled: false },
+    };
+
     const electronApp: ElectronApplication = await launchApp({
-      env: Object.assign(process.env),
+      env: Object.assign({}, process.env as Record<string, string>, {
+        FEATURE_FLAGS: JSON.stringify(hardcodedFeatureFlags),
+      }),
       lang: "en-US",
       theme: "dark",
       userdataDestinationPath: "",

@@ -127,10 +127,13 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
 
       - uses: actions/checkout@v4
         with:
@@ -197,6 +200,7 @@ jobs:
           DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
           BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
           TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
+          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
 
           if [ -z "$FILTER_PATTERN" ]; then
             FILTER_PATTERN="(none)"
@@ -211,6 +215,7 @@ jobs:
             echo "- **Filtered pattern:** $FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
+            echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           } >> $GITHUB_STEP_SUMMARY
           
       - name: Run Playwright Tests

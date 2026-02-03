@@ -34,8 +34,14 @@ const rspackMetafile: RspackMetafile = {
     { identifier: "/project/node_modules/.pnpm/bn.js@4.12.0/node_modules/bn.js/lib/bn.js" },
     { identifier: "/project/node_modules/.pnpm/bn.js@5.2.1/node_modules/bn.js/lib/bn.js" },
     // Scoped package with two versions (pnpm uses + for /)
-    { identifier: "/project/node_modules/.pnpm/@noble+hashes@1.3.0/node_modules/@noble/hashes/sha256.js" },
-    { identifier: "/project/node_modules/.pnpm/@noble+hashes@1.4.0/node_modules/@noble/hashes/sha256.js" },
+    {
+      identifier:
+        "/project/node_modules/.pnpm/@noble+hashes@1.3.0/node_modules/@noble/hashes/sha256.js",
+    },
+    {
+      identifier:
+        "/project/node_modules/.pnpm/@noble+hashes@1.4.0/node_modules/@noble/hashes/sha256.js",
+    },
     // Local file (should be ignored)
     { name: "./src/index.ts" },
   ],
@@ -184,10 +190,7 @@ test("extractDuplicates finds duplicates in rspack metafile", () => {
 import fs from "fs";
 import path from "path";
 
-const lldMetafilesPath = path.resolve(
-  __dirname,
-  "../../../../apps/ledger-live-desktop",
-);
+const lldMetafilesPath = path.resolve(__dirname, "../../../../apps/ledger-live-desktop");
 
 if (fs.existsSync(lldMetafilesPath)) {
   console.log("\n📂 Testing with real LLD metafiles...\n");
@@ -242,4 +245,3 @@ console.log(`\n📊 Results: ${passed} passed, ${failed} failed\n`);
 if (failed > 0) {
   process.exit(1);
 }
-

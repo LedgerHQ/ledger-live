@@ -116,7 +116,7 @@ export function StepValidatorsFooter({
 
   return (
     <Box horizontal justifyContent="flex-end" flow={2} grow>
-      <Button mr={1} secondary onClick={onClose}>
+      <Button mr={1} onClick={onClose}>
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button

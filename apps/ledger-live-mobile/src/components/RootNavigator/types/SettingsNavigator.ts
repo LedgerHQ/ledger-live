@@ -47,12 +47,6 @@ export type SettingsNavigatorStackParamList = {
     deviceId: string;
   };
   [ScreenName.DebugSwap]: undefined;
-  [ScreenName.DebugBLE]: {
-    deviceId: string;
-  };
-  [ScreenName.DebugBLEBenchmark]: {
-    deviceId: string;
-  };
   [ScreenName.DebugBLEDevicePairing]: {
     areKnownDevicesDisplayed: boolean;
     onSuccessAddToKnownDevices: boolean;
@@ -65,6 +59,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
   [ScreenName.DebugLumen]: undefined;
+  [ScreenName.DebugWallet40]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
   [ScreenName.DebugStorageMigration]: undefined;

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -27,7 +27,6 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
-import MarketBanner from "LLD/features/MarketBanner";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
 
@@ -70,15 +69,12 @@ export default function DashboardPage() {
     useDisplayOnPortfolioAnalytics();
 
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
-  const lwdWallet40FF = useFeature("lwdWallet40");
-  const shouldDisplayMarketBanner =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner) ?? false;
-  const shouldDisplayBalanceRework =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.graphRework) ?? false;
+  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
+    useWalletFeaturesConfig("desktop");
 
   return (
     <>
-      {lwdWallet40FF?.enabled && shouldDisplayBalanceRework && shouldDisplayMarketBanner ? (
+      {isWallet40Enabled ? (
         <Portfolio />
       ) : (
         <>
@@ -92,8 +88,7 @@ export default function DashboardPage() {
             hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
           />
           <Flex flexDirection="column" rowGap={32}>
-            {shouldDisplayMarketBanner ? <MarketBanner /> : null}
-            {shouldDisplayMarketBanner && <MarketBannerFeature />}
+            {shouldDisplayMarketBanner && __DEV__ && <MarketBannerFeature />}
             <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
               {!hasInstalledApps ? (
                 <EmptyStateInstalledApps />

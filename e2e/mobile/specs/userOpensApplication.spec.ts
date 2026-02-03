@@ -9,14 +9,11 @@ describe("User opens application", () => {
   test("Verify that user can open application", async () => {
     await app.onboarding.waitForOnboardingToLoad();
     await app.onboarding.expectGetStartedButtonToBeVisible();
-    await app.onboarding.expectCurrentSelectedLanguageToBe("EN");
-    await app.onboarding.selectLanguage("FR");
-    await app.onboarding.expectCurrentSelectedLanguageToBe("FR");
-    await app.onboarding.selectLanguage("EN");
-
+    await app.onboarding.expectProgressBarToBeVisible();
     await app.onboarding.tapOnGetStartedButton();
 
     await app.onboarding.selectStartingOption("setupLedger");
+
     await app.onboarding.checkDeviceCards();
   });
 });

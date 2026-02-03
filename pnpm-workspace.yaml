@@ -16,19 +16,19 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 1.11.1
+  "@ledgerhq/context-module": 1.13.0
   "@ledgerhq/crypto-icons": "1.4.0"
-  "@ledgerhq/device-management-kit": 0.13.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.9.4
-  "@ledgerhq/device-signer-kit-solana": 1.5.1
-  "@ledgerhq/device-transport-kit-react-native-ble": 1.3.1
-  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.2
-  "@ledgerhq/device-transport-kit-speculos": 1.1.2
-  "@ledgerhq/device-transport-kit-web-hid": 1.2.2
-  "@ledgerhq/lumen-design-core": 0.0.43
-  "@ledgerhq/lumen-ui-react": 0.0.67
-  "@ledgerhq/lumen-ui-rnative": 0.0.54
-  "@ledgerhq/speculos-device-controller": 0.2.1
+  "@ledgerhq/device-management-kit": 1.0.1
+  "@ledgerhq/device-signer-kit-ethereum": 1.10.0
+  "@ledgerhq/device-signer-kit-solana": 1.6.1
+  "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
+  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
+  "@ledgerhq/device-transport-kit-speculos": 1.1.3
+  "@ledgerhq/device-transport-kit-web-hid": 1.2.3
+  "@ledgerhq/speculos-device-controller": 0.2.3
+  "@ledgerhq/lumen-design-core": 0.0.44
+  "@ledgerhq/lumen-ui-react": 0.0.73
+  "@ledgerhq/lumen-ui-rnative": 0.0.60
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
@@ -54,13 +54,44 @@ catalog:
   expo-keep-awake: 14.1.4
   expo-modules-autolinking: 2.1.14
   expo-modules-core: 2.5.0
-
   "@jest/reporters": 30.2.0
   "@reduxjs/toolkit": 2.11.2
-  "@rspack/cli": 1.7.1
-  "@rspack/core": 1.7.1
+  "@rsbuild/core": 1.7.2
+  "@rsbuild/plugin-node-polyfill": 1.4.3
+  "@rsbuild/plugin-react": 1.4.3
+  "@rsbuild/plugin-styled-components": 1.6.1
+  "@rspack/cli": 1.7.3
+  "@rspack/core": 1.7.3
   "@rspack/dev-server": 1.1.5
   "@rspack/plugin-react-refresh": 1.6.0
+  "@rslib/core": 0.19.3
+  react-refresh: 0.18.0
+  storybook: 10.2.0
+  "@storybook/react": 10.2.0
+  "@storybook/react-native": 10.1.11
+  "@storybook/react-webpack5": 10.1.11
+  "@storybook/core": 8.6.14
+  "@storybook/addon-essentials": 8.6.14
+  "@storybook/addon-interactions": 8.6.14
+  "@storybook/addon-actions": 9.0.8
+  "@storybook/addon-docs": 10.2.0
+  "@storybook/addon-links": 10.2.0
+  "@storybook/addon-controls": 9.0.8
+  "@storybook/addon-ondevice-actions": 10.1.11
+  "@storybook/addon-ondevice-backgrounds": 10.1.11
+  "@storybook/addon-ondevice-controls": 10.1.11
+  "@storybook/addon-ondevice-notes": 10.1.11
+  "@storybook/addon-react-native-web": 0.0.29
+  "@storybook/blocks": 8.6.14
+  "@storybook/docs-tools": 8.6.14
+  "@storybook/global": 5.0.0
+  "@storybook/jest": 0.2.3
+  "@storybook/manager-api": 8.6.14
+  "@storybook/test": 8.6.15
+  "@storybook/testing-library": 0.2.2
+  "@storybook/theming": 8.6.14
+  storybook-dark-mode: 4.0.2
+  storybook-react-rsbuild: 3.2.2
   "@swc/core": 1.15.8
   "@swc/jest": 0.2.39
   "@testing-library/dom": 10.4.1

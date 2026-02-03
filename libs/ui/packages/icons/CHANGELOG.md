@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 0.19.0
+
+### Minor Changes
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - make lib compatible with react 19
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - make lib compatible with react 19
+
 ## 0.18.0
 
 ### Minor Changes

@@ -79,6 +79,7 @@ type ContentCardCommonProperties = {
   carouselWidthFactor?: WidthFactor;
   gridWidthFactor?: WidthFactor;
   type?: ContentCardsType;
+  extras?: Record<string, string>;
 };
 
 type CategoryContentCard = ContentCardCommonProperties & {

@@ -36,6 +36,7 @@ export type MatchedAccount = Readonly<{
 export type BridgeValidationErrors = {
   recipient?: Error;
   sender?: Error;
+  transaction?: Error;
 };
 
 export type BridgeValidationWarnings = Record<string, Error>;

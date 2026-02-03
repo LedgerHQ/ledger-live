@@ -1,26 +1,24 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
-import { useSendFlowNavigation, useSendFlowData } from "../context/SendFlowContext";
-import type { StepRegistry, StepRenderer } from "../../FlowWizard/types";
-import { FLOW_STATUS } from "../../FlowWizard/types";
-import type { SendFlowStep } from "../types";
+import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
+import { useSendFlowData } from "../context/SendFlowContext";
+import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import type { SendFlowStep, SendFlowBusinessContext } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { cn } from "LLD/utils/cn";
 
 type SendFlowLayoutProps = Readonly<{
-  stepRegistry: StepRegistry<SendFlowStep>;
   isOpen: boolean;
   onClose: () => void;
 }>;
 
-export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayoutProps) {
-  const { currentStep, currentStepConfig } = useSendFlowNavigation();
+export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
+  const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state } = useSendFlowData();
 
-  const StepComponent = useMemo<StepRenderer | null>(() => {
-    const renderer = stepRegistry[currentStep];
-    return renderer ?? null;
-  }, [currentStep, stepRegistry]);
+  const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
+  const StepComponent = wizard.currentStepRenderer;
 
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
@@ -38,7 +36,7 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent>
+      <DialogContent className="text-base">
         {shouldShowStatusGradient && (
           <div
             className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {
@@ -48,9 +46,9 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
           />
         )}
         <SendHeader />
-        <DialogBody className="-mb-24 gap-32 px-24 py-16 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <DialogBody className="-mb-24 gap-32 px-24 py-16">
           {StepComponent && (
-            <div key={currentStep} className="animate-fade-in">
+            <div key={wizard.currentStep} className="animate-fade-in">
               <StepComponent />
             </div>
           )}

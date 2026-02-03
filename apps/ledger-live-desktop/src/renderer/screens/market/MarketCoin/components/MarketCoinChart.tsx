@@ -162,7 +162,6 @@ function MarkeCoinChartComponent({
             {priceChangePercentage && (
               <FormattedVal
                 isPercent
-                isNegative
                 val={formatPercentage(priceChangePercentage)}
                 inline
                 withIcon

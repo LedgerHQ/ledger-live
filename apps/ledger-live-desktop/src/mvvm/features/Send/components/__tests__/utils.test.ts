@@ -1,7 +1,9 @@
-import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
+import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
 import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "../utils";
 
-jest.mock("@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress");
+jest.mock("LLD/features/ModularDialog/components/Address/formatAddress", () => ({
+  formatAddress: jest.fn(),
+}));
 
 const mockedFormatAddress = jest.mocked(formatAddress);
 

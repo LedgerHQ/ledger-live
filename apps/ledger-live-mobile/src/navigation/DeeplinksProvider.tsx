@@ -345,6 +345,7 @@ export const DeeplinksProvider = ({
   logStartupEvent("DeeplinksProvider render");
 
   const dispatch = useDispatch();
+  const triggeredAppStartRef = useRef(true);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   // Hook to close drawers when deeplink is triggered after app was in background
@@ -517,6 +518,7 @@ export const DeeplinksProvider = ({
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Track deeplink session when app comes from background
             track("Start", { isDeeplinkSession: true });
+            triggeredAppStartRef.current = false;
 
             // Close all drawers if app was in background before deeplink
             onDeeplinkReceived();
@@ -574,9 +576,13 @@ export const DeeplinksProvider = ({
             }, 4000); // Allow 4 seconds before resetting password lock, unless on Detox e2e test, as this breaks CI.
           }
 
+          const triggeredAppStart = triggeredAppStartRef.current;
+          triggeredAppStartRef.current = false;
+
           // Track deeplink only when ajsPropSource attribute exists.
           if (ajsPropSource) {
             track(TRACKING_EVENT, {
+              triggeredAppStart,
               deeplinkSource: ajsPropSource,
               deeplinkCampaign: ajsPropCampaign,
               url: hostname,
@@ -588,6 +594,7 @@ export const DeeplinksProvider = ({
             });
           } else
             track(TRACKING_EVENT, {
+              triggeredAppStart,
               deeplinkSource,
               deeplinkType,
               deeplinkDestination,
@@ -618,6 +625,21 @@ export const DeeplinksProvider = ({
 
               if (!validatedCurrencyId) {
                 return getStateFromPath("market", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+          }
+
+          // Handle asset deeplink - validate currencyId before navigation
+          if (hostname === "asset") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("portfolio", config);
               }
 
               url.pathname = `/${validatedCurrencyId}`;

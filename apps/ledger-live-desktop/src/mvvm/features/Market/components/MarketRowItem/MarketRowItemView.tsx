@@ -123,7 +123,6 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
             {currentPriceChangePercentage ? (
               <FormattedVal
                 isPercent
-                isNegative
                 val={formatPercentage(currentPriceChangePercentage)}
                 inline
                 withIcon

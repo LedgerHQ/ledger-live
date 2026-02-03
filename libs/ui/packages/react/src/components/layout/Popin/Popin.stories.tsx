@@ -1,6 +1,5 @@
 import React from "react";
-import { useArgs } from "@storybook/manager-api";
-import { action } from "@storybook/addon-actions";
+import { useArgs } from "storybook/manager-api";
 
 import Popin, { PopinProps } from "./index";
 import Text from "../../asorted/Text";
@@ -193,7 +192,7 @@ const Template = (args: PopinProps & playgroundProps) => {
       <Popin {...args}>
         {args.hasHeader ? (
           <Popin.Header
-            onBack={args.isBackDisplayed ? action("previous") : undefined}
+            onBack={args.isBackDisplayed ? () => {} : undefined}
             onClose={args.isCloseDisplayed ? onClose : undefined}
           >
             <Text variant="h5">{args["Header.Children.Text"]}</Text>
@@ -204,7 +203,7 @@ const Template = (args: PopinProps & playgroundProps) => {
         </Popin.Body>
         {args.hasFooter ? (
           <Popin.Footer flexDirection="row-reverse">
-            <Button variant="main" onClick={action("next")}>
+            <Button variant="main" onClick={() => {}}>
               Next
             </Button>
           </Popin.Footer>

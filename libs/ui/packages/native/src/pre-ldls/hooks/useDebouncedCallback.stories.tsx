@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useDebouncedCallback } from ".";
-import { expect, jest } from "@storybook/jest";
+import { expect } from "@storybook/jest";
 import { within, userEvent } from "@storybook/testing-library";
 
-const callback1 = jest.fn();
-const callback2 = jest.fn();
+const callback1 = (_value: string) => {};
+const callback2 = (_value: string) => {};
 
 const meta: Meta<typeof Template> = {
   component: Template,
@@ -21,8 +21,8 @@ export default meta;
 
 type TemplateProps = {
   delay: number;
-  callback1: typeof jest.fn;
-  callback2: typeof jest.fn;
+  callback1: (value: string) => void;
+  callback2: (value: string) => void;
 };
 function Template({ callback1, callback2, delay }: TemplateProps) {
   const [callback, setCallback] = useState(() => callback1);
@@ -50,7 +50,7 @@ export const Default: StoryObj<typeof Template> = {};
 
 export const WithInteraction: StoryObj<typeof Template> = {
   args: {},
-  controls: { expanded: true },
+  parameters: { controls: { expanded: true } },
 
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);

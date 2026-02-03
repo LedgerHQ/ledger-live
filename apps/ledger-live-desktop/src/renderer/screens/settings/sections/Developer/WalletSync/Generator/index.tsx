@@ -158,11 +158,11 @@ const StingifyComponent = styled(Flex)`
   max-height: 300px;
   overflow-y: auto;
 
-  ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     background-color: ${p => p.theme.colors.opacityDefault.c20};
   }
 
-  ::-webkit-scrollbar-track {
+  &::-webkit-scrollbar-track {
     background-color: ${p => p.theme.colors.opacityDefault.c10};
     border-radius: 8px;
   }

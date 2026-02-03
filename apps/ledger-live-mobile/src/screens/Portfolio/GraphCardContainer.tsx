@@ -17,6 +17,7 @@ const GraphCardContainer = ({
   currentPositionY,
   graphCardEndPosition,
   screenName,
+  hideGraph,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
@@ -25,6 +26,7 @@ const GraphCardContainer = ({
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   screenName: string;
+  hideGraph?: boolean;
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(currenciesSelector);
 
@@ -47,6 +49,7 @@ const GraphCardContainer = ({
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
           onTouchEndGraph={handleTouchEndGraph}
+          hideGraph={hideGraph}
         />
       )}
     </>

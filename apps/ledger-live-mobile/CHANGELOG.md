@@ -1,5 +1,177 @@
 # live-mobile
 
+## 3.103.0
+
+### Minor Changes
+
+- [#13726](https://github.com/LedgerHQ/ledger-live/pull/13726) [`e26f918`](https://github.com/LedgerHQ/ledger-live/commit/e26f918fb7c45be3c7a955c8fc382dcf9c7bf0b8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Lumen bump and small banner adjustments
+
+- [#13590](https://github.com/LedgerHQ/ledger-live/pull/13590) [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Fear and greed index to the market banner on LWM
+
+- [#13600](https://github.com/LedgerHQ/ledger-live/pull/13600) [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9) Thanks [@deepyjr](https://github.com/deepyjr)! - add new market banner on the home page (ff) and shared code for desktop and mobile (tests)
+
+- [#13786](https://github.com/LedgerHQ/ledger-live/pull/13786) [`e5cf08a`](https://github.com/LedgerHQ/ledger-live/commit/e5cf08a9bcb9ea903d0241aa0c6709e4016b947b) Thanks [@cfloume](https://github.com/cfloume)! - fix: better handle unknown coins through deeplinks
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13713](https://github.com/LedgerHQ/ledger-live/pull/13713) [`b410a61`](https://github.com/LedgerHQ/ledger-live/commit/b410a6128096803c415592bc4433c635f7333940) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add debug entry for lumen playground
+
+- [#13692](https://github.com/LedgerHQ/ledger-live/pull/13692) [`cec484b`](https://github.com/LedgerHQ/ledger-live/commit/cec484b0c093c028087a7a6228f147e596087942) Thanks [@cfloume](https://github.com/cfloume)! - fix: handle large mover deeplink edge cases
+
+- [#13730](https://github.com/LedgerHQ/ledger-live/pull/13730) [`c48b7d5`](https://github.com/LedgerHQ/ledger-live/commit/c48b7d519ed624e4cecc8f85f04c8d0117d4f2a3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Set the timerange to "day" for the marketBanner
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`b6c16fa`](https://github.com/LedgerHQ/ledger-live/commit/b6c16fa4a4895c65ee674cf73ce9f159ab2dc23a) Thanks [@ysitbon](https://github.com/ysitbon)! - bump `react` to `19.0.0` and `react-native` to `0.79`
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13784](https://github.com/LedgerHQ/ledger-live/pull/13784) [`d4c80fc`](https://github.com/LedgerHQ/ledger-live/commit/d4c80fcab9d89bb62a7e134f1b2ece39d9a8d19f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use CryptoIcons in Markets Pages
+
+- [#13921](https://github.com/LedgerHQ/ledger-live/pull/13921) [`a48f452`](https://github.com/LedgerHQ/ledger-live/commit/a48f452653c898b045d8c5fac3fda0f1602fe152) Thanks [@desirendr](https://github.com/desirendr)! - fix touch events not working on newly added assets/accounts
+
+- [#13654](https://github.com/LedgerHQ/ledger-live/pull/13654) [`96db81a`](https://github.com/LedgerHQ/ledger-live/commit/96db81ac888886cc731c11219216ca13f7c1c2c9) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: trigger notification drawer in swap, send, receive, stake flows
+
+- [#13868](https://github.com/LedgerHQ/ledger-live/pull/13868) [`beeb70f`](https://github.com/LedgerHQ/ledger-live/commit/beeb70f9c61d0c62a8d564e2964562bd2057d62a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix Android crash when navigating back from Earn webview. The crash occurred when using hardware back button after navigating away from the webview screen and returning to another screen.
+
+- [#13757](https://github.com/LedgerHQ/ledger-live/pull/13757) [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CVS staging toggle
+
+- [#13732](https://github.com/LedgerHQ/ledger-live/pull/13732) [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb) Thanks [@tonykhaov](https://github.com/tonykhaov)! - refactor: clean up old notifications logic
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb), [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/live-countervalues-react@0.9.0
+  - @ledgerhq/icons-ui@0.19.0
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/coin-evm@2.40.0
+  - @ledgerhq/native-ui@0.54.0
+  - @ledgerhq/coin-stacks@0.15.0
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/live-wallet@0.20.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/coin-canton@0.14.1
+  - @ledgerhq/coin-cosmos@0.23.1
+  - @ledgerhq/coin-filecoin@1.18.1
+  - @ledgerhq/coin-multiversx@0.10.1
+  - @ledgerhq/domain-service@1.6.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-countervalues@0.11.1
+  - @ledgerhq/client-ids@0.4.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.1
+  - @ledgerhq/ledger-key-ring-protocol@0.11.1
+  - @ledgerhq/live-dmk-mobile@0.18.1
+  - @ledgerhq/live-network@2.2.1
+
+## 3.103.0-next.2
+
+### Minor Changes
+
+- [#13921](https://github.com/LedgerHQ/ledger-live/pull/13921) [`a48f452`](https://github.com/LedgerHQ/ledger-live/commit/a48f452653c898b045d8c5fac3fda0f1602fe152) Thanks [@desirendr](https://github.com/desirendr)! - fix touch events not working on newly added assets/accounts
+
+## 3.103.0-next.1
+
+### Minor Changes
+
+- [#13868](https://github.com/LedgerHQ/ledger-live/pull/13868) [`beeb70f`](https://github.com/LedgerHQ/ledger-live/commit/beeb70f9c61d0c62a8d564e2964562bd2057d62a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix Android crash when navigating back from Earn webview. The crash occurred when using hardware back button after navigating away from the webview screen and returning to another screen.
+
+## 3.103.0-next.0
+
+### Minor Changes
+
+- [#13726](https://github.com/LedgerHQ/ledger-live/pull/13726) [`e26f918`](https://github.com/LedgerHQ/ledger-live/commit/e26f918fb7c45be3c7a955c8fc382dcf9c7bf0b8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Lumen bump and small banner adjustments
+
+- [#13590](https://github.com/LedgerHQ/ledger-live/pull/13590) [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Fear and greed index to the market banner on LWM
+
+- [#13600](https://github.com/LedgerHQ/ledger-live/pull/13600) [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9) Thanks [@deepyjr](https://github.com/deepyjr)! - add new market banner on the home page (ff) and shared code for desktop and mobile (tests)
+
+- [#13786](https://github.com/LedgerHQ/ledger-live/pull/13786) [`e5cf08a`](https://github.com/LedgerHQ/ledger-live/commit/e5cf08a9bcb9ea903d0241aa0c6709e4016b947b) Thanks [@cfloume](https://github.com/cfloume)! - fix: better handle unknown coins through deeplinks
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13713](https://github.com/LedgerHQ/ledger-live/pull/13713) [`b410a61`](https://github.com/LedgerHQ/ledger-live/commit/b410a6128096803c415592bc4433c635f7333940) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add debug entry for lumen playground
+
+- [#13692](https://github.com/LedgerHQ/ledger-live/pull/13692) [`cec484b`](https://github.com/LedgerHQ/ledger-live/commit/cec484b0c093c028087a7a6228f147e596087942) Thanks [@cfloume](https://github.com/cfloume)! - fix: handle large mover deeplink edge cases
+
+- [#13730](https://github.com/LedgerHQ/ledger-live/pull/13730) [`c48b7d5`](https://github.com/LedgerHQ/ledger-live/commit/c48b7d519ed624e4cecc8f85f04c8d0117d4f2a3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Set the timerange to "day" for the marketBanner
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`b6c16fa`](https://github.com/LedgerHQ/ledger-live/commit/b6c16fa4a4895c65ee674cf73ce9f159ab2dc23a) Thanks [@ysitbon](https://github.com/ysitbon)! - bump `react` to `19.0.0` and `react-native` to `0.79`
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13784](https://github.com/LedgerHQ/ledger-live/pull/13784) [`d4c80fc`](https://github.com/LedgerHQ/ledger-live/commit/d4c80fcab9d89bb62a7e134f1b2ece39d9a8d19f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use CryptoIcons in Markets Pages
+
+- [#13654](https://github.com/LedgerHQ/ledger-live/pull/13654) [`96db81a`](https://github.com/LedgerHQ/ledger-live/commit/96db81ac888886cc731c11219216ca13f7c1c2c9) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: trigger notification drawer in swap, send, receive, stake flows
+
+- [#13757](https://github.com/LedgerHQ/ledger-live/pull/13757) [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CVS staging toggle
+
+- [#13732](https://github.com/LedgerHQ/ledger-live/pull/13732) [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb) Thanks [@tonykhaov](https://github.com/tonykhaov)! - refactor: clean up old notifications logic
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb), [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/live-countervalues-react@0.9.0-next.0
+  - @ledgerhq/icons-ui@0.19.0-next.0
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/coin-evm@2.40.0-next.0
+  - @ledgerhq/native-ui@0.54.0-next.0
+  - @ledgerhq/coin-stacks@0.15.0-next.0
+  - @ledgerhq/live-env@2.26.0-next.0
+  - @ledgerhq/live-wallet@0.20.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/coin-canton@0.14.1-next.0
+  - @ledgerhq/coin-cosmos@0.23.1-next.0
+  - @ledgerhq/coin-filecoin@1.18.1-next.0
+  - @ledgerhq/coin-multiversx@0.10.1-next.0
+  - @ledgerhq/domain-service@1.6.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-countervalues@0.11.1-next.0
+  - @ledgerhq/client-ids@0.4.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.1-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.11.1-next.0
+  - @ledgerhq/live-dmk-mobile@0.18.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
 ## 3.102.0
 
 ### Minor Changes

@@ -135,6 +135,7 @@
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
     "psbtv2": "pnpm --filter psbtv2",
+    "currency-format": "pnpm --filter live-currency-format",
     "lkrp": "pnpm --filter ledger-key-ring-protocol",
     "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     "countervalues": "pnpm --filter live-countervalues",
@@ -151,6 +152,7 @@
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-canton": "pnpm --filter hw-app-canton",
+    "ljs:hw-app-concordium": "pnpm --filter hw-app-concordium",
     "ljs:hw-app-celo": "pnpm --filter hw-app-celo",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
     "ljs:hw-app-eth": "pnpm --filter hw-app-eth",
@@ -206,8 +208,7 @@
     "ui:icons": "pnpm --filter icons-ui",
     "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter ui-shared",
-    "ui:example:next": "pnpm  --filter=\"next.js-example\"",
-    "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
+    "ui:example:rspack": "pnpm  --filter=\"rspack-example\"",
     "actions": "pnpm --filter @actions/*",
     "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens"
   },
@@ -225,6 +226,7 @@
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
     "@react-native/babel-plugin-codegen": "catalog:",
+    "@vitest/mocker": "4.0.17",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
@@ -280,7 +282,7 @@
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
       "react-native@0.79.7": "patches/react-native@0.79.7.patch",
-      "@ledgerhq/lumen-ui-rnative@0.0.54": "patches/@ledgerhq__lumen-ui-rnative@0.0.54.patch"
+      "@ledgerhq/lumen-ui-rnative@0.0.60": "patches/@ledgerhq__lumen-ui-rnative@0.0.60.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

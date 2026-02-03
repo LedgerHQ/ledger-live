@@ -7,10 +7,10 @@ import { delegatableAccountsSelector } from "~/renderer/actions/general";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Label from "~/renderer/components/Label";
-import { SelectAccount } from "~/renderer/components/SelectAccount";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import { StepProps } from "../types";
+import SelectAccount from "~/renderer/components/SelectAccount";
 const StepAccount = ({
   account,
   parentAccount,

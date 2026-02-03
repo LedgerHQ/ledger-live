@@ -1,4 +1,4 @@
-import { exportCountervalues, initialState } from "@ledgerhq/live-countervalues/logic";
+import { initialState } from "@ledgerhq/live-countervalues/logic";
 import type { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { useSelector } from "LLD/hooks/redux";
 import { handleActions } from "redux-actions";
@@ -67,8 +67,6 @@ export const countervaluesStatePendingSelector = (s: RootState) =>
 export const countervaluesStateErrorSelector = (s: RootState) =>
   s.countervalues.countervalues.error;
 export const countervaluesUserSettingsSelector = (s: RootState) => s.countervalues.userSettings;
-export const countervaluesStateExportSelector = (s: RootState) =>
-  exportCountervalues(s.countervalues.countervalues.state);
 
 // Hooks
 
@@ -80,7 +78,6 @@ export const useCountervaluesPollingIsPolling = () =>
 export const useCountervaluesPollingTriggerLoad = () =>
   useSelector(countervaluesPollingTriggerLoadSelector);
 export const useCountervaluesStateError = () => useSelector(countervaluesStateErrorSelector);
-export const useCountervaluesStateExport = () => useSelector(countervaluesStateExportSelector);
 export const useCountervaluesStatePending = () => useSelector(countervaluesStatePendingSelector);
 export const useCountervaluesState = () => useSelector(countervaluesStateSelector);
 export const useCountervaluesUserSettings = () => useSelector(countervaluesUserSettingsSelector);

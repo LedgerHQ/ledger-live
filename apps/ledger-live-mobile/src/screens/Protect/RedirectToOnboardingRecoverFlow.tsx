@@ -8,7 +8,6 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { getVersion } from "@ledgerhq/live-common/device/use-cases/getVersionUseCase";
-import { BleError } from "@ledgerhq/live-common/ble/types";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -81,7 +80,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
             }
           }
         },
-        error: (error: BleError) => {
+        error: (error: Error) => {
           setError(error);
         },
       });

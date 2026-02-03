@@ -35,11 +35,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export function runDelegateTest(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-) {
+export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
@@ -83,8 +79,13 @@ export function runDelegateTest(
   });
 }
 
-export async function runDelegateCelo(delegation: DelegateType, tmsLinks: string[]) {
+export async function runDelegateCelo(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
+) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe(`Delegate flow on CELO`, () => {
     beforeAll(async () => {
       await beforeAllFunction(delegation);
@@ -113,9 +114,22 @@ export async function runDelegateCelo(delegation: DelegateType, tmsLinks: string
   });
 }
 
-export async function runDelegateTezos(delegation: DelegateType, tmsLinks: string[]) {
+export async function runDelegateTezos(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    `@tezos`,
+    `@family-tezos`,
+  ],
+) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
+  tags.forEach(tag => $Tag(tag));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on TEZOS`, () => {
     beforeAll(async () => {

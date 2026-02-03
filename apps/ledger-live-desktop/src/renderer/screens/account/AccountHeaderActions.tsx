@@ -280,8 +280,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     navigate("/swap", {
       state: {
         defaultCurrency: currency,
-        defaultAccount: account,
-        defaultParentAccount: parentAccount,
+        defaultAccountId: account.id,
+        defaultParentAccountId: parentAccount?.id,
         defaultAmountFrom: "0",
         from: location.pathname,
       },

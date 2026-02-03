@@ -25,16 +25,16 @@ const GlobalStyle = createGlobalStyle`
       padding-top: 0;
   }
 
-  div#page-scroller::-webkit-scrollbar {
+  #page-scroller &::-webkit-scrollbar {
     width: 10px;
   }
 
-  div#page-scroller::-webkit-scrollbar-thumb {
+  #page-scroller &::-webkit-scrollbar-thumb {
     background-color: ${p => p.theme.colors.neutral.c50};
     border-radius: 10px;
   }
 
-  div#page-scroller::-webkit-scrollbar-track {
+  #page-scroller &::-webkit-scrollbar-track {
     background: ${p => p.theme.colors.neutral.c20};
     border-radius: 10px;
   }

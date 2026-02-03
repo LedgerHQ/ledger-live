@@ -106,7 +106,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           flexShrink={1}
           textAlign="center"
           mr={3}
-          numberOfLines={2}
+          numberOfLines={1}
         >
           {t("tabs.portfolio")}
         </Text>

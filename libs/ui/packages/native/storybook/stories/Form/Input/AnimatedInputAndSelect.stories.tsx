@@ -1,6 +1,5 @@
 import React, { type JSX } from "react";
 import AnimatedInputSelect from "../../../../src/components/Form/Input/AnimatedInputSelect";
-import { action } from "@storybook/addon-actions";
 
 export default {
   title: "Form/Input/AnimatedInputSelect",
@@ -32,7 +31,7 @@ const AnimatedInputSelectStoryArgs = {
   disabled: false,
   placeholder: "Edit Tag",
   selectProps: {
-    onPressSelect: action("Select"),
+    onPressSelect: () => {},
     text: "Tag type",
   },
 };

@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.102.0",
+  "version": "3.103.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -115,7 +115,6 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
-    "@ledgerhq/react-native-hw-transport-ble": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

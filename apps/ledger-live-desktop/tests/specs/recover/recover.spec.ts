@@ -7,6 +7,10 @@ import { Layout } from "../../component/layout.component";
 test.use({
   userdata: "skip-onboarding",
   env: { MOCK_NO_BYPASS: "1" },
+  featureFlags: {
+    welcomeScreenVideoCarousel: { enabled: false },
+    noah: { enabled: false },
+  },
 });
 
 test.describe.parallel("Recover @smoke", () => {

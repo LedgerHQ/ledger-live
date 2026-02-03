@@ -62,7 +62,6 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
           dark: darkEmptyStateAccount,
         }}
         width="400"
-        themeTyped
       />
       <Box mt={5} alignItems="center">
         <Title>{t("account.emptyState.title")}</Title>

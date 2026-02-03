@@ -13,7 +13,12 @@ export const ViewAllTile = () => {
   }, [navigate]);
 
   return (
-    <Tile className="w-[98px] justify-center self-stretch" appearance="card" onClick={goToMarket}>
+    <Tile
+      className="w-[98px] [&>button]:h-full [&>button]:justify-center"
+      appearance="card"
+      onClick={goToMarket}
+      data-testid="market-banner-view-all"
+    >
       <TileSpot appearance="icon" icon={ChevronRight} />
       <TileContent>
         <TileTitle>{t("marketBanner.cta")}</TileTitle>

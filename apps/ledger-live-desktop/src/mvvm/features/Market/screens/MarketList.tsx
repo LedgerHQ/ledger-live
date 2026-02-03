@@ -56,7 +56,7 @@ function MarketList({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col rounded-md bg-surface-hover">
+    <div className="flex min-h-0 flex-1 flex-col rounded-md bg-surface">
       {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
       <div className="px-20">
         <TableRow header>

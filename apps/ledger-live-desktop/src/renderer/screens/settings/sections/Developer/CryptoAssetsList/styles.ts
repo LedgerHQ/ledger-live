@@ -3,20 +3,20 @@ import { Flex, Button } from "@ledgerhq/react-ui/index";
 
 // ==================== Layout Styled Components ====================
 
-export const DrawerContainer: ReturnType<typeof styled.div> = styled(Flex)`
+export const DrawerContainer = styled(Flex)`
   height: 100%;
   flex-direction: column;
   padding: 0;
 `;
 
-export const HeaderSection: ReturnType<typeof styled.div> = styled(Flex)`
+export const HeaderSection = styled(Flex)`
   flex-direction: column;
   padding: 32px 24px 24px;
   background: ${p => p.theme.colors.background.default};
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
-export const ConfigSection: ReturnType<typeof styled.div> = styled(Flex)`
+export const ConfigSection = styled(Flex)`
   flex-direction: column;
   row-gap: 16px;
   padding: 20px 24px;
@@ -24,7 +24,7 @@ export const ConfigSection: ReturnType<typeof styled.div> = styled(Flex)`
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
-export const TokenListSection: ReturnType<typeof styled.div> = styled(Flex)`
+export const TokenListSection = styled(Flex)`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
@@ -34,11 +34,7 @@ export const TokenListSection: ReturnType<typeof styled.div> = styled(Flex)`
 
 // ==================== Collapsible Styled Components ====================
 
-export const CollapsibleHeader: ReturnType<
-  typeof styled.div<{
-    collapsed?: boolean;
-  }>
-> = styled(Flex)<{
+export const CollapsibleHeader = styled(Flex)<{
   collapsed?: boolean;
 }>`
   padding: 10px 12px;
@@ -57,11 +53,7 @@ export const CollapsibleHeader: ReturnType<
   }
 `;
 
-export const CollapsibleContent: ReturnType<
-  typeof styled.div<{
-    isOpen?: boolean;
-  }>
-> = styled(Flex)<{
+export const CollapsibleContent = styled(Flex)<{
   isOpen?: boolean;
 }>`
   flex-direction: column;
@@ -77,7 +69,7 @@ export const CollapsibleContent: ReturnType<
 
 // ==================== Form Styled Components ====================
 
-export const StyledCheckbox: ReturnType<typeof styled.div> = styled(Flex)`
+export const StyledCheckbox = styled(Flex)`
   align-items: center;
   column-gap: 12px;
   cursor: pointer;
@@ -90,7 +82,7 @@ export const StyledCheckbox: ReturnType<typeof styled.div> = styled(Flex)`
   }
 `;
 
-export const MultiSelectContainer: ReturnType<typeof styled.div> = styled(Flex)`
+export const MultiSelectContainer = styled(Flex)`
   flex-direction: column;
   row-gap: 4px;
   max-height: 180px;
@@ -121,7 +113,7 @@ export const MultiSelectContainer: ReturnType<typeof styled.div> = styled(Flex)`
 
 // ==================== Token Item Styled Components ====================
 
-export const TokenItem: ReturnType<typeof styled.div<{ isExpanded?: boolean }>> = styled(Flex)<{
+export const TokenItem = styled(Flex)<{
   isExpanded?: boolean;
 }>`
   padding: 14px 16px;
@@ -144,7 +136,7 @@ export const TokenItem: ReturnType<typeof styled.div<{ isExpanded?: boolean }>> 
   }
 `;
 
-export const TokenHeader: ReturnType<typeof styled.div> = styled(Flex)`
+export const TokenHeader = styled(Flex)`
   align-items: center;
   justify-content: space-between;
   width: 100%;
@@ -152,7 +144,7 @@ export const TokenHeader: ReturnType<typeof styled.div> = styled(Flex)`
   gap: 12px;
 `;
 
-export const TokenNameContainer: ReturnType<typeof styled.div> = styled(Flex)`
+export const TokenNameContainer = styled(Flex)`
   align-items: center;
   column-gap: 8px;
   flex: 1;
@@ -173,14 +165,14 @@ export const TokenTicker = styled.span`
   flex-shrink: 0;
 `;
 
-export const TokenTag: ReturnType<typeof styled.div> = styled(Flex)`
+export const TokenTag = styled(Flex)`
   padding: 4px 8px;
   border-radius: 4px;
   background: ${p => p.theme.colors.error.c10};
   align-items: center;
 `;
 
-export const TokenDetails: ReturnType<typeof styled.div> = styled(Flex)`
+export const TokenDetails = styled(Flex)`
   flex-direction: column;
   row-gap: 12px;
   padding-top: 12px;
@@ -188,7 +180,7 @@ export const TokenDetails: ReturnType<typeof styled.div> = styled(Flex)`
   border-top: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
-export const DetailRow: ReturnType<typeof styled.div> = styled(Flex)`
+export const DetailRow = styled(Flex)`
   flex-direction: column;
   row-gap: 4px;
 `;
@@ -199,11 +191,11 @@ export const LoadMoreButton = styled(Button)`
 
 // ==================== New Layout Styled Components ====================
 
-export const ParameterGroup: ReturnType<typeof styled.div> = styled(Flex)`
+export const ParameterGroup = styled(Flex)`
   flex-direction: column;
 `;
 
-export const ParameterGrid: ReturnType<typeof styled.div> = styled.div`
+export const ParameterGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;

@@ -23,13 +23,15 @@ export class SwapPage extends AppPage {
   private numberOfQuotes = "number-of-quotes";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
-  private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
   private swapBtn = "execute-button";
   private executeSwapBtn = "execute-swap-button-step-approval";
   private continueBtn = this.page.locator("#sign-summary-continue-button");
+  private insufficientFundsBuyButton = "insufficient-funds-buy-button";
+  private insufficientFundsWarning = "insufficient-funds-warning";
+  private executeButtonDisabled = "execute-button-disabled";
 
   // Exchange Drawer Components
   readonly swapId = this.page.getByTestId("swap-id");
@@ -52,13 +54,7 @@ export class SwapPage extends AppPage {
     this.page.getByTestId(`swap-history-from-amount-${swapId}`);
   private selectSpecificOperationAmountTo = (swapId: string) =>
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
-  private drawerContent = this.page.locator('[data-testid="drawer-content"]');
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private insufficientFundsWarningElem = this.drawerContent.getByTestId(
-    "insufficient-funds-warning",
-  );
-  private continueButton = this.drawerContent.getByRole("button", { name: "Continue" });
-  private drawerCloseButton = this.drawerContent.getByTestId("drawer-close-button");
 
   async sendMax() {
     await this.maxSpendableToggle.click();
@@ -80,7 +76,6 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
     await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
-    await expect(webview.getByTestId(this.quoteInfosFeesSelector)).toBeVisible();
     await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
   }
 
@@ -204,19 +199,6 @@ export class SwapPage extends AppPage {
     throw new Error("No valid providers found");
   }
 
-  @step("Tap quote infos fees selector")
-  async tapQuoteInfosFeesSelector(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.quoteInfosFeesSelector).nth(1).click();
-  }
-
-  @step("Check drawer error message ($0)")
-  async checkFeeDrawerErrorMessage(errorMessage: string | RegExp) {
-    await expect(this.insufficientFundsWarningElem).toHaveText(errorMessage);
-    await expect(this.continueButton).toBeDisabled();
-    await this.drawerCloseButton.click();
-  }
-
   @step("Get all swap providers available")
   async getAllSwapProviders(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
@@ -225,6 +207,18 @@ export class SwapPage extends AppPage {
         '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
       )
       .allTextContents();
+  }
+
+  @step("Check drawer error message ($0)")
+  async checkFeeErrorMessage(electronApp: ElectronApplication, errorMessage: string | RegExp) {
+    const [, webview] = electronApp.windows();
+
+    const insufficientFundsWarningElem = webview.getByTestId(this.insufficientFundsWarning);
+    const errorMessageSpan = insufficientFundsWarningElem.getByText(errorMessage);
+    await expect(errorMessageSpan).toBeVisible();
+    const insufficientFundsBuyButton = webview.getByTestId(this.insufficientFundsBuyButton);
+    await expect(insufficientFundsBuyButton).toBeEnabled();
+    await expect(webview.getByTestId(this.executeButtonDisabled)).toBeDisabled();
   }
 
   @step("Extract quotes and fees")
