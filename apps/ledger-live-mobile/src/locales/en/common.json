@@ -467,6 +467,9 @@
       "title": "Device authentication failed",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "EthAppPleaseEnableContractData": {
+      "title": "Enable Blind signing or Contract data in Ethereum app"
+    },
     "HardResetFail": {
       "title": "Sorry, could not reset",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
