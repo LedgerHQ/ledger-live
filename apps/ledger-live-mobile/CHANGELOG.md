@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.105.0-next.1
+
+### Minor Changes
+
+- [#14198](https://github.com/LedgerHQ/ledger-live/pull/14198) [`0fec915`](https://github.com/LedgerHQ/ledger-live/commit/0fec915e472b33f2fc8544e69fbb7640ff8c72c0) Thanks [@cunhabruno](https://github.com/cunhabruno)! - remove jotai-scope import from PerpsWebView
+
 ## 3.105.0-next.0
 
 ### Minor Changes
