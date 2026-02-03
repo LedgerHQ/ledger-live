@@ -112,8 +112,13 @@ export function DrawerFooter({ provider, sponsored }: { provider: string; sponso
               style={{ textDecoration: "underline" }}
             />
           ))}
-        />{" "}
-        {sponsored && <Trans i18nKey="DeviceAction.swap.acceptTermsSponsored" />}
+        />
+        {sponsored && (
+          <>
+            {" "}
+            <Trans i18nKey="DeviceAction.swap.acceptTermsSponsored" />
+          </>
+        )}
       </Terms>
     </Box>
   );
