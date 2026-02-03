@@ -1,18 +1,12 @@
 import React, { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
-  createAction,
-  getViewKeyExec,
   type Request,
   type ViewKeysByAccountId,
 } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -20,6 +14,7 @@ import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 import { ADD_ACCOUNT_FLOW_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { ALEO_ADD_ACCOUNT_PAGE_NAME } from "./analytics/addAccount.types";
 import { TrackAleoAddAccountScreen } from "./analytics/TrackAleoAddAccountScreen";
+import { useGetViewKeyAction } from "./useGetViewKeyAction";
 import ViewKeyConfirmation from "./ViewKeyConfirmation";
 
 interface Props {
@@ -31,11 +26,7 @@ interface Props {
 
 const ViewKeyApprove = ({ currency, selectedAccounts, onResult, onCancel }: Props) => {
   const source = useSelector(modularDrawerSourceSelector);
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const action = createAction(
-    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
-    getEnv("MOCK") ? mockedEventEmitter : getViewKeyExec,
-  );
+  const action = useGetViewKeyAction();
 
   const request: Request = useMemo(
     () => ({
