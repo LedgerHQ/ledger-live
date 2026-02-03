@@ -6,16 +6,11 @@ import invariant from "invariant";
 /**
  * Return whether an operation is editable or not for Bitcoin.
  */
-export const isEditableOperation = (account: Account, operation: Operation): boolean => {
+export const isEditableOperation = (_account: Account, operation: Operation): boolean => {
   // Must be unconfirmed (no blockHeight)
   if (operation.blockHeight !== null && operation.blockHeight !== undefined) {
     return false;
   }
-
-  // // Must have transaction data to reconstruct the transaction
-  // if (!operation.transactionRaw) {
-  //   return false;
-  // }
 
   // Must be an outgoing transaction
   if (operation.type !== "OUT") {

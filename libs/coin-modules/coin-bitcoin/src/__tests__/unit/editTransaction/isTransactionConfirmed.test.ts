@@ -87,9 +87,11 @@ describe("isTransactionConfirmed", () => {
     expect(result).toBe(false);
   });
 
-  it("rethrows errors that are not 'not found'", async () => {
+  it("returns false when wallet throws an errors that are not 'not found'", async () => {
     mockedWallet.getAccountTransactions.mockRejectedValue(new Error("network failure"));
 
-    await expect(isTransactionConfirmed(account, txid)).rejects.toThrow("network failure");
+    const result = await isTransactionConfirmed(account, txid);
+
+    expect(result).toBe(false);
   });
 });

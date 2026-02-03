@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { isStrategyDisabled } from "../../../editTransaction/isStrategyDisabled";
 
 describe("isStrategyDisabled", () => {

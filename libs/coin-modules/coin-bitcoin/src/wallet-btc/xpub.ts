@@ -1,9 +1,9 @@
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
-import { TX, Address, IStorage } from "./storage/types";
+import { TX, Address, IStorage, Output } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
@@ -11,7 +11,6 @@ import { computeDustAmount, maxTxSizeCeil, getIncrementalFeeFloorSatVb } from ".
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
 import { Transaction } from "bitcoinjs-lib";
 import * as btc from "bitcoinjs-lib";
-import { Output } from "./storage/types";
 
 // names inside this class and discovery logic respect BIP32 standard
 class Xpub {
@@ -249,70 +248,71 @@ class Xpub {
     let needChangeoutput: boolean;
 
     if (originalTxId) {
-      // For RBF (speed up / cancel) transactions, we need to keep the same inputs as the original transaction
-      const originalTx = await this.explorer.getTxHex(originalTxId);
-      if (!originalTx) {
-        throw new Error("Original transaction not found for speed up");
+      try {
+        // For RBF (speed up / cancel) transactions, we need to keep the same inputs as the original transaction
+        const originalTx = await this.explorer.getTxHex(originalTxId);
+
+        const originalTxObj = Transaction.fromHex(originalTx);
+
+        // Build inputs and their associated derivations from the original transaction
+        const inputsWithDerivations = await Promise.all(
+          originalTxObj.ins.map(async input => {
+            const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
+
+            const prevTxHex = await this.explorer.getTxHex(prevTxId);
+            const prevTx = Transaction.fromHex(prevTxHex);
+
+            const prevOut = prevTx.outs[input.index];
+            if (!prevOut) {
+              throw new Error("Previous output not found");
+            }
+
+            const address = btc.address.fromOutputScript(prevOut.script, this.crypto.network);
+
+            // Look up the derivation path for this address from storage
+            const storedTx = this.storage.getTx(address, prevTxId);
+            const derivation: [number, number] = storedTx
+              ? [storedTx.account || 0, storedTx.index || 0]
+              : [0, 0]; // Fallback if not found
+
+            return {
+              input: {
+                txHex: prevTxHex,
+                value: prevOut.value.toString(),
+                address,
+                output_hash: prevTxId,
+                output_index: input.index,
+                sequence: input.sequence,
+                block_height: null,
+              } as InputInfo,
+              derivation,
+            };
+          }),
+        );
+
+        inputs = inputsWithDerivations.map(item => item.input);
+        associatedDerivations = inputsWithDerivations.map(item => item.derivation);
+
+        // Calculate total from actual inputs for RBF
+        total = inputs.reduce((sum, inp) => sum.plus(new BigNumber(inp.value)), new BigNumber(0));
+
+        // For RBF, we need to estimate the fee based on the transaction size
+        // The fee will be recalculated later, but we need a placeholder for now
+        const estimatedTxSize = maxTxSizeCeil(
+          inputs.length,
+          outputs.map(o => o.script),
+          true,
+          this.crypto,
+          this.derivationMode,
+        );
+        fee = estimatedTxSize * feePerByte;
+        needChangeoutput = true;
+      } catch (error) {
+        throw new Error("Failed to build RBF transaction: " + error);
       }
-      const originalTxObj = Transaction.fromHex(originalTx);
-
-      // Build inputs and their associated derivations from the original transaction
-      const inputsWithDerivations = await Promise.all(
-        originalTxObj.ins.map(async input => {
-          const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
-
-          const prevTxHex = await this.explorer.getTxHex(prevTxId);
-          const prevTx = Transaction.fromHex(prevTxHex);
-
-          const prevOut = prevTx.outs[input.index];
-          if (!prevOut) {
-            throw new Error("Previous output not found");
-          }
-
-          const address = btc.address.fromOutputScript(prevOut.script, this.crypto.network);
-
-          // Look up the derivation path for this address from storage
-          const storedTx = await this.storage.getTx(address, prevTxId);
-          const derivation: [number, number] = storedTx
-            ? [storedTx.account || 0, storedTx.index || 0]
-            : [0, 0]; // Fallback if not found
-
-          return {
-            input: {
-              txHex: prevTxHex,
-              value: prevOut.value.toString(),
-              address,
-              output_hash: prevTxId,
-              output_index: input.index,
-              sequence: input.sequence,
-              block_height: null,
-            } as InputInfo,
-            derivation,
-          };
-        }),
-      );
-
-      inputs = inputsWithDerivations.map(item => item.input);
-      associatedDerivations = inputsWithDerivations.map(item => item.derivation);
-
-      // Calculate total from actual inputs for RBF
-      total = inputs.reduce((sum, inp) => sum.plus(new BigNumber(inp.value)), new BigNumber(0));
-
-      // For RBF, we need to estimate the fee based on the transaction size
-      // The fee will be recalculated later, but we need a placeholder for now
-      const estimatedTxSize = maxTxSizeCeil(
-        inputs.length,
-        outputs.map(o => o.script),
-        true,
-        this.crypto,
-        this.derivationMode,
-      );
-      fee = estimatedTxSize * feePerByte;
-      needChangeoutput = true;
     } else {
       // now we select only the output needed to cover the amount + fee
       const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
-      total = result.totalValue;
       const unspentUtxoSelected = result.unspentUtxos;
       fee = result.fee;
       needChangeoutput = result.needChangeoutput;
@@ -325,13 +325,10 @@ class Xpub {
       // Filter to only successfully fetched UTXOs
       const successfulUtxos: Output[] = [];
       const successfulTxHexs: string[] = [];
-      const failedUtxos: Output[] = [];
       txHexResults.forEach((res, index) => {
         if (res.status === "fulfilled") {
           successfulUtxos.push(unspentUtxoSelected[index]);
           successfulTxHexs.push(res.value);
-        } else {
-          failedUtxos.push(unspentUtxoSelected[index]);
         }
       });
 
@@ -340,11 +337,6 @@ class Xpub {
         (sum, utxo) => sum.plus(new BigNumber(utxo.value)),
         new BigNumber(0),
       );
-
-      // Check if we still have enough after filtering
-      // if (total.lt(amount.plus(fee))) {
-      //   throw new Error(`Insufficient funds after filtering unfetchable UTXOs. Need ${amount.plus(fee).toString()}, have ${total.toString()}. Try syncing your account.`);
-      // }
 
       const txs = await Promise.all(
         successfulUtxos.map(unspentUtxo =>
@@ -442,8 +434,7 @@ class Xpub {
           }
         }
       } catch (error) {
-        console.error("RBF fee validation failed:", error);
-        // Continue without validation if we can't fetch the original tx
+        throw new Error("Failed to build RBF transaction: " + error);
       }
     }
 
