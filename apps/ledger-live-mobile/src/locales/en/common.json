@@ -3853,7 +3853,7 @@
       },
       "twoStepApproval": {
         "title": "Complete steps",
-        "completedTitle": "Completed"
+        "completedTitle": "Transaction Status"
       },
       "loader": {
         "title": "Processing Swap",

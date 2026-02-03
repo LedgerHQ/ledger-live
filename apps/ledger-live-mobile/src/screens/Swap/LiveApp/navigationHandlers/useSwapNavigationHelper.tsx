@@ -38,7 +38,7 @@ export function useSwapNavigationHelper({ navigation }: { navigation: Navigation
           page = SwapWebviewAllowedPageNames.TwoStepApproval;
 
           // Check if transaction is complete via query parameter
-          const isTransactionComplete = url.searchParams.get("status") === "complete";
+          const isTransactionComplete = url.searchParams.get("transactionStatus") === "complete";
           if (isTransactionComplete) {
             navigation.setParams({
               swapNavigationParams: { tab: tabParam, page, canGoBack, isTransactionComplete: true },
