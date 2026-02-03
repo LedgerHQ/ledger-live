@@ -176,7 +176,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     operationsCount,
     operations,
     pendingOperations,
-    lastSyncDate,
     balance,
     balanceHistoryCache,
     spendableBalance,
@@ -204,7 +203,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     operations: operations.map(convertOperation),
     pendingOperations: pendingOperations.map(convertOperation),
     currencyId: currency.id,
-    lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
   };
