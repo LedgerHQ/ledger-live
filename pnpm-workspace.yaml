@@ -113,6 +113,8 @@ catalog:
   electron: 39.2.7
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
   ethers: 6.15.0
+  "@solana/spl-token": ^0.4.14
+  "@solana/web3.js": ^1.98.4
   expect: 30.2.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
