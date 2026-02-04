@@ -491,7 +491,10 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations({} as CryptoCurrency, address.toLowerCase(), { minHeight: 1, order: "asc" }),
+      await listOperations({} as CryptoCurrency, address.toLowerCase(), {
+        minHeight: 1,
+        order: "asc",
+      }),
     ).toEqual([
       [
         {
