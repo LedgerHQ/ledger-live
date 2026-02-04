@@ -1,0 +1,87 @@
+# generated: 2026-01-29
+# project: ledger-live
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-01-29
+project: ledger-live
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Core API & Account Queries (8 FRs: FR1, FR2, FR3, FR4, FR20, FR21, FR22, FR23)
+  epic-1: done
+  1-1-api-factory-configuration: done
+  1-2-native-egld-balance-query: done
+  1-3-esdt-token-balance-query: done
+  1-4-account-sequence-query: done
+  1-5-block-information-unsupported-methods: done
+  epic-1-retrospective: done
+
+  # Epic 2: Operations History (3 FRs: FR5, FR6, FR7)
+  epic-2: done
+  2-1-list-operations-with-pagination: done
+  2-2-egld-and-esdt-operations: done
+  2-3-operations-sorting: done
+  epic-2-retrospective: optional
+
+  # Epic 3: Staking & Delegation (4 FRs: FR8, FR9, FR10, FR11)
+  epic-3: in-progress
+  3-1-delegation-positions-query: done
+  3-2-delegation-state-mapping: done
+  3-3-validators-list-query: done
+  3-4-unsupported-rewards-method: done
+  epic-3-retrospective: optional
+
+  # Epic 4: Transaction Lifecycle (8 FRs: FR12, FR13, FR14, FR15, FR16, FR17, FR18, FR19)
+  epic-4: in-progress
+  4-1-craft-native-egld-transactions: done  # Review complete 2026-02-03
+  4-2-craft-esdt-token-transactions: done
+  4-3-craft-delegation-transactions: done
+  4-4-fee-estimation: done  # Code review fixes applied 2026-02-03
+  4-5-combine-transaction-with-signature: done  # Code review fixes applied 2026-02-03
+  4-6-broadcast-transaction: done  # Code review fixes applied 2026-02-03
+  4-7-validate-transaction-intent: done  # Code review fixes applied 2026-02-03
+  4-8-unsupported-raw-transaction-method: done
+  epic-4-retrospective: optional
+
+  # Epic 5: Documentation & Quality Assurance (8 FRs: FR24, FR25, FR26, FR27, FR28, FR29, FR30, FR31)
+  epic-5: in-progress
+  5-1-jsdoc-documentation: done  # Code review fixes applied 2026-02-04
+  5-2-readme-usage-documentation: done  # Code review fixes applied 2026-02-04
+  5-3-migration-guide: done  # Code review fixes applied 2026-02-04
+  5-4-logic-function-unit-tests: done  # Code review complete 2026-02-04
+  5-5-api-integration-tests: done  # Code review complete 2026-02-05
+  5-6-edge-case-integration-tests: in-progress
+  5-7-combine-method-integration-tests: done  # Code review fixes applied 2026-02-04
+  5-8-bridge-regression-tests: ready-for-dev  # Story created 2026-02-04
+  epic-5-retrospective: optional

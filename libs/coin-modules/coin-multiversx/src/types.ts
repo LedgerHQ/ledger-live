@@ -233,3 +233,24 @@ export function isMultiversXOperationExtraRaw(
 ): op is MultiversXOperationExtraRaw {
   return op !== null && typeof op === "object" && "amount" in op;
 }
+
+/**
+ * Input parameters for crafting a MultiversX transaction.
+ * Used by the craftTransaction logic function.
+ */
+export interface CraftTransactionInput {
+  /** Sender address (erd1...) */
+  sender: string;
+  /** Recipient address (erd1...) */
+  recipient: string;
+  /** Amount in wei (smallest unit) */
+  amount: bigint;
+  /** Account nonce */
+  nonce: number;
+  /** Optional gas limit (defaults to MIN_GAS_LIMIT) */
+  gasLimit?: number;
+  /** Transaction mode */
+  mode: "send" | "delegate" | "unDelegate" | "claimRewards" | "withdraw" | "reDelegateRewards";
+  /** ESDT token ID (undefined for native EGLD) */
+  tokenIdentifier?: string;
+}

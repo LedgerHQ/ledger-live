@@ -35,9 +35,17 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -83,6 +91,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   }
 }
