@@ -28,9 +28,15 @@ module.exports = {
     eqeqeq: ["error"],
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
-    "no-empty-pattern": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "import/no-cycle": ["error"],
-    "import/order": ["error"],
+    "import/order": [
+      "error",
+      {
+        alphabetize: {
+          order: "asc",
+        },
+      },
+    ],
   },
 };

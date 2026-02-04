@@ -1,7 +1,7 @@
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
 
 beforeAll(() => {

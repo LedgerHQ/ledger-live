@@ -1,4 +1,11 @@
 import {
+  TransactionValidation,
+  TransactionIntent,
+  FeeEstimation,
+  Balance,
+} from "@ledgerhq/coin-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -7,13 +14,6 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  TransactionValidation,
-  TransactionIntent,
-  FeeEstimation,
-  Balance,
-} from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fetchAccountNetworkInfo, getRecipientAccount } from "../network";
 import { fetchAccount } from "../network/horizon";

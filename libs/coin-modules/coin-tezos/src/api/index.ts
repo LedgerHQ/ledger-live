@@ -14,9 +14,9 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
-import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
-import { getRevealFee } from "@taquito/taquito";
 import { log } from "@ledgerhq/logs";
+import { getRevealFee } from "@taquito/taquito";
+import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -30,6 +30,7 @@ import {
   validateIntent,
   getStakes,
 } from "../logic";
+import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import { getTezosToolkit } from "../logic/tezosToolkit";
 import api from "../network/tzkt";
 import {
@@ -38,7 +39,6 @@ import {
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
-import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import type { TezosApi, TezosFeeEstimation } from "./types";
 
 export function createApi(config: TezosConfig): TezosApi {

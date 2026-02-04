@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNodeApi } from "../network/node";
 import { EvmCoinConfig, setCoinConfig } from "../config";
+import { getNodeApi } from "../network/node";
 import { getBlock } from "./getBlock";
 
 jest.mock("../network/node");

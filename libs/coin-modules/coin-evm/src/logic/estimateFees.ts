@@ -1,17 +1,17 @@
-import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { Transaction, TransactionLike } from "ethers";
-import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
-import { getGasTracker } from "../network/gasTracker";
-import { isEthAddress } from "../utils";
-import { getNodeApi } from "../network/node";
 import { getAdditionalLayer2Fees } from "../logic";
+import { getGasTracker } from "../network/gasTracker";
+import { getNodeApi } from "../network/node";
+import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
+import { isEthAddress } from "../utils";
 import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 

@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNodeApi } from "../network/node";
+import BigNumber from "bignumber.js";
 import { getExplorerApi } from "../network/explorer";
+import { getNodeApi } from "../network/node";
 import { getStakes } from "./getStakes";
 import { getBalance } from ".";
 

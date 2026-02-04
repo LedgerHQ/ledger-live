@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction as EvmTransaction, FeeData } from "../../types";
+import { Account, BroadcastConfig } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
+import { Transaction as EvmTransaction, FeeData } from "../../types";
 
 /**
  * Asset information for token transfers

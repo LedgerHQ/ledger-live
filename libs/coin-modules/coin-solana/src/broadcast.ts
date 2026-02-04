@@ -1,9 +1,9 @@
-import { log } from "@ledgerhq/logs";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { log } from "@ledgerhq/logs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { ChainAPI } from "./network";
-import { SolanaTxConfirmationTimeout, SolanaTxSimulationFailedWhilePendingOp } from "./errors";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
+import { SolanaTxConfirmationTimeout, SolanaTxSimulationFailedWhilePendingOp } from "./errors";
+import { ChainAPI } from "./network";
 
 export const broadcastWithAPI = async (
   {
