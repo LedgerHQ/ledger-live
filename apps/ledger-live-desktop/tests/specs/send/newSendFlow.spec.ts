@@ -520,7 +520,7 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should show FeeTooHigh message when fees exceed 10% of amount (BTC)", async ({
+    test("should show warning message when fees exceed 10% of amount (BTC)", async ({
       app,
       page,
     }) => {
@@ -530,12 +530,16 @@ test.describe("New Send Flow", () => {
 
       await test.step("Small amount shows warning", async () => {
         await app.newSendFlow.fillCryptoAmount("0.0001");
-        await expect(feeTooHighText).toBeVisible({ timeout: 15000 });
+
+        await feeTooHighText.waitFor({ state: "visible" });
+        await expect(feeTooHighText).toBeVisible();
       });
 
       await test.step("Larger amount hides warning", async () => {
         await app.newSendFlow.fillAmount("10");
-        await expect(feeTooHighText).toBeHidden({ timeout: 15000 });
+
+        await feeTooHighText.waitFor({ state: "hidden" });
+        await expect(feeTooHighText).toBeHidden();
       });
     });
 
