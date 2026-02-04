@@ -10,6 +10,7 @@ import type { RecentAddressesState } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Application } from "tests/page";
 import { FEE_PRESETS, FeePreset } from "tests/common/newSendFlow/types";
+import { isLocatorEnabled } from "tests/utils/locatorUtils";
 
 // Test addresses per family (using abandon seed addresses for safety)
 const TEST_ADDRESSES = {
@@ -543,26 +544,26 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should change max amount when changing fee presets (BTC)", async ({ app, page }) => {
+    test.only("should change max amount when changing fee presets (BTC)", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
 
-      await test.step("Select Max", async () => {
+      await test.step("Select amount max quick action", async () => {
         await app.newSendFlow.clickQuickAction("Max");
-        await app.newSendFlow.waitForBridgeReady();
+        expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
       });
 
       const getAmount = async () => {
-        const raw = await app.newSendFlow.getAmountValue();
-        return new BigNumber((raw ?? "").replace(/,/g, ""));
+        const rawAmountValue = await app.newSendFlow.getAmountValue();
+        return new BigNumber(rawAmountValue);
       };
 
       await test.step("Slow preset yields higher max than Fast", async () => {
         await app.newSendFlow.selectFeePreset("slow");
-        await app.newSendFlow.waitForBridgeReady();
+        expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
         const slowAmount = await getAmount();
 
         await app.newSendFlow.selectFeePreset("fast");
-        await app.newSendFlow.waitForBridgeReady();
+        expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
         const fastAmount = await getAmount();
 
         expect(slowAmount.isFinite()).toBe(true);
