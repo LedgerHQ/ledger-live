@@ -28,7 +28,7 @@ jobs:
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -49,7 +49,7 @@ jobs:
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
@@ -67,7 +67,7 @@ jobs:
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -98,7 +98,7 @@ jobs:
     outputs:
       status: ${{ steps.tests.outcome }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -120,12 +120,12 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -137,7 +137,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
       - name: Upload Allure Report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
@@ -148,18 +148,18 @@ jobs:
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && needs.codechecks.result == 'success' && needs.unit-tests.result == 'success' && needs.e2e-tests-linux.outputs.status == 'success' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: "download linter results"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: lint-desktop-external
       - name: download images artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: images
       - name: parse images
