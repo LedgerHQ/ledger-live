@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useSelector } from "LLD/hooks/redux";
-import { Trans } from "react-i18next";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -9,11 +9,17 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { BitcoinFamily } from "./types";
+import ButtonV3 from "~/renderer/components/ButtonV3";
+import BigNumber from "bignumber.js";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import BigNumber from "bignumber.js";
-import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { openModal } from "~/renderer/actions/modals";
+import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { TokenAccount } from "@ledgerhq/types-live";
+import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import Spinner from "~/renderer/components/Spinner";
+import { TFunction } from "i18next";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -31,13 +37,13 @@ const BalanceDetail = styled(Box).attrs(() => ({
   paddingRight: 20,
 }))``;
 
-const TitleWrapper = styled(Box).attrs(() => ({
+export const TitleWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   mb: 1,
 }))``;
 
-const Title = styled(Text).attrs(() => ({
+export const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   ff: "Inter|Medium",
   color: "neutral.c70",
@@ -54,25 +60,90 @@ const AmountValue = styled(Text).attrs(() => ({
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
 
-const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
+type ZCashSyncState = "disabled" | "running" | "paused" | "complete" | "outdated";
+
+const ActionButton = ({
+  t,
+  syncState,
+  updateSyncState,
+}: {
+  t: TFunction<"translation", undefined>;
+  syncState: ZCashSyncState;
+  updateSyncState: () => void;
+}) => {
+  switch (syncState) {
+    case "disabled":
+      return (
+        <ButtonV3
+          variant="main"
+          onClick={updateSyncState}
+          buttonTestId="show-private-balance-button"
+        >
+          <Text>{t("zcash.shielded.state.showBalance")}</Text>
+        </ButtonV3>
+      );
+    case "paused":
+      return (
+        <ButtonV3
+          variant="main"
+          Icon={<Refresh size={20} />}
+          style={{ padding: "100%" }}
+          onClick={updateSyncState}
+        />
+      );
+    case "running":
+      return (
+        <ButtonV3
+          variant="main"
+          Icon={<Pause size={20} />}
+          style={{ padding: "100%" }}
+          onClick={updateSyncState}
+        />
+      );
+    case "outdated":
+      return (
+        <ButtonV3
+          variant="main"
+          Icon={<Refresh size={20} />}
+          style={{ padding: "100%" }}
+          onClick={updateSyncState}
+        />
+      );
+  }
+};
+
+type Props = {
+  account: BitcoinAccount | TokenAccount;
+};
+
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
+  const [syncState, setSyncState] = useState<ZCashSyncState>("disabled"); // TODO: initial state depends on the account data
+  const [progress] = useState(0);
+
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const { getFeature } = useFeatureFlags();
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
 
-  const showComponent = getFeature("zcashShielded");
+  const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
+
+  const { spendableBalance } = account;
+  const privateInfo = account.type === "Account" ? account.privateInfo : null;
+
+  useEffect(() => {
+    if (privateInfo?.key && syncState === "disabled") {
+      setSyncState("running");
+    }
+  }, [privateInfo, syncState]);
 
   if (
     account.type !== "Account" ||
     (account.currency.id as Currency) !== "zcash" ||
-    !showComponent?.enabled
+    !showPrivateBalanceComponent
   )
     return null;
-
-  // TODO: BitcoinAccount needs a new prop for private balance
-  // const { spendableBalance, privateBalance } = account;
-  const { spendableBalance } = account;
-  const privateBalance = BigNumber(0);
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -82,12 +153,33 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
   };
 
   const _transparentBalance = spendableBalance ?? BigNumber(0);
-  const _privateBalance = privateBalance ?? BigNumber(0);
+  const _privateBalance = privateInfo?.balance ?? BigNumber(0);
   const _availableBalance = _transparentBalance.plus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);
   const availableBalanceLabel = formatCurrencyUnit(unit, _availableBalance, formatConfig);
+
+  const updateSyncState = () => {
+    switch (syncState) {
+      case "disabled":
+        // Open modal to import UFVK
+        dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account }));
+        break;
+      case "running":
+        // Pause block processing task
+        setSyncState("paused");
+        break;
+      case "paused":
+        // Resume block processing task
+        setSyncState("running");
+        break;
+      case "outdated":
+        // Start sync from the last known block
+        setSyncState("running");
+        break;
+    }
+  };
 
   return (
     <Wrapper>
@@ -117,18 +209,32 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
           <Discreet>{transparentBalanceLabel}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="zcash.account.privateBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{privateBalanceLabel}</Discreet>
-        </AmountValue>
+      <BalanceDetail style={{ flexDirection: "row", alignItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="zcash.account.privateBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{privateBalanceLabel}</Discreet>
+          </AmountValue>
+        </div>
+        <div style={{ display: "flex", paddingLeft: "30px" }}>
+          {syncState !== "disabled" ? (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {syncState === "running" ? <Spinner size={14} /> : null}
+              {syncState === "paused" ? <Text>Paused at </Text> : null}
+              <Text style={{ paddingLeft: "3px", paddingRight: "10px" }}>{progress}%</Text>
+            </div>
+          ) : null}
+          <div>
+            <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
+          </div>
+        </div>
       </BalanceDetail>
     </Wrapper>
   );

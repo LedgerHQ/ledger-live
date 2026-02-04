@@ -7933,6 +7933,55 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "shielded": {
+      "state": {
+        "showBalance": "Show balance",
+        "lastSync": "Last sync {{days}} ago"
+      },
+      "flows": {
+        "export": {
+          "title": "Enable Zcash private balance",
+          "breadcrumbs": {
+            "0": "Birthday",
+            "1": "UFVK",
+            "2": "Device",
+            "3": "Confirmation"
+          },
+          "steps": {
+            "birthday": {
+              "text": "The birth height is the point on the blockchain where your wallet begins scanning for your funds.",
+              "cta": "Learn more",
+              "label": "Birthday height",
+              "tooltip": "Default: today's date. Change only for existing accounts with past private (shielded) activity.",
+              "syncFromZero": "This account received shielded ZEC in the past, but I can't retrieve the birth height. Scan from block 0 (this may take a long time).",
+              "error": "Invalid date"
+            },
+            "ufvk": {
+              "text": "To begin, you must export your Unified Full Viewing Key (UFVK). This action requires your confirmation on your Ledger device."
+            },
+            "device": {
+              "text": "Confirm UFVK export on your Ledger device"
+            },
+            "confirmation": {
+              "success": {
+                "title": "UFVK successfully imported",
+                "text": "You will be able to receive shielded ZEC and sign private transactions.",
+                "info": {
+                  "text": "Your Unified Full Viewing Key remains stored locally on your computer and is never transmitted or exposed to external systems.",
+                  "cta": "Learn more"
+                },
+                "warning": "Accounts with an older birth height may require a longer synchronisation (up to 2 hours). Please keep the app open until syncing finishes."
+              }
+            }
+          }
+        }
+      },
+      "startSync": "Start sync",
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      }
     }
   }
 }
