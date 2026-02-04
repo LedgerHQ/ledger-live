@@ -61,7 +61,7 @@ export function AddressMatchedSection({
   };
 
   return (
-    <div className="flex w-full min-w-0 flex-col">
+    <div data-testid="send-address-matched-title" className="flex w-full min-w-0 flex-col">
       <Subheader className="mb-12">
         <SubheaderRow>
           <SubheaderTitle>{t("newSendFlow.addressMatched")}</SubheaderTitle>

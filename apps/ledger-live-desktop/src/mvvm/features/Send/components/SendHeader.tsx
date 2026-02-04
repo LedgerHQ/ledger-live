@@ -86,6 +86,7 @@ export function SendHeader() {
           <div className="relative">
             <AddressInput className="w-full" defaultValue={addressInputValue} hideClearButton />
             <button
+              data-testid="send-edit-recipient-button"
               type="button"
               className="absolute inset-0"
               aria-label="Edit recipient"
@@ -103,6 +104,7 @@ export function SendHeader() {
           value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}
+          data-testid="send-recipient-input"
           placeholder={
             uiConfig.recipientSupportsDomain
               ? t("newSendFlow.placeholder")
@@ -174,6 +176,7 @@ export function SendHeader() {
   return (
     <div className="flex flex-col">
       <DialogHeader
+        data-testid="send-dialog-header"
         appearance="compact"
         title={title}
         description={descriptionText || undefined}

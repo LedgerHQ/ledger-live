@@ -58,7 +58,11 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
         secondaryAction={
           <Menu>
             <MenuTrigger asChild>
-              <TileSecondaryAction icon={MoreVertical} aria-label="More actions" />
+              <TileSecondaryAction
+                icon={MoreVertical}
+                data-testid="send-recent-tile-action"
+                aria-label="More actions"
+              />
             </MenuTrigger>
             <MenuContent>
               <MenuItem onSelect={handleRemove}>

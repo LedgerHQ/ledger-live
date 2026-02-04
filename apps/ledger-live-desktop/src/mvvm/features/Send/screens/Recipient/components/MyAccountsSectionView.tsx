@@ -22,7 +22,7 @@ export function MyAccountsSectionView({
   }
 
   return (
-    <div className="mt-6 flex flex-col gap-8 pb-12">
+    <div data-testid="send-my-accounts-section" className="mt-6 flex flex-col gap-8 pb-12">
       <Subheader className="mb-6">
         <SubheaderRow>
           <SubheaderTitle>{t("newSendFlow.myAccounts")}</SubheaderTitle>

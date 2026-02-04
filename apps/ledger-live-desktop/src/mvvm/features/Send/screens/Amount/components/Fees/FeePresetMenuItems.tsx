@@ -45,7 +45,7 @@ export function FeePresetMenuItems({
               const subLabel = shouldShowFeeRateLegend ? option.legendValue : option.fiatValue;
               return (
                 <MenuRadioItem key={option.id} value={option.id}>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col" data-testid={`send-fees-preset-${option.id}`}>
                     <span className="text-base">{label}</span>
                     {subLabel ? <span className="body-3 text-muted">{subLabel}</span> : null}
                   </div>
@@ -58,6 +58,7 @@ export function FeePresetMenuItems({
       ) : null}
       {hasCustom ? (
         <MenuItem
+          data-testid="send-custom-fees-menu-item"
           onSelect={() => {
             onSelectCustomFees?.();
           }}
@@ -67,6 +68,7 @@ export function FeePresetMenuItems({
       ) : null}
       {hasCoinControl ? (
         <MenuItem
+          data-testid="send-coin-control-fees-menu-item"
           onSelect={() => {
             onSelectCoinControl?.();
           }}

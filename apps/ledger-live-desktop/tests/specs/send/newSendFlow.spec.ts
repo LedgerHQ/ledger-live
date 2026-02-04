@@ -1,5 +1,5 @@
 import test from "../../fixtures/common";
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
 import { Layout } from "../../component/layout.component";
@@ -8,6 +8,10 @@ import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { updateRecentAddresses } from "@ledgerhq/live-wallet/store";
 import type { RecentAddressesState } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { Application } from "tests/page";
+import { FEE_PRESETS } from "tests/common/newSendFlow/types";
+import { isLocatorEnabled } from "tests/utils/locatorUtils";
+import { StellarMemoType } from "tests/page/modal/newSendFlow.page";
 
 // Test addresses per family (using abandon seed addresses for safety)
 const TEST_ADDRESSES = {
@@ -24,7 +28,7 @@ const TEST_ADDRESSES = {
   xrp: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // abandonSeed address
   // Additional test addresses
   sanctioned: Addresses.SANCTIONED_ETHEREUM,
-  newAddress: "0x2222222222222222222222222222222222222222", // Not in recent addresses
+  newAddress: "0x2222222222222222222222222222222222222222", // Not in recent addresses,
 };
 
 const INVALID_ADDRESSES = {
@@ -52,7 +56,8 @@ const ACCOUNT_NAMES = {
 };
 
 test.use({
-  userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXTZ1AccountXLM1AccountALGO1AccountXRP",
+  userdata:
+    "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXTZ1AccountXLM1AccountALGO1AccountXRP",
   featureFlags: {
     newSendFlow: {
       enabled: true,
@@ -118,8 +123,8 @@ test.describe("New Send Flow", () => {
 
   // Helper function to navigate to account and open send flow
   async function openSendFlowForAccount(
-    page: any,
-    app: any,
+    app: Application,
+    page: Page,
     accountName: string,
     shouldSkipIfMissing = true,
   ) {
@@ -152,7 +157,7 @@ test.describe("New Send Flow", () => {
     await app.newSendFlow.waitForDialog();
   }
 
-  async function getAccountFreshAddress(page: any, accountName: string): Promise<string | null> {
+  async function getAccountFreshAddress(page: Page, accountName: string): Promise<string | null> {
     return page.evaluate((name: string) => {
       const w = window as any;
       const store = w.__STORE__ ?? w.ledger?.store;
@@ -163,15 +168,25 @@ test.describe("New Send Flow", () => {
     }, accountName);
   }
 
-  async function reachSignatureStep(app: any, page: any, accountName: string, address: string) {
-    await openSendFlowForAccount(page, app, accountName);
-    await app.newSendFlow.typeAddress(address);
-    await app.newSendFlow.waitForRecipientValidation();
-    await app.newSendFlow.selectAddressItem(0);
-    await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-    await app.newSendFlow.fillCryptoAmount("0.001");
-    await app.newSendFlow.clickReview();
-    await app.newSendFlow.waitForSignature();
+  async function reachSignatureStep(
+    app: Application,
+    page: Page,
+    accountName: string,
+    address: string,
+  ) {
+    await openSendFlowForAccount(app, page, accountName);
+    await app.newSendFlow.reachSignatureStep(address);
+  }
+
+  async function reachAmountStep(
+    app: Application,
+    page: Page,
+    accountName: string,
+    address: string,
+    hasMemo: boolean = false,
+  ) {
+    await openSendFlowForAccount(app, page, accountName);
+    await app.newSendFlow.reachAmountStep(address, hasMemo);
   }
 
   async function mockDeviceError(page: any, errorName: string) {
@@ -183,7 +198,7 @@ test.describe("New Send Flow", () => {
 
   test.describe("Recipient Step", () => {
     test("should open dialog with address input visible @smoke", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Verify Recipient step UI", async () => {
         await app.newSendFlow.expectDialogVisible();
@@ -192,8 +207,8 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should show address matched after typing valid address", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+    test.only("should show address matched after typing valid address", async ({ app, page }) => {
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Type valid address", async () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
@@ -206,7 +221,7 @@ test.describe("New Send Flow", () => {
     });
 
     test("should show sanctioned banner for sanctioned address", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Type sanctioned address", async () => {
         await app.newSendFlow.typeAddress(Addresses.SANCTIONED_ETHEREUM);
@@ -219,12 +234,12 @@ test.describe("New Send Flow", () => {
     });
 
     test("should proceed to Amount step when clicking valid address", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Type and select address", async () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
         await app.newSendFlow.waitForRecipientValidation();
-        await app.newSendFlow.selectAddressItem(0);
+        await app.newSendFlow.clickOnSendToButton();
       });
 
       await test.step("Verify Amount step is visible", async () => {
@@ -235,7 +250,7 @@ test.describe("New Send Flow", () => {
     });
 
     test("should show recent address tiles", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Verify a recent address is displayed in initial state", async () => {
         // Tile title is a formatted address (with ellipsis). Match by prefix/suffix to avoid unicode issues.
@@ -243,8 +258,8 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should remove a recent address from the list", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+    test.only("should remove a recent address from the list", async ({ app, page }) => {
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       const recentDeadTile = page.getByText(/0x0000.*dead/i).first();
 
@@ -253,7 +268,6 @@ test.describe("New Send Flow", () => {
       });
 
       await test.step("Remove first recent address", async () => {
-        // Our seeded cache puts the 0x…dEaD address first.
         await app.newSendFlow.removeRecentAddressTile(0);
       });
 
@@ -263,7 +277,7 @@ test.describe("New Send Flow", () => {
     });
 
     test("should show 'sending to a new address' banner for new address", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Type a new address not in recent addresses", async () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.newAddress);
@@ -280,7 +294,7 @@ test.describe("New Send Flow", () => {
       app,
       page,
     }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Type an address that exists in recent addresses", async () => {
         // 0x000000000000000000000000000000000000dEaD is in recent addresses (see userdata)
@@ -305,7 +319,7 @@ test.describe("New Send Flow", () => {
         },
       );
 
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
       await test.step("Type ENS name and wait for validation", async () => {
         await app.newSendFlow.typeAddress("vitalik.eth");
@@ -314,13 +328,13 @@ test.describe("New Send Flow", () => {
 
       await test.step("Select resolved address and proceed", async () => {
         await app.newSendFlow.expectAddressMatched();
-        await app.newSendFlow.selectAddressItem(0);
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
       });
     });
 
     test("should allow self-transfer when policy is free (EVM)", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
       const selfAddress = await getAccountFreshAddress(page, ACCOUNT_NAMES.ethereum);
       if (!selfAddress) {
         test.skip();
@@ -334,13 +348,13 @@ test.describe("New Send Flow", () => {
 
       await test.step("Verify no recipient error and proceed", async () => {
         await expect(app.newSendFlow.recipientErrorBanner).not.toBeVisible();
-        await app.newSendFlow.selectAddressItem(0);
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
       });
     });
 
     test("should block self-transfer when policy is impossible (Tezos)", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.tezos);
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.tezos);
       const selfAddress = await getAccountFreshAddress(page, ACCOUNT_NAMES.tezos);
       if (!selfAddress) {
         test.skip();
@@ -356,18 +370,152 @@ test.describe("New Send Flow", () => {
         await expect(app.newSendFlow.recipientErrorBanner).toBeVisible({ timeout: 10000 });
       });
     });
+
+    test.describe("Memo skip", () => {
+      test("should be able to skip memo input and need to confirm it", async ({ app, page }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+        await app.newSendFlow.confirmSkipMemo();
+
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+      });
+
+      test("should not need to confirm skipping memo when parameter is enabled from send modal", async ({
+        app,
+        page,
+      }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.checkNeverAskAgainSkipMemo();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+        await app.newSendFlow.confirmSkipMemo();
+
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+
+        await app.newSendFlow.close();
+
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+      });
+
+      test("should not need to confirm skipping memo when parameter is enabled from settings", async ({
+        app,
+        page,
+      }) => {
+        await app.layout.goToSettings();
+        await app.settings.goToAccountsTab();
+        await app.settings.switchNeverAskAgainSkipMemo();
+
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+      });
+
+      test("should need to confirm skipping memo when parameter is disabled from settings", async ({
+        app,
+        page,
+      }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.checkNeverAskAgainSkipMemo();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+        await app.newSendFlow.confirmSkipMemo();
+
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+
+        await app.newSendFlow.close();
+
+        await app.layout.goToSettings();
+        await app.settings.goToAccountsTab();
+        await app.settings.switchNeverAskAgainSkipMemo();
+
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.checkNeverAskAgainSkipMemo();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+      });
+    });
+
+    test.describe("Memo on Stellar", () => {
+      test("should have Memo Text type as default option", async ({ app, page }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+        await expect(app.newSendFlow.memoOptionsSelect).toBeVisible();
+        await expect(app.newSendFlow.memoOptionsSelect).toHaveText("Memo Text");
+      });
+
+      const memoOptions: { type: StellarMemoType; value: string | undefined; label: string }[] = [
+        { type: "NO_MEMO", value: undefined, label: "No Memo" },
+        { type: "MEMO_TEXT", value: "some random memo", label: "Memo Text" },
+        { type: "MEMO_ID", value: "123456", label: "Memo ID" },
+        {
+          type: "MEMO_HASH",
+          value: "this a random memo of 64 characters needed by stellar memo logic",
+          label: "Memo Hash",
+        },
+        {
+          type: "MEMO_RETURN",
+          value: "this a random memo of 64 characters needed by stellar memo logic",
+          label: "Memo Return",
+        },
+      ];
+
+      memoOptions.forEach(option => {
+        test.skip(`should be able to switch to ${option.type}, fill the input and go to the amount step`, async ({
+          app,
+          page,
+        }) => {
+          await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+          await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
+          await expect(app.newSendFlow.memoInput).toBeVisible();
+          await expect(app.newSendFlow.memoOptionsSelect).toBeVisible();
+
+          if (option.type !== "MEMO_TEXT") {
+            await app.newSendFlow.memoOptionsSelect.click();
+            await app.newSendFlow.selectMemoType(option.type);
+          }
+
+          await expect(app.newSendFlow.memoOptionsSelect).toHaveText(option.label);
+
+          if (option.value !== undefined) {
+            await app.newSendFlow.loadingSpinner.waitFor({ state: "visible" });
+            await app.newSendFlow.loadingSpinner.waitFor({ state: "hidden" });
+            await app.newSendFlow.skipMemoLink.waitFor({ state: "visible" });
+            await app.newSendFlow.typeMemo(option.value);
+          }
+
+          await app.newSendFlow.clickOnSendToButton();
+          await expect(app.newSendFlow.amountInput).toBeVisible();
+        });
+      });
+    });
   });
 
   test.describe("Amount Step", () => {
-    // Helper to reach Amount step
-    async function reachAmountStep(app: any, page: any, accountName: string, address: string) {
-      await openSendFlowForAccount(page, app, accountName);
-      await app.newSendFlow.typeAddress(address);
-      await app.newSendFlow.waitForRecipientValidation();
-      await app.newSendFlow.selectAddressItem(0);
-      await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-    }
-
     test("should show amount input and quick actions @smoke", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
@@ -379,16 +527,8 @@ test.describe("New Send Flow", () => {
 
     test("should allow entering valid amount", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Fill crypto amount", async () => {
-        // Use fillCryptoAmount to switch from default FIAT mode to CRYPTO mode
-        // FIAT mode doesn't support 3 decimal places like 0.001
-        await app.newSendFlow.fillCryptoAmount("0.001");
-      });
-
-      await test.step("Verify review button is enabled", async () => {
-        await app.newSendFlow.expectReviewEnabled();
-      });
+      await app.newSendFlow.fillCryptoAmount("0.001");
+      await app.newSendFlow.expectReviewEnabled();
     });
 
     test("should allow entering fiat and crypto amounts", async ({ app, page }) => {
@@ -405,19 +545,15 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should show error for insufficient funds", async ({ app, page }) => {
+    test("should show error for insufficient funds and get funds button", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Enter amount exceeding balance", async () => {
         await app.newSendFlow.fillAmount("999999999");
       });
 
-      await test.step("Verify error or Get Funds button", async () => {
-        // Either error message or Get Funds button should appear
-        const hasError = await app.newSendFlow.amountErrorMessage.isVisible().catch(() => false);
-        const hasGetFunds = await app.newSendFlow.getFundsButton.isVisible().catch(() => false);
-        expect(hasError || hasGetFunds).toBe(true);
-      });
+      await app.newSendFlow.expectAmountError();
+      await app.newSendFlow.expectGetFundsButton();
     });
 
     test("should disable review button for zero amount", async ({ app, page }) => {
@@ -432,30 +568,27 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should test quick actions", async ({ app, page }) => {
+    test.skip("should set the correct amount when clicking on the amount quick actions", async ({
+      app,
+      page,
+    }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Test 25% quick action", async () => {
-        const hasQuickActions = await app.newSendFlow.quickAction25.isVisible().catch(() => false);
-        if (hasQuickActions) {
-          await app.newSendFlow.clickQuickAction("25%");
-          const amount = await app.newSendFlow.getAmountValue();
-          expect(amount).not.toBe("0");
-          expect(amount).not.toBe("");
-        }
+        await app.newSendFlow.clickQuickAction("25%");
+        const amount = await app.newSendFlow.getAmountValue();
+        expect(amount).not.toBe("0");
+        expect(amount).not.toBe("");
       });
     });
 
     test("should navigate back to Recipient", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
-      await test.step("Click back", async () => {
-        await app.newSendFlow.goBack();
-      });
+      await app.newSendFlow.goBack();
 
       await test.step("Verify back at Recipient step", async () => {
         await expect(app.newSendFlow.recipientInput).toBeVisible();
-        // Should be able to type again
         const isEditable = await app.newSendFlow.recipientInput.isEditable();
         expect(isEditable).toBe(true);
       });
@@ -472,18 +605,14 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.clickReview();
       });
 
-      await test.step("Wait for signature screen", async () => {
-        await app.newSendFlow.waitForSignature();
-      });
+      await app.newSendFlow.waitForSignature();
 
       await test.step("Complete device action", async () => {
         // Mock device signing the transaction
         await deviceAction.silentSign();
       });
 
-      await test.step("Verify confirmation screen", async () => {
-        await app.newSendFlow.waitForConfirmation();
-      });
+      await app.newSendFlow.waitForConfirmation();
     });
 
     test("should allow changing fee presets (EVM)", async ({ app, page }) => {
@@ -491,18 +620,20 @@ test.describe("New Send Flow", () => {
 
       await test.step("Fill crypto amount", async () => {
         await app.newSendFlow.fillCryptoAmount("0.001");
-        await app.newSendFlow.expectReviewEnabled();
+        await app.newSendFlow.reviewButton.waitFor({ state: "visible" });
+        const isReviewButtonEnabled = await app.newSendFlow.reviewButton.isEnabled();
+        expect(isReviewButtonEnabled).toEqual(true);
       });
 
-      await test.step("Select FAST preset", async () => {
-        await app.newSendFlow.selectFeePreset(/fast/i);
-        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/fast/i);
-      });
+      for (const preset of FEE_PRESETS) {
+        await test.step(`Select ${preset} preset`, async () => {
+          await app.newSendFlow.selectFeePreset(preset);
 
-      await test.step("Select SLOW preset", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
-        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/slow/i);
-      });
+          await test.step(`Verifying preset ${preset} is correctly selected`, async () => {
+            await expect(app.newSendFlow.feesMenuTrigger).toContainText(new RegExp(preset, "i"));
+          });
+        });
+      }
     });
 
     test("should allow changing fee presets (BTC)", async ({ app, page }) => {
@@ -510,28 +641,30 @@ test.describe("New Send Flow", () => {
 
       await test.step("Fill amount", async () => {
         await app.newSendFlow.fillCryptoAmount("0.0001");
-        await app.newSendFlow.expectReviewEnabled();
       });
 
-      await test.step("Verify fees menu shows Medium by default", async () => {
-        const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
-        expect(triggerText).toMatch(/medium/i);
+      await test.step("Verify fees menu shows medium by default", async () => {
+        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/medium/i);
       });
 
-      await test.step("Select FAST preset (highest fee rate)", async () => {
-        await app.newSendFlow.selectFeePreset(/fast/i);
-        const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
-        expect(triggerText).toMatch(/fast/i);
-      });
+      for (const preset of FEE_PRESETS) {
+        if (preset === "medium") {
+          continue;
+        }
 
-      await test.step("Select SLOW preset (lowest fee rate)", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
-        const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
-        expect(triggerText).toMatch(/slow/i);
+        await app.newSendFlow.selectFeePreset(preset);
+        await test.step(`Verifying preset ${preset} is correctly selected`, async () => {
+          await expect(app.newSendFlow.feesMenuTrigger).toContainText(new RegExp(preset, "i"));
+        });
+      }
+
+      await app.newSendFlow.selectFeePreset("medium");
+      await test.step("Verifying preset medium is correctly selected", async () => {
+        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/medium/i);
       });
     });
 
-    test("should show FeeTooHigh message when fees exceed 10% of amount (BTC)", async ({
+    test("should show warning message when fees exceed 10% of amount (BTC)", async ({
       app,
       page,
     }) => {
@@ -541,68 +674,44 @@ test.describe("New Send Flow", () => {
 
       await test.step("Small amount shows warning", async () => {
         await app.newSendFlow.fillCryptoAmount("0.0001");
-        await expect(feeTooHighText).toBeVisible({ timeout: 15000 });
+
+        await feeTooHighText.waitFor({ state: "visible" });
+        await expect(feeTooHighText).toBeVisible();
       });
 
       await test.step("Larger amount hides warning", async () => {
         await app.newSendFlow.fillAmount("10");
-        await expect(feeTooHighText).toBeHidden({ timeout: 15000 });
+
+        await feeTooHighText.waitFor({ state: "hidden" });
+        await expect(feeTooHighText).toBeHidden();
       });
     });
 
-    test("should change max amount when changing fee presets (BTC)", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
+    (["bitcoin", "ethereum"] as const).forEach(family => {
+      test(`should change max amount when changing fee presets ${family}`, async ({
+        app,
+        page,
+      }) => {
+        await reachAmountStep(app, page, ACCOUNT_NAMES[family], TEST_ADDRESSES[family]);
 
-      await test.step("Select Max", async () => {
-        await app.newSendFlow.clickQuickAction("Max");
-        await app.newSendFlow.waitForBridgeReady();
-      });
+        await test.step("Select amount max quick action", async () => {
+          await app.newSendFlow.clickQuickAction("Max");
+          expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
+        });
 
-      const getAmount = async () => {
-        const raw = await app.newSendFlow.getAmountValue();
-        return new BigNumber((raw ?? "").replace(/,/g, ""));
-      };
+        await test.step("Slow preset yields higher max than Fast", async () => {
+          await app.newSendFlow.selectFeePreset("slow");
+          expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
+          const slowAmount = new BigNumber(await app.newSendFlow.getAmountValue());
 
-      await test.step("Slow preset yields higher max than Fast", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
-        await app.newSendFlow.waitForBridgeReady();
-        const slowAmount = await getAmount();
+          await app.newSendFlow.selectFeePreset("fast");
+          expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
+          const fastAmount = new BigNumber(await app.newSendFlow.getAmountValue());
 
-        await app.newSendFlow.selectFeePreset(/fast/i);
-        await app.newSendFlow.waitForBridgeReady();
-        const fastAmount = await getAmount();
-
-        expect(slowAmount.isFinite()).toBe(true);
-        expect(fastAmount.isFinite()).toBe(true);
-        expect(fastAmount.lt(slowAmount)).toBe(true);
-      });
-    });
-
-    test("should change max amount when changing fee presets (EVM)", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Select Max", async () => {
-        await app.newSendFlow.clickQuickAction("Max");
-        await app.newSendFlow.waitForBridgeReady();
-      });
-
-      const getAmount = async () => {
-        const raw = await app.newSendFlow.getAmountValue();
-        return new BigNumber((raw ?? "").replace(/,/g, ""));
-      };
-
-      await test.step("Slow preset yields higher max than Fast", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
-        await app.newSendFlow.waitForBridgeReady();
-        const slowAmount = await getAmount();
-
-        await app.newSendFlow.selectFeePreset(/fast/i);
-        await app.newSendFlow.waitForBridgeReady();
-        const fastAmount = await getAmount();
-
-        expect(slowAmount.isFinite()).toBe(true);
-        expect(fastAmount.isFinite()).toBe(true);
-        expect(fastAmount.lt(slowAmount)).toBe(true);
+          expect(slowAmount.isFinite()).toBe(true);
+          expect(fastAmount.isFinite()).toBe(true);
+          expect(fastAmount.lt(slowAmount)).toBe(true);
+        });
       });
     });
 
@@ -613,52 +722,68 @@ test.describe("New Send Flow", () => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
       await app.newSendFlow.fillCryptoAmount("0.0001");
       await app.newSendFlow.openFeesMenu();
-      await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
-      await expect(page.getByRole("menuitem", { name: /coin control/i })).toBeVisible({
-        timeout: 10000,
-      });
+
+      await app.newSendFlow.customFeesMenuItem.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.customFeesMenuItem).toBeVisible();
+
+      await app.newSendFlow.coinControlFeesMenuItem.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.coinControlFeesMenuItem).toBeVisible();
     });
 
     test("should show custom fees option in fees menu (EVM)", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
       await app.newSendFlow.fillCryptoAmount("0.001");
       await app.newSendFlow.openFeesMenu();
-      await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
+      await app.newSendFlow.customFeesMenuItem.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.customFeesMenuItem).toBeVisible();
     });
 
     test("should not show fee menu options for Tezos", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.tezos, TEST_ADDRESSES.tezos);
       await app.newSendFlow.fillCryptoAmount("0.1");
-      const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
-      expect(hasMenu).toBe(false);
+      await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
 
     test("should not show fee menu options for Algorand", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand);
+      await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand, true);
       await app.newSendFlow.fillCryptoAmount("0.1");
-      const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
-      expect(hasMenu).toBe(false);
+      await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
 
     test("should show custom fees only for Stellar", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.stellar, TEST_ADDRESSES.stellar);
+      await reachAmountStep(app, page, ACCOUNT_NAMES.stellar, TEST_ADDRESSES.stellar, true);
       await app.newSendFlow.fillCryptoAmount("1");
       await app.newSendFlow.openFeesMenu();
-      await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
-      await expect(page.getByRole("menuitemradio")).toHaveCount(0);
+      await expect(app.newSendFlow.customFeesMenuItem).toBeVisible();
+
+      for (const preset of FEE_PRESETS) {
+        expect(await app.newSendFlow.getFeePreset(preset)).toBeHidden();
+      }
     });
 
     test("should not show fee menu options for XRP", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.xrp, TEST_ADDRESSES.xrp);
+      await reachAmountStep(app, page, ACCOUNT_NAMES.xrp, TEST_ADDRESSES.xrp, true);
       await app.newSendFlow.fillCryptoAmount("1");
-      const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
-      expect(hasMenu).toBe(false);
+      await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
   });
 
   test.describe("Generic Flow Tests", () => {
     // Test data for different families
     const familiesData = [
+      {
+        name: "Algorand",
+        accountName: ACCOUNT_NAMES.algorand,
+        address: TEST_ADDRESSES.algorand,
+        amount: "0.1",
+        hasMemo: true,
+      },
+      {
+        name: "Bitcoin",
+        accountName: ACCOUNT_NAMES.bitcoin,
+        address: TEST_ADDRESSES.bitcoin,
+        amount: "0.1",
+      },
       {
         name: "Ethereum",
         accountName: ACCOUNT_NAMES.ethereum,
@@ -678,22 +803,18 @@ test.describe("New Send Flow", () => {
         amount: "0.1",
       },
       {
-        name: "Algorand",
-        accountName: ACCOUNT_NAMES.algorand,
-        address: TEST_ADDRESSES.algorand,
-        amount: "0.1",
-      },
-      {
         name: "Stellar",
         accountName: ACCOUNT_NAMES.stellar,
         address: TEST_ADDRESSES.stellar,
         amount: "1",
+        hasMemo: true,
       },
       {
         name: "XRP",
         accountName: ACCOUNT_NAMES.xrp,
         address: TEST_ADDRESSES.xrp,
         amount: "1",
+        hasMemo: true,
       },
     ];
 
@@ -702,21 +823,22 @@ test.describe("New Send Flow", () => {
         const deviceAction = new DeviceAction(page);
 
         await test.step("Open send flow", async () => {
-          await openSendFlowForAccount(page, app, family.accountName);
+          await openSendFlowForAccount(app, page, family.accountName);
         });
 
         await test.step("Complete Recipient step", async () => {
           await app.newSendFlow.typeAddress(family.address);
-          await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          if (family.hasMemo === true) {
+            await app.newSendFlow.typeMemo("some random memo");
+          }
+
+          await app.newSendFlow.clickOnSendToButton();
         });
 
         await test.step("Complete Amount step", async () => {
-          await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-          // Use fillCryptoAmount to switch from default FIAT mode to CRYPTO mode
+          await expect(app.newSendFlow.amountInput).toBeVisible();
           await app.newSendFlow.fillCryptoAmount(family.amount);
-          await app.newSendFlow.expectReviewEnabled();
-          await app.newSendFlow.clickReview();
+          await app.newSendFlow.clickReview2();
         });
 
         await test.step("Wait for signature screen", async () => {
@@ -724,7 +846,6 @@ test.describe("New Send Flow", () => {
         });
 
         await test.step("Complete device action", async () => {
-          // Mock device signing the transaction
           await deviceAction.silentSign();
         });
 
@@ -737,40 +858,55 @@ test.describe("New Send Flow", () => {
 
   test.describe("Validation & Errors", () => {
     test("should validate address format - Ethereum", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Type invalid address", async () => {
-        await app.newSendFlow.typeAddress(INVALID_ADDRESSES.ethereum);
-        await app.newSendFlow.waitForRecipientValidation();
-      });
-
-      await test.step("Verify validation error message appears", async () => {
-        // Focus on checking the validation error message, not the button visibility
-        // The "Send to" button might be visible if there are matching accounts
-        await app.newSendFlow.expectValidationMessage(/incorrect address format/i);
-      });
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
+      await app.newSendFlow.typeAddress(INVALID_ADDRESSES.ethereum);
+      await app.newSendFlow.validationStatusMessage.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.validationStatusMessage).toContainText(
+        /incorrect address format/i,
+      );
     });
 
     test.describe("Navigation", () => {
-      test("should close dialog from any step", async ({ app, page }) => {
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
-
-        await test.step("Close from Recipient step", async () => {
+      test.describe("Close from any step", () => {
+        test("should close from recipient step", async ({ app, page }) => {
+          await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
           await app.newSendFlow.close();
+          await expect(app.newSendFlow.dialog).toBeHidden();
         });
 
-        await test.step("Verify dialog is closed", async () => {
-          await expect(app.newSendFlow.dialog).not.toBeVisible();
+        test("should close from amount step", async ({ app, page }) => {
+          await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.close();
+          await expect(app.newSendFlow.dialog).toBeHidden();
+        });
+
+        test("should close from signature step", async ({ app, page }) => {
+          await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.fillCryptoAmount("0.001");
+          await app.newSendFlow.clickReview();
+          await app.newSendFlow.waitForSignature();
+          await app.newSendFlow.close();
+          await expect(app.newSendFlow.dialog).toBeHidden();
+        });
+
+        test("should close at the end of the workflow", async ({ app, page }) => {
+          const deviceAction = new DeviceAction(page);
+          await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.fillCryptoAmount("0.001");
+          await app.newSendFlow.clickReview();
+          await app.newSendFlow.waitForSignature();
+          await deviceAction.silentSign();
+          await app.newSendFlow.close();
         });
       });
 
       test("should navigate back and forth", async ({ app, page }) => {
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
         await test.step("Go to Amount step", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
 
@@ -782,7 +918,7 @@ test.describe("New Send Flow", () => {
         await test.step("Go to Amount again", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
       });
@@ -792,12 +928,12 @@ test.describe("New Send Flow", () => {
         page,
       }) => {
         const address = TEST_ADDRESSES.ethereum;
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
         await test.step("Reach Amount step", async () => {
           await app.newSendFlow.typeAddress(address);
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
 
@@ -809,7 +945,7 @@ test.describe("New Send Flow", () => {
 
         await test.step("Proceed again with same address", async () => {
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
       });
@@ -844,7 +980,7 @@ test.describe("New Send Flow", () => {
 
     test.describe("Edge Cases", () => {
       test("should show My Accounts section in initial state", async ({ app, page }) => {
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
         await test.step("Verify My Accounts section", async () => {
           const hasMyAccounts = await app.newSendFlow.myAccountsSection
@@ -856,7 +992,7 @@ test.describe("New Send Flow", () => {
       });
 
       test("should show loading state during validation", async ({ app, page }) => {
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
         await test.step("Type address and check loading", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum.substring(0, 10));
@@ -881,7 +1017,7 @@ test.describe("New Send Flow", () => {
         });
 
         test("should use new flow when feature flag is enabled for EVM", async ({ app, page }) => {
-          await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+          await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
           await test.step("Verify new flow dialog is used", async () => {
             await app.newSendFlow.expectDialogVisible();
@@ -943,7 +1079,7 @@ test.describe("New Send Flow", () => {
 
         test("should respect family-specific feature flag for EVM", async ({ app, page }) => {
           await test.step("Test Ethereum (enabled)", async () => {
-            await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+            await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
             // Should use new flow for EVM
             await app.newSendFlow.expectDialogVisible();

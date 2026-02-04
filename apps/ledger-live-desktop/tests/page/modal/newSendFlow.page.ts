@@ -1,34 +1,31 @@
 import { expect } from "@playwright/test";
+import { FeePreset } from "tests/common/newSendFlow/types";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
+
+export type StellarMemoType = "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN";
 
 export class NewSendFlowPage extends Component {
   // ========== Dialog container ==========
   readonly dialog = this.page.getByRole("dialog");
 
   // ========== Header elements ==========
-  readonly headerTitle = this.dialog.locator("h2").first();
-  readonly backButton = this.dialog.getByRole("button", { name: /back|previous/i });
-  readonly closeButton = this.dialog.getByRole("button", { name: /close/i });
+  readonly headerTitle = this.dialog.getByTestId("send-dialog-header");
+  readonly backButton = this.headerTitle.getByRole("button", { name: "Go back" });
+  readonly closeButton = this.headerTitle.getByRole("button", { name: "Close" });
 
-  /**
-   * Recipient input is rendered by Lumen `AddressInput`.
-   * In en-US it uses placeholder:
-   * - "Enter address or ENS" (supports ENS)
-   * - "Enter address" (no ENS)
-   */
-  readonly recipientInput = this.dialog.getByPlaceholder(/enter address/i);
-  readonly editRecipientButton = this.dialog.getByRole("button", { name: /edit recipient/i });
+  readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
+  readonly editRecipientButton = this.dialog.getByTestId("send-edit-recipient-button");
 
   // ========== RECIPIENT STEP ==========
-  readonly recentSection = this.dialog.getByText(/recent/i).first();
-  readonly myAccountsSection = this.dialog.getByText(/my accounts/i).first();
-  readonly addressMatchedTitle = this.dialog.getByText(/address matched/i).first();
+  readonly recentSection = this.dialog.getByTestId("send-recent-addresses-section");
+  readonly myAccountsSection = this.dialog.getByTestId("send-my-accounts-section");
+  readonly addressMatchedTitle = this.dialog.getByTestId("send-address-matched-title");
   // Recent addresses are rendered as tiles with a "More actions" secondary button.
-  readonly recentTileMoreActionsButtons = this.dialog.getByRole("button", { name: "More actions" });
+  readonly recentTileMoreActionsButtons = this.dialog.getByTestId("send-recent-tile-action");
 
   // Primary selectable button in "Address matched" section (ListItem is a button with "Send to X" text)
-  readonly sendToButton = this.dialog.getByRole("button", { name: /send to/i });
+  readonly sendToButton = this.dialog.getByTestId("send-matched-address-button");
   readonly addressListItems = this.sendToButton;
   readonly addressNotFoundText = this.dialog.getByText(/address not found/i).first();
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
@@ -39,14 +36,31 @@ export class NewSendFlowPage extends Component {
   readonly senderErrorBanner = this.dialog.getByTestId("sender-error-banner");
   readonly newAddressBanner = this.dialog.getByText(/sending to a new address/i).first();
 
+  // Memo
+  readonly memoInput = this.dialog.getByTestId("send-memo-input");
+  readonly memoOptionsSelect = this.dialog.getByTestId("send-memo-options-select");
+  readonly memoOptionNoMemo = this.page.getByTestId("send-memo-select-option-NO_MEMO");
+  readonly memoOptionText = this.page.getByTestId("send-memo-select-option-MEMO_TEXT");
+  readonly memoOptionId = this.page.getByTestId("send-memo-select-option-MEMO_ID");
+  readonly memoOptionHash = this.page.getByTestId("send-memo-select-option-MEMO_HASH");
+  readonly memoOptionReturn = this.page.getByTestId("send-memo-select-option-MEMO_RETURN");
+  readonly skipMemoProposal = this.dialog.getByTestId("send-skip-memo-proposal");
+  readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
+  readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
+  readonly neverAskAgainSkipMemoButton = this.dialog.getByTestId(
+    "send-skip-memo-never-ask-again-button",
+  );
+
+  readonly loadingSpinner = this.dialog.getByTestId("send-loading-spinner");
+
   // ========== AMOUNT STEP ==========
   readonly amountInput = this.dialog.getByPlaceholder(/^0$/);
   readonly counterValue = this.dialog.locator(".body-2.text-muted").first();
   readonly amountErrorMessage = this.dialog.locator(".text-error").first();
-  readonly quickAction25 = this.dialog.getByRole("button", { name: "25%" });
-  readonly quickAction50 = this.dialog.getByRole("button", { name: "50%" });
-  readonly quickAction75 = this.dialog.getByRole("button", { name: "75%" });
-  readonly quickActionMax = this.dialog.getByRole("button", { name: "Max" });
+  readonly quickAction25 = this.dialog.getByTestId("send-quick-actions-quarter");
+  readonly quickAction50 = this.dialog.getByTestId("send-quick-actions-half");
+  readonly quickAction75 = this.dialog.getByTestId("send-quick-actions-threeQuarters");
+  readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
   readonly networkFeesRow = this.dialog.getByText(/network fees|fees/i).first();
   // Fees menu trigger shows "X • Strategy" (e.g. "0.0001 BTC • Medium")
   readonly feesMenuTrigger = this.dialog
@@ -55,6 +69,8 @@ export class NewSendFlowPage extends Component {
     .locator("button")
     .filter({ hasText: /•/ })
     .first();
+  readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
+  readonly coinControlFeesMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
   readonly reviewButton = this.dialog.getByRole("button", { name: /^review$/i });
   readonly getFundsButton = this.dialog.getByRole("button", { name: /^get /i });
   // Toggle button to switch between FIAT and CRYPTO input modes
@@ -65,7 +81,9 @@ export class NewSendFlowPage extends Component {
 
   // ========== CONFIRMATION STEP ==========
   // Confirmation step doesn't have stable static copy; rely on status gradient in the dialog.
-  readonly confirmationStatusGradient = this.dialog.locator(".bg-gradient-success, .bg-gradient-error");
+  readonly confirmationStatusGradient = this.dialog.locator(
+    ".bg-gradient-success, .bg-gradient-error",
+  );
   readonly viewDetailsButton = this.dialog.getByRole("button", { name: /view|details/i });
   readonly closeConfirmButton = this.dialog.getByRole("button", { name: /close/i });
 
@@ -81,7 +99,6 @@ export class NewSendFlowPage extends Component {
   @step("Close dialog")
   async close() {
     await this.closeButton.click();
-    await this.dialog.waitFor({ state: "hidden", timeout: 10000 });
   }
 
   @step("Click back button")
@@ -95,28 +112,15 @@ export class NewSendFlowPage extends Component {
 
   @step("Type address in search input: $0")
   async typeAddress(address: string) {
-    await this.recipientInput.waitFor({ state: "visible", timeout: 15000 });
+    await this.recipientInput.waitFor({ state: "visible" });
     await this.recipientInput.clear();
     await this.recipientInput.fill(address);
-    await this.page.waitForTimeout(800); // Wait for validation/search
   }
 
   @step("Select address from list (index: $0)")
-  async selectAddressItem(index: number = 0) {
-    // After typing an address, the happy path is to click the "Send to ..." button.
-    // AddressListItem renders as a <button> with "Send to X" text.
-    const button = this.sendToButton.nth(index);
-    await button.waitFor({ state: "visible", timeout: 20000 });
-    await button.scrollIntoViewIfNeeded();
-    await button.click({ timeout: 20000 });
-    // Wait for transition to Amount step
-    await this.page.waitForTimeout(500);
-  }
-
-  @step("Click recent address tile (index: $0)")
-  async clickRecentAddressTile(index: number = 0) {
-    // Kept for backward compatibility with earlier tests: select the first available "Send to" item.
-    await this.selectAddressItem(index);
+  async clickOnSendToButton() {
+    await this.sendToButton.waitFor({ state: "visible" });
+    await this.sendToButton.click();
   }
 
   @step("Remove recent address tile (index: $0)")
@@ -143,6 +147,7 @@ export class NewSendFlowPage extends Component {
       this.sanctionedBanner.waitFor({ state: "visible", timeout: 20000 }),
       this.recipientErrorBanner.waitFor({ state: "visible", timeout: 20000 }),
       this.senderErrorBanner.waitFor({ state: "visible", timeout: 20000 }),
+      this.skipMemoProposal.waitFor({ state: "visible", timeout: 20000 }),
     ]).catch(() => {
       // If all timeout, give UI time to settle for slower environments.
     });
@@ -178,9 +183,7 @@ export class NewSendFlowPage extends Component {
 
   @step("Verify validation message contains: $0")
   async expectValidationMessage(text: RegExp | string) {
-    const hasValidationMessage = await this.validationStatusMessage
-      .isVisible()
-      .catch(() => false);
+    const hasValidationMessage = await this.validationStatusMessage.isVisible().catch(() => false);
     if (hasValidationMessage) {
       await expect(this.validationStatusMessage).toContainText(text, { timeout: 10000 });
       return;
@@ -199,6 +202,58 @@ export class NewSendFlowPage extends Component {
     }
 
     throw new Error("No validation message or error banner appeared");
+  }
+
+  @step("Skip memo")
+  async skipMemo(confirm: boolean = true) {
+    await this.skipMemoLink.click();
+    if (confirm) {
+      await this.confirmSkipMemo();
+    }
+  }
+
+  @step("Confirm skip memo")
+  async confirmSkipMemo() {
+    await this.skipMemoConfirmButton.waitFor({ state: "visible" });
+    await this.skipMemoConfirmButton.click();
+  }
+
+  @step("Check never ask again memo")
+  async checkNeverAskAgainSkipMemo() {
+    await this.neverAskAgainSkipMemoButton.waitFor({ state: "visible" });
+    await this.neverAskAgainSkipMemoButton.click();
+  }
+
+  @step("Type memo")
+  async typeMemo(memo: string) {
+    await this.memoInput.waitFor({ state: "visible" });
+    await this.memoInput.fill(memo);
+  }
+
+  @step("Select memo type $0")
+  async selectMemoType(type: StellarMemoType) {
+    switch (type) {
+      case "NO_MEMO":
+        await this.memoOptionNoMemo.waitFor({ state: "visible" });
+        await this.memoOptionNoMemo.click();
+        break;
+      case "MEMO_TEXT":
+        await this.memoOptionText.waitFor({ state: "visible" });
+        await this.memoOptionText.click();
+        break;
+      case "MEMO_ID":
+        await this.memoOptionId.waitFor({ state: "visible" });
+        await this.memoOptionId.click();
+        break;
+      case "MEMO_HASH":
+        await this.memoOptionHash.waitFor({ state: "visible" });
+        await this.memoOptionHash.click();
+        break;
+      default:
+        await this.memoOptionReturn.waitFor({ state: "visible" });
+        await this.memoOptionReturn.click();
+        break;
+    }
   }
 
   // ========== AMOUNT STEP METHODS ==========
@@ -263,12 +318,10 @@ export class NewSendFlowPage extends Component {
   @step("Fill crypto amount: $0 (switches to crypto mode first)")
   async fillCryptoAmount(amount: string) {
     await this.amountInput.waitFor({ state: "visible", timeout: 10000 });
-    // Switch to crypto mode first (by default input is in FIAT mode)
+
     await this.switchToCryptoMode();
     await this.amountInput.clear();
     await this.amountInput.fill(amount);
-    // Wait for bridge to process the amount
-    await this.waitForBridgeReady();
   }
 
   @step("Click quick action: $0")
@@ -305,6 +358,12 @@ export class NewSendFlowPage extends Component {
     await this.page.waitForTimeout(500);
   }
 
+  @step("Click review to proceed to signature")
+  async clickReview2() {
+    await this.reviewButton.waitFor({ state: "visible" });
+    await this.reviewButton.click();
+  }
+
   @step("Verify review button is disabled")
   async expectReviewDisabled() {
     await expect(this.reviewButton).toBeDisabled({ timeout: 10000 });
@@ -339,28 +398,23 @@ export class NewSendFlowPage extends Component {
 
   @step("Open fees menu")
   async openFeesMenu() {
-    const isVisible = await this.feesMenuTrigger.isVisible().catch(() => false);
-    if (!isVisible) {
-      throw new Error("Fees menu trigger is not visible (no fee presets/custom fees available).");
-    }
+    await this.feesMenuTrigger.waitFor({ state: "visible" });
     await this.feesMenuTrigger.click();
-    // Wait for menu to open
-    await this.page.waitForTimeout(200);
   }
 
   @step("Select fee preset: $0")
-  async selectFeePreset(presetLabel: RegExp) {
+  async selectFeePreset(preset: FeePreset) {
     await this.openFeesMenu();
-    // MenuRadioItem accessible name might include sublabel (e.g., "Fast 4 sat/vbyte")
-    // Use filter with hasText to match any part of the content
-    const item = this.page
-      .getByRole("menuitemradio")
-      .filter({ hasText: presetLabel })
-      .first();
+
+    const item = this.page.getByTestId(`send-fees-preset-${preset}`);
     await item.waitFor({ state: "visible", timeout: 10000 });
     await item.click();
-    // Wait for menu to close and footer to update.
+
     await this.page.waitForTimeout(300);
+  }
+
+  async getFeePreset(preset: FeePreset) {
+    return this.page.getByTestId(`send-fees-preset-${preset}`);
   }
 
   // ========== SIGNATURE STEP METHODS ==========
@@ -370,14 +424,14 @@ export class NewSendFlowPage extends Component {
   @step("Wait for signature screen and device action loader")
   async waitForSignature() {
     // Wait for device action loader to appear - this means we're in signature step
-    await this.deviceActionLoader.waitFor({ state: "visible", timeout: 15000 });
+    await this.deviceActionLoader.waitFor({ state: "visible" });
   }
 
   // ========== CONFIRMATION STEP METHODS ==========
 
   @step("Wait for confirmation screen")
   async waitForConfirmation() {
-    await this.confirmationStatusGradient.waitFor({ state: "visible", timeout: 15000 });
+    await this.confirmationStatusGradient.waitFor({ state: "visible" });
   }
 
   @step("Wait for signature or confirmation step")
@@ -391,7 +445,9 @@ export class NewSendFlowPage extends Component {
         return;
       }
 
-      const isConfirmationVisible = await this.confirmationStatusGradient.isVisible().catch(() => false);
+      const isConfirmationVisible = await this.confirmationStatusGradient
+        .isVisible()
+        .catch(() => false);
       if (isConfirmationVisible) {
         return;
       }
@@ -434,5 +490,28 @@ export class NewSendFlowPage extends Component {
 
   async getAddressValue(): Promise<string> {
     return (await this.recipientInput.inputValue()) || "";
+  }
+
+  @step("Going to the amount step")
+  async reachAmountStep(address: string, hasMemo: boolean = false) {
+    await this.typeAddress(address);
+    await this.waitForRecipientValidation();
+    if (hasMemo) {
+      await this.skipMemo();
+    } else {
+      await this.clickOnSendToButton();
+    }
+    await expect(this.amountInput).toBeVisible({ timeout: 10000 });
+  }
+
+  @step("Going to the signature step")
+  async reachSignatureStep(address: string) {
+    await this.typeAddress(address);
+    await this.waitForRecipientValidation();
+    await this.clickOnSendToButton();
+    await expect(this.amountInput).toBeVisible({ timeout: 10000 });
+    await this.fillCryptoAmount("0.001");
+    await this.clickReview();
+    await this.waitForSignature();
   }
 }

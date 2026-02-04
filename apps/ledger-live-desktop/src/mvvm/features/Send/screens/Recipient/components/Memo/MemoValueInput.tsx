@@ -24,6 +24,7 @@ function MemoValueInputComponent({
 
   return (
     <TextInput
+      data-testid="send-memo-input"
       label={t("newSendFlow.tagHelp.inputLabel", { memoLabel })}
       onChange={e => onChange(e.target.value)}
       suffix={

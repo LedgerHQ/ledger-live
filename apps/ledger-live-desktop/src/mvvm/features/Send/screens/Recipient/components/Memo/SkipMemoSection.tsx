@@ -42,12 +42,19 @@ function SkipMemoSectionComponent({
 
   if (state === "propose") {
     return (
-      <div className="mt-16">
+      <div className="mt-16" data-testid="send-skip-memo-proposal">
         <span className="body-2 text-base">
           {t("newSendFlow.skipMemo.notRequired", { memoLabel })}
           &nbsp;
         </span>
-        <Link className="body-2" underline appearance="accent" size="sm" onClick={onRequestConfirm}>
+        <Link
+          data-testid="send-skip-memo-link"
+          className="body-2"
+          underline
+          appearance="accent"
+          size="sm"
+          onClick={onRequestConfirm}
+        >
           {t("common.skip")}
         </Link>
       </div>
@@ -64,7 +71,12 @@ function SkipMemoSectionComponent({
         onClose={onCancelConfirm}
         closeAriaLabel="Close banner"
         primaryAction={
-          <Button appearance="transparent" size="sm" onClick={handleOnSkipConfirmed}>
+          <Button
+            data-testid="send-skip-memo-confirm-button"
+            appearance="transparent"
+            size="sm"
+            onClick={handleOnSkipConfirmed}
+          >
             {t("newSendFlow.skipMemo.confirm")}
           </Button>
         }
@@ -74,7 +86,12 @@ function SkipMemoSectionComponent({
           </Button>
         }
       />
-      <button type="button" className="mt-16 flex items-center gap-8" onClick={toggleDoNotAskAgain}>
+      <button
+        data-testid="send-skip-memo-never-ask-again-button"
+        type="button"
+        className="mt-16 flex items-center gap-8"
+        onClick={toggleDoNotAskAgain}
+      >
         <div className="flex items-center" onClick={e => e.stopPropagation()}>
           <Checkbox checked={doNotAskAgain} onCheckedChange={setDoNotAskAgain} />
         </div>
