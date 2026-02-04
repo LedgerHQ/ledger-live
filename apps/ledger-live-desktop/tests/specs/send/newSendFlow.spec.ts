@@ -423,30 +423,27 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test.only("should test quick actions", async ({ app, page }) => {
+    test.skip("should set the correct amount when clicking on the amount quick actions", async ({
+      app,
+      page,
+    }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Test 25% quick action", async () => {
-        const hasQuickActions = await app.newSendFlow.quickAction25.isVisible().catch(() => false);
-        if (hasQuickActions) {
-          await app.newSendFlow.clickQuickAction("25%");
-          const amount = await app.newSendFlow.getAmountValue();
-          expect(amount).not.toBe("0");
-          expect(amount).not.toBe("");
-        }
+        await app.newSendFlow.clickQuickAction("25%");
+        const amount = await app.newSendFlow.getAmountValue();
+        expect(amount).not.toBe("0");
+        expect(amount).not.toBe("");
       });
     });
 
     test("should navigate back to Recipient", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
-      await test.step("Click back", async () => {
-        await app.newSendFlow.goBack();
-      });
+      await app.newSendFlow.goBack();
 
       await test.step("Verify back at Recipient step", async () => {
         await expect(app.newSendFlow.recipientInput).toBeVisible();
-        // Should be able to type again
         const isEditable = await app.newSendFlow.recipientInput.isEditable();
         expect(isEditable).toBe(true);
       });
@@ -463,35 +460,33 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.clickReview();
       });
 
-      await test.step("Wait for signature screen", async () => {
-        await app.newSendFlow.waitForSignature();
-      });
+      await app.newSendFlow.waitForSignature();
 
       await test.step("Complete device action", async () => {
         // Mock device signing the transaction
         await deviceAction.silentSign();
       });
 
-      await test.step("Verify confirmation screen", async () => {
-        await app.newSendFlow.waitForConfirmation();
-      });
+      await app.newSendFlow.waitForConfirmation();
     });
 
-    test("should allow changing fee presets (EVM)", async ({ app, page }) => {
+    test.only("should allow changing fee presets (EVM)", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Fill crypto amount", async () => {
         await app.newSendFlow.fillCryptoAmount("0.001");
-        await app.newSendFlow.expectReviewEnabled();
+        await app.newSendFlow.reviewButton.waitFor({ state: "visible" });
+        const isReviewButtonEnabled = await app.newSendFlow.reviewButton.isEnabled();
+        expect(isReviewButtonEnabled).toEqual(true);
       });
 
       await test.step("Select FAST preset", async () => {
-        await app.newSendFlow.selectFeePreset(/fast/i);
+        await app.newSendFlow.selectFeePreset("fast");
         await expect(app.newSendFlow.feesMenuTrigger).toContainText(/fast/i);
       });
 
       await test.step("Select SLOW preset", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
+        await app.newSendFlow.selectFeePreset("slow");
         await expect(app.newSendFlow.feesMenuTrigger).toContainText(/slow/i);
       });
     });

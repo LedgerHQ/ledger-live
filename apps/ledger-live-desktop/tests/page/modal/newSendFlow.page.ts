@@ -49,9 +49,9 @@ export class NewSendFlowPage extends Component {
   readonly counterValue = this.dialog.locator(".body-2.text-muted").first();
   readonly amountErrorMessage = this.dialog.locator(".text-error").first();
   readonly quickAction25 = this.dialog.getByTestId("send-quick-actions-quarter");
-  readonly quickAction50 = this.dialog.getByRole("button", { name: "50%" });
-  readonly quickAction75 = this.dialog.getByRole("button", { name: "75%" });
-  readonly quickActionMax = this.dialog.getByRole("button", { name: "Max" });
+  readonly quickAction50 = this.dialog.getByTestId("send-quick-actions-half");
+  readonly quickAction75 = this.dialog.getByTestId("send-quick-actions-threeQuarters");
+  readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
   readonly networkFeesRow = this.dialog.getByText(/network fees|fees/i).first();
   // Fees menu trigger shows "X • Strategy" (e.g. "0.0001 BTC • Medium")
   readonly feesMenuTrigger = this.dialog
@@ -210,7 +210,7 @@ export class NewSendFlowPage extends Component {
   @step("Skip memo")
   async skipMemo() {
     await this.skipMemoLink.click();
-    await expect(this.skipMemoConfirmButton).toBeVisible();
+    await expect(this.skipMemoConfirmButton).toBeVisible(); //TODO use waitFor
     await this.skipMemoConfirmButton.click();
   }
 
@@ -362,11 +362,11 @@ export class NewSendFlowPage extends Component {
   }
 
   @step("Select fee preset: $0")
-  async selectFeePreset(presetLabel: RegExp) {
+  async selectFeePreset(presetLabel: string) {
     await this.openFeesMenu();
     // MenuRadioItem accessible name might include sublabel (e.g., "Fast 4 sat/vbyte")
     // Use filter with hasText to match any part of the content
-    const item = this.page.getByRole("menuitemradio").filter({ hasText: presetLabel }).first();
+    const item = this.page.getByTestId(`send-fees-preset-${presetLabel}`);
     await item.waitFor({ state: "visible", timeout: 10000 });
     await item.click();
     // Wait for menu to close and footer to update.
