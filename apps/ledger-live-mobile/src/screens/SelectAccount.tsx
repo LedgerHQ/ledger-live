@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
-import { accountWithMandatoryTokens, flattenAccounts } from "@ledgerhq/live-common/account/helpers";
+import {
+  accountWithMandatoryTokens,
+  flattenAccounts,
+  getParentAccount,
+} from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,
@@ -73,12 +77,13 @@ function ReceiveFunds({ navigation, route }: Props) {
       } else {
         // If navigating to Send flow, check if new flow is enabled for this account's family
         if (next === ScreenName.SendSelectRecipient) {
-          const accountFamily = getFamilyFromAccount(account, undefined);
+          const parentAccount = getParentAccount(account, accounts);
+          const accountFamily = getFamilyFromAccount(account, parentAccount);
           const shouldUseNewFlow = isEnabledForFamily(accountFamily);
 
           if (shouldUseNewFlow) {
             // New flow: Navigate to SendFlow with account params
-            const mainAccount = getMainAccount(account, undefined);
+            const mainAccount = getMainAccount(account, parentAccount);
             // @ts-expect-error navigation types for nested navigators
             navigation.navigate(NavigatorName.SendFlow, {
               params: {
