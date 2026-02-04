@@ -59,7 +59,7 @@ describe("EVM Optimism Network", () => {
      * @see https://optimistic.etherscan.io/tx/0x273531e52133459d99420045b2d763d8f3d616d0616eb2f9d6b41376101f6365
      */
     it("returns internal transactions for address receiving ETH via smart contracts", async () => {
-      const [operations] = await module.listOperations(
+      const { items: operations } = await module.listOperations(
         "0xe0b719786c5511115ca9cdb38f6f7b3a8c97b105",
         {
           minHeight: 0,
