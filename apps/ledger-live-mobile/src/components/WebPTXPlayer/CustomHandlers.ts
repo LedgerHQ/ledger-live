@@ -31,12 +31,16 @@ import {
   decodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { useDispatch } from "~/context/hooks";
+import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -64,6 +68,7 @@ export function useCustomExchangeHandlers({
   const [device, setDevice] = useState<Device>();
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
+  const dispatch = useDispatch();
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -426,6 +431,22 @@ export function useCustomExchangeHandlers({
 
                     onCompleteResult?.(exchangeParams, operationHash);
 
+                    const params = getUpdateAccountWithUpdaterParams({
+                      result: { operation: result.operation, swapId: exchangeParams.swapId },
+                      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                      exchange: exchangeParams.exchange as ExchangeSwap,
+                      transaction: exchangeParams.transaction,
+                      magnitudeAwareRate: exchangeParams.magnitudeAwareRate!,
+                      provider: exchangeParams.provider,
+                    });
+
+                    if (!params.length) return;
+                    const dispatchAction = updateAccountWithUpdater({
+                      accountId: params[0],
+                      updater: params[1],
+                    });
+                    dispatch(dispatchAction);
+
                     // return success to swap live app
                     onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
@@ -455,6 +476,7 @@ export function useCustomExchangeHandlers({
     goToAccountStakeFlow,
     getManifestById,
     getAccount,
+    dispatch,
   ]);
 }
 
