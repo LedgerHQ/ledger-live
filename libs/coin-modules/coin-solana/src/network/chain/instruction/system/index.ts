@@ -1,9 +1,9 @@
 import { ParsedInstruction } from "@solana/web3.js";
-import { IX_STRUCTS, IX_TITLES, SystemInstructionType } from "./types";
 
-import { ParsedInfo } from "../../validators";
 import { create, Infer } from "superstruct";
 import { PARSED_PROGRAMS } from "../../program/constants";
+import { ParsedInfo } from "../../validators";
+import { IX_STRUCTS, IX_TITLES, SystemInstructionType } from "./types";
 
 export function parseSystemInstruction(
   ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SYSTEM },

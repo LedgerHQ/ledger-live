@@ -1,5 +1,5 @@
-import { localForger } from "@taquito/local-forging";
 import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { localForger } from "@taquito/local-forging";
 import type { TezosApi } from "./types";
 import { createApi } from ".";
 

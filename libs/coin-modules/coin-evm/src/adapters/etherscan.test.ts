@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,

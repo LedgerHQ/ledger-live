@@ -1,9 +1,9 @@
-import { Observable } from "rxjs";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
 import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
 import { Transaction, BoilerplateSigner } from "../types";
 

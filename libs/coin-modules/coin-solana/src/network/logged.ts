@@ -1,11 +1,7 @@
-import { ChainAPI } from "./chain";
-
-//import fs from "fs";
 import { Message, PublicKey } from "@solana/web3.js";
-import { LATEST_BLOCKHASH_MOCK } from "./chain";
+import { ChainAPI, LATEST_BLOCKHASH_MOCK } from "./chain";
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-function write(file: string, str: string) {
+function write(_file: string, _str: string) {
   // fs is not available on mobile
   //fs.appendFileSync(file, str);
 }

@@ -1,8 +1,8 @@
 import { fail, AssertionError } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { concat, of, throwError } from "rxjs";
-import { prepareMessageToSign, signMessage } from "./hw-signMessage";
 import { makeAccount } from "./fixtures/common.fixtures";
+import { prepareMessageToSign, signMessage } from "./hw-signMessage";
 
 const signPersonalMessage = jest.fn(() =>
   concat(

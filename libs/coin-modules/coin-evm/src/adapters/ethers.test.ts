@@ -1,5 +1,5 @@
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import { DEFAULT_NONCE } from "../utils";
 import { transactionToEthersTransaction } from "./ethers";

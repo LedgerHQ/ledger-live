@@ -1,11 +1,9 @@
 import { AssertionError, fail } from "assert";
-import axios from "axios";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import axios from "axios";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
@@ -14,6 +12,8 @@ import {
   etherscanOperationToOperations,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
+import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
   etherscanERC1155Operations,

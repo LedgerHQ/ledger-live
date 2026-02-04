@@ -1,6 +1,6 @@
+import { log } from "@ledgerhq/logs";
 import { type OperationContents, OpKind } from "@taquito/rpc";
 import { getRevealFee, getRevealGasLimit } from "@taquito/taquito";
-import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { createMockSigner } from "../utils";

@@ -1,10 +1,10 @@
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
-import eip55 from "eip55";
 import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import eip55 from "eip55";
 import type { Transaction as EvmTransaction } from "./types";
 import type { SeiDelegation } from "./types/staking";
 

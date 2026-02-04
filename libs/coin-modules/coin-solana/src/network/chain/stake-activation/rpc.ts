@@ -1,11 +1,11 @@
 import { SYSVAR_STAKE_HISTORY_PUBKEY } from "@solana/web3.js";
 import { BigNumber } from "bignumber.js";
-import { getStakeActivatingAndDeactivating, StakeActivatingAndDeactivating } from "./delegation";
-import { tryParseAsStakeAccount } from "../account";
-import { ChainAPI } from "..";
-import { ParsedOnChainStakeAccountWithInfo, toStakeAccountWithInfo } from "../web3";
-import { isHistoryEntry } from "../../../utils";
 import compact from "lodash/compact";
+import { ChainAPI } from "..";
+import { isHistoryEntry } from "../../../utils";
+import { tryParseAsStakeAccount } from "../account";
+import { ParsedOnChainStakeAccountWithInfo, toStakeAccountWithInfo } from "../web3";
+import { getStakeActivatingAndDeactivating, StakeActivatingAndDeactivating } from "./delegation";
 
 function getStakeActivationState({
   activating,

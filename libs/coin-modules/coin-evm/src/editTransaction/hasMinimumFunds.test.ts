@@ -1,9 +1,9 @@
+import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { getEstimatedFees } from "../utils";
-import type { Transaction } from "../types/index";
 import { getCoinConfig } from "../config";
+import type { Transaction } from "../types/index";
+import { getEstimatedFees } from "../utils";
 import { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";
 
 jest.mock("@ledgerhq/live-env", () => ({
