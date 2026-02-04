@@ -299,8 +299,8 @@
     "manager": "My Ledger",
     "earn": "Earn",
     "exchange": "Buy / Sell",
-    "perps": "Perps",
     "swap": "Swap",
+    "perps": "Perpetuals",
     "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
@@ -7872,7 +7872,12 @@
     "title": "Home",
     "today": "Today",
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto"
+    "noBalanceTitle": "Secure your crypto",
+    "perpsEntry": {
+      "title": "Perpetuals",
+      "description": "Trade with leverage",
+      "cta": "Discover"
+    }
   },
   "marketBanner": {
     "title": "Explore market",

@@ -342,10 +342,6 @@ const MainSideBar = () => {
     push("/swap");
     trackEntry("swap");
   }, [push, trackEntry]);
-  const handleClickPerps = useCallback(() => {
-    push("/perps");
-    trackEntry("perps");
-  }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
@@ -363,7 +359,10 @@ const MainSideBar = () => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
-
+  const handleClickPerps = useCallback(() => {
+    push("/perps");
+    trackEntry("perps");
+  }, [push, trackEntry]);
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
     const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
@@ -510,6 +509,11 @@ const MainSideBar = () => {
                     isActive={location.pathname.startsWith("/perps")}
                     disabled={noAccounts}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      <CustomTag active type="plain" size="small">
+                        {t("common.new")}
+                      </CustomTag>
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem

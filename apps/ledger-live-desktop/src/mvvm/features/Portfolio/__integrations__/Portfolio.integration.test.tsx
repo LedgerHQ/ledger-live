@@ -295,6 +295,42 @@ describe("PortfolioView", () => {
     });
   });
 
+  describe("Perps Entry Point", () => {
+    it("should show perps entry point when feature flag is enabled", () => {
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: true,
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
+
+    it("should hide perps entry point when feature flag is disabled", () => {
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: false,
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+    });
+  });
+
   it("should not render FeaturedButtons", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.queryByTestId("featured-buttons")).toBeNull();

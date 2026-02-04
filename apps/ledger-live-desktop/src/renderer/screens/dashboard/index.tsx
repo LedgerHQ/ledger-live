@@ -28,6 +28,7 @@ import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPromp
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
+import { PerpsEntryPoint } from "LLD/features/Portfolio/components/PerpsEntryPoint";
 import BannerSection from "./components/Banners/BannerSection";
 
 // This forces only one visible top banner at a time
@@ -116,7 +117,7 @@ export default function DashboardPage() {
                       range={selectedTimeRange}
                     />
                   )}
-
+                  <PerpsEntryPoint />
                   <AssetDistribution />
                   {totalOperations > 0 && (
                     <OperationsList
