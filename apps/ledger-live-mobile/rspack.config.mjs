@@ -41,7 +41,8 @@ const nodeModulesPaths = [
   "node_modules",
 ];
 
-const hermesParserPath = require.resolve("hermes-parser");
+// Single babel-swc-loader: we patch @polkadot/types-codec to replace class static blocks with IIFEs
+// (Hermes parser doesn't support static blocks). See patches/@polkadot+types-codec@11.2.1.patch.
 
 const withRozeniteUrlFix = rozeniteConfig => {
   return async env => {
@@ -81,6 +82,10 @@ export default withRozeniteUrlFix(
       const { mode, platform } = env;
       return {
         mode,
+        // Cold start (~33s): Rspack 1.x has no persistent cache, so every start is full rebuild.
+        // To reduce cold start time: use single-platform dev server (e.g. pnpm start:ios or
+        // pnpm start:android) so only one bundle is built. Re-enable persistent cache when
+        // upgrading to Rspack 2: ...(mode === "development" && { cache: { type: "persistent", ... } }),
         context: __dirname,
         entry: "./index.js",
         resolve: {
@@ -126,17 +131,13 @@ export default withRozeniteUrlFix(
           rules: [
             {
               test: /\.[cm]?[jt]sx?$/,
-              use: {
-                loader: "@callstack/repack/babel-loader",
-                parallel: true,
-                options: {
-                  hermesParserPath,
-                },
-              },
-              resolve: {
-                fullySpecified: false,
-              },
               type: "javascript/auto",
+              use: {
+                loader: "@callstack/repack/babel-swc-loader",
+                parallel: true,
+                options: {},
+              },
+              resolve: { fullySpecified: false },
             },
             ...Repack.getAssetTransformRules(),
           ],

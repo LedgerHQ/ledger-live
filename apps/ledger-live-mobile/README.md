@@ -54,6 +54,8 @@ Sometimes you may need to reset or clear the React Native packager's cache. To d
 pnpm dev:llm -- --reset-cache
 ```
 
+**Faster cold start:** The dev server builds for both iOS and Android by default (~33s cold). To build for one platform only and roughly halve cold start time, use `pnpm dev:llm:ios` or `pnpm dev:llm:android` (or from this app: `pnpm start:ios` / `pnpm start:android`).
+
 ### `pnpm mobile test`
 
 ### `pnpm mobile ios`
