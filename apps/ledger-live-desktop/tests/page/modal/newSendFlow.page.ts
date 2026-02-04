@@ -48,7 +48,7 @@ export class NewSendFlowPage extends Component {
   readonly amountInput = this.dialog.getByPlaceholder(/^0$/);
   readonly counterValue = this.dialog.locator(".body-2.text-muted").first();
   readonly amountErrorMessage = this.dialog.locator(".text-error").first();
-  readonly quickAction25 = this.dialog.getByRole("button", { name: "25%" });
+  readonly quickAction25 = this.dialog.getByTestId("send-quick-actions-quarter");
   readonly quickAction50 = this.dialog.getByRole("button", { name: "50%" });
   readonly quickAction75 = this.dialog.getByRole("button", { name: "75%" });
   readonly quickActionMax = this.dialog.getByRole("button", { name: "Max" });
@@ -446,5 +446,28 @@ export class NewSendFlowPage extends Component {
 
   async getAddressValue(): Promise<string> {
     return (await this.recipientInput.inputValue()) || "";
+  }
+
+  @step("Going to the amount step")
+  async reachAmountStep(address: string, hasMemo: boolean = false) {
+    await this.typeAddress(address);
+    await this.waitForRecipientValidation();
+    if (hasMemo) {
+      await this.skipMemo();
+    } else {
+      await this.selectAddressItem(0);
+    }
+    await expect(this.amountInput).toBeVisible({ timeout: 10000 });
+  }
+
+  @step("Going to the signature step")
+  async reachSignatureStep(address: string) {
+    await this.typeAddress(address);
+    await this.waitForRecipientValidation();
+    await this.selectAddressItem(0);
+    await expect(this.amountInput).toBeVisible({ timeout: 10000 });
+    await this.fillCryptoAmount("0.001");
+    await this.clickReview();
+    await this.waitForSignature();
   }
 }

@@ -17,6 +17,7 @@ export function QuickActionsRow({ actions }: QuickActionsRowProps) {
           disabled={action.disabled}
           onClick={action.onClick}
           className="min-w-0 flex-1"
+          data-testId={`send-quick-actions-${action.id}`}
         >
           {action.label}
         </Button>

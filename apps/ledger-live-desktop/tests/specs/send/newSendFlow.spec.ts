@@ -1,5 +1,5 @@
 import test from "../../fixtures/common";
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
 import { Layout } from "../../component/layout.component";
@@ -8,6 +8,7 @@ import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { updateRecentAddresses } from "@ledgerhq/live-wallet/store";
 import type { RecentAddressesState } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { Application } from "tests/page";
 
 // Test addresses per family (using abandon seed addresses for safety)
 const TEST_ADDRESSES = {
@@ -119,8 +120,8 @@ test.describe("New Send Flow", () => {
 
   // Helper function to navigate to account and open send flow
   async function openSendFlowForAccount(
-    page: any,
-    app: any,
+    app: Application,
+    page: Page,
     accountName: string,
     shouldSkipIfMissing = true,
   ) {
@@ -153,7 +154,7 @@ test.describe("New Send Flow", () => {
     await app.newSendFlow.waitForDialog();
   }
 
-  async function getAccountFreshAddress(page: any, accountName: string): Promise<string | null> {
+  async function getAccountFreshAddress(page: Page, accountName: string): Promise<string | null> {
     return page.evaluate((name: string) => {
       const w = window as any;
       const store = w.__STORE__ ?? w.ledger?.store;
@@ -164,15 +165,25 @@ test.describe("New Send Flow", () => {
     }, accountName);
   }
 
-  async function reachSignatureStep(app: any, page: any, accountName: string, address: string) {
-    await openSendFlowForAccount(page, app, accountName);
-    await app.newSendFlow.typeAddress(address);
-    await app.newSendFlow.waitForRecipientValidation();
-    await app.newSendFlow.selectAddressItem(0);
-    await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-    await app.newSendFlow.fillCryptoAmount("0.001");
-    await app.newSendFlow.clickReview();
-    await app.newSendFlow.waitForSignature();
+  async function reachSignatureStep(
+    app: Application,
+    page: Page,
+    accountName: string,
+    address: string,
+  ) {
+    await openSendFlowForAccount(app, page, accountName);
+    await app.newSendFlow.reachSignatureStep(address);
+  }
+
+  async function reachAmountStep(
+    app: Application,
+    page: Page,
+    accountName: string,
+    address: string,
+    hasMemo: boolean = false,
+  ) {
+    await openSendFlowForAccount(app, page, accountName);
+    await app.newSendFlow.reachAmountStep(address, hasMemo);
   }
 
   async function mockDeviceError(page: any, errorName: string) {
@@ -360,25 +371,6 @@ test.describe("New Send Flow", () => {
   });
 
   test.describe("Amount Step", () => {
-    // Helper to reach Amount step
-    async function reachAmountStep(
-      app: any,
-      page: any,
-      accountName: string,
-      address: string,
-      hasMemo: boolean = false,
-    ) {
-      await openSendFlowForAccount(page, app, accountName);
-      await app.newSendFlow.typeAddress(address);
-      await app.newSendFlow.waitForRecipientValidation();
-      if (hasMemo) {
-        await app.newSendFlow.skipMemo();
-      } else {
-        await app.newSendFlow.selectAddressItem(0);
-      }
-      await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-    }
-
     test("should show amount input and quick actions @smoke", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
@@ -390,16 +382,8 @@ test.describe("New Send Flow", () => {
 
     test("should allow entering valid amount", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Fill crypto amount", async () => {
-        // Use fillCryptoAmount to switch from default FIAT mode to CRYPTO mode
-        // FIAT mode doesn't support 3 decimal places like 0.001
-        await app.newSendFlow.fillCryptoAmount("0.001");
-      });
-
-      await test.step("Verify review button is enabled", async () => {
-        await app.newSendFlow.expectReviewEnabled();
-      });
+      await app.newSendFlow.fillCryptoAmount("0.001");
+      await app.newSendFlow.expectReviewEnabled();
     });
 
     test("should allow entering fiat and crypto amounts", async ({ app, page }) => {
@@ -416,19 +400,15 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should show error for insufficient funds", async ({ app, page }) => {
+    test("should show error for insufficient funds and get funds button", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Enter amount exceeding balance", async () => {
         await app.newSendFlow.fillAmount("999999999");
       });
 
-      await test.step("Verify error or Get Funds button", async () => {
-        // Either error message or Get Funds button should appear
-        const hasError = await app.newSendFlow.amountErrorMessage.isVisible().catch(() => false);
-        const hasGetFunds = await app.newSendFlow.getFundsButton.isVisible().catch(() => false);
-        expect(hasError || hasGetFunds).toBe(true);
-      });
+      await app.newSendFlow.expectAmountError();
+      await app.newSendFlow.expectGetFundsButton();
     });
 
     test("should disable review button for zero amount", async ({ app, page }) => {
@@ -443,7 +423,7 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should test quick actions", async ({ app, page }) => {
+    test.only("should test quick actions", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Test 25% quick action", async () => {
@@ -644,7 +624,7 @@ test.describe("New Send Flow", () => {
       expect(hasMenu).toBe(false);
     });
 
-    test.only("should not show fee menu options for Algorand", async ({ app, page }) => {
+    test("should not show fee menu options for Algorand", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand, true);
       await app.newSendFlow.fillCryptoAmount("0.1");
       const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
