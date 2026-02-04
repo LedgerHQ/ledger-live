@@ -92,3 +92,6 @@ describe("Change Language", () => {
     });
   }
 });
+
+//todo: implement more checks on the Test + visual of the app (Bruno - poc)
+//todo: Check only for arabic, latin, asian characters

@@ -49,6 +49,7 @@ export async function runCreateNewAccountAndDepositTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
+    //Already tested in Add account and Verify address
     it("should create new account and deposit", async () => {
       await app.transferMenuDrawer.open();
       await app.transferMenuDrawer.navigateToReceive();
@@ -70,6 +71,7 @@ export async function runCreateNewAccountAndDepositTest(
 }
 
 export async function runSelectCryptoNetworkTest(
+  //todo: check if the same as runDepositInExistingAccountTest and check with "classic receive"
   account: Account,
   networks: string[],
   withAccount: boolean,
@@ -141,7 +143,7 @@ export async function runDepositInExistingAccountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Deposit in existing account for ${account.currency.ticker}`, () => {
+  describe(`Deposit in existing account for ${account.currency.ticker} - don't verify address on device`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -152,6 +154,7 @@ export async function runDepositInExistingAccountTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
+    //Similar to verify address ?
     it(`should deposit in existing account for ${account.currency.ticker}`, async () => {
       await app.portfolio.tapQuickActionReceiveButton();
       await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
@@ -164,3 +167,5 @@ export async function runDepositInExistingAccountTest(
     });
   });
 }
+
+//TODO: Review all the tests in this file - tbd

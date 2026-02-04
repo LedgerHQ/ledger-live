@@ -11,9 +11,7 @@ describe("User opens application", () => {
     await app.onboarding.expectGetStartedButtonToBeVisible();
     await app.onboarding.expectProgressBarToBeVisible();
     await app.onboarding.tapOnGetStartedButton();
-
     await app.onboarding.selectStartingOption("setupLedger");
-
     await app.onboarding.checkDeviceCards();
   });
 });

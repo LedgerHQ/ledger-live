@@ -17,3 +17,5 @@ runSelectCryptoNetworkTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
+
+//todo: check if tested in "classic receive "

@@ -7,3 +7,5 @@ runSendTest(
   ["B2CQA-2574"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum_sepolia", "@family-evm"],
 );
+
+//TODO: Replace with ETH e2e test

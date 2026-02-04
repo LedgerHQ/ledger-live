@@ -16,3 +16,4 @@ runSelectCryptoNetworkTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
+//TODO: important - token - account is on the app

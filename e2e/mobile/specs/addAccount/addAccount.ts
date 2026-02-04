@@ -45,3 +45,4 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     });
   });
 }
+//TODO: Ask mic and Sophie to review the list of currencies (eg; BNB)

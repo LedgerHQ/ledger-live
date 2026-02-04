@@ -33,3 +33,5 @@ runNavigateToBuyFromAssetPageTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
+
+//TODO: from ASSET page = ETH

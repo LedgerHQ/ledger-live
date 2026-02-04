@@ -36,6 +36,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
 };
 
 export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  //TODO: Check if we are really delegating on the correct provider
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {

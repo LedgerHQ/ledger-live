@@ -7,3 +7,5 @@ runSendMaxTest(
   ["B2CQA-473"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 );
+
+//TODO: Move to sendValidAddress folder

@@ -7,3 +7,5 @@ runSendENSTest(
   ["B2CQA-2202"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 );
+
+//TODO: move to sendValidAddress folder

@@ -43,6 +43,7 @@ export function runPortfolioTransactionsHistoryTest(
 }
 
 export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string[]) {
+  //todo: will change with Wallet4.0
   describe("Portfolio charts and assets", () => {
     beforeAll(async () => {
       await beforeAllFunction({

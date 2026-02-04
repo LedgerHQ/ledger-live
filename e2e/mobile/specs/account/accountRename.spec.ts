@@ -52,3 +52,5 @@ describe.skip("Account name change", () => {
     await app.common.expectAccountName(newAccountName);
   });
 });
+
+//TODO: "mix" this test with an other one ? (eg. delete account ?) - Bruno

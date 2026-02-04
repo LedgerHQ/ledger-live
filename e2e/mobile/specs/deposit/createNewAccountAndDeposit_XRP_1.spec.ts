@@ -14,3 +14,4 @@ runCreateNewAccountAndDepositTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
+//todo: check why we are testing XRP

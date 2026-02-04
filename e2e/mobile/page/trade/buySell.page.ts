@@ -145,6 +145,7 @@ export default class BuySellPage {
     try {
       const currentUrl = await waitForCurrentWebviewUrlToContain(provider.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(provider.toLowerCase());
+      //TODO: Check that is buy.moonpay.com or sell.moonpay.com
     } catch (error) {
       throw new Error(`Provider page verification failed: ${sanitizeError(error)}`);
     }

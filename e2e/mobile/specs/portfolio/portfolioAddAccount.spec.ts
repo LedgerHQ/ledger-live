@@ -29,3 +29,5 @@ describe("Wallet Page", () => {
     await app.portfolio.expectPortfolioWithAccounts();
   });
 });
+
+//todo: double check if it's not tested in addAccount.spec.ts

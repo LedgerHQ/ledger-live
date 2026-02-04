@@ -118,6 +118,7 @@ export async function runNavigateToBuyFromMarketPageTest(
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from market page`, async () => {
       await app.portfolio.tapWalletTabSelector("Market");
       await app.market.searchAsset(buySell.crypto.currency.ticker);
+      //todo: add expect market row title (then delete B2CQA-1880)
       await app.market.openAssetPage(buySell.crypto.currency.ticker);
       await app.market.tapOnMarketQuickActionButton("buy");
       await handleBuySellFlow(buySell, paymentMethod, provider);
@@ -153,6 +154,7 @@ export async function runNavigateToBuyFromAssetPageTest(
 }
 
 export async function runQueryParametersTest(
+  //TODO: Add possibility to check more providers on 1 test - Bruno & Martijn
   buySell: BuySell,
   provider: Provider,
   paymentMethod: string,
@@ -176,3 +178,5 @@ export async function runQueryParametersTest(
     });
   });
 }
+
+//TODO: Add sell flow test - Only BTC

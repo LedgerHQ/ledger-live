@@ -23,3 +23,5 @@ runNavigateToBuyFromPortfolioPageTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
+
+//TODO: from PORTFOLIO page = BTC

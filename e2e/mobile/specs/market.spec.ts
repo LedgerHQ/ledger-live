@@ -1,3 +1,4 @@
+//todo: Delete all the file
 const tags: string[] = [
   "@NanoSP",
   "@LNS",
@@ -37,7 +38,7 @@ describe("Market page for user with no device", () => {
     await app.market.expectMarketRowTitle(ticker);
   });
 
-  $TmsLink("B2CQA-1879");
+  $TmsLink("B2CQA-1879"); //Wallet 4.0 version being autom by Martin C.
   tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {
     await app.market.openAssetPage(ticker);
