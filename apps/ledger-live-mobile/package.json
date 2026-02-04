@@ -6,6 +6,8 @@
     "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "start": "WITH_ROZENITE=true react-native start",
+    "start:ios": "WITH_ROZENITE=true react-native start --platform ios",
+    "start:android": "WITH_ROZENITE=true react-native start --platform android",
     "start:msw": "MSW_ENABLED=true react-native start",
     "conf": "react-native config",
     "doc": "react-native doctor",

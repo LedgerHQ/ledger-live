@@ -397,6 +397,9 @@ patchedDependencies:
   '@exodus/patch-broken-hermes-typed-arrays':
     hash: 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
     path: patches/@exodus__patch-broken-hermes-typed-arrays.patch
+  '@polkadot/types-codec@11.2.1':
+    hash: c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07
+    path: patches/@polkadot__types-codec@11.2.1.patch
   '@taquito/http-utils':
     hash: fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3
     path: patches/@taquito__http-utils.patch
@@ -43198,7 +43201,7 @@ snapshots:
       '@polkadot/rpc-augment': 11.2.1
       '@polkadot/types': 11.2.1
       '@polkadot/types-augment': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -43225,7 +43228,7 @@ snapshots:
       '@polkadot/api-base': 11.2.1
       '@polkadot/rpc-core': 11.2.1
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       rxjs: 7.8.2
@@ -43246,7 +43249,7 @@ snapshots:
       '@polkadot/rpc-provider': 11.2.1
       '@polkadot/types': 11.2.1
       '@polkadot/types-augment': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/types-create': 11.2.1
       '@polkadot/types-known': 11.2.1
       '@polkadot/util': 12.6.2
@@ -43275,7 +43278,7 @@ snapshots:
     dependencies:
       '@polkadot/rpc-core': 11.2.1
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -43320,11 +43323,11 @@ snapshots:
   '@polkadot/types-augment@11.2.1':
     dependencies:
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
 
-  '@polkadot/types-codec@11.2.1':
+  '@polkadot/types-codec@11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/x-bigint': 12.6.2
@@ -43332,7 +43335,7 @@ snapshots:
 
   '@polkadot/types-create@11.2.1':
     dependencies:
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
 
@@ -43340,7 +43343,7 @@ snapshots:
     dependencies:
       '@polkadot/networks': 12.6.2
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/types-create': 11.2.1
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
@@ -43354,7 +43357,7 @@ snapshots:
     dependencies:
       '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
       '@polkadot/types-augment': 11.2.1
-      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
       '@polkadot/types-create': 11.2.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
