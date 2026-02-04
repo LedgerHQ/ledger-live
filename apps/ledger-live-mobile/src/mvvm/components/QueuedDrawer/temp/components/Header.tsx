@@ -76,6 +76,7 @@ const Header = ({
         <Flex width={32} height={32} alignItems="center" justifyContent="center">
           {!noCloseButton && !areDrawersLocked && (
             <Pressable
+              hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
               onPress={handleCloseUserEvent}
               testID="drawer-close-button"
               style={({ pressed }: { pressed: boolean }) => ({
