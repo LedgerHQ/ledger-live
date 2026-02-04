@@ -191,9 +191,11 @@ export async function listOperations(
     ].includes(operation.type);
 
   const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean => {
-    const include = (list: string[]): boolean => list.map(item => item.toLowerCase()).includes(address.toLowerCase());
-    return include(op.senders) || include(op.recipients);
-  }
+    // some explorers return addresses with uppercase letters (eg eip-55 encoded addresses)
+    const isIncluded = (list: string[]): boolean =>
+      list.map(item => item.toLowerCase()).includes(address.toLowerCase());
+    return isIncluded(op.senders) || isIncluded(op.recipients);
+  };
 
   const operations = nativeOperations
     .concat(tokenOperations)
