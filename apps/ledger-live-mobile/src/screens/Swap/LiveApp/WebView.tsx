@@ -71,14 +71,13 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const initialSource = useMemo(() => currentRouteNameRef.current || "", []);
 
     return (
-
       <SafeAreaView edges={["bottom"]} isFlex>
         <Web3AppWebview
           ref={ref}
           manifest={manifest}
           customHandlers={customHandlers}
           onStateChange={setWebviewState}
-                      allowsBackForwardNavigationGestures={false}
+          allowsBackForwardNavigationGestures={false}
           inputs={{
             source: initialSource,
             swapApiBase: SWAP_API_BASE,
