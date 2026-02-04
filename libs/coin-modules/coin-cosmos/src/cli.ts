@@ -97,36 +97,36 @@ const cosmosValidatorsFormatters = {
       )
       .join("\n"),
 };
-const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
-const cosmosValidators = {
-  args: [
-    {
-      name: "format",
-      desc: Object.keys(cosmosValidatorsFormatters).join(" | "),
-      type: String,
-    },
-  ],
-  job: ({
-    format,
-  }: Partial<{
-    format: string;
-  }>): Observable<string> =>
-    from(cosmosValidatorsManager.getValidators()).pipe(
-      map(validators => {
-        const f =
-          (format && (cosmosValidatorsFormatters as any)[format]) ||
-          cosmosValidatorsFormatters.default;
-        return f(validators);
-      }),
-    ),
-};
 
 export default function makeCliTools() {
+  const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
+
   return {
     options,
     inferTransactions,
     commands: {
-      cosmosValidators,
+      cosmosValidators: {
+        args: [
+          {
+            name: "format",
+            desc: Object.keys(cosmosValidatorsFormatters).join(" | "),
+            type: String,
+          },
+        ],
+        job: ({
+          format,
+        }: Partial<{
+          format: string;
+        }>): Observable<string> =>
+          from(cosmosValidatorsManager.getValidators()).pipe(
+            map(validators => {
+              const f =
+                (format && (cosmosValidatorsFormatters as any)[format]) ||
+                cosmosValidatorsFormatters.default;
+              return f(validators);
+            }),
+          ),
+      },
     },
   };
 }

@@ -21,6 +21,8 @@ import CryptoOrg from "./CryptoOrg";
 import Xion from "./Xion";
 import Zenrock from "./Zenrock";
 import Babylon from "./Babylon";
+import cosmosCoinConfig from "../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -96,7 +98,13 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
       default:
         throw new Error(`${currencyId} is not supported`);
     }
+
+    const coinConfig = cosmosCoinConfig.getCoinConfig(getCryptoCurrencyById(currencyId));
+    if (coinConfig) {
+      cosmosChainParams[currencyId] = { ...cosmosChainParams[currencyId], ...coinConfig };
+    }
   }
+
   return cosmosChainParams[currencyId];
 
   // TODO: Currently, all cosmos currencies included setSupportedCurrencies must be supported here. We are working on a new way to support/enable new currencies
