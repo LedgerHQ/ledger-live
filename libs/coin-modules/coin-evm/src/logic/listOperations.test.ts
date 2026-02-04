@@ -431,9 +431,9 @@ describe("listOperations", () => {
     });
   });
 
-  it("filters out operations where the requested address is not involved", async () => {
+  it("filters out operations where the requested address is not involved (case insensitive)", async () => {
     setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
-
+    const address = "address";
     // Explorer returns: one native op for "address", and one internal op (same tx) where
     // senders/recipients and parent senders/recipients do NOT include "address"
     jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
@@ -442,7 +442,7 @@ describe("listOperations", () => {
           id: "coin-op-for-address",
           accountId: "",
           type: "OUT",
-          senders: ["address"],
+          senders: [address.toUpperCase()],
           recipients: ["address2"],
           value: new BigNumber(100),
           hash: "0xTxForAddress",
@@ -491,13 +491,13 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations({} as CryptoCurrency, "address", { minHeight: 1, order: "asc" }),
+      await listOperations({} as CryptoCurrency, address.toLowerCase(), { minHeight: 1, order: "asc" }),
     ).toEqual([
       [
         {
           id: "coin-op-for-address",
           type: "OUT",
-          senders: ["address"],
+          senders: [address.toUpperCase()],
           recipients: ["address2"],
           value: 90n, // value - fee = 100 - 10
           asset: { type: "native" },
