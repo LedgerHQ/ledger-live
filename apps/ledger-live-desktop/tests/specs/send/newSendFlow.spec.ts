@@ -598,8 +598,7 @@ test.describe("New Send Flow", () => {
     test("should not show fee menu options for Tezos", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.tezos, TEST_ADDRESSES.tezos);
       await app.newSendFlow.fillCryptoAmount("0.1");
-      const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
-      expect(hasMenu).toBe(false);
+      await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
 
     test("should not show fee menu options for Algorand", async ({ app, page }) => {
