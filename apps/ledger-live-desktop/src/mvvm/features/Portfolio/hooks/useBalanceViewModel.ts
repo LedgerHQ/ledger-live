@@ -16,6 +16,7 @@ import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
 const NEW_FLOW_RANGE = "day" as const;
 
@@ -50,6 +51,8 @@ export const useBalanceViewModel = (
   const valueChange = portfolio.countervalueChange;
 
   const navigateToAnalytics = useCallback(() => {
+    setTrackingSource(PORTFOLIO_TRACKING_PAGE_NAME);
+
     track("button_clicked", {
       button: "analytics_page",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
