@@ -193,6 +193,8 @@ libs/live-dmk-mobile/                                              @ledgerhq/liv
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
+libs/live-signer-solana/                                           @ledgerhq/live-devices
+libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 
 # Recover team
