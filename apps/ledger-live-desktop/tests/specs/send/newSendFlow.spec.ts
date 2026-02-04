@@ -544,59 +544,36 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test.only("should change max amount when changing fee presets (BTC)", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
+    (["bitcoin", "ethereum"] as const).forEach(family => {
+      test.only(`should change max amount when changing fee presets ${family}`, async ({
+        app,
+        page,
+      }) => {
+        await reachAmountStep(app, page, ACCOUNT_NAMES[family], TEST_ADDRESSES[family]);
 
-      await test.step("Select amount max quick action", async () => {
-        await app.newSendFlow.clickQuickAction("Max");
-        expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
-      });
+        await test.step("Select amount max quick action", async () => {
+          await app.newSendFlow.clickQuickAction("Max");
+          expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
+        });
 
-      const getAmount = async () => {
-        const rawAmountValue = await app.newSendFlow.getAmountValue();
-        return new BigNumber(rawAmountValue);
-      };
+        const getAmount = async () => {
+          const rawAmountValue = await app.newSendFlow.getAmountValue();
+          return new BigNumber(rawAmountValue);
+        };
 
-      await test.step("Slow preset yields higher max than Fast", async () => {
-        await app.newSendFlow.selectFeePreset("slow");
-        expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
-        const slowAmount = await getAmount();
+        await test.step("Slow preset yields higher max than Fast", async () => {
+          await app.newSendFlow.selectFeePreset("slow");
+          expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
+          const slowAmount = await getAmount();
 
-        await app.newSendFlow.selectFeePreset("fast");
-        expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
-        const fastAmount = await getAmount();
+          await app.newSendFlow.selectFeePreset("fast");
+          expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
+          const fastAmount = await getAmount();
 
-        expect(slowAmount.isFinite()).toBe(true);
-        expect(fastAmount.isFinite()).toBe(true);
-        expect(fastAmount.lt(slowAmount)).toBe(true);
-      });
-    });
-
-    test("should change max amount when changing fee presets (EVM)", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Select Max", async () => {
-        await app.newSendFlow.clickQuickAction("Max");
-        await app.newSendFlow.waitForBridgeReady();
-      });
-
-      const getAmount = async () => {
-        const raw = await app.newSendFlow.getAmountValue();
-        return new BigNumber((raw ?? "").replace(/,/g, ""));
-      };
-
-      await test.step("Slow preset yields higher max than Fast", async () => {
-        await app.newSendFlow.selectFeePreset("slow");
-        await app.newSendFlow.waitForBridgeReady();
-        const slowAmount = await getAmount();
-
-        await app.newSendFlow.selectFeePreset("fast");
-        await app.newSendFlow.waitForBridgeReady();
-        const fastAmount = await getAmount();
-
-        expect(slowAmount.isFinite()).toBe(true);
-        expect(fastAmount.isFinite()).toBe(true);
-        expect(fastAmount.lt(slowAmount)).toBe(true);
+          expect(slowAmount.isFinite()).toBe(true);
+          expect(fastAmount.isFinite()).toBe(true);
+          expect(fastAmount.lt(slowAmount)).toBe(true);
+        });
       });
     });
 
