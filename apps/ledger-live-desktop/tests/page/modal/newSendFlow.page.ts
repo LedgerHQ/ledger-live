@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { FeePreset } from "tests/common/newSendFlow/types";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
@@ -362,14 +363,13 @@ export class NewSendFlowPage extends Component {
   }
 
   @step("Select fee preset: $0")
-  async selectFeePreset(presetLabel: string) {
+  async selectFeePreset(preset: FeePreset) {
     await this.openFeesMenu();
-    // MenuRadioItem accessible name might include sublabel (e.g., "Fast 4 sat/vbyte")
-    // Use filter with hasText to match any part of the content
-    const item = this.page.getByTestId(`send-fees-preset-${presetLabel}`);
+
+    const item = this.page.getByTestId(`send-fees-preset-${preset}`);
     await item.waitFor({ state: "visible", timeout: 10000 });
     await item.click();
-    // Wait for menu to close and footer to update.
+
     await this.page.waitForTimeout(300);
   }
 

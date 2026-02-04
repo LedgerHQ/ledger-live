@@ -9,6 +9,7 @@ import { updateRecentAddresses } from "@ledgerhq/live-wallet/store";
 import type { RecentAddressesState } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Application } from "tests/page";
+import { FEE_PRESETS, FeePreset } from "tests/common/newSendFlow/types";
 
 // Test addresses per family (using abandon seed addresses for safety)
 const TEST_ADDRESSES = {
@@ -480,15 +481,15 @@ test.describe("New Send Flow", () => {
         expect(isReviewButtonEnabled).toEqual(true);
       });
 
-      await test.step("Select FAST preset", async () => {
-        await app.newSendFlow.selectFeePreset("fast");
-        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/fast/i);
-      });
+      for (const preset of FEE_PRESETS) {
+        await test.step(`Select ${preset} preset`, async () => {
+          await app.newSendFlow.selectFeePreset(preset);
 
-      await test.step("Select SLOW preset", async () => {
-        await app.newSendFlow.selectFeePreset("slow");
-        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/slow/i);
-      });
+          await test.step(`Verifying preset ${preset} is correctly selected`, async () => {
+            await expect(app.newSendFlow.feesMenuTrigger).toContainText(new RegExp(preset, "i"));
+          });
+        });
+      }
     });
 
     test("should allow changing fee presets (BTC)", async ({ app, page }) => {
@@ -505,13 +506,13 @@ test.describe("New Send Flow", () => {
       });
 
       await test.step("Select FAST preset (highest fee rate)", async () => {
-        await app.newSendFlow.selectFeePreset(/fast/i);
+        await app.newSendFlow.selectFeePreset("fast");
         const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
         expect(triggerText).toMatch(/fast/i);
       });
 
       await test.step("Select SLOW preset (lowest fee rate)", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
+        await app.newSendFlow.selectFeePreset("slow");
         const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
         expect(triggerText).toMatch(/slow/i);
       });
@@ -550,11 +551,11 @@ test.describe("New Send Flow", () => {
       };
 
       await test.step("Slow preset yields higher max than Fast", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
+        await app.newSendFlow.selectFeePreset("slow");
         await app.newSendFlow.waitForBridgeReady();
         const slowAmount = await getAmount();
 
-        await app.newSendFlow.selectFeePreset(/fast/i);
+        await app.newSendFlow.selectFeePreset("fast");
         await app.newSendFlow.waitForBridgeReady();
         const fastAmount = await getAmount();
 
@@ -578,11 +579,11 @@ test.describe("New Send Flow", () => {
       };
 
       await test.step("Slow preset yields higher max than Fast", async () => {
-        await app.newSendFlow.selectFeePreset(/slow/i);
+        await app.newSendFlow.selectFeePreset("slow");
         await app.newSendFlow.waitForBridgeReady();
         const slowAmount = await getAmount();
 
-        await app.newSendFlow.selectFeePreset(/fast/i);
+        await app.newSendFlow.selectFeePreset("fast");
         await app.newSendFlow.waitForBridgeReady();
         const fastAmount = await getAmount();
 
