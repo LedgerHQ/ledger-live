@@ -9,7 +9,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
-import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -21,6 +20,7 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { Globe, Percentage } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -108,12 +108,7 @@ export default function MainNavigator() {
           freezeOnBlur: true,
           headerShown: false,
           tabBarIcon: props => (
-            <TabIcon
-              Icon={IconsLegacy.LendMedium}
-              i18nKey={earnYiedlLabel}
-              testID="tab-bar-earn"
-              {...props}
-            />
+            <TabIcon Icon={Percentage} i18nKey={earnYiedlLabel} testID="tab-bar-earn" {...props} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -137,14 +132,6 @@ export default function MainNavigator() {
         })}
       />
 
-      <Tab.Screen
-        name={ScreenName.Transfer}
-        component={Transfer}
-        options={{
-          headerShown: false,
-          tabBarIcon: () => <TransferTabIcon />,
-        }}
-      />
       {web3hub?.enabled ? (
         <Tab.Screen
           name={NavigatorName.Web3HubTab}
@@ -170,9 +157,7 @@ export default function MainNavigator() {
           component={DiscoverNavigator}
           options={{
             headerShown: false,
-            tabBarIcon: props => (
-              <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
-            ),
+            tabBarIcon: props => <TabIcon Icon={Globe} i18nKey="tabs.discover" {...props} />,
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {

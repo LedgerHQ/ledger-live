@@ -13,6 +13,8 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
+import { Nano, Stax } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Apex } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -72,21 +74,21 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
   let icon;
   switch (lastSeenDevice?.modelId) {
     case DeviceModelId.stax:
-      icon = <Icons.Stax size="M" color={color} />;
+      icon = <Stax size="M" color={color} />;
       break;
     case DeviceModelId.europa:
-      icon = <Icons.Flex size="M" color={color} />;
+      icon = <Flex size="M" color={color} />;
       break;
     case DeviceModelId.apex:
-      icon = <Icons.Apex size="M" color={color} />;
+      icon = <Apex size="M" color={color} />;
       break;
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
-      icon = <IconsLegacy.NanoSFoldedMedium size={size} color={color} />;
+      icon = <Nano size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:
-      icon = <IconsLegacy.NanoXFoldedMedium size={size} color={color} />;
+      icon = <Nano size={size} color={color} />;
       break;
   }
 
@@ -109,7 +111,7 @@ export function ManagerTabIcon(
 
   if (isNavLocked) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return <TouchableOpacity onPress={() => {}}>{content}</TouchableOpacity>;
+    return <TouchableOpacity onPress={() => { }}>{content}</TouchableOpacity>;
   }
 
   return content;
