@@ -55,8 +55,19 @@ export const getStuckAccountAndOperation = (
     return undefined;
   }
 
-  const stuckOperations = mainAccount.pendingOperations.filter(
+  const pendingOperations = mainAccount.pendingOperations.filter(
     pendingOp => isEditableOperation(mainAccount, pendingOp) && isStuckOperation(pendingOp),
+  );
+  if (pendingOperations.length === 0) {
+    return undefined;
+  }
+
+  // Check that pending operations that are stuck have a corresponding operation in mainAccount.operations
+  // in order to avoid returning a pending operation that is already confirmed
+  const stuckOperations = mainAccount.operations.filter(op =>
+    pendingOperations.some(
+      pendingOp => pendingOp.id === op.id && isEditableOperation(mainAccount, op),
+    ),
   );
   if (stuckOperations.length === 0) {
     return undefined;

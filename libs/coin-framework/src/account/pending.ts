@@ -9,19 +9,6 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
 
-  // TODO: remove this special case and try to find another way to handle it
-  // Special handling for Bitcoin: check if the transaction hash exists in confirmed operations
-  if (account.currency.family === "bitcoin") {
-    // If this pending operation's hash exists in confirmed operations, remove it
-    const confirmedVersion = account.operations.find(
-      confirmedOp => confirmedOp.hash === op.hash && confirmedOp.blockHeight !== null
-    );
-
-    if (confirmedVersion) {
-      return false;
-    }
-  }
-
   const last = account.operations.find(o => o.senders.includes(op.senders[0]));
 
   if (

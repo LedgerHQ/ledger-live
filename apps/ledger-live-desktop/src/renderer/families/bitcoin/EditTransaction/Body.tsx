@@ -290,19 +290,17 @@ const Body = ({
   // Use user selection if available, otherwise use derived value
   const editType = userSelectedEditType ?? derivedEditType;
 
-  useEffect(() => {}, [editType, derivedEditType, userSelectedEditType]);
-
-  const handleSetEditType: StepProps["setEditType"] = useCallback(newEditType => {
-    setUserSelectedEditType(newEditType);
+  const handleSetEditType: StepProps["setEditType"] = useCallback(editType => {
+    setUserSelectedEditType(editType);
   }, []);
 
   /**
-   * In order to display the relevant informations in the summary step, regarding
+   * In order to display the relevant information in the summary step, regarding
    * account and currency, depending on the editType selected,
    * we need to update the account and parentAccount provided to the StepSummary
    * component.
-   * - When we do a speedup, the acount is the same as the one used in the transaction
-   * (wether it's an Account or TokenAccount)
+   * - When we do a speedup, the account is the same as the one used in the transaction
+   * (whether it's an Account or TokenAccount)
    * - When we do a cancel, the account used is always the mainAccount, since a cancel
    * is sending 0 COIN_CURRENCY (for example ETH for ethereum) to yourself
    */

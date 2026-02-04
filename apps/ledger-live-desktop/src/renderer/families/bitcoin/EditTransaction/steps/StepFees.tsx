@@ -2,13 +2,11 @@ import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/in
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, memo } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import BuyButton from "~/renderer/components/BuyButton";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import logger from "~/renderer/logger";
 import SendAmountFields, { SendAmountFieldsProps } from "~/renderer/modals/Send/SendAmountFields";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
@@ -17,7 +15,7 @@ import { StepProps } from "../types";
 /**
  * Since onChangeTransaction and updateTransaction are used by SendAmountFields,
  * which expect a generic Transaction type, we need to "generalize" the type
- * (going from specific (EvmTransaction) to generic (Transaction)) of these 2
+ * (going from specific (BitcoinTransaction) to generic (Transaction)) of these 2
  * functions
  */
 type StepFeesProps = Omit<StepProps, "onChangeTransaction" | "updateTransaction"> & {
@@ -39,9 +37,11 @@ const StepFees = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const locale = useSelector(localeSelector);
 
-  const {
-    formattedFeeValue
-  } = getFormattedFeeFields({ transaction: transactionToUpdate, mainAccount, locale });
+  const { formattedFeeValue } = getFormattedFeeFields({
+    transaction: transactionToUpdate,
+    mainAccount,
+    locale,
+  });
 
   return (
     <Box flow={4}>
@@ -69,8 +69,6 @@ const StepFees = ({
 };
 
 export const StepFeesFooter = ({
-  account,
-  parentAccount,
   transactionHasBeenValidated,
   bridgePending,
   status,
@@ -80,15 +78,11 @@ export const StepFeesFooter = ({
     transitionTo("summary");
   };
 
-  const mainAccount = getMainAccount(account, parentAccount);
-
   const { errors } = status;
   const hasErrors = !!Object.keys(errors).length;
   const disabled = bridgePending || hasErrors || transactionHasBeenValidated;
 
-  const {
-    replacementTransactionUnderpriced,
-  } = errors;
+  const { replacementTransactionUnderpriced } = errors;
 
   /**
    * To match the UX of StepAmount (see the StepAmountFooter component

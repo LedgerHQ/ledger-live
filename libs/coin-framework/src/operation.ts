@@ -283,6 +283,15 @@ export const isOldestBitcoinPendingOperation = (account: Account, date: Date): b
    * The selected pending operation is the oldest if there is no pending
    * operation with a lower date
    */
+  if (account.pendingOperations.length === 0) {
+    return !account.operations.some(operation => {
+      if (!operation.blockHeight) {
+        invariant(operation.date !== undefined, "date required");
+        return operation.date.getTime() < date.getTime();
+      }
+      return false;
+    });
+  }
   return !account.pendingOperations.some(pendingOp => {
     /**
      * the pending operation must have a date at this stage

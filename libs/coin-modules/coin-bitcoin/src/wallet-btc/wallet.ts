@@ -194,6 +194,10 @@ class BitcoinLikeWallet {
     );
   }
 
+  async getAccountTxBlockHeight(account: Account, hash: string): Promise<number | null> {
+    return await account.xpub.explorer.getTxBlockHeight(hash);
+  }
+
   async buildAccountTx(params: {
     fromAccount: Account;
     dest: string;

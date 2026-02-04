@@ -8,8 +8,8 @@ import {
 import {
   isStuckOperation as isStuckOperationBitcoin,
   getStuckAccountAndOperation as getStuckAccountAndOperationBitcoin,
+  isEditableOperation as isEditableOperationBitcoin,
 } from "@ledgerhq/coin-bitcoin/operation";
-import { isEditableOperation as isEditableOperationBitcoin } from "@ledgerhq/coin-bitcoin/operation";
 import { getCurrencyConfiguration } from "./config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
