@@ -618,38 +618,43 @@ describe("EVM Family", () => {
       });
 
       it("should return the expected payload", async () => {
-        jest.spyOn(axios, "request").mockImplementation(async ({ url }) =>
-          url?.endsWith("current")
-            ? {
-                data: {
-                  hash: "0xhashLatest",
-                  height: 456,
-                  time: new Date().toISOString(),
-                  txs: ["0xTx3", "0xTx4"],
-                },
-              }
-            : {
-                data: [
-                  {
-                    hash: "0xhash",
-                    height: 123,
-                    time: new Date().toISOString(),
-                    txs: ["0xTx1", "0xTx2"],
-                  },
-                ],
+        jest.spyOn(axios, "request").mockImplementation(async ({ url }) => {
+          if (url?.endsWith("current")) {
+            return {
+              data: {
+                hash: "0xhashLatest",
+                height: 456,
+                time: new Date().toISOString(),
+                txs: ["0xTx3", "0xTx4"],
+                prevHash: "0xparentHashLatest",
               },
-        );
+            };
+          }
+          return {
+            data: [
+              {
+                hash: "0xhash",
+                height: 123,
+                time: new Date().toISOString(),
+                txs: ["0xTx1", "0xTx2"],
+                prevHash: "0xparentHash",
+              },
+            ],
+          };
+        });
 
         expect(await LEDGER_API.getBlockByHeight(currency, 12)).toEqual({
           hash: "0xhash",
           height: 123,
           timestamp: Date.now(),
+          parentHash: "0xparentHash",
           transactionHashes: ["0xTx1", "0xTx2"],
         });
         expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
           timestamp: Date.now(),
+          parentHash: "0xparentHashLatest",
           transactionHashes: ["0xTx3", "0xTx4"],
         });
       });

@@ -193,7 +193,8 @@ export type AccountRaw = {
   feesCurrencyId?: string;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
-  lastSyncDate: string;
+  /** Not persisted; kept optional for backward compat when reading old data */
+  lastSyncDate?: string;
   subAccounts?: TokenAccountRaw[];
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];

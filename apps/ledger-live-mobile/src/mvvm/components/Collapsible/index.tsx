@@ -1,10 +1,6 @@
 import React, { memo, ReactNode, useCallback, useState } from "react";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import styled from "styled-components/native";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
@@ -33,7 +29,7 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
 
     collapseAnimation.value = withTiming(value, { duration: 200 }, finished => {
       if (finished) {
-        runOnJS(onDone)();
+        scheduleOnRN(onDone);
       }
     });
   }, [collapseAnimation]);

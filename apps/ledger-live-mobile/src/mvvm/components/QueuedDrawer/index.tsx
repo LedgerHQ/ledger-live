@@ -6,8 +6,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  runOnJS,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
@@ -112,7 +112,7 @@ const QueuedDrawerNative = ({
           if (after && !callbackFired) {
             if (timeoutId) clearTimeout(timeoutId);
             callbackFired = true;
-            runOnJS(after)();
+            scheduleOnRN(after);
           }
         },
       );

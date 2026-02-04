@@ -53,6 +53,8 @@ export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
 
 export const HEDERA_MAINNET_CHAIN_ID = 295;
 
+export const TRANSACTION_VALID_DURATION_SECONDS = 180;
+
 /**
  * On Hedera, transactions are not appended to a global chain of immutable blocks. Instead, each consensus node
  * publishes its own transactions stream, and mirrornode publishes transactions data as it receives it from each

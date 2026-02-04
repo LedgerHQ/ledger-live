@@ -2,7 +2,6 @@ import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   MarketCurrencyChartDataRequestParams,
-  SupportedCoins,
   MarketCoinDataChart,
   MarketChartApiResponse,
 } from "../utils/types";
@@ -10,12 +9,6 @@ import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
 
 const baseURL = getEnv("MARKET_API_URL");
-
-export async function getSupportedCoinsList(): Promise<SupportedCoins> {
-  const url = `${baseURL}/coins/list`;
-  const { data } = await network<SupportedCoins>({ method: "GET", url });
-  return data;
-}
 
 // Fetches list of supported counterCurrencies
 export async function supportedCounterCurrencies(): Promise<string[]> {

@@ -404,10 +404,15 @@ export const alpacaGetOperationAmount = (
 export function alpacaTransactionToOp(
   address: string,
   transaction: SuiTransactionBlockResponse,
+  checkpointHash?: string,
 ): Op {
   const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
+
+  const blockHeight = Number.parseInt(transaction.checkpoint || "0");
+  const blockHash =
+    checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
   const op: Op = {
     id: hash,
@@ -416,7 +421,8 @@ export function alpacaTransactionToOp(
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
       block: {
-        height: Number.parseInt(transaction.checkpoint || "0"),
+        height: blockHeight,
+        hash: blockHash,
         time: getOperationDate(transaction),
       },
       failed: transaction.effects?.status.status !== "success",
@@ -451,7 +457,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
     time: new Date(parseInt(checkpoint.timestampMs)),
   };
 
-  if (typeof checkpoint.previousDigest === "string")
+  if (typeof checkpoint.previousDigest === "string") {
     return {
       ...info,
       parent: {
@@ -459,6 +465,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
         hash: checkpoint.previousDigest,
       },
     };
+  }
 
   return info;
 }
@@ -698,9 +705,36 @@ export const getListOperations = async (
 
     const ops = dedupOperations(opsOut, opsIn, order);
 
-    const operations = ops.operations
-      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-      .map(t => alpacaTransactionToOp(addr, t));
+    const sortedOps = [...ops.operations].sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+    );
+
+    const uniqueCheckpoints = new Set(
+      sortedOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
+    );
+
+    const checkpointHashMap = new Map<string, string>();
+    await Promise.all(
+      Array.from(uniqueCheckpoints).map(async checkpoint => {
+        try {
+          const checkpointData = await api.getCheckpoint({ id: checkpoint });
+          checkpointHashMap.set(checkpoint, checkpointData.digest);
+        } catch (error) {
+          console.warn(
+            `Failed to fetch checkpoint ${checkpoint}, will use synthetic hash for associated operations:`,
+            error,
+          );
+        }
+      }),
+    );
+
+    const operations = sortedOps.map(t =>
+      alpacaTransactionToOp(
+        addr,
+        t,
+        t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
+      ),
+    );
 
     return {
       items: operations,

@@ -1,3 +1,4 @@
+// Native cache invalidation: 2026-01-27
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"

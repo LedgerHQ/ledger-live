@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
@@ -50,6 +50,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
 
   const { t } = useTranslation();
   const ptxCardFlag = useFeature("ptxCard");
+  const { isEnabled: isNewPortfolioEnabled } = useWalletFeaturesConfig("mobile");
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -110,7 +111,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         >
           {t("tabs.portfolio")}
         </Text>
-        {!hidePortfolio && <DiscreetModeButton size={20} />}
+        {!hidePortfolio && !isNewPortfolioEnabled && <DiscreetModeButton size={20} />}
       </Flex>
       <Flex flexDirection="row">
         <Flex mr={7}>
