@@ -601,7 +601,7 @@ test.describe("New Send Flow", () => {
       await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
 
-    test.only("should not show fee menu options for Algorand", async ({ app, page }) => {
+    test("should not show fee menu options for Algorand", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand, true);
       await app.newSendFlow.fillCryptoAmount("0.1");
       await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
@@ -611,8 +611,11 @@ test.describe("New Send Flow", () => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.stellar, TEST_ADDRESSES.stellar, true);
       await app.newSendFlow.fillCryptoAmount("1");
       await app.newSendFlow.openFeesMenu();
-      await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
-      await expect(page.getByRole("menuitemradio")).toHaveCount(0);
+      await expect(app.newSendFlow.customFeesMenuItem).toBeVisible();
+
+      for (const preset of FEE_PRESETS) {
+        expect(await app.newSendFlow.getFeePreset(preset)).toBeHidden();
+      }
     });
 
     test("should not show fee menu options for XRP", async ({ app, page }) => {

@@ -368,6 +368,10 @@ export class NewSendFlowPage extends Component {
     await this.page.waitForTimeout(300);
   }
 
+  async getFeePreset(preset: FeePreset) {
+    return this.page.getByTestId(`send-fees-preset-${preset}`);
+  }
+
   // ========== SIGNATURE STEP METHODS ==========
 
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
