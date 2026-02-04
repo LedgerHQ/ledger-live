@@ -803,7 +803,10 @@ type Feature_Wallet40_Params = {
   graphRework: boolean;
   quickActionCtas: boolean;
   mainNavigation: boolean;
+
+  //Specifics
   tour?: boolean;
+  newReceiveDialog?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<
@@ -811,7 +814,11 @@ export type Feature_LwmWallet40 = Feature<
     tour: boolean;
   } & Feature_Wallet40_Params
 >;
-export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
+export type Feature_LwdWallet40 = Feature<
+  {
+    newReceiveDialog: boolean;
+  } & Feature_Wallet40_Params
+>;
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
   variant: ABTestingVariants;
 }>;

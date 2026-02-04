@@ -3,6 +3,7 @@
  * Handles extracting, saving, and restoring tokens from RTK Query cache
  */
 
+import isEqual from "lodash/isEqual";
 import { log } from "@ledgerhq/logs";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "../currencies";
@@ -194,6 +195,32 @@ export function extractPersistedCALFromState(state: StateWithCryptoAssets): Pers
     tokens,
     ...(Object.keys(hashes).length > 0 && { hashes }),
   };
+}
+
+function tokenCurrencyRawEqual(a: TokenCurrencyRaw, b: TokenCurrencyRaw): boolean {
+  return isEqual(a, b);
+}
+
+/**
+ * Compares two PersistedCAL values by content (version, hashes, token data).
+ * Ignores token timestamps so that refetches with identical cache content are considered equal.
+ * Returns true only when both are null or both are content-equal.
+ */
+export function persistedCALContentEqual(a: PersistedCAL | null, b: PersistedCAL | null): boolean {
+  if (a === b) return true;
+  if (a === null || b === null) return false;
+  if (a.version !== b.version) return false;
+  if (!isEqual(a.hashes, b.hashes)) return false;
+  if (a.tokens.length !== b.tokens.length) return false;
+  const tokensByIdA = new Map(a.tokens.map(t => [t.data.id, t.data]));
+  const tokensByIdB = new Map(b.tokens.map(t => [t.data.id, t.data]));
+  const entriesA = Array.from(tokensByIdA.entries());
+  for (let i = 0; i < entriesA.length; i++) {
+    const [id, dataA] = entriesA[i];
+    const dataB = tokensByIdB.get(id);
+    if (!dataB || !tokenCurrencyRawEqual(dataA, dataB)) return false;
+  }
+  return true;
 }
 
 /**

@@ -43,12 +43,12 @@ import { validateMemo } from "../logic/validateMemo";
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
 
-function validateRecipient(account: Account, recipient: string): Error | null {
+async function validateRecipient(account: Account, recipient: string): Promise<Error | null> {
   if (!recipient || recipient.length === 0) {
     return new RecipientRequired();
   }
 
-  const [parsingError, parsingResult] = safeParseAccountId(recipient);
+  const [parsingError, parsingResult] = await safeParseAccountId(recipient);
 
   if (parsingError) {
     return parsingError;
@@ -123,7 +123,7 @@ async function handleHTSTokenTransaction(
     }),
   ]);
 
-  const recipientError = validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient(account, transaction.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -198,7 +198,7 @@ async function handleERC20TokenTransaction(
     }),
   ]);
 
-  const recipientError = validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient(account, transaction.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -244,7 +244,7 @@ async function handleCoinTransaction(
     }),
   ]);
 
-  const recipientError = validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient(account, transaction.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;

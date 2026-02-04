@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { AmountDisplay, Box, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
+import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
@@ -72,13 +73,16 @@ export const PortfolioBalanceSectionView = ({
       testID={isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading"}
     >
       <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
-        <AmountDisplay
-          key={unit.code}
-          value={isBalanceAvailable ? balance : 0}
-          formatter={formatter}
-          hidden={!isBalanceAvailable || discreet}
-          testID="portfolio-balance-amount"
-        />
+        <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+          <AmountDisplay
+            key={unit.code}
+            value={isBalanceAvailable ? balance : 0}
+            formatter={formatter}
+            hidden={!isBalanceAvailable || discreet}
+            testID="portfolio-balance-amount"
+          />
+          {discreet && <DiscreetModeIcon />}
+        </Box>
       </Pressable>
       <Box lx={{ ...rowStyle, ...(!isBalanceAvailable && { minHeight: "s24" }) }}>
         {getBalanceIndicator()}

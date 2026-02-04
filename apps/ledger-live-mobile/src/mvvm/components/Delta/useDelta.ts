@@ -50,7 +50,7 @@ export const useDelta = ({
       ? valueChange.percentage * 100
       : valueChange.value;
 
-  const roundedDelta = Number.parseFloat(delta.toFixed(0));
+  const roundedDelta = Number.parseFloat(delta.toFixed(2));
 
   if (roundedDelta === 0) return null;
 
@@ -73,7 +73,7 @@ export const useDelta = ({
   const arrowPrefix = percent && isArrowDisplayed ? `${sign}` : "";
   const currencyBefore = isPercentSignDisplayed ? sign : `(${sign}`;
   const currencyAfter = isPercentSignDisplayed ? "" : ")";
-  const percentValue = `${absDelta.toFixed(0)}%`;
+  const percentValue = `${absDelta.toFixed(2)}%`;
   const hasUnit = Boolean(unit && absDelta !== 0);
 
   return {

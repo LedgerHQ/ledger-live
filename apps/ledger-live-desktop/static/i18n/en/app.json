@@ -2206,6 +2206,19 @@
       "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
+  "newReceive": {
+    "steps": {
+      "options": {
+        "fromBank": {
+          "title": "Bank transfer",
+          "description": "Receive stablecoin by sending cash"
+        },
+        "fromCrypto": {
+          "title": "Receive crypto"
+        }
+      }
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
@@ -6669,7 +6682,7 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+      "title": "Enable Blind signing or Contract data in Ethereum app"
     },
     "CeloAppPleaseEnableContractData": {
       "title": "Please enable Contract data in the Celo app Settings"

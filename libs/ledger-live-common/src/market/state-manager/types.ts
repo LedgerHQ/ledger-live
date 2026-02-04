@@ -5,6 +5,7 @@ export enum MarketDataTags {
   Coins = "Coins",
   CounterCurrencies = "CounterCurrencies",
   ChartData = "ChartData",
+  CurrencyData = "CurrencyData",
 }
 
 export interface MarketPerformersQueryParams {

@@ -1,4 +1,9 @@
-import { MarketCurrencyData, MarketItemPerformer, KeysPriceChange } from "./types";
+import {
+  MarketCurrencyData,
+  MarketItemPerformer,
+  MarketItemResponse,
+  KeysPriceChange,
+} from "./types";
 
 /**
  * Mock market performers data for testing across platforms
@@ -191,5 +196,44 @@ export const createMockMarketPerformer = (
   priceChangePercentage30d: 15.3,
   priceChangePercentage1y: 120.5,
   ledgerIds: [],
+  ...overrides,
+});
+
+/**
+ * Create a mock market item API response with optional overrides
+ */
+export const createMockMarketItemResponse = (
+  overrides: Partial<MarketItemResponse> = {},
+): MarketItemResponse => ({
+  id: "bitcoin",
+  currencyId: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  image: "https://example.com/btc.png",
+  price: 50000,
+  marketCap: 1000000000000,
+  marketCapRank: 1,
+  marketCapChange24h: 5000000000,
+  marketCapChangePercentage24h: 2.5,
+  totalVolume: 30000000000,
+  high24h: 51000,
+  low24h: 49000,
+  priceChange24h: 1000,
+  priceChangePercentage1h: 0.5,
+  priceChangePercentage24h: 2.0,
+  priceChangePercentage7d: 5.0,
+  priceChangePercentage30d: 10.0,
+  priceChangePercentage1y: 100.0,
+  circulatingSupply: 19500000,
+  totalSupply: 21000000,
+  maxSupply: 21000000,
+  allTimeHigh: 69000,
+  allTimeHighDate: "2021-11-10T00:00:00.000Z",
+  allTimeLow: 67.81,
+  allTimeLowDate: "2013-07-06T00:00:00.000Z",
+  fullyDilutedValuation: 1050000000000,
+  sparkline: [48000, 49000, 50000, 51000, 50500],
+  ledgerIds: ["bitcoin"],
+  updatedAt: new Date().toISOString(),
   ...overrides,
 });

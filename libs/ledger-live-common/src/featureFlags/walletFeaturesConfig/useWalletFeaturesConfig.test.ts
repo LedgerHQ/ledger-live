@@ -36,6 +36,8 @@ const DISABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayMarketBanner: false,
   shouldDisplayGraphRework: false,
   shouldDisplayQuickActionCtas: false,
+  shouldDisplayNewReceiveDialog: false,
+  shouldDisplayWallet40MainNav: false,
 };
 
 const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
@@ -43,6 +45,8 @@ const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
   shouldDisplayMarketBanner: false,
   shouldDisplayGraphRework: false,
   shouldDisplayQuickActionCtas: false,
+  shouldDisplayNewReceiveDialog: false,
+  shouldDisplayWallet40MainNav: false,
 };
 
 const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
@@ -50,12 +54,16 @@ const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayMarketBanner: true,
   shouldDisplayGraphRework: true,
   shouldDisplayQuickActionCtas: true,
+  shouldDisplayNewReceiveDialog: true,
+  shouldDisplayWallet40MainNav: true,
 };
 
 const ALL_PARAMS_ENABLED: Wallet40Params = {
   marketBanner: true,
   graphRework: true,
   quickActionCtas: true,
+  newReceiveDialog: true,
+  mainNavigation: true,
 };
 
 describe("useWalletFeaturesConfig hook", () => {
@@ -98,6 +106,8 @@ describe("useWalletFeaturesConfig hook", () => {
         ["marketBanner", { marketBanner: true }, { shouldDisplayMarketBanner: true }],
         ["graphRework", { graphRework: true }, { shouldDisplayGraphRework: true }],
         ["quickActionCtas", { quickActionCtas: true }, { shouldDisplayQuickActionCtas: true }],
+        ["newReceiveDialog", { newReceiveDialog: true }, { shouldDisplayNewReceiveDialog: true }],
+        ["mainNavigation", { mainNavigation: true }, { shouldDisplayWallet40MainNav: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),
