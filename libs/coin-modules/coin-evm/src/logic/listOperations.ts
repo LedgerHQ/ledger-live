@@ -106,7 +106,7 @@ export async function listOperations(
   // pagination introduced the limit and order parameters that are effectively used to query the explorer
   // before that change, the explorer was always queried in descending order
   // to mimic the previous behavior while honoring explicit user input, we default to "desc" only when no order is provided
-  const explorerOrder = pagination.order ?? "desc";
+  const explorerOrder = pagination.limit !== undefined ? pagination.order : "desc";
   const {
     lastCoinOperations,
     lastTokenOperations,

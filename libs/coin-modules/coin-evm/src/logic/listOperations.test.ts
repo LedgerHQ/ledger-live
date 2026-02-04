@@ -430,7 +430,7 @@ describe("listOperations", () => {
 
     // Explorer returns: one native op for "address", and one internal op (same tx) where
     // senders/recipients and parent senders/recipients do NOT include "address"
-    jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-for-address",
@@ -500,6 +500,7 @@ describe("listOperations", () => {
             block: {
               height: 100,
               hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
             },
             fees: 10n,
             date: new Date("2025-02-20"),
@@ -508,7 +509,7 @@ describe("listOperations", () => {
           details: { sequence: BigNumber(1) },
         },
       ],
-      "",
+      undefined,
     ]);
   });
 
@@ -519,7 +520,7 @@ describe("listOperations", () => {
     const parentNativeValue = new BigNumber("0"); // No native ETH transferred
     const txFee = new BigNumber("21000000000000"); // Tx fees
 
-    jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-erc20-tx",
@@ -575,6 +576,7 @@ describe("listOperations", () => {
             block: {
               height: 279040,
               hash: "0x172b9bcb8f7d598227ab5f7f0ce",
+              time: new Date("2025-02-20"),
             },
             fees: 21000000000000n,
             date: new Date("2025-02-20"),
@@ -591,7 +593,7 @@ describe("listOperations", () => {
           },
         },
       ],
-      "",
+      undefined,
     ]);
   });
 
@@ -602,7 +604,7 @@ describe("listOperations", () => {
     const erc20TransferValue = new BigNumber("500000000"); // 500 USDC
     const txFee = new BigNumber("21000000000000"); // Tx fees
 
-    jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-mixed-tx",
@@ -658,6 +660,7 @@ describe("listOperations", () => {
             block: {
               height: 100,
               hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
             },
             fees: 21000000000000n,
             date: new Date("2025-02-20"),
@@ -681,6 +684,7 @@ describe("listOperations", () => {
             block: {
               height: 100,
               hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
             },
             fees: 21000000000000n,
             date: new Date("2025-02-20"),
@@ -697,7 +701,7 @@ describe("listOperations", () => {
           },
         },
       ],
-      "",
+      undefined,
     ]);
   });
 
@@ -706,7 +710,7 @@ describe("listOperations", () => {
 
     const txFee = new BigNumber("21000000000000");
 
-    jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-fees-only",
@@ -745,6 +749,7 @@ describe("listOperations", () => {
             block: {
               height: 100,
               hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
             },
             fees: 21000000000000n,
             date: new Date("2025-02-20"),
@@ -753,7 +758,7 @@ describe("listOperations", () => {
           details: { sequence: BigNumber(1) },
         },
       ],
-      "",
+      undefined,
     ]);
   });
 });
