@@ -99,8 +99,6 @@ const cosmosValidatorsFormatters = {
 };
 
 export default function makeCliTools() {
-  const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
-
   return {
     options,
     inferTransactions,
@@ -118,7 +116,7 @@ export default function makeCliTools() {
         }: Partial<{
           format: string;
         }>): Observable<string> =>
-          from(cosmosValidatorsManager.getValidators()).pipe(
+          from(new CosmosValidatorsManager(getCryptoCurrencyById("cosmos")).getValidators()).pipe(
             map(validators => {
               const f =
                 (format && (cosmosValidatorsFormatters as any)[format]) ||
