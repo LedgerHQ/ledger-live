@@ -1,9 +1,4 @@
-import {
-  AssetInfo,
-  MemoNotSupported,
-  Operation,
-  Pagination,
-} from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, Cursor, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
@@ -11,6 +6,13 @@ import { getExplorerApi } from "../network/explorer";
 type AssetConfig =
   | { type: "native"; internal?: boolean }
   | { type: "token"; owner: string; parents: Record<string, LiveOperation> };
+
+type ListOperationsOptions = {
+  minHeight: number;
+  cursor?: Cursor;
+  limit?: number;
+  order?: "asc" | "desc";
+};
 
 function extractStandard(op: LiveOperation): string {
   if (!op.standard) return "erc20";
@@ -97,16 +99,23 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
   };
 }
 
+type ListOperationsParams = ListOperationsOptions & {
+  // TODO: remove after all callers use `cursor`.
+  pagingToken?: Cursor;
+};
+
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  pagination: Pagination,
-): Promise<[Operation<MemoNotSupported>[], string]> {
+  {
+    minHeight,
+    order = "desc",
+    limit,
+    cursor,
+    pagingToken: legacyPagingToken,
+  }: ListOperationsParams,
+): Promise<[Operation<MemoNotSupported>[], Cursor | undefined]> {
   const explorerApi = getExplorerApi(currency);
-  // pagination introduced the limit and order parameters that are effectively used to query the explorer
-  // before that change, the explorer was always queried in descending order
-  // to mimic the previous behavior while honoring explicit user input, we default to "desc" only when no order is provided
-  const explorerOrder = pagination.limit !== undefined ? pagination.order : "desc";
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -117,19 +126,20 @@ export async function listOperations(
     currency,
     address,
     `js:2:${currency.id}:${address}:`,
-    pagination.minHeight,
+    minHeight,
     undefined,
-    pagination.pagingToken,
-    pagination.limit,
-    explorerOrder,
+    cursor ?? legacyPagingToken,
+    limit,
+    limit === undefined ? "desc" : order,
   );
 
   const tokenOrNftHashes = new Set(
     [...lastTokenOperations, ...lastNftOperations].map(op => op.hash),
   );
-  const tokenNftOrInternalHashes = new Set(
-    [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations].map(op => op.hash),
-  );
+  const tokenNftOrInternalHashes = new Set([
+    ...tokenOrNftHashes,
+    ...lastInternalOperations.map(op => op.hash),
+  ]);
 
   const parents: Record<string, LiveOperation> = {};
   const nativeOperations: Operation<MemoNotSupported>[] = [];
@@ -189,7 +199,7 @@ export async function listOperations(
     .filter(hasValidType)
     .filter(isAddressInvolved)
     .sort((a, b) =>
-      pagination.order === "asc"
+      order === "asc"
         ? a.tx.date.getTime() - b.tx.date.getTime()
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );

@@ -72,7 +72,7 @@ describe("genericGetAccountShape", () => {
         {
           minHeight: 11,
           order: "desc",
-          lastPagingToken: "pt1",
+          cursor: "pt1",
         },
         [
           {
@@ -160,14 +160,15 @@ describe("genericGetAccountShape", () => {
           asset.symbol === "TOK1" ? { id: `${currency.id}_token1` } : null,
         );
 
-        listOperationsMock.mockResolvedValue([
-          [
+        listOperationsMock.mockResolvedValue({
+          items: [
             { hash: "h2", type: "OUT", height: 12 },
             { hash: "h2", type: "OUT", height: 12, _token: true },
             { hash: "h3", type: "IN", tx: { failed: true }, height: 14 }, // won't appear in final shape
             { hash: "h4", type: "IN", tx: { failed: false }, height: 16 },
           ],
-        ]);
+          next: undefined,
+        });
         refreshOperationsMock.mockImplementation(ops => {
           const op = ops[0];
           if (op?.hash === "h0") {
@@ -216,7 +217,11 @@ describe("genericGetAccountShape", () => {
 
         expect(chainSpecificGetAccountShapeMock).toHaveBeenCalledWith(`${currency.id}_addr1`);
 
-        expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, expectedPagination);
+        expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, {
+          minHeight: expectedPagination.minHeight,
+          cursor: expectedPagination.cursor,
+          order: expectedPagination.order,
+        });
 
         const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;
         expect(assetsBalancePassed).toEqual([
@@ -251,7 +256,7 @@ describe("genericGetAccountShape", () => {
     test("handles empty operations (no old ops, no new ops) and blockHeight=0", async () => {
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
-      listOperationsMock.mockResolvedValue([[]]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
       buildSubAccountsMock.mockReturnValue([]);
 
       const getShape = genericGetAccountShape(network, currency.id);
@@ -332,7 +337,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
-      listOperationsMock.mockResolvedValue([[txWithLedgerOpTypes]]);
+      listOperationsMock.mockResolvedValue({ items: [txWithLedgerOpTypes], next: undefined });
       buildSubAccountsMock.mockReturnValue([]);
       lastBlockMock.mockResolvedValue({ height: 1 });
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op: any) => ({
@@ -371,7 +376,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue([[tokenOpFromList]]);
+      listOperationsMock.mockResolvedValue({ items: [tokenOpFromList], next: undefined });
       lastBlockMock.mockResolvedValue({ height: 100 });
 
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
@@ -449,7 +454,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue([[nativeOpFromList, tokenOpFromList]]);
+      listOperationsMock.mockResolvedValue({ items: [nativeOpFromList, tokenOpFromList], next: undefined });
       lastBlockMock.mockResolvedValue({ height: 100 });
 
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => {
@@ -552,7 +557,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue([[nativeOp, internalOp]]);
+      listOperationsMock.mockResolvedValue({ items: [nativeOp, internalOp], next: undefined });
       buildSubAccountsMock.mockReturnValue([]);
       lastBlockMock.mockResolvedValue({ height: 100 });
 
@@ -613,7 +618,7 @@ describe("genericGetAccountShape", () => {
 
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
-      listOperationsMock.mockResolvedValue([[parentOp, internalOp]]);
+      listOperationsMock.mockResolvedValue({ items: [parentOp, internalOp], next: undefined });
       buildSubAccountsMock.mockReturnValue([]);
       lastBlockMock.mockResolvedValue({ height: 123 });
 

@@ -35,7 +35,7 @@ describe("Xrp Api (testnet)", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200, order: "asc" });
+      const { items: tx } = await api.listOperations(SENDER, { minHeight: 200, order: "asc" });
 
       // https://blockexplorer.one/xrp/testnet/address/rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb
       // as of 2025-03-18, the address has 287 transactions
@@ -59,7 +59,7 @@ describe("Xrp Api (testnet)", () => {
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
 
       // When
-      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+      const { items: ops } = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
         minHeight: 0,
         order: "asc",
       });
@@ -79,7 +79,7 @@ describe("Xrp Api (testnet)", () => {
     it("returns operations from latest, but in asc order", async () => {
       // When
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
-      const [txDesc] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+      const { items: txDesc } = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
         minHeight: 200,
         order: "desc",
       });
@@ -97,7 +97,7 @@ describe("Xrp Api (testnet)", () => {
       const FAILED_TRANSACTIONS = new Set([
         "8C0D8EF7C52BE287F951ECDF01526D2ABF3BF189C56D0B59607DE1A192E72511",
       ]);
-      const [operations] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+      const { items: operations } = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
         minHeight: 200,
         order: "desc",
       });
@@ -249,7 +249,7 @@ describe("Xrp Api (mainnet)", () => {
 
     beforeAll(async () => {
       const resp = await api.listOperations(SENDER, { minHeight: 0 });
-      ops = resp[0];
+      ops = resp.items;
     });
 
     it("returns operations", async () => {
