@@ -14,14 +14,57 @@ const __dirname = path.dirname(__filename);
 const projectRootDir = path.resolve(__dirname, "..", "..");
 
 const tsconfig = JSON.parse(readFileSync(path.join(__dirname, "./tsconfig.json"), "utf8"));
-const resolveFromPnpmSubmodule = (...subPath) => {
-  const pnpmDir = path.resolve(projectRootDir, "node_modules", ".pnpm");
-  for (const entry of readdirSync(pnpmDir)) {
-    const candidate = path.join(pnpmDir, entry, ...subPath);
-    if (existsSync(candidate)) return candidate;
+
+const nodeModulesPaths = [
+  path.resolve(__dirname, "node_modules"),
+  path.resolve(projectRootDir, "node_modules"),
+  path.resolve(projectRootDir, "node_modules", ".pnpm"),
+  path.resolve(projectRootDir, "node_modules", ".pnpm", "node_modules"),
+  "node_modules",
+];
+
+const packageRootCache = new Map();
+const pnpmDir = path.resolve(projectRootDir, "node_modules", ".pnpm");
+
+/**
+ * Resolves a file inside a package. Tries require.resolve(package.json) first;
+ * if that fails (e.g. pnpm exports), falls back to one-time .pnpm scan per package.
+ * Results are cached per package.
+ */
+function resolvePackageFile(packageName, ...relativePathSegments) {
+  let packageRoot = packageRootCache.get(packageName);
+  if (packageRoot === undefined) {
+    try {
+      const pkgJsonPath = require.resolve(`${packageName}/package.json`, {
+        paths: nodeModulesPaths,
+      });
+      packageRoot = path.dirname(pkgJsonPath);
+    } catch {
+      const subPath = ["node_modules", ...packageName.split("/"), ...relativePathSegments];
+      const entries = readdirSync(pnpmDir);
+      for (const entry of entries) {
+        const candidate = path.join(pnpmDir, entry, ...subPath);
+        if (existsSync(candidate)) {
+          packageRoot = path.join(pnpmDir, entry, "node_modules", ...packageName.split("/"));
+          break;
+        }
+      }
+      if (packageRoot === undefined) {
+        throw new Error(
+          `Cannot resolve package ${packageName} (tried require.resolve and .pnpm scan in ${pnpmDir})`,
+        );
+      }
+    }
+    packageRootCache.set(packageName, packageRoot);
   }
-  throw new Error(`Cannot resolve pnpm submodule path: ${path.join(...subPath)}`);
-};
+  const resolved = path.join(packageRoot, ...relativePathSegments);
+  if (!existsSync(resolved)) {
+    throw new Error(
+      `Cannot resolve ${path.join(...relativePathSegments)} in package ${packageName} (root: ${packageRoot})`,
+    );
+  }
+  return resolved;
+}
 
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 const buildTsAlias = (paths = {}) =>
@@ -32,14 +75,6 @@ const buildTsAlias = (paths = {}) =>
     }),
     {},
   );
-
-const nodeModulesPaths = [
-  path.resolve(__dirname, "node_modules"),
-  path.resolve(projectRootDir, "node_modules"),
-  path.resolve(projectRootDir, "node_modules", ".pnpm"),
-  path.resolve(projectRootDir, "node_modules", ".pnpm", "node_modules"),
-  "node_modules",
-];
 
 const withRozeniteUrlFix = rozeniteConfig => {
   return async env => {
@@ -54,8 +89,9 @@ const withRozeniteUrlFix = rozeniteConfig => {
       ...config,
       devServer: {
         ...config.devServer,
-        setupMiddlewares: middlewares => {
-          const result = originalSetupMiddlewares(middlewares);
+        setupMiddlewares: (...args) => {
+          const [middlewares] = args;
+          const result = originalSetupMiddlewares(...args) ?? middlewares;
           result.unshift((req, res, next) => {
             if (req.url?.startsWith("/debugger-frontend/")) {
               const newUrl = req.url.replace("/debugger-frontend/", "/rozenite/");
@@ -90,20 +126,13 @@ export default withRozeniteUrlFix(
           alias: {
             ...buildTsAlias(tsconfig.compilerOptions.paths),
             // Packages with malformed exports field (missing "." subpath) - resolve to browser entry
-            "@aptos-labs/aptos-client": resolveFromPnpmSubmodule(
-              "node_modules",
-              "@aptos-labs",
-              "aptos-client",
+            "@aptos-labs/aptos-client": resolvePackageFile(
+              "@aptos-labs/aptos-client",
               "dist",
               "browser",
               "index.browser.mjs",
             ),
-            "rpc-websockets": resolveFromPnpmSubmodule(
-              "node_modules",
-              "rpc-websockets",
-              "dist",
-              "index.browser.mjs",
-            ),
+            "rpc-websockets": resolvePackageFile("rpc-websockets", "dist", "index.browser.mjs"),
           },
           fallback: {
             ...require("node-libs-react-native"),
