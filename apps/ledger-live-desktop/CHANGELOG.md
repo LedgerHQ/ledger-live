@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.140.0-next.2
+
+### Minor Changes
+
+- [#14217](https://github.com/LedgerHQ/ledger-live/pull/14217) [`67c7dc5`](https://github.com/LedgerHQ/ledger-live/commit/67c7dc5ee4f687ab5df949600a04ca4d197576a4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Retrigger new builds with hotfix stuffs
+
 ## 2.140.0-next.1
 
 ### Patch Changes
