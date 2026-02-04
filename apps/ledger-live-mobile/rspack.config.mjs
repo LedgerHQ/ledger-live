@@ -41,8 +41,6 @@ const nodeModulesPaths = [
   "node_modules",
 ];
 
-const hermesParserPath = require.resolve("hermes-parser");
-
 const withRozeniteUrlFix = rozeniteConfig => {
   return async env => {
     const config = await rozeniteConfig(env);
@@ -126,17 +124,13 @@ export default withRozeniteUrlFix(
           rules: [
             {
               test: /\.[cm]?[jt]sx?$/,
-              use: {
-                loader: "@callstack/repack/babel-loader",
-                parallel: true,
-                options: {
-                  hermesParserPath,
-                },
-              },
-              resolve: {
-                fullySpecified: false,
-              },
               type: "javascript/auto",
+              use: {
+                loader: "@callstack/repack/babel-swc-loader",
+                parallel: true,
+                options: {},
+              },
+              resolve: { fullySpecified: false },
             },
             ...Repack.getAssetTransformRules(),
           ],
