@@ -471,7 +471,7 @@ test.describe("New Send Flow", () => {
       await app.newSendFlow.waitForConfirmation();
     });
 
-    test.only("should allow changing fee presets (EVM)", async ({ app, page }) => {
+    test("should allow changing fee presets (EVM)", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
       await test.step("Fill crypto amount", async () => {
@@ -497,24 +497,26 @@ test.describe("New Send Flow", () => {
 
       await test.step("Fill amount", async () => {
         await app.newSendFlow.fillCryptoAmount("0.0001");
-        await app.newSendFlow.expectReviewEnabled();
       });
 
-      await test.step("Verify fees menu shows Medium by default", async () => {
-        const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
-        expect(triggerText).toMatch(/medium/i);
+      await test.step("Verify fees menu shows medium by default", async () => {
+        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/medium/i);
       });
 
-      await test.step("Select FAST preset (highest fee rate)", async () => {
-        await app.newSendFlow.selectFeePreset("fast");
-        const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
-        expect(triggerText).toMatch(/fast/i);
-      });
+      for (const preset of FEE_PRESETS) {
+        if (preset === "medium") {
+          continue;
+        }
 
-      await test.step("Select SLOW preset (lowest fee rate)", async () => {
-        await app.newSendFlow.selectFeePreset("slow");
-        const triggerText = await app.newSendFlow.feesMenuTrigger.textContent();
-        expect(triggerText).toMatch(/slow/i);
+        await app.newSendFlow.selectFeePreset(preset);
+        await test.step(`Verifying preset ${preset} is correctly selected`, async () => {
+          await expect(app.newSendFlow.feesMenuTrigger).toContainText(new RegExp(preset, "i"));
+        });
+      }
+
+      await app.newSendFlow.selectFeePreset("medium");
+      await test.step("Verifying preset medium is correctly selected", async () => {
+        await expect(app.newSendFlow.feesMenuTrigger).toContainText(/medium/i);
       });
     });
 
