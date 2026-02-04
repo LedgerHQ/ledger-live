@@ -25,6 +25,8 @@ function View({
   return (
     <NewBannerCard
       {...styledProps}
+      variant="titleProminent"
+      title={t(`lnsUpsell.${tracking}.title`)}
       description={t(`lnsUpsell.${tracking}.description`)}
       cta={t(`lnsUpsell.${tracking}.cta`)}
       icon={tracking === "opted_in" ? "SparksFill" : "Nano"}

@@ -7,7 +7,7 @@ import {
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import {
@@ -136,13 +136,17 @@ test.describe("Swap - 1inch flow", () => {
     `Swap test 1inch flow (${provider.uiName})`,
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-3120",
-      },
+      annotation: [
+        {
+          type: "TMS",
+          description: "B2CQA-3120",
+        },
+        { type: "BUG", description: "QAA-854" },
+      ],
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
@@ -154,7 +158,6 @@ test.describe("Swap - 1inch flow", () => {
       await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
       await app.swap.clickExecuteSwapButton(electronApp);
       await app.swap.clickContinueButton();
-      //TODO: when B2CA-2384 is fixed the flow could be finished
     },
   );
 });
@@ -867,7 +870,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
 const swapNetworkFeesAboveAccountBalanceTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, ""),
   errorMessage: new RegExp(
-    `You need \\d+\\.\\d+ ETH in your account to pay for transaction fees on the Ethereum network. {2}Buy ETH or deposit more into your account. Learn more`,
+    `Your account .+ doesn't have enough balance to cover the network fees\\.`,
   ),
   xrayTicket: "B2CQA-2363",
   tags: [
@@ -920,7 +923,6 @@ test.describe(`Swap - Error message when network fees are above account balance 
       { scope: "test" },
     ],
   });
-
   test(
     `Swap - Network fees above account balance`,
     {
@@ -953,8 +955,8 @@ test.describe(`Swap - Error message when network fees are above account balance 
       );
       await app.swap.checkQuotes(electronApp);
       await app.swap.selectExchange(electronApp);
-      await app.swap.tapQuoteInfosFeesSelector(electronApp);
-      await app.swap.checkFeeDrawerErrorMessage(
+      await app.swap.checkFeeErrorMessage(
+        electronApp,
         swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
       );
     },

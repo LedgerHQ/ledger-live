@@ -56,11 +56,6 @@ describe("DeepLinks Tests", () => {
     await app.discover.expectApp(randomLiveApp);
   });
 
-  it("should open Swap Form page", async () => {
-    await app.swap.openViaDeeplink();
-    await app.swap.expectSwapPage();
-  });
-
   it("should open Market Detail page for Bitcoin", async () => {
     await app.market.openViaDeeplink("bitcoin");
     await app.market.expectMarketDetailPage();

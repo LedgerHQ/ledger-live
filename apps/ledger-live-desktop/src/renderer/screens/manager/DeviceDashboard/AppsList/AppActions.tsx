@@ -149,10 +149,10 @@ const AppActions = React.memo(
             style={{
               display: "flex",
               backgroundColor: "rgba(0,0,0,0)",
+              justifyContent: "center",
             }}
             fontSize={3}
             onClick={onNavigateTo}
-            justifyContent="center"
             event={`Manager ${type} Click`}
             eventProperties={{
               appName: name,
@@ -202,11 +202,11 @@ const AppActions = React.memo(
                     style={{
                       display: "flex",
                       backgroundColor: "rgba(0,0,0,0)",
+                      justifyContent: "center",
                     }}
                     fontSize={3}
                     disabled={!canAddAccount}
                     onClick={onAddAccount}
-                    justifyContent="center"
                     event="Manager AddAccount Click"
                     eventProperties={{
                       appName: name,
@@ -231,10 +231,10 @@ const AppActions = React.memo(
                   style={{
                     display: "flex",
                     backgroundColor: "rgba(0,0,0,0)",
+                    justifyContent: "center",
                   }}
                   fontSize={3}
                   onClick={onNavigateTo}
-                  justifyContent="center"
                   event={`Manager ${type} Click`}
                   eventProperties={{
                     appName: name,

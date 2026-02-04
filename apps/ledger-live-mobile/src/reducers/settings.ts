@@ -15,7 +15,6 @@ import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
-  SettingsAcceptSwapProviderPayload,
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
@@ -77,6 +76,7 @@ import type {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
+  SettingsSetHasSeenWalletV4TourPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -168,18 +168,40 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
+  hasSeenWalletV4Tour: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
+/**
+ * Filters imported settings to only include valid SettingsState keys.
+ * This prevents unknown/obsolete fields (like nftCollectionsStatusByNetwork) from being imported.
+ */
+function isValidSettingsKey(key: string): key is keyof SettingsState {
+  return key in INITIAL_STATE;
+}
+
+export function filterValidSettings(
+  importedSettings: Partial<SettingsState>,
+): Partial<SettingsState> {
+  const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
+
+  return Object.fromEntries(
+    Object.entries(importedSettings).filter(
+      ([key]) => validKeys.has(key) && isValidSettingsKey(key),
+    ),
+  ) as Partial<SettingsState>;
+}
+
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
+    const filteredPayload = filterValidSettings(payload);
     return {
       ...state,
-      ...payload,
-      locale: payload.locale ?? state.locale ?? getDefaultLocale(),
+      ...filteredPayload,
+      locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
     };
   },
 
@@ -405,19 +427,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     locale: (action as Action<SettingsSetLocalePayload>).payload,
   }),
 
-  [SettingsActionTypes.ACCEPT_SWAP_PROVIDER]: (state, action) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      acceptedProviders: [
-        ...new Set([
-          ...(state.swap?.acceptedProviders || []),
-          (action as Action<SettingsAcceptSwapProviderPayload>).payload,
-        ]),
-      ],
-    },
-  }),
-
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
     const { payload } = action as Action<SettingsLastSeenDeviceInfoPayload>;
     return {
@@ -629,6 +638,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
       .payload,
   }),
+
+  [SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR]: (state, action) => ({
+    ...state,
+    hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -798,11 +812,8 @@ export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
-
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
-export const swapAcceptedProvidersSelector = (state: State) =>
-  state.settings.swap.acceptedProviders;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 
@@ -858,3 +869,4 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
+export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;

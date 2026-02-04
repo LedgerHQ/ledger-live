@@ -27,11 +27,8 @@ export default class SwapLiveAppPage {
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
   liveAppTitle = "live-app-title";
-  quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
-
-  feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -67,16 +64,6 @@ export default class SwapLiveAppPage {
   @Step("Tap to currency")
   async tapToCurrency() {
     await tapWebElementByTestId(this.toSelector);
-  }
-
-  @Step("Tap quote infos fees selector $0")
-  async tapQuoteInfosFeesSelector(index: number) {
-    await tapWebElementByTestId(this.quoteInfosFeesSelector, index);
-  }
-
-  @Step("Tap fee container $0")
-  async tapFeeContainer(strategy: "slow" | "medium" | "fast") {
-    await tapById(this.feeContainerId(strategy));
   }
 
   @Step("Input amount")
@@ -344,7 +331,6 @@ export default class SwapLiveAppPage {
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       const summaryContinueButton = app.send.summaryContinueButton();
       await waitForElement(summaryContinueButton);
-      //Test will fail here with a known issue: LIVE-21138
       await tapByElement(summaryContinueButton);
     }
   }

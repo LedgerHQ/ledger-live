@@ -8,11 +8,12 @@ import NoApps from "~/renderer/images/no-apps.svg";
 import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
-import { DefaultTheme, withTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
-const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
+const EmptyStateInstalledApps = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -74,4 +75,4 @@ const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
     </Box>
   );
 };
-export default React.memo(withTheme(EmptyStateInstalledApps));
+export default React.memo(EmptyStateInstalledApps);

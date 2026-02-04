@@ -1,7 +1,7 @@
 import React from "react";
-import { render, screen, waitFor, act } from "@testing-library/react";
-import { FearAndGreedView } from "../components/FearAndGreed";
-import { GradientMoodIndicator } from "../components/FearAndGreed/GradientMoodIndicator";
+import { render, screen, waitFor, act } from "tests/testSetup";
+import { FearAndGreedView } from "../../FearAndGreed";
+import { FearAndGreedIndicator } from "../../FearAndGreed/components/FearAndGreedIndicator";
 
 describe("FearAndGreed", () => {
   it("renders without crashing", () => {
@@ -30,9 +30,68 @@ describe("FearAndGreed", () => {
     const { container } = render(<FearAndGreedView {...props} />);
     expect(container.firstChild).toBeNull();
   });
+
+  describe("Dialog behavior", () => {
+    it("opens dialog when clicking on the tile", async () => {
+      const props = {
+        isLoading: false,
+        data: { value: 50, classification: "Neutral" },
+      };
+      const { user } = render(<FearAndGreedView {...props} />);
+
+      const moodTile = screen.getByTestId("fear-and-greed-card");
+      await user.click(moodTile);
+
+      expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
+    });
+
+    it("closes dialog when clicking the close button", async () => {
+      const props = {
+        isLoading: false,
+        data: { value: 50, classification: "Neutral" },
+      };
+      const { user } = render(<FearAndGreedView {...props} />);
+
+      const moodTile = screen.getByTestId("fear-and-greed-card");
+      await user.click(moodTile);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
+      });
+
+      const closeButton = screen.getByRole("button", { name: /close/i });
+      await user.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("fear-and-greed-dialog-content")).not.toBeInTheDocument();
+      });
+    });
+
+    it("closes dialog when clicking the CTA button", async () => {
+      const props = {
+        isLoading: false,
+        data: { value: 50, classification: "Neutral" },
+      };
+      const { user } = render(<FearAndGreedView {...props} />);
+
+      const moodTile = screen.getByTestId("fear-and-greed-card");
+      await user.click(moodTile);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
+      });
+
+      const ctaButton = screen.getByTestId("fear-and-greed-dialog-cta");
+      await user.click(ctaButton);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("fear-and-greed-dialog-content")).not.toBeInTheDocument();
+      });
+    });
+  });
 });
 
-describe("GradientMoodIndicator", () => {
+describe("FearAndGreedIndicator", () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -43,27 +102,27 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("renders the SVG gradient arc", () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
     const path = container.querySelector("path");
     expect(path).toBeVisible();
     expect(path?.getAttribute("stroke")).toBe("url(#paint0_linear_15877_11047)");
   });
 
   it("renders the white indicator circle", () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
     const circle = container.querySelector("circle");
     expect(circle).toBeVisible();
     expect(circle?.getAttribute("fill")).toBe("white");
   });
 
   it("displays the initial value as 0", () => {
-    const { container } = render(<GradientMoodIndicator value={75} />);
+    const { container } = render(<FearAndGreedIndicator value={75} />);
     const text = container.querySelector("text");
     expect(text?.textContent).toBe("0");
   });
 
   it("animates to the target value", async () => {
-    const { container } = render(<GradientMoodIndicator value={75} />);
+    const { container } = render(<FearAndGreedIndicator value={75} />);
     const text = container.querySelector("text");
 
     // Fast-forward through animation
@@ -77,7 +136,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("positions the circle at the left for value 0", () => {
-    const { container } = render(<GradientMoodIndicator value={0} />);
+    const { container } = render(<FearAndGreedIndicator value={0} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -90,7 +149,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("positions the circle at the right for value 100", async () => {
-    const { container } = render(<GradientMoodIndicator value={100} />);
+    const { container } = render(<FearAndGreedIndicator value={100} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -106,7 +165,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("positions the circle at the center for value 50", async () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -121,31 +180,8 @@ describe("GradientMoodIndicator", () => {
     });
   });
 
-  it("updates animation when value changes", async () => {
-    const { container, rerender } = render(<GradientMoodIndicator value={25} />);
-
-    act(() => {
-      jest.advanceTimersByTime(1200);
-    });
-
-    await waitFor(() => {
-      const text = container.querySelector("text");
-      expect(text?.textContent).toBe("25");
-    });
-
-    rerender(<GradientMoodIndicator value={75} />);
-
-    act(() => {
-      jest.advanceTimersByTime(1200);
-    });
-    await waitFor(() => {
-      const text = container.querySelector("text");
-      expect(text?.textContent).toBe("75");
-    });
-  });
-
   it("displays rounded value during animation", async () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
     const text = container.querySelector("text");
 
     // Check intermediate values are integers

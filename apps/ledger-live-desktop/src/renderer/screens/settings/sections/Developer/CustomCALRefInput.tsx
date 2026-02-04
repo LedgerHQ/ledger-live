@@ -55,7 +55,6 @@ const CustomCALRefInput = () => {
             <Input
               small
               style={{ minWidth: 200, maxWidth: 500, width: "100%" }}
-              isSearchable={false}
               onChange={handleOnChange}
               value={inputValue}
               data-testid="custom-cal-ref-input"

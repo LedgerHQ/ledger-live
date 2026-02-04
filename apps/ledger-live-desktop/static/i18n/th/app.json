@@ -282,11 +282,13 @@
     "advanced" : "ขั้นสูง",
     "custom" : "กำหนดเอง",
     "fast" : "เร็ว",
+    "networkFees" : "ค่าธรรมเนียมเครือข่าย",
     "high" : "สูง",
     "low" : "ต่ำ",
     "slow" : "ช้า",
     "standard" : "มาตรฐาน",
     "medium" : "กลาง",
+    "coinControl" : "Coin Control",
     "feesAmount" : "ค่าธรรมเนียม"
   },
   "sidebar" : {
@@ -650,134 +652,6 @@
         "placeholder" : "โทเคน"
       },
       "submit" : "เชื่อมต่อ"
-    }
-  },
-  "fullNode" : {
-    "status" : "สถานะ",
-    "connect" : "เชื่อมต่อ",
-    "disconnect" : "ยกเลิกการเชื่อมต่อ",
-    "checkNodeSettings" : "ตรวจสอบการตั้งค่าโหนด",
-    "edit" : "แก้ไข",
-    "modal" : {
-      "title" : "เชื่อมต่อ Full Node ของ Bitcoin",
-      "disconnectTitle" : "ยกเลิกการเชื่อมต่อ Full Node",
-      "steps" : {
-        "landing" : {
-          "header" : "เริ่ม Full Node ของคุณ โปรดอย่าไว้ใจ ตรวจสอบก่อนเสมอ",
-          "description" : "Bitcoin Full Node จะตรวจสอบธุรกรรมและบล็อกทั้งหมด ซึ่งช่วยให้คุณสามารถใช้ Bitcoin ได้แบบ Trustless และยังสนับสนุนเครือข่าย Bitcoin ไปในตัวอีกด้วย",
-          "list" : {
-            "item1" : "ตั้งค่า Bitcoin Core บนอุปกรณ์ที่มีทรัพยากรที่เพียงพอ",
-            "item2" : "รอให้โหนดซิงโครไนซ์ครบสมบูรณ์ก่อน",
-            "item3" : "บันทึก RPC Credentials ของโหนด, IP Address, และหมายเลข Port"
-          },
-          "disclaimer" : "การดำเนินการแบบ Full Node ต้องใช้คอมพิวเตอร์ที่มีทรัพยากรเพียงพอและการเชื่อมต่อบรอดแบนด์ความเร็วสูงที่ไม่จำกัดปริมาณข้อมูล"
-        },
-        "node" : {
-          "title" : "โหนด",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "ป้อนพารามิเตอร์โหนดของคุณ",
-              "disclaimer" : "Full Node ของคุณจะต้องซิงโครไนซ์อย่างสมบูรณ์ก่อนที่จะเชื่อมต่อแอป Ledger Wallet ได้",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "โฮสต์",
-                  "tooltip" : "ใช้ค่าเริ่มต้นหากใช้งานโหนดบนคอมพิวเตอร์เครื่องนี้ หรือเปลี่ยน IP Address ของโหนด และหมายเลข Port"
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC Credentials",
-                  "tooltip" : "ป้อนชื่อผู้ใช้และรหัสผ่าน RPC ของโหนดของคุณ ที่พบในไฟล์ bitcoin.conf",
-                  "usernamePlaceholder" : "ชื่อผู้ใช้",
-                  "passwordPlaceholder" : "รหัสผ่าน"
-                },
-                "tls" : {
-                  "title" : "ใช้ TLS",
-                  "tooltip" : "เปิดใช้งาน Transport Layer Security ตัวอย่างเช่น เมื่อใช้โซลูชันโหนดที่มีการโฮสต์"
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "กำลังทดสอบการเชื่อมต่อโหนด",
-              "description" : "โปรดรอขณะเราตรวจสอบว่า Full Node มีการตอบสนองหรือไม่"
-            },
-            "success" : {
-              "header" : "การเชื่อมต่อ Full Node เสร็จสมบูรณ์แล้ว",
-              "description" : "ตอนนี้คุณสามารถตั้งค่า Full Node เพื่อสแกนบัญชีของคุณบนบล็อกเชนได้แล้ว"
-            },
-            "failure" : {
-              "header" : "ไม่สามารถเข้าถึง Full Node ได้",
-              "description" : "โปรดตรวจสอบให้แน่ใจว่าโหนดของคุณได้ซิงโครไนซ์เสร็จเรียบร้อยแล้ว และตรวจสอบการตั้งค่าการเชื่อมต่อ"
-            }
-          }
-        },
-        "device" : {
-          "title" : "อุปกรณ์",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "ได้บัญชีจากอุปกรณ์",
-              "description" : "โปรดรอขณะกำลังเพิ่มบัญชีที่จะสแกนไปที่ไฟล์การตั้งค่าโหนด"
-            },
-            "success" : {
-              "header" : "บัญชีถูกเพิ่มไปยังการตั้งค่าโหนดแล้ว",
-              "description" : "ไฟล์การตั้งค่าถูกบันทึกไปยังโฟลเดอร์ข้อมูลผู้ใช้แล้ว ตอนนี้ Ledger SatStack สามารถเชื่อมต่อกับ Full Node ของคุณ และสามารถสแกนบัญชีของคุณบนบล็อกเชนได้แล้ว",
-              "cta" : "ดูข้อมูลผู้ใช้"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "บัญชี",
-          "existing" : "บัญชีที่มีอยู่ที่สามารถสแกนได้",
-          "toScan" : "บัญชีที่จะสแกน",
-          "toScanDescription" : "บัญชีที่จะสแกนหา Address แต่ละประเภท",
-          "toScanTooltip" : "เพิ่มเฉพาะเมื่อคุณมีบัญชี BTC มากกว่า 10 บัญชีขึ้นไป  การสแกนครั้งแรกจะช้ากว่าปกติ "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "ดาวน์โหลดและเรียกใช้งาน Ledger SatStack",
-              "description" : "Ledger SatStack เป็นแอปพลิเคชันขนาดเล็กที่อนุญาตให้แอป Ledger Wallet พูดคุยกับ Full Node ของคุณ โปรดดาวน์โหลดและเรียกใช้งานก่อนที่จะดำเนินการต่อ",
-              "disclaimer" : "SatStack ต้องเปิดทำงานอยู่เพื่อให้แอป Ledger Wallet เชื่อมต่อกับ Full Node ของคุณ  โปรดพิจารณาตั้งค่าเพื่อให้เปิดอัตโนมัติเมื่อเปิดคอมพิวเตอร์ของคุณ",
-              "cta" : "ดาวน์โหลด SatStack"
-            },
-            "satstack-disconnected" : {
-              "header" : "ไม่สามารถเข้าถึง SatStack ได้",
-              "description" : "โปรดตรวจสอบว่า SatStack กำลังทำงานอยู่บนคอมพิวเตอร์เครื่องนี้"
-            },
-            "satstack-outdated" : {
-              "header" : "โปรดอัปเกรด SatStack",
-              "description" : "เวอร์ชันของ SatStack ที่คุณใช้นั้นเก่าเกินไป และอาจมีข้อบกพร่องหรือไม่สามารถเข้ากันได้"
-            },
-            "node-disconnected" : {
-              "header" : "ไม่สามารถเข้าถึง Full Node ได้",
-              "description" : "โปรดตรวจสอบว่าโหนดของคุณสามารถเข้าถึงได้ และการตั้งค่าการเชื่อมต่อที่คุณป้อนนั้นถูกต้อง"
-            },
-            "invalid-chain" : {
-              "header" : "ชื่อ Chain ไม่ถูกต้อง",
-              "description" : "รายละเอียดเชนในคำแนะนำไม่ถูกต้อง"
-            },
-            "initializing" : {
-              "header" : "กำลังโหลด",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "พร้อมแล้ว",
-              "description" : "Full Node ซิงค์เสร็จสมบูรณ์แล้ว ยอดคงเหลือในบัญชี Bitcoin ของคุณถูกต้องแล้ว"
-            },
-            "syncing" : {
-              "header" : "กำลังดำเนินการซิงค์โหนด...",
-              "description" : "ธุรกรรมล่าสุดอาจยังไม่แสดงผล ดังนั้นยอดคงเหลือในบัญชี Bitcoin อาจยังไม่อัพเดท ถ้าเป็นไปได้ ให้เรียกใช้งานโหนดอยู่ตลอดเพื่อให้ข้อมูลอัปเดตอยู่เสมอ"
-            },
-            "scanning" : {
-              "header" : "กำลังดำเนินการสแกนบัญชี...",
-              "description" : "คุณสามารถเพิ่มบัญชีได้หลังการสแกนเสร็จสิ้นแล้ว บัญชี Bitcoin ทุกบัญชีที่ถูกเพิ่มผ่าน Explorer ของ Ledger ได้ถูกนำออกเรียบร้อยแล้ว"
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "ยกเลิกการเชื่อมต่อ",
-          "description" : "คุณแน่ใจใช่ไหม? การยกเลิกการเชื่อมต่อ Full Node จะนำบัญชี Bitcoin ทั้งหมดออก คุณสามารถเพิ่มบัญชีอีกครั้งโดยใช้ Explorer ของ Ledger"
-        }
-      }
     }
   },
   "account" : {
@@ -1605,34 +1479,6 @@
         "primaryCta" : "เชื่อมต่ออุปกรณ์",
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "แนวโน้ม {{time}}",
-      "buy" : "ซื้อ",
-      "swap" : "สวอป",
-      "gainers" : "สินทรัพย์ที่ปรับตัวขึ้น",
-      "losers" : "สินทรัพย์ที่ปรับตัวลง",
-      "error" : {
-        "title" : "ขออภัย เราไม่สามารถโหลดแนวโน้มได้",
-        "description" : "โปรดลองอีกครั้งในภายหลัง"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "ไม่มีสินทรัพย์ใดในกลุ่ม Top {{count}} ที่ได้กำไรในช่วง {{trend}} ที่ผ่านมา",
-          "description" : "ลองพิจารณา Top Losers ดูหรือกลับมาในภายหลัง"
-        },
-        "losers" : {
-          "title" : "ไม่มีสินทรัพย์ใดในกลุ่ม Top {{count}} ที่ขาดทุนในช่วง {{trend}} ที่ผ่านมา",
-          "description" : "ลองพิจารณา Top Gainers ดูหรือกลับมาในภายหลัง"
-        }
-      },
-      "trend" : {
-        "day" : "24 ชั่วโมง",
-        "week" : "7 วัน",
-        "month" : "30 วัน",
-        "year" : "ปี",
-        "all" : "ปี"
-      }
     }
   },
   "currentAddress" : {
@@ -1681,6 +1527,7 @@
     "currency" : "สกุลเงิน",
     "rangeLabel" : "เวลา",
     "goBack" : "ย้อนกลับ",
+    "searchPlaceholder" : "ค้นหาสินทรัพย์",
     "filters" : {
       "title" : "ตัวกรอง",
       "show" : "แสดง",
@@ -1786,8 +1633,6 @@
       "import" : "บัญชี",
       "finish" : "การยืนยัน"
     },
-    "fullNodeReadyInfo" : "จะมีการเพิ่มบัญชีโดยใช้ Bitcoin แบบ Full Node",
-    "fullNodeConfigure" : "กำหนดค่าโหนด",
     "tokensTip" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}} คุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
     "accountToImportSubtitle_other" : "เพิ่มบัญชีที่มีอยู่",
     "selectAll" : "เลือกทั้งหมด ({{count}})",
@@ -2518,9 +2363,26 @@
     "amountToSend" : "จำนวนที่จะส่งใน {{currency}}",
     "coinToSend" : "เหรียญที่จะส่ง",
     "coinControlCustom" : "การเลือกเหรียญเฉพาะที่กำหนดเอง",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "สูงสุด"
+    },
+    "reviewCta" : "ตรวจสอบ",
+    "getCta" : "รับ {{currency}}",
+    "switchInputMode" : "สลับโหมดป้อนจำนวน",
     "aboveMaximum" : "เกินยอดคงเหลือสูงสุด",
     "transactionSigned" : "ลงนามธุรกรรมสำเร็จแล้ว",
-    "processingTransaction" : "กำลังประมวลผลธุรกรรมของคุณ"
+    "processingTransaction" : "กำลังประมวลผลธุรกรรมของคุณ",
+    "sign" : {
+      "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่าย",
+      "warningDescription" : "การตั้งค่าค่าธรรมเนียมล่วงหน้าอาจตกรุ่น"
+    }
   },
   "releaseNotes" : {
     "title" : "Release Notes",
@@ -4572,9 +4434,7 @@
       "walletSyncDescription" : "พอร์ตของคุณจะอัปเดตเสมอ ไม่ว่าจะดูบนคอมหรือมือถือ",
       "mevProtection" : "MEV Protection",
       "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
-      "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว",
-      "marketPerformanceWidget" : "วิดเจ็ตประสิทธิภาพของตลาด",
-      "marketPerformanceWidgetDesc" : "เปิดใช้งานคุณสมบัตินี้เพื่อดู Top Gainers และ Losers ในกรอบเวลาที่เลือกในหน้าพอร์ตโฟลิโอ"
+      "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว"
     },
     "developer" : {
       "search" : "ค้นหา",
@@ -4704,6 +4564,15 @@
         "debugDialog" : "กล่องข้อความจากการ Debug",
         "debugDuplicates" : "สำเนาของการ Debug"
       },
+      "walletFeaturesDevTool" : {
+        "title" : "เครื่องมือพัฒนาฟีเจอร์วอลเล็ต",
+        "description" : "เปิด/ปิดฟีเจอร์วอลเล็ต 4.0 สำหรับเดสก์ท็อป (แฟล็กฟีเจอร์ lwdWallet40)",
+        "enableAll" : "เปิดใช้งานทั้งหมด",
+        "disableAll" : "ปิดใช้งานทั้งหมด",
+        "featureParameters" : "พารามิเตอร์ฟีเจอร์",
+        "showJson" : "แสดง JSON",
+        "hideJson" : "ซ่อน JSON"
+      },
       "cryptoAssetsList" : {
         "title" : "รายการสินทรัพย์คริปโต",
         "description" : "เรียกดูและจัดการสินทรัพย์คริปโตจากบริการรายการสินทรัพย์คริปโต (CAL)",
@@ -4801,6 +4670,8 @@
       "runLocalAppOpenButton" : "เปิด",
       "enableLearnStagingUrl" : "เรียนรู้ Page Staging URL",
       "enableLearnStagingUrlDesc" : "เปิดใช้งาน Staging URL สำหรับหน้าการเรียนรู้",
+      "enableCountervaluesStaging" : "สภาพแวดล้อมทดสอบแบบ Countervalues API Staging",
+      "enableCountervaluesStagingDesc" : "ใช้การสร้างสภาพแวดล้อมทดสอบแบบ Countervalues API Staging แทน Production",
       "openOnboardingAppInstallDebug" : "เปิดหน้าจอ Debug การติดตั้งแอปสำหรับการเข้าร่วม",
       "openOnboardingAppInstallDebugDesc" : "เปิดหน้าจอที่มีส่วนประกอบจากขั้นตอนการติดตั้งแอปสำหรับการเข้าร่วมในการซิงค์"
     },
@@ -4981,10 +4852,6 @@
         "desc" : "คุณสามารถซ่อนโทเคนได้โดยไปที่บัญชีหลัก จากนั้นคลิกขวาที่โทเคนและเลือก 'ซ่อนโทเคน'",
         "count" : "1 โทเคน",
         "count_other" : "{{count}} โทเคน"
-      },
-      "fullNode" : {
-        "title" : "เชื่อมต่อ Full Node ของ Bitcoin",
-        "desc" : "ติดตั้ง Bitcoin แบบ Full Node ของคุณเพื่อซิงโครไนซ์และส่งธุรกรรมโดยไม่ต้องใช้โปรแกรม Explorer ของ Ledger"
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "ซ่อนธุรกรรมโทเคนเมื่อค่าเป็น 0",
@@ -6456,22 +6323,6 @@
     "RPCPassRequired" : {
       "title" : "ต้องระบุรหัสผ่าน RPC"
     },
-    "SatStackAccessDown" : {
-      "title" : "ไม่สามารถเข้าถึง Full Node ได้",
-      "description" : "โปรดตรวจสอบว่า SatStack และโหนดของคุณกำลังทำงานอยู่ ตรวจสอบการตั้งค่า Full Node ในการตั้งค่า หากปัญหายังคงมีอยู่"
-    },
-    "SatStackStillSyncing" : {
-      "title" : "กำลังซิงค์โหนด...",
-      "description" : "โปรดรอสักครู่ขณะที่โหนดของคุณกำลังซิงค์ ไม่สามารถส่งได้เนื่องจากยอดคงเหลือในบัญชี Bitcoin ของคุณอาจไม่ถูกต้อง"
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "โปรดอัปเกรด SatStack",
-      "description" : "เวอร์ชัน SatStack ที่คุณใช้นั้นเก่าเกินไปและอาจมีข้อบกพร่องหรือความไม่เข้ากัน"
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "บัญชีไม่ได้สแกนด้วย Full Node",
-      "description" : "โปรดกำหนดค่า Full Node ของคุณเพื่อสแกนหาบัญชีที่เชื่อมโยงกับอุปกรณ์นี้ Full Node ของคุณต้องสแกนบล็อกเชนสำหรับบัญชีนี้ก่อนที่คุณจะสามารถเพิ่มลงในพอร์ตโฟลิโอของคุณได้"
-    },
     "SwapRateExpiredError" : {
       "title" : "อัตรานี้หมดอายุแล้ว",
       "description" : "อัตราแลกเปลี่ยนหมดอายุแล้ว โปรดรีเฟรชและลองอีกครั้ง"
@@ -6937,6 +6788,10 @@
       "title" : "พารามิเตอร์โพรโทคอล Cardano ไม่ถูกต้อง",
       "description" : "ธุรกรรม ADA ไม่สามารถใช้งานได้ชั่วคราว โปรดซิงค์บัญชีของคุณอีกครั้งและลองอีกครั้ง หรือติดต่อฝ่ายสนับสนุนหากคุณต้องการความช่วยเหลือ"
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 64 ตัวอักษร",
+      "description" : "ข้อความ Memo ใน Cardano มีข้อจำกัดของขนาดสูงสุด โปรดลดขนาดของ Memo"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
     },
@@ -7010,8 +6865,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "ไม่มี Reward ให้เคลม"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ยาวเกินไป ความยาวสูงสุดคือ {{maxLength}} ตัวอักษร"
+    "HederaMemoExceededSizeError" : {
+      "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 100 ตัวอักษร",
+      "description" : "Memo ของ Hedera มีขนาดจำกัดสูงสุด โปรดลดขนาดของ Memo"
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
@@ -7684,6 +7540,9 @@
       "analyticsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อวัดประสิทธิภาพของแอป Ledger Wallet และปรับปรุงการใช้งานแอปและประสบการณ์ของคุณ"
     }
   },
+  "analytics" : {
+    "title" : "การวิเคราะห์"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "ปิด",
@@ -7961,6 +7820,32 @@
         "description" : "ระบบของเรามีปัญหา โปรดลองอีกครั้งภายหลัง"
       },
       "cta" : "ลองอีกครั้ง"
+    }
+  },
+  "portfolio" : {
+    "title" : "หน้าหลัก",
+    "today" : "วันนี้"
+  },
+  "marketBanner" : {
+    "title" : "สำรวจตลาด",
+    "genericError" : "การเชื่อมต่อล้มเหลว",
+    "cta" : "ดูทั้งหมด",
+    "fearAndGreed" : {
+      "title" : "อารมณ์"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "กลัวขั้นสุด",
+      "fear" : "กลัว",
+      "neutral" : "ปกติ",
+      "greed" : "โลภ",
+      "extremeGreed" : "โลภขั้นสุด"
+    },
+    "dialog" : {
+      "title" : "ดัชนีวัดอารมณ์",
+      "content" : "ดัชนีวัดอารมณ์บ่งชี้ถึงสภาวะทางอารมณ์ของตลาด โดยมีช่วงตั้งแต่ 0 ถึง 100 โดยมูลค่าที่ต่ำกว่าแสดงถึงความกลัวขั้นสุด และมูลค่าที่สูงกว่าแสดงถึงความโลภขั้นสุด",
+      "cta" : "เข้าใจแล้ว"
     }
   },
   "nftEntryPoint" : {

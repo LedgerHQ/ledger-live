@@ -27,7 +27,6 @@ import {
 import { walletSelector } from "../reducers/wallet";
 import { countervaluesActions } from "./countervalues";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
-import { useMarketPerformanceTrackingPairs } from "./marketperformance";
 
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
@@ -109,9 +108,6 @@ export function useCalculateCountervaluesUserSettings() {
   const dispatch = useDispatch();
   const countervalue = useSelector(counterValueCurrencySelector);
 
-  // countervalues for top coins (market performance feature)
-  const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
-
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
@@ -122,9 +118,7 @@ export function useCalculateCountervaluesUserSettings() {
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
 
   useEffect(() => {
-    const trackingPairs = resolveTrackingPairs(
-      extraSessionTrackingPairs.concat(trPairs).concat(trackingPairsForTopCoins),
-    );
+    const trackingPairs = resolveTrackingPairs(extraSessionTrackingPairs.concat(trPairs));
 
     const granularitiesRates = granularitiesRatesConfig?.enabled
       ? {
@@ -143,11 +137,5 @@ export function useCalculateCountervaluesUserSettings() {
         granularitiesRates,
       }),
     );
-  }, [
-    dispatch,
-    granularitiesRatesConfig,
-    extraSessionTrackingPairs,
-    trackingPairsForTopCoins,
-    trPairs,
-  ]);
+  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
 }

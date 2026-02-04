@@ -23,6 +23,7 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
+  extraUserdataFiles?: Record<string, string>;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
   userdataOriginalFile?: string;
@@ -45,6 +46,25 @@ const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
 
+const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
+  lldModularDrawer: {
+    enabled: true,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: false,
+      send_flow: false,
+      enableModularization: true,
+      enableDialogDesktop: true,
+      searchDebounceTime: 300,
+      backendEnvironment: "PROD",
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
+    },
+  },
+};
+
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   const promise = await cmd(`${userdataDestinationPath}/app.json`);
   const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
@@ -62,6 +82,7 @@ export const test = base.extend<TestFixtures>({
   speculosApp: undefined,
   cliCommands: [],
   cliCommandsOnApp: [],
+  extraUserdataFiles: undefined,
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -92,6 +113,7 @@ export const test = base.extend<TestFixtures>({
       speculosApp,
       cliCommands,
       cliCommandsOnApp,
+      extraUserdataFiles,
     },
     use,
     testInfo,
@@ -105,6 +127,13 @@ export const test = base.extend<TestFixtures>({
 
     const userData = merge({ data: { settings } }, fileUserData);
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+    if (extraUserdataFiles) {
+      await Promise.all(
+        Object.entries(extraUserdataFiles).map(([name, contents]) =>
+          writeFile(path.join(userdataDestinationPath, name), contents),
+        ),
+      );
+    }
 
     let speculos: SpeculosDevice | undefined;
 
@@ -134,6 +163,8 @@ export const test = base.extend<TestFixtures>({
         }
       }
 
+      const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, featureFlags);
+
       // default environment variables
       env = Object.assign(
         {
@@ -146,7 +177,7 @@ export const test = base.extend<TestFixtures>({
           PLAYWRIGHT_RUN: true,
           CRASH_ON_INTERNAL_CRASH: true,
           LEDGER_MIN_HEIGHT: 768,
-          FEATURE_FLAGS: JSON.stringify(featureFlags),
+          FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
         },

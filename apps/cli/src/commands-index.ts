@@ -57,7 +57,6 @@ import portfolio from "./commands/live/portfolio";
 import synchronousOnboarding from "./commands/live/synchronousOnboarding";
 import user from "./commands/live/user";
 import version from "./commands/live/version";
-import swap from "./commands/ptx/swap";
 
 export default {
   bot,
@@ -119,5 +118,4 @@ export default {
   synchronousOnboarding,
   user,
   version,
-  swap,
 };

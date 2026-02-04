@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -22,14 +22,11 @@ import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInst
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
 import FeaturedButtons from "~/renderer/screens/dashboard/components/FeaturedButtons";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import MarketPerformanceWidget from "LLD/features/MarketPerformanceWidget";
-import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Flex, Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
-import MarketBanner from "LLD/features/MarketBanner";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
 
@@ -68,22 +65,16 @@ export default function DashboardPage() {
     [shouldFilterTokenOpsZeroAmount],
   );
 
-  const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
-    useMarketPerformanceFeatureFlag();
-
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
 
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
-  const lwdWallet40FF = useFeature("lwdWallet40");
-  const shouldDisplayMarketBanner =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner) ?? false;
-  const shouldDisplayBalanceRework =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.graphRework) ?? false;
+  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
+    useWalletFeaturesConfig("desktop");
 
   return (
     <>
-      {lwdWallet40FF?.enabled && shouldDisplayBalanceRework && shouldDisplayMarketBanner ? (
+      {isWallet40Enabled ? (
         <Portfolio />
       ) : (
         <>
@@ -97,8 +88,7 @@ export default function DashboardPage() {
             hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
           />
           <Flex flexDirection="column" rowGap={32}>
-            {shouldDisplayMarketBanner ? <MarketBanner /> : null}
-            {shouldDisplayMarketBanner && <MarketBannerFeature />}
+            {shouldDisplayMarketBanner && __DEV__ && <MarketBannerFeature />}
             <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
               {!hasInstalledApps ? (
                 <EmptyStateInstalledApps />
@@ -117,18 +107,6 @@ export default function DashboardPage() {
 
                       <Box ml={2} minWidth={375} maxWidth={700}>
                         <SwapWebViewEmbedded height="550px" />
-                      </Box>
-                    </PortfolioGrid>
-                  ) : marketPerformanceEnabled ? (
-                    <PortfolioGrid>
-                      <BalanceSummary
-                        counterValue={counterValue}
-                        chartColor={colors.wallet}
-                        range={selectedTimeRange}
-                      />
-
-                      <Box ml={2} minWidth={275}>
-                        <MarketPerformanceWidget variant={marketPerformanceVariant} />
                       </Box>
                     </PortfolioGrid>
                   ) : (

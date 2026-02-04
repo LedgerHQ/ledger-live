@@ -4,7 +4,7 @@ import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React, { Component, useCallback, useMemo, useEffect, useRef } from "react";
+import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
@@ -292,29 +292,36 @@ function RebootProvider({ children }: { children: React.ReactNode }) {
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   const { osTheme, resolvedTheme } = useSettings();
   const dispatch = useDispatch();
-
-  // Use a ref to track osTheme to avoid recreating compareOsTheme on every osTheme change
-  // which would cause an infinite loop with LumenStyleSheetProvider's Appearance.setColorScheme
+  const hasCheckedOnMountRef = useRef(false);
   const osThemeRef = useRef(osTheme);
+
+  // Keep osThemeRef in sync with Redux state
   osThemeRef.current = osTheme;
 
-  const compareOsTheme = useCallback(() => {
-    const currentOsTheme = Appearance.getColorScheme();
-
-    if (currentOsTheme && osThemeRef.current !== currentOsTheme) {
-      dispatch(setOsTheme(currentOsTheme));
-    }
-  }, [dispatch]);
-
   useEffect(() => {
-    compareOsTheme();
+    const compareOsTheme = () => {
+      const currentOsTheme = Appearance.getColorScheme();
+      // Only dispatch if the OS theme is different from what's stored in Redux
+      if (currentOsTheme && osThemeRef.current !== currentOsTheme) {
+        dispatch(setOsTheme(currentOsTheme));
+      }
+    };
 
-    const osThemeChangeHandler = (nextAppState: string) =>
-      nextAppState === "active" && compareOsTheme();
+    // Check on mount only once
+    if (!hasCheckedOnMountRef.current) {
+      hasCheckedOnMountRef.current = true;
+      compareOsTheme();
+    }
+
+    const osThemeChangeHandler = (nextAppState: string) => {
+      if (nextAppState === "active") {
+        compareOsTheme();
+      }
+    };
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
     return () => sub.remove();
-  }, [compareOsTheme]);
+  }, [dispatch]);
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>

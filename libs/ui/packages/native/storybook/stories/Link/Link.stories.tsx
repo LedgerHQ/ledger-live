@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 import Link from "../../../src/components/cta/Link";
 import { InfoMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
@@ -28,7 +27,7 @@ export const Regular = (args: typeof RegularArgs) => (
     size={args.size}
     iconPosition={args.iconPosition}
     disabled={args.disabled}
-    onPress={action("onPress")}
+    onPress={() => {}}
   >
     {args.text}
   </Link>
@@ -50,7 +49,7 @@ export const WithIcon = (args: typeof WithIconArgs) => (
     iconPosition={args.iconPosition}
     Icon={InfoMedium}
     disabled={args.disabled}
-    onPress={action("onPress")}
+    onPress={() => {}}
   >
     {args.text}
   </Link>

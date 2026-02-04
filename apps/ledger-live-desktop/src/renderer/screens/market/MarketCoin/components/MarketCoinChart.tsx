@@ -1,4 +1,4 @@
-import React, { useMemo, memo, useCallback } from "react";
+import React, { useMemo, memo, useCallback, useRef } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
@@ -102,6 +102,7 @@ function MarkeCoinChartComponent({
   supportedCounterCurrencies,
 }: Props) {
   const { t } = useTranslation();
+  const nodeRef = useRef(null);
 
   const { scale } = rangeDataTable[range] || { scale: undefined };
   const activeRangeIndex = ranges.indexOf(range);
@@ -162,7 +163,6 @@ function MarkeCoinChartComponent({
             {priceChangePercentage && (
               <FormattedVal
                 isPercent
-                isNegative
                 val={formatPercentage(priceChangePercentage)}
                 inline
                 withIcon
@@ -198,9 +198,10 @@ function MarkeCoinChartComponent({
           timeout={200}
           unmountOnExit
           mountOnEnter
+          nodeRef={nodeRef}
         >
           {state => (
-            <FadeIn state={state}>
+            <FadeIn ref={nodeRef} state={state}>
               {loading || !data.length ? (
                 <Flex height={250} color="neutral.c60">
                   <ChartPlaceholder />

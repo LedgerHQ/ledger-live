@@ -1,25 +1,35 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, act } from "tests/testSetup";
 import { DesyncOverlay } from "../components/DesyncOverlay";
 
 describe("DesyncOverlay", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("should show desync overlay", async () => {
     render(<DesyncOverlay isOpen productName="stax" />);
 
-    await waitFor(() => expect(screen.getByTestId("onboarding-desync-overlay")).toBeVisible(), {
-      timeout: 1000,
+    await act(async () => {
+      jest.runOnlyPendingTimers();
     });
+
+    expect(screen.getByTestId("onboarding-desync-overlay")).toBeVisible();
   });
 
-  it("should wait for delay before displaying desync overly", async () => {
+  it("should wait for delay before displaying desync overlay", async () => {
     render(<DesyncOverlay isOpen productName="stax" delay={1000} />);
 
-    const overlay = screen.queryByTestId("onboarding-desync-overlay");
+    expect(screen.queryByTestId("onboarding-desync-overlay")).toBeNull();
 
-    expect(overlay).toBeNull();
-
-    await waitFor(() => expect(screen.queryByTestId("onboarding-desync-overlay")).toBeVisible(), {
-      timeout: 2000,
+    await act(async () => {
+      jest.runOnlyPendingTimers();
     });
+
+    expect(screen.getByTestId("onboarding-desync-overlay")).toBeVisible();
   });
 });

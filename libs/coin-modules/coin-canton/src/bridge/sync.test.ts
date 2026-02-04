@@ -23,14 +23,15 @@ jest.mock("../signer");
 jest.mock("../config");
 jest.mock("./onboard");
 jest.mock("../common-logic/account/getBalance");
-jest.mock("@ledgerhq/cryptoassets/state", () => {
-  const store = {
-    findTokenByAddressInCurrency: jest.fn().mockResolvedValue(undefined),
-  };
-  return {
-    getCryptoAssetsStore: jest.fn(() => store),
-  };
-});
+const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
+const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
+
+jest.mock("@ledgerhq/cryptoassets/state", () => ({
+  getCryptoAssetsStore: jest.fn(() => ({
+    findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
+    findTokenById: mockFindTokenById,
+  })),
+}));
 
 const mockedGetBalance = accountBalance.getBalance as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
@@ -184,6 +185,8 @@ describe("makeGetAccountShape", () => {
     mockedGetLedgerEnd.mockResolvedValue(12345);
     mockedGetPendingTransferProposals.mockResolvedValue([]);
     mockedGetCalTokensCached.mockResolvedValue(new Map());
+    mockFindTokenByAddressInCurrency.mockResolvedValue(undefined);
+    mockFindTokenById.mockResolvedValue(undefined);
   });
 
   it("should return a valid account shape with correct balances and operations", async () => {
@@ -333,6 +336,56 @@ describe("makeGetAccountShape", () => {
     expect(shape.operations[0].value).toEqual(BigNumber(50)); // transfer value only, fees not added for TRANSFER_WITHDRAWN
   });
 
+  it("should filter out operations that match pending transfer proposals", async () => {
+    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+
+    mockedGetPendingTransferProposals.mockResolvedValue([
+      {
+        contract_id: "pending-proposal-uid",
+        sender: "sender-party",
+        receiver: "test-party-id",
+        amount: "100",
+        instrument_id: "Amulet",
+        instrument_admin: "native-admin",
+        memo: "Test proposal",
+        expires_at_micros: Date.now() + 100000,
+        update_id: "tx-pending",
+      },
+    ]);
+
+    mockedGetOperations.mockResolvedValue({
+      operations: [
+        createMockOperationView({
+          txHash: "tx-pending",
+          uid: "pending-proposal-uid",
+          type: "Receive",
+          value: "100",
+        }),
+        createMockOperationView({
+          txHash: "tx-completed",
+          uid: "completed-uid",
+          type: "Receive",
+          value: "200",
+        }),
+      ],
+    });
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+      paginationConfig: {},
+    });
+
+    expect(shape).toBeDefined();
+    expect(shape.operations.length).toBe(1);
+    expect(shape.operations[0].hash).toBe("tx-completed");
+    expect(shape.operations[0].value).toEqual(BigNumber(200));
+
+    expect(shape.cantonResources.pendingTransferProposals.length).toBe(1);
+    expect(shape.cantonResources.pendingTransferProposals[0].contract_id).toBe(
+      "pending-proposal-uid",
+    );
+  });
+
   it("should sync without device when account has xpub but no publicKey", async () => {
     mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
     mockedGetOperations.mockResolvedValue({
@@ -411,6 +464,91 @@ describe("makeGetAccountShape", () => {
     expect(shape.xpub).toBe("test-party-id");
     // Should not call getAddress since we have both values
     expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("should correctly identify tokens with same adminId but different instrumentId", async () => {
+    const sharedAdminId =
+      "party-28dc4516-b5ca-44ff-86c7-2107e90a6807::1220b8301e18aa8a401d6e34e6c20f8b0243183c514373bca8f1b6b9270246341a9e";
+    const sbcInstrumentId = "f29bdd7a-1469-498a-ba2a-796bf5387b31";
+    const cusdInstrumentId = "481871d4-ca56-42a8-b2d3-4b7d28742946";
+
+    // Create token mocks
+    const sbcToken = {
+      type: "TokenCurrency" as const,
+      id: "canton_network/cip56/sbc",
+      contractAddress: sharedAdminId,
+      parentCurrency: sampleCurrency,
+      tokenType: "cip56",
+      name: "SBC",
+      ticker: "SBC",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "SBC", code: "SBC", magnitude: 38 }],
+    };
+
+    const cusdToken = {
+      type: "TokenCurrency" as const,
+      id: "canton_network/cip56/cusd",
+      contractAddress: sharedAdminId,
+      parentCurrency: sampleCurrency,
+      tokenType: "cip56",
+      name: "CUSD",
+      ticker: "CUSD",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "CUSD", code: "CUSD", magnitude: 38 }],
+    };
+
+    // Mock CAL tokens map (token_identifier -> token id)
+    mockedGetCalTokensCached.mockResolvedValue(
+      new Map([
+        ["canton_network/cip56/sbc", sbcInstrumentId],
+        ["canton_network/cip56/cusd", cusdInstrumentId],
+      ]),
+    );
+
+    // Mock findTokenById to return correct tokens
+    mockFindTokenById.mockImplementation(async (id: string) => {
+      if (id === "canton_network/cip56/sbc") return sbcToken;
+      if (id === "canton_network/cip56/cusd") return cusdToken;
+      return undefined;
+    });
+
+    // Mock enabled instruments to include SBC (using SEPARATOR format)
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(
+      new Set([`${sbcInstrumentId}____${sharedAdminId}`]),
+    );
+
+    // Mock balances with SBC token (NOT CUSD)
+    mockedGetBalance.mockResolvedValue([
+      createMockNativeBalance("1000"),
+      {
+        value: BigInt("990000000000000000000000000000000"),
+        locked: BigInt(0),
+        asset: { type: "token", assetReference: sbcInstrumentId },
+        utxoCount: 1,
+        instrumentId: sbcInstrumentId,
+        adminId: sharedAdminId,
+      },
+    ]);
+
+    mockedGetOperations.mockResolvedValue({
+      operations: [],
+    });
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+      paginationConfig: {},
+    });
+
+    expect(shape).toBeDefined();
+    expect(shape.subAccounts).toHaveLength(1);
+
+    const tokenAccount = shape.subAccounts?.[0] as TokenAccount;
+    expect(tokenAccount).toBeDefined();
+    expect(tokenAccount.token.ticker).toBe("SBC"); // Should be SBC, not CUSD!
+    expect(tokenAccount.token.id).toBe("canton_network/cip56/sbc");
+    expect(tokenAccount.balance).toEqual(BigNumber("990000000000000000000000000000000"));
   });
 });
 

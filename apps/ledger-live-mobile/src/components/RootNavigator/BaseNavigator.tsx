@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
@@ -10,11 +10,9 @@ import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
-import PairDevices from "~/screens/PairDevices";
 import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
@@ -32,6 +30,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
+import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -86,9 +85,12 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { AppState } from "react-native";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
@@ -109,6 +111,28 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+
+  const { initPushNotificationsData, tryTriggerPushNotificationDrawerAfterInactivity } =
+    useNotifications();
+
+  useEffect(() => {
+    // This feature requires the user to be past onboarding, that's why it lives in the BaseNavigator for onboarded users only
+    initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
+
+    // No dependency because we only want to run it once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // This catches when the user is redirected back from toggling on notifications in the os settings
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "active") {
+        initPushNotificationsData();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [initPushNotificationsData]);
 
   return (
     <>
@@ -238,6 +262,11 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name={NavigatorName.Perps}
+          component={PerpsNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name={NavigatorName.Freeze}
           component={FreezeNavigator}
           options={{ headerShown: false }}
@@ -329,19 +358,6 @@ export default function BaseNavigator() {
           name={NavigatorName.AccountSettings}
           component={AccountSettingsNavigator}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.PairDevices}
-          component={PairDevices}
-          options={({ navigation, route }) => ({
-            title: "",
-            headerRight: () => {
-              const nav = navigation;
-              return <ErrorHeaderInfo route={route} navigation={nav} />;
-            },
-            headerShown: true,
-            headerStyle: styles.headerNoShadow,
-          })}
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}
@@ -562,6 +578,12 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
+
+        <Stack.Screen
+          name={NavigatorName.Analytics}
+          component={AnalyticsNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </>
   );

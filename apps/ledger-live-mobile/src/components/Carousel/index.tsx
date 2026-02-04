@@ -49,7 +49,11 @@ const Carousel = () => {
       decelerationRate={"fast"}
     >
       {walletCardsDisplayed.map((cardProps, index) => (
-        <LogContentCardWrapper key={cardProps.id + index} id={cardProps.id}>
+        <LogContentCardWrapper
+          key={cardProps.id + index}
+          id={cardProps.id}
+          location={cardProps.location}
+        >
           <CarouselCard id={cardProps.id} cardProps={cardProps} index={index} width={cardsWidth} />
         </LogContentCardWrapper>
       ))}

@@ -1,0 +1,8 @@
+{
+  "entry": [
+    "src/Concordium.ts"
+  ],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": [],
+  "ignoreUnused": []
+}

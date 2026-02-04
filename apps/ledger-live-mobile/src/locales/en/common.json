@@ -467,6 +467,9 @@
       "title": "Device authentication failed",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "EthAppPleaseEnableContractData": {
+      "title": "Enable Blind signing or Contract data in Ethereum app"
+    },
     "HardResetFail": {
       "title": "Sorry, could not reset",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -2681,6 +2684,10 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
+    "balance": {
+      "noSigner": "The most secure\nwallet",
+      "noFund": "Secure your\ncrypto"
+    },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
@@ -2701,6 +2708,18 @@
       "send": "Send",
       "deposit": "Receive",
       "stake": "Stake"
+    },
+    "quickActionsCtas": {
+      "transfer": "Transfer",
+      "swap": "Swap",
+      "buy": "Buy",
+      "transferDrawer": {
+        "title": "Transfer",
+        "receiveCrypto": "Receive crypto",
+        "sendCrypto": "Send crypto",
+        "bankTransfer": "Bank transfer",
+        "bankTransferDescription": "Receive stablecoin by sending cash"
+      }
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -2969,6 +2988,7 @@
     "yield": "Yield",
     "sell": "Sell",
     "swap": "Swap",
+    "perps": "Perps",
     "manage": "Manage",
     "lastTransactions": "Last transactions",
     "emptyState": {
@@ -3478,9 +3498,9 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "titleVariantB": "Get the most of Ledger Wallet",
+      "titleVariantB": "Don't miss what matters",
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
-      "descVariantB": "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
@@ -3655,6 +3675,10 @@
     "stake": {
       "title": "Stake",
       "description": "Get rewards on your crypto."
+    },
+    "perps": {
+      "title": "Perps",
+      "description": "Trade perpetuals on crypto."
     },
     "swap": {
       "title": "Swap",
@@ -8093,11 +8117,13 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements.",
       "cta": "Learn more"
     }
   },
@@ -8253,7 +8279,7 @@
     },
     "transactionCannotBeCreated": {
       "title": "Partner unavailable",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity": {
       "title": "Partner unavailable",
@@ -8290,6 +8316,11 @@
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
       "title": "Automatically accept incoming funds",
+      "processing": {
+        "title": "Processing transaction",
+        "description": "This process may take up to 1 minute",
+        "keepDeviceNearby": "Stay in the Ledger Wallet app and keep your Ledger nearby."
+      },
       "reonboard": {
         "title": "Account Update Required",
         "account": "Account",
@@ -8362,6 +8393,21 @@
       "neutral": "Neutral",
       "greed": "Greed",
       "extremeGreed": "Greed+"
+    },
+    "tileTitle": "Mood"
+  },
+  "perps": {
+    "title": "Perps"
+  },
+  "analyticsAllocation": {
+    "header": {
+      "main": "Analytics"
+    },
+    "allocation": {
+      "title": "Asset Allocation"
+    },
+    "actions": {
+      "swap": "Swap"
     }
   }
 }

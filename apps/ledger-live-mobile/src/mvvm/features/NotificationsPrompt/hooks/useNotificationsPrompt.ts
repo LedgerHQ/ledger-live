@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { add, isBefore, isEqual } from "date-fns";
+import { add, isAfter, isBefore, isEqual } from "date-fns";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { type DataOfUser } from "../types";
@@ -43,7 +43,7 @@ export const useNotificationsPrompt = ({
     return repromptSchedule[scheduleIndex];
   }, [repromptSchedule, pushNotificationsDataOfUser?.dismissedOptInDrawerAtList]);
 
-  const shouldPromptOptInDrawerCallback = useCallback(() => {
+  const shouldPromptOptInDrawerAfterAction = useCallback(() => {
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     if (isOsPermissionAuthorized && areNotificationsAllowed) {
       return false;
@@ -77,8 +77,25 @@ export const useNotificationsPrompt = ({
     nextRepromptDelay,
   ]);
 
+  const inactivityEnabled = featureBrazePushNotifications?.params?.inactivity_enabled;
+  const inactivityReprompt = featureBrazePushNotifications?.params?.inactivity_reprompt;
+
+  const checkIsInactive = useCallback(
+    (lastActionAt?: number) => {
+      if (!inactivityEnabled) return false;
+      if (!inactivityReprompt || !lastActionAt) return false;
+
+      const nextRepromptAt = add(lastActionAt, inactivityReprompt);
+      const isInactive = isAfter(Date.now(), nextRepromptAt) || isEqual(Date.now(), nextRepromptAt);
+
+      return isInactive;
+    },
+    [inactivityEnabled, inactivityReprompt],
+  );
+
   return {
+    checkIsInactive,
     nextRepromptDelay,
-    shouldPromptOptInDrawerCallback,
+    shouldPromptOptInDrawerAfterAction,
   };
 };

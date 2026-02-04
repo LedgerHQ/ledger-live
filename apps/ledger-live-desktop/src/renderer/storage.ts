@@ -8,7 +8,6 @@ import debounce from "lodash/debounce";
 
 import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
 import { DataModel } from "@ledgerhq/live-common/DataModel";
-import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/types";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsStoreSelector } from "./reducers/settings";
@@ -43,11 +42,6 @@ export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 type DatabaseValues = {
   accounts: Account[];
   user: User;
-  announcements: {
-    announcements: Announcement[];
-    seenIds: string[];
-    lastUpdateTime: number;
-  };
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;

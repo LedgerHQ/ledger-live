@@ -293,10 +293,25 @@ async function extendExpiration(
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
-  return tronWeb.transactionBuilder.extendExpiration(
-    preparedTransaction,
-    expiration ?? DEFAULT_EXPIRATION,
-  ) as unknown as Promise<SendTransactionDataSuccess>;
+  const extension = expiration ?? DEFAULT_EXPIRATION;
+  try {
+    return (await tronWeb.transactionBuilder.extendExpiration(
+      preparedTransaction,
+      extension,
+    )) as unknown as Promise<SendTransactionDataSuccess>;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : typeof err === "string" ? err : "";
+    if (message === "Invalid extension provided") {
+      // https://github.com/tronprotocol/tronweb/blob/2da130f4a295b9e9bd45361c15b5ca9d689cfa65/src/lib/transactionBuilder.js#L2929
+      log("tron/extendExpiration", message, {
+        preparedTransaction,
+        extensionInS: extension,
+        extensionInMs: extension * 1000,
+        minFinalExpiration: Date.now() + 3000,
+      });
+    }
+    throw err;
+  }
 }
 
 type BroadcastSuccessResponseTronAPI = { result: true; txid: string };

@@ -237,6 +237,9 @@ export class Account {
   static readonly VET_1 = new Account(Currency.VET, "Vechain 1", 0, "44'/818'/0'/0/0");
   static readonly VET_2 = new Account(Currency.VET, "Vechain 2", 1, "44'/818'/0'/0/1");
 
+  static readonly ZEC_1 = new Account(Currency.ZEC, "Zcash 1", 0, "44'/133'/0'/0/0");
+  static readonly ZEC_2 = new Account(Currency.ZEC, "Zcash 2", 0, "44'/133'/1'/0/0");
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", 0, "");
 }
 
@@ -319,6 +322,9 @@ export class TokenAccount extends Account {
     Account.SOL_2.accountPath,
     TokenType.SPL,
     Account.SOL_2,
+    undefined,
+    undefined,
+    Addresses.SOL_GIGA_2_ATA_ADDRESS,
   );
   static readonly SOL_GIGA_3 = new TokenAccount(
     Currency.SOL_GIGA,

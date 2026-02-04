@@ -74,7 +74,7 @@ const MemoTagField = ({
           value={value}
           spellCheck="false"
           ff="Inter"
-          maxMemoLength={maxMemoLength}
+          maxLength={maxMemoLength}
           autoFocus={autoFocus}
           data-testid="memo-tag-input"
         />

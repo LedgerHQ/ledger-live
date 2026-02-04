@@ -1,6 +1,5 @@
 import React, { type JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
-import { action } from "@storybook/addon-actions";
 import { Flex, Carousel, Text, Button } from "../../../src/components";
 import StoriesIndicator from "../../../src/components/Navigation/StoriesIndicator";
 
@@ -179,8 +178,8 @@ export const CustomIndicator = (args: typeof CustomIndicatorArgs): JSX.Element =
       autoDelay={args.autoDelay}
       restartAfterEnd={args.restartAfterEnd}
       IndicatorComponent={StoriesIndicator}
-      onOverflow={action("onOverflow")}
-      onChange={action("onChange")}
+      onOverflow={() => {}}
+      onChange={() => {}}
       scrollViewProps={{
         style: {
           width: "100%",

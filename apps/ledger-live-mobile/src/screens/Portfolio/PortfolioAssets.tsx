@@ -17,6 +17,7 @@ import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import MarketBanner from "LLM/features/MarketBanner";
+import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
@@ -131,7 +132,13 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
-  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
+  const {
+    shouldDisplayMarketBanner,
+    shouldDisplayQuickActionCtas,
+    isEnabled: isLwmWallet40Enabled,
+  } = useWalletFeaturesConfig("mobile");
+
+  const isLwmWallet40Disabled = !isLwmWallet40Enabled;
 
   return (
     <>
@@ -140,12 +147,23 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <Box my={24}>
-        <PortfolioQuickActionsBar />
-      </Box>
+
+      {shouldDisplayQuickActionCtas ? (
+        <Box my={24}>
+          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
+          <TransferDrawer />
+        </Box>
+      ) : (
+        isLwmWallet40Disabled && (
+          <Box my={24}>
+            <PortfolioQuickActionsBar />
+          </Box>
+        )
+      )}
+
       <MarketBanner />
 
-      {shouldDisplayMarketBanner && (
+      {shouldDisplayMarketBanner && __DEV__ && (
         <Box my={24}>
           <MarketBannerFeature />
         </Box>

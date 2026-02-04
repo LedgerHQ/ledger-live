@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Alınacak hiçbir ödül yok"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} karakter olmalıdır"
-    },
     "NearNewAccountWarning" : {
       "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Tutarın en az {{threshold}} olması gerekiyor"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Memo formatı yanlış, 4294967296’dan küçük olmalıdır"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Geçersiz memo boyutu, en fazla 100 karaktere izin verilir"
     },
     "PinNotSet" : {
       "title" : "PIN kodu belirlenmedi"
@@ -1876,7 +1879,7 @@
             "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2" : {
-            "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
+            "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
             "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3" : {
@@ -4845,7 +4848,7 @@
       "all" : "Tümü",
       "installed" : "Uygulamalar",
       "not_installed" : "Yüklenmemiş",
-      "supported" : "Ledger Wallet destekleniyor",
+      "supported" : "Ledger Wallet desteği",
       "updatable" : "Güncellenebilir",
       "apply" : "Uygula"
     },
@@ -7346,7 +7349,7 @@
         "actions" : {
           "redelegate" : "Yetki devret",
           "claim-rewards" : "Ödülleri topla",
-          "undelegate" : "Yetki devrini sonlandır"
+          "undelegate" : "Yetki devrini iptal et"
         }
       }
     },
@@ -8082,12 +8085,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve %20 oranında özel bir indirim için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin. ",
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "En yeni Ledger imzalayıcılarda %20 özel indirimden faydalanın.",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
-      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar.",
       "cta" : "Daha fazla bilgi"
+    }
+  },
+  "marketBanner" : {
+    "title" : "Piyasayı keşfedin",
+    "viewAll" : "Tümünü gör",
+    "viewAllAccessibilityHint" : "Piyasadaki tüm varlıkları görüntülemek için çift dokunun",
+    "connectionFailed" : "Bağlantı başarısız oldu",
+    "errorAccessibilityHint" : "Piyasa verileri yüklenemiyor. Lütfen daha sonra tekrar deneyin.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Piyasa bilgilerini görüntülemek için çift dokunun"
     }
   },
   "largeMover" : {
@@ -8329,6 +8345,28 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Duygu endeksi",
+    "description" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı açgözlülük anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
+    "levels" : {
+      "extremeFear" : "Aşırı Korku",
+      "fear" : "Korku",
+      "neutral" : "Nötr",
+      "greed" : "Açgözlülük",
+      "extremeGreed" : "Aşırı Açgözlülük"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Analiz"
+    },
+    "allocation" : {
+      "title" : "Varlık Dağılımı"
+    },
+    "actions" : {
+      "swap" : "Takas et"
     }
   }
 }

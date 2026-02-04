@@ -94,8 +94,8 @@ describe("logic utils", () => {
     oldStakingLedgerNodeIdEnv = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
   });
 
-  afterAll(() => {
-    rpcClient._resetInstance();
+  afterAll(async () => {
+    await rpcClient._resetInstance();
   });
 
   describe("signature serialization", () => {
@@ -530,31 +530,31 @@ describe("logic utils", () => {
   });
 
   describe("safeParseAccountId", () => {
-    it("returns account id and no checksum for valid address without checksum", () => {
-      const [error, result] = safeParseAccountId("0.0.9124531");
+    it("returns account id and no checksum for valid address without checksum", async () => {
+      const [error, result] = await safeParseAccountId("0.0.9124531");
 
       expect(error).toBeNull();
       expect(result?.accountId).toBe("0.0.9124531");
       expect(result?.checksum).toBeNull();
     });
 
-    it("returns account id and checksum for valid address with correct checksum", () => {
-      const [error, result] = safeParseAccountId("0.0.9124531-xrxlv");
+    it("returns account id and checksum for valid address with correct checksum", async () => {
+      const [error, result] = await safeParseAccountId("0.0.9124531-xrxlv");
 
       expect(error).toBeNull();
       expect(result?.accountId).toBe("0.0.9124531");
       expect(result?.checksum).toBe("xrxlv");
     });
 
-    it("returns error for valid address with incorrect checksum", () => {
-      const [error, accountId] = safeParseAccountId("0.0.9124531-invld");
+    it("returns error for valid address with incorrect checksum", async () => {
+      const [error, accountId] = await safeParseAccountId("0.0.9124531-invld");
 
       expect(error).toBeInstanceOf(HederaRecipientInvalidChecksum);
       expect(accountId).toBeNull();
     });
 
-    it("returns error for invalid address format", () => {
-      const [error, accountId] = safeParseAccountId("not-a-valid-address");
+    it("returns error for invalid address format", async () => {
+      const [error, accountId] = await safeParseAccountId("not-a-valid-address");
 
       expect(error).toBeInstanceOf(InvalidAddress);
       expect(accountId).toBeNull();

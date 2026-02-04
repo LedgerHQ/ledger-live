@@ -70,7 +70,13 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
     // timestamp is in milliseconds
-  ) => Promise<{ hash: string; height: number; timestamp: number; transactionHashes?: string[] }>;
+  ) => Promise<{
+    hash: string;
+    height: number;
+    timestamp: number;
+    parentHash: string;
+    transactionHashes?: string[];
+  }>;
   getOptimismAdditionalFees: (
     currency: CryptoCurrency,
     transaction: EvmTransaction | string,

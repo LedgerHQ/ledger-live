@@ -35,8 +35,8 @@ export const useGeneralLandingPage = (props: NavigationProps) => {
 
   const openLink = (card: LandingPageStickyCtaContentCard) => {
     trackContentCardEvent("contentcard_clicked", {
+      ...card.extras,
       campaign: card.id,
-      link: card.link,
       contentcard: card.cta,
       landingPage: useCase,
     });

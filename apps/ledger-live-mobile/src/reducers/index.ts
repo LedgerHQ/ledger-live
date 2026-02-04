@@ -13,11 +13,11 @@ import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
 import receiveOptionsDrawer from "./receiveOptionsDrawer";
+import transferDrawer from "./transferDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
 import settings from "./settings";
-import swap from "./swap";
 import toasts from "./toast";
 import trustchain from "./trustchain";
 import type { State } from "./types";
@@ -43,12 +43,12 @@ const appReducer = combineReducers({
   market,
   modularDrawer,
   receiveOptionsDrawer,
+  transferDrawer,
   notifications,
   postOnboarding,
   protect,
   ratings,
   settings,
-  swap,
   toasts,
   trustchain,
   wallet,

@@ -1,5 +1,31 @@
 # @ledgerhq/react-ui
 
+## 0.45.0
+
+### Minor Changes
+
+- [#13721](https://github.com/LedgerHQ/ledger-live/pull/13721) [`740c280`](https://github.com/LedgerHQ/ledger-live/commit/740c280dc82408ebab09b104e3d1b4327fe17739) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd): upgrade styled-components to v6, refactored relevant code"
+
+## 0.45.0-next.0
+
+### Minor Changes
+
+- [#13721](https://github.com/LedgerHQ/ledger-live/pull/13721) [`740c280`](https://github.com/LedgerHQ/ledger-live/commit/740c280dc82408ebab09b104e3d1b4327fe17739) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd): upgrade styled-components to v6, refactored relevant code"
+
+## 0.44.1
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/icons-ui@0.19.0
+
+## 0.44.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/icons-ui@0.19.0-next.0
+
 ## 0.44.0
 
 ### Minor Changes

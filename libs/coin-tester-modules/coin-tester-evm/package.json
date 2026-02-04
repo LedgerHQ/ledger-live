@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -75,7 +75,6 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
     "@types/bluebird": "^3.5.42",
     "@types/jest": "catalog:",
     "dotenv": "^16.4.5",

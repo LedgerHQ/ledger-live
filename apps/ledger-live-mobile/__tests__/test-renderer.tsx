@@ -36,8 +36,8 @@ import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notific
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
 import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
+import { INITIAL_STATE as TRANSFER_DRAWER_INITIAL_STATE } from "~/reducers/transferDrawer";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
-import { INITIAL_STATE as SWAP_INITIAL_STATE } from "~/reducers/swap";
 import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/walletconnect";
@@ -61,12 +61,12 @@ const INITIAL_STATE: State = {
   market: MARKET_INITIAL_STATE,
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
   receiveOptionsDrawer: RECEIVE_OPTIONS_DRAWER_INITIAL_STATE,
+  transferDrawer: TRANSFER_DRAWER_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
   ratings: RATINGS_INITIAL_STATE,
   settings: SETTINGS_INITIAL_STATE,
-  swap: SWAP_INITIAL_STATE,
   toasts: TOASTS_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
   wallet: WALLET_INITIAL_STATE,

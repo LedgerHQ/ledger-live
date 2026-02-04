@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 import {
-  SettingsAcceptSwapProviderPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
@@ -67,6 +66,7 @@ import {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
+  SettingsSetHasSeenWalletV4TourPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -168,9 +168,6 @@ export const setLocale = createAction<SettingsSetLocalePayload>(
   SettingsActionTypes.SETTINGS_SET_LOCALE,
 );
 
-export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
-  SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
-);
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
 );
@@ -292,6 +289,10 @@ export const setSelectedTabPortfolioAssets =
   createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
     SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
   );
+
+export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
+  SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
+);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

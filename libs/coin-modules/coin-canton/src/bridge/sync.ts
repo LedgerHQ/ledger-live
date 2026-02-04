@@ -14,6 +14,7 @@ import {
   getCalTokensCached,
   getKey,
   SEPARATOR,
+  type TransferProposal,
 } from "../network/gateway";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
@@ -93,8 +94,13 @@ const filterOperations = (
   transactions: OperationInfo[],
   accountId: string,
   partyId: string,
+  pendingTransferProposals: TransferProposal[],
 ): Operation[] => {
-  return transactions.map(txInfoToOperationAdapter(accountId, partyId));
+  const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
+
+  return transactions
+    .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
+    .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
 export async function filterDisabledTokenAccounts(
@@ -191,12 +197,16 @@ export function makeGetAccountShape(
       });
     }
 
+    const calTokens = await getCalTokensCached(currency);
+    const tokenIdentifierToId = new Map<string, string>();
+    for (const [tokenId, tokenIdentifier] of calTokens.entries()) {
+      tokenIdentifierToId.set(tokenIdentifier, tokenId);
+    }
+
     const tokensByKey = new Map<string, TokenCurrency>();
     for await (const balance of balances) {
-      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-        balance.adminId,
-        currency.id,
-      );
+      const tokenId = tokenIdentifierToId.get(balance.instrumentId) ?? "";
+      const token = await getCryptoAssetsStore().findTokenById(tokenId);
       if (!token) continue;
       tokensByKey.set(getKey(balance.instrumentId, balance.adminId), token);
     }
@@ -258,7 +268,13 @@ export function makeGetAccountShape(
         cursor: startAt,
         limit: 100,
       });
-      const newOperations = filterOperations(transactionData.operations, accountId, xpubOrAddress);
+      const newOperations = filterOperations(
+        transactionData.operations,
+        accountId,
+        xpubOrAddress,
+        pendingTransferProposals,
+      );
+
       operations = mergeOps(oldOperations, newOperations);
     }
 
@@ -269,9 +285,6 @@ export function makeGetAccountShape(
     });
 
     // Build sub-accounts for tokens with their filtered operations
-
-    const calTokens = await getCalTokensCached(currency);
-
     const subAccounts = buildSubAccounts({
       accountId,
       tokenBalances,

@@ -13,6 +13,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 
 type UseBleDevicePairingArgs = {
   device: Device;
+  enabled?: boolean;
 };
 
 type InternalPairingError = typeof PeerRemovedPairing | DmkError;
@@ -24,6 +25,7 @@ type UseBleDevicePairingResult = {
 
 export const useBleDevicePairing = ({
   device,
+  enabled = true,
 }: UseBleDevicePairingArgs): UseBleDevicePairingResult => {
   const dmk = useDeviceManagementKit();
   const [isPaired, setIsPaired] = useState(false);
@@ -58,10 +60,10 @@ export const useBleDevicePairing = ({
     }
   }, [dmk, device]);
   useEffect(() => {
-    if (device) {
+    if (enabled && device) {
       connectDevice();
     }
-  }, [device]);
+  }, [enabled, device, connectDevice]);
 
   return { isPaired, pairingError };
 };

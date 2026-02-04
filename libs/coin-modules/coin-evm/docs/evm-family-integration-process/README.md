@@ -28,20 +28,18 @@ Here is an example PR of an EVM currency integration: https://github.com/LedgerH
 
 _Common steps for all new EVM currency integration_
 
-1. Add a new config entry for the new currency under [`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/currencies.ts)
-2. Add the new currency ID to the `CryptoCurrencyId` type under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-cryptoassets/src/index.ts)
-3. Add an entry for the new currency in the `abandonSeedAddresses` (using the currency ID as key and `EVM_DEAD_ADDRESS` as value) under [`libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts)
-4. Add the new currency ID to the `setSupportedCurrencies` function param on each relevant project ([CLI](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/cli/src/live-common-setup-base.ts), [LLD](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-desktop/src/live-common-set-supported-currencies.ts), [LLM](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-mobile/src/live-common-setup.ts) and [LLC test environement](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/__tests__/test-helpers/environment.ts))
-5. Add a new feature flag config for this currency:
-   1. The new feature flag type in the [`CurrencyFeatures`](https://github.com/LedgerHQ/ledger-live/blob/7513354754ce0326a4ebcbcd86a5b4b38898a49e/libs/ledgerjs/packages/types-live/src/feature.ts#L80-L124) type under [`libs/ledgerjs/packages/types-live/src/feature.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-live/src/feature.ts)
-   2. The new feature flag definition with default value in the [`CURRENCY_DEFAULT_FEATURES`](https://github.com/LedgerHQ/ledger-live/blob/7513354754ce0326a4ebcbcd86a5b4b38898a49e/libs/ledger-live-common/src/featureFlags/defaultFeatures.ts#L23-L67) mapping under [`libs/ledger-live-common/src/featureFlags/defaultFeatures.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/featureFlags/defaultFeatures.ts)
-   3. Use this new feature flag in both [LLD](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-desktop/src/renderer/modals/AddAccounts/steps/StepChooseCurrency.tsx) and [LLM](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.tsx) currencies entry points (add account / select crypto flow)
-6. Update related doc and snapshot files:
-   1. run `pnpm doc` under `libs/ledgerjs/packages/types-live` to update the doc
-   2. run `pnpm test:jest` under `apps/ledger-live-desktop` to update the snapshots
-7. Add the related currency icon as SVG format under the [`libs/ui/packages/crypto-icons/src/svg`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/crypto-icons/src/svg) folder within the [@ledgerhq/icons-ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/crypto-icons) package
-   1. the file name should follow the `{currency_ticker}.svg` naming convention
-   2. the SVG icon should follow Ledger Live currency icon guideline (you can use [this tool](https://live.ledger.tools/svg-icons) for validation)
+1. Add a new config entry for the new currency under [`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/currencies.ts) (the `CryptoCurrencyId` type is auto-generated)
+2. Add an entry for the new currency in the `abandonSeedAddresses` (using the currency ID as key and `EVM_DEAD_ADDRESS` as value) under [`libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts)
+3. Add the new currency ID to the `setSupportedCurrencies` function param on each relevant project ([CLI](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/cli/src/live-common-setup-base.ts), [LLD](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-desktop/src/live-common-set-supported-currencies.ts), [LLM](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-mobile/src/live-common-setup.ts), [LLC test environment](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/__tests__/test-helpers/environment.ts), [web-tools](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/web-tools/src/live-common-setup.ts) and [account-migration tests](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/__tests__/migration/account-migration.ts))
+4. Add a new feature flag config for this currency:
+   1. The new feature flag type in the [`CurrencyFeatures`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-live/src/feature.ts) type under `libs/ledgerjs/packages/types-live/src/feature.ts`
+   2. The new feature flag definition with default value in the [`CURRENCY_DEFAULT_FEATURES`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/featureFlags/defaultFeatures.ts) mapping under `libs/ledger-live-common/src/featureFlags/defaultFeatures.ts`
+   3. Use this new feature flag in [`useCurrenciesUnderFeatureFlag.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts)
+5. Add the EVM config for RPC node and explorer under [`libs/ledger-live-common/src/families/evm/config.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/families/evm/config.ts)
+6. Update snapshot files:
+   1. `pnpm test -- -u` from `libs/coin-framework` to update `formatCurrencyUnit.test.ts` snapshots
+   2. `pnpm test:playwright tests/specs/services/wallet-api.spec.ts` from `apps/ledger-live-desktop` and update `tests/fixtures/wallet-api.ts` with new currencies
+7. Add the related currency icon to the [crypto-icons](https://github.com/LedgerHQ/crypto-icons) repository (see its README for instructions)
 
 ### Optional steps
 

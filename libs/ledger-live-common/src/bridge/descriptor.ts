@@ -1,7 +1,6 @@
-import type { CryptoOrTokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { FeatureId, FeatureConfig } from "@ledgerhq/coin-framework/features/types";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
 import { getCurrencyBridge } from "./impl";
-import { getCurrencyConfiguration } from "../config/index";
 import { descriptor as algorandDescriptor } from "../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../families/aptos/descriptor";
 import { descriptor as bitcoinDescriptor } from "../families/bitcoin/descriptor";
@@ -62,7 +61,51 @@ export type FeeDescriptor = {
   hasPresets: boolean;
   hasCustom: boolean;
   hasCoinControl?: boolean;
+  presets?: {
+    /**
+     * Optional UI legend for presets (ex: fee rate like `2 sat/vbyte`).
+     * Descriptor describes how to display it; UI layer provides the actual values (from presetAmount).
+     */
+    legend?: {
+      type: "none" | "feeRate";
+      unit: string;
+      valueFrom: "presetAmount";
+    };
+    /**
+     * Controls how the selected preset is labeled in the Amount row.
+     * - i18n: `Slow/Medium/Fast` via translations
+     * - legend: use the computed preset legend (ex: `2 sat/vbyte`)
+     */
+    strategyLabelInAmount?: "i18n" | "legend";
+
+    /**
+     * Optional builder for fee preset options. This allows coin-specific logic
+     * to live in descriptors instead of UI-level `family` checks.
+     */
+    getOptions?: (transaction: unknown) => readonly FeePresetOption[];
+
+    /**
+     * Whether fiat estimation for presets should be done via bridge estimation
+     * (`prepareTransaction` + `getTransactionStatus`) instead of using `presetAmount` directly.
+     */
+    shouldEstimateWithBridge?: (transaction: unknown) => boolean;
+  };
 };
+
+export type FeePresetOption = Readonly<{
+  id: string;
+  amount: BigNumber;
+  estimatedMs?: number;
+  disabled?: boolean;
+}>;
+
+export type SendAmountDescriptor = Readonly<{
+  /**
+   * Optional list of plugins that should run on the Amount step.
+   * These are executed by the UI layer through a plugin registry.
+   */
+  getPlugins?: () => readonly string[];
+}>;
 
 /**
  * Self-transfer policy for a coin
@@ -85,6 +128,7 @@ export type SendDescriptor = {
     memo?: InputDescriptor;
   };
   fees: FeeDescriptor;
+  amount?: SendAmountDescriptor;
   selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
   errors?: ErrorRegistry; // Registry of error class names for this coin
 };
@@ -132,23 +176,6 @@ const descriptorRegistry: Record<string, CoinDescriptor> = {
   xrp: xrpDescriptor,
 };
 
-function isFeatureActive(currency: CryptoCurrency, featureId: FeatureId): boolean {
-  try {
-    const currencyConfig = getCurrencyConfiguration(currency);
-
-    if (currencyConfig.status.type !== "active") {
-      return false;
-    }
-
-    // Type guard
-    const features = (currencyConfig.status as { type: "active"; features?: FeatureConfig[] })
-      .features;
-    return features?.find(f => f.id === featureId)?.status === "active";
-  } catch {
-    return false;
-  }
-}
-
 /**
  * Get the full descriptor for a given currency via the CurrencyBridge
  */
@@ -167,12 +194,7 @@ export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): Coin
 
   // Fallback: use the descriptor registry and check feature flags
   const fullDescriptor = descriptorRegistry[cryptoCurrency.family];
-
-  if (!fullDescriptor) {
-    return null;
-  }
-
-  if (fullDescriptor.send && isFeatureActive(cryptoCurrency, "blockchain_txs")) {
+  if (fullDescriptor) {
     return fullDescriptor;
   }
 
@@ -252,6 +274,24 @@ export const sendFeatures = {
   hasCoinControl: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.fees.hasCoinControl ?? false;
+  },
+  getFeePresetOptions: (
+    currency: CryptoOrTokenCurrency | undefined,
+    transaction: unknown,
+  ): readonly FeePresetOption[] => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.fees.presets?.getOptions?.(transaction) ?? [];
+  },
+  shouldEstimateFeePresetsWithBridge: (
+    currency: CryptoOrTokenCurrency | undefined,
+    transaction: unknown,
+  ): boolean => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.fees.presets?.shouldEstimateWithBridge?.(transaction) ?? false;
+  },
+  getAmountPlugins: (currency: CryptoOrTokenCurrency | undefined): readonly string[] => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.amount?.getPlugins?.() ?? [];
   },
   getMemoType: (currency: CryptoOrTokenCurrency | undefined) => {
     const descriptor = getSendDescriptor(currency);

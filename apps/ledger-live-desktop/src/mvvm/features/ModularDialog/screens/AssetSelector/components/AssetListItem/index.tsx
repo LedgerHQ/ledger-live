@@ -43,7 +43,7 @@ const renderDescriptionTag = ({
             copyToClipboard(assetId);
           }}
         >
-          <span className="text-muted body-4">{`${assetId} (${numberOfNetworks} networks)`}</span>
+          <span className="body-4 text-muted">{`${assetId} (${numberOfNetworks} networks)`}</span>
         </div>
       )}
     </div>

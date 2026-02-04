@@ -10,11 +10,11 @@ interface MarketTileIconProps {
 
 const MarketTileIcon = ({ ticker, ledgerIds, image }: MarketTileIconProps) => {
   return ledgerIds && ledgerIds.length > 0 && ticker ? (
-    <Icon ledgerId={ledgerIds?.[0]} ticker={ticker} size={32} />
+    <Icon ledgerId={ledgerIds?.[0]} ticker={ticker} size={40} />
   ) : (
     <Image
       source={{ uri: image }}
-      style={{ width: 32, height: 32, borderRadius: 16 }}
+      style={{ width: 40, height: 40, borderRadius: 20 }}
       resizeMode="cover"
     />
   );

@@ -13,13 +13,11 @@ import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
-import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 type NavigationProps = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StacksEditMemo>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StacksEditMemo>
-  | StackNavigatorProps<SwapFormNavigatorParamList, ScreenName.StacksEditMemo>
 >;
 
 function StacksEditMemo({ navigation, route }: NavigationProps) {

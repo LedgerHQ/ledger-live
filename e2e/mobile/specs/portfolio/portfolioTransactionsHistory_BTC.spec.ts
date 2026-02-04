@@ -4,5 +4,5 @@ import { runPortfolioTransactionsHistoryTest } from "./portfolio";
 runPortfolioTransactionsHistoryTest(
   Currency.BTC,
   ["B2CQA-2073"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@bitcoin`, `@family-bitcoin`],
 );

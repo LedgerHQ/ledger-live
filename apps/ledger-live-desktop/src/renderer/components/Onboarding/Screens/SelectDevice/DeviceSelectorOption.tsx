@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { css, DefaultTheme, ThemeProps } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import { Flex, Text, Button } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 
@@ -9,33 +9,24 @@ const DeviceIllustrationContainer = styled(Flex)`
   height: 260px;
 `;
 
-type BorderProps = ThemeProps<DefaultTheme> & { isFirst: boolean; isLast: boolean };
+type BorderProps = { theme: DefaultTheme; isFirst: boolean; isLast: boolean };
 
 const bkgColor = (p: BorderProps) => p.theme.colors.background.main;
 const bkgColorHover = (p: BorderProps) => p.theme.colors.neutral.c20;
 const borderColorHover = (p: BorderProps) => p.theme.colors.neutral.c40;
-
-const borderCSS = css`
-  ${(p: BorderProps) => (p.isFirst ? "" : `border-left: 1px solid ${bkgColor(p)};`)}
-  ${(p: BorderProps) => (p.isLast ? "" : `border-right: 1px solid ${bkgColor(p)};`)}
-  &:hover {
-    ${(p: BorderProps) => (p.isFirst ? "" : `border-left: 1px solid ${borderColorHover(p)};`)}
-    ${(p: BorderProps) => (p.isLast ? "" : `border-right: 1px solid ${borderColorHover(p)};`)}
-  }
-`;
 
 const SelectButton = styled(Button)`
   opacity: 0;
   margin-top: 32px;
 `;
 
-const Container = styled(Flex).attrs((p: BorderProps) => ({
+const Container = styled(Flex).attrs<BorderProps>(p => ({
   flex: 1,
   height: "100%",
   paddingTop: "38.43px",
   justifyContent: "center",
   backgroundColor: bkgColor(p),
-}))`
+}))<BorderProps>`
   transition: background border 200ms;
   &:hover {
     background-color: ${bkgColorHover};
@@ -46,7 +37,12 @@ const Container = styled(Flex).attrs((p: BorderProps) => ({
   &:hover ${SelectButton} {
     opacity: 1;
   }
-  ${borderCSS}
+  ${p => (p.isFirst ? "" : `border-left: 1px solid ${bkgColor(p)};`)}
+  ${p => (p.isLast ? "" : `border-right: 1px solid ${bkgColor(p)};`)}
+  &:hover {
+    ${p => (p.isFirst ? "" : `border-left: 1px solid ${borderColorHover(p)};`)};
+    ${p => (p.isLast ? "" : `border-right: 1px solid ${borderColorHover(p)};`)};
+  }
 `;
 
 const ContentContainer = styled(Flex).attrs({

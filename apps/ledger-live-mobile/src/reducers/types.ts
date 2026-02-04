@@ -11,8 +11,6 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { DataOfUser } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
@@ -35,6 +33,7 @@ import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import type { TransferDrawerState } from "./transferDrawer";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
@@ -118,7 +117,14 @@ export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** This helps us know what action caused the push notifications modal to open */
-  drawerSource?: "onboarding" | "send" | "receive" | "swap" | "stake" | "add_favorite_coin";
+  drawerSource?:
+    | "onboarding"
+    | "send"
+    | "receive"
+    | "swap"
+    | "stake"
+    | "add_favorite_coin"
+    | "inactivity";
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
 };
@@ -277,6 +283,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  hasSeenWalletV4Tour: boolean;
 };
 
 export type NotificationsSettings = {
@@ -290,16 +297,6 @@ export type NotificationsSettings = {
 
 export type WalletConnectState = {
   uri?: string;
-};
-
-// === SWAP STATE ===
-
-export type SwapStateType = {
-  providers?: AvailableProviderV3[];
-  pairs?: AvailableProviderV3["pairs"];
-  transaction?: Transaction;
-  exchangeRate?: ExchangeRate;
-  exchangeRateExpiration?: Date;
 };
 
 // === EARN STATE ===
@@ -381,12 +378,12 @@ export type State = LLMRTKApiState & {
   market: MarketState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
+  transferDrawer: TransferDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   ratings: RatingsState;
   settings: SettingsState;
-  swap: SwapStateType;
   toasts: ToastState;
   trustchain: TrustchainStore;
   wallet: WalletState;

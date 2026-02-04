@@ -1,11 +1,9 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import React, { useRef, forwardRef, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import { ScopeProvider } from "jotai-scope";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
@@ -72,37 +70,35 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
     const initialSource = useMemo(() => currentRouteNameRef.current || "", []);
 
-    // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
     return (
-      <ScopeProvider atoms={[currentAccountAtom]}>
-        <SafeAreaView edges={["bottom"]} isFlex>
-          <Web3AppWebview
-            ref={ref}
-            manifest={manifest}
-            customHandlers={customHandlers}
-            onStateChange={setWebviewState}
-            allowsBackForwardNavigationGestures={false}
-            inputs={{
-              source: initialSource,
-              swapApiBase: SWAP_API_BASE,
-              swapUserIp: SWAP_USER_IP,
-              devMode,
-              theme,
-              lang: language,
-              locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
-              countryLocale,
-              currencyTicker,
-              lastSeenDevice: lastSeenDevice?.modelId,
-              OS: Platform.OS,
-              platform: "LLM", // need consistent format with LLD, Platform doesn't work
-              shareAnalytics,
-              hasSeenAnalyticsOptInPrompt,
-              isModularDrawer: isLlmModularDrawer ? "true" : "false",
-              ...swapParams,
-            }}
-          />
-        </SafeAreaView>
-      </ScopeProvider>
+
+      <SafeAreaView edges={["bottom"]} isFlex>
+        <Web3AppWebview
+          ref={ref}
+          manifest={manifest}
+          customHandlers={customHandlers}
+          onStateChange={setWebviewState}
+                      allowsBackForwardNavigationGestures={false}
+          inputs={{
+            source: initialSource,
+            swapApiBase: SWAP_API_BASE,
+            swapUserIp: SWAP_USER_IP,
+            devMode,
+            theme,
+            lang: language,
+            locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
+            countryLocale,
+            currencyTicker,
+            lastSeenDevice: lastSeenDevice?.modelId,
+            OS: Platform.OS,
+            platform: "LLM", // need consistent format with LLD, Platform doesn't work
+            shareAnalytics,
+            hasSeenAnalyticsOptInPrompt,
+            isModularDrawer: isLlmModularDrawer ? "true" : "false",
+            ...swapParams,
+          }}
+        />
+      </SafeAreaView>
     );
   },
 );

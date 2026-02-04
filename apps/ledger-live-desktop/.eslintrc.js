@@ -25,6 +25,19 @@ const reactReduxImportRestrictions = [
   },
 ];
 
+const shellOpenExternalRestrictions = [
+  {
+    selector: "CallExpression[callee.object.name='shell'][callee.property.name='openExternal']",
+    message:
+      "Do not use shell.openExternal() directly. In renderer code, use openURL() from '~/renderer/linking' instead to prevent RCE vulnerabilities. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal. See: https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-openexternal-with-untrusted-content",
+  },
+  {
+    selector: "MemberExpression[object.name='shell'][property.name='openExternal']",
+    message:
+      "Do not use shell.openExternal directly. In renderer code, use openURL() from '~/renderer/linking'. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal.",
+  },
+];
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -113,6 +126,13 @@ module.exports = {
   overrides: [
     currencyFamiliesRules,
     livecommonRules,
+    {
+      files: ["src/**/*.ts", "src/**/*.tsx"],
+      excludedFiles: ["src/renderer/linking.ts"],
+      rules: {
+        "no-restricted-syntax": ["error", ...shellOpenExternalRestrictions],
+      },
+    },
     {
       files: [
         "src/mvvm/hooks/redux.ts",

@@ -74,23 +74,12 @@ async function getKeys(prefix: string) {
   return (await storage.keys()).filter(k => k.indexOf(prefix) === 0);
 }
 
-async function unsafeSaveCountervalues(
-  state: CounterValuesStateRaw,
-  {
-    changed,
-    pairIds,
-  }: {
-    changed: boolean;
-    pairIds: string[];
-  },
-): Promise<void> {
-  if (!changed) return;
-  const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(
-    k => ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
-  );
+async function unsafeSaveCountervalues(state: CounterValuesStateRaw): Promise<void> {
   const data = Object.entries(state).map<[string, RateMapRaw | CounterValuesStatus]>(
     ([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val],
   );
+  const dataKeys = new Set(data.map(([k]) => k));
+  const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(k => !dataKeys.has(k));
   await storage.save(data);
 
   if (deletedKeys.length) {

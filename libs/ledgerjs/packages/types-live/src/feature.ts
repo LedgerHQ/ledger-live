@@ -77,6 +77,7 @@ export type DefaultFeature = Feature<unknown>;
  */
 export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
+  currencyAvalancheCChainFuji: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
   currencyOptimismSepolia: DefaultFeature;
@@ -111,7 +112,9 @@ export type CurrencyFeatures = {
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
   currencyBaseSepolia: DefaultFeature;
+  currencyBitlayer: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyKlaytnBaobab: DefaultFeature;
   currencyVechain: DefaultFeature;
   currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
@@ -122,6 +125,8 @@ export type CurrencyFeatures = {
   currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
+  currencyShape: DefaultFeature;
+  currencyStory: DefaultFeature;
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
@@ -156,6 +161,8 @@ export type CurrencyFeatures = {
   currencyConcordiumTestnet: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
+  currencyUnichain: DefaultFeature;
+  currencyUnichainSepolia: DefaultFeature;
 };
 
 /**
@@ -206,6 +213,8 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxPerpsLiveApp: Feature_PtxPerpsLiveApp;
+  ptxPerpsLiveAppMobile: Feature_PtxPerpsLiveApp;
   ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
@@ -221,7 +230,6 @@ export type Features = CurrencyFeatures & {
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   lldActionCarousel: Feature_lldActionCarousel;
-  marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   lldWalletSync: Feature_LldWalletSync;
@@ -423,6 +431,14 @@ export type Feature_BrazePushNotifications = Feature<{
       timer: number;
     };
   };
+  inactivity_enabled: boolean;
+  inactivity_reprompt: {
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
   notificationsCategories: {
     displayed: boolean;
     category: string;
@@ -604,6 +620,10 @@ export type Feature_PtxSwapLiveApp = Feature<{
   families?: string[];
 }>;
 
+export type Feature_PtxPerpsLiveApp = Feature<{
+  manifest_id: string;
+}>;
+
 export type Feature_PtxEarnLiveApp = Feature<{
   manifest_id: string;
 }>;
@@ -624,15 +644,6 @@ export type Feature_LldAnalyticsOptInPrompt = Feature<{
 
 export type Feature_lldActionCarousel = Feature<{
   variant: ABTestingVariants;
-}>;
-
-export type Feature_MarketperformanceWidgetDesktop = Feature<{
-  variant: ABTestingVariants;
-  refreshRate: number;
-  top: number;
-  limit: number;
-  supported: boolean;
-  enableNewFeature: boolean;
 }>;
 
 export type Feature_LldRefreshMarketData = Feature<{
@@ -791,16 +802,21 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
+  mainNavigation: boolean;
+
+  //Specifics
+  tour?: boolean;
+  newReceiveDialog?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<
   {
-    // Add specific LWM params
+    tour: boolean;
   } & Feature_Wallet40_Params
 >;
 export type Feature_LwdWallet40 = Feature<
   {
-    //  Add specific LWD params
+    newReceiveDialog: boolean;
   } & Feature_Wallet40_Params
 >;
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{

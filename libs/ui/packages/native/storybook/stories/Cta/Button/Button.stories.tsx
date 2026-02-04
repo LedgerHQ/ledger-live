@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 import Button, { PromisableButton } from "../../../../src/components/cta/Button";
 import Info from "../../../../src/icons/Info";
 import { Meta, StoryFn } from "@storybook/react";
@@ -30,12 +29,8 @@ export default {
   },
 } as Meta<typeof Button>;
 
-export const Regular: StoryFn<typeof Button> = (args: typeof RegularArgs) => (
-  <Button
-    {...args}
-    Icon={args.Icon === "Info" ? (Info as IconType) : undefined}
-    onPress={action("onPress")}
-  >
+export const Regular: StoryFn<typeof RegularArgs> = (args: typeof RegularArgs) => (
+  <Button {...args} Icon={args.Icon === "Info" ? (Info as IconType) : undefined} onPress={() => {}}>
     {args.label}
   </Button>
 );
@@ -53,10 +48,10 @@ const RegularArgs = {
 };
 Regular.args = RegularArgs;
 
-export const Promisable: StoryFn<typeof Button> = (args: any) => (
+export const Promisable: StoryFn<typeof PromisableArgs> = (args: typeof PromisableArgs) => (
   <PromisableButton
     {...args}
-    Icon={args.Icon === "Info" ? Info : undefined}
+    Icon={args.Icon === "Info" ? (Info as IconType) : undefined}
     onPress={async () => await delay(3000)}
   >
     {args.label}
@@ -64,7 +59,7 @@ export const Promisable: StoryFn<typeof Button> = (args: any) => (
 );
 const PromisableArgs = {
   type: undefined,
-  iconPosition: "right",
+  iconPosition: "right" as const,
   Icon: "None",
   disabled: false,
   label: "Ledger",

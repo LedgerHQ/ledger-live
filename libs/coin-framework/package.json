@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "6.13.0",
+  "version": "6.14.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -88,6 +88,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

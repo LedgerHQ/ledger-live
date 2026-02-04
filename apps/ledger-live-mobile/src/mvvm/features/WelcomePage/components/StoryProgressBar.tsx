@@ -32,12 +32,14 @@ export function StoryProgressBar({
     }
   }, [durationMs, isActivated, isCompleted, progress]);
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    width: isCompleted ? "100%" : `${progress.value}%`,
-  }));
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      width: isCompleted ? "100%" : `${progress.value}%`,
+    };
+  }, [progress, isCompleted]);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="welcome-progress-bar">
       <Animated.View style={[styles.progress, animatedStyles]} />
     </View>
   );

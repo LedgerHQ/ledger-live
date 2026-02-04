@@ -1,20 +1,16 @@
 import React from "react";
-import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
+import { NavBar, NavBarBackButton, NavBarTitle } from "@ledgerhq/lumen-ui-react";
 
 type Props = Readonly<{
   title: string;
-  onBack: () => void;
+  onBack?: () => void;
 }>;
 
 export default function PageHeader({ title, onBack }: Props) {
   return (
-    <div
-      onClick={onBack}
-      className="flex cursor-pointer items-center gap-4"
-      data-testid="page-header"
-    >
-      <ArrowLeft className={"m-10 text-base"} size={20} />
-      <span className="heading-3-semi-bold text-base">{title}</span>
-    </div>
+    <NavBar data-testid="page-header">
+      {onBack ? <NavBarBackButton onClick={onBack} /> : null}
+      <NavBarTitle>{title}</NavBarTitle>
+    </NavBar>
   );
 }

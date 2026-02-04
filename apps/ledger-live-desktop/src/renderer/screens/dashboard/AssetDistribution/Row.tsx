@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import CounterValue, { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
 import { useNavigate } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -13,6 +13,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Tooltip from "~/renderer/components/Tooltip";
 import Bar from "./Bar";
+import { HIDE_BAR_THRESHOLD } from "./constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { DistributionItem } from "@ledgerhq/types-live";
@@ -20,7 +21,12 @@ import { DistributionItem } from "@ledgerhq/types-live";
 type Props = {
   item: DistributionItem;
   isVisible: boolean;
+  isResponsiveLayout?: boolean;
 };
+
+interface ResponsiveProps {
+  $isResponsiveLayout?: boolean;
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -62,7 +68,16 @@ const PriceSection = styled.div`
     display: inline-block;
   }
 `;
-const Distribution = styled.div`
+const distributionResponsiveStyles = css`
+  @media (max-width: ${HIDE_BAR_THRESHOLD}px) {
+    width: 10%;
+    > :nth-child(2) {
+      display: none;
+    }
+  }
+`;
+
+const Distribution = styled.div<ResponsiveProps>`
   width: 20%;
   text-align: right;
   > :first-child {
@@ -70,12 +85,30 @@ const Distribution = styled.div`
     width: 40px; //max width for a 99.99% case
     text-align: right;
   }
+
+  ${p => p.$isResponsiveLayout && distributionResponsiveStyles}
 `;
-const Amount = styled.div`
+
+const amountResponsiveStyles = css`
+  @media (max-width: ${HIDE_BAR_THRESHOLD}px) {
+    width: 30%;
+  }
+`;
+
+const Amount = styled.div<ResponsiveProps>`
   width: 25%;
   justify-content: flex-end;
+
+  ${p => p.$isResponsiveLayout && amountResponsiveStyles}
 `;
-const Value = styled.div`
+
+const valueResponsiveStyles = css`
+  @media (max-width: ${HIDE_BAR_THRESHOLD}px) {
+    width: 20%;
+  }
+`;
+
+const Value = styled.div<ResponsiveProps>`
   width: 15%;
   box-sizing: border-box;
   padding-left: 24px;
@@ -83,8 +116,14 @@ const Value = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  ${p => p.$isResponsiveLayout && valueResponsiveStyles}
 `;
-const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => {
+const Row = ({
+  item: { currency, amount, distribution },
+  isVisible,
+  isResponsiveLayout,
+}: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
@@ -111,13 +150,12 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       </Asset>
       <PriceSection>
         {distribution ? (
-          // @ts-expect-error Need to change "color" type in Component
           <Price from={currency} color="neutral.c80" fontSize={3} />
         ) : (
           <NoCountervaluePlaceholder />
         )}
       </PriceSection>
-      <Distribution>
+      <Distribution $isResponsiveLayout={isResponsiveLayout}>
         {!!distribution && (
           <>
             <Text ff="Inter" color="neutral.c100" fontSize={3}>
@@ -130,7 +168,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
           </>
         )}
       </Distribution>
-      <Amount>
+      <Amount $isResponsiveLayout={isResponsiveLayout}>
         <Ellipsis>
           <FormattedVal
             color={"neutral.c80"}
@@ -141,7 +179,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
           />
         </Ellipsis>
       </Amount>
-      <Value>
+      <Value $isResponsiveLayout={isResponsiveLayout}>
         <Ellipsis>
           {distribution ? (
             <CounterValue

@@ -9,7 +9,9 @@ export const listItemHeight = 73;
 export const miniChartThreshold = 900;
 export const miniMarketCapThreshold = 1100;
 
-export const TableCellBase = styled(props => <Flex alignItems="center" {...props} />)<{
+const TableCellBaseStyled = styled((props: FlexBoxProps & { disabled?: boolean }) => (
+  <Flex alignItems="center" {...props} />
+))<{
   disabled?: boolean;
 }>`
   padding-left: 5px;
@@ -17,7 +19,10 @@ export const TableCellBase = styled(props => <Flex alignItems="center" {...props
   cursor: ${p => (p.disabled ? "default" : "pointer")};
 `;
 
-export const TableRow = styled((props: FlexBoxProps & { header?: boolean; disabled?: boolean }) => (
+export const TableCellBase: React.ComponentType<FlexBoxProps & { disabled?: boolean }> =
+  TableCellBaseStyled;
+
+const TableRowBase = styled((props: FlexBoxProps & { header?: boolean; disabled?: boolean }) => (
   <Flex
     flexDirection="row"
     alignItems="stretch"
@@ -40,43 +45,43 @@ export const TableRow = styled((props: FlexBoxProps & { header?: boolean; disabl
     font-size: 13px;
     border-bottom: 1px solid ${p.theme.colors.neutral.c40};
 
-    :hover {
+    &:hover {
       background:  ${p.theme.colors.neutral.c20};
     }
-    :active {
+    &:active {
       background: ${p.theme.colors.neutral.c30};
     }
   `}
 
   cursor: ${p => (p.disabled ? "default" : "pointer")};
 
-  ${TableCellBase}:nth-child(1) {
+  ${TableCellBaseStyled}:nth-child(1) {
     flex: 0 0 40px;
     justify-content: flex-start;
     padding-left: 5px;
   }
-  ${TableCellBase}:nth-child(2) {
+  ${TableCellBaseStyled}:nth-child(2) {
     flex: 1 0 230px;
     justify-content: flex-start;
   }
-  ${TableCellBase}:nth-child(3) {
+  ${TableCellBaseStyled}:nth-child(3) {
     flex: 1 0 80px;
     justify-content: flex-end;
   }
-  ${TableCellBase}:nth-child(4) {
+  ${TableCellBaseStyled}:nth-child(4) {
     flex: 1 0 30px;
     justify-content: flex-end;
   }
-  ${TableCellBase}:nth-child(5) {
+  ${TableCellBaseStyled}:nth-child(5) {
     flex: 1 0 90px;
     justify-content: flex-end;
   }
-  ${TableCellBase}:nth-child(6) {
+  ${TableCellBaseStyled}:nth-child(6) {
     flex: 1 0 70px;
     justify-content: flex-end;
   }
 
-  ${TableCellBase}:nth-child(7) {
+  ${TableCellBaseStyled}:nth-child(7) {
     flex: 0 0 40px;
     justify-content: flex-end;
     padding-right: 5px;
@@ -86,20 +91,24 @@ export const TableRow = styled((props: FlexBoxProps & { header?: boolean; disabl
   }
 
   @media (max-width: ${miniChartThreshold}px) {
-    ${TableCellBase}:nth-child(6) {
+    ${TableCellBaseStyled}:nth-child(6) {
       display: none;
     }
   }
 
   @media (max-width: ${miniMarketCapThreshold}px) {
-    ${TableCellBase}:nth-child(3) {
+    ${TableCellBaseStyled}:nth-child(3) {
       flex: inherit;
     }
-    ${TableCellBase}:nth-child(1), ${TableCellBase}:nth-child(5) {
+    ${TableCellBaseStyled}:nth-child(1), ${TableCellBaseStyled}:nth-child(5) {
       display: none;
     }
   }
 `;
+
+export const TableRow: React.ComponentType<
+  FlexBoxProps & { header?: boolean; disabled?: boolean }
+> = TableRowBase;
 
 type TableCellProps = {
   disabled?: boolean;

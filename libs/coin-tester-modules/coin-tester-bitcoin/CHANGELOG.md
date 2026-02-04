@@ -1,5 +1,61 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.4.0
+
+### Minor Changes
+
+- [#13874](https://github.com/LedgerHQ/ledger-live/pull/13874) [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-bitcoin): add local signer
+
+### Patch Changes
+
+- Updated dependencies [[`dd1122e`](https://github.com/LedgerHQ/ledger-live/commit/dd1122eeb6e9c582541446ff82a488928fa340c2), [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b), [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983), [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d), [`1d2d196`](https://github.com/LedgerHQ/ledger-live/commit/1d2d19635c28db69adb04dcd21219b51836186f5), [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5), [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81)]:
+  - @ledgerhq/coin-framework@6.14.0
+  - @ledgerhq/coin-tester@0.17.0
+  - @ledgerhq/cryptoassets@13.38.0
+  - @ledgerhq/types-live@6.95.0
+  - @ledgerhq/coin-bitcoin@0.30.1
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#13874](https://github.com/LedgerHQ/ledger-live/pull/13874) [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-bitcoin): add local signer
+
+### Patch Changes
+
+- Updated dependencies [[`dd1122e`](https://github.com/LedgerHQ/ledger-live/commit/dd1122eeb6e9c582541446ff82a488928fa340c2), [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b), [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983), [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d), [`1d2d196`](https://github.com/LedgerHQ/ledger-live/commit/1d2d19635c28db69adb04dcd21219b51836186f5), [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5), [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81)]:
+  - @ledgerhq/coin-framework@6.14.0-next.0
+  - @ledgerhq/coin-tester@0.17.0-next.0
+  - @ledgerhq/cryptoassets@13.38.0-next.0
+  - @ledgerhq/types-live@6.95.0-next.0
+  - @ledgerhq/coin-bitcoin@0.30.1-next.0
+
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/hw-app-btc@10.17.0
+  - @ledgerhq/coin-bitcoin@0.30.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/coin-tester@0.16.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-network@2.2.1
+
+## 1.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/hw-app-btc@10.17.0-next.0
+  - @ledgerhq/coin-bitcoin@0.30.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/coin-tester@0.16.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
 ## 1.3.0
 
 ### Minor Changes

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Text from "../../components/asorted/Text";
 import Flex from "../../components/layout/Flex";
@@ -18,28 +18,38 @@ const ColorArea = styled.div<{ type: keyof ColorPalette; shade: string }>`
   border-radius: 2px;
 `;
 
+const CardColorWrapper = styled(Flex)`
+  & .color-value {
+    display: none;
+  }
+
+  &:hover .color-value {
+    display: inline;
+  }
+
+  &:hover .color-shade {
+    display: none;
+  }
+`;
+
 type CardColorProps = { shade: string; type: string; value: string };
 const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
-  const [isHovered, setIsHovered] = useState(false);
-
   const onClick = (type: string, shade: string): void => {
     navigator.clipboard.writeText(`p.theme.colors.${type}.${shade}`);
   };
 
   return (
-    <Flex
-      flexDirection="column"
-      alignItems="center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <CardColorWrapper flexDirection="column" alignItems="center">
       <ColorArea
         type={type as keyof ColorPalette}
         shade={shade}
         onClick={() => onClick(type, shade)}
       />
-      <Text variant="tiny">{isHovered ? value : shade}</Text>
-    </Flex>
+      <Text variant="tiny">
+        <span className="color-shade">{shade}</span>
+        <span className="color-value">{value}</span>
+      </Text>
+    </CardColorWrapper>
   );
 };
 
@@ -49,7 +59,7 @@ const { type: _, ...palette } = palettes.light;
 export const Colors = (): JSX.Element => (
   <Flex flexDirection="column" rowGap="2rem">
     {Object.entries(palette).map(([type, shades]) => (
-      <Flex flexDirection="column" rowGap="1rem">
+      <Flex key={type} flexDirection="column" rowGap="1rem">
         <Text variant="h2" textTransform="uppercase">
           {type}
         </Text>

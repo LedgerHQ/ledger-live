@@ -412,10 +412,18 @@ export const getLastOperations = makeLRUCache<
       };
     } catch (err) {
       log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
-      throw new InvalidExplorerResponse("", { currencyName: currency.name });
+      const message =
+        typeof err === "string"
+          ? err
+          : err instanceof Error
+            ? `${err.name} - ${err.message}`
+            : JSON.stringify(err);
+      throw new InvalidExplorerResponse(`${currency.name} - ${message}`, {
+        currencyName: currency.name,
+      });
     }
   },
-  (currency, address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
+  (_currency, _address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
   { ttl: ETHERSCAN_TIMEOUT },
 );
 

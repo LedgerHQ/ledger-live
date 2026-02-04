@@ -1,6 +1,6 @@
 name: "[Mobile] E2E Only - Scheduled/Manual"
 run-name: >
-  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'Schedule' && 'scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 on:
   schedule:
@@ -11,7 +11,7 @@ on:
         description: "The branch which triggered this workflow"
         required: false
       test_filter:
-        description: Filter to execute only test suite spec files according to pattern(s) (e.g. to execute nftGallery.spec.ts and deeplinks.spec.ts files "addAccount deeplinks")"
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -58,6 +58,11 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
+      smoke_tests:
+        description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -66,7 +71,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: "Filter to execute only test suite spec files according to pattern(s)"
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -85,6 +90,11 @@ on:
         default: false
       enable_broadcast:
         description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      smoke_tests:
+        description: "Run smoke tests"
         required: false
         type: boolean
         default: false
@@ -122,6 +132,7 @@ jobs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
+      test_filter: ${{ steps.test-filter.outputs.filter }}
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
@@ -139,10 +150,13 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -157,7 +171,9 @@ jobs:
         run: |
           FILTER_PATTERN="${{ inputs.test_filter || '' }}"
           DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
-          BUILD_TYPE="${{ inputs.production_firebase == 'true' && 'production' || 'testing' }}"
+          BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
+          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+          SMOKE_TESTS="${{ inputs.smoke_tests }}"
           TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
           TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
 
@@ -167,14 +183,16 @@ jobs:
           {
           echo "## Workflow Context"
           echo ""
-          echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
-          echo "- **Triggered branch:** ${{ github.ref_name }}"
+          echo "- **Workflow source branch:** ${{ github.ref_name }}"
+          echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **Device selected:** $DEVICE"
           echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
+          echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Configure AWS credentials
@@ -195,12 +213,32 @@ jobs:
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
+      - name: Prepare test filter
+        id: test-filter
+        run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
+          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
+            if [ -n "$BASE_FILTER" ]; then
+              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
+            else
+              echo "filter=@smoke" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Generate shards matrix and test files
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: e2e/mobile
-          test_filter: ${{ inputs.test_filter || '' }}
+          test_filter: ${{ steps.test-filter.outputs.filter }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
@@ -394,10 +432,10 @@ jobs:
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
           mkdir -p e2e/mobile/artifacts
           nohup bash -c '
-            echo "🔧 Creating iOS Simulator 2"
-            xcrun simctl create "iOS Simulator 2" "iPhone 15"
-            echo "🔧 Creating iOS Simulator 3"
-            xcrun simctl create "iOS Simulator 3" "iPhone 15"
+            echo "🔧 Creating iOS Simulator 2 (if not exists)"
+            xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            echo "🔧 Creating iOS Simulator 3 (if not exists)"
+            xcrun simctl list devices | grep -q "iOS Simulator 3" || xcrun simctl create "iOS Simulator 3" "iPhone 15"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -508,7 +546,7 @@ jobs:
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -628,7 +666,7 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-pnpm-cache: "true"
+          skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -736,7 +774,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -786,7 +824,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -837,7 +875,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -955,7 +993,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
+                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                   "emoji": true
                 }
               },

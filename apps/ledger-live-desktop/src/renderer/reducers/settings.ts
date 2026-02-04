@@ -34,7 +34,6 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -85,7 +84,6 @@ export type SettingsState = {
   accountsViewMode: "card" | "list";
   showAccountsHelperBanner: boolean;
   mevProtection: boolean;
-  marketPerformanceWidget: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
@@ -183,7 +181,6 @@ export const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   lastSeenDevice: null,
   mevProtection: true,
-  marketPerformanceWidget: true,
   devicesModelList: [],
   lastSeenCustomImage: {
     size: 0,
@@ -281,30 +278,51 @@ type HandlersPayloads = {
   [PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS]: { now: Date };
   [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
-  [TOGGLE_MARKET_WIDGET]: boolean;
   [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: {
     notifications: Record<string, number>;
   };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
+/**
+ * Filters imported settings to only include valid SettingsState keys.
+ * This prevents unknown/obsolete fields (like nftCollectionsStatusByNetwork) from being imported.
+ */
+function isValidSettingsKey(key: string): key is keyof SettingsState {
+  return key in INITIAL_STATE;
+}
+
+export function filterValidSettings(
+  importedSettings: Partial<SettingsState>,
+): Partial<SettingsState> {
+  const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
+
+  return Object.fromEntries(
+    Object.entries(importedSettings).filter(
+      ([key]) => validKeys.has(key) && isValidSettingsKey(key),
+    ),
+  ) as Partial<SettingsState>;
+}
+
 const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
+    const filteredPayload = filterValidSettings(payload);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(payload) as (keyof typeof payload)[]).some(
-      key => payload[key] !== state[key],
+    const changed = (Object.keys(filteredPayload) as (keyof typeof filteredPayload)[]).some(
+      key => filteredPayload[key] !== state[key],
     );
     if (!changed) return state;
     return {
       ...state,
-      ...payload,
+      ...filteredPayload,
     };
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
+    const filteredSettings = filterValidSettings(settings);
     return {
       ...state,
-      ...settings,
+      ...filteredSettings,
       loaded: true,
     };
   },
@@ -464,10 +482,6 @@ const handlers: SettingsHandlers = {
   [TOGGLE_MEV]: (state: SettingsState, { payload }) => ({
     ...state,
     mevProtection: payload,
-  }),
-  [TOGGLE_MARKET_WIDGET]: (state: SettingsState, { payload }) => ({
-    ...state,
-    marketPerformanceWidget: payload,
   }),
   [TOGGLE_MEMOTAG_INFO]: (state: SettingsState, { payload }) => ({
     ...state,
@@ -771,8 +785,6 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
 export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
-export const marketPerformanceWidgetSelector = (state: State) =>
-  state.settings.marketPerformanceWidget;
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;

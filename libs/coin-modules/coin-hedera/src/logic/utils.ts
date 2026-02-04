@@ -246,7 +246,7 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
       return true;
     }
 
-    const [parsingError, parsingResult] = safeParseAccountId(address);
+    const [parsingError, parsingResult] = await safeParseAccountId(address);
 
     if (parsingError) {
       throw parsingError;
@@ -279,9 +279,9 @@ export const getChecksum = (accountId: string): string | null => {
   }
 };
 
-export const safeParseAccountId = (
+export const safeParseAccountId = async (
   address: string,
-): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
+): Promise<[Error, null] | [null, { accountId: string; checksum: string | null }]> => {
   const currency = findCryptoCurrencyById("hedera");
   const currencyName = currency?.name ?? "Hedera";
 
@@ -290,7 +290,7 @@ export const safeParseAccountId = (
     const checksum = getChecksum(address);
 
     if (checksum) {
-      const client = rpcClient.getInstance();
+      const client = await rpcClient.getInstance();
       const expectedChecksum = accountId.toStringWithChecksum(client).split("-")[1];
 
       if (checksum !== expectedChecksum) {
@@ -365,7 +365,7 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
  * Fetches EVM address for given Hedera account ID (e.g. "0.0.1234").
  * It returns null if the fetch fails.
  *
- * @param address - Hedera account ID in the format `shard.realm.num`
+ * @param accountId - Hedera account ID in the format `shard.realm.num`
  * @returns EVM address (`0x...`) or null if fetch fails
  */
 export const toEVMAddress = async (accountId: string): Promise<string | null> => {

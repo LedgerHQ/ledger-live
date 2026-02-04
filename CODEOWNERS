@@ -28,6 +28,7 @@ libs/identities/                                         @ledgerhq/live-hub
 libs/ledger-live-common/src/                             @ledgerhq/live-hub
 libs/live-countervalues-react/                           @ledgerhq/live-hub
 libs/live-countervalues/                                 @ledgerhq/live-hub
+libs/live-currency-format/                               @ledgerhq/live-hub
 libs/live-hooks/                                         @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub
@@ -52,6 +53,7 @@ libs/domain-service/                                     @ledgerhq/coin-integrat
 libs/evm-tools/                                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                         @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                      @ledgerhq/coin-integration
+libs/ledger-live-common/src/apps/config.ts               @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
 libs/ledger-services/                                    @ledgerhq/coin-integration
 
@@ -167,6 +169,7 @@ apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/liv
 apps/ledger-live-mobile/src/components/RequiresLocation/           @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/SelectDevice2/              @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/live-devices
+apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices

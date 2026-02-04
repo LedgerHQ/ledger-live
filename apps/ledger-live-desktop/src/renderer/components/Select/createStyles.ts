@@ -86,14 +86,14 @@ export default <
     cursor: isDisabled ? "not-allowed" : "default",
     backgroundColor: isFocused ? theme.colors.background.default : undefined,
     // NB hover doesn't trigger isFocused since we disabled the onMouseMove/onMouseOver
-    ":hover:not(:active)": {
+    "&:hover:not(:active)": {
       backgroundColor: !isDisabled ? theme.colors.background.default : undefined,
       color: !isDisabled ? theme.colors.neutral.c100 : undefined,
     },
-    ":hover:active": {
+    "&:hover:active": {
       color: !isDisabled ? theme.colors.neutral.c100 : undefined,
     },
-    ":active": {
+    "&:active": {
       ...styles[":active"],
       backgroundColor: isDisabled ? undefined : theme.colors.neutral.c30,
     },

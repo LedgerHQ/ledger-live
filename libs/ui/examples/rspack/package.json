@@ -1,0 +1,29 @@
+{
+  "name": "@ledgerhq/rspack-example",
+  "private": true,
+  "version": "0.4.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "rspack build",
+    "dev": "rspack serve",
+    "serve": "http-server dist",
+    "clean": "rimraf dist",
+    "clean:full": "npx rimraf dist node_modules"
+  },
+  "dependencies": {
+    "@ledgerhq/react-ui": "workspace:^",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-is": "*",
+    "styled-components": "^5.3.3"
+  },
+  "devDependencies": {
+    "@rspack/cli": "catalog:",
+    "@rspack/core": "catalog:",
+    "@rspack/dev-server": "catalog:",
+    "@rspack/plugin-react-refresh": "catalog:",
+    "http-server": "^14.0.0",
+    "react-refresh": "catalog:",
+    "rimraf": "^3.0.2"
+  }
+}

@@ -1,9 +1,5 @@
-import {
-  SEND_FLOW_STEP,
-  type SendFlowStep,
-  type SendStepConfig,
-  type SendFlowConfig,
-} from "./types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig, SendFlowConfig } from "./types";
 
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.RECIPIENT,
@@ -21,6 +17,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
     canGoBack: true,
+    addressInput: true,
   },
   [SEND_FLOW_STEP.SIGNATURE]: {
     id: SEND_FLOW_STEP.SIGNATURE,

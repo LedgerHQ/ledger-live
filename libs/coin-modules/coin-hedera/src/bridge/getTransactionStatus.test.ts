@@ -89,8 +89,8 @@ describe("getTransactionStatus", () => {
     );
   });
 
-  afterAll(() => {
-    rpcClient._resetInstance();
+  afterAll(async () => {
+    await rpcClient._resetInstance();
   });
 
   it("coin transfer with valid recipient and sufficient balance completes successfully", async () => {

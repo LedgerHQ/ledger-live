@@ -120,7 +120,7 @@ describe("useDeepLinkHandler", () => {
       initialState: { accounts },
     });
     const { handler } = result.current;
-    handler(null, url);
+    handler(url, false);
   };
 
   beforeEach(() => {

@@ -1,5 +1,31 @@
 # @ledgerhq/coin-tester
 
+## 0.17.0
+
+### Minor Changes
+
+- [#13874](https://github.com/LedgerHQ/ledger-live/pull/13874) [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-bitcoin): add local signer
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#13874](https://github.com/LedgerHQ/ledger-live/pull/13874) [`f1e28ae`](https://github.com/LedgerHQ/ledger-live/commit/f1e28ae77c9d8b065b941240c884db1ba2b5ac3b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-bitcoin): add local signer
+
+## 0.16.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.5.1
+
+## 0.16.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.5.1-next.0
+
 ## 0.16.0
 
 ### Minor Changes

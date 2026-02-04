@@ -612,8 +612,10 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencyIds = useDAppManifestCurrencyIds(manifest);
-  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
-    useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
+    manifest.id,
+    currentAccountHistDb,
+  );
   const { openDrawer } = useModularDrawerController();
 
   const onSelectAccountSuccess = useCallback(

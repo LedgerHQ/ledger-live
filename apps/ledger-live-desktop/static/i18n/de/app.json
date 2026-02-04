@@ -282,11 +282,13 @@
     "advanced" : "Advanced",
     "custom" : "Benutzerdefiniert",
     "fast" : "Schnell",
+    "networkFees" : "Netzgebühren",
     "high" : "Hoch",
     "low" : "Niedrig",
     "slow" : "Langsam",
     "standard" : "Standart",
     "medium" : "Medium",
+    "coinControl" : "Coin-Kontrolle",
     "feesAmount" : "Gebührenbetrag"
   },
   "sidebar" : {
@@ -650,134 +652,6 @@
         "placeholder" : "Token"
       },
       "submit" : "Verbinden"
-    }
-  },
-  "fullNode" : {
-    "status" : "Status",
-    "connect" : "Verbinden",
-    "disconnect" : "Trennen",
-    "checkNodeSettings" : "Knoteneinstellungen überprüfen",
-    "edit" : "Bearbeiten",
-    "modal" : {
-      "title" : "Bitcoin Full Node verbinden",
-      "disconnectTitle" : "Full Node trennen",
-      "steps" : {
-        "landing" : {
-          "header" : "Starte deinen eigenen Full Node: Nicht vertrauen, überprüfen!",
-          "description" : "Ein Bitcoin-Knoten (Full Node) ist ein Computer, der alle Transaktionen und Blöcke validiert. Er ermöglicht es dir, Bitcoin ohne die Notwendigkeit vertrauenswürdiger Dritter zu nutzen und gleichzeitig zum Bitcoin-Netzwerk beizutragen.",
-          "list" : {
-            "item1" : "Bitcoin Core auf einem Gerät mit ausreichenden Ressourcen einrichten.",
-            "item2" : "Warte, bis dein Knoten vollständig synchronisiert ist.",
-            "item3" : "Notiere dir deine Knoten-RPC-Zugangsdaten, die IP-Adresse und die Portnummer."
-          },
-          "disclaimer" : "Ein Full Node (Bitcoin-Knoten) erfordert einen Computer mit ausreichenden Ressourcen und eine Breitbandverbindung ohne Datenbeschränkungen."
-        },
-        "node" : {
-          "title" : "Node",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Knotenparameter eingeben",
-              "disclaimer" : "Dein Knoten (Full Node) muss vollständig synchronisiert werden, bevor du die Verbindung mit Ledger Wallet herstellst.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "Host",
-                  "tooltip" : "Verwende die Vorgaben, sofern der Knoten auf diesem Computer ausgeführt wird, oder ersetze die IP-Adresse und die Portnummer für den Knoten."
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC Zugangsdaten",
-                  "tooltip" : "Gib den RPC-Benutzernamen und das Passwort deines Knotens ein. Die Angaben findest du in der Datei „bitcoin.conf“.",
-                  "usernamePlaceholder" : "Benutzername",
-                  "passwordPlaceholder" : "Passwort"
-                },
-                "tls" : {
-                  "title" : "TLS verwenden",
-                  "tooltip" : "Aktiviere Transport Layer Security, z. B. bei der Verwendung eines gehosteten Knotens."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "Teste Verbindung des Knotens",
-              "description" : "Bitte warte, während wir prüfen, ob dein Knoten (Full Node) antwortet."
-            },
-            "success" : {
-              "header" : "Verbindung zum Knoten erfolgreich",
-              "description" : "Du kannst deinen Knoten nun so konfigurieren, dass er auf der Blockchain nach deinen Konten sucht."
-            },
-            "failure" : {
-              "header" : "Full Node kann nicht erreicht werden",
-              "description" : "Bitte stelle sicher, dass dein Knoten vollständig synchronisiert ist, und überprüfe seine Verbindungseinstellungen."
-            }
-          }
-        },
-        "device" : {
-          "title" : "Gerät",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "Konten vom Gerät abrufen",
-              "description" : "Bitte warte, während die zu scannenden Konten zur Knotenkonfigurationsdatei hinzugefügt werden."
-            },
-            "success" : {
-              "header" : "Konten zur Knotenkonfiguration hinzugefügt",
-              "description" : "Eine Konfigurationsdatei wurde im Benutzerdatenordner gespeichert. Sie ermöglicht es Ledger SatStack, sich mit deinem Knoten (Full Node) zu verbinden und ihn nach deinen Konten auf der Blockchain suchen zu lassen.",
-              "cta" : "Benutzerdaten anzeigen"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "Konten",
-          "existing" : "Bestehende Konten zum Scannen",
-          "toScan" : "Zu scannende Konten",
-          "toScanDescription" : "Nach jedem Adresstyp zu durchsuchende Konten",
-          "toScanTooltip" : "Nur erhöhen, wenn du mindestens 10 BTC-Konten hast. Der anfängliche Scan wird langsamer sein. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ledger SatStack herunterladen und ausführen",
-              "description" : "Ledger SatStack ist eine kleine Anwendung, die es Ledger Wallet ermöglicht, mit deinem Full Node zu kommunizieren. Bitte lade die Anwendung herunter und starte sie, bevor du den Vorgang fortsetzt.",
-              "disclaimer" : "SatStack muss ausgeführt werden, damit Ledger Wallet eine Verbindung mit deinem Full Node herstellen kann.  Erwäge, SatStack so zu konfigurieren, dass es gemeinsam mit deinem Computer automatisch gestartet wird.",
-              "cta" : "SatStack herunterladen"
-            },
-            "satstack-disconnected" : {
-              "header" : "SatStack konnte nicht erreicht werden",
-              "description" : "Bitte überprüfe, ob SatStack auf diesem Computer ausgeführt wird."
-            },
-            "satstack-outdated" : {
-              "header" : "Bitte führe ein Upgrade von SatStack durch",
-              "description" : "Die SatStack-Version, die du verwendest, ist zu alt und enthält möglicherweise Fehler oder Inkompatibilitäten."
-            },
-            "node-disconnected" : {
-              "header" : "Full Node kann nicht erreicht werden",
-              "description" : "Bitte überprüfe, ob dein Knoten erreichbar ist und die eingegebenen Verbindungseinstellungen korrekt sind."
-            },
-            "invalid-chain" : {
-              "header" : "ungültiger Ketten-Titel",
-              "description" : "ungültige Kettenbeschreibung für Tooltip"
-            },
-            "initializing" : {
-              "header" : "Wird geladen",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "Bereit",
-              "description" : "Der Full Node ist vollständig synchronisiert. Deine Bitcoin-Kontostände sind jetzt korrekt."
-            },
-            "syncing" : {
-              "header" : "Synchronisierung läuft…",
-              "description" : "Jüngste Transaktionen sind möglicherweise noch nicht sichtbar, so dass die Bitcoin-Kontostände falsch sein können. Wenn möglich, solltest du deinen Knoten kontinuierlich betreiben, um ihn synchron zu halten."
-            },
-            "scanning" : {
-              "header" : "Konto-Scan läuft...",
-              "description" : "Du kannst deine Konten hinzufügen, sobald der Kontoscan abgeschlossen ist. Alle Bitcoin-Konten, die zuvor über die Explorer von Ledger hinzugefügt wurden, wurden entfernt."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "Trennen",
-          "description" : "Möchtest du den Vorgang wirklich fortsetzen? Das Trennen des Knotens (Full Node) entfernt alle Bitcoin-Konten. Du kannst deine Konten mit den Explorern von Ledger wieder hinzufügen."
-        }
-      }
     }
   },
   "account" : {
@@ -1605,34 +1479,6 @@
         "primaryCta" : "Gerät verbinden",
         "secondaryCta" : "Vielleicht später"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}}-Trend",
-      "buy" : "Kaufen",
-      "swap" : "Umtauschen",
-      "gainers" : "Gewinner",
-      "losers" : "Verlierer",
-      "error" : {
-        "title" : "Tut uns leid, die Trenddaten können gerade nicht abgerufen werden",
-        "description" : "Versuche es bitte später noch einmal"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "In den letzten {{trend}} konnten die Top {{count}} der Vermögenswerte keine Gewinne verzeichnen",
-          "description" : "Sieh dir doch die Krypto-Verlierer des Tages an oder komm später wieder"
-        },
-        "losers" : {
-          "title" : "Unter den Top {{count}} der Vermögenswerte gab es in den letzten {{trend}} keine Verluste",
-          "description" : "Sieh dir doch die Krypto-Gewinner des Tages an oder komm später wieder"
-        }
-      },
-      "trend" : {
-        "day" : "24 Stunden",
-        "week" : "7 Tagen",
-        "month" : "30 Tagen",
-        "year" : "Jahr",
-        "all" : "Jahr"
-      }
     }
   },
   "currentAddress" : {
@@ -1681,6 +1527,7 @@
     "currency" : "Währung",
     "rangeLabel" : "Uhrzeit",
     "goBack" : "Zurückgehen",
+    "searchPlaceholder" : "Asset suchen",
     "filters" : {
       "title" : "Filter",
       "show" : "Anzeigen",
@@ -1786,8 +1633,6 @@
       "import" : "Konten",
       "finish" : "Bestätigung"
     },
-    "fullNodeReadyInfo" : "Die Konten werden über Ihren Bitcoin-Knoten (Full Node) hinzugefügt.",
-    "fullNodeConfigure" : "Knoten konfigurieren",
     "tokensTip" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token.\n Du kannst Token auf einem {{currency}}-Konto direkt empfangen.",
     "accountToImportSubtitle_other" : "Bestehende Konten hinzufügen",
     "selectAll" : "Alle auswählen ({{count}})",
@@ -2518,9 +2363,26 @@
     "amountToSend" : "Zu sendender Betrag in ({{currency}})",
     "coinToSend" : "Zu sendender Coin",
     "coinControlCustom" : "Eigene Coinauswahl",
+    "quickActions" : {
+      "quarter" : "25 %",
+      "half" : "50 %",
+      "threeQuarters" : "75 %",
+      "max" : "Max."
+    },
+    "reviewCta" : "Prüfen",
+    "getCta" : "{{currency}} erhalten",
+    "switchInputMode" : "Betragseingabemodus ändern",
     "aboveMaximum" : "Über dem maximalen Saldo",
     "transactionSigned" : "Transaktion signiert",
-    "processingTransaction" : "Deine Transaktion wird verarbeitet"
+    "processingTransaction" : "Deine Transaktion wird verarbeitet",
+    "sign" : {
+      "title" : "Vorgang fortsetzen auf deinem Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "Die Netzwerkgebühren können nicht neu geladen werden",
+      "warningDescription" : "Möglicherweise sind die Gebühren-Presets veraltet."
+    }
   },
   "releaseNotes" : {
     "title" : "Informationen zur Version",
@@ -4572,9 +4434,7 @@
       "walletSyncDescription" : "Halte dein Portfolio auf dem neuesten Stand, wenn du den Computer wechselst oder ein Handy nutzt.",
       "mevProtection" : "MEV-Schutz",
       "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern.",
-      "mevProtectionLearnMore" : "Datenschutzerklärung",
-      "marketPerformanceWidget" : "Marktperformance-Widget",
-      "marketPerformanceWidgetDesc" : "Aktiviere diese Funktion, um auf der Portfolioseite die größten Gewinner und Verlierer über ausgewählte Zeiträume anzuzeigen."
+      "mevProtectionLearnMore" : "Datenschutzerklärung"
     },
     "developer" : {
       "search" : "Suchen nach",
@@ -4704,6 +4564,15 @@
         "debugDialog" : "Debug-Dialog",
         "debugDuplicates" : "Duplikate debuggen"
       },
+      "walletFeaturesDevTool" : {
+        "title" : "Entwicklungstool für Wallet-Funktionen",
+        "description" : "Schaltet Wallet 4.0-Funktionen für Desktop ein/aus (Feature-Flag lwdWallet40).",
+        "enableAll" : "Alles aktivieren",
+        "disableAll" : "Alles deaktivieren",
+        "featureParameters" : "Funktionsparameter",
+        "showJson" : "JSON anzeigen",
+        "hideJson" : "JSON ausblenden"
+      },
       "cryptoAssetsList" : {
         "title" : "Crypto Assets List (CAL)",
         "description" : "Hier kannst du Krypto-Assets über den CAL-Service (Crypto Assets List) anzeigen und verwalten.",
@@ -4801,6 +4670,8 @@
       "runLocalAppOpenButton" : "offen",
       "enableLearnStagingUrl" : "Staging-URL für Lernen-Seite",
       "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite.",
+      "enableCountervaluesStaging" : "Gegenwerte-API im Staging",
+      "enableCountervaluesStagingDesc" : "Verwende die Staging-Version der Gegenwerte-API anstelle der Produktionsversion.",
       "openOnboardingAppInstallDebug" : "Bildschirm zum Installieren der Debug-Anwendung der Onboarding-App öffnen",
       "openOnboardingAppInstallDebugDesc" : "Öffne einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
     },
@@ -4981,10 +4852,6 @@
         "desc" : "Du kannst Token ausblenden, indem du zum übergeordneten Konto gehst, dann mit der rechten Maustaste auf das Token klicken und „Token ausblenden“ wählen.",
         "count" : "1 Token",
         "count_other" : "{{count}} Token"
-      },
-      "fullNode" : {
-        "title" : "Bitcoin Full Node verbinden",
-        "desc" : "Richte deinen Bitcoin-Knoten (Full Node) ein, um Transaktionen zu synchronisieren und zu senden, ohne Ledgers Explorer zu verwenden."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Token-Transaktionen ausblenden, wenn der Wert 0 ist",
@@ -6456,22 +6323,6 @@
     "RPCPassRequired" : {
       "title" : "RPC-Passwort ist erforderlich"
     },
-    "SatStackAccessDown" : {
-      "title" : "Full Node kann nicht erreicht werden",
-      "description" : "Bitte überprüfen Sie, ob SatStack und Ihr Knoten/Node ausgeführt werden. Überprüfen Sie die vollständige Node-Einrichtung in den Einstellungen, wenn das Problem weiterhin besteht."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Knotensynchronisierung läuft...",
-      "description" : "Bitte warten Sie, während Ihr Node synchronisiert wird. Senden ist nicht möglich, da Ihr Bitcoin-Kontostand möglicherweise nicht korrekt ist."
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "Bitte aktualisieren Sie SatStack",
-      "description" : "Die SatStack-Version, die Sie verwenden, ist zu alt und enthält möglicherweise Fehler oder Inkompatibilitäten."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "Konto nicht von Knoten (Full Node) gescannt",
-      "description" : "Bitte konfigurieren Sie Ihren Full Node so, dass er nach den Konten sucht, die mit diesem Gerät verbunden sind. Ihr Full Node muss zuerst die Blockchain nach diesem Konto durchsuchen, bevor Sie es zu Ihrem Portfolio hinzufügen können."
-    },
     "SwapRateExpiredError" : {
       "title" : "Wechselkurs abgelaufen",
       "description" : "Wechselkurs abgelaufen. Bitte lade die Seite neu und versuche es dann noch einmal."
@@ -6937,6 +6788,10 @@
       "title" : "Ungültige Protokollparameter bei Cardano",
       "description" : "ADA-Transaktionen sind vorübergehend nicht verfügbar. Bitte synchronisiere dein Konto neu und versuche es noch einmal, oder wende dich an den Support, wenn du Hilfe benötigst."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "Ungültige Memolänge; zulässig sind maximal 64 Zeichen",
+      "description" : "Für Cardano-Memos gilt eine Längenbeschränkung. Bitte reduziere die Memolänge."
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
     },
@@ -7010,8 +6865,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Keine Prämien zum Einlösen vorhanden"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ist zu lang. Maximale Länge: {{maxLength}} Zeichen"
+    "HederaMemoExceededSizeError" : {
+      "title" : "Ungültige Memolänge; zulässig sind maximal 100 Zeichen.",
+      "description" : "Für Hedera-Memos gilt eine Längenbeschränkung. Bitte reduziere die Memolänge."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen.",
@@ -7684,6 +7540,9 @@
       "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Wallet zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren."
     }
   },
+  "analytics" : {
+    "title" : "Analysen"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Schließen",
@@ -7961,6 +7820,32 @@
         "description" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
       },
       "cta" : "Wiederholen"
+    }
+  },
+  "portfolio" : {
+    "title" : "Startseite",
+    "today" : "Heute"
+  },
+  "marketBanner" : {
+    "title" : "Markt erkunden",
+    "genericError" : "Verbindung fehlgeschlagen",
+    "cta" : "Alles anzeigen",
+    "fearAndGreed" : {
+      "title" : "Stimmung"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Angst+",
+      "fear" : "Angst",
+      "neutral" : "Neutral",
+      "greed" : "Gier",
+      "extremeGreed" : "Gier+"
+    },
+    "dialog" : {
+      "title" : "Stimmungsindex",
+      "content" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+      "cta" : "Verstanden"
     }
   },
   "nftEntryPoint" : {

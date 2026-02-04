@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Keine Prämien zum Einlösen vorhanden"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ist zu lang. Maximale Länge: {{maxLength}} Zeichen"
-    },
     "NearNewAccountWarning" : {
       "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Der Betrag muss mindestens {{threshold}} betragen"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Das Memo-Format ist ungültig; das Memo muss kleiner als 4294967296 sein."
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Ungültige Memolänge; zulässig sind maximal 100 Zeichen."
     },
     "PinNotSet" : {
       "title" : "PIN nicht festgelegt"
@@ -8082,12 +8085,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Führe ein Upgrade deiner Ledger Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und einem exklusiven Rabatt in Höhe von 20 %. ",
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Erhalte exklusiv 20 % Rabatt auf die aktuellen Ledger-Signer.",
       "cta" : "Ledger-Upgrade durchführen"
     },
     "opted_out" : {
-      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein.",
       "cta" : "Weitere Informationen"
+    }
+  },
+  "marketBanner" : {
+    "title" : "Markt erkunden",
+    "viewAll" : "Alles anzeigen",
+    "viewAllAccessibilityHint" : "Doppeltippen, um alle Assets anzuzeigen",
+    "connectionFailed" : "Verbindung fehlgeschlagen",
+    "errorAccessibilityHint" : "Die Marktdaten können nicht geladen werden. Versuche es bitte später noch einmal.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Doppeltippen, um Marktdetails anzuzeigen"
     }
   },
   "largeMover" : {
@@ -8329,6 +8345,28 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Stimmungsindex",
+    "description" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+    "levels" : {
+      "extremeFear" : "Angst+",
+      "fear" : "Angst",
+      "neutral" : "Neutral",
+      "greed" : "Gier",
+      "extremeGreed" : "Gier+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Analysen"
+    },
+    "allocation" : {
+      "title" : "Vermögensaufteilung"
+    },
+    "actions" : {
+      "swap" : "Swappen"
     }
   }
 }

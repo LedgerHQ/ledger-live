@@ -1,5 +1,6 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
+import { AnalyticsPage } from "./analytics.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetPage } from "./asset.page";
@@ -31,10 +32,14 @@ import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
 import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
+import { MarketBannerPage } from "./marketBanner.page";
+import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
+import { PrivateBalanceModal } from "./modal/private.balance.modal";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
   public accounts = new AccountsPage(this.page);
+  public analytics = new AnalyticsPage(this.page);
   public addAccount = new AddAccountModal(this.page);
   public assetDrawer = new AssetDrawer(this.page);
   public assetPage = new AssetPage(this.page);
@@ -57,6 +62,7 @@ export class Application extends PageHolder {
   public password = new PasswordlockModal(this.page);
   public portfolio = new PortfolioPage(this.page);
   public receive = new ReceiveModal(this.page);
+  public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
   public send = new SendModal(this.page);
   public sendDrawer = new SendDrawer(this.page);
@@ -65,4 +71,6 @@ export class Application extends PageHolder {
   public speculos = new SpeculosPage(this.page);
   public swap = new SwapPage(this.page);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
+  public marketBanner = new MarketBannerPage(this.page);
+  public fearAndGreedDialog = new FearAndGreedDialog(this.page);
 }

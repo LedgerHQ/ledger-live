@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { createPortal } from "react-dom";
 import { connect } from "react-redux";
 import styled, { CSSProperties, DefaultTheme } from "styled-components";
@@ -67,23 +67,17 @@ const transitionsScale = {
     transform: "scale(1.1)",
   },
 };
-const Container = styled.div.attrs(
-  ({
-    state,
-    centered,
-    isOpened,
-  }: {
-    state: TransitionStatus;
-    centered?: boolean;
-    isOpened?: boolean;
-  }) => ({
-    style: {
-      ...transitionsOpacity[state as keyof typeof transitionsOpacity],
-      justifyContent: centered ? "center" : "flex-start",
-      pointerEvents: isOpened ? "auto" : "none",
-    },
-  }),
-)<{
+const Container = styled.div.attrs<{
+  state: TransitionStatus;
+  centered?: boolean;
+  isOpened?: boolean;
+}>(p => ({
+  style: {
+    ...transitionsOpacity[p.state as keyof typeof transitionsOpacity],
+    justifyContent: p.centered ? "center" : "flex-start",
+    pointerEvents: p.isOpened ? "auto" : "none",
+  },
+}))<{
   state: TransitionStatus;
   centered?: boolean;
   isOpened?: boolean;
@@ -103,10 +97,10 @@ const Container = styled.div.attrs(
   align-items: center;
   transition: opacity 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
+const BodyWrapper = styled.div.attrs<{ state: TransitionStatus }>(p => ({
   style: {
-    ...transitionsOpacity[state as keyof typeof transitionsOpacity],
-    ...transitionsScale[state as keyof typeof transitionsScale],
+    ...transitionsOpacity[p.state as keyof typeof transitionsOpacity],
+    ...transitionsScale[p.state as keyof typeof transitionsScale],
   } as CSSProperties,
 }))<{ state: TransitionStatus; width?: number }>`
   background: ${p => p.theme.colors.background.card};
@@ -155,6 +149,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   state = {
     directlyClickedBackdrop: false,
   };
+  nodeRef = createRef<HTMLDivElement>();
 
   componentDidMount() {
     document.addEventListener("keyup", this.handleKeyup);
@@ -250,10 +245,12 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
           enter: 100,
           exit: 200,
         }}
+        nodeRef={this.nodeRef}
       >
         {state => {
           return (
             <Container
+              ref={this.nodeRef}
               data-testid="modal-backdrop"
               state={state}
               centered={centered}

@@ -147,13 +147,21 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
+  const onPressAllocations = useCallback(() => {
+    navigation.navigate(ScreenName.AnalyticsAllocation);
+  }, [navigation]);
+
   const data = useMemo(
     () => [
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
         <Flex px={6} key="FirmwareUpdateBanner">
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
-        <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
+        <PortfolioGraphCard
+          showAssets={showAssets}
+          key="PortfolioGraphCard"
+          screenName={ScreenName.Portfolio}
+        />
         {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
         {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
@@ -204,8 +212,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
                 title={t("analytics.allocation.title")}
                 testID="portfolio-allocation-section"
               />
-              <Flex minHeight={94}>
-                <AllocationsSection />
+              <Flex minHeight={94} mt={6}>
+                <AllocationsSection
+                  screenName={ScreenName.Portfolio}
+                  onPress={onPressAllocations}
+                />
               </Flex>
             </SectionContainer>,
             <SectionContainer px={6} key="PortfolioOperationsHistorySection">
@@ -227,13 +238,14 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [
       onBackFromUpdate,
       showAssets,
+      onPressAllocations,
+      isLNSUpsellBannerShown,
       isAccountListUIEnabled,
       handleHeightChange,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
       isAWalletCardDisplayed,
-      isLNSUpsellBannerShown,
       t,
     ],
   );

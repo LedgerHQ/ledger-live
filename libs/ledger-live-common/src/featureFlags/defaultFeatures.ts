@@ -41,6 +41,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
+  currencyAvalancheCChainFuji: DEFAULT_FEATURE,
   currencyAptos: DEFAULT_FEATURE,
   currencyAptosTestnet: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
@@ -54,7 +55,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
+  currencyBitlayer: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
+  currencyKlaytnBaobab: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
@@ -83,6 +86,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBlastSepolia: DEFAULT_FEATURE,
   currencyScroll: DEFAULT_FEATURE,
   currencyScrollSepolia: DEFAULT_FEATURE,
+  currencyShape: DEFAULT_FEATURE,
+  currencyStory: DEFAULT_FEATURE,
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
   currencyEtherlink: DEFAULT_FEATURE,
@@ -114,6 +119,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZeroGravity: DEFAULT_FEATURE,
   currencyConcordium: DEFAULT_FEATURE,
   currencyConcordiumTestnet: DEFAULT_FEATURE,
+  currencyUnichain: DEFAULT_FEATURE,
+  currencyUnichainSepolia: DEFAULT_FEATURE,
 };
 
 /**
@@ -468,6 +475,20 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxPerpsLiveApp: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
+  ptxPerpsLiveAppMobile: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {
@@ -529,18 +550,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
-
-  marketperformanceWidgetDesktop: {
-    enabled: false,
-    params: {
-      variant: ABTestingVariants.variantA,
-      refreshRate: 2,
-      top: 100,
-      limit: 100,
-      supported: true,
-      enableNewFeature: false,
-    },
-  },
 
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
@@ -775,6 +784,8 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      tour: true,
+      mainNavigation: true,
     },
   },
   lwdWallet40: {
@@ -783,6 +794,8 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      mainNavigation: true,
+      newReceiveDialog: true,
     },
   },
 };

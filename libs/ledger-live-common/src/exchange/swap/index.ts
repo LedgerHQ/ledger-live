@@ -16,12 +16,7 @@ import {
   ValidationError,
 } from "../../errors";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
-import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
-import getExchangeRates from "./getExchangeRates";
-import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
-import { maybeTronEmptyAccount } from "./maybeTronEmptyAccount";
-import { maybeKeepTronAccountAlive } from "./maybeKeepTronAccountAlive";
 import { getIncompatibleCurrencyKeys } from "./getIncompatibleCurrencyKeys";
 
 export { getAvailableProviders } from "../providers";
@@ -141,12 +136,7 @@ export {
   getSwapAPIVersion,
   getCompleteSwapHistory,
   postSwapAccepted,
-  getExchangeRates,
-  maybeTezosAccountUnrevealedAccount,
-  maybeTronEmptyAccount,
-  maybeKeepTronAccountAlive,
   postSwapCancelled,
-  initSwap,
   USStates,
   countries,
   getIncompatibleCurrencyKeys,

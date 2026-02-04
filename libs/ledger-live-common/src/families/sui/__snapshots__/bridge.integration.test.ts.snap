@@ -17,7 +17,6 @@ exports[`sui currency bridge scanAccounts sui seed 1 1`] = `
     "subAccounts": [],
     "suiResources": {},
     "swapHistory": [],
-    "syncHash": "6p9XjoTwZ81o9xTkodgswDbETbrN5Lkv1b2shBN4p99s",
     "used": true,
   },
   {
@@ -35,7 +34,6 @@ exports[`sui currency bridge scanAccounts sui seed 1 1`] = `
     "subAccounts": [],
     "suiResources": {},
     "swapHistory": [],
-    "syncHash": undefined,
     "used": false,
   },
 ]

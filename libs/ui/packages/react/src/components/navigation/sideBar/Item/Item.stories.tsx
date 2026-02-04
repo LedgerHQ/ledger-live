@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 
 import { StoryTemplate } from "../../../helpers";
 import WalletIcon from "@ledgerhq/icons-ui/reactLegacy/WalletMedium";
@@ -65,25 +64,25 @@ export const Disable: StoryTemplate<ItemType> = Template.bind({});
 
 Default.args = {
   label: "accounts",
-  onClick: action("go to accounts"),
+  onClick: () => {},
 };
 Active.args = {
   label: "accounts",
-  onClick: action("go to accounts"),
+  onClick: () => {},
   isActive: true,
 };
 Disable.args = {
   label: "accounts",
-  onClick: action("go to accounts"),
+  onClick: () => {},
   isDisabled: true,
 };
 Hover.args = {
   label: "accounts",
-  onClick: action("go to accounts"),
+  onClick: () => {},
 };
 Hover.parameters = { pseudo: { hover: true } };
 Focus.args = {
   label: "accounts",
-  onClick: action("go to accounts"),
+  onClick: () => {},
 };
 Focus.parameters = { pseudo: { focus: true } };

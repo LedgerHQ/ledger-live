@@ -207,5 +207,6 @@ function buildSubAccount({
 }
 
 function latestHash(operations: Operation[]) {
-  return operations.length ? operations[0].blockHash : null;
+  const confirmedOp = operations.find(op => op.blockHash !== null);
+  return confirmedOp ? confirmedOp.blockHash : null;
 }

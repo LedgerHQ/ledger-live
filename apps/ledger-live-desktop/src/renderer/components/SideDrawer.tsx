@@ -20,8 +20,10 @@ const transitionBackdropStyles = {
   },
   exited: {},
 };
-const DrawerBackdrop = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
-  style: transitionBackdropStyles[state as keyof typeof transitionBackdropStyles],
+const DrawerBackdrop = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
+  style: {
+    ...transitionBackdropStyles[state as keyof typeof transitionBackdropStyles],
+  },
 }))<{ state: TransitionStatus }>`
   position: absolute;
   top: 0;
@@ -41,10 +43,12 @@ const transitionStyles = {
   exiting: {},
   exited: {},
 };
-const DrawerContent = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
-  style: transitionStyles[state as keyof typeof transitionStyles],
+const DrawerContent = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
+  style: {
+    ...transitionStyles[state as keyof typeof transitionStyles],
+  },
   bg: "background.card",
-}))<{ state: TransitionStatus; direction: "left" | "right" }>`
+}))<{ direction: "left" | "right" }>`
   position: absolute;
   top: 0;
   left: ${p => (p.direction === "right" ? 0 : "unset")};
@@ -77,9 +81,11 @@ const transitionContainerStyles = {
     visibility: "hidden",
   },
 };
-const DrawerContainer = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
-  style: transitionContainerStyles[state as keyof typeof transitionContainerStyles],
-}))<{ state: TransitionStatus }>`
+const DrawerContainer = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
+  style: {
+    ...transitionContainerStyles[state as keyof typeof transitionContainerStyles],
+  },
+}))`
   color: ${p => p.theme.colors.neutral.c90};
   position: fixed;
   left: 0;
@@ -143,7 +149,7 @@ export function SideDrawer({
       window.removeEventListener("keydown", onKeyPress, false);
     };
   }, [onKeyPress]);
-  const focusTrapElem = useRef<typeof DrawerContainer>(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
   const focusTrap = useRef<FocusTrap | null>(null);
   const modalsState = useSelector(modalsStateSelector);
   const shouldDisableFocusTrap = Object.values(modalsState).some(state => state?.isOpened);
@@ -151,9 +157,9 @@ export function SideDrawer({
     if (forceDisableFocusTrap) {
       return;
     }
-    if (isOpen && focusTrapElem.current && !shouldDisableFocusTrap) {
-      focusTrap.current = createFocusTrap(focusTrapElem.current, {
-        fallbackFocus: focusTrapElem.current,
+    if (isOpen && nodeRef.current && !shouldDisableFocusTrap) {
+      focusTrap.current = createFocusTrap(nodeRef.current, {
+        fallbackFocus: nodeRef.current,
         escapeDeactivates: false,
         clickOutsideDeactivates: false,
         preventScroll: true,
@@ -178,12 +184,13 @@ export function SideDrawer({
             exit: DURATION * 3, // leaves extra time for the animation to end before unmount
           }}
           unmountOnExit
+          nodeRef={nodeRef}
         >
           {state => (
             <DrawerContainer
+              ref={nodeRef}
               state={state}
-              ref={focusTrapElem}
-              tabIndex="-1"
+              tabIndex={-1}
               data-testid="side-drawer-container"
             >
               <DrawerContent

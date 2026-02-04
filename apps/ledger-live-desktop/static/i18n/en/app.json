@@ -282,11 +282,13 @@
     "advanced": "Advanced",
     "custom": "Custom",
     "fast": "Fast",
+    "networkFees": "Network fees",
     "high": "High",
     "low": "Low",
     "slow": "Slow",
     "standard": "Standard",
     "medium": "Medium",
+    "coinControl": "Coin Control",
     "feesAmount": "Fees Amount"
   },
   "sidebar": {
@@ -297,6 +299,7 @@
     "manager": "My Ledger",
     "earn": "Earn",
     "exchange": "Buy / Sell",
+    "perps": "Perps",
     "swap": "Swap",
     "refer": "Refer a friend",
     "lend": "Lend",
@@ -1477,34 +1480,6 @@
         "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
-    },
-    "marketPerformanceWidget": {
-      "title": "{{time}} trend",
-      "buy": "Buy",
-      "swap": "Swap",
-      "gainers": "Gainers",
-      "losers": "Losers",
-      "error": {
-        "title": "Sorry, we’re unable to load the trend",
-        "description": "Please try again later"
-      },
-      "missingData": {
-        "gainers": {
-          "title": "No assets among the top {{count}} experienced gains in the last {{trend}}",
-          "description": "Consider viewing top losers or come back later"
-        },
-        "losers": {
-          "title": "No assets among the top {{count}} experienced losses in the last {{trend}}",
-          "description": "Consider viewing top gainers or come back later"
-        }
-      },
-      "trend": {
-        "day": "24 hours",
-        "week": "7 days",
-        "month": "30 days",
-        "year": "year",
-        "all": "year"
-      }
     }
   },
   "currentAddress": {
@@ -2231,6 +2206,19 @@
       "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
+  "newReceive": {
+    "steps": {
+      "options": {
+        "fromBank": {
+          "title": "Bank transfer",
+          "description": "Receive stablecoin by sending cash"
+        },
+        "fromCrypto": {
+          "title": "Receive crypto"
+        }
+      }
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
@@ -2389,12 +2377,25 @@
     "amountToSend": "Amount to send in ({{currency}})",
     "coinToSend": "Coin to send",
     "coinControlCustom": "Custom coin selection",
+    "quickActions": {
+      "quarter": "25%",
+      "half": "50%",
+      "threeQuarters": "75%",
+      "max": "Max"
+    },
+    "reviewCta": "Review",
+    "getCta": "Get {{currency}}",
+    "switchInputMode": "Switch amount input mode",
     "aboveMaximum": "Above maximum balance",
     "transactionSigned": "Transaction signed",
     "processingTransaction": "Your transaction is being processed",
     "sign": {
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instructions displayed on your Secure Touchscreen."
+    },
+    "gasOptionsSync": {
+      "warningTitle": "Unable to refresh network fees",
+      "warningDescription": "Fee presets may be outdated."
     }
   },
   "releaseNotes": {
@@ -4468,12 +4469,10 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
-      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
-      "mevProtectionLearnMore": "Privacy notice",
-      "marketPerformanceWidget": "Market Performance Widget",
-      "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
+      "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
       "search": "Search",
@@ -4546,6 +4545,10 @@
           "title": "Quick generation",
           "desc": "Generate 10 random accounts with random currencies"
         },
+        "emptyGenerate": {
+          "title": "Empty generation",
+          "desc": "Generate an empty account"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -4561,7 +4564,8 @@
         "buttons": {
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
-          "generateAccountsQuick": "Generate {{count}} accounts"
+          "generateAccountsQuick": "Generate {{count}} accounts",
+          "generateEmptyAccount": "Generate empty account"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -4607,6 +4611,7 @@
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
         "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "mainFeatureToggle": "Main Feature Toggle",
         "enableAll": "Enable All",
         "disableAll": "Disable All",
         "featureParameters": "Feature Parameters",
@@ -6379,7 +6384,7 @@
     },
     "TransactionCannotBeCreated": {
       "title": "Processing Error",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity": {
       "title": "Partner unavailable",
@@ -6677,7 +6682,7 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+      "title": "Enable Blind signing or Contract data in Ethereum app"
     },
     "CeloAppPleaseEnableContractData": {
       "title": "Please enable Contract data in the Celo app Settings"
@@ -7591,7 +7596,7 @@
     "close": "Close",
     "banner": {
       "title": "Your wallet isn't synced",
-      "description": "Keep your portfolio up to date when switching computers or use a phone",
+      "description": "Keep your portfolio up to date when switching computers or using a phone",
       "cta": "Sync my wallet"
     },
     "activate": {
@@ -7601,7 +7606,7 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?",
       "titleModal": "Sync your wallet",
-      "descriptionModal": "Keep your portfolio up to date when switching computers or use a phone — all secured by your Ledger device.",
+      "descriptionModal": "Keep your portfolio up to date when switching computers or using a phone — all secured by your Ledger device.",
       "ctaModal": "Continue"
     },
     "entryPoints": {
@@ -7863,6 +7868,12 @@
       "cta": "Try again"
     }
   },
+  "portfolio": {
+    "title": "Home",
+    "today": "Today",
+    "addAccountCta": "Add crypto account",
+    "noBalanceTitle": "Secure your crypto"
+  },
   "marketBanner": {
     "title": "Explore market",
     "genericError": "Connection failed",
@@ -7878,7 +7889,20 @@
       "neutral": "Neutral",
       "greed": "Greed",
       "extremeGreed": "Greed+"
+    },
+    "dialog": {
+      "title": "Mood index",
+      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "cta": "Got it"
     }
+  },
+  "quickActions": {
+    "send": "Send",
+    "receive": "Receive",
+    "buy": "Buy",
+    "sell": "Sell",
+    "connect": "Connect",
+    "buyALedger": "Buy a Ledger"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
@@ -7909,6 +7933,55 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "shielded": {
+      "state": {
+        "showBalance": "Show balance",
+        "lastSync": "Last sync {{days}} ago"
+      },
+      "flows": {
+        "export": {
+          "title": "Enable Zcash private balance",
+          "breadcrumbs": {
+            "0": "Birthday",
+            "1": "UFVK",
+            "2": "Device",
+            "3": "Confirmation"
+          },
+          "steps": {
+            "birthday": {
+              "text": "The birth height is the point on the blockchain where your wallet begins scanning for your funds.",
+              "cta": "Learn more",
+              "label": "Birthday height",
+              "tooltip": "Default: today's date. Change only for existing accounts with past private (shielded) activity.",
+              "syncFromZero": "This account received shielded ZEC in the past, but I can't retrieve the birth height. Scan from block 0 (this may take a long time).",
+              "error": "Invalid date"
+            },
+            "ufvk": {
+              "text": "To begin, you must export your Unified Full Viewing Key (UFVK). This action requires your confirmation on your Ledger device."
+            },
+            "device": {
+              "text": "Confirm UFVK export on your Ledger device"
+            },
+            "confirmation": {
+              "success": {
+                "title": "UFVK successfully imported",
+                "text": "You will be able to receive shielded ZEC and sign private transactions.",
+                "info": {
+                  "text": "Your Unified Full Viewing Key remains stored locally on your computer and is never transmitted or exposed to external systems.",
+                  "cta": "Learn more"
+                },
+                "warning": "Accounts with an older birth height may require a longer synchronisation (up to 2 hours). Please keep the app open until syncing finishes."
+              }
+            }
+          }
+        }
+      },
+      "startSync": "Start sync",
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      }
     }
   }
 }

@@ -1,16 +1,16 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { FLOW_STATUS } from "../../FlowWizard/types";
-import { useSendFlowAccount } from "./useSendFlowAccount";
+import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
+import { useSendFlowAccount } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAccount";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
-import { getSendUiConfig } from "../mocks/descriptor";
+import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
 import type {
   SendFlowState,
   SendFlowBusinessContext,
   SendFlowInitParams,
   RecipientData,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/types";
 
 type UseSendFlowBusinessLogicParams = Readonly<{
   initParams?: SendFlowInitParams;
@@ -23,8 +23,12 @@ export function useSendFlowBusinessLogic({
   initParams,
   onClose,
 }: UseSendFlowBusinessLogicParams): SendFlowBusinessContext {
-  const [flowStatus, setFlowStatus] = useState(FLOW_STATUS.IDLE);
+  const [flowStatus, setFlowStatus] = useState<FlowStatus>(FLOW_STATUS.IDLE);
   const [recipientSearchValue, setRecipientSearchValue] = useState("");
+  const [recipient, setRecipient] = useState<RecipientData | null>(() => {
+    if (!initParams?.recipient) return null;
+    return { address: initParams.recipient };
+  });
 
   const accountHook = useSendFlowAccount({
     initialAccount: initParams?.account,
@@ -56,6 +60,7 @@ export function useSendFlowBusinessLogic({
 
   const handleRecipientSet = useCallback(
     (recipient: RecipientData) => {
+      setRecipient(recipient);
       transactionHook.actions.setRecipient(recipient);
     },
     [transactionHook.actions],
@@ -74,12 +79,12 @@ export function useSendFlowBusinessLogic({
     () => ({
       account: accountHook.state,
       transaction: transactionHook.state,
-      recipient: null,
+      recipient,
       operation: operationHook.state,
       isLoading: transactionHook.state.bridgePending,
       flowStatus,
     }),
-    [accountHook.state, transactionHook.state, operationHook.state, flowStatus],
+    [accountHook.state, transactionHook.state, recipient, operationHook.state, flowStatus],
   );
 
   const statusActions = useMemo(

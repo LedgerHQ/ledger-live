@@ -1,5 +1,5 @@
 import React from "react";
-import { Subheader } from "@ledgerhq/lumen-ui-react";
+import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { RecentAddressTile } from "./RecentAddressTile";
 import type { RecentAddress } from "../types";
@@ -23,7 +23,11 @@ export function RecentAddressesSection({
 
   return (
     <div className="flex flex-col gap-8">
-      <Subheader title={t("newSendFlow.recent")} />
+      <Subheader>
+        <SubheaderRow>
+          <SubheaderTitle>{t("newSendFlow.recent")}</SubheaderTitle>
+        </SubheaderRow>
+      </Subheader>
       <div className="-mx-24 flex gap-8 overflow-x-auto px-12">
         {recentAddresses.map(address => (
           <RecentAddressTile

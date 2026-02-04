@@ -25,24 +25,35 @@ import {
   parseFormattedDate,
   incrementPerGranularity,
   datapointLimits,
+  datapointRetention,
 } from "./helpers";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 // yield raw version of the countervalues state to be saved in a db
-export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
+export function exportCountervalues(
+  { data, status }: CounterValuesState,
+  trackingPair: TrackingPair[],
+): CounterValuesStateRaw {
   const out = { status } as CounterValuesStateRaw;
+  const hourlyLimit = formatCounterValueDay(new Date(Date.now() - datapointRetention.hourly));
+  const pairIds = new Set(trackingPairIds(trackingPair));
 
   for (const path in data) {
+    if (!(data[path] instanceof Map)) continue; // Skip entries that are not maps
+    if (!pairIds.has(path)) continue; // Skip pairs that are not tracked anymore
+
+    let size = 0;
     const obj: RateMapRaw = {};
 
     for (const [k, v] of data[path]) {
+      if (k.length === 13 && k.slice(0, 10) < hourlyLimit) continue; // Skip old hourly data
+      size++;
       obj[k] = v;
     }
 
-    out[path] = obj;
+    if (size > 0) out[path] = obj;
   }
 
   return out;
@@ -78,27 +89,6 @@ export function importCountervalues(
       {},
     ),
   };
-}
-
-export function trackingPairForTopCoins(
-  marketcapIds: string[],
-  size: number,
-  countervalue: Currency,
-  startDate: Date,
-) {
-  const pairs = [];
-  for (let i = 0; i < marketcapIds.length && pairs.length < size; i++) {
-    const id = marketcapIds[i];
-    const currency = findCryptoCurrencyById(id);
-    if (currency) {
-      pairs.push({
-        from: currency,
-        to: countervalue,
-        startDate,
-      });
-    }
-  }
-  return pairs;
 }
 
 // infer the tracking pair from user accounts to know which pairs are concerned

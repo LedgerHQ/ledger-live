@@ -1,3 +1,11 @@
+# 2.139.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.139.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.137.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

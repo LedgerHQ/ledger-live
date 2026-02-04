@@ -30,7 +30,7 @@ async function initializeLedgerKeyRingProtocol() {
   return CLI.ledgerKeyRingProtocol({
     initMemberCredentials: true,
     apiBaseUrl: ledgerKeyRingProtocolArgs.apiBaseUrl,
-  }).then((output: { pubkey: string; privatekey: string }) => {
+  }).then(output => {
     if (output && "pubkey" in output) {
       ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
       ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
@@ -65,7 +65,7 @@ async function initializeLedgerSync() {
   const output = CLI.ledgerKeyRingProtocol({
     getKeyRingTree: true,
     ...ledgerKeyRingProtocolArgs,
-  }).then((out: { rootId: string; walletSyncEncryptionKey: string; applicationPath: string }) => {
+  }).then(out => {
     if (out && "rootId" in out) {
       ledgerSyncPushDataArgs.rootId = out.rootId;
       ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
@@ -108,7 +108,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
-    disableSync && (await device.disableSynchronization()); // TODO: Remove line when LIVE-15405 is fixed
+    if (disableSync) await device.disableSynchronization(); // TODO: Remove line when LIVE-15405 is fixed
     await app.settingsGeneral.navigateToLedgerSync();
   }
 

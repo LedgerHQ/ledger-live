@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { withTranslation, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { bootloader, bootloaderMode } from "@ledgerhq/live-common/deviceWordings";
 import Box from "~/renderer/components/Box";
@@ -110,4 +110,4 @@ const FlashMCUBlueLocal = ({ deviceModelId }: Props) => (
 const FlashMCUBlue = React.memo(FlashMCUBlueLocal);
 const FlashMCU = (props: Props) =>
   props.deviceModelId === "blue" ? <FlashMCUBlue {...props} /> : <FlashMCUNanos {...props} />;
-export default withTranslation()(FlashMCU);
+export default FlashMCU;

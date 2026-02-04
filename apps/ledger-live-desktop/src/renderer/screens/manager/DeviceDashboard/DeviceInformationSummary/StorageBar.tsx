@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Transition, TransitionGroup } from "react-transition-group";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
@@ -39,7 +39,7 @@ const StorageBarGraph = styled.div`
   height: 100%;
   position: relative;
   transform-origin: left;
-  animation: ${p => p.theme.animations.fadeInGrowX};
+  ${p => p.theme.animations.fadeInGrowX};
 `;
 
 const transitionStyles = {
@@ -72,7 +72,6 @@ const StorageBarItem = styled.div.attrs<{
 }>(props => ({
   style: {
     backgroundColor: props.installing ? props.theme.colors.neutral.c40 : props.color,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ...transitionStyles[props.state as keyof typeof transitionStyles](
       `${(props.ratio * 1e2).toFixed(3)}%`,
     ),
@@ -94,7 +93,9 @@ const StorageBarItem = styled.div.attrs<{
       ? css`
           animation: ${blinkOpacity} 2s ease infinite;
         `
-      : ""};
+      : css`
+          animation: none;
+        `};
   & > * {
     width: 100%;
   }
@@ -163,47 +164,76 @@ const StorageBar = ({
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
-}) => (
-  <StorageBarWrapper>
-    {!isIncomplete && (
-      <TransitionGroup component={StorageBarGraph}>
-        {distribution.apps.map(({ name, currency, bytes, blocks }) => (
-          <Transition
-            timeout={{
-              appear: 333,
-              enter: 333,
-              exit: 1200,
-            }}
-            key={`${name}`}
-          >
-            {state => (
-              <StorageBarItem
-                state={state}
-                installing={installQueue.includes(name) || uninstallQueue.includes(name)}
-                color={getAppStorageBarColor({
-                  name,
-                  currency,
-                })}
-                ratio={blocks / distribution.appsSpaceBlocks}
-              >
-                <Tooltip
-                  hideOnClick={false}
-                  content={
-                    <TooltipContent
-                      name={name}
-                      bytes={bytes}
-                      deviceModel={deviceModel}
-                      deviceInfo={deviceInfo}
-                    />
-                  }
-                />
-              </StorageBarItem>
-            )}
-          </Transition>
-        ))}
-      </TransitionGroup>
-    )}
-  </StorageBarWrapper>
-);
+}) => {
+  const refsMapRef = useRef<Map<string, React.RefObject<HTMLDivElement>>>(new Map());
+
+  useEffect(() => {
+    const refsMap = refsMapRef.current;
+    const currentNames = new Set(distribution.apps.map(({ name }) => name));
+    // Remove refs for apps that no longer exist
+    for (const [name] of refsMap) {
+      if (!currentNames.has(name)) {
+        refsMap.delete(name);
+      }
+    }
+    // Add refs for new apps
+    distribution.apps.forEach(({ name }) => {
+      if (!refsMap.has(name)) {
+        refsMap.set(name, React.createRef<HTMLDivElement>());
+      }
+    });
+  }, [distribution.apps]);
+
+  return (
+    <StorageBarWrapper>
+      {!isIncomplete && (
+        <TransitionGroup component={StorageBarGraph}>
+          {distribution.apps
+            .map(({ name, currency, bytes, blocks }) => {
+              const nodeRef = refsMapRef.current.get(name);
+              if (!nodeRef) return null;
+              return (
+                <Transition
+                  timeout={{
+                    appear: 333,
+                    enter: 333,
+                    exit: 1200,
+                  }}
+                  key={`${name}`}
+                  nodeRef={nodeRef}
+                >
+                  {state => (
+                    <StorageBarItem
+                      ref={nodeRef}
+                      state={state}
+                      installing={installQueue.includes(name) || uninstallQueue.includes(name)}
+                      color={getAppStorageBarColor({
+                        name,
+                        currency,
+                      })}
+                      ratio={blocks / distribution.appsSpaceBlocks}
+                    >
+                      <Tooltip
+                        hideOnClick={false}
+                        content={
+                          <TooltipContent
+                            name={name}
+                            bytes={bytes}
+                            deviceModel={deviceModel}
+                            deviceInfo={deviceInfo}
+                          />
+                        }
+                      />
+                    </StorageBarItem>
+                  )}
+                </Transition>
+              );
+            })
+            .filter((item): item is React.ReactElement => item !== null)}
+        </TransitionGroup>
+      )}
+    </StorageBarWrapper>
+  );
+};
 
 export default StorageBar;

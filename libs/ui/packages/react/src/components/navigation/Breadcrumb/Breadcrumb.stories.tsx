@@ -41,7 +41,7 @@ const routes: Route[] = [
 ];
 
 const RouteElement = styled.div`
-  :hover {
+  &:hover {
     text-decoration: underline;
   }
 `;

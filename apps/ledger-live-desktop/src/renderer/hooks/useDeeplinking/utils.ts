@@ -41,7 +41,7 @@ type DeepLinkingEvent = {
 
 const TRACKING_EVENT = "deeplink_clicked";
 
-export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
+export const trackDeeplinkingEvent = (event: DeepLinkingEvent, triggeredAppStart: boolean) => {
   if (event.ajsPropSource) {
     const {
       ajsPropSource,
@@ -54,6 +54,7 @@ export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
       deeplinkLocation,
     } = event;
     track(TRACKING_EVENT, {
+      triggeredAppStart,
       deeplinkSource: ajsPropSource,
       deeplinkCampaign: ajsPropCampaign,
       url,
@@ -74,6 +75,7 @@ export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
       deeplinkLocation,
     } = event;
     track(TRACKING_EVENT, {
+      triggeredAppStart,
       deeplinkSource,
       deeplinkType,
       deeplinkDestination,

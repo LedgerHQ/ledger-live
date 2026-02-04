@@ -650,7 +650,7 @@ export const renderWarningOutdated = ({
       <Trans i18nKey="DeviceAction.outdatedDesc" values={{ appName }} />
     </ErrorDescription>
     <ButtonContainer>
-      <Button secondary onClick={passWarning}>
+      <Button onClick={passWarning}>
         <Trans i18nKey="common.continue" />
       </Button>
       <OpenManagerButton ml={4} mt={0} appName={appName} updateApp />
@@ -1021,7 +1021,7 @@ export const HardwareUpdate = ({
 }) => (
   <Wrapper>
     <Header>
-      <Image resource={Nano} alt="NanoS" mb="40px"></Image>
+      <Image resource={Nano} alt="NanoS" style={{ marginBottom: 40 }} />
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="neutral.c100">

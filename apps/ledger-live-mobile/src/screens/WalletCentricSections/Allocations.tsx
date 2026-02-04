@@ -4,11 +4,9 @@ import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/curre
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { DefaultTheme, useTheme } from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import chunk from "lodash/chunk";
 import { ensureContrast } from "../../colors";
-import { ScreenName } from "~/const";
 import { useDistribution } from "~/actions/general";
 import RingChart, { ColorableDistributionItem } from "../Analytics/RingChart";
 import { track } from "~/analytics";
@@ -34,9 +32,8 @@ const AllocationCaption = React.memo(
   },
 );
 
-const Allocations = () => {
+const Allocations = ({ screenName, onPress }: { screenName: string; onPress: () => void }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount: true,
@@ -47,9 +44,10 @@ const Allocations = () => {
   const goToAnalyticsAllocations = useCallback(() => {
     track("analytics_clicked", {
       analytics: "Allocations",
+      page: screenName,
     });
-    navigation.navigate(ScreenName.AnalyticsAllocation);
-  }, [navigation]);
+    onPress();
+  }, [onPress, screenName]);
 
   const distributionListFormatted: ColorableDistributionItem[] = useMemo(() => {
     const displayedCurrencies: ColorableDistributionItem[] = distribution.list
@@ -118,7 +116,7 @@ const Allocations = () => {
   );
 
   return (
-    <Flex flex={1} mt={6}>
+    <Flex flex={1}>
       <TouchableOpacity onPress={goToAnalyticsAllocations}>
         <Flex flexDirection="row" alignItems="center">
           <Flex>
