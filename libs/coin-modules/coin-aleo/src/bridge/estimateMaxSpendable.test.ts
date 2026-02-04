@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import type { Transaction } from "../types";
+import { TRANSACTION_TYPE } from "../constants";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
@@ -8,8 +9,8 @@ import { prepareTransaction } from "./prepareTransaction";
 jest.mock("./prepareTransaction");
 jest.mock("./createTransaction");
 
-const mockPrepareTransaction = prepareTransaction as jest.MockedFunction<typeof prepareTransaction>;
-const mockCreateTransaction = createTransaction as jest.MockedFunction<typeof createTransaction>;
+const mockPrepareTransaction = jest.mocked(prepareTransaction);
+const mockCreateTransaction = jest.mocked(createTransaction);
 
 describe("estimateMaxSpendable", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -19,6 +20,7 @@ describe("estimateMaxSpendable", () => {
     useAllAmount: true,
     recipient: "",
     fees: new BigNumber(5000),
+    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
 
   beforeEach(() => {
@@ -31,6 +33,7 @@ describe("estimateMaxSpendable", () => {
       useAllAmount: false,
       recipient: "",
       fees: new BigNumber(0),
+      type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     });
   });
 

@@ -16,7 +16,7 @@ const mockGetCoinConfig = aleoConfig.getCoinConfig as jest.MockedFunction<
 describe("apiClient", () => {
   const mockCurrency = getMockedCurrency();
   const mockConfig = getMockedConfig();
-  const mockNodeUrl = mockConfig.nodeUrl;
+  const mockNodeUrl = mockConfig.apiUrls.node;
   const mockAddress = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
   beforeEach(() => {

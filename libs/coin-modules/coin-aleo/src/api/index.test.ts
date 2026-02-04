@@ -1,4 +1,5 @@
 import coinConfig, { type AleoCoinConfig } from "../config";
+import { feesByTransactionType, ESTIMATED_FEE_SAFETY_RATE } from "../constants";
 import { createApi } from "./index";
 
 describe("createApi", () => {
@@ -6,6 +7,8 @@ describe("createApi", () => {
     networkType: "mainnet",
     apiUrls: { node: "", sdk: "" },
     status: { type: "active" },
+    feesByTransactionType,
+    estimatedFeeSafetyRate: ESTIMATED_FEE_SAFETY_RATE,
   };
 
   it("should set the coin config value", () => {

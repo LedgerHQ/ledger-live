@@ -7,17 +7,20 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { estimateFees, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";
+import aleoCoinConfig from "../config";
+import { TRANSACTION_TYPE } from "../constants";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../logic");
 jest.mock("../logic/utils");
 
-const mockEstimateFees = estimateFees as jest.MockedFunction<typeof estimateFees>;
-const mockValidateAddress = validateAddress as jest.MockedFunction<typeof validateAddress>;
-const mockCalculateAmount = calculateAmount as jest.MockedFunction<typeof calculateAmount>;
+const mockEstimateFees = jest.mocked(estimateFees);
+const mockValidateAddress = jest.mocked(validateAddress);
+const mockCalculateAmount = jest.mocked(calculateAmount);
 
 describe("getTransactionStatus", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -29,11 +32,13 @@ describe("getTransactionStatus", () => {
     useAllAmount: false,
     recipient: "aleo1recipient",
     fees: new BigNumber(0),
+    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
+  const mockGetCoinConfig = jest.spyOn(aleoCoinConfig, "getCoinConfig");
 
   beforeEach(() => {
     jest.clearAllMocks();
-
+    mockGetCoinConfig.mockReturnValue(getMockedConfig());
     mockEstimateFees.mockResolvedValue(mockFees);
     mockValidateAddress.mockResolvedValue(true);
     mockCalculateAmount.mockReturnValue({

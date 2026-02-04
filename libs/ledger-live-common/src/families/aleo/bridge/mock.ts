@@ -20,6 +20,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "../../../config";
 import { validateAddress } from "../../../bridge/validateAddress";
 import aleoConfig, { type AleoCoinConfig } from "@ledgerhq/coin-aleo/config";
+import { TRANSACTION_TYPE } from "@ledgerhq/coin-aleo/constants";
 
 const receive = makeAccountBridgeReceive();
 const estimateFees = (_a, _t: Transaction) => new BigNumber(50000);
@@ -30,6 +31,7 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   fees: new BigNumber(50000),
+  type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
 });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {

@@ -6,13 +6,14 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type {
   Transaction as AleoTransaction,
   TransactionStatus as AleoTransactionStatus,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
+import aleoCoinConfig from "../config";
+import { TRANSACTION_TYPE } from "../constants";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
@@ -23,8 +24,7 @@ async function validateRecipient(account: Account, recipient: string): Promise<E
   }
 
   const isValidRecipient = await validateAddress(recipient, {});
-  const currency = findCryptoCurrencyById("aleo");
-  const currencyName = currency?.name ?? "Aleo";
+  const currencyName = account.currency.name;
 
   if (!isValidRecipient) {
     return new InvalidAddress("", { currencyName });
@@ -45,7 +45,12 @@ export const getTransactionStatus: AccountBridge<
   const errors: Errors = {};
   const warnings: Warnings = {};
 
-  const estimatedFees = await estimateFees();
+  const config = aleoCoinConfig.getCoinConfig(account.currency);
+  const estimatedFees = await estimateFees({
+    feesByTransactionType: config.feesByTransactionType,
+    transactionType: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    estimatedFeeSafetyRate: config.estimatedFeeSafetyRate,
+  });
   const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
   const recipientError = await validateRecipient(account, transaction.recipient);

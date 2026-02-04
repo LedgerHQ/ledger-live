@@ -2,6 +2,7 @@ import invariant from "invariant";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
+import { feesByTransactionType, ESTIMATED_FEE_SAFETY_RATE } from "../constants";
 
 describe("createApi", () => {
   const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
@@ -13,6 +14,8 @@ describe("createApi", () => {
         node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
+      feesByTransactionType,
+      estimatedFeeSafetyRate: ESTIMATED_FEE_SAFETY_RATE,
     },
     "aleo",
   );

@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../../types";
+import { TRANSACTION_TYPE } from "../../constants";
 
 export const getMockedTransaction = (overrides?: Partial<Transaction>): Transaction => {
   return {
@@ -8,6 +9,7 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
     recipient: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
     fees: new BigNumber(0),
     useAllAmount: false,
+    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     ...overrides,
   };
 };

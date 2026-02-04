@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Transaction, TransactionRaw } from "../types";
+import { TRANSACTION_TYPE } from "../constants";
 
 export function formatTransaction(transaction: Transaction, account: Account): string {
   const amount = formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
@@ -27,6 +28,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     ...common,
     family: tr.family,
     fees: new BigNumber(tr.fees),
+    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
 }
 

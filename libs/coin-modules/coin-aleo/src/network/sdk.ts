@@ -19,11 +19,11 @@ async function decryptRecord({
   ciphertext: string;
   viewKey: string;
 }): Promise<AleoDecryptedRecordResponse> {
-  const { networkType } = getNetworkConfig(currency);
+  const { sdkUrl } = getNetworkConfig(currency);
 
   const res = await network<AleoDecryptedRecordResponse>({
     method: "POST",
-    url: `https://aleo-backend.api.live.ledger.com/network/${networkType}/decrypt`,
+    url: `${sdkUrl}/decrypt`,
     data: {
       ciphertext,
       view_key: viewKey,
@@ -50,11 +50,11 @@ async function decryptCiphertext({
   functionName: string;
   outputIndex: number;
 }): Promise<AleoDecryptedCiphertextResponse> {
-  const { networkType } = getNetworkConfig(currency);
+  const { sdkUrl } = getNetworkConfig(currency);
 
   const res = await network<AleoDecryptedCiphertextResponse>({
     method: "POST",
-    url: `https://aleo-backend.api.live.ledger-test.com/network/${networkType}/symmetric_decrypt`,
+    url: `${sdkUrl}/symmetric_decrypt`,
     headers: {
       "Content-Type": "application/json",
     },

@@ -1,15 +1,18 @@
 import BigNumber from "bignumber.js";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { estimateFees } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";
+import aleoCoinConfig from "../config";
+import { TRANSACTION_TYPE } from "../constants";
 import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../logic");
 jest.mock("../logic/utils");
 
-const mockEstimateFees = estimateFees as jest.MockedFunction<typeof estimateFees>;
-const mockCalculateAmount = calculateAmount as jest.MockedFunction<typeof calculateAmount>;
+const mockEstimateFees = jest.mocked(estimateFees);
+const mockCalculateAmount = jest.mocked(calculateAmount);
 
 describe("prepareTransaction", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -21,11 +24,13 @@ describe("prepareTransaction", () => {
     useAllAmount: false,
     recipient: "aleo1recipient",
     fees: new BigNumber(0),
+    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
+  const mockGetCoinConfig = jest.spyOn(aleoCoinConfig, "getCoinConfig");
 
   beforeEach(() => {
     jest.clearAllMocks();
-
+    mockGetCoinConfig.mockReturnValue(getMockedConfig());
     mockEstimateFees.mockResolvedValue(mockFees);
     mockCalculateAmount.mockReturnValue({
       amount: mockAmount,
