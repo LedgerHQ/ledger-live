@@ -355,13 +355,8 @@ export class NewSendFlowPage extends Component {
 
   @step("Open fees menu")
   async openFeesMenu() {
-    const isVisible = await this.feesMenuTrigger.isVisible().catch(() => false);
-    if (!isVisible) {
-      throw new Error("Fees menu trigger is not visible (no fee presets/custom fees available).");
-    }
+    await this.feesMenuTrigger.waitFor({ state: "visible" });
     await this.feesMenuTrigger.click();
-    // Wait for menu to open
-    await this.page.waitForTimeout(200);
   }
 
   @step("Select fee preset: $0")
