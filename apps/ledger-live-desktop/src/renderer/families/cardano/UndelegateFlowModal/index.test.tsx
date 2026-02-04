@@ -5,7 +5,15 @@ import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
 // Mock Body component
 jest.mock("./Body", () => {
-  const MockBody = ({ stepId, onChangeStepId, onClose }: any) => (
+  const MockBody = ({
+    stepId,
+    onChangeStepId,
+    onClose,
+  }: {
+    stepId: string;
+    onChangeStepId: (stepId: string) => void;
+    onClose: () => void;
+  }) => (
     <div data-testid="undelegate-modal-body">
       <div data-testid="step-id">{stepId}</div>
       <button data-testid="change-step-button" onClick={() => onChangeStepId("connectDevice")}>
@@ -22,9 +30,13 @@ jest.mock("./Body", () => {
 
 // Mock Modal to just render children
 jest.mock("~/renderer/components/Modal", () => {
-  const MockModal = ({ render, name }: any) => (
-    <div data-testid={`modal-${name}`}>{render({ onClose: jest.fn(), data: {} })}</div>
-  );
+  const MockModal = ({
+    render,
+    name,
+  }: {
+    render: (props: { onClose: () => void; data: object }) => React.ReactNode;
+    name: string;
+  }) => <div data-testid={`modal-${name}`}>{render({ onClose: jest.fn(), data: {} })}</div>;
   MockModal.displayName = "MockModal";
   return MockModal;
 });
