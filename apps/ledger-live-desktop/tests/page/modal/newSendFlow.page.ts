@@ -61,6 +61,8 @@ export class NewSendFlowPage extends Component {
     .locator("button")
     .filter({ hasText: /•/ })
     .first();
+  readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
+  readonly coinControlFeesMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
   readonly reviewButton = this.dialog.getByRole("button", { name: /^review$/i });
   readonly getFundsButton = this.dialog.getByRole("button", { name: /^get /i });
   // Toggle button to switch between FIAT and CRYPTO input modes

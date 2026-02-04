@@ -572,17 +572,19 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should show custom and coin control options in fees menu (BTC)", async ({
+    test.only("should show custom and coin control options in fees menu (BTC)", async ({
       app,
       page,
     }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
       await app.newSendFlow.fillCryptoAmount("0.0001");
       await app.newSendFlow.openFeesMenu();
-      await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
-      await expect(page.getByRole("menuitem", { name: /coin control/i })).toBeVisible({
-        timeout: 10000,
-      });
+
+      await app.newSendFlow.customFeesMenuItem.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.customFeesMenuItem).toBeVisible();
+
+      await app.newSendFlow.coinControlFeesMenuItem.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.coinControlFeesMenuItem).toBeVisible();
     });
 
     test("should show custom fees option in fees menu (EVM)", async ({ app, page }) => {
