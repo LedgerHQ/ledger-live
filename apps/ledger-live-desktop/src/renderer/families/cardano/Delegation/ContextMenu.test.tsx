@@ -18,7 +18,7 @@ jest.mock("~/renderer/components/DropDownSelector", () => {
       <div>
         {children && children({})}
         <div data-testid="dropdown-items">
-          {items.map((item: any, index: number) => (
+          {items.map((item: { key: string; onClick: () => void; label: string }, index: number) => (
             <div key={item.key || index}>
               {renderItem ? renderItem({ item }) : <div onClick={item.onClick}>{item.label}</div>}
             </div>

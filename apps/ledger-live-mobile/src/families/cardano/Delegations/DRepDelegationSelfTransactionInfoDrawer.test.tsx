@@ -23,12 +23,17 @@ jest.mock("@react-navigation/native", () => ({
 
 jest.mock("~/components/QueuedDrawer", () => {
   const { View } = jest.requireActual("react-native");
-  return ({ children, isRequestingToBeOpened }: any) =>
-    isRequestingToBeOpened ? <View testID="queued-drawer">{children}</View> : null;
+  return ({
+    children,
+    isRequestingToBeOpened,
+  }: {
+    children: React.ReactNode;
+    isRequestingToBeOpened: boolean;
+  }) => (isRequestingToBeOpened ? <View testID="queued-drawer">{children}</View> : null);
 });
 jest.mock("~/components/wrappedUi/Button", () => {
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
-  return ({ onPress, children }: any) => (
+  return ({ onPress, children }: { onPress: () => void; children: React.ReactNode }) => (
     <TouchableOpacity onPress={onPress} testID="continue-button">
       <Text>{children}</Text>
     </TouchableOpacity>

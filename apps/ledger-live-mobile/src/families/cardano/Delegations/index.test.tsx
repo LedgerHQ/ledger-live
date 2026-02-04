@@ -24,7 +24,7 @@ jest.mock("~/context/Locale", () => ({
 // Mock child components
 jest.mock("~/components/AccountDelegationInfo", () => {
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
-  return ({ onPress, title }: any) => (
+  return ({ onPress, title }: { onPress: () => void; title: string }) => (
     <TouchableOpacity onPress={onPress} testID="account-delegation-info">
       <Text>{title}</Text>
     </TouchableOpacity>
@@ -33,10 +33,16 @@ jest.mock("~/components/AccountDelegationInfo", () => {
 
 jest.mock("~/components/DelegationDrawer", () => {
   const { View, Button } = jest.requireActual("react-native");
-  return ({ isOpen, actions }: any) =>
+  return ({
+    isOpen,
+    actions,
+  }: {
+    isOpen: boolean;
+    actions: { label: string; onPress: () => void }[];
+  }) =>
     isOpen ? (
       <View testID="delegation-drawer">
-        {actions.map((action: any, i: number) => (
+        {actions.map((action: { label: string; onPress: () => void }, i: number) => (
           <Button
             key={i}
             title={action.label}
@@ -50,7 +56,7 @@ jest.mock("~/components/DelegationDrawer", () => {
 
 jest.mock("./Row", () => {
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
-  return ({ onPress }: any) => (
+  return ({ onPress }: { onPress: () => void }) => (
     <TouchableOpacity onPress={onPress} testID="delegation-row">
       <Text>Delegation Row</Text>
     </TouchableOpacity>
@@ -59,7 +65,8 @@ jest.mock("./Row", () => {
 
 jest.mock("./DRepDelegationSelfTransactionInfoDrawer", () => {
   const { View } = jest.requireActual("react-native");
-  return ({ isOpen }: any) => (isOpen ? <View testID="drep-self-tx-drawer" /> : null);
+  return ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <View testID="drep-self-tx-drawer" /> : null;
 });
 
 jest.mock("~/reducers/wallet", () => ({
@@ -72,8 +79,8 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
 
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: (account: any) => account,
-  flattenAccounts: (accounts: any[]) => accounts,
+  getMainAccount: (account: unknown) => account,
+  flattenAccounts: (accounts: unknown[]) => accounts,
 }));
 jest.mock("@ledgerhq/live-common/explorers", () => ({
   getDefaultExplorerView: jest.fn(),
@@ -100,7 +107,9 @@ describe("CardanoDelegations", () => {
   });
 
   it("renders null if not a Cardano account", () => {
-    const { toJSON } = render(<CardanoDelegations account={{ type: "TokenAccount" } as any} />);
+    const { toJSON } = render(
+      <CardanoDelegations account={{ type: "TokenAccount" } as unknown as CardanoAccount} />,
+    );
     expect(toJSON()).toBeNull();
   });
 
