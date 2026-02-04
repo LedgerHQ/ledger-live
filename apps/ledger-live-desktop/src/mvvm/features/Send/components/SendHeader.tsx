@@ -103,6 +103,7 @@ export function SendHeader() {
           value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}
+          data-testid="send-recipient-input"
           placeholder={
             uiConfig.recipientSupportsDomain
               ? t("newSendFlow.placeholder")

@@ -17,7 +17,7 @@ export class NewSendFlowPage extends Component {
    * - "Enter address or ENS" (supports ENS)
    * - "Enter address" (no ENS)
    */
-  readonly recipientInput = this.dialog.getByPlaceholder(/enter address/i);
+  readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
   readonly editRecipientButton = this.dialog.getByRole("button", { name: /edit recipient/i });
 
   // ========== RECIPIENT STEP ==========
@@ -38,6 +38,11 @@ export class NewSendFlowPage extends Component {
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly senderErrorBanner = this.dialog.getByTestId("sender-error-banner");
   readonly newAddressBanner = this.dialog.getByText(/sending to a new address/i).first();
+
+  // Memo
+  readonly skipMemoProposal = this.dialog.getByTestId("send-skip-memo-proposal");
+  readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
+  readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
 
   // ========== AMOUNT STEP ==========
   readonly amountInput = this.dialog.getByPlaceholder(/^0$/);
@@ -65,7 +70,9 @@ export class NewSendFlowPage extends Component {
 
   // ========== CONFIRMATION STEP ==========
   // Confirmation step doesn't have stable static copy; rely on status gradient in the dialog.
-  readonly confirmationStatusGradient = this.dialog.locator(".bg-gradient-success, .bg-gradient-error");
+  readonly confirmationStatusGradient = this.dialog.locator(
+    ".bg-gradient-success, .bg-gradient-error",
+  );
   readonly viewDetailsButton = this.dialog.getByRole("button", { name: /view|details/i });
   readonly closeConfirmButton = this.dialog.getByRole("button", { name: /close/i });
 
@@ -143,6 +150,7 @@ export class NewSendFlowPage extends Component {
       this.sanctionedBanner.waitFor({ state: "visible", timeout: 20000 }),
       this.recipientErrorBanner.waitFor({ state: "visible", timeout: 20000 }),
       this.senderErrorBanner.waitFor({ state: "visible", timeout: 20000 }),
+      this.skipMemoProposal.waitFor({ state: "visible", timeout: 20000 }),
     ]).catch(() => {
       // If all timeout, give UI time to settle for slower environments.
     });
@@ -178,9 +186,7 @@ export class NewSendFlowPage extends Component {
 
   @step("Verify validation message contains: $0")
   async expectValidationMessage(text: RegExp | string) {
-    const hasValidationMessage = await this.validationStatusMessage
-      .isVisible()
-      .catch(() => false);
+    const hasValidationMessage = await this.validationStatusMessage.isVisible().catch(() => false);
     if (hasValidationMessage) {
       await expect(this.validationStatusMessage).toContainText(text, { timeout: 10000 });
       return;
@@ -199,6 +205,13 @@ export class NewSendFlowPage extends Component {
     }
 
     throw new Error("No validation message or error banner appeared");
+  }
+
+  @step("Skip memo")
+  async skipMemo() {
+    await this.skipMemoLink.click();
+    await expect(this.skipMemoConfirmButton).toBeVisible();
+    await this.skipMemoConfirmButton.click();
   }
 
   // ========== AMOUNT STEP METHODS ==========
@@ -353,10 +366,7 @@ export class NewSendFlowPage extends Component {
     await this.openFeesMenu();
     // MenuRadioItem accessible name might include sublabel (e.g., "Fast 4 sat/vbyte")
     // Use filter with hasText to match any part of the content
-    const item = this.page
-      .getByRole("menuitemradio")
-      .filter({ hasText: presetLabel })
-      .first();
+    const item = this.page.getByRole("menuitemradio").filter({ hasText: presetLabel }).first();
     await item.waitFor({ state: "visible", timeout: 10000 });
     await item.click();
     // Wait for menu to close and footer to update.
@@ -391,7 +401,9 @@ export class NewSendFlowPage extends Component {
         return;
       }
 
-      const isConfirmationVisible = await this.confirmationStatusGradient.isVisible().catch(() => false);
+      const isConfirmationVisible = await this.confirmationStatusGradient
+        .isVisible()
+        .catch(() => false);
       if (isConfirmationVisible) {
         return;
       }

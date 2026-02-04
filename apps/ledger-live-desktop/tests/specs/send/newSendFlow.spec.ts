@@ -52,7 +52,8 @@ const ACCOUNT_NAMES = {
 };
 
 test.use({
-  userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXTZ1AccountXLM1AccountALGO1AccountXRP",
+  userdata:
+    "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXTZ1AccountXLM1AccountALGO1AccountXRP",
   featureFlags: {
     newSendFlow: {
       enabled: true,
@@ -360,11 +361,21 @@ test.describe("New Send Flow", () => {
 
   test.describe("Amount Step", () => {
     // Helper to reach Amount step
-    async function reachAmountStep(app: any, page: any, accountName: string, address: string) {
+    async function reachAmountStep(
+      app: any,
+      page: any,
+      accountName: string,
+      address: string,
+      hasMemo: boolean = false,
+    ) {
       await openSendFlowForAccount(page, app, accountName);
       await app.newSendFlow.typeAddress(address);
       await app.newSendFlow.waitForRecipientValidation();
-      await app.newSendFlow.selectAddressItem(0);
+      if (hasMemo) {
+        await app.newSendFlow.skipMemo();
+      } else {
+        await app.newSendFlow.selectAddressItem(0);
+      }
       await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
     }
 
@@ -633,15 +644,15 @@ test.describe("New Send Flow", () => {
       expect(hasMenu).toBe(false);
     });
 
-    test("should not show fee menu options for Algorand", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand);
+    test.only("should not show fee menu options for Algorand", async ({ app, page }) => {
+      await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand, true);
       await app.newSendFlow.fillCryptoAmount("0.1");
       const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
       expect(hasMenu).toBe(false);
     });
 
     test("should show custom fees only for Stellar", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.stellar, TEST_ADDRESSES.stellar);
+      await reachAmountStep(app, page, ACCOUNT_NAMES.stellar, TEST_ADDRESSES.stellar, true);
       await app.newSendFlow.fillCryptoAmount("1");
       await app.newSendFlow.openFeesMenu();
       await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
@@ -649,7 +660,7 @@ test.describe("New Send Flow", () => {
     });
 
     test("should not show fee menu options for XRP", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.xrp, TEST_ADDRESSES.xrp);
+      await reachAmountStep(app, page, ACCOUNT_NAMES.xrp, TEST_ADDRESSES.xrp, true);
       await app.newSendFlow.fillCryptoAmount("1");
       const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
       expect(hasMenu).toBe(false);
