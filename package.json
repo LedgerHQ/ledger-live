@@ -59,6 +59,8 @@
     "dev:lld:msw": "pnpm turbo start:msw --filter=ledger-live-desktop",
     "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo start --filter=live-mobile",
+    "dev:llm:ios": "pnpm turbo start:ios --filter=live-mobile",
+    "dev:llm:android": "pnpm turbo start:android --filter=live-mobile",
     "dev:llm:msw": "pnpm turbo start:msw --filter=live-mobile",
     "release:lld": "pnpm turbo release --filter=ledger-live-desktop",
     "pre:lld": "pnpm turbo pre-build --filter=ledger-live-desktop",
@@ -213,7 +215,6 @@
     "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens"
   },
   "devDependencies": {
-    "@ledgerhq/lumen-design-core": "catalog:",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.7",
     "@commitlint/cli": "17.8.1",
@@ -221,15 +222,16 @@
     "@commitlint/prompt-cli": "17.8.1",
     "@datadog/datadog-ci": "3.11.0",
     "@ledgerhq/create-release-hash": "workspace:*",
+    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
     "@react-native-community/cli": "15.1.0",
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
     "@react-native/babel-plugin-codegen": "catalog:",
-    "@vitest/mocker": "4.0.17",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
+    "@vitest/mocker": "4.0.17",
     "chalk": "4.1.2",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
@@ -281,7 +283,8 @@
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
-      "react-native@0.79.7": "patches/react-native@0.79.7.patch"
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "@polkadot/types-codec@11.2.1": "patches/@polkadot__types-codec@11.2.1.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
