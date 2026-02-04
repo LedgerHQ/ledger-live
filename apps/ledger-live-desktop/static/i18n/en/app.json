@@ -7873,7 +7873,8 @@
     "title": "Home",
     "today": "Today",
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto"
+    "noBalanceTitle": "Secure your crypto",
+    "noDeviceTitle": "The most secure wallet"
   },
   "marketBanner": {
     "title": "Explore market",
