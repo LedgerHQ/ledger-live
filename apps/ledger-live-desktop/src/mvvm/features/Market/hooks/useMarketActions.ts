@@ -1,15 +1,11 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "../../../../renderer/screens/stake/constants";
 import useStakeFlow from "../../../../renderer/screens/stake";
 import { useGetSwapTrackingProperties } from "../../../../renderer/screens/exchange/Swap2/utils";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import {
   isAvailableOnBuy,
@@ -20,8 +16,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { buildSwapNavigationState } from "../utils/swapNavigation";
+import { useSwapNavigation } from "./useSwapNavigation";
 
 export enum Page {
   Market = "Page Market",
@@ -41,11 +36,8 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
-  const allAccounts = useSelector(accountsSelector);
-  const flattenedAccounts = flattenAccounts(allAccounts);
-
   const { isCurrencyAvailable } = useRampCatalog();
-  const { openAssetAndAccount } = useOpenAssetAndAccount();
+  const { navigateToSwap } = useSwapNavigation();
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
@@ -101,62 +93,9 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
 
-      const fromPath = location.pathname;
-      const availableAccounts = getAvailableAccountsById(ledgerCurrency.id, flattenedAccounts);
-      const hasAccounts = availableAccounts.length > 0;
-
-      if (!hasAccounts) {
-        navigate("/swap", {
-          state: buildSwapNavigationState({ defaultCurrency: ledgerCurrency, fromPath }),
-        });
-        return;
-      }
-
-      if (availableAccounts.length === 1) {
-        const account = availableAccounts[0];
-        const parentAccount = isTokenAccount(account)
-          ? allAccounts.find(a => a.id === account.parentId)
-          : undefined;
-
-        navigate("/swap", {
-          state: buildSwapNavigationState({
-            defaultCurrency: ledgerCurrency,
-            fromPath,
-            account,
-            parentAccount,
-          }),
-        });
-        return;
-      }
-
-      openAssetAndAccount({
-        currencies: [ledgerCurrency.id],
-        areCurrenciesFiltered: true,
-        useCase: "swap",
-        drawerConfiguration: {},
-        onSuccess: (account, parentAccount) => {
-          navigate("/swap", {
-            state: buildSwapNavigationState({
-              defaultCurrency: ledgerCurrency,
-              fromPath,
-              account,
-              parentAccount,
-            }),
-          });
-        },
-      });
+      navigateToSwap(ledgerCurrency);
     },
-    [
-      getLedgerCurrency,
-      currency?.ticker,
-      page,
-      swapDefaultTrack,
-      navigate,
-      location.pathname,
-      flattenedAccounts,
-      allAccounts,
-      openAssetAndAccount,
-    ],
+    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, navigateToSwap],
   );
 
   const onStake = useCallback(
