@@ -190,8 +190,10 @@ export async function listOperations(
       "NFT_OUT",
     ].includes(operation.type);
 
-  const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean =>
-    op.senders.includes(address) || op.recipients.includes(address);
+  const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean => {
+    const include = (list: string[]): boolean => list.map(item => item.toLowerCase()).includes(address.toLowerCase());
+    return include(op.senders) || include(op.recipients);
+  }
 
   const operations = nativeOperations
     .concat(tokenOperations)
