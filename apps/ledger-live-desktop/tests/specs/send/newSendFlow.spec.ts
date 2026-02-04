@@ -572,7 +572,7 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test.only("should show custom and coin control options in fees menu (BTC)", async ({
+    test("should show custom and coin control options in fees menu (BTC)", async ({
       app,
       page,
     }) => {
@@ -591,7 +591,8 @@ test.describe("New Send Flow", () => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
       await app.newSendFlow.fillCryptoAmount("0.001");
       await app.newSendFlow.openFeesMenu();
-      await expect(page.getByRole("menuitem", { name: /custom/i })).toBeVisible({ timeout: 10000 });
+      await app.newSendFlow.customFeesMenuItem.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.customFeesMenuItem).toBeVisible();
     });
 
     test("should not show fee menu options for Tezos", async ({ app, page }) => {
