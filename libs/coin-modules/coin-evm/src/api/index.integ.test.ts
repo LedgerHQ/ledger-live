@@ -6,9 +6,9 @@ import {
   Operation,
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { ethers } from "ethers";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { ethers } from "ethers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -471,9 +471,9 @@ describe.each([
         const { items: firstCallResult, next: firstCallToken } = await module.listOperations(
           address,
           {
-          minHeight: 200,
-          order: "desc",
-          limit: 5,
+            minHeight: 200,
+            order: "desc",
+            limit: 5,
           },
         );
 

@@ -1,5 +1,5 @@
-import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import { EvmConfigInfo } from "../../config";
 
 /** Constant representing no pagination token (end of pagination or first page) */

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { preloadWithAPI } from "./preload";
+import { Cluster } from "@solana/web3.js";
+import { firstValueFrom } from "rxjs";
 import { ChainAPI } from "./network";
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
-import { Cluster } from "@solana/web3.js";
-import { LEDGER_VALIDATOR_BY_CHORUS_ONE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
+import { preloadWithAPI } from "./preload";
 import { getSolanaPreloadData } from "./preload-data";
-import { firstValueFrom } from "rxjs";
+import { LEDGER_VALIDATOR_BY_CHORUS_ONE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
 
 jest.mock("./network/validator-app");
 

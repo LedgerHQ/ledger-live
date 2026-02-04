@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
@@ -11,6 +11,7 @@ import {
   deserializePagingToken,
   serializePagingToken,
 } from "../adapters";
+import { NO_TOKEN } from "../network/explorer/types";
 import {
   EtherscanERC1155Event,
   EtherscanERC20Event,
@@ -18,7 +19,6 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../types";
-import { NO_TOKEN } from "../network/explorer/types";
 
 describe("EVM Family", () => {
   describe("adapters", () => {

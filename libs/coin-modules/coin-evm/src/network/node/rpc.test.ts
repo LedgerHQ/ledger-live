@@ -1,16 +1,16 @@
 import { AssertionError, fail } from "assert";
-import { JsonRpcProvider, TransactionReceipt, TransactionResponse, ethers } from "ethers";
-import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { JsonRpcProvider, TransactionReceipt, TransactionResponse, ethers } from "ethers";
+import { getCoinConfig } from "../../config";
+import { GasEstimationError, InsufficientFunds } from "../../errors";
+import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
 } from "../../types";
-import { GasEstimationError, InsufficientFunds } from "../../errors";
-import { makeAccount } from "../../fixtures/common.fixtures";
-import { getCoinConfig } from "../../config";
 import * as RPC_API from "./rpc.common";
 
 jest.useFakeTimers();

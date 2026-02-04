@@ -1,8 +1,8 @@
 import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { getNodeApi } from "../network/node";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { getNodeApi } from "../network/node";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   const nodeApi = getNodeApi(currency);

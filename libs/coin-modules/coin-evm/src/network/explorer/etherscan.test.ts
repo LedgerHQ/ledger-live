@@ -1,10 +1,21 @@
 import { AssertionError, fail } from "assert";
-import axios from "axios";
-import BigNumber from "bignumber.js";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import axios from "axios";
+import BigNumber from "bignumber.js";
+import {
+  deserializePagingToken,
+  etherscanERC1155EventToOperations,
+  etherscanERC20EventToOperations,
+  etherscanERC721EventToOperations,
+  etherscanInternalTransactionToOperations,
+  etherscanOperationToOperations,
+  PagingState,
+  serializePagingToken,
+} from "../../adapters";
+import { getCoinConfig } from "../../config";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import {
@@ -14,17 +25,6 @@ import {
   etherscanInternalOperations,
   etherscanTokenOperations,
 } from "../../fixtures/etherscan.fixtures";
-import {
-  etherscanERC1155EventToOperations,
-  etherscanERC20EventToOperations,
-  etherscanERC721EventToOperations,
-  etherscanInternalTransactionToOperations,
-  etherscanOperationToOperations,
-  deserializePagingToken,
-  serializePagingToken,
-  PagingState,
-} from "../../adapters";
-import { getCoinConfig } from "../../config";
 import * as ETHERSCAN_API from "./etherscan";
 
 setupMockCryptoAssetsStore({

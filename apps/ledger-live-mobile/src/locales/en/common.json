@@ -3876,7 +3876,8 @@
         "title": "Select quote"
       },
       "twoStepApproval": {
-        "title": "Complete steps"
+        "title": "Complete steps",
+        "completedTitle": "Transaction Status"
       },
       "loader": {
         "title": "Processing Swap",

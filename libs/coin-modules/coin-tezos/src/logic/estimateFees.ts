@@ -1,8 +1,8 @@
+import { log } from "@ledgerhq/logs";
 import { COST_PER_BYTE, getRevealFee, ORIGINATION_SIZE, Estimate } from "@taquito/taquito";
 import { validatePublicKey, ValidationResult } from "@taquito/utils";
-import { log } from "@ledgerhq/logs";
-import { TezosOperationMode } from "../types/model";
 import { UnsupportedTransactionMode } from "../types/errors";
+import { TezosOperationMode } from "../types/model";
 import {
   createFallbackEstimation,
   createMockSigner,

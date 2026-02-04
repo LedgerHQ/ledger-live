@@ -1,19 +1,19 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
-import axios, { AxiosRequestConfig } from "axios";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Batcher } from "@ledgerhq/live-network/batcher/types";
 import { makeBatcher } from "@ledgerhq/live-network/batcher/index";
-import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
+import { Batcher } from "@ledgerhq/live-network/batcher/types";
+import { delay } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import axios, { AxiosRequestConfig } from "axios";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
+import { getCoinConfig } from "../../config";
+import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
-import { getCoinConfig } from "../../config";
-import { getGasOptions } from "../gasTracker/ledger";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
+import { getGasOptions } from "../gasTracker/ledger";
 import { NodeApi, isLedgerNodeConfig } from "./types";
 
 export const LEDGER_TIMEOUT = 10_000; // 10_000ms (10s) for network call timeout

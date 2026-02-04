@@ -1,6 +1,5 @@
-import { ethers, Transaction } from "ethers";
-import { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -8,12 +7,13 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { transactionToEthersTransaction } from "./adapters";
+import type { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { ethers, Transaction } from "ethers";
 import ERC1155ABI from "./abis/erc1155.abi.json";
-import ERC721ABI from "./abis/erc721.abi.json";
 import ERC20ABI from "./abis/erc20.abi.json";
+import ERC721ABI from "./abis/erc721.abi.json";
+import { transactionToEthersTransaction } from "./adapters";
 import type {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,

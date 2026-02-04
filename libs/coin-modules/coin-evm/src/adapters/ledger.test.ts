@@ -1,13 +1,6 @@
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import {
-  ledgerERC1155EventToOperations,
-  ledgerERC20EventToOperations,
-  ledgerERC721EventToOperations,
-  ledgerInternalTransactionToOperations,
-  ledgerOperationToOperations,
-} from "./ledger";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerER721TransferEvent,
@@ -15,6 +8,13 @@ import {
   LedgerExplorerInternalTransaction,
   LedgerExplorerOperation,
 } from "./../types";
+import {
+  ledgerERC1155EventToOperations,
+  ledgerERC20EventToOperations,
+  ledgerERC721EventToOperations,
+  ledgerInternalTransactionToOperations,
+  ledgerOperationToOperations,
+} from "./ledger";
 
 const accountId = encodeAccountId({
   type: "js",

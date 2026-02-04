@@ -1,15 +1,17 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
-import eip55 from "eip55";
-import BigNumber from "bignumber.js";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import eip55 from "eip55";
+import { NO_TOKEN } from "../network/explorer/types";
+import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 import {
   EtherscanOperation,
   EtherscanERC20Event,
@@ -18,8 +20,6 @@ import {
   EtherscanInternalTransaction,
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
-import { detectEvmStakingOperationType } from "../staking/detectOperationType";
-import { NO_TOKEN } from "../network/explorer/types";
 
 /**
  * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.

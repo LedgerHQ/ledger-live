@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
-import { UnknownNode } from "../../errors";
 import { getCoinConfig } from "../../config";
+import { UnknownNode } from "../../errors";
 import ledgerNodeApi from "./ledger";
 import rpcNodeApi from "./rpc";
 import { getNodeApi } from "./index";

@@ -3,8 +3,8 @@ import type {
   BlockOperation,
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
-import { LedgerExplorerOperation } from "../types";
 import { TransactionInfo } from "../network/node/types";
+import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 
 /**

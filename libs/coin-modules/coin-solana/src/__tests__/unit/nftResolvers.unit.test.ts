@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
-import axios from "axios";
-import { NFTMetadata } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { NFTMetadata } from "@ledgerhq/types-live";
+import axios from "axios";
 import { collectionMetadata, nftMetadata } from "../../nftResolvers";
 
 jest.mock("axios");

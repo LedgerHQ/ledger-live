@@ -1,5 +1,5 @@
-import seiAbi from "../abis/sei.abi.json";
 import celoAbi from "../abis/celo.abi.json";
+import seiAbi from "../abis/sei.abi.json";
 
 type StakingABI = typeof seiAbi | typeof celoAbi;
 
