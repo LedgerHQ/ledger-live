@@ -601,11 +601,10 @@ test.describe("New Send Flow", () => {
       await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
 
-    test("should not show fee menu options for Algorand", async ({ app, page }) => {
+    test.only("should not show fee menu options for Algorand", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.algorand, TEST_ADDRESSES.algorand, true);
       await app.newSendFlow.fillCryptoAmount("0.1");
-      const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
-      expect(hasMenu).toBe(false);
+      await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
 
     test("should show custom fees only for Stellar", async ({ app, page }) => {

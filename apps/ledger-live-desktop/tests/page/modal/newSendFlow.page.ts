@@ -279,12 +279,10 @@ export class NewSendFlowPage extends Component {
   @step("Fill crypto amount: $0 (switches to crypto mode first)")
   async fillCryptoAmount(amount: string) {
     await this.amountInput.waitFor({ state: "visible", timeout: 10000 });
-    // Switch to crypto mode first (by default input is in FIAT mode)
+
     await this.switchToCryptoMode();
     await this.amountInput.clear();
     await this.amountInput.fill(amount);
-    // Wait for bridge to process the amount
-    await this.waitForBridgeReady();
   }
 
   @step("Click quick action: $0")
