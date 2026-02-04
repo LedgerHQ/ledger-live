@@ -26,9 +26,9 @@ import { Flex, Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
-import BannerSection from "./components/BannerSection";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
+import BannerSection from "./components/Banners/BannerSection";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`

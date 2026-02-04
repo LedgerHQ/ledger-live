@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import BannerSection from "~/renderer/screens/dashboard/components/BannerSection";
 import MarketBanner from "LLD/features/MarketBanner";
 import PageHeader from "LLD/components/PageHeader";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
@@ -12,6 +11,8 @@ import QuickActions from "LLD/features/QuickActions";
 import { AddAccount } from "./components/AddAccount";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "./utils/constants";
 import { Divider } from "@ledgerhq/lumen-ui-react";
+import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
+import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -25,12 +26,15 @@ export const PortfolioView = memo(function PortfolioView({
   accounts,
   filterOperations,
   t,
+  isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
   const shouldDisplayAddAccountCta = totalAccounts === 0 && isWallet40Enabled;
 
   return (
     <>
-      <BannerSection isWallet40Enabled={isWallet40Enabled} />
+      <div className={isClearCacheBannerVisible && isWallet40Enabled ? "mb-32" : undefined}>
+        <BannerSection topBannerAlerts={true} portfolioBannerContent={false} />
+      </div>
       <TrackPage
         category={PORTFOLIO_TRACKING_PAGE_NAME}
         totalAccounts={totalAccounts}
@@ -47,10 +51,12 @@ export const PortfolioView = memo(function PortfolioView({
             {shouldDisplayQuickActionCtas && (
               <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
             )}
-            {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" className="mb-16" />}
-            {shouldDisplayMarketBanner && <MarketBanner />}
-            {shouldDisplayAddAccountCta && <AddAccount />}
+            {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" className="mb-8" />}
           </div>
+
+          <PortfolioBannerContent />
+          {shouldDisplayMarketBanner && <MarketBanner />}
+          {shouldDisplayAddAccountCta && <AddAccount />}
 
           <AssetDistribution />
           {totalOperations > 0 && (
