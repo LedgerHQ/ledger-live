@@ -545,7 +545,7 @@ test.describe("New Send Flow", () => {
     });
 
     (["bitcoin", "ethereum"] as const).forEach(family => {
-      test.only(`should change max amount when changing fee presets ${family}`, async ({
+      test(`should change max amount when changing fee presets ${family}`, async ({
         app,
         page,
       }) => {
@@ -556,19 +556,14 @@ test.describe("New Send Flow", () => {
           expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
         });
 
-        const getAmount = async () => {
-          const rawAmountValue = await app.newSendFlow.getAmountValue();
-          return new BigNumber(rawAmountValue);
-        };
-
         await test.step("Slow preset yields higher max than Fast", async () => {
           await app.newSendFlow.selectFeePreset("slow");
           expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
-          const slowAmount = await getAmount();
+          const slowAmount = new BigNumber(await app.newSendFlow.getAmountValue());
 
           await app.newSendFlow.selectFeePreset("fast");
           expect(await isLocatorEnabled(app.newSendFlow.reviewButton)).toEqual(true);
-          const fastAmount = await getAmount();
+          const fastAmount = new BigNumber(await app.newSendFlow.getAmountValue());
 
           expect(slowAmount.isFinite()).toBe(true);
           expect(fastAmount.isFinite()).toBe(true);
