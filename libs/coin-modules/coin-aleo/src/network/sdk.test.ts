@@ -3,6 +3,7 @@ import { sdkClient } from "./sdk";
 jest.mock("./sdk");
 
 const mockDecryptRecord = jest.mocked(sdkClient.decryptRecord);
+const mockDecryptCiphertext = jest.mocked(sdkClient.decryptCiphertext);
 
 describe("sdkClient", () => {
   describe("decryptRecord", () => {
@@ -41,6 +42,37 @@ describe("sdkClient", () => {
   });
 
   describe("decryptCiphertext", () => {
-    // TODO:
+    const mockParams = {
+      ciphertext: "ct1mock_ciphertext_data",
+      tpk: "tpk1mock_transition_public_key",
+      viewKey: "AViewKey1mock_view_key_data",
+      programId: "credits.aleo",
+      functionName: "transfer_private",
+      outputIndex: 0,
+    };
+    const mockDecryptedData = {
+      plaintext: "1000000u64",
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should successfully decrypt ciphertext", async () => {
+      mockDecryptCiphertext.mockResolvedValue(mockDecryptedData);
+
+      const result = await sdkClient.decryptCiphertext(mockParams);
+
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith(mockParams);
+      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockDecryptedData);
+    });
+
+    it("should handle network errors", async () => {
+      const mockError = new Error("Network error");
+      mockDecryptCiphertext.mockRejectedValue(mockError);
+
+      await expect(sdkClient.decryptCiphertext(mockParams)).rejects.toThrow("Network error");
+    });
   });
 });

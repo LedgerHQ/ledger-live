@@ -5,11 +5,11 @@ import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { accessProvableApi } from "../logic/accessProvableApi";
+import { accessProvableApi } from "../network/utils";
 import { getAccountShape } from "./sync";
 
 jest.mock("../logic");
-jest.mock("../logic/accessProvableApi");
+jest.mock("../network/utils");
 
 const mockGetBalance = getBalance as jest.MockedFunction<typeof getBalance>;
 const mockLastBlock = lastBlock as jest.MockedFunction<typeof lastBlock>;
@@ -31,6 +31,8 @@ describe("sync.ts", () => {
       provableApi: null,
       privateRecords: null,
       lastPrivateSyncDate: null,
+      privateRecordsHistory: null,
+      unspentPrivateRecords: null,
     },
   };
 
@@ -196,6 +198,7 @@ describe("sync.ts", () => {
         mockSyncConfig,
       );
 
+      expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
         currency: mockCurrency,
         address: mockAccount.freshAddress,
@@ -231,6 +234,7 @@ describe("sync.ts", () => {
         mockSyncConfig,
       );
 
+      expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
         currency: mockCurrency,
         address: mockAccount.freshAddress,

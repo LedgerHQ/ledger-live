@@ -3,9 +3,12 @@ import invariant from "invariant";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AleoPrivateRecord } from "../types/api";
 import type { AleoOperation, AleoTransactionType } from "../types";
-import { TRANSFERS } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
+import { sdkClient } from "../network/sdk";
+import { apiClient } from "../network/api";
 
 export function parseMicrocredits(microcreditsU64: string): string {
   const value = microcreditsU64.split(".")[0];
@@ -47,8 +50,8 @@ export const determineTransactionType = (
   functionId: string,
   operationType: OperationType,
 ): AleoTransactionType => {
-  if (functionId === TRANSFERS.PRIVATE) return "private";
-  if (functionId === TRANSFERS.PUBLIC) return "public";
+  if (functionId === EXPLORER_TRANSFER_TYPES.PRIVATE) return "private";
+  if (functionId === EXPLORER_TRANSFER_TYPES.PUBLIC) return "public";
   if (operationType === "IN") {
     if (functionId.endsWith("to_private")) {
       return "private";
@@ -56,9 +59,9 @@ export const determineTransactionType = (
       return "public";
     }
   } else if (operationType === "OUT") {
-    if (functionId.startsWith(TRANSFERS.PRIVATE)) {
+    if (functionId.startsWith(EXPLORER_TRANSFER_TYPES.PRIVATE)) {
       return "private";
-    } else if (functionId.startsWith(TRANSFERS.PUBLIC)) {
+    } else if (functionId.startsWith(EXPLORER_TRANSFER_TYPES.PUBLIC)) {
       return "public";
     }
   }
@@ -87,73 +90,134 @@ export const generateUniqueUsername = (address: string): string => {
  * @param ledgerAccountId - The Ledger account ID
  * @returns Array of patched operations including additional operations for semi transparent transfers
  */
-export const patchPublicOperations = async (
-  publicOperations: AleoOperation[],
-  privateRecords: AleoPrivateRecord[],
-  address: string,
-  ledgerAccountId: string,
-): Promise<AleoOperation[]> => {
+export const patchPublicOperations = async ({
+  currency,
+  publicOperations,
+  privateRecords,
+  address,
+  ledgerAccountId,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  publicOperations: AleoOperation[];
+  privateRecords: AleoPrivateRecord[];
+  address: string;
+  ledgerAccountId: string;
+  viewKey: string;
+}): Promise<AleoOperation[]> => {
   const patchedOperations: AleoOperation[] = [];
   const fullyPublicOperations = publicOperations.filter(
     op =>
-      op.extra.functionId !== TRANSFERS.PRIVATE_TO_PUBLIC &&
-      op.extra.functionId !== TRANSFERS.PUBLIC_TO_PRIVATE,
+      op.extra.functionId !== EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC &&
+      op.extra.functionId !== EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
   );
+
   const semiPublicOperations = publicOperations.filter(
     op =>
-      op.extra.functionId === TRANSFERS.PRIVATE_TO_PUBLIC ||
-      op.extra.functionId === TRANSFERS.PUBLIC_TO_PRIVATE,
+      op.extra.functionId === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC ||
+      op.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
   );
 
-  if (fullyPublicOperations.length === publicOperations.length) return publicOperations;
-
   for (const operation of semiPublicOperations) {
+    // TRY TO FIND A MATCHING PRIVATE RECORD, IGNORE FEE_PRIVATE RECORDS
     const privateRecord = privateRecords.find(
-      record => record.transaction_id.trim() === operation.hash.trim(),
+      record =>
+        record.transaction_id.trim() === operation.hash.trim() &&
+        record.function_name !== "fee_private",
     );
 
     // IF PRIVATE RECORD EXISTS, PATCH THE OPERATION
-    // OCCURRS IN 3 CASES:
-    // 1. PRIVATE TO PUBLIC (WHEN WE SEND FROM OUR OWN PRIVATE ACCOUNT)
-    // 2. PUBLIC TO PRIVATE (WHEN SOMEONE SENDS TO OUR PRIVATE ACCOUNT)
-    // 3. SELF-TRANSFER (PRIVATE TO PUBLIC & BACK TO PRIVATE)
+    // OCCURRS IN 2 CASES ONLY:
+    // 1. PUBLIC TO PRIVATE (CONVERT)
+    // 2. PRIVATE TO PUBLIC (CONVERT)
     if (privateRecord) {
-      const selfTransfer = privateRecord.sender === address;
-
       // ORIGINAL OPERATION, WE ONLY PATCH SENDERS/RECIPIENTS
       // FOR SELF-TRANSFERS, THE ORIGINAL OPERATION CAN BE INCOMING OR OUTGOING,
       // DEPENDING ON WHICH TRANSITION WE SEE IN THE PUBLIC TRANSACTION
       patchedOperations.push({
         ...operation,
         senders: privateRecord.sender ? [privateRecord.sender] : operation.senders,
-        recipients: selfTransfer ? [address] : operation.recipients,
+        recipients: [address],
       });
 
-      if (selfTransfer) {
-        // CLONED OPERATION FOR SELF TRANSFERS (CONVERSION BETWEEN PUBLIC/PRIVATE)
-        patchedOperations.push({
-          ...operation,
-          id: encodeOperationId(
-            ledgerAccountId,
-            operation.hash,
-            operation.type === "IN" ? "OUT" : "IN",
-          ),
-          type: operation.type === "IN" ? "OUT" : "IN",
-          extra: {
-            ...operation.extra,
-            transactionType: operation.extra.transactionType === "private" ? "public" : "private",
-          },
-          senders: [address],
-          recipients: [address],
-        });
-      }
+      // CLONED OPERATION FOR SELF TRANSFERS (CONVERSION BETWEEN PUBLIC/PRIVATE)
+      patchedOperations.push({
+        ...operation,
+        id: encodeOperationId(
+          ledgerAccountId,
+          operation.hash,
+          operation.type === "IN" ? "OUT" : "IN",
+        ),
+        type: operation.type === "IN" ? "OUT" : "IN",
+        date: new Date(operation.date.getTime() + 1), // ensure unique date for sorting
+        extra: {
+          ...operation.extra,
+          transactionType: operation.extra.transactionType === "private" ? "public" : "private",
+        },
+        senders: [address],
+        recipients: [address],
+      });
     } else {
-      // IF NO PRIVATE RECORD, JUST PUSH THE ORIGINAL OPERATION, IT CAN HAPPEN
-      // IF THE TRANSFER COMES FROM ANOTHER PRIVATE ACCOUNT AND WE DON'T HAVE THE PRIVATE RECORD
-      // TO CONFIRM IT'S A SELF-TRANSFER (E.G PRIVATE TO PUBLIC FROM ANOTHER ACCOUNT)
-      patchedOperations.push(operation);
+      // IF NO MATCHING PRIVATE RECORD AND IT'S VISIBLE IN OUR PUBLIC TRANSACTIONS,
+      // IT IS SEMI-TRANSPARENT TRANSFER FROM OUR OWN ACCOUNT TO ANOTHER ACCOUNT
+      // OR FROM ANOTHER ACCOUNT TO OUR OWN ACCOUNT, WE CAN PATCH IT TO SHOW THE COUNTERPARTY ADDRESS
+
+      const { execution } = await apiClient.getTransactionById(currency, operation.hash);
+      const recordTransition = execution.transitions[0];
+
+      // FOR PUBLIC TO PRIVATE (0 is address ciphertext, 1 is amount public)
+      if (operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE) {
+        // AS SENDER WE ARE ABLE TO DECRYPT THE RECIPIENT ADDRESS
+        // FIXME: WHY SOMETIMES IT FAILS ?
+        try {
+          const recipientData = await sdkClient.decryptCiphertext({
+            ciphertext: recordTransition.inputs[0].value,
+            tpk: recordTransition.tpk,
+            viewKey,
+            programId: PROGRAM_ID.CREDITS,
+            functionName: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+            outputIndex: 0,
+          });
+          patchedOperations.push({
+            ...operation,
+            recipients: [recipientData.plaintext],
+          });
+        } catch {
+          continue;
+        }
+      } else {
+        // FOR PRIVATE TO PUBLIC (IN OPERATION)
+        patchedOperations.push(operation);
+      }
     }
   }
 
+  patchedOperations.push(...fullyPublicOperations);
+
   return patchedOperations;
 };
+
+// Method to merge old and new records, mark spent/unspent based on unspent records list, and sort by block height desc
+export function processRecords(
+  oldRecords: AleoPrivateRecord[],
+  newRecords: AleoPrivateRecord[],
+  unspentRecords: AleoPrivateRecord[],
+): AleoPrivateRecord[] {
+  const existingKeys = new Set(oldRecords.map(r => `${r.transaction_id}_${r.commitment}`));
+
+  return [
+    ...oldRecords,
+    ...newRecords.filter(r => !existingKeys.has(`${r.transaction_id}_${r.commitment}`)),
+  ]
+    .map(r => {
+      const isUnspent = unspentRecords.some(u => u.commitment === r.commitment);
+
+      return {
+        ...r,
+        transaction_id: r.transaction_id.trim(),
+        transition_id: r.transition_id.trim(),
+        spent: !isUnspent,
+      };
+    })
+    .sort((a, b) => b.block_height - a.block_height);
+}

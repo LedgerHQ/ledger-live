@@ -8,7 +8,8 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { AleoJWT, AleoPrivateRecord, AleoRecordScannerStatusResponse } from "./api";
+import { AleoPrivateRecord } from "./api";
+import { AleoUnspentRecord, ProvableApi } from "./logic";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
@@ -22,20 +23,13 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export interface ProvableApi {
-  apiKey: string | undefined;
-  consumerId: string | undefined;
-  jwt: AleoJWT | undefined;
-  uuid: string | undefined;
-  scannerStatus?: AleoRecordScannerStatusResponse;
-}
-
 export interface AleoResources {
   transparentBalance: BigNumber;
   privateBalance: BigNumber | null;
   lastPrivateSyncDate: Date | null;
   provableApi: ProvableApi | null;
-  privateRecords: AleoPrivateRecord[] | null;
+  privateRecordsHistory: AleoPrivateRecord[] | null;
+  unspentPrivateRecords: AleoUnspentRecord[] | null;
 }
 
 export interface AleoResourcesRaw {
@@ -43,7 +37,8 @@ export interface AleoResourcesRaw {
   privateBalance: string | null;
   lastPrivateSyncDate: string | null;
   provableApi: string | null;
-  privateRecords: string | null;
+  privateRecordsHistory: string | null;
+  unspentPrivateRecords: string | null;
 }
 
 export type AleoAccount = Account & {

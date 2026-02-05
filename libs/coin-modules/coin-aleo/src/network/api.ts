@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
@@ -138,12 +139,11 @@ async function getAccountJWT(
     },
   });
 
-  const data = {
-    token: res.headers?.["authorization"] ?? "",
-    exp: res.data.exp,
-  };
+  const token = res.headers?.["authorization"];
+  const exp = res.data.exp;
+  invariant(typeof token === "string", "aleo: jwt token is missing in response headers");
 
-  return data;
+  return { token, exp };
 }
 
 async function registerForScanningAccountRecords(

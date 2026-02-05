@@ -1,9 +1,20 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { PROGRAM_ID, TRANSFERS } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
 import { parsePrivateOperation } from "../network/utils";
 import type { AleoPrivateRecord } from "../types/api";
 import type { AleoOperation } from "../types/bridge";
+
+function onlyNativeCoinOperations(record: AleoPrivateRecord): boolean {
+  const { program_name, function_name } = record;
+  const allowedFunctions: string[] = [
+    EXPLORER_TRANSFER_TYPES.PRIVATE,
+    EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+    EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+  ];
+
+  return program_name === PROGRAM_ID.CREDITS && allowedFunctions.includes(function_name);
+}
 
 export async function listPrivateOperations({
   currency,
@@ -19,11 +30,7 @@ export async function listPrivateOperations({
   privateRecords: AleoPrivateRecord[];
 }): Promise<AleoOperation[]> {
   const privateOperations: AleoOperation[] = [];
-
-  // currently we only support native aleo coin operations & ignore rest
-  const nativePrivateTransactions = privateRecords.filter(({ program_name, function_name }) => {
-    return program_name === PROGRAM_ID.CREDITS && function_name === TRANSFERS.PRIVATE;
-  });
+  const nativePrivateTransactions = privateRecords.filter(onlyNativeCoinOperations);
 
   await promiseAllBatched(2, nativePrivateTransactions, async rawTx => {
     const parsedOperation = await parsePrivateOperation({
@@ -34,7 +41,7 @@ export async function listPrivateOperations({
       ledgerAccountId,
     });
 
-    privateOperations.push(parsedOperation);
+    if (parsedOperation) privateOperations.push(parsedOperation);
   });
 
   return privateOperations;

@@ -2,9 +2,23 @@ import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { AMOUNT_ARG_INDEX, PROGRAM_ID, RECIPIENT_ARG_INDEX } from "../constants";
-import { determineTransactionType, parseMicrocredits } from "../logic/utils";
-import type { AleoOperation, AleoPrivateRecord, AleoPublicTransaction } from "../types";
+import {
+  AMOUNT_ARG_INDEX,
+  EXPLORER_TRANSFER_TYPES,
+  PROGRAM_ID,
+  RECIPIENT_ARG_INDEX,
+} from "../constants";
+import {
+  determineTransactionType,
+  generateUniqueUsername,
+  parseMicrocredits,
+} from "../logic/utils";
+import type {
+  AleoOperation,
+  AleoPrivateRecord,
+  AleoPublicTransaction,
+  ProvableApi,
+} from "../types";
 import { apiClient } from "./api";
 import { sdkClient } from "./sdk";
 
@@ -162,69 +176,179 @@ export async function parsePrivateOperation({
   address: string;
   ledgerAccountId: string;
   viewKey: string;
-}): Promise<AleoOperation> {
-  const { fee_value, block_hash, execution, status, block_timestamp } =
-    await apiClient.getTransactionById(currency, rawTx.transaction_id);
+}): Promise<AleoOperation | null> {
+  const [transactionDetails, outputRecord] = await Promise.all([
+    apiClient.getTransactionById(currency, rawTx.transaction_id),
+    sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey),
+  ]);
 
-  const timestamp = new Date(Number(block_timestamp) * 1000);
-  const hasFailed = status !== "Accepted";
-
+  const transactionId = rawTx.transaction_id.trim();
+  const blockHeight = rawTx.block_height;
+  const blockHash = transactionDetails.block_hash;
+  const timestamp = new Date(Number(transactionDetails.block_timestamp) * 1000);
+  const hasFailed = transactionDetails.status !== "Accepted";
   let recipient = "";
   let sender = "";
   let value = new BigNumber(0);
 
-  const outputRecord = await sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey);
-
   // PROGRAM INPUTS, BASED ON TRANSITION INDEX
-  const recordTransition = execution.transitions[rawTx.transition_index];
+  const recordTransition = transactionDetails.execution.transitions[rawTx.transition_index];
 
-  try {
-    // DECRYPT RECIPIENT & AMOUNT
-    // ONLY THE SENDER CAN DECRYPT THESE VALUES
-    const [recipientData, amountData] = await Promise.all([
-      sdkClient.decryptCiphertext({
-        ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
-        tpk: recordTransition.tpk,
-        viewKey,
-        programId: rawTx.program_name,
-        functionName: rawTx.function_name,
-        outputIndex: RECIPIENT_ARG_INDEX,
-      }),
-      sdkClient.decryptCiphertext({
-        ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
-        tpk: recordTransition.tpk,
-        viewKey,
-        programId: rawTx.program_name,
-        functionName: rawTx.function_name,
-        outputIndex: AMOUNT_ARG_INDEX,
-      }),
-    ]);
+  // REMOVE ALREADY PARSED SEMI PUBLIC OPERATIONS
+  if (rawTx.function_name === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE && rawTx.sender === address)
+    return null;
 
-    sender = address;
-    recipient = recipientData.plaintext;
-    value = new BigNumber(parseMicrocredits(amountData.plaintext));
-  } catch {
-    sender = rawTx.sender ?? "";
+  if (rawTx.sender === address) {
+    if (rawTx.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
+      if (recordTransition.inputs[RECIPIENT_ARG_INDEX].value === address) return null;
+      sender = address;
+      recipient = recordTransition.inputs[RECIPIENT_ARG_INDEX].value; // recipient is public, no need to decrypt
+      value = new BigNumber(parseMicrocredits(recordTransition.inputs[AMOUNT_ARG_INDEX].value));
+    } else {
+      // DECRYPT RECIPIENT & AMOUNT
+      // ONLY THE SENDER CAN DECRYPT THESE VALUES
+      const [recipientData, amountData] = await Promise.all([
+        sdkClient.decryptCiphertext({
+          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: rawTx.program_name,
+          functionName: rawTx.function_name,
+          outputIndex: RECIPIENT_ARG_INDEX,
+        }),
+        sdkClient.decryptCiphertext({
+          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: rawTx.program_name,
+          functionName: rawTx.function_name,
+          outputIndex: AMOUNT_ARG_INDEX,
+        }),
+      ]);
+      sender = address;
+      recipient = recipientData.plaintext;
+      value = new BigNumber(parseMicrocredits(amountData.plaintext));
+    }
+  } else {
+    // IN OPERATION FROM OTHER ACCOUNT
+    sender = rawTx.sender;
     recipient = address;
     value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
   }
 
+  const type = recipient === address ? "IN" : "OUT";
+
   return {
-    id: encodeOperationId(ledgerAccountId, rawTx.transition_id, rawTx.function_name),
+    id: encodeOperationId(ledgerAccountId, transactionId, type),
     senders: [sender],
     recipients: [recipient],
     value,
-    type: recipient === address ? "IN" : "OUT",
+    type,
     hasFailed,
-    hash: rawTx.transaction_id,
-    fee: new BigNumber(fee_value),
-    blockHeight: rawTx.block_height,
-    blockHash: block_hash,
+    hash: transactionId,
+    fee: new BigNumber(transactionDetails.fee_value),
+    blockHeight,
+    blockHash,
     accountId: ledgerAccountId,
     date: timestamp,
     extra: {
       functionId: rawTx.function_name,
       transactionType: "private",
     },
+  };
+}
+
+/**
+ * Manages access to the Provable API by handling authentication and account registration.
+ *
+ * This function ensures valid API credentials are available and up-to-date. It handles:
+ * - Initial account registration if API key or consumer ID are missing
+ * - JWT token refresh when expired or about to expire (within 5 minutes)
+ * - Account registration for scanning records if UUID is not set
+ * - Retrieval of current scanner status
+ *
+ * @param currency - The cryptocurrency being accessed
+ * @param viewKey - The view key for the account
+ * @param address - The account address
+ * @param provableApi - Existing Provable API credentials and state, or null for initial setup
+ *
+ * @returns A Promise resolving to updated ProvableApi credentials, or null if access needs to be reset
+ *
+ * @throws {Error} Re-throws any errors except unauthorized errors during JWT retrieval
+ *
+ * @remarks
+ * Edge cases that trigger Provable API access reset (returns null):
+ * - Unauthorized error during JWT retrieval, typically indicating:
+ *   - Revoked API key
+ *   - Invalid consumer credentials
+ *   - Account access has been terminated
+ *
+ * When null is returned, the caller should clear stored Provable API credentials
+ * and allow the user to re-initialize access from scratch.
+ */
+
+const JWT_EXPIRY_BUFFER_SECONDS = 5 * 60; // 5 minutes safe buffer
+
+export async function accessProvableApi({
+  currency,
+  viewKey,
+  address,
+  provableApi,
+}: {
+  currency: CryptoCurrency;
+  viewKey: string;
+  address: string;
+  provableApi: ProvableApi | null;
+}): Promise<ProvableApi | null> {
+  let apiKey = provableApi?.apiKey;
+  let consumerId = provableApi?.consumerId;
+  let jwt = provableApi?.jwt;
+  let uuid = provableApi?.uuid;
+  let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
+  let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
+
+  if (!apiKey || !consumerId) {
+    const username = generateUniqueUsername(address);
+
+    const { key, consumer } = await apiClient.registerNewAccount(currency, username);
+
+    apiKey = key;
+    consumerId = consumer.id;
+  }
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  if (!jwt || currentTimestamp >= jwt.exp - JWT_EXPIRY_BUFFER_SECONDS) {
+    try {
+      jwt = await apiClient.getAccountJWT(currency, apiKey, consumerId);
+    } catch (error) {
+      // If unauthorized (401), likely due to revoked API key - return null to reset Provable API access
+      if (error && typeof error === "object" && "status" in error && error.status === 401) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  if (!uuid) {
+    const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecords(
+      currency,
+      jwt.token,
+      viewKey,
+    );
+    uuid = accountUuid;
+  }
+
+  const status = await apiClient.getRecordScannerStatus(currency, jwt.token, uuid);
+  if (status) {
+    synced = status.synced;
+    percentage = status.percentage;
+  }
+
+  return {
+    apiKey,
+    consumerId,
+    jwt,
+    uuid,
+    scannerStatus: { synced, percentage },
   };
 }

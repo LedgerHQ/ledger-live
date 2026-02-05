@@ -8,19 +8,33 @@ const defaultMockAccountId =
   "js:2:aleo:aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f::AViewKey123";
 
 export const mockAleoResources: AleoResources = {
-  transparentBalance: new BigNumber(0),
-  privateBalance: null,
-  provableApi: null,
-  privateRecords: null,
-  lastPrivateSyncDate: null,
+  transparentBalance: new BigNumber(1000),
+  privateBalance: new BigNumber(1),
+  provableApi: {
+    apiKey: "abc",
+    consumerId: "consumer123",
+    jwt: {
+      token: "jwt_token",
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    },
+    uuid: "uuid-1234",
+    scannerStatus: {
+      percentage: 50,
+      synced: false,
+    },
+  },
+  privateRecordsHistory: [],
+  unspentPrivateRecords: [],
+  lastPrivateSyncDate: new Date(),
 };
 
 export const mockAleoResourcesRaw: AleoResourcesRaw = {
-  transparentBalance: "0",
-  privateBalance: null,
-  provableApi: null,
-  privateRecords: null,
-  lastPrivateSyncDate: null,
+  transparentBalance: mockAleoResources.transparentBalance.toString(),
+  privateBalance: mockAleoResources.privateBalance?.toString() ?? null,
+  provableApi: JSON.stringify(mockAleoResources.provableApi),
+  privateRecordsHistory: JSON.stringify(mockAleoResources.privateRecordsHistory),
+  unspentPrivateRecords: JSON.stringify(mockAleoResources.unspentPrivateRecords),
+  lastPrivateSyncDate: mockAleoResources.lastPrivateSyncDate?.toISOString() ?? null,
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {

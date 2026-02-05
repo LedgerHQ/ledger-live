@@ -8,7 +8,10 @@ async function decryptRecord(
   const res = await network<AleoDecryptedRecordResponse>({
     method: "POST",
     url: "https://aleo-backend.api.live.ledger.com/network/mainnet/decrypt",
-    data: { ciphertext, view_key: viewKey },
+    data: {
+      ciphertext,
+      view_key: viewKey,
+    },
   });
 
   return res.data;

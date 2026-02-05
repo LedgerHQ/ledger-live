@@ -9,7 +9,6 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { changes, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import { AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
 
 type Metadata = { startTime: number };
 type ExtendedAxiosRequestConfig = InternalAxiosRequestConfig & { metadata?: Metadata };
@@ -174,7 +173,7 @@ export type LiveNetworkRequest<T> = {
   timeout?: number;
 };
 export type LiveNetworkResponse<T> = {
-  headers?: AxiosResponseHeaders | RawAxiosResponseHeaders;
+  headers?: AxiosResponse<T>["headers"];
   data: T;
   status: number;
 };
@@ -216,7 +215,6 @@ export const newImplementation = async <T = unknown, U = unknown>(
   }
 
   const { data, status, headers } = response;
-
   return { data, status, headers };
 };
 

@@ -1,22 +1,38 @@
 import BigNumber from "bignumber.js";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
+  getMockedRecord,
   getMockedTransaction,
   getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { PROGRAM_ID } from "../constants";
+import { AleoPrivateRecord, ProvableApi } from "../types";
+import * as utils from "../logic/utils";
 import { apiClient } from "./api";
-import { fetchAccountTransactionsFromHeight, parseOperation } from "./utils";
+import {
+  accessProvableApi,
+  fetchAccountTransactionsFromHeight,
+  parseOperation,
+  parsePrivateOperation,
+} from "./utils";
+import { sdkClient } from "./sdk";
 
 jest.mock("./api");
+jest.mock("./sdk");
+jest.mock("../logic/utils", () => ({
+  ...jest.requireActual("../logic/utils"),
+  generateUniqueUsername: jest.fn(),
+}));
 
-const mockGetAccountPublicTransactions =
-  apiClient.getAccountPublicTransactions as jest.MockedFunction<
-    typeof apiClient.getAccountPublicTransactions
-  >;
-const mockGetTransactionById = apiClient.getTransactionById as jest.MockedFunction<
-  typeof apiClient.getTransactionById
->;
+const mockRegisterNewAccount = jest.mocked(apiClient.registerNewAccount);
+const mockGetAccountJWT = jest.mocked(apiClient.getAccountJWT);
+const mockGetRecordScannerStatus = jest.mocked(apiClient.getRecordScannerStatus);
+const mockGenerateUniqueUsername = jest.mocked(utils.generateUniqueUsername);
+const mockRegisterForScanningAccountRecords = jest.mocked(
+  apiClient.registerForScanningAccountRecords,
+);
+const mockGetAccountPublicTransactions = jest.mocked(apiClient.getAccountPublicTransactions);
+const mockGetTransactionById = jest.mocked(apiClient.getTransactionById);
 
 describe("network utils", () => {
   const mockCurrency = getMockedCurrency();
@@ -347,6 +363,7 @@ describe("network utils", () => {
         order: "asc",
       });
 
+      expect(mockGetAccountPublicTransactions).toHaveBeenCalledTimes(1);
       expect(mockGetAccountPublicTransactions).toHaveBeenCalledWith(
         expect.objectContaining({
           cursor: "400",
@@ -556,6 +573,7 @@ describe("network utils", () => {
         ledgerAccountId: mockLedgerAccountId,
       });
 
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
       expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, mockTx.transaction_id);
       expect(result).toMatchObject({
         fee: new BigNumber(5000),
@@ -564,7 +582,563 @@ describe("network utils", () => {
     });
   });
 
+  describe("accessProvableApi", () => {
+    const mockCurrency = getMockedCurrency();
+    const mockViewKey = "AViewKey1mockviewkey";
+    const mockAddress = "aleo1test123";
+    const mockApiKey = "test-api-key-123";
+    const mockConsumerId = "consumer-id-456";
+    const mockUUID = "uuid-abc-def";
+    const mockUsername = "1234567890_aleo1test123";
+    const mockJWT = {
+      token: "jwt-token-789",
+      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour in the future,
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockGenerateUniqueUsername.mockReturnValue(mockUsername);
+    });
+
+    describe("Initial registration flow", () => {
+      it("should register a new account when provableApi is null", async () => {
+        mockRegisterNewAccount.mockResolvedValue({
+          key: mockApiKey,
+          consumer: { id: mockConsumerId },
+          created_at: Date.now(),
+          id: "account-id",
+        });
+        mockGetAccountJWT.mockResolvedValue(mockJWT);
+        mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 0 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: null,
+        });
+
+        expect(mockGenerateUniqueUsername).toHaveBeenCalledTimes(1);
+        expect(mockRegisterNewAccount).toHaveBeenCalledTimes(1);
+        expect(mockGetAccountJWT).toHaveBeenCalledTimes(1);
+        expect(mockRegisterForScanningAccountRecords).toHaveBeenCalledTimes(1);
+        expect(mockGetRecordScannerStatus).toHaveBeenCalledTimes(1);
+
+        expect(result).toEqual({
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: false, percentage: 0 },
+        });
+      });
+
+      it("should register a new account when apiKey is missing", async () => {
+        const partialProvableApi: ProvableApi = {
+          apiKey: undefined,
+          consumerId: undefined,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        mockRegisterNewAccount.mockResolvedValue({
+          key: mockApiKey,
+          consumer: { id: mockConsumerId },
+          created_at: Date.now(),
+          id: "account-id",
+        });
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: partialProvableApi,
+        });
+
+        expect(mockRegisterNewAccount).toHaveBeenCalledTimes(1);
+        expect(mockRegisterNewAccount).toHaveBeenCalledWith(mockCurrency, mockUsername);
+        expect(result?.apiKey).toBe(mockApiKey);
+        expect(result?.consumerId).toBe(mockConsumerId);
+      });
+
+      it("should register a new account when consumerId is missing", async () => {
+        const partialProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: undefined,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        mockRegisterNewAccount.mockResolvedValue({
+          key: mockApiKey,
+          consumer: { id: mockConsumerId },
+          created_at: Date.now(),
+          id: "account-id",
+        });
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: partialProvableApi,
+        });
+
+        expect(mockRegisterNewAccount).toHaveBeenCalledTimes(1);
+        expect(mockRegisterNewAccount).toHaveBeenCalledWith(mockCurrency, mockUsername);
+        expect(result?.consumerId).toBe(mockConsumerId);
+      });
+    });
+
+    describe("JWT token management", () => {
+      it("should refresh JWT when it is expired", async () => {
+        const expiredJWT = {
+          token: "expired-token",
+          exp: Math.floor(Date.now() / 1000) - 3600, // 1 hour in the past
+        };
+
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: expiredJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        mockGetAccountJWT.mockResolvedValue(mockJWT);
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(result?.jwt).toEqual(mockJWT);
+      });
+
+      it("should refresh JWT when it is about to expire (within 5 minutes)", async () => {
+        const soonToExpireJWT = {
+          token: "soon-to-expire-token",
+          exp: Math.floor(Date.now() / 1000) + 4 * 60, // 4 minutes in the future
+        };
+
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: soonToExpireJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        mockGetAccountJWT.mockResolvedValue(mockJWT);
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(mockGetAccountJWT).toHaveBeenCalledTimes(1);
+        expect(mockGetAccountJWT).toHaveBeenCalledWith(mockCurrency, mockApiKey, mockConsumerId);
+        expect(result?.jwt).toEqual(mockJWT);
+      });
+
+      it("should not refresh JWT when it is still valid", async () => {
+        const validJWT = {
+          token: "valid-token",
+          exp: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minutes in the future
+        };
+
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: validJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(mockGetAccountJWT).not.toHaveBeenCalled();
+        expect(result?.jwt).toEqual(validJWT);
+      });
+
+      it("should request new JWT when jwt is undefined", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: undefined,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        mockGetAccountJWT.mockResolvedValue(mockJWT);
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(mockGetAccountJWT).toHaveBeenCalledTimes(1);
+        expect(mockGetAccountJWT).toHaveBeenCalledWith(mockCurrency, mockApiKey, mockConsumerId);
+        expect(result?.jwt).toEqual(mockJWT);
+      });
+
+      it("should return null when JWT retrieval fails with Unauthorized error", async () => {
+        const expiredJWT = {
+          token: "expired-token",
+          exp: Math.floor(Date.now() / 1000) - 3600,
+        };
+
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: expiredJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        const unauthorizedError = { status: 401, message: "Unauthorized" };
+        mockGetAccountJWT.mockRejectedValue(unauthorizedError);
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(result).toBeNull();
+        expect(mockGetAccountJWT).toHaveBeenCalled();
+        expect(mockGetRecordScannerStatus).not.toHaveBeenCalled();
+      });
+
+      it("should throw error when JWT retrieval fails with non-Unauthorized error", async () => {
+        const expiredJWT = {
+          token: "expired-token",
+          exp: Math.floor(Date.now() / 1000) - 3600,
+        };
+
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: expiredJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: true, percentage: 100 },
+        };
+
+        const networkError = new Error("Network error");
+        mockGetAccountJWT.mockRejectedValue(networkError);
+
+        await expect(
+          accessProvableApi({
+            currency: mockCurrency,
+            viewKey: mockViewKey,
+            address: mockAddress,
+            provableApi: existingProvableApi,
+          }),
+        ).rejects.toThrow("Network error");
+      });
+    });
+
+    describe("UUID and scanning registration", () => {
+      it("should register for scanning when uuid is missing", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: undefined,
+          scannerStatus: { synced: false, percentage: 0 },
+        };
+
+        mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 5 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(mockRegisterForScanningAccountRecords).toHaveBeenCalledWith(
+          mockCurrency,
+          mockJWT.token,
+          mockViewKey,
+        );
+        expect(result?.uuid).toBe(mockUUID);
+      });
+
+      it("should not register for scanning when uuid exists", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: false, percentage: 50 },
+        };
+
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 60 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(mockRegisterForScanningAccountRecords).not.toHaveBeenCalled();
+        expect(result?.uuid).toBe(mockUUID);
+      });
+    });
+
+    describe("Scanner status updates", () => {
+      it("should update scanner status when status is available", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: false, percentage: 50 },
+        };
+
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(result?.scannerStatus).toEqual({ synced: true, percentage: 100 });
+      });
+
+      it("should preserve previous scanner status when status call returns null", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: false, percentage: 75 },
+        };
+
+        mockGetRecordScannerStatus.mockResolvedValue(null as any);
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(result?.scannerStatus).toEqual({ synced: false, percentage: 75 });
+      });
+
+      it("should initialize scanner status with defaults when provableApi is null", async () => {
+        mockRegisterNewAccount.mockResolvedValue({
+          key: mockApiKey,
+          consumer: { id: mockConsumerId },
+          created_at: Date.now(),
+          id: "account-id",
+        });
+        mockGetAccountJWT.mockResolvedValue(mockJWT);
+        mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
+        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 0 });
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: null,
+        });
+
+        expect(result?.scannerStatus).toEqual({ synced: false, percentage: 0 });
+      });
+    });
+  });
+
   describe("parsePrivateOperation", () => {
-    // TODO:
+    const mockViewKey = "AViewKey1mockviewkey";
+    const mockAddress = "aleo1test123";
+    const mockLedgerAccountId = "js:2:aleo:aleo1test:";
+    const mockRecipient = "aleo1recipient";
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return null for PUBLIC_TO_PRIVATE transfers where sender is address", async () => {
+      const mockRecord: AleoPrivateRecord = getMockedRecord({
+        function_name: "transfer_public_to_private",
+        sender: mockAddress,
+      });
+
+      const result = await parsePrivateOperation({
+        currency: mockCurrency,
+        rawTx: mockRecord,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toBeNull();
+    });
+
+    it("should parse outgoing private transfer correctly", async () => {
+      const mockRecord = getMockedRecord({
+        function_name: "transfer_private",
+        sender: mockAddress,
+      });
+
+      const mockTransactionDetails = getMockedTransactionDetails({
+        id: "tx123",
+        block_hash: "block123",
+        block_timestamp: "1704067200",
+        status: "Accepted",
+        fee_value: 5000,
+        execution: {
+          transitions: [
+            {
+              id: "transition1",
+              scm: "scm1",
+              tcm: "tcm1",
+              tpk: "tpk123",
+              inputs: [
+                { id: "input0", type: "private", value: "record0" },
+                { id: "input1", type: "private", value: "ciphertext_recipient" },
+                { id: "input2", type: "private", value: "ciphertext_amount" },
+              ],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_private",
+            },
+          ],
+        },
+      });
+
+      mockGetTransactionById.mockResolvedValue(mockTransactionDetails);
+
+      jest.mocked(sdkClient.decryptRecord).mockResolvedValue({
+        data: { microcredits: "1000000u64" },
+      });
+      jest
+        .mocked(sdkClient.decryptCiphertext)
+        .mockResolvedValueOnce({ plaintext: mockRecipient })
+        .mockResolvedValueOnce({ plaintext: "1000000u64" });
+
+      const result = await parsePrivateOperation({
+        currency: mockCurrency,
+        rawTx: mockRecord,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        viewKey: mockViewKey,
+      });
+
+      expect(result?.type).toBe("OUT");
+      expect(result?.senders).toEqual([mockAddress]);
+      expect(result?.recipients).toEqual([mockRecipient]);
+      expect(result?.value).toEqual(new BigNumber(1000000));
+      expect(result?.hash).toBe("tx123");
+      expect(result?.blockHeight).toBe(100);
+      expect(result?.fee).toEqual(new BigNumber(5000));
+      expect(result?.hasFailed).toBe(false);
+      expect(result?.extra.functionId).toBe("transfer_private");
+      expect(result?.extra.transactionType).toBe("private");
+    });
+
+    it("should parse incoming private transfer correctly", async () => {
+      const mockSender = "aleo1sender";
+      const mockRecord = getMockedRecord({
+        transaction_id: "tx456",
+        block_height: 200,
+        transition_index: 0,
+        function_name: "transfer_private",
+        sender: mockSender,
+        program_name: "credits.aleo",
+        record_ciphertext: "record456",
+      });
+
+      const mockTransactionDetails = getMockedTransactionDetails({
+        id: "tx456",
+        block_hash: "block456",
+        block_timestamp: "1704153600",
+        status: "Accepted",
+        fee_value: 3000,
+      });
+
+      mockGetTransactionById.mockResolvedValue(mockTransactionDetails);
+
+      jest.mocked(sdkClient.decryptRecord).mockResolvedValue({
+        data: { microcredits: "2000000u64.private" },
+      });
+
+      const result = await parsePrivateOperation({
+        currency: mockCurrency,
+        rawTx: mockRecord,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        viewKey: mockViewKey,
+      });
+
+      expect(result?.type).toBe("IN");
+      expect(result?.senders).toEqual([mockSender]);
+      expect(result?.recipients).toEqual([mockAddress]);
+      expect(result?.value).toEqual(new BigNumber(2000000));
+      expect(result?.hash).toBe("tx456");
+      expect(result?.blockHeight).toBe(200);
+      expect(result?.fee).toEqual(new BigNumber(3000));
+    });
+
+    it("should mark transaction as failed when status is not Accepted", async () => {
+      const mockRecord = getMockedRecord({
+        transaction_id: "tx789",
+        block_height: 300,
+        transition_index: 0,
+        function_name: "transfer_private",
+        sender: "aleo1sender",
+        program_name: "credits.aleo",
+        record_ciphertext: "record789",
+      });
+
+      const mockTransactionDetails = getMockedTransactionDetails({
+        id: "tx789",
+        status: "Rejected",
+      });
+
+      mockGetTransactionById.mockResolvedValue(mockTransactionDetails);
+
+      jest.mocked(sdkClient.decryptRecord).mockResolvedValue({
+        data: { microcredits: "500000u64" },
+      });
+
+      const result = await parsePrivateOperation({
+        currency: mockCurrency,
+        rawTx: mockRecord,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        viewKey: mockViewKey,
+      });
+
+      expect(result?.hasFailed).toBe(true);
+    });
   });
 });
