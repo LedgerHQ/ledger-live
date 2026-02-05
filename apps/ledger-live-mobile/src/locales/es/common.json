@@ -10,6 +10,9 @@
     "seeAll" : "Ver todo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Atrás",
+    "fee" : "Tarifa",
+    "stake" : "Participación",
+    "validator" : "Validador",
     "delete" : "Borrar",
     "paste" : "Pegar",
     "yes" : "Sí",
@@ -466,6 +469,9 @@
     "GenuineCheckFailed" : {
       "title" : "La autenticación del dispositivo ha fallado",
       "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+    },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Activar la Firma a ciegas o Datos de contrato en la app de Ethereum"
     },
     "HardResetFail" : {
       "title" : "No fue posible restablecer",
@@ -2681,6 +2687,10 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
+    "balance" : {
+      "noSigner" : "La wallet más\nsegura",
+      "noFund" : "Protege tus cripto"
+    },
     "seeAllAssets" : "Ver todos los activos",
     "seeAllAccounts" : "Ver todas las cuentas",
     "marketPriceSection" : {
@@ -2701,6 +2711,20 @@
       "send" : "Enviar",
       "deposit" : "Recibir",
       "stake" : "Participar"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "Transferir",
+      "swap" : "Permutar",
+      "buy" : "Comprar",
+      "connect" : "Conectar",
+      "buyLedger" : "Compra un Ledger",
+      "transferDrawer" : {
+        "title" : "Transferir",
+        "receiveCrypto" : "Recibir cripto",
+        "sendCrypto" : "Enviar cripto",
+        "bankTransfer" : "Transferencia bancaria",
+        "bankTransferDescription" : "Envía dinero fiduciario y recibe moneda estable"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2993,7 @@
     "yield" : "Rendimiento",
     "sell" : "Vender",
     "swap" : "Permutar",
+    "perps" : "Perpetuos",
     "manage" : "Administrar",
     "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
@@ -3477,9 +3502,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activar las notificaciones",
-      "titleVariantB" : "Saca el máximo partido de Ledger Wallet",
+      "titleVariantB" : "No te pierdas lo que más importa",
       "desc" : "Recibe recomendaciones personalizadas y las últimas novedades sobre Ledger Wallet, los productos Ledger y el mercado. Puedes cancelar la suscripción en cualquier momento desde los ajustes.",
-      "descVariantB" : "Te enviaremos consejos personalizados, guías de configuración y las noticias más relevantes del mercado.",
+      "descVariantB" : "Recibe alertas en tiempo real de nuevos tokens, oportunidades de ganancia y cambios de tendencia del mercado. Puedes cancelar la suscripción en cualquier momento.",
       "allow" : "Permitir notificaciones",
       "later" : "Quizás más tarde"
     },
@@ -3654,6 +3679,10 @@
     "stake" : {
       "title" : "Poner en participación",
       "description" : "Obtén recompensas por tus cripto."
+    },
+    "perps" : {
+      "title" : "Perpetuos",
+      "description" : "Opera con perpetuos de cripto."
     },
     "swap" : {
       "title" : "Permutar",
@@ -3851,7 +3880,8 @@
         "title" : "Seleccionar cotización"
       },
       "twoStepApproval" : {
-        "title" : "Completar los pasos"
+        "title" : "Completar los pasos",
+        "completedTitle" : "Estado de la transacción"
       },
       "loader" : {
         "title" : "Procesando permuta",
@@ -4549,6 +4579,7 @@
       },
       "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
       "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
+      "acceptTermsSponsored" : "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
@@ -6064,6 +6095,52 @@
       "newAddressTRC20" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activarla."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "¡Dirección copiada!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegar",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "memoPlaceholder" : "Memo opcional",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "showAll" : "Mostrar todo",
+      "showLess" : "Mostrar menos",
+      "iDelegate" : "Delego"
+    }
+  },
   "stellar" : {
     "token" : "Activos",
     "memo" : {
@@ -6468,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
@@ -8247,7 +8321,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Proveedor no disponible",
-      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+      "description" : "El proveedor de permuta no puede procesar esta transacción. Código de error 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "Proveedor no disponible",
@@ -8284,6 +8358,11 @@
       "preapprove" : "Cuenta agregada correctamente",
       "validator" : "Validador de Ledger",
       "title" : "Aceptar automáticamente fondos recibidos",
+      "processing" : {
+        "title" : "Procesando transacción",
+        "description" : "Este proceso puede tardar hasta 1 minuto.",
+        "keepDeviceNearby" : "Mantente dentro de la aplicación Ledger Wallet y con tu Ledger disponible."
+      },
       "reonboard" : {
         "title" : "Es necesario actualizar la cuenta",
         "account" : "Cuenta",
@@ -8356,7 +8435,11 @@
       "neutral" : "Neutro",
       "greed" : "Avaricia",
       "extremeGreed" : "Más avaricia"
-    }
+    },
+    "tileTitle" : "Sentimiento"
+  },
+  "perps" : {
+    "title" : "Perpetuos"
   },
   "analyticsAllocation" : {
     "header" : {
