@@ -103,7 +103,6 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
-
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {

@@ -20,6 +20,8 @@ module.exports = {
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],
+    // Transform template literals for Hermes compatibility (ajv uses tagged templates)
+    "@babel/plugin-transform-template-literals",
     [
       "babel-plugin-transform-inline-environment-variables",
       // Exclude JEST_WORKER_ID and VITEST_WORKER_ID to avoid MMKV conflicts
