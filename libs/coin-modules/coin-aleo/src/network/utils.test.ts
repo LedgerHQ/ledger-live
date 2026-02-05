@@ -563,4 +563,8 @@ describe("network utils", () => {
       });
     });
   });
+
+  describe("parsePrivateOperation", () => {
+    // TODO:
+  });
 });
