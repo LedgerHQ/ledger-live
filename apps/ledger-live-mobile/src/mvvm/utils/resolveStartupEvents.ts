@@ -16,16 +16,23 @@ const NOT_LOGGED_EVENTS = new Set<string>([
   STARTUP_EVENTS.CURRENCY_HYDRATED,
 ]);
 
-const startupTsp = new Promise<number>(resolve => {
+let startupTsp: number | undefined = undefined;
+export function getStartupTsp() {
+  return startupTsp;
+}
+const startupTspP = new Promise<number>(resolve => {
   // On dev it doesn't make sense to compare to the app starting time due to metro start time
   // And also because react-native-startup-time does not reset on reload (so it keeps on increasing).
   if (__DEV__) return resolve(startupFirstImportTime);
   const now = Date.now();
   getTimeSinceStartup().then(t => resolve(now - t));
+}).then(tsp => {
+  startupTsp = tsp;
+  return tsp;
 });
 
 export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
-  const awaitedTsp = await startupTsp;
+  const awaitedTsp = await startupTspP;
   const resolved = new Map<string, GroupedStartupEvent>();
   startupEvents
     .filter(e => !NOT_LOGGED_EVENTS.has(e.event))

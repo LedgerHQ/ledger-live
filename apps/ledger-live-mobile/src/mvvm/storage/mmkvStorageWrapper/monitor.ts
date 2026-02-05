@@ -15,7 +15,7 @@ export function monitor<R, T = undefined>(
   input: { key: string | string[] | [string, unknown][]; value?: T | undefined },
   fn: () => R,
 ): R {
-  if (!__DEV__) return fn();
+  // if (!__DEV__) return fn(); // TODO make sure it doesn't have a significant performance impact
   const start = Date.now();
 
   const wasMonitoring = isMonitoring;
@@ -79,6 +79,23 @@ function groupKeys(keys: string[]) {
     group.keys.push(key);
   });
   return groups;
+}
+
+export type StorageSummary = {
+  read: { time: string; size: string };
+  write: { time: string; size: string };
+};
+export function getStorageSummary(): StorageSummary {
+  return {
+    read: formatOpSummary("read"),
+    write: formatOpSummary("write"),
+  };
+}
+function formatOpSummary(op: Op) {
+  return {
+    time: `${toFixed(0).format(totalTime[op])}\u00A0ms`,
+    size: `${toFixed(3).format(totalSize[op] / 1024)}\u00A0KB`,
+  };
 }
 
 function logBoth() {
