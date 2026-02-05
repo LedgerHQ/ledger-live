@@ -10,6 +10,9 @@
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
+    "fee" : "费用",
+    "stake" : "质押",
+    "validator" : "验证者",
     "delete" : "删除",
     "paste" : "粘贴",
     "yes" : "是",
@@ -466,6 +469,9 @@
     "GenuineCheckFailed" : {
       "title" : "设备验证失败",
       "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "在以太坊应用程序中启用盲签名或合约数据"
     },
     "HardResetFail" : {
       "title" : "抱歉，无法重置",
@@ -2681,6 +2687,10 @@
       "seeMarket" : "显示全部"
     },
     "walletBalance" : "钱包余额",
+    "balance" : {
+      "noSigner" : "最安全的\n钱包",
+      "noFund" : "保护您的\n加密货币"
+    },
     "seeAllAssets" : "查看所有资产",
     "seeAllAccounts" : "查看所有账户",
     "marketPriceSection" : {
@@ -2701,6 +2711,20 @@
       "send" : "发送",
       "deposit" : "接收",
       "stake" : "质押"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "转移",
+      "swap" : "互换",
+      "buy" : "买入",
+      "connect" : "连接",
+      "buyLedger" : "购买 Ledger 设备",
+      "transferDrawer" : {
+        "title" : "转移",
+        "receiveCrypto" : "接收加密货币",
+        "sendCrypto" : "发送加密货币",
+        "bankTransfer" : "银行转账",
+        "bankTransferDescription" : "通过发送现金接收稳定币"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2993,7 @@
     "yield" : "收益率",
     "sell" : "卖出",
     "swap" : "互换",
+    "perps" : "永续合约",
     "manage" : "管理",
     "lastTransactions" : "最近交易",
     "emptyState" : {
@@ -3477,9 +3502,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "打开通知",
-      "titleVariantB" : "充分利用 Ledger Wallet",
+      "titleVariantB" : "不要错过重要信息",
       "desc" : "获取关于 Ledger Wallet、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
-      "descVariantB" : "我们将向您发送个性化小贴士、设置指南以及相关市场新闻。",
+      "descVariantB" : "获取有关新代币、收益机会和市场变动的实时提醒。您可随时决定退出。",
       "allow" : "允许通知",
       "later" : "以后再说"
     },
@@ -3654,6 +3679,10 @@
     "stake" : {
       "title" : "权益质押",
       "description" : "获得加密货币权益质押奖励。"
+    },
+    "perps" : {
+      "title" : "永续合约",
+      "description" : "交易加密货币永续合约。"
     },
     "swap" : {
       "title" : "互换",
@@ -3851,7 +3880,8 @@
         "title" : "选择报价"
       },
       "twoStepApproval" : {
-        "title" : "完成步骤"
+        "title" : "完成步骤",
+        "completedTitle" : "交易状态"
       },
       "loader" : {
         "title" : "正在处理互换",
@@ -4549,6 +4579,7 @@
       },
       "acceptTerms" : "签署此交易，即表示您接受 <0><0>{{provider}}</0> 的使用条款</0>",
       "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
+      "acceptTermsSponsored" : "为享受免网络费用，您也同意与 Blinklabs 共享您的交易详情（包括钱包地址）。",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
@@ -6064,6 +6095,52 @@
       "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "地址已复制！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "memoPlaceholder" : "可选 Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "showAll" : "显示全部",
+      "showLess" : "显示更少",
+      "iDelegate" : "我委托"
+    }
+  },
   "stellar" : {
     "token" : "多种资产",
     "memo" : {
@@ -6468,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "可选 Memo"
   },
   "near" : {
     "info" : {
@@ -8247,7 +8321,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "服务提供商不可用",
-      "description" : "Changelly 无法处理此交易。错误代码 8HBB-{{randomCode}}"
+      "description" : "互换提供商无法处理此交易。错误代码 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "服务提供商不可用",
@@ -8284,6 +8358,11 @@
       "preapprove" : "账户添加成功",
       "validator" : "Ledger 验证者",
       "title" : "自动接收汇入资金",
+      "processing" : {
+        "title" : "正在处理交易",
+        "description" : "此过程最多可能需要 1 分钟",
+        "keepDeviceNearby" : "停留在 Ledger Wallet 钱包应用程序中并将 Ledger 设备一直放在附近。"
+      },
       "reonboard" : {
         "title" : "需要更新账户",
         "account" : "账户",
@@ -8356,7 +8435,11 @@
       "neutral" : "中立",
       "greed" : "贪婪",
       "extremeGreed" : "贪婪+"
-    }
+    },
+    "tileTitle" : "情绪"
+  },
+  "perps" : {
+    "title" : "永续合约"
   },
   "analyticsAllocation" : {
     "header" : {
