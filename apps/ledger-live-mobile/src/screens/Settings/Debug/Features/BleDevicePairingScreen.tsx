@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/types-devices";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 import { ScreenName } from "~/const";
 import BleDevicePairingFlowComponent, {
@@ -20,7 +21,9 @@ const BleDevicePairingScreen: React.FC<Props> = ({ navigation, route }) => {
     route.params;
 
   const onPairingSuccess = useCallback(
-    (device: Device) => {
+    // TODO: _discoveredDevice will be used for DMK-based device connections.
+    // Do not remove - see SelectDevice2/DISCOVERED_DEVICE_MIGRATION.md
+    (device: Device, _discoveredDevice: DiscoveredDevice) => {
       navigation.navigate(ScreenName.DebugFeatures, { pairedDevice: device });
     },
     [navigation],

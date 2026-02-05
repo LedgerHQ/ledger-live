@@ -5,6 +5,7 @@ import BleDevicePairingFlowComponent, {
 } from "~/components/BleDevicePairingFlow";
 import React, { useCallback } from "react";
 import { Device } from "@ledgerhq/types-devices";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
@@ -20,7 +21,9 @@ const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation, route }) 
   const { filterByDeviceModelId } = route.params;
 
   const onPairingSuccess = useCallback(
-    (device: Device) => {
+    // TODO: _discoveredDevice will be used for DMK-based device connections.
+    // Do not remove - see SelectDevice2/DISCOVERED_DEVICE_MIGRATION.md
+    (device: Device, _discoveredDevice: DiscoveredDevice) => {
       navigation.push(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
         params: {
