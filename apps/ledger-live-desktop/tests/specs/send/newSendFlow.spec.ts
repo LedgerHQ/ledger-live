@@ -621,8 +621,7 @@ test.describe("New Send Flow", () => {
     test("should not show fee menu options for XRP", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.xrp, TEST_ADDRESSES.xrp, true);
       await app.newSendFlow.fillCryptoAmount("1");
-      const hasMenu = await app.newSendFlow.feesMenuTrigger.isVisible().catch(() => false);
-      expect(hasMenu).toBe(false);
+      await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
     });
   });
 
