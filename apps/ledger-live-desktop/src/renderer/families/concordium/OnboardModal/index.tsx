@@ -1,9 +1,5 @@
-import type { ConcordiumCurrencyBridge, ConcordiumOnboardResult } from "@ledgerhq/coin-concordium";
-import {
-  ConcordiumOnboardProgress,
-  ConcordiumPairingProgress,
-  ConcordiumPairingStatus,
-} from "@ledgerhq/coin-concordium";
+import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
+import { ConcordiumPairingProgress } from "@ledgerhq/coin-concordium";
 import {
   setWalletConnect,
   ConcordiumWalletConnect,
@@ -11,7 +7,6 @@ import {
 } from "@ledgerhq/coin-concordium/network/walletConnect";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -36,10 +31,18 @@ import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import { OnboardingResult, StepId, StepProps } from "./types";
 import { extractErrorMessage, toError } from "./utils/errorExtraction";
+import {
+  getCreatableAccount,
+  getImportableAccounts,
+  resolveCreatableAccountName,
+  prepareAccountsForAdding,
+  getConfirmationCode,
+  shouldRetryPairing,
+  handlePairingProgress,
+  handleOnboardingProgress,
+} from "./helpers";
 
 const STEP_TRANSITION_TIMEOUT = 1500; // Delay before continue to next step while ID app handles the pairing
-const MAX_EXPIRED_RETRIES = 3;
-const CONFIRMATION_CODE_LENGTH = 4; // Number of characters from sessionTopic used for confirmation code
 
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
@@ -50,90 +53,6 @@ const mapDispatchToProps = {
   closeModal,
   addAccountsAction,
 };
-
-function getCreatableAccount(selectedAccounts: Account[]): Account | undefined {
-  return selectedAccounts.find(account => !account.used);
-}
-
-function getImportableAccounts(selectedAccounts: Account[]): Account[] {
-  return selectedAccounts.filter(account => account.used);
-}
-
-function resolveAccountName(
-  account: Account,
-  editedNames: { [accountId: string]: string },
-): string {
-  return editedNames[account.id] || getDefaultAccountName(account);
-}
-
-function resolveCreatableAccountName(
-  creatableAccount: Account | undefined,
-  currency: CryptoCurrency,
-  editedNames: { [accountId: string]: string },
-  importableAccountsCount: number,
-): string {
-  if (!creatableAccount) {
-    return `${currency.name} ${importableAccountsCount + 1}`;
-  }
-  return resolveAccountName(creatableAccount, editedNames);
-}
-
-type AddAccountsConfig = {
-  selectedAccounts: Account[];
-  existingAccounts: Account[];
-  editedNames: { [accountId: string]: string };
-  onboardingResult?: {
-    completedAccount: Account;
-  };
-};
-
-function prepareAccountsForNewOnboarding(
-  importableAccounts: Account[],
-  completedAccount: Account | undefined,
-  editedNames: { [accountId: string]: string },
-): {
-  accounts: Account[];
-  renamings: { [accountId: string]: string };
-} {
-  const accounts = [...importableAccounts];
-  if (completedAccount) {
-    accounts.push(completedAccount);
-  }
-
-  // on previous step the onboarding account is not yet finalized
-  // so editedNames use a temporary account ID
-  // since only one account is onboarded at a time, we can filter out importableAccounts renamings
-  // what is left belongs to the onboarded account
-  const importableAccountIds = new Set(importableAccounts.map(acc => acc.id));
-  const [, completedAccountName] =
-    Object.entries(editedNames).find(([accountId]) => !importableAccountIds.has(accountId)) || [];
-
-  const renamings = Object.fromEntries(
-    accounts.map(account => {
-      let accountName = editedNames[account.id];
-
-      if (completedAccount && account.id === completedAccount.id && completedAccountName) {
-        accountName = completedAccountName;
-      }
-
-      return [account.id, accountName || getDefaultAccountName(account)];
-    }),
-  );
-
-  return { accounts, renamings };
-}
-
-function prepareAccountsForAdding(config: AddAccountsConfig): {
-  accounts: Account[];
-  renamings: { [accountId: string]: string };
-} {
-  const { selectedAccounts, editedNames, onboardingResult } = config;
-
-  const importableAccounts = getImportableAccounts(selectedAccounts);
-  const completedAccount = onboardingResult?.completedAccount;
-
-  return prepareAccountsForNewOnboarding(importableAccounts, completedAccount, editedNames);
-}
 
 export type UserProps = {
   currency: CryptoCurrency | null;
@@ -319,40 +238,18 @@ class OnboardModal extends PureComponent<Props, State> {
       .pairWalletConnect(currency, device.deviceId)
       .subscribe({
         next: (data: ConcordiumPairingProgress) => {
-          switch (data.status) {
-            case ConcordiumPairingStatus.PREPARE:
-              if ("walletConnectUri" in data && data.walletConnectUri) {
-                this.setStateWithTimeout({
-                  onboardingStatus: AccountOnboardStatus.PREPARE,
-                  walletConnectUri: data.walletConnectUri,
-                });
-              }
-              return;
-
-            case ConcordiumPairingStatus.SUCCESS:
-              if ("sessionTopic" in data && data.sessionTopic) {
-                this.setStateWithTimeout({
-                  isPairing: false,
-                  onboardingStatus: AccountOnboardStatus.SUCCESS,
-                  sessionTopic: data.sessionTopic,
-                  walletConnectUri: null,
-                });
-              }
-              return;
+          const stateUpdate = handlePairingProgress(data);
+          if (stateUpdate) {
+            this.setStateWithTimeout(stateUpdate);
           }
         },
         complete: this.clearPairingSubscription,
         error: (error: unknown) => {
-          const errorMessage = extractErrorMessage(error);
-
-          if (
-            errorMessage.toLowerCase().includes("expired") &&
-            this.pairingExpiredRetryCount < MAX_EXPIRED_RETRIES
-          ) {
+          if (shouldRetryPairing(error, this.pairingExpiredRetryCount)) {
             this.pairingExpiredRetryCount++;
             log("concordium-onboarding", "pairing expired, retrying", {
               attempt: this.pairingExpiredRetryCount,
-              error: errorMessage,
+              error: extractErrorMessage(error),
             });
             this.handlePair(true);
             return;
@@ -401,22 +298,6 @@ class OnboardModal extends PureComponent<Props, State> {
     closeModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT");
   };
 
-  getConfirmationCode = (sessionTopic: string): string => {
-    if (sessionTopic.length < CONFIRMATION_CODE_LENGTH) {
-      const error = new Error(
-        `Invalid sessionTopic: expected at least ${CONFIRMATION_CODE_LENGTH} characters, got ${sessionTopic.length}`,
-      );
-      log("concordium-onboarding", "sessionTopic too short for confirmation code", {
-        length: sessionTopic.length,
-        sessionTopic,
-        expectedLength: CONFIRMATION_CODE_LENGTH,
-        error: error.message,
-      });
-      throw error;
-    }
-    return sessionTopic.substring(0, CONFIRMATION_CODE_LENGTH).toUpperCase();
-  };
-
   clearOnboardingSubscription = () => {
     if (!this.onboardingSubscription) return;
     this.onboardingSubscription.unsubscribe();
@@ -442,10 +323,10 @@ class OnboardModal extends PureComponent<Props, State> {
 
     let confirmationCode: string;
     try {
-      confirmationCode = this.getConfirmationCode(sessionTopic);
+      confirmationCode = getConfirmationCode(sessionTopic);
     } catch (error) {
       this.setState({
-        error: error instanceof Error ? error : new Error(String(error)),
+        error: toError(error),
         isProcessing: false,
         onboardingStatus: AccountOnboardStatus.ERROR,
         sessionTopic: null,
@@ -465,29 +346,10 @@ class OnboardModal extends PureComponent<Props, State> {
     this.onboardingSubscription = this.concordiumBridge
       .onboardAccount(currency, device.deviceId, creatableAccount)
       .subscribe({
-        next: (data: ConcordiumOnboardProgress | ConcordiumOnboardResult) => {
-          if ("status" in data && data.status === AccountOnboardStatus.SIGN) {
-            this.setStateWithTimeout({
-              onboardingStatus: AccountOnboardStatus.SIGN,
-            });
-            return;
-          }
-
-          if ("status" in data && data.status === AccountOnboardStatus.SUBMIT) {
-            this.setStateWithTimeout({
-              onboardingStatus: AccountOnboardStatus.SUBMIT,
-            });
-            return;
-          }
-
-          if ("account" in data) {
-            this.setStateWithTimeout({
-              onboardingResult: {
-                completedAccount: data.account,
-              },
-              onboardingStatus: AccountOnboardStatus.SUCCESS,
-              isProcessing: false,
-            });
+        next: data => {
+          const stateUpdate = handleOnboardingProgress(data);
+          if (stateUpdate) {
+            this.setStateWithTimeout(stateUpdate);
           }
         },
         complete: this.clearOnboardingSubscription,

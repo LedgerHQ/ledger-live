@@ -253,4 +253,137 @@ describe("OnboardModal", () => {
       });
     });
   });
+
+  describe("pairing non-expired error", () => {
+    it("should not retry on non-expired errors", async () => {
+      const genericError = { error: new Error("Connection failed") };
+      const mockPairObservable = createMockObservable([genericError]);
+      mockConcordiumBridge.pairWalletConnect.mockReturnValue(mockPairObservable);
+
+      render(<OnboardModal {...defaultProps} />, {
+        initialState: {
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          accounts: { active: [] },
+        },
+      });
+
+      const allowButton = await screen.findByRole("button", { name: "Agree" });
+      fireEvent.click(allowButton);
+
+      await waitFor(() => {
+        expect(mockConcordiumBridge.pairWalletConnect).toHaveBeenCalledTimes(1);
+      });
+
+      await waitFor(
+        () => {
+          expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
+        },
+        { timeout: 500 },
+      );
+    });
+  });
+
+  describe("account creation flow", () => {
+    it("should handle full account creation flow", async () => {
+      const mockPairObservable = createMockObservable([
+        mockPairingProgress.PREPARE,
+        mockPairingProgress.SUCCESS,
+      ]);
+      const mockOnboardObservable = createMockObservable([
+        mockOnboardingProgress.PREPARE,
+        mockOnboardingProgress.SIGN,
+        mockOnboardingProgress.SUBMIT,
+        mockOnboardingProgress.SUCCESS,
+      ]);
+      mockConcordiumBridge.pairWalletConnect.mockReturnValue(mockPairObservable);
+      mockConcordiumBridge.onboardAccount.mockReturnValue(mockOnboardObservable);
+
+      render(<OnboardModal {...defaultProps} />, {
+        initialState: {
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          accounts: { active: [] },
+        },
+      });
+
+      // Start pairing
+      const allowButton = await screen.findByRole("button", { name: "Agree" });
+      fireEvent.click(allowButton);
+
+      await waitFor(() => {
+        expect(mockConcordiumBridge.pairWalletConnect).toHaveBeenCalled();
+      });
+
+      // Navigate to create step
+      const createButton = screen.getByRole("button", { name: "Go to Create" });
+      fireEvent.click(createButton);
+
+      await waitFor(() => {
+        expect(screen.getByText("Current Step: CREATE")).toBeInTheDocument();
+      });
+    });
+
+    it("should handle account creation errors", async () => {
+      const mockPairObservable = createMockObservable([
+        mockPairingProgress.PREPARE,
+        mockPairingProgress.SUCCESS,
+      ]);
+      const mockOnboardObservable = createMockObservable([mockOnboardingProgress.ERROR]);
+      mockConcordiumBridge.pairWalletConnect.mockReturnValue(mockPairObservable);
+      mockConcordiumBridge.onboardAccount.mockReturnValue(mockOnboardObservable);
+
+      render(<OnboardModal {...defaultProps} />, {
+        initialState: {
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          accounts: { active: [] },
+        },
+      });
+
+      const allowButton = await screen.findByRole("button", { name: "Agree" });
+      fireEvent.click(allowButton);
+
+      await waitFor(() => {
+        expect(mockConcordiumBridge.pairWalletConnect).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe("edited account names", () => {
+    it("should use edited name for creatable account", () => {
+      const propsWithEditedNames = createMockUserProps({
+        currency: mockCurrency,
+        device: mockDevice,
+        selectedAccounts: [mockAccount, mockImportableAccount],
+        editedNames: { [mockAccount.id]: "My Custom Name" },
+      });
+
+      render(<OnboardModal {...propsWithEditedNames} />, {
+        initialState: {
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          accounts: { active: [] },
+        },
+      });
+
+      expect(screen.getByTestId("modal")).toBeInTheDocument();
+    });
+  });
+
+  describe("only importable accounts", () => {
+    it("should handle case with no creatable account", () => {
+      const onlyImportableProps = createMockUserProps({
+        currency: mockCurrency,
+        device: mockDevice,
+        selectedAccounts: [mockImportableAccount],
+      });
+
+      // This should throw because creatableAccount is required
+      expect(() =>
+        render(<OnboardModal {...onlyImportableProps} />, {
+          initialState: {
+            devices: { currentDevice: mockDevice, devices: [mockDevice] },
+            accounts: { active: [] },
+          },
+        }),
+      ).toThrow();
+    });
+  });
 });

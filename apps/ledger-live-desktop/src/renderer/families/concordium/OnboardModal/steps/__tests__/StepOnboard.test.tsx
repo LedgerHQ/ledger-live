@@ -94,6 +94,102 @@ describe("StepOnboard", () => {
     ).toBeInTheDocument();
   });
 
+  it("should display user refused error message", () => {
+    const { UserRefusedOnDevice } = jest.requireActual("@ledgerhq/errors");
+    const userRefusedError = new UserRefusedOnDevice();
+    const props = {
+      ...defaultProps,
+      onboardingStatus: AccountOnboardStatus.ERROR,
+      error: userRefusedError,
+    };
+
+    render(<StepOnboard {...props} />);
+
+    // The error message is displayed via Trans component with error.message as i18nKey
+    expect(screen.getByText(userRefusedError.message)).toBeInTheDocument();
+  });
+
+  it("should display locked device error message", () => {
+    const { LockedDeviceError } = jest.requireActual("@ledgerhq/errors");
+    const lockedError = new LockedDeviceError();
+    const props = {
+      ...defaultProps,
+      onboardingStatus: AccountOnboardStatus.ERROR,
+      error: lockedError,
+    };
+
+    render(<StepOnboard {...props} />);
+
+    // The error message is displayed via Trans component with error.message as i18nKey
+    expect(screen.getByText(lockedError.message)).toBeInTheDocument();
+  });
+
+  it("should display app store links when showing QR code", () => {
+    const props = {
+      ...defaultProps,
+      isPairing: true,
+      onboardingStatus: AccountOnboardStatus.PREPARE,
+      walletConnectUri: "wc:test-uri",
+    };
+
+    render(<StepOnboard {...props} />);
+
+    expect(screen.getByAltText("Get it on Google Play")).toBeInTheDocument();
+    expect(screen.getByAltText("Get it on Apple Store")).toBeInTheDocument();
+  });
+
+  it("should open Play Store when Google Play link is clicked", () => {
+    const { openURL } = jest.requireMock("~/renderer/linking");
+    const props = {
+      ...defaultProps,
+      isPairing: true,
+      onboardingStatus: AccountOnboardStatus.PREPARE,
+      walletConnectUri: "wc:test-uri",
+    };
+
+    render(<StepOnboard {...props} />);
+
+    const playStoreLink = screen.getByAltText("Get it on Google Play").closest("a");
+    playStoreLink?.click();
+
+    expect(openURL).toHaveBeenCalled();
+  });
+
+  it("should open App Store when Apple Store link is clicked", () => {
+    const { openURL } = jest.requireMock("~/renderer/linking");
+    const props = {
+      ...defaultProps,
+      isPairing: true,
+      onboardingStatus: AccountOnboardStatus.PREPARE,
+      walletConnectUri: "wc:test-uri",
+    };
+
+    render(<StepOnboard {...props} />);
+
+    const appStoreLink = screen.getByAltText("Get it on Apple Store").closest("a");
+    appStoreLink?.click();
+
+    expect(openURL).toHaveBeenCalled();
+  });
+
+  it("should open learn more link when clicked in QR code view", () => {
+    const { openURL } = jest.requireMock("~/renderer/linking");
+    const props = {
+      ...defaultProps,
+      isPairing: true,
+      onboardingStatus: AccountOnboardStatus.PREPARE,
+      walletConnectUri: "wc:test-uri",
+    };
+
+    render(<StepOnboard {...props} />);
+
+    // Find the learn more link in the QR code section
+    const learnMoreLink = screen.getByText(/learn more/i);
+    learnMoreLink.click();
+
+    expect(openURL).toHaveBeenCalled();
+  });
+
   it("should display loading state while connecting", () => {
     const props = {
       ...defaultProps,

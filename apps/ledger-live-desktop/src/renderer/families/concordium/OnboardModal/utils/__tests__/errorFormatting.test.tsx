@@ -3,6 +3,11 @@ import { render } from "@testing-library/react";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { formatOnboardingError } from "../errorFormatting";
 
+// Mock react-i18next to render the i18nKey as text
+jest.mock("react-i18next", () => ({
+  Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
+}));
+
 // Mock axios for isAxiosError check
 jest.mock("axios", () => ({
   isAxiosError: jest.fn((error: unknown) => {
@@ -30,7 +35,7 @@ describe("formatOnboardingError", () => {
       const result = formatOnboardingError(error, "onboard");
 
       const { container } = render(<div>{result}</div>);
-      expect(container.textContent).toContain("LockedDeviceError");
+      expect(container.textContent).toContain("Locked device");
     });
 
     it("should handle device errors in both contexts", () => {

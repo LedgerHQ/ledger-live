@@ -1,7 +1,7 @@
 import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import { ConcordiumAccount, ConcordiumResources } from "@ledgerhq/coin-concordium/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 export const createMockConcordiumCurrency = (): CryptoCurrency => {
@@ -24,7 +24,18 @@ export const createMockConcordiumCurrency = (): CryptoCurrency => {
   return mockCurrency;
 };
 
-export const createMockAccount = (overrides: Partial<Account> = {}): Account => {
+const defaultConcordiumResources: ConcordiumResources = {
+  isOnboarded: false,
+  credId: "",
+  publicKey: "",
+  identityIndex: 0,
+  credNumber: 0,
+  ipIdentity: 0,
+};
+
+export const createMockAccount = (
+  overrides: Partial<ConcordiumAccount> = {},
+): ConcordiumAccount => {
   const currency = createMockConcordiumCurrency();
   const derivationMode = "concordium" as const;
   const scheme = getDerivationScheme({ derivationMode, currency });
@@ -51,6 +62,7 @@ export const createMockAccount = (overrides: Partial<Account> = {}): Account => 
     balanceHistoryCache: createEmptyHistoryCache(),
     swapHistory: [],
     subAccounts: [],
+    concordiumResources: defaultConcordiumResources,
     ...overrides,
   };
 };

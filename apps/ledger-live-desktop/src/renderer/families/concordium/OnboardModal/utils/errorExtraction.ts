@@ -37,7 +37,10 @@ export function extractErrorMessage(error: unknown): string {
   // Fallback: stringify the error
   try {
     const stringified = String(error);
-    return stringified !== "[object Object]" ? stringified : "Unknown error occurred";
+    if (!stringified || stringified === "[object Object]") {
+      return "Unknown error occurred";
+    }
+    return stringified;
   } catch {
     return "Unknown error occurred";
   }
