@@ -105,22 +105,15 @@ export class NewSendFlowPage extends Component {
 
   @step("Type address in search input: $0")
   async typeAddress(address: string) {
-    await this.recipientInput.waitFor({ state: "visible", timeout: 15000 });
+    await this.recipientInput.waitFor({ state: "visible" });
     await this.recipientInput.clear();
     await this.recipientInput.fill(address);
-    await this.page.waitForTimeout(800); // Wait for validation/search
   }
 
   @step("Select address from list (index: $0)")
-  async selectAddressItem(_index: number = 0) {
+  async clickOnSendToButton() {
     await this.sendToButton.waitFor({ state: "visible" });
     await this.sendToButton.click();
-  }
-
-  @step("Click recent address tile (index: $0)")
-  async clickRecentAddressTile(index: number = 0) {
-    // Kept for backward compatibility with earlier tests: select the first available "Send to" item.
-    await this.selectAddressItem(index);
   }
 
   @step("Remove recent address tile (index: $0)")
@@ -454,7 +447,7 @@ export class NewSendFlowPage extends Component {
     if (hasMemo) {
       await this.skipMemo();
     } else {
-      await this.selectAddressItem(0);
+      await this.clickOnSendToButton();
     }
     await expect(this.amountInput).toBeVisible({ timeout: 10000 });
   }
@@ -463,7 +456,7 @@ export class NewSendFlowPage extends Component {
   async reachSignatureStep(address: string) {
     await this.typeAddress(address);
     await this.waitForRecipientValidation();
-    await this.selectAddressItem(0);
+    await this.clickOnSendToButton();
     await expect(this.amountInput).toBeVisible({ timeout: 10000 });
     await this.fillCryptoAmount("0.001");
     await this.clickReview();

@@ -238,7 +238,7 @@ test.describe("New Send Flow", () => {
       await test.step("Type and select address", async () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
         await app.newSendFlow.waitForRecipientValidation();
-        await app.newSendFlow.selectAddressItem(0);
+        await app.newSendFlow.clickOnSendToButton();
       });
 
       await test.step("Verify Amount step is visible", async () => {
@@ -328,7 +328,7 @@ test.describe("New Send Flow", () => {
 
       await test.step("Select resolved address and proceed", async () => {
         await app.newSendFlow.expectAddressMatched();
-        await app.newSendFlow.selectAddressItem(0);
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
       });
     });
@@ -348,7 +348,7 @@ test.describe("New Send Flow", () => {
 
       await test.step("Verify no recipient error and proceed", async () => {
         await expect(app.newSendFlow.recipientErrorBanner).not.toBeVisible();
-        await app.newSendFlow.selectAddressItem(0);
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
       });
     });
@@ -676,7 +676,7 @@ test.describe("New Send Flow", () => {
 
         await test.step("Complete Recipient step", async () => {
           await app.newSendFlow.typeAddress(family.address);
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
         });
 
         await test.step("Complete Amount step", async () => {
@@ -735,7 +735,7 @@ test.describe("New Send Flow", () => {
         await test.step("Go to Amount step", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
 
@@ -747,7 +747,7 @@ test.describe("New Send Flow", () => {
         await test.step("Go to Amount again", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
       });
@@ -762,7 +762,7 @@ test.describe("New Send Flow", () => {
         await test.step("Reach Amount step", async () => {
           await app.newSendFlow.typeAddress(address);
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
 
@@ -774,7 +774,7 @@ test.describe("New Send Flow", () => {
 
         await test.step("Proceed again with same address", async () => {
           await app.newSendFlow.waitForRecipientValidation();
-          await app.newSendFlow.selectAddressItem(0);
+          await app.newSendFlow.clickOnSendToButton();
           await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
         });
       });
