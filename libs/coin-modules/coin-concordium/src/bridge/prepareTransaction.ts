@@ -1,24 +1,24 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { encodeMemoToCbor } from "@ledgerhq/hw-app-concordium/lib/cbor";
+import { TransactionType } from "@ledgerhq/hw-app-concordium/lib/types";
 import { Transaction } from "../types";
-import { craftTransaction, estimateFees } from "../common-logic";
-import { getNextSequence } from "../network/node";
+import { estimateFees } from "../logic";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
   transaction,
 ) => {
-  const seq = await getNextSequence(account.freshAddress);
+  const transactionType = transaction.memo
+    ? TransactionType.TransferWithMemo
+    : TransactionType.Transfer;
 
-  const craftedTransaction = await craftTransaction(
-    { address: account.freshAddress, nextSequenceNumber: seq },
-    { amount: transaction.amount, recipient: transaction.recipient },
-  );
+  const memoSize = transaction.memo ? encodeMemoToCbor(transaction.memo).length : undefined;
 
-  const fee = await estimateFees(craftedTransaction.serializedTransaction);
+  const estimation = await estimateFees(account.currency, transactionType, memoSize);
 
-  if (transaction.fee !== new BigNumber(fee.toString())) {
-    return { ...transaction, fee: new BigNumber(fee.toString()) };
+  if (!transaction.fee?.isEqualTo(new BigNumber(estimation.cost.toString()))) {
+    return { ...transaction, fee: new BigNumber(estimation.cost.toString()) };
   }
 
   return transaction;

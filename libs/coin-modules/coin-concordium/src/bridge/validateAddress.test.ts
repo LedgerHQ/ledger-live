@@ -1,8 +1,8 @@
 import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
-import { isRecipientValid } from "../common-logic";
+import { isRecipientValid } from "../logic";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("../common-logic");
+jest.mock("../logic");
 
 describe("validateAddress", () => {
   const mockedIsRecipientValid = jest.mocked(isRecipientValid);

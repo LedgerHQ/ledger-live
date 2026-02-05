@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+package concordium.v2.plt;
+
+// This specifies the package we want to use for our generated Go code.
+// Has no effect on code generated on other languages.
+option go_package = "./pb";
+
+// This specifies the package we want to use for our generated Java classes.
+// Has no effect on code generated on other languages.
+option java_package = "com.concordium.grpc.v2.plt";
+
+// This specifies that separate .java files will be generated for each of the
+// Java classes/enums/etc. generated for the top-level messages, services, and
+// enumerations, and the wrapper Java class generated for this .proto file won't
+// contain any nested classes/enums/etc. If not generating Java code, this
+// option has no effect.
+option java_multiple_files = true;
+
+// This specifies the package we want to use for our generated C# classes.
+// Has no effect on code generated on other languages.
+option csharp_namespace = "Concordium.Grpc.V2.Plt";
+
+import "v2/concordium/kernel.proto";
+
+// A CBOR encoded bytestring
+message Cbor {
+  // A CBOR encoded byte string.
+  bytes value = 1;
+}
+
+// Token ID: a unique symbol and identifier of a protocol level token.
+message TokenId {
+  // Unique identifier for the token, guaranteed to be distinct across the
+  // entire concordium blockchain. The token id must be between 1 and 128 bytes long and consist of
+  // only a-z, A-Z, 0-9, `.`, `%` and `-`.
+  string value = 1;
+}
+
+// A token module reference. This is always 32 bytes long.
+message TokenModuleRef { bytes value = 1; }
+
+// PLT amount representation. The actual amount is computed as
+// `value * 10^(-decimals)`.
+message TokenAmount {
+  // The digits of the amount.
+  uint64 value = 1;
+  // Number of decimals in the representation
+  uint32 decimals = 2;
+}
+
+// Token state at the block level
+message TokenState {
+  reserved 2;
+  // The reference of the module implementing this token.
+  TokenModuleRef token_module_ref = 1;
+  // Number of decimals in the decimal number representation of amounts.
+  uint32 decimals = 3;
+  // The total available token supply.
+  TokenAmount total_supply = 4;
+  // Token module specific state, such as token name, feature flags, meta data.
+  Cbor module_state = 5;
+}
+
+// Token state at the account level
+message TokenAccountState {
+  // The available balance.
+  TokenAmount balance = 1;
+  reserved 2, 3;
+  // Token module specific account state, such as whether the account is on
+  // the allow or deny list.
+  optional Cbor module_state = 4;
+}
+
+// Single token event originating from a token module as part of a token
+// transaction.
+message TokenModuleEvent {
+  // The type of the event.
+  string type = 1;
+  // The CBOR encoded event details.
+  Cbor details = 2;
+}
+
+// A token holder is an entity that can hold tokens. Currently, this is limited
+// to accounts, but in the future it may be extended to other entities.
+message TokenHolder {
+  // The holder address
+  //
+  // This field might be extended in future versions of the API.
+  oneof address {
+    // The account address of the holder.
+    AccountAddress account = 1;
+  }
+}
+
+// An event emitted when a transfer of tokens from `from` to `to` is performed.
+message TokenTransferEvent {
+  // The token holder from which the tokens are transferred.
+  TokenHolder from = 1;
+  // The token holder to which the tokens are transferred.
+  TokenHolder to = 2;
+  // The amount of tokens transferred.
+  TokenAmount amount = 3;
+  // An optional memo field that can be used to attach a message to the token
+  // transfer.
+  optional Memo memo = 4;
+}
+
+// An event emitted when the token supply is updated, i.e. by minting/burning
+// tokens to/from the balance of the `target`.
+message TokenSupplyUpdateEvent {
+  // The token holder the balance update is performed on.
+  TokenHolder target = 1;
+  // The balance difference to be applied to the target.
+  TokenAmount amount = 2;
+}
+
+// Token event originating from token transactions.
+message TokenEvent {
+  // The Token ID.
+  TokenId token_id = 1;
+  // The type of the event.
+  //
+  // This field might be extended in future versions of the API.
+  oneof event {
+    // An event emitted by the token module.
+    TokenModuleEvent module_event = 2;
+    // An event emitted when a transfer of tokens is performed.
+    TokenTransferEvent transfer_event = 3;
+    // An event emitted when the token supply is updated by minting tokens to a
+    // token holder.
+    TokenSupplyUpdateEvent mint_event = 4;
+    // An event emitted when the token supply is updated by burning tokens from
+    // the balance of a token holder.
+    TokenSupplyUpdateEvent burn_event = 5;
+  }
+}
+
+// Token events originating from token transactions.
+message TokenEffect {
+  // Events emitted by the token.
+  repeated TokenEvent events = 1;
+}
+
+// Details provided by the token module in the event of rejecting a transaction.
+message TokenModuleRejectReason {
+  // The Token ID of the protocol-level token.
+  TokenId token_id = 1;
+  // The type of the reject reason.
+  string type = 2;
+  // (Optional) CBOR-encoded details.
+  optional Cbor details = 3;
+}
+
+// Update payload for creating a new protocol-level token
+message CreatePLT {
+  reserved 3;
+  // The Token ID of the protocol-level token.
+  TokenId token_id = 1;
+  // The hash that identifies the token module implementation.
+  TokenModuleRef token_module = 2;
+  // The number of decimal places used in the representation of amounts of this
+  // token. This determines the smallest representable fraction of the token.
+  // This can be at most 255.
+  uint32 decimals = 4;
+  // The initialization parameters of the token, encoded in CBOR.
+  Cbor initialization_parameters = 5;
+}
+
+// Details about the creation of a protocol-level token.
+message TokenCreationDetails {
+  // The update payload used to create the token.
+  CreatePLT create_plt = 1;
+  // The events generated by the token module during the creation of the token.
+  repeated TokenEvent events = 2;
+}

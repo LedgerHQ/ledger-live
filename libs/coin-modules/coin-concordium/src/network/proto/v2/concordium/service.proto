@@ -1,0 +1,391 @@
+syntax = "proto3";
+
+import "v2/concordium/kernel.proto";
+import "v2/concordium/types.proto";
+import "v2/concordium/protocol-level-tokens.proto";
+
+package concordium.v2;
+
+// This specifies the package we want to use for our generated Go code.
+// Has no effect on code generated on other languages.
+option go_package = "./pb";
+
+// This specifies the package we want to use for our generated Java classes.
+// Has no effect on code generated on other languages.
+option java_package = "com.concordium.grpc.v2";
+
+// This specifies the package we want to use for our generated C# classes.
+// Has no effect on code generated on other languages.
+option csharp_namespace = "Concordium.Grpc.V2";
+
+// This specifies that separate .java files will be generated for each of the Java classes/enums/etc. generated for the top-level messages, services, and enumerations,
+// and the wrapper Java class generated for this .proto file won't contain any nested classes/enums/etc.
+// If not generating Java code, this option has no effect.
+option java_multiple_files = true;
+
+service Queries {
+  // Return a stream of blocks that arrive from the time the query is made onward.
+  // This can be used to listen for incoming blocks.
+  rpc GetBlocks (Empty) returns (stream ArrivedBlockInfo);
+
+  // Return a stream of blocks that are finalized from the time the query is
+  // made onward. This can be used to listen for newly finalized blocks. Note
+  // that there is no guarantee that blocks will not be skipped if the client is
+  // too slow in processing the stream, however blocks will always be sent by
+  // increasing block height.
+  rpc GetFinalizedBlocks (Empty) returns (stream FinalizedBlockInfo);
+
+  // Retrieve the information about the given account in the given block.
+  rpc GetAccountInfo (AccountInfoRequest) returns (AccountInfo);
+
+  // Retrieve the information about the given token in the given block.
+  rpc GetTokenInfo (TokenInfoRequest) returns (TokenInfo);
+
+  // Retrieve the list of accounts that exist at the end of the given block.
+  rpc GetAccountList (BlockHashInput) returns (stream AccountAddress);
+
+  // Retrieve the list of protocol level tokens that exist at the end of the
+  // given block.
+  rpc GetTokenList (BlockHashInput) returns (stream concordium.v2.plt.TokenId);
+
+  // Get a list of all smart contract modules. The stream will end
+  // when all modules that exist in the state at the end of the given
+  // block have been returned.
+  rpc GetModuleList (BlockHashInput) returns (stream ModuleRef);
+
+  // Get a stream of ancestors for the provided block.
+  // Starting with the provided block itself, moving backwards until no more
+  // ancestors or the requested number of ancestors has been returned.
+  rpc GetAncestors (AncestorsRequest) returns (stream BlockHash);
+
+  // Get the source of a smart contract module.
+  rpc GetModuleSource (ModuleSourceRequest) returns (VersionedModuleSource);
+
+  // Get a list of addresses for all smart contract instances. The stream
+  // will end when all instances that exist in the state at the end of the
+  // given block has been returned.
+  rpc GetInstanceList (BlockHashInput) returns (stream ContractAddress);
+
+  // Get info about a smart contract instance as it appears at the end of the
+  // given block.
+  rpc GetInstanceInfo (InstanceInfoRequest) returns (InstanceInfo);
+
+  // Get the exact state of a specific contract instance, streamed as a list of
+  // key-value pairs. The list is streamed in lexicographic order of keys.
+  rpc GetInstanceState (InstanceInfoRequest) returns (stream InstanceStateKVPair);
+
+  // Get the value at a specific key of a contract state. In contrast to
+  // `GetInstanceState` this is more efficient, but requires the user to know
+  // the specific key to look for.
+  rpc InstanceStateLookup(InstanceStateLookupRequest) returns (InstanceStateValueAtKey);
+
+  // Get the best guess as to what the next account sequence number should be.
+  // If all account transactions are finalized then this information is reliable.
+  // Otherwise this is the best guess, assuming all other transactions will be
+  // committed to blocks and eventually finalized.
+  rpc GetNextAccountSequenceNumber (AccountAddress) returns (NextAccountSequenceNumber);
+
+  // Get information about the current state of consensus.
+  rpc GetConsensusInfo (Empty) returns (ConsensusInfo);
+
+  // Get the status of and information about a specific block item (transaction).
+  rpc GetBlockItemStatus (TransactionHash) returns (BlockItemStatus);
+
+  // Get the cryptographic parameters in a given block.
+  rpc GetCryptographicParameters (BlockHashInput) returns (CryptographicParameters);
+
+  // Get information, such as height, timings, and transaction counts for the given block.
+  rpc GetBlockInfo (BlockHashInput) returns (BlockInfo);
+
+  // Get all the bakers at the end of the given block.
+  rpc GetBakerList (BlockHashInput) returns (stream BakerId);
+
+  // Get information about a given pool at the end of a given block.
+  rpc GetPoolInfo (PoolInfoRequest) returns (PoolInfoResponse);
+
+  // Get information about the passive delegators at the end of a given block.
+  rpc GetPassiveDelegationInfo (BlockHashInput) returns (PassiveDelegationInfo);
+
+  // Get a list of live blocks at a given height.
+  rpc GetBlocksAtHeight (BlocksAtHeightRequest) returns (BlocksAtHeightResponse);
+
+  // Get information about tokenomics at the end of a given block.
+  rpc GetTokenomicsInfo (BlockHashInput) returns (TokenomicsInfo);
+
+  // Run the smart contract entrypoint in a given context and in the state at
+  // the end of the given block.
+  rpc InvokeInstance (InvokeInstanceRequest) returns (InvokeInstanceResponse);
+
+  // Get the registered delegators of a given pool at the end of a given block.
+  // In contrast to the `GetPoolDelegatorsRewardPeriod` which returns delegators
+  // that are fixed for the reward period of the block, this endpoint returns the
+  // list of delegators that are registered in the block. Any changes to delegators
+  // are immediately visible in this list.
+  // The stream will end when all the delegators has been returned.
+  rpc GetPoolDelegators (GetPoolDelegatorsRequest) returns (stream DelegatorInfo);
+
+  // Get the fixed delegators of a given pool for the reward period of the given block.
+  // In contracts to the `GetPoolDelegators` which returns delegators registered
+  // for the given block, this endpoint returns the fixed delegators contributing
+  // stake in the reward period containing the given block.
+  // The stream will end when all the delegators has been returned.
+  rpc GetPoolDelegatorsRewardPeriod (GetPoolDelegatorsRequest) returns (stream DelegatorRewardPeriodInfo);
+
+  // Get the registered passive delegators at the end of a given block.
+  // In contrast to the `GetPassiveDelegatorsRewardPeriod` which returns delegators
+  // that are fixed for the reward period of the block, this endpoint returns the
+  // list of delegators that are registered in the block. Any changes to delegators
+  // are immediately visible in this list.
+  // The stream will end when all the delegators has been returned.
+  rpc GetPassiveDelegators (BlockHashInput) returns (stream DelegatorInfo);
+
+  // Get the fixed passive delegators for the reward period of the given block.
+  // In contracts to the `GetPassiveDelegators` which returns delegators registered
+  // for the given block, this endpoint returns the fixed delegators contributing
+  // stake in the reward period containing the given block.
+  // The stream will end when all the delegators has been returned.
+  rpc GetPassiveDelegatorsRewardPeriod (BlockHashInput) returns (stream DelegatorRewardPeriodInfo);
+
+  // Get the current branches of blocks starting from and including the last finalized block.
+  rpc GetBranches (Empty) returns (Branch);
+
+  // Get information related to the baker election for a particular block.
+  rpc GetElectionInfo (BlockHashInput) returns (ElectionInfo);
+
+  // Get the identity providers registered as of the end of a given block.
+  // The stream will end when all the identity providers have been returned.
+  rpc GetIdentityProviders (BlockHashInput) returns (stream IpInfo);
+
+  // Get the anonymity revokers registered as of the end of a given block.
+  // The stream will end when all the anonymity revokers have been returned.
+  rpc GetAnonymityRevokers (BlockHashInput) returns (stream ArInfo);
+
+  // Get a list of non-finalized transaction hashes for a given account. This
+  // endpoint is not expected to return a large amount of data in most cases,
+  // but in bad network condtions it might. The stream will end when all the
+  // non-finalized transaction hashes have been returned.
+  rpc GetAccountNonFinalizedTransactions (AccountAddress) returns (stream TransactionHash);
+
+  // Get a list of transaction events in a given block.
+  // The stream will end when all the transaction events for a given block have been returned.
+  rpc GetBlockTransactionEvents (BlockHashInput) returns (stream BlockItemSummary);
+
+  // Get a list of special events in a given block. These are events generated
+  // by the protocol, such as minting and reward payouts. They are not directly
+  // generated by any transaction. The stream will end when all the special
+  // events for a given block have been returned.
+  rpc GetBlockSpecialEvents (BlockHashInput) returns (stream BlockSpecialEvent);
+
+  // Get the pending updates to chain parameters at the end of a given block.
+  // The stream will end when all the pending updates for a given block have been returned.
+  rpc GetBlockPendingUpdates (BlockHashInput) returns (stream PendingUpdate);
+
+  // Get next available sequence numbers for updating chain parameters after a given block.
+  rpc GetNextUpdateSequenceNumbers (BlockHashInput) returns (NextUpdateSequenceNumbers);
+
+  // Get all accounts that have scheduled releases, with the timestamp of the first pending
+  // scheduled release for that account. (Note, this only identifies accounts by index, and
+  // only indicates the first pending release for each account.)
+  rpc GetScheduledReleaseAccounts (BlockHashInput) returns (stream AccountPending);
+
+  // Get all accounts that have stake in cooldown, with the timestamp of the first pending
+  // cooldown expiry for each account. (Note, this only identifies accounts by index,
+  // and only indicates the first pending cooldown for each account.)
+  // Prior to protocol version 7, the resulting stream will always be empty.
+  rpc GetCooldownAccounts (BlockHashInput) returns (stream AccountPending);
+
+  // Get all accounts that have stake in pre-cooldown.
+  // (This only identifies accounts by index.)
+  // Prior to protocol version 7, the resulting stream will always be empty.
+  rpc GetPreCooldownAccounts (BlockHashInput) returns (stream AccountIndex);
+
+  // Get all accounts that have stake in pre-pre-cooldown.
+  // (This only identifies accounts by index.)
+  // Prior to protocol version 7, the resulting stream will always be empty.
+  rpc GetPrePreCooldownAccounts (BlockHashInput) returns (stream AccountIndex);
+
+  // Get the projected earliest time at which a particular baker will be required to bake a block.
+  // If the current consensus version is 0, this returns the status 'Unavailable', as the endpoint
+  // is only supported by consensus version 1.
+  //
+  // If the baker is not a baker for the current reward period, this returns a timestamp at the
+  // start of the next reward period. If the baker is a baker for the current reward period, the
+  // earliest win time is projected from the current round forward, assuming that each round after
+  // the last finalized round will take the minimum block time. (If blocks take longer, or timeouts
+  // occur, the actual time may be later, and the reported time in subsequent queries may reflect
+  // this.) At the end of an epoch (or if the baker is not projected to bake before the end of the
+  // epoch) the earliest win time for a (current) baker will be projected as the start of the next
+  // epoch. This is because the seed for the leader election is updated at the epoch boundary, and
+  // so the winners cannot be predicted beyond that. Note that in some circumstances the returned
+  // timestamp can be in the past, especially at the end of an epoch.
+  rpc GetBakerEarliestWinTime(BakerId) returns (Timestamp);
+
+  // Shut down the node.
+  // Return a GRPC error if the shutdown failed.
+  rpc Shutdown(Empty) returns (Empty);
+
+  // Suggest to a peer to connect to the submitted peer details.
+  // This, if successful, adds the peer to the list of given addresses.
+  // Otherwise return a GRPC error.
+  // Note. The peer might not be connected to instantly, in that case
+  // the node will try to establish the connection in near future. This
+  // function returns a GRPC status 'Ok' in this case.
+  rpc PeerConnect (IpSocketAddress) returns (Empty);
+
+  // Disconnect from the peer and remove them from the given addresses list
+  // if they are on it. Return if the request was processed successfully.
+  // Otherwise return a GRPC error.
+  rpc PeerDisconnect (IpSocketAddress) returns (Empty);
+
+  // Get a list of banned peers.
+  rpc GetBannedPeers(Empty) returns (BannedPeers);
+
+  // Ban the given peer.
+  // Returns a GRPC error if the action failed.
+  rpc BanPeer(PeerToBan) returns (Empty);
+
+  // Unban the banned peer.
+  // Returns a GRPC error if the action failed.
+  rpc UnbanPeer(BannedPeer) returns (Empty);
+
+  // Start dumping packages into the specified file.
+  // Only enabled if the node was built with the `network_dump` feature.
+  // Returns a GRPC error if the network dump failed to start.
+  rpc DumpStart(DumpRequest) returns (Empty);
+
+  // Stop dumping packages.
+  // Only enabled if the node was built with the `network_dump` feature.
+  // Returns a GRPC error if the network dump failed to be stopped.
+  rpc DumpStop(Empty) returns (Empty);
+
+  // Get a list of the peers that the node is connected to
+  // and assoicated network related information for each peer.
+  rpc GetPeersInfo(Empty) returns (PeersInfo);
+
+  // Get information about the node.
+  // The `NodeInfo` includes information of
+  // * Meta information such as the, version of the node, type of the node, uptime and the local time of the node.
+  // * NetworkInfo which yields data such as the node id, packets sent/received,
+  //   average bytes per second sent/received.
+  // * ConsensusInfo. The `ConsensusInfo` returned depends on if the node supports
+  //   the protocol on chain and whether the node is configured as a baker or not.
+  rpc GetNodeInfo(Empty) returns (NodeInfo);
+
+  // Send a block item. A block item is either an `AccountTransaction`, which is
+  // a transaction signed and paid for by an account, a `CredentialDeployment`,
+  // which creates a new account, or `UpdateInstruction`, which is an
+  // instruction to change some parameters of the chain. Update instructions can
+  // only be sent by the governance committee.
+  //
+  // Returns a hash of the block item, which can be used with
+  // `GetBlockItemStatus`.
+  rpc SendBlockItem (SendBlockItemRequest) returns (TransactionHash);
+
+  // Get the hash to be signed for an account transaction. The hash returned
+  // should be signed and the signatures included as an
+  // AccountTransactionSignature when calling `SendBlockItem`. This is provided as
+  // a convenience to support cases where the right SDK is not available for
+  // interacting with the node. If an SDK is available then it is strongly
+  // recommended to compute this hash off-line using it. That reduces the trust
+  // in the node, removes networking failure modes, and will perform better.
+  rpc GetAccountTransactionSignHash (PreAccountTransaction) returns (AccountTransactionSignHash);
+
+  // Get the hash to be signed for an account transaction v1. The
+  // hash returned should be signed and the signatures included as an
+  // AccountTransactionV1Signatures when calling `SendBlockItem`. This is
+  // provided as a convenience to support cases where the right SDK is not
+  // available for interacting with the node. If an SDK is available then it is
+  // strongly recommended to compute this hash off-line using it. That reduces
+  // the trust in the node, removes networking failure modes, and will perform
+  // better.
+  rpc GetAccountTransactionV1SignHash (PreAccountTransactionV1) returns (AccountTransactionSignHash);
+
+  // Get the values of chain parameters in effect in the given block.
+  rpc GetBlockChainParameters(BlockHashInput) returns (ChainParameters);
+
+  // Get the summary of the finalization data in a given block.
+  rpc GetBlockFinalizationSummary(BlockHashInput) returns (BlockFinalizationSummary);
+
+  // Get the items of a block.
+  rpc GetBlockItems(BlockHashInput) returns (stream BlockItem);
+
+  // Get all bakers in the reward period of a block.
+  // This endpoint is only supported for protocol version 6 and onwards.
+  // If the protocol does not support the endpoint then an  'IllegalArgument' error is returned.
+  rpc GetBakersRewardPeriod(BlockHashInput) returns (stream BakerRewardPeriodInfo);
+
+  // For a non-genesis block, this returns the quorum certificate, a timeout
+  // certificate (if present) and epoch finalization entry (if present).
+  // Note that, if the block being pointed to is not a product of ConcordiumBFT,
+  // then the response will be a grpc error (invalid argument).
+  // If the endpoint is not enabled by the node, then an 'unimplemented' error
+  // will be returned.
+  rpc GetBlockCertificates(BlockHashInput) returns (BlockCertificates);
+
+  // Get the list of bakers that won the lottery in a particular historical epoch (i.e. the
+  // last finalized block is in a later epoch). This lists the winners for each round in the
+  // epoch, starting from the round after the last block in the previous epoch, running to
+  // the round before the first block in the next epoch. It also indicates if a block in each
+  // round was included in the finalized chain.
+  //
+  // The following error cases are possible:
+  //  * `NOT_FOUND` if the query specifies an unknown block.
+  //  * `UNAVAILABLE` if the query is for an epoch that is not finalized in the current genesis
+  //     index, or is for a future genesis index.
+  //  * `INVALID_ARGUMENT` if the query is for an epoch that is not finalized for a past genesis
+  //    index.
+  //  * `INVALID_ARGUMENT` if the query is for a genesis index at consensus version 0.
+  //  * `INVALID_ARGUMENT` if the input `EpochRequest` is malformed.
+  //  * `UNIMPLEMENTED` if the endpoint is disabled on the node.
+  rpc GetWinningBakersEpoch (EpochRequest) returns (stream WinningBaker);
+
+  // Get the block hash of the first finalized block in a specified epoch.
+  //
+  // The following error cases are possible:
+  //  * `NOT_FOUND` if the query specifies an unknown block.
+  //  * `UNAVAILABLE` if the query is for an epoch that is not finalized in the current genesis
+  //    index, or is for a future genesis index.
+  //  * `INVALID_ARGUMENT` if the query is for an epoch with no finalized blocks for a past genesis
+  //    index.
+  //  * `INVALID_ARGUMENT` if the input `EpochRequest` is malformed.
+  //  * `UNIMPLEMENTED` if the endpoint is disabled on the node.
+  rpc GetFirstBlockEpoch (EpochRequest) returns (BlockHash);
+
+  // Get the detailed status of the consensus. This is only available for consensus version 1.
+  //
+  // The following error cases are possible:
+  //  * `NOT_FOUND` if the query specifies an unknown genesis index.
+  //  * `INVALID_ARGUMENT` if the query specifies a genesis index at consensus version 0.
+  //  * `UNIMPLEMENTED` if the endpoint is disabled on the node.
+  rpc GetConsensusDetailedStatus (ConsensusDetailedStatusQuery) returns (ConsensusDetailedStatus);
+
+  // Dry run a series of transactions and operations on a state derived from a specified block.
+  // The server should send a single `DryRunResponse` for each `DryRunRequest` received, unless
+  // the call fails with an error status code. If a request produces a `DryRunErrorResponse`, then
+  // the server will still process subsequent requests, just as if the request causing the error
+  // did not happen.
+  //
+  // The first request should be `load_block_at_state` to determine the block state that will be
+  // used for the dry run.
+  //
+  // The server associates each request with an energy cost, and limits the total energy that may
+  // be expended in a single invocation of `DryRun`. This limit is reported as `quota` in the
+  // initial metadata returned by the server. If executing an operation exceeds the limit,
+  // the server terminates the session with `RESOURCE_EXHAUSTED`.
+  //
+  // The server also imposes a timeout for a dry-run session to complete. The server reports
+  // the timeout duration in milliseconds in the initial metadata field `timeout`. If the session
+  // is not completed before the timeout elapses, the server terminates the session with
+  // `DEADLINE_EXCEEDED`.
+  //
+  // The following error cases are possible:
+  //  * `INVALID_ARGUMENT` if any `DryRunRequest` is malformed.
+  //  * `RESOURCE_EXHAUSTED` if the energy quota is exceeded.
+  //  * `DEADLINE_EXCEEDED` if the session does not complete before the server-imposed timeout.
+  //  * `RESOURCE_EXHAUSTED` if the server is not currently accepting new `DryRun` sessions.
+  //    (The server may impose a limit on the number of concurrent sessions.)
+  //  * `INTERNAL` if an interal server error occurs. This should not happen, and likely indicates
+  //    a bug.
+  //  * `UNIMPLEMENTED` if the endpoint is disabled on the node.
+  rpc DryRun (stream DryRunRequest) returns (stream DryRunResponse);
+}

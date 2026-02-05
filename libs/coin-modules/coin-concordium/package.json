@@ -30,8 +30,23 @@
       "api": [
         "lib/api/index"
       ],
+      "bridge/index": [
+        "lib/bridge/index"
+      ],
+      "bridge/serialization": [
+        "lib/bridge/serialization"
+      ],
+      "config": [
+        "lib/config"
+      ],
+      "constants": [
+        "lib/constants"
+      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
+      ],
+      "signer": [
+        "lib/signer/index"
       ],
       "logic": [
         "lib/logic/index"
@@ -39,10 +54,19 @@
       "specs": [
         "lib/test/bot-specs"
       ],
+      "test/cli": [
+        "lib/test/cli"
+      ],
+      "test/concordiumTestUtils": [
+        "lib/test/concordiumTestUtils"
+      ],
       "transaction": [
         "lib/bridge/transaction"
       ],
       "types": [
+        "lib/types/index"
+      ],
+      "types/index": [
         "lib/types/index"
       ],
       "*": [
@@ -62,6 +86,22 @@
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
+    "./bridge/index": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./bridge/serialization": {
+      "require": "./lib/bridge/serialization.js",
+      "default": "./lib-es/bridge/serialization.js"
+    },
+    "./config": {
+      "require": "./lib/config.js",
+      "default": "./lib-es/config.js"
+    },
+    "./constants": {
+      "require": "./lib/constants.js",
+      "default": "./lib-es/constants.js"
+    },
     "./deviceTransactionConfig": {
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
@@ -78,6 +118,14 @@
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
+    "./test/cli": {
+      "require": "./lib/test/cli.js",
+      "default": "./lib-es/test/cli.js"
+    },
+    "./test/concordiumTestUtils": {
+      "require": "./lib/test/concordiumTestUtils.js",
+      "default": "./lib-es/test/concordiumTestUtils.js"
+    },
     "./transaction": {
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
@@ -85,6 +133,22 @@
     "./types": {
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
+    },
+    "./types/index": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./network/submitCredentialDeploymentTransaction": {
+      "require": "./lib/network/submitCredentialDeploymentTransaction.js",
+      "default": "./lib-es/network/submitCredentialDeploymentTransaction.js"
+    },
+    "./network/utils": {
+      "require": "./lib/network/utils.js",
+      "default": "./lib-es/network/utils.js"
+    },
+    "./network/walletConnect": {
+      "require": "./lib/network/walletConnect.js",
+      "default": "./lib-es/network/walletConnect.js"
     },
     "./*": {
       "require": "./lib/*.js",
@@ -98,32 +162,38 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@grpc/grpc-js": "^1.9.15",
+    "@grpc/proto-loader": "^0.7.15",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-concordium": "workspace:*",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@walletconnect/sign-client": "2.23.4",
+    "@walletconnect/types": "2.23.0",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "typescript": "^5.4.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node && tsc --outDir lib-es --module esnext --moduleResolution bundler",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
