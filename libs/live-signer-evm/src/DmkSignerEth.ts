@@ -24,6 +24,10 @@ import {
 } from "@ledgerhq/errors";
 import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
+import { TogglableTrustedNameDataSource } from "./TogglableTrustedNameDataSource";
+
+const ORIGIN_TOKEN = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5";
 
 export type DAError =
   | GetAddressDAError
@@ -33,15 +37,27 @@ export type DAError =
 
 export class DmkSignerEth implements EvmSigner {
   private readonly signer: SignerEth;
+  private readonly trustedNamesDataSource: TogglableTrustedNameDataSource;
+
   constructor(
     readonly dmk: DeviceManagementKit,
     readonly sessionId: string,
   ) {
+    this.trustedNamesDataSource = new TogglableTrustedNameDataSource();
+
+    const contextModule = new ContextModuleBuilder({
+      originToken: ORIGIN_TOKEN,
+    })
+      .setTrustedNameDataSource(this.trustedNamesDataSource)
+      .build();
+
     this.signer = new SignerEthBuilder({
       dmk,
       sessionId,
-      originToken: "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5",
-    }).build();
+      originToken: ORIGIN_TOKEN,
+    })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
@@ -145,6 +161,12 @@ export class DmkSignerEth implements EvmSigner {
 
     if (!buffer) {
       throw new Error("Invalid transaction");
+    }
+
+    if (resolution?.domains?.[0]?.domain) {
+      this.trustedNamesDataSource.enableTrustedNames();
+    } else {
+      this.trustedNamesDataSource.disableTrustedNames();
     }
 
     return new Observable(observer => {

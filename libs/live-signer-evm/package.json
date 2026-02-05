@@ -33,6 +33,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
+    "purify-ts": "2.1.0",
     "rxjs": "catalog:"
   },
   "scripts": {
