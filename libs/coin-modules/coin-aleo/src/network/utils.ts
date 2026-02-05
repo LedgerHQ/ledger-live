@@ -6,6 +6,7 @@ import { AMOUNT_ARG_INDEX, PROGRAM_ID, RECIPIENT_ARG_INDEX } from "../constants"
 import { determineTransactionType, parseMicrocredits } from "../logic/utils";
 import type { AleoOperation, AleoPrivateRecord, AleoPublicTransaction } from "../types";
 import { apiClient } from "./api";
+import { sdkClient } from "./sdk";
 
 function limitTransactions(
   transactions: AleoPublicTransaction[],
@@ -172,7 +173,7 @@ export async function parsePrivateOperation({
   let sender = "";
   let value = new BigNumber(0);
 
-  const outputRecord = await apiClient.decryptRecord(rawTx.record_ciphertext, viewKey);
+  const outputRecord = await sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey);
 
   // PROGRAM INPUTS, BASED ON TRANSITION INDEX
   const recordTransition = execution.transitions[rawTx.transition_index];
@@ -180,22 +181,25 @@ export async function parsePrivateOperation({
   try {
     // DECRYPT RECIPIENT & AMOUNT
     // ONLY THE SENDER CAN DECRYPT THESE VALUES
-    const recipientData = await apiClient.decryptCiphertext({
-      ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
-      tpk: recordTransition.tpk,
-      viewKey,
-      programId: rawTx.program_name,
-      functionName: rawTx.function_name,
-      outputIndex: RECIPIENT_ARG_INDEX,
-    });
-    const amountData = await apiClient.decryptCiphertext({
-      ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
-      tpk: recordTransition.tpk,
-      viewKey,
-      programId: rawTx.program_name,
-      functionName: rawTx.function_name,
-      outputIndex: AMOUNT_ARG_INDEX,
-    });
+    const [recipientData, amountData] = await Promise.all([
+      sdkClient.decryptCiphertext({
+        ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+        tpk: recordTransition.tpk,
+        viewKey,
+        programId: rawTx.program_name,
+        functionName: rawTx.function_name,
+        outputIndex: RECIPIENT_ARG_INDEX,
+      }),
+      sdkClient.decryptCiphertext({
+        ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+        tpk: recordTransition.tpk,
+        viewKey,
+        programId: rawTx.program_name,
+        functionName: rawTx.function_name,
+        outputIndex: AMOUNT_ARG_INDEX,
+      }),
+    ]);
+
     sender = address;
     recipient = recipientData.plaintext;
     value = new BigNumber(parseMicrocredits(amountData.plaintext));
