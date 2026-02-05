@@ -301,6 +301,7 @@ export type Features = CurrencyFeatures & {
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
+  addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
 };
 
 /**
@@ -721,6 +722,10 @@ export type Feature_Noah = Feature<{
 
 export type Feature_NewSendFlow = Feature<{
   families?: string[];
+}>;
+
+export type Feature_AddressPoisoningOperationsFilter = Feature<{
+  families: string[];
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

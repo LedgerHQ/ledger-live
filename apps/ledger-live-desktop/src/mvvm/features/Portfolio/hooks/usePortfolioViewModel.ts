@@ -9,6 +9,7 @@ import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
+import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 
 export interface PortfolioViewModelResult {
   readonly totalAccounts: number;
@@ -36,16 +37,23 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
+  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
+    shouldFilter: shouldFilterTokenOpsZeroAmount,
+  });
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      const isOperationPoisoned = isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      );
 
-      return !removeZeroAmountTokenOp;
+      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
+
+      return shouldFilterOperation;
     },
-    [shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
   );
 
   const totalAccounts = accounts.length;
