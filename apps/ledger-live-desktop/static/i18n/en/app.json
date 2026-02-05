@@ -812,10 +812,13 @@
   "card": {
     "backToCard": "all cards",
     "title": "Card",
+    "imageAlt": "Card Image",
     "spendYourCrypto": "Spend your crypto",
     "payDescription": "Pay online or in store with a crypto card",
     "exploreCards": "Explore Cards",
-    "iAlreadyHaveACard": "I already have a card"
+    "iAlreadyHaveACard": "I already have a card",
+    "unlockLiquidity": "Unlock liquidity",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
   },
   "lend": {
     "title": "Lend crypto",
