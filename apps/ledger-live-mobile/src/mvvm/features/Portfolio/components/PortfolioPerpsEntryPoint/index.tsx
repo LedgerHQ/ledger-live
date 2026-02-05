@@ -17,6 +17,7 @@ import {
   Subheader,
   SubheaderRow,
   SubheaderTitle,
+  SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, PiggyBank } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { track } from "~/analytics";
@@ -36,16 +37,12 @@ export const PortfolioPerpsEntryPoint = () => {
 
   return (
     <FeatureToggle featureId="ptxPerpsLiveAppMobile">
-      <Flex flexDirection="row" alignItems="center" mb={4}>
-        <Subheader>
-          <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
-            <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>
-            <Flex ml={2}>
-              <ChevronRight size={12} color="muted" />
-            </Flex>
-          </SubheaderRow>
-        </Subheader>
-      </Flex>
+      <Subheader>
+        <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
+          <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>
+          <SubheaderShowMore />
+        </SubheaderRow>
+      </Subheader>
       <Flex mb={6}>
         <ListItem onPress={handlePress} testID="portfolio-perps-entry-point">
           <ListItemLeading>

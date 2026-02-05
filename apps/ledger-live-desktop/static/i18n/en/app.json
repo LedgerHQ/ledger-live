@@ -810,7 +810,12 @@
     }
   },
   "card": {
-    "backToCard": "all cards"
+    "backToCard": "all cards",
+    "title": "Card",
+    "spendYourCrypto": "Spend your crypto",
+    "payDescription": "Pay online or in store with a crypto card",
+    "exploreCards": "Explore Cards",
+    "iAlreadyHaveACard": "I already have a card"
   },
   "lend": {
     "title": "Lend crypto",
