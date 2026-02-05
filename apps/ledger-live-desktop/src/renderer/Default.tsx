@@ -97,6 +97,7 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
+const CardW40 = lazy(() => import("LLD/features/Card"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -222,6 +223,7 @@ const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBann
         <Route path="/" element={withSuspense(Dashboard)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
+        <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
         <Route path="/card/:appId?" element={withSuspense(Card)({})} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
         <Route path="/manager/*" element={withSuspense(Manager)({})} />

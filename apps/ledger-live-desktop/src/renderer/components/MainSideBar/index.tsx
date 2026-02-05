@@ -253,6 +253,7 @@ const MainSideBar = () => {
   const {
     shouldDisplayMarketBanner: isMarketBannerEnabled,
     shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
+    shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
 
@@ -345,6 +346,10 @@ const MainSideBar = () => {
   const handleClickPerps = useCallback(() => {
     push("/perps");
     trackEntry("perps");
+  }, [push, trackEntry]);
+  const handleClickCardWallet = useCallback(() => {
+    push("/card-new-wallet");
+    trackEntry("card-new-wallet");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
@@ -567,16 +572,29 @@ const MainSideBar = () => {
                     }
                   />
                 </FeatureToggle>
-                <SideBarListItem
-                  id={"card"}
-                  label={t("sidebar.card")}
-                  icon={Icons.CreditCard}
-                  iconActiveColor="wallet"
-                  isActive={location.pathname === "/card"}
-                  onClick={handleClickCard}
-                  collapsed={secondAnim}
-                  disabled={isCardDisabled}
-                />
+                {isWallet40MainNavEnabled ? (
+                  <SideBarListItem
+                    id={"card-wallet"}
+                    label={t("sidebar.card")}
+                    icon={Icons.CreditCard}
+                    iconActiveColor="wallet"
+                    isActive={location.pathname === "/card-new-wallet"}
+                    onClick={handleClickCardWallet}
+                    collapsed={secondAnim}
+                  />
+                ) : (
+                  <SideBarListItem
+                    id={"card"}
+                    label={t("sidebar.card")}
+                    icon={Icons.CreditCard}
+                    iconActiveColor="wallet"
+                    isActive={location.pathname === "/card"}
+                    onClick={handleClickCard}
+                    collapsed={secondAnim}
+                    disabled={isCardDisabled}
+                  />
+                )}
+
                 <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
                     id={"recover"}
