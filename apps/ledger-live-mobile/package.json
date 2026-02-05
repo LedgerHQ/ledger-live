@@ -257,6 +257,8 @@
     "@rozenite/network-activity-plugin": "1.2.0",
     "@rozenite/react-navigation-plugin": "1.2.0",
     "@rozenite/redux-devtools-plugin": "1.2.0",
+    "@module-federation/enhanced": "0.22.0",
+    "@module-federation/runtime": "0.22.0",
     "@rozenite/repack": "1.2.0",
     "@rspack/core": "catalog:",
     "@swc/helpers": "0.5.17",

@@ -169,6 +169,37 @@ export default withRozeniteUrlFix(
           new ReanimatedPlugin({
             unstable_disableTransform: true,
           }),
+          new Repack.plugins.ModuleFederationPluginV2({
+            name: "HostApp",
+            filename: "HostApp.container.js.bundle",
+            experiments: {
+              asyncStartup: true, // Add this line
+            },
+            remotes: {
+              RemoteApp: `RemoteApp@http://localhost:9000/${platform}/mf-manifest.json`,
+            },
+            dts: false,
+            shared: {
+              react: {
+                singleton: true,
+                eager: true,
+                requiredVersion: "18.3.1",
+              },
+              "react-native": {
+                singleton: true,
+                eager: true,
+                requiredVersion: "0.77.3",
+              },
+              "react-redux": {
+                singleton: true,
+                eager: true,
+              },
+              "@reduxjs/toolkit": {
+                singleton: true,
+                eager: true,
+              },
+            },
+          }),
           new ExpoModulesPlugin(),
         ],
       };

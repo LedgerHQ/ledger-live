@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { Platform } from "react-native";
@@ -54,6 +54,9 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import { Text } from "react-native";
+
+const RemoteLiveApp = lazy(() => import("RemoteApp/HelloWorld"));
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -180,6 +183,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
                 hideEmptyTokenAccount={hideEmptyTokenAccount}
                 openAddModal={openAddModal}
               />
+              <Suspense fallback={<Text>Loading...</Text>}>
+                <RemoteLiveApp />
+              </Suspense>
             </Box>
           </AnimatedContainer>
         ) : (
