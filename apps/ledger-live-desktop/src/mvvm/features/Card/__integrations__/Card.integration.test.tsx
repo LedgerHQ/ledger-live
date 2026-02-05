@@ -26,6 +26,16 @@ describe("Card feature integration", () => {
     expect(screen.getByText("Pay online or in store with a crypto card")).toBeInTheDocument();
   });
 
+  it("should display hero section when Card page is rendered", () => {
+    render(<CardPage />);
+
+    expect(screen.getByText("Unlock liquidity")).toBeVisible();
+    expect(
+      screen.getByText(/Explore our crypto cards and find the one that suits you best/),
+    ).toBeVisible();
+    expect(screen.getByRole("img", { name: /card image/i })).toBeVisible();
+  });
+
   it("should render Explore Cards and I already have a card buttons", () => {
     render(<CardPage />);
 
