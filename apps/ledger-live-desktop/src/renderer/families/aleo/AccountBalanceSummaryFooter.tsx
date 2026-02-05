@@ -3,6 +3,8 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
@@ -10,9 +12,12 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import type { AleoFamily } from "./types";
 
-const AccountBalanceSummaryFooter: AleoFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
+interface Props {
+  account: AleoAccount | TokenAccount;
+}
+
+const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
