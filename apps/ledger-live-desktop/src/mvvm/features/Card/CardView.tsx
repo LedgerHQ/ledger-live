@@ -12,6 +12,8 @@ import {
   CARD_IMAGE_WIDTH_VIEWPORT_RATIO,
   CARD_SUBTITLE_MAX_WIDTH_PX,
 } from "./constants";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { CARD_TRACKING_PAGE_NAME } from "./constants";
 
 const imageStyle = {
   maxHeight: `min(${CARD_IMAGE_MAX_HEIGHT_PX}px, ${MIN_HEIGHT * CARD_IMAGE_HEIGHT_VIEWPORT_RATIO}px)`,
@@ -31,6 +33,7 @@ export const CardView = memo(function CardView({
 
   return (
     <>
+      <TrackPage category={CARD_TRACKING_PAGE_NAME} />
       <PageHeader title={t("card.title")} />
 
       <div className="my-24 flex flex-col gap-12">
