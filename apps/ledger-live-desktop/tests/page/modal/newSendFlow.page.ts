@@ -385,7 +385,7 @@ export class NewSendFlowPage extends Component {
   @step("Wait for signature screen and device action loader")
   async waitForSignature() {
     // Wait for device action loader to appear - this means we're in signature step
-    await this.deviceActionLoader.waitFor({ state: "visible", timeout: 15000 });
+    await this.deviceActionLoader.waitFor({ state: "visible" });
   }
 
   // ========== CONFIRMATION STEP METHODS ==========
