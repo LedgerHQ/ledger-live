@@ -4,7 +4,7 @@ import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/type
 import { StyleSheet } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "~/const";
-import QueuedDrawer from "~/components/QueuedDrawer";
+import QueuedDrawer from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";

@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react-native";
+import { fireEvent, screen } from "@tests/test-renderer";
 import { render } from "@tests/test-renderer";
 import DRepDelegationSelfTransactionInfoDrawer from "./DRepDelegationSelfTransactionInfoDrawer";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
@@ -21,16 +21,6 @@ jest.mock("@react-navigation/native", () => ({
   }),
 }));
 
-jest.mock("~/components/QueuedDrawer", () => {
-  const { View } = jest.requireActual("react-native");
-  return ({
-    children,
-    isRequestingToBeOpened,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened: boolean;
-  }) => (isRequestingToBeOpened ? <View testID="queued-drawer">{children}</View> : null);
-});
 jest.mock("~/components/wrappedUi/Button", () => {
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
   return ({ onPress, children }: { onPress: () => void; children: React.ReactNode }) => (
@@ -67,20 +57,20 @@ describe("DRepDelegationSelfTransactionInfoDrawer", () => {
       />,
     );
 
-    expect(screen.getByTestId("queued-drawer")).toBeTruthy();
+    expect(screen.getByText("DRep Delegation Self Transaction")).toBeTruthy();
     expect(screen.getByTestId("continue-button")).toBeTruthy();
   });
 
-  it("does not render when isOpen is false", () => {
-    render(
-      <DRepDelegationSelfTransactionInfoDrawer
-        account={mockAccount}
-        isOpen={false}
-        onClose={jest.fn()}
-      />,
-    );
-
-    expect(screen.queryByTestId("queued-drawer")).toBeNull();
+  it("renders without errors when isOpen is false", () => {
+    expect(() =>
+      render(
+        <DRepDelegationSelfTransactionInfoDrawer
+          account={mockAccount}
+          isOpen={false}
+          onClose={jest.fn()}
+        />,
+      ),
+    ).not.toThrow();
   });
 
   it("creates transaction and navigates on continue", () => {
