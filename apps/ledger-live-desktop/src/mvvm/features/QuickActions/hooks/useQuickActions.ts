@@ -168,7 +168,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
         title: t("quickActions.send"),
         onAction: onSend,
         icon: ArrowUp,
-        disabled: !hasAccount,
+        disabled: !hasFunds,
         buttonAppearance: "transparent",
       },
     ];
