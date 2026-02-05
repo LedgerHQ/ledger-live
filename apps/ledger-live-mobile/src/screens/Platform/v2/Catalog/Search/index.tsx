@@ -84,7 +84,7 @@ export function Search({ title, disclaimer, search }: Props) {
             style={{ paddingVertical: 16 }}
             onPress={search.onCancel}
           >
-            <ArrowLeft size={18} color={colors.neutral.c100} />
+            <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-search-arrow-left" />
           </TouchableOpacity>
         }
         searchContent={<SearchBar search={search} />}
