@@ -14,6 +14,7 @@ export const mapDiscoveredDeviceToScannedDevice = (device: DiscoveredDevice): Sc
   deviceName: device.name,
   wired: false,
   modelId: dmkToLedgerDeviceIdMap[device.deviceModel.model],
+  discoveredDevice: device,
 });
 
 const BleStatesToAllowScanning = [...UndeterminedBleStates, BleState.PoweredOn];
