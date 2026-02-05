@@ -368,7 +368,6 @@ const MainSideBar = () => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
-
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
     const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
@@ -515,6 +514,11 @@ const MainSideBar = () => {
                     isActive={location.pathname.startsWith("/perps")}
                     disabled={noAccounts}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      <CustomTag active type="plain" size="small">
+                        {t("common.new")}
+                      </CustomTag>
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem

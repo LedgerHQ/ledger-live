@@ -6,6 +6,8 @@ import {
   overrideInitialStateWithFeatureFlag,
   overrideInitialStateWithGraphReworkEnabled,
   overrideInitialStateWithGraphReworkAndReadOnly,
+  overrideInitialStateWithPerpsEntryPointDisabled,
+  overrideInitialStateWithPerpsEntryPointEnabled,
 } from "./shared";
 
 describe("Portfolio Screen", () => {
@@ -58,6 +60,28 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioReadOnlyItems");
 
       expect(await screen.findByTestId("portfolio-balance-noSigner")).toBeVisible();
+    });
+  });
+
+  describe("Perps Entry Point", () => {
+    it("should show perps entry point when feature flag is enabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithPerpsEntryPointEnabled,
+      });
+
+      await screen.findByTestId("PortfolioAccountsList");
+
+      expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
+
+    it("should hide perps entry point when feature flag is disabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithPerpsEntryPointDisabled,
+      });
+
+      await screen.findByTestId("PortfolioAccountsList");
+
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
     });
   });
 

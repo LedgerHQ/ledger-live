@@ -9,10 +9,17 @@ import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
 const mockNavigate = jest.fn();
+
+jest.mock("~/renderer/analytics/segment", () => ({
+  ...jest.requireActual("~/renderer/analytics/segment"),
+  track: jest.fn(),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -348,6 +355,66 @@ describe("PortfolioView", () => {
     it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={false} />);
       expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
+    });
+  });
+
+  describe("Perps Entry Point", () => {
+    it("should show perps entry point when feature flag is enabled", () => {
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: true,
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
+
+    it("should hide perps entry point when feature flag is disabled", () => {
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: false,
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+    });
+
+    it("should track and navigate when clicking perps entry point", async () => {
+      const { user } = render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: true,
+              },
+            },
+          },
+        },
+      });
+
+      await user.click(screen.getByTestId("portfolio-perps-subheader-row"));
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "perps_entry_point",
+        flow: "perps",
+        page: PORTFOLIO_TRACKING_PAGE_NAME,
+      });
+      expect(mockNavigate).toHaveBeenCalledWith("/perps");
     });
   });
 

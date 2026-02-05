@@ -134,7 +134,6 @@ export enum ScreenName {
   SignSummary = "SignSummary",
   SignValidationError = "SignValidationError",
   Swap = "Swap",
-  Perps = "Perps",
   SwapSelectAccount = "SelectAccount",
   SwapSelectCurrency = "SelectCurrency",
   SwapCustomError = "SwapCustomError",
