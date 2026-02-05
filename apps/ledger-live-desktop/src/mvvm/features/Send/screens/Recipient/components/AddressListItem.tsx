@@ -56,6 +56,7 @@ export function AddressListItem({
       className={cn("mb-6", {
         "cursor-not-allowed opacity-50": disabled,
       })}
+      data-testid="send-matched-address-button"
     >
       <ListItemLeading>
         <ListItemSpot appearance="icon" icon={icon} />

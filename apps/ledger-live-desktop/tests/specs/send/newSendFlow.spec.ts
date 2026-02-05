@@ -676,7 +676,6 @@ test.describe("New Send Flow", () => {
 
         await test.step("Complete Recipient step", async () => {
           await app.newSendFlow.typeAddress(family.address);
-          await app.newSendFlow.waitForRecipientValidation();
           await app.newSendFlow.selectAddressItem(0);
         });
 

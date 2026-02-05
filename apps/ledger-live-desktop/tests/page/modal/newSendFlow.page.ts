@@ -29,7 +29,7 @@ export class NewSendFlowPage extends Component {
   readonly recentTileMoreActionsButtons = this.dialog.getByRole("button", { name: "More actions" });
 
   // Primary selectable button in "Address matched" section (ListItem is a button with "Send to X" text)
-  readonly sendToButton = this.dialog.getByRole("button", { name: /send to/i });
+  readonly sendToButton = this.dialog.getByTestId("send-matched-address-button");
   readonly addressListItems = this.sendToButton;
   readonly addressNotFoundText = this.dialog.getByText(/address not found/i).first();
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
@@ -112,15 +112,9 @@ export class NewSendFlowPage extends Component {
   }
 
   @step("Select address from list (index: $0)")
-  async selectAddressItem(index: number = 0) {
-    // After typing an address, the happy path is to click the "Send to ..." button.
-    // AddressListItem renders as a <button> with "Send to X" text.
-    const button = this.sendToButton.nth(index);
-    await button.waitFor({ state: "visible", timeout: 20000 });
-    await button.scrollIntoViewIfNeeded();
-    await button.click({ timeout: 20000 });
-    // Wait for transition to Amount step
-    await this.page.waitForTimeout(500);
+  async selectAddressItem(_index: number = 0) {
+    await this.sendToButton.waitFor({ state: "visible" });
+    await this.sendToButton.click();
   }
 
   @step("Click recent address tile (index: $0)")
