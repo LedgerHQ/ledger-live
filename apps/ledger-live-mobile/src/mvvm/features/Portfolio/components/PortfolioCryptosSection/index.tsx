@@ -35,7 +35,13 @@ export const PortfolioCryptosSection = ({
         </SubheaderRow>
       </Subheader>
       <Assets assets={assets} />
-      <Button appearance="gray" size="lg" isFull onPress={onPressShowAll} lx={{ marginTop: "s24" }}>
+      <Button
+        appearance="gray"
+        size="lg"
+        isFull
+        onPress={onPressShowAll}
+        lx={{ marginTop: "s24", marginBottom: "s48" }}
+      >
         {t("portfolio.seeAllAssets")}
       </Button>
     </Box>
