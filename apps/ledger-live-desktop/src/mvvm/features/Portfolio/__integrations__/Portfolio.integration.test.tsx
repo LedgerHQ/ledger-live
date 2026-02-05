@@ -7,7 +7,7 @@ import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
-import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
@@ -161,6 +161,20 @@ describe("PortfolioView", () => {
 
       expect(screen.getByTestId("no-balance-title")).toBeVisible();
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+    });
+
+    it("should render BalanceView when user has accounts but no funds", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [EMPTY_BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
+        },
+      });
+
+      expect(screen.queryByTestId("portfolio-balance")).toBeVisible();
     });
 
     it("should render NoDeviceView when user has not completed onboarding", () => {
