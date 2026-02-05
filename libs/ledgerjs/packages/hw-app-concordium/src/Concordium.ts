@@ -84,8 +84,7 @@ export default class Concordium {
         "getAddress",
         "verifyAddress",
         "getPublicKey",
-        "signTransfer",
-        "signTransferWithMemo",
+        "signTransaction",
         "signCredentialDeployment",
       ],
       scrambleKey,
@@ -221,15 +220,30 @@ export default class Concordium {
   }
 
   /**
-   * Sign a Transfer transaction.
+   * Sign a transaction (Transfer or TransferWithMemo).
+   * Routes to the appropriate signing method based on transaction type.
+   *
+   * @param tx - Transaction to sign
+   * @param path - BIP32 path for signing key
+   * @returns Promise with signature and serialized transaction
+   */
+  async signTransaction(tx: Transaction, path: string): Promise<SigningResult> {
+    if (tx.type === TransactionType.TransferWithMemo) {
+      return this.signTransferWithMemo(tx, path);
+    }
+    return this.signTransfer(tx, path);
+  }
+
+  /**
+   * Sign a Transfer transaction (internal method).
    *
    * @param tx - Transfer transaction with type-safe payload
    * @param path - BIP32 path for signing key
    * @returns Promise with signature and serialized transaction
    */
-  async signTransfer(tx: Transaction, path: string): Promise<SigningResult> {
-    if (tx.type === TransactionType.TransferWithMemo) {
-      throw new Error("Use signTransferWithMemo for TransferWithMemo transactions");
+  private async signTransfer(tx: Transaction, path: string): Promise<SigningResult> {
+    if (tx.type !== TransactionType.Transfer) {
+      throw new Error("Transaction type must be Transfer");
     }
 
     const serialized = serializeTransfer(tx);
@@ -252,13 +266,13 @@ export default class Concordium {
   }
 
   /**
-   * Sign a TransferWithMemo transaction.
+   * Sign a TransferWithMemo transaction (internal method).
    *
    * @param tx - TransferWithMemo transaction with type-safe payload
    * @param path - BIP32 path for signing key
    * @returns Promise with signature and serialized transaction
    */
-  async signTransferWithMemo(tx: Transaction, path: string): Promise<SigningResult> {
+  private async signTransferWithMemo(tx: Transaction, path: string): Promise<SigningResult> {
     if (tx.type !== TransactionType.TransferWithMemo) {
       throw new Error("Transaction type must be TransferWithMemo");
     }

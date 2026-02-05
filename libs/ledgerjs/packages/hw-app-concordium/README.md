@@ -58,38 +58,36 @@ For a smooth and quick integration:
         *   [Parameters](#parameters-7)
     *   [getPublicKey](#getpublickey)
         *   [Parameters](#parameters-8)
-    *   [signTransfer](#signtransfer)
+    *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-9)
-    *   [signTransferWithMemo](#signtransferwithmemo)
-        *   [Parameters](#parameters-10)
     *   [signCredentialDeployment](#signcredentialdeployment)
-        *   [Parameters](#parameters-11)
+        *   [Parameters](#parameters-10)
 *   [serializeTransfer](#serializetransfer)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-11)
 *   [prepareTransferAPDU](#preparetransferapdu)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-12)
 *   [serializeTransferWithMemo](#serializetransferwithmemo)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-13)
 *   [prepareTransferWithMemoAPDU](#preparetransferwithmemoapdu)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-14)
 *   [serializeTransactionPayloads](#serializetransactionpayloads)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-15)
 *   [serializeCredentialDeployment](#serializecredentialdeployment)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-16)
 *   [serializeIdOwnershipProofsPrefix](#serializeidownershipproofsprefix)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-17)
 *   [serializeIdOwnershipProofs](#serializeidownershipproofs)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-18)
 *   [serializeAccountOwnershipProofs](#serializeaccountownershipproofs)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-19)
 *   [insertAccountOwnershipProofs](#insertaccountownershipproofs)
 *   [Why Insertion Order Matters](#why-insertion-order-matters)
 *   [Serialization Order](#serialization-order)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-20)
 *   [deserializeTransfer](#deserializetransfer)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-21)
 *   [deserializeTransferWithMemo](#deserializetransferwithmemo)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-22)
 *   [IdOwnershipProofs](#idownershipproofs)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
 *   [Address](#address-1)
@@ -113,9 +111,9 @@ For a smooth and quick integration:
     *   [payload](#payload)
 *   [SigningResult](#signingresult)
 *   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-23)
 *   [chunkBuffer](#chunkbuffer)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-24)
 
 ### AccountAddress
 
@@ -319,24 +317,14 @@ Get public key for a given path.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with public key (hex string)
 
-#### signTransfer
+#### signTransaction
 
-Sign a Transfer transaction.
-
-##### Parameters
-
-*   `tx` **[Transaction](#transaction)** Transfer transaction with type-safe payload
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SigningResult](#signingresult)>** Promise with signature and serialized transaction
-
-#### signTransferWithMemo
-
-Sign a TransferWithMemo transaction.
+Sign a transaction (Transfer or TransferWithMemo).
+Routes to the appropriate signing method based on transaction type.
 
 ##### Parameters
 
-*   `tx` **[Transaction](#transaction)** TransferWithMemo transaction with type-safe payload
+*   `tx` **[Transaction](#transaction)** Transaction to sign
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SigningResult](#signingresult)>** Promise with signature and serialized transaction

@@ -88,7 +88,7 @@ describe("Concordium", () => {
       };
 
       // WHEN
-      const signPromise = app.signTransfer(txn, PATH);
+      const signPromise = app.signTransaction(txn, PATH);
 
       // Screen flow: Review → Sender (1/2) → Sender (2/2) → Amount → Recipient → Sign
       const delay = (ms: number): Promise<void> => new Promise(f => setTimeout(f, ms));
@@ -135,7 +135,7 @@ describe("Concordium", () => {
       };
 
       // WHEN
-      const signPromise = app.signTransferWithMemo(txn, PATH);
+      const signPromise = app.signTransaction(txn, PATH);
 
       // Screen flow: Review → Sender (1/2) → Sender (2/2) → Amount → Recipient → Memo → Sign
       // Device decodes CBOR and displays memo as UTF-8 text

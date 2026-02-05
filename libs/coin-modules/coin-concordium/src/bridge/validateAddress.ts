@@ -1,5 +1,5 @@
 import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
-import { isRecipientValid } from "../common-logic";
+import { isRecipientValid } from "../logic";
 
 export async function validateAddress(
   address: string,
