@@ -1,7 +1,7 @@
 import { MMKV } from "react-native-mmkv";
 import merge from "lodash/merge";
 import { CONFIG_PARAMS } from "./constants";
-import { monitorWrite } from "./monitor";
+import { monitor } from "./monitor";
 
 /** Singleton instance of MMKV storage */
 export const mmkv = new MMKV({
@@ -44,22 +44,24 @@ const storageWrapper = {
    * key or array of keys
    */
   get<T>(key: string | string[]): (T | undefined) | T[] {
-    if (!Array.isArray(key)) {
-      const value = mmkv.getString(key);
-      saveRead(key, value);
-      return value !== undefined ? (JSON.parse(value) as T) : undefined;
-    }
-
-    const data: T[] = [];
-    for (const k of key) {
-      const value = mmkv.getString(k);
-      saveRead(k, value);
-      if (value !== undefined) {
-        data.push(JSON.parse(value) as T);
+    return monitor<(T | undefined) | T[]>("read", { key }, () => {
+      if (!Array.isArray(key)) {
+        const value = storageWrapper.getString(key) ?? undefined;
+        saveRead(key, value);
+        return value !== undefined ? (JSON.parse(value) as T) : undefined;
       }
-    }
 
-    return data;
+      const data: T[] = [];
+      for (const k of key) {
+        const value = storageWrapper.getString(k) ?? undefined;
+        saveRead(k, value);
+        if (value !== undefined) {
+          data.push(JSON.parse(value) as T);
+        }
+      }
+
+      return data;
+    });
   },
 
   /**
@@ -69,9 +71,11 @@ const storageWrapper = {
    * the key
    */
   getString(key: string): string | null {
-    const value = mmkv.getString(key);
-    saveRead(key, value);
-    return value ?? null;
+    return monitor("read", { key }, () => {
+      const value = mmkv.getString(key);
+      saveRead(key, value);
+      return value ?? null;
+    });
   },
 
   /**
@@ -84,21 +88,19 @@ const storageWrapper = {
    * The value to save
    */
   save<T>(key: string | [string, T][], value?: T) {
-    if (!Array.isArray(key)) {
-      if (value !== undefined) {
-        monitorWrite(key, () => {
-          mmkv.set(key, JSON.stringify(value));
-        });
-      }
-    } else {
-      monitorWrite(key, () => {
+    monitor("write", { key }, () => {
+      if (!Array.isArray(key)) {
+        if (value !== undefined) {
+          storageWrapper.saveString(key, JSON.stringify(value));
+        }
+      } else {
         for (const [k, v] of key) {
           if (v !== undefined) {
-            mmkv.set(k, JSON.stringify(v));
+            storageWrapper.saveString(k, JSON.stringify(v));
           }
         }
-      });
-    }
+      }
+    });
   },
 
   /**
@@ -111,7 +113,7 @@ const storageWrapper = {
    * The value to save
    */
   saveString(key: string, value: string) {
-    monitorWrite(key, () => {
+    monitor("write", { key, value }, () => {
       mmkv.set(key, value);
     });
   },
@@ -210,6 +212,7 @@ const storageWrapper = {
   },
 };
 
+// TODO remove monitoredData and saveRead and replace with the data from ./monitor.ts
 export type MMKVMonitoredRead = { key: string; value: string | undefined };
 const monitoredData: { enabled: boolean; read: MMKVMonitoredRead[] } = { enabled: false, read: [] };
 
