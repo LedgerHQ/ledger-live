@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.105.0-next.4
+
+### Minor Changes
+
+- [#14236](https://github.com/LedgerHQ/ledger-live/pull/14236) [`3325156`](https://github.com/LedgerHQ/ledger-live/commit/33251566c191e95a47b8996717a1b8e8007e90f8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix a race condition with the bottomsheet
+
 ## 3.105.0-next.3
 
 ### Minor Changes
