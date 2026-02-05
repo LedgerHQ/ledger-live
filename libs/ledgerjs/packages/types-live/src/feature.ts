@@ -96,7 +96,6 @@ export type CurrencyFeatures = {
   currencyAptosTestnet: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
-  currencySeiNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyDydx: DefaultFeature;
   currencyUmee: DefaultFeature;
