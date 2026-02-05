@@ -319,6 +319,12 @@ export class NewSendFlowPage extends Component {
     await this.page.waitForTimeout(500);
   }
 
+  @step("Click review to proceed to signature")
+  async clickReview2() {
+    await this.reviewButton.waitFor({ state: "visible" });
+    await this.reviewButton.click();
+  }
+
   @step("Verify review button is disabled")
   async expectReviewDisabled() {
     await expect(this.reviewButton).toBeDisabled({ timeout: 10000 });

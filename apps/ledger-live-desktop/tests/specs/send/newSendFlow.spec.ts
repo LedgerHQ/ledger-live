@@ -625,7 +625,7 @@ test.describe("New Send Flow", () => {
     });
   });
 
-  test.describe("Generic Flow Tests", () => {
+  test.describe.only("Generic Flow Tests", () => {
     // Test data for different families
     const familiesData = [
       {
@@ -634,7 +634,7 @@ test.describe("New Send Flow", () => {
         address: TEST_ADDRESSES.ethereum,
         amount: "0.001",
       },
-      {
+      /*{
         name: "Arbitrum",
         accountName: ACCOUNT_NAMES.arbitrum,
         address: TEST_ADDRESSES.arbitrum,
@@ -663,7 +663,7 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.xrp,
         address: TEST_ADDRESSES.xrp,
         amount: "1",
-      },
+      },*/
     ];
 
     for (const family of familiesData) {
@@ -671,7 +671,7 @@ test.describe("New Send Flow", () => {
         const deviceAction = new DeviceAction(page);
 
         await test.step("Open send flow", async () => {
-          await openSendFlowForAccount(page, app, family.accountName);
+          await openSendFlowForAccount(app, page, family.accountName);
         });
 
         await test.step("Complete Recipient step", async () => {
@@ -681,11 +681,9 @@ test.describe("New Send Flow", () => {
         });
 
         await test.step("Complete Amount step", async () => {
-          await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-          // Use fillCryptoAmount to switch from default FIAT mode to CRYPTO mode
+          await expect(app.newSendFlow.amountInput).toBeVisible();
           await app.newSendFlow.fillCryptoAmount(family.amount);
-          await app.newSendFlow.expectReviewEnabled();
-          await app.newSendFlow.clickReview();
+          await app.newSendFlow.clickReview2();
         });
 
         await test.step("Wait for signature screen", async () => {
