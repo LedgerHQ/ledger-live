@@ -1,5 +1,4 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -23,12 +22,11 @@ const queryClient = new QueryClient();
 
 function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
   logStartupEvent("AppProviders render");
-  const dmkEnabled = useLdmkFeatureFlagInitiallyEnabled();
 
   return (
     <QueryClientProvider client={queryClient}>
       <WalletSyncProvider>
-        <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
+        <DeviceManagementKitProvider>
           <CountervaluesMarketcapBridgedProvider>
             <CountervaluesBridgedProvider initialState={initialCountervalues}>
               <BottomSheetModalProvider>

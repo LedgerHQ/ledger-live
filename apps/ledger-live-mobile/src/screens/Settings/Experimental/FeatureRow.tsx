@@ -68,10 +68,9 @@ const FeatureRow = ({
 
 const ForceProviderFeatureRow = ({ feature }: Props) => {
   const dmk = useDeviceManagementKit();
-  const ldmkFeatureFlag = useFeature("ldmkTransport");
 
   const onChangeOverride = (name: string, value: unknown) => {
-    if (dmk && ldmkFeatureFlag?.enabled && typeof value === "number") {
+    if (dmk && typeof value === "number") {
       dmk.setProvider(value);
     }
     setEnvUnsafe(name, value);

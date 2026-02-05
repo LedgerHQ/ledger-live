@@ -1,19 +1,15 @@
 import {
-  DeviceDisconnectedWhileSendingError,
   DeviceDisconnectedBeforeSendingApdu,
+  DeviceDisconnectedWhileSendingError,
   DeviceManagementKit,
   DeviceStatus,
-  DiscoveredDevice,
   SendApduEmptyResponseError,
 } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { DisconnectedDevice, HwTransportError } from "@ledgerhq/errors";
-import Transport, { type Observer as TransportObserver } from "@ledgerhq/hw-transport";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { DisconnectedDevice } from "@ledgerhq/errors";
+import Transport from "@ledgerhq/hw-transport";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
-import { DescriptorEvent } from "@ledgerhq/types-devices";
-import { BehaviorSubject, Subscription, firstValueFrom, pairwise, startWith } from "rxjs";
+import { BehaviorSubject, Subscription, firstValueFrom } from "rxjs";
 import { first, tap, timeout } from "rxjs/operators";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
@@ -98,58 +94,6 @@ export class DeviceManagementKitHIDTransport extends Transport {
       tracer.trace("[open] open error", { err });
       throw err;
     }
-  }
-
-  static listen(
-    observer: TransportObserver<DescriptorEvent<string>, HwTransportError>,
-    _context?: TraceContext,
-    dmk: DeviceManagementKit = getDeviceManagementKit(),
-  ) {
-    let availableSubscription: Subscription | undefined = undefined;
-
-    availableSubscription = dmk
-      .listenToAvailableDevices({
-        transport: rnHidTransportIdentifier,
-      })
-      .pipe(startWith<DiscoveredDevice[]>([]), pairwise())
-      .subscribe({
-        next: ([prevDevices, currDevices]) => {
-          const removedDevice = prevDevices.find(
-            prevDevice => !currDevices.some(device => device.id === prevDevice.id),
-          );
-          if (removedDevice) {
-            observer.next({
-              type: "remove",
-              descriptor: removedDevice.id,
-              device: removedDevice,
-            });
-          }
-          for (const device of currDevices) {
-            const deviceModelId = dmkToLedgerDeviceIdMap[device.deviceModel.model];
-            const deviceModel = getDeviceModel(deviceModelId);
-            observer.next({
-              type: "add",
-              descriptor: device.id,
-              device: device,
-              deviceModel,
-            });
-          }
-        },
-        complete: observer.complete,
-        error: err => {
-          tracer.trace("[listen] error", err);
-          observer.error(err);
-          availableSubscription?.unsubscribe();
-        },
-      });
-
-    const unsubscribe = () => {
-      availableSubscription?.unsubscribe();
-    };
-
-    return {
-      unsubscribe,
-    };
   }
 
   async exchange(apdu: Buffer, { abortTimeoutMs }: { abortTimeoutMs?: number } = {}) {

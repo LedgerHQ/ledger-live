@@ -35,7 +35,9 @@ import {
   filterScannedDevice,
   findMatchingNewDevice,
   useBleDevicesScanning,
+  useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
@@ -119,7 +121,9 @@ export default function SelectDevice({
 }: Props) {
   const { t } = useTranslation();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
-  const [USBDevice, setUSBDevice] = useState<Device | undefined>();
+  const [USBDevice, setUSBDevice] = useState<
+    (Device & { discoveredDevice: DiscoveredDevice }) | undefined
+  >();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
@@ -288,15 +292,30 @@ export default function SelectDevice({
     showSelectedBleDeviceNotAvailableDrawer,
   ]);
 
+  const { hidDevices } = useHidDevicesDiscovery();
+
+  useEffect(() => {
+    if (hidDevices.length > 0) {
+      const device = hidDevices[0];
+      setUSBDevice({
+        deviceId: device.deviceId,
+        deviceName: device.deviceName,
+        modelId: device.modelId,
+        wired: device.wired,
+        discoveredDevice: device.discoveredDevice,
+      });
+    } else {
+      setUSBDevice(undefined);
+    }
+  }, [hidDevices]);
+
   /**
-   * Discover USB devices and proxy devices
+   * Discover proxy devices (NB: currently needed for Speculos testing)
    */
   useEffect(() => {
-    const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
-    const setDeviceFromId = (id: string) => (id.startsWith("usb") ? setUSBDevice : setProxyDevice);
+    const filter = ({ id }: { id: string }) => ["httpdebug"].includes(id);
     const sub = discoverDevices(filter).subscribe(e => {
-      const setDevice = setDeviceFromId(e.id);
-      if (e.type === "remove") setDevice(undefined);
+      if (e.type === "remove") setProxyDevice(undefined);
       if (e.type === "add") {
         const { name, deviceModel, id, wired } = e;
 
@@ -309,7 +328,7 @@ export default function SelectDevice({
           wired,
         };
 
-        setDevice((maybeDevice: Device | undefined) => {
+        setProxyDevice((maybeDevice: Device | undefined) => {
           return maybeDevice || newDevice;
         });
       }

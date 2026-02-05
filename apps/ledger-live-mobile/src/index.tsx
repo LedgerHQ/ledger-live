@@ -75,7 +75,6 @@ import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
-import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
@@ -128,7 +127,6 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
-  const isLDMKEnabled = useDeviceManagementKitEnabled();
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -167,14 +165,14 @@ function App() {
   }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
-    if (providerNumber && isLDMKEnabled) {
+    if (providerNumber) {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLDMKEnabled, dmk]);
+  }, [dmk, providerNumber]);
 
-  useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
+  useEffect(() => registerTransports(), []);
 
   useEffect(() => {
     if (
