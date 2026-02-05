@@ -12,3 +12,4 @@ export const CARD_IMAGE_WIDTH_VIEWPORT_RATIO = 0.45;
 
 /** Max width of the subtitle text block in pixels */
 export const CARD_SUBTITLE_MAX_WIDTH_PX = 330;
+export const CARD_TRACKING_PAGE_NAME = "Card";

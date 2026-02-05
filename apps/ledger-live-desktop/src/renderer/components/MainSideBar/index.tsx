@@ -349,7 +349,7 @@ const MainSideBar = () => {
   }, [push, trackEntry]);
   const handleClickCardWallet = useCallback(() => {
     push("/card-new-wallet");
-    trackEntry("card-new-wallet");
+    trackEntry("card");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
