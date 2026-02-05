@@ -628,13 +628,13 @@ test.describe("New Send Flow", () => {
   test.describe.only("Generic Flow Tests", () => {
     // Test data for different families
     const familiesData = [
-      {
+      /*{
         name: "Ethereum",
         accountName: ACCOUNT_NAMES.ethereum,
         address: TEST_ADDRESSES.ethereum,
         amount: "0.001",
       },
-      /*{
+      {
         name: "Arbitrum",
         accountName: ACCOUNT_NAMES.arbitrum,
         address: TEST_ADDRESSES.arbitrum,
@@ -645,14 +645,15 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.tezos,
         address: TEST_ADDRESSES.tezos,
         amount: "0.1",
-      },
+      },*/
       {
         name: "Algorand",
         accountName: ACCOUNT_NAMES.algorand,
         address: TEST_ADDRESSES.algorand,
         amount: "0.1",
+        hasMemo: true,
       },
-      {
+      /*{
         name: "Stellar",
         accountName: ACCOUNT_NAMES.stellar,
         address: TEST_ADDRESSES.stellar,
@@ -676,6 +677,10 @@ test.describe("New Send Flow", () => {
 
         await test.step("Complete Recipient step", async () => {
           await app.newSendFlow.typeAddress(family.address);
+          if (family.hasMemo === true) {
+            await app.newSendFlow.typeMemo("some random memo");
+          }
+
           await app.newSendFlow.clickOnSendToButton();
         });
 

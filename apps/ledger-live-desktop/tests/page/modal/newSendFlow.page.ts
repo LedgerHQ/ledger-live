@@ -41,6 +41,7 @@ export class NewSendFlowPage extends Component {
   readonly newAddressBanner = this.dialog.getByText(/sending to a new address/i).first();
 
   // Memo
+  readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoProposal = this.dialog.getByTestId("send-skip-memo-proposal");
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
@@ -202,6 +203,12 @@ export class NewSendFlowPage extends Component {
     await this.skipMemoLink.click();
     await expect(this.skipMemoConfirmButton).toBeVisible(); //TODO use waitFor
     await this.skipMemoConfirmButton.click();
+  }
+
+  @step("Type memo")
+  async typeMemo(memo: string) {
+    await this.memoInput.waitFor({ state: "visible" });
+    await this.memoInput.fill(memo);
   }
 
   // ========== AMOUNT STEP METHODS ==========
