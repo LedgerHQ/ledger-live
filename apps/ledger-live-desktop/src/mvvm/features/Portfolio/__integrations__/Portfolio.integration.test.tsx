@@ -123,6 +123,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -139,6 +143,10 @@ describe("PortfolioView", () => {
       const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -151,11 +159,31 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
         initialState: {
           accounts: [],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
       expect(screen.getByTestId("no-balance-title")).toBeVisible();
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+    });
+
+    it("should render NoDeviceView when user has not completed onboarding", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: false,
+          },
+        },
+      });
+
+      expect(screen.getByTestId("no-device-title")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+      expect(screen.queryByTestId("no-balance-title")).toBeNull();
     });
     it("should display discreet placeholders when discreet mode is enabled", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
@@ -163,6 +191,7 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
             discreetMode: true,
           },
         },
@@ -179,6 +208,7 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
             discreetMode: false,
           },
         },
@@ -197,6 +227,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -211,6 +245,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -224,6 +262,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 

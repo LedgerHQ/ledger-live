@@ -1,0 +1,152 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "theme": null,
+      "region": null,
+      "locale": "en-US",
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoS",
+      "hasInstalledApps": true,
+      "hasAcceptedSwapKYC": false,
+      "lastSeenDevice": null,
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviderIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "swapProviders": [],
+      "showClearCacheBanner": false,
+      "starredAccountIds": [],
+      "hasPassword": false
+    },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "mock:1:ethereum:true_ethereum_1:",
+          "seedIdentifier": "mock",
+          "name": "Ethereum 2",
+          "starred": false,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 167357,
+          "creationDate": "2020-03-01T19:23:50.897Z",
+          "operationsCount": 2,
+          "operations": [
+            {
+              "id": "mock_op_0_mock:1:ethereum:true_ethereum_1:",
+              "hash": "B83D18EB165F9D7C458A11653358CE0772C1679C2AD1FA18C0125259B8F1616E",
+              "type": "IN",
+              "senders": ["0x29BD998F3AA8FDB3CB63489CBA009CA45CAB9180"],
+              "recipients": ["0x45D4E12022CAD49AB739D7E6F87D91E08483E8B6"],
+              "blockHash": "A896AC30DCEEEE6BDD92A1841E91B5EFCCD2BD083A953EA04F0DE369628765D0",
+              "blockHeight": 167336,
+              "accountId": "mock:1:ethereum:true_ethereum_1:",
+              "extra": {},
+              "date": "2019-03-14T12:16:37.058Z",
+              "value": "0",
+              "fee": "321392877807585"
+            },
+            {
+              "id": "mock_op_1_mock:1:ethereum:true_ethereum_1:",
+              "hash": "40C1FDBCA004C70968CC68147EF996BB769F7A1B5791F9169C67E7C6A744CABC",
+              "type": "IN",
+              "senders": ["0xC51A7B15F7DA54C62630447CD957CDAA9C7FBB83"],
+              "recipients": ["0x77236A8E83E888B71E24F3F53D02FE7D1ABBEA52"],
+              "blockHash": "EAAEDE595EBD5203720C2795C2ACC6E41EC1B1AA79C4489191E33B8D4871FEB7",
+              "blockHeight": 167331,
+              "accountId": "mock:1:ethereum:true_ethereum_1:",
+              "extra": {},
+              "date": "2019-03-14T11:03:36.211Z",
+              "value": "95909385794189330",
+              "fee": "959093857941893"
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "11310048568372696785",
+          "spendableBalance": "11310048568372696785",
+          "xpub": "C7785FED77C832DCB16E8C1333B7956E11C03152B68E1F37235C4CCF1939C636",
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_1:|1",
+              "parentId": "mock:1:ethereum:true_ethereum_1:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/usd__coin",
+              "balance": "102966480",
+              "spendableBalance": "102966480",
+              "creationDate": "2020-02-20T05:25:00.868Z",
+              "operationsCount": 2,
+              "operations": [
+                {
+                  "id": "mock_op_0_mock:1:ethereum:true_ethereum_1:|1",
+                  "hash": "FB0E9DF55D860751EBB8EE87A1D31B50B867208438AE8D1524E84C9AA87D2E93",
+                  "type": "IN",
+                  "senders": ["0x8791D6ABE72AFB517786A748E6950EE55BCA5D24"],
+                  "recipients": ["0xC0025B92BBC4BDC27E9F60580BFAB960098BEE5A"],
+                  "blockHash": "DE00CB680DABA32CEFAF1919B5C8E9D4147230D9782416EC737F8FAEFDB7F0D8",
+                  "blockHeight": 167313,
+                  "accountId": "mock:1:ethereum:true_ethereum_1:|1",
+                  "extra": {},
+                  "date": "2020-03-14T06:20:42.165Z",
+                  "value": "0",
+                  "fee": "6117"
+                },
+                {
+                  "id": "mock_op_1_mock:1:ethereum:true_ethereum_1:|1",
+                  "hash": "A7B71ACB9ACF3ACC7E0BD7F913D42A6E163C6F660F496E0E99C65637F197F778",
+                  "type": "IN",
+                  "senders": ["0x78990D3AEF91EAA3496C3C9E45AD18CCC09D9A60"],
+                  "recipients": ["0x23EE95C812EE8407FCFD3483BBCC685159840801"],
+                  "blockHash": "6956398D27897B569DD0F3D2E568A613BC08BDD47D5F9DB07A140949202770FD",
+                  "blockHeight": 167298,
+                  "accountId": "mock:1:ethereum:true_ethereum_1:|1",
+                  "extra": {},
+                  "date": "2020-03-14T02:48:44.528Z",
+                  "value": "3213122",
+                  "fee": "79752"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": []
+            }
+          ],
+          "swapHistory": []
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {}
+  }
+}

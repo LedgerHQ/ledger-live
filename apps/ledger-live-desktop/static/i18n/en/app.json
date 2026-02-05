@@ -7878,7 +7878,8 @@
       "title": "Perpetuals",
       "description": "Trade with leverage",
       "cta": "Discover"
-    }
+    },
+    "noDeviceTitle": "The most secure wallet"
   },
   "marketBanner": {
     "title": "Explore market",

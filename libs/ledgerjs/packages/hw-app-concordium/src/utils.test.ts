@@ -4,11 +4,13 @@ import {
   encodeWord32,
   encodeWord64,
   encodeWord8FromString,
+  serializeMap,
   serializeVerifyKey,
   serializeYearMonth,
-  serializeMap,
-  serializeIdOwnershipProofs,
+  pathToBuffer,
+  chunkBuffer,
 } from "./utils";
+import { serializeIdOwnershipProofs, serializeAccountOwnershipProofs } from "./serialization";
 
 describe("utils", () => {
   describe("encodeWord8", () => {
@@ -614,11 +616,10 @@ describe("utils", () => {
       const result = serializeIdOwnershipProofs(proofs);
 
       // THEN
-      expect(typeof result).toBe("string");
-      const buffer = Buffer.from(result, "hex");
-      expect(buffer.subarray(0, 64).toString("hex")).toBe("aa".repeat(64));
-      expect(buffer.subarray(64, 112).toString("hex")).toBe("bb".repeat(48));
-      expect(buffer.subarray(112, 144).toString("hex")).toBe("cc".repeat(32));
+      expect(Buffer.isBuffer(result)).toBe(true);
+      expect(result.subarray(0, 64).toString("hex")).toBe("aa".repeat(64));
+      expect(result.subarray(64, 112).toString("hex")).toBe("bb".repeat(48));
+      expect(result.subarray(112, 144).toString("hex")).toBe("cc".repeat(32));
     });
 
     it("should serialize proofs with single proofIdCredPub entry", () => {
@@ -639,10 +640,9 @@ describe("utils", () => {
       const result = serializeIdOwnershipProofs(proofs);
 
       // THEN
-      expect(typeof result).toBe("string");
-      const buffer = Buffer.from(result, "hex");
+      expect(Buffer.isBuffer(result)).toBe(true);
       const lengthOffset = 64 + 48 + 32;
-      expect(buffer.readUInt32BE(lengthOffset)).toBe(1);
+      expect(result.readUInt32BE(lengthOffset)).toBe(1);
     });
 
     it("should sort proofIdCredPub entries by index", () => {
@@ -665,14 +665,14 @@ describe("utils", () => {
       const result = serializeIdOwnershipProofs(proofs);
 
       // THEN
-      const buffer = Buffer.from(result, "hex");
+      expect(Buffer.isBuffer(result)).toBe(true);
       const lengthOffset = 64 + 48 + 32;
-      expect(buffer.readUInt32BE(lengthOffset)).toBe(3);
-      expect(buffer.readUInt32BE(lengthOffset + 4)).toBe(0);
-      expect(buffer.subarray(lengthOffset + 8, lengthOffset + 72).toString("hex")).toBe(
+      expect(result.readUInt32BE(lengthOffset)).toBe(3);
+      expect(result.readUInt32BE(lengthOffset + 4)).toBe(0);
+      expect(result.subarray(lengthOffset + 8, lengthOffset + 72).toString("hex")).toBe(
         "00".repeat(64),
       );
-      expect(buffer.readUInt32BE(lengthOffset + 72)).toBe(1);
+      expect(result.readUInt32BE(lengthOffset + 72)).toBe(1);
     });
 
     it("should include all proof components in correct order", () => {
@@ -691,28 +691,320 @@ describe("utils", () => {
       const result = serializeIdOwnershipProofs(proofs);
 
       // THEN
-      const buffer = Buffer.from(result, "hex");
+      expect(Buffer.isBuffer(result)).toBe(true);
       let offset = 0;
 
-      expect(buffer.subarray(offset, offset + 64).toString("hex")).toBe("aa".repeat(64));
+      expect(result.subarray(offset, offset + 64).toString("hex")).toBe("aa".repeat(64));
       offset += 64;
 
-      expect(buffer.subarray(offset, offset + 48).toString("hex")).toBe("bb".repeat(48));
+      expect(result.subarray(offset, offset + 48).toString("hex")).toBe("bb".repeat(48));
       offset += 48;
 
-      expect(buffer.subarray(offset, offset + 32).toString("hex")).toBe("cc".repeat(32));
+      expect(result.subarray(offset, offset + 32).toString("hex")).toBe("cc".repeat(32));
       offset += 32;
 
-      expect(buffer.readUInt32BE(offset)).toBe(0);
+      expect(result.readUInt32BE(offset)).toBe(0);
       offset += 4;
 
-      expect(buffer.subarray(offset, offset + 32).toString("hex")).toBe("dd".repeat(32));
+      expect(result.subarray(offset, offset + 32).toString("hex")).toBe("dd".repeat(32));
       offset += 32;
 
-      expect(buffer.subarray(offset, offset + 32).toString("hex")).toBe("ee".repeat(32));
+      expect(result.subarray(offset, offset + 32).toString("hex")).toBe("ee".repeat(32));
       offset += 32;
 
-      expect(buffer.subarray(offset, offset + 32).toString("hex")).toBe("ff".repeat(32));
+      expect(result.subarray(offset, offset + 32).toString("hex")).toBe("ff".repeat(32));
+    });
+  });
+
+  describe("serializeAccountOwnershipProofs", () => {
+    it("should serialize single signature", () => {
+      // GIVEN
+      const signatures = ["aa".repeat(64)];
+
+      // WHEN
+      const result = serializeAccountOwnershipProofs(signatures);
+
+      // THEN
+      expect(Buffer.isBuffer(result)).toBe(true);
+      expect(result[0]).toBe(1); // Number of signatures
+      expect(result[1]).toBe(0); // Key index 0
+      expect(result.subarray(2, 66).toString("hex")).toBe("aa".repeat(64));
+      expect(result.length).toBe(1 + 1 + 64); // count + (index + signature)
+    });
+
+    it("should serialize multiple signatures", () => {
+      // GIVEN
+      const signatures = ["aa".repeat(64), "bb".repeat(64), "cc".repeat(64)];
+
+      // WHEN
+      const result = serializeAccountOwnershipProofs(signatures);
+
+      // THEN
+      expect(result[0]).toBe(3); // Number of signatures
+      expect(result[1]).toBe(0); // First key index
+      expect(result.subarray(2, 66).toString("hex")).toBe("aa".repeat(64));
+      expect(result[66]).toBe(1); // Second key index
+      expect(result.subarray(67, 131).toString("hex")).toBe("bb".repeat(64));
+      expect(result[131]).toBe(2); // Third key index
+      expect(result.subarray(132, 196).toString("hex")).toBe("cc".repeat(64));
+      expect(result.length).toBe(1 + 3 * (1 + 64));
+    });
+
+    it("should throw on invalid signature length (too short)", () => {
+      // GIVEN
+      const signatures = ["aa".repeat(32)]; // Only 32 bytes instead of 64
+
+      // WHEN & THEN
+      expect(() => serializeAccountOwnershipProofs(signatures)).toThrow(
+        "Invalid signature length at index 0: expected 64 bytes, got 32",
+      );
+    });
+
+    it("should throw on invalid signature length (too long)", () => {
+      // GIVEN
+      const signatures = ["aa".repeat(80)]; // 80 bytes instead of 64
+
+      // WHEN & THEN
+      expect(() => serializeAccountOwnershipProofs(signatures)).toThrow(
+        "Invalid signature length at index 0: expected 64 bytes, got 80",
+      );
+    });
+
+    it("should throw on invalid signature in multi-signature array", () => {
+      // GIVEN
+      const signatures = ["aa".repeat(64), "bb".repeat(32), "cc".repeat(64)];
+
+      // WHEN & THEN
+      expect(() => serializeAccountOwnershipProofs(signatures)).toThrow(
+        "Invalid signature length at index 1: expected 64 bytes, got 32",
+      );
+    });
+
+    it("should handle empty signatures array", () => {
+      // GIVEN
+      const signatures: string[] = [];
+
+      // WHEN
+      const result = serializeAccountOwnershipProofs(signatures);
+
+      // THEN
+      expect(result[0]).toBe(0); // Zero signatures
+      expect(result.length).toBe(1);
+    });
+
+    it("should correctly index signatures sequentially", () => {
+      // GIVEN
+      const signatures = ["11".repeat(64), "22".repeat(64)];
+
+      // WHEN
+      const result = serializeAccountOwnershipProofs(signatures);
+
+      // THEN
+      expect(result[0]).toBe(2);
+      expect(result[1]).toBe(0); // First index
+      expect(result[66]).toBe(1); // Second index
+    });
+  });
+
+  describe("pathToBuffer", () => {
+    it("should serialize standard Concordium path", () => {
+      // GIVEN
+      const path = "44'/919'/0'/0/0";
+
+      // WHEN
+      const result = pathToBuffer(path);
+
+      // THEN
+      expect(result[0]).toBe(5); // Path length
+      expect(result.readUInt32BE(1)).toBe(0x8000002c); // 44'
+      expect(result.readUInt32BE(5)).toBe(0x80000397); // 919'
+      expect(result.readUInt32BE(9)).toBe(0x80000000); // 0'
+      expect(result.readUInt32BE(13)).toBe(0); // 0
+      expect(result.readUInt32BE(17)).toBe(0); // 0
+      expect(result.length).toBe(21); // 1 + 5*4
+    });
+
+    it("should serialize short path", () => {
+      // GIVEN
+      const path = "44'/919'";
+
+      // WHEN
+      const result = pathToBuffer(path);
+
+      // THEN
+      expect(result[0]).toBe(2);
+      expect(result.length).toBe(9); // 1 + 2*4
+    });
+
+    it("should handle path with m/ prefix", () => {
+      // GIVEN
+      const path = "m/44'/919'/0'";
+
+      // WHEN
+      const result = pathToBuffer(path);
+
+      // THEN
+      expect(result[0]).toBe(3);
+      expect(result.length).toBe(13); // 1 + 3*4
+    });
+
+    it("should handle non-hardened indices", () => {
+      // GIVEN
+      const path = "44'/919'/0/1/2";
+
+      // WHEN
+      const result = pathToBuffer(path);
+
+      // THEN
+      expect(result[0]).toBe(5);
+      expect(result.readUInt32BE(9)).toBe(0); // Non-hardened
+      expect(result.readUInt32BE(13)).toBe(1);
+      expect(result.readUInt32BE(17)).toBe(2);
+    });
+  });
+
+  describe("chunkBuffer", () => {
+    it("should handle buffer smaller than chunk size", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(100, 0xaa);
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(1);
+      expect(result[0]).toEqual(buffer);
+    });
+
+    it("should handle buffer exactly at chunk size", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(255, 0xaa);
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(1);
+      expect(result[0].length).toBe(255);
+    });
+
+    it("should split buffer larger than chunk size", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(300, 0xaa);
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(2);
+      expect(result[0].length).toBe(255);
+      expect(result[1].length).toBe(45);
+    });
+
+    it("should handle buffer exactly twice the chunk size", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(510, 0xbb);
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(2);
+      expect(result[0].length).toBe(255);
+      expect(result[1].length).toBe(255);
+    });
+
+    it("should handle multiple full chunks with remainder", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(600, 0xcc);
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(3);
+      expect(result[0].length).toBe(255);
+      expect(result[1].length).toBe(255);
+      expect(result[2].length).toBe(90);
+    });
+
+    it("should preserve data integrity across chunks", () => {
+      // GIVEN
+      const buffer = Buffer.from([...Array(300).keys()].map(i => i % 256));
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      const reconstructed = Buffer.concat(result);
+      expect(reconstructed).toEqual(buffer);
+    });
+
+    it("should handle empty buffer", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(0);
+      const maxSize = 255;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(0);
+    });
+
+    it("should handle custom chunk sizes", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(100, 0xdd);
+      const maxSize = 25;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(4);
+      expect(result[0].length).toBe(25);
+      expect(result[1].length).toBe(25);
+      expect(result[2].length).toBe(25);
+      expect(result[3].length).toBe(25);
+    });
+
+    it("should handle chunk size of 1", () => {
+      // GIVEN
+      const buffer = Buffer.from([0x01, 0x02, 0x03]);
+      const maxSize = 1;
+
+      // WHEN
+      const result = chunkBuffer(buffer, maxSize);
+
+      // THEN
+      expect(result.length).toBe(3);
+      expect(result[0]).toEqual(Buffer.from([0x01]));
+      expect(result[1]).toEqual(Buffer.from([0x02]));
+      expect(result[2]).toEqual(Buffer.from([0x03]));
+    });
+
+    it("should throw error for maxSize of 0", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(100, 0xaa);
+      const maxSize = 0;
+
+      // WHEN/THEN
+      expect(() => chunkBuffer(buffer, maxSize)).toThrow("maxSize must be positive, got 0");
+    });
+
+    it("should throw error for negative maxSize", () => {
+      // GIVEN
+      const buffer = Buffer.alloc(100, 0xaa);
+      const maxSize = -10;
+
+      // WHEN/THEN
+      expect(() => chunkBuffer(buffer, maxSize)).toThrow("maxSize must be positive, got -10");
     });
   });
 });
