@@ -109,10 +109,25 @@ const withRozeniteUrlFix = rozeniteConfig => {
   };
 };
 
+const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
+
+/**
+ * Checks if the specified resource file is compatible with hermes-parser following
+ * {@link hermesNonCompatibleDependencies}.
+ *
+ * @param {string} resourcePath
+ * Resource file path
+ */
+function isHermesNonCompatibleDependency(resourcePath) {
+  const normalizedPath = resourcePath.replace(/\\/g, "/");
+  return hermesNonCompatibleDependencies.some(pkgName => normalizedPath.includes(pkgName));
+}
+
 export default withRozeniteUrlFix(
   withRozenite(
     Repack.defineRspackConfig(env => {
       const { mode, platform } = env;
+
       return {
         mode,
         context: __dirname,
@@ -151,8 +166,25 @@ export default withRozeniteUrlFix(
         },
         module: {
           rules: [
+            // Use standard babel-loader for packages that can't be parsed by hermes-parser before transform
+            // like @polkadot/types-codec packages that contains unimplemented syntax - static blocks
             {
               test: /\.[cm]?[jt]sx?$/,
+              include: isHermesNonCompatibleDependency,
+              type: "javascript/auto",
+              use: {
+                loader: "babel-loader",
+                options: {
+                  configFile: path.resolve(__dirname, "./babel.config.js"),
+                  babelrc: false,
+                },
+              },
+              resolve: { fullySpecified: false },
+            },
+            // Default rule for all other files (exclude Polkadot packages)
+            {
+              test: /\.[cm]?[jt]sx?$/,
+              exclude: isHermesNonCompatibleDependency,
               type: "javascript/auto",
               use: {
                 loader: "@callstack/repack/babel-swc-loader",
@@ -171,6 +203,10 @@ export default withRozeniteUrlFix(
           }),
           new ExpoModulesPlugin(),
         ],
+        devServer: {
+          host: "local-ip",
+          hot: true,
+        },
       };
     }),
     {

@@ -388,6 +388,9 @@ packageExtensionsChecksum: sha256-kGDwpo9L2TH59KV352tDEqaWp+PiDaawn/wSTqp0h4A=
 pnpmfileChecksum: sha256-fLNC0tdYYXJ7hehQQ+dFF/gcWYeM1CyHq7+BtFetUro=
 
 patchedDependencies:
+  '@callstack/repack':
+    hash: aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151
+    path: patches/@callstack__repack.patch
   '@changesets/get-github-info@0.6.0':
     hash: e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9
     path: patches/@changesets__get-github-info@0.6.0.patch
@@ -397,9 +400,6 @@ patchedDependencies:
   '@exodus/patch-broken-hermes-typed-arrays':
     hash: 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
     path: patches/@exodus__patch-broken-hermes-typed-arrays.patch
-  '@polkadot/types-codec@11.2.1':
-    hash: c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07
-    path: patches/@polkadot__types-codec@11.2.1.patch
   '@taquito/http-utils':
     hash: fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3
     path: patches/@taquito__http-utils.patch
@@ -1821,13 +1821,13 @@ importers:
         version: 7.28.4
       '@callstack/repack':
         specifier: 5.2.3
-        version: 5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
+        version: 5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
       '@callstack/repack-plugin-expo-modules':
         specifier: 5.2.3
-        version: 5.2.3(@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))
+        version: 5.2.3(@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))
       '@callstack/repack-plugin-reanimated':
         specifier: 5.2.3
-        version: 5.2.3(@babel/core@7.28.5)(@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))
+        version: 5.2.3(@babel/core@7.28.5)(@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))
       '@features/market-banner':
         specifier: workspace:^
         version: link:../../features/market-banner
@@ -1875,7 +1875,7 @@ importers:
         version: 1.2.0(@types/react@19.0.14)(react-native-get-random-values@1.11.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)(redux@5.0.1)
       '@rozenite/repack':
         specifier: 1.2.0
-        version: 1.2.0(@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))
+        version: 1.2.0(@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))
       '@rspack/core':
         specifier: 'catalog:'
         version: 1.7.3(@swc/helpers@0.5.17)
@@ -37705,17 +37705,17 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/repack-plugin-expo-modules@5.2.3(@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))':
+  '@callstack/repack-plugin-expo-modules@5.2.3(@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))':
     dependencies:
-      '@callstack/repack': 5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
+      '@callstack/repack': 5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
 
-  '@callstack/repack-plugin-reanimated@5.2.3(@babel/core@7.28.5)(@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))':
+  '@callstack/repack-plugin-reanimated@5.2.3(@babel/core@7.28.5)(@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))':
     dependencies:
       '@babel/core': 7.28.5
-      '@callstack/repack': 5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
+      '@callstack/repack': 5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
       semver: 7.7.3
 
-  '@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))':
+  '@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))':
     dependencies:
       '@callstack/repack-dev-server': 5.2.3
       '@discoveryjs/json-ext': 0.5.7
@@ -43201,7 +43201,7 @@ snapshots:
       '@polkadot/rpc-augment': 11.2.1
       '@polkadot/types': 11.2.1
       '@polkadot/types-augment': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -43228,7 +43228,7 @@ snapshots:
       '@polkadot/api-base': 11.2.1
       '@polkadot/rpc-core': 11.2.1
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       rxjs: 7.8.2
@@ -43249,7 +43249,7 @@ snapshots:
       '@polkadot/rpc-provider': 11.2.1
       '@polkadot/types': 11.2.1
       '@polkadot/types-augment': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/types-create': 11.2.1
       '@polkadot/types-known': 11.2.1
       '@polkadot/util': 12.6.2
@@ -43278,7 +43278,7 @@ snapshots:
     dependencies:
       '@polkadot/rpc-core': 11.2.1
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -43323,11 +43323,11 @@ snapshots:
   '@polkadot/types-augment@11.2.1':
     dependencies:
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
 
-  '@polkadot/types-codec@11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)':
+  '@polkadot/types-codec@11.2.1':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/x-bigint': 12.6.2
@@ -43335,7 +43335,7 @@ snapshots:
 
   '@polkadot/types-create@11.2.1':
     dependencies:
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
 
@@ -43343,7 +43343,7 @@ snapshots:
     dependencies:
       '@polkadot/networks': 12.6.2
       '@polkadot/types': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/types-create': 11.2.1
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
@@ -43357,7 +43357,7 @@ snapshots:
     dependencies:
       '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
       '@polkadot/types-augment': 11.2.1
-      '@polkadot/types-codec': 11.2.1(patch_hash=c0a7d0d5b982d9eb6d9e45927643b9c2808e8bb769bb35ddbe30e400fb52ee07)
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/types-create': 11.2.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
@@ -45272,9 +45272,9 @@ snapshots:
       - tedious
       - utf-8-validate
 
-  '@rozenite/repack@1.2.0(@callstack/repack@5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))':
+  '@rozenite/repack@1.2.0(@callstack/repack@5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)))':
     dependencies:
-      '@callstack/repack': 5.2.3(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
+      '@callstack/repack': 5.2.3(patch_hash=aebaf8b446359949abaf14968b7e9aa6a2821100635c232ae4cb76e29ff6f151)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.8(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))
       '@rozenite/middleware': 1.2.0
       '@rozenite/tools': 1.2.0
       semver: 7.7.3
