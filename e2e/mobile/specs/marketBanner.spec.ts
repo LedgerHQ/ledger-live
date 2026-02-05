@@ -32,7 +32,7 @@ describe("Market Banner", () => {
     await app.portfolio.expectFearAndGreedCardVisible();
     await app.portfolio.tapFearAndGreedCard();
     await app.portfolio.expectFearAndGreedTitleInDrawer();
-    await app.portfolio.tapDrawerCloseButton({ onlyIfVisible: true });
+    await app.portfolio.tapDrawerCloseButton();
 
     await app.portfolio.tapMarketBannerTile(0);
     await app.market.expectMarketDetailPage();

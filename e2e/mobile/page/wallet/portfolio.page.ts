@@ -282,11 +282,9 @@ export default class PortfolioPage {
   }
 
   @Step("Tap on drawer close button")
-  async tapDrawerCloseButton(options?: { onlyIfVisible: boolean }) {
-    await tapByIdOptional(this.bottomSheetCloseButton, {
-      onlyIfVisible: options?.onlyIfVisible ?? false,
-    });
-    await waitForAnimation();
+  async tapDrawerCloseButton() {
+    await getElementById(this.bottomSheetCloseButton).swipe("down");
+    // await tapById(this.bottomSheetCloseButton);
   }
 
   @Step("Tap on market banner tile")
