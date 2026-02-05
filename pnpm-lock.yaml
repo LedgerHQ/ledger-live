@@ -7133,6 +7133,9 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
+      bs58check:
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@ledgerhq/errors':
         specifier: workspace:^
@@ -7140,6 +7143,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/hw-transport-node-speculos-http':
+        specifier: workspace:^
+        version: link:../hw-transport-node-speculos-http
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.8
