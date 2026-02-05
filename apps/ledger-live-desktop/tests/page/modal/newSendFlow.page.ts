@@ -392,7 +392,7 @@ export class NewSendFlowPage extends Component {
 
   @step("Wait for confirmation screen")
   async waitForConfirmation() {
-    await this.confirmationStatusGradient.waitFor({ state: "visible", timeout: 15000 });
+    await this.confirmationStatusGradient.waitFor({ state: "visible" });
   }
 
   @step("Wait for signature or confirmation step")

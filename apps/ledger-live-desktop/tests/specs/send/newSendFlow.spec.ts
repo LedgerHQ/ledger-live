@@ -691,7 +691,6 @@ test.describe("New Send Flow", () => {
         });
 
         await test.step("Complete device action", async () => {
-          // Mock device signing the transaction
           await deviceAction.silentSign();
         });
 
