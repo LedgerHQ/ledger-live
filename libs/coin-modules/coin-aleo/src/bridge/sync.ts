@@ -12,6 +12,8 @@ import type { AleoAccount, AleoOperation, ProvableApi } from "../types";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { patchPublicOperations } from "../logic/utils";
 import { AleoPrivateRecord } from "../types/api";
+import { apiClient } from "../network/api";
+import { getPrivateBalance } from "../logic/getPrivateBalance";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
@@ -23,20 +25,13 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     viewKey = decodeAccountId(initialAccount.id).customData;
     invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
 
-    if (viewKey) {
-      provableApi = await accessProvableApi(
-        currency,
-        viewKey,
-        address,
-        initialAccount.aleoResources.provableApi,
-      );
-    }
+    provableApi = await accessProvableApi(
+      currency,
+      viewKey,
+      address,
+      initialAccount.aleoResources.provableApi,
+    );
   }
-
-  const [latestBlock, balances] = await Promise.all([
-    lastBlock(currency),
-    getBalance(currency, address),
-  ]);
 
   const ledgerAccountId = encodeAccountId({
     type: "js",
@@ -49,10 +44,10 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     }),
   });
 
-  const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
-  const transparentBalance = new BigNumber(nativeBalance.toString());
-  const privateBalance = null;
-  const spendableBalance = transparentBalance.plus(privateBalance ?? 0);
+  const [latestBlock, balances] = await Promise.all([
+    lastBlock(currency),
+    getBalance(currency, address),
+  ]);
 
   const shouldSyncFromScratch = !initialAccount;
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
@@ -72,23 +67,35 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
 
   const oldPrivateRecords: AleoPrivateRecord[] = initialAccount?.aleoResources.privateRecords ?? [];
   const latestAccountPrivateRecord = oldPrivateRecords[0];
+  let lastPrivateSyncDate = initialAccount?.aleoResources.lastPrivateSyncDate ?? null;
+  let privateBalance = initialAccount?.aleoResources.privateBalance ?? null;
   let latestAccountPrivateOperations: AleoOperation[] = [];
-  let privateRecords: AleoPrivateRecord[] = [];
+  let allPrivateRecords: AleoPrivateRecord[] = [];
 
-  if (provableApi && provableApi.uuid && viewKey && provableApi.apiKey && provableApi.jwt?.token) {
-    const res = await listPrivateOperations({
-      currency,
-      jwtToken: provableApi.jwt.token,
+  if (viewKey && provableApi && provableApi.uuid && provableApi.apiKey && provableApi.jwt?.token) {
+    const newPrivateRecords = await apiClient.getAccountOwnedRecords({
+      jwtToken: provableApi.jwt?.token,
       uuid: provableApi.uuid,
       apiKey: provableApi.apiKey,
+      start: latestAccountPrivateRecord ? latestAccountPrivateRecord.block_height + 1 : 0,
+    });
+
+    latestAccountPrivateOperations = await listPrivateOperations({
+      currency,
       viewKey,
       address,
       ledgerAccountId,
-      start: latestAccountPrivateRecord ? latestAccountPrivateRecord.block_height + 1 : 0,
+      privateRecords: newPrivateRecords,
     });
-    latestAccountPrivateOperations = res.privateOperations;
-    privateRecords = [...oldPrivateRecords, ...res.privateRecords];
+
+    allPrivateRecords = [...oldPrivateRecords, ...newPrivateRecords];
+    privateBalance = await getPrivateBalance({ viewKey, privateRecords: allPrivateRecords });
+    lastPrivateSyncDate = new Date();
   }
+
+  const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
+  const transparentBalance = new BigNumber(nativeBalance.toString());
+  const spendableBalance = transparentBalance.plus(privateBalance ?? 0);
 
   // sort by date desc
   latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -99,10 +106,10 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     : mergeOps(oldOperations, latestAccountPublicOperations.operations);
 
   const publicOperations =
-    privateRecords.length > 0
+    allPrivateRecords.length > 0
       ? await patchPublicOperations(
           mergedPublicOperations as AleoOperation[],
-          privateRecords,
+          allPrivateRecords,
           address,
           ledgerAccountId,
         )
@@ -126,7 +133,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       transparentBalance,
       privateBalance,
       provableApi,
-      privateRecords: privateRecords,
+      privateRecords: allPrivateRecords,
       lastPrivateSyncDate: provableApi?.scannerStatus?.synced
         ? new Date()
         : initialAccount?.aleoResources.lastPrivateSyncDate || null,
