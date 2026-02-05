@@ -10,6 +10,9 @@
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
+    "fee" : "الرسوم",
+    "stake" : "الحصة",
+    "validator" : "المدقق",
     "delete" : "حذف",
     "paste" : "لصق",
     "yes" : "نعم",
@@ -466,6 +469,9 @@
     "GenuineCheckFailed" : {
       "title" : "فشل توثيق الجهاز",
       "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+    },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "تمكين Blind signing (التوقيع بدون اطلاع) أو Contract data (بيانات العقد) في تطبيق إيثريوم"
     },
     "HardResetFail" : {
       "title" : "عذراً، لا يمكن إعادة التعيين",
@@ -2681,6 +2687,10 @@
       "seeMarket" : "رؤية الكل"
     },
     "walletBalance" : "رصيد المحفظة",
+    "balance" : {
+      "noSigner" : "المحفظة الأكثر\nأماناً",
+      "noFund" : "تأمين\nأصولك المشفرة"
+    },
     "seeAllAssets" : "رؤية جميع الأصول",
     "seeAllAccounts" : "رؤية جميع الحسابات",
     "marketPriceSection" : {
@@ -2701,6 +2711,20 @@
       "send" : "إرسال",
       "deposit" : "تلقي",
       "stake" : "تكديس"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "تحويل",
+      "swap" : "مبادلة",
+      "buy" : "شراء",
+      "connect" : "اتصال",
+      "buyLedger" : "شراء Ledger",
+      "transferDrawer" : {
+        "title" : "تحويل",
+        "receiveCrypto" : "تلقي الأصول المشفرة",
+        "sendCrypto" : "إرسال أصول مشفرة",
+        "bankTransfer" : "تحويل بنكي",
+        "bankTransferDescription" : "تلقي العملات المستقرة بواسطة إرسال النقود"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2993,7 @@
     "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
+    "perps" : "عقود دائمة",
     "manage" : "إدارة",
     "lastTransactions" : "المعاملات الأخيرة",
     "emptyState" : {
@@ -3477,9 +3502,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "titleVariantB" : "حقِّق أقصى استفادة من Ledger Wallet",
+      "titleVariantB" : "لا تُفوّت الأخبار المهمة",
       "desc" : "احصل على آخر المستجدات حول Ledger Wallet ومنتجات Ledger والسوق والتوصيات المخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
-      "descVariantB" : "سنرسل إليك نصائح مخصصة، وإرشادات إعداد وأخبار السوق ذات الصلة.",
+      "descVariantB" : "احصل على تنبيهات في الوقت الفعلي حول رموز التوكن الجديدة، وفرص الكسب، وتحولات السوق. قم بإلغاء الانضمام في أي وقت.",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     },
@@ -3654,6 +3679,10 @@
     "stake" : {
       "title" : "تكديس",
       "description" : "احصل على مكافآت على أصولك المشفرة."
+    },
+    "perps" : {
+      "title" : "عقود دائمة",
+      "description" : "تداول العقود الدائمة بالأصول المشفرة."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -3851,7 +3880,8 @@
         "title" : "اختر عرض سعر"
       },
       "twoStepApproval" : {
-        "title" : "أكمل الخطوات"
+        "title" : "أكمل الخطوات",
+        "completedTitle" : "حالة المعاملة"
       },
       "loader" : {
         "title" : "المبادلة قيد المعالجة",
@@ -4549,6 +4579,7 @@
       },
       "acceptTerms" : "بتوقيع هذه المعاملة، أنت تقبل </0>شروط استخدام</0> {{provider}}<0><0>",
       "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
+      "acceptTermsSponsored" : "للاستفادة من رسوم الشبكة المجانية، أنت توافق أيضاً على مشاركة تفاصيل معاملتك (بما في ذلك عنوان محفظتك) مع Blinklabs.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -6064,6 +6095,52 @@
       "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "تم نسخ العنوان!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "إعادة التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "memoPlaceholder" : "ملاحظة اختيارية",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "showAll" : "عرض الكل",
+      "showLess" : "عرض أقل",
+      "iDelegate" : "أنا أفوّض"
+    }
+  },
   "stellar" : {
     "token" : "أصول",
     "memo" : {
@@ -6468,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {
@@ -8247,7 +8321,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "المزود غير متاح",
-      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
+      "description" : "مزود المبادلة لا يمكنه معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "المزود غير متاح",
@@ -8284,6 +8358,11 @@
       "preapprove" : "تمت إضافة الحساب بنجاح",
       "validator" : "مُدقِّق Ledger",
       "title" : "اقبل تلقائياً الأموال الواردة",
+      "processing" : {
+        "title" : "جارٍ معالجة المعاملة",
+        "description" : "هذه العملية قد تستغرق ما يصل إلى 1 دقيقة",
+        "keepDeviceNearby" : "لا تُغادر تطبيق Ledger Wallet واحتفظ بجهازك Ledger بالقرب منك."
+      },
       "reonboard" : {
         "title" : "مطلوب تحديث الحساب",
         "account" : "الحساب",
@@ -8356,7 +8435,11 @@
       "neutral" : "محايد",
       "greed" : "طمع",
       "extremeGreed" : "طمع+"
-    }
+    },
+    "tileTitle" : "الحالة المزاجية"
+  },
+  "perps" : {
+    "title" : "عقود دائمة"
   },
   "analyticsAllocation" : {
     "header" : {
