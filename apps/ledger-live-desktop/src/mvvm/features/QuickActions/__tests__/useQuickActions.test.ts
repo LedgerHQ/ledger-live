@@ -366,10 +366,22 @@ describe("useQuickActions", () => {
       expect(sendAction.disabled).toBe(true);
     });
 
-    it("should enable send action when all accounts are empty", () => {
+    it("should disable send action when user has no funds", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount()],
+          settings: { hasCompletedOnboarding: true },
+        },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(true);
+    });
+
+    it("should enable send action when user has at least one account with funds", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: {
+          accounts: [createEmptyAccount(), createAccountWithFunds()],
           settings: { hasCompletedOnboarding: true },
         },
       });
