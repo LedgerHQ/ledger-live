@@ -628,7 +628,7 @@ test.describe("New Send Flow", () => {
   test.describe.only("Generic Flow Tests", () => {
     // Test data for different families
     const familiesData = [
-      /*{
+      {
         name: "Ethereum",
         accountName: ACCOUNT_NAMES.ethereum,
         address: TEST_ADDRESSES.ethereum,
@@ -645,7 +645,7 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.tezos,
         address: TEST_ADDRESSES.tezos,
         amount: "0.1",
-      },*/
+      },
       {
         name: "Algorand",
         accountName: ACCOUNT_NAMES.algorand,
@@ -653,18 +653,20 @@ test.describe("New Send Flow", () => {
         amount: "0.1",
         hasMemo: true,
       },
-      /*{
+      {
         name: "Stellar",
         accountName: ACCOUNT_NAMES.stellar,
         address: TEST_ADDRESSES.stellar,
         amount: "1",
+        hasMemo: true,
       },
       {
         name: "XRP",
         accountName: ACCOUNT_NAMES.xrp,
         address: TEST_ADDRESSES.xrp,
         amount: "1",
-      },*/
+        hasMemo: true,
+      },
     ];
 
     for (const family of familiesData) {
