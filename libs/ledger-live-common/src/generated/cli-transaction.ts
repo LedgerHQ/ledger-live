@@ -6,6 +6,7 @@ import { cliTools as cardano } from "../families/cardano/setup";
 import { cliTools as casper } from "../families/casper/setup";
 import { cliTools as canton } from "../families/canton/setup";
 import { cliTools as celo } from "../families/celo/setup";
+import { cliTools as concordium } from "../families/concordium/setup";
 import { cliTools as cosmos } from "../families/cosmos/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as hedera } from "../families/hedera/setup";
@@ -36,6 +37,7 @@ export default {
   casper,
   canton,
   celo,
+  concordium,
   cosmos,
   evm,
   hedera,
