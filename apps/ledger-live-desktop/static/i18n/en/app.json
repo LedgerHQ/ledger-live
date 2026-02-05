@@ -4509,6 +4509,10 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
+      "reborn": {
+        "title": "Reborn mode",
+        "description": "Toggle to simulate onboarding completed or not. When off, the app will show the onboarding flow."
+      },
       "brazeTools": {
         "title": "Braze Tools",
         "description": "Generate local braze cards",

@@ -34,6 +34,7 @@ import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
+import RebornModeToggle from "./RebornModeToggle";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -142,6 +143,12 @@ const Default = () => {
       <WalletFeaturesDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
+      <Row
+        title={t("settings.developer.reborn.title")}
+        desc={t("settings.developer.reborn.description")}
+      >
+        <RebornModeToggle />
+      </Row>
       <MockAccountGeneratorSection />
     </Body>
   );
