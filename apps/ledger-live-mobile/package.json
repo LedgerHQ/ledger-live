@@ -94,6 +94,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
+    "@ledgerhq/dmk-ledger-wallet": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

@@ -19,3 +19,9 @@ export type {
   PrepareConnectManagerDAError,
   PrepareConnectManagerDAIntermediateValue,
 } from "./device-action/PrepareConnectManager/types";
+export { isDmkTransport } from "./utils/isDmkTransport";
+export {
+  useExecuteDMKDeviceAction,
+  type Params as UseExecuteDMKDeviceActionParams,
+  type Output as UseExecuteDMKDeviceActionOutput,
+} from "./hooks/useExecuteDeviceAction";
