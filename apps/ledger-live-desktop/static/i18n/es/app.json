@@ -152,7 +152,8 @@
     "quote" : "Cotización",
     "memoTag" : {
       "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
-    }
+    },
+    "stake" : "Participación"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,6 +300,7 @@
     "manager" : "Mi Ledger",
     "earn" : "Earn",
     "exchange" : "Comprar / Vender",
+    "perps" : "Perpetuos",
     "swap" : "Permutar",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
@@ -1783,6 +1785,7 @@
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
       "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
+      "acceptTermsSponsored" : "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -2203,6 +2206,19 @@
     "memoTag" : {
       "title" : "¿Necesitas una etiqueta o memo?",
       "description" : "Puede que necesites una <0>etiqueta o memo</0> para recibir este activo de un exchange. Puedes usar cualquier combinación de números, como 1234."
+    }
+  },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Transferencia bancaria",
+          "description" : "Envía dinero fiduciario y recibe monedas estables"
+        },
+        "fromCrypto" : {
+          "title" : "Recibir cripto"
+        }
+      }
     }
   },
   "send" : {
@@ -4506,6 +4522,10 @@
           "title" : "Generación rápida",
           "desc" : "Genera 10 cuentas aleatorias con divisas al azar."
         },
+        "emptyGenerate" : {
+          "title" : "Generación vacía",
+          "desc" : "Generar una cuenta vacía"
+        },
         "currencySelector" : {
           "placeholder" : "Elegir divisas...",
           "searchPlaceholder" : "Buscar",
@@ -4521,7 +4541,8 @@
         "buttons" : {
           "generateAccounts" : "Generar {{count}} cuenta",
           "generateAccounts_other" : "Generar {{count}} cuentas",
-          "generateAccountsQuick" : "Generar {{count}} cuentas"
+          "generateAccountsQuick" : "Generar {{count}} cuentas",
+          "generateEmptyAccount" : "Generar cuenta vacía"
         },
         "alerts" : {
           "selectCurrency" : "Selecciona al menos una divisa",
@@ -4567,6 +4588,7 @@
       "walletFeaturesDevTool" : {
         "title" : "Herramienta de desarrollo de funciones de wallet",
         "description" : "Activar/desactivar las funciones de wallet 4.0 para escritorio (marca de función lwdWallet40).",
+        "mainFeatureToggle" : "Alternar característica principal",
         "enableAll" : "Activar todo",
         "disableAll" : "Desactivar todo",
         "featureParameters" : "Parámetros de la función",
@@ -6336,7 +6358,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Error de procesamiento",
-      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+      "description" : "El proveedor de permuta no puede procesar esta transacción. Código de error 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "Proveedor no disponible",
@@ -6634,7 +6656,7 @@
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Habilita la firma a ciegas o los datos de contrato en los ajustes de la aplicación Ethereum"
+      "title" : "Activar la Firma a ciegas o Datos de contrato en la app de Ethereum"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Habilita los datos de contrato en los ajustes de la aplicación Celo"
@@ -7158,6 +7180,50 @@
     "memo" : "Memo",
     "memoPlaceholder" : "Escribir etiqueta/memo",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Tarifa",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Cambiar delegación",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. ",
+      "changeCTA" : "Cambiar"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "commission" : "Comisión"
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7824,7 +7890,9 @@
   },
   "portfolio" : {
     "title" : "Inicio",
-    "today" : "Hoy"
+    "today" : "Hoy",
+    "addAccountCta" : "Agregar cuenta cripto",
+    "noBalanceTitle" : "Protege tus cripto"
   },
   "marketBanner" : {
     "title" : "Explorar mercado",
@@ -7847,6 +7915,14 @@
       "content" : "El índice de sentimiento indica el estado emocional del mercado. Oscila entre el 0 y el 100. Un valor más bajo indica miedo extremo, mientras que uno más alto representa avaricia extrema.",
       "cta" : "Entendido"
     }
+  },
+  "quickActions" : {
+    "send" : "Enviar",
+    "receive" : "Recibir",
+    "buy" : "Comprar",
+    "sell" : "Vender",
+    "connect" : "Conectar",
+    "buyALedger" : "Compra un Ledger"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
@@ -7877,6 +7953,55 @@
       "transparentBalanceTooltip" : "Saldo visible para el público",
       "privateBalance" : "Saldo privado",
       "privateBalanceTooltip" : "Saldo que está oculto al público"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "Mostrar saldo",
+        "lastSync" : "Última sincronización hace {{days}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Activar saldo privado de Zcash",
+          "breadcrumbs" : {
+            "0" : "Altura de nacimiento",
+            "1" : "UFVK",
+            "2" : "Dispositivo",
+            "3" : "Confirmación"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos.",
+              "cta" : "Más información",
+              "label" : "Altura de nacimiento",
+              "tooltip" : "Default: today's date. Change only for existing accounts with past private (shielded) activity.",
+              "syncFromZero" : "Esta cuenta recibió ZEC blindado en el pasado, pero no puedo recuperar la altura de nacimiento. Escanea a partir del bloque 0 (este proceso puede llevar mucho tiempo).",
+              "error" : "Fecha no válida"
+            },
+            "ufvk" : {
+              "text" : "Para comenzar, debes exportar tu Clave de Visualización Completa Unificada (UFVK). Debes confirmar esta acción con tu dispositivo Ledger."
+            },
+            "device" : {
+              "text" : "Confirma la exportación de tu UFVK en tu dispositivo Ledger"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK importada correctamente",
+                "text" : "Podrás recibir Shielded ZEC y firmar transacciones privadas.",
+                "info" : {
+                  "text" : "Tu Clave de Visualización Completa Unificada se mantiene almacenada localmente en tu PC y nunca se transmite ni expone a sistemas externos.",
+                  "cta" : "Más información"
+                },
+                "warning" : "Las cuentas que tengan una altura de nacimiento más antigua pueden requerir una sincronización más prolongada (de hasta 2 horas). Mantén la app abierta hasta que finalice la sincronización."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "Iniciar sincronización",
+      "datepicker" : {
+        "label" : "Altura de nacimiento",
+        "tooltip" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos."
+      }
     }
   }
 }
