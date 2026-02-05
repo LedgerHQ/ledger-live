@@ -44,7 +44,7 @@ export const overrideInitialStateWithGraphReworkEnabled = (state: State): State 
   settings: {
     ...state.settings,
     overriddenFeatureFlags: {
-      lwmWallet40: { enabled: true, params: { graphRework: true } },
+      lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } },
     },
   },
 });
@@ -55,7 +55,7 @@ export const overrideInitialStateWithGraphReworkAndReadOnly = (state: State): St
     ...state.settings,
     readOnlyModeEnabled: true,
     overriddenFeatureFlags: {
-      lwmWallet40: { enabled: true, params: { graphRework: true } },
+      lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } },
     },
   },
 });

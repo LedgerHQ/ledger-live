@@ -84,4 +84,28 @@ describe("Portfolio Screen", () => {
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
     });
   });
+
+  describe("Portfolio Banners Section", () => {
+    it("should display banners section in noFund state", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithGraphReworkEnabled,
+      });
+
+      await screen.findByTestId("PortfolioEmptyList");
+
+      const bannersSections = await screen.findAllByTestId("portfolio-banners-section");
+      expect(bannersSections[0]).toBeVisible();
+    });
+
+    it("should display banners section in noSigner state (readOnly mode)", async () => {
+      renderWithReactQuery(<ReadOnlyPortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithGraphReworkAndReadOnly,
+      });
+
+      await screen.findByTestId("PortfolioReadOnlyItems");
+
+      const bannersSections = await screen.findAllByTestId("portfolio-banners-section");
+      expect(bannersSections[0]).toBeVisible();
+    });
+  });
 });
