@@ -25,7 +25,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
         "clamp",
       ),
     }),
-    [fadeStart, lastIndex, scrollProgressSharedValue.value],
+    [fadeStart, lastIndex, scrollProgressSharedValue],
   );
 
   const exploreStyle = useAnimatedStyle(
@@ -37,7 +37,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
         "clamp",
       ),
     }),
-    [fadeStart, lastIndex, scrollProgressSharedValue.value],
+    [fadeStart, lastIndex, scrollProgressSharedValue],
   );
 
   return (

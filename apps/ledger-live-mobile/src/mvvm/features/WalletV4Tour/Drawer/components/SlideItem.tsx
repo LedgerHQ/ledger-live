@@ -32,7 +32,7 @@ export function SlideItem({ title, description, index }: SlideItemProps) {
         },
       ],
     };
-  }, [index, slideWidth, scrollProgressSharedValue.value]);
+  }, [index, slideWidth, scrollProgressSharedValue]);
 
   return (
     <Animated.View onLayout={handleLayout} style={[animatedStyle, { flex: 1 }]}>
