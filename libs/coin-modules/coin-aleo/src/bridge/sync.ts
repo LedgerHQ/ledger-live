@@ -53,6 +53,14 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
   const latestOperation = oldOperations[0];
   const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+  const oldPrivateRecords: AleoPrivateRecord[] = initialAccount?.aleoResources.privateRecords ?? [];
+  const latestAccountPrivateRecord = oldPrivateRecords[0];
+  let lastPrivateSyncDate = initialAccount?.aleoResources.lastPrivateSyncDate ?? null;
+  let privateBalance = initialAccount?.aleoResources.privateBalance ?? null;
+  let latestAccountPrivateOperations: AleoOperation[] = [];
+  let newPrivateRecords: AleoPrivateRecord[] = [];
+  let allPrivateRecords: AleoPrivateRecord[] = [];
+
   const latestAccountPublicOperations = await listOperations({
     currency,
     address,
@@ -65,15 +73,8 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     },
   });
 
-  const oldPrivateRecords: AleoPrivateRecord[] = initialAccount?.aleoResources.privateRecords ?? [];
-  const latestAccountPrivateRecord = oldPrivateRecords[0];
-  let lastPrivateSyncDate = initialAccount?.aleoResources.lastPrivateSyncDate ?? null;
-  let privateBalance = initialAccount?.aleoResources.privateBalance ?? null;
-  let latestAccountPrivateOperations: AleoOperation[] = [];
-  let allPrivateRecords: AleoPrivateRecord[] = [];
-
   if (viewKey && provableApi && provableApi.uuid && provableApi.apiKey && provableApi.jwt?.token) {
-    const newPrivateRecords = await apiClient.getAccountOwnedRecords({
+    newPrivateRecords = await apiClient.getAccountOwnedRecords({
       jwtToken: provableApi.jwt?.token,
       uuid: provableApi.uuid,
       apiKey: provableApi.apiKey,
@@ -88,7 +89,19 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       privateRecords: newPrivateRecords,
     });
 
-    allPrivateRecords = [...oldPrivateRecords, ...newPrivateRecords];
+    // FIXME: util for deduplication and sorting
+    const existingKeys = new Set(oldPrivateRecords.map(r => r.transaction_id));
+    allPrivateRecords = [
+      ...oldPrivateRecords,
+      ...newPrivateRecords.filter(r => !existingKeys.has(`${r.transaction_id}_${r.commitment}`)),
+    ]
+      .map(r => ({
+        ...r,
+        transaction_id: r.transaction_id.trim(),
+        transition_id: r.transition_id.trim(),
+      }))
+      .sort((a, b) => b.block_height - a.block_height);
+
     privateBalance = await getPrivateBalance({ viewKey, privateRecords: allPrivateRecords });
     lastPrivateSyncDate = new Date();
   }
@@ -105,11 +118,12 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     ? latestAccountPublicOperations.operations
     : mergeOps(oldOperations, latestAccountPublicOperations.operations);
 
+  // patch public operations with private data where applicable
   const publicOperations =
-    allPrivateRecords.length > 0
+    newPrivateRecords.length > 0
       ? await patchPublicOperations(
           mergedPublicOperations as AleoOperation[],
-          allPrivateRecords,
+          newPrivateRecords,
           address,
           ledgerAccountId,
         )
@@ -134,13 +148,12 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       privateBalance,
       provableApi,
       privateRecords: allPrivateRecords,
-      lastPrivateSyncDate: provableApi?.scannerStatus?.synced
-        ? new Date()
-        : initialAccount?.aleoResources.lastPrivateSyncDate || null,
+      lastPrivateSyncDate,
     },
   };
 };
 
 export const sync = makeSync({
   getAccountShape,
+  shouldMergeOps: false,
 });

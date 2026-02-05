@@ -163,20 +163,22 @@ export async function parsePrivateOperation({
   ledgerAccountId: string;
   viewKey: string;
 }): Promise<AleoOperation> {
-  const { fee_value, block_hash, execution, status, block_timestamp } =
-    await apiClient.getTransactionById(currency, rawTx.transaction_id);
+  const [transactionDetails, outputRecord] = await Promise.all([
+    apiClient.getTransactionById(currency, rawTx.transaction_id),
+    sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey),
+  ]);
 
-  const timestamp = new Date(Number(block_timestamp) * 1000);
-  const hasFailed = status !== "Accepted";
-
+  const transactionId = rawTx.transaction_id.trim();
+  const blockHeight = rawTx.block_height;
+  const blockHash = transactionDetails.block_hash;
+  const timestamp = new Date(Number(transactionDetails.block_timestamp) * 1000);
+  const hasFailed = transactionDetails.status !== "Accepted";
   let recipient = "";
   let sender = "";
   let value = new BigNumber(0);
 
-  const outputRecord = await sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey);
-
   // PROGRAM INPUTS, BASED ON TRANSITION INDEX
-  const recordTransition = execution.transitions[rawTx.transition_index];
+  const recordTransition = transactionDetails.execution.transitions[rawTx.transition_index];
 
   try {
     // DECRYPT RECIPIENT & AMOUNT
@@ -209,17 +211,19 @@ export async function parsePrivateOperation({
     value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
   }
 
+  const type = recipient === address ? "IN" : "OUT";
+
   return {
-    id: encodeOperationId(ledgerAccountId, rawTx.transition_id, rawTx.function_name),
+    id: encodeOperationId(ledgerAccountId, transactionId, type),
     senders: [sender],
     recipients: [recipient],
     value,
-    type: recipient === address ? "IN" : "OUT",
+    type,
     hasFailed,
-    hash: rawTx.transaction_id,
-    fee: new BigNumber(fee_value),
-    blockHeight: rawTx.block_height,
-    blockHash: block_hash,
+    hash: transactionId,
+    fee: new BigNumber(transactionDetails.fee_value),
+    blockHeight,
+    blockHash,
     accountId: ledgerAccountId,
     date: timestamp,
     extra: {

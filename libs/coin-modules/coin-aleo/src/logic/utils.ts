@@ -122,6 +122,13 @@ export const patchPublicOperations = async (
       record => record.transaction_id.trim() === operation.hash.trim(),
     );
 
+    // FIXME: privateRecord here is "fee_private", so sender is our address
+    // the problem is that this transaction was Public -> Private from Account 1 -> Account 2
+    // right now it's incorrectly marked as "convert", so we have IN and OUT operations created
+    if (operation.hash === "at1zhfgv6ueg602cl6zchx27lnharjdds8qkf0vryh5k2ex8kuahcrqs2xjyq") {
+      console.log("Found problematic operation", { operation, privateRecord });
+    }
+
     // IF PRIVATE RECORD EXISTS, PATCH THE OPERATION
     // OCCURRS IN 3 CASES:
     // 1. PRIVATE TO PUBLIC (WHEN WE SEND FROM OUR OWN PRIVATE ACCOUNT)
@@ -149,6 +156,7 @@ export const patchPublicOperations = async (
             operation.type === "IN" ? "OUT" : "IN",
           ),
           type: operation.type === "IN" ? "OUT" : "IN",
+          date: new Date(operation.date.getTime() + 1), // ensure unique date for sorting
           extra: {
             ...operation.extra,
             transactionType: operation.extra.transactionType === "private" ? "public" : "private",
