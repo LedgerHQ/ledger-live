@@ -2,8 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
   LayoutChangeEvent,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   StyleSheet,
   View,
   ViewStyle,
@@ -21,6 +19,7 @@ import { Slide, type SlideElement } from "./Slide";
 import { Content, type ContentElement } from "./Content";
 import { Footer, type FooterElement } from "./Footer";
 import { isElementOfType } from "./utils";
+import { scheduleOnRN } from "react-native-worklets";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -32,11 +31,11 @@ export type SlidesProps = {
   initialSlideIndex?: number;
   style?: ViewStyle;
   /**
-   * Custom component to use instead of the default AnimatedFlatList.
-   * For instance, inside gorhom/bottom-sheet, we need to pass FlatList from react-native-gesture-handler.
    * Make sure it is wrapped in Animated.createAnimatedComponent
+   * Any custom FlatList component can be used here.
+   * For instance, inside gorhom/bottom-sheet, we need to pass FlatList from react-native-gesture-handler.
    */
-  as?: typeof AnimatedFlatList;
+  as?: React.ComponentType<any>;
   testID?: string;
 } & Omit<
   FlatListProps<React.ReactElement>,
@@ -122,21 +121,19 @@ export function Slides({
         scrollProgressSharedValue.value = event.contentOffset.x / width;
       }
     },
-  });
-
-  const handleMomentumScrollEnd = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    onMomentumEnd: (event) => {
       if (width <= 0) return;
 
-      const offsetX = event.nativeEvent.contentOffset.x;
+      const offsetX = event.contentOffset.x;
       const newIndex = Math.round(offsetX / width);
       if (newIndex !== currentIndex) {
-        setCurrentIndex(newIndex);
-        onSlideChange?.(newIndex);
+        scheduleOnRN(setCurrentIndex, newIndex);
+        if (onSlideChange) {
+          scheduleOnRN(onSlideChange, newIndex);
+        }
       }
     },
-    [width, currentIndex, onSlideChange],
-  );
+  });
 
   const getItemLayout = useCallback(
     (_: unknown, index: number): { length: number; offset: number; index: number } => ({
@@ -181,12 +178,10 @@ export function Slides({
             renderItem={renderItem}
             keyExtractor={(_: unknown, index: number): string => `slide-${index}`}
             horizontal
-            //  @ts-expect-error - pagingEnabled exists but typescript does not seem to know about it
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
-            onMomentumScrollEnd={handleMomentumScrollEnd}
             getItemLayout={getItemLayout}
             initialScrollIndex={initialSlideIndex}
             {...flatListProps}
@@ -206,7 +201,6 @@ export function Slides({
     slideChildren,
     renderItem,
     scrollHandler,
-    handleMomentumScrollEnd,
     getItemLayout,
     initialSlideIndex,
     flatListProps,

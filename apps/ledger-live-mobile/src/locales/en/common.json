@@ -8409,5 +8409,26 @@
     "actions": {
       "swap": "Swap"
     }
+  },
+  "walletV4Tour": {
+    "title": "Discover your new portfolio",
+    "slides": {
+      "portfolio": {
+        "title": "Your portfolio, reimagined",
+        "description": "We've decluttered your home screen. Missing your graph? Just tap below your balance."
+      },
+      "navigation": {
+        "title": "Everything in its right place",
+        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the bottom for faster access."
+      },
+      "actions": {
+        "title": "Actions at market speed",
+        "description": "Spot market trends with the new banner and trade instantly."
+      }
+    },
+    "cta": {
+      "continue": "Continue",
+      "explore": "Explore my new portfolio"
+    }
   }
 }
