@@ -27,7 +27,7 @@ const TEST_ADDRESSES = {
   xrp: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // abandonSeed address
   // Additional test addresses
   sanctioned: Addresses.SANCTIONED_ETHEREUM,
-  newAddress: "0x2222222222222222222222222222222222222222", // Not in recent addresses
+  newAddress: "0x2222222222222222222222222222222222222222", // Not in recent addresses,
 };
 
 const INVALID_ADDRESSES = {
@@ -629,6 +629,19 @@ test.describe("New Send Flow", () => {
     // Test data for different families
     const familiesData = [
       {
+        name: "Algorand",
+        accountName: ACCOUNT_NAMES.algorand,
+        address: TEST_ADDRESSES.algorand,
+        amount: "0.1",
+        hasMemo: true,
+      },
+      {
+        name: "Bitcoin",
+        accountName: ACCOUNT_NAMES.bitcoin,
+        address: TEST_ADDRESSES.bitcoin,
+        amount: "0.1",
+      },
+      {
         name: "Ethereum",
         accountName: ACCOUNT_NAMES.ethereum,
         address: TEST_ADDRESSES.ethereum,
@@ -645,13 +658,6 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.tezos,
         address: TEST_ADDRESSES.tezos,
         amount: "0.1",
-      },
-      {
-        name: "Algorand",
-        accountName: ACCOUNT_NAMES.algorand,
-        address: TEST_ADDRESSES.algorand,
-        amount: "0.1",
-        hasMemo: true,
       },
       {
         name: "Stellar",
