@@ -625,7 +625,7 @@ test.describe("New Send Flow", () => {
     });
   });
 
-  test.describe.only("Generic Flow Tests", () => {
+  test.describe("Generic Flow Tests", () => {
     // Test data for different families
     const familiesData = [
       {
@@ -715,18 +715,12 @@ test.describe("New Send Flow", () => {
 
   test.describe("Validation & Errors", () => {
     test("should validate address format - Ethereum", async ({ app, page }) => {
-      await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Type invalid address", async () => {
-        await app.newSendFlow.typeAddress(INVALID_ADDRESSES.ethereum);
-        await app.newSendFlow.waitForRecipientValidation();
-      });
-
-      await test.step("Verify validation error message appears", async () => {
-        // Focus on checking the validation error message, not the button visibility
-        // The "Send to" button might be visible if there are matching accounts
-        await app.newSendFlow.expectValidationMessage(/incorrect address format/i);
-      });
+      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
+      await app.newSendFlow.typeAddress(INVALID_ADDRESSES.ethereum);
+      await app.newSendFlow.validationStatusMessage.waitFor({ state: "visible" });
+      await expect(app.newSendFlow.validationStatusMessage).toContainText(
+        /incorrect address format/i,
+      );
     });
 
     test.describe("Navigation", () => {
