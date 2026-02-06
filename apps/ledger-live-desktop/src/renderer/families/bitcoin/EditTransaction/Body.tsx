@@ -1,9 +1,11 @@
 import {
   getEditTransactionStatus,
+  type GetEditTransactionStatusParams,
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
   isTransactionConfirmed,
 } from "@ledgerhq/coin-bitcoin/editTransaction/index";
+import { getOriginalTxFeeRateSatVb } from "@ledgerhq/coin-bitcoin/rbfHelpers";
 import { fromTransactionRaw } from "@ledgerhq/coin-bitcoin/transaction";
 import {
   BitcoinAccount,
@@ -23,6 +25,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
+import type { BigNumber } from "bignumber.js";
 import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -247,6 +250,7 @@ const Body = ({
 
   const [haveFundToCancel, setHaveFundToCancel] = useState(false);
   const [haveFundToSpeedup, setHaveFundToSpeedup] = useState(false);
+  const [originalFeePerByte, setOriginalFeePerByte] = useState<BigNumber | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -267,6 +271,28 @@ const Body = ({
       cancelled = true;
     };
   }, [mainAccount, transactionToUpdate]);
+
+  // When transactionToUpdate.feePerByte is missing (e.g. not stored in operation), fetch original tx fee rate for RBF validation
+  useEffect(() => {
+    const replaceTxId = transactionToUpdate.replaceTxId;
+    const hasFeePerByte =
+      transactionToUpdate.feePerByte != null && !transactionToUpdate.feePerByte.isNaN();
+
+    if (!replaceTxId || hasFeePerByte) {
+      setOriginalFeePerByte(null);
+      return;
+    }
+
+    let cancelled = false;
+    getOriginalTxFeeRateSatVb(mainAccount, replaceTxId).then((fee: BigNumber | null) => {
+      if (!cancelled) {
+        setOriginalFeePerByte(fee);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [mainAccount, transactionToUpdate.replaceTxId, transactionToUpdate.feePerByte]);
 
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const pendingOperation = mainAccount.pendingOperations.find(
@@ -320,12 +346,14 @@ const Body = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editType]);
 
-  const updatedStatus = getEditTransactionStatus({
+  const statusParams: GetEditTransactionStatusParams = {
     editType,
     transaction,
     transactionToUpdate,
     status: status as TransactionStatus,
-  });
+    ...(originalFeePerByte != null ? { originalFeePerByte } : {}),
+  };
+  const updatedStatus = getEditTransactionStatus(statusParams);
 
   const stepperProps = {
     title: t(getStepTitleKey(stepId, editType)),

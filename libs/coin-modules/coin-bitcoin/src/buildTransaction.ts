@@ -63,7 +63,7 @@ export const buildTransaction = async (
     changeAddress,
     originalTxId: transaction?.replaceTxId,
   });
-
+  console.log("Built transaction info Fees:", txInfo.fee);
   log("btcwallet", "txInfo", txInfo);
 
   return txInfo;

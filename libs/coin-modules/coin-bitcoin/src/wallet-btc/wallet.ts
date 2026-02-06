@@ -17,6 +17,7 @@ import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address, Output } from "./storage/types";
 import { blockchainBaseURL } from "../explorer";
+import { getMinReplacementFeeSat } from "../rbfHelpers";
 import { BitcoinSigner, SignerTransaction } from "../signer";
 
 class BitcoinLikeWallet {
@@ -214,6 +215,15 @@ class BitcoinLikeWallet {
       throw new Error("Invalid change address");
     }
 
+    let minReplacementFeeSat: number | undefined;
+    if (params.originalTxId) {
+      const minFee = await getMinReplacementFeeSat(
+        params.fromAccount,
+        params.originalTxId,
+      );
+      minReplacementFeeSat = minFee.isZero() ? undefined : minFee.integerValue().toNumber();
+    }
+
     const txInfo = await params.fromAccount.xpub.buildTx({
       destAddress: params.dest,
       amount: params.amount,
@@ -223,6 +233,7 @@ class BitcoinLikeWallet {
       sequence: params.sequence,
       opReturnData: params.opReturnData,
       originalTxId: params.originalTxId,
+      minReplacementFeeSat,
     });
 
     return txInfo;

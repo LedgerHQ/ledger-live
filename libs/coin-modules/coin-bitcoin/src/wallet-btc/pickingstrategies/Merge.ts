@@ -27,7 +27,7 @@ export class Merge extends PickingStrategy {
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Merge");
-
+    console.log("Merge options outputs:", outputs);
     let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
@@ -36,6 +36,12 @@ export class Merge extends PickingStrategy {
           x => x.hash === o.output_hash && x.outputIndex === o.output_index,
         ).length,
     );
+
+    // Validate UTXOs: only keep those for which we can fetch the transaction hex
+    const txHexResults = await Promise.allSettled(
+      unspentUtxos.map(u => xpub.explorer.getTxHex(u.output_hash)),
+    );
+    unspentUtxos = unspentUtxos.filter((_, i) => txHexResults[i].status === "fulfilled");
 
     // NOTE: clamping at this level, might remove...?
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
@@ -58,7 +64,7 @@ export class Merge extends PickingStrategy {
       this.derivationMode,
     );
     let fee = baseVNoInput * safeFeePerByte;
-
+    console.log("Merge Base fee (no inputs):", fee);
     let total = new BigNumber(0);
     const unspentUtxoSelected: Output[] = [];
 
@@ -77,6 +83,12 @@ export class Merge extends PickingStrategy {
     // If we can't afford to add the change output, drop it
     if (total.minus(amount.plus(fee)).lt(changeDeltaV * safeFeePerByte)) {
       // not enough fund to make a change output
+      console.log("merge total.minus(amount.plus(fee)):", total.minus(amount.plus(fee)).toString());
+      console.log("merge total:", total.toString());
+      console.log("merge amount:", amount.toString());
+      console.log("merge fee:", fee.toString());
+      console.log("merge amount.plus(fee):", amount.plus(fee).toString());
+      console.log("Merge unspentUtxos selected:", unspentUtxoSelected);
       return {
         totalValue: total,
         unspentUtxos: unspentUtxoSelected,
@@ -85,6 +97,7 @@ export class Merge extends PickingStrategy {
       };
     }
     fee += changeDeltaV * safeFeePerByte; // add change output cost
+    console.log("Merge fee after adding change output cost:", fee);
     return {
       totalValue: total,
       unspentUtxos: unspentUtxoSelected,

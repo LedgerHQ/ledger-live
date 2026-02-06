@@ -193,6 +193,41 @@ describe("rbfHelpers", () => {
       });
     });
 
+    it("returns at least old fee rate + 1 when incremental relay fee is 0 (RBF requires strictly greater)", () => {
+      const vsize = 100;
+      const originalTx = {
+        ins: [
+          {
+            sequence: 0,
+            hash: Uint8Array.from([1, 2, 3]),
+            index: 0,
+          },
+        ],
+        outs: [{ value: 1000 }],
+        virtualSize: () => vsize,
+      };
+      const utxoFundingTx = { outs: [{ value: 2000 }] };
+
+      mockExplorer.getTxHex.mockImplementation((txid: string) => {
+        if (txid === "orig-txid") return Promise.resolve("orig-tx-hex");
+        if (txid === "030201") return Promise.resolve("utxo-tx-hex");
+        return Promise.resolve("unexpected");
+      });
+
+      mockedFromHex
+        .mockImplementationOnce(() => originalTx)
+        .mockImplementationOnce(() => utxoFundingTx);
+
+      (getIncrementalFeeFloorSatVb as jest.Mock).mockResolvedValue(new BigNumber(0));
+
+      return getMinReplacementFeeRateSatVb({
+        account: {} as any,
+        originalTxId: "orig-txid",
+      }).then(result => {
+        expect(result.toNumber()).toBe(11);
+      });
+    });
+
     it("returns zero when original tx is not RBF enabled", () => {
       mockExplorer.getTxHex.mockResolvedValue("orig-tx-hex");
       const nonRbfTx = {

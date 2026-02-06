@@ -39,6 +39,7 @@ const EditOperationPanel = (props: Props) => {
       // For Bitcoin RBF, we can edit pending transactions even without transactionRaw
       // The edit modal will fetch the transaction from the blockchain using the hash
       // If transactionRaw exists, check if RBF is explicitly disabled
+      console.log("Checking Bitcoin RBF support for operation:", operation);
       if (operation.transactionRaw) {
         const bitcoinTxRaw = operation.transactionRaw as {
           family?: string;
@@ -106,31 +107,29 @@ const EditOperationPanel = (props: Props) => {
 
     // For Bitcoin, we can edit even without transactionRaw (the modal will fetch it)
     // For EVM, transactionRaw is required
-    if (currencyFamily === "bitcoin" && !operation.transactionRaw) {
-      // Create a minimal transactionRaw with replaceTxId pointing to the original transaction
-      // This tells the RBF logic which transaction to replace
-      // The modal will fetch the full transaction from the blockchain to verify RBF status
-      // Use the account's fresh address as a temporary recipient to pass bridge validation
-      // The actual recipient will be set by the RBF logic when speedup/cancel is selected
-      const minimalTransactionRaw = {
-        family: "bitcoin" as const,
-        amount: "0", // Required by TransactionCommonRaw, will be replaced by RBF logic
-        recipient: mainAccount.freshAddress, // Use fresh address as placeholder for validation
-        rbf: true, // Assume RBF is enabled, modal will verify when fetching from blockchain
-        replaceTxId: operation.hash, // This is the key - tells RBF logic which tx to replace
-        utxoStrategy: {
-          strategy: 0,
-          excludeUTXOs: [],
-        },
-        feePerByte: null,
-        networkInfo: null,
-      };
+    if (currencyFamily === "bitcoin") {
+      // replaceTxId must always be the tx we are replacing (this operation's hash).
+      // When re-canceling a cancel, the conflicting tx is the cancel, not the original send,
+      // so we must beat the cancel's fee — never use a stored replaceTxId from a previous replacement.
+      const transactionRaw =
+        operation.transactionRaw != null
+          ? { ...operation.transactionRaw, replaceTxId: operation.hash }
+          : {
+              family: "bitcoin" as const,
+              amount: "0",
+              recipient: mainAccount.freshAddress,
+              rbf: true,
+              replaceTxId: operation.hash,
+              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+              feePerByte: null,
+              networkInfo: null,
+            };
 
       dispatch(
         openModal(editConfig.modalName, {
           account,
           parentAccount,
-          transactionRaw: minimalTransactionRaw,
+          transactionRaw,
           transactionHash: operation.hash,
         }),
       );

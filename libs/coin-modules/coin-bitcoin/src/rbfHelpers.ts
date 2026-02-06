@@ -63,6 +63,23 @@ async function getOriginalTxFeeContext(
 }
 
 /**
+ * Original transaction fee rate (sat/vB). Used when validating RBF replacement
+ * and transactionToUpdate.feePerByte is not available (e.g. not stored in operation).
+ */
+export const getOriginalTxFeeRateSatVb = async (
+  account: Account,
+  originalTxId: string,
+): Promise<BigNumber | null> => {
+  try {
+    const walletAccount = getWalletAccount(account);
+    const ctx = await getOriginalTxFeeContext(walletAccount, originalTxId);
+    return ctx ? ctx.oldFeeRateSatVb : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
  * Extra fee (in sats) required by common Bitcoin Core RBF policy:
  * - absolute fee increase >= incrementalRelayFee * vsize
  * - feerate increase >= incrementalRelayFee
@@ -98,6 +115,34 @@ export const getAdditionalFeeRequiredForRbf = async ({
 };
 
 /**
+ * Minimum total fee (in sats) for a replacement tx. RBF requires the replacement to pay
+ * strictly more total fee than the original; using only a higher feerate can still yield
+ * a lower total fee if the replacement has a smaller vsize (e.g. cancel with fewer outputs).
+ */
+export const getMinReplacementFeeSat = async (
+  walletAccount: WalletAccount,
+  originalTxId: string,
+): Promise<BigNumber> => {
+  const ctx = await getOriginalTxFeeContext(walletAccount, originalTxId);
+  if (!ctx) return ZERO;
+
+  const { vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb } = ctx;
+
+  const minNewFeeFromAbsolute = oldFeeSat.plus(
+    incrementalFeeRateSatVb.times(vsize).integerValue(BigNumber.ROUND_CEIL),
+  );
+
+  const minNewFeeFromRate = oldFeeRateSatVb
+    .plus(incrementalFeeRateSatVb)
+    .times(vsize)
+    .integerValue(BigNumber.ROUND_CEIL);
+
+  const minNewFeeSat = BigNumber.maximum(minNewFeeFromAbsolute, minNewFeeFromRate);
+  // RBF requires new total fee strictly greater than old
+  return BigNumber.maximum(minNewFeeSat, oldFeeSat.plus(1));
+};
+
+/**
  * Minimum replacement feerate (sat/vB) implied by RBF policy for the original tx.
  * Useful for building a speedup transaction.
  */
@@ -125,5 +170,7 @@ export const getMinReplacementFeeRateSatVb = async ({
 
   const minNewFeeSat = BigNumber.maximum(minNewFeeFromAbsolute, minNewFeeFromRate);
 
-  return minNewFeeSat.div(vsize).integerValue(BigNumber.ROUND_CEIL);
+  const minFeeRateSatVb = minNewFeeSat.div(vsize).integerValue(BigNumber.ROUND_CEIL);
+  // RBF requires new feerate strictly greater than old; ensure we never return <= old (e.g. when incrementalRelayFee is 0)
+  return BigNumber.maximum(minFeeRateSatVb, oldFeeRateSatVb.plus(1));
 };

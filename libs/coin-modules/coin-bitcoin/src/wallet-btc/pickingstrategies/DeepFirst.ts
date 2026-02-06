@@ -27,7 +27,7 @@ export class DeepFirst extends PickingStrategy {
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Deepfirst");
-
+    console.log("deepfirst options:", outputs);
     let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
@@ -37,10 +37,17 @@ export class DeepFirst extends PickingStrategy {
         ).length,
     );
 
+    // Validate UTXOs: only keep those for which we can fetch the transaction hex (avoid selecting unfetchable UTXOs)
+    const txHexResults = await Promise.allSettled(
+      unspentUtxos.map(u => xpub.explorer.getTxHex(u.output_hash)),
+    );
+    unspentUtxos = unspentUtxos.filter((_, i) => txHexResults[i].status === "fulfilled");
+
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const outputScripts = outputs.map(o => o.script);
 
     unspentUtxos = sortBy(unspentUtxos, "block_height");
+    console.log("Unspent UTXOs sorted by block height (oldest first):", unspentUtxos);
     // https://metamug.com/article/security/bitcoin-transaction-fee-satoshi-per-byte.html
     const baseVNoInput = utils.maxTxVBytesCeil(
       0,
@@ -51,6 +58,7 @@ export class DeepFirst extends PickingStrategy {
     );
 
     let fee = baseVNoInput * safeFeePerByte;
+    console.log("Base fee (no inputs):", fee);
     const emptyTxV = utils.maxTxVBytesCeil(0, [], false, this.crypto, this.derivationMode);
     const perInputV =
       utils.maxTxVBytesCeil(1, [], false, this.crypto, this.derivationMode) - emptyTxV;
@@ -59,21 +67,29 @@ export class DeepFirst extends PickingStrategy {
 
     let total = new BigNumber(0);
     const unspentUtxoSelected: Output[] = [];
-
+    console.log("perInputV (additional vbytes per input):", perInputV);
     const amount = outputs.reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
     let i = 0;
+    console.log("Total amount to send:", amount.toString());
+    console.log("total full: ", total.toString());
+    console.log("amount.plus(fee):", amount.plus(fee).toString());
     while (total.lt(amount.plus(fee))) {
       if (!unspentUtxos[i]) {
         throw new NotEnoughBalance();
       }
       total = total.plus(unspentUtxos[i].value);
+
       unspentUtxoSelected.push(unspentUtxos[i]);
       fee += perInputV * safeFeePerByte;
       i += 1;
     }
-
+    console.log("DeepFirst selected UTXOs:", unspentUtxoSelected);
+    console.log("total after selection:", total.toString());
+    console.log("after selection amount.plus(fee):", amount.plus(fee).toString());
+    console.log("fee after selecting inputs:", fee);
     if (total.minus(amount.plus(fee)).lt(changeDeltaV * safeFeePerByte)) {
       // not enough fund to make a change output
+      console.log("Not enough funds to create a change output, adding change cost to fee");
       return {
         totalValue: total,
         unspentUtxos: unspentUtxoSelected,
@@ -82,6 +98,10 @@ export class DeepFirst extends PickingStrategy {
       };
     }
     fee += changeDeltaV * safeFeePerByte; // add change output cost
+    console.log("fee after adding change output cost deepFirst:", fee);
+    console.log("total after adding change output cost:", total.toString());
+    console.log("amount.plus(fee) after adding change output cost:", amount.plus(fee).toString());
+    console.log("unspentUtxos selected for DeepFirst strategy Final:", unspentUtxoSelected);
     return {
       totalValue: total,
       unspentUtxos: unspentUtxoSelected,

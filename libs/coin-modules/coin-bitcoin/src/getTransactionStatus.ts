@@ -161,6 +161,13 @@ export const getTransactionStatus: AccountBridge<
     errors.opReturnSizeLimit = new OpReturnDataSizeLimit();
   }
 
+  console.log("Transaction status errors:", errors);
+  console.log("Transaction status warnings:", warnings);
+  console.log("totalSpent:", totalSpent.toString());
+  console.log("estimatedFees:", estimatedFees.toString());
+  console.log("feePerByte:", transaction.feePerByte ? transaction.feePerByte.toString() : "null");
+  console.log("amount:", amount.toString());
+
   return {
     errors,
     warnings,

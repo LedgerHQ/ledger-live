@@ -30,7 +30,7 @@ export class CoinSelect extends PickingStrategy {
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Coinselect");
 
-    const unspentUtxos = flatten(
+    let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
       o =>
@@ -38,7 +38,15 @@ export class CoinSelect extends PickingStrategy {
           x => x.hash === o.output_hash && x.outputIndex === o.output_index,
         ).length,
     );
+
+    // Validate UTXOs: only keep those for which we can fetch the transaction hex
+    const txHexResults = await Promise.allSettled(
+      unspentUtxos.map(u => xpub.explorer.getTxHex(u.output_hash)),
+    );
+    unspentUtxos = unspentUtxos.filter((_, i) => txHexResults[i].status === "fulfilled");
+
     const TOTAL_TRIES = 100000;
+    console.log("Unspent UTXOs available for selection:", unspentUtxos);
     log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
@@ -83,15 +91,17 @@ export class CoinSelect extends PickingStrategy {
     // Get no inputs fees
     // At beginning, there are no outputs in tx, so noInputFees are fixed fees
     const notInputFees = safeFeePerByte * (fixedV + oneOutputV * outputs.length);
-
+    console.log("Current available value from UTXOs:", currentAvailableValue);
+    console.log("Not input fees (base fee + output fees):", notInputFees);
     // Start coin selection algorithm (according to SelectCoinBnb from Bitcoin Core)
     let currentValue = 0;
     const currentSelection: boolean[] = [];
 
     const amount = outputs.reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
+    console.log("Total amount to send:", amount.toString());
     // Actual amount we are targetting
     const actualTarget = notInputFees + amount.toNumber();
-
+    console.log("Actual target (amount + fees):", actualTarget);
     // Insufficient funds
     if (currentAvailableValue < actualTarget) {
       throw new NotEnoughBalance();
@@ -184,6 +194,13 @@ export class CoinSelect extends PickingStrategy {
           this.crypto,
           this.derivationMode,
         );
+      console.log("Best selection found:", {
+        totalValue: total.toString(),
+        fee,
+        needChangeoutput: bestSelectionNeedChangeoutput,
+        selectedUtxos: unspentUtxoSelected,
+        outputScripts,
+      });
       return {
         totalValue: total,
         unspentUtxos: unspentUtxoSelected,
