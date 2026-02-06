@@ -19,6 +19,7 @@ import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAva
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import MainSideBar from "~/renderer/components/MainSideBar";
+import SideBar from "LLD/components/SideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
@@ -207,12 +208,19 @@ const RecoverPlayerWithFeatureToggle = () => {
 };
 
 // Shared content for the main app layout
-const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBanner: boolean }) => (
+const MainAppContent = ({
+  shouldDisplayMarketBanner,
+  shouldDisplayWallet40MainNav,
+}: {
+  shouldDisplayMarketBanner: boolean;
+  shouldDisplayWallet40MainNav: boolean;
+}) => (
   <>
     <Routes>
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
     </Routes>
-    <MainSideBar />
+    {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
+
     <Page>
       <TopBannerContainer>
         <UpdateBanner />
@@ -254,8 +262,11 @@ const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBann
 // Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
   const { pathname } = useLocation();
-  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
-    useWalletFeaturesConfig("desktop");
+  const {
+    shouldDisplayMarketBanner,
+    isEnabled: isWallet40Enabled,
+    shouldDisplayWallet40MainNav,
+  } = useWalletFeaturesConfig("desktop");
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
   return (
@@ -267,7 +278,10 @@ const MainAppLayout = () => {
 
       {useWallet40Layout ? (
         <div className="flex size-full grow flex-row bg-canvas">
-          <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
+          <MainAppContent
+            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+          />
         </div>
       ) : (
         <Box
@@ -280,7 +294,10 @@ const MainAppLayout = () => {
             height: "100%",
           }}
         >
-          <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
+          <MainAppContent
+            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+          />
         </Box>
       )}
 
