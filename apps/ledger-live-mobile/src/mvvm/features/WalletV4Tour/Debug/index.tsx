@@ -5,6 +5,7 @@ import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasSeenWalletV4Tour } from "~/actions/settings";
 import { hasSeenWalletV4TourSelector } from "~/reducers/settings";
+import { useWalletV4TourDrawer, WalletV4TourDrawer } from "../Drawer";
 import { SectionCard, ToggleRow } from "./components";
 
 function WalletV4TourScreenDebug() {
@@ -12,14 +13,11 @@ function WalletV4TourScreenDebug() {
   const dispatch = useDispatch();
 
   const hasSeenTour = useSelector(hasSeenWalletV4TourSelector);
+  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer } = useWalletV4TourDrawer();
 
   const handleToggleHasSeenTour = useCallback(() => {
     dispatch(setHasSeenWalletV4Tour(!hasSeenTour));
   }, [dispatch, hasSeenTour]);
-
-  const handleOpenDrawer = useCallback(() => {
-    // TODO: Implement drawer opening
-  }, []);
 
   return (
     <Flex flex={1}>
@@ -73,6 +71,7 @@ function WalletV4TourScreenDebug() {
           {"Open Drawer"}
         </Button>
       </Flex>
+      <WalletV4TourDrawer isDrawerOpen={isDrawerOpen} handleCloseDrawer={handleCloseDrawer} />
     </Flex>
   );
 }
