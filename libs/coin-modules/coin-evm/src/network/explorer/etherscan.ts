@@ -462,6 +462,12 @@ export const getInternalOperations = async (
     return EMPTY_RESULT;
   }
 
+  // blockscout returns tx hash in transactionHash field
+  const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransaction => ({
+    ...op,
+    hash: op.hash ?? op.transactionHash,
+  });
+
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
@@ -473,7 +479,7 @@ export const getInternalOperations = async (
       startBlock: params.fromBlock,
       endBlock: params.toBlock,
     },
-  });
+  }).then(ops => ops.map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
