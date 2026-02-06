@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import userEvent from "@testing-library/user-event";
 import TopBar from "../index";
@@ -14,6 +15,27 @@ jest.mock("@braze/web-sdk", () => ({
   logCardDismissal: () => {},
   logContentCardClick: () => {},
 }));
+
+const mockBalance = new BigNumber(0);
+
+const mockAccount = {
+  id: "account1",
+  balance: mockBalance,
+  spendableBalance: mockBalance,
+  swapHistory: [],
+  operations: [],
+  operationsCount: 0,
+  pendingOperations: [],
+  lastSyncDate: new Date(),
+  currency: {
+    id: "bitcoin",
+    type: "CryptoCurrency",
+    ticker: "BTC",
+    name: "Bitcoin",
+    family: "bitcoin",
+    blockAvgTime: 10 * 60,
+  },
+};
 
 describe("TopBar", () => {
   const getDefaultInitialState = (overrides = {}) => ({
@@ -38,22 +60,7 @@ describe("TopBar", () => {
   it("renders ActivityIndicator when hasAccounts is true", () => {
     render(<TopBar />, {
       initialState: getDefaultInitialState({
-        accounts: [
-          {
-            id: "account1",
-            balance: { toString: () => "0" },
-            swapHistory: [],
-            lastSyncDate: new Date(),
-            currency: {
-              id: "bitcoin",
-              type: "CryptoCurrency",
-              ticker: "BTC",
-              name: "Bitcoin",
-              family: "bitcoin",
-              blockAvgTime: 10 * 60,
-            },
-          },
-        ],
+        accounts: [mockAccount],
       }),
     });
 
@@ -90,22 +97,7 @@ describe("TopBar", () => {
     render(<TopBar />, {
       initialState: getDefaultInitialState({
         application: { hasPassword: true },
-        accounts: [
-          {
-            id: "account1",
-            balance: { toString: () => "0" },
-            swapHistory: [],
-            lastSyncDate: new Date(),
-            currency: {
-              id: "bitcoin",
-              type: "CryptoCurrency",
-              ticker: "BTC",
-              name: "Bitcoin",
-              family: "bitcoin",
-              blockAvgTime: 10 * 60,
-            },
-          },
-        ],
+        accounts: [mockAccount],
       }),
     });
 
