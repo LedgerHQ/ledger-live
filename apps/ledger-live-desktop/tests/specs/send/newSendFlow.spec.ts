@@ -758,7 +758,7 @@ test.describe("New Send Flow", () => {
       });
 
       test("should navigate back and forth", async ({ app, page }) => {
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
         await test.step("Go to Amount step", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
