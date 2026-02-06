@@ -3,7 +3,8 @@
   "daemon": false,
   "globalDependencies": [
     "turbo.json",
-    "tsconfig.base.json"
+    "tsconfig.base.json",
+    "sonar-project.properties"
   ],
   "globalEnv": [
     "ANDROID_HOME",
