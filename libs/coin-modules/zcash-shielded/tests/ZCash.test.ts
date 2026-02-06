@@ -1,10 +1,21 @@
 import ZCash from "../src/ZCash";
 
-describe("estimateSyncTime", () => {
+describe("estimatedSyncTime", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   test("estimates the sync time", async () => {
+    jest.setSystemTime(new Date("2016-10-28T00:00:00.000Z"));
     const zcash = new ZCash();
-    const estimatedSyncTime = await zcash.estimateSyncTime(5, 10);
-    expect(estimatedSyncTime).toEqual(25);
+    const estimatedSyncTime = await zcash.estimatedSyncTime(10);
+    jest.setSystemTime(new Date("2016-10-28T00:20:00.000Z"));
+    const estimatedSyncTimeResult = estimatedSyncTime();
+    expect(estimatedSyncTimeResult).toEqual({ hours: 3, minutes: 20 });
   });
 });
 
