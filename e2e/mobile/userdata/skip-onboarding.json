@@ -15,7 +15,6 @@
       "orderAccounts": "balance|desc",
       "countervalueFirst": false,
       "autoLockTimeout": 10,
-      "selectedTimeRange": "month",
       "marketIndicator": "western",
       "currenciesSettings": {},
       "pairExchanges": {},

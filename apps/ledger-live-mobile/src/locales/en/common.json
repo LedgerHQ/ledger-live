@@ -2690,7 +2690,7 @@
     "walletBalance": "Wallet balance",
     "balance": {
       "noSigner": "The most secure\nwallet",
-      "noFund": "Secure your\ncrypto"
+      "noAccounts": "Secure your\ncrypto"
     },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
