@@ -409,8 +409,54 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.skipMemo(false);
         await expect(app.newSendFlow.amountInput).toBeVisible();
       });
-      test.skip("should not need to confirm skipping memo when parameter is enabled from settings", () => {});
-      test.skip("should need to confirm skipping memo when parameter is disabled from settings", () => {});
+
+      test("should not need to confirm skipping memo when parameter is enabled from settings", async ({
+        app,
+        page,
+      }) => {
+        await app.layout.goToSettings();
+        await app.settings.goToAccountsTab();
+        await app.settings.switchNeverAskAgainSkipMemo();
+
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+      });
+
+      test("should need to confirm skipping memo when parameter is disabled from settings", async ({
+        app,
+        page,
+      }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.checkNeverAskAgainSkipMemo();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+        await app.newSendFlow.confirmSkipMemo();
+
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+
+        await app.newSendFlow.close();
+
+        await app.layout.goToSettings();
+        await app.settings.goToAccountsTab();
+        await app.settings.switchNeverAskAgainSkipMemo();
+
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.checkNeverAskAgainSkipMemo();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+      });
     });
   });
 
