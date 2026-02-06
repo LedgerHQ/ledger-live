@@ -113,7 +113,15 @@ function ReceiveFunds({ navigation, route }: Props) {
         });
       }
     },
-    [minBalance, navigation, next, route.params, isEnabledForFamily, getFamilyFromAccount],
+    [
+      accounts,
+      minBalance,
+      navigation,
+      next,
+      route.params,
+      isEnabledForFamily,
+      getFamilyFromAccount,
+    ],
   );
 
   return (
