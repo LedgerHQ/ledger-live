@@ -95,8 +95,10 @@ jobs:
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+      pod_check_key: ${{ steps.cache-keys.outputs.pod_check_key }}
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
+      pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
     steps:
 
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -104,7 +106,9 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
-          sparse-checkout: apps/ledger-live-mobile
+          sparse-checkout: |
+            apps/ledger-live-mobile
+            pnpm-lock.yaml
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -122,6 +126,7 @@ jobs:
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-2" >> $GITHUB_OUTPUT
+          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
 
       - name: Generate shards matrix and test files
         id: generate-shards
@@ -184,6 +189,19 @@ jobs:
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
           key: ${{ steps.cache-keys.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if pod lockfile has been validated
+        id: check-lockfile-status
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ steps.cache-keys.outputs.pod_check_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -659,8 +677,15 @@ jobs:
     name: "Test Pod Lockfile"
     runs-on: [ macOS, ARM64 ]
     needs: [ determine-builds ]
-    if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true'
+    if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true'
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -684,3 +709,18 @@ jobs:
       - name: Test Pod Lockfile
         run: |
           pnpm mobile postinstall
+
+      - name: Cache pod lockfile validation
+        run: |
+          echo "pod-lockfile-validated=true" > pod-lockfile-cache.txt
+
+      - name: Write cache
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          path: pod-lockfile-cache.txt
+          key: ${{ needs.determine-builds.outputs.pod_check_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}

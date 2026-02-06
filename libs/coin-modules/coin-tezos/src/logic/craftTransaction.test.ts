@@ -112,8 +112,18 @@ describe("craftTransaction", () => {
 
   it("should craft a transaction with reveal operation", async () => {
     mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
-    mockTezosToolkit.estimate.reveal.mockResolvedValue({ gasLimit: 100, storageLimit: 0 });
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({ fees: { minRevealGasLimit: 100 } });
+    mockTezosToolkit.estimate.reveal.mockResolvedValue({
+      gasLimit: 100,
+      storageLimit: 0,
+      suggestedFeeMutez: getRevealFee("tz1..."),
+    });
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: {
+        minRevealGasLimit: 100,
+        minFees: 0,
+        minStorageLimit: 0,
+      },
+    });
 
     const account = { address: "tz1..." };
     const transaction = {
@@ -147,6 +157,40 @@ describe("craftTransaction", () => {
         storage_limit: "300",
       },
     ]);
+  });
+
+  it("should use minFees for reveal when suggestedFeeMutez is lower than minFees", async () => {
+    mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+    mockTezosToolkit.estimate.reveal.mockResolvedValue({
+      gasLimit: 50,
+      storageLimit: 0,
+      suggestedFeeMutez: 100,
+    });
+    const minFees = 500;
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: {
+        minRevealGasLimit: 300,
+        minFees,
+        minStorageLimit: 25,
+      },
+    });
+
+    const account = { address: "tz2..." };
+    const transaction = {
+      type: "delegate" as TransactionType,
+      recipient: "tz3...",
+      amount: BigInt(0),
+      fee: { fees: "200", gasLimit: "1000", storageLimit: "0" },
+    };
+    const publicKey = { publicKey: "pk", publicKeyHash: "pkh" };
+
+    const result = await craftTransaction(account, transaction, publicKey);
+
+    const revealOp = result.contents[0];
+    expect(revealOp.kind).toBe(OpKind.REVEAL);
+    expect(revealOp.fee).toBe(String(minFees));
+    expect(revealOp.gas_limit).toBe("300");
+    expect(revealOp.storage_limit).toBe("25");
   });
 
   it("should throw an error for unsupported transaction type", async () => {

@@ -2780,35 +2780,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  sei_network: {
-    type: "CryptoCurrency",
-    id: "sei_network",
-    coinType: CoinType.ATOM,
-    name: "SeiNetwork",
-    managerAppName: "Cosmos",
-    ticker: "SEI",
-    scheme: "sei_network",
-    color: "#89395b",
-    family: "cosmos",
-    units: [
-      {
-        name: "SEI",
-        code: "SEI",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-SEI",
-        code: "usei",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/sei/txs/$hash",
-        address: "https://www.mintscan.io/sei/validators/$address",
-      },
-    ],
-  },
   solana: {
     type: "CryptoCurrency",
     id: "solana",

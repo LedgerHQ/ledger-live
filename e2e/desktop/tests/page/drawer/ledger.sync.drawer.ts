@@ -3,27 +3,29 @@ import { expect } from "@playwright/test";
 import { Drawer } from "../../component/drawer.component";
 
 export class LedgerSyncDrawer extends Drawer {
-  private syncAccountsButton = this.page.getByRole("button", { name: "Turn on Ledger Sync" });
+  private continueButton = this.page.getByRole("button", { name: "continue" });
+  private walletSyncConnectDeviceButton = this.page.getByTestId(
+    "walletSync-synchronize-connectDevice",
+  );
   private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
   private deleteSyncButton = this.page.getByText("Delete sync");
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Yes, delete" });
-  private successTextElement = this.page
-    .locator("span", { hasText: "Ledger Sync turned on for" })
-    .or(this.page.locator("span", { hasText: "Sync successful!" }))
-    .first();
   private backupDeletionSuccessTextId = this.page.getByTestId(
     "walletsync-delete-backup-success-title",
   );
-  private removeMemberSuccessText = this.page.getByText(
+  private removeCliMemberSuccessText = this.page.getByText(
     "Your Ledger Wallet app on CLI is no longer connected to Ledger Sync",
   );
   private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
   private removeCLI = this.page.getByTestId("walletSync-manage-instance-CLI").getByText("Remove");
+  private fromNowOnYourPortfolioIsSyncedText = this.page.getByText("From now on, your portfolio");
 
   @step("Synchronize accounts")
   async syncAccounts() {
-    await expect(this.syncAccountsButton).toBeVisible();
-    await this.syncAccountsButton.click();
+    await expect(this.continueButton).toBeVisible();
+    await this.continueButton.click();
+    await expect(this.walletSyncConnectDeviceButton).toBeVisible();
+    await this.walletSyncConnectDeviceButton.click();
   }
 
   @step("Close the Ledger Sync drawer")
@@ -56,12 +58,12 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if sync entry point exists")
   async expectSyncAccountsButtonExist() {
-    await expect(this.syncAccountsButton).toBeVisible();
+    await expect(this.continueButton).toBeVisible();
   }
 
   @step("Check if synchronization was successful")
   async expectSynchronizationSuccess() {
-    await expect(this.successTextElement).toBeVisible();
+    await expect(this.fromNowOnYourPortfolioIsSyncedText).toBeVisible();
   }
 
   @step("Check if the backup deletion was successful")
@@ -88,6 +90,6 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if the member removal was successful")
   async expectMemberRemoval() {
-    await expect(this.removeMemberSuccessText).toBeVisible();
+    await expect(this.removeCliMemberSuccessText).toBeVisible();
   }
 }

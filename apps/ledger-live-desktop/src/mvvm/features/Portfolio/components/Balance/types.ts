@@ -13,4 +13,6 @@ export interface BalanceViewProps {
 
 export type BalanceViewModelResult = BalanceViewProps & {
   readonly hasFunds: boolean;
+  readonly hasAccount: boolean;
+  readonly hasCompletedOnboarding: boolean;
 };

@@ -31,7 +31,6 @@ type Actions =
   | "RECEIVE"
   | "BUY"
   | "SELL"
-  | "PERPS"
   | "SWAP"
   | "STAKE"
   | "WALLET_CONNECT"
@@ -50,8 +49,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
-  const ptxPerpsLiveAppMobile = useFeature("ptxPerpsLiveAppMobile");
-  const isPerpsEnabled = ptxPerpsLiveAppMobile?.enabled ?? false;
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isPtxServiceCtaExchangeDrawerDisabled = !(ptxServiceCtaExchangeDrawer?.enabled ?? true);
@@ -139,19 +136,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       },
     };
 
-    if (isPerpsEnabled) {
-      list.PERPS = {
-        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
-        route: [
-          NavigatorName.Perps,
-          {
-            screen: ScreenName.PerpsTab,
-          },
-        ],
-        icon: IconsLegacy.BuyCryptoMedium,
-      };
-    }
-
     if (canBeBought) {
       list.BUY = {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
@@ -233,7 +217,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
-    isPerpsEnabled,
     canBeBought,
     canBeSold,
     partnerStakeRoute,

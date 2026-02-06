@@ -113,16 +113,6 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
-  config_currency_sei_network: {
-    type: "object",
-    default: {
-      lcd: "https://sei-api.polkachu.com",
-      minGasPrice: 0.1,
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_stargaze: {
     type: "object",
     default: {

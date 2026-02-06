@@ -168,6 +168,7 @@
     "src/hoc/withRemountableWrapper.tsx",
     "src/hooks/recoverFeatureFlag.ts",
     "src/hooks/useAccountsWithFundsListener.ts",
+    "src/hooks/useAddressPoisoningOperationsFamilies.ts",
     "src/hooks/useBroadcast.ts",
     "src/hooks/useDBRaw.ts",
     "src/hooks/useDebounce.ts",

@@ -6,6 +6,7 @@ import {
   selectedTimeRangeSelector,
   localeSelector,
   discreetModeSelector,
+  hasCompletedOnboardingSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
@@ -34,7 +35,8 @@ export const useBalanceViewModel = (
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const { hasFunds } = useAccountStatus();
+  const { hasFunds, hasAccount } = useAccountStatus();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const range = useLegacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
 
@@ -88,5 +90,7 @@ export const useBalanceViewModel = (
     navigateToAnalytics,
     handleKeyDown,
     hasFunds,
+    hasAccount,
+    hasCompletedOnboarding,
   };
 };

@@ -253,6 +253,7 @@ const MainSideBar = () => {
   const {
     shouldDisplayMarketBanner: isMarketBannerEnabled,
     shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
+    shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
 
@@ -346,6 +347,10 @@ const MainSideBar = () => {
     push("/perps");
     trackEntry("perps");
   }, [push, trackEntry]);
+  const handleClickCardWallet = useCallback(() => {
+    push("/card-new-wallet");
+    trackEntry("card");
+  }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
@@ -363,7 +368,6 @@ const MainSideBar = () => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
-
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
     const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
@@ -510,6 +514,11 @@ const MainSideBar = () => {
                     isActive={location.pathname.startsWith("/perps")}
                     disabled={noAccounts}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      <CustomTag active type="plain" size="small">
+                        {t("common.new")}
+                      </CustomTag>
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
@@ -567,16 +576,29 @@ const MainSideBar = () => {
                     }
                   />
                 </FeatureToggle>
-                <SideBarListItem
-                  id={"card"}
-                  label={t("sidebar.card")}
-                  icon={Icons.CreditCard}
-                  iconActiveColor="wallet"
-                  isActive={location.pathname === "/card"}
-                  onClick={handleClickCard}
-                  collapsed={secondAnim}
-                  disabled={isCardDisabled}
-                />
+                {isWallet40MainNavEnabled ? (
+                  <SideBarListItem
+                    id={"card-wallet"}
+                    label={t("sidebar.card")}
+                    icon={Icons.CreditCard}
+                    iconActiveColor="wallet"
+                    isActive={location.pathname === "/card-new-wallet"}
+                    onClick={handleClickCardWallet}
+                    collapsed={secondAnim}
+                  />
+                ) : (
+                  <SideBarListItem
+                    id={"card"}
+                    label={t("sidebar.card")}
+                    icon={Icons.CreditCard}
+                    iconActiveColor="wallet"
+                    isActive={location.pathname === "/card"}
+                    onClick={handleClickCard}
+                    collapsed={secondAnim}
+                    disabled={isCardDisabled}
+                  />
+                )}
+
                 <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
                     id={"recover"}
