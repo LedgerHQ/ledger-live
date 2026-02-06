@@ -1,9 +1,9 @@
 import React from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetView } from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import FearAndGreedCard from "./components/FearAndGreedCard";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import FearAndGreedTitle from "./components/FearAndGreedTitle";
 import type { FearAndGreedViewProps } from "./types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,7 +23,7 @@ export const FearAndGreedView = ({
   return (
     <>
       <FearAndGreedCard data={data} onPress={handleOpenDrawer} />
-      <QueuedDrawerGorhom
+      <QueuedDrawerBottomSheet
         isRequestingToBeOpened={isDrawerOpen}
         onClose={handleCloseDrawer}
         enableDynamicSizing
@@ -34,7 +34,7 @@ export const FearAndGreedView = ({
             {t("fearAndGreed.description")}
           </Text>
         </BottomSheetView>
-      </QueuedDrawerGorhom>
+      </QueuedDrawerBottomSheet>
     </>
   );
 };

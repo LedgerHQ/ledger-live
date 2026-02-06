@@ -1,11 +1,7 @@
 import React, { useCallback } from "react";
+import { View } from "react-native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  AssetType,
-  NetworkItem,
-  Network as NetworkType,
-} from "@ledgerhq/native-ui/lib/pre-ldls/index";
-import { Flex } from "@ledgerhq/native-ui";
+import { CryptoIcon, Network as NetworkType } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
   useModularDrawerAnalytics,
@@ -13,7 +9,6 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
@@ -24,6 +19,14 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import {
+  BottomSheetFlatList,
+  ListItem,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+} from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -92,10 +95,41 @@ const NetworkSelection = ({
 
   const formattedNetworks = transformNetworks(availableNetworks);
 
-  const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
+  const styles = useStyleSheet(
+    theme => ({
+      infoWrapper: {
+        rowGap: theme.spacings.s4,
+        marginLeft: theme.spacings.s8,
+        flex: 1,
+      },
+      leftElementWrapper: {
+        flexDirection: "row",
+        gap: theme.spacings.s4,
+      },
+    }),
+    [],
+  );
+
+  const keyExtractor = useCallback((item: NetworkType, index: number) => `${item.id}-${index}`, []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: NetworkType }) => (
+      <ListItem onPress={() => handleNetworkClick(item.id)}>
+        <ListItemLeading lx={{ flex: 0 }}>
+          <CryptoIcon overridesRadius={16} size={48} ledgerId={item.id} ticker={item.ticker} />
+        </ListItemLeading>
+        <View style={styles.infoWrapper}>
+          <ListItemTitle>{item.name}</ListItemTitle>
+          {item.leftElement && <View style={styles.leftElementWrapper}>{item.leftElement}</View>}
+        </View>
+        <ListItemTrailing>{item.rightElement}</ListItemTrailing>
+      </ListItem>
+    ),
+    [styles.infoWrapper, styles.leftElementWrapper, handleNetworkClick],
+  );
 
   return (
-    <Flex flexGrow={1}>
+    <>
       <TrackDrawerScreen
         page={EVENTS_NAME.MODULAR_NETWORK_SELECTION}
         flow={flow}
@@ -108,15 +142,14 @@ const NetworkSelection = ({
         showsVerticalScrollIndicator={false}
         data={formattedNetworks}
         keyExtractor={keyExtractor}
-        renderItem={({ item }: { item: NetworkType }) => (
-          <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
-        )}
+        renderItem={renderItem}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
+          marginTop: 16,
         }}
         testID="modular-drawer-network-selection-scrollView"
       />
-    </Flex>
+    </>
   );
 };
 

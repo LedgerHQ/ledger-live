@@ -1,5 +1,5 @@
 import React from "react";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { TransferDrawerView } from "./TransferDrawerView";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
 
@@ -15,11 +15,15 @@ export const TransferDrawer = () => {
   const { isOpen, actions, handleClose, t } = useTransferDrawerViewModel();
 
   return (
-    <QueuedDrawerGorhom isRequestingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
+    <QueuedDrawerBottomSheet
+      isRequestingToBeOpened={isOpen}
+      enableDynamicSizing
+      onClose={handleClose}
+    >
       <TransferDrawerView
         actions={actions}
         title={t("portfolio.quickActionsCtas.transferDrawer.title")}
       />
-    </QueuedDrawerGorhom>
+    </QueuedDrawerBottomSheet>
   );
 };

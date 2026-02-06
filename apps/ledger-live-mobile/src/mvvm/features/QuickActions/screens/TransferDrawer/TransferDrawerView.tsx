@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { TransferAction } from "../../types";
 import TransferListItem from "./TransferListItem";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetView } from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

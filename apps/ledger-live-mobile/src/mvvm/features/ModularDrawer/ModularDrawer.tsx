@@ -4,7 +4,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 
 import { AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
@@ -100,15 +100,12 @@ export function ModularDrawer({
   });
 
   return (
-    <QueuedDrawerGorhom
+    <QueuedDrawerBottomSheet
       isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
       onClose={handleCloseButton}
-      enableBlurKeyboardOnGesture={true}
       snapPoints={SNAP_POINTS}
       hasBackButton={shouldShowBackButton}
       onBack={handleBackButton}
-      enablePanDownToClose
-      keyboardBehavior="extend"
     >
       <ModularDrawerFlowManager
         assetsViewModel={{
@@ -133,6 +130,6 @@ export function ModularDrawer({
           onAccountSelected,
         }}
       />
-    </QueuedDrawerGorhom>
+    </QueuedDrawerBottomSheet>
   );
 }

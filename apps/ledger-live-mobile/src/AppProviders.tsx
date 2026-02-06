@@ -1,4 +1,3 @@
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
@@ -13,6 +12,7 @@ import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
+import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;

@@ -3,7 +3,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { Icons } from "@ledgerhq/native-ui/index";
 import { TrackScreen } from "~/analytics";
 import { OptionButton } from "../components/OptionButton";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import useReceiveFundsOptionsViewModel from "./useReceiveFundsOptionsViewModel";
 import { TFunction } from "i18next";
 
@@ -17,7 +17,7 @@ type ViewProps = Readonly<{
 
 function View({ isOpen, t, handleGoToFiat, handleGoToCrypto, handleClose }: ViewProps) {
   return (
-    <QueuedDrawerGorhom
+    <QueuedDrawerBottomSheet
       isRequestingToBeOpened={isOpen}
       snapPoints={["35%", "55%"]}
       onClose={handleClose}
@@ -40,7 +40,7 @@ function View({ isOpen, t, handleGoToFiat, handleGoToCrypto, handleClose }: View
         testID="option-button-content-crypto"
         Icon={Icons.CoinsCrypto}
       />
-    </QueuedDrawerGorhom>
+    </QueuedDrawerBottomSheet>
   );
 }
 
