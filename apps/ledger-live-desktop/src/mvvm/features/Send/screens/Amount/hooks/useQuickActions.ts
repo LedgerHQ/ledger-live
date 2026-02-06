@@ -7,6 +7,7 @@ import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { areAmountsEqual } from "../utils/amount";
 import type { AmountScreenQuickAction } from "../types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 
 type UseQuickActionsParams = Readonly<{
   account: AccountLike;
@@ -88,6 +89,7 @@ export function useQuickActions({
       };
     });
 
+    const canSendMax = sendFeatures.canSendMax(accountCurrency);
     const isMaxActive = transaction.useAllAmount ?? false;
     actions.push({
       id: "max",
@@ -98,7 +100,7 @@ export function useQuickActions({
         onSelectMax();
       },
       active: isMaxActive,
-      disabled,
+      disabled: disabled || !canSendMax,
     });
 
     return actions;
@@ -112,6 +114,7 @@ export function useQuickActions({
     transaction.amount,
     transaction.useAllAmount,
     tolerance,
+    accountCurrency,
   ]);
 
   return quickActions;

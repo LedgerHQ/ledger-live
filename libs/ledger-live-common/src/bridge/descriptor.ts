@@ -105,6 +105,7 @@ export type SendAmountDescriptor = Readonly<{
    * These are executed by the UI layer through a plugin registry.
    */
   getPlugins?: () => readonly string[];
+  canSendMax?: boolean;
 }>;
 
 /**
@@ -259,6 +260,10 @@ export function applyMemoToTransaction(
 }
 
 export const sendFeatures = {
+  canSendMax: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.amount?.canSendMax !== false;
+  },
   hasMemo: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.inputs.memo !== undefined;
