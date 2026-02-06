@@ -303,10 +303,8 @@ export function useSelectAccount({
   });
 
   const currencyIds = useDAppManifestCurrencyIds(manifest);
-  const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
-    manifest.id,
-    currentAccountHistDb,
-  );
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
+    useDappCurrentAccount(currentAccountHistDb);
 
   const onSuccess = useCallback(
     (account: AccountLike) => {

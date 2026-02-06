@@ -1,7 +1,9 @@
 import { useTranslation } from "~/context/Locale";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { ScopeProvider } from "jotai-scope";
 import { useNavigation } from "@react-navigation/native";
+import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
@@ -79,21 +81,23 @@ const WebReceivePlayer = ({ manifest, inputs }: Props) => {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { paddingTop: 0 }]}>
-      <Web3AppWebview
-        ref={webviewAPIRef}
-        manifest={manifest}
-        inputs={inputs}
-        allowsBackForwardNavigationGestures={false}
-        customHandlers={customHandlers}
-        onStateChange={setWebviewState}
-      />
-      <ProviderInterstitial
-        manifest={manifest}
-        isLoading={webviewState.loading}
-        description={t("transfer.receive.connectToNoah")}
-      />
-    </SafeAreaView>
+    <ScopeProvider atoms={[currentAccountAtom]}>
+      <SafeAreaView style={[styles.root, { paddingTop: 0 }]}>
+        <Web3AppWebview
+          ref={webviewAPIRef}
+          manifest={manifest}
+          inputs={inputs}
+          allowsBackForwardNavigationGestures={false}
+          customHandlers={customHandlers}
+          onStateChange={setWebviewState}
+        />
+        <ProviderInterstitial
+          manifest={manifest}
+          isLoading={webviewState.loading}
+          description={t("transfer.receive.connectToNoah")}
+        />
+      </SafeAreaView>
+    </ScopeProvider>
   );
 };
 

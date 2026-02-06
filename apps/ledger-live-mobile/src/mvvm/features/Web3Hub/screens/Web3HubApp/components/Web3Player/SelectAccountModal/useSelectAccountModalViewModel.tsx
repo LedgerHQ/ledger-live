@@ -38,10 +38,7 @@ export default function useSelectAccountModalViewModel({
   }, [currencyIds]);
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
-  const { setCurrentAccountHist, setCurrentAccount } = useDappCurrentAccount(
-    manifest.id,
-    currentAccountHistDb,
-  );
+  const { setCurrentAccountHist, setCurrentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const onPressCurrencyItem = useCallback((currency: CryptoCurrency) => {
     setSelectedCurrency(currency);

@@ -43,9 +43,6 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
 const Drawer = () => {
   const { state, setDrawer } = useContext(context);
   const [queue, setQueue] = useState<State[]>([]);
-  const [transitionKey, setTransitionKey] = useState<string>("initial");
-  const wasOpenRef = useRef(false);
-  const openCountRef = useRef(0);
   useEffect(() => {
     setQueue(q => {
       if (!state.open) return [];
@@ -53,13 +50,6 @@ const Drawer = () => {
       return q;
     });
   }, [state]);
-  useEffect(() => {
-    if (state.open && !wasOpenRef.current) {
-      openCountRef.current += 1;
-      setTransitionKey(state.id || `open-${openCountRef.current}`);
-    }
-    wasOpenRef.current = state.open;
-  }, [state.open, state.id]);
   useEffect(() => {
     let t: NodeJS.Timeout | undefined;
     if (queue.length > 1) {
@@ -100,7 +90,7 @@ const Drawer = () => {
       {...state.options}
     >
       <>
-        <TransitionGroup key={transitionKey}>
+        <TransitionGroup>
           {queue.map(({ Component, props, id }, index) => {
             const refsMap = refsMapRef.current;
             if (!refsMap.has(id)) {
