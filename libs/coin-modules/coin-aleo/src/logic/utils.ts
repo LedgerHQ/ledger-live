@@ -207,6 +207,8 @@ export const patchPublicOperations = async (
         } catch {
           patchedOperations.push(operation);
         }
+      } else {
+        patchedOperations.push(operation);
       }
     }
   }
