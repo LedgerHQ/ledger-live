@@ -111,7 +111,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
     runs-on: [ledger-live-4xlarge-e2e]
     outputs:
@@ -217,7 +217,7 @@ jobs:
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           } >> $GITHUB_STEP_SUMMARY
-          
+
       - name: Run Playwright Tests
         id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
