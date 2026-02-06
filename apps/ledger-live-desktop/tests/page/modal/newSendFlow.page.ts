@@ -45,6 +45,9 @@ export class NewSendFlowPage extends Component {
   readonly skipMemoProposal = this.dialog.getByTestId("send-skip-memo-proposal");
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
+  readonly neverAskAgainSkipMemoButton = this.dialog.getByTestId(
+    "send-skip-memo-never-ask-again-button",
+  );
 
   // ========== AMOUNT STEP ==========
   readonly amountInput = this.dialog.getByPlaceholder(/^0$/);
@@ -209,6 +212,12 @@ export class NewSendFlowPage extends Component {
   async confirmSkipMemo() {
     await this.skipMemoConfirmButton.waitFor({ state: "visible" });
     await this.skipMemoConfirmButton.click();
+  }
+
+  @step("Check never ask again memo")
+  async checkNeverAskAgainSkipMemo() {
+    await this.neverAskAgainSkipMemoButton.waitFor({ state: "visible" });
+    await this.neverAskAgainSkipMemoButton.click();
   }
 
   @step("Type memo")

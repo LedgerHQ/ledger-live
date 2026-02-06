@@ -86,7 +86,12 @@ function SkipMemoSectionComponent({
           </Button>
         }
       />
-      <button type="button" className="mt-16 flex items-center gap-8" onClick={toggleDoNotAskAgain}>
+      <button
+        data-testid="send-skip-memo-never-ask-again-button"
+        type="button"
+        className="mt-16 flex items-center gap-8"
+        onClick={toggleDoNotAskAgain}
+      >
         <div className="flex items-center" onClick={e => e.stopPropagation()}>
           <Checkbox checked={doNotAskAgain} onCheckedChange={setDoNotAskAgain} />
         </div>

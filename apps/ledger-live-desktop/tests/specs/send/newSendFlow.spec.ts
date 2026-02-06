@@ -371,11 +371,8 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test.describe("Memo skip", () => {
-      test.only("should be able to skip memo input and need to confirm it", async ({
-        app,
-        page,
-      }) => {
+    test.describe.only("Memo skip", () => {
+      test("should be able to skip memo input and need to confirm it", async ({ app, page }) => {
         await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
         await expect(app.newSendFlow.memoInput).toBeVisible();
@@ -387,7 +384,31 @@ test.describe("New Send Flow", () => {
         await expect(app.newSendFlow.amountInput).toBeVisible();
       });
 
-      test.skip("should not need to confirm skipping memo when parameter is enabled from send modal", () => {});
+      test("should not need to confirm skipping memo when parameter is enabled from send modal", async ({
+        app,
+        page,
+      }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.checkNeverAskAgainSkipMemo();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+        await app.newSendFlow.confirmSkipMemo();
+
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+
+        await app.newSendFlow.close();
+
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorand);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.skipMemo(false);
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+      });
       test.skip("should not need to confirm skipping memo when parameter is enabled from settings", () => {});
       test.skip("should need to confirm skipping memo when parameter is disabled from settings", () => {});
     });
