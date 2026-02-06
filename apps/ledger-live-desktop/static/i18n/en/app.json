@@ -7955,7 +7955,8 @@
     "shielded": {
       "state": {
         "showBalance": "Show balance",
-        "lastSync": "Last sync {{days}} ago"
+        "pausedAt": "Paused at ",
+        "lastSync": "Last sync: {{date}}"
       },
       "flows": {
         "export": {
