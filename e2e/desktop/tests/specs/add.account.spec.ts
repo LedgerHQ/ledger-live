@@ -5,6 +5,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import invariant from "invariant";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { waitForAccountsPersisted } from "tests/utils/userdata";
 
 const currencies = [
   {
@@ -57,7 +58,7 @@ for (const currency of currencies) {
           description: currency.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app, userdataFile }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
@@ -79,6 +80,11 @@ for (const currency of currencies) {
 
         await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
+
+        await test.step("app.json is persisted with the new account within 5s", async () => {
+          await waitForAccountsPersisted(userdataFile, 1, 5000);
+        });
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);
