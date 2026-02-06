@@ -8,12 +8,17 @@ import {
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { accessProvableApi } from "../logic/accessProvableApi";
-import type { AleoAccount, AleoOperation, AleoUnspentRecord, ProvableApi } from "../types";
-import { listPrivateOperations } from "../logic/listPrivateOperations";
-import { patchPublicOperations } from "../logic/utils";
-import { AleoPrivateRecord } from "../types/api";
-import { apiClient } from "../network/api";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
+import { listPrivateOperations } from "../logic/listPrivateOperations";
+import { apiClient } from "../network/api";
+import { patchPublicOperations } from "../network/utils";
+import type {
+  AleoAccount,
+  AleoOperation,
+  AleoUnspentRecord,
+  ProvableApi,
+  AleoPrivateRecord,
+} from "../types";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;

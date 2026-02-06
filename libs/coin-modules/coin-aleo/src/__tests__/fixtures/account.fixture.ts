@@ -11,7 +11,8 @@ export const mockAleoResources: AleoResources = {
   transparentBalance: new BigNumber(0),
   privateBalance: null,
   provableApi: null,
-  privateRecords: null,
+  privateRecordsHistory: null,
+  unspentPrivateRecords: null,
   lastPrivateSyncDate: null,
 };
 
@@ -19,7 +20,8 @@ export const mockAleoResourcesRaw: AleoResourcesRaw = {
   transparentBalance: "0",
   privateBalance: null,
   provableApi: null,
-  privateRecords: null,
+  privateRecordsHistory: null,
+  unspentPrivateRecords: null,
   lastPrivateSyncDate: null,
 };
 

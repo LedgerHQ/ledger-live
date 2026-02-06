@@ -3,6 +3,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import invariant from "invariant";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Transaction, AleoSigner, AleoAccount } from "../types";
 import { sdkClient } from "../network/sdk";
 import { SignedAleoTransaction, serializeTransaction } from "../logic/utils";
@@ -115,7 +116,10 @@ export const buildSignOperation =
             } satisfies SignedAleoTransaction;
 
             // FIXME: just for testing, so we can confirm something before broadcasting
-            await signer.getViewKey(account.freshAddressPath);
+            const result = await signer.getViewKey(account.freshAddressPath);
+            if (!result) {
+              throw new UserRefusedOnDevice();
+            }
 
             return serializeTransaction(signedTransaction);
           });
