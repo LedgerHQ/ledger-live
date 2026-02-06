@@ -527,12 +527,12 @@ jobs:
           # Install certificate
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             sudo mkdir -p /usr/local/share/ca-certificates/
-            sudo cp ~/.local/share/mitmproxy/mitmproxy-ca-cert.pem /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
+            sudo cp ~/.mitmproxy/mitmproxy-ca-cert.pem /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
             sudo update-ca-certificates
             export HTTP_PROXY=http://127.0.0.1:8080
             export HTTPS_PROXY=http://127.0.0.1:8080
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.local/share/mitmproxy/mitmproxy-ca-cert.pem
+            sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
             sudo networksetup -setwebproxy "Wi-Fi" 127.0.0.1 8080
             sudo networksetup -setsecurewebproxy "Wi-Fi" 127.0.0.1 8080
           fi
