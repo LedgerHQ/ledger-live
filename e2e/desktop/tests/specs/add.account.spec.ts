@@ -57,7 +57,7 @@ for (const currency of currencies) {
           description: currency.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app, userdataFile }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
@@ -79,6 +79,8 @@ for (const currency of currencies) {
 
         await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
+        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);
