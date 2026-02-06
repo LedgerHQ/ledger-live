@@ -1,6 +1,6 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
-import { createApi } from "../../api";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { createApi } from "../../api";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, TOKEN_TYPE } from "../../constants";
 
 describe("createApi", () => {
@@ -35,7 +35,7 @@ describe("createApi", () => {
     it("returns the last block information", async () => {
       const lastBlock = await api.lastBlock();
       expect(lastBlock).toHaveProperty("hash");
-      expect(Hex.isValid(lastBlock.hash ?? "").valid).toBeTruthy();
+      expect(Hex.isValid(lastBlock.hash ?? "").valid).toBe(true);
 
       expect(lastBlock).toHaveProperty("height");
       expect(lastBlock.height).toBeGreaterThan(0);
@@ -43,7 +43,7 @@ describe("createApi", () => {
       const time = lastBlock.time as Date;
 
       expect(lastBlock).toHaveProperty("time");
-      expect(lastBlock.time).toBeDefined();
+      expect(lastBlock.time).toBeInstanceOf(Date);
       expect(time.getFullYear()).toBeGreaterThan(0);
       expect(time.getMonth() + 1).toBeGreaterThan(0);
       expect(time.getDay() + 1).toBeGreaterThan(0);

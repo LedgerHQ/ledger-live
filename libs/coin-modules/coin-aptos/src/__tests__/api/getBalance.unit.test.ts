@@ -1,7 +1,7 @@
-import { AptosAPI } from "../../network";
-import { APTOS_ASSET_ID, TOKEN_TYPE } from "../../constants";
-import type { AptosConfig } from "../../config";
 import { createApi } from "../../api";
+import type { AptosConfig } from "../../config";
+import { APTOS_ASSET_ID, TOKEN_TYPE } from "../../constants";
+import { AptosAPI } from "../../network";
 
 jest.mock("@aptos-labs/ts-sdk");
 let mockedAptosApi: jest.Mocked<any>;

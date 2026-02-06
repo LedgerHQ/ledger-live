@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
 import * as jsHelpers from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, SyncConfig } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { CosmosAPI } from "./network/Cosmos";
 import { getAccountShape } from "./synchronisation";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
@@ -223,7 +223,9 @@ describe("getAccountShape", () => {
   it("should add newly fetched operations", async () => {
     mockAccountInfo({ txs: [mockCosmosTx({})] });
     await getAccountShape(infoMock, syncConfig);
-    expect(mergeOpsSpy.mock.calls[0][1]).toBeTruthy();
+    expect(mergeOpsSpy.mock.calls[0][1]).toEqual([
+      expect.objectContaining({ hash: "2", type: "REWARD" }),
+    ]);
   });
 
   it("should get the memo correctly", async () => {
@@ -693,6 +695,6 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].value).toBeDefined();
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(5));
   });
 });

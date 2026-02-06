@@ -1,10 +1,10 @@
 import { CraftedTransaction, TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { APTOS_ASSET_ID, type TOKEN_TYPE } from "../constants";
 import type { AptosAPI } from "../network";
 import buildTransaction, { isTokenType } from "./buildTransaction";
 import createTransaction from "./createTransaction";
-import BigNumber from "bignumber.js";
-import { APTOS_ASSET_ID, type TOKEN_TYPE } from "../constants";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,

@@ -1,8 +1,7 @@
-import { log } from "@ledgerhq/logs";
-
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { log } from "@ledgerhq/logs";
 import { FilecoinSigner } from "../types";
 
 function resolver(signerContext: SignerContext<FilecoinSigner>): GetAddressFn {

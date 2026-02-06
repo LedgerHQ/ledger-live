@@ -1,3 +1,4 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
@@ -6,25 +7,24 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { AlgorandAccount, AlgorandOperation, Transaction, TransactionStatus } from "../types";
+import { broadcast } from "../broadcast";
+import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import formatters from "../formatters";
 import { getTransactionStatus } from "../getTransactionStatus";
-import { getAccountShape, sync } from "../synchronization";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
-import { initAccount } from "../initAccount";
-import { AlgorandSigner } from "../signer";
-import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
+import { initAccount } from "../initAccount";
+import { prepareTransaction } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
+import { buildSignOperation } from "../signOperation";
+import { AlgorandSigner } from "../signer";
+import { getAccountShape, sync } from "../synchronization";
+import type { AlgorandAccount, AlgorandOperation, Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {

@@ -1,13 +1,13 @@
-import { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
 import {
   NotEnoughBalance,
   RecipientRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
+import { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";
+import { Transaction } from "../types";
 
 const OWNER = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 const RECIPIENT = "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435";

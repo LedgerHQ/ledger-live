@@ -1,11 +1,11 @@
-import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { PolkadotAccount, Transaction } from "../types";
-import { calculateAmount } from "./utils";
-import { buildTransaction } from "./buildTransaction";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
 import { estimateFees } from "../logic";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { PolkadotAccount, Transaction } from "../types";
+import { buildTransaction } from "./buildTransaction";
+import { calculateAmount } from "./utils";
 
 /**
  * Fetch the transaction fees for a transaction

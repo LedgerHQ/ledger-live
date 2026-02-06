@@ -1,19 +1,19 @@
-import cbor from "@zondax/cbor";
-import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { fetchERC20TokenBalance, fetchERC20TransactionsWithPages } from "../api";
-import invariant from "invariant";
-import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { convertAddressFilToEth } from "../network";
-import { ethers } from "ethers";
-import contractABI from "./ERC20.json";
-import { RecipientRequired } from "@ledgerhq/errors";
-import { AccountType } from "../bridge/utils";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { RecipientRequired } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import cbor from "@zondax/cbor";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
+import invariant from "invariant";
+import { fetchERC20TokenBalance, fetchERC20TransactionsWithPages } from "../api";
+import { AccountType } from "../bridge/utils";
+import { convertAddressFilToEth } from "../network";
+import { ERC20Transfer, TxStatus } from "../types";
+import contractABI from "./ERC20.json";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,

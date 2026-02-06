@@ -1,20 +1,20 @@
-import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge, DeviceId } from "@ledgerhq/types-live";
-import { getAddress } from "./bridgeHelpers/addresses";
+import { Cbor } from "@zondax/ledger-live-icp/agent";
 import {
   UnsignedTransaction,
   createUnsignedSendTransaction,
   hashTransaction,
   pubkeyToDer,
 } from "@zondax/ledger-live-icp/utils";
-import { Cbor } from "@zondax/ledger-live-icp/agent";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { Transaction } from "../types";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { ICPSigner } from "../types";
-import { getPath } from "../common-logic";
-import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
+import { Observable } from "rxjs";
+import { getPath } from "../common-logic";
+import { Transaction } from "../types";
+import { ICPSigner } from "../types";
+import { getAddress } from "./bridgeHelpers/addresses";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 const signICPTransaction = async (
   unsignedTxn: UnsignedTransaction,

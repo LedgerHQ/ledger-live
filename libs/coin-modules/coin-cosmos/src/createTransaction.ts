@@ -1,5 +1,5 @@
-import { BigNumber } from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import type { CosmosDelegationInfo, Transaction } from "./types";
 
 /**

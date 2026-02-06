@@ -1,8 +1,8 @@
-import buildSignOperation from "./signOperation";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import { SuiSigner } from "../types";
-import coinConfig from "../config";
 import { getEnv } from "@ledgerhq/live-env";
+import coinConfig from "../config";
+import { SuiSigner } from "../types";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import buildSignOperation from "./signOperation";
 
 describe("signOperation", () => {
   beforeAll(() => {

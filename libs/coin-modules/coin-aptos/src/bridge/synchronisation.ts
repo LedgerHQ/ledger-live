@@ -1,20 +1,20 @@
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AptosAPI } from "../network";
-import { txsToOps } from "./logic";
-import type { AptosAccount, AptosStakingPosition } from "../types";
-import { Operation, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
   encodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import BigNumber from "bignumber.js";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { AptosAPI } from "../network";
+import type { AptosAccount, AptosStakingPosition } from "../types";
+import { txsToOps } from "./logic";
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found

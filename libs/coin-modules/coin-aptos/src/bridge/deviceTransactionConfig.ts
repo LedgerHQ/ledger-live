@@ -1,8 +1,8 @@
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 
 async function getDeviceTransactionConfig({
   account,

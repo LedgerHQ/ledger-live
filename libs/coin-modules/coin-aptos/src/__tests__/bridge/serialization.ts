@@ -1,12 +1,12 @@
+import { AccountRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromAptosResourcesRaw,
   toAptosResourcesRaw,
 } from "../../bridge/serialization";
-import { createFixtureAccount } from "../../bridge/bridge.fixture";
-import { AccountRaw } from "@ledgerhq/types-live";
 import { AptosAccountRaw } from "../../types";
 
 describe("serialization", () => {

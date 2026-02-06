@@ -1,8 +1,8 @@
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "../types";
-import getEstimatedFees from "./getFeesForTransaction";
 import createTransaction from "./createTransaction";
+import getEstimatedFees from "./getFeesForTransaction";
 import { calculateAmount } from "./utils";
 
 /**

@@ -1,26 +1,24 @@
 import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { BigNumber } from "bignumber.js";
 
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { AlgoTransactionType } from "./api";
 import algorandAPI, {
   type AlgoAsset,
   type AlgoAssetTransferInfo,
   type AlgoPaymentInfo,
   type AlgoTransaction,
 } from "./api";
-
-import { AlgoTransactionType } from "./api";
-
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
-import { AlgorandAccount, AlgorandOperation } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { addPrefixToken, extractTokenId } from "./tokens";
+import { AlgorandAccount, AlgorandOperation } from "./types";
 
 const SECONDS_TO_MILLISECONDS = 1000;
 

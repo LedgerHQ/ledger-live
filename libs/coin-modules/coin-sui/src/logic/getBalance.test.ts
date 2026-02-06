@@ -1,6 +1,6 @@
-import { getBalance } from "./getBalance";
-import { getAllBalancesCached, getStakes } from "../network";
 import type { Stake } from "@ledgerhq/coin-framework/api/types";
+import { getAllBalancesCached, getStakes } from "../network";
+import { getBalance } from "./getBalance";
 
 jest.mock("../network", () => ({
   getAllBalancesCached: jest.fn().mockResolvedValue([

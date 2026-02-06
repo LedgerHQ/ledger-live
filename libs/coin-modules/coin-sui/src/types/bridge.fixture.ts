@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { SuiAccount } from "./bridge";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { SuiAccount } from "./bridge";
 
 export const createFixtureAccount = (overrides = {}) =>
   ({

@@ -1,3 +1,4 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   updateTransaction,
   makeAccountBridgeReceive,
@@ -6,27 +7,26 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } from "../types";
-import { getPreloadStrategy, hydrate, preload } from "./preload";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
+import { validateAddress } from "../logic/validateAddress";
+import signerGetAddress from "../signer";
+import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } from "../types";
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getSerializedAddressParameters } from "./exchange";
 import formatters from "./formatters";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
-import { getAccountShape, sync } from "./synchronization";
-import { createTransaction } from "./createTransaction";
-import { buildSignOperation } from "./signOperation";
-import signerGetAddress from "../signer";
-import { broadcast } from "./broadcast";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "./serialization";
-import { validateAddress } from "../logic/validateAddress";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShape, sync } from "./synchronization";
 
 function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);

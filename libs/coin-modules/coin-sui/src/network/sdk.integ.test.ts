@@ -1,5 +1,6 @@
-import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import type { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import {
   createTransaction,
@@ -12,7 +13,6 @@ import {
   getBlockInfo,
   getStakes,
 } from "./sdk";
-import { getEnv } from "@ledgerhq/live-env";
 
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
@@ -45,7 +45,7 @@ describe("SUI SDK Integration tests", () => {
 
       describe("List", () => {
         it("should fetch operations successfully", async () => {
-          expect(Array.isArray(operations)).toBeDefined();
+          expect(operations).toBeInstanceOf(Array);
         });
 
         it("should fetch all operations", async () => {
@@ -236,7 +236,10 @@ describe("SUI SDK Integration tests", () => {
         expect(stake.amountRewarded).toBeGreaterThanOrEqual(0);
         // @ts-expect-error properties are defined
         expect(stake.amount).toEqual(stake.amountDeposited + stake.amountRewarded);
-        expect(stake.details).toBeDefined();
+        expect(stake.details).toMatchObject({
+          activeEpoch: expect.any(Number),
+          requestEpoch: expect.any(Number),
+        });
       });
     });
   });

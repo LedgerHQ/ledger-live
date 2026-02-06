@@ -2,9 +2,10 @@ jest.mock("../../network/validators", () => ({
   getValidators: jest.fn(() => Promise.resolve([])),
 }));
 
-import BigNumber from "bignumber.js";
-import { createBridges } from "../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
+import { createBridges } from "../../bridge";
 
 const signer = jest.fn();
 const bridge = createBridges(signer);
@@ -19,16 +20,14 @@ describe("Aptos bridge interface ", () => {
     });
 
     it("should have a hydrate method that is a function", () => {
-      expect(bridge.currencyBridge.hydrate).toBeDefined();
-      expect(typeof bridge.currencyBridge.hydrate).toBe("function");
+      expect(bridge.currencyBridge.hydrate).toBeInstanceOf(Function);
       const cryptoCurrency = getCryptoCurrencyById("aptos");
       const result = bridge.currencyBridge.hydrate({}, cryptoCurrency);
       expect(result).toBeUndefined();
     });
 
     it("should have a scanAccounts method that is a function", () => {
-      expect(bridge.currencyBridge.scanAccounts).toBeDefined();
-      expect(typeof bridge.currencyBridge.scanAccounts).toBe("function");
+      expect(bridge.currencyBridge.scanAccounts).toBeInstanceOf(Function);
       const cryptoCurrency = getCryptoCurrencyById("aptos");
       const deviceId = "test-device";
       const result = bridge.currencyBridge.scanAccounts({
@@ -36,36 +35,35 @@ describe("Aptos bridge interface ", () => {
         deviceId,
         syncConfig: { paginationConfig: {} },
       });
-      expect(result).toBeDefined();
+      expect(result).toBeInstanceOf(Observable);
     });
   });
 
   describe("accountBridge", () => {
     it("should contain all methods", () => {
-      expect(bridge.accountBridge.estimateMaxSpendable).toBeDefined();
-      expect(typeof bridge.accountBridge.estimateMaxSpendable).toBe("function");
-      expect(bridge.accountBridge.createTransaction).toBeDefined();
-      expect(typeof bridge.accountBridge.createTransaction).toBe("function");
-      expect(bridge.accountBridge.updateTransaction).toBeDefined();
-      expect(typeof bridge.accountBridge.updateTransaction).toBe("function");
-      expect(bridge.accountBridge.getTransactionStatus).toBeDefined();
-      expect(typeof bridge.accountBridge.getTransactionStatus).toBe("function");
-      expect(bridge.accountBridge.prepareTransaction).toBeDefined();
-      expect(typeof bridge.accountBridge.prepareTransaction).toBe("function");
-      expect(bridge.accountBridge.sync).toBeDefined();
-      expect(typeof bridge.accountBridge.sync).toBe("function");
-      expect(bridge.accountBridge.receive).toBeDefined();
-      expect(typeof bridge.accountBridge.receive).toBe("function");
-      expect(bridge.accountBridge.signOperation).toBeDefined();
-      expect(typeof bridge.accountBridge.signOperation).toBe("function");
-      expect(bridge.accountBridge.broadcast).toBeDefined();
-      expect(typeof bridge.accountBridge.broadcast).toBe("function");
-      expect(bridge.currencyBridge.hydrate).toBeDefined();
-      expect(typeof bridge.currencyBridge.hydrate).toBe("function");
-      expect(bridge.currencyBridge.preload).toBeDefined();
-      expect(typeof bridge.currencyBridge.preload).toBe("function");
-      expect(bridge.currencyBridge.scanAccounts).toBeDefined();
-      expect(typeof bridge.currencyBridge.scanAccounts).toBe("function");
+      expect(bridge).toEqual({
+        accountBridge: {
+          estimateMaxSpendable: expect.any(Function),
+          createTransaction: expect.any(Function),
+          updateTransaction: expect.any(Function),
+          getTransactionStatus: expect.any(Function),
+          prepareTransaction: expect.any(Function),
+          sync: expect.any(Function),
+          receive: expect.any(Function),
+          signOperation: expect.any(Function),
+          broadcast: expect.any(Function),
+          assignFromAccountRaw: expect.any(Function),
+          assignToAccountRaw: expect.any(Function),
+          getSerializedAddressParameters: expect.any(Function),
+          signRawOperation: expect.any(Function),
+          validateAddress: expect.any(Function),
+        },
+        currencyBridge: {
+          hydrate: expect.any(Function),
+          preload: expect.any(Function),
+          scanAccounts: expect.any(Function),
+        },
+      });
     });
   });
 

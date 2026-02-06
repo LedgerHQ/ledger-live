@@ -1,3 +1,9 @@
+import {
+  AlpacaApi,
+  CraftedTransaction,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type SuiConfig } from "../config";
 import {
   estimateFees,
@@ -13,12 +19,6 @@ import {
   getRewards,
   getValidators as logicGetValidators,
 } from "../logic";
-import {
-  AlpacaApi,
-  CraftedTransaction,
-  FeeEstimation,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
 
 export function createApi(config: SuiConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
