@@ -9,28 +9,23 @@ export type FormattedAmount = Readonly<{
   value: BigNumber;
 }>;
 
-export function formatAmountForInput(unit: Unit, amount: BigNumber, locale: string): string {
-  if (amount.isZero()) return "";
-
-  return formatCurrencyUnit(unit, amount, {
+const formatUnitForInput = (unit: Unit, amount: BigNumber, locale: string): string =>
+  formatCurrencyUnit(unit, amount, {
     showCode: false,
     disableRounding: true,
     useGrouping: false,
     locale,
   });
+
+export function formatAmountForInput(unit: Unit, amount: BigNumber, locale: string): string {
+  if (amount.isZero()) return "";
+  return formatUnitForInput(unit, amount, locale);
 }
 
 export function formatFiatForInput(unit: Unit, amount: BigNumber, locale: string): string {
   if (amount.isZero()) return "";
-
-  const formatted = formatCurrencyUnit(unit, amount, {
-    showCode: false,
-    disableRounding: true,
-    useGrouping: false,
-    locale,
-  });
-  const clamped = clampDecimals(formatted);
-  return trimTrailingZeros(clamped);
+  const formatted = formatUnitForInput(unit, amount, locale);
+  return trimTrailingZeros(clampDecimals(formatted));
 }
 
 export function processRawInput(rawValue: string, unit: Unit, locale: string): FormattedAmount {

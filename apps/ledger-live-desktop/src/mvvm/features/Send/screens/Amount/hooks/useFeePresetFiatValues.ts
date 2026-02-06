@@ -9,6 +9,26 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCu
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { buildEstimationKey } from "../utils/feeEstimation";
 
+function getFeesStrategyForPreset(presetId: string): Transaction["feesStrategy"] | null {
+  if (presetId === "slow") return "slow";
+  if (presetId === "medium") return "medium";
+  if (presetId === "fast") return "fast";
+  if (presetId === "custom") return "custom";
+  return null;
+}
+
+function formatCountervalueAsFiat(
+  fiatUnit: Unit,
+  countervalue: BigNumber | null | undefined,
+): string | null {
+  return countervalue !== null && countervalue !== undefined
+    ? formatCurrencyUnit(fiatUnit, countervalue, {
+        showCode: true,
+        disableRounding: true,
+      })
+    : null;
+}
+
 export type FeeFiatMap = Readonly<Record<string, string | null>>;
 
 type Params = Readonly<{
@@ -39,13 +59,7 @@ async function estimateFiatValuesForPresets(params: {
   try {
     const entries = await Promise.all(
       params.presetIds.map(async presetId => {
-        const feesStrategy: Transaction["feesStrategy"] =
-          presetId === "slow" ||
-          presetId === "medium" ||
-          presetId === "fast" ||
-          presetId === "custom"
-            ? presetId
-            : null;
+        const feesStrategy = getFeesStrategyForPreset(presetId);
         const txWithStrategy = params.bridge.updateTransaction(params.transaction, {
           feesStrategy,
         });
@@ -57,13 +71,7 @@ async function estimateFiatValuesForPresets(params: {
         const estimatedFees = status.estimatedFees ?? new BigNumber(0);
 
         const countervalue = params.convertCountervalue(params.mainAccount.currency, estimatedFees);
-        const fiatValue =
-          countervalue !== null && countervalue !== undefined
-            ? formatCurrencyUnit(params.fiatUnit, countervalue, {
-                showCode: true,
-                disableRounding: true,
-              })
-            : null;
+        const fiatValue = formatCountervalueAsFiat(params.fiatUnit, countervalue);
 
         return [presetId, fiatValue] as const;
       }),
@@ -140,13 +148,7 @@ export function useFeePresetFiatValues({
     const next: Record<string, string | null> = {};
     for (const option of feePresetOptions) {
       const countervalue = convertCountervalue(mainAccount.currency, option.amount);
-      next[option.id] =
-        countervalue !== null && countervalue !== undefined
-          ? formatCurrencyUnit(fiatUnit, countervalue, {
-              showCode: true,
-              disableRounding: true,
-            })
-          : null;
+      next[option.id] = formatCountervalueAsFiat(fiatUnit, countervalue);
     }
     return next;
   }, [

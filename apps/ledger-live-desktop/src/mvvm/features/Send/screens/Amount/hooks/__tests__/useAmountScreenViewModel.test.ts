@@ -12,11 +12,6 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
 
-jest.mock("react-i18next", () => ({
-  ...jest.requireActual("react-i18next"),
-  useTranslation: () => ({ t: (key: string) => key }),
-}));
-
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/coin-framework/account/helpers");
 jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
