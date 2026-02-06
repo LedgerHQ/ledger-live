@@ -317,6 +317,12 @@ export const getLastInternalOperations = async (
   // Corescan has no support to get internal operations by address
   if (explorer.type === "corescan") return [];
 
+  // blockscout returns tx hash in transactionHash field
+  const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransaction => ({
+    ...op,
+    hash: op.hash ?? op.transactionHash,
+  });
+
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${address}`,
@@ -327,7 +333,7 @@ export const getLastInternalOperations = async (
       startBlock: fromBlock,
       endBlock: toBlock,
     },
-  });
+  }).then(ops => ops.map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
