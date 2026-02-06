@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { AMOUNT_ARG_INDEX, PROGRAM_ID, RECIPIENT_ARG_INDEX } from "../constants";
+import { AMOUNT_ARG_INDEX, PROGRAM_ID, RECIPIENT_ARG_INDEX, TRANSFERS } from "../constants";
 import { determineTransactionType, parseMicrocredits } from "../logic/utils";
 import type { AleoOperation, AleoPrivateRecord, AleoPublicTransaction } from "../types";
 import { apiClient } from "./api";
@@ -162,7 +162,7 @@ export async function parsePrivateOperation({
   address: string;
   ledgerAccountId: string;
   viewKey: string;
-}): Promise<AleoOperation> {
+}): Promise<AleoOperation | null> {
   const [transactionDetails, outputRecord] = await Promise.all([
     apiClient.getTransactionById(currency, rawTx.transaction_id),
     sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey),
@@ -180,35 +180,44 @@ export async function parsePrivateOperation({
   // PROGRAM INPUTS, BASED ON TRANSITION INDEX
   const recordTransition = transactionDetails.execution.transitions[rawTx.transition_index];
 
-  try {
-    // DECRYPT RECIPIENT & AMOUNT
-    // ONLY THE SENDER CAN DECRYPT THESE VALUES
-    const [recipientData, amountData] = await Promise.all([
-      sdkClient.decryptCiphertext({
-        ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
-        tpk: recordTransition.tpk,
-        viewKey,
-        programId: rawTx.program_name,
-        functionName: rawTx.function_name,
-        outputIndex: RECIPIENT_ARG_INDEX,
-      }),
-      sdkClient.decryptCiphertext({
-        ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
-        tpk: recordTransition.tpk,
-        viewKey,
-        programId: rawTx.program_name,
-        functionName: rawTx.function_name,
-        outputIndex: AMOUNT_ARG_INDEX,
-      }),
-    ]);
+  // IF PUBLIC TO PRIVATE, OR PRIVATE TO PUBLIC WHERE WE ARE SENDERS IGNORE
+  if (rawTx.sender === address) return null;
 
-    sender = address;
-    recipient = recipientData.plaintext;
-    value = new BigNumber(parseMicrocredits(amountData.plaintext));
-  } catch {
+  if (rawTx.function_name !== TRANSFERS.PRIVATE) {
     sender = rawTx.sender ?? "";
     recipient = address;
     value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
+  } else {
+    try {
+      // DECRYPT RECIPIENT & AMOUNT
+      // ONLY THE SENDER CAN DECRYPT THESE VALUES
+      const [recipientData, amountData] = await Promise.all([
+        sdkClient.decryptCiphertext({
+          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: rawTx.program_name,
+          functionName: rawTx.function_name,
+          outputIndex: RECIPIENT_ARG_INDEX,
+        }),
+        sdkClient.decryptCiphertext({
+          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: rawTx.program_name,
+          functionName: rawTx.function_name,
+          outputIndex: AMOUNT_ARG_INDEX,
+        }),
+      ]);
+
+      sender = address;
+      recipient = recipientData.plaintext;
+      value = new BigNumber(parseMicrocredits(amountData.plaintext));
+    } catch {
+      sender = rawTx.sender ?? "";
+      recipient = address;
+      value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
+    }
   }
 
   const type = recipient === address ? "IN" : "OUT";

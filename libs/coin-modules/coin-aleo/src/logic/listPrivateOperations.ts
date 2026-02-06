@@ -22,8 +22,13 @@ export async function listPrivateOperations({
 
   // currently we only support native aleo coin operations & ignore rest
   const nativePrivateTransactions = privateRecords.filter(({ program_name, function_name }) => {
-    return program_name === PROGRAM_ID.CREDITS && function_name === TRANSFERS.PRIVATE;
+    return (
+      program_name === PROGRAM_ID.CREDITS &&
+      (function_name === TRANSFERS.PRIVATE || function_name === TRANSFERS.PUBLIC_TO_PRIVATE)
+    );
   });
+
+  console.log("DEBUG", nativePrivateTransactions);
 
   await promiseAllBatched(2, nativePrivateTransactions, async rawTx => {
     const parsedOperation = await parsePrivateOperation({
@@ -34,7 +39,7 @@ export async function listPrivateOperations({
       ledgerAccountId,
     });
 
-    privateOperations.push(parsedOperation);
+    if (parsedOperation) privateOperations.push(parsedOperation);
   });
 
   return privateOperations;

@@ -122,10 +122,10 @@ export const patchPublicOperations = async (
     );
 
     // IF PRIVATE RECORD EXISTS, PATCH THE OPERATION
-    // OCCURRS IN 3 CASES:
+    // OCCURRS IN 2 CASES ONLY:
     // 1. PRIVATE TO PUBLIC (WHEN WE SEND FROM OUR OWN PRIVATE ACCOUNT)
-    // 2. PUBLIC TO PRIVATE (WHEN SOMEONE SENDS TO OUR PRIVATE ACCOUNT)
-    // 3. SELF-TRANSFER (PRIVATE TO PUBLIC & BACK TO PRIVATE)
+    // 2. SELF-TRANSFER (PRIVATE TO PUBLIC & BACK TO PRIVATE)
+    // NOT PUBLIC TO PRIVATE (WHEN SOMEONE SENDS TO OUR PRIVATE ACCOUNT)
     if (privateRecord) {
       const selfTransfer = privateRecord.sender === address;
 
@@ -169,9 +169,10 @@ export const patchPublicOperations = async (
       // IF PRIVATE TO PUBLIC (0 is record, 1 is address , 2 is amount)
       // IF PUBLIC TO PRIVATE (0 is address ciphertext, 1 is amount public)
       if (operation.extra.functionId === TRANSFERS.PUBLIC_TO_PRIVATE && viewKey) {
+        console.log("DEBUG", operation, execution);
+        // DECRYPT RECIPIENT & AMOUNT
+        // ONLY THE SENDER CAN DECRYPT THESE VALUES
         try {
-          // DECRYPT RECIPIENT & AMOUNT
-          // ONLY THE SENDER CAN DECRYPT THESE VALUES
           const recipientData = await sdkClient.decryptCiphertext({
             ciphertext: recordTransition.inputs[0].value,
             tpk: recordTransition.tpk,
@@ -181,13 +182,12 @@ export const patchPublicOperations = async (
             outputIndex: 0,
           });
           const recipient = recipientData.plaintext;
-
           patchedOperations.push({
             ...operation,
             recipients: [recipient],
           });
         } catch {
-          patchedOperations.push(operation);
+          continue;
         }
       } else {
         patchedOperations.push(operation);
