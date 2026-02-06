@@ -213,5 +213,7 @@ export const patchPublicOperations = async (
     }
   }
 
+  patchedOperations.push(...fullyPublicOperations);
+
   return patchedOperations;
 };
