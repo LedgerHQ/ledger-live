@@ -7,8 +7,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { firstValueFrom, of, throwError } from "rxjs";
-import { take, toArray } from "rxjs/operators";
+import { firstValueFrom, Observable, of, throwError, take, toArray } from "rxjs";
 import {
   AccountShapeInfo,
   bip32asBuffer,
@@ -524,6 +523,283 @@ describe("makeScanAccounts", () => {
       expect(event.type).toEqual("discovered");
       expect(event.account.used).toBe(true);
     });
+  });
+
+  it("evaluates emptyCount only on final emission", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("near");
+    const seenIndexes: number[] = [];
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: accountShape => {
+        seenIndexes.push(accountShape.index);
+        if (accountShape.index === 0) {
+          return of(
+            {
+              id: "acc-0",
+              used: false,
+              balanceHistoryCache: createEmptyHistoryCache(),
+            },
+            {
+              id: "acc-0",
+              used: true,
+              balanceHistoryCache: createEmptyHistoryCache(),
+            },
+          );
+        }
+        return of({
+          id: `acc-${accountShape.index}`,
+          used: false,
+          balanceHistoryCache: createEmptyHistoryCache(),
+        });
+      },
+      buildIterateResult: () =>
+        Promise.resolve(async ({ index }) =>
+          index > 1
+            ? null
+            : {
+                address: `address-${index}`,
+                path: `path-${index}`,
+                publicKey: "publicKey",
+              },
+        ),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+        scheme: "nearbip44h",
+      }).pipe(toArray()),
+    );
+
+    expect(seenIndexes).toEqual([0, 1]);
+    expect(result.map(event => event.account.id)).toEqual(["acc-0", "acc-0", "acc-1"]);
+  });
+
+  it("respects scanAccountsConcurrency limit", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("near");
+    let inFlight = 0;
+    let maxInFlight = 0;
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: accountShape =>
+        new Observable(subscriber => {
+          inFlight++;
+          maxInFlight = Math.max(maxInFlight, inFlight);
+          subscriber.next({
+            id: `acc-${accountShape.index}`,
+            used: false,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          const timeout = setTimeout(() => {
+            inFlight--;
+            subscriber.complete();
+          }, 10);
+          return () => {
+            clearTimeout(timeout);
+            if (inFlight > 0) inFlight--;
+          };
+        }),
+      buildIterateResult: () =>
+        Promise.resolve(async ({ index }) =>
+          index > 2
+            ? null
+            : {
+                address: `address-${index}`,
+                path: `path-${index}`,
+                publicKey: "publicKey",
+              },
+        ),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    const scanPromise = firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {}, scanAccountsConcurrency: 2 } as SyncConfig,
+        scheme: "nearbip44h",
+      }).pipe(toArray()),
+    );
+
+    await scanPromise;
+
+    expect(maxInFlight).toBeLessThanOrEqual(2);
+  });
+
+  it("unsubscribes inner account$ when consumer stops synchronously", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    let unsubscribed = false;
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () =>
+        new Observable<Partial<Account>>(subscriber => {
+          subscriber.next({
+            id: "acc-0",
+            used: true,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          const timeout = setTimeout(() => {
+            subscriber.complete();
+          }, 50);
+          return () => {
+            clearTimeout(timeout);
+            unsubscribed = true;
+          };
+        }),
+      buildIterateResult: () =>
+        Promise.resolve(async ({ index }) =>
+          index > 0
+            ? null
+            : {
+                address: "address-0",
+                path: "path-0",
+                publicKey: "publicKey",
+              },
+        ),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).pipe(take(1)),
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(unsubscribed).toBe(true);
+  });
+
+  it("does not cancel in-flight subscriptions when early-stop triggers for a mode", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("near");
+    let longRunningCompleted = false;
+    let longRunningUnsubscribed = false;
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: accountShape =>
+        new Observable(subscriber => {
+          subscriber.next({
+            id: `acc-${accountShape.index}`,
+            used: false,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          if (accountShape.index === 0) {
+            const timeout = setTimeout(() => {
+              subscriber.complete();
+            }, 5);
+            return () => {
+              clearTimeout(timeout);
+            };
+          }
+          const timeout = setTimeout(() => {
+            longRunningCompleted = true;
+            subscriber.complete();
+          }, 30);
+          return () => {
+            clearTimeout(timeout);
+            longRunningUnsubscribed = true;
+          };
+        }),
+      buildIterateResult: () =>
+        Promise.resolve(async ({ index }) =>
+          index > 1
+            ? null
+            : {
+                address: `address-${index}`,
+                path: `path-${index}`,
+                publicKey: "publicKey",
+              },
+        ),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {}, scanAccountsConcurrency: 2 } as SyncConfig,
+        scheme: "",
+      }).pipe(toArray()),
+    );
+
+    expect(longRunningCompleted).toBe(true);
+    expect(longRunningUnsubscribed).toBe(true);
+  });
+
+  it("continues scanning other derivation modes when early-stop triggers", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("bitcoin");
+    const seenModes = new Set<string>();
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: accountShape => {
+        seenModes.add(accountShape.derivationMode);
+        return of(
+          {
+            id: `acc-${accountShape.derivationMode}`,
+            used: true,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          },
+          {
+            id: `acc-${accountShape.derivationMode}`,
+            used: false,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          },
+        );
+      },
+      buildIterateResult: () =>
+        Promise.resolve(async ({ index, derivationMode }) =>
+          index > 0
+            ? null
+            : {
+                address: `address-${derivationMode}`,
+                path: `path-${derivationMode}`,
+                publicKey: `publicKey-${derivationMode}`,
+              },
+        ),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).pipe(toArray()),
+    );
+
+    const resultModes = new Set(result.map(event => event.account.derivationMode));
+    expect(seenModes.size).toBeGreaterThan(1);
+    expect(resultModes.size).toBeGreaterThan(1);
   });
 
   it("propagates Observable errors from getAccountShape", async () => {
