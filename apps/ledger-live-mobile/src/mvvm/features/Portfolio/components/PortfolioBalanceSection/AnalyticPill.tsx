@@ -67,7 +67,7 @@ const PressableStyle: LumenViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  height: "s48",
+  height: "s40",
   borderRadius: "full",
   paddingHorizontal: "s16",
   gap: "s2",
