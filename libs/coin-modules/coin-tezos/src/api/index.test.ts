@@ -169,6 +169,77 @@ describe("Testing craftTransaction function", () => {
       );
     },
   );
+
+  it("splits custom total fee 2000 so unrevealed delegate gets reveal 1000 + main op 1000 (total 2000)", async () => {
+    const minFees = 1000;
+    const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
+    const delegateRecipient = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
+    const totalCustomFee = 2000n;
+
+    const apiMinFees1000 = createApi({
+      baker: { url: "https://baker.example.com" },
+      explorer: { url: "foo", maxTxQuery: 1 },
+      node: { url: "bar" },
+      fees: {
+        minGasLimit: 600,
+        minRevealGasLimit: 300,
+        minStorageLimit: 0,
+        minFees,
+        minEstimatedFees: minFees,
+      },
+    });
+
+    const unrevealedAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: false,
+      address: unrevealedSender,
+      publicKey: "sppktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    (networkApi.getAccountByAddress as jest.Mock)
+      .mockResolvedValueOnce(unrevealedAccount)
+      .mockResolvedValueOnce(unrevealedAccount);
+
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: totalCustomFee,
+      fees: 1000n,
+      gasLimit: 10000n,
+      storageLimit: 0n,
+      parameters: {
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        txFee: 1000n,
+      },
+    });
+
+    await apiMinFees1000.craftTransaction(
+      {
+        intentType: "staking",
+        type: "delegate",
+        sender: unrevealedSender,
+        senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+        recipient: delegateRecipient,
+        amount: 0n,
+      } as TransactionIntent,
+      { value: totalCustomFee },
+    );
+
+    expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ address: unrevealedSender }),
+      expect.objectContaining({
+        fee: expect.objectContaining({
+          fees: "1000",
+          gasLimit: "10000",
+          storageLimit: "0",
+        }),
+      }),
+    );
+  });
 });
 
 describe("Testing estimateFees function", () => {

@@ -102,6 +102,24 @@ describe("Tezos Api - Mainnet", () => {
       expect(Number(result.parameters?.gasLimit ?? 0)).toBeGreaterThanOrEqual(600);
       expect(Number(result.parameters?.storageLimit ?? 0)).toBeGreaterThanOrEqual(0);
     });
+
+    it("craftTransaction with customFees 2000 produces transaction with total fees 2000", async () => {
+      const { transaction: encodedTransaction } = await moduleMinFees1000.craftTransaction(
+        {
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "delegate",
+          sender: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V",
+          senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+          recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+          amount: BigInt(0),
+        },
+        { value: 2000n },
+      );
+      const decoded = await localForger.parse(encodedTransaction.slice(2));
+      const totalFees = decoded.contents.reduce((sum, op) => sum + BigInt(op.fee ?? "0"), 0n);
+      expect(totalFees).toBe(2000n);
+    });
   });
 
   describe("encode", () => {

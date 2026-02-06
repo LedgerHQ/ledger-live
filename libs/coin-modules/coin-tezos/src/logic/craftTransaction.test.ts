@@ -193,6 +193,43 @@ describe("craftTransaction", () => {
     expect(revealOp.storage_limit).toBe("25");
   });
 
+  it("reveal + delegate with main op fee 1000 and minFees 1000 yields total fees 2000", async () => {
+    mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+    mockTezosToolkit.estimate.reveal.mockResolvedValue({
+      gasLimit: 300,
+      storageLimit: 0,
+      suggestedFeeMutez: 100,
+    });
+    const minFees = 1000;
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: {
+        minRevealGasLimit: 300,
+        minFees,
+        minStorageLimit: 0,
+      },
+    });
+
+    const account = { address: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V" };
+    const mainOpFee = 1000;
+    const transaction = {
+      type: "delegate" as TransactionType,
+      recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+      amount: BigInt(0),
+      fee: { fees: String(mainOpFee), gasLimit: "10000", storageLimit: "0" },
+    };
+    const publicKey = { publicKey: "pk", publicKeyHash: account.address };
+
+    const result = await craftTransaction(account, transaction, publicKey);
+
+    expect(result.contents).toHaveLength(2);
+    const revealFee = Number(result.contents[0].fee ?? 0);
+    const delegationFee = Number(result.contents[1].fee ?? 0);
+    const total = revealFee + delegationFee;
+    expect(revealFee).toBe(minFees);
+    expect(delegationFee).toBe(mainOpFee);
+    expect(total).toBe(2000);
+  });
+
   it("should throw an error for unsupported transaction type", async () => {
     const account = { address: "tz1..." };
     const transaction = {
