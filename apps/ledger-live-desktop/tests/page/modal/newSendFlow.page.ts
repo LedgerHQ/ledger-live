@@ -92,7 +92,6 @@ export class NewSendFlowPage extends Component {
   @step("Close dialog")
   async close() {
     await this.closeButton.click();
-    await this.dialog.waitFor({ state: "hidden", timeout: 10000 });
   }
 
   @step("Click back button")

@@ -724,15 +724,36 @@ test.describe("New Send Flow", () => {
     });
 
     test.describe("Navigation", () => {
-      test("should close dialog from any step", async ({ app, page }) => {
-        await openSendFlowForAccount(page, app, ACCOUNT_NAMES.ethereum);
-
-        await test.step("Close from Recipient step", async () => {
+      test.describe.only("Close from any step", () => {
+        test("should close from recipient step", async ({ app, page }) => {
+          await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
           await app.newSendFlow.close();
+          await expect(app.newSendFlow.dialog).toBeHidden();
         });
 
-        await test.step("Verify dialog is closed", async () => {
-          await expect(app.newSendFlow.dialog).not.toBeVisible();
+        test("should close from amount step", async ({ app, page }) => {
+          await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.close();
+          await expect(app.newSendFlow.dialog).toBeHidden();
+        });
+
+        test("should close from signature step", async ({ app, page }) => {
+          await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.fillCryptoAmount("0.001");
+          await app.newSendFlow.clickReview();
+          await app.newSendFlow.waitForSignature();
+          await app.newSendFlow.close();
+          await expect(app.newSendFlow.dialog).toBeHidden();
+        });
+
+        test("should close at the end of the workflow", async ({ app, page }) => {
+          const deviceAction = new DeviceAction(page);
+          await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.fillCryptoAmount("0.001");
+          await app.newSendFlow.clickReview();
+          await app.newSendFlow.waitForSignature();
+          await deviceAction.silentSign();
+          await app.newSendFlow.close();
         });
       });
 
