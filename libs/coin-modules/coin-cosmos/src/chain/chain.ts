@@ -8,7 +8,6 @@ import Onomy from "./Onomy";
 import Persistence from "./Persistence";
 import Quicksilver from "./Quicksilver";
 import SecretNetwork from "./SecretNetwork";
-import SeiNetwork from "./SeiNetwork";
 import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Umee from "./Umee";
@@ -59,9 +58,6 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "secret_network":
         cosmosChainParams[currencyId] = new SecretNetwork();
-        break;
-      case "sei_network":
-        cosmosChainParams[currencyId] = new SeiNetwork();
         break;
       case "stargaze":
         cosmosChainParams[currencyId] = new Stargaze();
