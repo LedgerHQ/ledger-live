@@ -7,17 +7,17 @@ import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import { Asset } from "~/types/asset";
 
-interface PortfolioNoFundsContentProps {
+interface PortfolioNoSignerContentProps {
   readonly assets: Asset[];
   readonly goToAssets: () => void;
   readonly isLNSUpsellBannerShown: boolean;
 }
 
-export const PortfolioNoFundsContent = ({
+export const PortfolioNoSignerContent = ({
   assets,
   goToAssets,
   isLNSUpsellBannerShown,
-}: PortfolioNoFundsContentProps) => (
+}: PortfolioNoSignerContentProps) => (
   <Box lx={{ paddingHorizontal: "s16" }}>
     <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
     <TransferDrawer />

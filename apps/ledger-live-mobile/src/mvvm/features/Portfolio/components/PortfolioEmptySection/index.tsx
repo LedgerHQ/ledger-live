@@ -1,6 +1,6 @@
 import React from "react";
 import { usePortfolioEmptySectionViewModel } from "./usePortfolioEmptySectionViewModel";
-import { PortfolioNoFundsContent } from "./PortfolioNoFundsContent";
+import { PortfolioNoSignerContent } from "./PortfolioNoSignerContent";
 import PortfolioNoAccountsContent from "./PortfolioNoAccountsContent";
 
 interface PortfolioEmptySectionProps {
@@ -23,7 +23,7 @@ export const PortfolioEmptySection = ({ isLNSUpsellBannerShown }: PortfolioEmpty
   }
 
   return (
-    <PortfolioNoFundsContent
+    <PortfolioNoSignerContent
       assets={assets}
       goToAssets={goToAssets}
       isLNSUpsellBannerShown={isLNSUpsellBannerShown}
