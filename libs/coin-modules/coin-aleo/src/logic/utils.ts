@@ -3,9 +3,12 @@ import invariant from "invariant";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AleoPrivateRecord } from "../types/api";
 import type { AleoOperation, AleoTransactionType } from "../types";
-import { TRANSFERS } from "../constants";
+import { PROGRAM_ID, TRANSFERS } from "../constants";
+import { sdkClient } from "../network/sdk";
+import { apiClient } from "../network/api";
 
 const U64_PRIVATE_SUFFIX = "u64.private";
 const U64_SUFFIX = "u64";
@@ -98,10 +101,12 @@ export const generateUniqueUsername = (address: string): string => {
  * @returns Array of patched operations including additional operations for semi transparent transfers
  */
 export const patchPublicOperations = async (
+  currency: CryptoCurrency,
   publicOperations: AleoOperation[],
   privateRecords: AleoPrivateRecord[],
   address: string,
   ledgerAccountId: string,
+  viewKey?: string,
 ): Promise<AleoOperation[]> => {
   const patchedOperations: AleoOperation[] = [];
   const fullyPublicOperations = publicOperations.filter(
@@ -118,8 +123,11 @@ export const patchPublicOperations = async (
   if (fullyPublicOperations.length === publicOperations.length) return publicOperations;
 
   for (const operation of semiPublicOperations) {
+    // TRY TO FIND A MATCHING PRIVATE RECORD, IGNORE FEE_PRIVATE RECORDS
     const privateRecord = privateRecords.find(
-      record => record.transaction_id.trim() === operation.hash.trim(),
+      record =>
+        record.transaction_id.trim() === operation.hash.trim() &&
+        record.function_name !== "fee_private",
     );
 
     // FIXME: privateRecord here is "fee_private", so sender is our address
@@ -136,6 +144,8 @@ export const patchPublicOperations = async (
     // 3. SELF-TRANSFER (PRIVATE TO PUBLIC & BACK TO PRIVATE)
     if (privateRecord) {
       const selfTransfer = privateRecord.sender === address;
+
+      console.log("SELF-TRANSFER", privateRecord.sender === address, privateRecord);
 
       // ORIGINAL OPERATION, WE ONLY PATCH SENDERS/RECIPIENTS
       // FOR SELF-TRANSFERS, THE ORIGINAL OPERATION CAN BE INCOMING OR OUTGOING,
@@ -166,10 +176,38 @@ export const patchPublicOperations = async (
         });
       }
     } else {
-      // IF NO PRIVATE RECORD, JUST PUSH THE ORIGINAL OPERATION, IT CAN HAPPEN
-      // IF THE TRANSFER COMES FROM ANOTHER PRIVATE ACCOUNT AND WE DON'T HAVE THE PRIVATE RECORD
-      // TO CONFIRM IT'S A SELF-TRANSFER (E.G PRIVATE TO PUBLIC FROM ANOTHER ACCOUNT)
-      patchedOperations.push(operation);
+      // FIXME: try to decrypt before push
+
+      const { execution } = await apiClient.getTransactionById(currency, operation.hash);
+
+      // PROGRAM INPUTS, BASED ON TRANSITION INDEX
+      // FIXME: ?? transition index?
+      const recordTransition = execution.transitions[0];
+
+      // IF PRIVATE TO PUBLIC (0 is record, 1 is address , 2 is amount)
+      // IF PUBLIC TO PRIVATE (0 is address ciphertext, 1 is amount public)
+      if (operation.extra.functionId === TRANSFERS.PUBLIC_TO_PRIVATE && viewKey) {
+        try {
+          // DECRYPT RECIPIENT & AMOUNT
+          // ONLY THE SENDER CAN DECRYPT THESE VALUES
+          const recipientData = await sdkClient.decryptCiphertext({
+            ciphertext: recordTransition.inputs[0].value,
+            tpk: recordTransition.tpk,
+            viewKey,
+            programId: PROGRAM_ID.CREDITS,
+            functionName: TRANSFERS.PUBLIC_TO_PRIVATE,
+            outputIndex: 0,
+          });
+          const recipient = recipientData.plaintext;
+
+          patchedOperations.push({
+            ...operation,
+            recipients: [recipient],
+          });
+        } catch {
+          patchedOperations.push(operation);
+        }
+      }
     }
   }
 

@@ -119,13 +119,17 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     : mergeOps(oldOperations, latestAccountPublicOperations.operations);
 
   // patch public operations with private data where applicable
+  console.log(allPrivateRecords);
+
   const publicOperations =
     newPrivateRecords.length > 0
       ? await patchPublicOperations(
+          currency,
           mergedPublicOperations as AleoOperation[],
           newPrivateRecords,
           address,
           ledgerAccountId,
+          viewKey,
         )
       : mergedPublicOperations;
 
