@@ -517,6 +517,13 @@ jobs:
 
       - name: Install mitmproxy certificate and setup proxy
         run: |
+          # Generate certificate first if it doesn't exist
+          mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost --save /tmp/mitmproxy_dump.txt &
+          MITMPROXY_PID=$!
+          sleep 5
+          kill $MITMPROXY_PID 2>/dev/null || true
+          wait $MITMPROXY_PID 2>/dev/null || true
+
           # Install certificate
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             sudo mkdir -p /usr/local/share/ca-certificates/
@@ -531,7 +538,7 @@ jobs:
           fi
         shell: bash
 
-      - name: Initialize mitmproxy to capture requests
+      - name: Start mitmproxy to capture requests
         run: |
           # Start mitmproxy in background to capture all HTTP/HTTPS requests
           mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost --save /tmp/mitmproxy_dump.txt &
