@@ -32,6 +32,8 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-management-kit-devtools-core": "catalog:",
+    "@ledgerhq/device-management-kit-devtools-rozenite": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

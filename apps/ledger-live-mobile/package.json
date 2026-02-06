@@ -99,6 +99,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-management-kit-devtools-rozenite": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",

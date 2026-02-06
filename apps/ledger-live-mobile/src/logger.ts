@@ -50,7 +50,7 @@ export class ConsoleLogger {
    * Refreshes the logger config from the `VERBOSE` env variable
    */
   refreshSetup() {
-    const logVerbose = getEnv("VERBOSE");
+    const logVerbose = ["true"]; // getEnv("VERBOSE");
 
     if (logVerbose) {
       this.everyLogs =

@@ -153,6 +153,7 @@ module.exports = withRozenite(mergeConfig(defaultConfig, metroConfig), {
     "@rozenite/react-navigation-plugin",
     "@rozenite/redux-devtools-plugin",
     "@rozenite/mmkv-plugin",
+    "@ledgerhq/device-management-kit-devtools-rozenite",
   ],
   enhanceMetroConfig: config => withRozeniteReduxDevTools(config),
 });
