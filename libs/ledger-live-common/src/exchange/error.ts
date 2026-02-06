@@ -3,6 +3,18 @@ import { getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/lib/ReturnCode";
 import get from "lodash/get";
 
+type ErrorCauseDetails = {
+  name?: string;
+  message?: string;
+  swapCode?: string;
+};
+
+type ErrorDetails = {
+  name?: string;
+  message: string;
+  cause?: ErrorCauseDetails;
+};
+
 export type CompleteExchangeStep =
   | "INIT"
   | "SET_PARTNER_KEY"
@@ -41,19 +53,39 @@ export function convertTransportError(
   return err;
 }
 
-export function getErrorName(error: unknown): string | undefined {
-  return get(error, "name") || get(error, "cause.name");
+export function getErrorDetails(error: unknown): ErrorDetails {
+  if (error == null) return { message: "Unknown error" };
+  if (typeof error === "string") return { message: error || "Unknown error" };
+
+  const name: string | undefined = get(error, "name");
+  const message: string | undefined = get(error, "message");
+  const causeName: string | undefined = get(error, "cause.name");
+  const causeMessage: string | undefined = get(error, "cause.message");
+  const causeSwapCode: string | undefined = get(error, "cause.swapCode");
+
+  const cause: ErrorCauseDetails | undefined =
+    causeName || causeMessage || causeSwapCode
+      ? { name: causeName, message: causeMessage, swapCode: causeSwapCode }
+      : undefined;
+
+  // Prefer a specific name; fall back to cause.name when top-level is generic "Error"
+  const effectiveName = name && name !== "Error" ? name : causeName ?? name;
+
+  return {
+    ...(effectiveName ? { name: effectiveName } : {}),
+    message: message || causeMessage || effectiveName || "Unknown error",
+    ...(cause ? { cause } : {}),
+  };
 }
 
 export function getErrorMessage(error: unknown): string {
-  if (typeof error === "string") return error.trim() ? error : "Unknown error";
-
-  return get(error, "message") || get(error, "cause.message") || "Unknown error";
+  return getErrorDetails(error).message;
 }
 
 export function getSwapStepFromError(error: Error): string {
-  if ((error as CompleteExchangeError).step) {
-    return (error as CompleteExchangeError).step;
+  const step = get(error, "step");
+  if (typeof step === "string") {
+    return step;
   } else if (error.name === "DisabledTransactionBroadcastError") {
     return "SIGN_COIN_TRANSACTION";
   }
