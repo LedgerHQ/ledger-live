@@ -8,7 +8,7 @@ import {
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { accessProvableApi } from "../logic/accessProvableApi";
-import type { AleoAccount, AleoOperation, ProvableApi } from "../types";
+import type { AleoAccount, AleoOperation, AleoUnspentRecord, ProvableApi } from "../types";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { patchPublicOperations } from "../logic/utils";
 import { AleoPrivateRecord } from "../types/api";
@@ -53,13 +53,15 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
   const latestOperation = oldOperations[0];
   const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
-  const oldPrivateRecords: AleoPrivateRecord[] = initialAccount?.aleoResources.privateRecords ?? [];
-  const latestAccountPrivateRecord = oldPrivateRecords[0];
+  const oldPrivateRecordsHistory = initialAccount?.aleoResources.privateRecordsHistory ?? [];
+  const latestAccountPrivateRecord = oldPrivateRecordsHistory[0];
+
   let lastPrivateSyncDate = initialAccount?.aleoResources.lastPrivateSyncDate ?? null;
   let privateBalance = initialAccount?.aleoResources.privateBalance ?? null;
   let latestAccountPrivateOperations: AleoOperation[] = [];
+  let privateRecordsHistory: AleoPrivateRecord[] | null = null;
+  let unspentPrivateRecords: AleoUnspentRecord[] | null = null;
   let newPrivateRecords: AleoPrivateRecord[] = [];
-  let allPrivateRecords: AleoPrivateRecord[] = [];
 
   const latestAccountPublicOperations = await listOperations({
     currency,
@@ -74,12 +76,22 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   });
 
   if (viewKey && provableApi && provableApi.uuid && provableApi.apiKey && provableApi.jwt?.token) {
-    newPrivateRecords = await apiClient.getAccountOwnedRecords({
-      jwtToken: provableApi.jwt?.token,
-      uuid: provableApi.uuid,
-      apiKey: provableApi.apiKey,
-      start: latestAccountPrivateRecord ? latestAccountPrivateRecord.block_height + 1 : 0,
-    });
+    const [resNewPrivateRecords, resUnspentPrivateRecords] = await Promise.all([
+      apiClient.getAccountOwnedRecords({
+        jwtToken: provableApi.jwt?.token,
+        uuid: provableApi.uuid,
+        apiKey: provableApi.apiKey,
+        start: latestAccountPrivateRecord ? latestAccountPrivateRecord.block_height + 1 : 0,
+      }),
+      apiClient.getAccountOwnedRecords({
+        jwtToken: provableApi.jwt?.token,
+        uuid: provableApi.uuid,
+        apiKey: provableApi.apiKey,
+        unspent: true,
+      }),
+    ]);
+
+    newPrivateRecords = resNewPrivateRecords;
 
     latestAccountPrivateOperations = await listPrivateOperations({
       currency,
@@ -90,19 +102,30 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     });
 
     // FIXME: util for deduplication and sorting
-    const existingKeys = new Set(oldPrivateRecords.map(r => r.transaction_id));
-    allPrivateRecords = [
-      ...oldPrivateRecords,
+    const existingKeys = new Set(oldPrivateRecordsHistory.map(r => r.transaction_id));
+    privateRecordsHistory = [
+      ...oldPrivateRecordsHistory,
       ...newPrivateRecords.filter(r => !existingKeys.has(`${r.transaction_id}_${r.commitment}`)),
     ]
-      .map(r => ({
-        ...r,
-        transaction_id: r.transaction_id.trim(),
-        transition_id: r.transition_id.trim(),
-      }))
+      .map(r => {
+        const isUnspent = resUnspentPrivateRecords.some(u => u.commitment === r.commitment);
+
+        return {
+          ...r,
+          transaction_id: r.transaction_id.trim(),
+          transition_id: r.transition_id.trim(),
+          spent: !isUnspent,
+        };
+      })
       .sort((a, b) => b.block_height - a.block_height);
 
-    privateBalance = await getPrivateBalance({ viewKey, privateRecords: allPrivateRecords });
+    const privateBalanceResult = await getPrivateBalance({
+      viewKey,
+      privateRecords: privateRecordsHistory,
+    });
+
+    privateBalance = privateBalanceResult.balance;
+    unspentPrivateRecords = privateBalanceResult.unspentRecords;
     lastPrivateSyncDate = new Date();
   }
 
@@ -118,9 +141,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     ? latestAccountPublicOperations.operations
     : mergeOps(oldOperations, latestAccountPublicOperations.operations);
 
-  // patch public operations with private data where applicable
-  console.log(allPrivateRecords);
-
+  // patch public operations with latest private data where applicable
   const publicOperations =
     newPrivateRecords.length > 0
       ? await patchPublicOperations(
@@ -151,7 +172,8 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       transparentBalance,
       privateBalance,
       provableApi,
-      privateRecords: allPrivateRecords,
+      privateRecordsHistory,
+      unspentPrivateRecords,
       lastPrivateSyncDate,
     },
   };

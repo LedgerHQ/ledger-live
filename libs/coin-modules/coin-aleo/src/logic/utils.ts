@@ -10,22 +10,13 @@ import { PROGRAM_ID, TRANSFERS } from "../constants";
 import { sdkClient } from "../network/sdk";
 import { apiClient } from "../network/api";
 
-const U64_PRIVATE_SUFFIX = "u64.private";
-const U64_SUFFIX = "u64";
-
 export function parseMicrocredits(microcreditsU64: string): string {
-  const hasPrivateSuffix = microcreditsU64.endsWith(U64_PRIVATE_SUFFIX);
-  const hasPublicSuffix = microcreditsU64.endsWith(U64_SUFFIX);
+  const value = microcreditsU64.split(".")[0];
+  const expectedSuffix = "u64";
+  const hasValidSuffix = value.endsWith(expectedSuffix);
+  invariant(hasValidSuffix, `aleo: invalid microcredits format (${microcreditsU64})`);
 
-  invariant(
-    hasPrivateSuffix || hasPublicSuffix,
-    `aleo: invalid microcredits format (${microcreditsU64})`,
-  );
-
-  return microcreditsU64.slice(
-    0,
-    hasPrivateSuffix ? -U64_PRIVATE_SUFFIX.length : -U64_SUFFIX.length,
-  );
+  return value.replace(expectedSuffix, "");
 }
 
 export function patchAccountWithViewKey(account: Account, viewKey: string): Account {
@@ -130,13 +121,6 @@ export const patchPublicOperations = async (
         record.function_name !== "fee_private",
     );
 
-    // FIXME: privateRecord here is "fee_private", so sender is our address
-    // the problem is that this transaction was Public -> Private from Account 1 -> Account 2
-    // right now it's incorrectly marked as "convert", so we have IN and OUT operations created
-    if (operation.hash === "at1zhfgv6ueg602cl6zchx27lnharjdds8qkf0vryh5k2ex8kuahcrqs2xjyq") {
-      console.log("Found problematic operation", { operation, privateRecord });
-    }
-
     // IF PRIVATE RECORD EXISTS, PATCH THE OPERATION
     // OCCURRS IN 3 CASES:
     // 1. PRIVATE TO PUBLIC (WHEN WE SEND FROM OUR OWN PRIVATE ACCOUNT)
@@ -144,8 +128,6 @@ export const patchPublicOperations = async (
     // 3. SELF-TRANSFER (PRIVATE TO PUBLIC & BACK TO PRIVATE)
     if (privateRecord) {
       const selfTransfer = privateRecord.sender === address;
-
-      console.log("SELF-TRANSFER", privateRecord.sender === address, privateRecord);
 
       // ORIGINAL OPERATION, WE ONLY PATCH SENDERS/RECIPIENTS
       // FOR SELF-TRANSFERS, THE ORIGINAL OPERATION CAN BE INCOMING OR OUTGOING,
