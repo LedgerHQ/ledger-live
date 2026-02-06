@@ -18,6 +18,7 @@ const Container = styled(Flex).attrs({
   justifyContent: "flex-start",
   overflow: "hidden",
   px: 1,
+  py: 1,
 })``;
 
 const SelectBarContainer = styled(Flex)`
