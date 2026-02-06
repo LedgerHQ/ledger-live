@@ -331,7 +331,9 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
         baseTxFee = BigInt(Math.max(DEFAULT_TX_FEE_FALLBACK, config.fees.minFees));
       }
 
-      const revealFee = needsReveal ? BigInt(getRevealFee(transactionIntent.sender)) : 0n;
+      const revealFee = needsReveal
+        ? BigInt(Math.max(config.fees.minFees ?? 0, getRevealFee(transactionIntent.sender)))
+        : 0n;
       const totalFee = baseTxFee + revealFee;
 
       return {

@@ -62,6 +62,48 @@ describe("Tezos Api - Mainnet", () => {
     });
   });
 
+  describe("estimateFees with minFees 1000 (reveal + delegate)", () => {
+    let moduleMinFees1000: TezosApi;
+
+    beforeAll(() => {
+      moduleMinFees1000 = createApi({
+        baker: {
+          url: "https://baker.example.com",
+        },
+        explorer: {
+          url: "https://xtz-tzkt-explorer.api.vault.ledger.com",
+          maxTxQuery: 100,
+        },
+        node: {
+          url: "https://xtz-node.api.vault.ledger.com",
+        },
+        fees: {
+          minGasLimit: 600,
+          minRevealGasLimit: 300,
+          minStorageLimit: 0,
+          minFees: 1000,
+          minEstimatedFees: 1000,
+        },
+      });
+    });
+
+    it("returns value 2000 for unrevealed account delegate (2 * minFees for reveal + delegation)", async () => {
+      const result = await moduleMinFees1000.estimateFees({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "delegate",
+        sender: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V",
+        senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+        recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+        amount: BigInt(0),
+      });
+
+      expect(result.value).toBe(2000n);
+      expect(Number(result.parameters?.gasLimit ?? 0)).toBeGreaterThanOrEqual(600);
+      expect(Number(result.parameters?.storageLimit ?? 0)).toBeGreaterThanOrEqual(0);
+    });
+  });
+
   describe("encode", () => {
     it("encode a reveal operation without failing", async () => {
       // When

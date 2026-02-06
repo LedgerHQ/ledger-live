@@ -24,6 +24,11 @@ jest.mock("../logic", () => ({
   rawEncode: () => Promise.resolve("tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"),
 }));
 
+const mockGetTezosToolkit = jest.fn();
+jest.mock("../logic/tezosToolkit", () => ({
+  getTezosToolkit: () => mockGetTezosToolkit(),
+}));
+
 jest.spyOn(networkApi, "getAccountByAddress").mockResolvedValue({
   type: "user",
   balance: 1000,
@@ -267,5 +272,92 @@ describe("Testing estimateFees function", () => {
     expect(result.value).toBe(expectedTotalFees);
     expect(result.parameters.gasLimit).toBe(DEFAULT_GAS_LIMIT);
     expect(result.parameters.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+  });
+
+  it("Public key not found fallback returns value 2000 for unrevealed delegate when minFees is 1000", async () => {
+    const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
+    const delegateRecipient = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
+    const minFees = 1000;
+
+    const apiMinFees1000 = createApi({
+      baker: { url: "https://baker.example.com" },
+      explorer: { url: "foo", maxTxQuery: 1 },
+      node: { url: "bar" },
+      fees: {
+        minGasLimit: 600,
+        minRevealGasLimit: 300,
+        minStorageLimit: 0,
+        minFees,
+        minEstimatedFees: minFees,
+      },
+    });
+
+    logicEstimateFees.mockImplementation(() => Promise.reject(new Error("Public key not found")));
+
+    const defaultUserForTry = {
+      type: "user" as const,
+      balance: 1000,
+      revealed: true,
+      address: unrevealedSender,
+      publicKey: "edpktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    const recipientAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      address: delegateRecipient,
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    const senderUnrevealedAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: false,
+      address: unrevealedSender,
+      publicKey: undefined,
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    (networkApi.getAccountByAddress as jest.Mock)
+      .mockImplementationOnce(() => Promise.resolve(defaultUserForTry))
+      .mockImplementationOnce(() => Promise.resolve(recipientAccount))
+      .mockImplementationOnce(() => Promise.resolve(senderUnrevealedAccount));
+
+    mockGetTezosToolkit.mockReturnValueOnce({
+      estimate: {
+        transfer: jest.fn().mockResolvedValue({
+          suggestedFeeMutez: 100,
+          gasLimit: 10000,
+          storageLimit: 0,
+          burnFeeMutez: 0,
+          opSize: 100,
+        }),
+      },
+    });
+
+    const result = await apiMinFees1000.estimateFees({
+      intentType: "staking",
+      type: "delegate",
+      sender: unrevealedSender,
+      recipient: delegateRecipient,
+      amount: 0n,
+    } as TransactionIntent);
+
+    expect(result.value).toBe(2000n);
+    expect(result.parameters?.txFee).toBe(1000n);
+    expect(result.parameters?.gasLimit).toBe(10000n);
+    expect(result.parameters?.storageLimit).toBe(0n);
+
+    logicEstimateFees.mockReset();
   });
 });
