@@ -266,6 +266,27 @@ export enum ScreenName {
 
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
+  // ICP Staking Flow
+  InternetComputerStakingStarted = "InternetComputerStakingStarted",
+  InternetComputerStakingAmount = "InternetComputerStakingAmount",
+  InternetComputerStakingSelectDevice = "InternetComputerStakingSelectDevice",
+  InternetComputerStakingConnectDevice = "InternetComputerStakingConnectDevice",
+  InternetComputerStakingValidationError = "InternetComputerStakingValidationError",
+  InternetComputerStakingValidationSuccess = "InternetComputerStakingValidationSuccess",
+  // ICP Neuron Management Flow
+  InternetComputerNeuronList = "InternetComputerNeuronList",
+  InternetComputerNeuronAction = "InternetComputerNeuronAction",
+  InternetComputerNeuronSetDissolveDelay = "InternetComputerNeuronSetDissolveDelay",
+  InternetComputerNeuronAddHotKey = "InternetComputerNeuronAddHotKey",
+  InternetComputerNeuronRemoveHotKey = "InternetComputerNeuronRemoveHotKey",
+  InternetComputerNeuronStakeMaturity = "InternetComputerNeuronStakeMaturity",
+  InternetComputerNeuronFollowSelectTopic = "InternetComputerNeuronFollowSelectTopic",
+  InternetComputerNeuronFollowSelectFollowees = "InternetComputerNeuronFollowSelectFollowees",
+  InternetComputerNeuronConfirmFollowingList = "InternetComputerNeuronConfirmFollowingList",
+  InternetComputerNeuronSelectDevice = "InternetComputerNeuronSelectDevice",
+  InternetComputerNeuronConnectDevice = "InternetComputerNeuronConnectDevice",
+  InternetComputerNeuronValidationError = "InternetComputerNeuronValidationError",
+  InternetComputerNeuronValidationSuccess = "InternetComputerNeuronValidationSuccess",
 
   // ton
   TonEditComment = "TonEditComment",
@@ -642,6 +663,9 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
+  // Internet Computer (ICP)
+  InternetComputerStakingFlow = "InternetComputerStakingFlow",
+  InternetComputerNeuronManageFlow = "InternetComputerNeuronManageFlow",
   // Aptos
   // Hedera
   HederaAssociateTokenFlow = "HederaAssociateTokenFlow",

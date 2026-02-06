@@ -55,6 +55,8 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
+    "remove": "Remove",
+    "select": "Select",
     "token_one": "Token",
     "token_other": "Tokens",
     "subaccount_one": "Subaccount",
@@ -473,6 +475,36 @@
     "HardResetFail": {
       "title": "Sorry, could not reset",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "NotEnoughTransferAmount": {
+      "title": "The minimum amount for {{purpose}} is {{amount}}."
+    },
+    "ICPDissolveDelayLTMin": {
+      "title": "The dissolve delay must be at least {{min}}."
+    },
+    "ICPDissolveDelayGTMax": {
+      "title": "The dissolve delay must be less than {{max}}."
+    },
+    "ICPDissolveDelayLTCurrent": {
+      "title": "The new dissolve delay must be greater than the current dissolve delay."
+    },
+    "ICPNeuronNotFound": {
+      "title": "The neuron was not found."
+    },
+    "ICPInvalidHotKey": {
+      "title": "The principal ID is invalid"
+    },
+    "ICPHotKeyAlreadyExists": {
+      "title": "The hot key already exists"
+    },
+    "ICPSplitNotAllowed": {
+      "title": "The split amount is more than the maximum allowed"
+    },
+    "ICPIncreaseStakeWarning": {
+      "title": "This operation will transfer the amount to increase the stake of an existing neuron"
+    },
+    "ICPCreateNeuronWarning": {
+      "title": "This operation will transfer the amount to a new neuron. Upon successful confirmation, the neuron will be available for further operations."
     },
     "ImageCommitRefusedOnDevice": {
       "title": "Lock screen picture discarded on {{productName}}",
@@ -2847,7 +2879,9 @@
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
-      "UPDATE_ACCOUNT": "Updated account"
+      "UPDATE_ACCOUNT": "Updated account",
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Topped up"
     }
   },
   "operationDetails": {
@@ -6497,6 +6531,329 @@
           "interestRateNotSetup": "Current interest rate is set up to 0%.",
           "description": "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
         }
+      }
+    }
+  },
+  "icp": {
+    "staking": {
+      "sectionLabel": "Neuron(s)",
+      "emptyState": {
+        "description": "Stake your {{name}} and gain rewards by participating in its governance.",
+        "learnMore": "Learn about ICP staking"
+      },
+      "add": "Add",
+      "actions": {
+        "manage": "Manage",
+        "manageNeurons": "Manage Neurons"
+      },
+      "drawer": {
+        "neuronId": "Neuron ID",
+        "maturity": "Available Maturity",
+        "stakedMaturity": "Staked Maturity",
+        "status": "Status",
+        "dissolveDelay": "Dissolve Delay",
+        "votingPower": "Voting Power",
+        "ageBonus": "Age Bonus",
+        "dissolveDelayBonus": "Dissolve Delay Bonus",
+        "dateCreated": "Date Created",
+        "dissolveDate": "Dissolve Date",
+        "neuronAccount": "Neuron Account",
+        "followees": "Followees",
+        "hotKeys": "Hot Keys"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "title": "Stake ICP",
+            "description": "Stake your ICP to earn rewards by creating a neuron and participating in governance.",
+            "steps": {
+              "0": "Staked assets remain yours."
+            },
+            "warning": "Your staked ICP will be locked for the dissolve delay period. You can start dissolving at any time, but must wait for the full dissolve delay before withdrawing.",
+            "learnMore": "Learn about ICP staking",
+            "cta": "Continue"
+          },
+          "amount": {
+            "title": "Stake amount",
+            "amountLabel": "Amount to stake",
+            "useMax": "Use max",
+            "minAmount": "Minimum: {{amount}}"
+          },
+          "success": {
+            "title": "Neuron created successfully",
+            "description": "Your neuron has been created. Your account balance will be updated once the network confirms the transaction."
+          },
+          "connect": {
+            "title": "Connect device"
+          },
+          "device": {
+            "title": "Select device"
+          }
+        }
+      },
+      "stakingUnavailable": {
+        "title": "Staking unavailable",
+        "description": "Not enough available balance in your account to stake, unstake, and withdraw."
+      }
+    },
+    "neuronManage": {
+      "list": {
+        "title": "Your Neurons",
+        "subtitle": "Select a neuron to manage",
+        "description": "Tap a neuron to view details and available actions",
+        "emptyTitle": "No neurons found",
+        "emptyDescription": "Sync to see neurons created through NNS dapp or start staking to create new neurons.",
+        "learnMore": "Learn about ICP staking",
+        "lastSync": "Last Synced",
+        "lastSyncNever": "Never",
+        "sync": "Sync"
+      },
+      "manage": {
+        "title": "Manage Neuron",
+        "notFound": "Neuron not found",
+        "neuronId": "Neuron ID",
+        "stake": "Staked",
+        "status": "Status",
+        "dissolveDelay": "Dissolve Delay",
+        "maturity": "Maturity",
+        "actions": "Actions"
+      },
+      "actions": {
+        "increaseStake": "Increase Stake",
+        "startDissolving": "Start Dissolving",
+        "stopDissolving": "Stop Dissolving",
+        "disburse": "Disburse",
+        "spawnNeuron": "Spawn Neuron",
+        "splitNeuron": "Split Neuron",
+        "stakeMaturity": "Stake Maturity",
+        "setDissolveDelay": "Set Dissolve Delay",
+        "increaseDissolveDelay": "Increase Dissolve Delay",
+        "addHotKey": "Add HotKey",
+        "removeHotKey": "Remove HotKey",
+        "autoStakeMaturity": "Auto Stake Maturity",
+        "startAutoStakeMaturity": "Start Auto Stake Maturity",
+        "stopAutoStakeMaturity": "Stop Auto Stake Maturity",
+        "refreshVotingPower": "Refresh Voting Power",
+        "follow": "Manage Following"
+      },
+      "action": {
+        "title": "Confirm Action",
+        "amount": "Amount",
+        "useMax": "Use max",
+        "neuronId": "Neuron ID",
+        "fee": "Network Fee",
+        "currentBalance": "Current Balance",
+        "increaseStake": {
+          "title": "Increase Stake",
+          "description": "This transaction will increase the stake of an existing neuron, input the desired amount to be staked in the amount field above."
+        },
+        "startDissolving": {
+          "title": "Start Dissolving",
+          "description": "Begin the dissolve countdown. Your neuron will unlock after the dissolve delay period."
+        },
+        "stopDissolving": {
+          "title": "Stop Dissolving",
+          "description": "Stop the dissolve countdown and return the neuron to locked state."
+        },
+        "disburse": {
+          "title": "Disburse",
+          "description": "Withdraw your staked ICP from this neuron."
+        },
+        "spawnNeuron": {
+          "title": "Spawn Neuron",
+          "description": "Create a new neuron from the available maturity. The new neuron will have a 7-day dissolve delay."
+        },
+        "splitNeuron": {
+          "title": "Split Neuron",
+          "description": "Split this neuron into two neurons. The new neuron will inherit the same dissolve delay."
+        },
+        "stakeMaturity": {
+          "title": "Stake Maturity",
+          "description": "Convert available maturity into staked ICP within this neuron."
+        },
+        "setDissolveDelay": {
+          "title": "Set Dissolve Delay",
+          "description": "Dissolve delay is the minimum amount of time you have to wait for the neuron to unlock, and ICP to be available again. Note, that dissolve delay only decreases when the neuron is in a dissolving state."
+        },
+        "addHotKey": {
+          "title": "Add HotKey",
+          "description": "Add a principal ID as a hotkey to manage this neuron."
+        },
+        "removeHotKey": {
+          "title": "Remove HotKey",
+          "description": "Remove a hotkey from this neuron."
+        },
+        "autoStakeMaturity": {
+          "title": "Auto Stake Maturity",
+          "description": "Toggle automatic staking of maturity rewards into this neuron."
+        },
+        "refreshVotingPower": {
+          "title": "Refresh Voting Power",
+          "description": "Confirm your neuron's following to maintain voting power rewards."
+        },
+        "follow": {
+          "title": "Manage Following",
+          "description": "Configure which neurons this neuron follows for governance proposals."
+        }
+      },
+      "removeHotKey": {
+        "selectLabel": "Select HotKey to Remove",
+        "noHotKeys": "No HotKeys found"
+      },
+      "setDissolveDelay": {
+        "inputLabel": "Dissolve Delay (days)",
+        "duration": "Duration",
+        "balance": "Balance",
+        "votingPower": "Voting Power"
+      },
+      "addHotKey": {
+        "inputLabel": "Principal ID"
+      },
+      "confirmFollowing": {
+        "headerTitle": "Confirm Following",
+        "title": "Refresh Voting Power",
+        "description": "ICP neurons that are inactive for 6 months start missing voting rewards. Confirm your following to maintain rewards.",
+        "confirmButton": "Confirm",
+        "noNeurons": "No neurons need following confirmation at this time.",
+        "inactiveNeuron": "Inactive Neuron"
+      },
+      "stakeMaturity": {
+        "percentageLabel": "Percentage to Stake",
+        "availableMaturity": "Available Maturity",
+        "amountToStake": "Amount to Stake"
+      },
+      "followSelectTopic": {
+        "title": "Select Topic",
+        "description": "Choose a governance topic to configure following for this neuron.",
+        "warning": "Neurons earn rewards by voting. You can set up your neuron to automatically follow other neurons' votes on specific topics.",
+        "selectTopic": "Available Topics"
+      },
+      "followSelectFollowees": {
+        "headerTitle": "Select Followees",
+        "description": "Add neuron IDs to follow for this topic. Your neuron will automatically vote the same way as the majority of followed neurons.",
+        "addNeuronId": "Add Neuron ID",
+        "placeholder": "Enter neuron ID",
+        "invalidNeuronId": "Invalid neuron ID. Please enter a valid numeric ID.",
+        "alreadyAdded": "This neuron ID is already in the followees list.",
+        "knownNeurons": "Known Neurons",
+        "selectedFollowees": "Followees ({{count}})",
+        "noFollowees": "No followees selected. Add neuron IDs to follow for this topic.",
+        "topic": "Topic"
+      },
+      "followTopic": {
+        "0": {
+          "description": "Catch-all topic for proposals that don't fit other categories."
+        },
+        "1": {
+          "description": "Proposals related to neuron management such as rewards and dissolve delays."
+        },
+        "2": {
+          "description": "Proposals to upgrade the ICP network infrastructure."
+        },
+        "3": {
+          "description": "Proposals to manage network governance parameters."
+        },
+        "4": {
+          "description": "Proposals to modify the network's economic parameters."
+        },
+        "5": {
+          "description": "Proposals to create or manage subnets on the ICP network."
+        },
+        "6": {
+          "description": "Proposals to add or remove nodes from the network."
+        },
+        "7": {
+          "description": "Proposals to manage ICP node providers."
+        },
+        "8": {
+          "description": "Proposals to manage participant identity verification."
+        },
+        "9": {
+          "description": "Proposals related to the Network Nervous System configuration."
+        },
+        "10": {
+          "description": "Proposals for replica version management."
+        },
+        "11": {
+          "description": "Proposals to manage NNS canisters."
+        },
+        "12": {
+          "description": "Proposals related to SNS and community governance."
+        },
+        "13": {
+          "description": "Proposals for API boundary node management."
+        },
+        "14": {
+          "description": "Proposals related to Service Nervous System decentralization."
+        },
+        "15": {
+          "description": "Proposals for API boundary node management and configuration."
+        },
+        "16": {
+          "description": "Proposals related to subnet rental on the ICP network."
+        },
+        "17": {
+          "description": "Proposals for protocol canister management and upgrades."
+        },
+        "18": {
+          "description": "Proposals for Service Nervous System management."
+        }
+      },
+      "success": {
+        "title": "{{action}} was successful",
+        "description": "Please synchronize your accounts to see the updated changes."
+      },
+      "actionText": {
+        "increase_stake": "Increasing Stake",
+        "create_neuron": "Creating Neuron",
+        "start_dissolving": "Starting Dissolve",
+        "stop_dissolving": "Stopping Dissolve",
+        "list_neurons": "Listing Neurons",
+        "disburse": "Disbursing Neuron",
+        "spawn_neuron": "Spawning Neuron",
+        "add_hot_key": "Adding Hot Key",
+        "remove_hot_key": "Removing Hot Key",
+        "stake_maturity": "Staking Maturity",
+        "refresh_voting_power": "Refreshing Voting Power",
+        "set_dissolve_delay": "Setting Dissolve Delay",
+        "follow": "Following Neurons",
+        "split_neuron": "Splitting Neuron",
+        "auto_stake_maturity": "Setting Auto Stake Maturity"
+      },
+      "syncSuccess": {
+        "title": "Neurons synced",
+        "description": "Your neurons have been synchronized successfully."
+      },
+      "device": {
+        "title": "Select device"
+      },
+      "connect": {
+        "title": "Connect device"
+      }
+    },
+    "stakeBanner": {
+      "learnMore": "Learn more",
+      "confirmFollowing": {
+        "description": "Your neuron's following needs to be confirmed in {{days}} days and {{hours}} hours.",
+        "urgentDescription": "Your neuron's following confirmation has expired. Confirm now to resume earning rewards.",
+        "altDescription": "You are losing rewards, confirm neuron following to continue earning.",
+        "cta": "Confirm Following"
+      },
+      "syncNeurons": {
+        "altDescription": "We recommend syncing your neurons to see the latest details.",
+        "cta": "Sync Neurons"
+      },
+      "lockNeurons": {
+        "description": "One or more of your neurons are not locked. If you don't lock them you can't get rewards.",
+        "cta": "Manage Neurons"
+      },
+      "addFollowees": {
+        "description": "One or more of your neurons have no followees. Without followees you might not get rewards.",
+        "cta": "Manage Neurons"
+      },
+      "stakeICP": {
+        "description": "Stake ICP and gain rewards by participating in its governance.",
+        "cta": "Stake ICP"
       }
     }
   },

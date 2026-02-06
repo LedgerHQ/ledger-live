@@ -3955,6 +3955,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -3968,7 +3971,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       invariant:
-        specifier: ^2.2.2
+        specifier: ^2.2.4
         version: 2.2.4
       lodash:
         specifier: ^4.17.21
@@ -3984,14 +3987,17 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: ^2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
+        specifier: ^4.17.13
+        version: 4.17.21
+      '@types/node-fetch':
+        specifier: ^2.6.11
+        version: 2.6.11
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -4001,6 +4007,15 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      node-fetch:
+        specifier: ^2.7.0
+        version: 2.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.4.6(jest@30.2.0)(typescript@5.4.3)
 
   libs/coin-modules/coin-kaspa:
     dependencies:
@@ -21431,6 +21446,10 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
+  bs-logger@0.2.6:
+    resolution: {integrity: sha512-pd8DCoxmbgc7hyPKOvxtqNcjYoOsABPQdcCUjGp3d42VR2CX1ORhk2A87oqqu5R1kk+76nsxZupkmyd+MVtCog==}
+    engines: {node: '>= 6'}
+
   bs58@4.0.0:
     resolution: {integrity: sha512-/jcGuUuSebyxwLLfKrbKnCJttxRf9PM51EnHTwmFKBxl4z1SGkoAhrfd6uZKE0dcjQTfm6XzTP8DPr1tzE4KIw==}
 
@@ -32500,6 +32519,33 @@ packages:
     resolution: {integrity: sha512-uivwYcQaxAucv1CzRp2n/QdYPo4ILf9VXgH19zEIjFx2EJufV16P0JtJVpYHy89DItG6Kwj2oIUjrcK5au+4tQ==}
     engines: {node: '>=8'}
 
+  ts-jest@29.4.6:
+    resolution: {integrity: sha512-fSpWtOO/1AjSNQguk43hb/JCo16oJDnMJf3CdEGNkqsEX3t0KX96xvyX1D7PfLCpVoKu4MfVrqUkFyblYoY4lA==}
+    engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@babel/core': '>=7.0.0-beta.0 <8'
+      '@jest/transform': ^29.0.0 || ^30.0.0
+      '@jest/types': ^29.0.0 || ^30.0.0
+      babel-jest: ^29.0.0 || ^30.0.0
+      esbuild: '*'
+      jest: ^29.0.0 || ^30.0.0
+      jest-util: ^29.0.0 || ^30.0.0
+      typescript: '>=4.3 <6'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@jest/transform':
+        optional: true
+      '@jest/types':
+        optional: true
+      babel-jest:
+        optional: true
+      esbuild:
+        optional: true
+      jest-util:
+        optional: true
+
   ts-loader@9.5.1:
     resolution: {integrity: sha512-rNH3sK9kGZcH9dYzC7CewQm4NtxJTjSEVRJ2DyBZR7f8/wcta+iV44UPCXc5+nzDzivKtlzV6c9P4e+oFhDLYg==}
     engines: {node: '>=12.0.0'}
@@ -32669,6 +32715,10 @@ packages:
 
   type-fest@4.40.0:
     resolution: {integrity: sha512-ABHZ2/tS2JkvH1PEjxFDTUWC8dB5OsIGZP4IFLhR293GqT5Y5qB1WwL2kMPYhQW9DVgVD8Hd7I8gjwPIf5GFkw==}
+    engines: {node: '>=16'}
+
+  type-fest@4.41.0:
+    resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
   type-is@1.6.18:
@@ -51326,6 +51376,10 @@ snapshots:
       node-releases: 2.0.27
       update-browserslist-db: 1.1.4(browserslist@4.28.0)
 
+  bs-logger@0.2.6:
+    dependencies:
+      fast-json-stable-stringify: 2.1.0
+
   bs58@4.0.0:
     dependencies:
       base-x: 2.0.6
@@ -66848,6 +66902,20 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
+  ts-jest@29.4.6(jest@30.2.0)(typescript@5.4.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      handlebars: 4.7.8
+      jest: 30.2.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.7.3
+      type-fest: 4.41.0
+      typescript: 5.4.3
+      yargs-parser: 21.1.1
+
   ts-loader@9.5.1(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.15.8)):
     dependencies:
       chalk: 4.1.2
@@ -67223,6 +67291,8 @@ snapshots:
   type-fest@3.13.1: {}
 
   type-fest@4.40.0: {}
+
+  type-fest@4.41.0: {}
 
   type-is@1.6.18:
     dependencies:
