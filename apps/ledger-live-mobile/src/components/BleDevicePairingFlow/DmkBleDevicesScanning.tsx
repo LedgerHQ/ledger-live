@@ -14,7 +14,7 @@ import { useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { FilterByDeviceModelId } from "./FilterByDeviceModelId";
 import { useIsFocused } from "@react-navigation/core";
-import { useMockBleDevicesScanning } from "~/react-native-hw-transport-ble/useMockBle";
+import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
 
 type DmkBleDevicesScanningProps = Omit<BleDevicesScanningProps, "devices"> & {
   /**

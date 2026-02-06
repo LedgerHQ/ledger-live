@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
-import getBLETransport from "~/react-native-hw-transport-ble";
+import getBLETransport from "~/transport/bleTransport";
 
 const { BluetoothHelperModule } = NativeModules;
 

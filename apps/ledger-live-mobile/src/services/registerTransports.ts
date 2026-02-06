@@ -6,7 +6,7 @@ import { registerTransportModule, type TransportModule } from "@ledgerhq/live-co
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import getBLETransport from "~/react-native-hw-transport-ble";
+import getBLETransport from "~/transport/bleTransport";
 import { DeviceManagementKitHIDTransport } from "@ledgerhq/live-dmk-mobile";
 
 /**

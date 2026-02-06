@@ -46,7 +46,8 @@ import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
-import { useMockBleDevicesScanning } from "~/react-native-hw-transport-ble/useMockBle";
+import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
+import { useMockHidDevicesDiscovery } from "~/transport/useMockHidDiscovery";
 
 export type { SetHeaderOptionsRequest };
 
@@ -143,12 +144,22 @@ export default function SelectDevice({
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
-  // FIXME: this will be done properly by injecting the mock transport directly in the DMK transport builder
+  /**
+   * FIXME: Swapping between mock and real hooks is not ideal.
+   * This is a temporary workaround to keep e2e tests working until transport-level mocking is implemented
+   * directly with the DMK, which will allow real hooks to work transparently with mocked transports.
+   * Previously it was working because the discovery mocks were done directly inside the legacy HID and BLE transports.
+   * We have to progressively remove those legacy transports, hence this temporary workaround.
+   */
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
+
+  const mockHidState = useMockHidDevicesDiscovery(isMockMode);
+  const realHidState = useHidDevicesDiscovery(!isMockMode);
+  const { hidDevices } = isMockMode ? mockHidState : realHidState;
+
   const scanningEnabled =
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
 
-  // Use mock scanning in e2e test mode, real DMK scanning otherwise
   const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
   const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
 
@@ -291,8 +302,6 @@ export default function SelectDevice({
     availableDeviceMatchingSelectedBleDevice,
     showSelectedBleDeviceNotAvailableDrawer,
   ]);
-
-  const { hidDevices } = useHidDevicesDiscovery();
 
   useEffect(() => {
     if (hidDevices.length > 0) {
