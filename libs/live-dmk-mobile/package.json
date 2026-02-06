@@ -32,6 +32,8 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-management-kit-devtools-core": "file:/Users/olivier.freyssinet/Downloads/npm-snapshot-packages/ledgerhq-device-management-kit-devtools-core-0.0.0-support-no-issue-devtools-improvements-20260206104045.tgz",
+    "@ledgerhq/device-management-kit-devtools-rozenite": "file:/Users/olivier.freyssinet/Downloads/ledgerhq-device-management-kit-devtools-rozenite-0.0.1.tgz",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

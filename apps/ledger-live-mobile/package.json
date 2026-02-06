@@ -93,6 +93,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-management-kit-devtools-rozenite": "file:/Users/olivier.freyssinet/Downloads/ledgerhq-device-management-kit-devtools-rozenite-0.0.1.tgz",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",

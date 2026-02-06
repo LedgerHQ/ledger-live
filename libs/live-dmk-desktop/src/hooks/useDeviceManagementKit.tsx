@@ -9,6 +9,12 @@ import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
+import {
+  DevToolsLogger,
+  DevToolsDmkInspector,
+} from "@ledgerhq/device-management-kit-devtools-core";
+import { DEFAULT_CLIENT_WS_URL } from "@ledgerhq/device-management-kit-devtools-websocket-common";
+import { DevToolsWebSocketConnector } from "@ledgerhq/device-management-kit-devtools-websocket-connector";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
@@ -22,11 +28,23 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       firmwareDistributionSalt,
     });
 
+    // Create the WebSocket devtools connector (shared between logger and inspector)
+    const connector = DevToolsWebSocketConnector.getInstance().connect({
+      url: DEFAULT_CLIENT_WS_URL,
+    });
+
+    // Create the devtools logger
+    const devToolsLogger = new DevToolsLogger(connector);
+
     instance = new DeviceManagementKitBuilder()
       .addTransport(webHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
+      .addLogger(devToolsLogger)
       .addConfig({ firmwareDistributionSalt })
       .build();
+
+    // Enable inspector for device sessions and DMK interaction (must be after build)
+    new DevToolsDmkInspector(connector, instance);
   }
 
   return instance;

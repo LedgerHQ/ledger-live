@@ -32,6 +32,9 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-management-kit-devtools-core": "file:/Users/olivier.freyssinet/Downloads/npm-snapshot-packages/ledgerhq-device-management-kit-devtools-core-0.0.0-support-no-issue-devtools-improvements-20260206104045.tgz",
+    "@ledgerhq/device-management-kit-devtools-websocket-common": "file:/Users/olivier.freyssinet/Downloads/npm-snapshot-packages/ledgerhq-device-management-kit-devtools-websocket-common-0.0.0-support-no-issue-devtools-improvements-20260206104045.tgz",
+    "@ledgerhq/device-management-kit-devtools-websocket-connector": "file:/Users/olivier.freyssinet/Downloads/npm-snapshot-packages/ledgerhq-device-management-kit-devtools-websocket-connector-0.0.0-support-no-issue-devtools-improvements-20260206104045.tgz",
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:^",

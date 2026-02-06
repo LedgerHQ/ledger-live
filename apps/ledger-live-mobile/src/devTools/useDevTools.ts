@@ -1,6 +1,7 @@
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
 import { useReactNavigationDevTools } from "@rozenite/react-navigation-plugin";
 import { useMMKVDevTools } from "@rozenite/mmkv-plugin";
+import { useRozeniteConnector } from "@ledgerhq/device-management-kit-devtools-rozenite";
 import { mmkv } from "LLM/storage/mmkvStorageWrapper";
 import { navigationRef } from "~/rootnavigation";
 
@@ -21,6 +22,9 @@ const HookDevTools = () => {
   useMMKVDevTools({
     storages: [mmkv],
   });
+
+  // Initialise the DMK devtools Rozenite connection
+  useRozeniteConnector();
 
   return null;
 };
