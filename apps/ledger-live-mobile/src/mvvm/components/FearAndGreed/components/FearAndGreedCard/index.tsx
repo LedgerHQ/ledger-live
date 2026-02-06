@@ -17,7 +17,12 @@ function FearAndGreedCard({ data, onPress }: FearAndGreedCardProps) {
   const translationKey = getFearAndGreedTranslationKey(value);
 
   return (
-    <Tile appearance="card" lx={{ width: "s96", flexGrow: 1 }} onPress={onPress}>
+    <Tile
+      appearance="card"
+      lx={{ width: "s96", flexGrow: 1 }}
+      onPress={onPress}
+      testID="fear-and-greed-card"
+    >
       <Box lx={{ height: "s40", justifyContent: "center", alignItems: "center" }}>
         <FearAndGreedArc value={value} />
       </Box>
