@@ -538,15 +538,6 @@ jobs:
           fi
         shell: bash
 
-      - name: Start mitmproxy to capture requests
-        run: |
-          # Start mitmproxy in background to capture all HTTP/HTTPS requests
-          mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost --save /tmp/mitmproxy_dump.txt &
-          echo $! > /tmp/mitmproxy.pid
-          # Wait a moment for mitmproxy to start
-          sleep 3
-        shell: bash
-
       - name: create AVD with cold boot and generate snapshot for caching
         # if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
@@ -565,6 +556,12 @@ jobs:
           script: |
             # Start with cold boot to use patched Magisk image
             ./tools/scripts/wait_emulator_idle.sh
+
+            # Start mitmproxy to capture network requests
+            mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost --save /tmp/mitmproxy_dump.txt &
+            echo $! > /tmp/mitmproxy.pid
+            # Wait a moment for mitmproxy to start
+            sleep 3
 
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -589,6 +586,20 @@ jobs:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
           PRODUCTION: ${{ inputs.production_firebase }}
+
+      - name: Stop mitmproxy and save dump
+        if: always() && steps.detox.outcome != 'skipped'
+        run: |
+          # Stop mitmproxy if running
+          if [ -f /tmp/mitmproxy.pid ]; then
+            kill $(cat /tmp/mitmproxy.pid) 2>/dev/null || true
+            wait $(cat /tmp/mitmproxy.pid) 2>/dev/null || true
+          fi
+          # Ensure dump file exists and has content
+          if [ ! -f /tmp/mitmproxy_dump.txt ]; then
+            echo "mitmproxy dump file not found, creating empty file" > /tmp/mitmproxy_dump.txt
+          fi
+        shell: bash
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
