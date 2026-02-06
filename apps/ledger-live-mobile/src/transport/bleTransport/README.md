@@ -76,7 +76,7 @@ Components that perform BLE scanning must check for mock mode:
 ```typescript
 import Config from "react-native-config";
 import { useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
-import { useMockBleDevicesScanning } from "~/react-native-hw-transport-ble/useMockBle";
+import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
 
 const isMockMode = Boolean(Config.MOCK || Config.DETOX);
 const scanningEnabled = /* your condition */;
