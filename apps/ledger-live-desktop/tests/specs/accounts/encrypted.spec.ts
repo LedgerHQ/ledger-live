@@ -13,6 +13,7 @@ test("accounts are restored on an encrypted app.json", async ({ page }) => {
   await lockscreenPage.checkInputErrorVisibility("visible");
   await lockscreenPage.login("foobar");
   await layout.goToAccounts();
+  await page.getByTestId("accounts-account-row-item").first().waitFor({ state: "visible" });
   const accountsPage = new AccountsPage(page);
   const count = await accountsPage.countAccounts();
   expect(count).toBe(6);
