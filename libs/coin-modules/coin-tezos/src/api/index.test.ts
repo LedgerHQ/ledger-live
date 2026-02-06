@@ -232,4 +232,40 @@ describe("Testing estimateFees function", () => {
       },
     });
   });
+
+  it("returns value 2000 for unrevealed account delegate (reveal + delegate, minFees applied)", async () => {
+    const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "user",
+      balance: 1000000,
+      revealed: false,
+      address: unrevealedSender,
+      publicKey: undefined,
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount);
+
+    const expectedTotalFees = 2000n;
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: expectedTotalFees,
+      fees: 1000n,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+    });
+
+    const result = await api.estimateFees({
+      intentType: "staking",
+      type: "delegate",
+      sender: unrevealedSender,
+      recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+      amount: 0n,
+    } as TransactionIntent);
+
+    expect(result.value).toBe(expectedTotalFees);
+    expect(result.parameters.gasLimit).toBe(DEFAULT_GAS_LIMIT);
+    expect(result.parameters.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+  });
 });
