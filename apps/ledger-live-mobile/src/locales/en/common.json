@@ -3005,7 +3005,8 @@
         "receiveFunds": "Receive",
         "buyCrypto": "Buy"
       },
-      "addAccountCta": "Add Account"
+      "addAccountCta": "Add Account",
+      "addCryptoAccount": "Add crypto account"
     },
     "settings": {
       "header": "Account settings",
