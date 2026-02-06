@@ -1,7 +1,7 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
 
-export type PortfolioBalanceState = "noSigner" | "noFund" | "normal";
+export type PortfolioBalanceState = "noSigner" | "noAccounts" | "normal";
 
 export interface PortfolioBalanceSectionProps {
   readonly showAssets: boolean;
