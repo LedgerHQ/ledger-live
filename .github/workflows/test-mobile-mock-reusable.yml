@@ -531,6 +531,15 @@ jobs:
           fi
         shell: bash
 
+      - name: Initialize mitmproxy to capture requests
+        run: |
+          # Start mitmproxy in background to capture all HTTP/HTTPS requests
+          mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost --save /tmp/mitmproxy_dump.txt &
+          echo $! > /tmp/mitmproxy.pid
+          # Wait a moment for mitmproxy to start
+          sleep 3
+        shell: bash
+
       - name: create AVD with cold boot and generate snapshot for caching
         # if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
@@ -581,6 +590,14 @@ jobs:
         with:
           name: "android-test-artifacts-${{ matrix.shard }}"
           path: apps/ledger-live-mobile/artifacts/
+
+      - name: Upload mitmproxy artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        id: "mitmproxy-artifacts"
+        with:
+          name: "android-mitmproxy-artifacts-${{ matrix.shard }}"
+          path: /tmp/mitmproxy_dump.txt
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
