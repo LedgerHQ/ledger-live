@@ -7,7 +7,8 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, of, throwError } from "rxjs";
+import { take, toArray } from "rxjs/operators";
 import {
   AccountShapeInfo,
   bip32asBuffer,
@@ -104,6 +105,40 @@ describe("makeSync", () => {
       subAccounts: undefined,
     };
     expect(newAccount.id).toEqual(expectedAccount.id);
+  });
+
+  it("emits an updater for each Observable account shape", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const shapes = [{ balance: new BigNumber(10) }, { balance: new BigNumber(20) }];
+
+    const accountUpdater = makeSync({
+      getAccountShape: () => of(...shapes),
+    })(account, {} as SyncConfig);
+
+    const updaters = await firstValueFrom(accountUpdater.pipe(toArray()));
+    const updatedAccounts = updaters.map(updater => updater(account));
+
+    expect(updatedAccounts).toHaveLength(2);
+    expect(updatedAccounts[0].spendableBalance).toEqual(new BigNumber(10));
+    expect(updatedAccounts[1].spendableBalance).toEqual(new BigNumber(20));
+  });
+
+  it("propagates Observable errors from getAccountShape", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+
+    const accountUpdater = makeSync({
+      getAccountShape: () => throwError(() => new Error("boom")),
+    })(account, {} as SyncConfig);
+
+    await expect(firstValueFrom(accountUpdater)).rejects.toThrow("boom");
   });
 });
 
@@ -450,6 +485,69 @@ describe("makeScanAccounts", () => {
       },
     });
   });
+
+  it("emits discovered events for each Observable account shape", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () =>
+        of(
+          {
+            id: "1234",
+            used: true,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          },
+          {
+            id: "1234",
+            used: true,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          },
+        ),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).pipe(take(2), toArray()),
+    );
+
+    expect(result).toHaveLength(2);
+    result.forEach(event => {
+      expect(event.type).toEqual("discovered");
+      expect(event.account.used).toBe(true);
+    });
+  });
+
+  it("propagates Observable errors from getAccountShape", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () => throwError(() => new Error("boom")),
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+
+    await expect(
+      firstValueFrom(
+        scanAccounts({
+          currency: getCryptoCurrencyById("algorand"),
+          deviceId: "deviceId",
+          syncConfig: { paginationConfig: {} },
+        }),
+      ),
+    ).rejects.toThrow("boom");
+  });
 });
 
 describe("bip32asBuffer", () => {
@@ -497,7 +595,7 @@ function createAccount(init: Partial<Account>): Account {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    lastSyncDate: new Date(),
+    lastSyncDate: init.lastSyncDate ?? new Date(),
     // subAccounts: [],
     balanceHistoryCache: createEmptyHistoryCache(),
     swapHistory: [],
