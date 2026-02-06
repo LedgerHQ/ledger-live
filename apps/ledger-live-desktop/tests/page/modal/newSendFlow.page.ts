@@ -198,9 +198,16 @@ export class NewSendFlowPage extends Component {
   }
 
   @step("Skip memo")
-  async skipMemo() {
+  async skipMemo(confirm: boolean = true) {
     await this.skipMemoLink.click();
-    await expect(this.skipMemoConfirmButton).toBeVisible(); //TODO use waitFor
+    if (confirm) {
+      await this.confirmSkipMemo();
+    }
+  }
+
+  @step("Confirm skip memo")
+  async confirmSkipMemo() {
+    await this.skipMemoConfirmButton.waitFor({ state: "visible" });
     await this.skipMemoConfirmButton.click();
   }
 
