@@ -125,6 +125,7 @@ function View({
         </StyledBadge>
       </TouchableOpacity>
       <SortBadge
+        testID="market-filter-sort"
         label={t("market.filters.sort")}
         valueLabel={t(
           top100
@@ -159,11 +160,13 @@ function View({
         valueLabel={timeRangeValue?.label ?? ""}
         options={timeRanges}
         onChange={onFilterChange}
+        testID="market-filter-time"
       />
       <TouchableOpacity
         onPress={() => {
           navigation.navigate(ScreenName.MarketCurrencySelect);
         }}
+        testID="market-filter-currency"
       >
         <StyledBadge>
           <Text fontWeight="semiBold" variant="body">
