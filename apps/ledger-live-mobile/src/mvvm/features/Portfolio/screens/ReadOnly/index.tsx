@@ -43,7 +43,6 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         assets={assets}
         goToAssets={goToAssets}
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        showAssets={false}
       />,
     ],
     [shouldDisplayGraphRework, isLNSUpsellBannerShown, assets, goToAssets],

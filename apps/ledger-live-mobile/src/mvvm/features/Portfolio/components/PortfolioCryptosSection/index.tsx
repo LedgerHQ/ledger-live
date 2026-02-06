@@ -23,7 +23,7 @@ export const PortfolioCryptosSection = ({
   const { t } = useTranslation();
 
   return (
-    <Box key="cryptos" lx={{ paddingHorizontal: "s16" }}>
+    <Box key="cryptos">
       <Subheader>
         <SubheaderRow
           onPress={onPressShowAll}

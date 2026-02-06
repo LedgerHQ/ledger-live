@@ -11,28 +11,18 @@ interface PortfolioNoFundsContentProps {
   readonly assets: Asset[];
   readonly goToAssets: () => void;
   readonly isLNSUpsellBannerShown: boolean;
-  readonly showAssets: boolean;
 }
 
 export const PortfolioNoFundsContent = ({
   assets,
   goToAssets,
   isLNSUpsellBannerShown,
-  showAssets,
 }: PortfolioNoFundsContentProps) => (
-  <>
-    <Box lx={{ paddingHorizontal: "s16" }}>
-      <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-      <TransferDrawer />
-    </Box>
-    <PortfolioBannersSection
-      isFirst={true}
-      isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-      showAssets={showAssets}
-    />
-    <Box lx={{ paddingHorizontal: "s16" }}>
-      <MarketBanner />
-    </Box>
+  <Box lx={{ paddingHorizontal: "s16" }}>
+    <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
+    <TransferDrawer />
+    <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
+    <MarketBanner />
     <PortfolioCryptosSection assets={assets} onPressShowAll={goToAssets} />
-  </>
+  </Box>
 );
