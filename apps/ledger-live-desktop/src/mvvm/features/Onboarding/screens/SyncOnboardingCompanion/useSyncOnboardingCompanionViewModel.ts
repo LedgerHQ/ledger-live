@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -13,15 +11,14 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
-import { DesyncOverlay } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
-import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
-import { analyticsFlowName } from "../shared";
+
+import { SeedPathStatus } from "./types";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import LockedDeviceDrawer from "../LockedDeviceDrawer";
+import LockedDeviceDrawer from "~/renderer/components/SyncOnboarding/Manual/LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
@@ -30,8 +27,8 @@ import useCompanionSteps, {
   READY_REDIRECT_DELAY_MS,
   Step,
   StepKey,
-} from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
-import TwoStepCompanion from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/TwoStepCompanion";
+} from "./hooks/useCompanionSteps";
+import { analyticsFlowName } from "./utils/constants/analytics";
 
 const POLLING_PERIOD_MS = 1000;
 
@@ -77,14 +74,13 @@ export type SyncOnboardingCompanionProps = {
 /**
  * Component rendering the synchronous onboarding companion
  */
-const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
+const useSyncOnboardingCompanionViewModel = ({
   device,
   onLostDevice,
   notifySyncOnboardingShouldReset,
   parentRef,
   setCompanionStep,
-}) => {
-  const { t } = useTranslation();
+}: SyncOnboardingCompanionProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
@@ -484,46 +480,18 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     }
   }, [stepKey]);
 
-  return (
-    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
-      <DesyncOverlay
-        isOpen={isDesyncOverlayOpen}
-        delay={desyncOverlayDelay}
-        productName={productName}
-      />
-      <Flex
-        height="100%"
-        width="480px"
-        flexDirection="column"
-        justifyContent="flex-start"
-        alignSelf="center"
-        flexGrow={0}
-        flexShrink={1}
-      >
-        <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
-          {isSyncIncr1Enabled
-            ? t("syncOnboarding.manual.titleTwoStep")
-            : t("syncOnboarding.manual.title", { deviceName })}
-        </Text>
-        <Box>
-          {isSyncIncr1Enabled ? (
-            <TwoStepCompanion
-              deviceName={deviceName}
-              steps={steps}
-              activeStepKey={stepKey}
-              installStep={companionSteps.installStep}
-              isNewSeed={isNewSeed}
-              handleComplete={companionSteps.handleAppStepComplete}
-              seedConfiguration={analyticsSeedConfiguration.current}
-              hasSyncStep={companionSteps.hasSyncStep}
-            />
-          ) : (
-            <VerticalTimeline steps={steps} />
-          )}
-        </Box>
-      </Flex>
-    </Flex>
-  );
+  return {
+    isDesyncOverlayOpen,
+    desyncOverlayDelay,
+    productName,
+    isSyncIncr1Enabled,
+    deviceName,
+    steps,
+    stepKey,
+    companionSteps,
+    analyticsSeedConfiguration,
+    isNewSeed,
+  };
 };
 
-export default SyncOnboardingCompanion;
+export default useSyncOnboardingCompanionViewModel;
