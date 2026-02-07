@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
@@ -9,6 +9,7 @@ import { DefaultAccountSwapParamList, DetailsSwapParamList } from "~/screens/Swa
 import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
 import { useIsSwapTab } from "./useIsSwapTab";
+import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 
 function getScreenTitle({
   webviewCurrentPage,
@@ -79,8 +80,13 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
       swapVersion: SWAP_VERSION,
     });
 
-    webviewRef.current?.resetToInitialURL();
-  }, [webviewRef, track]);
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: ScreenName.SwapTab }],
+      }),
+    );
+  }, [track, navigation]);
 
   useEffect(() => {
     if (!isSwapTabScreen) return;
@@ -103,13 +109,7 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
     if (isTwoStepApproval && isTransactionComplete) {
       navigation.setOptions({
         headerLeft: undefined,
-        headerRight: () => (
-          <Flex p={6}>
-            <Touchable touchableTestID="NavigationHeaderClose" onPress={navigateToSwapForm}>
-              <Icons.Close color={"neutral.c100"} />
-            </Touchable>
-          </Flex>
-        ),
+        headerRight: () => <NavigationHeaderCloseButton onPress={navigateToSwapForm} />,
         headerTitle: getScreenTitle({ t, webviewCurrentPage, isTransactionComplete }),
       });
     } else if (
