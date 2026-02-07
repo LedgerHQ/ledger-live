@@ -345,6 +345,11 @@ export type LLDCoinFamily<
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
 
   /**
+   * Allow to overwrite recipient step in Send modal
+   */
+  StepRecipient?: React.ComponentType<SendStepProps>;
+
+  /**
    * Allow to add specific component in Send modal below the recipient address
    */
   StepRecipientCustomAlert?: React.ComponentType<{ status: TS }>;

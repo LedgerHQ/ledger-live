@@ -6,7 +6,6 @@ import { TRANSACTION_TYPE } from "../constants";
 const mapTransactionTypeToMethod: Record<TRANSACTION_TYPE, string> = {
   [TRANSACTION_TYPE.TRANSFER_PUBLIC]: "Transfer Public",
   [TRANSACTION_TYPE.TRANSFER_PRIVATE]: "Transfer Private",
-  [TRANSACTION_TYPE.SPLIT]: "Split",
   [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: "Convert Public to Private",
   [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: "Convert Private to Public",
 };

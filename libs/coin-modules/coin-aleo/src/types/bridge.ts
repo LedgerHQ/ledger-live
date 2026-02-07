@@ -15,13 +15,56 @@ import type { AleoUnspentRecord, ProvableApi } from "./logic";
 export type Transaction = TransactionCommon & {
   family: "aleo";
   fees: BigNumber;
-  type: TRANSACTION_TYPE;
-};
+} & (
+    | {
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC;
+      }
+    | {
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        amountRecord: string | null;
+        feeRecord: string | null;
+      }
+    | {
+        type: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+      }
+    | {
+        type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        amountRecord: string | null;
+        feeRecord: string | null;
+      }
+  );
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "aleo";
   fees: string;
-};
+} & (
+    | {
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC;
+      }
+    | {
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        amountRecord: string | null;
+        feeRecord: string | null;
+      }
+    | {
+        type: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+      }
+    | {
+        type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        amountRecord: string | null;
+        feeRecord: string | null;
+      }
+  );
+
+export type TransactionTransfer = Extract<
+  Transaction,
+  { type: TRANSACTION_TYPE.TRANSFER_PUBLIC | TRANSACTION_TYPE.TRANSFER_PRIVATE }
+>;
+
+export type TransactionSelfTransfer = Extract<
+  Transaction,
+  { type: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE | TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC }
+>;
 
 export type TransactionStatus = TransactionStatusCommon;
 

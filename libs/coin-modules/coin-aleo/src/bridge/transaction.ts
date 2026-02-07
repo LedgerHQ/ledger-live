@@ -22,23 +22,56 @@ export function formatTransaction(transaction: Transaction, account: Account): s
 }
 
 export function fromTransactionRaw(tr: TransactionRaw): Transaction {
-  const common = fromTransactionCommonRaw(tr);
-
-  return {
-    ...common,
+  const commonGeneric = fromTransactionCommonRaw(tr);
+  const commonAleo = {
     family: tr.family,
     fees: new BigNumber(tr.fees),
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+  };
+
+  if (
+    tr.type === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    tr.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      type: tr.type,
+      amountRecord: tr.amountRecord,
+      feeRecord: tr.feeRecord,
+    };
+  }
+
+  return {
+    ...commonGeneric,
+    ...commonAleo,
+    type: tr.type,
   };
 }
 
 export function toTransactionRaw(t: Transaction): TransactionRaw {
-  const common = toTransactionCommonRaw(t);
-
-  return {
-    ...common,
+  const commonGeneric = toTransactionCommonRaw(t);
+  const commonAleo = {
     family: t.family,
     fees: t.fees.toString(),
+  };
+
+  if (
+    t.type === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    t.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      type: t.type,
+      amountRecord: t.amountRecord,
+      feeRecord: t.feeRecord,
+    };
+  }
+
+  return {
+    ...commonGeneric,
+    ...commonAleo,
+    type: t.type,
   };
 }
 

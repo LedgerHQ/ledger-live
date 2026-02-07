@@ -19,6 +19,7 @@ import type {
   ProvableApi,
   AleoPrivateRecord,
 } from "../types";
+import { getViewKey } from "../logic/utils";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
@@ -27,8 +28,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   let provableApi: ProvableApi | null = null;
 
   if (initialAccount) {
-    viewKey = decodeAccountId(initialAccount.id).customData;
-    invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
+    viewKey = getViewKey(initialAccount);
 
     provableApi = await accessProvableApi(
       currency,

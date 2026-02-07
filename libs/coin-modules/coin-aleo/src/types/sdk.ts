@@ -71,7 +71,7 @@ export interface PreparedRequestResponse {
 }
 
 export interface AuthorizationResponse {
-  authorization: string;
+  authorization: Record<string, unknown>;
   execution_id: string;
 }
 

@@ -293,7 +293,7 @@ const envDefinitions = {
     desc: "Aleo testnet node URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
+    def: "http://10.3.19.130/network/testnet",
     parser: stringParser,
     desc: "Aleo testnet SDK URL",
   },

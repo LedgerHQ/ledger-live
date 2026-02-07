@@ -2,6 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 
+interface Props {
+  icon?: React.ReactNode;
+}
+
 const Separator = styled.div`
   display: flex;
   align-items: center;
@@ -23,12 +27,10 @@ const Separator = styled.div`
     }
   }
 `;
-const StepRecipientSeparator = () => (
+const StepRecipientSeparator = ({ icon = <IconArrowDown size={16} /> }: Props) => (
   <Separator>
     <div />
-    <div>
-      <IconArrowDown size={16} />
-    </div>
+    <div>{icon}</div>
     <div />
   </Separator>
 );

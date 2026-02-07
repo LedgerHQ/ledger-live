@@ -32,7 +32,8 @@ export async function getPrivateBalance({
     unspentRecordsWithPlaintext.push({
       ...record,
       microcredits,
-      plaintext: JSON.stringify(decryptedRecord),
+      // FIXME: should come either from backend or dedicated util for formatting decrypted record
+      plaintext: `{ owner: ${decryptedRecord.owner}, microcredits: ${decryptedRecord.data.microcredits}, _nonce: ${decryptedRecord.nonce}.public, _version: ${decryptedRecord.version}u8.public }`,
     });
   });
 

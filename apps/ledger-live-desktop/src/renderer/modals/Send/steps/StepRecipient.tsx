@@ -41,20 +41,21 @@ import { Account } from "@ledgerhq/types-live";
 
 const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
-const StepRecipient = ({
-  t,
-  account,
-  parentAccount,
-  openedFromAccount,
-  transaction,
-  onChangeAccount,
-  onChangeTransaction,
-  error,
-  status,
-  maybeRecipient,
-  onResetMaybeRecipient,
-  currencyName,
-}: StepProps) => {
+const StepRecipient = (props: StepProps) => {
+  const {
+    t,
+    account,
+    parentAccount,
+    openedFromAccount,
+    transaction,
+    onChangeAccount,
+    onChangeTransaction,
+    error,
+    status,
+    maybeRecipient,
+    onResetMaybeRecipient,
+    currencyName,
+  } = props;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
   const lldMemoTag = useFeature("lldMemoTag");
@@ -71,8 +72,14 @@ const StepRecipient = ({
   if (!status || !account) return null;
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const extensions = getTokenExtensions(account);
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const CustomStepRecipient = specific?.StepRecipient;
 
+  if (CustomStepRecipient) {
+    return <CustomStepRecipient {...props} />;
+  }
+
+  const extensions = getTokenExtensions(account);
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 

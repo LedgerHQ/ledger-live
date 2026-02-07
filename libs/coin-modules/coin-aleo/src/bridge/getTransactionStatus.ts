@@ -9,16 +9,27 @@ import {
 import type {
   Transaction as AleoTransaction,
   TransactionStatus as AleoTransactionStatus,
+  TransactionSelfTransfer,
+  TransactionStatus,
+  TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
-import { calculateAmount } from "../logic/utils";
+import { calculateAmount, isSelfTransferTransaction, isTransferTransaction } from "../logic/utils";
 import aleoCoinConfig from "../config";
 import { TRANSACTION_TYPE } from "../constants";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
 
-async function validateRecipient(account: Account, recipient: string): Promise<Error | null> {
+async function validateRecipient({
+  account,
+  recipient,
+  allowSelfTransfer,
+}: {
+  account: Account;
+  recipient: string;
+  allowSelfTransfer: boolean;
+}): Promise<Error | null> {
   if (!recipient || recipient.length === 0) {
     return new RecipientRequired();
   }
@@ -30,18 +41,22 @@ async function validateRecipient(account: Account, recipient: string): Promise<E
     return new InvalidAddress("", { currencyName });
   }
 
-  if (account.freshAddress === recipient) {
+  if (!allowSelfTransfer && account.freshAddress === recipient) {
     return new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   return null;
 }
 
-export const getTransactionStatus: AccountBridge<
-  AleoTransaction,
-  Account,
-  AleoTransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
+async function handleTransferTransaction({
+  account,
+  transaction,
+  allowSelfTransfer,
+}: {
+  account: Account;
+  transaction: TransactionTransfer | TransactionSelfTransfer;
+  allowSelfTransfer: boolean;
+}): Promise<TransactionStatus> {
   const errors: Errors = {};
   const warnings: Warnings = {};
 
@@ -53,7 +68,11 @@ export const getTransactionStatus: AccountBridge<
   });
   const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
-  const recipientError = await validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient({
+    account,
+    recipient: transaction.recipient,
+    allowSelfTransfer,
+  });
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -67,6 +86,20 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new NotEnoughBalance("");
   }
 
+  // FIXME: custom errors probably
+  if (
+    transaction.type === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    if (!transaction.amountRecord) {
+      errors.amountRecord = new Error("Amount record is required for private transactions");
+    }
+
+    if (!transaction.feeRecord) {
+      errors.feeRecord = new Error("Fee record is required for private transactions");
+    }
+  }
+
   return {
     amount: calculatedAmount.amount,
     totalSpent: calculatedAmount.totalSpent,
@@ -74,4 +107,27 @@ export const getTransactionStatus: AccountBridge<
     errors,
     warnings,
   };
+}
+
+export const getTransactionStatus: AccountBridge<
+  AleoTransaction,
+  Account,
+  AleoTransactionStatus
+>["getTransactionStatus"] = async (account, transaction) => {
+  if (isTransferTransaction(transaction)) {
+    return handleTransferTransaction({
+      account,
+      transaction,
+      allowSelfTransfer: false,
+    });
+  } else if (isSelfTransferTransaction(transaction)) {
+    return handleTransferTransaction({
+      account,
+      transaction,
+      allowSelfTransfer: true,
+    });
+  }
+
+  // @ts-expect-error - FIXME:
+  throw new Error(`aleo: unsupported transaction type in getTransactionStatus ${transaction.type}`);
 };
