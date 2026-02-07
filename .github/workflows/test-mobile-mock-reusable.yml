@@ -529,8 +529,13 @@ jobs:
             sudo mkdir -p /usr/local/share/ca-certificates/
             sudo cp ~/.mitmproxy/mitmproxy-ca-cert.pem /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
             sudo update-ca-certificates
+
             export HTTP_PROXY=http://127.0.0.1:8080
             export HTTPS_PROXY=http://127.0.0.1:8080
+
+            sudo iptables -t nat -A PREROUTING -i virbr0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+            sudo iptables -t nat -A PREROUTING -i virbr0 -p tcp --dport 443 -j REDIRECT --to-port 8080
+
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
             sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
             sudo networksetup -setwebproxy "Wi-Fi" 127.0.0.1 8080
@@ -541,7 +546,7 @@ jobs:
       - name: Start mitmproxy to capture requests
         run: |
           # Start mitmproxy in background to capture all HTTP/HTTPS requests
-          mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost --save /tmp/mitmproxy_dump.txt &
+          mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --mode transparent --showhost --save /tmp/mitmproxy_dump.txt &
           echo $! > /tmp/mitmproxy.pid
           # Wait a moment for mitmproxy to start
           sleep 3
