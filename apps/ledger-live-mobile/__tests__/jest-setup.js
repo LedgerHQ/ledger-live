@@ -111,6 +111,7 @@ jest.mock("~/analytics/segment", () => ({
     alias: jest.fn(),
     reset: jest.fn(),
   })),
+  useTrack: jest.fn(() => jest.fn()),
 }));
 
 // Mock of Native Modules
