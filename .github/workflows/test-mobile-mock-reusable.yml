@@ -535,7 +535,7 @@ jobs:
       - name: Start mitmproxy to capture requests
         run: |
           # Start mitmproxy in REGULAR mode (not transparent)
-          mitmdump --set confdir=~/.mitmproxy --listen-host 0.0.0.0 --listen-port 8080 --showhost -w /tmp/mitmproxy_dump.mitm &
+          mitmdump --set confdir=~/.mitmproxy --listen-host 0.0.0.0 --mode transparent --listen-port 8080 --showhost -w /tmp/mitmproxy_dump.mitm &
           echo $! > /tmp/mitmproxy.pid
           sleep 3
         shell: bash
