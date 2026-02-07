@@ -77,7 +77,6 @@ export const WebView = forwardRef<WebviewAPI, Props>(
           manifest={manifest}
           customHandlers={customHandlers}
           onStateChange={setWebviewState}
-          allowsBackForwardNavigationGestures={false}
           inputs={{
             source: initialSource,
             swapApiBase: SWAP_API_BASE,
