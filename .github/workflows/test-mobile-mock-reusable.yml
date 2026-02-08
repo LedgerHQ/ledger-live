@@ -564,51 +564,51 @@ jobs:
           cores: ${{ env.AVD_CORES }}
           ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }} -writable-system -http-proxy 127.0.0.1:8080
+          emulator-options: ${{ env.AVD_OPTIONS }} # -writable-system -http-proxy 127.0.0.1:8080
           script: |
             ./tools/scripts/wait_emulator_idle.sh
 
-            # Install mitmproxy certificate on the emulator
-            adb root
-            sleep 2
-
-            # Remount system partition as writable
-            adb shell avbctl disable-verification
-            adb disable-verity
-            adb reboot
-            sleep 30
-            ./tools/scripts/wait_emulator_idle.sh
-
-            adb root
-            sleep 2
-            adb remount
-            sleep 2
-
-            # Get certificate hash
-            CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.pem | head -1)
-
-            # Create certificate file with proper name
-            cat ~/.mitmproxy/mitmproxy-ca-cert.pem > ${CERT_HASH}.0
-
-            # Push to emulator
-            adb push ${CERT_HASH}.0 /sdcard/
-            adb shell "su 0 cp /sdcard/${CERT_HASH}.0 /system/etc/security/cacerts/${CERT_HASH}.0"
-            adb shell "su 0 chmod 644 /system/etc/security/cacerts/${CERT_HASH}.0"
-
-            # Configure proxy settings
-            adb shell settings put global http_proxy 10.0.2.2:8080
-
-            # Verify
-            echo "Proxy setting:"
-            adb shell settings get global http_proxy
-
-            echo "Certificate installed:"
-            adb shell ls -la /system/etc/security/cacerts/${CERT_HASH}.0
-
-            # Final reboot to apply everything
-            adb reboot
-            sleep 30
-            ./tools/scripts/wait_emulator_idle.sh
+            # # Install mitmproxy certificate on the emulator
+            # adb root
+            # sleep 2
+            #
+            # # Remount system partition as writable
+            # adb shell avbctl disable-verification
+            # adb disable-verity
+            # adb reboot
+            # sleep 30
+            # ./tools/scripts/wait_emulator_idle.sh
+            #
+            # adb root
+            # sleep 2
+            # adb remount
+            # sleep 2
+            #
+            # # Get certificate hash
+            # CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.pem | head -1)
+            #
+            # # Create certificate file with proper name
+            # cat ~/.mitmproxy/mitmproxy-ca-cert.pem > ${CERT_HASH}.0
+            #
+            # # Push to emulator
+            # adb push ${CERT_HASH}.0 /sdcard/
+            # adb shell "su 0 cp /sdcard/${CERT_HASH}.0 /system/etc/security/cacerts/${CERT_HASH}.0"
+            # adb shell "su 0 chmod 644 /system/etc/security/cacerts/${CERT_HASH}.0"
+            #
+            # # Configure proxy settings
+            # adb shell settings put global http_proxy 10.0.2.2:8080
+            #
+            # # Verify
+            # echo "Proxy setting:"
+            # adb shell settings get global http_proxy
+            #
+            # echo "Certificate installed:"
+            # adb shell ls -la /system/etc/security/cacerts/${CERT_HASH}.0
+            #
+            # # Final reboot to apply everything
+            # adb reboot
+            # sleep 30
+            # ./tools/scripts/wait_emulator_idle.sh
 
       - name: Run Android Tests
         id: detox
