@@ -20,7 +20,12 @@ export const MemoTagDrawer = memo(({ open, onClose, onNext, onModalHide }: Props
   const { t } = useTranslation();
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose} onModalHide={onModalHide}>
+    <QueuedDrawer
+      isRequestingToBeOpened={open}
+      onClose={onClose}
+      onModalHide={onModalHide}
+      preventKeyboardDismissOnClose
+    >
       <Flex alignItems="center" mb={7}>
         <Circle size={72} bg={colors.opacityDefault.c05}>
           <Icons.InformationFill size="L" color="primary.c80" />
