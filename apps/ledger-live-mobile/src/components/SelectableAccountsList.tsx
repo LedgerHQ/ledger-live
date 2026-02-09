@@ -142,7 +142,7 @@ const SelectableAccountsList = ({
   );
 
   return (
-    <Flex marginBottom={7} {...props}>
+    <Flex marginBottom={7} testID="selectable-accounts-list" {...props}>
       {header ? (
         <Header
           text={header}
@@ -301,7 +301,7 @@ const SelectableAccount = ({
   }, [startAnimation]);
 
   const inner = (
-    <Animated.View style={[animatedStyle]}>
+    <Animated.View style={[animatedStyle]} testID={`account-${account.id}`}>
       <Flex
         {...styles.selectableAccount}
         flexDirection="row"

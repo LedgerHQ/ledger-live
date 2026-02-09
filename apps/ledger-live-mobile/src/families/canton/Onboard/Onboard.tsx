@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
 import { CantonOnboardAccountParamList } from "./types";
-import Accept from "./steps/Accept";
+import OnboardScreen from "./OnboardScreen";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type OnboardProps = StackNavigatorProps<
@@ -25,7 +25,7 @@ function Onboard({ route }: OnboardProps) {
     >
       <Stack.Screen
         name={ScreenName.CantonOnboardAccount}
-        component={Accept}
+        component={OnboardScreen}
         initialParams={route.params}
         options={{ headerTitle: "" }}
       />

@@ -9,10 +9,10 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
-// Mock the Accept component
-jest.mock("./steps/Accept", () => {
-  return function MockAccept() {
-    return <div data-testid="accept-component">Accept Component</div>;
+// Mock the OnboardScreen component
+jest.mock("./OnboardScreen", () => {
+  return function MockOnboardScreen() {
+    return <div data-testid="onboard-screen-component">OnboardScreen Component</div>;
   };
 });
 
@@ -140,10 +140,10 @@ describe("Canton Onboard Component", () => {
     });
   });
 
-  it("should pass route params to Accept component", () => {
+  it("should pass route params to OnboardScreen component", () => {
     const result = render(<TestNavigator />);
 
-    // The Accept component should be rendered with the correct params
+    // The OnboardScreen component should be rendered with the correct params
     expect(result).toBeDefined();
   });
 
