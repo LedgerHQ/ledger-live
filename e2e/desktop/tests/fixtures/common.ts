@@ -16,6 +16,7 @@ import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import { attachNetworkLogging } from "tests/utils/networkLogging";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -44,6 +45,7 @@ type TestFixtures = {
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
 
@@ -93,9 +95,11 @@ export const test = base.extend<TestFixtures>({
   userdataDestinationPath: async ({}, use) => {
     await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
   },
+
   userdataOriginalFile: async ({ userdata }, use) => {
     await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
   },
+
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     await use(fullFilePath);
@@ -119,7 +123,6 @@ export const test = base.extend<TestFixtures>({
     use,
     testInfo,
   ) => {
-    // create userdata path
     await mkdir(userdataDestinationPath, { recursive: true });
 
     const fileUserData = userdataOriginalFile
@@ -128,6 +131,7 @@ export const test = base.extend<TestFixtures>({
 
     const userData = merge({ data: { settings } }, fileUserData);
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+
     if (extraUserdataFiles) {
       await Promise.all(
         Object.entries(extraUserdataFiles).map(([name, contents]) =>
@@ -141,6 +145,7 @@ export const test = base.extend<TestFixtures>({
     try {
       setEnv("PLAYWRIGHT_RUN", true);
       setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
+
       if (IS_NOT_MOCK && speculosApp) {
         setEnv("MOCK", "");
         process.env.MOCK = "";
@@ -166,7 +171,6 @@ export const test = base.extend<TestFixtures>({
 
       const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, featureFlags);
 
-      // default environment variables
       env = Object.assign(
         {
           ...process.env,
@@ -185,7 +189,6 @@ export const test = base.extend<TestFixtures>({
         env,
       );
 
-      // launch app
       const windowSize = { width: 1024, height: 768 };
 
       const electronApp: ElectronApplication = await launchApp({
@@ -211,11 +214,12 @@ export const test = base.extend<TestFixtures>({
       }
     }
   },
+
   page: async ({ electronApp }, use, testInfo) => {
-    // app is ready
     const page = await electronApp.firstWindow();
-    // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
+
+    attachNetworkLogging(page, testInfo);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
@@ -224,7 +228,6 @@ export const test = base.extend<TestFixtures>({
       });
     }
 
-    // record all logs into an artifact
     const logFile = testInfo.outputPath("logs.log");
     page.on("console", msg => {
       const txt = msg.text();
@@ -232,25 +235,20 @@ export const test = base.extend<TestFixtures>({
         console.error(txt);
       }
       if (IS_DEBUG_MODE) {
-        // Direct Electron console to Node terminal.
         console.log(txt);
       }
       safeAppendFile(logFile, `${txt}\n`);
     });
 
-    // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
-    // use page in the test
     await use(page);
 
-    // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
       await captureArtifacts(page, testInfo, electronApp);
     }
 
-    //Remove video if test passed
     if (testInfo.status === "passed") {
       await electronApp.close();
       await page.video()?.delete();
