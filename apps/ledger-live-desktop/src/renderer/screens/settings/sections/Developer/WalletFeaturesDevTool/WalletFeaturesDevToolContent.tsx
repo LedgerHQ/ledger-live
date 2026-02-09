@@ -11,6 +11,10 @@ import {
   TourSection,
 } from "./components";
 import { Divider } from "@ledgerhq/lumen-ui-react";
+import {
+  useWalletV4TourDrawerViewModel,
+  WalletV4TourDialog,
+} from "LLD/features/WalletV4Tour/Drawer";
 
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
@@ -25,6 +29,7 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     handleToggleParam,
     handleToggleHasSeenTour,
   } = useWalletFeaturesDevToolViewModel();
+  const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useWalletV4TourDrawerViewModel();
 
   return (
     <div className="flex flex-col gap-2 pt-2">
@@ -63,7 +68,10 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
           <TourSection
             hasSeenTour={hasSeenWalletV4Tour}
             onToggleHasSeenTour={handleToggleHasSeenTour}
+            onOpenDrawer={handleOpenDialog}
           />
+
+          <WalletV4TourDialog isOpen={isDialogOpen} onClose={handleCloseDialog} />
 
           <div className="flex gap-4">
             <QuickActions

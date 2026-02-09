@@ -6,9 +6,14 @@ import { ToggleRow } from "./ToggleRow";
 interface TourSectionProps {
   readonly hasSeenTour: boolean;
   readonly onToggleHasSeenTour: () => void;
+  readonly onOpenDrawer: () => void;
 }
 
-export const TourSection = ({ hasSeenTour, onToggleHasSeenTour }: TourSectionProps) => {
+export const TourSection = ({
+  hasSeenTour,
+  onToggleHasSeenTour,
+  onOpenDrawer,
+}: TourSectionProps) => {
   const { t } = useTranslation();
 
   return (
@@ -28,7 +33,7 @@ export const TourSection = ({ hasSeenTour, onToggleHasSeenTour }: TourSectionPro
             : "User has not seen the tour yet."
         }
       />
-      <Button appearance="accent" size="sm" onClick={() => {}}>
+      <Button appearance="accent" size="sm" onClick={onOpenDrawer}>
         {t("settings.developer.walletFeaturesDevTool.openDrawer")}
       </Button>
     </div>
