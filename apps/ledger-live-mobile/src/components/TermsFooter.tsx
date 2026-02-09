@@ -84,7 +84,7 @@ const TermsFooter: React.FC<{
       {sponsored && (
         <>
           {" "}
-          <Trans i18nKey="DeviceAction.swap.acceptTermsSponsored" />
+          <Trans i18nKey="DeviceAction.confirmSwap.acceptTermsSponsored" />
         </>
       )}
     </CenteredText>
