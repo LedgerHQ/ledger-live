@@ -6,10 +6,16 @@ import { useTranslation } from "~/context/Locale";
 import { SEND_FLOW_CONFIG } from "../constants";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
-import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
+import { useAvailableBalance } from "./useAvailableBalance";
+import {
+  getRecipientDisplayValue,
+  getRecipientSearchPrefillValue,
+} from "@ledgerhq/live-common/flows/send/utils";
 
-export type SendFlowLayoutViewModel = {
+export type SendHeaderViewModel = {
   title: string;
+  descriptionText: string;
+  showTitle: boolean;
   canGoBack: boolean;
   isRecipientStep: boolean;
   isAmountStep: boolean;
@@ -18,13 +24,14 @@ export type SendFlowLayoutViewModel = {
   formattedAddress: string;
   recipientPlaceholder: string;
   handleBackPress: () => void;
+  handleClose: () => void;
   handleRecipientInputPress: () => void;
   setRecipientSearchValue: (value: string) => void;
   clearRecipientSearch: () => void;
   handleQrCodeClick: () => void;
 };
 
-export function useSendFlowLayoutViewModel(): SendFlowLayoutViewModel {
+export function useSendHeaderViewModel(): SendHeaderViewModel {
   const navigation = useNavigation();
   const route = useRoute();
   const { t } = useTranslation();
@@ -32,8 +39,7 @@ export function useSendFlowLayoutViewModel(): SendFlowLayoutViewModel {
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
 
-  const currencyName = state.account.currency?.ticker ?? "";
-  const title = t("send.newSendFlow.title", { currency: currencyName });
+  const availableText = useAvailableBalance(state.account.account);
 
   const [currentStep, currentStepConfig] = useMemo<
     readonly [
@@ -48,10 +54,37 @@ export function useSendFlowLayoutViewModel(): SendFlowLayoutViewModel {
     return [step, SEND_FLOW_CONFIG.stepConfigs[step]];
   }, [route.name]);
 
+  const currencyName = state.account.currency?.ticker ?? "";
+  const showTitle = currentStepConfig?.showTitle !== false;
+  const title = showTitle ? t("send.newSendFlow.title", { currency: currencyName }) : "";
+  const descriptionText =
+    showTitle && availableText ? t("send.newSendFlow.available", { amount: availableText }) : "";
+
   const canGoBack = Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
   const showRecipientInput = Boolean(currentStepConfig?.addressInput);
+
+  const recipientFromTransaction = useMemo(() => {
+    const address = state.transaction.transaction?.recipient;
+    if (!address || typeof address !== "string") return null;
+    return { address } as const;
+  }, [state.transaction.transaction?.recipient]);
+
+  const formattedAddress = useMemo(() => {
+    if (isRecipientStep) {
+      return recipientSearchValue.length > 11
+        ? `${recipientSearchValue.slice(0, 4)}...${recipientSearchValue.slice(-4)}`
+        : recipientSearchValue;
+    }
+    if (isAmountStep) {
+      return getRecipientDisplayValue(recipientFromTransaction, {
+        prefixLength: 4,
+        suffixLength: 4,
+      });
+    }
+    return "";
+  }, [isRecipientStep, isAmountStep, recipientSearchValue, recipientFromTransaction]);
 
   const handleBackPress = useCallback(() => {
     if (canGoBack) {
@@ -69,15 +102,20 @@ export function useSendFlowLayoutViewModel(): SendFlowLayoutViewModel {
     }
   }, [canGoBack, close, currentStep, navigation, transaction]);
 
-  const formattedAddress = useMemo(
-    () => formatAddress(recipientSearchValue),
-    [recipientSearchValue],
-  );
+  const handleClose = useCallback(() => {
+    close();
+  }, [close]);
 
   const handleRecipientInputPress = useCallback(() => {
     if (!isAmountStep) return;
+
+    const prefillValue = getRecipientSearchPrefillValue(recipientFromTransaction);
+    if (prefillValue) {
+      setRecipientSearchValue(prefillValue);
+    }
+
     navigation.goBack();
-  }, [isAmountStep, navigation]);
+  }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
 
   const handleQrCodeClick = useCallback(() => {
     // Implementation of QR code scanning on Recipient screen
@@ -89,6 +127,8 @@ export function useSendFlowLayoutViewModel(): SendFlowLayoutViewModel {
 
   return {
     title,
+    descriptionText,
+    showTitle,
     canGoBack,
     isRecipientStep,
     isAmountStep,
@@ -97,6 +137,7 @@ export function useSendFlowLayoutViewModel(): SendFlowLayoutViewModel {
     formattedAddress,
     recipientPlaceholder,
     handleBackPress,
+    handleClose,
     handleRecipientInputPress,
     setRecipientSearchValue,
     clearRecipientSearch,

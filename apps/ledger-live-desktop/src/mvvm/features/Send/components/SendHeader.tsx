@@ -10,7 +10,10 @@ import {
   type SendFlowBusinessContext,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
-import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
+import {
+  getRecipientDisplayValue,
+  getRecipientSearchPrefillValue,
+} from "@ledgerhq/live-common/flows/send/utils";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 
 export function SendHeader() {
