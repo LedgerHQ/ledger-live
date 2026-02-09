@@ -26,6 +26,7 @@ export async function launchApp({
       "--disable-dev-shm-usage",
       "--no-sandbox",
       "--enable-logging",
+
       ...(simulateCamera
         ? [
             "--use-fake-device-for-media-stream",
