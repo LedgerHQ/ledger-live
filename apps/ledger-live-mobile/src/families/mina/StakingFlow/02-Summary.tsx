@@ -22,7 +22,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import Touchable from "~/components/Touchable";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";

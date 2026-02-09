@@ -12,7 +12,7 @@ import { TrackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { MinaStakingFlowParamList } from "./types";
