@@ -2,14 +2,13 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import { Icons, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Animated, StyleProp, StyleSheet, TextStyle, View } from "react-native";
 import Config from "react-native-config";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -117,11 +116,12 @@ function StakingSummary({ navigation, route }: Props) {
   const color = getCurrencyColor(currency);
 
   const onContinue = useCallback(async () => {
+    if (!transaction || transaction.family !== "mina") return;
     navigation.navigate(ScreenName.MinaStakingSelectDevice, {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction: transaction as MinaTransaction,
+      transaction,
       status,
     });
   }, [route.params, navigation, account.id, parentAccount?.id, transaction, status]);

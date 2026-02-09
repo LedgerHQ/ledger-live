@@ -4,7 +4,7 @@ import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { TFunction } from "i18next";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

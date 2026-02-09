@@ -1,6 +1,6 @@
 import { CompositeScreenProps } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {
   StackNavigatorNavigation,
