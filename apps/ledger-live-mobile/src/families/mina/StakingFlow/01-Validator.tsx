@@ -1,11 +1,11 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { MinaAccount, ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useMemo, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
@@ -23,6 +23,10 @@ type Props = CompositeScreenProps<
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
+function isMinaAccount(account: AccountLike): account is MinaAccount {
+  return account.type === "Account";
+}
+
 function StakingValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
@@ -32,11 +36,10 @@ function StakingValidator({ navigation, route }: Props) {
   invariant(account.type === "Account", "account must be of type Account");
 
   const unit = useAccountUnit(account);
-  const mainAccount = getMainAccount<MinaAccount>(account as MinaAccount, undefined);
+  const minaResources = isMinaAccount(account) ? account.resources : undefined;
   const blockProducers = useMemo(() => {
-    return mainAccount?.resources?.blockProducers || [];
-    // usa blockProducers
-  }, [mainAccount?.resources?.blockProducers]);
+    return minaResources?.blockProducers || [];
+  }, [minaResources?.blockProducers]);
 
   // Sort validators by stake (highest first) and filter by search
   const validators = useMemo(() => {
