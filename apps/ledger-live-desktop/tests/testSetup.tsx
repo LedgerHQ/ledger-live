@@ -99,6 +99,7 @@ function Providers({
   withLiveApp = false,
   initialCountervalues,
   skipRouter = false,
+  initialRoute,
 }: {
   children: React.ReactNode;
   store: ReduxStore;
@@ -106,6 +107,7 @@ function Providers({
   withLiveApp?: boolean;
   initialCountervalues?: CounterValuesStateRaw;
   skipRouter?: boolean;
+  initialRoute?: string;
 }): React.JSX.Element {
   const queryClient = new QueryClient();
 
@@ -121,7 +123,13 @@ function Providers({
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-          {skipRouter ? routerContent : <MemoryRouter>{routerContent}</MemoryRouter>}
+          {skipRouter ? (
+            routerContent
+          ) : (
+            <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+              {routerContent}
+            </MemoryRouter>
+          )}
         </FirebaseFeatureFlagsProvider>
       </Provider>
     </QueryClientProvider>
@@ -197,6 +205,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
     skipRouter = false,
+    initialRoute,
     ...renderOptions
   } = options;
 
@@ -206,7 +215,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
-        <Providers store={store} skipRouter={skipRouter}>
+        <Providers store={store} skipRouter={skipRouter} initialRoute={initialRoute}>
           {children}
         </Providers>
       ),
