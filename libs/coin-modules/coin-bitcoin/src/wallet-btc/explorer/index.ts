@@ -109,6 +109,7 @@ class BitcoinLikeExplorer implements IExplorer {
     });
     return data.block ? data.block.height : null;
   }
+
   async fetchTxs(
     address: Address,
     params: ExplorerParams,
