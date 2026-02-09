@@ -40,8 +40,15 @@ type BalanceTotalProps = {
 type Props = {
   unit: Unit;
   counterValueId?: string;
+  shouldDisplayGraphRework?: boolean;
 } & BalanceSinceProps;
-export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Props) {
+export function BalanceDiff({
+  valueChange,
+  unit,
+  isAvailable,
+  shouldDisplayGraphRework,
+  ...boxProps
+}: Props) {
   if (!isAvailable) return null;
   return (
     <Box horizontal {...boxProps}>
@@ -61,6 +68,7 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
             val={Math.round(valueChange.percentage * 100)}
             inline
             withIcon
+            percentageTwoDecimals={shouldDisplayGraphRework}
           />
         )}
         {valueChange.value === 0 ? (
@@ -127,6 +135,7 @@ export default function BalanceInfos({
   isAvailable,
   unit,
   counterValueId,
+  shouldDisplayGraphRework,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
@@ -221,6 +230,7 @@ export default function BalanceInfos({
         valueChange={valueChange}
         unit={unit}
         isAvailable={isAvailable}
+        shouldDisplayGraphRework={shouldDisplayGraphRework}
       />
     </Box>
   );
