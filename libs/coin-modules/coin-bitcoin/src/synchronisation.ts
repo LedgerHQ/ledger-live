@@ -103,27 +103,45 @@ export const removeReplaced = (operations: BtcOperation[], now = Date.now()): Bt
           const isNewOpConfirmed = typeof op.blockHeight === "number";
 
           if (isExistingConfirmed && !isNewOpConfirmed) {
+            if (uniqueOperations.has(op.hash)) {
+              uniqueOperations.delete(op.hash); // Remove the unconfirmed transaction if it was previously added
+            }
             continue; // Keep the confirmed transaction
           }
 
           if (!isExistingConfirmed && isNewOpConfirmed) {
             uniqueOperations.delete(existingOp.hash); // Remove unconfirmed transaction
             txByInput.set(input, op); // Store the confirmed transaction
+            uniqueOperations.set(op.hash, op);
           } else {
             // Compare block height first
             if ((op.blockHeight ?? -1) > (existingOp.blockHeight ?? -1)) {
               uniqueOperations.delete(existingOp.hash);
               txByInput.set(input, op);
+              uniqueOperations.set(op.hash, op);
             } else if ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1)) {
               uniqueOperations.set(op.hash, op);
               continue; // If date is older, disregard
             }
           }
         } else {
-          txByInput.set(input, op);
+          // First time we see this input: only add op if it is not superseded.
+          // An unconfirmed op is superseded if any of its inputs is already spent by a confirmed tx.
+          const opIsSuperseded =
+            typeof op.blockHeight !== "number" &&
+            op.extra.inputs.some((inp: string) => {
+              const existing = txByInput.get(inp);
+              return (
+                existing !== undefined &&
+                existing.hash !== op.hash &&
+                typeof existing.blockHeight === "number"
+              );
+            });
+          if (!opIsSuperseded) {
+            txByInput.set(input, op);
+            uniqueOperations.set(op.hash, op);
+          }
         }
-
-        uniqueOperations.set(op.hash, op);
       }
     } else {
       // Store transactions without inputs (they shouldn't be removed)
@@ -243,7 +261,53 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       return !removedOperationHashes.has(utxo.output_hash);
     });
     const utxos = filteredRawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-    const balance = utxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
+    // 1) Keep operations that have the same hash as those utxos
+    const utxoHashes = new Set(utxos.map(u => u.hash));
+    const operationsOfUtxos = operations.filter(op => utxoHashes.has(op.hash));
+
+    // 2) Keep only one operation when multiple operations share the same inputs
+    const getInputsKey = (op: BtcOperation): string | null => {
+      const inputs = op.extra?.inputs;
+      if (!Array.isArray(inputs) || inputs.length === 0) return null;
+      return [...inputs].sort().join("|");
+    };
+
+    const isBetterCandidate = (candidate: BtcOperation, existing: BtcOperation): boolean => {
+      const candidateConfirmed = typeof candidate.blockHeight === "number";
+      const existingConfirmed = typeof existing.blockHeight === "number";
+      if (candidateConfirmed !== existingConfirmed) return candidateConfirmed;
+
+      const candidateHeight = candidate.blockHeight ?? -1;
+      const existingHeight = existing.blockHeight ?? -1;
+      if (candidateHeight !== existingHeight) return candidateHeight > existingHeight;
+
+      return new Date(candidate.date).getTime() > new Date(existing.date).getTime();
+    };
+
+    const bestOpByInputsKey = new Map<string, BtcOperation>();
+    for (const op of operationsOfUtxos) {
+      const key = getInputsKey(op);
+      if (!key) continue;
+      const existing = bestOpByInputsKey.get(key);
+      if (!existing || isBetterCandidate(op, existing)) {
+        bestOpByInputsKey.set(key, op);
+      }
+    }
+
+    const finalOperationsOfUtxos = operationsOfUtxos.filter(op => {
+      const key = getInputsKey(op);
+      if (!key) return true;
+      return bestOpByInputsKey.get(key)?.hash === op.hash;
+    });
+
+    // 3) Filter the original utxos to keep the ones that share a hash with the final operations
+    const finalOperationHashes = new Set(finalOperationsOfUtxos.map(op => op.hash));
+    const finalUtxos =
+      finalOperationHashes.size > 0
+        ? utxos.filter(utxo => finalOperationHashes.has(utxo.hash))
+        : utxos;
+
+    const balance = finalUtxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
 
     return {
       id: accountId,
@@ -256,7 +320,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
       blockHeight,
       bitcoinResources: {
-        utxos,
+        utxos: finalUtxos,
         walletAccount,
       },
     };

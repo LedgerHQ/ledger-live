@@ -15,10 +15,8 @@ import wallet, { Account } from "../wallet-btc";
  */
 export async function isTransactionConfirmed(account: Account, txId: string): Promise<boolean> {
   try {
-    const { txs: transactions } = await wallet.getAccountTransactions(account);
-
-    const transaction = transactions.find(tx => tx.hash === txId);
-    return Boolean(transaction?.block?.height && transaction.block.height > 0);
+    const blockHeight = await wallet.getAccountTxBlockHeight(account, txId);
+    return Boolean(blockHeight && blockHeight > 0);
   } catch {
     return false;
   }

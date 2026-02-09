@@ -17,6 +17,7 @@ import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address, Output } from "./storage/types";
 import { blockchainBaseURL } from "../explorer";
+import { getMinReplacementFeeSat, getTxInputOutpoints } from "../rbfHelpers";
 import { BitcoinSigner, SignerTransaction } from "../signer";
 
 class BitcoinLikeWallet {
@@ -194,6 +195,10 @@ class BitcoinLikeWallet {
     );
   }
 
+  async getAccountTxBlockHeight(account: Account, hash: string): Promise<number | null> {
+    return await account.xpub.explorer.getTxBlockHeight(hash);
+  }
+
   async buildAccountTx(params: {
     fromAccount: Account;
     dest: string;
@@ -204,10 +209,34 @@ class BitcoinLikeWallet {
     opReturnData?: Buffer | undefined;
     changeAddress?: string | undefined;
     originalTxId?: string | undefined;
+    /** Pending operations (hash + extra.inputs) to detect conflicting txs; when set with originalTxId, min fee is max over all conflicting */
+    pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }> | undefined;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     if (params.changeAddress && params.changeAddress !== changeAddress.address) {
       throw new Error("Invalid change address");
+    }
+
+    let minReplacementFeeSat: number | undefined;
+    if (params.originalTxId) {
+      const replaceTxId = params.originalTxId;
+      const inputOutpoints = await getTxInputOutpoints(params.fromAccount, replaceTxId);
+      const conflictingTxIds = new Set<string>([replaceTxId]);
+      if (params.pendingOperations?.length) {
+        for (const op of params.pendingOperations) {
+          const opInputs = op.extra?.inputs;
+          if (!Array.isArray(opInputs)) continue;
+          if (opInputs.some((inp: string) => inputOutpoints.has(inp)))
+            conflictingTxIds.add(op.hash);
+        }
+      }
+      let maxMinFee = 0;
+      for (const txId of conflictingTxIds) {
+        const minFee = await getMinReplacementFeeSat(params.fromAccount, txId);
+        const n = minFee.integerValue().toNumber();
+        if (n > maxMinFee) maxMinFee = n;
+      }
+      minReplacementFeeSat = maxMinFee > 0 ? maxMinFee : undefined;
     }
 
     const txInfo = await params.fromAccount.xpub.buildTx({
@@ -219,6 +248,7 @@ class BitcoinLikeWallet {
       sequence: params.sequence,
       opReturnData: params.opReturnData,
       originalTxId: params.originalTxId,
+      minReplacementFeeSat,
     });
 
     return txInfo;

@@ -20,6 +20,7 @@ export interface IExplorer {
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
+  getTxBlockHeight(hash: string): Promise<number | null>;
   getTxsSinceBlockheight(
     batchSize: number,
     address: Address,

@@ -3,7 +3,7 @@ import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
-import { TX, Address, IStorage, Output } from "./storage/types";
+import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
@@ -190,6 +190,8 @@ class Xpub {
     sequence: number;
     opReturnData?: Buffer | undefined;
     originalTxId?: string | undefined;
+    /** For RBF: minimum total fee (sats) so replacement pays more than original (avoids "less fees than conflicting" reject) */
+    minReplacementFeeSat?: number | undefined;
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
 
@@ -202,6 +204,7 @@ class Xpub {
       feePerByte,
       sequence,
       originalTxId,
+      minReplacementFeeSat,
     } = params;
 
     if (opReturnData) {
@@ -296,8 +299,8 @@ class Xpub {
         // Calculate total from actual inputs for RBF
         total = inputs.reduce((sum, inp) => sum.plus(new BigNumber(inp.value)), new BigNumber(0));
 
-        // For RBF, we need to estimate the fee based on the transaction size
-        // The fee will be recalculated later, but we need a placeholder for now
+        // For RBF, fee must be at least (estimatedSize * feePerByte) AND at least minReplacementFeeSat
+        // so that total fee is strictly greater than the original (replacement can be smaller vsize)
         const estimatedTxSize = maxTxSizeCeil(
           inputs.length,
           outputs.map(o => o.script),
@@ -305,7 +308,11 @@ class Xpub {
           this.crypto,
           this.derivationMode,
         );
-        fee = estimatedTxSize * feePerByte;
+        const feeFromRate = estimatedTxSize * feePerByte;
+        fee =
+          minReplacementFeeSat !== undefined
+            ? Math.max(feeFromRate, minReplacementFeeSat)
+            : feeFromRate;
         needChangeoutput = true;
       } catch (error) {
         throw new Error("Failed to build RBF transaction: " + error);
@@ -313,40 +320,31 @@ class Xpub {
     } else {
       // now we select only the output needed to cover the amount + fee
       const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
+
       const unspentUtxoSelected = result.unspentUtxos;
       fee = result.fee;
       needChangeoutput = result.needChangeoutput;
 
       // Fetch transaction hex for selected UTXOs, handling failures gracefully
-      const txHexResults = await Promise.allSettled(
+      const txHexResults = await Promise.all(
         unspentUtxoSelected.map(unspentUtxo => this.explorer.getTxHex(unspentUtxo.output_hash)),
       );
 
-      // Filter to only successfully fetched UTXOs
-      const successfulUtxos: Output[] = [];
-      const successfulTxHexs: string[] = [];
-      txHexResults.forEach((res, index) => {
-        if (res.status === "fulfilled") {
-          successfulUtxos.push(unspentUtxoSelected[index]);
-          successfulTxHexs.push(res.value);
-        }
-      });
-
       // Recalculate total based on what we actually got
-      total = successfulUtxos.reduce(
+      total = unspentUtxoSelected.reduce(
         (sum, utxo) => sum.plus(new BigNumber(utxo.value)),
         new BigNumber(0),
       );
 
       const txs = await Promise.all(
-        successfulUtxos.map(unspentUtxo =>
+        unspentUtxoSelected.map(unspentUtxo =>
           this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
         ),
       );
 
-      inputs = successfulUtxos.map((utxo, index) => {
+      inputs = unspentUtxoSelected.map((utxo, index) => {
         return {
-          txHex: successfulTxHexs[index],
+          txHex: txHexResults[index],
           value: utxo.value,
           address: utxo.address,
           output_hash: utxo.output_hash,
@@ -356,7 +354,7 @@ class Xpub {
         };
       });
 
-      associatedDerivations = successfulUtxos.map((_utxo, index) => {
+      associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
         if (!txs[index]) {
           throw new Error("Invalid index in txs[index]");
         }
@@ -386,7 +384,6 @@ class Xpub {
 
     const outputsValue: BigNumber = outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0));
     const actualFee = total.minus(outputsValue).toNumber();
-
     // For RBF transactions, validate that the absolute fee increase meets the minimum requirements
     if (originalTxId) {
       try {
@@ -418,26 +415,24 @@ class Xpub {
         if (actualFeeIncrease < minAbsoluteFeeIncrease) {
           // We need to increase the fee by reducing the change output
           const additionalFeeNeeded = minAbsoluteFeeIncrease - actualFeeIncrease;
-
-          // Find and adjust the change output
           const changeOutput = outputs.find(o => o.isChange);
-          if (changeOutput) {
-            const newChangeValue = changeOutput.value.minus(additionalFeeNeeded);
-
-            if (newChangeValue.lt(dustLimit)) {
-              // Change becomes dust, remove it entirely
-              const changeIndex = outputs.indexOf(changeOutput);
-              outputs.splice(changeIndex, 1);
-            } else {
-              changeOutput.value = newChangeValue;
-            }
+          if (!changeOutput) {
+            throw new Error(
+              `RBF requires an additional ${additionalFeeNeeded} sats fee increase but there is no change output to reduce (e.g. send-max). Cannot build a valid replacement.`,
+            );
+          }
+          const newChangeValue = changeOutput.value.minus(additionalFeeNeeded);
+          if (newChangeValue.lt(dustLimit)) {
+            const changeIndex = outputs.indexOf(changeOutput);
+            outputs.splice(changeIndex, 1);
+          } else {
+            changeOutput.value = newChangeValue;
           }
         }
       } catch (error) {
         throw new Error("Failed to build RBF transaction: " + error);
       }
     }
-
     const result = {
       inputs,
       associatedDerivations,

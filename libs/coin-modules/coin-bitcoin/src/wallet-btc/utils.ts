@@ -314,7 +314,7 @@ export async function getRelayFeeFloorSatVb(
 
 export async function getIncrementalFeeFloorSatVb(
   explorer: unknown,
-  defaultFloor: BigNumber = new BigNumber(0),
+  defaultFloor: BigNumber = new BigNumber(1),
 ): Promise<BigNumber> {
   try {
     const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };

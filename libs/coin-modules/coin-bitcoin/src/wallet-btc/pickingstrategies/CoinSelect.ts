@@ -30,7 +30,7 @@ export class CoinSelect extends PickingStrategy {
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Coinselect");
 
-    const unspentUtxos = flatten(
+    let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
       o =>
@@ -38,6 +38,13 @@ export class CoinSelect extends PickingStrategy {
           x => x.hash === o.output_hash && x.outputIndex === o.output_index,
         ).length,
     );
+
+    // Validate UTXOs: only keep those for which we can fetch the transaction hex
+    const txHexResults = await Promise.allSettled(
+      unspentUtxos.map(u => xpub.explorer.getTxHex(u.output_hash)),
+    );
+    unspentUtxos = unspentUtxos.filter((_, i) => txHexResults[i].status === "fulfilled");
+
     const TOTAL_TRIES = 100000;
     log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
@@ -83,7 +90,6 @@ export class CoinSelect extends PickingStrategy {
     // Get no inputs fees
     // At beginning, there are no outputs in tx, so noInputFees are fixed fees
     const notInputFees = safeFeePerByte * (fixedV + oneOutputV * outputs.length);
-
     // Start coin selection algorithm (according to SelectCoinBnb from Bitcoin Core)
     let currentValue = 0;
     const currentSelection: boolean[] = [];
@@ -91,7 +97,6 @@ export class CoinSelect extends PickingStrategy {
     const amount = outputs.reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
     // Actual amount we are targetting
     const actualTarget = notInputFees + amount.toNumber();
-
     // Insufficient funds
     if (currentAvailableValue < actualTarget) {
       throw new NotEnoughBalance();

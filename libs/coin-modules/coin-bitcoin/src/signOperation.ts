@@ -139,6 +139,16 @@ async function executeSignOperation(
     recipients,
   });
 
+  // Verify that UTXOs used as inputs are still valid (parent tx still fetchable)
+  const inputValidationResults = await Promise.allSettled(
+    txInfo.inputs.map(input => walletAccount.xpub.explorer.getTxHex(input.output_hash)),
+  );
+  if (inputValidationResults.some(r => r.status === "rejected")) {
+    throw new Error(
+      "One or more inputs are no longer valid (transaction may have been spent or reorged). Please rebuild the transaction.",
+    );
+  }
+
   o.next({
     type: "signed",
     signedOperation: {
