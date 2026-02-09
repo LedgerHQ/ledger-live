@@ -93,7 +93,7 @@ export const INITIAL_STATE: SettingsState = {
   personalizedRecommendationsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
-  selectedTimeRange: "month",
+  selectedTimeRange: "day",
   orderAccounts: "balance|desc",
   hasCompletedCustomImageFlow: false,
   hasCompletedOnboarding: false,
