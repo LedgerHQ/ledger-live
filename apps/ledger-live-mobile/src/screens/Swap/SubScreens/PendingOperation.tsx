@@ -4,7 +4,7 @@ import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { TrackScreen, useTrack } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
@@ -21,7 +21,6 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   const { colors } = useTheme();
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
-  const track = useTrack();
   const syncAccounts = useSyncAllAccounts();
 
   const navigateToSwapForm = useCallback(() => {
@@ -37,7 +36,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         routes: [{ name: ScreenName.SwapTab }],
       }),
     );
-  }, [navigation, track]);
+  }, [navigation]);
 
   useEffect(() => {
     navigation.setOptions({
