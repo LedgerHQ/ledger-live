@@ -12,8 +12,8 @@ import {
 } from "@ledgerhq/errors";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
+import { isRecipientValid } from "../logic/utils";
 import { Transaction, TransactionStatus } from "../types";
 
 export const getTransactionStatus: AccountBridge<
