@@ -46,30 +46,85 @@ describe("estimateFees", () => {
     });
   });
 
-  it("takes into account minFees in estimatedFees for unrevealed account when minFees > getRevealFee", async () => {
-    const minFees = 1000;
-    mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
-      suggestedFeeMutez: 100,
-      gasLimit: 10000,
-      storageLimit: 0,
-      burnFeeMutez: 0,
-      opSize: 100,
+  describe("when suggested fee is above or below minFees floor", () => {
+    it("estimate fees when default estimation is greater than minFees", async () => {
+      const suggestedFee = 2000;
+      const minFees = 1000;
+      mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
+        suggestedFeeMutez: suggestedFee,
+        gasLimit: 10000,
+        storageLimit: 0,
+        burnFeeMutez: 0,
+        opSize: 100,
+      });
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: { ...defaultFeesConfig, minFees },
+      });
+
+      const result = await estimateFees({
+        account: revealedAccount,
+        transaction: {
+          mode: "delegate",
+          recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+          amount: BigInt(0),
+        },
+      });
+
+      expect(result.fees).toBe(BigInt(suggestedFee));
+      expect(result.estimatedFees).toBe(BigInt(suggestedFee));
     });
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
-      fees: { ...defaultFeesConfig, minFees },
+
+    it("estimate fees when default estimation is lesser than minFees", async () => {
+      const minFees = 1000;
+      mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
+        suggestedFeeMutez: 100,
+        gasLimit: 10000,
+        storageLimit: 0,
+        burnFeeMutez: 0,
+        opSize: 100,
+      });
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: { ...defaultFeesConfig, minFees },
+      });
+
+      const result = await estimateFees({
+        account: revealedAccount,
+        transaction: {
+          mode: "delegate",
+          recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+          amount: BigInt(0),
+        },
+      });
+
+      expect(result.fees).toBe(BigInt(minFees));
+      expect(result.estimatedFees).toBe(BigInt(minFees));
     });
 
-    const account = { ...unrevealedAccount };
-    const transaction = {
-      mode: "delegate" as const,
-      recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
-      amount: BigInt(0),
-    };
+    it("estimate fees when default estimation is lesser than minFees (unrevealed composite)", async () => {
+      const minFees = 1000;
+      mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
+        suggestedFeeMutez: 100,
+        gasLimit: 10000,
+        storageLimit: 0,
+        burnFeeMutez: 0,
+        opSize: 100,
+      });
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: { ...defaultFeesConfig, minFees },
+      });
 
-    const result = await estimateFees({ account, transaction });
+      const account = { ...unrevealedAccount };
+      const transaction = {
+        mode: "delegate" as const,
+        recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+        amount: BigInt(0),
+      };
 
-    expect(result.fees).toBe(BigInt(minFees));
-    expect(result.estimatedFees).toBe(BigInt(minFees * 2));
+      const result = await estimateFees({ account, transaction });
+
+      expect(result.fees).toBe(BigInt(minFees));
+      expect(result.estimatedFees).toBe(BigInt(minFees * 2));
+    });
   });
 
   it("uses getRevealFee for unrevealed account when minFees is 0", async () => {
@@ -96,59 +151,6 @@ describe("estimateFees", () => {
 
     const expectedRevealFee = getRevealFee(account.address);
     expect(result.estimatedFees).toBe(BigInt(delegationFee + expectedRevealFee));
-  });
-
-  it("uses suggested fee for main op when suggestedFeeMutez > minFees (revealed account)", async () => {
-    const suggestedFee = 2000;
-    const minFees = 1000;
-    mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
-      suggestedFeeMutez: suggestedFee,
-      gasLimit: 10000,
-      storageLimit: 0,
-      burnFeeMutez: 0,
-      opSize: 100,
-    });
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
-      fees: { ...defaultFeesConfig, minFees },
-    });
-
-    const result = await estimateFees({
-      account: revealedAccount,
-      transaction: {
-        mode: "delegate",
-        recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
-        amount: BigInt(0),
-      },
-    });
-
-    expect(result.fees).toBe(BigInt(suggestedFee));
-    expect(result.estimatedFees).toBe(BigInt(suggestedFee));
-  });
-
-  it("applies minFees to main op when suggestedFeeMutez < minFees (revealed account)", async () => {
-    const minFees = 1000;
-    mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
-      suggestedFeeMutez: 100,
-      gasLimit: 10000,
-      storageLimit: 0,
-      burnFeeMutez: 0,
-      opSize: 100,
-    });
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
-      fees: { ...defaultFeesConfig, minFees },
-    });
-
-    const result = await estimateFees({
-      account: revealedAccount,
-      transaction: {
-        mode: "delegate",
-        recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
-        amount: BigInt(0),
-      },
-    });
-
-    expect(result.fees).toBe(BigInt(minFees));
-    expect(result.estimatedFees).toBe(BigInt(minFees));
   });
 
   it("undelegate uses same fee logic as delegate", async () => {

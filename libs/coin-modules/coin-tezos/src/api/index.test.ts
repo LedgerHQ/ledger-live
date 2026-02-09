@@ -103,40 +103,76 @@ describe("get operations", () => {
   });
 });
 
-describe("Testing craftTransaction function", () => {
+describe("craftTransaction", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("should use estimated fees when user does not provide them for crafting a transaction ", async () => {
-    logicEstimateFees.mockResolvedValue({
-      estimatedFees: DEFAULT_ESTIMATED_FEES,
-      gasLimit: DEFAULT_GAS_LIMIT,
-      storageLimit: DEFAULT_STORAGE_LIMIT,
-    });
-    await api.craftTransaction({
-      intentType: "transaction",
-      type: "send",
-      sender: "tz1test",
-      recipient: "tz1recipient",
-      amount: 1000n,
-    } as TransactionIntent);
-    expect(logicEstimateFees).toHaveBeenCalledTimes(1);
-    expect(logicCraftTransactionMock).toHaveBeenCalledWith(
-      expect.objectContaining({ address: "tz1test" }),
-      expect.objectContaining({
-        fee: expect.objectContaining({
-          fees: DEFAULT_ESTIMATED_FEES.toString(),
-          gasLimit: DEFAULT_GAS_LIMIT.toString(),
-          storageLimit: DEFAULT_STORAGE_LIMIT.toString(),
+  describe("when suggested fee is above or below minFees floor", () => {
+    it("craft transaction when default estimation is greater than minFees", async () => {
+      const estimatedFees = 500n;
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+        parameters: {
+          gasLimit: DEFAULT_GAS_LIMIT,
+          storageLimit: DEFAULT_STORAGE_LIMIT,
+          txFee: 500n,
+        },
+      });
+      await api.craftTransaction({
+        intentType: "transaction",
+        type: "send",
+        sender: "tz1test",
+        recipient: "tz1recipient",
+        amount: 1000n,
+      } as TransactionIntent);
+      expect(logicEstimateFees).toHaveBeenCalledTimes(1);
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+        expect.objectContaining({ address: "tz1test" }),
+        expect.objectContaining({
+          fee: expect.objectContaining({
+            fees: estimatedFees.toString(),
+            gasLimit: DEFAULT_GAS_LIMIT.toString(),
+            storageLimit: DEFAULT_STORAGE_LIMIT.toString(),
+          }),
         }),
-      }),
-    );
+      );
+    });
+
+    it("craft transaction when default estimation is lesser than minFees", async () => {
+      const estimatedFees = 50n;
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+        parameters: {
+          gasLimit: DEFAULT_GAS_LIMIT,
+          storageLimit: DEFAULT_STORAGE_LIMIT,
+          txFee: 50n,
+        },
+      });
+      await api.craftTransaction({
+        intentType: "transaction",
+        type: "send",
+        sender: "tz1test",
+        recipient: "tz1recipient",
+        amount: 1000n,
+      } as TransactionIntent);
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          fee: expect.objectContaining({ fees: estimatedFees.toString() }),
+        }),
+      );
+    });
   });
 
-  it.each([[1n], [50n], [99n]])(
-    "should use custom user fees when user provides it for crafting a transaction",
-    async (customFees: bigint) => {
+  describe("with customFee", () => {
+    it("craft transaction with customFee when default estimation is greater than customFee", async () => {
+      const defaultEstimatedFees = 500n;
+      const customFee = 100n;
       logicEstimateFees.mockResolvedValue({
-        estimatedFees: DEFAULT_ESTIMATED_FEES,
+        estimatedFees: defaultEstimatedFees,
         gasLimit: DEFAULT_GAS_LIMIT,
         storageLimit: DEFAULT_STORAGE_LIMIT,
         parameters: {
@@ -152,100 +188,162 @@ describe("Testing craftTransaction function", () => {
           recipient: "tz1recipient",
           amount: 1000n,
         } as TransactionIntent,
-        {
-          value: customFees,
-        },
+        { value: customFee },
       );
-      expect(logicEstimateFees).toHaveBeenCalledTimes(1);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
-          fee: {
-            fees: customFees.toString(),
-            gasLimit: DEFAULT_GAS_LIMIT.toString(),
-            storageLimit: DEFAULT_STORAGE_LIMIT.toString(),
-          },
+          fee: expect.objectContaining({ fees: customFee.toString() }),
         }),
       );
-    },
-  );
-
-  it("splits custom total fee 2000 so unrevealed delegate gets reveal 1000 + main op 1000 (total 2000)", async () => {
-    const minFees = 1000;
-    const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
-    const delegateRecipient = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
-    const totalCustomFee = 2000n;
-
-    const apiMinFees1000 = createApi({
-      baker: { url: "https://baker.example.com" },
-      explorer: { url: "foo", maxTxQuery: 1 },
-      node: { url: "bar" },
-      fees: {
-        minGasLimit: 600,
-        minRevealGasLimit: 300,
-        minStorageLimit: 0,
-        minFees,
-        minEstimatedFees: minFees,
-      },
     });
 
-    const unrevealedAccount = {
-      type: "user" as const,
-      balance: 1000000,
-      revealed: false,
-      address: unrevealedSender,
-      publicKey: "sppktest",
-      counter: 0,
-      delegationLevel: 0,
-      delegationTime: "2021-01-01T00:00:00Z",
-      numTransactions: 0,
-      firstActivityTime: "2021-01-01T00:00:00Z",
-    } as APIAccount;
-    (networkApi.getAccountByAddress as jest.Mock)
-      .mockResolvedValueOnce(unrevealedAccount)
-      .mockResolvedValueOnce(unrevealedAccount);
+    it("craft transaction with customFee when default estimation is lesser than customFee", async () => {
+      const customFee = 500n;
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees: 100n,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+        parameters: {
+          gasLimit: DEFAULT_GAS_LIMIT,
+          storageLimit: DEFAULT_STORAGE_LIMIT,
+        },
+      });
+      await api.craftTransaction(
+        {
+          intentType: "transaction",
+          type: "send",
+          sender: "tz1test",
+          recipient: "tz1recipient",
+          amount: 1000n,
+        } as TransactionIntent,
+        { value: customFee },
+      );
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          fee: expect.objectContaining({ fees: customFee.toString() }),
+        }),
+      );
+    });
 
-    logicEstimateFees.mockResolvedValue({
-      estimatedFees: totalCustomFee,
-      fees: 1000n,
-      gasLimit: 10000n,
-      storageLimit: 0n,
-      parameters: {
+    it("craft transaction with customFee splits total for unrevealed delegate so total equals customFee", async () => {
+      const minFees = 1000;
+      const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
+      const delegateRecipient = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
+      const totalCustomFee = BigInt(minFees * 2);
+
+      const apiMinFees1000 = createApi({
+        baker: { url: "https://baker.example.com" },
+        explorer: { url: "foo", maxTxQuery: 1 },
+        node: { url: "bar" },
+        fees: {
+          minGasLimit: 600,
+          minRevealGasLimit: 300,
+          minStorageLimit: 0,
+          minFees,
+          minEstimatedFees: minFees,
+        },
+      });
+
+      const unrevealedAccount = {
+        type: "user" as const,
+        balance: 1000000,
+        revealed: false,
+        address: unrevealedSender,
+        publicKey: "sppktest",
+        counter: 0,
+        delegationLevel: 0,
+        delegationTime: "2021-01-01T00:00:00Z",
+        numTransactions: 0,
+        firstActivityTime: "2021-01-01T00:00:00Z",
+      } as APIAccount;
+      (networkApi.getAccountByAddress as jest.Mock)
+        .mockResolvedValueOnce(unrevealedAccount)
+        .mockResolvedValueOnce(unrevealedAccount);
+
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees: totalCustomFee,
+        fees: 1000n,
         gasLimit: 10000n,
         storageLimit: 0n,
-        txFee: 1000n,
-      },
-    });
+        parameters: {
+          gasLimit: 10000n,
+          storageLimit: 0n,
+          txFee: 1000n,
+        },
+      });
 
-    await apiMinFees1000.craftTransaction(
-      {
-        intentType: "staking",
-        type: "delegate",
-        sender: unrevealedSender,
-        senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
-        recipient: delegateRecipient,
-        amount: 0n,
-      } as TransactionIntent,
-      { value: totalCustomFee },
-    );
+      await apiMinFees1000.craftTransaction(
+        {
+          intentType: "staking",
+          type: "delegate",
+          sender: unrevealedSender,
+          senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+          recipient: delegateRecipient,
+          amount: 0n,
+        } as TransactionIntent,
+        { value: totalCustomFee },
+      );
 
-    expect(logicCraftTransactionMock).toHaveBeenCalledWith(
-      expect.objectContaining({ address: unrevealedSender }),
-      expect.objectContaining({
-        fee: expect.objectContaining({
-          fees: "1000",
-          gasLimit: "10000",
-          storageLimit: "0",
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+        expect.objectContaining({ address: unrevealedSender }),
+        expect.objectContaining({
+          fee: expect.objectContaining({
+            fees: String(minFees),
+            gasLimit: "10000",
+            storageLimit: "0",
+          }),
         }),
-      }),
-    );
+      );
+    });
   });
 });
 
-describe("Testing estimateFees function", () => {
+describe("estimateFees", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("should return estimation from logic module", async () => {
+  describe("when suggested fee is above or below minFees floor", () => {
+    it("estimate fees when default estimation is greater than minFees", async () => {
+      const estimatedFees = 500n;
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      });
+      const result = await api.estimateFees({
+        intentType: "transaction",
+        type: "send",
+        sender: "tz1test",
+        recipient: "tz1recipient",
+        amount: 1000n,
+      } as TransactionIntent);
+      expect(result.value).toBe(estimatedFees);
+      expect(result.parameters?.gasLimit).toBe(DEFAULT_GAS_LIMIT);
+      expect(result.parameters?.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+    });
+
+    it("estimate fees when default estimation is lesser than minFees", async () => {
+      const estimatedFees = 100n;
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      });
+      const result = await api.estimateFees({
+        intentType: "transaction",
+        type: "send",
+        sender: "tz1test",
+        recipient: "tz1recipient",
+        amount: 1000n,
+      } as TransactionIntent);
+      expect(result.value).toBe(estimatedFees);
+      expect(result.parameters?.gasLimit).toBe(DEFAULT_GAS_LIMIT);
+      expect(result.parameters?.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+    });
+  });
+
+  it("returns estimation from logic module", async () => {
     logicEstimateFees.mockResolvedValue({
       estimatedFees: DEFAULT_ESTIMATED_FEES,
       gasLimit: DEFAULT_GAS_LIMIT,
@@ -309,7 +407,7 @@ describe("Testing estimateFees function", () => {
     });
   });
 
-  it("returns value 2000 for unrevealed account delegate (reveal + delegate, minFees applied)", async () => {
+  it("returns total estimation for unrevealed delegate when minFees applied (composite)", async () => {
     const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
     (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
       type: "user",
@@ -345,7 +443,7 @@ describe("Testing estimateFees function", () => {
     expect(result.parameters.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
   });
 
-  it("Public key not found fallback returns value 2000 for unrevealed delegate when minFees is 1000", async () => {
+  it("fallback when Taquito throws Public key not found returns total with minFees for reveal (unrevealed)", async () => {
     const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
     const delegateRecipient = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
     const minFees = 1000;
