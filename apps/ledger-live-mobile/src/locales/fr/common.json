@@ -10,6 +10,9 @@
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
+    "fee" : "Frais",
+    "stake" : "Staké",
+    "validator" : "Validateur",
     "delete" : "Effacer",
     "paste" : "Coller",
     "yes" : "Oui",
@@ -466,6 +469,9 @@
     "GenuineCheckFailed" : {
       "title" : "Échec de la vérification de l’authenticité",
       "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Activez la signature aveugle (\"Blind Signing\" ou \"Contract Data\") dans l’app Ethereum"
     },
     "HardResetFail" : {
       "title" : "Échec de la réinitialisation",
@@ -2673,6 +2679,10 @@
     "carousel" : {
       "title" : "Pour vous"
     },
+    "perpsEntry" : {
+      "title" : "Perpétuels",
+      "description" : "Tradez avec effet de levier"
+    },
     "recommended" : {
       "title" : "Recommandé"
     },
@@ -2681,6 +2691,10 @@
       "seeMarket" : "Afficher tout"
     },
     "walletBalance" : "Solde total",
+    "balance" : {
+      "noSigner" : "Le wallet le plus\nsécurisé",
+      "noFund" : "Sécurisez\nvos cryptos"
+    },
     "seeAllAssets" : "Voir tous les actifs",
     "seeAllAccounts" : "Voir tous les comptes",
     "marketPriceSection" : {
@@ -2701,6 +2715,20 @@
       "send" : "Envoyer",
       "deposit" : "Recevoir",
       "stake" : "Staker"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "Transférer",
+      "swap" : "Échanger",
+      "buy" : "Acheter",
+      "connect" : "Connecter",
+      "buyLedger" : "Acheter un Ledger",
+      "transferDrawer" : {
+        "title" : "Transférer",
+        "receiveCrypto" : "Recevoir des cryptos",
+        "sendCrypto" : "Envoyer des cryptos",
+        "bankTransfer" : "Virement bancaire",
+        "bankTransferDescription" : "Recevez des stablecoins par virement bancaire."
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2980,7 +3008,8 @@
         "receiveFunds" : "Recevoir",
         "buyCrypto" : "Acheter"
       },
-      "addAccountCta" : "Ajouter un compte"
+      "addAccountCta" : "Ajouter un compte",
+      "addCryptoAccount" : "Ajouter un compte crypto"
     },
     "settings" : {
       "header" : "Paramètres du compte",
@@ -3477,9 +3506,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activez les notifications",
-      "titleVariantB" : "Exploitez tout le potentiel de Ledger Wallet",
+      "titleVariantB" : "Ne passez pas à côté de l’essentiel",
       "desc" : "Ne manquez plus rien sur Ledger Wallet, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
-      "descVariantB" : "Nous vous enverrons des conseils personnalisés, des guides de configuration et les actualités du marché les plus utiles.",
+      "descVariantB" : "Recevez des alertes en temps réel sur les nouvelles cryptos, les opportunités de rendement et les mouvements du marché. Vous pouvez les désactiver à tout moment.",
       "allow" : "Autoriser les notifications",
       "later" : "Plus tard"
     },
@@ -3851,7 +3880,8 @@
         "title" : "Choisissez une offre"
       },
       "twoStepApproval" : {
-        "title" : "Suivez les étapes"
+        "title" : "Suivez les étapes",
+        "completedTitle" : "Statut de la transaction"
       },
       "loader" : {
         "title" : "Échange en cours de traitement",
@@ -4549,6 +4579,7 @@
       },
       "acceptTerms" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
+      "acceptTermsSponsored" : "Pour bénéficier de la gratuité des frais de réseau, vous acceptez également de partager les détails de votre transaction (y compris votre adresse de wallet) avec Blink Labs.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place des procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
@@ -6064,6 +6095,52 @@
       "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse copiée",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redéléguer",
+      "earn" : "Gagner"
+    },
+    "stakeBanner" : {
+      "title" : "Gagner des récompenses avec MINA",
+      "altTitle" : "Gérer votre délégation de MINA",
+      "description" : "Déléguez vos MINA à un producteur de blocs et percevez les récompenses générées. Les récompenses sont calculées en fonction du montant délégué.",
+      "altDescription" : "Modifiez vos paramètres de délégation ou arrêtez la délégation de vos MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Délégué à",
+      "stakedBalance" : "Solde de staking",
+      "producerAddress" : "Adresse du producteur",
+      "delegatedToTooltip" : "Nom du producteur de blocs auquel vous accordez la délégation",
+      "stakedBalanceTooltip" : "Montant total de MINA actuellement stakés avec ce validateur",
+      "producerAddressTooltip" : "Adresse publique du producteur de blocs auquel vous accordez la délégation"
+    },
+    "delegators" : "Délégants",
+    "memoPlaceholder" : "Mémo facultatif",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choisir un validateur",
+        "connectDevice" : "Connecter votre appareil",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Staker des MINA",
+      "help" : "Pour déléguer vos MINA, sélectionnez un validateur dans la liste ci-dessous.",
+      "success" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre demande de modification de délégation a été envoyée."
+      },
+      "error" : {
+        "title" : "Erreur lors de l’émission de la transaction"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "showAll" : "Afficher tout",
+      "showLess" : "Afficher moins",
+      "iDelegate" : "Je délègue"
+    }
+  },
   "stellar" : {
     "token" : "Actifs",
     "memo" : {
@@ -6468,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Mémo facultatif"
   },
   "near" : {
     "info" : {
@@ -8247,7 +8321,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Prestataire non disponible",
-      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
+      "description" : "Ce prestataire du service Swap ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "Prestataire non disponible",
@@ -8284,6 +8358,11 @@
       "preapprove" : "Compte ajouté",
       "validator" : "Validateur Ledger",
       "title" : "Accepter automatiquement les actifs versés",
+      "processing" : {
+        "title" : "Traitement de la transaction en cours",
+        "description" : "Le processus peut prendre jusqu’à 1 minute.",
+        "keepDeviceNearby" : "Restez dans l’application Ledger Wallet et gardez votre appareil Ledger à portée de main."
+      },
       "reonboard" : {
         "title" : "Mise à jour du compte requise",
         "account" : "Compte",
@@ -8356,7 +8435,8 @@
       "neutral" : "Neutre",
       "greed" : "Cupidité",
       "extremeGreed" : "Cupidité+"
-    }
+    },
+    "tileTitle" : "Psychologie"
   },
   "analyticsAllocation" : {
     "header" : {
