@@ -84,7 +84,6 @@ const QueuedDrawerNative = ({
   const translateY = useSharedValue(1000);
   const backdropOpacity = useSharedValue(0);
   const closeAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeAnimFiredRef = useRef(false);
 
   const openAnim = useCallback(() => {
     translateY.value = withTiming(0, {
@@ -101,16 +100,14 @@ const QueuedDrawerNative = ({
         clearTimeout(closeAnimTimeoutRef.current);
         closeAnimTimeoutRef.current = null;
       }
-      closeAnimFiredRef.current = false;
 
+      // Build the once-only callback on the JS thread (not in a worklet)
+      // so that refs remain accessible when scheduled back via scheduleOnRN.
       const afterOnce = after
         ? () => {
-            if (closeAnimFiredRef.current) return;
-            closeAnimFiredRef.current = true;
-            if (closeAnimTimeoutRef.current) {
-              clearTimeout(closeAnimTimeoutRef.current);
-              closeAnimTimeoutRef.current = null;
-            }
+            if (!closeAnimTimeoutRef.current) return;
+            clearTimeout(closeAnimTimeoutRef.current);
+            closeAnimTimeoutRef.current = null;
             after();
           }
         : undefined;
