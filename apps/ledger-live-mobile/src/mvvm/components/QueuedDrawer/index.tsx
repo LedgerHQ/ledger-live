@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -83,6 +83,7 @@ const QueuedDrawerNative = ({
 
   const translateY = useSharedValue(1000);
   const backdropOpacity = useSharedValue(0);
+  const closeAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const openAnim = useCallback(() => {
     translateY.value = withTiming(0, {
@@ -94,25 +95,34 @@ const QueuedDrawerNative = ({
 
   const closeAnim = useCallback(
     (after?: () => void) => {
-      // Set a timeout fallback in case runOnJS doesn't fire
-      let callbackFired = false;
-      const timeoutId = after
-        ? setTimeout(() => {
-            if (!callbackFired) {
-              callbackFired = true;
-              after();
-            }
-          }, ANIMATION_DURATION + 50)
-        : null;
+      // Cancel any pending callback from a previous closeAnim call
+      if (closeAnimTimeoutRef.current) {
+        clearTimeout(closeAnimTimeoutRef.current);
+        closeAnimTimeoutRef.current = null;
+      }
+
+      // Build the once-only callback on the JS thread (not in a worklet)
+      // so that refs remain accessible when scheduled back via scheduleOnRN.
+      const afterOnce = after
+        ? () => {
+            if (!closeAnimTimeoutRef.current) return;
+            clearTimeout(closeAnimTimeoutRef.current);
+            closeAnimTimeoutRef.current = null;
+            after();
+          }
+        : undefined;
+
+      // Timeout fallback in case the animation completion callback doesn't fire
+      if (afterOnce) {
+        closeAnimTimeoutRef.current = setTimeout(afterOnce, ANIMATION_DURATION + 50);
+      }
 
       translateY.value = withTiming(
         1000,
         { duration: ANIMATION_DURATION, easing: Easing.in(Easing.cubic) },
         () => {
-          if (after && !callbackFired) {
-            if (timeoutId) clearTimeout(timeoutId);
-            callbackFired = true;
-            scheduleOnRN(after);
+          if (afterOnce) {
+            scheduleOnRN(afterOnce);
           }
         },
       );
