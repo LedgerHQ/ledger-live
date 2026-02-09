@@ -297,6 +297,8 @@ const extraProperties = async (store: AppStore) => {
       ]
     : [];
 
+  const operationsCount = accounts.reduce((sum, acc) => sum + acc.operationsCount, 0);
+
   const nps = userNpsSelector(state);
 
   const stakingProviders =
@@ -379,6 +381,8 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
+    accountsCount: accounts.length,
+    operationsCount: operationsCount,
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
