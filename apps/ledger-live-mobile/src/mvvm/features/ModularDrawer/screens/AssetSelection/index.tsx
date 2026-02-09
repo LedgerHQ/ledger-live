@@ -16,8 +16,13 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { FlatList } from "react-native";
-import { BottomSheetVirtualizedList, useBottomSheet } from "@gorhom/bottom-sheet";
+import { FlatList, StyleSheet } from "react-native";
+import {
+  BottomSheetVirtualizedList,
+  BottomSheetHeader,
+  useBottomSheet,
+} from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -42,6 +47,7 @@ export type AssetSelectionStepProps = {
   refetch?: () => void;
   loadNext?: () => void;
   assetsSorted?: AssetData[];
+  useLumenBottomSheet?: boolean;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -56,7 +62,9 @@ const AssetSelection = ({
   refetch,
   loadNext,
   assetsSorted,
+  useLumenBottomSheet = false,
 }: Readonly<AssetSelectionStepProps>) => {
+  const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
 
   const flow = useSelector(modularDrawerFlowSelector);
@@ -157,9 +165,10 @@ const AssetSelection = ({
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         ListEmptyComponent={<AssetsEmptyList />}
+        style={useLumenBottomSheet ? undefined : LEGACY_LIST_STYLE}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
-          marginTop: 16,
+          ...(useLumenBottomSheet ? {} : { marginTop: 16 }),
         }}
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
@@ -180,16 +189,38 @@ const AssetSelection = ({
           formatAssetConfig
         />
       )}
-      <SearchInputContainer
-        source={source}
-        flow={flow}
-        onFocus={handleSearchFocus}
-        onBlur={handleSearchBlur}
-        onPressIn={expandToFullHeight}
-      />
+      {useLumenBottomSheet ? (
+        <>
+          <BottomSheetHeader spacing title={t("modularDrawer.selectAsset")} appearance="expanded" />
+          <SearchInputContainer
+            source={source}
+            flow={flow}
+            onFocus={handleSearchFocus}
+            onBlur={handleSearchBlur}
+            onPressIn={expandToFullHeight}
+            withHorizontalPadding
+          />
+        </>
+      ) : (
+        <SearchInputContainer
+          source={source}
+          flow={flow}
+          onFocus={handleSearchFocus}
+          onBlur={handleSearchBlur}
+          onPressIn={expandToFullHeight}
+        />
+      )}
       {renderContent()}
     </>
   );
 };
+
+/**
+ * Temporary: cancels QueuedDrawerGorhom's paddingHorizontal: 16 so list items
+ * align with the header. Will be removed when Gorhom fallback is deleted.
+ */
+const LEGACY_LIST_STYLE = StyleSheet.create({
+  list: { marginHorizontal: -16 },
+}).list;
 
 export default withDiscreetMode(React.memo(AssetSelection));

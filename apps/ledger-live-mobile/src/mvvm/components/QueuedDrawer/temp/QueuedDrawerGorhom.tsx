@@ -4,10 +4,6 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProps,
-  BottomSheetFlatList,
-  BottomSheetScrollView,
-  BottomSheetSectionList,
-  BottomSheetVirtualizedList,
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
@@ -22,8 +18,9 @@ export {
   BottomSheetFlatList,
   BottomSheetScrollView,
   BottomSheetSectionList,
+  BottomSheetView,
   BottomSheetVirtualizedList,
-};
+} from "@gorhom/bottom-sheet";
 
 export type Props = Omit<BottomSheetModalProps, "snapPoints" | "children"> & {
   isRequestingToBeOpened?: boolean;
