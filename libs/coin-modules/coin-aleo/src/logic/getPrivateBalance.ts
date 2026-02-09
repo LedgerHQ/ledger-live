@@ -24,6 +24,7 @@ export async function getPrivateBalance({
 
     unspentRecordsWithPlaintext.push({
       ...record,
+      microcredits,
       plaintext: JSON.stringify(decryptedRecord),
     });
   });
