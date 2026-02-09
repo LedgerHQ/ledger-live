@@ -7,8 +7,8 @@ import {
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { v4, v5, parse } from "uuid";
-import { Transaction } from "../../types";
 import { TokenAccountExtensions } from "../../network/chain/account/tokenExtensions";
+import { Transaction } from "../../types";
 
 const seed = v4();
 

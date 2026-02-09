@@ -1,7 +1,37 @@
+import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { Operation, OperationType, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import {
+  InflationReward,
+  ParsedTransaction,
+  PublicKey,
+  StakeActivationData,
+} from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 
-import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import ky from "ky";
+import compact from "lodash/compact";
+import { keyBy, toPairs, pipe, flow, sortBy, sum } from "lodash/fp";
+import groupBy from "lodash/groupBy";
+import head from "lodash/head";
+import coinConfig from "./config";
+import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token";
+import {
+  encodeAccountIdWithTokenAccountAddress,
+  isStakeLockUpInForce,
+  withdrawableFromStake,
+} from "./logic";
+import { ChainAPI } from "./network";
+import { tryParseAsMintAccount } from "./network/chain/account";
+import { MintExtensions } from "./network/chain/account/tokenExtensions";
+import { DelegateInfo, WithdrawInfo } from "./network/chain/instruction/stake/types";
+import { parseQuiet } from "./network/chain/program";
+import { PARSED_PROGRAMS } from "./network/chain/program/constants";
+import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
 import {
   getAccountMinimumBalanceForRentExemption,
   getTokenAccruedInterestDelta,
@@ -10,25 +40,6 @@ import {
   toTokenAccountWithInfo,
   TransactionDescriptor,
 } from "./network/chain/web3";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import {
-  encodeAccountIdWithTokenAccountAddress,
-  isStakeLockUpInForce,
-  withdrawableFromStake,
-} from "./logic";
-import { keyBy, toPairs, pipe, flow, sortBy, sum } from "lodash/fp";
-import groupBy from "lodash/groupBy";
-import head from "lodash/head";
-import compact from "lodash/compact";
-import { parseQuiet } from "./network/chain/program";
-import {
-  InflationReward,
-  ParsedTransaction,
-  PublicKey,
-  StakeActivationData,
-} from "@solana/web3.js";
-import { ChainAPI } from "./network";
 import { ParsedOnChainTokenAccountWithInfo } from "./network/chain/web3";
 import { estimateTxFee } from "./tx-fees";
 import {
@@ -39,18 +50,7 @@ import {
   SolanaTokenAccountExtensions,
   SolanaTokenProgram,
 } from "./types";
-import { Operation, OperationType, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
-import { DelegateInfo, WithdrawInfo } from "./network/chain/instruction/stake/types";
-import { PARSED_PROGRAMS } from "./network/chain/program/constants";
-import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token";
-import { MintExtensions } from "./network/chain/account/tokenExtensions";
-import coinConfig from "./config";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
-import { tryParseAsMintAccount } from "./network/chain/account";
-import ky from "ky";
 import { isSignaturesForAddressResponse } from "./utils";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getAccount(
   address: string,

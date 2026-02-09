@@ -4,7 +4,7 @@
  * - RightPanel (swap sidebar)
  * - Wallet40Layout with pt-32 spacing
  */
-const WALLET_40_PAGES = new Set(["/", "/market", "/analytics"]);
+const WALLET_40_PAGES = new Set(["/", "/market", "/analytics", "/card-new-wallet"]);
 /**
  * Pages that display the right panel (swap sidebar)
  */

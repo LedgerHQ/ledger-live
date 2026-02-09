@@ -1,6 +1,6 @@
-import { BigNumber } from "bignumber.js";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { BigNumber } from "bignumber.js";
 
 // NOTE: replace ripple by your currency id, it should be found in
 // libs/ledgerjs/packages/cryptoassets/src/currencies.ts

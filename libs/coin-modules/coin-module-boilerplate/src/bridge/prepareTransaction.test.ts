@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { craftTransaction, estimateFees } from "../common-logic";
 import { getNextSequence } from "../network/node";
 import { Transaction } from "../types";

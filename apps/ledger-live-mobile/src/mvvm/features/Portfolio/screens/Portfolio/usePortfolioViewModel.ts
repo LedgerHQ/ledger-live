@@ -21,6 +21,7 @@ import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePo
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
@@ -35,6 +36,7 @@ interface UsePortfolioViewModelResult {
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
   shouldDisplayGraphRework: boolean;
+  backgroundColor: string;
   openAddModal: () => void;
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
@@ -56,6 +58,7 @@ const usePortfolioViewModel = (navigation: {
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   useListenToHidDevices();
   const isFocused = useIsFocused();
+  const { backgroundColor } = useWallet40Theme("mobile");
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
@@ -136,6 +139,7 @@ const usePortfolioViewModel = (navigation: {
     isLNSUpsellBannerShown,
     isAddModalOpened,
     shouldDisplayGraphRework,
+    backgroundColor,
     openAddModal,
     closeAddModal,
     handleHeightChange,

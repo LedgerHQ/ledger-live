@@ -17,13 +17,11 @@ export const MarketBannerHeader = memo(function MarketBannerHeader({
   const { t } = useTranslation();
 
   return (
-    <div className="text-base">
-      <Subheader>
-        <SubheaderRow onClick={onNavigate} data-testid="market-banner-button">
-          <SubheaderTitle>{t("marketBanner.title")}</SubheaderTitle>
-          <SubheaderShowMore />
-        </SubheaderRow>
-      </Subheader>
-    </div>
+    <Subheader>
+      <SubheaderRow onClick={onNavigate} data-testid="market-banner-button">
+        <SubheaderTitle>{t("marketBanner.title")}</SubheaderTitle>
+        <SubheaderShowMore />
+      </SubheaderRow>
+    </Subheader>
   );
 });

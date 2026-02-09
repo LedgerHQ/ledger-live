@@ -1,11 +1,11 @@
-import semver from "semver";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
-import { SolanaSigner } from "./signer";
-import { toOffChainMessage } from "./offchainMessage/format";
-import coinConfig from "./config";
 import bs58 from "bs58";
 import invariant from "invariant";
+import semver from "semver";
+import coinConfig from "./config";
+import { toOffChainMessage } from "./offchainMessage/format";
+import { SolanaSigner } from "./signer";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>

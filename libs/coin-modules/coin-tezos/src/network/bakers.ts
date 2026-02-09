@@ -2,8 +2,8 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { Baker, Delegation } from "../types";
 import coinConfig from "../config";
+import { Baker, Delegation } from "../types";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
 
 export type TezosApiBaker = {

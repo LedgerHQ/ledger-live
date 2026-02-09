@@ -16,4 +16,5 @@ module.exports = {
       },
     ],
   },
+  modulePathIgnorePatterns: ["lib/", "lib-es/"],
 };

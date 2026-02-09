@@ -70,7 +70,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyQuicksilver: DEFAULT_FEATURE,
   currencyRsk: DEFAULT_FEATURE,
   currencySecretNetwork: DEFAULT_FEATURE,
-  currencySeiNetwork: DEFAULT_FEATURE,
   currencyStacks: DEFAULT_FEATURE,
   currencyStargaze: DEFAULT_FEATURE,
   currencySyscoin: DEFAULT_FEATURE,
@@ -796,6 +795,23 @@ export const DEFAULT_FEATURES: Features = {
       quickActionCtas: true,
       mainNavigation: true,
       newReceiveDialog: true,
+    },
+  },
+  addressPoisoningOperationsFilter: {
+    ...DEFAULT_FEATURE,
+    enabled: true,
+    params: {
+      families: [
+        "evm",
+        "tron",
+        "solana",
+        "xrp",
+        "stellar",
+        "hedera",
+        "algorand",
+        "cardano",
+        "cosmos",
+      ],
     },
   },
 };

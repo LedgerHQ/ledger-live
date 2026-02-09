@@ -100,6 +100,7 @@ function toEmptyAccount(currency: CryptoCurrency, info: AccountInfo): Account {
     operations: [],
     pendingOperations: [],
     balanceHistoryCache: {},
+    blockHeight: 0,
   } as unknown as Account;
 }
 

@@ -85,7 +85,6 @@ setSupportedCurrencies([
   "desmos",
   "dydx",
   "onomy",
-  "sei_network",
   "persistence",
   "quicksilver",
   "vechain",

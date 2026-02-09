@@ -1,11 +1,11 @@
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import { SolanaAddress } from "./signer";
-import { buildSignOperation } from "./signOperation";
-import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
-import { ChainAPI } from "./network";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Transaction } from "./types";
+import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight, VersionedTransaction } from "@solana/web3.js";
+import { ChainAPI } from "./network";
+import { buildSignOperation } from "./signOperation";
+import { SolanaAddress } from "./signer";
+import { Transaction } from "./types";
 
 const TRANSFER_KINDS = [
   "transfer",

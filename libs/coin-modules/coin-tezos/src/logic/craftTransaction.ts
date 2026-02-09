@@ -1,6 +1,6 @@
+import { log } from "@ledgerhq/logs";
 import { type OperationContents, OpKind } from "@taquito/rpc";
 import { getRevealFee, getRevealGasLimit } from "@taquito/taquito";
-import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { createMockSigner } from "../utils";
@@ -52,28 +52,43 @@ export async function craftTransaction(
   const contents: OperationContents[] = [];
 
   if (publicKey !== undefined) {
-    let revealFees;
+    const feesConfig = coinConfig.getCoinConfig().fees;
+
+    type RevealEstimate = { gasLimit?: number; storageLimit?: number; suggestedFeeMutez?: number };
+    let revealEstimate: RevealEstimate | undefined;
     try {
-      revealFees = await tezosToolkit.estimate.reveal();
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      revealEstimate = (await tezosToolkit.estimate.reveal()) as RevealEstimate;
     } catch (error) {
       // for some unknown reason, on some addresses the estimation fails with "inconsistent_hash" error, we fall back to
       // another method from the SDK
       log("estimate-error", "error estimating reveal fees, trying using getRevealGasLimit", {
         error,
       });
-      revealFees = {
+      revealEstimate = {
         gasLimit: getRevealGasLimit(address),
+        suggestedFeeMutez: getRevealFee(address),
       };
     }
-    const minRevealGasLimit = coinConfig.getCoinConfig().fees.minRevealGasLimit;
-    const revealGasLimit = Math.max(revealFees?.gasLimit || 0, minRevealGasLimit);
+
+    const revealFee = Math.max(
+      feesConfig.minFees ?? 0,
+      revealEstimate?.suggestedFeeMutez ?? getRevealFee(address) ?? 0,
+    );
+    const revealGasLimit = Math.max(
+      feesConfig.minRevealGasLimit ?? 0,
+      revealEstimate?.gasLimit ?? 0,
+    );
+    const revealStorageLimit = Math.max(
+      feesConfig.minStorageLimit ?? 0,
+      revealEstimate?.storageLimit ?? 0,
+    );
+
     contents.push({
       kind: OpKind.REVEAL,
-      fee: getRevealFee(address).toString(),
-      //TODO: use instead of previous line when this PR will be validated, as the value change (don't forget to update the test too)
-      // fee: getRevealFee(address).toString(),
+      fee: revealFee.toString(),
       gas_limit: revealGasLimit.toString(),
-      storage_limit: (revealFees?.storageLimit || 0).toString(),
+      storage_limit: revealStorageLimit.toString(),
       source: publicKey.publicKeyHash,
       counter: (counter + 1 + contents.length).toString(),
       public_key: publicKey.publicKey,

@@ -34,7 +34,7 @@ export type SaveSettings = (a: Partial<Settings>) => {
   payload: Partial<Settings>;
 };
 export const saveSettings: SaveSettings = payload => ({
-  type: "DB:SAVE_SETTINGS",
+  type: "SAVE_SETTINGS",
   payload,
 });
 export const setCountervalueFirst = (countervalueFirst: boolean) =>

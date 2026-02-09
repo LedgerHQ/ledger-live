@@ -1,15 +1,17 @@
 import BigNumber from "bignumber.js";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
+
 import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
-import { makeGetAccountShape } from "./synchronisation";
+import { makeGetAccountShape, mapTxToAccountOperation } from "./synchronisation";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
-import { APINetworkInfo } from "./api/api-types";
+import { APINetworkInfo, APITransaction } from "./api/api-types";
 import { CardanoSigner } from "./signer";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
@@ -88,9 +90,7 @@ describe("makeGetAccountShape", () => {
       getTransactionsMock.mockReturnValue(
         Promise.resolve({
           transactions: [],
-          externalCredentials: [
-            { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
-          ],
+          externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
           internalCredentials: [],
           blockHeight: 0,
         }),
@@ -103,9 +103,7 @@ describe("makeGetAccountShape", () => {
       getTransactionsMock.mockReturnValue(
         Promise.resolve({
           transactions: [],
-          externalCredentials: [
-            { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
-          ],
+          externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
           internalCredentials: [
             {
               isUsed: true,
@@ -173,6 +171,177 @@ describe("makeGetAccountShape", () => {
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.cardanoResources?.delegation?.dRepHex).toEqual("dRepHex");
       expect(result.cardanoResources?.delegation?.rewards).toEqual(new BigNumber(10));
+    });
+  });
+});
+
+describe("mapTxToAccountOperation", () => {
+  const paymentCredKey = "1234";
+  const stakeCredKey = "5678";
+  const stakeAddress = new TyphonAddress.RewardAddress(TyphonTypes.NetworkId.TESTNET, {
+    type: TyphonTypes.HashType.ADDRESS,
+    hash: Buffer.from(stakeCredKey, "hex"),
+  });
+  const stakeCredHex = stakeAddress.getHex();
+
+  let accountShapeInfo: AccountShapeInfo<CardanoAccount>;
+  let accountAddress: TyphonAddress.EnterpriseAddress;
+  let accountCredentialMap: Record<string, PaymentCredential>;
+
+  beforeEach(() => {
+    accountCredentialMap = {
+      [paymentCredKey]: { key: paymentCredKey } as PaymentCredential,
+    };
+    accountAddress = new TyphonAddress.EnterpriseAddress(TyphonTypes.NetworkId.TESTNET, {
+      hash: Buffer.from(paymentCredKey, "hex"),
+      type: TyphonTypes.HashType.ADDRESS,
+    });
+    accountShapeInfo = {
+      currency: {
+        id: "cardano_testnet",
+        units: [{ name: "Cardano", code: "ADA", magnitude: 6 }],
+      } as any,
+      address: "address",
+      index: 0,
+      initialAccount: {} as any,
+      derivationPath: "",
+      derivationMode: "cardano",
+      deviceId: "id",
+    };
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  describe("Conway era certificates operation identification", () => {
+    it("should correctly map stake registration transaction", async () => {
+      const mockTxResult: APITransaction = {
+        fees: (1e6).toString(), // 1 ADA
+        hash: "txHash",
+        inputs: [
+          {
+            index: 1,
+            txId: "txId1",
+            address: accountAddress.getHex(),
+            value: (10e6).toString(), // 10 ADA
+            tokens: [],
+            paymentKey: paymentCredKey,
+          },
+        ],
+        outputs: [
+          {
+            address: accountAddress.getHex(),
+            value: (7e6).toString(), // 7 ADA
+            tokens: [],
+            paymentKey: paymentCredKey,
+          },
+        ],
+        timestamp: "2024-01-01T00:00:00.000Z",
+        blockHeight: 0,
+        certificate: {
+          stakeRegistrations: [],
+          stakeRegsConway: [
+            {
+              deposit: (2e6).toString(), // 2 ADA,
+              index: 0,
+              stakeHex: stakeCredHex,
+            },
+          ],
+          stakeDeRegistrations: [],
+          stakeDelegations: [
+            {
+              index: 0,
+              poolKeyHash: "pool",
+              stakeCredential: {
+                key: stakeCredKey,
+                type: 0,
+              },
+            },
+          ],
+        },
+        withdrawals: [],
+      };
+
+      const op = mapTxToAccountOperation(
+        mockTxResult,
+        "accountId",
+        accountCredentialMap,
+        { key: stakeCredKey } as any,
+        [],
+        accountShapeInfo,
+        { stakeKeyDeposit: "1" } as any,
+      );
+
+      expect(op).toBeDefined();
+      expect(op.type).toBe("DELEGATE");
+      expect(op.value.toString()).toBe((3e6).toString()); // fee + deposit spent
+      expect(op.extra.deposit).toMatch(/^2\s*ADA$/);
+    });
+
+    it("should correctly map the deregistration with withdrawal transaction", async () => {
+      const mockTxResult: APITransaction = {
+        fees: (1e6).toString(), // 1 ADA
+        hash: "txHash",
+        inputs: [
+          {
+            index: 1,
+            txId: "txId1",
+            address: accountAddress.getHex(),
+            value: (1e6).toString(), // 1 ADA
+            tokens: [],
+            paymentKey: paymentCredKey,
+          },
+        ],
+        outputs: [
+          {
+            address: accountAddress.getHex(),
+            value: (12e6).toString(), // 12 ADA
+            tokens: [],
+            paymentKey: paymentCredKey,
+          },
+        ],
+        timestamp: "2024-01-01T00:00:00.000Z",
+        blockHeight: 0,
+        certificate: {
+          stakeDeRegsConway: [
+            {
+              deposit: (2e6).toString(), // 2 ADA,
+              index: 0,
+              stakeHex: stakeCredHex,
+            },
+          ],
+          stakeRegistrations: [],
+          stakeDeRegistrations: [],
+          stakeDelegations: [],
+        },
+        withdrawals: [
+          {
+            stakeCredential: {
+              key: stakeCredKey,
+              type: 0,
+            },
+            amount: (10e6).toString(), // 10 ADA
+            stakeHex: stakeCredHex,
+          },
+        ],
+      };
+
+      const op = mapTxToAccountOperation(
+        mockTxResult,
+        "accountId",
+        accountCredentialMap,
+        { key: stakeCredKey } as any,
+        [],
+        accountShapeInfo,
+        { stakeKeyDeposit: "1" } as any,
+      );
+
+      expect(op).toBeDefined();
+      expect(op.type).toBe("UNDELEGATE");
+      expect(op.value.toString()).toBe((1e6).toString()); // only fee is spent
+      expect(op.extra.refund).toMatch(/^2\s*ADA$/);
+      expect(op.extra.rewards).toMatch(/^10\s*ADA$/);
     });
   });
 });

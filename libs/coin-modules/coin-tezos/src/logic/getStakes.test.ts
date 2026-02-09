@@ -1,6 +1,6 @@
 import { createApi } from "../api/index";
-import tzktApi from "../network/tzkt";
 import coinConfig from "../config";
+import tzktApi from "../network/tzkt";
 
 describe("getStakes", () => {
   const api = createApi({

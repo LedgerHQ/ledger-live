@@ -1,3 +1,4 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -9,12 +10,11 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { Transaction, TransactionStatus } from "../types";
+import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
+import { Transaction, TransactionStatus } from "../types";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

@@ -294,6 +294,9 @@ export function useWebviewState(
         loadURL: (url: string): void => {
           setURI(url);
         },
+        resetToInitialURL: (): void => {
+          setURI(initialURL);
+        },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         notify: (method: `event.${string}`, params: any) => {
           serverRef?.current?.sendMessage(method, params);

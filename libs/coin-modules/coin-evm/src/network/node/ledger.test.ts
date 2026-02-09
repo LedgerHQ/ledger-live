@@ -1,14 +1,14 @@
 import { AssertionError, fail } from "assert";
-import axios from "axios";
-import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
-import { getGasOptions } from "../gasTracker/ledger";
-import { Transaction as EvmTransaction } from "../../types";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import axios from "axios";
+import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../../config";
+import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
+import { makeAccount } from "../../fixtures/common.fixtures";
+import { Transaction as EvmTransaction } from "../../types";
+import { getGasOptions } from "../gasTracker/ledger";
 import * as LEDGER_API from "./ledger";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
