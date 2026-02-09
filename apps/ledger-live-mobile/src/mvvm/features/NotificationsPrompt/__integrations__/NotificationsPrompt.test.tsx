@@ -8,6 +8,7 @@ import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { NotificationsPromptDrawer } from "../screens/NotificationsPromptDrawer";
 import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
+import { NotificationsState } from "~/reducers/types";
 
 // Mock QueuedDrawer to bypass animation issues with Reanimated 4 in tests
 jest.mock("~/components/QueuedDrawer", () => {
@@ -69,101 +70,23 @@ jest.mock("@react-native-firebase/messaging", () => {
 const REPROMPT_SCHEDULE = [{ days: 7 }, { days: 30 }, { days: 90 }] as const;
 const INACTIVITY_REPROMPT = { months: 6 } as const;
 
-jest.mock("@ledgerhq/live-common/featureFlags/useFeature", () => {
-  return jest.fn(name => {
-    if (name === "brazePushNotifications") {
-      return {
-        enabled: true,
-        params: {
-          action_events: {
-            complete_onboarding: {
-              enabled: true,
-              timer: 0,
-            },
-
-            add_favorite_coin: {
-              enabled: true,
-              timer: 0,
-            },
-
-            send: {
-              enabled: true,
-              timer: 0,
-            },
-            receive: {
-              enabled: true,
-              timer: 0,
-            },
-            buy: {
-              enabled: true,
-              timer: 0,
-            },
-            swap: {
-              enabled: true,
-              timer: 0,
-            },
-            stake: {
-              enabled: true,
-              timer: 0,
-            },
-          },
-          reprompt_schedule: REPROMPT_SCHEDULE,
-
-          notificationsCategories: [
-            {
-              displayed: true,
-              category: "announcementsCategory",
-            },
-            {
-              displayed: true,
-              category: "recommendationsCategory",
-            },
-            {
-              displayed: true,
-              category: "largeMoverCategory",
-            },
-            {
-              displayed: true,
-              category: "transactionsAlertsCategory",
-            },
-          ],
-
-          inactivity_enabled: true,
-          inactivity_reprompt: INACTIVITY_REPROMPT,
-        },
-      };
-    }
-
-    if (name === "lwmNewWordingOptInNotificationsDrawer") {
-      return {
-        enabled: true,
-        params: {
-          variant: ABTestingVariants.variantA,
-        },
-      };
-    }
-
-    console.warn(`Unhandled feature flag: ${name}`);
-
-    return {
-      enabled: true,
-    };
-  });
-});
-
 describe("NotificationsPrompt Integration", () => {
   async function setup({
+    actionSource = "onboarding",
     osPermission,
     appNotifications,
     lastActionAt,
     dateOfNextAllowedRequest,
     alreadyDelayedToLater,
+    variant = ABTestingVariants.variantB,
   }: {
+    actionSource?: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">;
     osPermission: AuthorizationStatusType;
     appNotifications: boolean;
     lastActionAt?: number;
     dateOfNextAllowedRequest?: Date;
     alreadyDelayedToLater?: boolean;
+    variant?: ABTestingVariants;
   }) {
     mockHasPermission.mockResolvedValue(osPermission);
     mockRequestPermission.mockResolvedValue(osPermission);
@@ -198,7 +121,7 @@ describe("NotificationsPrompt Integration", () => {
 
       return (
         <>
-          <Button onPress={() => tryTriggerPushNotificationDrawerAfterAction("onboarding")}>
+          <Button onPress={() => tryTriggerPushNotificationDrawerAfterAction(actionSource)}>
             Trigger drawer
           </Button>
           <Button onPress={reload}>Reload app</Button>
@@ -212,10 +135,85 @@ describe("NotificationsPrompt Integration", () => {
         <SetupComponent />
       </>,
       {
-        overrideInitialState: state => {
-          state.settings.notifications.areNotificationsAllowed = appNotifications;
-          return state;
-        },
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            notifications: {
+              ...state.settings.notifications,
+              areNotificationsAllowed: appNotifications,
+            },
+            overriddenFeatureFlags: {
+              ...state.settings.overriddenFeatureFlags,
+              brazePushNotifications: {
+                enabled: true,
+                params: {
+                  action_events: {
+                    complete_onboarding: {
+                      enabled: true,
+                      timer: 0,
+                    },
+
+                    add_favorite_coin: {
+                      enabled: true,
+                      timer: 0,
+                    },
+
+                    send: {
+                      enabled: true,
+                      timer: 0,
+                    },
+                    receive: {
+                      enabled: true,
+                      timer: 0,
+                    },
+                    buy: {
+                      enabled: true,
+                      timer: 0,
+                    },
+                    swap: {
+                      enabled: true,
+                      timer: 0,
+                    },
+                    stake: {
+                      enabled: true,
+                      timer: 0,
+                    },
+                  },
+                  reprompt_schedule: REPROMPT_SCHEDULE,
+
+                  notificationsCategories: [
+                    {
+                      displayed: true,
+                      category: "announcementsCategory",
+                    },
+                    {
+                      displayed: true,
+                      category: "recommendationsCategory",
+                    },
+                    {
+                      displayed: true,
+                      category: "largeMoverCategory",
+                    },
+                    {
+                      displayed: true,
+                      category: "transactionsAlertsCategory",
+                    },
+                  ],
+
+                  inactivity_enabled: true,
+                  inactivity_reprompt: INACTIVITY_REPROMPT,
+                },
+              },
+              lwmNewWordingOptInNotificationsDrawer: {
+                enabled: true,
+                params: {
+                  variant,
+                },
+              },
+            },
+          },
+        }),
       },
     );
 
@@ -854,6 +852,45 @@ describe("NotificationsPrompt Integration", () => {
         await user.press(screen.getByText(/reload app/i));
         act(() => jest.runOnlyPendingTimers());
         expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+      });
+    });
+  });
+
+  describe("A/B test", () => {
+    describe("variant A (legacy)", () => {
+      it("should show drawer after onboarding action", async () => {
+        const { tryTriggerDrawer } = await setup({
+          osPermission: AuthorizationStatus.NOT_DETERMINED,
+          appNotifications: false,
+          variant: ABTestingVariants.variantA,
+        });
+
+        await tryTriggerDrawer();
+        expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+      });
+
+      it("should never show drawer after non-onboarding actions", async () => {
+        const { tryTriggerDrawer } = await setup({
+          actionSource: "add_favorite_coin",
+          osPermission: AuthorizationStatus.AUTHORIZED,
+          appNotifications: false,
+          variant: ABTestingVariants.variantA,
+        });
+
+        await tryTriggerDrawer();
+        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+      });
+
+      it("should never show drawer after inactivity", async () => {
+        await setup({
+          osPermission: AuthorizationStatus.AUTHORIZED,
+          appNotifications: false,
+          lastActionAt: sub(Date.now(), INACTIVITY_REPROMPT).getTime(),
+          variant: ABTestingVariants.variantA,
+        });
+
+        act(() => jest.runOnlyPendingTimers());
+        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
       });
     });
   });
