@@ -1,7 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { blocks, transactions } from "../tests/testAccounts";
-
-const JSON_RPC_SERVER = "http://localhost:18232";
+import { JSON_RPC_SERVER } from "../src/consts";
 
 export const handlers = [
   http.post(`${JSON_RPC_SERVER}`, async ({ request }) => {

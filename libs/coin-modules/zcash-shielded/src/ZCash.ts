@@ -3,7 +3,7 @@ import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import type { ShieldedTransaction } from "./shieldedTransaction";
 import { JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction } from "./shieldedTransaction";
-import { LOG_TYPE } from "./consts";
+import { JSON_RPC_SERVER, LOG_TYPE } from "./consts";
 
 /**
  * ZCash API
@@ -14,9 +14,6 @@ export type SyncEstimatedTime = {
   minutes: number;
 };
 export default class ZCash {
-  static readonly AVERAGE_BLOCK_SYNC_TIME_MS = 5;
-  static readonly JSON_RPC_SERVER = "http://localhost:18232";
-
   /**
    * Estimates sync time given a total number of blocks to process.
    * This is a curried function that returns a function that returns the estimated sync time.
@@ -57,7 +54,7 @@ export default class ZCash {
     viewingKey: string,
   ): Promise<ShieldedTransaction[]> {
     // 1. retrieve block
-    const jsonRpcClient = new JsonRpcClient(ZCash.JSON_RPC_SERVER);
+    const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
     const block = await jsonRpcClient.getBlock(blockHex);
 
     // 2. get list of tx
