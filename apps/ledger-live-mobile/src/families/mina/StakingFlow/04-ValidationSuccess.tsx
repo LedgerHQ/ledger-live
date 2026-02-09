@@ -8,7 +8,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { ScreenName } from "~/const";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { MinaStakingFlowParamList } from "./types";
 
