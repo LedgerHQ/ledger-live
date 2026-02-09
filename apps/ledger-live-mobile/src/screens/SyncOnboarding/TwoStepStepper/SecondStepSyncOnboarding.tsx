@@ -15,7 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LayoutChangeEvent } from "react-native";
 import { SeedOriginType } from "@ledgerhq/types-live";
-import NewSeedConfirmation from "./NewSeedConfirmation";
+import NewSeedPanel from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel";
 
 const ENTRY_TIMING = 300;
 const ENTRY_OPACITY_TIMING = 400;
@@ -121,7 +121,7 @@ const SecondStepSyncOnboarding = ({
         <Animated.View onLayout={handleLayout}>
           <Box mt={isFinished ? 0 : 3}>
             {companionStep === SEED_STATE.NEW_SEED ? (
-              <NewSeedConfirmation
+              <NewSeedPanel
                 handlePress={handleExit}
                 seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
