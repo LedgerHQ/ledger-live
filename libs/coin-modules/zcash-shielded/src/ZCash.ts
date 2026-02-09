@@ -3,6 +3,7 @@ import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import type { ShieldedTransaction } from "./shieldedTransaction";
 import { JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction } from "./shieldedTransaction";
+import { LOG_TYPE } from "./consts";
 
 /**
  * ZCash API
@@ -76,7 +77,7 @@ export default class ZCash {
               decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
             }
           } catch (_e) {
-            log("zcash-shielded", "warn: could not decrypt transaction");
+            log(LOG_TYPE, "warn: could not decrypt transaction");
           }
         }
       }
@@ -100,7 +101,7 @@ export default class ZCash {
     try {
       return decrypt_tx(rawHexTransaction, viewingKey);
     } catch (error) {
-      log("zcash-shielded", "err: failed to decrypt transaction", error);
+      log(LOG_TYPE, "error: failed to decrypt transaction", error);
     }
   }
 
