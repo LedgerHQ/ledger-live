@@ -541,14 +541,6 @@ jobs:
           echo $! > /tmp/mitmproxy.pid
           sleep 3
 
-          # Set up iptables to redirect traffic (Linux only)
-          # Redirect HTTP traffic
-          sudo iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-port 8080
-          # Redirect HTTPS traffic
-          sudo iptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to-port 8080
-
-          # Verify iptables rules
-          sudo iptables -t nat -L -n -v
         shell: bash
 
       - name: create AVD with cold boot and generate snapshot for caching
@@ -566,6 +558,15 @@ jobs:
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }} # -writable-system -http-proxy 127.0.0.1:8080
           script: |
+            # Set up iptables to redirect traffic (Linux only)
+            # Redirect HTTP traffic
+            sudo iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-port 8080
+            # Redirect HTTPS traffic
+            sudo iptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to-port 8080
+
+            # Verify iptables rules
+            sudo iptables -t nat -L -n -v
+
             ./tools/scripts/wait_emulator_idle.sh
 
             # # Install mitmproxy certificate on the emulator
