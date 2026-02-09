@@ -160,7 +160,7 @@ export const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   countervalueFirst: false,
   autoLockTimeout: 10,
-  selectedTimeRange: "month",
+  selectedTimeRange: "day",
   currenciesSettings: {},
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
