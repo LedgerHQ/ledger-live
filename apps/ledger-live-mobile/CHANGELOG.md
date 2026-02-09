@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.105.0-next.5
+
+### Minor Changes
+
+- [#14314](https://github.com/LedgerHQ/ledger-live/pull/14314) [`50da5ec`](https://github.com/LedgerHQ/ledger-live/commit/50da5ec0dd8c14e607deaa7cc67cc28dc3ad0a2d) Thanks [@Justkant](https://github.com/Justkant)! - fix: prevent double-firing of close animation callbacks in QueuedDrawer and DeviceConnect
+
+  Use refs instead of local variables in QueuedDrawer's closeAnim to
+  deduplicate callbacks across rapid successive calls. Add a guard ref
+  in DeviceConnect to prevent handleSuccess from executing twice.
+
 ## 3.105.0-next.4
 
 ### Minor Changes
