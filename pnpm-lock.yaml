@@ -848,6 +848,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@ledgerhq/zcash-shielded':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/zcash-shielded
       '@noble/curves':
         specifier: 1.9.7
         version: 1.9.7
@@ -5264,12 +5267,18 @@ importers:
 
   libs/coin-modules/zcash-shielded:
     dependencies:
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../coin-bitcoin
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
       '@ledgerhq/zcash-decrypt':
         specifier: 0.1.0
         version: 0.1.0
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'

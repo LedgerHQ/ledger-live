@@ -7955,8 +7955,14 @@
     "shielded": {
       "state": {
         "showBalance": "Show balance",
-        "pausedAt": "Paused at ",
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
         "lastSync": "Last sync: {{date}}"
+      },
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       },
       "flows": {
         "export": {
@@ -7995,11 +8001,6 @@
             }
           }
         }
-      },
-      "startSync": "Start sync",
-      "datepicker": {
-        "label": "Birthday height",
-        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       }
     }
   }

@@ -8,8 +8,9 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { Container } from "../shared/Container";
-import { readyZcashSync, startZcashSync } from "~/renderer/reducers/zcashSync";
+import type { ZcashAccount, ZcashPrivateInfo } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { StepProps } from "../types";
+import { syncStateUpdater } from "../sync";
 
 function StepConfirmation({ t }: Readonly<StepProps>) {
   return (
@@ -62,16 +63,28 @@ function StepConfirmation({ t }: Readonly<StepProps>) {
   );
 }
 
-export function StepConfirmationFooter({ closeModal }: Readonly<StepProps>) {
+export function StepConfirmationFooter({ account, closeModal }: Readonly<StepProps>) {
   const dispatch = useDispatch();
 
+  const saveSyncState = (info: Partial<ZcashPrivateInfo>) => {
+    dispatch(
+      syncStateUpdater(account as ZcashAccount, {
+        ...info,
+      }),
+    );
+  };
+
   const handleCloseModal = () => {
-    dispatch(readyZcashSync());
+    saveSyncState({
+      syncState: "ready",
+    });
     closeModal();
   };
 
   const handleStartSync = () => {
-    dispatch(startZcashSync());
+    saveSyncState({
+      syncState: "running",
+    });
     closeModal();
   };
 
@@ -81,7 +94,7 @@ export function StepConfirmationFooter({ closeModal }: Readonly<StepProps>) {
         <Trans i18nKey="common.close" />
       </Button>
       <Button id="export-key-start-sync-button" primary onClick={handleStartSync}>
-        <Trans i18nKey="zcash.shielded.startSync" />
+        <Trans i18nKey="zcash.shielded.state.startSync" />
       </Button>
     </Box>
   );
