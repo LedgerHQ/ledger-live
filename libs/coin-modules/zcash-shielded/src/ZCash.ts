@@ -76,7 +76,7 @@ export default class ZCash {
               decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
             }
           } catch (_e) {
-            console.warn("could not decrypt transaction");
+            log("zcash-shielded", "warn: could not decrypt transaction");
           }
         }
       }
@@ -100,7 +100,7 @@ export default class ZCash {
     try {
       return decrypt_tx(rawHexTransaction, viewingKey);
     } catch (error) {
-      log("zcash-shielded", "failed to decrypt transaction", error);
+      log("zcash-shielded", "err: failed to decrypt transaction", error);
     }
   }
 
