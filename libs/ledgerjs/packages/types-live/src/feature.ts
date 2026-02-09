@@ -807,17 +807,13 @@ type Feature_Wallet40_Params = {
   graphRework: boolean;
   quickActionCtas: boolean;
   mainNavigation: boolean;
+  tour: boolean;
 
   //Specifics
-  tour?: boolean;
   newReceiveDialog?: boolean;
 };
 
-export type Feature_LwmWallet40 = Feature<
-  {
-    tour: boolean;
-  } & Feature_Wallet40_Params
->;
+export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;

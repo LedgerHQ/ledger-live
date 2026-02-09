@@ -3,7 +3,13 @@ import { useTranslation } from "react-i18next";
 import { WALLET_FEATURES_PARAMS } from "./constants";
 import { WalletFeaturesDevToolContentProps } from "./types";
 import { useWalletFeaturesDevToolViewModel } from "./hooks/useWalletFeaturesDevToolViewModel";
-import { QuickActions, FeatureParamRow, FeatureFlagPreview, MainFeatureToggle } from "./components";
+import {
+  QuickActions,
+  FeatureParamRow,
+  FeatureFlagPreview,
+  MainFeatureToggle,
+  TourSection,
+} from "./components";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
@@ -13,9 +19,11 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     isEnabled,
     params,
     allEnabled,
+    hasSeenWalletV4Tour,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
+    handleToggleHasSeenTour,
   } = useWalletFeaturesDevToolViewModel();
 
   return (
@@ -51,6 +59,11 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
               </div>
             </div>
           </div>
+
+          <TourSection
+            hasSeenTour={hasSeenWalletV4Tour}
+            onToggleHasSeenTour={handleToggleHasSeenTour}
+          />
 
           <div className="flex gap-4">
             <QuickActions
