@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "exclude": [
+    "node_modules",
+    "./scripts",
+    "./lib",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
