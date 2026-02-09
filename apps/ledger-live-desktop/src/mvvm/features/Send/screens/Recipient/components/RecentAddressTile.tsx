@@ -13,7 +13,7 @@ import {
   MenuTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { Wallet, Trash, MoreVertical, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { formatRelativeDate } from "../utils/dateFormatter";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useSelector } from "LLD/hooks/redux";
