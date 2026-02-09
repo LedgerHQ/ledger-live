@@ -1,3 +1,6 @@
+import { log } from "@ledgerhq/logs";
+import { LOG_TYPE } from "./consts";
+
 type JsonRpcRequestArgs = {
   method: string;
   params: unknown[];
@@ -134,7 +137,7 @@ export class JsonRpcClient {
       if (body?.result) {
         return body.result;
       } else {
-        console.error(`Empty response result from server - ${body?.error?.message}`);
+        log(LOG_TYPE, `error: Empty response result from server - ${body?.error?.message}`);
         return;
       }
     } else {
