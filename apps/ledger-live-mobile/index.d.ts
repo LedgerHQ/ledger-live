@@ -7,3 +7,7 @@ declare module "*.png";
 declare module "*.jpg";
 declare module "*.jpeg";
 declare module "*.webp";
+declare module "*.lottie" {
+  const content: number;
+  export default content;
+}

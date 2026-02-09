@@ -118,6 +118,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@lottiefiles/dotlottie-react-native": "0.7.1",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-clipboard/clipboard": "1.16.2",
     "@react-native-community/blur": "4.4.1",

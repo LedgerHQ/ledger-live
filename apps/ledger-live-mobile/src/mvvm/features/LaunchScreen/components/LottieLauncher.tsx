@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animation from "~/components/Animation";
-import Splashscreen from "./Splashscreen.json";
+import Splashscreen from "./SplashScreenOpti.lottie";
 
 const LottieLauncher = ({ onFinish }: { onFinish: () => void }) => {
   const { width, height } = Dimensions.get("window");

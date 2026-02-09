@@ -103,6 +103,80 @@ const final = async () => {
     recursive: true,
   });
 
+  const dotLottieViewManagerPath = join(
+    "node_modules",
+    "@lottiefiles",
+    "dotlottie-react-native",
+    "ios",
+    "DotlottieReactNativeViewManager.swift",
+  );
+  if (existsSync(dotLottieViewManagerPath)) {
+    const contents = readFileSync(dotLottieViewManagerPath, "utf8");
+    const legacyCall = "stateMachineUnSubscribe(observer: stateMachineObserver)";
+    const fixedCall = "stateMachineUnsubscribe(stateMachineObserver)";
+
+    if (contents.includes(legacyCall)) {
+      const updated = contents.replace(legacyCall, fixedCall);
+      writeFileSync(dotLottieViewManagerPath, updated, "utf8");
+    } else if (!contents.includes(fixedCall)) {
+      const message =
+        "DotLottie patch failed: expected stateMachineUnSubscribe call not found. " +
+        "Please update the postinstall patch for dotlottie-react-native.";
+      echo(chalk.red(message));
+      throw new Error(message);
+    }
+  }
+
+  const dotLottieAndroidFiles = [
+    join(
+      "node_modules",
+      "@lottiefiles",
+      "dotlottie-react-native",
+      "android",
+      "src",
+      "main",
+      "java",
+      "com",
+      "dotlottiereactnative",
+      "DotlottieReactNativePackage.kt",
+    ),
+    join(
+      "node_modules",
+      "@lottiefiles",
+      "dotlottie-react-native",
+      "android",
+      "src",
+      "main",
+      "java",
+      "com",
+      "dotlottiereactnative",
+      "DotlottieReactNativeViewManager.kt",
+    ),
+  ];
+
+  const interopImportRegex =
+    /^import com\.facebook\.react\.common\.annotations\.internal\.InteropLegacyArchitecture\r?\n/m;
+  const interopAnnotationRegex = /^@InteropLegacyArchitecture\r?\n/m;
+
+  for (const filePath of dotLottieAndroidFiles) {
+    if (!existsSync(filePath)) continue;
+
+    const contents = readFileSync(filePath, "utf8");
+    const updated = contents.replace(interopImportRegex, "").replace(interopAnnotationRegex, "");
+
+    if (updated !== contents) {
+      writeFileSync(filePath, updated, "utf8");
+    }
+
+    if (updated.includes("InteropLegacyArchitecture")) {
+      const message =
+        "DotLottie Android patch failed: InteropLegacyArchitecture is still present. " +
+        `Please update the postinstall patch for ${filePath}.`;
+      echo(chalk.red(message));
+      throw new Error(message);
+    }
+  }
+
   // Create the dev .env file with APP_NAME if it doesn't exist
   const exists = existsSync(".env");
   if (!exists) {
