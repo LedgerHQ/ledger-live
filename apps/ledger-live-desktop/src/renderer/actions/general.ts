@@ -22,6 +22,7 @@ import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
   counterValueCurrencySelector,
   getOrderAccounts,
+  selectedTimeRangeSelector,
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
@@ -107,6 +108,7 @@ export const themeSelector = createSelector(
 export function useCalculateCountervaluesUserSettings() {
   const dispatch = useDispatch();
   const countervalue = useSelector(counterValueCurrencySelector);
+  const selectedTimeRange = useSelector(selectedTimeRangeSelector);
 
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);
@@ -126,6 +128,7 @@ export function useCalculateCountervaluesUserSettings() {
           hourly: Number(granularitiesRatesConfig.params?.hourly),
         }
       : undefined;
+
     dispatch(
       countervaluesActions.COUNTERVALUES_USER_SETTINGS_SET({
         trackingPairs,
@@ -135,7 +138,8 @@ export function useCalculateCountervaluesUserSettings() {
           "config_countervalues_marketCapBatchingAfterRank",
         ),
         granularitiesRates,
+        selectedTimeRange,
       }),
     );
-  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
+  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs, selectedTimeRange]);
 }
