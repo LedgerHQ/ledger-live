@@ -180,44 +180,39 @@ export async function parsePrivateOperation({
   // PROGRAM INPUTS, BASED ON TRANSITION INDEX
   const recordTransition = transactionDetails.execution.transitions[rawTx.transition_index];
 
-  // IF PUBLIC TO PRIVATE, OR PRIVATE TO PUBLIC WHERE WE ARE SENDERS IGNORE
-  if (rawTx.sender === address) return null;
+  // REMOVE ALREADY PARSED SEMI PUBLIC OPERATIONS
+  if (rawTx.function_name === TRANSFERS.PUBLIC_TO_PRIVATE && rawTx.sender === address) return null;
 
-  if (rawTx.function_name !== TRANSFERS.PRIVATE) {
-    sender = rawTx.sender ?? "";
+  if (rawTx.sender === address) {
+    // DECRYPT RECIPIENT & AMOUNT
+    // ONLY THE SENDER CAN DECRYPT THESE VALUES
+    const [recipientData, amountData] = await Promise.all([
+      sdkClient.decryptCiphertext({
+        ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+        tpk: recordTransition.tpk,
+        viewKey,
+        programId: rawTx.program_name,
+        functionName: rawTx.function_name,
+        outputIndex: RECIPIENT_ARG_INDEX,
+      }),
+      sdkClient.decryptCiphertext({
+        ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+        tpk: recordTransition.tpk,
+        viewKey,
+        programId: rawTx.program_name,
+        functionName: rawTx.function_name,
+        outputIndex: AMOUNT_ARG_INDEX,
+      }),
+    ]);
+
+    sender = address;
+    recipient = recipientData.plaintext;
+    value = new BigNumber(parseMicrocredits(amountData.plaintext));
+  } else {
+    // IN OPERATION FROM OTHER ACCOUNT
+    sender = rawTx.sender;
     recipient = address;
     value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
-  } else {
-    try {
-      // DECRYPT RECIPIENT & AMOUNT
-      // ONLY THE SENDER CAN DECRYPT THESE VALUES
-      const [recipientData, amountData] = await Promise.all([
-        sdkClient.decryptCiphertext({
-          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
-          tpk: recordTransition.tpk,
-          viewKey,
-          programId: rawTx.program_name,
-          functionName: rawTx.function_name,
-          outputIndex: RECIPIENT_ARG_INDEX,
-        }),
-        sdkClient.decryptCiphertext({
-          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
-          tpk: recordTransition.tpk,
-          viewKey,
-          programId: rawTx.program_name,
-          functionName: rawTx.function_name,
-          outputIndex: AMOUNT_ARG_INDEX,
-        }),
-      ]);
-
-      sender = address;
-      recipient = recipientData.plaintext;
-      value = new BigNumber(parseMicrocredits(amountData.plaintext));
-    } catch {
-      sender = rawTx.sender ?? "";
-      recipient = address;
-      value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
-    }
   }
 
   const type = recipient === address ? "IN" : "OUT";
