@@ -578,15 +578,16 @@ jobs:
             adb wait-for-device
             sleep 3
 
-            # Step 3: Install certificate
-            CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.pem | head -1)
-            echo "Certificate hash: $CERT_HASH"
+            # Step 3: Install certificate - use inline expansion to avoid GitHub Actions variable interpolation
+            openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.pem | head -1 > /tmp/cert_hash.txt
+            CERT_HASH=$(cat /tmp/cert_hash.txt)
+            echo "Certificate hash: $$CERT_HASH"
 
-            cp ~/.mitmproxy/mitmproxy-ca-cert.pem $CERT_HASH.0
+            cp ~/.mitmproxy/mitmproxy-ca-cert.pem $$(cat /tmp/cert_hash.txt).0
 
-            adb push $CERT_HASH.0 /data/local/tmp/
-            adb shell "cp /data/local/tmp/$CERT_HASH.0 /system/etc/security/cacerts/$CERT_HASH.0"
-            adb shell "chmod 644 /system/etc/security/cacerts/$CERT_HASH.0"
+            adb push $$(cat /tmp/cert_hash.txt).0 /data/local/tmp/
+            adb shell "cp /data/local/tmp/$$(cat /tmp/cert_hash.txt).0 /system/etc/security/cacerts/$$(cat /tmp/cert_hash.txt).0"
+            adb shell "chmod 644 /system/etc/security/cacerts/$$(cat /tmp/cert_hash.txt).0"
 
             # Step 4: Configure proxy
             adb shell settings put global http_proxy 10.0.2.2:8080
@@ -596,7 +597,7 @@ jobs:
             adb shell settings get global http_proxy
 
             echo "Certificate installed:"
-            adb shell ls -l /system/etc/security/cacerts/$CERT_HASH.0
+            adb shell ls -l /system/etc/security/cacerts/$$(cat /tmp/cert_hash.txt).0
 
             # Step 6: Final reboot to apply certificate
             adb reboot
