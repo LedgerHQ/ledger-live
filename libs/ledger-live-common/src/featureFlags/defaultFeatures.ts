@@ -794,6 +794,7 @@ export const DEFAULT_FEATURES: Features = {
       graphRework: true,
       quickActionCtas: true,
       mainNavigation: true,
+      tour: true,
       newReceiveDialog: true,
     },
   },
