@@ -1,4 +1,5 @@
 import React from "react";
+import { DotLottie } from "@lottiefiles/dotlottie-react-native";
 import Lottie from "lottie-react-native";
 import { type AnimationObject } from "lottie-react-native";
 import Config from "react-native-config";
@@ -15,21 +16,26 @@ function isAnimationObject(maybeAnimation: unknown): maybeAnimation is Animation
 }
 
 export type LottieProps = Lottie["props"];
+type AnimationSource = AnimationObject | number | { uri: string };
+type AnimationProps = Omit<LottieProps, "source" | "style"> & {
+  source?: AnimationSource;
+  style?: StyleProp<ViewStyle>;
+};
 
 export default function Animation({
   style,
   ...lottieProps
-}: LottieProps & {
-  style?: StyleProp<ViewStyle>;
-}) {
-  const { source } = lottieProps;
+}: AnimationProps) {
+  const { source, autoPlay, loop, speed, onAnimationFinish, ...rest } = lottieProps;
 
   if (!source) return null;
 
-  // Computes the ration w / h because lottie-react-native v6 seems not to compute and apply a ratio anymore.
-  // It will be overridden if the provided style sets one (see below)
+  // Compute ratio from JSON sources only.
+  // .lottie assets don't expose w/h, so they must rely on explicit sizing via style.
   let aspectRatio = 1;
-  if (isAnimationObject(source)) {
+  const isJsonSource = isAnimationObject(source);
+  const isDotLottieSource = typeof source === "number";
+  if (isJsonSource) {
     const { w, h } = source;
 
     if (w && h && h > 0) {
@@ -41,12 +47,24 @@ export default function Animation({
   // Animation prop `style` could define both a width and height, or an aspectRatio, and should override the computed aspectRatio
   return (
     <View>
-      <Lottie
-        {...lottieProps}
-        style={[styles.default, { aspectRatio }, style]}
-        loop={lottieProps.loop ?? true}
-        autoPlay={Config.DETOX ? false : lottieProps.autoPlay ?? true}
-      />
+      {isDotLottieSource ? (
+        <DotLottie
+          source={source}
+          style={style}
+          loop={loop ?? true}
+          autoplay={Config.DETOX ? false : autoPlay ?? true}
+          speed={speed}
+          onComplete={onAnimationFinish ? () => onAnimationFinish(false) : undefined}
+        />
+      ) : (
+        <Lottie
+          {...rest}
+          source={source}
+          style={isJsonSource ? [styles.default, { aspectRatio }, style] : [style]}
+          loop={loop ?? true}
+          autoPlay={Config.DETOX ? false : autoPlay ?? true}
+        />
+      )}
     </View>
   );
 }
