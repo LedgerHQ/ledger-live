@@ -35,7 +35,7 @@ export const useBalanceViewModel = (
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const { hasFunds, hasAccount } = useAccountStatus();
+  const { hasAccount } = useAccountStatus();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const range = useLegacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
@@ -49,7 +49,6 @@ export const useBalanceViewModel = (
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
   const unit = counterValue.units[0];
-  const isAvailable = portfolio.balanceAvailable;
   const valueChange = portfolio.countervalueChange;
 
   const navigateToAnalytics = useCallback(() => {
@@ -86,10 +85,8 @@ export const useBalanceViewModel = (
     formatter,
     discreet,
     valueChange,
-    isAvailable,
     navigateToAnalytics,
     handleKeyDown,
-    hasFunds,
     hasAccount,
     hasCompletedOnboarding,
   };
