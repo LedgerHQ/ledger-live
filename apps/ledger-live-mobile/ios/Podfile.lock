@@ -80,6 +80,31 @@ PODS:
     - OpenTelemetrySwiftApi (= 1.13.1)
   - DatadogWebViewTracking (2.27.0):
     - DatadogInternal (= 2.27.0)
+  - dotlottie-react-native (0.7.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - LottieFiles-dotLottie-iOS (~> 0.9)
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - DoubleConversion (1.1.6)
   - EXConstants (17.1.8):
     - ExpoModulesCore
@@ -266,6 +291,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - LottieFiles-dotLottie-iOS (0.11.1)
   - MultiplatformBleAdapter (0.2.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
@@ -2769,6 +2795,7 @@ DEPENDENCIES:
   - "braze-react-native-sdk (from `../node_modules/@braze/react-native-sdk`)"
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - "DatadogSDKReactNative (from `../node_modules/@datadog/mobile-react-native`)"
+  - "dotlottie-react-native (from `../node_modules/@lottiefiles/dotlottie-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@17.1.8_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8d4_e18a27c576ee336e45eedf2b6359af4c/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@5.0.0_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8_a8f232c0da7154ffd1eb6025cf92d9ba/node_modules/expo-image-loader/ios`)"
@@ -2925,6 +2952,7 @@ SPEC REPOS:
     - GoogleUtilities
     - libwebp
     - lottie-ios
+    - LottieFiles-dotLottie-iOS
     - MultiplatformBleAdapter
     - nanopb
     - OpenTelemetrySwiftApi
@@ -2944,6 +2972,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-linear-gradient"
   DatadogSDKReactNative:
     :path: "../node_modules/@datadog/mobile-react-native"
+  dotlottie-react-native:
+    :path: "../node_modules/@lottiefiles/dotlottie-react-native"
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
@@ -3214,6 +3244,7 @@ SPEC CHECKSUMS:
   DatadogSDKReactNative: d0f497967719f9e21223ab3a3cdf4758050857a5
   DatadogTrace: f46c8220c73463d09741013f385a6e27cd39185b
   DatadogWebViewTracking: dc8376420c8686efd09d00752bc1034b639d180b
+  dotlottie-react-native: 505e4f7518107b6e4ad1127ed37dacf3f673fbe3
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: d3d551cb154718f5161c4247304e96aa59f6cca7
   EXImageLoader: e5da974e25b13585c196b658a440720c075482d5
@@ -3245,6 +3276,7 @@ SPEC CHECKSUMS:
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 825856a41d05a933539ea4fdf384d67c10590547
+  LottieFiles-dotLottie-iOS: e9b34e7cff6d04f5affd97336c2dab934b86e6fb
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
@@ -3364,6 +3396,6 @@ SPEC CHECKSUMS:
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: fce72270ebed754904bbe5e18bb05cda3c3075db
 
-PODFILE CHECKSUM: 383b3ba2e67deedb3aaf06cab144a449c950c986
+PODFILE CHECKSUM: 08fb8a2e26238b46ae9afba2e7605807a3c195a2
 
 COCOAPODS: 1.14.3

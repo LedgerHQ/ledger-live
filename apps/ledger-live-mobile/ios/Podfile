@@ -11,7 +11,7 @@ ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWO
 # it's used by react-native-vision-camera
 $VCEnableLocation = false
 
-platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
+platform :ios, podfile_properties['ios.deploymentTarget'] || '15.4'
 install! 'cocoapods',
   :deterministic_uuids => false
 
