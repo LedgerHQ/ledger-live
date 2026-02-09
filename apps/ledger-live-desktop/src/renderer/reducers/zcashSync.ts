@@ -1,6 +1,5 @@
-import { handleActions } from "redux-actions";
+import { createSlice } from "@reduxjs/toolkit";
 import type { State } from "~/renderer/reducers";
-import type { Handlers } from "./types";
 
 export type ZcashSyncState = {
   startSyncNonce: number;
@@ -12,23 +11,20 @@ const initialState: ZcashSyncState = {
   syncState: "disabled",
 };
 
-type HandlersPayloads = {
-  ZCASH_SYNC_START: undefined;
-  ZCASH_SYNC_READY: undefined;
-};
+const zcashSyncSlice = createSlice({
+  name: "zcashSync",
+  initialState,
+  reducers: {
+    startZcashSync: state => {
+      state.startSyncNonce += 1;
+    },
+    readyZcashSync: state => {
+      state.syncState = "ready";
+    },
+  },
+});
 
-type ZcashSyncHandlers<PreciseKey = true> = Handlers<ZcashSyncState, HandlersPayloads, PreciseKey>;
-
-const handlers: ZcashSyncHandlers = {
-  ZCASH_SYNC_START: state => ({
-    ...state,
-    startSyncNonce: state.startSyncNonce + 1,
-  }),
-  ZCASH_SYNC_READY: state => ({
-    ...state,
-    syncState: "ready",
-  }),
-};
+export const { startZcashSync, readyZcashSync } = zcashSyncSlice.actions;
 
 export const zcashSyncStartNonceSelector = (state: State): ZcashSyncState["startSyncNonce"] =>
   state.zcashSync.startSyncNonce;
@@ -36,7 +32,4 @@ export const zcashSyncStartNonceSelector = (state: State): ZcashSyncState["start
 export const zcashSyncStateSelector = (state: State): ZcashSyncState["syncState"] =>
   state.zcashSync.syncState;
 
-export default handleActions<ZcashSyncState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as ZcashSyncHandlers<false>,
-  initialState,
-);
+export default zcashSyncSlice.reducer;
