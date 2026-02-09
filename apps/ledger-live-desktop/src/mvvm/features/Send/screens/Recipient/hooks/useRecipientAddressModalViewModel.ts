@@ -1,29 +1,29 @@
-import { useCallback, useMemo, useState } from "react";
-import { useSelector } from "LLD/hooks/redux";
 import {
   getAccountCurrency,
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountLike,
   RecentAddress as RecentAddressFromStore,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useSelector } from "LLD/hooks/redux";
+import { useCallback, useMemo, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useSendFlowData } from "../../../context/SendFlowContext";
 import type { RecentAddress } from "../types";
+import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { useAddressValidation } from "./useAddressValidation";
 import { useRecipientSearchState } from "./useRecipientSearchState";
-import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
-import { useSendFlowData } from "../../../context/SendFlowContext";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -34,7 +34,7 @@ export function useRecipientAddressModalViewModel({
   onAddressSelected,
   recipientSupportsDomain,
 }: UseRecipientAddressModalViewModelProps) {
-  const { recipientSearch } = useSendFlowData();
+  const { recipientSearch, state } = useSendFlowData();
   const [refreshCounter, setRefreshCounter] = useState(0);
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -106,23 +106,50 @@ export function useRecipientAddressModalViewModel({
   const hasUserAccounts = userAccountsForCurrency.length > 0;
   const showInitialEmptyState = showInitialState && !hasRecentAddresses && !hasUserAccounts;
 
+  const hasMemo = sendFeatures.hasMemo(currency);
+  const memoType = sendFeatures.getMemoType(currency);
+  const memoTypeOptions = sendFeatures.getMemoOptions(currency);
+  const memoDefaultOption = sendFeatures.getMemoDefaultOption(currency);
+  const memoMaxLength = sendFeatures.getMemoMaxLength(currency);
+
+  const hasMemoValidationError = useMemo(() => {
+    if (!hasMemo) return false;
+    return Boolean(state.transaction.status.errors.transaction);
+  }, [hasMemo, state.transaction.status.errors.transaction]);
+
+  const hasFilledMemo = useMemo(() => {
+    if (!hasMemo) return true;
+    const memo = state.recipient?.memo;
+    if (!memo) return false;
+    if (memo.type === "NO_MEMO") return true;
+    return memo.value.length > 0;
+  }, [hasMemo, state.recipient?.memo]);
+
   const handleRecentAddressSelect = useCallback(
     (address: RecentAddress) => {
-      onAddressSelected(address.address, address.ensName);
+      if (hasMemo) {
+        recipientSearch.setValue(address.ensName ?? address.address);
+      }
+
+      onAddressSelected(address.address, address.ensName, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected, recipientSearch],
   );
 
   const handleAccountSelect = useCallback(
     (selectedAccount: Account) => {
-      onAddressSelected(selectedAccount.freshAddress);
+      if (hasMemo) {
+        recipientSearch.setValue(selectedAccount.freshAddress);
+      }
+
+      onAddressSelected(selectedAccount.freshAddress, undefined, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected, recipientSearch],
   );
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
-      onAddressSelected(address, ensName);
+      onAddressSelected(address, ensName, true);
     },
     [onAddressSelected],
   );
@@ -154,6 +181,13 @@ export function useRecipientAddressModalViewModel({
     handleAccountSelect,
     handleAddressSelect,
     handleRemoveAddress,
+    hasMemo,
+    hasMemoValidationError,
+    hasFilledMemo,
+    memoType,
+    memoTypeOptions,
+    memoDefaultOption,
+    memoMaxLength,
     ...searchState,
   };
 }

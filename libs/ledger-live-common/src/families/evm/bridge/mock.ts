@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../../account";
@@ -15,7 +15,7 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getGasLimit } from "@ledgerhq/coin-evm/utils";
+import { getGasLimit, isEthAddress } from "@ledgerhq/coin-evm/utils";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "../../../config";
@@ -23,7 +23,13 @@ import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
-const defaultGetFees = (_a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
+const defaultGetFees = (_a, t: any) => {
+  const gasLimit = getGasLimit(t);
+  if (t.type === 2 && t.maxFeePerGas) {
+    return t.maxFeePerGas.times(gasLimit);
+  }
+  return (t.gasPrice || new BigNumber(0)).times(gasLimit);
+};
 
 const createTransaction = (): Transaction => ({
   family: "evm",
@@ -94,6 +100,10 @@ const getTransactionStatus = (account, transaction) => {
   }
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
+  } else if (!isEthAddress(transaction.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   return Promise.resolve({
@@ -106,11 +116,19 @@ const getTransactionStatus = (account, transaction) => {
 };
 
 const prepareTransaction = async (_a, t) => {
+  const feesStrategy = (t as unknown as { feesStrategy?: string }).feesStrategy;
+  const gasPriceByStrategy: Record<string, BigNumber> = {
+    slow: new BigNumber(20000000000), // 20 gwei
+    medium: new BigNumber(30000000000), // 30 gwei
+    fast: new BigNumber(50000000000), // 50 gwei
+  };
+
+  const gasPrice = feesStrategy ? gasPriceByStrategy[feesStrategy] ?? new BigNumber(30000000000) : new BigNumber(30000000000);
   const typedTransaction = getTypedTransaction(t, {
-    gasPrice: new BigNumber(50),
-    maxFeePerGas: new BigNumber(50),
-    maxPriorityFeePerGas: new BigNumber(50),
-    nextBaseFee: new BigNumber(50),
+    gasPrice,
+    maxFeePerGas: gasPrice,
+    maxPriorityFeePerGas: gasPrice,
+    nextBaseFee: new BigNumber(30000000000),
   });
   return typedTransaction;
 };

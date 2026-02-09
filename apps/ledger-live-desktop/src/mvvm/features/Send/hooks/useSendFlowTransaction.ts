@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from "react";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionState,
   SendFlowTransactionActions,
   RecipientData,
 } from "@ledgerhq/live-common/flows/send/types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type UseSendFlowTransactionParams = Readonly<{
   account: AccountLike | null;
@@ -57,7 +57,12 @@ export function useSendFlowTransaction({
       if (recipient.memo !== undefined) {
         Object.assign(
           updates,
-          applyMemoToTransaction(transaction.family, recipient.memo, transaction),
+          applyMemoToTransaction(
+            transaction.family,
+            recipient.memo.value,
+            recipient.memo.type,
+            transaction,
+          ),
         );
       }
 
@@ -66,7 +71,7 @@ export function useSendFlowTransaction({
         if (Number.isFinite(parsedTag)) {
           Object.assign(
             updates,
-            applyMemoToTransaction(transaction.family, parsedTag, transaction),
+            applyMemoToTransaction(transaction.family, parsedTag, undefined, transaction),
           );
         }
       }

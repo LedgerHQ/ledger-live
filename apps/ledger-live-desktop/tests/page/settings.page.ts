@@ -31,6 +31,10 @@ export class SettingsPage extends AppPage {
     "switch-filter-token-operations-zero-amount",
   );
 
+  readonly neverAskAgainSkipMemoSwitch = this.page.getByTestId(
+    "settings-never-ask-again-skip-memo-switch",
+  );
+
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
     await this.accountsTab.click();
@@ -73,6 +77,12 @@ export class SettingsPage extends AppPage {
     await this.counterValueSelector.click();
     await this.counterValueSearchBar.fill(currency);
     await this.counterValueropdownChoiceEuro.click();
+  }
+
+  @step("Switch never ask again skip memo")
+  async switchNeverAskAgainSkipMemo() {
+    await this.neverAskAgainSkipMemoSwitch.waitFor({ state: "visible" });
+    await this.neverAskAgainSkipMemoSwitch.click();
   }
 
   @step("Expect counter value to be $0")

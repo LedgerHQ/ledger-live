@@ -60,7 +60,9 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   if (account.type !== "Account") return null;
 
   const { spendableBalance: _spendableBalance, solanaResources } = account;
-  const { stakes } = solanaResources;
+  // In some mocked / partially-loaded states `solanaResources` can be undefined.
+  // Keep this component resilient to avoid crashing the whole account view.
+  const stakes = solanaResources?.stakes ?? [];
   const _delegatedBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + (s.delegation?.stake ?? 0), 0),
   );

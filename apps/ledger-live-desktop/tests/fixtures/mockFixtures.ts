@@ -28,9 +28,17 @@ export const test = base.extend<TestFixtures>({
       "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
       async route => {
         console.log("Mocking Fees endpoint");
+        // Bitcoin bridge expects blockCount 1 (fast), 3 (medium), 6 (slow)
+        // Values are in satoshi per 1000 bytes, so we return different values for each preset
+        // 4000 = 4 sat/vbyte (fast), 3000 = 3 sat/vbyte (medium), 2000 = 2 sat/vbyte (slow)
         await route.fulfill({
           headers: { teststatus: "mocked" },
-          body: JSON.stringify({ "2": 15067, "4": 15067, "6": 15067, last_updated: Date.now() }),
+          body: JSON.stringify({
+            "1": 4000, // fast: 4 sat/vbyte
+            "3": 3000, // medium: 3 sat/vbyte
+            "6": 2000, // slow: 2 sat/vbyte
+            last_updated: Date.now(),
+          }),
         });
       },
     );

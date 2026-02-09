@@ -94,7 +94,7 @@ type Props = {
 };
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const { stake, meta } = stakeWithMeta;
-  const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
+  const stakeActions = (solanaStakeActions(stake) ?? []).map(toStakeDropDownItem);
   const unit = useAccountUnit(account);
   const onSelect = useCallback(
     (action: (typeof stakeActions)[number]) => {

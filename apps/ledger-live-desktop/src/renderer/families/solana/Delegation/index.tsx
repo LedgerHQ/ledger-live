@@ -31,7 +31,9 @@ const Wrapper = styled(Box).attrs(() => ({
 const Delegation = ({ account }: { account: SolanaAccount }) => {
   const { solanaResources } = account;
   const dispatch = useDispatch();
-  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, solanaResources.stakes);
+  // In mocked / partially-loaded states `solanaResources` can be undefined.
+  const stakes = solanaResources?.stakes ?? [];
+  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, stakes);
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_SOLANA_REWARDS_INFO", {
