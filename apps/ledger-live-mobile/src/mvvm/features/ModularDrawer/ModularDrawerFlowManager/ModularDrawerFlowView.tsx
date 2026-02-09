@@ -10,6 +10,7 @@ import { ModularDrawerFlowProps } from ".";
 import useScreenTransition from "./useScreenTransition";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function ModularDrawerFlowView({
   assetsViewModel,
@@ -17,17 +18,18 @@ export function ModularDrawerFlowView({
   accountsViewModel,
 }: ModularDrawerFlowProps) {
   const currentStep = useSelector(modularDrawerStepSelector);
+  const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case ModularDrawerStep.Asset:
-        return <AssetSelection {...assetsViewModel} />;
+        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={isEnabled} />;
       case ModularDrawerStep.Network:
-        return <NetworkSelection {...networksViewModel} />;
+        return <NetworkSelection {...networksViewModel} useLumenBottomSheet={isEnabled} />;
       case ModularDrawerStep.Account:
-        return <AccountSelection {...accountsViewModel} />;
+        return <AccountSelection {...accountsViewModel} useLumenBottomSheet={isEnabled} />;
       default:
         return null;
     }
@@ -43,7 +45,7 @@ export function ModularDrawerFlowView({
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        <Title step={step} />
+        {!isEnabled && <Title step={step} />}
         {renderStepContent(step)}
       </Animated.View>
     );
