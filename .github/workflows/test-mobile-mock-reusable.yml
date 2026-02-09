@@ -558,32 +558,49 @@ jobs:
           script: |
             ./tools/scripts/wait_emulator_idle.sh
 
-            # Install certificate on emulator
+            # Step 1: Disable verity
             adb root
-            sleep 2
-            adb remount
-            sleep 2
+            adb wait-for-device
+            sleep 3
 
-            # Generate cert hash
+            adb disable-verity
+            adb reboot
+            adb wait-for-device
+            sleep 30
+            ./tools/scripts/wait_emulator_idle.sh
+
+            # Step 2: Root and remount
+            adb root
+            adb wait-for-device
+            sleep 3
+
+            adb remount
+            adb wait-for-device
+            sleep 3
+
+            # Step 3: Install certificate
             CERT_HASH=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.pem | head -1)
+            echo "Certificate hash: ${CERT_HASH}"
+
             cp ~/.mitmproxy/mitmproxy-ca-cert.pem ${CERT_HASH}.0
 
-            # Install cert
             adb push ${CERT_HASH}.0 /data/local/tmp/
-            adb shell "cp /data/local/tmp/${CERT_HASH}.0 /system/etc/security/cacerts/"
+            adb shell "cp /data/local/tmp/${CERT_HASH}.0 /system/etc/security/cacerts/${CERT_HASH}.0"
             adb shell "chmod 644 /system/etc/security/cacerts/${CERT_HASH}.0"
 
-            # Set proxy via adb
+            # Step 4: Configure proxy
             adb shell settings put global http_proxy 10.0.2.2:8080
 
-            # Verify
+            # Step 5: Verify
             echo "Proxy configured:"
             adb shell settings get global http_proxy
+
             echo "Certificate installed:"
             adb shell ls -l /system/etc/security/cacerts/${CERT_HASH}.0
 
-            # Reboot to load certificate
+            # Step 6: Final reboot to apply certificate
             adb reboot
+            adb wait-for-device
             sleep 30
             ./tools/scripts/wait_emulator_idle.sh
 
