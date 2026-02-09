@@ -65,26 +65,22 @@ function StepConfirmation({ t }: Readonly<StepProps>) {
 export function StepConfirmationFooter({ closeModal }: Readonly<StepProps>) {
   const dispatch = useDispatch();
 
+  const handleCloseModal = () => {
+    dispatch(readyZcashSync());
+    closeModal();
+  };
+
+  const handleStartSync = () => {
+    dispatch(startZcashSync());
+    closeModal();
+  };
+
   return (
     <Box horizontal alignItems="right">
-      <Button
-        data-testid="modal-close-button"
-        ml={2}
-        onClick={() => {
-          dispatch(readyZcashSync());
-          closeModal();
-        }}
-      >
+      <Button data-testid="modal-close-button" ml={2} onClick={handleCloseModal}>
         <Trans i18nKey="common.close" />
       </Button>
-      <Button
-        id="export-key-start-sync-button"
-        primary
-        onClick={() => {
-          dispatch(startZcashSync());
-          closeModal();
-        }}
-      >
+      <Button id="export-key-start-sync-button" primary onClick={handleStartSync}>
         <Trans i18nKey="zcash.shielded.startSync" />
       </Button>
     </Box>
