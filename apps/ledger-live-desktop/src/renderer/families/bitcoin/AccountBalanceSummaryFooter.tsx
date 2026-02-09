@@ -95,7 +95,7 @@ const ActionButton = ({
         <ButtonV3
           variant="main"
           Icon={<Refresh size={20} />}
-          style={{ padding: "100%" }}
+          style={{ padding: "100%", fontSize: 1 }}
           onClick={updateSyncState}
         />
       );
@@ -104,7 +104,7 @@ const ActionButton = ({
         <ButtonV3
           variant="main"
           Icon={<Pause size={20} />}
-          style={{ padding: "100%" }}
+          style={{ padding: "100%", fontSize: 1 }}
           onClick={updateSyncState}
         />
       );
@@ -113,7 +113,7 @@ const ActionButton = ({
         <ButtonV3
           variant="main"
           Icon={<Refresh size={20} />}
-          style={{ padding: "100%" }}
+          style={{ padding: "100%", fontSize: 1 }}
           onClick={updateSyncState}
         />
       );
