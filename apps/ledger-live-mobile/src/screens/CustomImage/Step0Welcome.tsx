@@ -66,7 +66,7 @@ const Step0Welcome: React.FC<
     setWaitingForUserPicture(true);
   }, [setWaitingForUserPicture]);
 
-  const animationSource = useMemo(() => {
+  const animationSource = useMemo((): number | undefined => {
     switch (deviceModelId) {
       case DeviceModelId.stax:
         return STAX_CLS_PREVIEW;
@@ -75,7 +75,7 @@ const Step0Welcome: React.FC<
       case DeviceModelId.apex:
         return APEX_CLS_PREVIEW;
       default:
-        return "";
+        return undefined;
     }
   }, [deviceModelId]);
 
@@ -86,7 +86,9 @@ const Step0Welcome: React.FC<
       <TrackScreen category={analyticsScreenName} />
       <Flex flex={1} mt={8} alignItems={"center"} justifyContent={"space-between"} pb={8}>
         <Flex my={"auto"} testID="custom-image-welcome-title">
-          <Animation source={animationSource} style={{ width: "100%" }} />
+          {animationSource != null && (
+            <Animation source={animationSource} style={{ width: "100%" }} />
+          )}
           <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={-10}>
             {t("customImage.landingPage.title", {
               productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
