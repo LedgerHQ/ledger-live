@@ -374,6 +374,7 @@ export type LargeMoverState = {
 export type DeeplinkInstallAppState = {
   isDrawerOpen: boolean;
   appToInstall: string | null;
+  selectedDevice: Device | null;
 };
 
 // === ROOT STATE ===

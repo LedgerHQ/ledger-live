@@ -82,8 +82,10 @@ import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCu
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
-import { DeeplinkInstallAppDrawer } from "LLM/features/DeeplinkInstallApp";
-import DeeplinkInstallAppDeviceSelection from "LLM/features/DeeplinkInstallApp/screens/DeviceSelectionScreen";
+import {
+  DeeplinkInstallAppDrawer,
+  DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection,
+} from "LLM/features/DeeplinkInstallApp";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
