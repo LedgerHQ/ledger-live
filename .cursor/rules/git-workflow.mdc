@@ -1,7 +1,6 @@
 ---
 description: Git workflow and commit conventions for Ledger Wallet
-globs: ["**/*"]
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Git Workflow & Commit Conventions
