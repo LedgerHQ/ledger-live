@@ -188,6 +188,7 @@ export function solanaTransaction({
   extraTransactionParameters,
 }: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
   let templateId: string | undefined = undefined;
+  let raw: string | undefined = undefined;
   const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
 
   if (lifiSolanaFeature?.enabled && extraTransactionParameters) {
@@ -195,6 +196,14 @@ export function solanaTransaction({
       const parsed = JSON.parse(extraTransactionParameters);
       if (typeof parsed?.solanaTransaction?.templateId === "string") {
         templateId = parsed.solanaTransaction.templateId;
+      } else {
+        console.warn(
+          `Template id "${templateId}" found in extraTransactionParameters for solana transaction is not a string, ignored`,
+        );
+      }
+
+      if (typeof parsed?.solanaTransaction?.data === "string") {
+        raw = parsed.solanaTransaction.data;
       } else {
         console.warn(
           `Template id "${templateId}" found in extraTransactionParameters for solana transaction is not a string, ignored`,
@@ -210,6 +219,7 @@ export function solanaTransaction({
     amount,
     recipient,
     model: { kind: "transfer", uiState: {} },
+    ...(raw && { raw }),
     ...(templateId && { templateId }),
   };
 }
