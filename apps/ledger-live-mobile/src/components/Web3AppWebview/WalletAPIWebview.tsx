@@ -104,7 +104,7 @@ WalletAPIWebview.displayName = "WalletAPIWebview";
 function DefaultLoader() {
   return (
     <View style={styles.center}>
-      <ActivityIndicator size="small" />
+      {/* <ActivityIndicator size="small" /> */}
     </View>
   );
 }

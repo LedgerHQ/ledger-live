@@ -13,7 +13,6 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { Fragment, memo, useMemo } from "react";
 import { Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -91,7 +90,6 @@ function Earn({ route }: Props) {
 
   const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
   const isPtxUiV2 = earnUiVersion === "v2" || earnUiVersion === "2";
-  const insets = useSafeAreaInsets();
 
   const webviewInputs = useMemo(
     () => ({
@@ -102,9 +100,7 @@ function Earn({ route }: Props) {
       currencyTicker,
       devMode,
       discreetMode: discreet ? "true" : "false",
-      stakeProgramsParam: stakeProgramsParam
-        ? JSON.stringify(stakeProgramsParam)
-        : undefined,
+      stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
       stakeCurrenciesParam: stakeCurrenciesParam?.length
         ? JSON.stringify(stakeCurrenciesParam)
         : undefined,
@@ -138,19 +134,7 @@ function Earn({ route }: Props) {
     }
     return (
       <View style={{ flex: 1, overflow: "visible" }}>
-        <View
-          style={{
-            position: "absolute",
-            top: -insets.top,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 0,
-          }}
-          pointerEvents="none"
-        >
-          <EarnBackground />
-        </View>
+        <EarnBackground />
         <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
           {displayManifest ? (
             hideMainNavigator ? (
@@ -164,14 +148,12 @@ function Earn({ route }: Props) {
                 <EarnWebview manifest={displayManifest} inputs={webviewInputs} />
               </Container>
             )
-          ) : remoteLiveAppState.isLoading ? (
-            <Flex flex={1} justifyContent="center" alignItems="center">
-              <InfiniteLoader />
-            </Flex>
           ) : (
-            <Flex flex={1} p={10} justifyContent="center" alignItems="center">
-              <GenericErrorView error={appManifestNotFoundError} />
-            </Flex>
+            !remoteLiveAppState.isLoading && ( // if the manifest is not found, show the error screen
+              <Flex flex={1} p={10} justifyContent="center" alignItems="center">
+                <GenericErrorView error={appManifestNotFoundError} />
+              </Flex>
+            )
           )}
         </View>
       </View>

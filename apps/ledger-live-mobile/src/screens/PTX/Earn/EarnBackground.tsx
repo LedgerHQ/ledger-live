@@ -2,6 +2,7 @@ import React, { memo, useMemo } from "react";
 import { Dimensions, View } from "react-native";
 import { Box, LinearGradient, RadialGradient } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { EdgeInsets } from "react-native-safe-area-context";
 
 /**
  * Transcribed from Figma:
@@ -12,7 +13,6 @@ import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
  */
 const RADIAL_CENTER_COLOR = "rgba(156, 226, 164, 0.8)";
 const LINEAR_START_COLOR = "rgba(87, 149, 125, 0.6)";
-
 
 /** Linear direction: 189deg (CSS: 0° = up, clockwise) */
 const LINEAR_ANGLE = 189;
@@ -75,10 +75,22 @@ function EarnBackgroundComponent() {
   };
 
   return (
-    <Box style={containerStyle} pointerEvents="none">
-      <LinearGradient direction={LINEAR_ANGLE} stops={linearStops} style={gradientStyle} />
-      <RadialGradient {...args} />
-    </Box>
+    <View
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 0,
+      }}
+      pointerEvents="none"
+    >
+      <Box style={containerStyle} pointerEvents="none">
+        <LinearGradient direction={LINEAR_ANGLE} stops={linearStops} style={gradientStyle} />
+        <RadialGradient {...args} />
+      </Box>
+    </View>
   );
 }
 
