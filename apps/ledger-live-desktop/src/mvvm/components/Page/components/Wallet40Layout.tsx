@@ -26,7 +26,7 @@ export const Wallet40Layout = memo(function Wallet40Layout({
         <div
           id="page-scroller"
           ref={scrollerRef}
-          className="scrollbar-none flex flex-1 flex-col overflow-y-auto pt-32 pl-16"
+          className="scrollbar-none flex flex-1 flex-col overflow-y-auto pl-16"
         >
           <div className="relative flex h-full flex-1 flex-col">{children}</div>
         </div>

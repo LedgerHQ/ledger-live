@@ -8,7 +8,7 @@ import SwapWebViewEmbedded from "~/renderer/screens/dashboard/components/SwapWeb
  */
 export const RightPanelView = memo(function RightPanelView() {
   return (
-    <div className="flex h-full flex-col py-32">
+    <div className="flex h-full flex-col pb-32">
       <SwapWebViewEmbedded height="100%" isWallet40 />
     </div>
   );
