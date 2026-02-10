@@ -3,13 +3,11 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router";
 import { lock } from "~/renderer/actions/application";
-import { hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { ItemContainer } from "~/renderer/components/TopBar/shared";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
 
-import ActivityIndicator from "~/renderer/components/TopBar/ActivityIndicator";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -26,7 +24,6 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const hasPassword = useSelector(hasPasswordSelector);
-  const hasAccounts = useSelector(hasAccountsSelector);
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
 
@@ -44,12 +41,6 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
         <Breadcrumb />
       </NavBarTitle>
       <NavBarTrailing className="h-48 gap-12">
-        {hasAccounts && (
-          <>
-            <ActivityIndicator />
-            <TopBarDivider />
-          </>
-        )}
         <LiveAppDrawer />
         <NotificationIndicator />
         <TopBarDivider />

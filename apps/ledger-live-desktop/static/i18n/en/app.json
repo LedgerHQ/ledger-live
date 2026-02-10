@@ -7929,6 +7929,12 @@
       "opensea": "OpenSea"
     }
   },
+  "topBar": {
+    "activityIndicator": {
+      "refreshToolTip": "Tap to refresh",
+      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
+    }
+  },
   "geoBlocking": {
     "title": "Location unavailable",
     "description": "Ledger Wallet is not available in this location.",

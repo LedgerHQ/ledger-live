@@ -64,7 +64,7 @@ describe("TopBar", () => {
       }),
     });
 
-    expect(screen.getByTestId("topbar-synchronize-button")).toBeVisible();
+    expect(screen.getByTestId("topbar-action-button-synchronize")).toBeVisible();
   });
 
   it("does not render ActivityIndicator when hasAccounts is false", () => {
@@ -72,7 +72,7 @@ describe("TopBar", () => {
       initialState: getDefaultInitialState(),
     });
 
-    expect(screen.queryByTestId("topbar-synchronize-button")).toBeNull();
+    expect(screen.queryByTestId("topbar-action-button-synchronize")).toBeNull();
   });
 
   it("renders lock button when hasPassword is true", () => {
@@ -101,7 +101,7 @@ describe("TopBar", () => {
       }),
     });
 
-    expect(screen.getByTestId("topbar-synchronize-button")).toBeVisible();
+    expect(screen.getByTestId("topbar-action-button-synchronize")).toBeVisible();
     expect(screen.getByTestId("topbar-password-lock-button")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-discreet")).toBeVisible();
     expect(screen.getByTestId("topbar-help-button")).toBeVisible();
