@@ -29,6 +29,13 @@ test("Settings", async ({ page }) => {
         body: JSON.stringify(languagePacksData),
       });
     });
+    await page.route("**/get_latest_firmware**", route => {
+      route.fulfill({
+        headers: { teststatus: "mocked" },
+        status: 200,
+        body: JSON.stringify({ result: "null" }),
+      });
+    });
     await layout.goToManager();
     await deviceAction.accessManagerWithL10n();
     // Wait for DeviceDashboard to fully process device info (useEffect dispatches to Redux)

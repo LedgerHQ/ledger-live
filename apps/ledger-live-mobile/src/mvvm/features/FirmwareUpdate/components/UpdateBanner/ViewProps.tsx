@@ -8,4 +8,6 @@ export interface ViewProps {
   unsupportedUpdateDrawerOpened: boolean;
   closeUnsupportedUpdateDrawer(): void;
   isUpdateSupportedButDeviceNotWired: boolean;
+  shouldDisplayWallet40MainNav: boolean;
+  isInMyLedgerDeviceScreen: boolean;
 }
