@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import BigNumber from "bignumber.js";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import { TFunction } from "i18next";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { zcashSyncStartNonceSelector, zcashSyncStateSelector } from "~/renderer/reducers/zcashSync";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import BigNumber from "bignumber.js";
+import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { openModal } from "~/renderer/actions/modals";
+import { startZcashSync } from "~/renderer/reducers/zcashSync";
 import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
-import Spinner from "~/renderer/components/Spinner";
-import { TFunction } from "i18next";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -60,7 +62,7 @@ const AmountValue = styled(Text).attrs(() => ({
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
 
-type ZCashSyncState = "disabled" | "running" | "paused" | "complete" | "outdated";
+type ZCashSyncState = "disabled" | "ready" | "running" | "paused" | "complete" | "outdated";
 
 const ActionButton = ({
   t,
@@ -82,12 +84,18 @@ const ActionButton = ({
           <Text>{t("zcash.shielded.state.showBalance")}</Text>
         </ButtonV3>
       );
+    case "ready":
+      return (
+        <ButtonV3 variant="main" onClick={updateSyncState}>
+          <Text>{t("zcash.shielded.startSync")}</Text>
+        </ButtonV3>
+      );
     case "paused":
       return (
         <ButtonV3
           variant="main"
           Icon={<Refresh size={20} />}
-          style={{ padding: "100%" }}
+          style={{ padding: "100%", fontSize: 1 }}
           onClick={updateSyncState}
         />
       );
@@ -96,7 +104,7 @@ const ActionButton = ({
         <ButtonV3
           variant="main"
           Icon={<Pause size={20} />}
-          style={{ padding: "100%" }}
+          style={{ padding: "100%", fontSize: 1 }}
           onClick={updateSyncState}
         />
       );
@@ -105,7 +113,7 @@ const ActionButton = ({
         <ButtonV3
           variant="main"
           Icon={<Refresh size={20} />}
-          style={{ padding: "100%" }}
+          style={{ padding: "100%", fontSize: 1 }}
           onClick={updateSyncState}
         />
       );
@@ -116,27 +124,65 @@ type Props = {
   account: BitcoinAccount | TokenAccount;
 };
 
+type SyncState = {
+  state: ZCashSyncState;
+  progress: number;
+};
+
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
-  const [syncState, setSyncState] = useState<ZCashSyncState>("disabled"); // TODO: initial state depends on the account data
-  const [progress] = useState(0);
+  // TODO: retrieve initial sync state from the account data
+  const initialSyncState: SyncState = {
+    state: "disabled",
+    progress: 0,
+  };
+
+  const [syncState, setSyncState] = useState<ZCashSyncState>(initialSyncState.state);
+  const [progress, setProgress] = useState(initialSyncState.progress);
+  const [lastSync, setLastSync] = useState<Date | null>(null);
+
+  // TODO: Mocking progress. Delete this once we have a real progress.
+  useEffect(() => {
+    if (syncState === "running" && progress < 100) {
+      const interval = setInterval(() => setProgress(progress + 1), 100);
+      return () => {
+        if (interval) clearInterval(interval);
+      };
+    }
+  }, [syncState, progress]);
+
+  useEffect(() => {
+    if (syncState === "running" && progress === 100) {
+      setSyncState("complete");
+      setLastSync(new Date());
+    }
+  }, [syncState, progress]);
 
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const zcashSyncStartNonce = useSelector(zcashSyncStartNonceSelector);
+  const zcashSyncState = useSelector(zcashSyncStateSelector);
   const unit = useAccountUnit(account);
   const { getFeature } = useFeatureFlags();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  useEffect(() => {
+    if (zcashSyncStartNonce > 0) {
+      setProgress(0);
+      setSyncState("running");
+    }
+  }, [zcashSyncStartNonce]);
+
+  useEffect(() => {
+    if (zcashSyncState === "ready") {
+      setSyncState("ready");
+    }
+  }, [zcashSyncState]);
+
   const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
 
   const { spendableBalance } = account;
   const privateInfo = account.type === "Account" ? account.privateInfo : null;
-
-  useEffect(() => {
-    if (privateInfo?.key && syncState === "disabled") {
-      setSyncState("running");
-    }
-  }, [privateInfo, syncState]);
 
   if (
     account.type !== "Account" ||
@@ -166,12 +212,17 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         // Open modal to import UFVK
         dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account }));
         break;
+      case "ready":
+        // Start
+        dispatch(startZcashSync());
+        setSyncState("running");
+        break;
       case "running":
-        // Pause block processing task
+        // Pause
         setSyncState("paused");
         break;
       case "paused":
-        // Resume block processing task
+        // Resume
         setSyncState("running");
         break;
       case "outdated":
@@ -227,8 +278,16 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           {syncState !== "disabled" ? (
             <div style={{ display: "flex", alignItems: "center" }}>
               {syncState === "running" ? <Spinner size={14} /> : null}
-              {syncState === "paused" ? <Text>Paused at </Text> : null}
-              <Text style={{ paddingLeft: "3px", paddingRight: "10px" }}>{progress}%</Text>
+              {syncState === "paused" ? <Trans i18nKey="zcash.shielded.state.pausedAt" /> : null}
+              {syncState === "complete" ? (
+                <Trans
+                  i18nKey="zcash.shielded.state.lastSync"
+                  values={{ date: lastSync?.toLocaleString().replace(",", "") }}
+                />
+              ) : null}
+              {(syncState === "running" || syncState === "paused") && progress < 100 ? (
+                <Text style={{ paddingLeft: "5px", minWidth: "50px" }}>{progress}%</Text>
+              ) : null}
             </div>
           ) : null}
           <div>
