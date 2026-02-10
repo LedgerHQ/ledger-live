@@ -1,20 +1,11 @@
 import React, { useCallback } from "react";
 import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import {
-  Stax,
-  Compass,
-  Bell,
-  BellNotification,
-  Settings,
-  Apex,
-  Flex,
-  Nano,
-} from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Compass, Bell, BellNotification, Settings } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ICON_SIZE } from "./const";
+import { getDeviceIcon, IconComponent } from "LLM/utils/getDeviceIcon";
 
 type TopBarViewProps = {
   onMyLedgerPress: () => void;
@@ -23,8 +14,6 @@ type TopBarViewProps = {
   onSettingsPress: () => void;
   hasUnreadNotifications: boolean;
 };
-
-type IconComponent = NonNullable<React.ComponentProps<typeof IconButton>["icon"]>;
 
 export function TopBarView({
   onMyLedgerPress,
@@ -36,22 +25,8 @@ export function TopBarView({
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   const deviceIcon: IconComponent = useCallback(
-    ({ size, style }) => {
-      switch (lastConnectedDevice?.modelId) {
-        case DeviceModelId.nanoS:
-        case DeviceModelId.nanoSP:
-        case DeviceModelId.nanoX:
-          return <Nano size={size ?? ICON_SIZE} style={style} color="base" />;
-        case DeviceModelId.europa:
-          return <Flex size={size ?? ICON_SIZE} style={style} color="base" />;
-        case DeviceModelId.apex:
-          return <Apex size={size ?? ICON_SIZE} style={style} color="base" />;
-        case DeviceModelId.stax:
-        default:
-          return <Stax size={size ?? ICON_SIZE} style={style} color="base" />;
-      }
-    },
-    [lastConnectedDevice?.modelId],
+    ({ size, style }) => getDeviceIcon(lastConnectedDevice, size, style),
+    [lastConnectedDevice],
   );
 
   const notificationIcon: IconComponent = useCallback(
