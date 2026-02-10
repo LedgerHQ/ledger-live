@@ -1,8 +1,10 @@
+/** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFiles: ["dotenv/config"],
+  testTimeout: 60_000,
+  forceExit: true,
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

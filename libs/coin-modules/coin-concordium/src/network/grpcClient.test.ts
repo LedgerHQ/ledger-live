@@ -28,7 +28,11 @@ jest.mock("@grpc/grpc-js", () => ({
             if (response instanceof Error) {
               callback(response, null);
             } else {
-              callback(null, response);
+              callback(null, {
+                lastFinalizedBlockHeight: { value: response.lastFinalizedBlockHeight },
+                lastFinalizedBlock: { value: Buffer.from(response.lastFinalizedBlock, "hex") },
+                lastFinalizedTime: response.lastFinalizedTime,
+              });
             }
           },
           GetBlocksAtHeight: <T>(_req: T, callback: GrpcCallback<{ blocks: T }>) => {
@@ -45,9 +49,9 @@ jest.mock("@grpc/grpc-js", () => ({
               callback(response, null);
             } else {
               callback(null, {
-                height: response.blockHeight,
-                hash: response.blockHash.value,
-                slotTime: { value: response.blockSlotTime.getTime() },
+                height: { value: String(response.blockHeight) },
+                hash: { value: Buffer.from(response.blockHash, "hex") },
+                slotTime: { value: String(response.blockSlotTime.getTime()) },
               });
             }
           },
@@ -147,9 +151,10 @@ describe("grpcClient", () => {
 
   describe("getLastBlock", () => {
     it("should return last finalized block info", async () => {
+      const mockHash = "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "blockhash123",
+        lastFinalizedBlock: mockHash,
         lastFinalizedTime: { value: "1700000000000" },
       });
 
@@ -158,7 +163,7 @@ describe("grpcClient", () => {
 
       expect(result).toEqual({
         height: 1000,
-        hash: "blockhash123",
+        hash: mockHash,
         time: new Date(1700000000000),
       });
     });
@@ -166,7 +171,7 @@ describe("grpcClient", () => {
     it("should call getConsensusStatus on client", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
         lastFinalizedTime: { value: "1000" },
       });
 
@@ -179,10 +184,12 @@ describe("grpcClient", () => {
 
   describe("getBlockInfoByHeight", () => {
     it("should return block info at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash456" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 500n,
-        blockHash: { value: "blockhash456", toString: () => "blockhash456" },
+        blockHash: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4",
         blockSlotTime: new Date("2024-01-01"),
       });
 
@@ -190,7 +197,7 @@ describe("grpcClient", () => {
       const result = await getBlockInfoByHeight(currency, 500);
 
       expect(result.height).toBe(500);
-      expect(result.hash).toBe("blockhash456");
+      expect(result.hash).toBe("abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4");
     });
 
     it("should throw error when no blocks found at height", async () => {
@@ -205,18 +212,22 @@ describe("grpcClient", () => {
 
     it("should include parent block info when height > 0", async () => {
       mockGetBlocksAtHeightResponse
-        .mockReturnValueOnce([{ blockHash: "blockhash" }])
-        .mockReturnValueOnce([{ blockHash: "parenthash" }]);
+        .mockReturnValueOnce([
+          { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+        ])
+        .mockReturnValueOnce([
+          { value: "def123def123def123def123def123def123def123def123def123def123def1" },
+        ]);
 
       mockGetBlockInfoResponse
         .mockReturnValueOnce({
           blockHeight: 500n,
-          blockHash: { value: "blockhash", toString: () => "blockhash" },
+          blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
           blockSlotTime: new Date("2024-01-02"),
         })
         .mockReturnValueOnce({
           blockHeight: 499n,
-          blockHash: { value: "parenthash", toString: () => "parenthash" },
+          blockHash: "def123def123def123def123def123def123def123def123def123def123def1",
           blockSlotTime: new Date("2024-01-01"),
         });
 
@@ -225,14 +236,18 @@ describe("grpcClient", () => {
 
       expect(result.parent).not.toBeUndefined();
       expect(result.parent?.height).toBe(499);
-      expect(result.parent?.hash).toBe("parenthash");
+      expect(result.parent?.hash).toBe(
+        "def123def123def123def123def123def123def123def123def123def123def1",
+      );
     });
 
     it("should not include parent for height 0", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "genesis" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "0000000000000000000000000000000000000000000000000000000000000000" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 0n,
-        blockHash: { value: "genesis", toString: () => "genesis" },
+        blockHash: "0000000000000000000000000000000000000000000000000000000000000000",
         blockSlotTime: new Date("2024-01-01"),
       });
 
@@ -245,10 +260,12 @@ describe("grpcClient", () => {
 
   describe("getBlockByHeight", () => {
     it("should return block with transactions", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
@@ -261,10 +278,12 @@ describe("grpcClient", () => {
     });
 
     it("should parse transfer transactions", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockReturnValue(
@@ -296,10 +315,12 @@ describe("grpcClient", () => {
     });
 
     it("should handle failed transactions", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockReturnValue(
@@ -324,10 +345,12 @@ describe("grpcClient", () => {
     });
 
     it("should skip non-accountTransaction events", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockReturnValue(
@@ -376,10 +399,12 @@ describe("grpcClient", () => {
     });
 
     it("should scan blocks for address operations", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockReturnValue(
@@ -409,10 +434,12 @@ describe("grpcClient", () => {
     });
 
     it("should filter operations for specific address", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockReturnValue(
@@ -465,7 +492,9 @@ describe("grpcClient", () => {
     });
 
     it("should handle and throw getBlockInfoByHeight errors when GetBlockInfo fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue(new Error("Block not found"));
 
       const currency = createMockCurrency();
@@ -474,10 +503,12 @@ describe("grpcClient", () => {
     });
 
     it("should handle and throw getBlockByHeight errors", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
       mockGetBlockTransactionEventsStream.mockImplementation(() => {
@@ -497,10 +528,12 @@ describe("grpcClient", () => {
         lastFinalizedBlock: "hash",
         lastFinalizedTime: { value: "1700000000000" },
       });
-      mockGetBlocksAtHeightResponse.mockReturnValue([{ blockHash: "blockhash" }]);
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
       mockGetBlockInfoResponse.mockReturnValue({
         blockHeight: 100n,
-        blockHash: { value: "blockhash", toString: () => "blockhash" },
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         blockSlotTime: new Date("2024-01-01"),
       });
     });
