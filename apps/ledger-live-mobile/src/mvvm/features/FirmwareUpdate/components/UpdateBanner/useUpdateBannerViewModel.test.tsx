@@ -5,10 +5,20 @@ import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 /** Brace yourselves for the mocks ... */
 
 // Mock react-navigation
+const mockUseRoute = jest.fn();
+const mockUseNavigation = jest.fn();
+const mockUseIsFocused = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useRoute: jest.fn(),
-  useNavigation: jest.fn(),
+  useRoute: (...args: unknown[]) => mockUseRoute(...args),
+  useNavigation: (...args: unknown[]) => mockUseNavigation(...args),
+  useIsFocused: (...args: unknown[]) => mockUseIsFocused(...args),
+}));
+
+// Mock analytics
+const mockTrack = jest.fn();
+jest.mock("~/analytics", () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
 }));
 
 jest.mock("react-redux", () => {
@@ -61,6 +71,12 @@ const { isNewFirmwareUpdateUxSupported, isBleUpdateSupported } = jest.requireMoc
   "../../utils/isFirmwareUpdateSupported",
 );
 
+// Mock useWalletFeaturesConfig
+const mockUseWalletFeaturesConfig = jest.fn();
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+  useWalletFeaturesConfig: (...args: unknown[]) => mockUseWalletFeaturesConfig(...args),
+}));
+
 // Mock navigation to new and old update flows
 jest.mock("../../utils/navigateToNewUpdateFlow", () => ({
   navigateToNewUpdateFlow: jest.fn(),
@@ -74,6 +90,10 @@ describe("useUpdateBannerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
+    mockUseRoute.mockReturnValue({ name: "Portfolio" });
+    mockUseNavigation.mockReturnValue({ navigate: jest.fn() });
+    mockUseIsFocused.mockReturnValue(true);
+    mockUseWalletFeaturesConfig.mockReturnValue({ shouldDisplayWallet40MainNav: false });
   });
   afterEach(() => {
     PlatformSpy?.mockRestore();
@@ -262,5 +282,142 @@ describe("useUpdateBannerViewModel", () => {
 
     expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
     expect(navigateToNewUpdateFlow).toHaveBeenCalled();
+  });
+
+  describe("analytics", () => {
+    it("should track banner impression when shouldDisplayWallet40MainNav is true and screen is focused", () => {
+      mockUseWalletFeaturesConfig.mockReturnValue({ shouldDisplayWallet40MainNav: true });
+      mockUseIsFocused.mockReturnValue(true);
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+
+      renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      expect(mockTrack).toHaveBeenCalledWith("banner_impression", {
+        banner: "OS update",
+        page: "portfolio",
+      });
+    });
+
+    it("should track banner impression with 'my ledger' page when on MyLedgerDevice screen", () => {
+      mockUseWalletFeaturesConfig.mockReturnValue({ shouldDisplayWallet40MainNav: true });
+      mockUseIsFocused.mockReturnValue(true);
+      mockUseRoute.mockReturnValue({ name: "MyLedgerDevice" });
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+
+      renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      expect(mockTrack).toHaveBeenCalledWith("banner_impression", {
+        banner: "OS update",
+        page: "my ledger",
+      });
+    });
+
+    it("should not track banner impression when shouldDisplayWallet40MainNav is false", () => {
+      mockUseWalletFeaturesConfig.mockReturnValue({ shouldDisplayWallet40MainNav: false });
+      mockUseIsFocused.mockReturnValue(true);
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+
+      renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      expect(mockTrack).not.toHaveBeenCalledWith("banner_impression", expect.anything());
+    });
+
+    it("should not track banner impression when screen is not focused", () => {
+      mockUseWalletFeaturesConfig.mockReturnValue({ shouldDisplayWallet40MainNav: true });
+      mockUseIsFocused.mockReturnValue(false);
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+
+      renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      expect(mockTrack).not.toHaveBeenCalledWith("banner_impression", expect.anything());
+    });
+
+    it("should track impression only once even if re-rendered", () => {
+      mockUseWalletFeaturesConfig.mockReturnValue({ shouldDisplayWallet40MainNav: true });
+      mockUseIsFocused.mockReturnValue(true);
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+
+      const { rerender } = renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      rerender({});
+
+      const impressionCalls = mockTrack.mock.calls.filter(
+        ([event]: [string]) => event === "banner_impression",
+      );
+      expect(impressionCalls).toHaveLength(1);
+    });
+
+    it("should track button_clicked when onClickUpdate is called", () => {
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+      isNewFirmwareUpdateUxSupported.mockReturnValue(false);
+
+      const { result } = renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      act(() => result.current.onClickUpdate());
+
+      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+        page: "portfolio",
+        banner: "OS update",
+        button: "click(update)",
+      });
+    });
+
+    it("should track button_clicked with 'my ledger' page when on MyLedgerDevice screen", () => {
+      mockUseRoute.mockReturnValue({ name: "MyLedgerDevice" });
+      hasConnectedDeviceSelector.mockReturnValue(true);
+      hasCompletedOnboardingSelector.mockReturnValue(true);
+      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+      isNewFirmwareUpdateUxSupported.mockReturnValue(false);
+
+      const { result } = renderHook(() =>
+        useUpdateBannerViewModel({
+          onBackFromUpdate: jest.fn(),
+        }),
+      );
+
+      act(() => result.current.onClickUpdate());
+
+      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+        page: "my ledger",
+        banner: "OS update",
+        button: "click(update)",
+      });
+    });
   });
 });
