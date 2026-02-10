@@ -5,10 +5,12 @@ import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 /** Brace yourselves for the mocks ... */
 
 // Mock react-navigation
+const mockUseRoute = jest.fn();
+const mockUseNavigation = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useRoute: jest.fn(),
-  useNavigation: jest.fn(),
+  useRoute: (...args: unknown[]) => mockUseRoute(...args),
+  useNavigation: (...args: unknown[]) => mockUseNavigation(...args),
 }));
 
 jest.mock("react-redux", () => {
@@ -67,6 +69,11 @@ jest.mock("../../utils/navigateToNewUpdateFlow", () => ({
 }));
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
 
+// Mock useWallet40Theme (uses useTheme which requires ThemeProvider)
+jest.mock("~/mvvm/hooks/useWallet40Theme", () => ({
+  useWallet40Theme: jest.fn(() => ({ isWallet40Enabled: false })),
+}));
+
 /** TESTS */
 
 describe("useUpdateBannerViewModel", () => {
@@ -74,6 +81,8 @@ describe("useUpdateBannerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
+    mockUseRoute.mockReturnValue({ name: "Portfolio" });
+    mockUseNavigation.mockReturnValue({ navigate: jest.fn() });
   });
   afterEach(() => {
     PlatformSpy?.mockRestore();

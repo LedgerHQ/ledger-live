@@ -1,19 +1,30 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { Pressable } from "react-native";
-import { useTranslation } from "~/context/Locale";
-import { Text, Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex as FlexIcon, Nano, Stax, Apex } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-
+import { track } from "~/analytics";
+import { Button as LumenButton, Box, Text as LumenText } from "@ledgerhq/lumen-ui-rnative";
 import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import type { ViewProps } from "./ViewProps";
+import { Text, Flex, Icons } from "@ledgerhq/native-ui";
+import { useTranslation } from "~/context/Locale";
 
-export type FirmwareUpdateBannerProps = {
-  onBackFromUpdate: (updateState: UpdateStep) => void;
-};
+function getDeviceIcon(modelId: DeviceModelId | undefined) {
+  switch (modelId) {
+    case DeviceModelId.stax:
+      return Stax;
+    case DeviceModelId.europa:
+      return FlexIcon;
+    case DeviceModelId.apex:
+      return Apex;
+    default:
+      return Nano;
+  }
+}
 
 const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId | undefined }) => {
   switch (deviceModelId) {
@@ -28,6 +39,10 @@ const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId | undefine
   }
 };
 
+export type FirmwareUpdateBannerProps = {
+  onBackFromUpdate: (updateState: UpdateStep) => void;
+};
+
 const UpdateBanner = ({
   bannerVisible,
   lastConnectedDevice,
@@ -36,13 +51,138 @@ const UpdateBanner = ({
   unsupportedUpdateDrawerOpened,
   closeUnsupportedUpdateDrawer,
   isUpdateSupportedButDeviceNotWired,
+  isWallet40Enabled,
+  isInMyLedgerDeviceScreen,
 }: ViewProps) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!isWallet40Enabled) return;
+    track("banner_impression", {
+      banner: "OS update",
+      page: isInMyLedgerDeviceScreen ? "my ledger" : "portfolio",
+    });
+  }, [isWallet40Enabled, isInMyLedgerDeviceScreen]);
+
   const productName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
     : undefined;
 
   const deviceName = lastConnectedDevice?.deviceName;
+  const deviceIcon = getDeviceIcon(lastConnectedDevice?.modelId);
+  const trackOnClickUpdate = useCallback(() => {
+    track("button_clicked", {
+      page: isInMyLedgerDeviceScreen ? "my ledger" : "portfolio",
+      banner: "OS update",
+      button: "click(update)",
+    });
+    onClickUpdate();
+  }, [onClickUpdate, isInMyLedgerDeviceScreen]);
+
+  if (isWallet40Enabled && !isInMyLedgerDeviceScreen) {
+    return bannerVisible ? (
+      <>
+        <Box lx={{ alignItems: "center", paddingTop: "s16", gap: "s10" }}>
+          <LumenButton
+            appearance="transparent"
+            size="sm"
+            icon={deviceIcon}
+            onPress={trackOnClickUpdate}
+            testID="fw-update-banner"
+          >
+            {t("FirmwareUpdate.banner.wallet40.title.default")}
+          </LumenButton>
+        </Box>
+
+        <QueuedDrawer
+          isRequestingToBeOpened={unsupportedUpdateDrawerOpened}
+          onClose={closeUnsupportedUpdateDrawer}
+          Icon={isUpdateSupportedButDeviceNotWired ? UsbMedium : DownloadMedium}
+          title={
+            isUpdateSupportedButDeviceNotWired
+              ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle")
+              : t("FirmwareUpdate.drawerUpdate.title")
+          }
+          description={
+            isUpdateSupportedButDeviceNotWired
+              ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
+                  deviceName: productName,
+                })
+              : t("FirmwareUpdate.drawerUpdate.description")
+          }
+        >
+          <Button
+            testID="fw-update-drawer-unsupported-close-btn"
+            type="primary"
+            title={t("common.close")}
+            onPress={closeUnsupportedUpdateDrawer}
+          />
+        </QueuedDrawer>
+      </>
+    ) : null;
+  }
+
+  if (isWallet40Enabled && isInMyLedgerDeviceScreen) {
+    return bannerVisible ? (
+      <>
+        <Box
+          lx={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            backgroundColor: "accent",
+            borderRadius: "md",
+            padding: "s16",
+          }}
+        >
+          <Box lx={{ flexDirection: "column", alignItems: "flex-start", flexShrink: 1 }}>
+            <LumenText typography="heading5SemiBold" lx={{ color: "black" }}>
+              {t("FirmwareUpdate.banner.wallet40.title.manager")}
+            </LumenText>
+            <LumenText typography="body2" lx={{ color: "black" }}>
+              {t("FirmwareUpdate.banner.wallet40.version", {
+                productName,
+                firmwareVersion: version,
+              })}
+            </LumenText>
+          </Box>
+          <Box>
+            <LumenButton appearance="gray" size="sm" onPress={trackOnClickUpdate}>
+              {t("FirmwareUpdate.banner.wallet40.cta", {
+                productName,
+                firmwareVersion: version,
+              })}
+            </LumenButton>
+          </Box>
+        </Box>
+        <QueuedDrawer
+          isRequestingToBeOpened={unsupportedUpdateDrawerOpened}
+          onClose={closeUnsupportedUpdateDrawer}
+          Icon={isUpdateSupportedButDeviceNotWired ? UsbMedium : DownloadMedium}
+          title={
+            isUpdateSupportedButDeviceNotWired
+              ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle")
+              : t("FirmwareUpdate.drawerUpdate.title")
+          }
+          description={
+            isUpdateSupportedButDeviceNotWired
+              ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
+                  deviceName: productName,
+                })
+              : t("FirmwareUpdate.drawerUpdate.description")
+          }
+          noCloseButton
+        >
+          <Button
+            testID="fw-update-drawer-unsupported-close-btn"
+            type="primary"
+            title={t("common.close")}
+            onPress={closeUnsupportedUpdateDrawer}
+          />
+        </QueuedDrawer>
+      </>
+    ) : null;
+  }
 
   return bannerVisible ? (
     <>

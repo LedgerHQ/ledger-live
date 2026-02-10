@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Platform } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import {
@@ -17,6 +17,8 @@ import {
 } from "../../utils/isFirmwareUpdateSupported";
 import { navigateToNewUpdateFlow } from "../../utils/navigateToNewUpdateFlow";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
+import { ScreenName } from "~/const";
 
 export function useUpdateBannerViewModel({
   onBackFromUpdate,
@@ -45,6 +47,10 @@ export function useUpdateBannerViewModel({
   const closeUnsupportedUpdateDrawer = useCallback(() => {
     setUnsupportedUpdateDrawerOpened(false);
   }, []);
+
+  const { isWallet40Enabled } = useWallet40Theme("mobile");
+  const route = useRoute();
+  const isInMyLedgerDeviceScreen = route.name === ScreenName.MyLedgerDevice;
 
   const onClickUpdate = useCallback(() => {
     if (isNewUxSupported) {
@@ -82,5 +88,7 @@ export function useUpdateBannerViewModel({
     closeUnsupportedUpdateDrawer,
     isUpdateSupportedButDeviceNotWired:
       Platform.OS === "android" && isNewUxSupported && !bleUpdateSupported,
+    isWallet40Enabled,
+    isInMyLedgerDeviceScreen,
   };
 }
