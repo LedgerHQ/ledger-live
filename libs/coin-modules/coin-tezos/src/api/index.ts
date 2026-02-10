@@ -165,16 +165,18 @@ async function craft(
   const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
   const totalFee = Number(fee.fees || "0");
 
+  const feesConfig = coinConfig.getCoinConfig().fees;
+  const revealFeeForSplit = needsReveal
+    ? Math.max(feesConfig.minFees ?? 0, getRevealFee(transactionIntent.sender))
+    : 0;
+
   let txFee: number;
   if (customFees) {
-    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
+    txFee = needsReveal ? Math.max(totalFee - revealFeeForSplit, 0) : totalFee;
   } else if (estimation.parameters?.txFee !== undefined) {
     txFee = Number(estimation.parameters.txFee);
   } else {
-    const calculatedTxFee = needsReveal
-      ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0)
-      : totalFee;
-    txFee = calculatedTxFee;
+    txFee = needsReveal ? Math.max(totalFee - revealFeeForSplit, 0) : totalFee;
   }
 
   const txForCraft = {
@@ -331,7 +333,9 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
         baseTxFee = BigInt(Math.max(DEFAULT_TX_FEE_FALLBACK, config.fees.minFees));
       }
 
-      const revealFee = needsReveal ? BigInt(getRevealFee(transactionIntent.sender)) : 0n;
+      const revealFee = needsReveal
+        ? BigInt(Math.max(config.fees.minFees ?? 0, getRevealFee(transactionIntent.sender)))
+        : 0n;
       const totalFee = baseTxFee + revealFee;
 
       return {

@@ -1,8 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import cosmosCoinConfig, { cosmosConfig } from "../config";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import cosmosCoinConfig, { cosmosConfig } from "../config";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
 import { hydrate } from "./preload";

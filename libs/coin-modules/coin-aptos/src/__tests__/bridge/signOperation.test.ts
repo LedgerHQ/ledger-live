@@ -1,13 +1,13 @@
-import BigNumber from "bignumber.js";
-import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
-import buildSignOperation, { getAddress } from "../../bridge/signOperation";
-import { AptosSigner } from "../../types";
-import { signTransaction } from "../../network";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { faker } from "@faker-js/faker";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import buildSignOperation, { getAddress } from "../../bridge/signOperation";
+import { signTransaction } from "../../network";
+import { AptosSigner } from "../../types";
 
 const generateTransaction = jest.fn(() => "tx");
 

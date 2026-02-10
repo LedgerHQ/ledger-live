@@ -1,5 +1,5 @@
-import { encodeAddress, decodeAddress } from "@polkadot/util-crypto";
 import { hexToU8a, isHex } from "@polkadot/util";
+import { encodeAddress, decodeAddress } from "@polkadot/util-crypto";
 
 const POLKADOT_SS58_PREFIX = 0;
 

@@ -1,6 +1,6 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { createTransaction } from "./createTransaction";
 import BigNumber from "bignumber.js";
+import { createTransaction } from "./createTransaction";
 
 describe("createTransaction", () => {
   it("should create a 0 amount transaction", () => {

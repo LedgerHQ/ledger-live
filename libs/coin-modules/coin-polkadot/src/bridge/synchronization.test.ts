@@ -1,10 +1,11 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
-import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import { PolkadotOperation } from "../types";
-import getAccountShape from "./synchronization";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import coinConfig from "../config";
+import { PolkadotOperation } from "../types";
+import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
+import getAccountShape from "./synchronization";
 
 jest.mock("../config", () => ({
   getCoinConfig: jest.fn(),
@@ -26,7 +27,6 @@ jest.mock("../network", () => ({
 const CURRENCY = getCryptoCurrencyById("polkadot");
 const EXPECTED_CURRENCY = getCryptoCurrencyById("assethub_polkadot");
 
-import coinConfig from "../config";
 const mockGetCoinConfig = coinConfig.getCoinConfig as jest.MockedFunction<
   typeof coinConfig.getCoinConfig
 >;

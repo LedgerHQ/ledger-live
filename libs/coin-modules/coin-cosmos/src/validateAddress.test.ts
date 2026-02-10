@@ -1,9 +1,9 @@
-import { validateAddress } from "./validateAddress";
-import * as bech32 from "bech32";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import * as bech32 from "bech32";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
+import { validateAddress } from "./validateAddress";
 
 jest.mock("bech32");
 jest.mock("@ledgerhq/cryptoassets");

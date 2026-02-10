@@ -1,8 +1,8 @@
 import { Hex, RawTransaction, Deserializer } from "@aptos-labs/ts-sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../../api";
-import { AptosAPI } from "../../network";
 import { APTOS_ASSET_ID } from "../../constants";
+import { AptosAPI } from "../../network";
 
 jest.mock("../../network");
 let mockedAptosApi: jest.Mocked<any>;
@@ -57,7 +57,7 @@ describe("craftTransaction", () => {
     const { transaction: tx } = await api.craftTransaction(txArg);
 
     expect(tx).not.toEqual("");
-    expect(Hex.isValid(tx).valid).toBeTruthy();
+    expect(Hex.isValid(tx).valid).toBe(true);
     expect(mockGetBalances).toHaveBeenCalledTimes(0);
     expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
 
@@ -99,7 +99,7 @@ describe("craftTransaction", () => {
     const { transaction: tx } = await api.craftTransaction(txArg);
 
     expect(tx).not.toEqual("");
-    expect(Hex.isValid(tx).valid).toBeTruthy();
+    expect(Hex.isValid(tx).valid).toBe(true);
     expect(mockGetBalances).toHaveBeenCalledTimes(0);
     expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
 

@@ -66,7 +66,7 @@ async function save(
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
     dispatch(setAccountNames(newLocalState.accountNames));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
-    dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
+    dispatch(replaceAccounts(newLocalState.accounts.list)); // triggers db middleware to persist accounts
   }
 }
 

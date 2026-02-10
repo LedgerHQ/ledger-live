@@ -62,11 +62,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     if (!showAssets) {
       sections.push(
-        <PortfolioEmptySection
-          key="empty"
-          isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-          showAssets={showAssets}
-        />,
+        <PortfolioEmptySection key="empty" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
       );
       return sections;
     }

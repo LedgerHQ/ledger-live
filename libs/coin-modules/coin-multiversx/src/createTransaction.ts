@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { MIN_GAS_LIMIT } from "./constants";
 import { Transaction } from "./types";
 

@@ -1,3 +1,4 @@
+import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   type MultiversXResourcesRaw,
@@ -9,7 +10,6 @@ import {
   isMultiversXOperationExtraRaw,
   isMultiversXOperationExtra,
 } from "./types";
-import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export function toMultiversXResourcesRaw(r: MultiversXResources): MultiversXResourcesRaw {
   const { nonce, delegations, isGuarded } = r;

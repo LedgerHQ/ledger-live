@@ -1,5 +1,5 @@
-import getEstimatedFees from "./getFeesForTransaction";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import getEstimatedFees from "./getFeesForTransaction";
 
 const estimateFees = jest.fn();
 

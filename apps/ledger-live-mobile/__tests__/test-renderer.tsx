@@ -43,6 +43,7 @@ import { State } from "~/reducers/types";
 import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/walletconnect";
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
 import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
+import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
@@ -73,6 +74,7 @@ const INITIAL_STATE: State = {
   walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
+  sendFlow: SEND_FLOW_INITIAL_STATE,
   ...llmRtkApiInitialStates,
 };
 
@@ -85,6 +87,10 @@ enum RenderType {
   DEFAULT = "default",
   HOOK = "hook",
 }
+
+type NavigationChildren = React.ComponentProps<typeof NavigationContainer>["children"];
+type CountervaluesChildren = React.ComponentProps<typeof CountervaluesProvider>["children"];
+type WrapperProps = { children?: NavigationChildren };
 
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
   return configureStore({
@@ -104,7 +110,7 @@ function CountervaluesProviders({
   children,
   store,
 }: {
-  children: React.ReactNode;
+  children: CountervaluesChildren;
   store: ReduxStore;
 }): React.JSX.Element {
   // TODO This interim bridge is only a stop-gap. We’ll remove it once we either:
@@ -154,7 +160,7 @@ function Providers({
   withLiveApp = false,
   renderType = RenderType.DEFAULT,
 }: {
-  children: React.ReactNode;
+  children: NavigationChildren;
   store: ReduxStore;
   withReactQuery?: boolean;
   withLiveApp?: boolean;
@@ -206,7 +212,7 @@ function Providers({
 }
 
 const customRender = (
-  ui: React.ReactElement,
+  ui: Parameters<typeof rntlRender>[0],
   {
     overrideInitialState: overrideInitialState = state => state,
     userEventOptions = {},
@@ -217,7 +223,7 @@ const customRender = (
     overrideInitialState,
   });
 
-  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
     return <Providers store={store}>{children}</Providers>;
   };
 
@@ -229,7 +235,7 @@ const customRender = (
 };
 
 const renderWithReactQuery = (
-  ui: React.ReactElement,
+  ui: Parameters<typeof rntlRender>[0],
   {
     overrideInitialState: overrideInitialState = state => state,
     userEventOptions = {},
@@ -240,7 +246,7 @@ const renderWithReactQuery = (
     overrideInitialState,
   });
 
-  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
     return (
       <Providers store={store} withReactQuery>
         {children}
@@ -265,7 +271,7 @@ const customRenderHook = <Result,>(
   const store = createStore({
     overrideInitialState,
   });
-  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
     return (
       <Providers store={store} renderType={RenderType.HOOK}>
         {children}
@@ -287,7 +293,7 @@ const customRenderHookWithLiveAppProvider = <Result,>(
     overrideInitialState,
   });
 
-  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
     return (
       <Providers store={store} renderType={RenderType.HOOK} withLiveApp>
         {children}

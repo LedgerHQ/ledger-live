@@ -1,9 +1,3 @@
-import expect from "expect";
-import invariant from "invariant";
-import sampleSize from "lodash/sampleSize";
-import { BigNumber } from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
@@ -11,9 +5,15 @@ import {
   pickSiblings,
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { toOperationRaw } from "@ledgerhq/coin-framework/serialization";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { BigNumber } from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
+import sampleSize from "lodash/sampleSize";
 import { getCurrentPolkadotPreloadData } from "../bridge/state";
-import type { PolkadotAccount, PolkadotResources, Transaction } from "../types";
 import {
   canBond,
   canUnbond,
@@ -21,7 +21,7 @@ import {
   isFirstBond,
   hasMinimumBondBalance,
 } from "../bridge/utils";
-import { DeviceModelId } from "@ledgerhq/devices";
+import type { PolkadotAccount, PolkadotResources, Transaction } from "../types";
 import { acceptTransaction } from "./bot-deviceActions";
 
 const maxAccounts = 32;

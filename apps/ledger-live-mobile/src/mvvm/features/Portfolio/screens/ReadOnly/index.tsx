@@ -11,7 +11,7 @@ import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderF
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { ScreenName } from "~/const";
-import { PortfolioNoFundsContent } from "../../components/PortfolioEmptySection/PortfolioNoFundsContent";
+import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 
 type NavigationProps = BaseComposite<
@@ -38,12 +38,11 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           isReadOnlyMode
         />
       </Box>,
-      <PortfolioNoFundsContent
-        key="noFunds"
+      <PortfolioNoSignerContent
+        key="noSigner"
         assets={assets}
         goToAssets={goToAssets}
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        showAssets={false}
       />,
     ],
     [shouldDisplayGraphRework, isLNSUpsellBannerShown, assets, goToAssets],

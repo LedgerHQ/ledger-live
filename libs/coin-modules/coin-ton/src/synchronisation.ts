@@ -15,6 +15,7 @@ import {
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { WalletContractV4 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
@@ -31,7 +32,6 @@ import {
   mapTxToOps,
 } from "./bridge/bridgeHelpers/txn";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
-import { WalletContractV4 } from "@ton/ton";
 
 const jettonTxMessageHashesMap = new Map<string, string>();
 

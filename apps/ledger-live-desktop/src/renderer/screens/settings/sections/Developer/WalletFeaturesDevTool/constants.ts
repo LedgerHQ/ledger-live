@@ -7,6 +7,7 @@ export const WALLET_FEATURES_PARAMS = [
   { key: "graphRework", label: "Graph & Balance Rework" },
   { key: "quickActionCtas", label: "Quick Action CTAs" },
   { key: "mainNavigation", label: "Main Navigation" },
+  { key: "tour", label: "Tour" },
   { key: "newReceiveDialog", label: "New Receive Dialog" },
 ] as const;
 

@@ -1,19 +1,20 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { setupServer } from "msw/node";
 import { firstValueFrom, reduce } from "rxjs";
 import coinConfig, { TronCoinConfig } from "../config";
+import * as tronNetwork from "../network";
 import { mockServer, TRONGRID_BASE_URL_MOCKED } from "../network/index.mock";
-import { Transaction, TronAccount } from "../types";
-import accountFixture from "./fixtures/synchronization.account.fixture.json";
-import { createBridges } from "./index";
-import { getAccountShape } from "./synchronization";
-import { setupServer } from "msw/node";
 import { AccountTronAPI } from "../network/types";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { Transaction, TronAccount } from "../types";
 import type { NetworkInfo } from "../types/bridge";
+import accountFixture from "./fixtures/synchronization.account.fixture.json";
+import { getAccountShape } from "./synchronization";
+import { createBridges } from "./index";
 
 // Create mock functions inside the factory to avoid hoisting issues
 jest.mock("../network", () => {
@@ -37,7 +38,6 @@ jest.mock("../network", () => {
 });
 
 // Import the mocked module to access the mocks
-import * as tronNetwork from "../network";
 
 // Get mock functions from the mocked module
 const mockFunctions = (tronNetwork as typeof tronNetwork & { __mocks: typeof mockFunctions })

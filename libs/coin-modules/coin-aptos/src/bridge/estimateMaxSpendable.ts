@@ -1,11 +1,11 @@
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
 import { AptosAPI } from "../network";
+import type { AptosAccount, Transaction } from "../types";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
-import type { AptosAccount, Transaction } from "../types";
 
 const estimateMaxSpendable = async ({
   account,

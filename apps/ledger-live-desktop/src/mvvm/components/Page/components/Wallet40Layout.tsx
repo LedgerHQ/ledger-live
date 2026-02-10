@@ -19,14 +19,14 @@ export const Wallet40Layout = memo(function Wallet40Layout({
 }: Wallet40LayoutProps) {
   return (
     <div
-      className="grid flex-1 gap-32 overflow-hidden px-32"
+      className="grid flex-1 gap-32 overflow-hidden pr-32 pl-16"
       style={rightPanel ? { gridTemplateColumns: `1fr ${RIGHT_PANEL_WIDTH}px` } : undefined}
     >
       <div id="scroll-area" className="relative flex min-w-0 flex-col overflow-hidden">
         <div
           id="page-scroller"
           ref={scrollerRef}
-          className="flex flex-1 flex-col overflow-y-auto pt-32 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="scrollbar-none flex flex-1 flex-col overflow-y-auto pl-16"
         >
           <div className="relative flex h-full flex-1 flex-col">{children}</div>
         </div>

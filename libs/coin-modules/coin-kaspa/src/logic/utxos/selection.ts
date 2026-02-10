@@ -1,7 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
-import { calcComputeMass, calcStorageMass } from "../massCalcluation";
-import { calcMaxSpendableAmount, sortUtxos, sumUtxoAmounts } from "./lib";
 import {
   MASS_LIMIT_PER_TX,
   MASS_PER_INPUT,
@@ -9,6 +7,8 @@ import {
   MAX_DISCARD,
   MAX_UTXOS_PER_TX,
 } from "../constants";
+import { calcComputeMass, calcStorageMass } from "../massCalcluation";
+import { calcMaxSpendableAmount, sortUtxos, sumUtxoAmounts } from "./lib";
 
 export const selectUtxos = (
   utxos: KaspaUtxo[],

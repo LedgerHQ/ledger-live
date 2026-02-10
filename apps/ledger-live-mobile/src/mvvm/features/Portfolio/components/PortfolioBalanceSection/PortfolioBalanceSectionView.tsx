@@ -64,7 +64,7 @@ export const PortfolioBalanceSectionView = ({
     return (
       <>
         <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
-          <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s4" }}>
+          <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
             <AmountDisplay
               key={unit.code}
               value={isBalanceAvailable ? balance : 0}

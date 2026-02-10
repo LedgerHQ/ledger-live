@@ -1,7 +1,3 @@
-import { isValidAddress } from "algosdk";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -13,15 +9,18 @@ import {
   NotEnoughBalanceInParentAccount,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import type { AccountBridge } from "@ledgerhq/types-live";
-
 import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { isValidAddress } from "algosdk";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+
 import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "./errors";
 
 import { computeAlgoMaxSpendable, isAmountValid, recipientHasAsset } from "./logic";
+import { validateMemo } from "./logic/validateMemo";
 import { extractTokenId } from "./tokens";
 import type { AlgorandAccount, Transaction, TransactionStatus } from "./types";
-import { validateMemo } from "./logic/validateMemo";
 
 /*
  * Here are the list of the differents things we check

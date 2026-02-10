@@ -8,14 +8,9 @@ export const BalanceView = ({
   formatter,
   discreet,
   valueChange,
-  isAvailable,
   navigateToAnalytics,
   handleKeyDown,
 }: BalanceViewProps) => {
-  if (!isAvailable) {
-    return null;
-  }
-
   return (
     <div
       className="flex cursor-pointer items-baseline gap-12"

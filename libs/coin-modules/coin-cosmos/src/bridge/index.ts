@@ -5,17 +5,17 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
-import { CosmosAPI } from "../network/Cosmos";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import formatters from "../formatters";
 import getTransactionStatus from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { CosmosAPI } from "../network/Cosmos";
 import { prepareTransaction } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
@@ -28,8 +28,8 @@ import { getAccountShape } from "../synchronisation";
 import type { CosmosAccount, CosmosOperation, Transaction, TransactionStatus } from "../types";
 import { CosmosSigner } from "../types/signer";
 import { updateTransaction } from "../updateTransaction";
-import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { validateAddress } from "../validateAddress";
+import { getPreloadStrategy, hydrate, preload } from "./preload";
 
 const sync = makeSync({ getAccountShape });
 

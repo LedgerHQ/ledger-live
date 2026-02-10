@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import type { Transaction } from "../types";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import type { Transaction } from "../types";
 
 const createTransaction = (): Transaction => ({
   family: "aptos",

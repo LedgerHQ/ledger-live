@@ -11,8 +11,10 @@ import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import get from "lodash/get";
 import { computeBalanceBridge, lastBlock } from "../logic";
+import { getAccount } from "../logic/getAccount";
 import { getOperationsPageSize } from "../logic/pagination";
 import { defaultFetchParams, fetchTronAccountTxs } from "../network";
+import { AccountTronAPI } from "../network/types";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
 import {
   defaultTronResources,
@@ -21,8 +23,6 @@ import {
   txInfoToOperation,
   isAccountEmpty,
 } from "./utils";
-import { getAccount } from "../logic/getAccount";
-import { AccountTronAPI } from "../network/types";
 
 type TronToken = {
   key: string;
@@ -199,7 +199,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   };
 };
 
-export const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
+export const postSync = (_initial: TronAccount, parent: TronAccount): TronAccount => {
   function evictRecentOpsIfPending(a: Account | TokenAccount) {
     a.pendingOperations.forEach(pending => {
       const i = a.operations.findIndex(o => o.id === pending.id);

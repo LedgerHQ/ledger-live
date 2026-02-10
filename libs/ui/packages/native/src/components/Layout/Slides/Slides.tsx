@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
   LayoutChangeEvent,
@@ -10,15 +10,24 @@ import {
   FlatListProps,
 } from "react-native";
 
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { SlideContext, SlidesContext } from "./context";
-import { ProgressIndicator } from "./ProgressIndicator";
-import { Slide } from "./Slide";
+import Animated, {
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
+import { SlidesContext } from "./context";
+import { ProgressIndicator, type ProgressIndicatorElement } from "./ProgressIndicator";
+import { Slide, type SlideElement } from "./Slide";
+import { Content, type ContentElement } from "./Content";
+import { Footer, type FooterElement } from "./Footer";
+import { isElementOfType } from "./utils";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
+type SlidesChild = ContentElement | FooterElement | ProgressIndicatorElement;
+
 export type SlidesProps = {
-  children: ReactNode;
+  children: SlidesChild | SlidesChild[];
   onSlideChange?: (index: number) => void;
   initialSlideIndex?: number;
   style?: ViewStyle;
@@ -28,6 +37,7 @@ export type SlidesProps = {
    * Make sure it is wrapped in Animated.createAnimatedComponent
    */
   as?: typeof AnimatedFlatList;
+  testID?: string;
 } & Omit<
   FlatListProps<React.ReactElement>,
   | "data"
@@ -49,23 +59,15 @@ export function Slides({
   onSlideChange,
   initialSlideIndex = 0,
   style,
+  testID,
   as = AnimatedFlatList,
   ...flatListProps
 }: SlidesProps) {
   const ListComponent = as;
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useAnimatedRef<FlatList>();
   const [width, setWidth] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(initialSlideIndex);
-  const [footerHeights, setFooterHeights] = useState<Map<number, number>>(new Map());
   const scrollProgressSharedValue = useSharedValue(initialSlideIndex);
-
-  const setFooterHeight = useCallback((slideIndex: number, footerHeight: number) => {
-    setFooterHeights((prev) => {
-      const newMap = new Map(prev);
-      newMap.set(slideIndex, footerHeight);
-      return newMap;
-    });
-  }, []);
 
   const handleContainerLayout = useCallback(
     (event: LayoutChangeEvent) => {
@@ -77,22 +79,19 @@ export function Slides({
     [width],
   );
 
-  const slideChildren: React.ReactElement[] = useMemo(
-    () =>
-      React.Children.toArray(children).filter(
-        (child): child is React.ReactElement => React.isValidElement(child) && child.type === Slide,
-      ),
-    [children],
-  );
+  const slideChildren: SlideElement[] = useMemo(() => {
+    const content = React.Children.toArray(children).find((child): child is ContentElement =>
+      isElementOfType(child, Content),
+    );
 
-  const progressIndicatorChildren = useMemo(
-    () =>
-      React.Children.toArray(children).filter(
-        (child): child is React.ReactElement =>
-          React.isValidElement(child) && child.type === ProgressIndicator,
-      ),
-    [children],
-  );
+    if (!content) {
+      return [];
+    }
+
+    return React.Children.toArray(content.props.children).filter((child): child is SlideElement =>
+      isElementOfType(child, Slide),
+    );
+  }, [children]);
 
   const totalSlides = slideChildren.length;
 
@@ -150,11 +149,7 @@ export function Slides({
 
   const renderItem = useCallback(
     (info: { item: React.ReactElement; index: number }): React.ReactElement => {
-      return (
-        <SlideContext.Provider value={{ slideIndex: info.index }}>
-          <View style={{ width, flex: 1 }}>{info.item}</View>
-        </SlideContext.Provider>
-      );
+      return <View style={{ width, flex: 1 }}>{info.item}</View>;
     },
     [width],
   );
@@ -168,17 +163,19 @@ export function Slides({
       goToSlide,
       flatListRef,
       scrollProgressSharedValue,
-      footerHeights,
-      setFooterHeight,
     }),
-    [currentIndex, totalSlides, goToNext, goToPrevious, goToSlide, footerHeights, setFooterHeight],
+    [currentIndex, totalSlides, goToNext, goToPrevious, goToSlide],
   );
 
-  return (
-    <SlidesContext.Provider value={contextValue}>
-      <View style={[styles.container, style]} onLayout={handleContainerLayout}>
-        {width > 0 && (
+  const renderOrderedChildren = useCallback(() => {
+    return React.Children.map(children, (child) => {
+      if (isElementOfType(child, Content)) {
+        if (width <= 0) {
+          return null;
+        }
+        return (
           <ListComponent
+            key="slides-content"
             ref={flatListRef}
             data={slideChildren}
             renderItem={renderItem}
@@ -194,8 +191,33 @@ export function Slides({
             initialScrollIndex={initialSlideIndex}
             {...flatListProps}
           />
-        )}
-        {progressIndicatorChildren.length > 0 && progressIndicatorChildren}
+        );
+      }
+
+      if (isElementOfType(child, Footer) || isElementOfType(child, ProgressIndicator)) {
+        return child;
+      }
+
+      return null;
+    });
+  }, [
+    children,
+    width,
+    slideChildren,
+    renderItem,
+    scrollHandler,
+    handleMomentumScrollEnd,
+    getItemLayout,
+    initialSlideIndex,
+    flatListProps,
+    ListComponent,
+    flatListRef,
+  ]);
+
+  return (
+    <SlidesContext.Provider value={contextValue}>
+      <View testID={testID} style={[styles.container, style]} onLayout={handleContainerLayout}>
+        {renderOrderedChildren()}
       </View>
     </SlidesContext.Provider>
   );

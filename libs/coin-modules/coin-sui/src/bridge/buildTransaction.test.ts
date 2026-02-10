@@ -1,14 +1,13 @@
 import { BigNumber } from "bignumber.js";
-import { buildTransaction } from "./buildTransaction";
+import { craftTransaction } from "../logic";
 import type { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount } from "../types/bridge.fixture";
+import { buildTransaction } from "./buildTransaction";
 
 // Mock the craftTransaction function
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
 }));
-
-import { craftTransaction } from "../logic";
 
 describe("buildTransaction", () => {
   const mockAccount: SuiAccount = {

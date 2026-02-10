@@ -1,10 +1,10 @@
-import { addNetworkIdentifier, buildAccountIdentifier, makeTransferPayload } from "./utils";
 import {
   MINA_DECIMALS,
   MINA_SYMBOL,
   MINA_TOKEN_ID,
   MAINNET_NETWORK_IDENTIFIER,
 } from "../../consts";
+import { addNetworkIdentifier, buildAccountIdentifier, makeTransferPayload } from "./utils";
 
 describe("addNetworkIdentifier", () => {
   it("should add network identifier to an empty object", () => {

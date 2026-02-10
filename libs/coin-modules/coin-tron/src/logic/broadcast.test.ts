@@ -1,5 +1,5 @@
-import { broadcast } from "./broadcast";
 import { broadcastTron } from "../network";
+import { broadcast } from "./broadcast";
 import { decodeTransaction } from "./utils";
 
 jest.mock("../network", () => ({
