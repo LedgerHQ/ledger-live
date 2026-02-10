@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
-import { MINA_API_RETRY_COUNT, MINA_ROSETTA_TIMEOUT } from "../consts";
 import { log } from "@ledgerhq/logs";
 import { AxiosError } from "axios";
+import { MINA_API_RETRY_COUNT, MINA_ROSETTA_TIMEOUT } from "../consts";
 
 export const makeNetworkRequest = async <T>({
   method,
