@@ -69,12 +69,12 @@ export default function DashboardPage() {
     useDisplayOnPortfolioAnalytics();
 
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
-  const { shouldDisplayMarketBanner, shouldDisplayGraphRework } =
+  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
     useWalletFeaturesConfig("desktop");
 
   return (
     <>
-      {shouldDisplayGraphRework && shouldDisplayMarketBanner ? (
+      {isWallet40Enabled ? (
         <Portfolio />
       ) : (
         <>

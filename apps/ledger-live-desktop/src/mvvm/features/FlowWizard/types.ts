@@ -1,33 +1,24 @@
-import type { ComponentType } from "react";
+import type {
+  FlowStep,
+  FlowStepConfig,
+  FlowConfig,
+  StepRenderer,
+} from "@ledgerhq/live-common/flows/wizard/types";
 
-export type FlowStep = string;
+/**
+ * LLD-specific types for FlowWizard navigation
+ *
+ * These types are specific to LLD's custom navigation system
+ * (not used by LLM which uses React Navigation Stack)
+ */
 
 export const FLOW_NAVIGATION_DIRECTION = {
   FORWARD: "FORWARD",
   BACKWARD: "BACKWARD",
-};
+} as const;
 
 export type FlowNavigationDirection =
   (typeof FLOW_NAVIGATION_DIRECTION)[keyof typeof FLOW_NAVIGATION_DIRECTION];
-
-export const FLOW_STATUS = {
-  IDLE: "IDLE",
-  ERROR: "ERROR",
-  SUCCESS: "SUCCESS",
-};
-
-export type FlowStatus = (typeof FLOW_STATUS)[keyof typeof FLOW_STATUS];
-
-export type FlowStepConfig<TStep extends FlowStep = FlowStep> = Readonly<{
-  id: TStep;
-  canGoBack: boolean;
-  showHeader?: boolean;
-}>;
-
-export type AnimationConfig = Readonly<{
-  forward?: string;
-  backward?: string;
-}>;
 
 export type FlowNavigationState<TStep extends FlowStep = FlowStep> = Readonly<{
   currentStep: TStep;
@@ -43,43 +34,19 @@ export type FlowNavigationActions<TStep extends FlowStep = FlowStep> = Readonly<
   canGoForward: () => boolean;
 }>;
 
-export type FlowStatusActions = Readonly<{
-  setStatus: (status: FlowStatus) => void;
-  setError: () => void;
-  setSuccess: () => void;
-  resetStatus: () => void;
-}>;
-
-export type StepRenderer = ComponentType<unknown>;
-
-export type StepRegistry<TStep extends FlowStep = FlowStep> = Partial<Record<TStep, StepRenderer>>;
-
-export type FlowConfig<
-  TStep extends FlowStep = FlowStep,
-  TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
-> = Readonly<{
-  stepOrder: readonly TStep[];
-  stepConfigs: Record<TStep, TStepConfig>;
-  initialStep?: TStep;
-  initialHistory?: TStep[];
-}>;
-
-/**
- * The shape of the FlowWizard's internal navigation context.
- *
- * Flows access this via useFlowWizard() hook.
- */
 export type FlowWizardContextValue<
   TStep extends FlowStep = FlowStep,
+  TContextValue = unknown,
   TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
-> = Readonly<{
-  navigation: FlowNavigationActions<TStep>;
-  currentStep: TStep;
-  direction: FlowNavigationDirection;
-  currentStepConfig: TStepConfig;
-  currentStepRenderer: StepRenderer | null;
-  stepHistory: readonly TStep[];
-}>;
+> = TContextValue &
+  Readonly<{
+    navigation: FlowNavigationActions<TStep>;
+    currentStep: TStep;
+    direction: FlowNavigationDirection;
+    currentStepConfig: TStepConfig;
+    currentStepRenderer: StepRenderer | null;
+    stepHistory: readonly TStep[];
+  }>;
 
 export type UseFlowWizardNavigationParams<
   TStep extends FlowStep = FlowStep,

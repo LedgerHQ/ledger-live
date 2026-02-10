@@ -1,17 +1,16 @@
 import { ValueChange } from "@ledgerhq/types-live";
-
-export interface BalanceParts {
-  readonly integerPart: string;
-  readonly decimalSeparator: string;
-  readonly decimalDigits: string;
-}
+import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 
 export interface BalanceViewProps {
-  readonly balanceParts: BalanceParts;
+  readonly balance: number;
+  readonly formatter: (value: number) => FormattedValue;
+  readonly discreet: boolean;
   readonly valueChange: ValueChange;
   readonly isAvailable: boolean;
   readonly navigateToAnalytics: () => void;
   readonly handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
-export type BalanceViewModelResult = BalanceViewProps;
+export type BalanceViewModelResult = BalanceViewProps & {
+  readonly hasFunds: boolean;
+};

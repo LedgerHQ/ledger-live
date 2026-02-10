@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { action } from "@storybook/addon-actions";
 import { Flex, SelectableList } from "../../../src/components";
 import { IconsLegacy } from "../../../src/assets";
 import { TouchableOpacity } from "react-native";
@@ -59,7 +58,7 @@ export const Story = () => {
           value="fr"
           Icon={IconsLegacy.NanoXMedium}
           renderRight={() => (
-            <TouchableOpacity onPress={action("onMore")}>
+            <TouchableOpacity onPress={() => {}}>
               <IconsLegacy.OthersMedium size={24} />
             </TouchableOpacity>
           )}

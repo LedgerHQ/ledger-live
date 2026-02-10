@@ -12,7 +12,7 @@ const EmptyList = () => {
       <div className="flex items-center justify-center rounded-full bg-muted-transparent p-16">
         {Icon}
       </div>
-      <span className="text-base heading-4-semi-bold">{text}</span>
+      <span className="heading-4-semi-bold text-base">{text}</span>
     </div>
   );
 };

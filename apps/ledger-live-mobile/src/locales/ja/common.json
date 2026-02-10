@@ -467,6 +467,9 @@
       "title" : "デバイスの認証に失敗しました。",
       "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Ethereumアプリでブラインド署名またはコントラクトデータを有効化する"
+    },
     "HardResetFail" : {
       "title" : "リセットできませんでした。",
       "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
@@ -2681,6 +2684,10 @@
       "seeMarket" : "すべて表示"
     },
     "walletBalance" : "ウォレット残高",
+    "balance" : {
+      "noSigner" : "最も安全な\nウォレット",
+      "noFund" : "暗号資産を\n安全に保護"
+    },
     "seeAllAssets" : "すべての暗号資産を表示",
     "seeAllAccounts" : "すべてのアカウントを表示",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "送付",
       "deposit" : "受け取る",
       "stake" : "ステーキング"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "送金",
+      "swap" : "スワップ",
+      "buy" : "購入",
+      "transferDrawer" : {
+        "title" : "送金",
+        "receiveCrypto" : "暗号資産を受け取る",
+        "sendCrypto" : "暗号資産を送付",
+        "bankTransfer" : "銀行振込",
+        "bankTransferDescription" : "現金送金でステーブルコインを受け取る"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "イールド",
     "sell" : "売却",
     "swap" : "スワップ",
+    "perps" : "無期限先物",
     "manage" : "管理",
     "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "通知をオンにする",
-      "titleVariantB" : "Ledger Walletを最大限に活用する",
+      "titleVariantB" : "重要な情報を見逃さない",
       "desc" : "Ledger Wallet、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定からいつでも購読解除できます。",
-      "descVariantB" : "お客様に合わせたヒントやセットアップガイド、関連する市場ニュースをお届けします。",
+      "descVariantB" : "新規トークン、収益機会、市場変動をリアルタイムでお知らせします。通知はいつでも解除できます。",
       "allow" : "通知を許可",
       "later" : "後で"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "ステーキング",
       "description" : "お持ちの暗号資産で報酬を獲得しましょう。"
+    },
+    "perps" : {
+      "title" : "無期限先物",
+      "description" : "暗号資産の無期限先物を取引"
     },
     "swap" : {
       "title" : "スワップ",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "スワッププロバイダー利用不可",
-      "description" : "Changellyはこの取引を処理できません。Error code 8HBB-{{randomCode}}"
+      "description" : "スワッププロバイダーがこのトランザクションを処理できません。Error code 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "スワッププロバイダー利用不可",
@@ -8284,6 +8308,11 @@
       "preapprove" : "アカウントを追加しました",
       "validator" : "Ledgerバリデーター",
       "title" : "資金の自動受け取り",
+      "processing" : {
+        "title" : "トランザクションを処理中",
+        "description" : "この処理には最大1分かかる場合があります。",
+        "keepDeviceNearby" : "Ledger Walletアプリを開いた状態で、Ledgerを近くに置いてください。"
+      },
       "reonboard" : {
         "title" : "アカウントの更新が必要です",
         "account" : "アカウント",
@@ -8356,7 +8385,11 @@
       "neutral" : "中立",
       "greed" : "貪欲",
       "extremeGreed" : "極度の貪欲"
-    }
+    },
+    "tileTitle" : "市場ムード"
+  },
+  "perps" : {
+    "title" : "無期限先物"
   },
   "analyticsAllocation" : {
     "header" : {

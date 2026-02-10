@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cardano",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "description": "Ledger Cardano Coin integration",
   "keywords": [
     "Ledger",

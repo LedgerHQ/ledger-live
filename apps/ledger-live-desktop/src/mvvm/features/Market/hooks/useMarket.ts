@@ -65,6 +65,7 @@ export function useMarket() {
 
   const currenciesLength = marketResult.data.length;
   const loading = marketResult.isLoading;
+  const isError = marketResult.isError;
   const freshLoading = loading && !currenciesLength;
   const itemCount =
     starred.length > 0 || search.length > 0 ? currenciesLength : currenciesLength + 1;
@@ -208,6 +209,7 @@ export function useMarket() {
     itemCount,
     locale,
     loading,
+    isError,
     currenciesLength,
     refreshRate: REFRESH_RATE,
   };

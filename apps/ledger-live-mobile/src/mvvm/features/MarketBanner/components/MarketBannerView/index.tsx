@@ -26,7 +26,7 @@ interface MarketBannerViewProps {
   testID?: string;
 }
 
-const HEIGHT = 102;
+const HEIGHT = 108;
 const MARGIN_RIGHT = 8;
 const PADDING_HORIZONTAL = 16;
 const MARGIN_HORIZONTAL = -16;

@@ -40991,7 +40991,7 @@ var __webpack_exports__ = {};
             required: true,
             trimWhitespace: true
         });
-        app.all("*", (req, res, next)=>{
+        app.use((req, res, next)=>{
             console.info(`Got a ${req.method} request`, req.path);
             const { authorization = "" } = req.headers;
             const [type = "", token = ""] = authorization.split(" ");

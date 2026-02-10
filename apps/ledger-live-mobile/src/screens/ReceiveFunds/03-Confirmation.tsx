@@ -38,12 +38,8 @@ import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
@@ -248,7 +244,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     () => ({
       height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
         if (onFinish && bannerHeight.value === 0) {
-          runOnJS(hideBanner)();
+          scheduleOnRN(hideBanner);
         }
       }),
       opacity: withTiming(bannerOpacity.value, { duration: 200 }),

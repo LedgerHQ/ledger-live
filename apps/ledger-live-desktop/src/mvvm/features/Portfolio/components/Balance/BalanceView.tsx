@@ -1,9 +1,12 @@
 import React from "react";
+import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
 import { BalanceViewProps } from "./types";
 import { Trend } from "../Trend";
 
 export const BalanceView = ({
-  balanceParts,
+  balance,
+  formatter,
+  discreet,
   valueChange,
   isAvailable,
   navigateToAnalytics,
@@ -12,8 +15,6 @@ export const BalanceView = ({
   if (!isAvailable) {
     return null;
   }
-
-  const { integerPart, decimalSeparator, decimalDigits } = balanceParts;
 
   return (
     <div
@@ -25,11 +26,12 @@ export const BalanceView = ({
       onKeyDown={handleKeyDown}
       aria-label="View portfolio analytics"
     >
-      <div className="flex items-baseline gap-2" data-testid="portfolio-total-balance">
-        <span className="heading-1-semi-bold text-base">{integerPart}</span>
-        <span className="heading-2-semi-bold text-muted">{decimalSeparator}</span>
-        <span className="heading-2-semi-bold text-muted">{decimalDigits}</span>
-      </div>
+      <AmountDisplay
+        value={balance}
+        formatter={formatter}
+        hidden={discreet}
+        data-testid="portfolio-total-balance"
+      />
       <Trend valueChange={valueChange} />
     </div>
   );

@@ -7,7 +7,7 @@ import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { setEnv } from "@ledgerhq/live-env";
-import { log } from "detox";
+import { allure } from "jest-allure2-reporter/api";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -532,7 +532,8 @@ export function runSwapCheckProvider(
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.goToProviderLiveApp(provider.uiName);
       if (provider.uiName === "1inch") {
-        log.warn("Skipping 1inch URL verification due to QAA-854");
+        allure.issue("QAA-854");
+        allure.statusDetails({ message: "Skipping 1inch URL verification due to QAA-854" });
         return;
       }
       await app.swapLiveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());

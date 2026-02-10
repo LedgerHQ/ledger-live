@@ -1,8 +1,9 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { FlowWizardOrchestrator, createStepRegistry } from "../FlowWizardOrchestrator";
+import { FlowWizardOrchestrator } from "../FlowWizardOrchestrator";
 import { useFlowWizard } from "../FlowWizardContext";
-import type { FlowConfig } from "../types";
+import { FlowWizardProvider } from "../FlowWizardContext";
+import type { FlowConfig, StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
 const TEST_STEPS = {
   FIRST: "FIRST",
@@ -47,11 +48,11 @@ const StepThree = () => {
   );
 };
 
-const stepRegistry = createStepRegistry({
+const stepRegistry: StepRegistry<TestStep> = {
   [TEST_STEPS.FIRST]: StepOne,
   [TEST_STEPS.SECOND]: StepTwo,
   [TEST_STEPS.THIRD]: StepThree,
-});
+};
 
 const flowConfig: FlowConfig<TestStep> = {
   stepOrder: [TEST_STEPS.FIRST, TEST_STEPS.SECOND, TEST_STEPS.THIRD],
@@ -62,8 +63,30 @@ const flowConfig: FlowConfig<TestStep> = {
   },
 };
 
+// Mock business context for tests
+type TestBusinessContext = Record<string, never>;
+
+const TestContextProvider = FlowWizardProvider;
+
+// Component that renders the current step using useFlowWizard
+const TestFlowRenderer = () => {
+  const { currentStepRenderer: StepComponent } = useFlowWizard<TestStep>();
+  return StepComponent ? <StepComponent /> : null;
+};
+
 function renderFlow(config: FlowConfig<TestStep> = flowConfig) {
-  return render(<FlowWizardOrchestrator flowConfig={config} stepRegistry={stepRegistry} />);
+  const contextValue: TestBusinessContext = {};
+
+  return render(
+    <FlowWizardOrchestrator<TestStep, TestBusinessContext>
+      flowConfig={config}
+      stepRegistry={stepRegistry}
+      contextValue={contextValue}
+      ContextProvider={TestContextProvider}
+    >
+      <TestFlowRenderer />
+    </FlowWizardOrchestrator>,
+  );
 }
 
 describe("FlowWizardOrchestrator", () => {
@@ -113,8 +136,15 @@ describe("FlowWizardOrchestrator", () => {
       );
     };
 
+    const contextValue: TestBusinessContext = {};
+
     render(
-      <FlowWizardOrchestrator flowConfig={flowConfig} stepRegistry={stepRegistry}>
+      <FlowWizardOrchestrator<TestStep, TestBusinessContext>
+        flowConfig={flowConfig}
+        stepRegistry={stepRegistry}
+        contextValue={contextValue}
+        ContextProvider={TestContextProvider}
+      >
         <CustomLayout />
       </FlowWizardOrchestrator>,
     );

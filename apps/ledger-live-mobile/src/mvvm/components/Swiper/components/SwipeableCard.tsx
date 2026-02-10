@@ -11,6 +11,7 @@ const { width } = Dimensions.get("window");
 const SPRING_CONFIG = {
   damping: 30,
   stiffness: 400,
+  overshootClamping: true,
 };
 
 type SwipeableCardProps = {
@@ -29,12 +30,12 @@ function useSwipeStyle(swipeX: SharedValue<number>, swipeY: SharedValue<number>,
     let translateX = 0;
     let translateY = 0;
     let scale = 1;
-    let rotate = "0deg";
+    let rotateDeg = 0;
 
     if (isActive) {
       translateX = swipeX.value;
       translateY = swipeY.value;
-      rotate = `${interpolate(swipeX.value, [-width / 2, 0, width / 2], [-16, 0, 15])}deg`;
+      rotateDeg = interpolate(swipeX.value, [-width / 2, 0, width / 2], [-16, 0, 15]);
     } else if (isNext) {
       scale = interpolate(Math.abs(swipeX.value), [0, width], [0.95, 1]);
       translateY = interpolate(Math.abs(swipeX.value), [0, width], [-28, 0]);
@@ -45,12 +46,11 @@ function useSwipeStyle(swipeX: SharedValue<number>, swipeY: SharedValue<number>,
 
     return {
       transform: [
-        { translateX: withSpring(translateX, SPRING_CONFIG) },
-        { translateY: withSpring(translateY, SPRING_CONFIG) },
-        { scale: withSpring(scale, SPRING_CONFIG) },
-        { rotate: withSpring(rotate, SPRING_CONFIG) },
+        { translateX: isActive ? translateX : withSpring(translateX, SPRING_CONFIG) },
+        { translateY: isActive ? translateY : withSpring(translateY, SPRING_CONFIG) },
+        { scale: isActive ? scale : withSpring(scale, SPRING_CONFIG) },
+        { rotate: `${rotateDeg}deg` },
       ],
-
       zIndex: isActive ? 100 : 100 - index,
     };
   }, [index, swipeX, swipeY]);

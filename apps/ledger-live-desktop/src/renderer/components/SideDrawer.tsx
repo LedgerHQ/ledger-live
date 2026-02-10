@@ -149,7 +149,7 @@ export function SideDrawer({
       window.removeEventListener("keydown", onKeyPress, false);
     };
   }, [onKeyPress]);
-  const focusTrapElem = useRef<HTMLDivElement>(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
   const focusTrap = useRef<FocusTrap | null>(null);
   const modalsState = useSelector(modalsStateSelector);
   const shouldDisableFocusTrap = Object.values(modalsState).some(state => state?.isOpened);
@@ -157,9 +157,9 @@ export function SideDrawer({
     if (forceDisableFocusTrap) {
       return;
     }
-    if (isOpen && focusTrapElem.current && !shouldDisableFocusTrap) {
-      focusTrap.current = createFocusTrap(focusTrapElem.current, {
-        fallbackFocus: focusTrapElem.current,
+    if (isOpen && nodeRef.current && !shouldDisableFocusTrap) {
+      focusTrap.current = createFocusTrap(nodeRef.current, {
+        fallbackFocus: nodeRef.current,
         escapeDeactivates: false,
         clickOutsideDeactivates: false,
         preventScroll: true,
@@ -184,11 +184,12 @@ export function SideDrawer({
             exit: DURATION * 3, // leaves extra time for the animation to end before unmount
           }}
           unmountOnExit
+          nodeRef={nodeRef}
         >
           {state => (
             <DrawerContainer
+              ref={nodeRef}
               state={state}
-              ref={focusTrapElem}
               tabIndex={-1}
               data-testid="side-drawer-container"
             >

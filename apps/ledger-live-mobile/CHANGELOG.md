@@ -1,5 +1,310 @@
 # live-mobile
 
+## 3.105.0
+
+### Minor Changes
+
+- [#13994](https://github.com/LedgerHQ/ledger-live/pull/13994) [`7aeb7bb`](https://github.com/LedgerHQ/ledger-live/commit/7aeb7bb9c98636ca75f8e60fa65034aa7fc6e247) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: update wording notifications prompt drawer
+
+- [#14016](https://github.com/LedgerHQ/ledger-live/pull/14016) [`eb89e1a`](https://github.com/LedgerHQ/ledger-live/commit/eb89e1a689d7c6c340ba40fe088547b016783b2b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - FearAndGreed add an early return in the animation to avoid infinite re renders with jest
+
+- [#14028](https://github.com/LedgerHQ/ledger-live/pull/14028) [`0225aac`](https://github.com/LedgerHQ/ledger-live/commit/0225aacff3cd1b737e20233943d2bf016dcb93fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump lumen-ui libraries (lumen-ui-react 0.0.71 → 0.0.73, lumen-ui-rnative 0.0.58 → 0.0.60)
+
+- [#14030](https://github.com/LedgerHQ/ledger-live/pull/14030) [`8388db4`](https://github.com/LedgerHQ/ledger-live/commit/8388db4ad26fd6882cef46cfe7da305ce519eccc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen rnative to latest so it uses react 19
+
+- [#14155](https://github.com/LedgerHQ/ledger-live/pull/14155) [`16da950`](https://github.com/LedgerHQ/ledger-live/commit/16da950a3225ccf0687f0d633021a084f218bbf9) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: removed navbar from perps
+
+- [#14019](https://github.com/LedgerHQ/ledger-live/pull/14019) [`009c0cd`](https://github.com/LedgerHQ/ledger-live/commit/009c0cd01ab617d349a546344daa6f0dd18661e3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add dev tools for the wallet 4.0
+
+- [#14072](https://github.com/LedgerHQ/ledger-live/pull/14072) [`cdb1567`](https://github.com/LedgerHQ/ledger-live/commit/cdb156754d77e98c64e1b6d08c57484885f1f204) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Adjust market banner tiles to match design
+
+- [#14045](https://github.com/LedgerHQ/ledger-live/pull/14045) [`e32bd06`](https://github.com/LedgerHQ/ledger-live/commit/e32bd06906543f3884a491781014f691f8c99f54) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix market deeplink when the market banner ff is enabled
+
+- [#14104](https://github.com/LedgerHQ/ledger-live/pull/14104) [`638e2af`](https://github.com/LedgerHQ/ledger-live/commit/638e2af2161b006b68394bdbe83357e1414bf54b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Realign fear and greed tile with the other tiles
+
+- [#13951](https://github.com/LedgerHQ/ledger-live/pull/13951) [`a8fd790`](https://github.com/LedgerHQ/ledger-live/commit/a8fd790177f0eb0129c8afa139e8e95e4011e605) Thanks [@deepyjr](https://github.com/deepyjr)! - Add PortfolioBalanceSection component for wallet balance display with three states (normal, noFund, noSigner) behind graph_rework feature flag.
+
+  Unify currency formatting across mobile and desktop:
+
+  - Mobile: Use formatCurrencyUnitFragment with AmountDisplay from lumen-ui-rnative
+  - Desktop: Migrate BalanceView to use AmountDisplay from lumen-ui-react, remove formatBalanceParts utility
+  - Both platforms now use the same formatter callback pattern with Lumen components handling currency positioning
+
+- [#14054](https://github.com/LedgerHQ/ledger-live/pull/14054) [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: perps ff and entry points
+
+- [#14167](https://github.com/LedgerHQ/ledger-live/pull/14167) [`fee8081`](https://github.com/LedgerHQ/ledger-live/commit/fee808157e46e1bd7cde5c30ba392ca3450ad6b5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(LWD, LWM): update `EthAppPleaseEnableContractData` error message
+
+- [#14105](https://github.com/LedgerHQ/ledger-live/pull/14105) [`93cfcb0`](https://github.com/LedgerHQ/ledger-live/commit/93cfcb02fdc4a97a353174b9c12847a546bd8f0b) Thanks [@thesan](https://github.com/thesan)! - Stop the incessant re-saving of countervalues
+
+- [#14147](https://github.com/LedgerHQ/ledger-live/pull/14147) [`b425b53`](https://github.com/LedgerHQ/ledger-live/commit/b425b5337fb4079a8b1c302bf58205692658340d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Rename notifications prompt illustrations (NotificationsBell, NotificationsPerformanceChart) and show by drawer source
+
+- [#14130](https://github.com/LedgerHQ/ledger-live/pull/14130) [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add mainNavigation FF for Wallet4.0
+
+- [#14037](https://github.com/LedgerHQ/ledger-live/pull/14037) [`be39926`](https://github.com/LedgerHQ/ledger-live/commit/be39926478820f77a1280693c231c76e1eb078ac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics pill to the portfolio balance
+
+- [#14314](https://github.com/LedgerHQ/ledger-live/pull/14314) [`50da5ec`](https://github.com/LedgerHQ/ledger-live/commit/50da5ec0dd8c14e607deaa7cc67cc28dc3ad0a2d) Thanks [@Justkant](https://github.com/Justkant)! - fix: prevent double-firing of close animation callbacks in QueuedDrawer and DeviceConnect
+
+  Use refs instead of local variables in QueuedDrawer's closeAnim to
+  deduplicate callbacks across rapid successive calls. Add a guard ref
+  in DeviceConnect to prevent handleSuccess from executing twice.
+
+- [#13830](https://github.com/LedgerHQ/ledger-live/pull/13830) [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e) Thanks [@ysitbon](https://github.com/ysitbon)! - upgrade react-native-reanimated from v3 to v4
+
+  - Add new required dependency `react-native-worklets` (0.7.2)
+  - Migrate babel plugin from `react-native-reanimated/plugin` to `react-native-worklets/plugin`
+  - Migrate `runOnJS` API to `scheduleOnRN` from `react-native-worklets`
+  - Add missing dependency arrays to `useAnimatedStyle` hooks (required for Reanimated 4 without Babel plugin)
+  - Update test mocks for compatibility with Reanimated 4
+
+- [#14039](https://github.com/LedgerHQ/ledger-live/pull/14039) [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: ContentDrawer - add tour parameter to lwmWallet40 ff, new hasSeenWalletV4Tour flag, add debug row
+
+- [#14236](https://github.com/LedgerHQ/ledger-live/pull/14236) [`3325156`](https://github.com/LedgerHQ/ledger-live/commit/33251566c191e95a47b8996717a1b8e8007e90f8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix a race condition with the bottomsheet
+
+- [#14029](https://github.com/LedgerHQ/ledger-live/pull/14029) [`44e0119`](https://github.com/LedgerHQ/ledger-live/commit/44e01193484cbbade3d0c09d29367e8cfcc71d79) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Quick Actions CTAs with new Transfer drawer for Wallet 4.0
+
+  - New Quick Actions CTAs (Transfer, Swap, Buy) displayed when quick_action_ctas feature flag is enabled
+  - Transfer action opens a bottom sheet with Receive, Send, and Bank transfer options
+  - Swap action navigates to Swap Live app
+  - Buy action navigates to Buy Live app
+  - Built with Lumen UI components (TileButton, ListItem, Box, Subheader)
+  - Full MVVM architecture with integration tests
+
+- [#14040](https://github.com/LedgerHQ/ledger-live/pull/14040) [`59b4d7e`](https://github.com/LedgerHQ/ledger-live/commit/59b4d7e4052bf873644dfb817ee910ab1f046332) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - feat(recover): pass hasConnectedNanoS and countryCode params to Recover webapp
+
+  - Add new `getCountryCodeFromLocale` utility in `@ledgerhq/live-common/locale`
+  - Pass `hasConnectedNanoS` boolean to indicate if user has ever connected a Nano S
+  - Pass `countryCode` (ISO 3166-1 alpha-2, lowercase) extracted from user's locale setting
+
+- [#14198](https://github.com/LedgerHQ/ledger-live/pull/14198) [`0fec915`](https://github.com/LedgerHQ/ledger-live/commit/0fec915e472b33f2fc8544e69fbb7640ff8c72c0) Thanks [@cunhabruno](https://github.com/cunhabruno)! - remove jotai-scope import from PerpsWebView
+
+- [#13847](https://github.com/LedgerHQ/ledger-live/pull/13847) [`a8ef145`](https://github.com/LedgerHQ/ledger-live/commit/a8ef1456fc361a2c82cea7eccc982ea9d4621203) Thanks [@ishaba](https://github.com/ishaba)! - fix Canton stale screen and error handling on add account mobile
+
+- [#14134](https://github.com/LedgerHQ/ledger-live/pull/14134) [`64a32d2`](https://github.com/LedgerHQ/ledger-live/commit/64a32d23aa176c904974bb6e3acd717d9c75729a) Thanks [@Justkant](https://github.com/Justkant)! - fix(mobile): resolve webview state interference and staking drawer double-open
+
+  - Replace single currentAccountAtom with atomFamily (currentAccountAtomFamily) to provide manifest-scoped account state isolation between webviews
+  - Remove ScopeProvider wrappers from webview components (no longer needed)
+  - Use refs for staking drawer callbacks in EarnLiveAppNavigator to prevent useEffect re-runs when callbacks change
+  - Update jotai from 2.12.4 to 2.17.0, remove jotai-scope, add jotai-family
+
+  This fixes two related issues:
+
+  1. Account state bleeding between EarnWebview and WebPlatformPlayer when both are mounted simultaneously
+  2. Staking drawer opening multiple times due to unstable callback dependencies in the useEffect
+
+- [#13859](https://github.com/LedgerHQ/ledger-live/pull/13859) [`c36a6b1`](https://github.com/LedgerHQ/ledger-live/commit/c36a6b1112bb87e53ae106f676069327726b90c7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove legacy React Native BLE transport code
+
+  Since the `ldmkTransport` feature flag is now enabled by default in all environments, the Device Management Kit (DMK) transport is always used. This removes all dead code related to the legacy BLE transport:
+
+  - Removed `@ledgerhq/react-native-hw-transport-ble` dependency from LLM
+  - Removed `PairDevices` screen and related components
+  - Removed `DebugBLE` and `DebugBLEBenchmark` debug screens
+  - Removed legacy BLE hooks (`useBleDevicePairing`, `useBleDevicesScanning`) from live-common
+  - Removed legacy BLE types from live-common
+
+  Note: The `@ledgerhq/react-native-hw-transport-ble` package itself (in `libs/ledgerjs/`) is not removed — it will be deprecated in a separate PR.
+
+- [#14126](https://github.com/LedgerHQ/ledger-live/pull/14126) [`c9f56c4`](https://github.com/LedgerHQ/ledger-live/commit/c9f56c4af8a2825f52696c2ef241564e62c55111) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Split market API into market and countervalues RTK Query APIs
+
+- [#14086](https://github.com/LedgerHQ/ledger-live/pull/14086) [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop persisting Account#lastSyncDate to optimize need to resave accounts
+
+- [#14013](https://github.com/LedgerHQ/ledger-live/pull/14013) [`7524c14`](https://github.com/LedgerHQ/ledger-live/commit/7524c14bc3d6a26264adaaf7f90bc8fce9981efd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - cleanup old fields in settings reducers
+
+- [#14157](https://github.com/LedgerHQ/ledger-live/pull/14157) [`080cd87`](https://github.com/LedgerHQ/ledger-live/commit/080cd8711475cc3ff0e8fbf901b981bf799d0def) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Hide bank transfer option in transfer drawer when Noah feature flag is disabled
+
+- [#14033](https://github.com/LedgerHQ/ledger-live/pull/14033) [`8e07e63`](https://github.com/LedgerHQ/ledger-live/commit/8e07e6329c02664406a699f7103af81f909ef4cd) Thanks [@deepyjr](https://github.com/deepyjr)! - Add tap to toggle discreet mode on portfolio balance
+
+- [#14217](https://github.com/LedgerHQ/ledger-live/pull/14217) [`67c7dc5`](https://github.com/LedgerHQ/ledger-live/commit/67c7dc5ee4f687ab5df949600a04ca4d197576a4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Retrigger new builds with hotfix stuffs
+
+- [#14097](https://github.com/LedgerHQ/ledger-live/pull/14097) [`d5b273b`](https://github.com/LedgerHQ/ledger-live/commit/d5b273b41e768c3a656306070c16bc42b7790f79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Reduce polling state to 3 minutes
+
+### Patch Changes
+
+- Updated dependencies [[`a155cdf`](https://github.com/LedgerHQ/ledger-live/commit/a155cdf12a17b61f7b2effc25d30dafb1554b23c), [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`62f9834`](https://github.com/LedgerHQ/ledger-live/commit/62f9834ae78b21ac387270c7f64f9068c43352da), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`34cf993`](https://github.com/LedgerHQ/ledger-live/commit/34cf99398715d029c6d814cd9d4a697e5db775da), [`7dbe08b`](https://github.com/LedgerHQ/ledger-live/commit/7dbe08b72ebae5ee707cc06826715341d2678404), [`982a7e9`](https://github.com/LedgerHQ/ledger-live/commit/982a7e9c73867b7c7b90ccae6df575d59c06806c), [`65f0757`](https://github.com/LedgerHQ/ledger-live/commit/65f0757b1ea33a5971132d338e270ecf3242ba10), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014), [`a774b49`](https://github.com/LedgerHQ/ledger-live/commit/a774b49cca0696426d20a51782e3f18640c47613)]:
+  - @ledgerhq/coin-canton@0.16.0
+  - @ledgerhq/types-live@6.96.0
+  - @ledgerhq/live-wallet@0.21.0
+  - @ledgerhq/native-ui@0.55.0
+  - @ledgerhq/coin-cosmos@0.24.0
+  - @ledgerhq/coin-evm@2.42.0
+  - @ledgerhq/coin-framework@6.15.0
+  - @ledgerhq/live-env@2.27.0
+  - @ledgerhq/coin-filecoin@1.18.3
+  - @ledgerhq/coin-multiversx@0.10.3
+  - @ledgerhq/coin-stacks@0.15.2
+  - @ledgerhq/domain-service@1.6.3
+  - @ledgerhq/cryptoassets@13.38.1
+  - @ledgerhq/live-countervalues@0.12.1
+  - @ledgerhq/live-countervalues-react@0.9.2
+  - @ledgerhq/client-ids@0.5.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.2
+  - @ledgerhq/ledger-key-ring-protocol@0.11.2
+  - @ledgerhq/live-dmk-mobile@0.18.2
+  - @ledgerhq/live-network@2.2.2
+
+## 3.105.0-next.5
+
+### Minor Changes
+
+- [#14314](https://github.com/LedgerHQ/ledger-live/pull/14314) [`50da5ec`](https://github.com/LedgerHQ/ledger-live/commit/50da5ec0dd8c14e607deaa7cc67cc28dc3ad0a2d) Thanks [@Justkant](https://github.com/Justkant)! - fix: prevent double-firing of close animation callbacks in QueuedDrawer and DeviceConnect
+
+  Use refs instead of local variables in QueuedDrawer's closeAnim to
+  deduplicate callbacks across rapid successive calls. Add a guard ref
+  in DeviceConnect to prevent handleSuccess from executing twice.
+
+## 3.105.0-next.4
+
+### Minor Changes
+
+- [#14236](https://github.com/LedgerHQ/ledger-live/pull/14236) [`3325156`](https://github.com/LedgerHQ/ledger-live/commit/33251566c191e95a47b8996717a1b8e8007e90f8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix a race condition with the bottomsheet
+
+## 3.105.0-next.3
+
+### Minor Changes
+
+- [#14217](https://github.com/LedgerHQ/ledger-live/pull/14217) [`67c7dc5`](https://github.com/LedgerHQ/ledger-live/commit/67c7dc5ee4f687ab5df949600a04ca4d197576a4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Retrigger new builds with hotfix stuffs
+
+## 3.105.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`62f9834`](https://github.com/LedgerHQ/ledger-live/commit/62f9834ae78b21ac387270c7f64f9068c43352da)]:
+  - @ledgerhq/live-wallet@0.21.0-next.1
+
+## 3.105.0-next.1
+
+### Minor Changes
+
+- [#14198](https://github.com/LedgerHQ/ledger-live/pull/14198) [`0fec915`](https://github.com/LedgerHQ/ledger-live/commit/0fec915e472b33f2fc8544e69fbb7640ff8c72c0) Thanks [@cunhabruno](https://github.com/cunhabruno)! - remove jotai-scope import from PerpsWebView
+
+## 3.105.0-next.0
+
+### Minor Changes
+
+- [#13994](https://github.com/LedgerHQ/ledger-live/pull/13994) [`7aeb7bb`](https://github.com/LedgerHQ/ledger-live/commit/7aeb7bb9c98636ca75f8e60fa65034aa7fc6e247) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: update wording notifications prompt drawer
+
+- [#14016](https://github.com/LedgerHQ/ledger-live/pull/14016) [`eb89e1a`](https://github.com/LedgerHQ/ledger-live/commit/eb89e1a689d7c6c340ba40fe088547b016783b2b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - FearAndGreed add an early return in the animation to avoid infinite re renders with jest
+
+- [#14028](https://github.com/LedgerHQ/ledger-live/pull/14028) [`0225aac`](https://github.com/LedgerHQ/ledger-live/commit/0225aacff3cd1b737e20233943d2bf016dcb93fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump lumen-ui libraries (lumen-ui-react 0.0.71 → 0.0.73, lumen-ui-rnative 0.0.58 → 0.0.60)
+
+- [#14030](https://github.com/LedgerHQ/ledger-live/pull/14030) [`8388db4`](https://github.com/LedgerHQ/ledger-live/commit/8388db4ad26fd6882cef46cfe7da305ce519eccc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen rnative to latest so it uses react 19
+
+- [#14155](https://github.com/LedgerHQ/ledger-live/pull/14155) [`16da950`](https://github.com/LedgerHQ/ledger-live/commit/16da950a3225ccf0687f0d633021a084f218bbf9) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: removed navbar from perps
+
+- [#14019](https://github.com/LedgerHQ/ledger-live/pull/14019) [`009c0cd`](https://github.com/LedgerHQ/ledger-live/commit/009c0cd01ab617d349a546344daa6f0dd18661e3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add dev tools for the wallet 4.0
+
+- [#14072](https://github.com/LedgerHQ/ledger-live/pull/14072) [`cdb1567`](https://github.com/LedgerHQ/ledger-live/commit/cdb156754d77e98c64e1b6d08c57484885f1f204) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Adjust market banner tiles to match design
+
+- [#14045](https://github.com/LedgerHQ/ledger-live/pull/14045) [`e32bd06`](https://github.com/LedgerHQ/ledger-live/commit/e32bd06906543f3884a491781014f691f8c99f54) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix market deeplink when the market banner ff is enabled
+
+- [#14104](https://github.com/LedgerHQ/ledger-live/pull/14104) [`638e2af`](https://github.com/LedgerHQ/ledger-live/commit/638e2af2161b006b68394bdbe83357e1414bf54b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Realign fear and greed tile with the other tiles
+
+- [#13951](https://github.com/LedgerHQ/ledger-live/pull/13951) [`a8fd790`](https://github.com/LedgerHQ/ledger-live/commit/a8fd790177f0eb0129c8afa139e8e95e4011e605) Thanks [@deepyjr](https://github.com/deepyjr)! - Add PortfolioBalanceSection component for wallet balance display with three states (normal, noFund, noSigner) behind graph_rework feature flag.
+
+  Unify currency formatting across mobile and desktop:
+
+  - Mobile: Use formatCurrencyUnitFragment with AmountDisplay from lumen-ui-rnative
+  - Desktop: Migrate BalanceView to use AmountDisplay from lumen-ui-react, remove formatBalanceParts utility
+  - Both platforms now use the same formatter callback pattern with Lumen components handling currency positioning
+
+- [#14054](https://github.com/LedgerHQ/ledger-live/pull/14054) [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: perps ff and entry points
+
+- [#14167](https://github.com/LedgerHQ/ledger-live/pull/14167) [`fee8081`](https://github.com/LedgerHQ/ledger-live/commit/fee808157e46e1bd7cde5c30ba392ca3450ad6b5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(LWD, LWM): update `EthAppPleaseEnableContractData` error message
+
+- [#14105](https://github.com/LedgerHQ/ledger-live/pull/14105) [`93cfcb0`](https://github.com/LedgerHQ/ledger-live/commit/93cfcb02fdc4a97a353174b9c12847a546bd8f0b) Thanks [@thesan](https://github.com/thesan)! - Stop the incessant re-saving of countervalues
+
+- [#14147](https://github.com/LedgerHQ/ledger-live/pull/14147) [`b425b53`](https://github.com/LedgerHQ/ledger-live/commit/b425b5337fb4079a8b1c302bf58205692658340d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Rename notifications prompt illustrations (NotificationsBell, NotificationsPerformanceChart) and show by drawer source
+
+- [#14130](https://github.com/LedgerHQ/ledger-live/pull/14130) [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add mainNavigation FF for Wallet4.0
+
+- [#14037](https://github.com/LedgerHQ/ledger-live/pull/14037) [`be39926`](https://github.com/LedgerHQ/ledger-live/commit/be39926478820f77a1280693c231c76e1eb078ac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics pill to the portfolio balance
+
+- [#13830](https://github.com/LedgerHQ/ledger-live/pull/13830) [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e) Thanks [@ysitbon](https://github.com/ysitbon)! - upgrade react-native-reanimated from v3 to v4
+
+  - Add new required dependency `react-native-worklets` (0.7.2)
+  - Migrate babel plugin from `react-native-reanimated/plugin` to `react-native-worklets/plugin`
+  - Migrate `runOnJS` API to `scheduleOnRN` from `react-native-worklets`
+  - Add missing dependency arrays to `useAnimatedStyle` hooks (required for Reanimated 4 without Babel plugin)
+  - Update test mocks for compatibility with Reanimated 4
+
+- [#14039](https://github.com/LedgerHQ/ledger-live/pull/14039) [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: ContentDrawer - add tour parameter to lwmWallet40 ff, new hasSeenWalletV4Tour flag, add debug row
+
+- [#14029](https://github.com/LedgerHQ/ledger-live/pull/14029) [`44e0119`](https://github.com/LedgerHQ/ledger-live/commit/44e01193484cbbade3d0c09d29367e8cfcc71d79) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Quick Actions CTAs with new Transfer drawer for Wallet 4.0
+
+  - New Quick Actions CTAs (Transfer, Swap, Buy) displayed when quick_action_ctas feature flag is enabled
+  - Transfer action opens a bottom sheet with Receive, Send, and Bank transfer options
+  - Swap action navigates to Swap Live app
+  - Buy action navigates to Buy Live app
+  - Built with Lumen UI components (TileButton, ListItem, Box, Subheader)
+  - Full MVVM architecture with integration tests
+
+- [#14040](https://github.com/LedgerHQ/ledger-live/pull/14040) [`59b4d7e`](https://github.com/LedgerHQ/ledger-live/commit/59b4d7e4052bf873644dfb817ee910ab1f046332) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - feat(recover): pass hasConnectedNanoS and countryCode params to Recover webapp
+
+  - Add new `getCountryCodeFromLocale` utility in `@ledgerhq/live-common/locale`
+  - Pass `hasConnectedNanoS` boolean to indicate if user has ever connected a Nano S
+  - Pass `countryCode` (ISO 3166-1 alpha-2, lowercase) extracted from user's locale setting
+
+- [#13847](https://github.com/LedgerHQ/ledger-live/pull/13847) [`a8ef145`](https://github.com/LedgerHQ/ledger-live/commit/a8ef1456fc361a2c82cea7eccc982ea9d4621203) Thanks [@ishaba](https://github.com/ishaba)! - fix Canton stale screen and error handling on add account mobile
+
+- [#14134](https://github.com/LedgerHQ/ledger-live/pull/14134) [`64a32d2`](https://github.com/LedgerHQ/ledger-live/commit/64a32d23aa176c904974bb6e3acd717d9c75729a) Thanks [@Justkant](https://github.com/Justkant)! - fix(mobile): resolve webview state interference and staking drawer double-open
+
+  - Replace single currentAccountAtom with atomFamily (currentAccountAtomFamily) to provide manifest-scoped account state isolation between webviews
+  - Remove ScopeProvider wrappers from webview components (no longer needed)
+  - Use refs for staking drawer callbacks in EarnLiveAppNavigator to prevent useEffect re-runs when callbacks change
+  - Update jotai from 2.12.4 to 2.17.0, remove jotai-scope, add jotai-family
+
+  This fixes two related issues:
+
+  1. Account state bleeding between EarnWebview and WebPlatformPlayer when both are mounted simultaneously
+  2. Staking drawer opening multiple times due to unstable callback dependencies in the useEffect
+
+- [#13859](https://github.com/LedgerHQ/ledger-live/pull/13859) [`c36a6b1`](https://github.com/LedgerHQ/ledger-live/commit/c36a6b1112bb87e53ae106f676069327726b90c7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove legacy React Native BLE transport code
+
+  Since the `ldmkTransport` feature flag is now enabled by default in all environments, the Device Management Kit (DMK) transport is always used. This removes all dead code related to the legacy BLE transport:
+
+  - Removed `@ledgerhq/react-native-hw-transport-ble` dependency from LLM
+  - Removed `PairDevices` screen and related components
+  - Removed `DebugBLE` and `DebugBLEBenchmark` debug screens
+  - Removed legacy BLE hooks (`useBleDevicePairing`, `useBleDevicesScanning`) from live-common
+  - Removed legacy BLE types from live-common
+
+  Note: The `@ledgerhq/react-native-hw-transport-ble` package itself (in `libs/ledgerjs/`) is not removed — it will be deprecated in a separate PR.
+
+- [#14126](https://github.com/LedgerHQ/ledger-live/pull/14126) [`c9f56c4`](https://github.com/LedgerHQ/ledger-live/commit/c9f56c4af8a2825f52696c2ef241564e62c55111) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Split market API into market and countervalues RTK Query APIs
+
+- [#14086](https://github.com/LedgerHQ/ledger-live/pull/14086) [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop persisting Account#lastSyncDate to optimize need to resave accounts
+
+- [#14013](https://github.com/LedgerHQ/ledger-live/pull/14013) [`7524c14`](https://github.com/LedgerHQ/ledger-live/commit/7524c14bc3d6a26264adaaf7f90bc8fce9981efd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - cleanup old fields in settings reducers
+
+- [#14157](https://github.com/LedgerHQ/ledger-live/pull/14157) [`080cd87`](https://github.com/LedgerHQ/ledger-live/commit/080cd8711475cc3ff0e8fbf901b981bf799d0def) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Hide bank transfer option in transfer drawer when Noah feature flag is disabled
+
+- [#14033](https://github.com/LedgerHQ/ledger-live/pull/14033) [`8e07e63`](https://github.com/LedgerHQ/ledger-live/commit/8e07e6329c02664406a699f7103af81f909ef4cd) Thanks [@deepyjr](https://github.com/deepyjr)! - Add tap to toggle discreet mode on portfolio balance
+
+- [#14097](https://github.com/LedgerHQ/ledger-live/pull/14097) [`d5b273b`](https://github.com/LedgerHQ/ledger-live/commit/d5b273b41e768c3a656306070c16bc42b7790f79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Reduce polling state to 3 minutes
+
+### Patch Changes
+
+- Updated dependencies [[`a155cdf`](https://github.com/LedgerHQ/ledger-live/commit/a155cdf12a17b61f7b2effc25d30dafb1554b23c), [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`34cf993`](https://github.com/LedgerHQ/ledger-live/commit/34cf99398715d029c6d814cd9d4a697e5db775da), [`7dbe08b`](https://github.com/LedgerHQ/ledger-live/commit/7dbe08b72ebae5ee707cc06826715341d2678404), [`982a7e9`](https://github.com/LedgerHQ/ledger-live/commit/982a7e9c73867b7c7b90ccae6df575d59c06806c), [`65f0757`](https://github.com/LedgerHQ/ledger-live/commit/65f0757b1ea33a5971132d338e270ecf3242ba10), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014), [`a774b49`](https://github.com/LedgerHQ/ledger-live/commit/a774b49cca0696426d20a51782e3f18640c47613)]:
+  - @ledgerhq/coin-canton@0.16.0-next.0
+  - @ledgerhq/types-live@6.96.0-next.0
+  - @ledgerhq/native-ui@0.55.0-next.0
+  - @ledgerhq/coin-cosmos@0.24.0-next.0
+  - @ledgerhq/coin-evm@2.42.0-next.0
+  - @ledgerhq/coin-framework@6.15.0-next.0
+  - @ledgerhq/live-env@2.27.0-next.0
+  - @ledgerhq/coin-filecoin@1.18.3-next.0
+  - @ledgerhq/coin-multiversx@0.10.3-next.0
+  - @ledgerhq/coin-stacks@0.15.2-next.0
+  - @ledgerhq/domain-service@1.6.3-next.0
+  - @ledgerhq/cryptoassets@13.38.1-next.0
+  - @ledgerhq/live-countervalues@0.12.1-next.0
+  - @ledgerhq/live-countervalues-react@0.9.2-next.0
+  - @ledgerhq/live-wallet@0.20.2-next.0
+  - @ledgerhq/client-ids@0.5.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.2-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.11.2-next.0
+  - @ledgerhq/live-dmk-mobile@0.18.2-next.0
+  - @ledgerhq/live-network@2.2.2-next.0
+
 ## 3.104.0
 
 ### Minor Changes

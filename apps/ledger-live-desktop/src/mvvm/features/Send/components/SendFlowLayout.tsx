@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
-import { FLOW_STATUS } from "../../FlowWizard/types";
-import type { SendFlowStep, SendStepConfig } from "../types";
+import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import type { SendFlowStep, SendFlowBusinessContext } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { cn } from "LLD/utils/cn";
 
@@ -13,11 +14,11 @@ type SendFlowLayoutProps = Readonly<{
 }>;
 
 export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
-  const { currentStep, currentStepConfig, currentStepRenderer } = useFlowWizard<
-    SendFlowStep,
-    SendStepConfig
-  >();
+  const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state } = useSendFlowData();
+
+  const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
+  const StepComponent = wizard.currentStepRenderer;
 
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
@@ -33,8 +34,6 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
 
-  const StepComponent = currentStepRenderer;
-
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="text-base">
@@ -49,7 +48,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
         <SendHeader />
         <DialogBody className="-mb-24 gap-32 px-24 py-16">
           {StepComponent && (
-            <div key={currentStep} className="animate-fade-in">
+            <div key={wizard.currentStep} className="animate-fade-in">
               <StepComponent />
             </div>
           )}

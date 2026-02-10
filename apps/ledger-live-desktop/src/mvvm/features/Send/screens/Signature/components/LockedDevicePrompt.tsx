@@ -24,7 +24,7 @@ export const LockedDevicePrompt = ({ deviceModelId, onRetry }: LockedDevicePromp
       <div className="flex h-full flex-col items-center justify-center gap-24 px-24 pb-16">
         <Animation animation={getDeviceAnimation(deviceModelId, theme, "enterPinCode")} />
         <div className="flex flex-col items-center gap-12">
-          <h2 className="text-center text-base heading-3-semi-bold">
+          <h2 className="text-center heading-3-semi-bold text-base">
             {t("errors.LockedDeviceError.descriptionWithProductName", { productName: deviceName })}
           </h2>
         </div>

@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import React, { useEffect, useState, createContext } from "react";
+import React, { useEffect, useState, createContext, useRef } from "react";
 import { Routes, Route } from "react-router";
 import { CSSTransition } from "react-transition-group";
 import { Flex } from "@ledgerhq/react-ui";
@@ -65,6 +65,8 @@ export function Onboarding() {
     preloadAssets();
   }, []);
 
+  const nodeRef = useRef(null);
+
   return (
     <OnboardingContext.Provider value={{ deviceModelId, setDeviceModelId }}>
       <Pedagogy
@@ -88,8 +90,15 @@ export function Onboarding() {
         </Box>
       </SideDrawer>
       <OnboardingContainer>
-        <CSSTransition in appear key="onboarding" timeout={DURATION} classNames="page-switch">
-          <ScreenContainer>
+        <CSSTransition
+          in
+          appear
+          key="onboarding"
+          timeout={DURATION}
+          classNames="page-switch"
+          nodeRef={nodeRef}
+        >
+          <ScreenContainer ref={nodeRef}>
             <Routes>
               <Route index element={<Welcome />} />
               <Route path="welcome" element={<Welcome />} />

@@ -1,24 +1,13 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { useSelector, useDispatch } from "~/context/hooks";
 import { EyeMedium, EyeNoneMedium } from "@ledgerhq/native-ui/assets/icons";
-import { discreetModeSelector } from "~/reducers/settings";
-import { setDiscreetMode } from "~/actions/settings";
-import { track } from "~/analytics";
+import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 
 export default function DiscreetModeButton({ size = 24 }: { size?: number }) {
-  const discreetMode = useSelector(discreetModeSelector);
-  const dispatch = useDispatch();
-  const onPress = useCallback(() => {
-    track("button_clicked", {
-      button: "Discreet mode",
-      toggle: !discreetMode ? "ON" : "OFF",
-    });
-    dispatch(setDiscreetMode(!discreetMode));
-  }, [discreetMode, dispatch]);
+  const { discreetMode, toggleDiscreetMode } = useToggleDiscreetMode();
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.root}>
+    <TouchableOpacity onPress={toggleDiscreetMode} style={styles.root}>
       {discreetMode ? (
         <EyeNoneMedium size={size} color={"neutral.c100"} />
       ) : (

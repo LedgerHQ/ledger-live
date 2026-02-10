@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
@@ -76,6 +76,7 @@ export const InformationDrawer = ({
   );
   const tabIndex = useMemo(() => tabs.findIndex(tab => tab.id === tabId), [tabId, tabs]);
   const CurrentPanel = tabs[tabIndex].Component;
+  const nodeRef = useRef(null);
   return (
     <SideDrawer
       isOpen={isOpen}
@@ -98,8 +99,9 @@ export const InformationDrawer = ({
           key={tabIndex}
           timeout={FADE_DURATION}
           classNames="information-panel-switch"
+          nodeRef={nodeRef}
         >
-          <PanelContainer>
+          <PanelContainer ref={nodeRef}>
             <CurrentPanel key={tabs[tabIndex].id} />
           </PanelContainer>
         </CSSTransition>

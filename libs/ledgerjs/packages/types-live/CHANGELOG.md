@@ -1,5 +1,43 @@
 # @ledgerhq/types-live
 
+## 6.96.0
+
+### Minor Changes
+
+- [#14166](https://github.com/LedgerHQ/ledger-live/pull/14166) [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new receive Dialog param into W4.0 FF
+
+- [#14054](https://github.com/LedgerHQ/ledger-live/pull/14054) [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: perps ff and entry points
+
+- [#14130](https://github.com/LedgerHQ/ledger-live/pull/14130) [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add mainNavigation FF for Wallet4.0
+
+- [#14039](https://github.com/LedgerHQ/ledger-live/pull/14039) [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: ContentDrawer - add tour parameter to lwmWallet40 ff, new hasSeenWalletV4Tour flag, add debug row
+
+- [#14086](https://github.com/LedgerHQ/ledger-live/pull/14086) [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop persisting Account#lastSyncDate to optimize need to resave accounts
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.5.1
+
+## 6.96.0-next.0
+
+### Minor Changes
+
+- [#14166](https://github.com/LedgerHQ/ledger-live/pull/14166) [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new receive Dialog param into W4.0 FF
+
+- [#14054](https://github.com/LedgerHQ/ledger-live/pull/14054) [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: perps ff and entry points
+
+- [#14130](https://github.com/LedgerHQ/ledger-live/pull/14130) [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add mainNavigation FF for Wallet4.0
+
+- [#14039](https://github.com/LedgerHQ/ledger-live/pull/14039) [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: ContentDrawer - add tour parameter to lwmWallet40 ff, new hasSeenWalletV4Tour flag, add debug row
+
+- [#14086](https://github.com/LedgerHQ/ledger-live/pull/14086) [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop persisting Account#lastSyncDate to optimize need to resave accounts
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.5.1-next.0
+
 ## 6.95.0
 
 ### Minor Changes

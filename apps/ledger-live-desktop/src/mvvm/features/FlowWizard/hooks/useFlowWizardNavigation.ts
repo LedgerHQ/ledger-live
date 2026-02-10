@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useReducer } from "react";
+import type { FlowStep, FlowStepConfig } from "@ledgerhq/live-common/flows/wizard/types";
 import {
   FLOW_NAVIGATION_DIRECTION,
-  type FlowStep,
   type FlowNavigationState,
   type FlowNavigationActions,
-  type FlowStepConfig,
   type UseFlowWizardNavigationParams,
   type UseFlowWizardNavigationResult,
   type FlowNavigationDirection,

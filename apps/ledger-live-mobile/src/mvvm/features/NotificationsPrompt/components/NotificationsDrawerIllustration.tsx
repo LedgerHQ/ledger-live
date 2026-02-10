@@ -1,38 +1,36 @@
 import * as React from "react";
 import type { NotificationsState } from "~/reducers/types";
 import Illustration from "~/images/illustration/Illustration";
-import PromptNotifGenericDark from "~/images/illustration/Dark/_PromptNotifGeneric.webp";
-import PromptNotifGenericLight from "~/images/illustration/Light/_PromptNotifGeneric.webp";
-import PromptNotifMarketDark from "~/images/illustration/Dark/_PromptNotifMarket.webp";
-import PromptNotifMarketLight from "~/images/illustration/Light/_PromptNotifMarket.webp";
+import NotificationsBellDark from "~/images/illustration/Dark/_NotificationsBell.webp";
+import NotificationsBellLight from "~/images/illustration/Light/_NotificationsBell.webp";
+import NotificationsPerformanceChartDark from "~/images/illustration/Dark/_NotificationsPerformanceChart.webp";
+import NotificationsPerformanceChartLight from "~/images/illustration/Light/_NotificationsPerformanceChart.webp";
+
+const WIDTH = 300;
+const HEIGHT = 141;
 
 export function NotificationsDrawerIllustration({
   type,
 }: {
   readonly type: NotificationsState["drawerSource"];
 }) {
-  switch (type) {
-    case "add_favorite_coin": {
-      return (
-        <Illustration
-          lightSource={PromptNotifMarketLight}
-          darkSource={PromptNotifMarketDark}
-          width={300}
-          height={141}
-        />
-      );
-    }
-    case "onboarding":
-    default: {
-      // we will display illustrations for other cases later
-      return (
-        <Illustration
-          lightSource={PromptNotifGenericLight}
-          darkSource={PromptNotifGenericDark}
-          width={300}
-          height={141}
-        />
-      );
-    }
+  if (type === "onboarding") {
+    return (
+      <Illustration
+        lightSource={NotificationsBellLight}
+        darkSource={NotificationsBellDark}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+    );
   }
+
+  return (
+    <Illustration
+      lightSource={NotificationsPerformanceChartLight}
+      darkSource={NotificationsPerformanceChartDark}
+      width={WIDTH}
+      height={HEIGHT}
+    />
+  );
 }

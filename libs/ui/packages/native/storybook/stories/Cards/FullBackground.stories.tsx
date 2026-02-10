@@ -16,7 +16,7 @@ export default {
   },
 } as Meta<typeof FullBackgroundCard>;
 
-export const FullBackgroundCardStory: StoryFn<typeof FullBackgroundCard> = (
+export const FullBackgroundCardStory: StoryFn<typeof FullBackgroundCardStoryArgs> = (
   args: typeof FullBackgroundCardStoryArgs,
 ) => {
   return (

@@ -70,6 +70,7 @@ export const submit = async (signedTx: string): Promise<SubmitReponse> => {
   const { data } = await network<SubmitReponse>({
     url,
     method: "GET",
+    data: { signedTx },
   });
   return data;
 };

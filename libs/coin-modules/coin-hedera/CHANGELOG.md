@@ -1,5 +1,41 @@
 # @ledgerhq/coin-hedera
 
+## 1.21.0
+
+### Minor Changes
+
+- [#14060](https://github.com/LedgerHQ/ledger-live/pull/14060) [`d12dbba`](https://github.com/LedgerHQ/ledger-live/commit/d12dbbaf026e29cfe069778ac6f4760c9a659665) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-hedera): log hedera address on missing evm address
+
+- [#14143](https://github.com/LedgerHQ/ledger-live/pull/14143) [`c0f7f57`](https://github.com/LedgerHQ/ledger-live/commit/c0f7f572bf4551f90f6f1466aea26e9d5e457303) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: update hedera sdk configuration
+
+### Patch Changes
+
+- Updated dependencies [[`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014)]:
+  - @ledgerhq/types-live@6.96.0
+  - @ledgerhq/coin-framework@6.15.0
+  - @ledgerhq/live-env@2.27.0
+  - @ledgerhq/cryptoassets@13.38.1
+  - @ledgerhq/live-countervalues@0.12.1
+  - @ledgerhq/live-network@2.2.2
+
+## 1.21.0-next.0
+
+### Minor Changes
+
+- [#14060](https://github.com/LedgerHQ/ledger-live/pull/14060) [`d12dbba`](https://github.com/LedgerHQ/ledger-live/commit/d12dbbaf026e29cfe069778ac6f4760c9a659665) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-hedera): log hedera address on missing evm address
+
+- [#14143](https://github.com/LedgerHQ/ledger-live/pull/14143) [`c0f7f57`](https://github.com/LedgerHQ/ledger-live/commit/c0f7f572bf4551f90f6f1466aea26e9d5e457303) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: update hedera sdk configuration
+
+### Patch Changes
+
+- Updated dependencies [[`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014)]:
+  - @ledgerhq/types-live@6.96.0-next.0
+  - @ledgerhq/coin-framework@6.15.0-next.0
+  - @ledgerhq/live-env@2.27.0-next.0
+  - @ledgerhq/cryptoassets@13.38.1-next.0
+  - @ledgerhq/live-countervalues@0.12.1-next.0
+  - @ledgerhq/live-network@2.2.2-next.0
+
 ## 1.20.0
 
 ### Minor Changes

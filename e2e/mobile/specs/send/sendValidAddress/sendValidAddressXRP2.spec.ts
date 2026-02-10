@@ -2,4 +2,13 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendValidAddressTest } from "../send";
 
 const transaction = new Transaction(Account.XRP_1, Account.XRP_2, "2", undefined, "noTag");
-runSendValidAddressTest(transaction, ["B2CQA-2719"], "without tag");
+runSendValidAddressTest(transaction, ["B2CQA-2719"], "without tag", [
+  "@NanoSP",
+  "@LNS",
+  "@NanoX",
+  "@Stax",
+  "@Flex",
+  "@NanoGen5",
+  "@ripple",
+  "@family-xrp",
+]);
