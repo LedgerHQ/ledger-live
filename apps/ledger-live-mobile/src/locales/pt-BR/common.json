@@ -467,6 +467,9 @@
       "title" : "Falha na autenticação do dispositivo",
       "description" : "Algo deu errado. Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Habilite a assinatura cega ou os dados de contrato no aplicativo Ethereum"
+    },
     "HardResetFail" : {
       "title" : "Não foi possível redefinir",
       "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -2681,6 +2684,10 @@
       "seeMarket" : "Ver tudo"
     },
     "walletBalance" : "Saldo da carteira",
+    "balance" : {
+      "noSigner" : "A carteira mais segura",
+      "noFund" : "Proteja sua cripto"
+    },
     "seeAllAssets" : "Ver todos os ativos",
     "seeAllAccounts" : "Ver todas as contas",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "Enviar",
       "deposit" : "Receber",
       "stake" : "Aplicar"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "Transferir",
+      "swap" : "Trocar",
+      "buy" : "Comprar",
+      "transferDrawer" : {
+        "title" : "Transferir",
+        "receiveCrypto" : "Receber cripto",
+        "sendCrypto" : "Enviar cripto",
+        "bankTransfer" : "Transferência bancária",
+        "bankTransferDescription" : "Receber stablecoin enviando dinheiro"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "Rendimento",
     "sell" : "Vender",
     "swap" : "Trocar",
+    "perps" : "Perpétuos",
     "manage" : "Gerenciar",
     "lastTransactions" : "Últimas Transações",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Ativar Notificações",
-      "titleVariantB" : "Aproveite ao máximo a Ledger Wallet",
+      "titleVariantB" : "Não perca o que é importante",
       "desc" : "Receba as últimas atualizações sobre a Ledger Wallet, os produtos Ledger, o mercado e recomendações personalizadas. Cancele a qualquer momento nas configurações",
-      "descVariantB" : "Enviaremos dicas personalizadas, guias de configuração e notícias relevantes do mercado.",
+      "descVariantB" : "Receba alertas em tempo real sobre novos tokens, oportunidades de ganhos e mudanças no mercado. Cancele a qualquer momento.",
       "allow" : "Permitir Notificações",
       "later" : "Talvez mais tarde"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "Aplicar",
       "description" : "Receba recompensas com sua cripto."
+    },
+    "perps" : {
+      "title" : "Perpétuos",
+      "description" : "Negocie perpétuos em criptomoedas."
     },
     "swap" : {
       "title" : "Trocar",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Provedor indisponível",
-      "description" : "A Changelly não pode processar esta transação. Erro código 8HBB-{{randomCode}}"
+      "description" : "O provedor de troca não pode processar esta transação. Erro código 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "Provedor indisponível",
@@ -8284,6 +8308,11 @@
       "preapprove" : "Conta adicionada com sucesso",
       "validator" : "Validador Ledger",
       "title" : "Aceitar automaticamente fundos recebidos",
+      "processing" : {
+        "title" : "Processando transação",
+        "description" : "Este processo pode demorar até 1 minuto",
+        "keepDeviceNearby" : "Fique no aplicativo Ledger Wallet e mantenha a Ledger por perto."
+      },
       "reonboard" : {
         "title" : "Atualização da conta necessária",
         "account" : "Conta",
@@ -8356,7 +8385,11 @@
       "neutral" : "Neutro",
       "greed" : "Ganância",
       "extremeGreed" : "Ganância+"
-    }
+    },
+    "tileTitle" : "Sentimento"
+  },
+  "perps" : {
+    "title" : "Perpétuos"
   },
   "analyticsAllocation" : {
     "header" : {

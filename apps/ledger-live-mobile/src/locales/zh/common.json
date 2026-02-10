@@ -467,6 +467,9 @@
       "title" : "设备验证失败",
       "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "在以太坊应用程序中启用盲签名或合约数据"
+    },
     "HardResetFail" : {
       "title" : "抱歉，无法重置",
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -2306,7 +2309,7 @@
     },
     "secureYourCrypto" : {
       "title" : "保护您的加密货币",
-      "subtitle" : "开始将您的加密货币从交易所或钱包转移到 Ledger 悦签宝，以确保最大程度的安全性。",
+      "subtitle" : "开始将您的加密货币从交易所或钱包转移到 Ledger 签署设备，以确保最大程度的安全性。",
       "secureCryptoButton" : "保护我的加密货币",
       "maybeLater" : "以后再说"
     },
@@ -2681,6 +2684,10 @@
       "seeMarket" : "显示全部"
     },
     "walletBalance" : "钱包余额",
+    "balance" : {
+      "noSigner" : "最安全的\n钱包",
+      "noFund" : "保护您的\n加密货币"
+    },
     "seeAllAssets" : "查看所有资产",
     "seeAllAccounts" : "查看所有账户",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "发送",
       "deposit" : "接收",
       "stake" : "质押"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "转移",
+      "swap" : "互换",
+      "buy" : "买入",
+      "transferDrawer" : {
+        "title" : "转移",
+        "receiveCrypto" : "接收加密货币",
+        "sendCrypto" : "发送加密货币",
+        "bankTransfer" : "银行转账",
+        "bankTransferDescription" : "通过发送现金接收稳定币"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "收益率",
     "sell" : "卖出",
     "swap" : "互换",
+    "perps" : "永续合约",
     "manage" : "管理",
     "lastTransactions" : "最近交易",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "打开通知",
-      "titleVariantB" : "充分利用 Ledger Wallet",
+      "titleVariantB" : "不要错过重要信息",
       "desc" : "获取关于 Ledger Wallet、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
-      "descVariantB" : "我们将向您发送个性化小贴士、设置指南以及相关市场新闻。",
+      "descVariantB" : "获取有关新代币、收益机会和市场变动的实时提醒。您可随时决定退出。",
       "allow" : "允许通知",
       "later" : "以后再说"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "权益质押",
       "description" : "获得加密货币权益质押奖励。"
+    },
+    "perps" : {
+      "title" : "永续合约",
+      "description" : "交易加密货币永续合约。"
     },
     "swap" : {
       "title" : "互换",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "服务提供商不可用",
-      "description" : "Changelly 无法处理此交易。错误代码 8HBB-{{randomCode}}"
+      "description" : "互换提供商无法处理此交易。错误代码 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "服务提供商不可用",
@@ -8284,6 +8308,11 @@
       "preapprove" : "账户添加成功",
       "validator" : "Ledger 验证者",
       "title" : "自动接收汇入资金",
+      "processing" : {
+        "title" : "正在处理交易",
+        "description" : "此过程最多可能需要 1 分钟",
+        "keepDeviceNearby" : "停留在 Ledger Wallet 钱包应用程序中并将 Ledger 设备一直放在附近。"
+      },
       "reonboard" : {
         "title" : "需要更新账户",
         "account" : "账户",
@@ -8356,7 +8385,11 @@
       "neutral" : "中立",
       "greed" : "贪婪",
       "extremeGreed" : "贪婪+"
-    }
+    },
+    "tileTitle" : "情绪"
+  },
+  "perps" : {
+    "title" : "永续合约"
   },
   "analyticsAllocation" : {
     "header" : {
