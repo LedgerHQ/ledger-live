@@ -1,7 +1,7 @@
 import { isRecipientValid } from "./utils";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("../common-logic/utils");
+jest.mock("../logic/utils");
 
 describe("validateAddress", () => {
   const mockedIsRecipientValid = jest.mocked(isRecipientValid);
