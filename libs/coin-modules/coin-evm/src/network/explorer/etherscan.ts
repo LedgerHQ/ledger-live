@@ -297,10 +297,15 @@ export const getLastNftOperations = async (
   );
 };
 
+// blockscout returns tx hash in transactionHash field
+const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransaction => ({
+  ...op,
+  hash: op.hash ?? op.transactionHash,
+});
+
 /**
  * Get all the latest internal transactions
  */
-
 export const getLastInternalOperations = async (
   currency: CryptoCurrency,
   address: string,
@@ -327,7 +332,7 @@ export const getLastInternalOperations = async (
       startBlock: fromBlock,
       endBlock: toBlock,
     },
-  });
+  }).then(ops => ops.map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
