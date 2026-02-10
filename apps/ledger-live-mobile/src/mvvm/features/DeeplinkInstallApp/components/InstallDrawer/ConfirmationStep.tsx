@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text, Button, Icons } from "@ledgerhq/native-ui";
 import type { AppInstallConfig } from "../../constants/appInstallMap";
 
@@ -22,7 +22,8 @@ export function ConfirmationStep({ appConfig, onConfirm, onCancel }: Props) {
       </Text>
       <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
         {t(
-          appConfig.confirmationDescriptionKey || "deeplinkInstallApp.confirmation.genericDescription",
+          appConfig.confirmationDescriptionKey ??
+            "deeplinkInstallApp.confirmation.genericDescription",
           { appName: appConfig.displayName },
         )}
       </Text>

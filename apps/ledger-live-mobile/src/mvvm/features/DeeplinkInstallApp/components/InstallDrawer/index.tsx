@@ -1,15 +1,14 @@
 import React from "react";
 import { Platform } from "react-native";
 import { Flex, Text, Icons, Button } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import VersionNumber from "react-native-version-number";
 import QueuedDrawer from "~/components/QueuedDrawer";
+import TranslatedError from "~/components/TranslatedError";
 import { TrackScreen } from "~/analytics";
 import { ConfirmationStep } from "./ConfirmationStep";
 import { InstallingContent } from "./InstallingContent";
-import { useDeeplinkInstallDrawer, setSelectedDeviceForInstall } from "./useDeeplinkInstallDrawer";
-
-export { setSelectedDeviceForInstall };
+import { useDeeplinkInstallDrawer } from "./useDeeplinkInstallDrawer";
 
 export function DeeplinkInstallAppDrawer() {
   const { t } = useTranslation();
@@ -66,13 +65,14 @@ export function DeeplinkInstallAppDrawer() {
               LLVersion={VersionNumber.appVersion}
             />
             <Flex alignItems="center" justifyContent="center" pt={8} pb={4}>
-              <Icons.CheckmarkCircle size="L" color="success.c50" />
+              <Icons.CheckmarkCircleFill size="L" color="success.c60" />
               <Text variant="h5" fontWeight="semiBold" textAlign="center" mt={6}>
                 {t("deeplinkInstallApp.success.title", { appName: appConfig.displayName })}
               </Text>
               <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={4}>
                 {t(
-                  appConfig.successDescriptionKey || "deeplinkInstallApp.success.genericDescription",
+                  appConfig.successDescriptionKey ??
+                    "deeplinkInstallApp.success.genericDescription",
                   { appName: appConfig.displayName },
                 )}
               </Text>
@@ -83,21 +83,25 @@ export function DeeplinkInstallAppDrawer() {
           </>
         );
 
-      case "error":
+      case "error": {
         return (
           <Flex alignItems="center" justifyContent="center" pt={8} pb={4}>
             <Icons.Warning size="L" color="error.c50" />
             <Text variant="h5" fontWeight="semiBold" textAlign="center" mt={6}>
-              {t("deeplinkInstallApp.error.title", { appName: appConfig.displayName })}
+              <TranslatedError error={installError} />
             </Text>
             <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
-              {installError?.message || t("deeplinkInstallApp.error.description")}
+              <TranslatedError error={installError} field="description" />
             </Text>
             <Button size="medium" type="main" mt={6} alignSelf="stretch" onPress={handleRetry}>
               {t("common.retry")}
             </Button>
+            <Button size="medium" type="shade" mt={4} alignSelf="stretch" onPress={handleClose}>
+              {t("common.cancel")}
+            </Button>
           </Flex>
         );
+      }
 
       default:
         return null;
