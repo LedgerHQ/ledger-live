@@ -1,13 +1,9 @@
 import React, { useCallback } from "react";
 import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { Stax, Apex, Flex, Nano } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ICON_SIZE } from "LLM/components/TopBar/const";
-
-type IconComponent = NonNullable<React.ComponentProps<typeof IconButton>["icon"]>;
+import { getDeviceIcon, IconComponent } from "LLM/utils/getDeviceIcon";
 
 export type TopBarActionIcon = {
   id: string;
@@ -26,22 +22,8 @@ export function CustomTopBar({ onMyLedgerPress, customIcons }: Readonly<CustomTo
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   const deviceIcon: IconComponent = useCallback(
-    ({ size, style }) => {
-      switch (lastConnectedDevice?.modelId) {
-        case DeviceModelId.nanoS:
-        case DeviceModelId.nanoSP:
-        case DeviceModelId.nanoX:
-          return <Nano size={size ?? ICON_SIZE} style={style} color="base" />;
-        case DeviceModelId.europa:
-          return <Flex size={size ?? ICON_SIZE} style={style} color="base" />;
-        case DeviceModelId.apex:
-          return <Apex size={size ?? ICON_SIZE} style={style} color="base" />;
-        case DeviceModelId.stax:
-        default:
-          return <Stax size={size ?? ICON_SIZE} style={style} color="base" />;
-      }
-    },
-    [lastConnectedDevice?.modelId],
+    ({ size, style }) => getDeviceIcon(lastConnectedDevice, size, style),
+    [lastConnectedDevice],
   );
 
   return (
