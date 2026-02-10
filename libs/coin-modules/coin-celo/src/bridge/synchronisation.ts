@@ -87,7 +87,7 @@ const getOperationsList = async ({
     await api.listOperations(address, {
       minHeight: Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
     })
-  )[0];
+  ).items;
 
   const operationsList = await Promise.all(
     rawOperationsList.map(async item => {
