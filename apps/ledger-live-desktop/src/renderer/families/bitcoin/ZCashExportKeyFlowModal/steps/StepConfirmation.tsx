@@ -8,7 +8,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { Container } from "../shared/Container";
-import { readyZcashSync, startZcashSync } from "~/renderer/actions/zcashSync";
+import { readyZcashSync, startZcashSync } from "~/renderer/reducers/zcashSync";
 import type { StepProps } from "../types";
 
 function StepConfirmation({ t }: Readonly<StepProps>) {

@@ -18,7 +18,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openModal } from "~/renderer/actions/modals";
-import { startZcashSync } from "~/renderer/actions/zcashSync";
+import { startZcashSync } from "~/renderer/reducers/zcashSync";
 import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
