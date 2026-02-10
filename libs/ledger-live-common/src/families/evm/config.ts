@@ -934,6 +934,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_arbitrum_sepolia: {
     type: "object",
     default: {
+      status: { type: "active" },
       node: { type: "external", uri: "https://sepolia-rollup.arbitrum.io/rpc" },
       explorer: {
         type: "etherscan",
@@ -1177,7 +1178,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://mainnet.unichain.org",
+        uri: "https://unichain-rpc.publicnode.com",
       },
       explorer: {
         type: "blockscout",
@@ -1193,7 +1194,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://sepolia.unichain.org" },
+      node: { type: "external", uri: "https://unichain-sepolia-rpc.publicnode.com" },
       explorer: { type: "blockscout", uri: "https://unichain-sepolia.blockscout.com/api" },
       showNfts: false,
     },

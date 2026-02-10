@@ -28,7 +28,9 @@ import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPromp
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
+import { PerpsEntryPoint } from "LLD/features/Portfolio/components/PerpsEntryPoint";
 import BannerSection from "./components/Banners/BannerSection";
+import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -53,16 +55,23 @@ export default function DashboardPage() {
     [accounts],
   );
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
+  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
+    shouldFilter: shouldFilterTokenOpsZeroAmount,
+  });
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      const isOperationPoisoned = isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      );
 
-      return !removeZeroAmountTokenOp;
+      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
+
+      return shouldFilterOperation;
     },
-    [shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
   );
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
@@ -116,7 +125,7 @@ export default function DashboardPage() {
                       range={selectedTimeRange}
                     />
                   )}
-
+                  <PerpsEntryPoint />
                   <AssetDistribution />
                   {totalOperations > 0 && (
                     <OperationsList

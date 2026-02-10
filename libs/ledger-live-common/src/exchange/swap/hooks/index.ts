@@ -2,7 +2,6 @@ export * from "./live-app-migration/useIsSwapLiveApp";
 export * from "./live-app-migration/useSwapLiveConfig";
 export * from "./useFromState";
 export * from "./usePageState";
-export * from "./usePickDefaultAccount";
 export * from "./usePickDefaultCurrency";
 export * from "./useSelectableCurrencies";
 export * from "./useSwapTransaction";

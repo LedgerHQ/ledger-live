@@ -11,6 +11,10 @@ import type {
 } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { emptyHistoryCache, generateHistoryFromOperations } from "../account/balanceHistoryCache";
+import {
+  compressBalanceHistoryCache,
+  decompressBalanceHistoryCache,
+} from "../account/balanceHistoryCacheCompression";
 import { isAccountEmpty } from "../account/helpers";
 import { fromNFTRaw, toNFTRaw } from "./nft";
 import {
@@ -110,7 +114,9 @@ export async function fromAccountRaw(
     lastSyncDate: new Date(lastSyncDate || 0),
     swapHistory: [],
     syncHash,
-    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
+    balanceHistoryCache: balanceHistoryCache
+      ? decompressBalanceHistoryCache(balanceHistoryCache)
+      : emptyHistoryCache,
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res);
 
@@ -212,7 +218,8 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
   }
 
   if (balanceHistoryCache) {
-    res.balanceHistoryCache = balanceHistoryCache;
+    // Compress for storage
+    res.balanceHistoryCache = compressBalanceHistoryCache(balanceHistoryCache);
   }
 
   if (xpub) {
@@ -284,7 +291,9 @@ async function fromTokenAccountRaw(
     operations: operations.map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     swapHistory: swapHistory?.map(fromSwapOperationRaw) || [],
-    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
+    balanceHistoryCache: balanceHistoryCache
+      ? decompressBalanceHistoryCache(balanceHistoryCache)
+      : emptyHistoryCache,
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res as TokenAccount);
   return res;
@@ -308,18 +317,23 @@ function toTokenAccountRaw(
 
   const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
 
-  return {
+  const res: TokenAccountRaw = {
     type: "TokenAccountRaw",
     id,
     parentId,
     tokenId: token.id,
     balance: balance.toString(),
     spendableBalance: spendableBalance.toString(),
-    balanceHistoryCache,
     creationDate: ta.creationDate.toISOString(),
     operationsCount,
     operations: operations.map(convertOperation),
     pendingOperations: pendingOperations.map(convertOperation),
     swapHistory: swapHistory?.map(toSwapOperationRaw),
   };
+
+  if (balanceHistoryCache) {
+    res.balanceHistoryCache = compressBalanceHistoryCache(balanceHistoryCache);
+  }
+
+  return res;
 }

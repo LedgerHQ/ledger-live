@@ -23,6 +23,7 @@ import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
+import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -160,6 +161,10 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           </Box>
         )
       )}
+
+      <Box>
+        <PortfolioPerpsEntryPoint />
+      </Box>
 
       <MarketBanner />
 

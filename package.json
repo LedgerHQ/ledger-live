@@ -116,6 +116,7 @@
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
     "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
+    "coin:zcash-shielded": "pnpm --filter zcash-shielded test",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",

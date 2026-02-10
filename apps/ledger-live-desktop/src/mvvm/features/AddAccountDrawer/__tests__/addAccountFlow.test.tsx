@@ -36,6 +36,12 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
 let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
 
+const mockAccountBridge = {
+  assignToAccountRaw: () => {},
+  assignToTokenAccountRaw: () => {},
+  toOperationExtraRaw: (extra: unknown) => extra,
+};
+
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
   getCurrencyBridge: () => ({
@@ -56,6 +62,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     preload: () => true,
     hydrate: () => true,
   }),
+  getAccountBridge: () => mockAccountBridge,
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {

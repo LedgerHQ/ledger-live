@@ -1,4 +1,5 @@
 import { AssetInfo, Cursor, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
@@ -46,7 +47,23 @@ function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
   return op.hasFailed ?? false;
 }
 
-function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSupported> {
+function toOperation(
+  currency: string,
+  address: string,
+  asset: AssetConfig,
+  op: LiveOperation,
+): Operation<MemoNotSupported> {
+  if (op.value.isNaN() || op.fee.isNaN()) {
+    log("evm/listOperations", "Found NaN value on operation", {
+      currency,
+      address,
+      operation: op.hash,
+      assetType: asset.type,
+      assetIsInternal: asset.type === "native" && !!asset.internal,
+      ...(op.contract ? { assetReference: op.contract } : {}),
+    });
+  }
+
   const assetInfo: AssetInfo = { type: asset.type };
 
   if (asset.type === "token") {
@@ -64,13 +81,13 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
   const tokenOpDetail =
     asset.type === "token"
       ? {
-          ledgerOpType: op.type,
-          assetAmount: op.value.toFixed(0),
-          assetSenders: op.senders,
-          assetRecipients: op.recipients,
-          parentSenders: asset.parents[op.hash]?.senders ?? [],
-          parentRecipients: asset.parents[op.hash]?.recipients ?? [],
-        }
+        ledgerOpType: op.type,
+        assetAmount: op.value.toFixed(0),
+        assetSenders: op.senders,
+        assetRecipients: op.recipients,
+        parentSenders: asset.parents[op.hash]?.senders ?? [],
+        parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+      }
       : {};
 
   return {
@@ -160,16 +177,18 @@ export async function listOperations(
     //    operations are emitted (with duplicate fees information, as it's the same on-chain transaction)
     //  * in the case of a fees-only operation, only 1 operation is emitted with type FEES
     if (!tokenOrNftHashes.has(coinOperation.hash) || !coinOperation.value.isZero()) {
-      nativeOperations.push(toOperation({ type: "native" }, coinOperation));
+      nativeOperations.push(toOperation(currency.id, address, { type: "native" }, coinOperation));
     }
   }
 
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
-  >(op => toOperation({ type: "token", owner: address, parents }, op));
+  >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
   const internalOperations = lastInternalOperations.map<Operation<MemoNotSupported>>(op => {
     const parent = parents[op.hash];
     return toOperation(
+      currency.id,
+      address,
       { type: "native", internal: true },
       // Explorers don't provide block hash and fees for internal operations.
       // When a parent exists, we take these values from the parent; otherwise keep the internal op values.

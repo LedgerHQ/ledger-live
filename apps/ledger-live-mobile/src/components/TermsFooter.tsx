@@ -31,7 +31,8 @@ const NEAR_INTENTS_PROVIDER = "nearintents";
 
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
-}> = ({ provider }) => {
+  sponsored?: boolean;
+}> = ({ provider, sponsored }) => {
   // Map changelly_v2 to changelly to access the correct urls
   const providerName = provider?.includes(CHANGELLY_PROVIDER) ? CHANGELLY_PROVIDER : provider;
   const providerUrls = providerName && urls.swap.providers[providerName];
@@ -80,6 +81,12 @@ const TermsFooter: React.FC<{
           />
         ))}
       />
+      {sponsored && (
+        <>
+          {" "}
+          <Trans i18nKey="DeviceAction.confirmSwap.acceptTermsSponsored" />
+        </>
+      )}
     </CenteredText>
   );
 };

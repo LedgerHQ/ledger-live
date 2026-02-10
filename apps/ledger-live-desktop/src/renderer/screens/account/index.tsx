@@ -34,6 +34,7 @@ import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
+import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 
 type Params = {
   id?: string;
@@ -91,16 +92,23 @@ const AccountPage = ({
   const PendingTransferProposals = specific?.PendingTransferProposals;
   const bgColor = useTheme().colors.background.card;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
+  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
+    shouldFilter: shouldFilterTokenOpsZeroAmount,
+  });
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      const isOperationPoisoned = isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      );
 
-      return !removeZeroAmountTokenOp;
+      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
+
+      return shouldFilterOperation;
     },
-    [shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
   );
 
   const currency = mainAccount?.currency;

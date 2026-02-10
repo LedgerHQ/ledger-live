@@ -112,8 +112,18 @@ describe("craftTransaction", () => {
 
   it("should craft a transaction with reveal operation", async () => {
     mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
-    mockTezosToolkit.estimate.reveal.mockResolvedValue({ gasLimit: 100, storageLimit: 0 });
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({ fees: { minRevealGasLimit: 100 } });
+    mockTezosToolkit.estimate.reveal.mockResolvedValue({
+      gasLimit: 100,
+      storageLimit: 0,
+      suggestedFeeMutez: getRevealFee("tz1..."),
+    });
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: {
+        minRevealGasLimit: 100,
+        minFees: 0,
+        minStorageLimit: 0,
+      },
+    });
 
     const account = { address: "tz1..." };
     const transaction = {
@@ -147,6 +157,115 @@ describe("craftTransaction", () => {
         storage_limit: "300",
       },
     ]);
+  });
+
+  describe("when suggested fee is above or below minFees floor", () => {
+    it("craft transaction when default estimation is greater than minFees", async () => {
+      mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+      const suggestedRevealFee = 800;
+      mockTezosToolkit.estimate.reveal.mockResolvedValue({
+        gasLimit: 300,
+        storageLimit: 0,
+        suggestedFeeMutez: suggestedRevealFee,
+      });
+      const minFees = 500;
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: {
+          minRevealGasLimit: 300,
+          minFees,
+          minStorageLimit: 0,
+        },
+      });
+
+      const account = { address: "tz2..." };
+      const mainOpFee = 600;
+      const transaction = {
+        type: "delegate" as TransactionType,
+        recipient: "tz3...",
+        amount: BigInt(0),
+        fee: { fees: String(mainOpFee), gasLimit: "10000", storageLimit: "0" },
+      };
+      const publicKey = { publicKey: "pk", publicKeyHash: "pkh" };
+
+      const result = await craftTransaction(account, transaction, publicKey);
+
+      const revealOp = result.contents[0];
+      expect(revealOp.kind).toBe(OpKind.REVEAL);
+      expect(Number(revealOp.fee ?? 0)).toBe(suggestedRevealFee);
+      const delegationOp = result.contents[1];
+      expect(Number(delegationOp.fee ?? 0)).toBe(mainOpFee);
+    });
+
+    it("craft transaction when default estimation is lesser than minFees", async () => {
+      mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+      mockTezosToolkit.estimate.reveal.mockResolvedValue({
+        gasLimit: 50,
+        storageLimit: 0,
+        suggestedFeeMutez: 100,
+      });
+      const minFees = 500;
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: {
+          minRevealGasLimit: 300,
+          minFees,
+          minStorageLimit: 25,
+        },
+      });
+
+      const account = { address: "tz2..." };
+      const transaction = {
+        type: "delegate" as TransactionType,
+        recipient: "tz3...",
+        amount: BigInt(0),
+        fee: { fees: "200", gasLimit: "1000", storageLimit: "0" },
+      };
+      const publicKey = { publicKey: "pk", publicKeyHash: "pkh" };
+
+      const result = await craftTransaction(account, transaction, publicKey);
+
+      const revealOp = result.contents[0];
+      expect(revealOp.kind).toBe(OpKind.REVEAL);
+      expect(revealOp.fee).toBe(String(minFees));
+      expect(revealOp.gas_limit).toBe("300");
+      expect(revealOp.storage_limit).toBe("25");
+    });
+
+    it("craft transaction with customFee splits total so reveal and main op respect minFees", async () => {
+      mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+      mockTezosToolkit.estimate.reveal.mockResolvedValue({
+        gasLimit: 300,
+        storageLimit: 0,
+        suggestedFeeMutez: 100,
+      });
+      const minFees = 1000;
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: {
+          minRevealGasLimit: 300,
+          minFees,
+          minStorageLimit: 0,
+        },
+      });
+
+      const account = { address: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V" };
+      const mainOpFee = 1000;
+      const transaction = {
+        type: "delegate" as TransactionType,
+        recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+        amount: BigInt(0),
+        fee: { fees: String(mainOpFee), gasLimit: "10000", storageLimit: "0" },
+      };
+      const publicKey = { publicKey: "pk", publicKeyHash: account.address };
+
+      const result = await craftTransaction(account, transaction, publicKey);
+
+      expect(result.contents).toHaveLength(2);
+      const revealFee = Number(result.contents[0].fee ?? 0);
+      const delegationFee = Number(result.contents[1].fee ?? 0);
+      const total = revealFee + delegationFee;
+      expect(revealFee).toBe(minFees);
+      expect(delegationFee).toBe(mainOpFee);
+      expect(total).toBe(minFees + mainOpFee);
+    });
   });
 
   it("should throw an error for unsupported transaction type", async () => {

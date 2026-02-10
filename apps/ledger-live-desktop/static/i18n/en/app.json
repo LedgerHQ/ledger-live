@@ -299,8 +299,8 @@
     "manager": "My Ledger",
     "earn": "Earn",
     "exchange": "Buy / Sell",
-    "perps": "Perps",
     "swap": "Swap",
+    "perps": "Perpetuals",
     "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
@@ -810,7 +810,15 @@
     }
   },
   "card": {
-    "backToCard": "all cards"
+    "backToCard": "all cards",
+    "title": "Card",
+    "imageAlt": "Card Image",
+    "spendYourCrypto": "Spend your crypto",
+    "payDescription": "Pay online or in store with a crypto card",
+    "exploreCards": "Explore Cards",
+    "iAlreadyHaveACard": "I already have a card",
+    "unlockLiquidity": "Unlock liquidity",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
   },
   "lend": {
     "title": "Lend crypto",
@@ -1784,6 +1792,7 @@
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
+      "acceptTermsSponsored": "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
       "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
@@ -4615,6 +4624,9 @@
         "enableAll": "Enable All",
         "disableAll": "Disable All",
         "featureParameters": "Feature Parameters",
+        "tourState": "Tour State",
+        "drawerPreview": "Drawer Preview",
+        "openDrawer": "Open Drawer",
         "showJson": "Show JSON",
         "hideJson": "Hide JSON"
       },
@@ -7872,7 +7884,13 @@
     "title": "Home",
     "today": "Today",
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto"
+    "noBalanceTitle": "Secure your crypto",
+    "perpsEntry": {
+      "title": "Perpetuals",
+      "description": "Trade with leverage",
+      "cta": "Discover"
+    },
+    "noDeviceTitle": "The most secure wallet"
   },
   "marketBanner": {
     "title": "Explore market",
