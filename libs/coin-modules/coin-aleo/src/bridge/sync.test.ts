@@ -6,6 +6,7 @@ import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { accessProvableApi } from "../logic/accessProvableApi";
+import { AleoAccount } from "../types";
 import { getAccountShape } from "./sync";
 
 jest.mock("../logic");
@@ -23,13 +24,14 @@ describe("sync.ts", () => {
   const mockSyncConfig: SyncConfig = {
     paginationConfig: {},
   };
-  const mockInitialAccount = {
+  const mockInitialAccount: AleoAccount = {
     ...getMockedAccount(),
     aleoResources: {
       transparentBalance: new BigNumber(500000),
       privateBalance: null,
       provableApi: null,
-      privateRecords: null,
+      privateRecordsHistory: null,
+      unspentPrivateRecords: null,
       lastPrivateSyncDate: null,
     },
   };
@@ -82,6 +84,10 @@ describe("sync.ts", () => {
         aleoResources: {
           transparentBalance: mockAccount.balance,
           privateBalance: null,
+          provableApi: null,
+          privateRecordsHistory: null,
+          unspentPrivateRecords: null,
+          lastPrivateSyncDate: null,
         },
       });
     });
@@ -178,9 +184,7 @@ describe("sync.ts", () => {
           },
           mockSyncConfig,
         ),
-      ).rejects.toThrow(
-        `aleo: viewKey is missing in initialAccount ${mockInvalidInitialAccount.id}`,
-      );
+      ).rejects.toThrow(`aleo: viewKey is missing in account ${mockInvalidInitialAccount.id}`);
     });
 
     it("should pass correct pagination parameters when syncing from scratch", async () => {

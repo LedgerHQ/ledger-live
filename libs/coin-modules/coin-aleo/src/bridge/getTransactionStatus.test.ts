@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
+import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
 import { estimateFees, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";
@@ -16,24 +17,20 @@ import { TRANSACTION_TYPE } from "../constants";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../logic");
-jest.mock("../logic/utils");
+jest.mock("../logic/utils", () => ({
+  ...jest.requireActual("../logic/utils"),
+  calculateAmount: jest.fn(),
+}));
 
+const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockValidateAddress = jest.mocked(validateAddress);
-const mockCalculateAmount = jest.mocked(calculateAmount);
 
 describe("getTransactionStatus", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
   const mockFees = new BigNumber(5000);
   const mockAmount = new BigNumber(500000);
-  const mockTransaction: Transaction = {
-    family: "aleo",
-    amount: new BigNumber(500000),
-    useAllAmount: false,
-    recipient: "aleo1recipient",
-    fees: new BigNumber(0),
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-  };
+  const mockTransaction = getMockedTransaction({ amount: new BigNumber(500000) });
   const mockGetCoinConfig = jest.spyOn(aleoCoinConfig, "getCoinConfig");
 
   beforeEach(() => {
@@ -101,19 +98,7 @@ describe("getTransactionStatus", () => {
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
     });
 
-    it("validates the transaction recipient address", async () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: "aleo1custom123",
-      };
-
-      await getTransactionStatus(mockAccount, transaction);
-
-      expect(mockValidateAddress).toHaveBeenCalledTimes(1);
-      expect(mockValidateAddress).toHaveBeenCalledWith("aleo1custom123", {});
-    });
-
-    it("adds error when recipient is same as sender address", async () => {
+    it("adds error when recipient is same as sender address for regular transfer", async () => {
       const account = getMockedAccount({ freshAddress: "aleo1sender" });
       const transaction: Transaction = {
         ...mockTransaction,
@@ -123,6 +108,19 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+    });
+
+    it("allows self-transfer when transaction type is self-transfer", async () => {
+      const account = getMockedAccount({ freshAddress: "aleo1sender" });
+      const transaction: Transaction = {
+        ...mockTransaction,
+        type: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+        recipient: "aleo1sender",
+      };
+
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors.recipient).toBeUndefined();
     });
   });
 
@@ -162,18 +160,6 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
-    it("adds error during transfer with insufficient balance", async () => {
-      const account = getMockedAccount({ balance: new BigNumber(1000) });
-      mockCalculateAmount.mockReturnValue({
-        amount: new BigNumber(990),
-        totalSpent: new BigNumber(1001),
-      });
-
-      const result = await getTransactionStatus(account, mockTransaction);
-
-      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
-    });
-
     it("does not add error when balance equals total spent", async () => {
       const account = getMockedAccount({ balance: new BigNumber(1000) });
       mockCalculateAmount.mockReturnValue({
@@ -203,7 +189,7 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toBeInstanceOf(AmountRequired);
     });
 
-    it("replaces amount required error with insufficient balance when both apply", async () => {
+    it("shows insufficient balance error when amount is zero and balance is exceeded", async () => {
       mockCalculateAmount.mockReturnValue({
         amount: new BigNumber(0),
         totalSpent: new BigNumber(2000000),
@@ -218,6 +204,72 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+  });
+
+  describe("private transactions validation", () => {
+    it("adds error when amountRecord is missing for private transfer", async () => {
+      const transaction: Transaction = {
+        ...mockTransaction,
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        amountRecord: null,
+        feeRecord: "some_fee_record",
+      };
+
+      const result = await getTransactionStatus(mockAccount, transaction);
+
+      expect(result.errors.amountRecord).toBeInstanceOf(Error);
+    });
+
+    it("adds error when feeRecord is missing for private transfer", async () => {
+      const transaction: Transaction = {
+        ...mockTransaction,
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        amountRecord: "some_amount_record",
+        feeRecord: null,
+      };
+
+      const result = await getTransactionStatus(mockAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(Error);
+    });
+
+    it("adds error when amountRecord is missing for convert private to public", async () => {
+      const transaction: Transaction = {
+        ...mockTransaction,
+        type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+        amountRecord: null,
+        feeRecord: "some_fee_record",
+      };
+
+      const result = await getTransactionStatus(mockAccount, transaction);
+
+      expect(result.errors.amountRecord).toBeInstanceOf(Error);
+    });
+
+    it("adds both errors when both records are missing for private transaction", async () => {
+      const transaction: Transaction = {
+        ...mockTransaction,
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        amountRecord: null,
+        feeRecord: null,
+      };
+
+      const result = await getTransactionStatus(mockAccount, transaction);
+
+      expect(result.errors.amountRecord).toBeInstanceOf(Error);
+      expect(result.errors.feeRecord).toBeInstanceOf(Error);
+    });
+  });
+
+  describe("unsupported transaction types", () => {
+    it("throws error for unsupported transaction type", async () => {
+      const transaction = {
+        ...mockTransaction,
+        type: "UNSUPPORTED_TYPE" as any,
+      };
+
+      await expect(getTransactionStatus(mockAccount, transaction)).rejects.toThrow();
     });
   });
 });

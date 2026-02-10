@@ -4,20 +4,16 @@ import type { AleoConfig } from "../config";
 import { TRANSACTION_TYPE } from "../constants";
 
 export async function estimateFees({
-  feesByTransactionType,
   transactionType,
+  feesByTransactionType,
   estimatedFeeSafetyRate,
 }: {
-  feesByTransactionType: AleoConfig["feesByTransactionType"];
   transactionType: TRANSACTION_TYPE;
+  feesByTransactionType: AleoConfig["feesByTransactionType"];
   estimatedFeeSafetyRate: AleoConfig["estimatedFeeSafetyRate"];
 }): Promise<BigNumber> {
-  const transactionFee = feesByTransactionType[transactionType];
+  const fee = feesByTransactionType[transactionType];
+  invariant(typeof fee === "number", `aleo: missing fee configuration for ${transactionType}`);
 
-  invariant(
-    typeof transactionFee === "number",
-    `aleo: missing fee configuration for ${transactionType}`,
-  );
-
-  return new BigNumber(transactionFee).multipliedBy(estimatedFeeSafetyRate);
+  return new BigNumber(fee).multipliedBy(estimatedFeeSafetyRate);
 }

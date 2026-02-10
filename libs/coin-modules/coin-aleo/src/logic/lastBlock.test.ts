@@ -4,9 +4,7 @@ import { lastBlock } from "./lastBlock";
 
 jest.mock("../network/api");
 
-const mockGetLatestBlock = apiClient.getLatestBlock as jest.MockedFunction<
-  typeof apiClient.getLatestBlock
->;
+const mockGetLatestBlock = jest.mocked(apiClient.getLatestBlock);
 
 describe("lastBlock", () => {
   const mockCurrency = getMockedCurrency();

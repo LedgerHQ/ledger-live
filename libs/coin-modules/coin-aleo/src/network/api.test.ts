@@ -8,15 +8,14 @@ import { apiClient } from "./api";
 jest.mock("@ledgerhq/live-network");
 jest.mock("../config");
 
-const mockNetwork = network as jest.MockedFunction<typeof network>;
-const mockGetCoinConfig = aleoConfig.getCoinConfig as jest.MockedFunction<
-  typeof aleoConfig.getCoinConfig
->;
+const mockNetwork = jest.mocked(network);
+const mockGetCoinConfig = jest.mocked(aleoConfig.getCoinConfig);
 
 describe("apiClient", () => {
   const mockCurrency = getMockedCurrency();
   const mockConfig = getMockedConfig();
   const mockNodeUrl = mockConfig.apiUrls.node;
+  const mockNetworkType = mockConfig.networkType;
   const mockAddress = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
   beforeEach(() => {
@@ -46,7 +45,7 @@ describe("apiClient", () => {
       expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
       expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
-      expect(requestUrl).toBe(`${mockNodeUrl}/blocks/latest`);
+      expect(requestUrl).toBe(`${mockNodeUrl}/v2/${mockNetworkType}/blocks/latest`);
     });
 
     it("should throw error when network request fails", async () => {
@@ -70,7 +69,7 @@ describe("apiClient", () => {
       expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
       expect(requestUrl).toBe(
-        `${mockNodeUrl}/programs/program/${PROGRAM_ID.CREDITS}/mapping/account/${mockAddress}`,
+        `${mockNodeUrl}/v2/${mockNetworkType}/programs/program/${PROGRAM_ID.CREDITS}/mapping/account/${mockAddress}`,
       );
     });
 
@@ -123,7 +122,9 @@ describe("apiClient", () => {
       expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
       expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
-      expect(requestUrl).toBe(`${mockNodeUrl}/transactions/${mockTransactionId}`);
+      expect(requestUrl).toBe(
+        `${mockNodeUrl}/v2/${mockNetworkType}/transactions/${mockTransactionId}`,
+      );
     });
 
     it("should throw error when network request fails", async () => {
@@ -161,7 +162,9 @@ describe("apiClient", () => {
       expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
       expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
-      expect(requestUrl).toContain(`${mockNodeUrl}/transactions/address/${mockAddress}`);
+      expect(requestUrl).toContain(
+        `${mockNodeUrl}/v2/${mockNetworkType}/transactions/address/${mockAddress}`,
+      );
       expect(requestUrl).toContain("limit=50");
       expect(requestUrl).toContain("sort=asc");
       expect(requestUrl).toContain("direction=next");

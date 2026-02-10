@@ -10,13 +10,8 @@ import { fetchAccountTransactionsFromHeight, parseOperation } from "./utils";
 
 jest.mock("./api");
 
-const mockGetAccountPublicTransactions =
-  apiClient.getAccountPublicTransactions as jest.MockedFunction<
-    typeof apiClient.getAccountPublicTransactions
-  >;
-const mockGetTransactionById = apiClient.getTransactionById as jest.MockedFunction<
-  typeof apiClient.getTransactionById
->;
+const mockGetAccountPublicTransactions = jest.mocked(apiClient.getAccountPublicTransactions);
+const mockGetTransactionById = jest.mocked(apiClient.getTransactionById);
 
 describe("network utils", () => {
   const mockCurrency = getMockedCurrency();

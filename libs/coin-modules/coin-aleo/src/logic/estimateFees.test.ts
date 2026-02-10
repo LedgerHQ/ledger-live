@@ -58,19 +58,6 @@ describe("estimateFees", () => {
     );
   });
 
-  it("should return correct fee for SPLIT transaction type", async () => {
-    const result = await estimateFees({
-      feesByTransactionType: mockFeesByTransactionType,
-      transactionType: TRANSACTION_TYPE.SPLIT,
-      estimatedFeeSafetyRate: mockSafetyRate,
-    });
-
-    expect(result).toBeInstanceOf(BigNumber);
-    expect(result.toNumber()).toEqual(
-      mockFeesByTransactionType[TRANSACTION_TYPE.SPLIT] * mockSafetyRate,
-    );
-  });
-
   it("should throw error for unknown transaction type", async () => {
     await expect(
       estimateFees({

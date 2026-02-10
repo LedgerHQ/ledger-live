@@ -4,8 +4,8 @@ import { feesByTransactionType, ESTIMATED_FEE_SAFETY_RATE } from "../../constant
 export const getMockedConfig = (overrides?: Partial<AleoCoinConfig>): AleoCoinConfig => ({
   networkType: "testnet",
   apiUrls: {
-    node: "https://api.provable.com/v2/testnet",
-    sdk: "https://api.provable.com/v2/testnet",
+    node: "https://api.provable.com",
+    sdk: "https://sdk.ledger.com",
   },
   status: {
     type: "active",

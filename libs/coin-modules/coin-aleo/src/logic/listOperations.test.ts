@@ -6,11 +6,8 @@ import { listOperations } from "./listOperations";
 
 jest.mock("../network/utils");
 
-const mockParseOperation = parseOperation as jest.MockedFunction<typeof parseOperation>;
-const mockFetchAccountTransactionsFromHeight =
-  fetchAccountTransactionsFromHeight as jest.MockedFunction<
-    typeof fetchAccountTransactionsFromHeight
-  >;
+const mockParseOperation = jest.mocked(parseOperation);
+const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 
 describe("listOperations", () => {
   const mockCurrency = getMockedCurrency();
