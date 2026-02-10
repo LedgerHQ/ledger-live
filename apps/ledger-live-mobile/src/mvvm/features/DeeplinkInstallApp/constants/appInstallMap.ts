@@ -6,6 +6,11 @@ export interface AppInstallConfig {
   analyticsName?: string;
 }
 
+/**
+ * Allowlist of apps that can be installed via deep link.
+ * SECURITY: Only add entries here after security review.
+ * Adding a new entry enables external URLs to trigger app installation.
+ */
 export const APP_INSTALL_MAP: Record<string, AppInstallConfig> = {
   RecoveryKeyUpdater: {
     appName: "Recovery Key Updater",
@@ -21,8 +26,8 @@ export const APP_INSTALL_MAP: Record<string, AppInstallConfig> = {
   },
 };
 
-export const getAppInstallConfig = (appKey: string): AppInstallConfig | undefined => {
-  return APP_INSTALL_MAP[appKey];
+export const getAppInstallConfig = (appKey: string): AppInstallConfig | null => {
+  return APP_INSTALL_MAP[appKey] ?? null;
 };
 
 export const isValidInstallApp = (appKey: string): boolean => {

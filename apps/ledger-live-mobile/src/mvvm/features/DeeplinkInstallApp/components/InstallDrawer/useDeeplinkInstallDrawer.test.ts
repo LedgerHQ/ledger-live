@@ -1,9 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
-import {
-  useDeeplinkInstallDrawer,
-  setSelectedDeviceForInstall,
-} from "./useDeeplinkInstallDrawer";
+import { useDeeplinkInstallDrawer } from "./useDeeplinkInstallDrawer";
 import { ScreenName, NavigatorName } from "~/const";
 import { track } from "~/analytics";
 
@@ -28,7 +25,6 @@ const mockDevice = {
 describe("useDeeplinkInstallDrawer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setSelectedDeviceForInstall(null as never);
   });
 
   describe("initial state", () => {
@@ -49,6 +45,7 @@ describe("useDeeplinkInstallDrawer", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: null,
           },
         }),
       });
@@ -70,6 +67,7 @@ describe("useDeeplinkInstallDrawer", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: null,
           },
         }),
       });
@@ -90,6 +88,7 @@ describe("useDeeplinkInstallDrawer", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: null,
           },
         }),
       });
@@ -129,6 +128,7 @@ describe("useDeeplinkInstallDrawer", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: null,
           },
         }),
       });
@@ -136,6 +136,7 @@ describe("useDeeplinkInstallDrawer", () => {
       act(() => result.current.handleRetry());
 
       expect(store.getState().deeplinkInstallApp.isDrawerOpen).toBe(false);
+      expect(result.current.step).toBe("confirmation");
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Base, {
         screen: ScreenName.DeeplinkInstallAppDeviceSelection,
         params: {
@@ -153,6 +154,7 @@ describe("useDeeplinkInstallDrawer", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: null,
           },
         }),
       });
@@ -171,6 +173,7 @@ describe("useDeeplinkInstallDrawer", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: null,
           },
         }),
       });
@@ -185,15 +188,14 @@ describe("useDeeplinkInstallDrawer", () => {
   });
 
   describe("device selection flow", () => {
-    it("should transition to installing step when device is selected", () => {
-      setSelectedDeviceForInstall(mockDevice as never);
-
+    it("should transition to installing step when device is selected via Redux", () => {
       const { result } = renderHook(() => useDeeplinkInstallDrawer(), {
         overrideInitialState: (state: State) => ({
           ...state,
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: mockDevice,
           },
         }),
       });
@@ -203,14 +205,13 @@ describe("useDeeplinkInstallDrawer", () => {
     });
 
     it("should set installKey > 0 when device is selected for fresh hook remount", () => {
-      setSelectedDeviceForInstall(mockDevice as never);
-
       const { result } = renderHook(() => useDeeplinkInstallDrawer(), {
         overrideInitialState: (state: State) => ({
           ...state,
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "Bitcoin",
+            selectedDevice: mockDevice,
           },
         }),
       });

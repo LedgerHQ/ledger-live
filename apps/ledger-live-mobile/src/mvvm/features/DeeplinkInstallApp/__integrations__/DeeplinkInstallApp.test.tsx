@@ -9,6 +9,7 @@ describe("DeeplinkInstallApp", () => {
     deeplinkInstallApp: {
       isDrawerOpen: false,
       appToInstall: null,
+      selectedDevice: null,
     },
   };
 
@@ -32,6 +33,7 @@ describe("DeeplinkInstallApp", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "RecoveryKeyUpdater",
+            selectedDevice: null,
           },
         }),
       });
@@ -47,6 +49,7 @@ describe("DeeplinkInstallApp", () => {
           deeplinkInstallApp: {
             isDrawerOpen: true,
             appToInstall: "InvalidApp",
+            selectedDevice: null,
           },
         }),
       });

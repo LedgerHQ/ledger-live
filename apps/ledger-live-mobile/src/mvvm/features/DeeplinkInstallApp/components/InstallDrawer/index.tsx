@@ -7,9 +7,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 import { ConfirmationStep } from "./ConfirmationStep";
 import { InstallingContent } from "./InstallingContent";
-import { useDeeplinkInstallDrawer, setSelectedDeviceForInstall } from "./useDeeplinkInstallDrawer";
-
-export { setSelectedDeviceForInstall };
+import { useDeeplinkInstallDrawer } from "./useDeeplinkInstallDrawer";
 
 export function DeeplinkInstallAppDrawer() {
   const { t } = useTranslation();
@@ -72,7 +70,7 @@ export function DeeplinkInstallAppDrawer() {
               </Text>
               <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={4}>
                 {t(
-                  appConfig.successDescriptionKey || "deeplinkInstallApp.success.genericDescription",
+                  appConfig.successDescriptionKey ?? "deeplinkInstallApp.success.genericDescription",
                   { appName: appConfig.displayName },
                 )}
               </Text>
@@ -91,7 +89,7 @@ export function DeeplinkInstallAppDrawer() {
               {t("deeplinkInstallApp.error.title", { appName: appConfig.displayName })}
             </Text>
             <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
-              {installError?.message || t("deeplinkInstallApp.error.description")}
+              {installError?.message ?? t("deeplinkInstallApp.error.description")}
             </Text>
             <Button size="medium" type="main" mt={6} alignSelf="stretch" onPress={handleRetry}>
               {t("common.retry")}

@@ -1,21 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Flex, Text, ProgressLoader } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { AllowManager } from "~/components/DeviceAction/common";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { AppInstallConfig } from "../../constants/appInstallMap";
 
-type Props = {
+interface UseInstallingContentViewModelParams {
   device: Device;
   appConfig: AppInstallConfig;
   onSuccess: () => void;
   onError: (error: Error) => void;
-};
+}
 
-export function InstallingContent({ device, appConfig, onSuccess, onError }: Props) {
-  const { t } = useTranslation();
+export function useInstallingContentViewModel({
+  device,
+  appConfig,
+  onSuccess,
+  onError,
+}: UseInstallingContentViewModelParams) {
   const action = useAppDeviceAction();
 
   const commandRequest = useMemo(
@@ -77,46 +78,12 @@ export function InstallingContent({ device, appConfig, onSuccess, onError }: Pro
     }
   }, [error, onError]);
 
-  if (showAllowManager) {
-    const productName = getDeviceModel(device.modelId)?.productName || "";
-    return (
-      <Flex px={6} pb={6}>
-        <AllowManager
-          wording={t("DeviceAction.allowManagerPermission", { productName })}
-          device={device}
-        />
-      </Flex>
-    );
-  }
+  const productName = getDeviceModel(device.modelId)?.productName ?? "";
 
-  if (listingApps) {
-    return (
-      <Flex alignItems="center" justifyContent="center" pt={8} pb={6} px={10}>
-        <ProgressLoader infinite radius={30} strokeWidth={6} />
-        <Text variant="h5" fontWeight="semiBold" textAlign="center" mt={6}>
-          {t("deeplinkInstallApp.installing.resolving")}
-        </Text>
-      </Flex>
-    );
-  }
-
-  return (
-    <Flex alignItems="center" justifyContent="center" pt={8} pb={6} px={10}>
-      <ProgressLoader
-        progress={progress}
-        infinite={typeof progress !== "number" || progress === 1}
-        radius={30}
-        strokeWidth={6}
-      >
-        <Text color="primary.c80" variant="paragraph" fontWeight="semiBold">
-          {typeof progress === "number" && progress < 1
-            ? `${Math.round(progress * 100)}%`
-            : ""}
-        </Text>
-      </ProgressLoader>
-      <Text variant="h5" fontWeight="semiBold" textAlign="center" mt={6}>
-        {t("deeplinkInstallApp.installing.title", { appName: appConfig.displayName })}
-      </Text>
-    </Flex>
-  );
+  return {
+    showAllowManager,
+    listingApps,
+    progress,
+    productName,
+  };
 }

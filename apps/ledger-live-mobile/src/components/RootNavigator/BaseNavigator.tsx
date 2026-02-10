@@ -81,7 +81,7 @@ import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import { DeeplinkInstallAppDrawer } from "LLM/features/DeeplinkInstallApp";
-import DeeplinkInstallAppDeviceSelection from "LLM/features/DeeplinkInstallApp/screens/DeviceSelectionScreen";
+import { DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection } from "LLM/features/DeeplinkInstallApp/screens/DeviceSelectionScreen";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";

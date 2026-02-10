@@ -6,26 +6,20 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
+import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
-import { openDeeplinkInstallAppDrawer } from "~/reducers/deeplinkInstallApp";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { openDeeplinkInstallAppDrawer, setSelectedDevice } from "~/reducers/deeplinkInstallApp";
 import { getAppInstallConfig } from "../../constants/appInstallMap";
-import { setSelectedDeviceForInstall } from "../../components/InstallDrawer";
 
-export type DeeplinkInstallAppDeviceSelectionParams = {
-  appKey: string;
-};
-
-type NavigationProps = {
-  route: RouteProp<{ params: DeeplinkInstallAppDeviceSelectionParams }, "params">;
-};
-
-const DeviceSelectionScreen: React.FC = () => {
+export function DeviceSelectionScreen() {
   const { t } = useTranslation();
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   const navigation = useNavigation<BaseNavigation>();
-  const route = useRoute<NavigationProps["route"]>();
+  const route =
+    useRoute<RouteProp<BaseNavigatorStackParamList, ScreenName.DeeplinkInstallAppDeviceSelection>>();
 
   const appKey = route.params?.appKey;
   const appConfig = useMemo(() => (appKey ? getAppInstallConfig(appKey) : null), [appKey]);
@@ -41,7 +35,7 @@ const DeviceSelectionScreen: React.FC = () => {
   const onSelectDevice = useCallback(
     (selectedDevice?: Device) => {
       if (selectedDevice && appKey) {
-        setSelectedDeviceForInstall(selectedDevice);
+        dispatch(setSelectedDevice(selectedDevice));
         navigation.goBack();
         dispatch(openDeeplinkInstallAppDrawer({ appToInstall: appKey }));
       }
@@ -93,6 +87,4 @@ const DeviceSelectionScreen: React.FC = () => {
       </Flex>
     </SafeAreaView>
   );
-};
-
-export default DeviceSelectionScreen;
+}
