@@ -40,12 +40,16 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
   const aleoAccount = account as AleoAccount;
   const aleoAccountRaw = accountRaw as AleoAccountRaw;
 
-  aleoAccountRaw.aleoResources = toAleoResourcesRaw(aleoAccount.aleoResources);
+  if (aleoAccount.aleoResources) {
+    aleoAccountRaw.aleoResources = toAleoResourcesRaw(aleoAccount.aleoResources);
+  }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const aleoAccount = account as AleoAccount;
   const aleoAccountRaw = accountRaw as AleoAccountRaw;
 
-  aleoAccount.aleoResources = fromAleoResourcesRaw(aleoAccountRaw.aleoResources);
+  if (aleoAccountRaw.aleoResources) {
+    aleoAccount.aleoResources = fromAleoResourcesRaw(aleoAccountRaw.aleoResources);
+  }
 }

@@ -23,7 +23,7 @@ export const prepareTransaction: AccountBridge<
     transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
   ) {
     const { amountRecord, feeRecord } = findBestRecords({
-      unspentRecords: account.aleoResources.unspentPrivateRecords ?? [],
+      unspentRecords: account.aleoResources?.unspentPrivateRecords ?? [],
       targetAmount: calculatedAmount.totalSpent,
       targetFee: estimatedFees,
     });

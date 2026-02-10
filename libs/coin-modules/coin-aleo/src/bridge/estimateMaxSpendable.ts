@@ -5,7 +5,6 @@ import type { AleoAccount, Transaction as AleoTransaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
 
-// FIXME: with private balance, max spendable is value of record that has the biggest amount
 export const estimateMaxSpendable: AccountBridge<
   AleoTransaction,
   AleoAccount
@@ -17,6 +16,9 @@ export const estimateMaxSpendable: AccountBridge<
     ...t,
     useAllAmount: true,
   });
+
+  // TODO: max spendable for private transaction is the record with the biggest amount
+  // TODO: if user clicks on "send max", records used for transaction must be updated
 
   const maxSpendable = mainAccount.balance.minus(preparedTransaction.fees);
 

@@ -10,7 +10,7 @@ export async function broadcast({
   account: AleoAccount;
   signedTx: string;
 }): Promise<string> {
-  const { provableApi } = account.aleoResources;
+  const { provableApi } = account.aleoResources ?? {};
   invariant(provableApi, `aleo: api access is not configured for ${account.freshAddress}`);
   invariant(provableApi.jwt, `aleo: api jwt token is missing for ${account.freshAddress}`);
 

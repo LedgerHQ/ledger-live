@@ -34,7 +34,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       currency,
       viewKey,
       address,
-      initialAccount.aleoResources.provableApi,
+      initialAccount.aleoResources?.provableApi ?? null,
     );
   }
 
@@ -58,11 +58,11 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
   const latestOperation = oldOperations[0];
   const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
-  const oldPrivateRecordsHistory = initialAccount?.aleoResources.privateRecordsHistory ?? [];
+  const oldPrivateRecordsHistory = initialAccount?.aleoResources?.privateRecordsHistory ?? [];
   const latestAccountPrivateRecord = oldPrivateRecordsHistory[0];
 
-  let lastPrivateSyncDate = initialAccount?.aleoResources.lastPrivateSyncDate ?? null;
-  let privateBalance = initialAccount?.aleoResources.privateBalance ?? null;
+  let lastPrivateSyncDate = initialAccount?.aleoResources?.lastPrivateSyncDate ?? null;
+  let privateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
   let latestAccountPrivateOperations: AleoOperation[] = [];
   let privateRecordsHistory: AleoPrivateRecord[] | null = null;
   let unspentPrivateRecords: AleoUnspentRecord[] | null = null;

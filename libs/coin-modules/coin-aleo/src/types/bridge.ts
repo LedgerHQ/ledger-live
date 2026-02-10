@@ -89,11 +89,11 @@ export interface AleoResourcesRaw {
 }
 
 export type AleoAccount = Account & {
-  aleoResources: AleoResources;
+  aleoResources?: AleoResources;
 };
 
 export type AleoAccountRaw = AccountRaw & {
-  aleoResources: AleoResourcesRaw;
+  aleoResources?: AleoResourcesRaw;
 };
 
 export type AleoTransactionType = "public" | "private";
