@@ -604,7 +604,6 @@ describe("makeScanAccounts", () => {
             balanceHistoryCache: createEmptyHistoryCache(),
           });
           const timeout = setTimeout(() => {
-            inFlight--;
             subscriber.complete();
           }, 10);
           return () => {
