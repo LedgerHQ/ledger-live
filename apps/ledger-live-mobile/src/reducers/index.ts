@@ -17,6 +17,7 @@ import transferDrawer from "./transferDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
+import sendFlow from "./sendFlow";
 import settings from "./settings";
 import sendFlow from "./sendFlow";
 import toasts from "./toast";
@@ -49,6 +50,7 @@ const appReducer = combineReducers({
   postOnboarding,
   protect,
   ratings,
+  sendFlow,
   settings,
   sendFlow,
   toasts,
