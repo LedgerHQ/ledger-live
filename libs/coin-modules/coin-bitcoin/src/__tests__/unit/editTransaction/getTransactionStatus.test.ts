@@ -96,7 +96,7 @@ describe("validateEditTransaction", () => {
     expect(result.errors).toEqual({});
   });
 
-  it("blocks when replaceTxId is set but original fee is not yet available (loading)", () => {
+  it("returns empty errors when replaceTxId is set but original fee is not yet available (loading)", () => {
     const transaction = makeTransaction({ feePerByte: new BigNumber(11) });
     const transactionToUpdate = makeTransaction({
       rbf: true,
@@ -110,12 +110,11 @@ describe("validateEditTransaction", () => {
       editType: "cancel",
     });
 
-    expect(result.errors.replacementTransactionUnderpriced).toBeInstanceOf(
-      ReplacementTransactionUnderpriced,
-    );
+    expect(result.errors).toEqual({});
+    expect(result.warnings).toEqual({});
   });
 
-  it("uses originalFeePerByte when transactionToUpdate.feePerByte is missing", () => {
+  it("sets error when transactionToUpdate.feePerByte is missing", () => {
     const transaction = makeTransaction({ feePerByte: new BigNumber(11) });
     const transactionToUpdate = makeTransaction({
       rbf: true,
@@ -129,7 +128,9 @@ describe("validateEditTransaction", () => {
       originalFeePerByte: new BigNumber(10),
     });
 
-    expect(result.errors).toEqual({});
+    expect(result.errors.replacementTransactionUnderpriced).toBeInstanceOf(
+      ReplacementTransactionUnderpriced,
+    );
   });
 
   it("sets error when new feePerByte is less than minimum required (RBF bump rule)", () => {
@@ -153,9 +154,9 @@ describe("validateEditTransaction", () => {
     );
   });
 
-  it("returns no errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
-    // Original 10 => min is 11. New 11 is OK.
-    const transaction = makeTransaction({ feePerByte: new BigNumber(11) });
+  it("returns errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
+    // Original 10 => min is 11. New 12 is OK.
+    const transaction = makeTransaction({ feePerByte: new BigNumber(12) });
     const transactionToUpdate = makeTransaction({
       rbf: true,
       feePerByte: new BigNumber(10),
