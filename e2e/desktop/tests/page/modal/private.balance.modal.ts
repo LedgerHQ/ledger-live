@@ -5,8 +5,9 @@ import { step } from "tests/misc/reporters/step";
 export class PrivateBalanceModal extends Modal {
   private modalTitle = this.page.getByText("Enable Zcash private balance");
   private birthdayInput = this.page.getByTestId("birthday-height");
-  private continueButton = this.page.getByRole("button", { name: "Continue" });
   private finalMessage = this.page.getByText(/ufvk successfully imported/i);
+
+  readonly continueButton = this.page.getByRole("button", { name: "Continue" });
 
   @step("Retrieve modal title")
   async expectModalVisibility() {
