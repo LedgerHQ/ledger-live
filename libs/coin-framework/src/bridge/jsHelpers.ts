@@ -173,10 +173,11 @@ const createAccountUpdater =
       ? mergeOps(a.operations, shape.operations || [])
       : shape.operations || [];
 
+    const spendableBalance = shape.spendableBalance ?? shape.balance ?? a.spendableBalance;
     a = postSync(a, {
       ...a,
       id: accountId,
-      spendableBalance: shape.balance || a.balance,
+      spendableBalance,
       operationsCount: shape.operationsCount || operations.length,
       lastSyncDate: new Date(),
       creationDate: operations.at(-1)?.date ?? new Date(),
