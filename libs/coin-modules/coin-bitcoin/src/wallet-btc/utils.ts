@@ -312,6 +312,11 @@ export async function getRelayFeeFloorSatVb(
   }
 }
 
+/**
+ * Incremental relay fee (sat/vB) for RBF: replacement must increase fee by at least this much
+ * per vB (and in total). When the explorer does not provide incremental_fee, use a safer
+ * default (1 sat/vB) so replacements are accepted by stricter nodes
+ */
 export async function getIncrementalFeeFloorSatVb(
   explorer: unknown,
   defaultFloor: BigNumber = new BigNumber(1),

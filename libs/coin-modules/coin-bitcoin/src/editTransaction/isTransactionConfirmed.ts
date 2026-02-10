@@ -14,10 +14,6 @@ import wallet, { Account } from "../wallet-btc";
  * This function does NOT guarantee on-chain confirmation.
  */
 export async function isTransactionConfirmed(account: Account, txId: string): Promise<boolean> {
-  try {
-    const blockHeight = await wallet.getAccountTxBlockHeight(account, txId);
-    return Boolean(blockHeight && blockHeight > 0);
-  } catch {
-    return false;
-  }
+  const blockHeight = await wallet.getAccountTxBlockHeight(account, txId);
+  return Boolean(blockHeight && blockHeight > 0);
 }

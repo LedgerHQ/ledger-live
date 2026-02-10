@@ -68,7 +68,10 @@ export const validateEditTransaction = ({
   }
 
   const { feePerByte: minNewFeePerByte } = getMinFees({ feePerByte: originalFeePerByte });
-  if (newFeePerByte.isLessThanOrEqualTo(minNewFeePerByte)) {
+  if (
+    newFeePerByte.isLessThan(minNewFeePerByte) ||
+    newFeePerByte.isLessThanOrEqualTo(originalFeePerByte)
+  ) {
     errors.replacementTransactionUnderpriced = new ReplacementTransactionUnderpriced();
     return { errors, warnings };
   }
