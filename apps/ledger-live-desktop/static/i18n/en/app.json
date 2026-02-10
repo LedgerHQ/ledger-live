@@ -2354,6 +2354,15 @@
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
     "recentSendWillAppear": "Your recent send will appear here",
+    "relativeDate": {
+      "justNow": "Just now",
+      "minutesAgo_one": "1 min ago",
+      "minutesAgo_other": "{{count}} min ago",
+      "hoursAgo_one": "1 hour ago",
+      "hoursAgo_other": "{{count}} hours ago",
+      "daysAgo_one": "1 day ago",
+      "daysAgo_other": "{{count}} days ago"
+    },
     "remove": "Remove",
     "enterTag": "Enter {{tag}}",
     "firstInteraction": {
