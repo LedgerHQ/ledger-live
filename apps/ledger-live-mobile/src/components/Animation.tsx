@@ -22,10 +22,7 @@ type AnimationProps = Omit<LottieProps, "source" | "style"> & {
   style?: StyleProp<ViewStyle>;
 };
 
-export default function Animation({
-  style,
-  ...lottieProps
-}: AnimationProps) {
+export default function Animation({ style, ...lottieProps }: AnimationProps) {
   const { source, autoPlay, loop, speed, onAnimationFinish, ...rest } = lottieProps;
 
   if (!source) return null;
