@@ -20,6 +20,7 @@ import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 export function useUpdateBannerViewModel({
   onBackFromUpdate,
+  fullWidth,
 }: FirmwareUpdateBannerProps): ViewProps {
   const navigation = useNavigation<BaseNavigation>();
 
@@ -82,5 +83,6 @@ export function useUpdateBannerViewModel({
     closeUnsupportedUpdateDrawer,
     isUpdateSupportedButDeviceNotWired:
       Platform.OS === "android" && isNewUxSupported && !bleUpdateSupported,
+    fullWidth,
   };
 }

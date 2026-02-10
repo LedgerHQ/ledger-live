@@ -226,7 +226,7 @@ const AppsScreen = ({
         >
           {showFwUpdateBanner ? (
             <Flex p={6} pb={0}>
-              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} fullWidth />
             </Flex>
           ) : null}
           {!showAppUpdate && !showFwUpdateBanner ? (
