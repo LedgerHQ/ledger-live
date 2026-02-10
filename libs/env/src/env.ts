@@ -278,7 +278,7 @@ const envDefinitions = {
     desc: "Thorest API for VeChain",
   },
   ALEO_MAINNET_NODE_ENDPOINT: {
-    def: "https://api.provable.com/v2/mainnet",
+    def: "https://api.provable.com",
     parser: stringParser,
     desc: "Aleo mainnet node URL",
   },
@@ -288,7 +288,7 @@ const envDefinitions = {
     desc: "Aleo mainnet SDK URL",
   },
   ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://api.provable.com/v2/testnet",
+    def: "https://api.provable.com",
     parser: stringParser,
     desc: "Aleo testnet node URL",
   },

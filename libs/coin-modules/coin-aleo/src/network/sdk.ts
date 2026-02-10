@@ -124,11 +124,11 @@ async function createAuthorization({
 }
 
 async function getDevKeys({ currency }: { currency: CryptoCurrency }) {
-  const { networkType } = getNetworkConfig(currency);
+  const { sdkUrl } = getNetworkConfig(currency);
 
   const res = await network<DevKeysResponse>({
     method: "GET",
-    url: `http://10.3.19.130/network/${networkType}/dev/keys`,
+    url: `${sdkUrl}/dev/keys`,
   });
 
   return res.data;
@@ -141,11 +141,11 @@ async function devSign({
   currency: CryptoCurrency;
   request: PreparedRequestResponse;
 }) {
-  const { networkType } = getNetworkConfig(currency);
+  const { sdkUrl } = getNetworkConfig(currency);
 
   const res = await network<DevSignatureData>({
     method: "POST",
-    url: `http://10.3.19.130/network/${networkType}/dev/sign`,
+    url: `${sdkUrl}/dev/sign`,
     data: request,
   });
 
