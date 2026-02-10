@@ -48,12 +48,15 @@ export function createApi(config: SuiConfig): AlpacaApi {
 }
 
 async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const { unsigned, objects } = await craftTransaction(transactionIntent, true);
+  const { unsigned, objects, resolution } = await craftTransaction(transactionIntent, true);
 
   return {
     transaction: Buffer.from(unsigned).toString("hex"),
     details: {
       objects: objects?.map(obj => Buffer.from(obj).toString("hex")),
+      ...(resolution
+        ? { resolution: Buffer.from(JSON.stringify(resolution)).toString("hex") }
+        : {}),
     },
   };
 }
