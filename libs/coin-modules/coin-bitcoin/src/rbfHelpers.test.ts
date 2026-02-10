@@ -11,7 +11,8 @@ jest.mock("bitcoinjs-lib", () => ({
     fromHex: jest.fn(),
   },
 }));
-jest.mock("./wallet-btc", () => ({
+
+jest.mock("./wallet-btc/getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 
