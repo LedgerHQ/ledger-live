@@ -1,7 +1,7 @@
-import { validateAddress as zondaxValidateAddress } from "@zondax/ledger-live-icp/utils";
+import { validateAddress as zondaxValidateAddress } from "../dfinity/validation";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("@zondax/ledger-live-icp/utils");
+jest.mock("../dfinity/validation");
 
 describe("validateAddress", () => {
   const mockedZondaxValidateAddress = jest.mocked(zondaxValidateAddress);

@@ -2,17 +2,14 @@ import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/accou
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, OperationType } from "@ledgerhq/types-live";
-import {
-  deriveAddressFromPubkey,
-  hashTransaction,
-  TransactionWithId,
-} from "@zondax/ledger-live-icp";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
 import { normalizeEpochTimestamp } from "../../common-logic/utils";
 import { ICP_FEES } from "../../consts";
+import type { TransactionWithId } from "../../dfinity/candid";
+import { hashTransaction } from "../../dfinity/hash";
+import { deriveAddressFromPubkey } from "../../dfinity/public-key";
 import { InternetComputerOperation } from "../../types";
 
 export const getAccountShape: GetAccountShape = async info => {
@@ -46,10 +43,7 @@ export const getAccountShape: GetAccountShape = async info => {
     id: accountId,
     balance,
     spendableBalance: balance,
-    operations: flatMap<TransactionWithId, InternetComputerOperation>(
-      txns,
-      mapTxToOps(accountId, address),
-    ),
+    operations: txns.flatMap(mapTxToOps(accountId, address)),
     blockHeight: blockHeight.toNumber(),
     operationsCount: (initialAccount?.operations.length ?? 0) + txns.length,
     xpub: publicKey,

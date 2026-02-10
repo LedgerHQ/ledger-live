@@ -7,7 +7,7 @@ module.exports = {
     "!src/test/**/*.ts",
   ],
   transform: {
-    "^.+\\.(ts|tsx)$": [
+    "^.+\\.(ts|tsx|js|jsx|mjs)$": [
       "@swc/jest",
       {
         jsc: {
@@ -16,6 +16,7 @@ module.exports = {
       },
     ],
   },
+  transformIgnorePatterns: ["/node_modules/(?!(\\.pnpm/)?(@dfinity|@icp-sdk))/"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],

@@ -1,17 +1,5 @@
 import { log } from "@ledgerhq/logs";
 
-import {
-  ledgerIdlFactory,
-  indexIdlFactory,
-  getCanisterIdlFunc,
-  Principal,
-  encodeCanisterIdlFunc,
-  decodeCanisterIdlFunc,
-  GetAccountIdentifierTransactionsResponse,
-  TransactionWithId,
-} from "@zondax/ledger-live-icp";
-import { getAgent } from "@zondax/ledger-live-icp/agent";
-import { fromNullable } from "@zondax/ledger-live-icp/utils";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {
@@ -20,6 +8,20 @@ import {
   MAINNET_LEDGER_CANISTER_ID,
   ICP_NETWORK_URL,
 } from "../consts";
+import { getAgent } from "../dfinity/agent";
+import type {
+  GetAccountIdentifierTransactionsResponse,
+  TransactionWithId,
+} from "../dfinity/candid";
+import {
+  ledgerIdlFactory,
+  indexIdlFactory,
+  getCanisterIdlFunc,
+  Principal,
+  encodeCanisterIdlFunc,
+  decodeCanisterIdlFunc,
+  fromNullable,
+} from "../dfinity/candid";
 
 export const fetchBlockHeight = async (): Promise<BigNumber> => {
   const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
@@ -56,7 +58,7 @@ export const broadcastTxn = async (
 ) => {
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
   const res = await fetch(`${ICP_NETWORK_URL}/api/v3/canister/${canisterId}/${type}`, {
-    body: payload,
+    body: new Uint8Array(payload),
     method: "POST",
     headers: {
       "Content-Type": "application/cbor",

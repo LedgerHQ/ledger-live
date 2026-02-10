@@ -50,6 +50,7 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/coin-internet_computer": "workspace:^",
     "asciichart": "1.5.25",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
@@ -72,8 +73,7 @@
     "rxjs": "catalog:",
     "usb": "*",
     "winston": "3.13.0",
-    "ws": "catalog:",
-    "@zondax/ledger-live-icp": "1.4.1"
+    "ws": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

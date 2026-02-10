@@ -227,10 +227,10 @@
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
     "@react-native/babel-plugin-codegen": "catalog:",
-    "@vitest/mocker": "4.0.17",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
+    "@vitest/mocker": "4.0.17",
     "chalk": "4.1.2",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
@@ -282,7 +282,8 @@
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
-      "react-native@0.79.7": "patches/react-native@0.79.7.patch"
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "@icp-sdk/canisters@3.4.0": "patches/@icp-sdk__canisters@3.4.0.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

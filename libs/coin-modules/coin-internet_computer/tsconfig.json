@@ -5,6 +5,8 @@
     "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "downlevelIteration": true,
     "lib": [
       "es2020",
@@ -12,11 +14,18 @@
     ],
     "rootDir": "./src",
     "outDir": "lib",
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "paths": {
+      "@icp-sdk/core/*": ["./node_modules/@icp-sdk/core/lib/esm/*"],
+    },
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "src/**/*",
     "deviceTransactionConfig.ts",
     "transaction.ts"
-  ]
+  ],
+  "exclude": []
 }

@@ -6,8 +6,8 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "@zondax/ledger-live-icp/utils";
 import BigNumber from "bignumber.js";
+import { validateAddress } from "../dfinity/validation";
 import { InvalidMemoICP } from "../errors";
 import { validateMemo } from "../logic/validateMemo";
 import { Transaction, TransactionStatus } from "../types";
