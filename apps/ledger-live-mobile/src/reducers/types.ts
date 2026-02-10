@@ -37,6 +37,7 @@ import type { TransferDrawerState } from "./transferDrawer";
 import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -379,6 +380,7 @@ export type State = LLMRTKApiState & {
   market: MarketState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
+  rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
   transferDrawer: TransferDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
