@@ -181,6 +181,23 @@ export function bitcoinTransaction({
   return baseTransaction;
 }
 
+type SolanaParams = {
+  data: string;
+  templateId: string;
+};
+
+function isObjectForSolana(params: unknown): params is SolanaParams {
+  return (
+    params !== undefined &&
+    params !== null &&
+    typeof params === "object" &&
+    "data" in params &&
+    typeof params.data === "string" &&
+    "templateId" in params &&
+    typeof params.templateId === "string"
+  );
+}
+
 export function solanaTransaction({
   amount,
   recipient,
@@ -188,21 +205,12 @@ export function solanaTransaction({
   extraTransactionParameters,
 }: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
   let templateId: string | undefined = undefined;
-  const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
+  let raw: string | undefined = undefined;
+  //const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
 
-  if (lifiSolanaFeature?.enabled && extraTransactionParameters) {
-    try {
-      const parsed = JSON.parse(extraTransactionParameters);
-      if (typeof parsed?.solanaTransaction?.templateId === "string") {
-        templateId = parsed.solanaTransaction.templateId;
-      } else {
-        console.warn(
-          `Template id "${templateId}" found in extraTransactionParameters for solana transaction is not a string, ignored`,
-        );
-      }
-    } catch (e) {
-      console.warn("Failed to parse extraTransactionParameters", e);
-    }
+  if (isObjectForSolana(extraTransactionParameters)) {
+    templateId = extraTransactionParameters.templateId;
+    raw = extraTransactionParameters.data;
   }
 
   return {
@@ -210,6 +218,7 @@ export function solanaTransaction({
     amount,
     recipient,
     model: { kind: "transfer", uiState: {} },
+    ...(raw && { raw }),
     ...(templateId && { templateId }),
   };
 }
