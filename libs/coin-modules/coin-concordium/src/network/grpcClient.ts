@@ -53,22 +53,35 @@ function loadProtoDescriptor(packageDefinition: protoLoader.PackageDefinition): 
   return grpcObject;
 }
 
+/**
+ * Helper to convert a gRPC hash field (Buffer wrapped in { value: Buffer }) to hex string.
+ */
+function bufferHashToHex(hashField: { value: Buffer } | undefined): string {
+  if (!hashField?.value) return "";
+  const buf = hashField.value;
+  return Buffer.isBuffer(buf) ? buf.toString("hex") : String(buf);
+}
+
+// gRPC response types use snake_case (keepCase: true in proto-loader config)
+// and wrap scalar values in { value: T } messages per Concordium protobuf schema.
+
 interface GetConsensusInfoResponse {
-  lastFinalizedBlockHeight: string;
-  lastFinalizedBlock: string;
-  lastFinalizedTime?: {
+  last_finalized_block_height: { value: string };
+  last_finalized_block: { value: Buffer };
+  last_finalized_time?: {
     value: string;
   };
 }
 
 interface GetBlocksAtHeightResponse {
-  blocks: Array<{ value: string }>;
+  blocks: Array<{ value: Buffer }>;
 }
 
 interface GetBlockInfoResponse {
-  height: string;
-  hash: string;
-  slotTime?: {
+  height: { value: string };
+  hash: { value: Buffer };
+  parent_block: { value: Buffer };
+  slot_time?: {
     value: string;
   };
 }
@@ -114,15 +127,15 @@ interface GRPCClient {
     callback: GrpcCallback<GetConsensusInfoResponse>,
   ) => void;
   GetBlocksAtHeight: (
-    request: { blockHeight: { value: string } },
+    request: { absolute: { height: { value: string } } },
     callback: GrpcCallback<GetBlocksAtHeightResponse>,
   ) => void;
   GetBlockInfo: (
-    request: { blockHash: string },
+    request: { given: { value: Buffer } },
     callback: GrpcCallback<GetBlockInfoResponse>,
   ) => void;
   GetBlockTransactionEvents: (request: {
-    blockHash: string;
+    given: { value: Buffer };
   }) => AsyncIterable<GetBlockTransactionEventsStreamItem>;
 }
 
@@ -219,12 +232,14 @@ export async function getLastBlock(currency: CryptoCurrency): Promise<BlockInfo>
             return;
           }
 
-          const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
-
           resolve({
-            height: Number(lastFinalizedBlockHeight || 0),
-            hash: lastFinalizedBlock || "",
-            time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
+            height: Number(response.last_finalized_block_height?.value || 0),
+            hash: bufferHashToHex(response.last_finalized_block),
+            time: new Date(
+              response.last_finalized_time?.value
+                ? Number(response.last_finalized_time.value)
+                : Date.now(),
+            ),
           });
         });
       });
@@ -250,7 +265,7 @@ function handleBlocksResponse(
     return;
   }
 
-  const blocks: string[] = (response.blocks || []).map(block => block.value);
+  const blocks: string[] = (response.blocks || []).map(block => bufferHashToHex(block));
   resolve(blocks);
 }
 
@@ -265,8 +280,9 @@ function handleBlocksResponse(
 async function getBlockHashesAtHeight(currency: CryptoCurrency, height: number): Promise<string[]> {
   const fetchBlocks = (client: GRPCClient): Promise<string[]> => {
     return new Promise<string[]>((resolve, reject) => {
-      client.GetBlocksAtHeight({ blockHeight: { value: String(height) } }, (error, response) =>
-        handleBlocksResponse(error, response, resolve, reject),
+      client.GetBlocksAtHeight(
+        { absolute: { height: { value: String(height) } } },
+        (error, response) => handleBlocksResponse(error, response, resolve, reject),
       );
     });
   };
@@ -294,16 +310,17 @@ async function getBlockInfo(currency: CryptoCurrency, blockHash: string): Promis
   try {
     return await withClient(currency, async client => {
       return new Promise<BlockInfo>((resolve, reject) => {
-        client.GetBlockInfo({ blockHash }, (error, response) => {
+        const hashBuffer = Buffer.from(blockHash, "hex");
+        client.GetBlockInfo({ given: { value: hashBuffer } }, (error, response) => {
           if (error) {
             reject(error);
             return;
           }
 
-          const height: number = Number(response.height || 0);
-          const hash: string = response.hash || "";
-          const time: Date = response.slotTime?.value
-            ? new Date(Number(response.slotTime.value))
+          const height: number = Number(response.height?.value || 0);
+          const hash: string = bufferHashToHex(response.hash);
+          const time: Date = response.slot_time?.value
+            ? new Date(Number(response.slot_time.value))
             : new Date();
 
           resolve({ height, hash, time });
@@ -382,8 +399,9 @@ async function getBlockTransactionEvents(
 ): Promise<AsyncIterable<BlockTransactionEvent>> {
   try {
     return await withClient(currency, async client => {
+      const hashBuffer = Buffer.from(blockHash, "hex");
       const request = {
-        blockHash,
+        given: { value: hashBuffer },
       };
 
       const stream: AsyncIterable<GetBlockTransactionEventsStreamItem> =
