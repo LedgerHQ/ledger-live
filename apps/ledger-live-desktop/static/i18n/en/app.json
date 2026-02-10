@@ -5986,7 +5986,6 @@
           "onboarded": "Onboarded accounts",
           "success": "Successfully connected to Concordium ID App.",
           "error": "Failed to onboard new account. Please try again.",
-          "errorTimeout": "Connection timed out. The mobile app may not have connected or the session proposal was rejected. Please try again.",
           "status": {
             "prepare": "Preparing account onboarding...",
             "submit": "Onboarding account...",
@@ -6920,6 +6919,9 @@
     "ConcordiumMemoTooLong": {
       "title": "Memo exceeds maximum length",
       "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
+    "ConcordiumInsufficientFunds": {
+      "title": "Sorry, insufficient funds"
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"

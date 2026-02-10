@@ -102,7 +102,7 @@ const StepCreate = ({
                       i18nKey="families.concordium.addAccount.create.prepare.resendDescription"
                       values={{
                         count: resendTimeRemaining,
-                        unit: t("time.second", { count: resendTimeRemaining }),
+                        unit: t("time.second_short"),
                       }}
                     >
                       <Text fontWeight="600" />

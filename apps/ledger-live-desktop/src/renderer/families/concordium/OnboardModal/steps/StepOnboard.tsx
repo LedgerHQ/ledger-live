@@ -73,7 +73,7 @@ export default function StepOnboard({
               <Alert type="hint">
                 <Text variant="paragraph">
                   <Trans i18nKey="families.concordium.addAccount.identity.scanQRCode">
-                    <Link type="color" onClick={() => openURL(urls.concordium.learnMore)} />
+                    <Link type="color" onClick={() => openURL(link)} />
                   </Trans>
                 </Text>
                 <br />
