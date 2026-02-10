@@ -79,9 +79,11 @@ async function findSanctionedAddressesOnUtxos(
 ): Promise<string[]> {
   const sanctionedAddresses = [];
   for (const utxo of utxos) {
-    const addressIsSanctioned = await isAddressSanctioned(currency, utxo.address);
-    if (addressIsSanctioned) {
-      sanctionedAddresses.push(utxo.address);
+    if (utxo?.address) {
+      const addressIsSanctioned = await isAddressSanctioned(currency, utxo.address);
+      if (addressIsSanctioned) {
+        sanctionedAddresses.push(utxo.address);
+      }
     }
   }
 

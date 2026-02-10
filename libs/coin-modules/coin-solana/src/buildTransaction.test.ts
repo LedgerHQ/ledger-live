@@ -4,9 +4,9 @@ import {
   RecentPrioritizationFees,
   VersionedTransaction,
 } from "@solana/web3.js";
+import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import { buildTransactionWithAPI } from "./buildTransaction";
 import { ChainAPI } from "./network";
-import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import { DUMMY_SIGNATURE } from "./utils";
 
 // Mock VersionedTransaction

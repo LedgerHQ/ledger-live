@@ -47,7 +47,7 @@ jobs:
             } else if ("${{ matrix.config.output-name }}" === "win") {
               return "win"
             }
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -82,7 +82,7 @@ jobs:
         run: |
           echo "${{matrix.config.output-name}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
       - name: Upload app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/ledger-live-desktop-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}

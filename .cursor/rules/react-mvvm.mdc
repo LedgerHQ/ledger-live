@@ -1,7 +1,7 @@
 ---
-alwaysApply: true
 description: React MVVM Architecture engineering rules (mvvm) for Ledger Wallet
 globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: false
 ---
 
 # React MVVM Architecture (`mvvm`)

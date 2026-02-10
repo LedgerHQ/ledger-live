@@ -1,18 +1,21 @@
 import Transport from "@ledgerhq/hw-transport";
 import type {
-  AccountTransaction,
+  Transaction,
   Address,
   CredentialDeploymentTransaction,
-  SignCredentialDeploymentMetadata,
   VerifyAddressResponse,
+  SigningResult,
 } from "./types";
 import {
-  pathToBuffer,
   serializeCredentialDeployment,
-  serializeTransaction,
   serializeTransactionPayloads,
+  serializeTransfer,
   serializeTransferWithMemo,
+  prepareTransferAPDU,
+  prepareTransferWithMemoAPDU,
 } from "./serialization";
+import { TransactionType } from "./types";
+import { pathToBuffer } from "./utils";
 
 const PUBLIC_KEY_LENGTH = 32;
 
@@ -77,7 +80,14 @@ export default class Concordium {
     this.transport = transport;
     this.transport.decorateAppAPIMethods(
       this,
-      ["getAddress", "verifyAddress", "getPublicKey", "signTransfer", "signCredentialDeployment"],
+      [
+        "getAddress",
+        "verifyAddress",
+        "getPublicKey",
+        "signTransfer",
+        "signTransferWithMemo",
+        "signCredentialDeployment",
+      ],
       scrambleKey,
     );
   }
@@ -211,50 +221,63 @@ export default class Concordium {
   }
 
   /**
-   * Sign an account transaction.
+   * Sign a Transfer transaction.
    *
-   * @param txn - Account transaction in hw-app format (sender as Buffer, payload pre-serialized)
+   * @param tx - Transfer transaction with type-safe payload
    * @param path - BIP32 path for signing key
-   * @returns Promise with signature (hex string)
+   * @returns Promise with signature and serialized transaction
    */
-  async signTransfer(txn: AccountTransaction, path: string): Promise<string> {
-    // Check if this is a transfer with memo - requires different APDU sequence
-    // TransferWithMemo = 22
-    if (txn.transactionType === 22) {
-      return this.signTransferWithMemo(txn, path);
+  async signTransfer(tx: Transaction, path: string): Promise<SigningResult> {
+    if (tx.type === TransactionType.TransferWithMemo) {
+      throw new Error("Use signTransferWithMemo for TransferWithMemo transactions");
     }
 
-    const { payloads } = serializeTransaction(txn, path);
-    let response: Buffer = Buffer.alloc(0);
+    const serialized = serializeTransfer(tx);
 
+    // Prepare APDU payloads for device (chunked)
+    const payloads = prepareTransferAPDU(serialized, path);
+
+    // Send APDU commands
+    let response: Buffer = Buffer.alloc(0);
     for (let i = 0; i < payloads.length; i++) {
       const p2 = i === payloads.length - 1 ? P2.LAST : P2.MORE;
       response = await this.send(INS.SIGN_TRANSFER, P1.INITIAL, p2, payloads[i]);
     }
 
-    return response.subarray(0, response.length - 2).toString("hex");
+    const signature = response.subarray(0, -2).toString("hex");
+    return {
+      signature,
+      serialized: serialized.toString("hex"),
+    };
   }
 
   /**
-   * Sign a transfer with memo transaction.
-   * Uses a multi-APDU sequence: header+recipient+memo_length, memo chunks, amount
+   * Sign a TransferWithMemo transaction.
    *
-   * @param txn - Transfer with memo transaction object
+   * @param tx - TransferWithMemo transaction with type-safe payload
    * @param path - BIP32 path for signing key
-   * @returns Promise with signature (hex string)
+   * @returns Promise with signature and serialized transaction
    */
-  private async signTransferWithMemo(txn: AccountTransaction, path: string): Promise<string> {
-    const { headerPayload, memoPayloads, amountPayload } = serializeTransferWithMemo(txn, path);
-
-    // Send header + recipient + memo length (P1=0x01, P2=0x00)
-    await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.INITIAL_WITH_MEMO, P2.NONE, headerPayload);
-
-    // Send memo chunks (P1=0x02, P2=0x00)
-    for (let i = 0; i < memoPayloads.length; i++) {
-      await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.MEMO, P2.NONE, memoPayloads[i]);
+  async signTransferWithMemo(tx: Transaction, path: string): Promise<SigningResult> {
+    if (tx.type !== TransactionType.TransferWithMemo) {
+      throw new Error("Transaction type must be TransferWithMemo");
     }
 
-    // Send amount and get signature (P1=0x03, P2=0x00)
+    const serialized = serializeTransferWithMemo(tx);
+
+    // Prepare APDU payloads for device (parses serialized transaction)
+    const { headerPayload, memoPayloads, amountPayload } = prepareTransferWithMemoAPDU(
+      serialized,
+      path,
+    );
+
+    // Send APDU commands (special 3-step sequence for TransferWithMemo)
+    await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.INITIAL_WITH_MEMO, P2.NONE, headerPayload);
+
+    for (const memoPayload of memoPayloads) {
+      await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.MEMO, P2.NONE, memoPayload);
+    }
+
     const response = await this.send(
       INS.SIGN_TRANSFER_WITH_MEMO,
       P1.AMOUNT,
@@ -262,23 +285,28 @@ export default class Concordium {
       amountPayload,
     );
 
-    return response.subarray(0, response.length - 2).toString("hex");
+    const signature = response.subarray(0, -2).toString("hex");
+    return {
+      signature,
+      serialized: serialized.toString("hex"),
+    };
   }
 
   /**
    * Sign a credential deployment transaction.
    *
-   * @param payload - CredentialDeploymentTransaction in hw-app format
+   * Always creates credentials for new accounts on existing identities.
+   * The device displays the expiry time for user verification.
+   *
+   * @param tx - CredentialDeploymentTransaction in hw-app format
    * @param path - BIP32 path for signing key
-   * @param metadata - Optional metadata for hardware wallet (isNew, address as Buffer)
    * @returns Promise with signature (hex string)
    */
   async signCredentialDeployment(
-    payload: CredentialDeploymentTransaction,
+    tx: CredentialDeploymentTransaction,
     path: string,
-    metadata?: SignCredentialDeploymentMetadata,
   ): Promise<string> {
-    const serialized = serializeCredentialDeployment(payload, path, metadata);
+    const serialized = serializeCredentialDeployment(tx, path);
     let response: Buffer = Buffer.alloc(0);
 
     const send = async (p1: number, p2: number, data: Buffer) =>
@@ -318,17 +346,13 @@ export default class Concordium {
     await send(P1.LENGTH_OF_PROOFS, P2.MORE, serialized.proofLength);
 
     const proofsPayloads = serializeTransactionPayloads(serialized.proofs);
-    for (let i = 0; i < proofsPayloads.length; i++) {
-      const p2 =
-        i === proofsPayloads.length - 1 && !serialized.newOrExistingPayload ? P2.LAST : P2.MORE;
-      response = await send(P1.PROOFS, p2, proofsPayloads[i]);
+    for (const proofsPayload of proofsPayloads) {
+      await send(P1.PROOFS, P2.MORE, proofsPayload);
     }
 
-    // 7. New or Existing metadata
-    if (serialized.newOrExistingPayload) {
-      response = await send(P1.NEW_OR_EXISTING, P2.LAST, serialized.newOrExistingPayload);
-    }
+    // 7. Send expiry (always for new account creation)
+    response = await send(P1.NEW_OR_EXISTING, P2.LAST, serialized.newOrExistingPayload);
 
-    return response.subarray(0, response.length - 2).toString("hex");
+    return response.subarray(0, -2).toString("hex");
   }
 }

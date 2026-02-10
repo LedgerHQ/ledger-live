@@ -5,7 +5,7 @@ import {
   GetAccountShape,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { utils as TyphonUtils, address as TyphonAddress } from "@stricahq/typhonjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
@@ -174,11 +174,17 @@ export const makeGetAccountShape =
 
     const operations = mergeOps(Object.values(stableOperationsByIds), newOperations);
 
+    let spendableBalance = BigNumber.max(0, utxosSum.minus(minAdaForTokens));
+    if (delegationInfo?.dRepHex && delegationInfo?.rewards) {
+      // if account is delegated to a dRep, include rewards in spendable balance
+      spendableBalance = spendableBalance.plus(delegationInfo.rewards);
+    }
+
     return {
       id: accountId,
       xpub,
       balance: totalBalance,
-      spendableBalance: BigNumber.max(0, utxosSum.minus(minAdaForTokens)),
+      spendableBalance,
       operations: operations,
       syncHash,
       subAccounts,
@@ -195,7 +201,7 @@ export const makeGetAccountShape =
     };
   };
 
-function mapTxToAccountOperation(
+export function mapTxToAccountOperation(
   tx: APITransaction,
   accountId: string,
   accountCredentialsMap: Record<string, PaymentCredential>,
@@ -205,6 +211,11 @@ function mapTxToAccountOperation(
   protocolParams: ProtocolParams,
 ): CardanoOperation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
+  const networkParams = getNetworkParameters(accountShapeInfo.currency.id);
+  const stakeAddress = new TyphonAddress.RewardAddress(networkParams.networkId, {
+    type: HashType.ADDRESS,
+    hash: Buffer.from(stakeCredential.key, "hex"),
+  });
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
@@ -215,6 +226,7 @@ function mapTxToAccountOperation(
 
   let operationValue = accountChange.ada;
 
+  // pre-conway era stake registrations
   if (tx.certificate.stakeRegistrations.length) {
     const walletRegistration = tx.certificate.stakeRegistrations.find(
       c =>
@@ -233,6 +245,24 @@ function mapTxToAccountOperation(
     }
   }
 
+  // conway era stake registrations
+  if (tx.certificate.stakeRegsConway?.length) {
+    const walletRegistration = tx.certificate.stakeRegsConway.find(
+      w => stakeAddress.getHex() === w.stakeHex,
+    );
+    if (walletRegistration) {
+      extra.deposit = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(walletRegistration.deposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  // pre-conway era stake de-registrations
   if (tx.certificate.stakeDeRegistrations.length) {
     const walletDeRegistration = tx.certificate.stakeDeRegistrations.find(
       c =>
@@ -244,6 +274,24 @@ function mapTxToAccountOperation(
       extra.refund = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  // conway era stake de-registrations
+  if (tx.certificate.stakeDeRegsConway?.length) {
+    const walletDeRegistration = tx.certificate.stakeDeRegsConway.find(
+      w => stakeAddress.getHex() === w.stakeHex,
+    );
+    if (walletDeRegistration) {
+      operationValue = operationValue.minus(walletDeRegistration.deposit);
+      extra.refund = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(walletDeRegistration.deposit),
         {
           showCode: true,
           disableRounding: true,

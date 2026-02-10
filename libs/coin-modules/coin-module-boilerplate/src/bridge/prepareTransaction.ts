@@ -1,8 +1,8 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { Transaction } from "../types";
-import { craftTransaction, estimateFees } from "../common-logic";
+import { craftTransaction, estimateFees } from "../logic";
 import { getNextSequence } from "../network/node";
+import { Transaction } from "../types";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

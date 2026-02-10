@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import {
   IAddress,
   PROTOCOL_INDICATOR,
@@ -6,7 +7,6 @@ import {
   fromString,
   toEthAddress,
 } from "iso-filecoin/address";
-import { log } from "@ledgerhq/logs";
 
 export type ValidateAddressResult =
   | {

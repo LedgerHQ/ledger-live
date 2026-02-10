@@ -1,8 +1,8 @@
-import { ethers } from "ethers";
 import type { OperationType } from "@ledgerhq/types-live";
+import { ethers } from "ethers";
 import type { StakingOperation } from "../types/staking";
-import { STAKING_CONTRACTS } from "./contracts";
 import { getStakingABI } from "./abis";
+import { STAKING_CONTRACTS } from "./contracts";
 
 const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
   delegate: "DELEGATE",

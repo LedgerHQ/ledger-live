@@ -1,7 +1,7 @@
-import { PolkadotOperation, PolkadotOperationExtra } from "../types";
-import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
-import { listOperations } from "./listOperations";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
+import { PolkadotOperation, PolkadotOperationExtra } from "../types";
+import { listOperations } from "./listOperations";
 
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => {
@@ -75,6 +75,7 @@ describe("listOperations", () => {
             fees: BigInt(1),
             block: {
               height: 10,
+              hash: "blockHash1",
               time: new Date("2025-03-13T00:00:00Z"),
             },
             date: new Date("2025-03-13T00:00:00Z"),
@@ -93,6 +94,7 @@ describe("listOperations", () => {
             fees: BigInt(5),
             block: {
               height: 11,
+              hash: "blockHash2",
               time: new Date("2025-03-13T01:00:00Z"),
             },
             date: new Date("2025-03-13T01:00:00Z"),
@@ -159,6 +161,7 @@ describe("listOperations", () => {
             fees: BigInt(1),
             block: {
               height: 0,
+              hash: "blockHash1",
               time: new Date("2025-03-13T00:00:00Z"),
             },
             date: new Date("2025-03-13T00:00:00Z"),
@@ -211,6 +214,7 @@ describe("listOperations", () => {
             fees: BigInt(1),
             block: {
               height: 10,
+              hash: "blockHash1",
               time: new Date("2025-03-13T00:00:00Z"),
             },
             date: new Date("2025-03-13T00:00:00Z"),

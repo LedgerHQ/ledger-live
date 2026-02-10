@@ -1,8 +1,9 @@
+import { log } from "@ledgerhq/logs";
 import { COST_PER_BYTE, getRevealFee, ORIGINATION_SIZE, Estimate } from "@taquito/taquito";
 import { validatePublicKey, ValidationResult } from "@taquito/utils";
-import { log } from "@ledgerhq/logs";
-import { TezosOperationMode } from "../types/model";
+import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
+import { TezosOperationMode } from "../types/model";
 import {
   createFallbackEstimation,
   createMockSigner,
@@ -34,6 +35,7 @@ export type EstimatedFees = {
   amount?: bigint;
   taquitoError?: string;
 };
+
 /**
  * Fetch the transaction fees for a transaction
  *
@@ -110,6 +112,9 @@ export async function estimateFees({
         throw new UnsupportedTransactionMode("unsupported mode", { mode: transaction.mode });
     }
 
+    const minFees = coinConfig.getCoinConfig().fees.minFees ?? 0;
+    const mainOpFee = Math.max(minFees, estimate.suggestedFeeMutez);
+
     // NOTE: if useAllAmount is true, is it for sure in the send mode (ie. transfer)?
     if (transaction.useAllAmount) {
       let totalFees: number;
@@ -121,7 +126,7 @@ export async function estimateFees({
       }
       const maxAmount =
         parseInt(account.balance.toString()) -
-        (totalFees + (account.revealed ? 0 : getRevealFee(account.address)));
+        (totalFees + (account.revealed ? 0 : getRevealFeeForEstimation(account.address)));
       // NOTE: from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
@@ -133,10 +138,10 @@ export async function estimateFees({
 
       const maxMinusBuff = maxAmount - (DUST_MARGIN_MUTEZ - incr);
       estimation.amount = maxMinusBuff > 0 ? BigInt(maxMinusBuff) : 0n;
-      estimation.fees = BigInt(estimate.suggestedFeeMutez);
+      estimation.fees = BigInt(mainOpFee);
       estimation.gasLimit = BigInt(estimate.gasLimit);
     } else {
-      estimation.fees = BigInt(estimate.suggestedFeeMutez);
+      estimation.fees = BigInt(mainOpFee);
       estimation.gasLimit = BigInt(estimate.gasLimit);
       estimation.amount = transaction.amount;
     }
@@ -144,7 +149,8 @@ export async function estimateFees({
     estimation.storageLimit = BigInt(estimate.storageLimit);
     estimation.estimatedFees = estimation.fees;
     if (!account.revealed) {
-      estimation.estimatedFees = estimation.estimatedFees + BigInt(getRevealFee(account.address));
+      estimation.estimatedFees =
+        estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
@@ -171,7 +177,7 @@ export async function estimateFees({
         estimation.estimatedFees = fallback.fees;
         if (!account.revealed) {
           estimation.estimatedFees =
-            estimation.estimatedFees + BigInt(getRevealFee(account.address));
+            estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
         }
         // Handle useAllAmount also for send mode when estimation falls back
         if (transaction.useAllAmount) {
@@ -187,7 +193,7 @@ export async function estimateFees({
             estimation.estimatedFees = BigInt(suggestedFee);
             if (!account.revealed) {
               estimation.estimatedFees =
-                estimation.estimatedFees + BigInt(getRevealFee(account.address));
+                estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
             }
           }
 
@@ -195,7 +201,7 @@ export async function estimateFees({
           const totalFees =
             suggestedFee + (burnFeeMutez > 0 ? burnFeeMutez - 20 * COST_PER_BYTE : 0);
 
-          const revealFee = account.revealed ? 0 : getRevealFee(account.address);
+          const revealFee = account.revealed ? 0 : getRevealFeeForEstimation(account.address);
           const maxAmount = Number.parseInt(account.balance.toString()) - (totalFees + revealFee);
 
           const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
@@ -222,7 +228,7 @@ export async function estimateFees({
         estimation.estimatedFees = fallback.estimatedFees;
         if (!account.revealed) {
           estimation.estimatedFees =
-            estimation.estimatedFees + BigInt(getRevealFee(account.address));
+            estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
         }
         if (transaction.useAllAmount) {
           const suggestedFee =
@@ -235,14 +241,14 @@ export async function estimateFees({
             estimation.estimatedFees = BigInt(suggestedFee);
             if (!account.revealed) {
               estimation.estimatedFees =
-                estimation.estimatedFees + BigInt(getRevealFee(account.address));
+                estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
             }
           }
 
           const burnFeeMutez = Number(estimation.storageLimit) * COST_PER_BYTE;
           const totalFees =
             suggestedFee + (burnFeeMutez > 0 ? burnFeeMutez - 20 * COST_PER_BYTE : 0);
-          const revealFee = account.revealed ? 0 : getRevealFee(account.address);
+          const revealFee = account.revealed ? 0 : getRevealFeeForEstimation(account.address);
           const maxAmount = Number.parseInt(account.balance.toString()) - (totalFees + revealFee);
           const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
           const incr = OP_SIZE_XTZ_TRANSFER + DUST_MARGIN_MUTEZ * MINIMAL_FEE_PER_GAS_MUTEZ;
@@ -258,4 +264,9 @@ export async function estimateFees({
     }
   }
   return estimation;
+}
+
+function getRevealFeeForEstimation(address: string): number {
+  const minFees = coinConfig.getCoinConfig().fees.minFees ?? 0;
+  return Math.max(minFees, getRevealFee(address));
 }

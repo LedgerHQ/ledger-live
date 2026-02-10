@@ -58,7 +58,7 @@ export const AnalyticPill = ({ valueChange }: { valueChange: ValueChange }) => {
           {t("common.today")}
         </Text>
       </Box>
-      <ChevronRight />
+      <ChevronRight size={16} />
     </Pressable>
   );
 };
@@ -70,7 +70,6 @@ const PressableStyle: LumenViewStyle = {
   height: "s40",
   borderRadius: "full",
   paddingHorizontal: "s16",
-  paddingVertical: "s10",
   gap: "s2",
 };
 

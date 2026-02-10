@@ -1,16 +1,16 @@
-import BigNumber from "bignumber.js";
-import { stringCamelCase } from "@polkadot/util";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import polkadotAPI from "../network";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { stringCamelCase } from "@polkadot/util";
 import { hexToU8a } from "@polkadot/util";
+import BigNumber from "bignumber.js";
+import polkadotAPI from "../network";
 import {
   CoreTransaction,
   PalletMethodName,
   PolkadotOperationMode,
   TransactionPayloadInfo,
 } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any

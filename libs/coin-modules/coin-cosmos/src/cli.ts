@@ -1,11 +1,11 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { AccountLike } from "@ledgerhq/types-live";
 import { CosmosValidatorsManager } from "./CosmosValidatorsManager";
 import type { CosmosDelegationInfo } from "./types";
 import { Transaction as CosmosTransaction } from "./types";
@@ -97,36 +97,34 @@ const cosmosValidatorsFormatters = {
       )
       .join("\n"),
 };
-const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
-const cosmosValidators = {
-  args: [
-    {
-      name: "format",
-      desc: Object.keys(cosmosValidatorsFormatters).join(" | "),
-      type: String,
-    },
-  ],
-  job: ({
-    format,
-  }: Partial<{
-    format: string;
-  }>): Observable<string> =>
-    from(cosmosValidatorsManager.getValidators()).pipe(
-      map(validators => {
-        const f =
-          (format && (cosmosValidatorsFormatters as any)[format]) ||
-          cosmosValidatorsFormatters.default;
-        return f(validators);
-      }),
-    ),
-};
 
 export default function makeCliTools() {
   return {
     options,
     inferTransactions,
     commands: {
-      cosmosValidators,
+      cosmosValidators: {
+        args: [
+          {
+            name: "format",
+            desc: Object.keys(cosmosValidatorsFormatters).join(" | "),
+            type: String,
+          },
+        ],
+        job: ({
+          format,
+        }: Partial<{
+          format: string;
+        }>): Observable<string> =>
+          from(new CosmosValidatorsManager(getCryptoCurrencyById("cosmos")).getValidators()).pipe(
+            map(validators => {
+              const f =
+                (format && (cosmosValidatorsFormatters as any)[format]) ||
+                cosmosValidatorsFormatters.default;
+              return f(validators);
+            }),
+          ),
+      },
     },
   };
 }

@@ -22,7 +22,7 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
-} from "../common-logic";
+} from "../logic";
 
 export function createApi(config: BoilerplateConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

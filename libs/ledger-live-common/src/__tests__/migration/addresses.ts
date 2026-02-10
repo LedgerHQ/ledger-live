@@ -98,10 +98,6 @@ export const migrationAddresses: MigrationAddress[] = [
   //   address: "secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4",
   // },
   {
-    currencyId: "sei_network",
-    address: "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
-  },
-  {
     currencyId: "stargaze",
     address: "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
   },

@@ -7,12 +7,19 @@ import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
-import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
 const mockNavigate = jest.fn();
+
+jest.mock("~/renderer/analytics/segment", () => ({
+  ...jest.requireActual("~/renderer/analytics/segment"),
+  track: jest.fn(),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -26,9 +33,15 @@ jest.mock("~/renderer/screens/dashboard/components/SwapWebViewEmbedded", () => (
   default: () => <div data-testid="swap-webview-embedded">SwapWebViewEmbedded</div>,
 }));
 
-jest.mock("~/renderer/screens/dashboard/components/BannerSection", () => ({
+jest.mock("~/renderer/screens/dashboard/components/Banners/BannerSection", () => ({
   __esModule: true,
   default: () => <div data-testid="banner-section">BannerSection</div>,
+}));
+
+jest.mock("~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent", () => ({
+  PortfolioBannerContent: () => (
+    <div data-testid="portfolio-banner-content">PortfolioBannerContent</div>
+  ),
 }));
 
 // Mock RampCatalog provider - returns all currencies as available
@@ -78,6 +91,7 @@ describe("PortfolioView", () => {
     shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
+    isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -109,6 +123,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -125,6 +143,10 @@ describe("PortfolioView", () => {
       const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -137,11 +159,45 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
         initialState: {
           accounts: [],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
       expect(screen.getByTestId("no-balance-title")).toBeVisible();
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+    });
+
+    it("should render BalanceView when user has accounts but no funds", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [EMPTY_BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
+        },
+      });
+
+      expect(screen.queryByTestId("portfolio-balance")).toBeVisible();
+    });
+
+    it("should render NoDeviceView when user has not completed onboarding", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: false,
+          },
+        },
+      });
+
+      expect(screen.getByTestId("no-device-title")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+      expect(screen.queryByTestId("no-balance-title")).toBeNull();
     });
     it("should display discreet placeholders when discreet mode is enabled", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
@@ -149,6 +205,7 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
             discreetMode: true,
           },
         },
@@ -165,6 +222,7 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
             discreetMode: false,
           },
         },
@@ -183,6 +241,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -197,6 +259,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -210,6 +276,10 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+          },
         },
       });
 
@@ -285,6 +355,66 @@ describe("PortfolioView", () => {
     it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={false} />);
       expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
+    });
+  });
+
+  describe("Perps Entry Point", () => {
+    it("should show perps entry point when feature flag is enabled", () => {
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: true,
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
+
+    it("should hide perps entry point when feature flag is disabled", () => {
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: false,
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+    });
+
+    it("should track and navigate when clicking perps entry point", async () => {
+      const { user } = render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            overriddenFeatureFlags: {
+              ptxPerpsLiveApp: {
+                enabled: true,
+              },
+            },
+          },
+        },
+      });
+
+      await user.click(screen.getByTestId("portfolio-perps-subheader-row"));
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "perps_entry_point",
+        flow: "perps",
+        page: PORTFOLIO_TRACKING_PAGE_NAME,
+      });
+      expect(mockNavigate).toHaveBeenCalledWith("/perps");
     });
   });
 

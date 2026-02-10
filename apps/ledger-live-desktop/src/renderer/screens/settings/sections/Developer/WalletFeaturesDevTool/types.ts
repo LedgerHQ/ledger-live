@@ -12,9 +12,11 @@ export interface WalletFeaturesViewModel {
   readonly isEnabled: boolean;
   readonly params: WalletFeatureParams;
   readonly allEnabled: boolean;
+  readonly hasSeenWalletV4Tour: boolean;
   readonly handleToggleAll: (enable: boolean) => void;
   readonly handleToggleEnabled: () => void;
   readonly handleToggleParam: (key: WalletFeatureParamKey) => void;
+  readonly handleToggleHasSeenTour: () => void;
 }
 
 export interface FeatureParamRowProps {

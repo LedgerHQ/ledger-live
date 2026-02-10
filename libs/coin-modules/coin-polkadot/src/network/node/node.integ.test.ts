@@ -1,7 +1,7 @@
-import { ApiPromise, HttpProvider } from "@polkadot/api";
-import { fetchValidators } from "./validators";
-import getApiPromise from "./apiPromise";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { ApiPromise, HttpProvider } from "@polkadot/api";
+import getApiPromise from "./apiPromise";
+import { fetchValidators } from "./validators";
 
 jest.mock("./apiPromise");
 

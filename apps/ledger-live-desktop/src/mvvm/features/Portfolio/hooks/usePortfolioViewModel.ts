@@ -8,6 +8,8 @@ import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/operation"
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
+import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
+import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 
 export interface PortfolioViewModelResult {
   readonly totalAccounts: number;
@@ -21,6 +23,7 @@ export interface PortfolioViewModelResult {
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
   readonly t: TFunction;
+  readonly isClearCacheBannerVisible: boolean;
 }
 
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
@@ -34,16 +37,23 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
+  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
+    shouldFilter: shouldFilterTokenOpsZeroAmount,
+  });
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      const isOperationPoisoned = isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      );
 
-      return !removeZeroAmountTokenOp;
+      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
+
+      return shouldFilterOperation;
     },
-    [shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
   );
 
   const totalAccounts = accounts.length;
@@ -56,6 +66,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   );
 
   const hasExchangeBannerCTA = !!portfolioExchangeBanner?.enabled;
+  const isClearCacheBannerVisible = useSelector(showClearCacheBannerSelector);
 
   return {
     totalAccounts,
@@ -69,5 +80,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     filterOperations,
     accounts,
     t,
+    isClearCacheBannerVisible,
   };
 };

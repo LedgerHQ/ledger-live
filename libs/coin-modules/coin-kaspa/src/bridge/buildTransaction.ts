@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 
+import { addressToScriptPublicKey, getFeeRate, parseExtendedPublicKey, scanUtxos } from "../logic";
+import { selectUtxos } from "../logic/utxos/selection";
 import {
   KaspaAccount,
   KaspaHwTransaction,
@@ -7,8 +9,6 @@ import {
   KaspaHwTransactionOutput,
   Transaction,
 } from "../types";
-import { selectUtxos } from "../logic/utxos/selection";
-import { addressToScriptPublicKey, getFeeRate, parseExtendedPublicKey, scanUtxos } from "../logic";
 
 /**
  * Assembles a transaction for the Kaspa network.

@@ -1,6 +1,6 @@
 ---
 description: Redux Toolkit createSlice best practices
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Redux Toolkit - createSlice

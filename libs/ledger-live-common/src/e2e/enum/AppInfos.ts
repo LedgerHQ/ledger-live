@@ -70,4 +70,6 @@ export class AppInfos {
   static readonly BASE = new AppInfos("Base");
 
   static readonly VECHAIN = new AppInfos("Vechain");
+
+  static readonly ZCASH = new AppInfos("Zcash");
 }

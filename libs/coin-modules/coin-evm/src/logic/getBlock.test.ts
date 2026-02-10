@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNodeApi } from "../network/node";
 import { EvmCoinConfig, setCoinConfig } from "../config";
+import { getNodeApi } from "../network/node";
 import { getBlock } from "./getBlock";
 
 jest.mock("../network/node");
@@ -15,18 +15,13 @@ describe("getBlock", () => {
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest.fn();
-    mockGetBlockByHeight
-      .mockResolvedValueOnce({
-        hash: "0xabc123",
-        height: 12345,
-        timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
-        transactionHashes: ["0xtx1", "0xtx2"],
-      })
-      .mockResolvedValueOnce({
-        hash: "0xparent123",
-        height: 12344,
-        timestamp: new Date("2025-01-15T10:29:00Z").getTime(),
-      });
+    mockGetBlockByHeight.mockResolvedValueOnce({
+      hash: "0xabc123",
+      height: 12345,
+      timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
+      parentHash: "0xparent123",
+      transactionHashes: ["0xtx1", "0xtx2"],
+    });
     const mockGetTransaction = jest.fn();
     mockGetTransaction
       .mockResolvedValueOnce({
@@ -77,7 +72,6 @@ describe("getBlock", () => {
       parent: {
         hash: "0xparent123",
         height: 12344,
-        time: new Date("2025-01-15T10:29:00Z"),
       },
     });
     expect(result.transactions).toHaveLength(2);

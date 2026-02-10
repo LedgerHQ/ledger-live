@@ -1,7 +1,7 @@
-import { getBalance } from "./getBalance";
+import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import coinConfig, { PolkadotCoinConfig } from "../config";
-import { HttpResponse, http } from "msw";
+import { getBalance } from "./getBalance";
 
 describe("getBalance", () => {
   const mockServer = setupServer();

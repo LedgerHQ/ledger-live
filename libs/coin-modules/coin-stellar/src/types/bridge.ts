@@ -1,5 +1,4 @@
-import { Horizon } from "@stellar/stellar-sdk";
-import type { BigNumber } from "bignumber.js";
+import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import type {
   Account,
   Operation,
@@ -9,7 +8,8 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { Horizon } from "@stellar/stellar-sdk";
+import type { BigNumber } from "bignumber.js";
 
 export type NetworkInfo = {
   family: "stellar";

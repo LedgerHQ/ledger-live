@@ -1,16 +1,16 @@
-import BigNumber from "bignumber.js";
-import type { PublicKey } from "@solana/web3.js";
-import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { AccountLike } from "@ledgerhq/types-live";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import type { PublicKey } from "@solana/web3.js";
+import BigNumber from "bignumber.js";
+import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
   SolanaTokenAccount,
   SolanaTokenAccountExtensions,
   SolanaTokenProgram,
   TransferFeeCalculated,
 } from "../types";
-import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
-import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function tokenIsListedOnLedger(currencyId: string, mint: string): Promise<boolean> {
   const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);

@@ -1,6 +1,4 @@
 // TODO: Remove this file once Celo bridge is removed
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
 import {
   decodeAccountId,
   emptyHistoryCache,
@@ -14,17 +12,19 @@ import {
   mergeOps,
   mergeNfts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { ExplorerApi } from "../network/explorer/types";
-import { getExplorerApi } from "../network/explorer";
-import { getNodeApi } from "../network/node/index";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getCoinConfig } from "../config";
 import { attachOperations, mergeSubAccounts, createSwapHistoryMap, getSyncHash } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
-import { getCoinConfig } from "../config";
+import { getExplorerApi } from "../network/explorer";
+import { ExplorerApi } from "../network/explorer/types";
+import { getNodeApi } from "../network/node/index";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.

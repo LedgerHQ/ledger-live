@@ -1,5 +1,7 @@
-import BigNumber from "bignumber.js";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "../types/bridge";
 import type {
   TransactionResponse,
@@ -7,8 +9,6 @@ import type {
   EstimatedFeesResponse,
   ERC20Transfer,
 } from "../types/common";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 
 /**
  * Sample Filecoin addresses for testing

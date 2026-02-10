@@ -40,7 +40,8 @@
     "@ledgerhq/errors": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "invariant": "2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

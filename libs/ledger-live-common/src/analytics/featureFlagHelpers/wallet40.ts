@@ -22,5 +22,6 @@ export const getWallet40Attributes = (
     quickActionCtas: wallet40FeatureFlag?.params?.quickActionCtas ?? false,
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
+    newReceiveDialog: wallet40FeatureFlag?.params?.newReceiveDialog ?? false,
   };
 };

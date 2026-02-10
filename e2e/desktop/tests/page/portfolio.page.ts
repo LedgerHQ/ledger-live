@@ -1,6 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
+import { waitForAccountsPersisted } from "tests/utils/userdata";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -170,6 +171,15 @@ export class PortfolioPage extends AppPage {
   @step("Wait for balance to be visible")
   async expectBalanceVisibility() {
     await this.totalBalance.waitFor({ state: "visible" });
+  }
+
+  @step("Expect app.json to be persisted with at least $1 account(s) within $2ms")
+  async expectAccountsPersistedInAppJson(
+    userdataFile: string,
+    minCount: number = 1,
+    timeoutMs: number = 5000,
+  ) {
+    await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
   }
 
   // Wallet 4.0 methods

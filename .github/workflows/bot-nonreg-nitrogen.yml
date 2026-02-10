@@ -2,10 +2,8 @@ name: "[Coin] - Daily non-reg with 'Nitrogen' - Scheduled"
 on:
   schedule:
     - cron: "9 16 * * 1-5" # every working day at 4pm we will do a daily non reg on what was merged in
-
 concurrency:
   group: bot-seed7
-
 jobs:
   run-bot:
     runs-on: [ledger-live-medium]
@@ -19,9 +17,9 @@ jobs:
           repositories: |
             coin-apps
             ledger-live
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Retrieving coin apps
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps
@@ -37,5 +35,5 @@ jobs:
           SEED: ${{ secrets.SEED7 }}
           BOT_ENVIRONMENT: production
           # We don't run these currencies daily because fees are expensive
-          BOT_DISABLED_CURRENCIES: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,desmos,sei_network,xion,velas_evm,umee,stargaze,klaytn,etherlink,telos_evm,polygon_zk_evm,polkadot,polygon_zk_evm_testnet,aptos_testnet,arbitrum_sepolia,base_sepolia,blast_sepolia,scroll_sepolia,zksync_sepolia,ethereum_sepolia,optimism_sepolia,linea_sepolia,near
+          BOT_DISABLED_CURRENCIES: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,desmos,xion,velas_evm,umee,stargaze,klaytn,etherlink,telos_evm,polygon_zk_evm,polkadot,polygon_zk_evm_testnet,aptos_testnet,arbitrum_sepolia,base_sepolia,blast_sepolia,scroll_sepolia,zksync_sepolia,ethereum_sepolia,optimism_sepolia,linea_sepolia,near
           BOT_FILTER_FEATURES: send

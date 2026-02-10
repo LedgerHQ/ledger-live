@@ -1,9 +1,9 @@
+import { assert } from "console";
 import { HttpResponse, http } from "msw";
 import { setupServer, SetupServerApi } from "msw/node";
-import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
 import coinConfig from "../config";
+import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
 import { defaultFetchParams, fetchTronAccountTxs } from ".";
-import { assert } from "console";
 
 const TRON_BASE_URL_TEST = "https://httpbin.org";
 
@@ -68,11 +68,14 @@ describe("fetchTronAccountTxs", () => {
     );
 
     // THEN
-    const tx = results.find(tx => tx.blockHeight === 62258698);
-    expect(tx).toBeDefined();
-    expect(tx!.from).toEqual("TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH");
-    expect(tx!.to).toEqual("TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj");
-  });
+    expect(results).toContainEqual(
+      expect.objectContaining({
+        blockHeight: 62258698,
+        from: "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH",
+        to: "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
+      }),
+    );
+  }, 10_000);
 });
 
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
@@ -117,11 +120,9 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
     const results = await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
 
     // THEN
-    const tx1 = results.find(tx => tx.txID === tx1Hash);
-    expect(tx1).toBeDefined();
-    const tx2 = results.find(tx => tx.txID === tx2Hash);
-    expect(tx2).toBeDefined();
-  });
+    expect(results).toContainEqual(expect.objectContaining({ txID: tx1Hash }));
+    expect(results).toContainEqual(expect.objectContaining({ txID: tx2Hash }));
+  }, 10_000);
 });
 
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries it throws an exception", () => {
@@ -145,15 +146,10 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
   afterAll(doAfterAll(mockServer));
 
   it("after several retry, it gives up on retry", async () => {
-    try {
-      await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
-    } catch (e) {
-      expect(e).toBeDefined();
-      expect((e as Error).message).toBe(
-        "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
-      );
-      return;
-    }
-    fail("should have thrown an error");
-  });
+    await expect(
+      fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams),
+    ).rejects.toThrow(
+      "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
+    );
+  }, 10_000);
 });

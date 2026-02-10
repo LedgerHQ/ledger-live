@@ -1,5 +1,5 @@
-import { API_BASE } from "./config";
 import { ApiResponseUtxo } from "../types";
+import { API_BASE } from "./config";
 
 export const getUtxosForAddresses = async (addresses: string[]): Promise<ApiResponseUtxo[]> => {
   try {

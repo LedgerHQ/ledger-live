@@ -299,8 +299,8 @@
     "manager": "My Ledger",
     "earn": "Earn",
     "exchange": "Buy / Sell",
-    "perps": "Perps",
     "swap": "Swap",
+    "perps": "Perpetuals",
     "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
@@ -810,7 +810,15 @@
     }
   },
   "card": {
-    "backToCard": "all cards"
+    "backToCard": "all cards",
+    "title": "Card",
+    "imageAlt": "Card Image",
+    "spendYourCrypto": "Spend your crypto",
+    "payDescription": "Pay online or in store with a crypto card",
+    "exploreCards": "Explore Cards",
+    "iAlreadyHaveACard": "I already have a card",
+    "unlockLiquidity": "Unlock liquidity",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
   },
   "lend": {
     "title": "Lend crypto",
@@ -1784,6 +1792,7 @@
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
+      "acceptTermsSponsored": "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
       "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
@@ -2204,6 +2213,19 @@
     "memoTag": {
       "title": "Need a Tag/Memo?",
       "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
+    }
+  },
+  "newReceive": {
+    "steps": {
+      "options": {
+        "fromBank": {
+          "title": "Bank transfer",
+          "description": "Receive stablecoin by sending cash"
+        },
+        "fromCrypto": {
+          "title": "Receive crypto"
+        }
+      }
     }
   },
   "send": {
@@ -4602,6 +4624,9 @@
         "enableAll": "Enable All",
         "disableAll": "Disable All",
         "featureParameters": "Feature Parameters",
+        "tourState": "Tour State",
+        "drawerPreview": "Drawer Preview",
+        "openDrawer": "Open Drawer",
         "showJson": "Show JSON",
         "hideJson": "Hide JSON"
       },
@@ -7859,7 +7884,13 @@
     "title": "Home",
     "today": "Today",
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto"
+    "noBalanceTitle": "Secure your crypto",
+    "perpsEntry": {
+      "title": "Perpetuals",
+      "description": "Trade with leverage",
+      "cta": "Discover"
+    },
+    "noDeviceTitle": "The most secure wallet"
   },
   "marketBanner": {
     "title": "Explore market",
@@ -7898,6 +7929,12 @@
       "opensea": "OpenSea"
     }
   },
+  "topBar": {
+    "activityIndicator": {
+      "refreshToolTip": "Tap to refresh",
+      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
+    }
+  },
   "geoBlocking": {
     "title": "Location unavailable",
     "description": "Ledger Wallet is not available in this location.",
@@ -7920,6 +7957,56 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "shielded": {
+      "state": {
+        "showBalance": "Show balance",
+        "pausedAt": "Paused at ",
+        "lastSync": "Last sync: {{date}}"
+      },
+      "flows": {
+        "export": {
+          "title": "Enable Zcash private balance",
+          "breadcrumbs": {
+            "0": "Birthday",
+            "1": "UFVK",
+            "2": "Device",
+            "3": "Confirmation"
+          },
+          "steps": {
+            "birthday": {
+              "text": "The birth height is the point on the blockchain where your wallet begins scanning for your funds.",
+              "cta": "Learn more",
+              "label": "Birthday height",
+              "tooltip": "Default: today's date. Change only for existing accounts with past private (shielded) activity.",
+              "syncFromZero": "This account received shielded ZEC in the past, but I can't retrieve the birth height. Scan from block 0 (this may take a long time).",
+              "error": "Invalid date"
+            },
+            "ufvk": {
+              "text": "To begin, you must export your Unified Full Viewing Key (UFVK). This action requires your confirmation on your Ledger device."
+            },
+            "device": {
+              "text": "Confirm UFVK export on your Ledger device"
+            },
+            "confirmation": {
+              "success": {
+                "title": "UFVK successfully imported",
+                "text": "You will be able to receive shielded ZEC and sign private transactions.",
+                "info": {
+                  "text": "Your Unified Full Viewing Key remains stored locally on your computer and is never transmitted or exposed to external systems.",
+                  "cta": "Learn more"
+                },
+                "warning": "Accounts with an older birth height may require a longer synchronisation (up to 2 hours). Please keep the app open until syncing finishes."
+              }
+            }
+          }
+        }
+      },
+      "startSync": "Start sync",
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      }
     }
   }
 }

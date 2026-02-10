@@ -1,10 +1,10 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import type { SuiAccount, Transaction } from "../types";
-import { calculateAmount } from "./utils";
+import { BigNumber } from "bignumber.js";
 import { estimateFees } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
+import type { SuiAccount, Transaction } from "../types";
+import { calculateAmount } from "./utils";
 
 /**
  * Fetch the transaction fees for a transaction

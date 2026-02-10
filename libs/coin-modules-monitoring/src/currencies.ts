@@ -45,7 +45,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         big: { address: "0x15610fa7ee546b96cb580be4060fae1c4bb15eca87f9a0aa931512bad445fc76" },
       },
     },
-    polkadot: {
+    assethub_polkadot: {
       accounts: {
         pristine: { address: "5HEDGMG7mYqh18Xs4BZpYZ3u7EPWUJ8hPDTJhq3cDZh1ztRW" },
         average: { address: "1zugcabYjgfQdMLC3cAzQ8tJZMo45tMnGpivpAzpxB4CZyK" },
@@ -87,7 +87,6 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         average: { address: "0x201cf09644cd5d88aa6db2d1670011325eea2c3198ddfd0c1aa549be0003bb24" },
         big: { address: "0xb8922507317d85197d70c2bc1afc949c759fd0a62c8841a4300d1e2b63649bf6" },
       },
-      skip: "403 issue",
     },
     celo: {
       accounts: {
@@ -107,7 +106,8 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "test-pristine.testnet" },
         average: { address: "nearkat.near" },
-        big: { address: "relay.aurora" },
+        // Note: waiting for TSD-8075
+        // big: { address: "relay.aurora" },
       },
     },
     cosmos: {
@@ -116,7 +116,6 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         average: { address: "cosmos1gs72s636mzfnc0re2qrvupz0daytv4057y30g6" },
         big: { address: "cosmos18ejqp3d6yejcq3rxj4z6fsne63uj23cykw92pp" },
       },
-      skip: "invalid url issue",
     },
     vechain: {
       accounts: {
@@ -165,23 +164,74 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         pristine: {
           address: "020319d3ace178361daf4a2438faa00ccacad7bd531c93173c1fc30ecc8173ef0f76",
         },
-        average: { address: "015febf058ea3d58e62363c0f5b546d4cb1a4439fc439dc3d333db192606e6defa" },
+        average: { address: "01a0d23e084a95cdee9c2fb226d54033d645873a7c7c9739de2158725c7dfe672f" },
         big: {
-          address: "8c15bba2d147859c7b7a8f43028eeb4d3c9571c6e36dfecc97c77463d3af08cd",
-          xpub: "02024c5e3ba7b1da49cda950319aec914cd3c720fbec3dcf25aa4add631e28f70aa9",
+          address: "01a0d23e084a95cdee9c2fb226d54033d645873a7c7c9739de2158725c7dfe672f",
         },
       },
-      skip: "xpub issues",
     },
     internet_computer: {
       accounts: {
         pristine: {
-          address: "020319d3ace178361daf4a2438faa00ccacad7bd531c93173c1fc30ecc8173ef0f76",
+          address: "24724ab008898cceeb03832dc21121ffe382a4492ae78ddb826b29304f8fd78f",
         },
-        average: { address: "015febf058ea3d58e62363c0f5b546d4cb1a4439fc439dc3d333db192606e6defa" },
-        big: { address: "015febf058ea3d58e62363c0f5b546d4cb1a4439fc439dc3d333db192606e6defa" },
+        average: { address: "06f46e2e891dee6a1e49b842139ecc494dd5dd22a466425c46016d535fcb0c2e" },
+        big: { address: "609d3e1e45103a82adc97d4f88c51f78dedb25701e8e51e8c4fec53448aadc29" },
       },
-      skip: "500 issue",
+    },
+    ton: {
+      accounts: {
+        pristine: {
+          address: "UQCOkKun5sht5xBKmSmFfjEkinsYjf_Mr1YL9FGKy8GJvjEo",
+          xpub: "8a7af2a4307b3120968149fbec5829df40b725aa05c5fe304ee0374c6b545266",
+        },
+        average: {
+          address: "UQAXGm8h_nvQfDwrC7Feb2KYcGGSA3PkZ0TQUzzDFOrqe2yt",
+          xpub: "cb0812e999bdcc447009b47f15391d1970ef6414269eaf54b3f510a63142c443",
+        },
+      },
+    },
+    cardano: {
+      accounts: {
+        pristine: {
+          address:
+            "addr1q9n2anrp5apezx00gef67y8dlysen2r6egfyr9zhg4503mwuwsrfe903g8wmla28n0fe3aw8sft0lfm27vu3zjz9a8rq28aemy",
+          xpub: "66aecc61a7439119ef4653af10edf92199a87aca124194574568f8ed",
+        },
+        average: {
+          address:
+            "addr1q9dkdemkwprf8qscpjpecpvqfw2aemempn0gzplr4rh2s2fwlqyt4mswmh4hl0nnq53r4rp798vj4c7p7f2wdgqnc8uqvvxkmk",
+          xpub: "483a1aa2538cf616ab6f772a12df1792075feebb55e0444a93b38220",
+        },
+      },
+    },
+    kaspa: {
+      accounts: {
+        pristine: {
+          address: "kaspa:qpkpngv2klv0wvexh5wvmyj52guu29rrh3745ym2ytyz0kvxkfp0js5e9kuch",
+          xpub: "41046c19a18ab7d8f73326bd1ccd92545239c51463bc7d5a136a22c827d986b242f90d3def7891cd761fbce4a51fe076f6fa03dbca4f02f5c09f79bc11a7d2868ee52011723ccef2f449ee47c9520db4b89f99794e72f2ad0b55c31e05439c54574776",
+        },
+        average: {
+          address: "kaspa:qzga59qp654072m0fcu725n9ckrp0968x4yhlj4ytpl8t98tf0d2k2up3ac2m",
+          xpub: "41040f36037aa864b763280fc89c2c7f30bae343b0690da58a003f2aa472bdf7b52b9a91c65da8a5085b36fe6774a6b7be5a5545a7601d58cf93abee1e4e22976a2f20247ff3c53bca80427bdb7480f1256b4281825c70846c4281f7392e15d32e7e31",
+        },
+      },
+    },
+    stacks: {
+      accounts: {
+        pristine: {
+          address: "SP1C3B9QFCQ3K792SC8TYV47VXQ8VM72DC4RBSFQ8",
+          xpub: "0205451d135e898813ab8b5b066af8724edcf8459c0c7755c7a58ec9e5c6e1f61c",
+        },
+        average: {
+          address: "SP3YNA01GHV76JARX6MXFDWJHWB9ESW7FEXBNPH6K",
+          xpub: "039e5aec6908db9413a065c4761405b7c385a13245d4a249db479f505c7fc1c91a",
+        },
+        big: {
+          address: "SP1C3B9QFCQ3K792SC8TYV47VXQ8VM72DC4RBSFQ8",
+          xpub: "0205451d135e898813ab8b5b066af8724edcf8459c0c7755c7a58ec9e5c6e1f61c",
+        },
+      },
     },
   };
 

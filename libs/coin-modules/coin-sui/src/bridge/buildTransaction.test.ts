@@ -1,14 +1,13 @@
 import { BigNumber } from "bignumber.js";
-import { buildTransaction } from "./buildTransaction";
+import { craftTransaction } from "../logic";
 import type { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount } from "../types/bridge.fixture";
+import { buildTransaction } from "./buildTransaction";
 
 // Mock the craftTransaction function
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
 }));
-
-import { craftTransaction } from "../logic";
 
 describe("buildTransaction", () => {
   const mockAccount: SuiAccount = {
@@ -70,16 +69,20 @@ describe("buildTransaction", () => {
       await buildTransaction(mockAccount, mockTransaction);
 
       // THEN
-      expect(craftTransaction).toHaveBeenCalledWith({
-        intentType: "transaction",
-        sender: mockAccount.freshAddress,
-        recipient: mockTransaction.recipient,
-        type: mockTransaction.mode,
-        amount: BigInt(mockTransaction.amount!.toString()),
-        asset: { type: "native" },
-        useAllAmount: false,
-        stakedSuiId: "",
-      });
+      expect(craftTransaction).toHaveBeenCalledWith(
+        {
+          intentType: "transaction",
+          sender: mockAccount.freshAddress,
+          recipient: mockTransaction.recipient,
+          type: mockTransaction.mode,
+          amount: BigInt(mockTransaction.amount!.toString()),
+          asset: { type: "native" },
+          useAllAmount: false,
+          stakedSuiId: "",
+        },
+        undefined,
+        undefined,
+      );
     });
 
     it("should call craftTransaction with correct parameters for token asset", async () => {
@@ -107,16 +110,68 @@ describe("buildTransaction", () => {
       });
 
       // THEN
-      expect(craftTransaction).toHaveBeenCalledWith({
-        intentType: "transaction",
-        sender: account.freshAddress,
-        recipient: mockTransaction.recipient,
-        type: mockTransaction.mode,
-        useAllAmount: false,
-        stakedSuiId: "",
-        amount: BigInt(mockTransaction.amount!.toString()),
-        asset: { type: "token", assetReference: "0x3::usdt::USDT" },
+      expect(craftTransaction).toHaveBeenCalledWith(
+        {
+          intentType: "transaction",
+          sender: account.freshAddress,
+          recipient: mockTransaction.recipient,
+          type: mockTransaction.mode,
+          useAllAmount: false,
+          stakedSuiId: "",
+          amount: BigInt(mockTransaction.amount!.toString()),
+          asset: { type: "token", assetReference: "0x3::usdt::USDT" },
+        },
+        undefined,
+        undefined,
+      );
+    });
+
+    it("should call craftTransaction with correct parameters for token asset with resolution data", async () => {
+      const account = createFixtureAccount({
+        id: "parentAccountId",
+        balance: BigNumber(0),
+        spendableBalance: BigNumber(0),
+        subAccounts: [
+          createFixtureAccount({
+            id: "subAccountId",
+            parentId: "parentAccountId",
+            type: "TokenAccount",
+            token: {
+              contractAddress: "0x3::usdt::USDT",
+            },
+          }),
+        ],
       });
+
+      // WHEN
+      await buildTransaction(account, {
+        ...mockTransaction,
+        subAccountId: "subAccountId",
+        coinType: "0x3::usdt::USDT",
+        tokenId: "tokenId",
+        mode: "token.send",
+      });
+
+      // THEN
+      expect(craftTransaction).toHaveBeenCalledWith(
+        {
+          intentType: "transaction",
+          sender: account.freshAddress,
+          recipient: mockTransaction.recipient,
+          type: "token.send",
+          useAllAmount: false,
+          stakedSuiId: "",
+          amount: BigInt(mockTransaction.amount!.toString()),
+          asset: { type: "token", assetReference: "0x3::usdt::USDT" },
+        },
+        undefined,
+        {
+          certificateSignatureKind: undefined,
+          deviceModelId: undefined,
+          tokenAddress: "0x3::usdt::USDT",
+          tokenId: "tokenId",
+        },
+      );
     });
 
     it("should return the result from craftTransaction", async () => {
@@ -146,6 +201,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           amount: BigInt("999999999999999999"),
         }),
+        undefined,
+        undefined,
       );
     });
 
@@ -163,6 +220,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           amount: BigInt("0"),
         }),
+        undefined,
+        undefined,
       );
     });
 
@@ -180,6 +239,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           type: "send",
         }),
+        undefined,
+        undefined,
       );
     });
 
@@ -197,6 +258,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           recipient: "0x9876543210fedcba",
         }),
+        undefined,
+        undefined,
       );
     });
 
@@ -214,6 +277,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           sender: "0xabcdef1234567890",
         }),
+        undefined,
+        undefined,
       );
     });
 
@@ -263,6 +328,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           recipient: "",
         }),
+        undefined,
+        undefined,
       );
     });
 
@@ -281,6 +348,8 @@ describe("buildTransaction", () => {
         expect.objectContaining({
           recipient: longAddress,
         }),
+        undefined,
+        undefined,
       );
     });
   });

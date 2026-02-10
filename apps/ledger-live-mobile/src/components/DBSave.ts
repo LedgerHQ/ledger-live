@@ -6,7 +6,7 @@ import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
-import { useTrackingPairs } from "~/actions/general";
+import { useTrackingPairs, useUserSettings } from "~/actions/general";
 import {
   saveAccounts,
   saveBle,
@@ -29,7 +29,10 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
-import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import {
+  extractPersistedCALFromState,
+  persistedCALContentEqual,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
@@ -152,10 +155,8 @@ const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
-const cryptoAssetsNotEquals = (a: State, b: State) => {
-  // Compare RTK Query state reference
-  return a.cryptoAssetsApi !== b.cryptoAssetsApi;
-};
+const cryptoAssetsNotEquals = (a: State, b: State) =>
+  !persistedCALContentEqual(extractPersistedCALFromState(a), extractPersistedCALFromState(b));
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
@@ -163,8 +164,12 @@ const extractIdentitiesForPersistence = (state: State) =>
 
 export const ConfigureDBSaveEffects = () => {
   const trackingPairs = useTrackingPairs();
+  const userSettings = useUserSettings();
   const state = useCountervaluesState();
-  const rawState = useMemo(() => exportCountervalues(state, trackingPairs), [state, trackingPairs]);
+  const rawState = useMemo(
+    () => exportCountervalues(state, trackingPairs, userSettings.selectedTimeRange),
+    [state, trackingPairs, userSettings.selectedTimeRange],
+  );
   const lastRawState = useRef(rawState);
   const countervaluesChangesStats = useCallback(() => {
     const changed = lastRawState.current !== rawState;

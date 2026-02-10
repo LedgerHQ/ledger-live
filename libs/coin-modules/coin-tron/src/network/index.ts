@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -8,7 +9,6 @@ import compact from "lodash/compact";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
-import { stringify } from "querystring";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
 import type {
@@ -300,9 +300,10 @@ async function extendExpiration(
       extension,
     )) as unknown as Promise<SendTransactionDataSuccess>;
   } catch (err) {
-    if (err instanceof Error && err.message === "Invalid extension provided") {
-      // https://github.com/tronprotocol/tronweb/blob/15b8f1d5633a2d87f4e38cbd3c7b807da18a10c4/src/lib/TransactionBuilder/TransactionBuilder.ts#L2450-L2451
-      log("tron/extendExpiration", err.message, {
+    const message = err instanceof Error ? err.message : typeof err === "string" ? err : "";
+    if (message === "Invalid extension provided") {
+      // https://github.com/tronprotocol/tronweb/blob/2da130f4a295b9e9bd45361c15b5ca9d689cfa65/src/lib/transactionBuilder.js#L2929
+      log("tron/extendExpiration", message, {
         preparedTransaction,
         extensionInS: extension,
         extensionInMs: extension * 1000,
@@ -575,7 +576,7 @@ export async function fetchTronAccountTxs(
         invalids.push(i);
       }
     }
-    txs.filter(tx => !isValid(tx)).map((tx, index) => index);
+    txs.filter(tx => !isValid(tx)).map((_tx, index) => index);
     return invalids;
   }
 

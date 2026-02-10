@@ -1,14 +1,14 @@
-import { from, Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import invariant from "invariant";
-import flatMap from "lodash/flatMap";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { isAccount } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "../network/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { AccountLike } from "@ledgerhq/types-live";
-import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
+import invariant from "invariant";
+import flatMap from "lodash/flatMap";
+import { from, Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import polkadotAPI from "../network";
+import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "../network/types";
+import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
 
 type Options =
   | { name: string; type: StringConstructor; desc: string }

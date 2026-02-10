@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTransactionCount as externalGetTransactionCount } from "../network/node/rpc.common";
-import ledgerNode from "../network/node/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
+import ledgerNode from "../network/node/ledger";
+import { getTransactionCount as externalGetTransactionCount } from "../network/node/rpc.common";
 import { getSequence } from "./getSequence";
 
 jest.mock("../network/node/rpc.common", () => ({

@@ -1,8 +1,8 @@
 import { ParsedInstruction } from "@solana/web3.js";
 import { create, Infer } from "superstruct";
-import { IX_STRUCTS, IX_TITLES, TokenInstructionType } from "./types";
-import { ParsedInfo } from "../../validators";
 import { SolanaTokenProgram } from "../../../../types";
+import { ParsedInfo } from "../../validators";
+import { IX_STRUCTS, IX_TITLES, TokenInstructionType } from "./types";
 
 export function parseSplTokenInstruction(
   ix: ParsedInstruction & { program: SolanaTokenProgram },

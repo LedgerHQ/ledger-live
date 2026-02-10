@@ -1,11 +1,9 @@
 import { AssertionError, fail } from "assert";
-import axios from "axios";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import axios from "axios";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
@@ -14,6 +12,8 @@ import {
   etherscanOperationToOperations,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
+import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
   etherscanERC1155Operations,
@@ -875,6 +875,35 @@ describe("EVM Family", () => {
             endBlock: 100,
           },
         });
+      });
+
+      it("should use transactionHash when hash is missing for internal transactions (blockscout specific)", async () => {
+        const blockscoutInternalOps = etherscanInternalOperations.map(op => ({
+          ...op,
+          hash: undefined,
+          transactionHash: op.hash, // <-- this is what is returned by blockscout
+        }));
+
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: blockscoutInternalOps,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastInternalOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          ].flat(),
+        );
       });
     });
 

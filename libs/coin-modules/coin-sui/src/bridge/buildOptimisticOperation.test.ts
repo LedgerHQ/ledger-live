@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
+import { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { SuiAccount, Transaction } from "../types";
 
 describe("buildOptimisticOperation", () => {
   it("should build optimistic operation for transfer", () => {
