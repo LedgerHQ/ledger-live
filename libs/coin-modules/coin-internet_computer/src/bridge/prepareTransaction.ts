@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "@zondax/ledger-live-icp";
+import { validateAddress } from "../dfinity/validation";
 import { Transaction } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
 

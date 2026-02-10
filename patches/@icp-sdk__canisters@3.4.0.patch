@@ -1,0 +1,73 @@
+diff --git a/package.json b/package.json
+index dcd6391f45575ba23aa58539857b003a467c187b..1e6ace62f37263d8ab4519a8143b4a07f8a342bf 100644
+--- a/package.json
++++ b/package.json
+@@ -11,57 +11,57 @@
+     ".": {
+       "types": "./index.d.ts",
+       "import": "./index.js",
+-      "require": "./index.mjs"
++      "require": "./index.js"
+     },
+     "./assets": {
+       "types": "./assets/index.d.ts",
+       "import": "./assets/index.js",
+-      "require": "./assets/index.mjs"
++      "require": "./assets/index.js"
+     },
+     "./ckbtc": {
+       "types": "./ckbtc/index.d.ts",
+       "import": "./ckbtc/index.js",
+-      "require": "./ckbtc/index.mjs"
++      "require": "./ckbtc/index.js"
+     },
+     "./cketh": {
+       "types": "./cketh/index.d.ts",
+       "import": "./cketh/index.js",
+-      "require": "./cketh/index.mjs"
++      "require": "./cketh/index.js"
+     },
+     "./cmc": {
+       "types": "./cmc/index.d.ts",
+       "import": "./cmc/index.js",
+-      "require": "./cmc/index.mjs"
++      "require": "./cmc/index.js"
+     },
+     "./ic-management": {
+       "types": "./ic-management/index.d.ts",
+       "import": "./ic-management/index.js",
+-      "require": "./ic-management/index.mjs"
++      "require": "./ic-management/index.js"
+     },
+     "./ledger/icp": {
+       "types": "./ledger/icp/index.d.ts",
+       "import": "./ledger/icp/index.js",
+-      "require": "./ledger/icp/index.mjs"
++      "require": "./ledger/icp/index.js"
+     },
+     "./ledger/icrc": {
+       "types": "./ledger/icrc/index.d.ts",
+       "import": "./ledger/icrc/index.js",
+-      "require": "./ledger/icrc/index.mjs"
++      "require": "./ledger/icrc/index.js"
+     },
+     "./ledger/cycles": {
+       "types": "./ledger/cycles/index.d.ts",
+       "import": "./ledger/cycles/index.js",
+-      "require": "./ledger/cycles/index.mjs"
++      "require": "./ledger/cycles/index.js"
+     },
+     "./nns": {
+       "types": "./nns/index.d.ts",
+       "import": "./nns/index.js",
+-      "require": "./nns/index.mjs"
++      "require": "./nns/index.js"
+     },
+     "./sns": {
+       "types": "./sns/index.d.ts",
+       "import": "./sns/index.js",
+-      "require": "./sns/index.mjs"
++      "require": "./sns/index.js"
+     }
+   },
+   "scripts": {

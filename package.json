@@ -291,7 +291,8 @@
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
       "react-native@0.79.7": "patches/react-native@0.79.7.patch",
       "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch",
-      "@callstack/repack@5.2.3": "patches/@callstack__repack@5.2.3.patch"
+      "@callstack/repack@5.2.3": "patches/@callstack__repack@5.2.3.patch",
+      "@icp-sdk/canisters@3.4.0": "patches/@icp-sdk__canisters@3.4.0.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

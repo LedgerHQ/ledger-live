@@ -1,12 +1,12 @@
 import { Account } from "@ledgerhq/types-live";
-import { validateAddress } from "@zondax/ledger-live-icp/utils";
 import BigNumber from "bignumber.js";
+import { validateAddress } from "../dfinity/validation";
 import { InvalidMemoICP } from "../errors";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { Transaction } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
 
-jest.mock("@zondax/ledger-live-icp/utils");
+jest.mock("../dfinity/validation");
 jest.mock("../logic/validateMemo");
 
 describe("getTransactionStatus", () => {
