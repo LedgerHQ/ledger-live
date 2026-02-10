@@ -1,10 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
-import { getLastBlock, getBlockInfoByHeight, getBlockByHeight, getOperations } from "./grpcClient";
+import { getLastBlock, getBlockInfoByHeight, getBlockByHeight } from "./grpcClient";
 
 describe("grpcClient", () => {
   const currency = getCryptoCurrencyById("concordium");
-  const ADDRESS_WITH_BALANCE = "2x4m3rsdRivWi7rpJThd8CEje3TmYGvRAsix6LxU6EUp8dAtLv";
 
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({

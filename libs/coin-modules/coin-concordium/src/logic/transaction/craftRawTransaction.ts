@@ -1,11 +1,9 @@
 import { log } from "@ledgerhq/logs";
-import { TransactionType, type Transaction } from "@ledgerhq/hw-app-concordium/lib/types";
+import type { Transaction } from "@ledgerhq/hw-app-concordium/lib/types";
 import { AccountAddress } from "@ledgerhq/hw-app-concordium/lib/address";
 import {
-  deserializeTransfer,
-  deserializeTransferWithMemo,
-  serializeTransfer,
-  serializeTransferWithMemo,
+  deserializeTransaction,
+  serializeTransaction,
 } from "@ledgerhq/hw-app-concordium/lib/serialization";
 
 /**
@@ -27,48 +25,25 @@ export async function craftRawTransaction(
   serializedTransaction: string;
 }> {
   try {
-    const buffer = Buffer.from(transaction, "hex");
-
-    // Try to deserialize - hw-app will validate the buffer format
-    let accountTransaction: Transaction;
-    try {
-      accountTransaction = deserializeTransfer(buffer);
-    } catch {
-      try {
-        accountTransaction = deserializeTransferWithMemo(buffer);
-      } catch (error) {
-        throw new Error(
-          `Failed to deserialize transaction: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
-
+    const deserializedTransaction = deserializeTransaction(Buffer.from(transaction, "hex"));
     const senderAddress = AccountAddress.fromBase58(sender);
-    const transactionSenderAddress = accountTransaction.header.sender.address;
 
-    if (transactionSenderAddress !== sender) {
+    if (deserializedTransaction.header.sender.address !== sender) {
       throw new Error("Sender address does not match the transaction account");
     }
 
     const updatedTransaction: Transaction = {
-      type: accountTransaction.type,
+      type: deserializedTransaction.type,
       header: {
         sender: senderAddress,
         nonce: sequence,
-        expiry: accountTransaction.header.expiry,
-        energyAmount: accountTransaction.header.energyAmount,
+        expiry: deserializedTransaction.header.expiry,
+        energyAmount: deserializedTransaction.header.energyAmount,
       },
-      payload: accountTransaction.payload,
+      payload: deserializedTransaction.payload,
     };
 
-    let serializedBuffer: Buffer;
-    if (accountTransaction.type === TransactionType.Transfer) {
-      serializedBuffer = serializeTransfer(updatedTransaction);
-    } else {
-      serializedBuffer = serializeTransferWithMemo(updatedTransaction);
-    }
-
-    const serializedTransaction = serializedBuffer.toString("hex");
+    const serializedTransaction = serializeTransaction(updatedTransaction).toString("hex");
 
     return {
       nativeTransaction: updatedTransaction,

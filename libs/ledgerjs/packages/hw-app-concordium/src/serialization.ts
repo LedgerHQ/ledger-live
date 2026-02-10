@@ -774,3 +774,76 @@ export const deserializeTransferWithMemo = (buffer: Buffer): Transaction => {
     },
   };
 };
+
+/**
+ * Gets the transaction type from a serialized transaction buffer.
+ *
+ * Common header format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8][type:1]
+ * The type byte is at offset 60 (32+8+8+4+8).
+ *
+ * Payload structure varies by type:
+ * - Transfer (0x03): [recipient:32][amount:8]
+ * - TransferWithMemo (0x16): [recipient:32][memo_length:2][memo:N][amount:8]
+ *
+ * @param buffer - Serialized transaction buffer
+ * @returns The transaction type
+ * @throws Error if buffer is too short or type is invalid
+ */
+export function getTransactionType(buffer: Buffer): TransactionType {
+  const TYPE_OFFSET = 60; // 32 (sender) + 8 (nonce) + 8 (energy) + 4 (payloadSize) + 8 (expiry)
+
+  if (buffer.length <= TYPE_OFFSET) {
+    throw new Error(
+      `Transaction buffer too short: expected at least ${TYPE_OFFSET + 1} bytes, got ${buffer.length}`,
+    );
+  }
+
+  const type = buffer.readUInt8(TYPE_OFFSET);
+
+  if (type !== TransactionType.Transfer && type !== TransactionType.TransferWithMemo) {
+    throw new Error(
+      `Unsupported transaction type: ${type} (0x${type.toString(16)}). Expected Transfer (${TransactionType.Transfer}) or TransferWithMemo (${TransactionType.TransferWithMemo})`,
+    );
+  }
+
+  return type;
+}
+
+/**
+ * Deserializes a transaction buffer by automatically detecting its type.
+ *
+ * @param buffer - Serialized transaction buffer
+ * @returns The deserialized transaction
+ * @throws Error if buffer is invalid or type is unsupported
+ */
+export function deserializeTransaction(buffer: Buffer): Transaction {
+  const type = getTransactionType(buffer);
+
+  switch (type) {
+    case TransactionType.Transfer:
+      return deserializeTransfer(buffer);
+    case TransactionType.TransferWithMemo:
+      return deserializeTransferWithMemo(buffer);
+    default:
+      // This should never happen since getTransactionType validates the type
+      throw new Error(`Unexpected transaction type: ${type}`);
+  }
+}
+
+/**
+ * Serializes a transaction by automatically using the correct serializer based on its type.
+ *
+ * @param transaction - The transaction to serialize
+ * @returns The serialized transaction buffer
+ * @throws Error if transaction type is unsupported
+ */
+export function serializeTransaction(transaction: Transaction): Buffer {
+  switch (transaction.type) {
+    case TransactionType.Transfer:
+      return serializeTransfer(transaction);
+    case TransactionType.TransferWithMemo:
+      return serializeTransferWithMemo(transaction);
+    default:
+      throw new Error(`Unsupported transaction type for serialization: ${transaction.type}`);
+  }
+}

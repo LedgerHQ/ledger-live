@@ -196,7 +196,7 @@ describe("craftRawTransaction", () => {
 
       await expect(
         craftRawTransaction("aabbccdd", VALID_ADDRESS, PUBLIC_KEY, BigInt(1)),
-      ).rejects.toThrow("Address buffer must be 32 bytes");
+      ).rejects.toThrow("Transaction buffer too short");
     });
 
     it("should throw error for empty hex string", async () => {
@@ -218,7 +218,7 @@ describe("craftRawTransaction", () => {
 
       await expect(
         craftRawTransaction(buffer.toString("hex"), VALID_ADDRESS, PUBLIC_KEY, BigInt(1)),
-      ).rejects.toThrow("Expected TransferWithMemo type (22), got 99");
+      ).rejects.toThrow("Unsupported transaction type: 99");
     });
   });
 

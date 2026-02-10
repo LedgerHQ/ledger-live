@@ -88,6 +88,12 @@ For a smooth and quick integration:
     *   [Parameters](#parameters-21)
 *   [deserializeTransferWithMemo](#deserializetransferwithmemo)
     *   [Parameters](#parameters-22)
+*   [getTransactionType](#gettransactiontype)
+    *   [Parameters](#parameters-23)
+*   [deserializeTransaction](#deserializetransaction)
+    *   [Parameters](#parameters-24)
+*   [serializeTransaction](#serializetransaction)
+    *   [Parameters](#parameters-25)
 *   [IdOwnershipProofs](#idownershipproofs)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
 *   [Address](#address-1)
@@ -111,9 +117,9 @@ For a smooth and quick integration:
     *   [payload](#payload)
 *   [SigningResult](#signingresult)
 *   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-26)
 *   [chunkBuffer](#chunkbuffer)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-27)
 
 ### AccountAddress
 
@@ -552,6 +558,56 @@ Expected format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry
 *   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized TransferWithMemo transaction
 
 Returns **[Transaction](#transaction)** Structured Transaction with all fields including memo
+
+### getTransactionType
+
+Gets the transaction type from a serialized transaction buffer.
+
+Common header format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry:8]\[type:1]
+The type byte is at offset 60 (32+8+8+4+8).
+
+Payload structure varies by type:
+
+*   Transfer (0x03): \[recipient:32]\[amount:8]
+*   TransferWithMemo (0x16): \[recipient:32]\[memo\_length:2]\[memo:N]\[amount:8]
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction buffer
+
+<!---->
+
+*   Throws **any** Error if buffer is too short or type is invalid
+
+Returns **[TransactionType](#transactiontype)** The transaction type
+
+### deserializeTransaction
+
+Deserializes a transaction buffer by automatically detecting its type.
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction buffer
+
+<!---->
+
+*   Throws **any** Error if buffer is invalid or type is unsupported
+
+Returns **[Transaction](#transaction)** The deserialized transaction
+
+### serializeTransaction
+
+Serializes a transaction by automatically using the correct serializer based on its type.
+
+#### Parameters
+
+*   `transaction` **[Transaction](#transaction)** The transaction to serialize
+
+<!---->
+
+*   Throws **any** Error if transaction type is unsupported
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** The serialized transaction buffer
 
 ### IdOwnershipProofs
 
