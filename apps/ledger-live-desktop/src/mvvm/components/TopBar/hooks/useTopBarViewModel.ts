@@ -1,11 +1,9 @@
 import { TopBarAction } from "../types";
-import { useTranslation } from "react-i18next";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
 
 const useTopBarViewModel = () => {
-  const { t } = useTranslation();
-  const { handleDiscreet, discreetIcon } = useDiscreetMode();
+  const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
 
   const {
     hasAccounts,
@@ -29,7 +27,7 @@ const useTopBarViewModel = () => {
       : []),
     {
       label: "discreet",
-      tooltip: t("settings.discreet"),
+      tooltip: discreetTooltip,
       icon: discreetIcon,
       isInteractive: true,
       onClick: handleDiscreet,

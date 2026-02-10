@@ -7940,8 +7940,15 @@
   },
   "topBar": {
     "activityIndicator": {
-      "refreshToolTip": "Tap to refresh",
-      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
+      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "upToDate": "You're up to date",
+      "minutesAgo_one": "Last sync: {{count}} min ago. Tap to refresh",
+      "minutesAgo_other": "Last sync: {{count}} mins ago. Tap to refresh",
+      "hoursAgo_one": "Last sync: {{count}} hour ago. Tap to refresh",
+      "hoursAgo_other": "Last sync: {{count}} hours ago. Tap to refresh",
+      "daysAgo_one": "Last sync: {{count}} day ago. Tap to refresh",
+      "daysAgo_other": "Last sync: {{count}} days ago. Tap to refresh"
     }
   },
   "geoBlocking": {
