@@ -33,6 +33,7 @@ describe("EVM Arbitrum Network", () => {
 
       const internalOperations = operations.filter(op => op.details?.internal === true);
 
+      expect(internalOperations.length).toBeGreaterThan(0);
       internalOperations.forEach(op => {
         expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       });
