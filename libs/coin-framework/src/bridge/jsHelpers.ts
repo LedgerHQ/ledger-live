@@ -338,10 +338,7 @@ const createScanContext = (syncConfig: SyncConfig): ScanContext => {
   const subscriptions: Array<{ unsubscribe: () => void }> = [];
   const inFlightPromises = new Set<Promise<void>>();
   const inFlightResolvers = new Set<() => void>();
-  const scanAccountsConcurrency = Math.max(
-    1,
-    (syncConfig as SyncConfig & { scanAccountsConcurrency?: number }).scanAccountsConcurrency ?? 1,
-  );
+  const scanAccountsConcurrency = Math.max(1, syncConfig.scanAccountsConcurrency ?? 1);
 
   const resolveInFlight = () => {
     inFlightResolvers.forEach(resolve => resolve());
