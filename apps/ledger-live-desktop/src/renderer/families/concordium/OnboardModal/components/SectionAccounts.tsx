@@ -81,6 +81,7 @@ export const SectionAccounts = ({
   );
 };
 
+// Overlay blocks pointer events on AccountRow which sets pointer-events: auto explicitly
 const SectionAccountsStyled = styled(Box)`
   position: relative;
   &::after {

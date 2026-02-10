@@ -162,7 +162,6 @@ describe("OnboardModal helpers", () => {
 
       const result = prepareAccountsForAdding({
         selectedAccounts: [usedAccount, unusedAccount],
-        existingAccounts: [],
         editedNames: {},
         onboardingResult: { completedAccount },
       });
@@ -177,7 +176,6 @@ describe("OnboardModal helpers", () => {
 
       const result = prepareAccountsForAdding({
         selectedAccounts: [usedAccount],
-        existingAccounts: [],
         editedNames: {},
       });
 

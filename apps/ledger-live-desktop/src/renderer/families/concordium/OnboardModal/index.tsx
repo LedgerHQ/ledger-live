@@ -275,7 +275,6 @@ class OnboardModal extends PureComponent<Props, State> {
 
     const { accounts, renamings } = prepareAccountsForAdding({
       selectedAccounts,
-      existingAccounts,
       editedNames,
       onboardingResult,
     });

@@ -40,7 +40,6 @@ export function resolveCreatableAccountName(
 
 export type AddAccountsConfig = {
   selectedAccounts: Account[];
-  existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
   onboardingResult?: {
     completedAccount: Account;
