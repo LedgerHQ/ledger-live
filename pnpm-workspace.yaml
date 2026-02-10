@@ -28,7 +28,7 @@ catalog:
   "@ledgerhq/speculos-device-controller": 0.2.3
   "@ledgerhq/lumen-design-core": 0.0.48
   "@ledgerhq/lumen-ui-react": 0.0.78
-  "@ledgerhq/lumen-ui-rnative": 0.0.65
+  "@ledgerhq/lumen-ui-rnative": 0.0.68
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
