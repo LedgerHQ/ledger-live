@@ -1,11 +1,13 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
 import { track } from "~/analytics";
-import { MockComponent } from "./shared";
+import { MockDrawerComponent } from "./shared";
 
-describe("UpsellFlex", () => {
-  it("Should render UpsellFlex", async () => {
-    const { getByText } = render(<MockComponent />);
+describe("Reborn Buy Device Drawer", () => {
+  it("Should render reborn drawer", async () => {
+    const { user, getByRole, getByText } = render(<MockDrawerComponent />);
+
+    await user.press(getByRole("button"));
 
     expect(getByText(/you need a ledger/i)).toBeVisible();
     expect(getByText(/buy your ledger now/i)).toBeVisible();
@@ -13,7 +15,9 @@ describe("UpsellFlex", () => {
   });
 
   it("Should call tracking correctly", async () => {
-    const { user, getByText } = render(<MockComponent />);
+    const { user, getByText, getByRole } = render(<MockDrawerComponent />);
+    await user.press(getByRole("button"));
+
     await user.press(getByText(/i already have a ledger, set it up/i));
     expect(track).toHaveBeenCalledWith("message_clicked", {
       message: "I already have a device, set it up now",
