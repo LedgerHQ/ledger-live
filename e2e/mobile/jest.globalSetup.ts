@@ -17,7 +17,7 @@ import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
+import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 
 export default async function setup(): Promise<void> {
   const envFileName = process.env.ENV_FILE || ".env.mock";
