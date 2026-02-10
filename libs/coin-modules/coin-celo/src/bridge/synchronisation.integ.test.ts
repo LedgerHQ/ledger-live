@@ -6,7 +6,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 const defaultInfo = {
-  address: "0x6D03813A75c71e55401aFcAE02fb299416Dc8574",
+  address: "0xC6aE6b3678EA9617f690B76126522a3d103E66a9",
   currency: getCryptoCurrencyById("celo"),
   index: 0,
   derivationPath: "44'/52752'/0'",
@@ -46,8 +46,8 @@ describe("Integration — getAccountShape with real implementations", () => {
   it("should fetch account data with expected structure", async () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
-    expect(result.balance).toEqual(BigNumber(306028106371000000));
-    expect(result.spendableBalance).toEqual(BigNumber(6028106371000000));
+    expect(result.balance).toEqual(new BigNumber(745784106371000000));
+    expect(result.spendableBalance).toEqual(BigNumber(445784106371000000));
     expect(result.blockHeight).toBeGreaterThan(0);
     expect(result.operations?.length).toBeGreaterThan(0);
     expect(result.celoResources?.lockedBalance).toEqual(BigNumber(300000000000000000));
@@ -57,12 +57,12 @@ describe("Integration — getAccountShape with real implementations", () => {
   it("should get account without locked balance", async () => {
     // Call with real implementations - will connect to actual network endpoints
     const result = await getAccountShape(
-      { ...defaultInfo, address: "0x200a27e7a6b07af5883682930addda1941b115f3" },
+      { ...defaultInfo, address: "0xaAD5ec1c8b1DBD1b9e8beD143f39df0C674b0B92" },
       defaultConfig,
     );
 
-    expect(result.balance).toEqual(BigNumber(7874979000000000));
-    expect(result.spendableBalance).toEqual(BigNumber(7874979000000000));
+    expect(result.balance).toEqual(BigNumber(250000000000000000));
+    expect(result.spendableBalance).toEqual(BigNumber(250000000000000000));
     expect(result.celoResources?.lockedBalance).toEqual(BigNumber(0));
     expect(result.celoResources?.nonvotingLockedBalance).toEqual(BigNumber(0));
   }, 10000);
