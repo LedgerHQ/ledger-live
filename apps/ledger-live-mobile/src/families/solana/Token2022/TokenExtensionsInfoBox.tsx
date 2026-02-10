@@ -151,7 +151,6 @@ export default function TokenExtensionsInfoBox({
             <Button
               type="color"
               size="small"
-              maxWidth={150}
               alignSelf="center"
               outline
               Icon={InfoMedium}
