@@ -1,9 +1,9 @@
-import isEqual from "lodash/isEqual";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import isEqual from "lodash/isEqual";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getEstimatedFees } from "./getFeesForTransaction";
 import type { AlgorandAccount, Transaction } from "./types";
-import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Calculate fees for the current transaction

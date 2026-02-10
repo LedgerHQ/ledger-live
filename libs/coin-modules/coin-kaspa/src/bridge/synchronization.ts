@@ -1,9 +1,9 @@
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AccountAddresses, KaspaAccount } from "../types";
 import { Operation } from "@ledgerhq/types-live";
 import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../network";
+import { AccountAddresses, KaspaAccount } from "../types";
 
 export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const { initialAccount, index, rest } = info;

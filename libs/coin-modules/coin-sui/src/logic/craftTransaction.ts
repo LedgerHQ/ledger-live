@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import type { SuiTransactionMode, CoreTransaction } from "../types";
+import BigNumber from "bignumber.js";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import type { SuiTransactionMode, CoreTransaction } from "../types";
 
 export async function craftTransaction(
   {

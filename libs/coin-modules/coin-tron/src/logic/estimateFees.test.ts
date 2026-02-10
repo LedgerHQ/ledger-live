@@ -1,6 +1,6 @@
-import { estimateFees } from "./estimateFees";
-import { ACTIVATION_FEES_TRC_20, STANDARD_FEES_NATIVE } from "./constants";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { ACTIVATION_FEES_TRC_20, STANDARD_FEES_NATIVE } from "./constants";
+import { estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
   it("should calculate fees for native trx transactionIntent", async () => {

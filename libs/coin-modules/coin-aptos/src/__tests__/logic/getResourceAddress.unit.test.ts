@@ -1,8 +1,8 @@
 import { WriteSetChange, Event } from "@aptos-labs/ts-sdk";
-import { AptosTransaction } from "../../types";
-import { getResourceAddress } from "../../logic/getResourceAddress";
 import { APTOS_ASSET_ID, APTOS_COIN_CHANGE, APTOS_FUNGIBLE_STORE } from "../../constants";
 import { getEventCoinAddress, getEventFAAddress } from "../../logic/getCoinAndAmounts";
+import { getResourceAddress } from "../../logic/getResourceAddress";
+import { AptosTransaction } from "../../types";
 
 describe("getResourceAddress", () => {
   it("should return coin name from the change", () => {

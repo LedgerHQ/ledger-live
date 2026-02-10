@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { SuiAccount, Transaction } from "../types";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 const mockEstimateFees = jest.fn();
 jest.mock("../logic", () => ({

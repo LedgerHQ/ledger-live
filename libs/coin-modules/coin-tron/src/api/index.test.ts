@@ -1,3 +1,6 @@
+import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import coinConfig from "../config";
+import { TronConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -7,9 +10,6 @@ import {
   listOperations,
   lastBlock,
 } from "../logic";
-import coinConfig from "../config";
-import { TronConfig } from "../config";
-import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 
 jest.mock("../config", () => ({

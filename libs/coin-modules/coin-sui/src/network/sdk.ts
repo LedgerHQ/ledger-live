@@ -1,3 +1,20 @@
+import type {
+  Block,
+  BlockInfo,
+  BlockTransaction,
+  BlockOperation,
+  Operation as Op,
+  Page,
+  Stake,
+  StakeState,
+  AssetInfo,
+} from "@ledgerhq/coin-framework/api/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getEnv } from "@ledgerhq/live-env";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { getInputObjects } from "@mysten/signers/ledger";
 import {
   BalanceChange,
   Checkpoint,
@@ -17,23 +34,11 @@ import {
   TransactionBlockData,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
+import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
-import type {
-  Block,
-  BlockInfo,
-  BlockTransaction,
-  BlockOperation,
-  Operation as Op,
-  Page,
-  Stake,
-  StakeState,
-  AssetInfo,
-} from "@ledgerhq/coin-framework/api/index";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { log } from "@ledgerhq/logs";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import coinConfig from "../config";
+import { ONE_SUI } from "../constants";
 import type {
   Transaction as TransactionType,
   SuiValidator,
@@ -41,12 +46,7 @@ import type {
   CoreTransaction,
 } from "../types";
 import { ensureAddressFormat } from "../utils";
-import coinConfig from "../config";
-import { getEnv } from "@ledgerhq/live-env";
-import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
-import { getCurrentSuiPreloadData } from "../bridge/preload";
-import { ONE_SUI } from "../constants";
-import { getInputObjects } from "@mysten/signers/ledger";
+import { getCurrentSuiPreloadData } from "./preload-data";
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -627,7 +627,7 @@ export const getOperations = async (
 export const filterOperations = (
   sendOps: LoadOperationResponse,
   receiveOps: LoadOperationResponse,
-  order: "ascending" | "descending",
+  _order: "ascending" | "descending",
   shouldFilter: boolean = true,
 ): LoadOperationResponse => {
   let filterTimestamp: number = 0;

@@ -4,8 +4,8 @@ import type {
   Operation,
   Pagination,
 } from "@ledgerhq/coin-framework/api/types";
-import { createApi } from ".";
 import { getEnv } from "@ledgerhq/live-env";
+import { createApi } from ".";
 
 describe("Sui Api", () => {
   let module: AlpacaApi;
@@ -53,7 +53,7 @@ describe("Sui Api", () => {
       const [operations1, token1] = await module.listOperations(binance, baseOpts);
 
       expect(operations1.length).toBeGreaterThan(2);
-      expect(token1).toBeTruthy();
+      expect(token1.length).toBeGreaterThan(0);
 
       const [operations2, _] = await module.listOperations(binance, {
         ...baseOpts,
@@ -63,9 +63,9 @@ describe("Sui Api", () => {
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
 
       // check that none of the operations in operations2 are in operations1
-      expect(
-        operations2.every(op2 => !operations1.some(op1 => op1.tx.hash === op2.tx.hash)),
-      ).toBeTruthy();
+      expect(operations2.every(op2 => !operations1.some(op1 => op1.tx.hash === op2.tx.hash))).toBe(
+        true,
+      );
     }
 
     it("should fetch operations successfully in desc order", async () => {
@@ -121,9 +121,7 @@ describe("Sui Api", () => {
     it("returns a list regarding address parameter", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
       txs.forEach(operation => {
-        const isSenderOrReceipt =
-          operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(operation.senders.concat(operation.recipients)).toContain(SENDER);
       });
     });
 
@@ -135,12 +133,12 @@ describe("Sui Api", () => {
 
     it("at least operation should be IN", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "IN")).toBeTruthy();
+      expect(txs.some(t => t.type === "IN")).toBe(true);
     });
 
     it("at least operation should be OUT", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "OUT")).toBeTruthy();
+      expect(txs.some(t => t.type === "OUT")).toBe(true);
     });
 
     it("uses the minHeight to filter", async () => {
@@ -152,7 +150,9 @@ describe("Sui Api", () => {
     });
 
     it("returns block height as a number", async () => {
-      expect(txs.every(t => typeof t.tx.block.height === "number")).toBeTruthy();
+      txs.forEach(t => {
+        expect(t.tx.block.height).toBeGreaterThan(0);
+      });
     });
 
     it("should fail when address is invalid", async () => {
@@ -189,8 +189,8 @@ describe("Sui Api", () => {
       // When
       const result = await module.lastBlock();
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/); // base58
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });
@@ -241,10 +241,11 @@ describe("Sui Api", () => {
     it("returns at least a hundred validators with expected fields", async () => {
       const page = await module.getValidators();
 
-      expect(Array.isArray(page.items)).toBeTruthy();
+      expect(page.items).toEqual(expect.any(Array));
       expect(page.items.length).toBeGreaterThanOrEqual(100);
 
       const v = page.items[0];
+
       expect(v).toHaveProperty("address");
       expect(v).toHaveProperty("name");
       expect(v).toHaveProperty("description");
@@ -265,7 +266,6 @@ describe("Sui Api", () => {
       expect((v.url as string).length).toBeGreaterThan(0);
       expect(typeof v.logo).toBe("string");
       expect((v.logo as string).length).toBeGreaterThan(0);
-      expect(typeof v.balance === "bigint").toBeTruthy();
       expect(v.balance as bigint).toBeGreaterThanOrEqual(0n);
       expect(typeof v.commissionRate).toBe("string");
       expect((v.commissionRate as string).length).toBeGreaterThan(0);
@@ -290,7 +290,10 @@ describe("Sui Api", () => {
         expect(stake.amountRewarded).toBeGreaterThanOrEqual(0);
         // @ts-expect-error properties are defined
         expect(stake.amount).toEqual(stake.amountDeposited + stake.amountRewarded);
-        expect(stake.details).toBeDefined();
+        expect(stake.details).toMatchObject({
+          activeEpoch: expect.any(Number),
+          requestEpoch: expect.any(Number),
+        });
       });
     });
   });

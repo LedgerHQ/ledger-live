@@ -1,8 +1,8 @@
-import { TypeRegistry } from "@polkadot/types";
-import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
-import { createFixtureAccount } from "../types/bridge.fixture";
 import { faker } from "@faker-js/faker";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { TypeRegistry } from "@polkadot/types";
+import { createFixtureAccount } from "../types/bridge.fixture";
+import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
 
 const registry = new TypeRegistry();
 

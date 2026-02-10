@@ -1,9 +1,9 @@
+import type { Operation } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { defaultFetchParams, fetchTronAccountTxs, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { TrongridTxInfo } from "../types";
 import { defaultOptions, listOperations } from "./listOperations";
-import type { Operation } from "@ledgerhq/coin-framework/api/index";
 
 // Mock the fetchTronAccountTxs and fromTrongridTxInfoToOperation functions
 jest.mock("../network", () => ({

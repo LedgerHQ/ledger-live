@@ -1,4 +1,5 @@
-import BigNumber from "bignumber.js";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -8,11 +9,9 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";
-import type { MultiversXAccount, Transaction, TransactionStatus } from "./types";
-import { isValidAddress, isSelfTransaction, isAmountSpentFromBalance } from "./logic";
 import {
   MultiversXDecimalsLimitReached,
   MultiversXMinDelegatedAmountError,
@@ -20,7 +19,8 @@ import {
   MultiversXDelegationBelowMinimumError,
   NotEnoughEGLDForFees,
 } from "./errors";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { isValidAddress, isSelfTransaction, isAmountSpentFromBalance } from "./logic";
+import type { MultiversXAccount, Transaction, TransactionStatus } from "./types";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

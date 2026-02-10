@@ -1,8 +1,10 @@
-import { BigNumber } from "bignumber.js";
-import { TypeRegistry } from "@polkadot/types";
-import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { TypeRegistry } from "@polkadot/types";
+import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
+import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import type {
   PolkadotValidator,
@@ -10,6 +12,8 @@ import type {
   PolkadotUnlocking,
   PolkadotNomination,
 } from "../types";
+import { createRegistryAndExtrinsics } from "./common";
+import node from "./node";
 import type {
   SidecarAccountBalanceInfo,
   SidecarPalletStorageItem,
@@ -24,10 +28,6 @@ import type {
   SidecarRuntimeSpec,
   BlockInfo,
 } from "./types";
-import { createRegistryAndExtrinsics } from "./common";
-import node from "./node";
-import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Returns the full indexer url for en route endpoint.

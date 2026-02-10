@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import { fromTrongridTxInfoToOperation } from "./trongrid-adapters";
+import BigNumber from "bignumber.js";
 import { TrongridTxInfo } from "../../types";
+import { fromTrongridTxInfoToOperation } from "./trongrid-adapters";
 
 // Mock fromBigNumberToBigInt
 jest.mock("@ledgerhq/coin-framework/utils", () => ({

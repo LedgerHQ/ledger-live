@@ -1,10 +1,10 @@
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import getEstimatedFees from "./getEstimateFees";
-import { extractBandwidthInfo } from "./utils";
 import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
+import getEstimatedFees from "./getEstimateFees";
+import { extractBandwidthInfo } from "./utils";
 
 // Mock typed functions
 const mockGetAccount = jest.mocked(getAccount);

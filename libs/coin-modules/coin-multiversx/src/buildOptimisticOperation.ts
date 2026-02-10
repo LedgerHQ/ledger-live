@@ -1,15 +1,15 @@
-import BigNumber from "bignumber.js";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import { Address } from "@multiversx/sdk-core";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import { BinaryUtils } from "./utils/binary.utils";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import { Address } from "@multiversx/sdk-core";
+import BigNumber from "bignumber.js";
 import {
   MultiversXAccount,
   MultiversXProtocolTransaction,
   MultiversXTransactionMode,
   Transaction,
 } from "./types";
+import { BinaryUtils } from "./utils/binary.utils";
 
 function getOptimisticOperationType(transactionMode: MultiversXTransactionMode): OperationType {
   switch (transactionMode) {

@@ -9,13 +9,13 @@ import {
   Validator,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import type { AptosConfig as AptosConfigApi } from "../config";
 import type { Balance, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { AptosConfig as AptosConfigApi } from "../config";
 import coinConfig from "../config";
-import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { getBalances } from "../logic/getBalances";
+import { AptosAPI } from "../network";
 
 export function createApi(config: AptosConfigApi): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

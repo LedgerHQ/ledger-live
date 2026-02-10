@@ -1,5 +1,3 @@
-import { signTransaction } from "../../network";
-import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import {
   AccountAddress,
   ChainId,
@@ -8,6 +6,8 @@ import {
   generateSigningMessageForTransaction,
   generateSignedTransaction,
 } from "@aptos-labs/ts-sdk";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
+import { signTransaction } from "../../network";
 
 jest.mock("@aptos-labs/ts-sdk", () => {
   const originalModule = jest.requireActual("@aptos-labs/ts-sdk");

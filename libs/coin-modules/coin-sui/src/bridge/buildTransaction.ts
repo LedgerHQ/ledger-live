@@ -1,7 +1,7 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-import type { SuiAccount, Transaction } from "../types";
 import { craftTransaction } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
+import type { SuiAccount, Transaction } from "../types";
 
 /**
  * @param {Account} account

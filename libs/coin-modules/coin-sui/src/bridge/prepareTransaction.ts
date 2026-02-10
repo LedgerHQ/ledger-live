@@ -1,10 +1,10 @@
-import { AccountBridge } from "@ledgerhq/types-live";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import type { SuiTransactionMode, SuiAccount, Transaction } from "../types";
-import getFeesForTransaction from "./getFeesForTransaction";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import type { SuiTransactionMode, SuiAccount, Transaction } from "../types";
+import getFeesForTransaction from "./getFeesForTransaction";
 import { calculateAmount } from "./utils";
 
 /**

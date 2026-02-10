@@ -1,5 +1,5 @@
-import type { CosmosPreloadData } from "./types";
 import { cosmosConfig } from "./config";
+import type { CosmosPreloadData } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

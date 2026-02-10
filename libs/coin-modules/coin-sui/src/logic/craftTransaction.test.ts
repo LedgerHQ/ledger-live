@@ -1,6 +1,6 @@
+import { BigNumber } from "bignumber.js";
 import { craftTransaction } from "../logic/craftTransaction";
 import suiAPI from "../network";
-import { BigNumber } from "bignumber.js";
 
 jest.mock("../network");
 

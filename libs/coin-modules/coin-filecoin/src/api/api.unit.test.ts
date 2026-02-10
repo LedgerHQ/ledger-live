@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network";
+import {
+  createMockBalanceResponse,
+  createMockEstimatedFeesResponse,
+  createMockTransactionResponse,
+  createMockERC20Transfer,
+  TEST_ADDRESSES,
+  TEST_TRANSACTION_HASHES,
+  TEST_BLOCK_HEIGHTS,
+} from "../test/fixtures";
 import {
   fetchBalances,
   fetchEstimatedFees,
@@ -11,15 +20,6 @@ import {
   fetchERC20TokenBalance,
   fetchERC20TransactionsWithPages,
 } from "./api";
-import {
-  createMockBalanceResponse,
-  createMockEstimatedFeesResponse,
-  createMockTransactionResponse,
-  createMockERC20Transfer,
-  TEST_ADDRESSES,
-  TEST_TRANSACTION_HASHES,
-  TEST_BLOCK_HEIGHTS,
-} from "../test/fixtures";
 
 // Mock dependencies
 jest.mock("@ledgerhq/logs");
@@ -164,7 +164,9 @@ describe("Filecoin API", () => {
 
       const result = await broadcastTx(mockRequest);
 
-      expect(result).toBeDefined();
+      expect(result).toEqual({
+        hash: "bafy2bzacedpqzd6qm2r7nvxj5oetpqvhujwwmvkhz4u3xnfzdvwzxpjzuqhpa",
+      });
     });
   });
 
