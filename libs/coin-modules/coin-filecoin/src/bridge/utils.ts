@@ -2,23 +2,9 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEquivalentAddress } from "../network";
 
-export enum Methods {
-  Transfer = 0,
-  ERC20Transfer = 1,
-  InvokeEVM = 3844450837,
-}
-
-export enum AccountType {
-  Account = "Account",
-  TokenAccount = "TokenAccount",
-}
-
-export enum BotScenario {
-  DEFAULT = "default",
-  ETH_RECIPIENT = "eth-recipient",
-  F4_RECIPIENT = "f4-recipient",
-  TOKEN_TRANSFER = "token-transfer",
-}
+// Re-export shared enums from logic layer
+export { Methods, AccountType, BotScenario } from "../logic/common";
+import { Methods, AccountType } from "../logic/common";
 
 const validHexRegExp = new RegExp(/^(0x)?[a-fA-F0-9]+$/);
 const validBase64RegExp = new RegExp(
@@ -50,6 +36,10 @@ export const getBufferFromString = (message: string): Buffer =>
       ? Buffer.from(message, "base64")
       : Buffer.from(message);
 
+/**
+ * Calculate estimated fees from gas parameters (BigNumber version for bridge layer)
+ * Note: The logic/ layer has a bigint version of this function
+ */
 export const calculateEstimatedFees = (gasFeeCap: BigNumber, gasLimit: BigNumber): BigNumber =>
   gasFeeCap.multipliedBy(gasLimit);
 

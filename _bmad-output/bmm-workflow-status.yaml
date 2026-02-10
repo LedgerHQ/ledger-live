@@ -1,0 +1,30 @@
+# BMM Workflow Status
+# Tracks completion of BMAD workflow artifacts
+
+workflow_status:
+  product-brief: "_bmad-output/planning-artifacts/product-brief-ledger-live-2026-01-29.md"
+  tech-spec: "_bmad-output/implementation-artifacts/tech-spec-alpaca-api-coin-multiversx.md"
+  create-architecture: "_bmad-output/planning-artifacts/architecture.md"
+  project-context: "_bmad-output/project-context.md"
+
+completion_history:
+  - workflow: create-product-brief
+    artifact: product-brief-ledger-live-2026-01-29.md
+    completed_at: 2026-01-29
+    author: Hedi.edelbloute
+    project: Alpaca API for coin-multiversx
+  - workflow: create-tech-spec
+    artifact: tech-spec-alpaca-api-coin-multiversx.md
+    completed_at: 2026-01-29
+    author: Hedi.edelbloute
+    project: Alpaca API for coin-multiversx
+  - workflow: create-architecture
+    artifact: architecture.md
+    completed_at: 2026-01-29
+    author: Hedi.edelbloute
+    project: Alpaca API for coin-multiversx
+  - workflow: generate-project-context
+    artifact: project-context.md
+    completed_at: 2026-01-29
+    author: Hedi.edelbloute
+    project: Alpaca API for coin-multiversx
