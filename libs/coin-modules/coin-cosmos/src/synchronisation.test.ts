@@ -1,9 +1,9 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { getAccountShape } from "./synchronisation";
-import { SyncConfig } from "@ledgerhq/types-live";
 
 const mockGetAccountInfo = jest.fn();
 jest.mock("./network/Cosmos", () => {

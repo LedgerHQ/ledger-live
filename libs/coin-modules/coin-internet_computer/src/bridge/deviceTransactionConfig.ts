@@ -1,11 +1,11 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
-import { Transaction, TransactionStatus } from "../types";
 import { methodToString } from "../common-logic/utils";
+import { Transaction, TransactionStatus } from "../types";
 
 const currency = getCryptoCurrencyById("internet_computer");
 

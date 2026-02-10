@@ -1,6 +1,6 @@
+import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import { calcComputeMass, calcStorageMass } from "../massCalcluation";
-import { BigNumber } from "bignumber.js";
 
 describe("Check storage mass calculation", () => {
   test("Storage mass for different in- and outputs", () => {

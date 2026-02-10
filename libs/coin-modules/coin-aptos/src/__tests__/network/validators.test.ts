@@ -1,7 +1,7 @@
-import { Aptos } from "@aptos-labs/ts-sdk";
 import { ApolloClient } from "@apollo/client";
-import { getValidators } from "../../network/validators";
+import { Aptos } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
+import { getValidators } from "../../network/validators";
 
 jest.mock("@aptos-labs/ts-sdk");
 let mockedAptos: jest.Mocked<any>;

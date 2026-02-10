@@ -1,5 +1,5 @@
-import { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { Account, OperationType } from "@ledgerhq/types-live";
 import { InternetComputerOperation, Transaction } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
 

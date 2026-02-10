@@ -1,10 +1,10 @@
 import { InvalidAddress, NotEnoughBalance, AmountRequired } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
-import { fromTransactionRaw } from "../bridge/transaction";
-import { InvalidRecipientForTokenTransfer } from "../errors";
-import { getSubAccount } from "../common-logic";
 import BigNumber from "bignumber.js";
+import { fromTransactionRaw } from "../bridge/transaction";
+import { getSubAccount } from "../common-logic";
+import { InvalidRecipientForTokenTransfer } from "../errors";
+import type { Transaction } from "../types";
 
 const SEED_IDENTIFIER = "f1plmg3kklvmnodfboimcq5w27mnfs2hwjtas6gia";
 const ACCOUNT_1 = "f1plmg3kklvmnodfboimcq5w27mnfs2hwjtas6gia";
@@ -296,7 +296,7 @@ const filecoin: CurrenciesData<Transaction> = {
             amount: "1",
             useAllAmount: true,
           }),
-          expectedStatus: (account, tx, status) => {
+          expectedStatus: (account, _tx, status) => {
             return {
               amount: account.spendableBalance.minus(status.estimatedFees),
               errors: {},

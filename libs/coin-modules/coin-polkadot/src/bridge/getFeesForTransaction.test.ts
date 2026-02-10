@@ -1,15 +1,15 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import getEstimatedFees from "./getFeesForTransaction";
+import coinConfig from "../config";
+import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import { createRegistryAndExtrinsics } from "../network/common";
-import coinConfig from "../config";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import getEstimatedFees from "./getFeesForTransaction";
 
 const mockPaymentInfo = jest.fn();
 const mockRegistry = jest

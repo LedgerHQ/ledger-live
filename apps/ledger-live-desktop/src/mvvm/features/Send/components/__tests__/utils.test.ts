@@ -1,7 +1,10 @@
-import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
-import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "../utils";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import {
+  getRecipientDisplayValue,
+  getRecipientSearchPrefillValue,
+} from "@ledgerhq/live-common/flows/send/utils";
 
-jest.mock("LLD/features/ModularDialog/components/Address/formatAddress", () => ({
+jest.mock("@ledgerhq/live-common/utils/addressUtils", () => ({
   formatAddress: jest.fn(),
 }));
 

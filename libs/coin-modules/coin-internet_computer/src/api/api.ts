@@ -1,10 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import {
-  FETCH_TXNS_LIMIT,
-  MAINNET_INDEX_CANISTER_ID,
-  MAINNET_LEDGER_CANISTER_ID,
-  ICP_NETWORK_URL,
-} from "../consts";
 
 import {
   ledgerIdlFactory,
@@ -16,10 +10,16 @@ import {
   GetAccountIdentifierTransactionsResponse,
   TransactionWithId,
 } from "@zondax/ledger-live-icp";
-import BigNumber from "bignumber.js";
-import { fromNullable } from "@zondax/ledger-live-icp/utils";
 import { getAgent } from "@zondax/ledger-live-icp/agent";
+import { fromNullable } from "@zondax/ledger-live-icp/utils";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import {
+  FETCH_TXNS_LIMIT,
+  MAINNET_INDEX_CANISTER_ID,
+  MAINNET_LEDGER_CANISTER_ID,
+  ICP_NETWORK_URL,
+} from "../consts";
 
 export const fetchBlockHeight = async (): Promise<BigNumber> => {
   const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);

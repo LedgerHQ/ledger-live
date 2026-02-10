@@ -1,7 +1,7 @@
-import { TokenAccount } from "@ledgerhq/types-live";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import type { Transaction } from "./types";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { extractTokenId } from "./logic";
+import type { Transaction } from "./types";
 
 export class MultiversXEncodeTransaction {
   static async ESDTTransfer(t: Transaction, ta: TokenAccount): Promise<string> {

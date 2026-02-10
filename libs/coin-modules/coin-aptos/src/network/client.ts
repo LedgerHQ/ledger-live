@@ -20,8 +20,16 @@ import {
   type PendingTransactionResponse,
   Network,
 } from "@aptos-labs/ts-sdk";
+import {
+  BlockInfo,
+  FeeEstimation,
+  Operation,
+  Page,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import {
@@ -31,6 +39,9 @@ import {
   ESTIMATE_GAS_MUL,
   TOKEN_TYPE,
 } from "../constants";
+import { isTestnet } from "../logic/isTestnet";
+import { normalizeAddress } from "../logic/normalizeAddress";
+import { transactionsToOperations } from "../logic/transactionsToOperations";
 import type {
   AptosBalance,
   AptosTransaction,
@@ -43,17 +54,6 @@ import type {
   GetAccountTransactionsDataGtQueryVariables,
   TransactionVersion,
 } from "./graphql/types";
-import {
-  BlockInfo,
-  FeeEstimation,
-  Operation,
-  Page,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
-import { log } from "@ledgerhq/logs";
-import { transactionsToOperations } from "../logic/transactionsToOperations";
-import { isTestnet } from "../logic/isTestnet";
-import { normalizeAddress } from "../logic/normalizeAddress";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");

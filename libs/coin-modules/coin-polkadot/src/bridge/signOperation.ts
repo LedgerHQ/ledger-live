@@ -1,16 +1,16 @@
 /* eslint-disable no-console */
-import { Observable } from "rxjs";
-import { BigNumber } from "bignumber.js";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import { signExtrinsic } from "../logic";
+import polkadotAPI from "../network";
 import type { PolkadotAccount, PolkadotSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-import { signExtrinsic } from "../logic";
-import polkadotAPI from "../network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 /**
  * Sign Transaction with Ledger hardware

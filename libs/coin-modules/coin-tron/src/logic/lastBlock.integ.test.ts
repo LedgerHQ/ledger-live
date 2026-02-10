@@ -1,5 +1,5 @@
-import { lastBlock } from "./lastBlock";
 import coinConfig from "../config";
+import { lastBlock } from "./lastBlock";
 
 describe("lastBlock", () => {
   beforeAll(() => {

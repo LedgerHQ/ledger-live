@@ -1,10 +1,10 @@
+import { getFullnodeUrl } from "@mysten/sui/client";
+import { BigNumber } from "bignumber.js";
+import coinConfig from "../config";
+import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
-import { BigNumber } from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
-import coinConfig from "../config";
-import { getFullnodeUrl } from "@mysten/sui/client";
-import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
 
 describe("buildTransaction", () => {
   beforeAll(() => {

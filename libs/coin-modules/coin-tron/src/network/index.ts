@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -8,7 +9,6 @@ import compact from "lodash/compact";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
-import { stringify } from "querystring";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
 import type {
@@ -576,7 +576,7 @@ export async function fetchTronAccountTxs(
         invalids.push(i);
       }
     }
-    txs.filter(tx => !isValid(tx)).map((tx, index) => index);
+    txs.filter(tx => !isValid(tx)).map((_tx, index) => index);
     return invalids;
   }
 

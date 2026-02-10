@@ -1,13 +1,13 @@
-import { Account } from "@ledgerhq/types-live";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { MinaUnsignedTransaction } from "@ledgerhq/coin-mina/types";
+import { MinaSigner } from "@ledgerhq/coin-mina/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import { DeviceId } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "../api/rosetta/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { MinaUnsignedTransaction } from "@ledgerhq/coin-mina/types";
-import { DeviceId } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { MinaSigner } from "@ledgerhq/coin-mina/types";
 import { Transaction } from "../types";
 
 // Mock account data
@@ -215,7 +215,7 @@ export const createMockSignerContext = (
     signature: "mock_raw_signature",
   },
 ): SignerContext<MinaSigner> =>
-  jest.fn().mockImplementation((deviceId, cb) => {
+  jest.fn().mockImplementation((_deviceId, cb) => {
     const mockSigner: MinaSigner = {
       getAddress: jest.fn(),
       signTransaction: jest.fn().mockResolvedValue(signatureResponse),

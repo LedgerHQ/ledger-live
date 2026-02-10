@@ -86,10 +86,7 @@ const handlers = [
 
     return HttpResponse.json(response);
   }),
-  http.get(`${TRONGRID_BASE_URL_MOCKED}/wallet/getReward*`, ({ request }) => {
-    const url = new URL(request.url);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const address = url.searchParams.get("address");
+  http.get(`${TRONGRID_BASE_URL_MOCKED}/wallet/getReward*`, () => {
     return HttpResponse.json({
       reward: 1802573,
     });

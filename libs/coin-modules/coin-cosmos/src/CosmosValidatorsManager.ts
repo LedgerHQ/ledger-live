@@ -4,8 +4,8 @@ import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
-import type { CosmosValidatorItem } from "./types";
 import { CosmosAPI } from "./network/Cosmos";
+import type { CosmosValidatorItem } from "./types";
 
 export class CosmosValidatorsManager {
   protected _version: string;

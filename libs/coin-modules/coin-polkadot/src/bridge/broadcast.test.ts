@@ -1,6 +1,6 @@
+import { Operation } from "@ledgerhq/types-live";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
-import { Operation } from "@ledgerhq/types-live";
 
 const mockSubmitExtrinsic = jest.fn();
 

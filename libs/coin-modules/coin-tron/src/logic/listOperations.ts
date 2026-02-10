@@ -6,8 +6,8 @@ import {
   FetchTxsStopPredicate as FetchTxsContinuePredicate,
   getBlock,
 } from "../network";
-import { Block } from "../network/types";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
+import { Block } from "../network/types";
 
 export type Options = {
   // the soft limit is an indicative number of transactions to fetch

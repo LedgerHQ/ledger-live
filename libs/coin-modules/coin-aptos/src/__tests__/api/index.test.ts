@@ -1,7 +1,7 @@
 import { Aptos } from "@aptos-labs/ts-sdk";
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/types";
-import type { AptosConfig } from "../../config";
 import { createApi } from "../../api";
+import type { AptosConfig } from "../../config";
 import coinConfig from "../../config";
 
 jest.mock("@aptos-labs/ts-sdk");
@@ -35,13 +35,21 @@ describe("createApi", () => {
     const api: AlpacaApi = createApi(mockAptosConfig);
 
     // Check that methods are set with what we expect
-    expect(api.broadcast).toBeDefined();
-    expect(api.combine).toBeDefined();
-    expect(api.craftTransaction).toBeDefined();
-    expect(api.estimateFees).toBeDefined();
-    expect(api.getBalance).toBeDefined();
-    expect(api.lastBlock).toBeDefined();
-    expect(api.listOperations).toBeDefined();
+    expect(api).toEqual({
+      broadcast: expect.any(Function),
+      combine: expect.any(Function),
+      craftTransaction: expect.any(Function),
+      estimateFees: expect.any(Function),
+      getBalance: expect.any(Function),
+      lastBlock: expect.any(Function),
+      listOperations: expect.any(Function),
+      craftRawTransaction: expect.any(Function),
+      getBlock: expect.any(Function),
+      getBlockInfo: expect.any(Function),
+      getRewards: expect.any(Function),
+      getStakes: expect.any(Function),
+      getValidators: expect.any(Function),
+    });
   });
 });
 

@@ -13,6 +13,7 @@ import {
   TransactionIntent,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -24,7 +25,6 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import type { BroadcastConfig } from "@ledgerhq/types-live";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

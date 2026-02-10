@@ -1,10 +1,13 @@
 import querystring from "querystring";
-import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import type { OperationType } from "@ledgerhq/types-live";
-import network from "@ledgerhq/live-network/network";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import network from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { OperationType } from "@ledgerhq/types-live";
+import { encodeAddress } from "@polkadot/util-crypto";
+import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";
+import coinConfig from "../config";
 import type {
   ExplorerExtrinsic,
   PalletMethod,
@@ -12,9 +15,6 @@ import type {
   PolkadotOperation,
   PolkadotOperationExtra,
 } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import coinConfig from "../config";
-import { encodeAddress } from "@polkadot/util-crypto";
 
 const LIMIT = 200;
 
@@ -235,13 +235,12 @@ const extrinsicToOperation = (
 /**
  * Map reward to live operation type
  *
- * @param {string} addr
  * @param {string} accountId
  * @param {*} reward
  *
  * @returns {PolkadotOperation}
  */
-const rewardToOperation = (addr: string, accountId: string, reward: any): PolkadotOperation => {
+const rewardToOperation = (accountId: string, reward: any): PolkadotOperation => {
   const hash = reward.extrinsicHash;
   const type = "REWARD_PAYOUT";
   return {
@@ -263,13 +262,12 @@ const rewardToOperation = (addr: string, accountId: string, reward: any): Polkad
 /**
  * Map slash to live operation type
  *
- * @param {string} addr
  * @param {string} accountId
  * @param {*} slash
  *
  * @returns {PolkadotOperation}
  */
-const slashToOperation = (addr: string, accountId: string, slash: any): PolkadotOperation => {
+const slashToOperation = (accountId: string, slash: any): PolkadotOperation => {
   const hash = `${slash.blockNumber}`;
   const type = "SLASH";
   return {
@@ -313,8 +311,8 @@ const fetchOperationList = async (
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
   );
-  const rewards = data.rewards.map((reward: any) => rewardToOperation(addr, accountId, reward));
-  const slashes = data.slashes.map((slash: any) => slashToOperation(addr, accountId, slash));
+  const rewards = data.rewards.map((reward: any) => rewardToOperation(accountId, reward));
+  const slashes = data.slashes.map((slash: any) => slashToOperation(accountId, slash));
   const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
 
   if (operations.length < LIMIT && rewards.length < LIMIT && slashes.length < LIMIT) {

@@ -58,7 +58,7 @@ describe("getBalance", () => {
     usdTokens.forEach(balance => {
       expect(balance.asset.type).toBe("token");
       if (balance.asset.type === "token") {
-        expect(balance.asset.assetReference).toBeTruthy();
+        expect(balance.asset.assetReference).toMatch(/usd/);
       }
       expect(typeof balance.value).toBe("bigint");
     });
