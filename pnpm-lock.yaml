@@ -416,7 +416,7 @@ patchedDependencies:
     hash: 42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d
     path: patches/buffer@6.0.3.patch
   detox-allure2-adapter@1.0.0-alpha.42:
-    hash: 52f782744de04590c3886194cd463838ef852905f699bc073cfd17996d71ea2e
+    hash: de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81
     path: patches/detox-allure2-adapter@1.0.0-alpha.42.patch
   detox@20.46.0:
     hash: b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14
@@ -1935,7 +1935,7 @@ importers:
         version: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
-        version: 1.0.0-alpha.42(patch_hash=52f782744de04590c3886194cd463838ef852905f699bc073cfd17996d71ea2e)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
+        version: 1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
       eslint-import-resolver-typescript:
         specifier: 3.6.1
         version: 3.6.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0)
@@ -2376,7 +2376,7 @@ importers:
         version: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
-        version: 1.0.0-alpha.42(patch_hash=52f782744de04590c3886194cd463838ef852905f699bc073cfd17996d71ea2e)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
+        version: 1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -53324,7 +53324,7 @@ snapshots:
 
   detect-node@2.1.0: {}
 
-  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=52f782744de04590c3886194cd463838ef852905f699bc073cfd17996d71ea2e)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
       detox: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
@@ -53334,7 +53334,7 @@ snapshots:
       tslib: 2.6.2
       videokitten: 1.0.1
 
-  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=52f782744de04590c3886194cd463838ef852905f699bc073cfd17996d71ea2e)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
       detox: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
