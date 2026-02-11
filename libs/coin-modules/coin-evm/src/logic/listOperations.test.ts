@@ -280,7 +280,7 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-1",
-            type: "FEES",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address1"],
             value: 1n,
@@ -308,7 +308,7 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-2",
-            type: "NONE",
+            type: "IN",
             senders: ["address"],
             recipients: ["address2"],
             value: 2n,
@@ -340,7 +340,7 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-3",
-            type: "FEES",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address1"],
             value: 1n,
@@ -436,7 +436,7 @@ describe("listOperations", () => {
     const address = "address";
     // Explorer returns: one native op for "address", and one internal op (same tx) where
     // senders/recipients and parent senders/recipients do NOT include "address"
-    jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-for-address",
@@ -488,6 +488,7 @@ describe("listOperations", () => {
           extra: {},
         },
       ],
+      nextPagingToken: "",
     });
 
     expect(

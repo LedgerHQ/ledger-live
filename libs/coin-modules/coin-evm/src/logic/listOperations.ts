@@ -206,9 +206,9 @@ export async function listOperations(
 
   const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean => {
     // some explorers return addresses with uppercase letters (eg eip-55 encoded addresses)
-    const addr = address.toLowerCase();
+    const addressLower = address.toLowerCase();
     const isIncluded = (list: string[]): boolean =>
-      list.some(item => item.toLowerCase() === addr);
+      list.some(item => item.toLowerCase() === addressLower);
     return isIncluded(op.senders) || isIncluded(op.recipients);
   };
 
