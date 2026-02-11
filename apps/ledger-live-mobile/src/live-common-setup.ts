@@ -73,7 +73,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "bitcoin_regtest",
   "ethereum_sepolia",
-  "ethereum_holesky",
   "ethereum_hoodi",
   "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "hedera",

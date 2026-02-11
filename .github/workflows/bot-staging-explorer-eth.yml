@@ -41,5 +41,5 @@ jobs:
           # These currencies are not yet handled by ATLAS, should be added back
           # to the list once they are.
           # avalanche_c_chain,bsc,polygon,ethereum_classic
-          BOT_FILTER_CURRENCIES: ethereum,ethereum_sepolia,ethereum_holesky
+          BOT_FILTER_CURRENCIES: ethereum,ethereum_sepolia
           BOT_ENVIRONMENT: staging

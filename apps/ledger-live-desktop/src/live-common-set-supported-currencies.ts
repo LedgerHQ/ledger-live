@@ -51,7 +51,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "bitcoin_regtest",
   "ethereum_sepolia",
-  "ethereum_holesky",
   "ethereum_hoodi",
   "hedera",
   "cardano",
