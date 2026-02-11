@@ -6,6 +6,7 @@ import {
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { MinaCoinConfig, setCoinConfig } from "../config";
 import resolver from "../signer/getAddress";
 import type {
