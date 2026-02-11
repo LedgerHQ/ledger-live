@@ -168,6 +168,7 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
+  generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
 };
 

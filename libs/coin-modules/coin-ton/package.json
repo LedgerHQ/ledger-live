@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",

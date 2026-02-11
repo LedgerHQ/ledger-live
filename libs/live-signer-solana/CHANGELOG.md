@@ -1,5 +1,31 @@
 # @ledgerhq/live-signer-solana
 
+## 0.11.0
+
+### Minor Changes
+
+- [#13982](https://github.com/LedgerHQ/ledger-live/pull/13982) [`6bb478f`](https://github.com/LedgerHQ/ledger-live/commit/6bb478fcabc6b2097873082c3b2babea076f5dcd) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Added userInputType enum and logger in evm dmk mock
+
+### Patch Changes
+
+- Updated dependencies [[`6bb478f`](https://github.com/LedgerHQ/ledger-live/commit/6bb478fcabc6b2097873082c3b2babea076f5dcd)]:
+  - @ledgerhq/coin-solana@0.44.0
+  - @ledgerhq/ledger-cal-service@1.11.2
+  - @ledgerhq/ledger-trust-service@0.6.2
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#13982](https://github.com/LedgerHQ/ledger-live/pull/13982) [`6bb478f`](https://github.com/LedgerHQ/ledger-live/commit/6bb478fcabc6b2097873082c3b2babea076f5dcd) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Added userInputType enum and logger in evm dmk mock
+
+### Patch Changes
+
+- Updated dependencies [[`6bb478f`](https://github.com/LedgerHQ/ledger-live/commit/6bb478fcabc6b2097873082c3b2babea076f5dcd)]:
+  - @ledgerhq/coin-solana@0.44.0-next.0
+  - @ledgerhq/ledger-cal-service@1.11.2-next.0
+  - @ledgerhq/ledger-trust-service@0.6.2-next.0
+
 ## 0.10.2
 
 ### Patch Changes

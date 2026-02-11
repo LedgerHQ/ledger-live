@@ -1,5 +1,17 @@
 # @ledgerhq/live-env
 
+## 2.27.0
+
+### Minor Changes
+
+- [#14065](https://github.com/LedgerHQ/ledger-live/pull/14065) [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset legacy announcements (CDN json) system from desktop app to gain app.json performance
+
+## 2.27.0-next.0
+
+### Minor Changes
+
+- [#14065](https://github.com/LedgerHQ/ledger-live/pull/14065) [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset legacy announcements (CDN json) system from desktop app to gain app.json performance
+
 ## 2.26.0
 
 ### Minor Changes

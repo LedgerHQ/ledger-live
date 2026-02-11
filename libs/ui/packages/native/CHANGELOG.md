@@ -1,5 +1,33 @@
 # @ledgerhq/native-ui
 
+## 0.55.0
+
+### Minor Changes
+
+- [#13830](https://github.com/LedgerHQ/ledger-live/pull/13830) [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e) Thanks [@ysitbon](https://github.com/ysitbon)! - upgrade react-native-reanimated from v3 to v4
+
+  - Add new required dependency `react-native-worklets` (0.7.2)
+  - Migrate babel plugin from `react-native-reanimated/plugin` to `react-native-worklets/plugin`
+  - Migrate `runOnJS` API to `scheduleOnRN` from `react-native-worklets`
+  - Add missing dependency arrays to `useAnimatedStyle` hooks (required for Reanimated 4 without Babel plugin)
+  - Update test mocks for compatibility with Reanimated 4
+
+- [#14020](https://github.com/LedgerHQ/ledger-live/pull/14020) [`34cf993`](https://github.com/LedgerHQ/ledger-live/commit/34cf99398715d029c6d814cd9d4a697e5db775da) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change network crypto icons border radius to match LWD
+
+## 0.55.0-next.0
+
+### Minor Changes
+
+- [#13830](https://github.com/LedgerHQ/ledger-live/pull/13830) [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e) Thanks [@ysitbon](https://github.com/ysitbon)! - upgrade react-native-reanimated from v3 to v4
+
+  - Add new required dependency `react-native-worklets` (0.7.2)
+  - Migrate babel plugin from `react-native-reanimated/plugin` to `react-native-worklets/plugin`
+  - Migrate `runOnJS` API to `scheduleOnRN` from `react-native-worklets`
+  - Add missing dependency arrays to `useAnimatedStyle` hooks (required for Reanimated 4 without Babel plugin)
+  - Update test mocks for compatibility with Reanimated 4
+
+- [#14020](https://github.com/LedgerHQ/ledger-live/pull/14020) [`34cf993`](https://github.com/LedgerHQ/ledger-live/commit/34cf99398715d029c6d814cd9d4a697e5db775da) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change network crypto icons border radius to match LWD
+
 ## 0.54.0
 
 ### Minor Changes

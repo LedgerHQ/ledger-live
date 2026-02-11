@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "4.12.2",
+  "version": "4.13.0",
   "description": "Boilerplate coin integration",
   "keywords": [
     "Ledger",

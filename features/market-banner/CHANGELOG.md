@@ -1,5 +1,17 @@
 # @features/market-banner
 
+## 0.2.0
+
+### Minor Changes
+
+- [#14030](https://github.com/LedgerHQ/ledger-live/pull/14030) [`8388db4`](https://github.com/LedgerHQ/ledger-live/commit/8388db4ad26fd6882cef46cfe7da305ce519eccc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen rnative to latest so it uses react 19
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#14030](https://github.com/LedgerHQ/ledger-live/pull/14030) [`8388db4`](https://github.com/LedgerHQ/ledger-live/commit/8388db4ad26fd6882cef46cfe7da305ce519eccc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen rnative to latest so it uses react 19
+
 ## 0.1.0
 
 ### Minor Changes
