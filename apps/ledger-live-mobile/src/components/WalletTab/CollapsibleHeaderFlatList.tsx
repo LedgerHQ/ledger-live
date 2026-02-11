@@ -1,6 +1,6 @@
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback, useRef } from "react";
-import { Dimensions, Animated, StatusBar, FlatList, FlatListProps } from "react-native";
+import { Dimensions, Animated, StatusBar, FlatList, FlatListProps, View } from "react-native";
 import SafeAreaView from "../SafeAreaView";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import AnimatedProps = Animated.AnimatedProps;
@@ -47,7 +47,7 @@ function CollapsibleHeaderFlatList<T>({
   );
 
   return (
-    <SafeAreaView isFlex>
+    <View style={{ flex: 1, marginTop: headerHeight }}>
       <Animated.FlatList<T>
         {...otherProps}
         scrollToOverflowEnabled={true}
@@ -56,8 +56,8 @@ function CollapsibleHeaderFlatList<T>({
         onScroll={
           isFocused && hasContext
             ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-                useNativeDriver: true,
-              })
+              useNativeDriver: true,
+            })
             : undefined
         }
         onScrollEndDrag={onMomentumScrollEnd}
@@ -75,7 +75,7 @@ function CollapsibleHeaderFlatList<T>({
       >
         {children}
       </Animated.FlatList>
-    </SafeAreaView>
+    </View>
   );
 }
 

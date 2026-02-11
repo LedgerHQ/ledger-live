@@ -22,6 +22,7 @@ import {
   PortfolioOperationsSection,
   PortfolioBannersSection,
 } from "../../components";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -124,6 +125,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       <Animated.View style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
           data={data}
+          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
