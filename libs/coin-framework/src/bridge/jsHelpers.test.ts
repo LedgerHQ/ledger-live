@@ -105,6 +105,46 @@ describe("makeSync", () => {
     };
     expect(newAccount.id).toEqual(expectedAccount.id);
   });
+
+  it("does not add customData when not present", async () => {
+    // Given
+    const account = createAccount({
+      id: `js:2:bitcoin::`,
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+
+    // When
+    const accountUpdater = makeSync({
+      getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
+    })(account, {} as SyncConfig);
+    const updater = await firstValueFrom(accountUpdater);
+    const newAccount = updater(account);
+
+    // Then
+    expect(newAccount.id).toEqual("js:2:bitcoin::");
+    expect(newAccount.id).not.toContain("specific-chain-data");
+  });
+
+  it("preserves customData in account.id when present", async () => {
+    // Given
+    const customData = "specific-chain-data";
+    const account = createAccount({
+      id: `js:2:bitcoin:::${customData}`,
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+
+    // When
+    const accountUpdater = makeSync({
+      getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
+    })(account, {} as SyncConfig);
+    const updater = await firstValueFrom(accountUpdater);
+    const newAccount = updater(account);
+
+    // Then
+    expect(newAccount.id).toEqual(account.id);
+  });
 });
 
 describe("makeScanAccounts", () => {
