@@ -76,7 +76,14 @@ export const useTrackDmkErrorsEvents = ({
   if (!isDmkError(error)) {
     return;
   }
-  const properties = { subError: error._tag };
+  const properties = {
+    subError: error._tag,
+    subErrorMessage: error.message,
+    subErrorOriginalError: error.originalError,
+    subErrorOriginalErrorTag: error.originalError?._tag,
+    subErrorOriginalErrorMessage: error.originalError?.message,
+    subErrorJSON: JSON.stringify(error),
+  };
   const groupedError = ErrorEvents.find(({ tags }) => tags.includes(error._tag));
 
   track("Error:", groupedError ? groupedError.name : error._tag, {

@@ -1,158 +1,262 @@
 import {
-  AlreadySendingApduError,
-  DeviceAlreadyConnectedError,
-  DeviceDisconnectedBeforeSendingApdu,
+  // Transport errors (exported)
   DeviceDisconnectedWhileSendingError,
-  DeviceLockedError,
+  ReconnectionFailedError,
+  DisconnectError,
+  TransportNotSupportedError,
+  TransportAlreadyExistsError,
+  NoTransportProvidedError,
+  NoAccessibleDeviceError,
   DeviceNotInitializedError,
   DeviceNotRecognizedError,
-  DisconnectError,
-  InvalidStatusWordError,
-  NoAccessibleDeviceError,
-  NoTransportProvidedError,
-  OpeningConnectionError,
-  OutOfMemoryDAError,
-  ReconnectionFailedError,
-  SendApduTimeoutError,
-  TransportAlreadyExistsError,
-  TransportNotSupportedError,
-  UnknownDAError,
+  DeviceAlreadyConnectedError,
   UnknownDeviceError,
-  UnknownDeviceExchangeError,
+  SendApduTimeoutError,
+  AlreadySendingApduError,
+  // Command errors (exported)
+  InvalidStatusWordError,
+  InvalidGetFirmwareMetadataResponseError,
+  // Device action errors (exported)
+  DeviceLockedError,
+  OutOfMemoryDAError,
   UnsupportedFirmwareDAError,
+  UnknownDAError,
+  // Core errors (exported)
+  UnknownDeviceExchangeError,
 } from "@ledgerhq/device-management-kit";
 import { useTrackDmkErrorsEvents } from "./useTrackDmkErrorsEvents";
 
+// Helper to create mock DMK errors for error classes not exported from the package
+const createMockDmkError = (tag: string, message = "Mock error message") => ({
+  _tag: tag,
+  message,
+  originalError: undefined,
+});
+
 describe("useTrackDmkErrorsEvents", () => {
-  describe.each([
-    {
-      expectedErrorName: "Device Connection Lost",
-      errors: [
-        new DeviceDisconnectedWhileSendingError(),
-        new ReconnectionFailedError(),
-        new DeviceDisconnectedBeforeSendingApdu(),
-        new DisconnectError(),
-        { _tag: "DeviceSessionNotFound" },
-      ],
-    },
-    {
-      expectedErrorName: "Connection Method",
-      errors: [
-        new TransportNotSupportedError(),
-        new TransportAlreadyExistsError(),
-        new NoTransportProvidedError(),
-        new NoAccessibleDeviceError(),
-        new OpeningConnectionError(),
-      ],
-    },
-    {
-      expectedErrorName: "Device Not Onboarded",
-      errors: [
-        new DeviceNotInitializedError(),
-        {
-          _tag: "DeviceNotOnboardedError",
-        },
-      ],
-    },
-    {
-      expectedErrorName: "Device Locked",
-      errors: [new DeviceLockedError()],
-    },
-    {
-      expectedErrorName: "Not Enough Memory",
-      errors: [new OutOfMemoryDAError()],
-    },
-    {
-      expectedErrorName: "OS is Unsupported",
-      errors: [new UnsupportedFirmwareDAError()],
-    },
-    {
-      expectedErrorName: "Battery Error",
-      errors: [
-        {
-          _tag: "InvalidBatteryStatusTypeError",
-        },
-        {
-          _tag: "InvalidBatteryDataError",
-        },
-      ],
-    },
-    {
-      expectedErrorName: "Device Connection Error",
-      errors: [
-        new InvalidStatusWordError(),
-        {
-          _tag: "InvalidResponseFormatError",
-        },
-        new UnknownDAError(),
-      ],
-    },
-    {
-      expectedErrorName: "Device Not Recognized",
-      errors: [
-        new DeviceNotRecognizedError(),
-        new DeviceAlreadyConnectedError(),
-        new UnknownDeviceError(),
-      ],
-    },
-    {
-      expectedErrorName: "Communication Error",
-      errors: [
-        new AlreadySendingApduError(),
-        new UnknownDeviceExchangeError(),
-        new SendApduTimeoutError(),
-        {
-          _tag: "ReceiverApduError",
-        },
-        {
-          _tag: "FramerApduError",
-        },
-      ],
-    },
-  ])("$expectedErrorName event", ({ expectedErrorName, errors }) => {
-    it.each(errors)(`should be event name ${expectedErrorName} with error %j`, error => {
-      // given
-      const mockedTrackScreen = jest.fn();
-      // when
-      useTrackDmkErrorsEvents({
-        error,
-        trackScreen: mockedTrackScreen,
-      });
-      // then
-      expect(mockedTrackScreen).toHaveBeenCalledWith("Error:", expectedErrorName, {
-        error: expectedErrorName,
-        subError: error._tag,
-      });
+  describe("should not track non-DMK errors", () => {
+    it("does not track regular Error instances", () => {
+      const mockTrackScreen = jest.fn();
+      useTrackDmkErrorsEvents({ error: new Error("regular error"), trackScreen: mockTrackScreen });
+      expect(mockTrackScreen).not.toHaveBeenCalled();
+    });
+
+    it("does not track null", () => {
+      const mockTrackScreen = jest.fn();
+      useTrackDmkErrorsEvents({ error: null, trackScreen: mockTrackScreen });
+      expect(mockTrackScreen).not.toHaveBeenCalled();
+    });
+
+    it("does not track undefined", () => {
+      const mockTrackScreen = jest.fn();
+      useTrackDmkErrorsEvents({ error: undefined, trackScreen: mockTrackScreen });
+      expect(mockTrackScreen).not.toHaveBeenCalled();
+    });
+
+    it("does not track string errors", () => {
+      const mockTrackScreen = jest.fn();
+      useTrackDmkErrorsEvents({ error: "string error", trackScreen: mockTrackScreen });
+      expect(mockTrackScreen).not.toHaveBeenCalled();
     });
   });
 
-  it("should not track any event if error is not a DMK error", () => {
-    // given
-    const mockedTrackScreen = jest.fn();
-    const error = new Error("test");
-    // when
-    useTrackDmkErrorsEvents({
-      error,
-      trackScreen: mockedTrackScreen,
+  describe("should track DMK errors with correct properties", () => {
+    it("includes all expected properties for a grouped error", () => {
+      const mockTrackScreen = jest.fn();
+      const error = new DeviceDisconnectedWhileSendingError();
+
+      useTrackDmkErrorsEvents({ error, trackScreen: mockTrackScreen });
+
+      expect(mockTrackScreen).toHaveBeenCalledWith(
+        "Error:",
+        "Device Connection Lost",
+        expect.objectContaining({
+          subError: "DeviceDisconnectedWhileSendingError",
+          subErrorJSON: expect.any(String),
+          error: "Device Connection Lost",
+        }),
+      );
     });
-    // then
-    expect(mockedTrackScreen).not.toHaveBeenCalled();
+
+    it("handles undefined originalError gracefully", () => {
+      const mockTrackScreen = jest.fn();
+      const error = new DeviceLockedError();
+
+      useTrackDmkErrorsEvents({ error, trackScreen: mockTrackScreen });
+
+      expect(mockTrackScreen).toHaveBeenCalledWith(
+        "Error:",
+        "Device Locked",
+        expect.objectContaining({
+          subError: "DeviceLockedError",
+          error: "Device Locked",
+        }),
+      );
+    });
   });
-  it("should track event if dmk error is not grouped", () => {
-    // given
-    const mockedTrackScreen = jest.fn();
-    const error = {
-      _tag: "UnregisteredDmkErrorEvent",
-    };
-    // when
-    useTrackDmkErrorsEvents({
-      error,
-      trackScreen: mockedTrackScreen,
+
+  describe("error grouping for all categories", () => {
+    // Tests using actual exported DMK error classes
+    const exportedErrorTests = [
+      {
+        group: "Device Connection Lost",
+        errors: [
+          { error: new DeviceDisconnectedWhileSendingError(), tag: "DeviceDisconnectedWhileSendingError" },
+          { error: new ReconnectionFailedError(), tag: "ReconnectionFailedError" },
+          { error: new DisconnectError(), tag: "DisconnectError" },
+        ],
+      },
+      {
+        group: "Connection Method",
+        errors: [
+          { error: new TransportNotSupportedError(), tag: "TransportNotSupportedError" },
+          { error: new TransportAlreadyExistsError(), tag: "TransportAlreadyExistsError" },
+          { error: new NoTransportProvidedError(), tag: "NoTransportProvidedError" },
+          { error: new NoAccessibleDeviceError(), tag: "NoAccessibleDeviceError" },
+        ],
+      },
+      {
+        group: "Device Not Onboarded",
+        errors: [{ error: new DeviceNotInitializedError(), tag: "DeviceNotInitializedError" }],
+      },
+      {
+        group: "Device Locked",
+        errors: [{ error: new DeviceLockedError(), tag: "DeviceLockedError" }],
+      },
+      {
+        group: "Not Enough Memory",
+        errors: [{ error: new OutOfMemoryDAError(), tag: "OutOfMemoryDAError" }],
+      },
+      {
+        group: "OS is Unsupported",
+        errors: [{ error: new UnsupportedFirmwareDAError(), tag: "UnsupportedFirmwareDAError" }],
+      },
+      {
+        group: "Device Connection Error",
+        errors: [
+          { error: new InvalidStatusWordError(), tag: "InvalidStatusWordError" },
+          { error: new UnknownDAError(), tag: "UnknownDAError" },
+        ],
+      },
+      {
+        group: "Device Not Recognized",
+        errors: [
+          { error: new DeviceNotRecognizedError(), tag: "DeviceNotRecognizedError" },
+          { error: new DeviceAlreadyConnectedError(), tag: "DeviceAlreadyDiscoveredError" },
+          { error: new UnknownDeviceError(), tag: "UnknownDeviceError" },
+        ],
+      },
+      {
+        group: "Communication Error",
+        errors: [
+          { error: new SendApduTimeoutError(), tag: "SendApduTimeoutError" },
+          { error: new AlreadySendingApduError(), tag: "AlreadySendingApduError" },
+          { error: new UnknownDeviceExchangeError(), tag: "UnknownDeviceExchangeError" },
+        ],
+      },
+      {
+        group: "Invalid Provider",
+        errors: [
+          {
+            error: new InvalidGetFirmwareMetadataResponseError(),
+            tag: "InvalidGetFirmwareMetadataResponseError",
+          },
+        ],
+      },
+    ];
+
+    // Tests using mocks for error classes not exported from the package
+    const mockErrorTests = [
+      {
+        group: "Device Connection Lost",
+        errors: [
+          { tag: "DeviceDisconnectedBeforeSendingApdu" },
+          { tag: "DeviceSessionNotFound" },
+        ],
+      },
+      {
+        group: "Connection Method",
+        errors: [{ tag: "ConnectionOpeningError" }],
+      },
+      {
+        group: "Device Not Onboarded",
+        errors: [{ tag: "DeviceNotOnboardedError" }],
+      },
+      {
+        group: "Battery Error",
+        errors: [{ tag: "InvalidBatteryStatusTypeError" }, { tag: "InvalidBatteryDataError" }],
+      },
+      {
+        group: "Device Connection Error",
+        errors: [{ tag: "InvalidResponseFormatError" }],
+      },
+      {
+        group: "Communication Error",
+        errors: [{ tag: "ReceiverApduError" }, { tag: "FramerApduError" }],
+      },
+    ];
+
+    describe("with actual DMK error instances", () => {
+      exportedErrorTests.forEach(({ group, errors }) => {
+        describe(`"${group}" group`, () => {
+          errors.forEach(({ error, tag }) => {
+            it(`maps ${tag} to "${group}"`, () => {
+              const mockTrackScreen = jest.fn();
+
+              useTrackDmkErrorsEvents({ error, trackScreen: mockTrackScreen });
+
+              expect(mockTrackScreen).toHaveBeenCalledWith(
+                "Error:",
+                group,
+                expect.objectContaining({
+                  subError: tag,
+                  error: group,
+                }),
+              );
+            });
+          });
+        });
+      });
     });
-    // then
-    expect(mockedTrackScreen).toHaveBeenCalledWith("Error:", "UnregisteredDmkErrorEvent", {
-      error: "UnregisteredDmkErrorEvent",
-      subError: "UnregisteredDmkErrorEvent",
+
+    describe("with mock DMK errors (for non-exported error classes)", () => {
+      mockErrorTests.forEach(({ group, errors }) => {
+        describe(`"${group}" group`, () => {
+          errors.forEach(({ tag }) => {
+            it(`maps ${tag} to "${group}"`, () => {
+              const mockTrackScreen = jest.fn();
+              const error = createMockDmkError(tag);
+
+              useTrackDmkErrorsEvents({ error, trackScreen: mockTrackScreen });
+
+              expect(mockTrackScreen).toHaveBeenCalledWith(
+                "Error:",
+                group,
+                expect.objectContaining({
+                  subError: tag,
+                  error: group,
+                }),
+              );
+            });
+          });
+        });
+      });
+    });
+
+    it("uses _tag directly for ungrouped errors", () => {
+      const mockTrackScreen = jest.fn();
+      const error = createMockDmkError("SomeUnknownError", "Unknown error message");
+
+      useTrackDmkErrorsEvents({ error, trackScreen: mockTrackScreen });
+
+      expect(mockTrackScreen).toHaveBeenCalledWith(
+        "Error:",
+        "SomeUnknownError",
+        expect.objectContaining({
+          subError: "SomeUnknownError",
+          error: "SomeUnknownError",
+        }),
+      );
     });
   });
 });

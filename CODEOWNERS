@@ -196,6 +196,7 @@ libs/live-signer-evm/                                              @ledgerhq/liv
 libs/live-signer-solana/                                           @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
+**/useTrackDmk*                                                   @ledgerhq/live-devices
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/                                @ledgerhq/recover-software
