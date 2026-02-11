@@ -18,7 +18,6 @@ import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
-import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { i18n } from "~/context/Locale";
 import reducers from "~/reducers";
@@ -139,9 +138,7 @@ function CountervaluesProviders({
   }, [store]);
 
   return (
-    <CountervaluesMarketcapBridgedProvider>
-      <CountervaluesProvider bridge={bridge}>{children}</CountervaluesProvider>
-    </CountervaluesMarketcapBridgedProvider>
+    <CountervaluesProvider bridge={bridge}>{children}</CountervaluesProvider>
   );
 }
 

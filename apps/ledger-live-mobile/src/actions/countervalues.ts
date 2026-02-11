@@ -1,24 +1,6 @@
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { createAction } from "redux-actions";
-import {
-  CountervaluesActionTypes,
-  CountervaluesMarketcapSetErrorPayload,
-  CountervaluesMarketcapSetIdsPayload,
-  CountervaluesMarketcapSetLoadingPayload,
-} from "./types";
-
-export const setCountervaluesMarketcapIds = createAction<CountervaluesMarketcapSetIdsPayload>(
-  CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_IDS,
-);
-
-export const setCountervaluesMarketcapLoading =
-  createAction<CountervaluesMarketcapSetLoadingPayload>(
-    CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_LOADING,
-  );
-
-export const setCountervaluesMarketcapError = createAction<CountervaluesMarketcapSetErrorPayload>(
-  CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_ERROR,
-);
+import { CountervaluesActionTypes } from "./types";
 
 export const setCountervaluesPollingIsPolling = createAction<boolean>(
   CountervaluesActionTypes.COUNTERVALUES_POLLING_SET_IS_POLLING,
