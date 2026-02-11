@@ -10,6 +10,9 @@
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
+    "fee" : "费用",
+    "stake" : "质押",
+    "validator" : "验证者",
     "delete" : "删除",
     "paste" : "粘贴",
     "yes" : "是",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "为您而设"
     },
+    "perpsEntry" : {
+      "title" : "永续合约",
+      "description" : "杠杆交易"
+    },
     "recommended" : {
       "title" : "推荐"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "转移",
       "swap" : "互换",
       "buy" : "买入",
+      "connect" : "连接",
+      "buyLedger" : "购买 Ledger 设备",
       "transferDrawer" : {
         "title" : "转移",
         "receiveCrypto" : "接收加密货币",
@@ -2988,7 +2997,6 @@
     "yield" : "收益率",
     "sell" : "卖出",
     "swap" : "互换",
-    "perps" : "永续合约",
     "manage" : "管理",
     "lastTransactions" : "最近交易",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "接收",
         "buyCrypto" : "买入"
       },
-      "addAccountCta" : "添加账户"
+      "addAccountCta" : "添加账户",
+      "addCryptoAccount" : "添加加密货币账户"
     },
     "settings" : {
       "header" : "账户设置",
@@ -3675,10 +3684,6 @@
       "title" : "权益质押",
       "description" : "获得加密货币权益质押奖励。"
     },
-    "perps" : {
-      "title" : "永续合约",
-      "description" : "交易加密货币永续合约。"
-    },
     "swap" : {
       "title" : "互换",
       "description" : "将加密货币兑换成加密货币。",
@@ -3875,7 +3880,8 @@
         "title" : "选择报价"
       },
       "twoStepApproval" : {
-        "title" : "完成步骤"
+        "title" : "完成步骤",
+        "completedTitle" : "交易状态"
       },
       "loader" : {
         "title" : "正在处理互换",
@@ -4573,6 +4579,7 @@
       },
       "acceptTerms" : "签署此交易，即表示您接受 <0><0>{{provider}}</0> 的使用条款</0>",
       "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
+      "acceptTermsSponsored" : "为享受免网络费用，您也同意与 Blinklabs 共享您的交易详情（包括钱包地址）。",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
@@ -6088,6 +6095,52 @@
       "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "地址已复制！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "memoPlaceholder" : "可选 Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "showAll" : "显示全部",
+      "showLess" : "显示更少",
+      "iDelegate" : "我委托"
+    }
+  },
   "stellar" : {
     "token" : "多种资产",
     "memo" : {
@@ -6492,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "可选 Memo"
   },
   "near" : {
     "info" : {
@@ -8387,9 +8437,6 @@
       "extremeGreed" : "贪婪+"
     },
     "tileTitle" : "情绪"
-  },
-  "perps" : {
-    "title" : "永续合约"
   },
   "analyticsAllocation" : {
     "header" : {
