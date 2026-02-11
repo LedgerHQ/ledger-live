@@ -152,7 +152,8 @@
     "quote" : "見積もり",
     "memoTag" : {
       "learnMore" : "タグ/メモについて詳しく知る"
-    }
+    },
+    "stake" : "ステーキング"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "報酬獲得",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
+    "perps" : "無期限先物",
     "refer" : "ご友人紹介",
     "lend" : "レンディング",
     "catalog" : "アプリ一覧",
@@ -809,7 +811,15 @@
     }
   },
   "card" : {
-    "backToCard" : "すべてのカード"
+    "backToCard" : "すべてのカード",
+    "title" : "カード",
+    "imageAlt" : "Card Image",
+    "spendYourCrypto" : "暗号資産で決済",
+    "payDescription" : "暗号資産カードを使用して、オンラインや実店舗でショッピング",
+    "exploreCards" : "カードを探す",
+    "iAlreadyHaveACard" : "すでにカードをお持ちの方",
+    "unlockLiquidity" : "Unlock liquidity",
+    "exploreCryptoCardsDescription" : "Explore our crypto cards and find the one that suits you best"
   },
   "lend" : {
     "title" : "暗号資産をレンディング",
@@ -1783,6 +1793,7 @@
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
       "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
+      "acceptTermsSponsored" : "ネットワーク手数料を無料にするには、お客様のトランザクション詳細（ウォレットアドレスを含む）をBlinklabsと共有することに同意していただく必要があります。",
       "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
       "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、\n取引の完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
@@ -2205,6 +2216,19 @@
       "description" : "この資産を取引所から受け取る際に、<0>タグ/メモ</0>が必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。"
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "銀行送金",
+          "description" : "現金送金でステーブルコインを受け取る"
+        },
+        "fromCrypto" : {
+          "title" : "暗号資産を受け取る"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "送付",
     "totalSpent" : "合計出金額",
@@ -2331,6 +2355,15 @@
     "addressNotFound" : "住所が見つかりません",
     "alreadyUsed" : "使用ずみ・{{date}}",
     "recentSendWillAppear" : "最近の送付がこちらに表示されます",
+    "relativeDate" : {
+      "justNow" : "Just now",
+      "minutesAgo_one" : "1 min ago",
+      "minutesAgo_other" : "{{count}} min ago",
+      "hoursAgo_one" : "1 hour ago",
+      "hoursAgo_other" : "{{count}} hours ago",
+      "daysAgo_one" : "1 day ago",
+      "daysAgo_other" : "{{count}} days ago"
+    },
     "remove" : "削除",
     "enterTag" : "{{tag}}を入力してください",
     "firstInteraction" : {
@@ -4431,7 +4464,7 @@
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "さまざまなスマートフォンやコンピューター間でLedger Wallet暗号資産アカウントを同期します。",
-      "walletSyncDescription" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
+      "walletSyncDescription" : "PCの切り替えやスマートフォンを使用する際も、ポートフォリオを最新の状態に維持",
       "mevProtection" : "MEV保護",
       "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
       "mevProtectionLearnMore" : "プライバシーに関する通知"
@@ -4506,6 +4539,10 @@
           "title" : "クイック生成",
           "desc" : "ランダムな通貨を持つランダムなアカウントを10個生成します"
         },
+        "emptyGenerate" : {
+          "title" : "空のアカウント生成",
+          "desc" : "空のアカウントを生成"
+        },
         "currencySelector" : {
           "placeholder" : "通貨を選択...",
           "searchPlaceholder" : "検索",
@@ -4521,7 +4558,8 @@
         "buttons" : {
           "generateAccounts" : "{{count}}個のアカウントを生成",
           "generateAccounts_other" : "{{count}}個のアカウントを生成",
-          "generateAccountsQuick" : "{{count}}個のアカウントを生成"
+          "generateAccountsQuick" : "{{count}}個のアカウントを生成",
+          "generateEmptyAccount" : "空のアカウントを生成"
         },
         "alerts" : {
           "selectCurrency" : "少なくとも1つの通貨を選択してください",
@@ -4567,9 +4605,13 @@
       "walletFeaturesDevTool" : {
         "title" : "ウォレット機能開発ツール",
         "description" : "デスクトップ版のWallet 4.0機能を切り替えます（lwdWallet40機能フラグ）。",
+        "mainFeatureToggle" : "メイン機能トグル",
         "enableAll" : "すべて有効にする",
         "disableAll" : "すべて無効にする",
         "featureParameters" : "機能パラメータ",
+        "tourState" : "Tour State",
+        "drawerPreview" : "Drawer Preview",
+        "openDrawer" : "Open Drawer",
         "showJson" : "JSONを表示",
         "hideJson" : "JSONを非表示"
       },
@@ -6336,7 +6378,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "処理エラー",
-      "description" : "Changellyはこの取引を処理できません。Error code 8HBB-{{randomCode}}"
+      "description" : "スワッププロバイダーがこのトランザクションを処理できません。Error code 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "スワッププロバイダー利用不可",
@@ -6634,7 +6676,7 @@
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにご連絡ください。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Ethereumアプリの設定からブラインド署名またはコントラクトデータを有効にしてください"
+      "title" : "Ethereumアプリでブラインド署名またはコントラクトデータを有効化する"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celoアプリの設定でコントラクトデータを有効にしてください"
@@ -7159,6 +7201,50 @@
     "memoPlaceholder" : "タグ/メモを入力",
     "memoWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "手数料",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "デリゲートを変更する",
+      "earn" : "報酬獲得"
+    },
+    "stakeBanner" : {
+      "title" : "MINAで報酬を獲得",
+      "altTitle" : "MINAのデリゲート（委任）管理",
+      "description" : "MINAをブロックプロデューサーにデリゲートして、ブロック生成による報酬を獲得。報酬はデリゲート量に応じて分配されます。",
+      "altDescription" : "デリゲート設定の変更や、MINAトークンのデリゲート解除ができます。 ",
+      "changeCTA" : "変更"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "デリゲート先：",
+      "stakedBalance" : "ステーキング済み残高",
+      "producerAddress" : "プロデューサーアドレス",
+      "delegatedToTooltip" : "デリゲート先のブロックプロデューサー名",
+      "stakedBalanceTooltip" : "現在このバリデーターにステーキングされているMINAの総量",
+      "producerAddressTooltip" : "デリゲート先のブロックプロデューサーの公開アドレス"
+    },
+    "delegators" : "デリゲーター",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "バリデーターを選択",
+        "connectDevice" : "デバイスを接続",
+        "confirmation" : "確認"
+      },
+      "title" : "MINAをステーキング",
+      "help" : "以下の一覧からバリデーターを選択し、MINAトークンをデリゲートしてください。",
+      "success" : {
+        "title" : "トランザクションの送信に成功しました",
+        "description" : "デリゲーションの変更リクエストが送信されました。"
+      },
+      "error" : {
+        "title" : "トランザクションの送信中にエラーが発生しました。"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション"
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -7548,7 +7634,7 @@
     "close" : "閉じる",
     "banner" : {
       "title" : "ウォレットが同期されていません",
-      "description" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
+      "description" : "PCの切り替えやスマートフォンを使用する際も、ポートフォリオを最新の状態に維持",
       "cta" : "ウォレットを同期する"
     },
     "activate" : {
@@ -7558,7 +7644,7 @@
       "alreadySync" : "すでにオンにしました",
       "learnMore" : "Ledger Syncの仕組みは？",
       "titleModal" : "ウォレットを同期",
-      "descriptionModal" : "パソコンの買い替え時やスマホの利用時も、ポートフォリオを常に最新の状態に保てます。すべてはLedgerデバイスによって安全に守られます。",
+      "descriptionModal" : "PCの切り替えやスマートフォンを使用する際も、ポートフォリオを常に最新の状態へ—すべてをLedgerデバイスで保護",
       "ctaModal" : "続行"
     },
     "entryPoints" : {
@@ -7824,7 +7910,15 @@
   },
   "portfolio" : {
     "title" : "ホーム",
-    "today" : "今日"
+    "today" : "今日",
+    "addAccountCta" : "暗号資産アカウントを追加",
+    "noBalanceTitle" : "暗号資産を保護",
+    "perpsEntry" : {
+      "title" : "無期限先物",
+      "description" : "レバレッジ取引",
+      "cta" : "アプリ一覧"
+    },
+    "noDeviceTitle" : "最も安全なウォレット"
   },
   "marketBanner" : {
     "title" : "市場を見る",
@@ -7848,11 +7942,25 @@
       "cta" : "了解"
     }
   },
+  "quickActions" : {
+    "send" : "送付",
+    "receive" : "受け取る",
+    "buy" : "購入",
+    "sell" : "売却",
+    "connect" : "接続",
+    "buyALedger" : "Ledgerを購入する"
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "refreshToolTip" : "Tap to refresh",
+      "errorToolTip" : "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7985,56 @@
       "transparentBalanceTooltip" : "一般に公開されている残高",
       "privateBalance" : "プライベート残高",
       "privateBalanceTooltip" : "一般には非公開の残高"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "残高を表示",
+        "pausedAt" : "Paused at ",
+        "lastSync" : "Last sync: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Zcashのプライベート残高を有効にする",
+          "breadcrumbs" : {
+            "0" : "Birthday",
+            "1" : "UFVK",
+            "2" : "デバイス",
+            "3" : "確認"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "バースデーハイトとは、ブロックチェーン上でウォレットが資産のスキャンを開始する地点（ブロック）のことです。",
+              "cta" : "詳細はこちら",
+              "label" : "バースデーハイト",
+              "tooltip" : "デフォルト：本日の日付。過去にプライベート（シールド）アクティビティがある既存アカウントの場合のみ変更してください。",
+              "syncFromZero" : "このアカウントは過去にシールドZECを受け取っていますが、バースデーハイトを取得できませんでした。ブロック0からスキャンする（長い時間がかかる場合があります）。",
+              "error" : "無効な日付"
+            },
+            "ufvk" : {
+              "text" : "開始するには、Unified Full Viewing Key (UFVK：統合閲覧キー) をエクスポートする必要があります。この操作にはLedgerデバイスでの承認が必要です。"
+            },
+            "device" : {
+              "text" : "LedgerデバイスでUFVKのエクスポートを承認してください"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVKのインポートに成功しました",
+                "text" : "シールドZECの受け取りや、プライベートトランザクションへの署名が可能になります。",
+                "info" : {
+                  "text" : "お客様のUFVKはコンピューター上にローカル保存され、外部システムへの送信や公開は一切行われません。",
+                  "cta" : "詳細はこちら"
+                },
+                "warning" : "バースデーハイトが古いアカウントの場合、同期に時間がかかることがあります（最大2時間）。同期が完了するまで、アプリを開いたままにしてください。"
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "同期を開始",
+      "datepicker" : {
+        "label" : "バースデーハイト",
+        "tooltip" : "バースデーハイトとは、ブロックチェーン上でウォレットが資産のスキャンを開始する地点（ブロック）のことです。"
+      }
     }
   }
 }
