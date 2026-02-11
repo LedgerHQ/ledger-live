@@ -38,7 +38,6 @@ import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
-import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
@@ -71,6 +70,7 @@ import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import backgroundImg from "~/renderer/images/background.png";
 import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
+import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -227,8 +227,8 @@ const MainAppContent = ({
 
     <Page>
       <TopBannerContainer>
+        {shouldDisplayWallet40MainNav ? null : <FirmwareUpdateBanner />}
         {!shouldDisplayWallet40MainNav && <UpdateBanner />}
-        <FirmwareUpdateBanner />
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
