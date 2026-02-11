@@ -107,19 +107,19 @@
     "tronweb": "5.3.2"
   },
   "devDependencies": {
-    "@agrozyme/types-tronweb": "^5.3.2",
+    "@agrozyme/types-tronweb": "5.3.2",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "catalog:",
-    "@types/invariant": "^2.2.2",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
-    "dotenv": "^16.4.5",
+    "@types/lodash": "4.17.7",
+    "dotenv": "16.4.5",
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "5.6.3"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

@@ -23,7 +23,7 @@
     "events": "^3.3.0"
   },
   "devDependencies": {
-    "@types/events": "^3.0.3",
+    "@types/events": "3.0.3",
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:"
   },

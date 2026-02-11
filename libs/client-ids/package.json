@@ -39,14 +39,14 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "@types/react": "^18.0.0",
-    "@types/uuid": "^9.0.0",
+    "@types/uuid": "9.0.8",
     "jest": "catalog:",
     "react-redux": "catalog:",
     "react-dom": "catalog:",
     "react": "catalog:",
-    "rimraf": "^4.4.1",
+    "rimraf": "4.4.1",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"
   },

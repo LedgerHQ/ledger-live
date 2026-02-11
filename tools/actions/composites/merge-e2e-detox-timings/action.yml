@@ -45,20 +45,20 @@ runs:
   using: "composite"
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         repository: LedgerHQ/ledger-live
         sparse-checkout: |
           apps/ledger-live-mobile/scripts
 
     - name: Download timing files
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
       with:
         pattern: "${{ inputs.key }}-*"
         merge-multiple: true
 
     - name: Restore cached timing file
-      uses: tespkg/actions-cache/restore@v1
+      uses: tespkg/actions-cache/restore@a2e3f005921809689270625bc026d387f73017ae # v1
       with:
         path: ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
         key: "${{ inputs.key }}"
@@ -84,7 +84,7 @@ runs:
         cp ./e2e-test-results-${{ inputs.platform }}.json ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
 
     - name: Save merged timing file to cache
-      uses: tespkg/actions-cache/save@v1
+      uses: tespkg/actions-cache/save@a2e3f005921809689270625bc026d387f73017ae # v1
       with:
         path: ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
         key: "${{ inputs.key }}"

@@ -56,12 +56,12 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "typescript": "^5.4.3"
+    "rimraf": "4.4.1",
+    "typescript": "5.8.3"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

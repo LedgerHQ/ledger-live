@@ -19,6 +19,6 @@
     "serve-handler": "^6.1.3"
   },
   "devDependencies": {
-    "@types/serve-handler": "^6.1.1"
+    "@types/serve-handler": "6.1.4"
   }
 }

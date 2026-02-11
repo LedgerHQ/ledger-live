@@ -82,7 +82,7 @@ jobs:
         run: |
           git add .
       - name: commit changes
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(hotfix) :rocket: entering hotfix mode"
           repo: ${{ github.repository }}
@@ -111,7 +111,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

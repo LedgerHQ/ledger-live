@@ -283,7 +283,7 @@ jobs:
         with:
           name: images
       - name: parse images
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const fs = require("fs");
@@ -305,7 +305,7 @@ jobs:
         with:
           images: images.json
           no-actor: true
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         name: prepare status
         id: status
         with:
@@ -510,7 +510,7 @@ jobs:
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
         if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
         with:
           channel-id: "C05FKJ7DFAP"

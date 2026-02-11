@@ -487,7 +487,7 @@ importers:
         specifier: 'catalog:'
         version: 0.79.7
       '@ton/crypto':
-        specifier: ^3.3.0
+        specifier: 3.3.0
         version: 3.3.0
       '@typescript-eslint/eslint-plugin':
         specifier: 'catalog:'
@@ -2172,16 +2172,16 @@ importers:
         specifier: 'catalog:'
         version: 1.7.3
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/lodash':
-        specifier: ^4.17.21
+        specifier: 4.17.21
         version: 4.17.21
       '@types/node':
         specifier: 22.19.3
         version: 22.19.3
       '@types/qrcode':
-        specifier: ^1.5.6
+        specifier: 1.5.6
         version: 1.5.6
       '@types/react':
         specifier: ^18.3.27
@@ -2190,10 +2190,10 @@ importers:
         specifier: ^18.3.7
         version: 18.3.7(@types/react@18.3.27)
       '@types/react-inspector':
-        specifier: ^4.0.6
+        specifier: 4.0.6
         version: 4.0.6(@types/react@18.3.27)
       '@types/react-table':
-        specifier: ^7.7.20
+        specifier: 7.7.20
         version: 7.7.20(@types/react@18.3.27)
       '@types/semver':
         specifier: 'catalog:'
@@ -2282,7 +2282,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       '@jest/types':
-        specifier: ^30.2.0
+        specifier: 30.2.0
         version: 30.2.0
       '@ledgerhq/devices':
         specifier: workspace:*
@@ -2357,7 +2357,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       babel-plugin-module-resolver:
-        specifier: ^5.0.2
+        specifier: 5.0.2
         version: 5.0.2
       bignumber.js:
         specifier: 9.1.2
@@ -2417,7 +2417,7 @@ importers:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.4.3)
       tsconfig-paths:
-        specifier: ^4.2.0
+        specifier: 4.2.0
         version: 4.2.0
       ws:
         specifier: 'catalog:'
@@ -2466,7 +2466,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.19.3
         version: 22.19.3
       '@types/react':
         specifier: 18.2.73
@@ -2530,13 +2530,13 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/react':
         specifier: ^18.0.0
         version: 18.2.73
       '@types/uuid':
-        specifier: ^9.0.0
+        specifier: 9.0.8
         version: 9.0.8
       jest:
         specifier: 'catalog:'
@@ -2551,7 +2551,7 @@ importers:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
 
   libs/coin-framework:
@@ -2633,28 +2633,28 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/imurmurhash':
-        specifier: ^0.1.4
+        specifier: 0.1.4
         version: 0.1.4
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/numeral':
-        specifier: ^2.0.2
+        specifier: 2.0.5
         version: 2.0.5
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       jest:
         specifier: 'catalog:'
         version: 30.2.0
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
 
   libs/coin-modules-monitoring:
@@ -2706,7 +2706,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       bignumber.js:
         specifier: 9.1.2
@@ -2715,7 +2715,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
       tsx:
-        specifier: ^4.7.1
+        specifier: 4.10.3
         version: 4.10.3
 
   libs/coin-modules/coin-aleo:
@@ -2761,16 +2761,16 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.21
         version: 4.17.21
       eslint-plugin-jest:
-        specifier: ^27.4.2
+        specifier: 27.9.0
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
       jest:
         specifier: 'catalog:'
@@ -2840,13 +2840,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -2913,7 +2913,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^9.4.0
+        specifier: 9.4.0
         version: 9.4.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -2925,13 +2925,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.17.14
+        specifier: 4.17.14
         version: 4.17.14
       '@types/semver':
         specifier: 'catalog:'
@@ -3040,7 +3040,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/bchaddrjs':
-        specifier: ^0.4.3
+        specifier: 0.4.3
         version: 0.4.3
       '@types/bs58':
         specifier: 'catalog:'
@@ -3049,40 +3049,40 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2
       '@types/cashaddrjs':
-        specifier: ^0.3.3
+        specifier: 0.3.3
         version: 0.3.3
       '@types/create-hmac':
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/object-hash':
-        specifier: ^2.1.0
+        specifier: 2.2.1
         version: 2.2.1
       '@types/ripemd160':
-        specifier: ^2.0.3
+        specifier: 2.0.3
         version: 2.0.3
       '@types/secp256k1':
-        specifier: ^4.0.3
+        specifier: 4.0.6
         version: 4.0.6
       '@types/sha.js':
-        specifier: ^2.4.4
+        specifier: 2.4.4
         version: 2.4.4
       axios:
         specifier: 'catalog:'
         version: 1.13.2
       bip32:
-        specifier: ^2.0.6
+        specifier: 2.0.6
         version: 2.0.6
       bip39:
-        specifier: ^3.0.4
+        specifier: 3.1.0
         version: 3.1.0
       jest:
         specifier: 'catalog:'
@@ -3091,7 +3091,7 @@ importers:
         specifier: 'catalog:'
         version: 0.7.0
       object-hash:
-        specifier: ^2.2.0
+        specifier: 2.2.0
         version: 2.2.0
 
   libs/coin-modules/coin-canton:
@@ -3146,13 +3146,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 'catalog:'
@@ -3164,7 +3164,7 @@ importers:
         specifier: 1.1.2
         version: 1.1.2(protobufjs@7.5.4)
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.8.3
         version: 5.8.3
 
   libs/coin-modules/coin-cardano:
@@ -3231,13 +3231,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -3295,13 +3295,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/semver':
         specifier: 'catalog:'
@@ -3383,7 +3383,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^9.9.0
+        specifier: 9.9.0
         version: 9.9.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -3398,16 +3398,16 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.179
+        specifier: 4.17.14
         version: 4.17.14
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect:
         specifier: 'catalog:'
@@ -3416,7 +3416,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-concordium:
@@ -3465,13 +3465,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 'catalog:'
@@ -3480,7 +3480,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-cosmos:
@@ -3568,13 +3568,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/semver':
         specifier: 'catalog:'
@@ -3668,37 +3668,37 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/imurmurhash':
-        specifier: ^0.1.4
+        specifier: 0.1.4
         version: 0.1.4
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       eslint-plugin-import:
-        specifier: ^2.28.1
+        specifier: 2.29.1
         version: 2.29.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)
       fast-check:
-        specifier: ^3.12.0
+        specifier: 3.17.1
         version: 3.17.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
       jest-expect-message:
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3
       msw:
         specifier: 'catalog:'
         version: 2.7.3(typescript@5.4.3)
       prando:
-        specifier: ^6.0.1
+        specifier: 6.0.1
         version: 6.0.1
 
   libs/coin-modules/coin-filecoin:
@@ -3762,13 +3762,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/semver':
         specifier: 'catalog:'
@@ -3844,16 +3844,16 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       eslint-plugin-jest:
-        specifier: ^27.4.2
+        specifier: 27.9.0
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
       jest:
         specifier: 'catalog:'
@@ -3926,13 +3926,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -3984,13 +3984,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/semver':
         specifier: 'catalog:'
@@ -4078,19 +4078,19 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.18
         version: 4.17.18
       '@types/numeral':
-        specifier: ^2.0.2
+        specifier: 2.0.5
         version: 2.0.5
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       jest:
         specifier: 'catalog:'
@@ -4099,7 +4099,7 @@ importers:
         specifier: 0.2.16
         version: 0.2.16
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
 
   libs/coin-modules/coin-mina:
@@ -4160,13 +4160,13 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.14
         version: 4.17.14
       jest:
         specifier: 'catalog:'
@@ -4218,13 +4218,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect:
         specifier: 'catalog:'
@@ -4233,7 +4233,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-multiversx:
@@ -4306,13 +4306,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.17.7
+        specifier: 4.17.14
         version: 4.17.14
       jest:
         specifier: 'catalog:'
@@ -4373,13 +4373,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -4452,7 +4452,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -4467,34 +4467,34 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       eslint-plugin-jest:
-        specifier: ^27.4.2
+        specifier: 27.9.0
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3)))(typescript@5.6.3)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3))
       jest-expect-message:
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3
       msw:
         specifier: 'catalog:'
         version: 2.7.3(typescript@5.6.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.6.3)
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-solana:
@@ -4561,7 +4561,7 @@ importers:
         version: 0.16.7
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -4576,13 +4576,13 @@ importers:
         specifier: 'catalog:'
         version: 4.0.4
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       '@types/semver':
         specifier: 'catalog:'
@@ -4591,7 +4591,7 @@ importers:
         specifier: 'catalog:'
         version: 1.13.2
       eslint-plugin-jest:
-        specifier: ^27.4.2
+        specifier: 27.9.0
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
       jest:
         specifier: 'catalog:'
@@ -4667,7 +4667,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -4679,16 +4679,16 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect:
         specifier: 'catalog:'
@@ -4697,10 +4697,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       ripple-keypairs:
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-stellar:
@@ -4752,7 +4752,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -4764,13 +4764,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
@@ -4831,7 +4831,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/devices':
         specifier: workspace:*
@@ -4846,13 +4846,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -4907,7 +4907,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -4922,16 +4922,16 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@taquito/local-forging':
-        specifier: ^23.0.0-RC.0
+        specifier: 23.0.0-beta.1
         version: 23.0.0-beta.1
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.17.4
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -4940,7 +4940,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(typescript@5.6.3)
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-ton:
@@ -5010,13 +5010,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       jest:
         specifier: 'catalog:'
@@ -5074,7 +5074,7 @@ importers:
         version: 5.3.2
     devDependencies:
       '@agrozyme/types-tronweb':
-        specifier: ^5.3.2
+        specifier: 5.3.2
         version: 5.3.2
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -5089,16 +5089,16 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       jest:
         specifier: 'catalog:'
@@ -5107,7 +5107,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(typescript@5.6.3)
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/coin-vechain:
@@ -5153,7 +5153,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@faker-js/faker':
-        specifier: ^9.6.0
+        specifier: 9.6.0
         version: 9.6.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -5171,16 +5171,16 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.191
+        specifier: 4.17.7
         version: 4.17.7
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       jest:
         specifier: 'catalog:'
@@ -5226,7 +5226,7 @@ importers:
         version: 1.11.0
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 8.4.1
         version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -5241,13 +5241,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect:
         specifier: 'catalog:'
@@ -5256,10 +5256,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       ripple-keypairs:
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
@@ -5315,13 +5315,13 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
       typescript:
-        specifier: ^5.1.3
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-tester-modules/coin-tester-bitcoin:
@@ -5388,19 +5388,19 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3))
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.8.3)
       tsx:
-        specifier: ^4.19.3
+        specifier: 4.20.6
         version: 4.20.6
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.8.3
         version: 5.8.3
 
   libs/coin-tester-modules/coin-tester-evm:
@@ -5461,13 +5461,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3))
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.6.3)
       typescript:
-        specifier: ^5.3.3
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-tester-modules/coin-tester-polkadot:
@@ -5531,10 +5531,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3))
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.6.3)
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.6.3
         version: 5.6.3
 
   libs/coin-tester-modules/coin-tester-solana:
@@ -5592,19 +5592,19 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       dotenv:
-        specifier: ^16
+        specifier: 16.4.7
         version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3))
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       ts-node:
-        specifier: ^10
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.8.3)
       typescript:
-        specifier: ^5
+        specifier: 5.8.3
         version: 5.8.3
 
   libs/deeplink-module:
@@ -5617,7 +5617,7 @@ importers:
         version: 1.27.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
 
   libs/device-core:
@@ -5663,13 +5663,13 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
       '@types/sha.js':
-        specifier: ^2.4.4
+        specifier: 2.4.4
         version: 2.4.4
       jest:
         specifier: 'catalog:'
@@ -5700,7 +5700,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
@@ -5788,13 +5788,13 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       eslint-plugin-jest:
-        specifier: ^27.4.2
+        specifier: 27.9.0
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0(@types/node@22.10.10))(typescript@5.4.3)
       jest:
         specifier: 'catalog:'
@@ -5841,7 +5841,7 @@ importers:
         specifier: 'catalog:'
         version: 1.7.3
       '@types/events':
-        specifier: ^3.0.3
+        specifier: 3.0.3
         version: 3.0.3
 
   libs/evm-tools:
@@ -5872,13 +5872,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/crypto-js':
-        specifier: ^4.1.1
+        specifier: 4.2.2
         version: 4.2.2
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
@@ -5897,7 +5897,7 @@ importers:
         version: 9.1.2
     devDependencies:
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
 
   libs/feature-flag-module:
@@ -5910,7 +5910,7 @@ importers:
         version: 1.27.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.19.3
         version: 22.19.3
 
   libs/hw-ledger-key-ring-protocol:
@@ -5944,10 +5944,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: '4'
+        specifier: 4.17.7
         version: 4.17.7
       '@types/secp256k1':
-        specifier: ^4.0.6
+        specifier: 4.0.6
         version: 4.0.6
       jest:
         specifier: 'catalog:'
@@ -6005,7 +6005,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       bip39:
-        specifier: ^3.0.4
+        specifier: 3.1.0
         version: 3.1.0
       expect:
         specifier: 'catalog:'
@@ -6017,7 +6017,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(typescript@5.4.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(typescript@5.4.3)
 
   libs/ledger-live-common:
@@ -6459,7 +6459,7 @@ importers:
         specifier: 'catalog:'
         version: 1.98.4(typescript@5.4.3)
       '@svgr/core':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0
       '@swc/core':
         specifier: 'catalog:'
@@ -6468,7 +6468,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@tanstack/react-query':
-        specifier: ^5.28.9
+        specifier: 5.28.9
         version: 5.28.9(react@18.3.1)
       '@testing-library/dom':
         specifier: 'catalog:'
@@ -6483,52 +6483,52 @@ importers:
         specifier: 6.0.0
         version: 6.0.0
       '@types/invariant':
-        specifier: ^2.2.36
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.179
+        specifier: 4.17.7
         version: 4.17.7
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
       '@types/uuid':
-        specifier: ^8.3.4
+        specifier: 8.3.4
         version: 8.3.4
       benchmark:
-        specifier: ^2.1.4
+        specifier: 2.1.4
         version: 2.1.4
       buffer:
         specifier: 6.0.3
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       camelcase:
-        specifier: ^6.2.1
+        specifier: 6.3.0
         version: 6.3.0
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       env-cmd:
-        specifier: '*'
+        specifier: 10.1.0
         version: 10.1.0
       eslint-plugin-import:
-        specifier: ^2.28.1
+        specifier: 2.29.1
         version: 2.29.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)
       eslint-plugin-jsx-a11y:
-        specifier: ^6.7.1
+        specifier: 6.8.0
         version: 6.8.0(eslint@8.57.0)
       eslint-plugin-react:
-        specifier: ^7.33.2
+        specifier: 7.34.1
         version: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks:
-        specifier: ^4.6.0
+        specifier: 4.6.0
         version: 4.6.0(eslint@8.57.0)
       fs:
-        specifier: ^0.0.1-security
+        specifier: 0.0.1-security
         version: 0.0.1-security
       glob:
         specifier: ^7.2.0
@@ -6549,7 +6549,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       nock:
-        specifier: ^13.0.5
+        specifier: 13.5.4
         version: 13.5.4
       react:
         specifier: 'catalog:'
@@ -6570,10 +6570,10 @@ importers:
         specifier: 2.6.5
         version: 2.6.5
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
       typescript:
         specifier: 5.4.3
@@ -6582,7 +6582,7 @@ importers:
         specifier: 'catalog:'
         version: 7.18.2
       uuid:
-        specifier: ^8.3.2
+        specifier: 8.3.2
         version: 8.3.2
       ws:
         specifier: 'catalog:'
@@ -6607,10 +6607,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect:
         specifier: 'catalog:'
@@ -6622,7 +6622,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledger-services/trust:
@@ -6644,10 +6644,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect:
         specifier: 'catalog:'
@@ -6659,7 +6659,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledgerjs:
@@ -6684,10 +6684,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       eslint-plugin-react:
-        specifier: ^7.33.2
+        specifier: 7.34.1
         version: 7.34.1(eslint@8.57.0)
       jest:
         specifier: 'catalog:'
@@ -6739,7 +6739,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/react':
         specifier: ^18.0.0
@@ -6751,22 +6751,22 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       react:
-        specifier: ^18.0.0
+        specifier: 18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.0.0
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.7.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/devices:
@@ -6794,7 +6794,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/semver':
         specifier: 'catalog:'
@@ -6806,13 +6806,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/errors:
@@ -6827,7 +6827,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -6836,13 +6836,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-algorand:
@@ -6879,7 +6879,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -6888,13 +6888,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-aptos:
@@ -6925,7 +6925,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -6934,13 +6934,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-btc:
@@ -6995,7 +6995,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       axios:
         specifier: 'catalog:'
@@ -7007,13 +7007,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-canton:
@@ -7044,7 +7044,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7053,13 +7053,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-celo:
@@ -7111,7 +7111,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7120,13 +7120,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-concordium:
@@ -7160,7 +7160,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.19.3
         version: 22.19.3
       documentation:
         specifier: 14.0.2
@@ -7169,10 +7169,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-cosmos:
@@ -7200,7 +7200,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7209,13 +7209,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-eth:
@@ -7261,13 +7261,13 @@ importers:
         version: 7.7.3
     devDependencies:
       '@ethersproject/bignumber':
-        specifier: ^5.7.0
+        specifier: 5.7.0
         version: 5.7.0
       '@ethersproject/constants':
-        specifier: ^5.7.0
+        specifier: 5.7.0
         version: 5.7.0
       '@ethersproject/units':
-        specifier: ^5.7.0
+        specifier: 5.7.0
         version: 5.7.0
       '@swc/core':
         specifier: 'catalog:'
@@ -7279,7 +7279,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7288,16 +7288,16 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       nock:
-        specifier: ^13.0.5
+        specifier: 13.5.4
         version: 13.5.4
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-exchange:
@@ -7343,10 +7343,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       bip32-path:
-        specifier: ^0.4.2
+        specifier: 0.4.2
         version: 0.4.2
       documentation:
         specifier: 14.0.2
@@ -7355,7 +7355,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3))
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-hedera:
@@ -7383,7 +7383,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7392,13 +7392,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-helium:
@@ -7444,7 +7444,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       axios:
         specifier: 'catalog:'
@@ -7456,13 +7456,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-icon:
@@ -7493,7 +7493,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7502,13 +7502,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-kaspa:
@@ -7542,13 +7542,13 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^20.11.30
+        specifier: 20.12.12
         version: 20.12.12
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3))
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-multiversx:
@@ -7585,7 +7585,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7594,13 +7594,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-near:
@@ -7625,7 +7625,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7634,13 +7634,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-polkadot:
@@ -7671,7 +7671,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7680,13 +7680,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-solana:
@@ -7717,7 +7717,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7726,13 +7726,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-str:
@@ -7760,7 +7760,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7769,13 +7769,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-sui:
@@ -7797,7 +7797,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^20.8.10
+        specifier: 20.12.12
         version: 20.12.12
       documentation:
         specifier: 14.0.2
@@ -7806,13 +7806,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-tezos:
@@ -7843,7 +7843,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7852,13 +7852,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-trx:
@@ -7880,7 +7880,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7889,13 +7889,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-vet:
@@ -7929,7 +7929,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7938,10 +7938,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-xrp:
@@ -7966,7 +7966,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -7975,13 +7975,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-bolos:
@@ -8006,7 +8006,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8015,10 +8015,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport:
@@ -8046,7 +8046,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8055,13 +8055,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-http:
@@ -8092,7 +8092,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8101,13 +8101,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-mocker:
@@ -8132,7 +8132,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8141,13 +8141,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-hid:
@@ -8187,7 +8187,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8196,13 +8196,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-hid-noevents:
@@ -8233,10 +8233,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/node-hid':
-        specifier: ^1.3.1
+        specifier: 1.3.4
         version: 1.3.4
       documentation:
         specifier: 14.0.2
@@ -8245,13 +8245,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-hid-singleton:
@@ -8288,7 +8288,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8297,13 +8297,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
@@ -8331,7 +8331,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8340,13 +8340,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
@@ -8377,7 +8377,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8386,13 +8386,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-vault:
@@ -8417,7 +8417,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8426,13 +8426,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-web-ble:
@@ -8463,10 +8463,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/web-bluetooth':
-        specifier: ^0.0.20
+        specifier: 0.0.20
         version: 0.0.20
       documentation:
         specifier: 14.0.2
@@ -8475,13 +8475,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-webhid:
@@ -8509,10 +8509,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/w3c-web-hid':
-        specifier: ^1.0.2
+        specifier: 1.0.6
         version: 1.0.6
       documentation:
         specifier: 14.0.2
@@ -8521,13 +8521,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-webusb:
@@ -8555,10 +8555,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/w3c-web-usb':
-        specifier: ^1.0.5
+        specifier: 1.0.10
         version: 1.0.10
       documentation:
         specifier: 14.0.2
@@ -8567,13 +8567,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/logs:
@@ -8588,7 +8588,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8597,13 +8597,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/react-native-hid:
@@ -8634,7 +8634,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8643,16 +8643,16 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
       yarn-add-no-save:
-        specifier: ^1.0.3
+        specifier: 1.0.3
         version: 1.0.3
 
   libs/ledgerjs/packages/react-native-hw-transport-ble:
@@ -8689,10 +8689,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/uuid':
-        specifier: ^9.0.5
+        specifier: 9.0.8
         version: 9.0.8
       documentation:
         specifier: 14.0.2
@@ -8701,13 +8701,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/swift-bridge-hw-app-eth:
@@ -8729,7 +8729,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8738,13 +8738,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/swift-bridge-hw-app-solana:
@@ -8766,7 +8766,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8775,13 +8775,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
@@ -8800,7 +8800,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8809,13 +8809,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/types-cryptoassets:
@@ -8830,19 +8830,19 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/types-devices:
@@ -8857,7 +8857,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8866,13 +8866,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/types-live:
@@ -8903,7 +8903,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -8912,13 +8912,13 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/live-config:
@@ -8937,10 +8937,10 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: ^4.14.202
+        specifier: 4.17.7
         version: 4.17.7
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
@@ -8992,7 +8992,7 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       prando:
-        specifier: '6'
+        specifier: 6.0.1
         version: 6.0.1
 
   libs/live-countervalues-react:
@@ -9343,10 +9343,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       react:
-        specifier: ^18.3.1
+        specifier: 18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       rxjs:
         specifier: 'catalog:'
@@ -9413,13 +9413,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/invariant':
-        specifier: ^2.2.35
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
@@ -9462,10 +9462,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.1)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
       ws:
         specifier: 'catalog:'
@@ -9517,10 +9517,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.1)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
 
   libs/live-signer-evm:
@@ -9566,10 +9566,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.1)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
       ws:
         specifier: 'catalog:'
@@ -9645,10 +9645,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.1)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
 
   libs/live-wallet:
@@ -9715,13 +9715,13 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: '4'
+        specifier: 4.17.7
         version: 4.17.7
       '@types/pako':
-        specifier: ^2.0.0
+        specifier: 2.0.3
         version: 2.0.3
       '@types/ws':
-        specifier: ^8.5.3
+        specifier: 8.5.10
         version: 8.5.10
       jest:
         specifier: 'catalog:'
@@ -9730,10 +9730,10 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(typescript@5.4.3)
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
       ws:
-        specifier: ^8.16.0
+        specifier: 8.17.1
         version: 8.17.1
 
   libs/promise:
@@ -9774,16 +9774,16 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       typescript:
-        specifier: ^5.4.3
+        specifier: 5.8.3
         version: 5.8.3
 
   libs/speculos-transport:
@@ -9808,7 +9808,7 @@ importers:
         version: link:../ledgerjs/packages/logs
     devDependencies:
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       documentation:
         specifier: 14.0.2
@@ -9824,7 +9824,7 @@ importers:
         version: 6.1.5
     devDependencies:
       '@types/serve-handler':
-        specifier: ^6.1.1
+        specifier: 6.1.4
         version: 6.1.4
 
   libs/ui:
@@ -9845,16 +9845,16 @@ importers:
         specifier: 'catalog:'
         version: 1.51.1
       concurrently:
-        specifier: ^8.0.0
+        specifier: 8.2.2
         version: 8.2.2
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       json:
-        specifier: ^11.0.0
+        specifier: 11.0.0
         version: 11.0.0
       lint-staged:
-        specifier: ^14.0.0
+        specifier: 14.0.1
         version: 14.0.1
 
   libs/ui/examples/rspack:
@@ -9903,10 +9903,10 @@ importers:
         specifier: 'catalog:'
         version: 1.7.3
       '@svgr/core':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0(@svgr/plugin-svgo@5.5.0)
       '@svgr/plugin-svgo':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0
       '@types/react':
         specifier: ^18.2.21
@@ -9915,10 +9915,10 @@ importers:
         specifier: ^18.2.13
         version: 18.3.0(@types/react@18.2.73)
       '@types/styled-system':
-        specifier: ^5.1.13
+        specifier: 5.1.22
         version: 5.1.22
       camelcase:
-        specifier: ^6.2.1
+        specifier: 6.3.0
         version: 6.3.0
       glob:
         specifier: ^7.2.0
@@ -9930,7 +9930,7 @@ importers:
         specifier: 'catalog:'
         version: 15.15.1(react@18.3.1)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       styled-components:
         specifier: 'catalog:'
@@ -9942,7 +9942,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0
       tiny-glob:
-        specifier: ^0.2.9
+        specifier: 0.2.9
         version: 0.2.9
 
   libs/ui/packages/native:
@@ -10003,10 +10003,10 @@ importers:
         specifier: 7.28.4
         version: 7.28.4
       '@emotion/core':
-        specifier: ^11.0.0
+        specifier: 11.0.0
         version: 11.0.0
       '@emotion/native':
-        specifier: ^11.0.0
+        specifier: 11.11.0
         version: 11.11.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       '@expo/cli':
         specifier: 0.24.14
@@ -10018,13 +10018,13 @@ importers:
         specifier: 2.1.2
         version: 2.1.2(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))
       '@react-native-community/cli-server-api':
-        specifier: ^7.0.3
+        specifier: 7.0.4
         version: 7.0.4
       '@react-native-community/datetimepicker':
         specifier: 6.7.5
         version: 6.7.5
       '@react-native-community/slider':
-        specifier: ^4.5.7
+        specifier: 4.5.7
         version: 4.5.7
       '@react-native/assets-registry':
         specifier: 'catalog:'
@@ -10072,13 +10072,13 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
       '@svgr/core':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0(@svgr/plugin-svgo@5.5.0)
       '@svgr/plugin-jsx':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0
       '@svgr/plugin-svgo':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0
       '@testing-library/dom':
         specifier: 'catalog:'
@@ -10090,28 +10090,28 @@ importers:
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.1)
       '@types/color':
-        specifier: ^3.0.3
+        specifier: 3.0.6
         version: 3.0.6
       '@types/hoist-non-react-statics':
-        specifier: ^3.3.1
+        specifier: 3.3.5
         version: 3.3.5(@types/react@19.0.14)
       '@types/lodash':
         specifier: 4.17.18
         version: 4.17.18
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
       '@types/prop-types':
-        specifier: ^15.7.5
+        specifier: 15.7.12
         version: 15.7.12
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
       '@types/styled-system':
-        specifier: ^5.1.13
+        specifier: 5.1.22
         version: 5.1.22
       assert:
-        specifier: ^2.0.0
+        specifier: 2.1.0
         version: 2.1.0
       babel-loader:
         specifier: 10.0.0
@@ -10120,10 +10120,10 @@ importers:
         specifier: 5.0.2
         version: 5.0.2
       babel-plugin-react-docgen-typescript:
-        specifier: ^1.5.1
+        specifier: 1.5.1
         version: 1.5.1(@babel/core@7.28.5)(typescript@5.4.3)
       babel-plugin-react-native-web:
-        specifier: ^0.19.0
+        specifier: 0.19.10
         version: 0.19.10
       babel-preset-expo:
         specifier: 13.1.11
@@ -10132,19 +10132,19 @@ importers:
         specifier: 6.0.3
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       camelcase:
-        specifier: ^6.2.1
+        specifier: 6.3.0
         version: 6.3.0
       csstype:
-        specifier: ^3.0.11
+        specifier: 3.1.3
         version: 3.1.3
       eslint-plugin-react:
-        specifier: ^7.33.2
+        specifier: 7.34.1
         version: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks:
-        specifier: ^4.6.0
+        specifier: 4.6.0
         version: 4.6.0(eslint@8.57.0)
       eslint-plugin-storybook:
-        specifier: ^0.12.0
+        specifier: 0.12.0
         version: 0.12.0(eslint@8.57.0)(typescript@5.4.3)
       expo:
         specifier: 'catalog:'
@@ -10162,7 +10162,7 @@ importers:
         specifier: 'catalog:'
         version: 2.5.0(expo-constants@17.1.8)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       fs-extra:
-        specifier: ^10.0.1
+        specifier: 10.1.0
         version: 10.1.0
       glob:
         specifier: ^7.2.0
@@ -10180,7 +10180,7 @@ importers:
         specifier: 0.81.5
         version: 0.81.5
       metro-minify-uglify:
-        specifier: ^0.76.8
+        specifier: 0.76.8
         version: 0.76.8
       metro-react-native-babel-preset:
         specifier: 0.77.0
@@ -10201,13 +10201,13 @@ importers:
         specifier: 0.81.5
         version: 0.81.5
       minimatch:
-        specifier: ^5.1.0
+        specifier: 5.1.6
         version: 5.1.6
       os-browserify:
         specifier: 0.3.0
         version: 0.3.0
       prop-types:
-        specifier: ^15.8.1
+        specifier: 15.8.1
         version: 15.8.1
       react:
         specifier: 19.0.0
@@ -10231,7 +10231,7 @@ importers:
         specifier: 'catalog:'
         version: 15.15.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       react-native-web:
-        specifier: ~0.19.6
+        specifier: 0.19.10
         version: 0.19.10(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-native-worklets:
         specifier: 'catalog:'
@@ -10240,10 +10240,10 @@ importers:
         specifier: 'catalog:'
         version: 0.18.0
       regenerator-runtime:
-        specifier: ^0.14.0
+        specifier: 0.14.1
         version: 0.14.1
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       storybook:
         specifier: 'catalog:'
@@ -10255,22 +10255,22 @@ importers:
         specifier: 'catalog:'
         version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       stylelint:
-        specifier: ^14.9.1
+        specifier: 14.16.1
         version: 14.16.1
       stylelint-config-recommended:
-        specifier: ^13.0.0
+        specifier: 13.0.0
         version: 13.0.0(stylelint@14.16.1)
       stylelint-config-styled-components:
-        specifier: ^0.1.1
+        specifier: 0.1.1
         version: 0.1.1
       stylelint-processor-styled-components:
-        specifier: ^1.10.0
+        specifier: 1.10.0
         version: 1.10.0
       tty-browserify:
         specifier: 0.0.1
         version: 0.0.1
       util:
-        specifier: ^0.12.5
+        specifier: 0.12.5
         version: 0.12.5
 
   libs/ui/packages/react:
@@ -10361,10 +10361,10 @@ importers:
         specifier: 'catalog:'
         version: 8.6.15(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@svgr/core':
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0(@svgr/plugin-svgo@5.5.0)
       '@svgr/plugin-svgo':
-        specifier: '*'
+        specifier: 5.5.0
         version: 5.5.0
       '@testing-library/dom':
         specifier: 'catalog:'
@@ -10379,16 +10379,16 @@ importers:
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.1)
       '@types/color':
-        specifier: ^3.0.2
+        specifier: 3.0.6
         version: 3.0.6
       '@types/hoist-non-react-statics':
-        specifier: ^3.3.1
+        specifier: 3.3.5
         version: 3.3.5(@types/react@18.2.73)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/lodash':
-        specifier: '4'
+        specifier: 4.17.7
         version: 4.17.7
       '@types/react':
         specifier: ~18.2.21
@@ -10400,37 +10400,37 @@ importers:
         specifier: ^17.0.3
         version: 17.0.7(@types/react@18.2.73)
       '@types/react-transition-group':
-        specifier: ^4.4.2
+        specifier: 4.4.10
         version: 4.4.10(@types/react@18.2.73)
       '@types/styled-components':
-        specifier: ^5.1.14
+        specifier: 5.1.34
         version: 5.1.34(@types/react@18.2.73)
       '@types/styled-system':
-        specifier: ^5.1.12
+        specifier: 5.1.22
         version: 5.1.22
       '@vitest/expect':
         specifier: 3.1.1
         version: 3.1.1
       babel-loader:
-        specifier: ^8.0.0
+        specifier: 8.3.0
         version: 8.3.0(@babel/core@7.28.5)
       csstype:
-        specifier: ^3.0.11
+        specifier: 3.1.3
         version: 3.1.3
       embla-carousel:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17
       eslint-plugin-react:
-        specifier: ^7.33.2
+        specifier: 7.34.1
         version: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks:
-        specifier: ^4.6.0
+        specifier: 4.6.0
         version: 4.6.0(eslint@8.57.0)
       eslint-plugin-storybook:
-        specifier: ^0.12.0
+        specifier: 0.12.0
         version: 0.12.0(eslint@8.57.0)(typescript@5.4.3)
       fs-extra:
-        specifier: ^10.0.1
+        specifier: 10.1.0
         version: 10.1.0
       jest:
         specifier: 'catalog:'
@@ -10445,7 +10445,7 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       storybook:
         specifier: 'catalog:'
@@ -10454,28 +10454,28 @@ importers:
         specifier: 'catalog:'
         version: 3.2.2(@rsbuild/core@1.7.2)(@rspack/core@1.7.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.4.3)
       styled-components:
-        specifier: ^5.3.3
+        specifier: 5.3.11
         version: 5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
       stylelint:
-        specifier: ^14.9.1
+        specifier: 14.16.1
         version: 14.16.1
       stylelint-config-recommended:
-        specifier: ^13.0.0
+        specifier: 13.0.0
         version: 13.0.0(stylelint@14.16.1)
       stylelint-config-styled-components:
-        specifier: ^0.1.1
+        specifier: 0.1.1
         version: 0.1.1
       stylelint-processor-styled-components:
-        specifier: ^1.10.0
+        specifier: 1.10.0
         version: 1.10.0
       tiny-glob:
-        specifier: ^0.2.9
+        specifier: 0.2.9
         version: 0.2.9
       tty-browserify:
         specifier: 0.0.1
         version: 0.0.1
       util:
-        specifier: ^0.12.5
+        specifier: 0.12.5
         version: 0.12.5
 
   libs/ui/packages/shared:
@@ -10484,7 +10484,7 @@ importers:
         specifier: 'catalog:'
         version: 1.7.3
       tiny-glob:
-        specifier: ^0.2.9
+        specifier: 0.2.9
         version: 0.2.9
 
   libs/wallet-api-acre-module:
@@ -10497,7 +10497,7 @@ importers:
         version: 1.27.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
-        specifier: ^22.10.10
+        specifier: 22.10.10
         version: 22.10.10
 
   tests/dummy-live-app:
@@ -11002,7 +11002,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -11761,16 +11761,8 @@ packages:
     resolution: {integrity: sha512-zfedSIzFhat/gFhWfHtgWvlec0nqB9YEIVrpuwjruLlXfUSnA8cJB0miHKwqDnQ7d32aKo2xt88/xZptwxbfhA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-function-name@7.23.0':
-    resolution: {integrity: sha512-OErEqsrxjZTJciZ4Oo+eoZqeW9UIiOcuYKRJA4ZAgV9myA+pOXhhmpfNCKjEH/auVfEYVFJ6y1Tc4r0eIApqiw==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/helper-globals@7.28.0':
     resolution: {integrity: sha512-+W6cISkXFa1jXsDEdYA8HeevQT/FULhxzR99pxphltZcVaugps53THCeiWA8SguxxpSp3gKPiuYfSWopkLQ4hw==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-hoist-variables@7.22.5':
-    resolution: {integrity: sha512-wGjk9QZVzvknA6yKIUURb8zY3grXCcOZt+/7Wcy8O2uctxhplmUPkOdlgoNhmdVee2c92JXbf1xpMtVNbfoxRw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-member-expression-to-functions@7.28.5':
@@ -11819,10 +11811,6 @@ packages:
     resolution: {integrity: sha512-Tub4ZKEXqbPjXgWLl2+3JpQAYBJ8+ikpQ2Ocj/q/r0LwE3UhENh7EUabyHjz2kCEsrRY83ew2DQdHluuiDQFzg==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-split-export-declaration@7.22.6':
-    resolution: {integrity: sha512-AsUnxuLhRYsisFiaJwvp1QF+I3KjD5FOxut14q/GzovUe6orHLesW2C7d754kRm53h5gqrz6sFl6sxc4BVtE/g==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
     engines: {node: '>=6.9.0'}
@@ -11850,11 +11838,6 @@ packages:
   '@babel/highlight@7.24.6':
     resolution: {integrity: sha512-2YnuOp4HAk2BsBrJJvYCbItHx0zWscI1C3zgWkz+wDyD9I7GIVrfnLyrR4Y1VR+7p+chAEcrgRQYZAGIKMV7vQ==}
     engines: {node: '>=6.9.0'}
-
-  '@babel/parser@7.24.1':
-    resolution: {integrity: sha512-Zo9c7N3xdOIQrNip7Lc9wvRPzlRtovHVE4lkz8WEDr7uYh/GMQhSiIgFxGIArRHYdJE5kxtZjAf8rT0xhdLCzg==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
 
   '@babel/parser@7.27.0':
     resolution: {integrity: sha512-iaepho73/2Pz7w2eMS0Q5f83+0RKI7i4xmiYeBmDzfRVbQtTOG7Ts0S4HzJVsTMGI9keU8rNfuZr8DKfSt7Yyg==}
@@ -12621,10 +12604,6 @@ packages:
 
   '@babel/template@7.27.2':
     resolution: {integrity: sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/traverse@7.24.1':
-    resolution: {integrity: sha512-xuU6o9m68KeqZbQuDt2TcKSxUw/mrsvavlEqQ1leZ/B+C9tk6E4sRWy97WaXgvq5E+nU3cXMxv3WKOCanVMCmQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/traverse@7.27.0':
@@ -18509,7 +18488,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -19933,10 +19912,6 @@ packages:
     resolution: {integrity: sha512-VXuvVvZeQCQb5Zgf4HAxc04q5j+WrNAtNh9OwCsCgpKqESMTu3tF/jhZ3xG6T4NZwWl65Bg8KuS2uEvhSfLl0w==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@typescript-eslint/scope-manager@8.30.1':
-    resolution: {integrity: sha512-+C0B6ChFXZkuaNDl73FJxRYT0G7ufVPOSQkqkpM/U198wUwUFOtgo1k/QzFh1KjpBitaK7R1tgjVz6o9HmsRPg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@typescript-eslint/scope-manager@8.48.1':
     resolution: {integrity: sha512-rj4vWQsytQbLxC5Bf4XwZ0/CKd362DkWMUkviT7DCS057SK64D5lH74sSGzhI6PDD2HCEq02xAP9cX68dYyg1w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -19958,10 +19933,6 @@ packages:
     resolution: {integrity: sha512-87NVngcbVXUahrRTqIK27gD2t5Cu1yuCXxbLcFtCzZGlfyVWWh8mLHkoxzjsB6DDNnvdL+fW8MiwPEJyGJQDgQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@typescript-eslint/types@8.30.1':
-    resolution: {integrity: sha512-81KawPfkuulyWo5QdyG/LOKbspyyiW+p4vpn4bYO7DM/hZImlVnFwrpCTnmNMOt8CvLRr5ojI9nU1Ekpw4RcEw==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@typescript-eslint/types@8.48.1':
     resolution: {integrity: sha512-+fZ3LZNeiELGmimrujsDCT4CRIbq5oXdHe7chLiW8qzqyPMnn1puNstCrMNVAqwcl2FdIxkuJ4tOs/RFDBVc/Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -19975,12 +19946,6 @@ packages:
       typescript:
         optional: true
 
-  '@typescript-eslint/typescript-estree@8.30.1':
-    resolution: {integrity: sha512-kQQnxymiUy9tTb1F2uep9W6aBiYODgq5EMSk6Nxh4Z+BDUoYUSa029ISs5zTzKBFnexQEh71KqwjKnRz58lusQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <5.9.0'
-
   '@typescript-eslint/typescript-estree@8.48.1':
     resolution: {integrity: sha512-/9wQ4PqaefTK6POVTjJaYS0bynCgzh6ClJHGSBj06XEHjkfylzB+A3qvyaXnErEZSaxhIo4YdyBgq6j4RysxDg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -19993,13 +19958,6 @@ packages:
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@typescript-eslint/utils@8.30.1':
-    resolution: {integrity: sha512-T/8q4R9En2tcEsWPQgB5BQ0XJVOtfARcUvOa8yJP3fh9M/mXraLxZrkCfGb6ChrO/V3W+Xbd04RacUEqk1CFEQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      eslint: ^8.57.0 || ^9.0.0
-      typescript: '>=4.8.4 <5.9.0'
-
   '@typescript-eslint/utils@8.48.1':
     resolution: {integrity: sha512-fAnhLrDjiVfey5wwFRwrweyRlCmdz5ZxXz2G/4cLn0YDLjTapmN4gcCsTBR1N2rWnZSDeWpYtgLDsJt+FpmcwA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -20010,10 +19968,6 @@ packages:
   '@typescript-eslint/visitor-keys@5.62.0':
     resolution: {integrity: sha512-07ny+LHRzQXepkGg6w0mFY41fVUNBrL2Roj/++7V1txKugfjm/Ci/qSND03r2RhlJhJYMcTn9AhhSSqQp0Ysyw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  '@typescript-eslint/visitor-keys@8.30.1':
-    resolution: {integrity: sha512-aEhgas7aJ6vZnNFC7K4/vMGDGyOiqWcYZPpIWrTKuTAlsvDNKy2GFDqh9smL+iq069ZvR0YzEeq0B8NJlLzjFA==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/visitor-keys@8.48.1':
     resolution: {integrity: sha512-BmxxndzEWhE4TIEEMBs8lP3MBWN3jFPs/p6gPm/wkv02o41hI6cq9AuSmGAaTTHPtA1FTi2jBre4A9rm5ZmX+Q==}
@@ -20727,7 +20681,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -25988,10 +25942,6 @@ packages:
     resolution: {integrity: sha512-xFuJpne9oFz5qDaodwmmG08e3CawH/2ZV8Qqza1Ko7Sk8POWbkRdwIoAWVhqvq0XeUzANEhKo2n0IXUGBm7A/w==}
     engines: {node: '>=0.10.0'}
 
-  is-typed-array@1.1.13:
-    resolution: {integrity: sha512-uZ25/bUAlUY5fR4OKT4rZQEBrzQWYV9ZJYGGsUmEJ6thodVJ1HX64ePQ6Z0qPWP+m+Uq6e9UugrE38jeYsDSMw==}
-    engines: {node: '>= 0.4'}
-
   is-typed-array@1.1.15:
     resolution: {integrity: sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==}
     engines: {node: '>= 0.4'}
@@ -27973,10 +27923,6 @@ packages:
     resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
     engines: {node: '>=8.6'}
 
-  micromatch@4.0.7:
-    resolution: {integrity: sha512-LPP/3KorzCwBxfeUuZmaR6bG2kdeHSbe0P2tY3FLRU4vYrjYz5hI4QZwV0njUx3jeuKe67YukQ1LSPZBKDqO/Q==}
-    engines: {node: '>=8.6'}
-
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
@@ -28083,10 +28029,6 @@ packages:
 
   minimatch@8.0.4:
     resolution: {integrity: sha512-W0Wvr9HyFXZRGIDgCicunpQ299OKXs9RgZfaukz4qAW/pJhcpUfupc9c+OObPOFueNy8VSrZgEmDtk6Kh4WzDA==}
-    engines: {node: '>=16 || 14 >=14.17'}
-
-  minimatch@9.0.4:
-    resolution: {integrity: sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   minimatch@9.0.5:
@@ -31265,10 +31207,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  send@0.18.0:
-    resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
-    engines: {node: '>= 0.8.0'}
-
   send@0.19.0:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
@@ -31305,10 +31243,6 @@ packages:
 
   serve-index@1.9.1:
     resolution: {integrity: sha512-pXHfKNP4qujrtteMrSBb0rc8HJ9Ms/GrXwcUtUtD5s4ewDJI8bT3Cz2zTVRMKtri49pLx2e0Ya8ziP5Ya2pZZw==}
-    engines: {node: '>= 0.8.0'}
-
-  serve-static@1.15.0:
-    resolution: {integrity: sha512-XGuRDNjXUijsUL0vl6nSD7cwURuzEgglbOaFuZM9g3kwDXOWVTck0jLzjPzGD+TazWbboZYu52/9/XPdUgne9g==}
     engines: {node: '>= 0.8.0'}
 
   serve-static@1.16.2:
@@ -31387,9 +31321,6 @@ packages:
 
   shell-quote@1.8.0:
     resolution: {integrity: sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==}
-
-  shell-quote@1.8.1:
-    resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
 
   shell-quote@1.8.2:
     resolution: {integrity: sha512-AzqKpGKjrj7EM6rKVQEPpB288oCfnrEIuyoT9cyF4nmGa7V8Zk6f7RRqYisX8X9m+Q7bd632aZW4ky7EhbQztA==}
@@ -33648,10 +33579,6 @@ packages:
   which-pm@2.2.0:
     resolution: {integrity: sha512-MOiaDbA5ZZgUjkeMWM5EkJp4loW5ZRoa5bc3/aeMox/PJelMhE6t7S/mLuiY43DBupyxH+S0U1bTui9kWUlmsw==}
     engines: {node: '>=8.15'}
-
-  which-typed-array@1.1.15:
-    resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}
-    engines: {node: '>= 0.4'}
 
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
@@ -36152,16 +36079,7 @@ snapshots:
 
   '@babel/helper-environment-visitor@7.22.20': {}
 
-  '@babel/helper-function-name@7.23.0':
-    dependencies:
-      '@babel/template': 7.27.2
-      '@babel/types': 7.28.5
-
   '@babel/helper-globals@7.28.0': {}
-
-  '@babel/helper-hoist-variables@7.22.5':
-    dependencies:
-      '@babel/types': 7.28.5
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
@@ -36238,10 +36156,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-split-export-declaration@7.22.6':
-    dependencies:
-      '@babel/types': 7.28.5
-
   '@babel/helper-string-parser@7.27.1': {}
 
   '@babel/helper-validator-identifier@7.28.5': {}
@@ -36269,10 +36183,6 @@ snapshots:
       chalk: 2.4.2
       js-tokens: 4.0.0
       picocolors: 1.1.1
-
-  '@babel/parser@7.24.1':
-    dependencies:
-      '@babel/types': 7.28.5
 
   '@babel/parser@7.27.0':
     dependencies:
@@ -37262,21 +37172,6 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
 
-  '@babel/traverse@7.24.1':
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/generator': 7.28.5
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-function-name': 7.23.0
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
-      debug: 4.3.4
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/traverse@7.27.0':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -37876,7 +37771,7 @@ snapshots:
     dependencies:
       '@commitlint/top-level': 17.8.1
       '@commitlint/types': 17.8.1
-      fs-extra: 11.2.0
+      fs-extra: 11.3.3
       git-raw-commits: 2.0.11
       minimist: 1.2.8
 
@@ -38144,7 +38039,7 @@ snapshots:
   '@datadog/datadog-api-client@1.40.0':
     dependencies:
       '@types/buffer-from': 1.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/pako': 1.0.7
       buffer-from: 1.1.2
       cross-fetch: 3.1.8
@@ -38158,7 +38053,7 @@ snapshots:
   '@datadog/datadog-api-client@2.0.0-beta.1':
     dependencies:
       '@types/buffer-from': 1.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/pako': 1.0.7
       buffer-from: 1.1.2
       cross-fetch: 3.1.8
@@ -38573,7 +38468,7 @@ snapshots:
       '@emotion/memoize': 0.9.0
       '@emotion/unitless': 0.10.0
       '@emotion/utils': 1.4.2
-      csstype: 3.2.3
+      csstype: 3.1.3
 
   '@emotion/sheet@1.4.0': {}
 
@@ -38852,7 +38747,7 @@ snapshots:
   '@ethersproject/abstract-signer@5.7.0':
     dependencies:
       '@ethersproject/abstract-provider': 5.8.0
-      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
@@ -38867,7 +38762,7 @@ snapshots:
 
   '@ethersproject/address@5.7.0':
     dependencies:
-      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/keccak256': 5.8.0
       '@ethersproject/logger': 5.8.0
@@ -38891,9 +38786,9 @@ snapshots:
 
   '@ethersproject/bignumber@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      bn.js: 5.2.1
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      bn.js: 5.2.2
 
   '@ethersproject/bignumber@5.8.0':
     dependencies:
@@ -39000,7 +38895,7 @@ snapshots:
   '@ethersproject/strings@5.7.0':
     dependencies:
       '@ethersproject/bytes': 5.8.0
-      '@ethersproject/constants': 5.8.0
+      '@ethersproject/constants': 5.7.0
       '@ethersproject/logger': 5.8.0
 
   '@ethersproject/strings@5.8.0':
@@ -39037,7 +38932,7 @@ snapshots:
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/constants': 5.7.0
-      '@ethersproject/logger': 5.7.0
+      '@ethersproject/logger': 5.8.0
 
   '@ethersproject/web@5.8.0':
     dependencies:
@@ -39086,7 +38981,7 @@ snapshots:
       getenv: 2.0.0
       glob: 10.4.5
       lan-network: 0.1.7
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       node-forge: 1.3.1
       npm-package-arg: 11.0.3
       ora: 3.4.0
@@ -39111,7 +39006,7 @@ snapshots:
       terminal-link: 2.1.1
       undici: 6.19.2
       wrap-ansi: 7.0.0
-      ws: 8.18.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - graphql
@@ -39181,7 +39076,7 @@ snapshots:
       terminal-link: 2.1.1
       undici: 6.19.2
       wrap-ansi: 7.0.0
-      ws: 8.18.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - graphql
@@ -40438,12 +40333,12 @@ snapshots:
   '@grpc/grpc-js@1.7.3':
     dependencies:
       '@grpc/proto-loader': 0.7.15
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@grpc/grpc-js@1.9.15':
     dependencies:
       '@grpc/proto-loader': 0.7.15
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@grpc/proto-loader@0.6.13':
     dependencies:
@@ -40669,7 +40564,7 @@ snapshots:
   '@jest/console@30.2.0':
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       chalk: 4.1.2
       jest-message-util: 30.2.0
       jest-util: 30.2.0
@@ -40683,14 +40578,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)
+      jest-config: 30.2.0(@types/node@22.19.3)
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40720,14 +40615,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40757,14 +40652,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40794,14 +40689,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40831,14 +40726,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40868,14 +40763,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40905,14 +40800,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40942,14 +40837,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -40979,14 +40874,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -41016,14 +40911,14 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 4.3.1
       exit-x: 0.2.2
       graceful-fs: 4.2.11
       jest-changed-files: 30.2.0
-      jest-config: 30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3))
+      jest-config: 30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3))
       jest-haste-map: 30.2.0
       jest-message-util: 30.2.0
       jest-regex-util: 30.0.1
@@ -41061,7 +40956,7 @@ snapshots:
       '@jest/fake-timers': 30.2.0
       '@jest/types': 30.2.0
       '@types/jsdom': 21.1.7
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-mock: 30.2.0
       jest-util: 30.2.0
       jsdom: 26.1.0
@@ -41070,14 +40965,14 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-mock: 29.7.0
 
   '@jest/environment@30.2.0':
     dependencies:
       '@jest/fake-timers': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-mock: 30.2.0
 
   '@jest/expect-utils@30.2.0':
@@ -41096,7 +40991,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -41105,7 +41000,7 @@ snapshots:
     dependencies:
       '@jest/types': 30.2.0
       '@sinonjs/fake-timers': 13.0.5
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-message-util: 30.2.0
       jest-mock: 30.2.0
       jest-util: 30.2.0
@@ -41124,7 +41019,7 @@ snapshots:
 
   '@jest/pattern@30.0.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-regex-util: 30.0.1
 
   '@jest/reporters@30.2.0':
@@ -41264,7 +41159,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/yargs': 15.0.19
       chalk: 4.1.2
 
@@ -41272,7 +41167,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/yargs': 16.0.9
       chalk: 4.1.2
 
@@ -41281,7 +41176,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -41291,7 +41186,7 @@ snapshots:
       '@jest/schemas': 30.0.5
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -41570,7 +41465,7 @@ snapshots:
 
   '@ledgerhq/evm-tools@1.3.0':
     dependencies:
-      '@ethersproject/constants': 5.8.0
+      '@ethersproject/constants': 5.7.0
       '@ethersproject/hash': 5.8.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
       '@ledgerhq/live-env': 2.4.1
@@ -41814,7 +41709,7 @@ snapshots:
       '@ledgerhq/wallet-api-client': 1.12.6(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core': 1.27.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-server': 3.0.0(@ton/crypto@3.3.0)
-      ws: 8.18.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - bufferutil
@@ -41878,11 +41773,11 @@ snapshots:
 
   '@marijn/find-cluster-break@1.0.2': {}
 
-  '@mdx-js/react@3.1.0(@types/react@18.2.73)(react@18.3.1)':
+  '@mdx-js/react@3.1.0(@types/react@18.2.73)(react@19.0.0)':
     dependencies:
       '@types/mdx': 2.0.12
       '@types/react': 18.2.73
-      react: 18.3.1
+      react: 19.0.0
 
   '@module-federation/error-codes@0.22.0': {}
 
@@ -43007,7 +42902,7 @@ snapshots:
     dependencies:
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
-      ws: 8.18.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -43647,7 +43542,7 @@ snapshots:
       errorhandler: 1.5.1
       nocache: 2.1.0
       pretty-format: 26.6.2
-      serve-static: 1.15.0
+      serve-static: 1.16.2
       ws: 7.5.10
     transitivePeerDependencies:
       - bufferutil
@@ -43693,7 +43588,7 @@ snapshots:
       node-fetch: 2.7.0
       open: 6.4.0
       semver: 6.3.1
-      shell-quote: 1.8.2
+      shell-quote: 1.8.3
     transitivePeerDependencies:
       - encoding
 
@@ -47274,12 +47169,12 @@ snapshots:
 
   '@storybook/addon-docs@10.2.0(@types/react@18.2.73)(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@mdx-js/react': 3.1.0(@types/react@18.2.73)(react@18.3.1)
+      '@mdx-js/react': 3.1.0(@types/react@18.2.73)(react@19.0.0)
       '@storybook/csf-plugin': 10.2.0(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@storybook/icons': 2.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@storybook/react-dom-shim': 10.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      '@storybook/icons': 2.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@storybook/react-dom-shim': 10.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
       storybook: 10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -47415,6 +47310,12 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
+      storybook: 10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  '@storybook/react-dom-shim@10.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
       storybook: 10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@storybook/react-dom-shim@10.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.2.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))':
@@ -48172,11 +48073,11 @@ snapshots:
 
   '@types/accepts@1.3.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/adm-zip@0.5.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/aria-query@5.0.4': {}
 
@@ -48207,7 +48108,7 @@ snapshots:
 
   '@types/bn.js@5.1.5':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/body-parser@1.19.5':
     dependencies:
@@ -48216,28 +48117,28 @@ snapshots:
 
   '@types/bonjour@3.5.13':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/bs58@4.0.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       base-x: 3.0.9
 
   '@types/bs58check@2.1.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/btoa-lite@1.0.2': {}
 
   '@types/buffer-from@1.1.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/cacheable-request@6.0.3':
     dependencies:
       '@types/http-cache-semantics': 4.0.4
       '@types/keyv': 3.1.4
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/responselike': 1.0.3
 
   '@types/caseless@0.12.5': {}
@@ -48281,15 +48182,15 @@ snapshots:
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 4.17.43
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/connect@3.4.36':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/content-disposition@0.5.8': {}
 
@@ -48300,7 +48201,7 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/express': 4.17.21
       '@types/keygrip': 1.0.6
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/cors@2.8.17':
     dependencies:
@@ -48308,7 +48209,7 @@ snapshots:
 
   '@types/create-hmac@1.1.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/crypto-js@4.2.2': {}
 
@@ -48445,7 +48346,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.17.43':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/qs': 6.9.14
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -48467,7 +48368,7 @@ snapshots:
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/geojson@7946.0.16': {}
 
@@ -48475,7 +48376,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/hammerjs@2.0.45': {}
 
@@ -48509,7 +48410,7 @@ snapshots:
 
   '@types/http-proxy@1.17.14':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/imurmurhash@0.1.4': {}
 
@@ -48537,7 +48438,7 @@ snapshots:
 
   '@types/jsdom@21.1.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/tough-cookie': 4.0.5
       parse5: 7.2.1
 
@@ -48547,13 +48448,13 @@ snapshots:
 
   '@types/jsonwebtoken@9.0.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/keygrip@1.0.6': {}
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/koa-compose@3.2.8':
     dependencies:
@@ -48568,7 +48469,7 @@ snapshots:
       '@types/http-errors': 2.0.4
       '@types/keygrip': 1.0.6
       '@types/koa-compose': 3.2.8
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/koa__router@12.0.3':
     dependencies:
@@ -48576,7 +48477,7 @@ snapshots:
 
   '@types/ledgerhq__hw-transport@4.21.8':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/libsodium-wrappers@0.7.13': {}
 
@@ -48623,20 +48524,20 @@ snapshots:
 
   '@types/mysql@2.15.22':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/node-fetch@2.6.11':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       form-data: 4.0.5
 
   '@types/node-forge@1.3.11':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/node-hid@1.3.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/node@10.12.18': {}
 
@@ -48686,7 +48587,7 @@ snapshots:
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/pg-pool@2.0.4':
     dependencies:
@@ -48694,13 +48595,13 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       pg-protocol: 1.6.1
       pg-types: 2.2.0
 
   '@types/plist@3.0.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       xmlbuilder: 15.1.1
     optional: true
 
@@ -48716,7 +48617,7 @@ snapshots:
 
   '@types/qrcode@1.5.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/qs@6.9.14': {}
 
@@ -48816,7 +48717,7 @@ snapshots:
   '@types/request@2.48.12':
     dependencies:
       '@types/caseless': 0.12.5
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/tough-cookie': 4.0.5
       form-data: 2.5.5
 
@@ -48824,7 +48725,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/retry@0.12.0': {}
 
@@ -48832,7 +48733,7 @@ snapshots:
 
   '@types/ripemd160@2.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/secp256k1@4.0.6':
     dependencies:
@@ -48843,7 +48744,7 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/serve-handler@6.1.4':
     dependencies:
@@ -48857,11 +48758,11 @@ snapshots:
     dependencies:
       '@types/http-errors': 2.0.4
       '@types/mime': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/sha.js@2.4.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/shimmer@1.2.0': {}
 
@@ -48869,7 +48770,7 @@ snapshots:
 
   '@types/sockjs@0.3.36':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/stack-utils@2.0.3': {}
 
@@ -48877,11 +48778,11 @@ snapshots:
 
   '@types/stream-chain@2.0.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/stream-json@1.7.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@types/stream-chain': 2.0.4
 
   '@types/styled-components@5.1.34(@types/react@18.2.73)':
@@ -48913,13 +48814,13 @@ snapshots:
 
   '@types/tunnel@0.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/unist@2.0.10': {}
 
   '@types/unzipper@0.10.9':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/use-sync-external-store@0.0.6': {}
 
@@ -48946,7 +48847,7 @@ snapshots:
 
   '@types/ws@7.4.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   '@types/ws@8.5.10':
     dependencies:
@@ -48968,7 +48869,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)':
@@ -49064,11 +48965,6 @@ snapshots:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
 
-  '@typescript-eslint/scope-manager@8.30.1':
-    dependencies:
-      '@typescript-eslint/types': 8.30.1
-      '@typescript-eslint/visitor-keys': 8.30.1
-
   '@typescript-eslint/scope-manager@8.48.1':
     dependencies:
       '@typescript-eslint/types': 8.48.1
@@ -49107,8 +49003,6 @@ snapshots:
       - supports-color
 
   '@typescript-eslint/types@5.62.0': {}
-
-  '@typescript-eslint/types@8.30.1': {}
 
   '@typescript-eslint/types@8.48.1': {}
 
@@ -49151,20 +49045,6 @@ snapshots:
       tsutils: 3.21.0(typescript@5.6.3)
     optionalDependencies:
       typescript: 5.6.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@typescript-eslint/typescript-estree@8.30.1(typescript@5.4.3)':
-    dependencies:
-      '@typescript-eslint/types': 8.30.1
-      '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.3.4
-      fast-glob: 3.3.2
-      is-glob: 4.0.3
-      minimatch: 9.0.5
-      semver: 7.7.3
-      ts-api-utils: 2.1.0(typescript@5.4.3)
-      typescript: 5.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -49228,17 +49108,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@typescript-eslint/utils@8.30.1(eslint@8.57.0)(typescript@5.4.3)':
-    dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@8.57.0)
-      '@typescript-eslint/scope-manager': 8.30.1
-      '@typescript-eslint/types': 8.30.1
-      '@typescript-eslint/typescript-estree': 8.30.1(typescript@5.4.3)
-      eslint: 8.57.0
-      typescript: 5.4.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@typescript-eslint/utils@8.48.1(eslint@8.57.0)(typescript@5.4.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.0(eslint@8.57.0)
@@ -49265,11 +49134,6 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
-
-  '@typescript-eslint/visitor-keys@8.30.1':
-    dependencies:
-      '@typescript-eslint/types': 8.30.1
-      eslint-visitor-keys: 4.2.1
 
   '@typescript-eslint/visitor-keys@8.48.1':
     dependencies:
@@ -49961,7 +49825,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
       eventemitter3: 5.0.1
-      ws: 8.18.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -50638,7 +50502,7 @@ snapshots:
 
   assert@2.1.0:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       is-nan: 1.3.2
       object-is: 1.1.6
       object.assign: 4.1.5
@@ -50888,7 +50752,7 @@ snapshots:
       glob: 9.3.5
       pkg-up: 3.1.0
       reselect: 4.1.8
-      resolve: 1.22.8
+      resolve: 1.22.11
 
   babel-plugin-polyfill-corejs2@0.4.14(@babel/core@7.28.5):
     dependencies:
@@ -51970,7 +51834,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -51981,7 +51845,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -52335,7 +52199,7 @@ snapshots:
       date-fns: 2.30.0
       lodash: 4.17.21
       rxjs: 7.8.2
-      shell-quote: 1.8.1
+      shell-quote: 1.8.3
       spawn-command: 0.0.2
       supports-color: 8.1.1
       tree-kill: 1.2.2
@@ -53604,7 +53468,7 @@ snapshots:
   dom-helpers@5.2.1:
     dependencies:
       '@babel/runtime': 7.28.4
-      csstype: 3.2.3
+      csstype: 3.1.3
 
   dom-serializer@0.2.2:
     dependencies:
@@ -53933,7 +53797,7 @@ snapshots:
   env-cmd@10.1.0:
     dependencies:
       commander: 4.1.1
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
 
   env-editor@0.4.2: {}
 
@@ -54472,7 +54336,7 @@ snapshots:
   eslint-plugin-storybook@0.12.0(eslint@8.57.0)(typescript@5.4.3):
     dependencies:
       '@storybook/csf': 0.1.13
-      '@typescript-eslint/utils': 8.30.1(eslint@8.57.0)(typescript@5.4.3)
+      '@typescript-eslint/utils': 8.48.1(eslint@8.57.0)(typescript@5.4.3)
       eslint: 8.57.0
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -56964,10 +56828,6 @@ snapshots:
     dependencies:
       text-extensions: 1.9.0
 
-  is-typed-array@1.1.13:
-    dependencies:
-      which-typed-array: 1.1.19
-
   is-typed-array@1.1.15:
     dependencies:
       which-typed-array: 1.1.19
@@ -57568,39 +57428,6 @@ snapshots:
       - metro
       - supports-color
 
-  jest-config@30.2.0(@types/node@20.12.12):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
   jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)):
     dependencies:
       '@babel/core': 7.28.5
@@ -57664,244 +57491,6 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.12.12
       ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(typescript@5.6.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@30.2.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3)):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.0.1
-      '@jest/test-sequencer': 30.2.0
-      '@jest/types': 30.2.0
-      babel-jest: 30.2.0(@babel/core@7.28.5)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.4.5
-      graceful-fs: 4.2.11
-      jest-circus: 30.2.0
-      jest-docblock: 30.2.0
-      jest-environment-node: 30.2.0
-      jest-regex-util: 30.0.1
-      jest-resolve: 30.2.0
-      jest-runner: 30.2.0
-      jest-util: 30.2.0
-      jest-validate: 30.2.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 30.2.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@swc/core@1.15.8)(typescript@5.8.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -58075,6 +57664,176 @@ snapshots:
       - metro
       - supports-color
 
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@20.12.12)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
   jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3)):
     dependencies:
       '@babel/core': 7.28.5
@@ -58104,6 +57863,108 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.3
       ts-node: 10.9.2(@swc/core@1.15.8)(@types/node@22.19.3)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(typescript@5.4.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.6.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(typescript@5.6.3)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - metro
+      - supports-color
+
+  jest-config@30.2.0(@types/node@22.19.3)(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3)):
+    dependencies:
+      '@babel/core': 7.28.5
+      '@jest/get-type': 30.1.0
+      '@jest/pattern': 30.0.1
+      '@jest/test-sequencer': 30.2.0
+      '@jest/types': 30.2.0
+      babel-jest: 30.2.0(@babel/core@7.28.5)
+      chalk: 4.1.2
+      ci-info: 4.3.1
+      deepmerge: 4.3.1
+      glob: 10.4.5
+      graceful-fs: 4.2.11
+      jest-circus: 30.2.0
+      jest-docblock: 30.2.0
+      jest-environment-node: 30.2.0
+      jest-regex-util: 30.0.1
+      jest-resolve: 30.2.0
+      jest-runner: 30.2.0
+      jest-util: 30.2.0
+      jest-validate: 30.2.0
+      micromatch: 4.0.8
+      parse-json: 5.2.0
+      pretty-format: 30.2.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 22.19.3
+      ts-node: 10.9.2(@swc/core@1.15.8)(typescript@5.8.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -58291,7 +58152,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -58322,7 +58183,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -58340,7 +58201,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -58357,7 +58218,7 @@ snapshots:
   jest-haste-map@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -58454,18 +58315,18 @@ snapshots:
   jest-mock@27.5.1:
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
 
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-util: 29.7.0
 
   jest-mock@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-util: 30.2.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@30.2.0):
@@ -58504,7 +58365,7 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       chalk: 4.1.2
       emittery: 0.13.1
       exit-x: 0.2.2
@@ -58534,7 +58395,7 @@ snapshots:
       '@jest/test-result': 30.2.0
       '@jest/transform': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       chalk: 4.1.2
       cjs-module-lexer: 2.2.0
       collect-v8-coverage: 1.0.2
@@ -58588,7 +58449,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -58597,7 +58458,7 @@ snapshots:
   jest-util@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
@@ -58625,7 +58486,7 @@ snapshots:
     dependencies:
       '@jest/test-result': 30.2.0
       '@jest/types': 30.2.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.13.1
@@ -58634,20 +58495,20 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0(metro@0.81.5):
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -58656,7 +58517,7 @@ snapshots:
 
   jest-worker@29.7.0(metro@0.82.5):
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -58665,7 +58526,7 @@ snapshots:
 
   jest-worker@30.2.0:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       '@ungap/structured-clone': 1.3.0
       jest-util: 30.2.0
       merge-stream: 2.0.0
@@ -61017,11 +60878,6 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  micromatch@4.0.7:
-    dependencies:
-      braces: 3.0.3
-      picomatch: 2.3.1
-
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
@@ -61101,10 +60957,6 @@ snapshots:
       brace-expansion: 2.0.1
 
   minimatch@8.0.4:
-    dependencies:
-      brace-expansion: 2.0.1
-
-  minimatch@9.0.4:
     dependencies:
       brace-expansion: 2.0.1
 
@@ -62855,9 +62707,9 @@ snapshots:
 
   postcss-resolve-nested-selector@0.1.1: {}
 
-  postcss-safe-parser@6.0.0(postcss@8.4.38):
+  postcss-safe-parser@6.0.0(postcss@8.5.6):
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.5.6
 
   postcss-selector-not@6.0.1(postcss@8.5.6):
     dependencies:
@@ -63160,7 +63012,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       long: 4.0.0
 
   protobufjs@7.2.5:
@@ -63175,7 +63027,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       long: 5.2.3
 
   protobufjs@7.3.2:
@@ -63190,7 +63042,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       long: 5.2.3
 
   protobufjs@7.5.4:
@@ -63205,7 +63057,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.19.3
       long: 5.2.3
 
   protocols@2.0.1: {}
@@ -63399,7 +63251,7 @@ snapshots:
     dependencies:
       '@types/lodash': 4.17.21
       color: 4.2.3
-      csstype: 3.2.3
+      csstype: 3.1.3
       lodash-es: 4.17.21
 
   react-devtools-core@6.1.2:
@@ -64943,7 +64795,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       eventemitter3: 5.0.1
       uuid: 8.3.2
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.17.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
@@ -65117,24 +64969,6 @@ snapshots:
 
   semver@7.7.3: {}
 
-  send@0.18.0:
-    dependencies:
-      debug: 2.6.9
-      depd: 2.0.0
-      destroy: 1.2.0
-      encodeurl: 1.0.2
-      escape-html: 1.0.3
-      etag: 1.8.1
-      fresh: 0.5.2
-      http-errors: 2.0.0
-      mime: 1.6.0
-      ms: 2.1.3
-      on-finished: 2.4.1
-      range-parser: 1.2.1
-      statuses: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
-
   send@0.19.0:
     dependencies:
       debug: 2.6.9
@@ -65237,15 +65071,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serve-static@1.15.0:
-    dependencies:
-      encodeurl: 1.0.2
-      escape-html: 1.0.3
-      parseurl: 1.3.3
-      send: 0.18.0
-    transitivePeerDependencies:
-      - supports-color
-
   serve-static@1.16.2:
     dependencies:
       encodeurl: 2.0.0
@@ -65337,8 +65162,6 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   shell-quote@1.8.0: {}
-
-  shell-quote@1.8.1: {}
 
   shell-quote@1.8.2: {}
 
@@ -65488,7 +65311,7 @@ snapshots:
 
   smoldot@2.0.22:
     dependencies:
-      ws: 8.18.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -66352,9 +66175,9 @@ snapshots:
 
   stylelint-processor-styled-components@1.10.0:
     dependencies:
-      '@babel/parser': 7.24.1
-      '@babel/traverse': 7.24.1
-      micromatch: 4.0.7
+      '@babel/parser': 7.28.5
+      '@babel/traverse': 7.28.5
+      micromatch: 4.0.8
       postcss: 7.0.39
     transitivePeerDependencies:
       - supports-color
@@ -66381,13 +66204,13 @@ snapshots:
       known-css-properties: 0.26.0
       mathml-tag-names: 2.1.3
       meow: 9.0.0
-      micromatch: 4.0.7
+      micromatch: 4.0.8
       normalize-path: 3.0.0
       picocolors: 1.1.1
-      postcss: 8.4.38
+      postcss: 8.5.6
       postcss-media-query-parser: 0.2.3
       postcss-resolve-nested-selector: 0.1.1
-      postcss-safe-parser: 6.0.0(postcss@8.4.38)
+      postcss-safe-parser: 6.0.0(postcss@8.5.6)
       postcss-selector-parser: 6.0.16
       postcss-value-parser: 4.2.0
       resolve-from: 5.0.0
@@ -67867,8 +67690,8 @@ snapshots:
       inherits: 2.0.4
       is-arguments: 1.1.1
       is-generator-function: 1.0.10
-      is-typed-array: 1.1.13
-      which-typed-array: 1.1.15
+      is-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   utila@0.4.0: {}
 
@@ -68154,7 +67977,7 @@ snapshots:
   vue@2.7.16:
     dependencies:
       '@vue/compiler-sfc': 2.7.16
-      csstype: 3.2.3
+      csstype: 3.1.3
 
   w3c-keyname@2.2.8: {}
 
@@ -68476,7 +68299,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.4(webpack@5.94.0(@swc/core@1.15.8))
-      ws: 8.18.3
+      ws: 8.17.1
     optionalDependencies:
       webpack: 5.94.0(@swc/core@1.15.8)
     transitivePeerDependencies:
@@ -68650,14 +68473,6 @@ snapshots:
       load-yaml-file: 0.2.0
       path-exists: 4.0.0
 
-  which-typed-array@1.1.15:
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.8
-      for-each: 0.3.5
-      gopd: 1.2.0
-      has-tostringtag: 1.0.2
-
   which-typed-array@1.1.19:
     dependencies:
       available-typed-arrays: 1.0.7
@@ -68809,12 +68624,12 @@ snapshots:
 
   ws@8.17.1: {}
 
-  ws@8.18.3: {}
-
-  ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10):
+  ws@8.17.1(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
+
+  ws@8.18.3: {}
 
   ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     optionalDependencies:

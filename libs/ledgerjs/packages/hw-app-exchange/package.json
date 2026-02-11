@@ -38,13 +38,13 @@
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@noble/curves": "1.9.7",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
-    "bip32-path": "^0.4.2",
+    "@types/node": "22.10.10",
+    "bip32-path": "0.4.2",
     "documentation": "14.0.2",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

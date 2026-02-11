@@ -26,7 +26,7 @@
     "@ledgerhq/logs": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "documentation": "14.0.2"
   },
   "scripts": {

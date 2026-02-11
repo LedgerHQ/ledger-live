@@ -104,18 +104,18 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
+    "@faker-js/faker": "8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@types/invariant": "^2.2.37",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
-    "dotenv": "^16.4.5",
+    "@types/lodash": "4.17.7",
+    "dotenv": "16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
-    "ripple-keypairs": "^2.0.0",
+    "ripple-keypairs": "2.0.0",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "5.6.3"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

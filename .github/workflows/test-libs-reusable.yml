@@ -111,7 +111,7 @@ jobs:
           path: |
             libs/ledger-live-common/src
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         if: ${{ !cancelled() }}
         with:
           script: |
@@ -166,7 +166,7 @@ jobs:
         id: unimported
         run: pnpm unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         if: ${{ !cancelled() }}
         with:
           script: |
@@ -223,7 +223,7 @@ jobs:
           pattern: outputs-*
           merge-multiple: true
           path: outputs
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         name: build summary
         with:
           script: |

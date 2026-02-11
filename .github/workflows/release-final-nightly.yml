@@ -61,7 +61,7 @@ jobs:
         run: pnpm changeset version --snapshot nightly
 
       - name: authenticate with npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           registry-url: "https://registry.npmjs.org"
 
@@ -88,7 +88,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           overwrite: true
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         name: trigger nightly build of desktop
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -103,7 +103,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         name: trigger nightly build of mobile
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -126,7 +126,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

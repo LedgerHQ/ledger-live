@@ -18,13 +18,13 @@ runs:
   using: "composite"
   steps:
     - name: Setup JDK ${{ inputs.jdk_version }}
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62 # v3
       with:
         distribution: ${{ inputs.jdk_distribution }}
         java-version: ${{ inputs.jdk_version }}
 
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3.2.2
+      uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3.2.2
       with:
         packages: ${{ inputs.android_packages }}
         cmdline-tools-version: 13114758

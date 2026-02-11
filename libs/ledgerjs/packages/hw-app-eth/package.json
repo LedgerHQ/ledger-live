@@ -55,19 +55,19 @@
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
-    "@ethersproject/bignumber": "^5.7.0",
-    "@ethersproject/constants": "^5.7.0",
-    "@ethersproject/units": "^5.7.0",
+    "@ethersproject/bignumber": "5.7.0",
+    "@ethersproject/constants": "5.7.0",
+    "@ethersproject/units": "5.7.0",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "documentation": "14.0.2",
     "jest": "catalog:",
-    "nock": "^13.0.5",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
+    "nock": "13.5.4",
+    "rimraf": "4.4.1",
+    "source-map-support": "0.5.21",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   },
   "overrides": {
     "@ethersproject/providers": {

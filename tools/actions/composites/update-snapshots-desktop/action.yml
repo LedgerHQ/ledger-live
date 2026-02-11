@@ -60,7 +60,7 @@ runs:
       shell: bash
 
     - name: Commit snapshots
-      uses: planetscale/ghcommit-action@v0.2.9
+      uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
       if: ${{ steps.status.outputs.status != '0' || steps.status-windows.outputs.status != '0' }}
       with:
         commit_message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
@@ -71,7 +71,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Upload playwright results [On Failure]
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       if: failure() && !cancelled()
       with:
         name: ${{ format('playwright-results-{0}', inputs.os) }}

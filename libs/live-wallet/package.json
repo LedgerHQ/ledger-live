@@ -41,15 +41,15 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/lodash": "4",
-    "@types/pako": "^2.0.0",
-    "@types/ws": "^8.5.3",
+    "@types/lodash": "4.17.7",
+    "@types/pako": "2.0.3",
+    "@types/ws": "8.5.10",
     "msw": "catalog:",
     "jest": "catalog:",
-    "timemachine": "^0.3.2",
+    "timemachine": "0.3.2",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ws": "^8.16.0"
+    "ws": "8.17.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

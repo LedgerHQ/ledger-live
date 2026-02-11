@@ -228,7 +228,7 @@
     "@react-native-community/cli-platform-ios": "15.1.0",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@vitest/mocker": "4.0.17",
-    "@ton/crypto": "^3.3.0",
+    "@ton/crypto": "3.3.0",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "chalk": "4.1.2",

@@ -27,7 +27,7 @@ runs:
   using: "composite"
   steps:
     - name: "Merge ${{ inputs.head-branch }} into ${{ inputs.base-branch }}"
-      uses: actions/github-script@v7
+      uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
       id: merge
       with:
         github-token: ${{ inputs.github-token }}

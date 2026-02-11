@@ -58,13 +58,13 @@
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "documentation": "14.0.2",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
+    "rimraf": "4.4.1",
+    "source-map-support": "0.5.21",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   }
 }

@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@jest/reporters": "catalog:",
-    "@jest/types": "^30.2.0",
+    "@jest/types": "30.2.0",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
@@ -48,7 +48,7 @@
     "@typescript-eslint/parser": "catalog:",
     "allure-commandline": "2.28.0",
     "babel-jest": "catalog:",
-    "babel-plugin-module-resolver": "^5.0.2",
+    "babel-plugin-module-resolver": "5.0.2",
     "bignumber.js": "9.1.2",
     "body-parser": "2.2.2",
     "cors": "2.8.5",
@@ -70,7 +70,7 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "10.9.2",
-    "tsconfig-paths": "^4.2.0",
+    "tsconfig-paths": "4.2.0",
     "ws": "catalog:"
   }
 }

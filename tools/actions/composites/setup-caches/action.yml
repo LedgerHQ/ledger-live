@@ -46,7 +46,7 @@ runs:
   steps:
     - name: Setup proto
       if: inputs.install-proto == 'true'
-      uses: moonrepo/setup-toolchain@v0
+      uses: moonrepo/setup-toolchain@65d53643a42a85e876ee676b40318b96d1885fb5 # v0
       with:
         proto-version: "0.55.2"
 
@@ -59,7 +59,7 @@ runs:
       shell: bash
       run: proto use
 
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
       if: inputs.install-proto == 'true' && startsWith(env.CI_OS, 'windows')
       with:
         version: 10.24.0
@@ -70,7 +70,7 @@ runs:
         echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
       if: inputs.accountId != '' && inputs.roleName != ''
       id: aws
       with:
@@ -78,7 +78,7 @@ runs:
         aws-region: ${{ inputs.region }}
 
     - name: Cache pnpm store
-      uses: tespkg/actions-cache@v1
+      uses: tespkg/actions-cache@a2e3f005921809689270625bc026d387f73017ae # v1
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
@@ -93,7 +93,7 @@ runs:
         use-fallback: false
 
     - name: Cache LLM pods
-      uses: actions/cache@v3
+      uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3
       if: inputs.skip-pod-cache != 'true'
       with:
         path: |

@@ -112,14 +112,14 @@
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@types/invariant": "^2.2.37",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "dotenv": "^16.4.5",
+    "dotenv": "16.4.7",
     "expect": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "5.6.3"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
