@@ -209,7 +209,7 @@ describe("useAppLoadingManager", () => {
   });
 
   describe("Case C: Max duration fallback", () => {
-    it("should transition when max duration is reached even if navigation is not ready", () => {
+    it("should not transition before navigation is ready even after max duration, and then transition once navigation becomes ready", () => {
       const onAppReady = jest.fn();
       const config: LoadingConfig = {
         lottieMinDuration: 1000,
@@ -373,7 +373,7 @@ describe("useAppLoadingManager", () => {
       expect(SplashScreen.hide).toHaveBeenCalledTimes(2);
     });
 
-    it("should not call SplashScreen.hide() when navigation is ready from start", () => {
+    it("should call SplashScreen.hide() when navigation is ready from start", () => {
       renderHook(() =>
         useAppLoadingManager({
           isNavigationReady: true,
@@ -514,7 +514,7 @@ describe("useAppLoadingManager", () => {
         lottieMaxDuration: 5000,
       };
 
-      const { rerender } = renderHook(
+      const { result, rerender } = renderHook(
         ({ isNavigationReady }: RenderHookProps) =>
           useAppLoadingManager({
             isNavigationReady,
@@ -529,13 +529,23 @@ describe("useAppLoadingManager", () => {
         jest.advanceTimersByTime(0);
       });
 
+      expect(result.current.loadingState).toBe(LoadingState.LOTTIE_LOADING);
+
       rerender({ isNavigationReady: true });
+
+      act(() => {
+        jest.advanceTimersByTime(0);
+      });
+
+      // Transition should start even without onAppReady callback
+      expect(result.current.appIsReady).toBe(true);
 
       act(() => {
         jest.advanceTimersByTime(300);
       });
 
-      expect(true).toBe(true);
+      expect(result.current.loadingState).toBe(LoadingState.APP_READY);
+      expect(result.current.appIsReady).toBe(true);
     });
   });
 
