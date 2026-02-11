@@ -15,7 +15,6 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 const StepValidator = ({ account, transaction, onUpdateTransaction, error }: StepProps) => {
-  const { t } = useTranslation();
   if (!transaction) return null;
   if (!account) return null;
 
@@ -52,7 +51,7 @@ export function StepValidatorFooter({
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           {t("common.cancel")}
         </Button>
         <Button

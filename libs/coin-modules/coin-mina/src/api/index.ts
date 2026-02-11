@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { isValidAddress } from "../common-logic";
 import { MINA_TOKEN_ID } from "../consts";
 import { MinaAPIAccount, MinaSignedTransaction, Transaction, TxType } from "../types/common";
+import { getDelegateAccount } from "./graphql";
 import {
   fetchAccountBalance,
   fetchAccountTransactions,
@@ -12,7 +13,6 @@ import {
   rosettaSubmitTransaction,
 } from "./rosetta";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "./rosetta/types";
-import { getDelegateAccount } from "./graphql";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();

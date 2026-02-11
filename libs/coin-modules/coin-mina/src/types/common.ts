@@ -7,6 +7,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { ValidatorInfo } from "../api/fetchValidators";
 
 export type Transaction = TransactionCommon & {
