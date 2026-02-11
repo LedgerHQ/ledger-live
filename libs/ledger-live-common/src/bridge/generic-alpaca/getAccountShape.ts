@@ -47,17 +47,34 @@ function buildOneParentOpPerHash(
   newInternalOperations: OperationCommon[],
   accountId: string,
 ): OperationCommon[] {
-  const seenHashes = new Set<string>();
   const result: OperationCommon[] = [];
 
+  // Group non-internal operations by hash while preserving the order
+  const nonInternalByHash = new Map<string, OperationCommon[]>();
   for (const op of newNonInternalOperations) {
-    if (seenHashes.has(op.hash)) continue;
-    seenHashes.add(op.hash);
+    const existing = nonInternalByHash.get(op.hash);
+    if (existing) {
+      existing.push(op);
+    } else {
+      nonInternalByHash.set(op.hash, [op]);
+    }
+  }
 
-    const transactionOps = newNonInternalOperations.filter(o => o.hash === op.hash);
+  // Group internal operations by hash
+  const internalByHash = new Map<string, OperationCommon[]>();
+  for (const op of newInternalOperations) {
+    const existing = internalByHash.get(op.hash);
+    if (existing) {
+      existing.push(op);
+    } else {
+      internalByHash.set(op.hash, [op]);
+    }
+  }
+
+  for (const [hash, transactionOps] of nonInternalByHash) {
     const nativeOp = transactionOps.find(isNativeLiveOp);
-    const subOperations = inferSubOperations(op.hash, newSubAccounts);
-    const internalOperations = newInternalOperations.filter(it => it.hash === op.hash);
+    const subOperations = inferSubOperations(hash, newSubAccounts);
+    const internalOperations = internalByHash.get(hash) ?? [];
 
     if (nativeOp) {
       result.push(
