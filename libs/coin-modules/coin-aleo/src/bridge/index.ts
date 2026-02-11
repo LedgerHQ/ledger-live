@@ -4,7 +4,8 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { CoinConfig } from "@ledgerhq/coin-framework/config";
 import type {
   AccountBridge,
   Bridge,
@@ -13,6 +14,7 @@ import type {
 } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
+import aleoCoinConfig, { type AleoCoinConfig } from "../config";
 import type { Transaction as AleoTransaction } from "../types/index";
 import type { AleoSigner } from "../types/signer";
 import resolver from "../signer/getAddress";
@@ -66,7 +68,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<AleoSigner>): Bridge<AleoTransaction> {
+export function createBridges(
+  signerContext: SignerContext<AleoSigner>,
+  coinConfig: CoinConfig<AleoCoinConfig>,
+): Bridge<AleoTransaction> {
+  aleoCoinConfig.setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
