@@ -152,7 +152,8 @@
     "quote" : "Cotización",
     "memoTag" : {
       "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
-    }
+    },
+    "stake" : "Participación"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "Earn",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
+    "perps" : "Perpetuos",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
     "catalog" : "Discover",
@@ -809,7 +811,15 @@
     }
   },
   "card" : {
-    "backToCard" : "todas las tarjetas"
+    "backToCard" : "todas las tarjetas",
+    "title" : "Tarjeta",
+    "imageAlt" : "Imagen de la tarjeta",
+    "spendYourCrypto" : "Gasta tus cripto",
+    "payDescription" : "Paga en tiendas online o físicas con una tarjeta cripto",
+    "exploreCards" : "Explorar tarjetas",
+    "iAlreadyHaveACard" : "Ya tengo una tarjeta",
+    "unlockLiquidity" : "Desbloquear liquidez",
+    "exploreCryptoCardsDescription" : "Explora nuestras tarjetas cripto y elige la que mejor se ajuste a tus necesidades."
   },
   "lend" : {
     "title" : "Prestar cripto",
@@ -1783,6 +1793,7 @@
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
       "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
+      "acceptTermsSponsored" : "Para poder beneficiarte de las tarifas de red gratuitas, aceptas compartir los detalles de tu transacción (incluida la dirección de tu wallet) con Blinklabs.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -2205,6 +2216,19 @@
       "description" : "Puede que necesites una <0>etiqueta o memo</0> para recibir este activo de un exchange. Puedes usar cualquier combinación de números, como 1234."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Transferencia bancaria",
+          "description" : "Envía dinero fiduciario y recibe monedas estables"
+        },
+        "fromCrypto" : {
+          "title" : "Recibir cripto"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "Enviar",
     "totalSpent" : "Total a debitar",
@@ -2331,6 +2355,15 @@
     "addressNotFound" : "Dirección no encontrada",
     "alreadyUsed" : "Ya utilizado · {{date}}",
     "recentSendWillAppear" : "Tus envíos anteriores aparecerán aquí",
+    "relativeDate" : {
+      "justNow" : "Ahora",
+      "minutesAgo_one" : "1 min ago",
+      "minutesAgo_other" : "{{count}} min ago",
+      "hoursAgo_one" : "Hace 1 hora",
+      "hoursAgo_other" : "hace {{count}} horas",
+      "daysAgo_one" : "Hace 1 día",
+      "daysAgo_other" : "hace {{count}} días"
+    },
     "remove" : "Eliminar",
     "enterTag" : "Ingresar {{tag}}",
     "firstInteraction" : {
@@ -4506,6 +4539,10 @@
           "title" : "Generación rápida",
           "desc" : "Genera 10 cuentas aleatorias con divisas al azar."
         },
+        "emptyGenerate" : {
+          "title" : "Generación vacía",
+          "desc" : "Generar una cuenta vacía"
+        },
         "currencySelector" : {
           "placeholder" : "Elegir divisas...",
           "searchPlaceholder" : "Buscar",
@@ -4521,7 +4558,8 @@
         "buttons" : {
           "generateAccounts" : "Generar {{count}} cuenta",
           "generateAccounts_other" : "Generar {{count}} cuentas",
-          "generateAccountsQuick" : "Generar {{count}} cuentas"
+          "generateAccountsQuick" : "Generar {{count}} cuentas",
+          "generateEmptyAccount" : "Generar cuenta vacía"
         },
         "alerts" : {
           "selectCurrency" : "Selecciona al menos una divisa",
@@ -4567,9 +4605,13 @@
       "walletFeaturesDevTool" : {
         "title" : "Herramienta de desarrollo de funciones de wallet",
         "description" : "Activar/desactivar las funciones de wallet 4.0 para escritorio (marca de función lwdWallet40).",
+        "mainFeatureToggle" : "Alternar característica principal",
         "enableAll" : "Activar todo",
         "disableAll" : "Desactivar todo",
         "featureParameters" : "Parámetros de la función",
+        "tourState" : "Estado del tour",
+        "drawerPreview" : "Vista previa del drawer",
+        "openDrawer" : "Abrir drawer",
         "showJson" : "Mostrar JSON",
         "hideJson" : "Ocultar JSON"
       },
@@ -6336,7 +6378,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Error de procesamiento",
-      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+      "description" : "El proveedor de permuta no puede procesar esta transacción. Código de error 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "Proveedor no disponible",
@@ -6634,7 +6676,7 @@
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Habilita la firma a ciegas o los datos de contrato en los ajustes de la aplicación Ethereum"
+      "title" : "Activar la Firma a ciegas o Datos de contrato en la app de Ethereum"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Habilita los datos de contrato en los ajustes de la aplicación Celo"
@@ -7158,6 +7200,50 @@
     "memo" : "Memo",
     "memoPlaceholder" : "Escribir etiqueta/memo",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Tarifa",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Cambiar delegación",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. ",
+      "changeCTA" : "Cambiar"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "commission" : "Comisión"
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7824,7 +7910,15 @@
   },
   "portfolio" : {
     "title" : "Inicio",
-    "today" : "Hoy"
+    "today" : "Hoy",
+    "addAccountCta" : "Agregar cuenta cripto",
+    "noBalanceTitle" : "Protege tus cripto",
+    "perpsEntry" : {
+      "title" : "Perpetuos",
+      "description" : "Opera con apalancamiento",
+      "cta" : "Discover"
+    },
+    "noDeviceTitle" : "La wallet más segura"
   },
   "marketBanner" : {
     "title" : "Explorar mercado",
@@ -7848,11 +7942,25 @@
       "cta" : "Entendido"
     }
   },
+  "quickActions" : {
+    "send" : "Enviar",
+    "receive" : "Recibir",
+    "buy" : "Comprar",
+    "sell" : "Vender",
+    "connect" : "Conectar",
+    "buyALedger" : "Compra un Ledger"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "refreshToolTip" : "Tap to refresh",
+      "errorToolTip" : "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7985,56 @@
       "transparentBalanceTooltip" : "Saldo visible para el público",
       "privateBalance" : "Saldo privado",
       "privateBalanceTooltip" : "Saldo que está oculto al público"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "Mostrar saldo",
+        "pausedAt" : "Se pausó a las: ",
+        "lastSync" : "Última sincronización: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Activar saldo privado de Zcash",
+          "breadcrumbs" : {
+            "0" : "Altura de nacimiento",
+            "1" : "UFVK",
+            "2" : "Dispositivo",
+            "3" : "Confirmación"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos.",
+              "cta" : "Más información",
+              "label" : "Altura de nacimiento",
+              "tooltip" : "Valor predeterminado: La fecha de hoy. Cámbialo solo para las cuentas ya existentes con actividad privada (protegida) anterior.",
+              "syncFromZero" : "Esta cuenta recibió ZEC blindado en el pasado, pero no puedo recuperar la altura de nacimiento. Escanea a partir del bloque 0 (este proceso puede llevar mucho tiempo).",
+              "error" : "Fecha no válida"
+            },
+            "ufvk" : {
+              "text" : "Para comenzar, debes exportar tu Clave de Visualización Completa Unificada (UFVK). Debes confirmar esta acción con tu dispositivo Ledger."
+            },
+            "device" : {
+              "text" : "Confirma la exportación de tu UFVK en tu dispositivo Ledger"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK importada correctamente",
+                "text" : "Podrás recibir Shielded ZEC y firmar transacciones privadas.",
+                "info" : {
+                  "text" : "Tu Clave de Visualización Completa Unificada se mantiene almacenada localmente en tu PC y nunca se transmite ni expone a sistemas externos.",
+                  "cta" : "Más información"
+                },
+                "warning" : "Las cuentas que tengan una altura de nacimiento más antigua pueden requerir una sincronización más prolongada (de hasta 2 horas). Mantén la app abierta hasta que finalice la sincronización."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "Iniciar sincronización",
+      "datepicker" : {
+        "label" : "Altura de nacimiento",
+        "tooltip" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos."
+      }
     }
   }
 }
