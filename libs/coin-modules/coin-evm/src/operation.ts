@@ -39,7 +39,7 @@ export const isEditableOperation = (
 };
 
 /**
- * Return weather an operation is considered stuck or not.
+ * Return whether an operation is considered stuck or not.
  */
 export const isStuckOperation = (operation: Operation): boolean => {
   /**

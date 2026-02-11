@@ -149,7 +149,6 @@ export type Transaction = TransactionCommon & {
   psbt?: string;
   finalizePsbt?: boolean;
   replaceTxId?: string | undefined;
-  // nextFeeRate?: BigNumber | null | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -161,7 +160,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
   replaceTxId?: string | undefined;
-  // nextFeeRate?: BigNumber | null | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon & {

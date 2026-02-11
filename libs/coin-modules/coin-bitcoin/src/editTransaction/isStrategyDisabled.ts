@@ -13,10 +13,7 @@ export const isStrategyDisabled = ({
   feesStrategy: BigNumber;
 }): boolean => {
   // If RBF is explicitly disabled, a replacement tx shouldn't be possible.
-  if (transaction.rbf === false) {
-    return true;
-  }
-  if (!feesStrategy || feesStrategy.lte(0)) {
+  if (!transaction.rbf || !feesStrategy || feesStrategy.lte(0)) {
     return true;
   }
 

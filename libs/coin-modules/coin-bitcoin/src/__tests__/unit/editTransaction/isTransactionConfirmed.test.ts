@@ -1,5 +1,5 @@
 import { isTransactionConfirmed } from "../../../editTransaction/isTransactionConfirmed";
-import wallet from "../../../wallet-btc";
+import wallet, { type BitcoinLikeWallet } from "../../../wallet-btc";
 import { Account } from "../../../wallet-btc";
 
 jest.mock("../../../wallet-btc", () => ({
@@ -9,7 +9,7 @@ jest.mock("../../../wallet-btc", () => ({
   },
 }));
 
-const mockedWallet = wallet as jest.Mocked<typeof wallet>;
+const mockedWallet = wallet as jest.Mocked<BitcoinLikeWallet>;
 
 describe("isTransactionConfirmed", () => {
   const account = {} as Account;

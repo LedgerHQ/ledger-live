@@ -310,7 +310,7 @@ class Xpub {
         );
         const feeFromRate = estimatedTxSize * feePerByte;
         fee =
-          minReplacementFeeSat !== undefined
+          typeof minReplacementFeeSat === "number"
             ? Math.max(feeFromRate, minReplacementFeeSat)
             : feeFromRate;
         needChangeoutput = true;

@@ -18,7 +18,7 @@ const getSpeedupPatch = async ({
 }: {
   transaction: BtcTransaction;
   account: Account;
-}): Promise<Partial<BtcTransaction>> => {
+}): Promise<BtcTransaction> => {
   const originalTxId = transaction.replaceTxId;
   invariant(typeof originalTxId === "string" && originalTxId.length > 0, "replaceTxId is required");
 
@@ -56,7 +56,7 @@ const getCancelPatch = async ({
 }: {
   transaction: BtcTransaction;
   account: Account;
-}): Promise<Partial<BtcTransaction>> => {
+}): Promise<BtcTransaction> => {
   const originalTxId = transaction.replaceTxId;
   invariant(typeof originalTxId === "string" && originalTxId.length > 0, "replaceTxId is required");
 
@@ -87,7 +87,7 @@ const getCancelPatch = async ({
   };
 };
 
-export const getEditTransactionPatch = async ({
+export const getEditTransactionPatch = ({
   editType,
   transaction,
   account,
@@ -95,7 +95,7 @@ export const getEditTransactionPatch = async ({
   editType: EditType;
   transaction: BtcTransaction;
   account: Account;
-}): Promise<Partial<BtcTransaction>> => {
+}): Promise<BtcTransaction> => {
   return editType === "speedup"
     ? getSpeedupPatch({ transaction, account })
     : getCancelPatch({ transaction, account });

@@ -20,7 +20,7 @@ describe("isStrategyDisabled", () => {
     expect(isStrategyDisabled({ transaction, feesStrategy })).toBe(false);
   });
 
-  it("should return true if RBF is explicitly disabled,", () => {
+  it("should return true if RBF is explicitly disabled", () => {
     const transaction = {
       rbf: false,
       feePerByte: new BigNumber("100000000"),
@@ -29,7 +29,7 @@ describe("isStrategyDisabled", () => {
     expect(isStrategyDisabled({ transaction, feesStrategy })).toBe(true);
   });
 
-  it("should return true if feePerByte is less than or equal to 0", () => {
+  it("should return true if the strategy's fee rate is less than or equal to 0", () => {
     const transaction = {
       rbf: true,
       feePerByte: new BigNumber("100"),

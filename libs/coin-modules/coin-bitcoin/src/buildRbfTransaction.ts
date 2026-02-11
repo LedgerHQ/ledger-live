@@ -6,8 +6,9 @@ import wallet, { getWalletAccount, Account as WalletAccount } from "./wallet-btc
 import { Account } from "@ledgerhq/types-live";
 import { fromWalletUtxo } from "./synchronisation";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
-import type { Transaction as BtcTransaction } from "./types";
+import type { Transaction as BtcTransaction, NetworkInfo } from "./types";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfHelpers";
+import { Address } from "./wallet-btc/storage/types";
 
 async function getAmountAndRecipient(
   tx: Transaction,
@@ -67,8 +68,8 @@ type RbfTxContext = {
   walletAccount: WalletAccount;
   originalTx: Transaction;
   feePerByte: BigNumber;
-  networkInfo: Awaited<ReturnType<typeof getAccountNetworkInfo>>;
-  changeAddress: Awaited<ReturnType<WalletAccount["xpub"]["getNewAddress"]>>;
+  networkInfo: NetworkInfo;
+  changeAddress: Address;
   excludeUTXOs: Array<{ hash: string; outputIndex: number }>;
 };
 
@@ -91,10 +92,7 @@ const buildExcludeUtxos = async (walletAccount: WalletAccount) => {
     .map(u => ({ hash: u.hash, outputIndex: u.outputIndex }));
 };
 
-const resolveFeesStrategy = (
-  feePerByte: BigNumber,
-  networkInfo: Awaited<ReturnType<typeof getAccountNetworkInfo>>,
-) => {
+const resolveFeesStrategy = (feePerByte: BigNumber, networkInfo: NetworkInfo) => {
   const fast = networkInfo?.feeItems.items.find(item => item.speed === "fast");
   return fast?.feePerByte && feePerByte.isEqualTo(fast.feePerByte) ? "fast" : "custom";
 };
@@ -104,8 +102,7 @@ const getRbfContext = async (account: Account, originalTxId: string): Promise<Rb
   let hexTx: string;
   try {
     hexTx = await walletAccount.xpub.explorer.getTxHex(originalTxId);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
+  } catch {
     throw new Error(`Original transaction ${originalTxId} could not be fetched`);
   }
 

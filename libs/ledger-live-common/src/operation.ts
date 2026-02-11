@@ -16,7 +16,7 @@ function hasGasTracker(currency: CryptoCurrency): boolean {
 }
 
 /**
- * Return weather an operation is editable or not.
+ * Return whether an operation is editable or not.
  */
 export const isEditableOperation = ({
   account,
@@ -33,7 +33,7 @@ export const isEditableOperation = ({
 };
 
 /**
- * Return weather an operation is considered stuck or not.
+ * Return whether an operation is considered stuck or not.
  */
 export const isStuckOperation = ({
   family,
