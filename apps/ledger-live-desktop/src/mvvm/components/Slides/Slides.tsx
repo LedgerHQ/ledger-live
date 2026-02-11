@@ -25,6 +25,25 @@ export function Slides({
     initialSlideIndex,
   });
 
+  const renderChildren = () =>
+    React.Children.map(children, child => {
+      if (React.isValidElement(child) && child.type === Content) {
+        return (
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="scrollbar-none flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth"
+          >
+            {child.props.children}
+          </div>
+        );
+      }
+      if (React.isValidElement(child) && child.type === StaticSection) {
+        return child;
+      }
+      return null;
+    });
+
   return (
     <SlidesContext.Provider value={contextValue}>
       <div className={cn("flex flex-1 flex-col", className)}>
