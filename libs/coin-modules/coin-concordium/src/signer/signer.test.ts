@@ -53,7 +53,7 @@ describe("signer", () => {
       expect(mockSigner.getAddress).toHaveBeenCalledWith(path, true);
     });
 
-    it("should pass display=false when verify is undefined", async () => {
+    it("should pass display=undefined when verify is undefined", async () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
@@ -63,7 +63,7 @@ describe("signer", () => {
       await getAddressFn(deviceId, { path });
 
       // THEN
-      expect(mockSigner.getAddress).toHaveBeenCalledWith(path, false);
+      expect(mockSigner.getAddress).toHaveBeenCalledWith(path, undefined);
     });
 
     it("should propagate signer errors", async () => {
@@ -90,7 +90,7 @@ describe("signer", () => {
 
       // THEN
       expect(result.path).toBe(customPath);
-      expect(mockSigner.getAddress).toHaveBeenCalledWith(customPath, false);
+      expect(mockSigner.getAddress).toHaveBeenCalledWith(customPath, undefined);
     });
   });
 

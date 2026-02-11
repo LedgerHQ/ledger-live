@@ -631,7 +631,7 @@ function processTransactionForAddress(
  * @param currency - The cryptocurrency configuration
  * @param address - The account address to filter operations for
  * @param page - Pagination parameters (minHeight determines scan start)
- * @returns Array of operations and cursor (empty string, pagination not implemented)
+ * @returns Array of operations and cursor (stringified next block height if more results, empty string otherwise)
  */
 export async function getOperations(
   currency: CryptoCurrency,
@@ -671,7 +671,10 @@ export async function getOperations(
 
     operations.sort((a, b) => b.tx.date.getTime() - a.tx.date.getTime());
 
-    return [operations, ""];
+    const hasMore = endHeight < currentHeight;
+    const nextCursor = hasMore ? JSON.stringify(endHeight + 1) : "";
+
+    return [operations, nextCursor];
   } catch (error) {
     log("concordium-grpc", "getOperations", { error });
     throw error;

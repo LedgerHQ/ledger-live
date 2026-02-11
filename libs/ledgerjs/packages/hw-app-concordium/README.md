@@ -292,7 +292,7 @@ Get Concordium address for a given path.
 ##### Parameters
 
 *   `originalPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path
-*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to display/verify address on device (default: true) (optional, default `true`)
+*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to display/verify address on device (default: false) (optional, default `false`)
 *   `id` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Identity number
 *   `cred` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Credential number
 *   `idp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Identity provider number

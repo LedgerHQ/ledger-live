@@ -111,7 +111,7 @@ describe("history", () => {
           recipients: ["recipient1"],
         },
       ];
-      getOperationsGrpcMock.mockResolvedValue(mockOperations);
+      getOperationsGrpcMock.mockResolvedValue([mockOperations, ""]);
 
       // WHEN
       const result = await listOperations(VALID_ADDRESS, { minHeight: 100 }, mockCurrency);
@@ -120,7 +120,7 @@ describe("history", () => {
       expect(getOperationsGrpcMock).toHaveBeenCalledWith(mockCurrency, VALID_ADDRESS, {
         minHeight: 100,
       });
-      expect(result).toEqual(mockOperations);
+      expect(result).toEqual([mockOperations, ""]);
     });
 
     it("should use proxy client when minHeight is 0", async () => {

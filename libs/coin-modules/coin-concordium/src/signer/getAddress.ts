@@ -18,10 +18,8 @@ import { ConcordiumSigner } from "../types";
  */
 export const getAddress = (signerContext: SignerContext<ConcordiumSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
-    // During scanning, verify is undefined/false, so we explicitly pass false to avoid device verification
-    const display = verify === true;
     const { address, publicKey } = await signerContext(deviceId, signer =>
-      signer.getAddress(path, display),
+      signer.getAddress(path, verify),
     );
 
     return {

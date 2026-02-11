@@ -103,7 +103,8 @@ describe("api/index", () => {
     it("should call listOperations with address, pagination and currency", async () => {
       const api = createApi(mockConfig);
       const mockOperations = [{ id: "op1" }, { id: "op2" }];
-      listOperationsMock.mockResolvedValue(mockOperations);
+      const mockCursor = "";
+      listOperationsMock.mockResolvedValue([mockOperations, mockCursor]);
       const pagination = { minHeight: 100 };
 
       const result = await api.listOperations(VALID_ADDRESS, pagination);
@@ -113,7 +114,7 @@ describe("api/index", () => {
         pagination,
         expect.objectContaining({ id: "concordium" }),
       );
-      expect(result).toEqual(mockOperations);
+      expect(result).toEqual([mockOperations, mockCursor]);
     });
   });
 

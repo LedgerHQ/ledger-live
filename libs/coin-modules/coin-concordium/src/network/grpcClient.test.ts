@@ -393,7 +393,7 @@ describe("grpcClient", () => {
 
     it("should return empty array when minHeight exceeds current height", async () => {
       const currency = createMockCurrency();
-      const result = await getOperations("address", { minHeight: 2000 }, currency);
+      const result = await getOperations(currency, "address", { minHeight: 2000 });
 
       expect(result).toEqual([[], ""]);
     });
@@ -428,7 +428,7 @@ describe("grpcClient", () => {
       );
 
       const currency = createMockCurrency();
-      const [operations] = await getOperations("my-address", { minHeight: 100 }, currency);
+      const [operations] = await getOperations(currency, "my-address", { minHeight: 100 });
 
       expect(operations.length).toBeGreaterThanOrEqual(0);
     });
@@ -463,7 +463,7 @@ describe("grpcClient", () => {
       );
 
       const currency = createMockCurrency();
-      const [operations] = await getOperations("my-address", { minHeight: 100 }, currency);
+      const [operations] = await getOperations(currency, "my-address", { minHeight: 100 });
 
       // Should not include transactions not involving my-address
       expect(
@@ -471,6 +471,76 @@ describe("grpcClient", () => {
           op => op.senders.includes("my-address") || op.recipients.includes("my-address"),
         ),
       ).toHaveLength(0);
+    });
+
+    it("should return empty cursor when at chain tip", async () => {
+      mockGetConsensusStatusResponse.mockReturnValue({
+        lastFinalizedBlockHeight: "100",
+        lastFinalizedBlock: "hash",
+        lastFinalizedTime: { value: "1700000000000" },
+      });
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
+      mockGetBlockInfoResponse.mockReturnValue({
+        blockHeight: 100n,
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
+        blockSlotTime: new Date("2024-01-01"),
+      });
+      mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
+
+      const currency = createMockCurrency();
+      const [, cursor] = await getOperations(currency, "my-address", { minHeight: 100 });
+
+      expect(cursor).toBe("");
+    });
+
+    it("should return next block height as cursor when more blocks exist", async () => {
+      mockGetConsensusStatusResponse.mockReturnValue({
+        lastFinalizedBlockHeight: "2000",
+        lastFinalizedBlock: "hash",
+        lastFinalizedTime: { value: "1700000000000" },
+      });
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
+      mockGetBlockInfoResponse.mockReturnValue({
+        blockHeight: 100n,
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
+        blockSlotTime: new Date("2024-01-01"),
+      });
+      mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
+
+      const currency = createMockCurrency();
+      // Scan from height 100, will hit MAX_BLOCKS_TO_SCAN (1000) limit at height 1100
+      const [, cursor] = await getOperations(currency, "my-address", { minHeight: 100 });
+
+      // Next height should be 1101 (endHeight + 1 where endHeight = 100 + 1000)
+      expect(cursor).toBe(JSON.stringify(1101));
+    });
+
+    it("should return correct cursor when scan ends before MAX_BLOCKS_TO_SCAN", async () => {
+      mockGetConsensusStatusResponse.mockReturnValue({
+        lastFinalizedBlockHeight: "150",
+        lastFinalizedBlock: "hash",
+        lastFinalizedTime: { value: "1700000000000" },
+      });
+      mockGetBlocksAtHeightResponse.mockReturnValue([
+        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
+      ]);
+      mockGetBlockInfoResponse.mockReturnValue({
+        blockHeight: 100n,
+        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
+        blockSlotTime: new Date("2024-01-01"),
+      });
+      mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
+
+      const currency = createMockCurrency();
+      // Scan from 100 to 150 (current height)
+      const [, cursor] = await getOperations(currency, "my-address", { minHeight: 100 });
+
+      // At chain tip, should return empty cursor
+      expect(cursor).toBe("");
     });
   });
 

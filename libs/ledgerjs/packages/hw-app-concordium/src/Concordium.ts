@@ -103,7 +103,7 @@ export default class Concordium {
    * Get Concordium address for a given path.
    *
    * @param originalPath - BIP32 path
-   * @param display - Whether to display/verify address on device (default: true)
+   * @param display - Whether to display/verify address on device (default: false)
    * @param id - Identity number
    * @param cred - Credential number
    * @param idp - Identity provider number
@@ -111,7 +111,7 @@ export default class Concordium {
    */
   async getAddress(
     originalPath: string,
-    display: boolean = true,
+    display: boolean = false,
     id: number,
     cred: number,
     idp: number,
