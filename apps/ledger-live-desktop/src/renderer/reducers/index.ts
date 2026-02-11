@@ -8,6 +8,7 @@ import UI, { UIState } from "./UI";
 import settings, { SettingsState } from "./settings";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
+import manager, { ManagerState } from "./manager";
 import market, { MarketState } from "./market";
 import wallet from "./wallet";
 import { WalletState } from "@ledgerhq/live-wallet/store";
@@ -32,6 +33,7 @@ export type State = LLDRTKApiState & {
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   identities: IdentitiesState;
+  manager: ManagerState;
   market: MarketState;
   modals: ModalsState;
   modularDrawer: ModularDrawerState;
@@ -54,6 +56,7 @@ const appReducer = combineReducers({
   devices,
   dynamicContent,
   identities: identitiesSlice.reducer,
+  manager,
   modals,
   modularDrawer,
   sendFlow,
