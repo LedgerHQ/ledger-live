@@ -1,5 +1,5 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { View,StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -139,7 +139,7 @@ export const EarnWebview = ({ manifest, inputs, isPtxUiV2 }: Props) => {
     };
   }, [customEarnHandlers, customDeeplinkHandlers]);
 
-  const Container = isPtxUiV2 ? Fragment : SafeAreaView;
+  const Container = isPtxUiV2 ? View : SafeAreaView;
 
   return (
     <Container style={[styles.root]}>

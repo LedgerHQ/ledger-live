@@ -29,10 +29,13 @@ import { EarnBackground } from "./EarnBackground";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
 const appManifestNotFoundError = new Error("Earn App not found");
+
+const DEFAULT_NAVIGATION_HEIGHT = 56;
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
@@ -63,6 +66,7 @@ function Earn({ route }: Props) {
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
   const earnUiFlag = useFeature("ptxEarnUi");
   const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
+  const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("mobile");
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
@@ -109,8 +113,12 @@ function Earn({ route }: Props) {
       OS: Platform.OS,
       ethDepositCohort,
       uiVersion: earnUiVersion,
-      bottomOffset: TAB_BAR_SAFE_HEIGHT.toString(),
-      topOffset: insets.top.toString(),
+      safeAreaTop: insets.top.toString(),
+      safeAreaBottom: insets.bottom.toString(),
+      safeAreaLeft: insets.left.toString(),
+      safeAreaRight: insets.right.toString(),
+      navigationHeightOffset: DEFAULT_NAVIGATION_HEIGHT.toString(),
+      lwm40enabled: isLwm40Enabled ? "true" : "false",
       ...params,
       ...Object.fromEntries(searchParams.entries()),
     }),
@@ -127,11 +135,14 @@ function Earn({ route }: Props) {
       earnUiVersion,
       params,
       searchParams,
+      insets.left,
+      insets.right,
+      isLwm40Enabled,
     ],
   );
 
   /** V2: single shell (background + content). Use lastKnownManifest whenever manifest is missing so remount (e.g. dev Strict Mode) keeps showing webview instead of loader. */
-  if (isPtxUiV2) {
+  if (isLwm40Enabled) {
     const displayManifest = manifest ?? lastKnownManifest;
     if (!displayManifest && !remoteLiveAppState.isLoading && remoteLiveAppState.error) {
       lastKnownManifest = undefined;
@@ -141,17 +152,14 @@ function Earn({ route }: Props) {
         <EarnBackground />
         <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
           {displayManifest ? (
-            hideMainNavigator ? (
-              <Fragment>
-                <TrackScreen category="EarnDashboard" name="Earn" />
-                <EarnWebview manifest={displayManifest} inputs={webviewInputs} isPtxUiV2={isPtxUiV2} />
-              </Fragment>
-            ) : (
-              <Fragment>
-                <TrackScreen category="EarnDashboard" name="Earn" />
-                <EarnWebview manifest={displayManifest} inputs={webviewInputs} isPtxUiV2={isPtxUiV2} />
-              </Fragment>
-            )
+            <Fragment>
+              <TrackScreen category="EarnDashboard" name="Earn" />
+              <EarnWebview
+                manifest={displayManifest}
+                inputs={webviewInputs}
+                isPtxUiV2={isPtxUiV2}
+              />
+            </Fragment>
           ) : (
             !remoteLiveAppState.isLoading && ( // if the manifest is not found, show the error screen
               <Flex flex={1} p={10} justifyContent="center" alignItems="center">
