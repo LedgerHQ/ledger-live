@@ -1,9 +1,6 @@
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
 import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
 import type {
   Account,
   DeviceId,
@@ -11,11 +8,14 @@ import type {
   OperationType,
   AccountBridge,
 } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import { Observable } from "rxjs";
+import { reEncodeRawSignature } from "../common-logic";
+import { MINA_CANCEL_RETURN_CODE } from "../consts";
+import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
 import { MinaSigner } from "../types/signer";
 import { buildTransaction } from "./buildTransaction";
-import { reEncodeRawSignature } from "../common-logic";
-import invariant from "invariant";
-import { MINA_CANCEL_RETURN_CODE } from "../consts";
 
 export const buildOptimisticOperation = (
   account: Account,

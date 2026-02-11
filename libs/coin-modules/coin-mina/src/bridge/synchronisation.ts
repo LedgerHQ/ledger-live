@@ -6,10 +6,10 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getAccount, getBlockInfo, getDelegateAddress, getTransactions } from "../api";
-import { getEpochInfo } from "../api/graphql";
-import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
-import { RosettaTransaction } from "../api/rosetta/types";
 import { fetchValidators } from "../api/fetchValidators";
+import { getEpochInfo } from "../api/graphql";
+import { RosettaTransaction } from "../api/rosetta/types";
+import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,

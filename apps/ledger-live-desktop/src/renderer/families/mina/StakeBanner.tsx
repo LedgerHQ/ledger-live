@@ -4,7 +4,7 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useTranslation } from "react-i18next";

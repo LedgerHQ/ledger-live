@@ -10,10 +10,10 @@ jest.mock("../api/fetchValidators");
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getAccount, getTransactions, getBlockInfo, getDelegateAddress } from "../api";
-import { getEpochInfo } from "../api/graphql";
-import { fetchValidators } from "../api/fetchValidators";
 import BigNumber from "bignumber.js";
+import { getAccount, getTransactions, getBlockInfo, getDelegateAddress } from "../api";
+import { fetchValidators } from "../api/fetchValidators";
+import { getEpochInfo } from "../api/graphql";
 import {
   createMockTxn,
   createMockAccountInfo,

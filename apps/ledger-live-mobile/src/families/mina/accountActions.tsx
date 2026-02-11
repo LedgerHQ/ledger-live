@@ -3,7 +3,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
 
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";

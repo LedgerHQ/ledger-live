@@ -1,16 +1,16 @@
-import React, { useCallback } from "react";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
-import ValidateSuccess from "~/components/ValidateSuccess";
-import { MinaStakingFlowParamList } from "./types";
+import React, { useCallback } from "react";
+import { useTranslation } from "~/context/Locale";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useTranslation } from "react-i18next";
 import {
-  StackNavigatorProps,
   StackNavigatorNavigation,
+  StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
+import ValidateSuccess from "~/components/ValidateSuccess";
+import { ScreenName } from "~/const";
+import { useSelector } from "~/context/hooks";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { MinaStakingFlowParamList } from "./types";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<MinaStakingFlowParamList, ScreenName.MinaStakingValidationSuccess>,
