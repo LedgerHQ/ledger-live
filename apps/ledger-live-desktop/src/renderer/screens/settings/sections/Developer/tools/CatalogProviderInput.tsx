@@ -5,7 +5,7 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import api from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/api/index";
-import DeveloperClassicInputRow from "../components/DeveloperClassicInputRow";
+import DeveloperToggleInputRow from "../components/DeveloperToggleInputRow";
 
 const CatalogProviderInput = () => {
   const { provider, setProvider } = useRemoteLiveAppContext();
@@ -53,7 +53,7 @@ const CatalogProviderInput = () => {
   return (
     <>
       <Track onUpdate event="CatalogProviderInout" currentProvider={provider} />
-      <DeveloperClassicInputRow
+      <DeveloperToggleInputRow
         title={t("settings.developer.catalogUrl")}
         desc={t("settings.developer.catalogUrlDesc")}
         isEnabled={enableCustomProvider}
@@ -75,7 +75,7 @@ const CatalogProviderInput = () => {
         >
           {t("common.apply")}
         </Button>
-      </DeveloperClassicInputRow>
+      </DeveloperToggleInputRow>
     </>
   );
 };

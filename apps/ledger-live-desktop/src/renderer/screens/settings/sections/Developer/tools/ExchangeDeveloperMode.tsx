@@ -4,7 +4,7 @@ import { setTestProviderInfo } from "@ledgerhq/live-common/exchange/providers/in
 import Input from "~/renderer/components/Input";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import DeveloperClassicInputRow from "../components/DeveloperClassicInputRow";
+import DeveloperToggleInputRow from "../components/DeveloperToggleInputRow";
 
 const ExchangeDeveloperMode = () => {
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ const ExchangeDeveloperMode = () => {
   };
 
   return (
-    <DeveloperClassicInputRow
+    <DeveloperToggleInputRow
       title={t("settings.developer.exchangeDeveloperMode.title")}
       desc={t("settings.developer.exchangeDeveloperMode.desc")}
       isEnabled={enableExchangeDevMode}
@@ -58,7 +58,7 @@ const ExchangeDeveloperMode = () => {
       >
         {t("common.apply")}
       </Button>
-    </DeveloperClassicInputRow>
+    </DeveloperToggleInputRow>
   );
 };
 

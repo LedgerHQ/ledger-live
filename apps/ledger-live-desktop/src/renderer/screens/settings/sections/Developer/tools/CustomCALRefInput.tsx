@@ -7,7 +7,7 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { prepareCurrency } from "~/renderer/bridge/cache";
-import DeveloperClassicInputRow from "../components/DeveloperClassicInputRow";
+import DeveloperToggleInputRow from "../components/DeveloperToggleInputRow";
 
 const CustomCALRefInput = () => {
   const { t } = useTranslation();
@@ -52,7 +52,7 @@ const CustomCALRefInput = () => {
   return (
     <>
       <Track onUpdate event="CustomCALRefInput" currentBranch={ref} />
-      <DeveloperClassicInputRow
+      <DeveloperToggleInputRow
         title={t("settings.developer.customCALRef")}
         desc={t("settings.developer.customCALRefDesc")}
         isEnabled={enableCustomRef}
@@ -74,7 +74,7 @@ const CustomCALRefInput = () => {
         >
           {t("common.apply")}
         </Button>
-      </DeveloperClassicInputRow>
+      </DeveloperToggleInputRow>
     </>
   );
 };

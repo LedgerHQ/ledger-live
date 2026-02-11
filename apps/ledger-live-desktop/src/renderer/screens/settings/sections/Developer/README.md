@@ -20,7 +20,7 @@ Short guide to decide **which row component to use** in `Settings > Developer`.
   - Use case: standard row with `title + desc + control` (usually a simple switch).
   - Example: `AllowDebugAppsToggle`, `EnableThemeConsole`.
 
-- `DeveloperClassicInputRow`
+- `DeveloperToggleInputRow`
 
   - Use case: switch that enables conditional controls (input + Apply button, etc.).
   - Key props: `isEnabled`, `onToggle`, `children`.
@@ -48,7 +48,7 @@ Short guide to decide **which row component to use** in `Settings > Developer`.
 1. No action -> `DeveloperInfoRow`
 2. One "Open" action -> `DeveloperOpenRow`
 3. Show/Hide + collapsible content -> `DeveloperExpandableRow`
-4. Switch + conditional controls -> `DeveloperClassicInputRow`
+4. Switch + conditional controls -> `DeveloperToggleInputRow`
 5. Multiple buttons -> `DeveloperActionsRow`
 6. Switch-only row -> `DeveloperClassicRow`
 

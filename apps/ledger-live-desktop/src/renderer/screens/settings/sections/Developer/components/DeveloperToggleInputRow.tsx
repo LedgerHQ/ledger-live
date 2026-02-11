@@ -12,7 +12,7 @@ type Props = {
   dataTestId?: string;
 };
 
-const DeveloperClassicInputRow = ({
+const DeveloperToggleInputRow = ({
   title,
   desc,
   isEnabled,
@@ -28,4 +28,4 @@ const DeveloperClassicInputRow = ({
   </SettingsSectionRow>
 );
 
-export default DeveloperClassicInputRow;
+export default DeveloperToggleInputRow;

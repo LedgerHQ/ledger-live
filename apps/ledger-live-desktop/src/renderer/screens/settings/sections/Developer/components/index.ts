@@ -1,5 +1,5 @@
 export { default as DeveloperClassicRow } from "./DeveloperClassicRow";
-export { default as DeveloperClassicInputRow } from "./DeveloperClassicInputRow";
+export { default as DeveloperToggleInputRow } from "./DeveloperToggleInputRow";
 export { default as DeveloperExpandableRow } from "./DeveloperExpandableRow";
 export { default as DeveloperOpenRow } from "./DeveloperOpenRow";
 export { default as DeveloperInfoRow } from "./DeveloperInfoRow";

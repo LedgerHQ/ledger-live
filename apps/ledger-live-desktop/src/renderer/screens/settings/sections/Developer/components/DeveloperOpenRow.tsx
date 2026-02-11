@@ -11,8 +11,8 @@ type Props = {
 };
 
 const DeveloperOpenRow = ({ title, desc, cta, onOpen, dataTestId }: Props) => (
-  <SettingsSectionRow title={title} desc={desc} dataTestId={dataTestId}>
-    <Button size="sm" appearance="accent" onClick={onOpen}>
+  <SettingsSectionRow title={title} desc={desc}>
+    <Button size="sm" appearance="accent" onClick={onOpen} data-testid={dataTestId}>
       {cta}
     </Button>
   </SettingsSectionRow>
