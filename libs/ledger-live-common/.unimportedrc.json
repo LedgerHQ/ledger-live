@@ -559,7 +559,14 @@
     "@react-native/assets-registry/registry",
     "@react-native/normalize-colors",
     "@react-native/virtualized-lists",
+    "@solana/codecs-numbers",
     "@solana/buffer-layout",
+    [
+      "@solana/codecs-numbers",
+      [
+        "node_modules/@solana/web3.js/lib/index.cjs.js"
+      ]
+    ],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",
