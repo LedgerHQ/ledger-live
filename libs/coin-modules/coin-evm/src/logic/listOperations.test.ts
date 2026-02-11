@@ -509,6 +509,7 @@ describe("listOperations", () => {
             block: {
               height: 100,
               hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
             },
             fees: 10n,
             date: new Date("2025-02-20"),
