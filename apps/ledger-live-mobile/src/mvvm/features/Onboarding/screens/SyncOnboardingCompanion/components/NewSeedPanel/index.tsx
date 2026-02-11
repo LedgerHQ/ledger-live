@@ -1,16 +1,16 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { Trans } from "~/context/Locale";
-import NewSeedIllustration from "./NewSeedIllustration";
-import { track } from "~/analytics";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import NewSeedIllustration from "LLM/features/Onboarding/assets/NewSeedIllustration";
+import { Trans } from "~/context/Locale";
+import { track } from "~/analytics";
 
 type Props = {
   handlePress: (done: boolean) => void;
   seedConfiguration?: SeedOriginType;
 };
 
-const NewSeedConfirmation = ({ handlePress, seedConfiguration }: Props) => {
+const NewSeedPanel = ({ handlePress, seedConfiguration }: Props) => {
   const handleConfirm = useCallback(() => {
     track("button_clicked", {
       button: "Secure my crypto",
@@ -33,14 +33,21 @@ const NewSeedConfirmation = ({ handlePress, seedConfiguration }: Props) => {
       <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
         <Trans i18nKey="syncOnboarding.newSeed.subtitle" />
       </Text>
-      <Button mb={3} mt={6} size="small" type="main" onPress={handleConfirm}>
+      <Button
+        mb={3}
+        mt={6}
+        size="small"
+        type="main"
+        onPress={handleConfirm}
+        testID="new-seed-panel-confirm"
+      >
         <Trans i18nKey="syncOnboarding.newSeed.installCTA" />
       </Button>
-      <Button size="small" onPress={handleSkip}>
+      <Button size="small" onPress={handleSkip} testID="new-seed-panel-skip">
         <Trans i18nKey="syncOnboarding.newSeed.skipCTA" />
       </Button>
     </Flex>
   );
 };
 
-export default NewSeedConfirmation;
+export default NewSeedPanel;
