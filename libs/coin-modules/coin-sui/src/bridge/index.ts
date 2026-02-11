@@ -9,7 +9,7 @@ import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import suiConfig, { type SuiCoinConfig } from "../config";
-import signerGetAddress from "../signer";
+import { getAddress as signerGetAddress } from "../signer";
 import { SuiAccount, SuiSigner, TransactionStatus, type Transaction } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";

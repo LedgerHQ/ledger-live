@@ -106,10 +106,6 @@ export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
   }, [currency, openDrawer, sourceScreenName, navigateToSwap]);
 
   const handleOpenSwap = useCallback(() => {
-    if (!currency) {
-      return;
-    }
-
     const accountCount = accountsForCurrency.length;
 
     if (accountCount === 0) {
@@ -124,7 +120,7 @@ export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
     }
 
     openAccountSelectionDrawer();
-  }, [currency, accountsForCurrency, navigateToSwap, openAccountSelectionDrawer]);
+  }, [accountsForCurrency, navigateToSwap, openAccountSelectionDrawer]);
 
   return { handleOpenSwap };
 }

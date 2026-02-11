@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.22.1",
+  "version": "0.23.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -143,14 +143,15 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@mysten/signers": "0.5.0",
-    "@mysten/sui": "1.38.0",
+    "@mysten/signers": "0.6.2",
+    "@mysten/sui": "1.45.2",
     "bignumber.js": "^9.1.2",
     "lodash": "4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",

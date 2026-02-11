@@ -232,6 +232,8 @@ apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                           
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/reducers/dynamicContent.ts                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 
 # UI tests
 apps/ledger-live-desktop/tests/                                             @ledgerhq/wallet-xp

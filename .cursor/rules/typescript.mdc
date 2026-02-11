@@ -1,7 +1,7 @@
 ---
-alwaysApply: true
-globs: ["**/*.ts", "**/*.tsx"]
 description: React and React Native development patterns for Ledger Wallet
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: false
 ---
 
 ## **Components**

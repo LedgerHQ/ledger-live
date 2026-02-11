@@ -467,6 +467,9 @@
       "title" : "La autenticación del dispositivo ha fallado",
       "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Activar la Firma a ciegas o Datos de contrato en la app de Ethereum"
+    },
     "HardResetFail" : {
       "title" : "No fue posible restablecer",
       "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
@@ -2681,6 +2684,10 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
+    "balance" : {
+      "noSigner" : "La wallet más\nsegura",
+      "noFund" : "Protege tus cripto"
+    },
     "seeAllAssets" : "Ver todos los activos",
     "seeAllAccounts" : "Ver todas las cuentas",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "Enviar",
       "deposit" : "Recibir",
       "stake" : "Participar"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "Transferir",
+      "swap" : "Permutar",
+      "buy" : "Comprar",
+      "transferDrawer" : {
+        "title" : "Transferir",
+        "receiveCrypto" : "Recibir cripto",
+        "sendCrypto" : "Enviar cripto",
+        "bankTransfer" : "Transferencia bancaria",
+        "bankTransferDescription" : "Envía dinero fiduciario y recibe moneda estable"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "Rendimiento",
     "sell" : "Vender",
     "swap" : "Permutar",
+    "perps" : "Perpetuos",
     "manage" : "Administrar",
     "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activar las notificaciones",
-      "titleVariantB" : "Saca el máximo partido de Ledger Wallet",
+      "titleVariantB" : "No te pierdas lo que más importa",
       "desc" : "Recibe recomendaciones personalizadas y las últimas novedades sobre Ledger Wallet, los productos Ledger y el mercado. Puedes cancelar la suscripción en cualquier momento desde los ajustes.",
-      "descVariantB" : "Te enviaremos consejos personalizados, guías de configuración y las noticias más relevantes del mercado.",
+      "descVariantB" : "Recibe alertas en tiempo real de nuevos tokens, oportunidades de ganancia y cambios de tendencia del mercado. Puedes cancelar la suscripción en cualquier momento.",
       "allow" : "Permitir notificaciones",
       "later" : "Quizás más tarde"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "Poner en participación",
       "description" : "Obtén recompensas por tus cripto."
+    },
+    "perps" : {
+      "title" : "Perpetuos",
+      "description" : "Opera con perpetuos de cripto."
     },
     "swap" : {
       "title" : "Permutar",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Proveedor no disponible",
-      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+      "description" : "El proveedor de permuta no puede procesar esta transacción. Código de error 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "Proveedor no disponible",
@@ -8284,6 +8308,11 @@
       "preapprove" : "Cuenta agregada correctamente",
       "validator" : "Validador de Ledger",
       "title" : "Aceptar automáticamente fondos recibidos",
+      "processing" : {
+        "title" : "Procesando transacción",
+        "description" : "Este proceso puede tardar hasta 1 minuto.",
+        "keepDeviceNearby" : "Mantente dentro de la aplicación Ledger Wallet y con tu Ledger disponible."
+      },
       "reonboard" : {
         "title" : "Es necesario actualizar la cuenta",
         "account" : "Cuenta",
@@ -8356,7 +8385,11 @@
       "neutral" : "Neutro",
       "greed" : "Avaricia",
       "extremeGreed" : "Más avaricia"
-    }
+    },
+    "tileTitle" : "Sentimiento"
+  },
+  "perps" : {
+    "title" : "Perpetuos"
   },
   "analyticsAllocation" : {
     "header" : {

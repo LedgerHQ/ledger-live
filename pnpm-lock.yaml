@@ -40,14 +40,14 @@ catalogs:
       specifier: 1.2.3
       version: 1.2.3
     '@ledgerhq/lumen-design-core':
-      specifier: 0.0.48
-      version: 0.0.48
+      specifier: 0.0.50
+      version: 0.0.50
     '@ledgerhq/lumen-ui-react':
-      specifier: 0.0.78
-      version: 0.0.78
+      specifier: 0.0.80
+      version: 0.0.80
     '@ledgerhq/lumen-ui-rnative':
-      specifier: 0.0.65
-      version: 0.0.65
+      specifier: 0.0.69
+      version: 0.0.69
     '@ledgerhq/speculos-device-controller':
       specifier: 0.2.3
       version: 0.2.3
@@ -114,6 +114,12 @@ catalogs:
     '@rspack/plugin-react-refresh':
       specifier: 1.6.0
       version: 1.6.0
+    '@solana/spl-token':
+      specifier: ^0.4.14
+      version: 0.4.14
+    '@solana/web3.js':
+      specifier: ^1.98.4
+      version: 1.98.4
     '@storybook/addon-docs':
       specifier: 10.2.0
       version: 10.2.0
@@ -464,7 +470,7 @@ importers:
         version: link:tools/create-release-hash
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.48
+        version: 0.0.50
       '@ledgerhq/pnpm-utils':
         specifier: workspace:*
         version: link:tools/pnpm-utils
@@ -832,10 +838,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.48
+        version: 0.0.50
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.0.78(e17c1f4f71171860e7268885e247ad1a)
+        version: 0.0.80(e17c1f4f71171860e7268885e247ad1a)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -1439,10 +1445,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.48
+        version: 0.0.50
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.0.65(1a544b7365a008c40240fa7357f4b8c2)
+        version: 0.0.69(9849c610cc9433fa7f07b31e42a9aca2)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -2431,13 +2437,13 @@ importers:
         version: 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.48
+        version: 0.0.50
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.0.78(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)
+        version: 0.0.80(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.0.65(ab91e23b990986edb15662ba5820dcef)
+        version: 0.0.69(6490af2c709149dc62613b1f1d585ebb)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.8
@@ -4527,11 +4533,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@solana/spl-token':
-        specifier: 0.4.9
-        version: 0.4.9(@solana/web3.js@1.95.4)(typescript@5.4.3)
+        specifier: 'catalog:'
+        version: 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js':
-        specifier: 1.95.4
-        version: 1.95.4
+        specifier: 'catalog:'
+        version: 1.98.4(typescript@5.4.3)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -4815,11 +4821,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@mysten/signers':
-        specifier: 0.5.0
-        version: 0.5.0(typescript@5.4.3)
+        specifier: 0.6.2
+        version: 0.6.2(typescript@5.4.3)
       '@mysten/sui':
-        specifier: 1.38.0
-        version: 1.38.0(typescript@5.4.3)
+        specifier: 1.45.2
+        version: 1.45.2(typescript@5.4.3)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -4833,6 +4839,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -5260,6 +5269,13 @@ importers:
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
+    dependencies:
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/zcash-decrypt':
+        specifier: 0.1.0
+        version: 0.1.0
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -5557,11 +5573,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@solana/spl-token':
-        specifier: 0.4.9
-        version: 0.4.9(@solana/web3.js@1.95.4)(typescript@5.8.3)
+        specifier: 'catalog:'
+        version: 0.4.14(@solana/web3.js@1.98.4(typescript@5.8.3))(typescript@5.8.3)
       '@solana/web3.js':
-        specifier: 1.95.4
-        version: 1.95.4
+        specifier: 'catalog:'
+        version: 1.98.4(typescript@5.8.3)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -6452,8 +6468,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       '@solana/web3.js':
-        specifier: 1.95.4
-        version: 1.95.4
+        specifier: 'catalog:'
+        version: 1.98.4(typescript@5.4.3)
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
@@ -7777,8 +7793,8 @@ importers:
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
       '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.6.0
-        version: 0.6.0
+        specifier: 0.7.0
+        version: 0.7.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -10554,8 +10570,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.2(@ton/crypto@3.3.0)
       '@solana/web3.js':
-        specifier: 1.95.4
-        version: 1.95.4
+        specifier: 'catalog:'
+        version: 1.98.4(typescript@5.6.3)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -14911,6 +14927,9 @@ packages:
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
 
+  '@ledgerhq/hw-bolos@6.32.9':
+    resolution: {integrity: sha512-4GDpBPPl0weqcvm/+gvYs01whsbwwl+HIiTtFi5iDfHa/6JmV7KxRaT8JfPRc8M4fSnJs5Z7NxHnrhEHu+tA2Q==}
+
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
 
@@ -14930,11 +14949,32 @@ packages:
       '@types/react':
         optional: true
 
+  '@ledgerhq/ledger-cal-service@1.9.1':
+    resolution: {integrity: sha512-QR5rdjrLn7qXPZj2Le+BSuLGUsgYFdOkHipm4Ky4WJOT8hm96kaBcQOJhqO4JTfo6bYvInkcfVaDwKytq2B13w==}
+
+  '@ledgerhq/ledger-trust-service@0.3.14':
+    resolution: {integrity: sha512-Q83QXnLDFIDnm2Bv4WgWilurE1WGSX7gGaMEhVxb/BQXH1O78QlNgNRys8K35wnG7BxYKjBJGMoK9U6JdWwW2Q==}
+
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
+  '@ledgerhq/live-env@2.18.0':
+    resolution: {integrity: sha512-wasAK0IPyyX4ZAU0FLTZUsRzxJfdHlewyhkbz3HryYKbNofuMRwIWyaZ2xhpXXjEdP6qHb9HzewAZevjSn7DLQ==}
+
+  '@ledgerhq/live-env@2.22.0':
+    resolution: {integrity: sha512-zOtxXQl0stQpNp/01nvClMyAdc5WLY8b4vAeP8KJvvoDPCY9VfKLNGvjfU7r/AGsTTmJqy8DOSlboQ24CNd+zg==}
+
   '@ledgerhq/live-env@2.4.1':
     resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
+
+  '@ledgerhq/live-network@2.0.19':
+    resolution: {integrity: sha512-KVdqFDQcqEUNoC/TnaOJeo/I7TY39lQhzcVlnkAt2jbp5Xfv5YNuazL9lId5+bBb28jNPAv5uNJSlgvzpSSNIg==}
+
+  '@ledgerhq/live-network@2.1.2':
+    resolution: {integrity: sha512-Sz1kgRcHhD5y/cIQrNi69JDJf9clLylTzIBy33im0Bpfeq/Ko1xL1YBzzSeoHMPezrxwhHVO5Q1M1B5HBczSyw==}
+
+  '@ledgerhq/live-promise@0.1.1':
+    resolution: {integrity: sha512-oFo6KUZIdFEndp2uokSU9XE9UCT/7NLOOKa1nQUfHhAfyKxRWqBlZOGRuivM/BIwKm0IUFa3+HE7uxK497kYPg==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
@@ -14942,11 +14982,14 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/lumen-design-core@0.0.48':
-    resolution: {integrity: sha512-gItfPgdZXcqcTRVHKZDd2HaiV5DEGhKFJL3+50skmnsvAg6swhES5pF3g03YgShkwW0NN1LXxDZsY/ExK53KHw==}
+  '@ledgerhq/logs@6.14.0':
+    resolution: {integrity: sha512-kJFu1+asWQmU9XlfR1RM3lYR76wuEoPyZvkI/CNjpft78BQr3+MMf3Nu77ABzcKFnhIcmAkOLlDQ6B8L6hDXHA==}
 
-  '@ledgerhq/lumen-ui-react@0.0.78':
-    resolution: {integrity: sha512-+mgrbBEWAVkrooUEaTssZA/8vv0rIYZygNF+z5vPjKEplpnLL+j11EXLU5IjLu73gAGwGVojSDu1wFYY+HyCUw==}
+  '@ledgerhq/lumen-design-core@0.0.50':
+    resolution: {integrity: sha512-6fgAxdkAzD4oG9prWwoTIjG6RXZEL+lKULbkbXtCtKNUHvxc/TPAGO5Fa5/QEmCihvnfQLVG4U0hncA0Gr5vwA==}
+
+  '@ledgerhq/lumen-ui-react@0.0.80':
+    resolution: {integrity: sha512-rTx6PXfBTl/XN/OBRgMHoiZ+dGU45Bf/IoZwHYRdAPINC/rB2DDFfOXVwmntstq5wdviBKmLV9NA6Y6U+gxf2Q==}
     peerDependencies:
       '@radix-ui/react-checkbox': ^1.3.2
       '@radix-ui/react-dialog': ^1.1.15
@@ -14961,11 +15004,11 @@ packages:
       react-dom: ^18.0.0 || ^19.0.0
       tailwind-merge: ^2.6.0
 
-  '@ledgerhq/lumen-ui-rnative@0.0.65':
-    resolution: {integrity: sha512-v2xVVkItKx2uYohtjat5dQgFyS6mnd3jIbNo6A0y+jNx7J1MAXA6EjIAuGQe+5xA2uPOC9yNQ8gVIUpzq4t0Mw==}
+  '@ledgerhq/lumen-ui-rnative@0.0.69':
+    resolution: {integrity: sha512-KjW/y1jwetIXmX/EUAKMfRrcQmGMMAa+LRb4ntvJtpy7pw7BzRLB9gNzF68CdyyAJQvJJMU/Tru0VzlylcN1sQ==}
     peerDependencies:
       '@gorhom/bottom-sheet': ^5.0.0
-      '@ledgerhq/lumen-design-core': 0.0.46
+      '@ledgerhq/lumen-design-core': 0.0.50
       '@react-native-community/blur': ^4.4.1
       '@types/react': ^19.0.0
       react: 19.0.0
@@ -15019,6 +15062,9 @@ packages:
 
   '@ledgerhq/wallet-api-simulator@2.0.2':
     resolution: {integrity: sha512-7qRqzypnsBnkWaNSf+Ws28obtz2Blin5dUC3JG75U0hG8IXttPWQC4C6xh8ITWOkWRFRj3jSKSVpAaP6gU/SoA==}
+
+  '@ledgerhq/zcash-decrypt@0.1.0':
+    resolution: {integrity: sha512-ISleZtSRu40csXjVXhYG1a7x3WkG4GcQ0xoU2lUZkVSB9LLoN04cQexH2lwvQJadwIAhiI1PWbA21wBdrhKG1A==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -15109,18 +15155,18 @@ packages:
   '@multiversx/sdk-transaction-decoder@1.0.2':
     resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
 
-  '@mysten/bcs@1.8.0':
-    resolution: {integrity: sha512-bDoLN1nN+XPONsvpNyNyqYHndM3PKWS419GLeRnbLoWyNm4bnyD1X4luEpJLLDq400hBuXiCan4RWjofvyTUIQ==}
+  '@mysten/bcs@1.9.2':
+    resolution: {integrity: sha512-kBk5xrxV9OWR7i+JhL/plQrgQ2/KJhB2pB5gj+w6GXhbMQwS3DPpOvi/zN0Tj84jwPvHMllpEl0QHj6ywN7/eQ==}
 
-  '@mysten/ledgerjs-hw-app-sui@0.6.0':
-    resolution: {integrity: sha512-UopsSSI1gphfoh59feiPPhZUEybYIvYEcvmudGR2RAIN3IDJHkaA3Uu0HPH8BZQbQXhkgvFW4V2KNWIWj2IE2g==}
+  '@mysten/ledgerjs-hw-app-sui@0.7.0':
+    resolution: {integrity: sha512-Z2ydxg35U2tk3pThsWzPewticDnHWqAeLlh2Vp4NhYU/YFyoVxK9obh21pnvU/hmRzL+BRpYlwbX5Nuo77+lwA==}
 
-  '@mysten/signers@0.5.0':
-    resolution: {integrity: sha512-BVbOJLTXLHzHSB/P2PHUSCEDnlQkkyQd8Xwl0ZTLEHMYWUeK9lMiKyijk+8dw8wF3hTJFfob7N8mBZ1PK3gJow==}
+  '@mysten/signers@0.6.2':
+    resolution: {integrity: sha512-TFdsoixjly/PHSRDF93wAl/6+cYGS/4J2PCg8lLoxmrLQZCDqIKYwP/dy1243qkXzyeN9d0Ri5IJvozcDpoY/g==}
     engines: {node: '>=20'}
 
-  '@mysten/sui@1.38.0':
-    resolution: {integrity: sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==}
+  '@mysten/sui@1.45.2':
+    resolution: {integrity: sha512-gftf7fNpFSiXyfXpbtP2afVEnhc7p2m/MEYc/SO5pov92dacGKOpQIF7etZsGDI1Wvhv+dpph+ulRNpnYSs7Bg==}
     engines: {node: '>=18'}
 
   '@mysten/utils@0.2.0':
@@ -15188,6 +15234,10 @@ packages:
 
   '@noble/curves@1.9.1':
     resolution: {integrity: sha512-k11yZxZg+t+gWvBbIswW0yoJlu8cHOC7dhunwOzoWH/mXGBiYyR4YY6hAEK/3EUs4UpB8la1RfdRpeGsFHkWsA==}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/curves@1.9.4':
+    resolution: {integrity: sha512-2bKONnuM53lINoDrSmK8qP8W271ms7pygDhZt4SiLOoLwBtoHqeCFi6RG42V8zd3mLHuJFhU/Bmaqo4nX0/kBw==}
     engines: {node: ^14.21.3 || >=16}
 
   '@noble/curves@1.9.7':
@@ -15802,6 +15852,15 @@ packages:
   '@probot/pino@2.3.5':
     resolution: {integrity: sha512-IiyiNZonMw1dHC4EAdD55y5owV733d9Gll/IKsrLikB7EJ54+eMCOtL/qo+OmgWN9XV3NTDfziEQF2og/OBKog==}
     hasBin: true
+
+  '@protobuf-ts/grpcweb-transport@2.11.1':
+    resolution: {integrity: sha512-1W4utDdvOB+RHMFQ0soL4JdnxjXV+ddeGIUg08DvZrA8Ms6k5NN6GBFU2oHZdTOcJVpPrDJ02RJlqtaoCMNBtw==}
+
+  '@protobuf-ts/runtime-rpc@2.11.1':
+    resolution: {integrity: sha512-4CqqUmNA+/uMz00+d3CYKgElXO9VrEbucjnBFEjqI4GuDrEQ32MaI3q+9qPBvIGOlL4PmHXrzM32vBPWRhQKWQ==}
+
+  '@protobuf-ts/runtime@2.11.1':
+    resolution: {integrity: sha512-KuDaT1IfHkugM2pyz+FwiY80ejWrkH1pAtOBOZFuR6SXEFTsnb/jiQWQ1rCIrcKx2BtyxnxW6BWwsVSA/Ie+WQ==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -17821,15 +17880,6 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       '@solana/web3.js': ^1.95.5
-
-  '@solana/spl-token@0.4.9':
-    resolution: {integrity: sha512-g3wbj4F4gq82YQlwqhPB0gHFXfgsC6UmyGMxtSLf/BozT/oKd59465DbnlUK8L8EcimKMavxsVAMoLcEdeCicg==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.95.3
-
-  '@solana/web3.js@1.95.4':
-    resolution: {integrity: sha512-sdewnNEA42ZSMxqkzdwEWi6fDgzwtJHaQa5ndUGEJYtoOnM6X5cvPmjoTUp7/k7bRrVAxfBgDnvQQHD6yhlLYw==}
 
   '@solana/web3.js@1.98.4':
     resolution: {integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==}
@@ -20556,10 +20606,6 @@ packages:
     resolution: {integrity: sha512-jRR5wdylq8CkOe6hei19GGZnxM6rBGwFl3Bg0YItGDimvjGtAvdZk4Pu6Cl4u4Igsws4a1fd1Vq3ezrhn4KmFw==}
     engines: {node: '>= 14'}
 
-  agentkeepalive@4.5.0:
-    resolution: {integrity: sha512-5GG/5IbQQpC9FpkRGsSvZI5QYeSCzlJHdpBQntCsuTOxhKD8lqKhrleg2Yi7yvMIf82Ycmmqln9U8V9qwEiJew==}
-    engines: {node: '>= 8.0.0'}
-
   agentkeepalive@4.6.0:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
@@ -20988,6 +21034,12 @@ packages:
   axe-core@4.7.0:
     resolution: {integrity: sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==}
     engines: {node: '>=4'}
+
+  axios@1.11.0:
+    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
+
+  axios@1.12.2:
+    resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
   axios@1.13.2:
     resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
@@ -33160,9 +33212,6 @@ packages:
     resolution: {integrity: sha512-/EH/sDgxU2eGxajKdwLCDmQ4FWq+kpi3uCmBGpw1xJtnAxEjlD8j8PEiGWpCIMIs3ciNAgH0d3TTJiUkYzyZjA==}
     engines: {node: '>=10.12.0'}
 
-  valibot@0.36.0:
-    resolution: {integrity: sha512-CjF1XN4sUce8sBK9TixrDqFM7RwNkuXdJu174/AwmQUB62QbCQADg5lLe8ldBalFgtj1uKj+pKwDJiNo4Mn+eQ==}
-
   valibot@1.2.0:
     resolution: {integrity: sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==}
     peerDependencies:
@@ -41543,6 +41592,10 @@ snapshots:
       axios: 1.7.7
       crypto-js: 4.2.0
 
+  '@ledgerhq/hw-bolos@6.32.9':
+    dependencies:
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
@@ -41564,26 +41617,70 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
+  '@ledgerhq/ledger-cal-service@1.9.1':
+    dependencies:
+      '@ledgerhq/live-env': 2.22.0
+      '@ledgerhq/live-network': 2.1.2
+
+  '@ledgerhq/ledger-trust-service@0.3.14':
+    dependencies:
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-network': 2.0.19
+
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
+
+  '@ledgerhq/live-env@2.18.0':
+    dependencies:
+      rxjs: 7.8.2
+      utility-types: 3.11.0
+
+  '@ledgerhq/live-env@2.22.0':
+    dependencies:
+      rxjs: 7.8.2
+      utility-types: 3.11.0
 
   '@ledgerhq/live-env@2.4.1':
     dependencies:
       rxjs: 7.8.2
       utility-types: 3.11.0
 
+  '@ledgerhq/live-network@2.0.19':
+    dependencies:
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-promise': 0.1.1
+      '@ledgerhq/logs': 6.14.0
+      axios: 1.11.0
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-network@2.1.2':
+    dependencies:
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/live-env': 2.22.0
+      '@ledgerhq/live-promise': 0.1.1
+      '@ledgerhq/logs': 6.14.0
+      axios: 1.12.2
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-promise@0.1.1':
+    dependencies:
+      '@ledgerhq/logs': 6.14.0
+
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/lumen-design-core@0.0.48':
+  '@ledgerhq/logs@6.14.0': {}
+
+  '@ledgerhq/lumen-design-core@0.0.50':
     dependencies:
       tailwindcss: 4.1.18
       tslib: 2.6.2
 
-  '@ledgerhq/lumen-ui-react@0.0.78(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)':
+  '@ledgerhq/lumen-ui-react@0.0.80(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)':
     dependencies:
       '@ledgerhq/lumen-utils-shared': 0.0.17(react@18.3.1)
       clsx: 2.1.1
@@ -41595,7 +41692,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.0.78(e17c1f4f71171860e7268885e247ad1a)':
+  '@ledgerhq/lumen-ui-react@0.0.80(e17c1f4f71171860e7268885e247ad1a)':
     dependencies:
       '@ledgerhq/lumen-utils-shared': 0.0.17(react@18.3.1)
       '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -41615,10 +41712,26 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-rnative@0.0.65(1a544b7365a008c40240fa7357f4b8c2)':
+  '@ledgerhq/lumen-ui-rnative@0.0.69(6490af2c709149dc62613b1f1d585ebb)':
+    dependencies:
+      '@gorhom/bottom-sheet': 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      '@ledgerhq/lumen-design-core': 0.0.50
+      '@ledgerhq/lumen-utils-shared': 0.0.17(react@18.3.1)
+      '@types/react': 18.2.73
+      i18next: 23.10.1
+      react: 18.3.1
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+      react-native-reanimated: 4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-safe-area-context: 5.6.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-svg: 15.15.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react-dom
+
+  '@ledgerhq/lumen-ui-rnative@0.0.69(9849c610cc9433fa7f07b31e42a9aca2)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(ce3c2bb9a6a8aaadbbab096d15e66218)
-      '@ledgerhq/lumen-design-core': 0.0.48
+      '@ledgerhq/lumen-design-core': 0.0.50
       '@ledgerhq/lumen-utils-shared': 0.0.17(react@19.0.0)
       '@react-native-community/blur': 4.4.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@types/react': 19.0.14
@@ -41629,22 +41742,6 @@ snapshots:
       react-native-reanimated: 4.1.6(@babel/core@7.28.5)(react-native-worklets@0.7.2(@babel/core@7.28.5)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-safe-area-context: 5.6.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-svg: 15.15.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-    transitivePeerDependencies:
-      - react-dom
-
-  '@ledgerhq/lumen-ui-rnative@0.0.65(ab91e23b990986edb15662ba5820dcef)':
-    dependencies:
-      '@gorhom/bottom-sheet': 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      '@ledgerhq/lumen-design-core': 0.0.48
-      '@ledgerhq/lumen-utils-shared': 0.0.17(react@18.3.1)
-      '@types/react': 18.2.73
-      i18next: 23.10.1
-      react: 18.3.1
-      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
-      react-native-reanimated: 4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-native-safe-area-context: 5.6.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-native-svg: 15.15.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react-dom
 
@@ -41738,6 +41835,8 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
+
+  '@ledgerhq/zcash-decrypt@0.1.0': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
@@ -41893,22 +41992,28 @@ snapshots:
     dependencies:
       bech32: 2.0.0
 
-  '@mysten/bcs@1.8.0':
+  '@mysten/bcs@1.9.2':
     dependencies:
       '@mysten/utils': 0.2.0
       '@scure/base': 1.2.6
 
-  '@mysten/ledgerjs-hw-app-sui@0.6.0':
+  '@mysten/ledgerjs-hw-app-sui@0.7.0':
     dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/hw-bolos': 6.32.9
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-cal-service': 1.9.1
+      '@ledgerhq/ledger-trust-service': 0.3.14
       fast-sha256: 1.3.0
+      semver: 7.7.3
 
-  '@mysten/signers@0.5.0(typescript@5.4.3)':
+  '@mysten/signers@0.6.2(typescript@5.4.3)':
     dependencies:
       '@google-cloud/kms': 4.5.0
-      '@mysten/ledgerjs-hw-app-sui': 0.6.0
-      '@mysten/sui': 1.38.0(typescript@5.4.3)
-      '@noble/curves': 1.9.7
+      '@mysten/ledgerjs-hw-app-sui': 0.7.0
+      '@mysten/sui': 1.45.2(typescript@5.4.3)
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
       asn1-ts: 8.0.5
     transitivePeerDependencies:
@@ -41918,20 +42023,23 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mysten/sui@1.38.0(typescript@5.4.3)':
+  '@mysten/sui@1.45.2(typescript@5.4.3)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
-      '@mysten/bcs': 1.8.0
+      '@mysten/bcs': 1.9.2
       '@mysten/utils': 0.2.0
-      '@noble/curves': 1.9.7
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
+      '@protobuf-ts/grpcweb-transport': 2.11.1
+      '@protobuf-ts/runtime': 2.11.1
+      '@protobuf-ts/runtime-rpc': 2.11.1
       '@scure/base': 1.2.6
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       gql.tada: 1.8.13(graphql@16.11.0)(typescript@5.4.3)
       graphql: 16.11.0
       poseidon-lite: 0.2.1
-      valibot: 0.36.0
+      valibot: 1.2.0(typescript@5.4.3)
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
@@ -42073,6 +42181,10 @@ snapshots:
       '@noble/hashes': 1.7.1
 
   '@noble/curves@1.9.1':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
+  '@noble/curves@1.9.4':
     dependencies:
       '@noble/hashes': 1.8.0
 
@@ -42941,6 +43053,17 @@ snapshots:
       split2: 4.2.0
     transitivePeerDependencies:
       - supports-color
+
+  '@protobuf-ts/grpcweb-transport@2.11.1':
+    dependencies:
+      '@protobuf-ts/runtime': 2.11.1
+      '@protobuf-ts/runtime-rpc': 2.11.1
+
+  '@protobuf-ts/runtime-rpc@2.11.1':
+    dependencies:
+      '@protobuf-ts/runtime': 2.11.1
+
+  '@protobuf-ts/runtime@2.11.1': {}
 
   '@protobufjs/aspromise@1.1.2': {}
 
@@ -46108,15 +46231,28 @@ snapshots:
 
   '@soda/get-current-script@1.0.2': {}
 
-  '@solana/buffer-layout-utils@0.2.0':
+  '@solana/buffer-layout-utils@0.2.0(typescript@5.4.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/web3.js': 1.95.4
+      '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - typescript
+      - utf-8-validate
+
+  '@solana/buffer-layout-utils@0.2.0(typescript@5.8.3)':
+    dependencies:
+      '@solana/buffer-layout': 4.0.1
+      '@solana/web3.js': 1.98.4(typescript@5.8.3)
+      bigint-buffer: 1.1.5
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
       - utf-8-validate
 
   '@solana/buffer-layout@4.0.1':
@@ -46137,6 +46273,16 @@ snapshots:
     dependencies:
       '@solana/errors': 2.3.0(typescript@5.4.3)
       typescript: 5.4.3
+
+  '@solana/codecs-core@2.3.0(typescript@5.6.3)':
+    dependencies:
+      '@solana/errors': 2.3.0(typescript@5.6.3)
+      typescript: 5.6.3
+
+  '@solana/codecs-core@2.3.0(typescript@5.8.3)':
+    dependencies:
+      '@solana/errors': 2.3.0(typescript@5.8.3)
+      typescript: 5.8.3
 
   '@solana/codecs-data-structures@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
@@ -46169,6 +46315,18 @@ snapshots:
       '@solana/codecs-core': 2.3.0(typescript@5.4.3)
       '@solana/errors': 2.3.0(typescript@5.4.3)
       typescript: 5.4.3
+
+  '@solana/codecs-numbers@2.3.0(typescript@5.6.3)':
+    dependencies:
+      '@solana/codecs-core': 2.3.0(typescript@5.6.3)
+      '@solana/errors': 2.3.0(typescript@5.6.3)
+      typescript: 5.6.3
+
+  '@solana/codecs-numbers@2.3.0(typescript@5.8.3)':
+    dependencies:
+      '@solana/codecs-core': 2.3.0(typescript@5.8.3)
+      '@solana/errors': 2.3.0(typescript@5.8.3)
+      typescript: 5.8.3
 
   '@solana/codecs-strings@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
@@ -46224,6 +46382,18 @@ snapshots:
       commander: 14.0.2
       typescript: 5.4.3
 
+  '@solana/errors@2.3.0(typescript@5.6.3)':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.2
+      typescript: 5.6.3
+
+  '@solana/errors@2.3.0(typescript@5.8.3)':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.2
+      typescript: 5.8.3
+
   '@solana/options@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
       '@solana/codecs-core': 2.0.0-rc.1(typescript@5.4.3)
@@ -46246,22 +46416,6 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
-  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.95.4)(typescript@5.4.3)':
-    dependencies:
-      '@solana/codecs': 2.0.0-rc.1(typescript@5.4.3)
-      '@solana/web3.js': 1.95.4
-    transitivePeerDependencies:
-      - fastestsmallesttextencoderdecoder
-      - typescript
-
-  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.95.4)(typescript@5.8.3)':
-    dependencies:
-      '@solana/codecs': 2.0.0-rc.1(typescript@5.8.3)
-      '@solana/web3.js': 1.95.4
-    transitivePeerDependencies:
-      - fastestsmallesttextencoderdecoder
-      - typescript
-
   '@solana/spl-token-group@0.0.7(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(typescript@5.4.3)
@@ -46270,18 +46424,10 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.95.4)(typescript@5.4.3)':
-    dependencies:
-      '@solana/codecs': 2.0.0-rc.1(typescript@5.4.3)
-      '@solana/web3.js': 1.95.4
-    transitivePeerDependencies:
-      - fastestsmallesttextencoderdecoder
-      - typescript
-
-  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.95.4)(typescript@5.8.3)':
+  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.98.4(typescript@5.8.3))(typescript@5.8.3)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(typescript@5.8.3)
-      '@solana/web3.js': 1.95.4
+      '@solana/web3.js': 1.98.4(typescript@5.8.3)
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
       - typescript
@@ -46294,10 +46440,18 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
+  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.98.4(typescript@5.8.3))(typescript@5.8.3)':
+    dependencies:
+      '@solana/codecs': 2.0.0-rc.1(typescript@5.8.3)
+      '@solana/web3.js': 1.98.4(typescript@5.8.3)
+    transitivePeerDependencies:
+      - fastestsmallesttextencoderdecoder
+      - typescript
+
   '@solana/spl-token@0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/buffer-layout-utils': 0.2.0
+      '@solana/buffer-layout-utils': 0.2.0(typescript@5.4.3)
       '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
@@ -46309,13 +46463,13 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@solana/spl-token@0.4.9(@solana/web3.js@1.95.4)(typescript@5.4.3)':
+  '@solana/spl-token@0.4.14(@solana/web3.js@1.98.4(typescript@5.8.3))(typescript@5.8.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/buffer-layout-utils': 0.2.0
-      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.95.4)(typescript@5.4.3)
-      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.95.4)(typescript@5.4.3)
-      '@solana/web3.js': 1.95.4
+      '@solana/buffer-layout-utils': 0.2.0(typescript@5.8.3)
+      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.98.4(typescript@5.8.3))(typescript@5.8.3)
+      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.98.4(typescript@5.8.3))(typescript@5.8.3)
+      '@solana/web3.js': 1.98.4(typescript@5.8.3)
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
     transitivePeerDependencies:
       - bufferutil
@@ -46324,30 +46478,15 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@solana/spl-token@0.4.9(@solana/web3.js@1.95.4)(typescript@5.8.3)':
-    dependencies:
-      '@solana/buffer-layout': 4.0.1
-      '@solana/buffer-layout-utils': 0.2.0
-      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.95.4)(typescript@5.8.3)
-      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.95.4)(typescript@5.8.3)
-      '@solana/web3.js': 1.95.4
-      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - fastestsmallesttextencoderdecoder
-      - typescript
-      - utf-8-validate
-
-  '@solana/web3.js@1.95.4':
+  '@solana/web3.js@1.98.4(typescript@5.4.3)':
     dependencies:
       '@babel/runtime': 7.28.4
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@solana/buffer-layout': 4.0.1
-      agentkeepalive: 4.5.0
-      bigint-buffer: 1.1.5
-      bn.js: 5.2.1
+      '@solana/codecs-numbers': 2.3.0(typescript@5.4.3)
+      agentkeepalive: 4.6.0
+      bn.js: 5.2.2
       borsh: 0.7.0
       bs58: 4.0.1
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -46359,15 +46498,39 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - typescript
       - utf-8-validate
 
-  '@solana/web3.js@1.98.4(typescript@5.4.3)':
+  '@solana/web3.js@1.98.4(typescript@5.6.3)':
     dependencies:
       '@babel/runtime': 7.28.4
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@solana/buffer-layout': 4.0.1
-      '@solana/codecs-numbers': 2.3.0(typescript@5.4.3)
+      '@solana/codecs-numbers': 2.3.0(typescript@5.6.3)
+      agentkeepalive: 4.6.0
+      bn.js: 5.2.2
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
+      fast-stable-stringify: 1.0.0
+      jayson: 4.1.2
+      node-fetch: 2.7.0
+      rpc-websockets: 9.0.4
+      superstruct: 2.0.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+
+  '@solana/web3.js@1.98.4(typescript@5.8.3)':
+    dependencies:
+      '@babel/runtime': 7.28.4
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@solana/buffer-layout': 4.0.1
+      '@solana/codecs-numbers': 2.3.0(typescript@5.8.3)
       agentkeepalive: 4.6.0
       bn.js: 5.2.2
       borsh: 0.7.0
@@ -50100,10 +50263,6 @@ snapshots:
 
   agent-base@7.1.3: {}
 
-  agentkeepalive@4.5.0:
-    dependencies:
-      humanize-ms: 1.2.1
-
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
@@ -50582,6 +50741,18 @@ snapshots:
   aws4@1.12.0: {}
 
   axe-core@4.7.0: {}
+
+  axios@1.11.0:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.5
+      proxy-from-env: 1.1.0
+
+  axios@1.12.2:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.5
+      proxy-from-env: 1.1.0
 
   axios@1.13.2:
     dependencies:
@@ -67752,8 +67923,6 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
       '@types/istanbul-lib-coverage': 2.0.6
       convert-source-map: 2.0.0
-
-  valibot@0.36.0: {}
 
   valibot@1.2.0(typescript@5.4.3):
     optionalDependencies:

@@ -876,6 +876,35 @@ describe("EVM Family", () => {
           },
         });
       });
+
+      it("should use transactionHash when hash is missing for internal transactions (blockscout specific)", async () => {
+        const blockscoutInternalOps = etherscanInternalOperations.map(op => ({
+          ...op,
+          hash: undefined,
+          transactionHash: op.hash, // <-- this is what is returned by blockscout
+        }));
+
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: blockscoutInternalOps,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastInternalOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          ].flat(),
+        );
+      });
     });
 
     describe("getLastNftOperations without nft", () => {
