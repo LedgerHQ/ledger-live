@@ -40,16 +40,23 @@ test.describe("Main navigation", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.mainNavigation.verifyPortfolioNavigation();
-      await app.mainNavigation.verifyAccountsNavigation();
-      await app.mainNavigation.verifySwapNavigation();
-      await app.mainNavigation.verifyEarnNavigation();
-      await app.mainNavigation.verifyDiscoverNavigation();
-      await app.mainNavigation.verifyReferAFriendNavigation();
-      await app.mainNavigation.verifyCardNavigation();
-      await app.mainNavigation.verifyNotificationCenterNavigation();
-      await app.mainNavigation.verifyActivityIndicatorNavigation();
-      await app.mainNavigation.verifySettingsNavigation();
+      await app.mainNavigation.openTargetFromMainNavigation("portfolio");
+      await app.mainNavigation.validateTargetFromMainNavigation("portfolio");
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.mainNavigation.validateTargetFromMainNavigation("accounts");
+      await app.mainNavigation.openTargetFromMainNavigation("swap");
+      await app.mainNavigation.validateTargetFromMainNavigation("swap");
+      await app.mainNavigation.openTargetFromMainNavigation("earn");
+      await app.mainNavigation.validateTargetFromMainNavigation("earn");
+      await app.mainNavigation.openTargetFromMainNavigation("discover");
+      await app.mainNavigation.validateTargetFromMainNavigation("discover");
+      await app.mainNavigation.openTargetFromMainNavigation("refer a friend");
+      await app.mainNavigation.validateTargetFromMainNavigation("refer a friend");
+
+      await app.mainNavigation.openTargetFromMainNavigation("card");
+      await app.mainNavigation.openNotificationCenter();
+      await app.mainNavigation.clickActivityIndicator();
+      await app.mainNavigation.openSettings();
     },
   );
 });
