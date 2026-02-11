@@ -3,13 +3,20 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useAcceptGeneralTerms } from "~/logic/terms";
 import { urls } from "~/utils/urls";
 import { NavigatorName, ScreenName } from "~/const/navigation";
-import { setAnalytics, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setAnalytics,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingWelcome>
@@ -27,6 +34,11 @@ export function useWelcomeNavigation() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const acceptTerms = useAcceptGeneralTerms();
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
+  const walletFeaturesConfig = useWalletFeaturesConfig("mobile");
+  const shouldUseLazyOnboarding =
+    (walletFeaturesConfig as typeof walletFeaturesConfig & { shouldUseLazyOnboarding?: boolean })
+      .shouldUseLazyOnboarding ?? false;
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const onTermsAndConditions = useCallback(
     () => Linking.openURL((urls.terms as Record<string, string>)[language] || urls.terms.en),
@@ -39,6 +51,18 @@ export function useWelcomeNavigation() {
       ),
     [language],
   );
+  const continueWithLazyOnboarding = useCallback(() => {
+    dispatch(completeOnboarding());
+    dispatch(setReadOnlyMode(true));
+    dispatch(setIsReborn(true));
+    dispatch(setOnboardingHasDevice(false));
+    navigation.reset({
+      index: 0,
+      routes: [{ name: NavigatorName.Base } as never],
+    });
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  }, [dispatch, navigation, tryTriggerPushNotificationDrawerAfterAction]);
+
   const onGetStarted = useCallback(() => {
     acceptTerms();
     const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
@@ -51,12 +75,17 @@ export function useWelcomeNavigation() {
       });
     } else {
       dispatch(setAnalytics(true));
-      navigation.navigate({
-        name: ScreenName.OnboardingPostWelcomeSelection,
-        params: {
-          userHasDevice: true,
-        },
-      });
+
+      if (shouldUseLazyOnboarding) {
+        continueWithLazyOnboarding();
+      } else {
+        navigation.navigate({
+          name: ScreenName.OnboardingPostWelcomeSelection,
+          params: {
+            userHasDevice: true,
+          },
+        });
+      }
     }
   }, [
     acceptTerms,
@@ -64,6 +93,8 @@ export function useWelcomeNavigation() {
     llmAnalyticsOptInPromptFeature?.params?.entryPoints,
     navigation,
     dispatch,
+    shouldUseLazyOnboarding,
+    continueWithLazyOnboarding,
   ]);
 
   const [_, setBooleans] = useState<boolean[]>([]);

@@ -26,6 +26,10 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
   const featureFlagKey = FEATURE_FLAG_KEYS[platform];
   const walletFeatureFlag = useFeature(featureFlagKey);
 
+  console.log("params", walletFeatureFlag?.params);
+  console.log("enabled", walletFeatureFlag?.enabled);
+  console.log("featureFlagKey", featureFlagKey);
+
   return useMemo(() => {
     const isEnabled = walletFeatureFlag?.enabled ?? false;
     const params = walletFeatureFlag?.params;
@@ -37,6 +41,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
       shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
+      shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
     };
   }, [walletFeatureFlag]);
 };

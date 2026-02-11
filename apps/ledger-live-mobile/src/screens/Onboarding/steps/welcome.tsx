@@ -12,12 +12,20 @@ import { NavigatorName, ScreenName } from "~/const";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import { urls } from "~/utils/urls";
 import { useAcceptGeneralTerms } from "~/logic/terms";
-import { setAnalytics, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setAnalytics,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import ForceTheme from "~/components/theme/ForceTheme";
 import Button from "~/components/wrappedUi/Button";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 import videoSources from "../../../../assets/videos";
 import LanguageSelect from "../../SyncOnboarding/LanguageSelect";
@@ -43,6 +51,11 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const { t } = useTranslation();
   const acceptTerms = useAcceptGeneralTerms();
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
+  const walletFeaturesConfig = useWalletFeaturesConfig("mobile");
+  const shouldUseLazyOnboarding =
+    (walletFeaturesConfig as typeof walletFeaturesConfig & { shouldUseLazyOnboarding?: boolean })
+      .shouldUseLazyOnboarding ?? false;
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const {
     i18n: { language: locale },
@@ -61,6 +74,18 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     [locale],
   );
 
+  const continueWithLazyOnboarding = useCallback(() => {
+    dispatch(completeOnboarding());
+    dispatch(setReadOnlyMode(true));
+    dispatch(setIsReborn(true));
+    dispatch(setOnboardingHasDevice(false));
+    navigation.reset({
+      index: 0,
+      routes: [{ name: NavigatorName.Base } as never],
+    });
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  }, [dispatch, navigation, tryTriggerPushNotificationDrawerAfterAction]);
+
   const next = useCallback(() => {
     acceptTerms();
     const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
@@ -74,12 +99,17 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
       });
     } else {
       dispatch(setAnalytics(true));
-      navigation.navigate({
-        name: ScreenName.OnboardingPostWelcomeSelection,
-        params: {
-          userHasDevice: true,
-        },
-      });
+
+      if (shouldUseLazyOnboarding) {
+        continueWithLazyOnboarding();
+      } else {
+        navigation.navigate({
+          name: ScreenName.OnboardingPostWelcomeSelection,
+          params: {
+            userHasDevice: true,
+          },
+        });
+      }
     }
   }, [
     acceptTerms,
@@ -87,6 +117,8 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     llmAnalyticsOptInPromptFeature?.params?.entryPoints,
     navigation,
     dispatch,
+    shouldUseLazyOnboarding,
+    continueWithLazyOnboarding,
   ]);
 
   const videoMounted = !useIsAppInBackground();
