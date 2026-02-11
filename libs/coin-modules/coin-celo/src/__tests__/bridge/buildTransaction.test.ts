@@ -112,7 +112,7 @@ describe("buildTransaction", () => {
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: "address",
-      value: "10",
+      value: "0xa",
       data: { data: "lock_data" },
       gas: "12",
     });
@@ -135,7 +135,7 @@ describe("buildTransaction", () => {
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: "address",
-      value: "121",
+      value: "0x79",
       data: { data: "lock_data" },
       gas: "12",
     });
@@ -444,7 +444,49 @@ describe("buildTransaction", () => {
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: transactionFixture.recipient,
-      value: "10",
+      value: "0xa",
+      gas: "12",
+    });
+  });
+
+  it("should build a send transaction when amount is less than 1 CELO but greater than gas fee", async () => {
+    const oneCelo = new BigNumber(10).pow(18);
+    const pointOneCelo = new BigNumber(10).pow(17);
+
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: oneCelo },
+      {
+        ...transactionFixture,
+        mode: "send",
+        amount: pointOneCelo,
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: transactionFixture.recipient,
+      value: "0x16345785d8a0000",
+      gas: "12",
+    });
+  });
+
+  it("should build a send transaction when amount is less than gas fee", async () => {
+    const twoCelo = new BigNumber(10).pow(18).times(2);
+    const amountLessThanFee = new BigNumber(10);
+
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: twoCelo },
+      {
+        ...transactionFixture,
+        mode: "send",
+        amount: amountLessThanFee,
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: transactionFixture.recipient,
+      value: "0xa",
       gas: "12",
     });
   });
@@ -465,7 +507,7 @@ describe("buildTransaction", () => {
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: "recipient",
-      value: "10",
+      value: "0xa",
       gas: "12",
     });
   });
@@ -495,7 +537,7 @@ describe("buildTransaction", () => {
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: "recipient",
-      value: "10",
+      value: "0xa",
       gas: "12",
     });
   });
