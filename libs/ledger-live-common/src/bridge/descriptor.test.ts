@@ -279,6 +279,43 @@ describe("sendFeatures", () => {
     expect(typeof config?.buildTransactionPatch).toBe("function");
   });
 
+  it("should return custom fee config for stellar", () => {
+    const stellar = getCryptoCurrencyById("stellar");
+    const config = sendFeatures.getCustomFeeConfig(stellar);
+    expect(config).not.toBeNull();
+    expect(config?.inputs).toHaveLength(1);
+    expect(config?.inputs[0]).toMatchObject({
+      key: "fees",
+      type: "number",
+      unitLabel: "stroop",
+    });
+    expect(config?.buildTransactionPatch({ fees: "100" })).toMatchObject({
+      fees: new BigNumber(100),
+      customFees: { parameters: { fees: new BigNumber(100) } },
+    });
+  });
+
+  it("should return custom fee config for kaspa", () => {
+    const kaspa = getCryptoCurrencyById("kaspa");
+    const config = sendFeatures.getCustomFeeConfig(kaspa);
+    expect(config).not.toBeNull();
+    expect(config?.inputs).toHaveLength(1);
+    expect(config?.inputs[0]).toMatchObject({
+      key: "feePerByte",
+      type: "number",
+      unitLabel: "Sompi/byte",
+    });
+  });
+
+  it("should return false for custom fees when coin does not expose custom config", () => {
+    const stacks = getCryptoCurrencyById("stacks");
+    const filecoin = getCryptoCurrencyById("filecoin");
+    expect(sendFeatures.hasCustomFees(stacks)).toBe(false);
+    expect(sendFeatures.hasCustomFees(filecoin)).toBe(false);
+    expect(sendFeatures.getCustomFeeConfig(stacks)).toBeNull();
+    expect(sendFeatures.getCustomFeeConfig(filecoin)).toBeNull();
+  });
+
   it("should return empty fee preset options when not implemented", () => {
     const solana = getCryptoCurrencyById("solana");
     expect(sendFeatures.getFeePresetOptions(solana, {})).toEqual([]);
