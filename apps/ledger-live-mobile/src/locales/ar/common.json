@@ -467,6 +467,9 @@
       "title" : "فشل توثيق الجهاز",
       "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "تمكين Blind signing (التوقيع بدون اطلاع) أو Contract data (بيانات العقد) في تطبيق إيثريوم"
+    },
     "HardResetFail" : {
       "title" : "عذراً، لا يمكن إعادة التعيين",
       "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
@@ -2681,6 +2684,10 @@
       "seeMarket" : "رؤية الكل"
     },
     "walletBalance" : "رصيد المحفظة",
+    "balance" : {
+      "noSigner" : "المحفظة الأكثر\nأماناً",
+      "noFund" : "تأمين\nأصولك المشفرة"
+    },
     "seeAllAssets" : "رؤية جميع الأصول",
     "seeAllAccounts" : "رؤية جميع الحسابات",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "إرسال",
       "deposit" : "تلقي",
       "stake" : "تكديس"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "تحويل",
+      "swap" : "مبادلة",
+      "buy" : "شراء",
+      "transferDrawer" : {
+        "title" : "تحويل",
+        "receiveCrypto" : "تلقي الأصول المشفرة",
+        "sendCrypto" : "إرسال أصول مشفرة",
+        "bankTransfer" : "تحويل بنكي",
+        "bankTransferDescription" : "تلقي العملات المستقرة بواسطة إرسال النقود"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
+    "perps" : "عقود دائمة",
     "manage" : "إدارة",
     "lastTransactions" : "المعاملات الأخيرة",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "titleVariantB" : "حقِّق أقصى استفادة من Ledger Wallet",
+      "titleVariantB" : "لا تُفوّت الأخبار المهمة",
       "desc" : "احصل على آخر المستجدات حول Ledger Wallet ومنتجات Ledger والسوق والتوصيات المخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
-      "descVariantB" : "سنرسل إليك نصائح مخصصة، وإرشادات إعداد وأخبار السوق ذات الصلة.",
+      "descVariantB" : "احصل على تنبيهات في الوقت الفعلي حول رموز التوكن الجديدة، وفرص الكسب، وتحولات السوق. قم بإلغاء الانضمام في أي وقت.",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "تكديس",
       "description" : "احصل على مكافآت على أصولك المشفرة."
+    },
+    "perps" : {
+      "title" : "عقود دائمة",
+      "description" : "تداول العقود الدائمة بالأصول المشفرة."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "المزود غير متاح",
-      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
+      "description" : "مزود المبادلة لا يمكنه معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "المزود غير متاح",
@@ -8284,6 +8308,11 @@
       "preapprove" : "تمت إضافة الحساب بنجاح",
       "validator" : "مُدقِّق Ledger",
       "title" : "اقبل تلقائياً الأموال الواردة",
+      "processing" : {
+        "title" : "جارٍ معالجة المعاملة",
+        "description" : "هذه العملية قد تستغرق ما يصل إلى 1 دقيقة",
+        "keepDeviceNearby" : "لا تُغادر تطبيق Ledger Wallet واحتفظ بجهازك Ledger بالقرب منك."
+      },
       "reonboard" : {
         "title" : "مطلوب تحديث الحساب",
         "account" : "الحساب",
@@ -8356,7 +8385,11 @@
       "neutral" : "محايد",
       "greed" : "طمع",
       "extremeGreed" : "طمع+"
-    }
+    },
+    "tileTitle" : "الحالة المزاجية"
+  },
+  "perps" : {
+    "title" : "عقود دائمة"
   },
   "analyticsAllocation" : {
     "header" : {

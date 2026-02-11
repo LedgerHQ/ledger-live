@@ -50,7 +50,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "bitcoin_regtest",
   "ethereum_sepolia",
-  "ethereum_holesky",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",

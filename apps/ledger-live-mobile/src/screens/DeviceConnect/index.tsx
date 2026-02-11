@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { TFunction } from "i18next";
@@ -35,6 +35,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [device, setDevice] = useState<Device | null | undefined>();
+  const hasHandledSuccessRef = useRef(false);
   const { appName = "BOLOS", onSuccess } = route.params;
   const request = useMemo(
     () => ({
@@ -50,6 +51,8 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
 
   const handleSuccess = useCallback(
     (result: AppResult) => {
+      if (hasHandledSuccessRef.current) return;
+      hasHandledSuccessRef.current = true;
       onSuccess(result);
       onDone();
     },

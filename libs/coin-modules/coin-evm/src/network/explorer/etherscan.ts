@@ -445,6 +445,12 @@ export const getNftOperations = async (params: FetchOperationsParams): Promise<E
   };
 };
 
+// blockscout returns tx hash in transactionHash field
+const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransaction => ({
+  ...op,
+  hash: op.hash ?? op.transactionHash,
+});
+
 /**
  * Get all the internal transactions
  */

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.59.0",
+  "version": "34.60.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -284,7 +284,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@solana/web3.js": "1.95.4",
+    "@solana/web3.js": "catalog:",
     "@svgr/core": "^5.5.0",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

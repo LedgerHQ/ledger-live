@@ -45,6 +45,7 @@ export type Transaction = TransactionCommon & {
   skipVerify?: boolean;
   coinType: string;
   stakedSuiId?: string;
+  tokenId?: string;
   // add here all transaction-specific fields when implement other modes than "send"
 };
 

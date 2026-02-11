@@ -46,6 +46,7 @@ import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketNavigator from "LLM/features/Market/Navigator";
+import SendWorkflow from "LLM/features/Send";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
@@ -203,6 +204,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.SendFunds}
           component={SendFundsNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.SendFlow}
+          component={SendWorkflow}
           options={{ headerShown: false }}
         />
         {web3hub?.enabled ? (

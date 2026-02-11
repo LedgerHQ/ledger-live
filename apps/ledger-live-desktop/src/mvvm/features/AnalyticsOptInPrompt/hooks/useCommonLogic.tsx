@@ -11,7 +11,7 @@ import { ABTestingVariants } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track, updateIdentify } from "~/renderer/analytics/segment";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -70,9 +70,14 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     ],
   );
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
+    try {
+      await updateIdentify({ force: true });
+    } catch (error) {
+      console.error("Failed to update analytics identify", error);
+    }
     if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);

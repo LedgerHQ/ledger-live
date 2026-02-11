@@ -2354,6 +2354,15 @@
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
     "recentSendWillAppear": "Your recent send will appear here",
+    "relativeDate": {
+      "justNow": "Just now",
+      "minutesAgo_one": "1 min ago",
+      "minutesAgo_other": "{{count}} min ago",
+      "hoursAgo_one": "1 hour ago",
+      "hoursAgo_other": "{{count}} hours ago",
+      "daysAgo_one": "1 day ago",
+      "daysAgo_other": "{{count}} days ago"
+    },
     "remove": "Remove",
     "enterTag": "Enter {{tag}}",
     "firstInteraction": {
@@ -7929,6 +7938,12 @@
       "opensea": "OpenSea"
     }
   },
+  "topBar": {
+    "activityIndicator": {
+      "refreshToolTip": "Tap to refresh",
+      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
+    }
+  },
   "geoBlocking": {
     "title": "Location unavailable",
     "description": "Ledger Wallet is not available in this location.",
@@ -7955,7 +7970,8 @@
     "shielded": {
       "state": {
         "showBalance": "Show balance",
-        "lastSync": "Last sync {{days}} ago"
+        "pausedAt": "Paused at ",
+        "lastSync": "Last sync: {{date}}"
       },
       "flows": {
         "export": {

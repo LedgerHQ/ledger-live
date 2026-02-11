@@ -141,14 +141,6 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
-  Ethereum_Holesky: {
-    currency: getCryptoCurrencyById("ethereum_holesky"),
-    appQuery: {
-      model: getSpeculosModel(),
-      appName: "Ethereum",
-    },
-    dependencies: [],
-  },
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {

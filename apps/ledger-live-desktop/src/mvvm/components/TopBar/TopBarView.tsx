@@ -3,19 +3,17 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router";
 import { lock } from "~/renderer/actions/application";
-import { hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { ItemContainer } from "~/renderer/components/TopBar/shared";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
 
-import ActivityIndicator from "~/renderer/components/TopBar/ActivityIndicator";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
 import { IconsLegacy } from "@ledgerhq/react-ui";
-import { NavBar, NavBarTrailing } from "@ledgerhq/lumen-ui-react";
+import { NavBar, NavBarTrailing, NavBarTitle } from "@ledgerhq/lumen-ui-react";
 import { TopBarDivider } from "./components/Divider";
 import { TopBarViewProps } from "./types";
 import { TopBarActionsList } from "./components/ActionsList";
@@ -26,7 +24,6 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const hasPassword = useSelector(hasPasswordSelector);
-  const hasAccounts = useSelector(hasAccountsSelector);
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
 
@@ -39,15 +36,11 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
   }, [navigate, location]);
 
   return (
-    <NavBar className="justify-end py-24 pr-32 pl-[70px]">
-      <NavBarTrailing className="gap-12">
+    <NavBar className="items-center px-32 py-24">
+      <NavBarTitle className="h-48">
         <Breadcrumb />
-        {hasAccounts && (
-          <>
-            <ActivityIndicator />
-            <TopBarDivider />
-          </>
-        )}
+      </NavBarTitle>
+      <NavBarTrailing className="h-48 gap-12">
         <LiveAppDrawer />
         <NotificationIndicator />
         <TopBarDivider />

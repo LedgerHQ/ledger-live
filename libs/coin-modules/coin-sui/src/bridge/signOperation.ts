@@ -17,7 +17,7 @@ import { calculateAmount } from "./utils";
 export const buildSignOperation = (
   signerContext: SignerContext<SuiSigner>,
 ): AccountBridge<Transaction, SuiAccount>["signOperation"] => {
-  return ({ account, deviceId, transaction }) =>
+  return ({ account, deviceId, transaction, deviceModelId, certificateSignatureKind }) =>
     new Observable(subscriber => {
       async function main() {
         subscriber.next({
@@ -37,7 +37,13 @@ export const buildSignOperation = (
           }),
         };
 
-        const { unsigned } = await buildTransaction(account, transactionToSign);
+        const { unsigned, objects, resolution } = await buildTransaction(
+          account,
+          transactionToSign,
+          true,
+          deviceModelId,
+          certificateSignatureKind,
+        );
 
         const signed = await signerContext(deviceId, async suiSigner =>
           withApi(async (suiClient: SuiClient) => {
@@ -46,7 +52,7 @@ export const buildSignOperation = (
               suiSigner,
               suiClient,
             );
-            return ledgerSigner.signTransaction(unsigned);
+            return ledgerSigner.signTransaction(unsigned, objects, resolution);
           }),
         );
 

@@ -11,6 +11,7 @@ import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -174,16 +175,29 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     [isPtxServiceCtaScreensDisabled, currency, account, t, isZeroBalance],
   );
 
-  const newSendFlow = useFeature("newSendFlow");
+  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
+  const accountFamily = getFamilyFromAccount(account, parentAccount);
+  const shouldUseNewFlow = isEnabledForFamily(accountFamily);
+
   const SendAction = useMemo(
     () => ({
       id: "send",
-      navigationParams: [
-        NavigatorName.SendFunds,
-        {
-          screen: !newSendFlow?.enabled ? ScreenName.SendSelectRecipient : ScreenName.NewSendFlow,
-        },
-      ],
+      navigationParams: shouldUseNewFlow
+        ? [
+            NavigatorName.SendFlow,
+            {
+              params: {
+                account,
+                parentAccount,
+              },
+            },
+          ]
+        : [
+            NavigatorName.SendFunds,
+            {
+              screen: ScreenName.SendSelectRecipient,
+            },
+          ],
       label: t("account.send"),
       event: "AccountSend",
       Icon: IconsLegacy.ArrowTopMedium,
@@ -193,7 +207,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       },
       ...extraSendActionParams,
     }),
-    [newSendFlow, extraSendActionParams, t, isZeroBalance],
+    [shouldUseNewFlow, account, parentAccount, extraSendActionParams, t, isZeroBalance],
   );
 
   const ReceiveAction = useMemo(

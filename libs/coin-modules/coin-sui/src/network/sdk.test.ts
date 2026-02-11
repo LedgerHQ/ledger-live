@@ -126,6 +126,7 @@ jest.mock("@mysten/sui/client", () => {
           status: { status: "success" },
         },
       }),
+      multiGetObjects: jest.fn().mockResolvedValue([]),
     })),
     getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
   };
@@ -154,6 +155,7 @@ jest.mock("@mysten/sui/transactions", () => {
         },
         build: jest.fn().mockResolvedValue(mockTxb),
         setGasBudgetIfNotSet: jest.fn(),
+        getData: jest.fn().mockImplementation(() => ({ gasData: {}, inputs: [] })),
       };
     }),
   };

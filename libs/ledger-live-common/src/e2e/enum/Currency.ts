@@ -51,13 +51,6 @@ export class Currency {
     [Network.ETHEREUM],
     "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
   );
-  static readonly tETH = new Currency(
-    "Ethereum Holesky",
-    "𝚝ETH",
-    "ethereum_holesky",
-    AppInfos.ETHEREUM_HOLESKY,
-    [Network.ETHEREUM_HOLESKY],
-  );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",
     "ETH",
