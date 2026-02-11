@@ -10,6 +10,9 @@
     "seeAll" : "모두 보기",
     "seeAllWithNumber" : "모두 보기 ({{number}})",
     "back" : "뒤로",
+    "fee" : "수수료",
+    "stake" : "스테이킹",
+    "validator" : "검증인",
     "delete" : "삭제",
     "paste" : "붙여넣기",
     "yes" : "예",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "고객 맞춤 정보"
     },
+    "perpsEntry" : {
+      "title" : "Perpetuals",
+      "description" : "Trade with leverage"
+    },
     "recommended" : {
       "title" : "추천"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "전송",
       "swap" : "스왑",
       "buy" : "매수",
+      "connect" : "연결",
+      "buyLedger" : "Ledger 구매하기",
       "transferDrawer" : {
         "title" : "전송",
         "receiveCrypto" : "암호화폐 받기",
@@ -2988,7 +2997,6 @@
     "yield" : "이자",
     "sell" : "판매",
     "swap" : "스왑",
-    "perps" : "무기한 계약",
     "manage" : "관리",
     "lastTransactions" : "마지막 트랜잭션",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "수령",
         "buyCrypto" : "구매"
       },
-      "addAccountCta" : "계정 추가"
+      "addAccountCta" : "계정 추가",
+      "addCryptoAccount" : "Add crypto account"
     },
     "settings" : {
       "header" : "계정 설정",
@@ -3675,10 +3684,6 @@
       "title" : "스테이킹",
       "description" : "암호화폐로 더 큰 혜택을 누려보세요"
     },
-    "perps" : {
-      "title" : "무기한 계약",
-      "description" : "암호화폐 무기한 계약 거래"
-    },
     "swap" : {
       "title" : "스왑",
       "description" : "암호화폐끼리 교환하세요.",
@@ -3875,7 +3880,8 @@
         "title" : "견적 선택"
       },
       "twoStepApproval" : {
-        "title" : "단계 완료하기"
+        "title" : "단계 완료하기",
+        "completedTitle" : "트랜잭션 상태"
       },
       "loader" : {
         "title" : "스왑 처리 중",
@@ -4573,6 +4579,7 @@
       },
       "acceptTerms" : "본 트랜잭션에 서명하면 <0><0>{{provider}}</0>의 이용약관</0>을 수락하는 것으로 간주합니다.",
       "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
+      "acceptTermsSponsored" : "네트워크 수수료 면제 혜택을 받으려면, 트랜잭션 상세 정보(지갑 주소 포함)를 Blinklabs와 공유하는 것에 동의해야 합니다.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 확인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, 이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
@@ -6088,6 +6095,52 @@
       "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "주소 복사 완료!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "스테이킹 잔액",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 스테이킹된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "memoPlaceholder" : "메모(선택)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 스테이킹",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다."
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료",
+      "showAll" : "모두 보기",
+      "showLess" : "접기",
+      "iDelegate" : "위임"
+    }
+  },
   "stellar" : {
     "token" : "자산",
     "memo" : {
@@ -6492,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "메모(선택)"
   },
   "near" : {
     "info" : {
@@ -8387,9 +8437,6 @@
       "extremeGreed" : "탐욕+"
     },
     "tileTitle" : "시장 심리"
-  },
-  "perps" : {
-    "title" : "무기한 계약"
   },
   "analyticsAllocation" : {
     "header" : {
