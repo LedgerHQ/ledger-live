@@ -152,7 +152,8 @@
     "quote" : "โควตราคา",
     "memoTag" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Tag/Memo"
-    }
+    },
+    "stake" : "สเตค"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "สร้างรายได้",
     "exchange" : "ซื้อ / ขาย",
     "swap" : "สวอป",
+    "perps" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
     "refer" : "แนะนำเพื่อน",
     "lend" : "ให้ยืม",
     "catalog" : "ผู้ให้บริการ",
@@ -809,7 +811,15 @@
     }
   },
   "card" : {
-    "backToCard" : "บัตรทั้งหมด"
+    "backToCard" : "บัตรทั้งหมด",
+    "title" : "บัตร",
+    "imageAlt" : "ภาพบัตร",
+    "spendYourCrypto" : "ใช้จ่ายคริปโตของคุณ",
+    "payDescription" : "ชำระทางออนไลน์หรือในร้านค้าด้วยบัตรคริปโต",
+    "exploreCards" : "ดูบัตรต่าง ๆ",
+    "iAlreadyHaveACard" : "ฉันมีบัตรอยู่แล้ว",
+    "unlockLiquidity" : "ใช้จ่ายผ่านคริปโตได้ง่ายขึ้น",
+    "exploreCryptoCardsDescription" : "ดูบัตรคริปโตของเราแล้วเลือกใบที่เหมาะกับคุณที่สุด"
   },
   "lend" : {
     "title" : "ให้ยืมคริปโต",
@@ -1783,6 +1793,7 @@
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
       "nearIntentsAcceptTerms" : "เมื่อยืนยันธุรกรรมนี้\n ถือว่าคุณยอมรับเงื่อนไขการใช้งานของ <0>SwapKit</0> ซึ่งเป็นเทคโนโลยีเบื้องหลัง NEAR Intents",
+      "acceptTermsSponsored" : "เพื่อรับสิทธิประโยชน์จากการใช้งานแบบไม่มีค่าธรรมเนียมเครือข่าย คุณยังยินยอมที่จะแบ่งปันรายละเอียดธุรกรรม (รวมถึงที่อยู่วอลเล็ต) ของคุณกับ Blinklabs อีกด้วย",
       "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
       "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ\n<1>นโยบาย AML/KYC</1> ของ Changelly Changelly อาจใช้กระบวนการ AML/KYC \nซึ่งอาจส่งผลกระทบต่อการทำธุรกรรมของคุณในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
@@ -2205,6 +2216,19 @@
       "description" : "คุณอาจต้องมี <0>Tag/Memo</0> เพื่อรับสินทรัพย์นี้จาก Exchange คุณสามารถใช้ตัวเลขผสมใด ๆ ก็ได้ เช่น 1234"
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "การโอนเงินผ่านธนาคาร",
+          "description" : "รับสเตเบิลคอยน์ด้วยการส่งเงินสด"
+        },
+        "fromCrypto" : {
+          "title" : "รับคริปโต"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "ส่ง",
     "totalSpent" : "ยอดรวมที่จะส่ง",
@@ -2331,6 +2355,15 @@
     "addressNotFound" : "ไม่พบที่อยู่",
     "alreadyUsed" : "{{date}} ถูกใช้งานแล้ว",
     "recentSendWillAppear" : "การส่งล่าสุดของคุณจะแสดงที่นี่",
+    "relativeDate" : {
+      "justNow" : "Just now",
+      "minutesAgo_one" : "1 min ago",
+      "minutesAgo_other" : "{{count}} min ago",
+      "hoursAgo_one" : "1 hour ago",
+      "hoursAgo_other" : "{{count}} hours ago",
+      "daysAgo_one" : "1 day ago",
+      "daysAgo_other" : "{{count}} days ago"
+    },
     "remove" : "ลบออก",
     "enterTag" : "ป้อน {{tag}}",
     "firstInteraction" : {
@@ -4431,7 +4464,7 @@
       "stockDesc" : "เลือกฝั่งตะวันตกเพื่อแสดงการเพิ่มขึ้นของตลาดเป็นสีน้ำเงิน หรือฝั่งตะวันออกเพื่อแสดงเป็นสีแดง",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "ซิงค์บัญชีคริปโตบนแอป Ledger Wallet ของคุณระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ",
-      "walletSyncDescription" : "พอร์ตของคุณจะอัปเดตเสมอ ไม่ว่าจะดูบนคอมหรือมือถือ",
+      "walletSyncDescription" : "พอร์ตการลงทุนของคุณจะอัปเดตเสมอ ไม่ว่าจะเปลี่ยนไปใช้คอมพิวเตอร์หรือใช้โทรศัพท์",
       "mevProtection" : "MEV Protection",
       "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
       "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว"
@@ -4506,6 +4539,10 @@
           "title" : "การสร้างแบบด่วน",
           "desc" : "สร้างบัญชีสุ่ม 10 บัญชีพร้อมสกุลเงินแบบสุ่ม"
         },
+        "emptyGenerate" : {
+          "title" : "การสร้างบัญชีทดสอบ",
+          "desc" : "สร้างบัญชีทดสอบ"
+        },
         "currencySelector" : {
           "placeholder" : "เลือกสกุลเงิน...",
           "searchPlaceholder" : "ค้นหา",
@@ -4521,7 +4558,8 @@
         "buttons" : {
           "generateAccounts" : "สร้าง {{count}} บัญชี",
           "generateAccounts_other" : "สร้าง {{count}} บัญชี",
-          "generateAccountsQuick" : "สร้าง {{count}} บัญชี"
+          "generateAccountsQuick" : "สร้าง {{count}} บัญชี",
+          "generateEmptyAccount" : "สร้างบัญชีทดสอบ"
         },
         "alerts" : {
           "selectCurrency" : "โปรดเลือกอย่างน้อยหนึ่งสกุลเงิน",
@@ -4567,9 +4605,13 @@
       "walletFeaturesDevTool" : {
         "title" : "เครื่องมือพัฒนาฟีเจอร์วอลเล็ต",
         "description" : "เปิด/ปิดฟีเจอร์วอลเล็ต 4.0 สำหรับเดสก์ท็อป (แฟล็กฟีเจอร์ lwdWallet40)",
+        "mainFeatureToggle" : "สลับฟีเจอร์หลัก",
         "enableAll" : "เปิดใช้งานทั้งหมด",
         "disableAll" : "ปิดใช้งานทั้งหมด",
         "featureParameters" : "พารามิเตอร์ฟีเจอร์",
+        "tourState" : "Tour State",
+        "drawerPreview" : "Drawer Preview",
+        "openDrawer" : "Open Drawer",
         "showJson" : "แสดง JSON",
         "hideJson" : "ซ่อน JSON"
       },
@@ -6336,7 +6378,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "ข้อผิดพลาดในการประมวลผล",
-      "description" : "Changelly ไม่สามารถประมวลผลธุรกรรมนี้ได้ รหัสข้อผิดพลาด 8HBB-{{randomCode}}"
+      "description" : "ผู้ให้บริการสวอปไม่สามารถประมวลผลธุรกรรมนี้ได้ รหัสข้อผิดพลาด 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "ผู้ให้บริการไม่พร้อมให้บริการ",
@@ -6634,7 +6676,7 @@
       "description" : "มีบางอย่างผิดพลาด โปรดลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน Ledger หากมีข้อสงสัย"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "โปรดเปิดใช้งาน Blind Signing หรือ Contract Data ในการตั้งค่าแอป Ethereum"
+      "title" : "เปิดใช้งาน Blind Signing หรือข้อมูลของสัญญาในแอป Ethereum"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "โปรดเปิดใช้งาน Contract Data ในการตั้งค่าแอป Celo"
@@ -7159,6 +7201,50 @@
     "memoPlaceholder" : "ป้อน Tag/Memo",
     "memoWarningText" : "เมื่อใช้บันทึก ควรตรวจสอบข้อมูลกับผู้รับอย่างละเอียดรอบคอบ"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "ค่าธรรมเนียม",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "เปลี่ยนการ Delegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ ",
+      "changeCTA" : "เปลี่ยน"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน"
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -7548,7 +7634,7 @@
     "close" : "ปิด",
     "banner" : {
       "title" : "วอลเล็ตของคุณยังไม่ซิงค์",
-      "description" : "อัปเดตพอร์ตให้คุณเสมอแม้เปลี่ยนคอมพิวเตอร์หรือใช้โทรศัพท์",
+      "description" : "พอร์ตการลงทุนของคุณจะอัปเดตเสมอ ไม่ว่าจะเปลี่ยนไปใช้คอมพิวเตอร์หรือใช้โทรศัพท์",
       "cta" : "ซิงค์วอลเล็ตของฉัน"
     },
     "activate" : {
@@ -7558,7 +7644,7 @@
       "alreadySync" : "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง",
       "learnMore" : "Ledger Sync ทำงานอย่างไร?",
       "titleModal" : "ซิงค์วอลเล็ตของคุณ",
-      "descriptionModal" : "อัปเดตพอร์ตให้คุณเสมอแม้จะเปลี่ยนคอมพิวเตอร์หรือใช้โทรศัพท์ โดยทั้งหมดจะปลอดภัยโดยอุปกรณ์ Ledger ของคุณ",
+      "descriptionModal" : "อัปเดตพอร์ตให้คุณเสมอแม้จะเปลี่ยนคอมพิวเตอร์หรือใช้โทรศัพท์ — โดยทั้งหมดจะปลอดภัยโดยอุปกรณ์ Ledger ของคุณ",
       "ctaModal" : "ดำเนินการต่อ"
     },
     "entryPoints" : {
@@ -7824,7 +7910,15 @@
   },
   "portfolio" : {
     "title" : "หน้าหลัก",
-    "today" : "วันนี้"
+    "today" : "วันนี้",
+    "addAccountCta" : "เพิ่มบัญชีคริปโต",
+    "noBalanceTitle" : "ปกป้องคริปโตของคุณ",
+    "perpsEntry" : {
+      "title" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
+      "description" : "เทรดแบบมีเลเวอเรจ",
+      "cta" : "ผู้ให้บริการ"
+    },
+    "noDeviceTitle" : "วอลเล็ตที่ปลอดภัยที่สุด"
   },
   "marketBanner" : {
     "title" : "สำรวจตลาด",
@@ -7848,11 +7942,25 @@
       "cta" : "เข้าใจแล้ว"
     }
   },
+  "quickActions" : {
+    "send" : "ส่ง",
+    "receive" : "รับ",
+    "buy" : "ซื้อ",
+    "sell" : "ขาย",
+    "connect" : "เชื่อมต่อ",
+    "buyALedger" : "ซื้อ Ledger"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "refreshToolTip" : "Tap to refresh",
+      "errorToolTip" : "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7985,56 @@
       "transparentBalanceTooltip" : "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
       "privateBalance" : "ยอดคงเหลือในบัญชีส่วนบุคคล",
       "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "แสดงยอดคงเหลือในบัญชี",
+        "pausedAt" : "หยุดชั่วคราวเมื่อ ",
+        "lastSync" : "ซิงค์ล่าสุด: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "เปิดใช้งานยอดคงเหลือในบัญชีส่วนตัว ZCash",
+          "breadcrumbs" : {
+            "0" : "Birthday",
+            "1" : "UFVK",
+            "2" : "อุปกรณ์",
+            "3" : "การยืนยัน"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ",
+              "cta" : "เรียนรู้เพิ่มเติม",
+              "label" : "ระดับบล็อก (Birthday Height)",
+              "tooltip" : "ค่าเริ่มต้น: วันที่ปัจจุบัน การเปลี่ยนแปลงนี้จะเกิดเฉพาะกับบัญชีเดิมที่มีอยู่แล้วซึ่งเคยมีการใช้งานแบบส่วนตัว (ในโหมด Shielded) มาก่อนเท่านั้น",
+              "syncFromZero" : "บัญชีนี้เคยใช้รับ ZEC ที่เปิดใช้โหมดการปกป้องข้อมูลมาก่อน แต่ฉันไม่สามารถดึงตำแหน่งของบล็อกของได้ สแกนจากบล็อก 0 (ขั้นตอนนี้อาจใช้เวลานาน)",
+              "error" : "วันที่ไม่ถูกต้อง"
+            },
+            "ufvk" : {
+              "text" : "ในการเริ่มต้น คุณต้องทำการส่งออก UFVK (Unified Full Viewing Key) คุณต้องยืนยันการทำรายการนี้บนอุปกรณ์ Ledger ของคุณ"
+            },
+            "device" : {
+              "text" : "ยืนยันการส่งออก UFVK บนอุปกรณ์ Ledger ของคุณ"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "นำเข้า UFVK สำเร็จ",
+                "text" : "คุณจะสามารถรับ ZEC แบบซ่อนข้อมูล และลงชื่อในธุรกรรมแบบส่วนตัวได้",
+                "info" : {
+                  "text" : "Unified Full Viewing Key ของคุณจะยังคงถูกจัดเก็บในคอมพิวเตอร์ของคุณ และจะไม่ถูกส่งต่อหรือเปิดเผยกับระบบภายนอกเด็ดขาด",
+                  "cta" : "เรียนรู้เพิ่มเติม"
+                },
+                "warning" : "บัญชีที่มีระดับบล็อกที่เก่ากว่าอาจต้องใช้เวลาในการซิงค์นานขึ้น (สูงสุด 2 ชั่วโมง) โปรดเปิดแอปไว้จนกว่าการซิงค์จะเสร็จสมบูรณ์"
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "เริ่มซิงค์",
+      "datepicker" : {
+        "label" : "ระดับบล็อก (Birthday Height)",
+        "tooltip" : "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ"
+      }
     }
   }
 }
