@@ -207,11 +207,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       localOverrides: filteredPayload.overriddenFeatureFlags,
     });
     const isWallet40Enabled = wallet40FF?.enabled === true;
+    const isWallet40GraphReworkEnabled =
+      wallet40FF?.params?.graphRework === true && isWallet40Enabled;
     return {
       ...state,
       ...filteredPayload,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
-      ...(isWallet40Enabled && { selectedTimeRange: "day" }),
+      ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
   },
 

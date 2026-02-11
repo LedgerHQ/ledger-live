@@ -40,7 +40,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
+
 /* Initial state */
 
 export type VaultSigner = {
@@ -307,8 +307,6 @@ export function filterValidSettings(
   ) as Partial<SettingsState>;
 }
 
-const LWD_WALLET_40: FeatureId = "lwdWallet40";
-
 const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
@@ -325,17 +323,10 @@ const handlers: SettingsHandlers = {
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
     const filteredSettings = filterValidSettings(settings);
-    const wallet40FF = getFeature({
-      key: LWD_WALLET_40,
-      localOverrides: filteredSettings.overriddenFeatureFlags,
-    });
-    const isWallet40Enabled = wallet40FF?.enabled === true;
-
     return {
       ...state,
       ...filteredSettings,
       loaded: true,
-      ...(isWallet40Enabled && { selectedTimeRange: "day" }),
     };
   },
   SETTINGS_DISMISS_BANNER: (state, { payload: bannerId }) => ({
