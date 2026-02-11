@@ -15,6 +15,7 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
+import { computeIntentType } from "../computeIntentType";
 
 /**
  * Enriches transaction intent with memo and asset information
@@ -36,7 +37,7 @@ function enrichTransactionIntent(
  * Sign Transaction with Ledger hardware
  */
 export const genericSignOperation =
-  (_network: string, kind: string) =>
+  (network: string, kind: string) =>
   (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signOperation"] =>
   ({
     account,
@@ -77,7 +78,7 @@ export const genericSignOperation =
           };
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
           const { amount } = await alpacaApi.validateIntent(
-            transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+            transactionToIntent(account, draftTransaction, computeIntentType(network)),
             extractBalances(account, alpacaApi.getAssetFromToken),
             customFees,
           );
@@ -90,7 +91,7 @@ export const genericSignOperation =
           let transactionIntent = transactionToIntent(
             account,
             { ...transaction },
-            alpacaApi.computeIntentType,
+            computeIntentType(network),
           );
           transactionIntent.senderPublicKey = publicKey;
 

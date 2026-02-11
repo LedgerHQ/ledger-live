@@ -9,6 +9,7 @@ import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account } from "@ledgerhq/types-live";
+import { getTokenFromAsset } from "./token";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -93,7 +94,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       allTokenAssetsBalances,
       syncConfig,
       operations: newAssetOperations,
-      getTokenFromAsset: alpacaApi.getTokenFromAsset,
+      getTokenFromAsset: getTokenFromAsset(network, currency),
     });
     const subAccounts = syncFromScratch
       ? newSubAccounts
