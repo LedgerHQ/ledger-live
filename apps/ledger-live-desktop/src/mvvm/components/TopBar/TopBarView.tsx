@@ -9,16 +9,14 @@ import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
 
 import { hasPasswordSelector } from "~/renderer/reducers/application";
-import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { NavBar, NavBarTrailing, NavBarTitle } from "@ledgerhq/lumen-ui-react";
-import { TopBarDivider } from "./components/Divider";
 import { TopBarViewProps } from "./types";
 import { TopBarActionsList } from "./components/ActionsList";
 
-const TopBarView = ({ actionsList }: TopBarViewProps) => {
+const TopBarView = ({ slots }: TopBarViewProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,10 +40,8 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
       </NavBarTitle>
       <NavBarTrailing className="h-48 gap-12">
         <LiveAppDrawer />
-        <NotificationIndicator />
-        <TopBarDivider />
 
-        <TopBarActionsList actionsList={actionsList} />
+        <TopBarActionsList slots={slots} />
 
         <Tooltip content={t("settings.helpButton")} placement="bottom">
           <ItemContainer
@@ -59,8 +55,6 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
         <HelpSideBar isOpened={helpSideBarVisible} onClose={() => setHelpSideBarVisible(false)} />
         {hasPassword && (
           <>
-            <TopBarDivider />
-
             <Tooltip content={t("common.lock")}>
               <ItemContainer
                 data-testid="topbar-password-lock-button"
@@ -73,7 +67,6 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
             </Tooltip>
           </>
         )}
-        <TopBarDivider />
         <Tooltip content={t("settings.title")} placement="bottom">
           <ItemContainer
             data-testid="topbar-settings-button"
