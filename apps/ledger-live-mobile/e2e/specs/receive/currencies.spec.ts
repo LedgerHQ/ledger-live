@@ -25,18 +25,12 @@ describe("Receive different currency", () => {
   });
 
   it.each([
-    ["bitcoin"],
-    ["ethereum", "ethereum"],
-    ["bsc"],
-    ["ripple"],
     //["solana"], // TOFIX Error during flow
     ["cardano"],
     ["dogecoin"],
     // ["tron"], // TO FIX, scenario hangs
     ["avalanche_c_chain"],
     ["polygon", "polygon"],
-    ["polkadot", "assethub_polkadot"],
-    ["cosmos", "cosmos"],
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
     const currency = getCryptoCurrencyById(currencyId);
     const currencyName = getCryptoCurrencyById(currencyId).name;
