@@ -138,7 +138,7 @@ describe("Sui Api", () => {
     });
 
     it("uses the minHeight to filter", async () => {
-      const minHeightTxs = await module.listOperations(SENDER, {
+      const { items: minHeightTxs } = await module.listOperations(SENDER, {
         minHeight: 154925948,
         order: "asc",
       });

@@ -23,7 +23,7 @@ describe("EVM Arbitrum Network", () => {
 
   describe("listOperations", () => {
     it("returns operations with valid tx hash for address with internal transactions", async () => {
-      const [operations] = await module.listOperations(
+      const { items: operations } = await module.listOperations(
         "0x63f5c1b5a54a2423a0284b55ad6e48485e048e6a",
         {
           minHeight: 0,
