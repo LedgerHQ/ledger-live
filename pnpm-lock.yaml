@@ -3667,9 +3667,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
-      '@types/bluebird':
-        specifier: ^3.5.42
-        version: 3.5.42
       '@types/imurmurhash':
         specifier: ^0.1.4
         version: 0.1.4
@@ -3682,9 +3679,6 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
-      bluebird:
-        specifier: ^3.7.2
-        version: 3.7.2
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -5441,9 +5435,6 @@ importers:
       bip39:
         specifier: ^3.1.0
         version: 3.1.0
-      bluebird:
-        specifier: ^3.7.2
-        version: 3.7.2
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
@@ -5463,9 +5454,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
-      '@types/bluebird':
-        specifier: ^3.5.42
-        version: 3.5.42
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -19185,9 +19173,6 @@ packages:
 
   '@types/bchaddrjs@0.4.3':
     resolution: {integrity: sha512-KJT+Tz39T/Y8/WMijiL4DXhaaUODytoXxvLpwIvI+WwLzfKR4kLrnzLyuIId245GjsVSvK3T9qz/fbvK+//b5w==}
-
-  '@types/bluebird@3.5.42':
-    resolution: {integrity: sha512-Jhy+MWRlro6UjVi578V/4ZGNfeCOcNCp0YaFNIUGFKlImowqwb1O/22wDVk3FDGMLqxdpOV3qQHD5fPEH4hK6A==}
 
   '@types/bn.js@5.1.5':
     resolution: {integrity: sha512-V46N0zwKRF5Q00AZ6hWtN0T8gGmDUaUzLWQvHFo5yThtVwK/VCenFY3wXVbOvNfajEpsTfQM4IN9k/d6gUVX3A==}
@@ -48219,8 +48204,6 @@ snapshots:
       '@babel/types': 7.28.5
 
   '@types/bchaddrjs@0.4.3': {}
-
-  '@types/bluebird@3.5.42': {}
 
   '@types/bn.js@5.1.5':
     dependencies:
