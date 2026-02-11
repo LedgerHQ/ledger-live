@@ -1,10 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
 import type { ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import Circle from "~/components/Circle";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
@@ -17,8 +16,6 @@ type Props = Readonly<{
 }>;
 
 export default function ValidatorRow({ validator, onPress, unit }: Props) {
-  const currency = getCryptoCurrencyById("mina");
-
   const onPressT = useCallback(() => {
     onPress(validator);
   }, [validator, onPress]);
