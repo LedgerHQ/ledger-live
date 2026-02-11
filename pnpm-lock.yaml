@@ -205,8 +205,8 @@ catalogs:
       specifier: 3.2.1
       version: 3.2.1
     axios:
-      specifier: 1.13.2
-      version: 1.13.2
+      specifier: 1.13.5
+      version: 1.13.5
     babel-jest:
       specifier: 30.2.0
       version: 30.2.0
@@ -1226,7 +1226,7 @@ importers:
         version: 10.4.22(postcss@8.5.6)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       buffer:
         specifier: 6.0.3
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -2239,7 +2239,7 @@ importers:
         version: 3.2.1(@playwright/test@1.51.1)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -2588,7 +2588,7 @@ importers:
         version: link:../ledgerjs/packages/types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -2938,7 +2938,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -3077,7 +3077,7 @@ importers:
         version: 2.4.4
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bip32:
         specifier: ^2.0.6
         version: 2.0.6
@@ -3308,7 +3308,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       expect:
         specifier: 'catalog:'
         version: 30.2.0
@@ -3529,7 +3529,7 @@ importers:
         version: link:../../ledgerjs/packages/types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -3620,7 +3620,7 @@ importers:
         version: link:../../ledgerjs/packages/logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -3775,7 +3775,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -3997,7 +3997,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -4273,7 +4273,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -4589,7 +4589,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       eslint-plugin-jest:
         specifier: ^27.4.2
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
@@ -4643,7 +4643,7 @@ importers:
         version: 1.0.4
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5288,7 +5288,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -5728,7 +5728,7 @@ importers:
         version: 30.0.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.8.3))
@@ -5755,7 +5755,7 @@ importers:
         version: link:../ledgerjs/packages/types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -5857,7 +5857,7 @@ importers:
         version: link:../env
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
@@ -6339,7 +6339,7 @@ importers:
         version: 3.2.5
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -6666,7 +6666,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -6999,7 +6999,7 @@ importers:
         version: 22.10.10
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -7252,7 +7252,7 @@ importers:
         version: link:../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -7448,7 +7448,7 @@ importers:
         version: 22.10.10
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -7561,7 +7561,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -8077,7 +8077,7 @@ importers:
         version: link:../logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       ws:
         specifier: 'catalog:'
         version: 8.18.3
@@ -8362,7 +8362,7 @@ importers:
         version: link:../logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -9401,7 +9401,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -11002,7 +11002,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -18509,7 +18509,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -20727,7 +20727,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -21028,6 +21028,9 @@ packages:
 
   axios@1.13.2:
     resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
+
+  axios@1.13.5:
+    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -41970,7 +41973,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.2
+      axios: 1.13.5
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -50743,6 +50746,12 @@ snapshots:
       form-data: 4.0.5
       proxy-from-env: 1.1.0
 
+  axios@1.13.5:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.5
+      proxy-from-env: 1.1.0
+
   axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.11
@@ -51830,7 +51839,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.13.2
+      axios: 1.13.5
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
