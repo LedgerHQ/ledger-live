@@ -73,12 +73,13 @@ describe("getTransactionStatus", () => {
     expect(Object.keys(transactionStatus.warnings).length).toEqual(0);
   });
 
-  it("should return an NotEnoughBalance error in case the transaction is more than the account balance", async () => {
+  it("should return NotEnoughBalance for send when totalSpent exceeds totalSpendableBalance", async () => {
     const transactionStatus = await getTransactionStatus(
       { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
       {
         ...transactionFixture,
         recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        mode: "send",
         fees: BigNumber(2),
         amount: BigNumber(88888),
       },
@@ -88,6 +89,28 @@ describe("getTransactionStatus", () => {
     expect(transactionStatus.errors).not.toHaveProperty("recipient");
     expect(transactionStatus.errors).not.toHaveProperty("fees");
     expect(Object.keys(transactionStatus.warnings).length).toEqual(0);
+  });
+
+  it("should return NotEnoughBalance for send when totalSpendableBalance is below estimated fees", async () => {
+    const balanceBelowFees = new BigNumber(10);
+    const estimatedFees = new BigNumber(24);
+
+    const transactionStatus = await getTransactionStatus(
+      {
+        ...accountFixture,
+        balance: balanceBelowFees,
+        spendableBalance: balanceBelowFees,
+      },
+      {
+        ...transactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        mode: "send",
+        useAllAmount: true,
+        fees: estimatedFees,
+      },
+    );
+
+    expect(transactionStatus.errors["amount"].name).toEqual("NotEnoughBalance");
   });
 
   it("should return an RecipientRequired error in case the transaction does not have a recipient address", async () => {
@@ -257,5 +280,53 @@ describe("getTransactionStatus", () => {
     expect(transactionStatus.errors).not.toHaveProperty("fees");
     expect(transactionStatus.errors).not.toHaveProperty("recipient");
     expect(Object.keys(transactionStatus.warnings).length).toEqual(0);
+  });
+
+  it("should not return amount error for send when amount is less than gas fee", async () => {
+    const twoCelo = new BigNumber(10).pow(18).times(2);
+    const amountLessThanFee = new BigNumber(10);
+    const gasFee = new BigNumber(24);
+
+    const transactionStatus = await getTransactionStatus(
+      {
+        ...accountFixture,
+        balance: twoCelo,
+        spendableBalance: twoCelo,
+      },
+      {
+        ...transactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        mode: "send",
+        amount: amountLessThanFee,
+        fees: gasFee,
+      },
+    );
+
+    expect(transactionStatus.errors).not.toHaveProperty("amount");
+    expect(transactionStatus.totalSpent).toEqual(amountLessThanFee.plus(gasFee));
+  });
+
+  it("should not return amount error for send when amount is less than 1 CELO but greater than gas fee", async () => {
+    const oneCelo = new BigNumber(10).pow(18);
+    const pointOneCelo = new BigNumber(10).pow(17);
+    const gasFee = new BigNumber(24);
+
+    const transactionStatus = await getTransactionStatus(
+      {
+        ...accountFixture,
+        balance: oneCelo,
+        spendableBalance: oneCelo,
+      },
+      {
+        ...transactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        mode: "send",
+        amount: pointOneCelo,
+        fees: gasFee,
+      },
+    );
+
+    expect(transactionStatus.errors).not.toHaveProperty("amount");
+    expect(transactionStatus.estimatedFees).toEqual(gasFee);
   });
 });

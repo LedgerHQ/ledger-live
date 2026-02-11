@@ -231,4 +231,26 @@ describe("getFeesForTransaction", () => {
 
     expect(fees).toEqual(BigNumber(6));
   });
+
+  it("should return fees for send when amount is less than 1 CELO but greater than gas fee", async () => {
+    const oneCelo = new BigNumber(10).pow(18);
+    const pointOneCelo = new BigNumber(10).pow(17);
+
+    const fees = await getFeesForTransaction({
+      account: {
+        ...accountFixture,
+        balance: oneCelo,
+        spendableBalance: oneCelo,
+      },
+      transaction: {
+        ...transactionFixture,
+        mode: "send",
+        amount: pointOneCelo,
+      },
+    });
+
+    expect(fees).toBeInstanceOf(BigNumber);
+    expect(fees.gt(0)).toBe(true);
+    expect(fees.lt(pointOneCelo)).toBe(true);
+  });
 });
