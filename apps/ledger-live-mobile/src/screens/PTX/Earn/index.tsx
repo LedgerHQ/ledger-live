@@ -19,7 +19,7 @@ import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
@@ -28,6 +28,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { EarnBackground } from "./EarnBackground";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -44,6 +45,7 @@ export const EarnScreen = memo(Earn);
 function Earn({ route }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
+  const insets = useSafeAreaInsets();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
@@ -107,6 +109,8 @@ function Earn({ route }: Props) {
       OS: Platform.OS,
       ethDepositCohort,
       uiVersion: earnUiVersion,
+      bottomOffset: TAB_BAR_SAFE_HEIGHT.toString(),
+      topOffset: insets.top.toString(),
       ...params,
       ...Object.fromEntries(searchParams.entries()),
     }),
@@ -138,15 +142,15 @@ function Earn({ route }: Props) {
         <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
           {displayManifest ? (
             hideMainNavigator ? (
-              <Container>
+              <Fragment>
                 <TrackScreen category="EarnDashboard" name="Earn" />
-                <EarnWebview manifest={displayManifest} inputs={webviewInputs} />
-              </Container>
+                <EarnWebview manifest={displayManifest} inputs={webviewInputs} isPtxUiV2={isPtxUiV2} />
+              </Fragment>
             ) : (
-              <Container edges={["left", "right", "bottom"]}>
+              <Fragment>
                 <TrackScreen category="EarnDashboard" name="Earn" />
-                <EarnWebview manifest={displayManifest} inputs={webviewInputs} />
-              </Container>
+                <EarnWebview manifest={displayManifest} inputs={webviewInputs} isPtxUiV2={isPtxUiV2} />
+              </Fragment>
             )
           ) : (
             !remoteLiveAppState.isLoading && ( // if the manifest is not found, show the error screen

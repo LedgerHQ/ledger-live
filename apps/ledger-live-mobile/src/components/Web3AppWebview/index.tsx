@@ -34,16 +34,16 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
         />
       );
     }
-    return (
-      <PlatformAPIWebview
-        ref={ref}
-        onScroll={onScroll}
-        currentAccountHistDb={currentAccountHistDb}
-        manifest={manifest}
-        inputs={inputs}
-        onStateChange={onStateChange}
-      />
-    );
+    // return (
+    //   <PlatformAPIWebview
+    //     ref={ref}
+    //     onScroll={onScroll}
+    //     currentAccountHistDb={currentAccountHistDb}
+    //     manifest={manifest}
+    //     inputs={inputs}
+    //     onStateChange={onStateChange}
+    //   />
+    // );
   },
 );
 

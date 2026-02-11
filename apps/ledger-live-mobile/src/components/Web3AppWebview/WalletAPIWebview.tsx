@@ -70,9 +70,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
         showsVerticalScrollIndicator={false}
-        renderLoading={Loader}
         originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
+        renderLoading={Loader}
         onMessage={onMessage}
         onError={() => {
           onLoadError();
@@ -104,7 +104,7 @@ WalletAPIWebview.displayName = "WalletAPIWebview";
 function DefaultLoader() {
   return (
     <View style={styles.center}>
-      {/* <ActivityIndicator size="small" /> */}
+      <ActivityIndicator size="small" />
     </View>
   );
 }

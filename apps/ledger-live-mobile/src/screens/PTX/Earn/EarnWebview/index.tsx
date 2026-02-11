@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 import { useSelector } from "~/context/hooks";
 
@@ -36,9 +36,10 @@ export enum MobileViewState {
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
+  isPtxUiV2?: boolean;
 };
 /** Subset of WebPTXPlayer functionality required for Earn live app. */
-export const EarnWebview = ({ manifest, inputs }: Props) => {
+export const EarnWebview = ({ manifest, inputs, isPtxUiV2 }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
@@ -138,17 +139,19 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
     };
   }, [customEarnHandlers, customDeeplinkHandlers]);
 
+  const Container = isPtxUiV2 ? Fragment : SafeAreaView;
+
   return (
-    <SafeAreaView style={[styles.root]}>
+    <Container style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
-        Loader={() => <Loading backgroundColor="transparent" /> }
+        Loader={() => <Loading backgroundColor="transparent" />}
       />
-    </SafeAreaView>
+    </Container>
   );
 };
 
