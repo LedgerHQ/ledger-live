@@ -4,9 +4,6 @@ import { useSelector } from "~/context/hooks";
 import { Action, handleActions, ReducerMap } from "redux-actions";
 import {
   CountervaluesActionTypes,
-  CountervaluesMarketcapSetErrorPayload,
-  CountervaluesMarketcapSetIdsPayload,
-  CountervaluesMarketcapSetLoadingPayload,
   CountervaluesPayload,
   CountervaluesPollingSetIsPollingPayload,
   CountervaluesPollingSetTriggerLoadPayload,
@@ -19,12 +16,6 @@ import { State } from "./types";
 /// State
 
 export interface CountervaluesState {
-  marketcap: {
-    ids: string[];
-    lastUpdated: number;
-    isLoading: boolean;
-    error: string | null;
-  };
   countervalues: {
     state: CounterValuesState;
     pending: boolean;
@@ -38,12 +29,6 @@ export interface CountervaluesState {
 }
 
 export const INITIAL_STATE: CountervaluesState = {
-  marketcap: {
-    ids: [],
-    lastUpdated: 0,
-    isLoading: false,
-    error: null,
-  },
   countervalues: {
     state: initialState,
     pending: false,
@@ -64,19 +49,9 @@ export const INITIAL_STATE: CountervaluesState = {
 
 /// Selectors
 
-export const countervaluesMarketcapIdsSelector = (s: State) => s.countervalues.marketcap.ids;
-export const countervaluesMarketcapLastUpdatedSelector = (s: State) =>
-  s.countervalues.marketcap.lastUpdated;
-
 export const countervaluesStateSelector = (s: State) => s.countervalues.countervalues.state;
 export const countervaluesPendingSelector = (s: State) => s.countervalues.countervalues.pending;
 export const countervaluesErrorSelector = (s: State) => s.countervalues.countervalues.error;
-
-// Hooks
-
-export const useCountervaluesMarketcapIds = () => useSelector(countervaluesMarketcapIdsSelector);
-export const useCountervaluesMarketcapLastUpdated = () =>
-  useSelector(countervaluesMarketcapLastUpdatedSelector);
 
 export const useCountervaluesStateError = () => useSelector(countervaluesErrorSelector);
 export const useCountervaluesStatePending = () => useSelector(countervaluesPendingSelector);
@@ -90,32 +65,6 @@ export const useCountervaluesPollingTriggerLoad = () =>
 /// Handlers
 
 const handlers: ReducerMap<CountervaluesState, CountervaluesPayload> = {
-  [CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_IDS]: (state, action) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      error: null,
-      ids: (action as Action<CountervaluesMarketcapSetIdsPayload>).payload,
-      isLoading: false,
-      lastUpdated: Date.now(),
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_LOADING]: (state, action) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      error: null,
-      isLoading: (action as Action<CountervaluesMarketcapSetLoadingPayload>).payload,
-    },
-  }),
-  [CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_ERROR]: (state, action) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      error: (action as Action<CountervaluesMarketcapSetErrorPayload>).payload,
-      isLoading: false,
-    },
-  }),
   [CountervaluesActionTypes.COUNTERVALUES_STATE_SET]: (state, action) => ({
     ...state,
     countervalues: {

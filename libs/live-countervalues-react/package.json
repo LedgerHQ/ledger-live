@@ -28,9 +28,11 @@
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/cryptoassets": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/coin-framework": "workspace:*",
     "@ledgerhq/live-hooks": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
     "bignumber.js": "9"
   },
   "devDependencies": {
