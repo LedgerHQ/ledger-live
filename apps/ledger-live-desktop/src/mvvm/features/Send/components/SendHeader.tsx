@@ -29,6 +29,11 @@ export function SendHeader() {
   const availableText = useAvailableBalance(state.account.account);
 
   const handleBack = useCallback(() => {
+    // Custom fees step is not in the main flow order; back must go explicitly to Amount
+    if (currentStep === SEND_FLOW_STEP.CUSTOM_FEES) {
+      navigation.goToStep(SEND_FLOW_STEP.AMOUNT);
+      return;
+    }
     if (navigation.canGoBack()) {
       // Reset amount-related state when leaving Amount step (back navigation),
       // otherwise the transaction amount can persist while the UI remounts empty.
@@ -46,12 +51,19 @@ export function SendHeader() {
     }
   }, [close, currentStep, navigation, transaction]);
 
-  const showBackButton = navigation.canGoBack();
+  const isCustomFeesStep = currentStep === SEND_FLOW_STEP.CUSTOM_FEES;
+  const showBackButton = isCustomFeesStep || navigation.canGoBack();
   const showTitle = currentStepConfig?.showTitle !== false;
 
-  const title = showTitle ? t("newSendFlow.title", { currency: currencyName }) : "";
+  const title = isCustomFeesStep
+    ? t("newSendFlow.customFees.title")
+    : showTitle
+      ? t("newSendFlow.title", { currency: currencyName })
+      : "";
   const descriptionText =
-    showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
+    showTitle && availableText && !isCustomFeesStep
+      ? t("newSendFlow.available", { amount: availableText })
+      : "";
 
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;

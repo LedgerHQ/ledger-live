@@ -7,7 +7,9 @@ import type {
   SendFlowTransactionActions,
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { AmountScreenViewModel } from "../types";
+import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useAmountInput } from "./useAmountInput";
@@ -44,6 +46,7 @@ export function useAmountScreenViewModel({
   transactionActions,
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
+  const { navigation } = useFlowWizard();
 
   const mainAccount = useMemo(
     () => getMainAccount(account, parentAccount ?? undefined),
@@ -222,6 +225,11 @@ export function useAmountScreenViewModel({
     return t(`fees.${strategy}`);
   };
 
+  // Navigate to custom fees step
+  const onOpenCustomFees = useCallback(() => {
+    navigation.goToStep(SEND_FLOW_STEP.CUSTOM_FEES);
+  }, [navigation]);
+
   return {
     amountValue: amountInput.amountValue,
     amountInputMaxDecimalLength: amountInput.amountInputMaxDecimalLength,
@@ -249,5 +257,6 @@ export function useAmountScreenViewModel({
     feePresetOptions,
     fiatByPreset,
     legendByPreset,
+    onOpenCustomFees,
   };
 }

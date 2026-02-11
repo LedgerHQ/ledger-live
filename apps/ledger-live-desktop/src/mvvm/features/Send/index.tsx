@@ -11,11 +11,13 @@ import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
 import { SendFlowLayout } from "./components/SendFlowLayout";
 import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
 import { AmountScreen } from "./screens/Amount/AmountScreen";
+import { CustomFeesScreen } from "./screens/CustomFees/CustomFeesScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
+  [SEND_FLOW_STEP.CUSTOM_FEES]: CustomFeesScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
 };

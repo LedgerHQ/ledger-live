@@ -2414,6 +2414,18 @@
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
       "warningDescription": "Fee presets may be outdated."
+    },
+    "customFees": {
+      "title": "Custom fees",
+      "confirm": "Confirm",
+      "maxFee": "Max fee ({{unit}})",
+      "maxPriorityFee": "Max fee ({{unit}})",
+      "gasLimit": "Gas limit ({{unit}})",
+      "feePerByte": "Fees amount ({{unit}})",
+      "suggested": "Suggested",
+      "nextBlock": "Next block",
+      "networkFeesInFiat": "Network fees in {{currency}}",
+      "invalidValue": "Enter a valid number"
     }
   },
   "releaseNotes": {

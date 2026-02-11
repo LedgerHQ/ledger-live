@@ -16,6 +16,7 @@ type AmountFooterProps = Readonly<{
   fiatByPreset: FeeFiatMap;
   legendByPreset: FeePresetLegendMap;
   onSelectFeeStrategy: (strategy: string) => void;
+  onOpenCustomFees: () => void;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -33,6 +34,7 @@ export function AmountFooter({
   fiatByPreset,
   legendByPreset,
   onSelectFeeStrategy,
+  onOpenCustomFees,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -64,6 +66,9 @@ export function AmountFooter({
           options: feePresetOptions,
           fiatByPreset,
           legendByPreset,
+        }}
+        actions={{
+          onSelectCustomFees: onOpenCustomFees,
         }}
       />
       <Button

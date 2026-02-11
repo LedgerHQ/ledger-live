@@ -19,6 +19,12 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: true,
     addressInput: true,
   },
+  [SEND_FLOW_STEP.CUSTOM_FEES]: {
+    id: SEND_FLOW_STEP.CUSTOM_FEES,
+    canGoBack: true,
+    addressInput: false,
+    showTitle: false,
+  },
   [SEND_FLOW_STEP.SIGNATURE]: {
     id: SEND_FLOW_STEP.SIGNATURE,
     canGoBack: false,

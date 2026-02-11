@@ -32,11 +32,24 @@ export function syncAmountInputs(params: {
   const canSyncWithBridge = useAllAmountChanged || isUseAllAmountActive || timeSinceUserInput > 200;
   const isQuickAction = params.lastUserInputTimeRef.current === 0;
 
-  if (cryptoAmountChanged && canSyncWithBridge) {
-    params.lastTransactionAmountRef.current = params.cryptoAmount;
-    if (useAllAmountChanged) {
-      params.lastUseAllAmountRef.current = params.transactionUseAllAmount;
-      params.lastUserInputTimeRef.current = 0;
+  // After remount (e.g. back from CustomFees), inputs are empty but transaction already has an amount.
+  // Refs match current amount so *Changed flags are false — we must repopulate inputs explicitly.
+  const inputsEmptyButHaveAmount =
+    params.cryptoAmount.gt(0) &&
+    params.cryptoInputValue.length === 0 &&
+    params.fiatInputValue.length === 0 &&
+    canSyncWithBridge;
+
+  if ((cryptoAmountChanged && canSyncWithBridge) || inputsEmptyButHaveAmount) {
+    if (inputsEmptyButHaveAmount) {
+      params.lastTransactionAmountRef.current = params.cryptoAmount;
+      params.lastFiatAmountRef.current = params.fiatAmount;
+    } else {
+      params.lastTransactionAmountRef.current = params.cryptoAmount;
+      if (useAllAmountChanged) {
+        params.lastUseAllAmountRef.current = params.transactionUseAllAmount;
+        params.lastUserInputTimeRef.current = 0;
+      }
     }
 
     const shouldSync = shouldSyncInput({
@@ -46,7 +59,7 @@ export function syncAmountInputs(params: {
       hasInputValue: params.cryptoInputValue.length > 0,
     });
 
-    if (shouldSync) {
+    if (shouldSync || inputsEmptyButHaveAmount) {
       const formatted = formatAmountForInput(
         params.accountUnit,
         params.cryptoAmount,
@@ -56,17 +69,22 @@ export function syncAmountInputs(params: {
     }
   }
 
-  if ((cryptoAmountChanged || fiatAmountChanged) && canSyncWithBridge) {
-    params.lastFiatAmountRef.current = params.fiatAmount;
+  if (
+    ((cryptoAmountChanged || fiatAmountChanged) && canSyncWithBridge) ||
+    inputsEmptyButHaveAmount
+  ) {
+    if (!inputsEmptyButHaveAmount) {
+      params.lastFiatAmountRef.current = params.fiatAmount;
+    }
 
-    const shouldSync = shouldSyncInput({
+    const shouldSyncFiat = shouldSyncInput({
       isQuickAction,
       useAllAmountChanged,
       isActiveInput: params.inputMode === "fiat",
       hasInputValue: params.fiatInputValue.length > 0,
     });
 
-    if (shouldSync) {
+    if (shouldSyncFiat || inputsEmptyButHaveAmount) {
       const formatted = formatFiatForInput(params.fiatUnit, params.fiatAmount, params.locale);
       params.setFiatInputValue(formatted);
     }

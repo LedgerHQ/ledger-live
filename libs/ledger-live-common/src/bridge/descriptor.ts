@@ -55,6 +55,42 @@ export type InputDescriptor = Readonly<{
 }>;
 
 /**
+ * Descriptor for a single custom fee input field
+ */
+export type CustomFeeInputDescriptor = Readonly<{
+  /** Transaction field key, e.g. "maxFeePerGas", "feePerByte" */
+  key: string;
+  /** Input type (currently only "number") */
+  type: "number";
+  /** Display unit for the input, e.g. "Gwei", "sat/vbyte" */
+  unitLabel: string;
+  /** i18n key for the input label, e.g. "newSendFlow.customFees.maxFee" */
+  i18nLabelKey: string;
+  /** Optional suggested range displayed below the input */
+  suggestedRange?: {
+    getRange: (transaction: unknown) => { min: string; max: string } | null;
+  };
+  /** Optional helper info displayed below the input (e.g. "Next block: 0 Gwei") */
+  helperInfo?: {
+    i18nKey: string;
+    getValue: (transaction: unknown) => string | null;
+  };
+}>;
+
+/**
+ * Configuration for custom fee inputs.
+ * Describes which fields to render and how to read/write transaction values.
+ */
+export type CustomFeeConfig = Readonly<{
+  /** List of input fields to render in the custom fees dialog */
+  inputs: readonly CustomFeeInputDescriptor[];
+  /** Extract initial values from the current transaction */
+  getInitialValues: (transaction: unknown) => Record<string, string>;
+  /** Build a transaction patch from the user-entered values */
+  buildTransactionPatch: (values: Record<string, string>) => Record<string, unknown>;
+}>;
+
+/**
  * Fee input options
  */
 export type FeeDescriptor = {
@@ -90,6 +126,12 @@ export type FeeDescriptor = {
      */
     shouldEstimateWithBridge?: (transaction: unknown) => boolean;
   };
+  /**
+   * Configuration for custom fee inputs.
+   * When `hasCustom` is true, this describes which input fields to show
+   * in the Custom Fees dialog and how to map them to transaction fields.
+   */
+  custom?: CustomFeeConfig;
 };
 
 export type FeePresetOption = Readonly<{
@@ -275,6 +317,10 @@ export const sendFeatures = {
   hasCustomFees: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.fees.hasCustom ?? false;
+  },
+  getCustomFeeConfig: (currency: CryptoOrTokenCurrency | undefined): CustomFeeConfig | null => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.fees.custom ?? null;
   },
   hasCoinControl: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);
