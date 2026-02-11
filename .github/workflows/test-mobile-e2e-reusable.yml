@@ -707,6 +707,9 @@ jobs:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
           avd_api: ${{ env.AVD_API }}
+          
+      - name: Cleanup any running Android emulators (pre-boot)
+        run: tools/scripts/cleanup-android-emulators.sh || true
 
       - name: Boot Android Emulators in Background
         run: |
@@ -717,9 +720,9 @@ jobs:
             ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
 
             log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }}  2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU3" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} --read-only  2>&1 | ts "EMU1" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} --read-only 2>&1 | ts "EMU2" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} --read-only 2>&1 | ts "EMU3" &
 
             log "⏳ Waiting for 3 emulators to connect..."
             while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
