@@ -81,13 +81,13 @@ function toOperation(
   const tokenOpDetail =
     asset.type === "token"
       ? {
-        ledgerOpType: op.type,
-        assetAmount: op.value.toFixed(0),
-        assetSenders: op.senders,
-        assetRecipients: op.recipients,
-        parentSenders: asset.parents[op.hash]?.senders ?? [],
-        parentRecipients: asset.parents[op.hash]?.recipients ?? [],
-      }
+          ledgerOpType: op.type,
+          assetAmount: op.value.toFixed(0),
+          assetSenders: op.senders,
+          assetRecipients: op.recipients,
+          parentSenders: asset.parents[op.hash]?.senders ?? [],
+          parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+        }
       : {};
 
   return {

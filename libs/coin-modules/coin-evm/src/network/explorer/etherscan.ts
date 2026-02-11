@@ -468,12 +468,6 @@ export const getInternalOperations = async (
     return EMPTY_RESULT;
   }
 
-  // blockscout returns tx hash in transactionHash field
-  const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransaction => ({
-    ...op,
-    hash: op.hash ?? op.transactionHash,
-  });
-
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
