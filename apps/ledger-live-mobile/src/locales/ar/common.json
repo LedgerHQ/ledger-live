@@ -10,6 +10,9 @@
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
+    "fee" : "الرسوم",
+    "stake" : "الحصة",
+    "validator" : "المدقق",
     "delete" : "حذف",
     "paste" : "لصق",
     "yes" : "نعم",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "من أجلك"
     },
+    "perpsEntry" : {
+      "title" : "العقود الدائمة",
+      "description" : "تداول باستخدام رافعة مالية"
+    },
     "recommended" : {
       "title" : "موصى به"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "تحويل",
       "swap" : "مبادلة",
       "buy" : "شراء",
+      "connect" : "اتصال",
+      "buyLedger" : "شراء Ledger",
       "transferDrawer" : {
         "title" : "تحويل",
         "receiveCrypto" : "تلقي الأصول المشفرة",
@@ -2988,7 +2997,6 @@
     "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
-    "perps" : "عقود دائمة",
     "manage" : "إدارة",
     "lastTransactions" : "المعاملات الأخيرة",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "تلقي",
         "buyCrypto" : "شراء"
       },
-      "addAccountCta" : "إضافة حساب"
+      "addAccountCta" : "إضافة حساب",
+      "addCryptoAccount" : "إضافة حساب أصل مشفر"
     },
     "settings" : {
       "header" : "إعدادات الحساب",
@@ -3675,10 +3684,6 @@
       "title" : "تكديس",
       "description" : "احصل على مكافآت على أصولك المشفرة."
     },
-    "perps" : {
-      "title" : "عقود دائمة",
-      "description" : "تداول العقود الدائمة بالأصول المشفرة."
-    },
     "swap" : {
       "title" : "مبادلة",
       "description" : "استبدل الأصول المشفرة بالأصول المشفرة.",
@@ -3875,7 +3880,8 @@
         "title" : "اختر عرض سعر"
       },
       "twoStepApproval" : {
-        "title" : "أكمل الخطوات"
+        "title" : "أكمل الخطوات",
+        "completedTitle" : "حالة المعاملة"
       },
       "loader" : {
         "title" : "المبادلة قيد المعالجة",
@@ -4573,6 +4579,7 @@
       },
       "acceptTerms" : "بتوقيع هذه المعاملة، أنت تقبل </0>شروط استخدام</0> {{provider}}<0><0>",
       "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
+      "acceptTermsSponsored" : "للاستفادة من رسوم الشبكة المجانية، أنت توافق أيضاً على مشاركة تفاصيل معاملتك (بما في ذلك عنوان محفظتك) مع Blinklabs.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -6088,6 +6095,52 @@
       "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "تم نسخ العنوان!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "إعادة التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "memoPlaceholder" : "ملاحظة اختيارية",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "showAll" : "عرض الكل",
+      "showLess" : "عرض أقل",
+      "iDelegate" : "أنا أفوّض"
+    }
+  },
   "stellar" : {
     "token" : "أصول",
     "memo" : {
@@ -6492,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {
@@ -8387,9 +8437,6 @@
       "extremeGreed" : "طمع+"
     },
     "tileTitle" : "الحالة المزاجية"
-  },
-  "perps" : {
-    "title" : "عقود دائمة"
   },
   "analyticsAllocation" : {
     "header" : {
