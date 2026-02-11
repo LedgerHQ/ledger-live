@@ -30,7 +30,7 @@ import MODAL_ERROR from "./ErrorModal";
 import MODAL_VAULT_SIGNER from "./VaultSigner";
 
 import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
-import MODAL_BRAZE_TOOLS from "../screens/settings/sections/Developer/BrazeTools/Modal";
+import MODAL_BRAZE_TOOLS from "../screens/settings/sections/Developer/tools/BrazeTools/Modal";
 
 type GlobalModals = MakeModalsType<GlobalModalData>;
 

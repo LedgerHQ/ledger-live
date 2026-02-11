@@ -4,8 +4,8 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Flex } from "@ledgerhq/react-ui";
 import TabBar from "~/renderer/components/TabBar";
-import { GeneratorLedgerSync } from "~/renderer/screens/settings/sections/Developer/WalletSync/Generator";
-import { CheckerLedgerSync } from "~/renderer/screens/settings/sections/Developer/WalletSync/Checker";
+import { GeneratorLedgerSync } from "~/renderer/screens/settings/sections/Developer/tools/WalletSync/Generator";
+import { CheckerLedgerSync } from "~/renderer/screens/settings/sections/Developer/tools/WalletSync/Checker";
 
 const getItems = (t: (a: string) => string) => {
   const items = [

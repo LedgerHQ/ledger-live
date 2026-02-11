@@ -3,37 +3,38 @@ import { useTranslation } from "react-i18next";
 import { Routes, Route } from "react-router";
 import user from "~/helpers/user";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
-import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
-import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
-import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
-import CatalogProviderInput from "./CatalogProviderInput";
-import CustomLockScreenToggle from "./CustomLockScreenToggle";
-import CustomLockScreenAssets from "./CustomLockScreenAssets";
-import RunLocalAppButton from "./RunLocalAppButton";
-import FeatureFlagsSettings from "./FeatureFlagsSettings";
-import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
-import EnableCountervaluesStagingToggle from "./EnableCountervaluesStagingToggle";
-import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
-import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
-import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
-import LottieTester from "./LottieTester";
-import PostOnboardingHubTester from "./PostOnboardingHubTester";
-import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
+import { SettingsSectionBody as Body } from "../../SettingsSection";
+import AllowExperimentalAppsToggle from "./tools/AllowExperimentalAppsToggle";
+import AllowDebugAppsToggle from "./tools/AllowDebugAppsToggle";
+import EnablePlatformDevToolsToggle from "./tools/EnablePlatformDevToolsToggle";
+import CatalogProviderInput from "./tools/CatalogProviderInput";
+import CustomLockScreenToggle from "./tools/CustomLockScreenToggle";
+import CustomLockScreenAssets from "./tools/CustomLockScreenAssets";
+import RunLocalAppButton from "./tools/RunLocalAppButton";
+import FeatureFlagsSettings from "./tools/FeatureFlagsSettings";
+import EnableLearnPageStagingUrlToggle from "./tools/EnableLearnPageStagingUrlToggle";
+import EnableCountervaluesStagingToggle from "./tools/EnableCountervaluesStagingToggle";
+import OnboardingAppInstallDebugButton from "./tools/OnboardingAppInstallDebug";
+import ExchangeDeveloperMode from "./tools/ExchangeDeveloperMode";
+import ExchangeTestPartnerMode from "./tools/ExchangeTestPartnerMode";
+import LottieTester from "./tools/LottieTester";
+import PostOnboardingHubTester from "./tools/PostOnboardingHubTester";
+import AllowDebugReactQueryToggle from "./tools/AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import WalletSyncTester from "./WalletSync/WalletSyncTester";
-import MockAppUpdate from "./MockAppUpdate";
-import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
-import EnableThemeConsole from "./EnableThemeConsole";
-import BrazeTools from "./BrazeTools";
-import { RecoverUpsellRow } from "./RecoverUpsellRow";
-import CustomCALRefInput from "./CustomCALRefInput";
-import EnvVariableOverride from "./EnvVariableOverride";
-import ModularDrawerDevTool from "./ModularDrawer";
-import CryptoAssetsListDevTool from "./CryptoAssetsList";
-import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
-import CustomLockScreenTester from "./CustomLockScreenTester";
-import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
+import WalletSyncTester from "./tools/WalletSync";
+import MockAppUpdate from "./tools/MockAppUpdate";
+import EnableAnalyticsConsole from "./tools/EnableAnalyticsConsole";
+import EnableThemeConsole from "./tools/EnableThemeConsole";
+import BrazeTools from "./tools/BrazeTools";
+import { RecoverUpsellRow } from "./tools/RecoverUpsellRow";
+import CustomCALRefInput from "./tools/CustomCALRefInput";
+import EnvVariableOverride from "./tools/EnvVariableOverride";
+import ModularDrawerDevTool from "./tools/ModularDrawer/index";
+import CryptoAssetsListDevTool from "./tools/CryptoAssetsList";
+import { MockAccountGeneratorSection } from "./tools/GenerateMockAccounts";
+import CustomLockScreenTester from "./tools/CustomLockScreenTester";
+import WalletFeaturesDevTool from "./tools/WalletFeaturesDevTool/index";
+import { DeveloperInfoRow } from "./components";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -47,80 +48,32 @@ const Default = () => {
 
   return (
     <Body>
-      <Row title={t("settings.developer.userId")} desc={segmentId} dataTestId="developer-user-id" />
+      <DeveloperInfoRow
+        title={t("settings.developer.userId")}
+        value={segmentId}
+        dataTestId="developer-user-id"
+      />
 
-      <Row title={t("settings.developer.debugApps")} desc={t("settings.developer.debugAppsDesc")}>
-        <AllowDebugAppsToggle />
-      </Row>
+      <AllowDebugAppsToggle />
+      <AllowExperimentalAppsToggle />
+      <MockAppUpdate />
 
-      <Row
-        title={t("settings.developer.experimentalApps")}
-        desc={t("settings.developer.experimentalAppsDesc")}
-      >
-        <AllowExperimentalAppsToggle />
-      </Row>
+      <CatalogProviderInput />
+      <CustomCALRefInput />
 
-      <Row
-        title={t("settings.developer.mockAppUpdate")}
-        desc={t("settings.developer.mockAppUpdateDesc")}
-      >
-        <MockAppUpdate />
-      </Row>
-
-      <Row title={t("settings.developer.catalogUrl")} desc={t("settings.developer.catalogUrlDesc")}>
-        <CatalogProviderInput />
-      </Row>
-
-      <Row
-        title={t("settings.developer.customCALRef")}
-        desc={t("settings.developer.customCALRefDesc")}
-      >
-        <CustomCALRefInput />
-      </Row>
-
-      <Row
-        title={t("settings.developer.enablePlatformDevTools")}
-        desc={t("settings.developer.enablePlatformDevToolsDesc")}
-      >
-        <EnablePlatformDevToolsToggle />
-      </Row>
-      <Row
-        title={t("settings.developer.analyticsConsole.title")}
-        desc={t("settings.developer.analyticsConsole.desc")}
-      >
-        <EnableAnalyticsConsole />
-      </Row>
-      <Row
-        title={t("settings.developer.themeConsole.title")}
-        desc={t("settings.developer.themeConsole.desc")}
-      >
-        <EnableThemeConsole />
-      </Row>
+      <EnablePlatformDevToolsToggle />
+      <EnableAnalyticsConsole />
+      <EnableThemeConsole />
       <RunLocalAppButton />
       <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
       {__DEV__ && <EnvVariableOverride />}
-      <Row
-        title={t("settings.developer.enableLearnStagingUrl")}
-        desc={t("settings.developer.enableLearnStagingUrlDesc")}
-      >
-        <EnableLearnPageStagingUrlToggle />
-      </Row>
-      <Row
-        title={t("settings.developer.enableCountervaluesStaging")}
-        desc={t("settings.developer.enableCountervaluesStagingDesc")}
-      >
-        <EnableCountervaluesStagingToggle />
-      </Row>
+      <EnableLearnPageStagingUrlToggle />
+      <EnableCountervaluesStagingToggle />
       <RecoverUpsellRow />
 
-      <Row
-        title={t("settings.developer.openOnboardingAppInstallDebug")}
-        desc={t("settings.developer.openOnboardingAppInstallDebugDesc")}
-      >
-        <OnboardingAppInstallDebugButton />
-      </Row>
+      <OnboardingAppInstallDebugButton />
       <LottieTester />
       <PostOnboardingHubTester />
       <ExchangeDeveloperMode />
@@ -131,14 +84,7 @@ const Default = () => {
 
       <BrazeTools />
 
-      {__DEV__ && (
-        <Row
-          title={t("settings.developer.debugReactQuery")}
-          desc={t("settings.developer.debugReactQueryDesc")}
-        >
-          <AllowDebugReactQueryToggle />
-        </Row>
-      )}
+      {__DEV__ && <AllowDebugReactQueryToggle />}
       <WalletFeaturesDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />

@@ -14,8 +14,8 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
-import LottieTester from "../Developer/LottieTester";
-import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
+import LottieTester from "../Developer/tools/LottieTester";
+import PostOnboardingHubTester from "../Developer/tools/PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
