@@ -8,10 +8,10 @@
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@playwright/test": "catalog:",
-    "concurrently": "^8.0.0",
-    "cross-env": "^7.0.3",
-    "json": "^11.0.0",
-    "lint-staged": "^14.0.0"
+    "concurrently": "8.2.2",
+    "cross-env": "7.0.3",
+    "json": "11.0.0",
+    "lint-staged": "14.0.1"
   },
   "scripts": {
     "pretest:react": "playwright install",

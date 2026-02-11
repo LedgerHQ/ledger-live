@@ -74,11 +74,11 @@
   "devDependencies": {
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10",
-    "dotenv": "^16",
-    "typescript": "^5"
+    "ts-node": "10.9.2",
+    "dotenv": "16.4.7",
+    "typescript": "5.8.3"
   }
 }

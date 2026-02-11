@@ -85,17 +85,17 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@faker-js/faker": "^8.4.1",
-    "@taquito/local-forging": "^23.0.0-RC.0",
+    "@faker-js/faker": "8.4.1",
+    "@taquito/local-forging": "23.0.0-beta.1",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@types/invariant": "^2.2.37",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.17.4",
+    "@types/lodash": "4.17.7",
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "5.6.3"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

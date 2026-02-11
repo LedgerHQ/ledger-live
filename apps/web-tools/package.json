@@ -68,14 +68,14 @@
     "@rsbuild/plugin-react": "catalog:",
     "@rsbuild/plugin-styled-components": "catalog:",
     "@rspack/core": "catalog:",
-    "@types/invariant": "^2.2.37",
-    "@types/lodash": "^4.17.21",
+    "@types/invariant": "2.2.37",
+    "@types/lodash": "4.17.21",
     "@types/node": "22.19.3",
-    "@types/qrcode": "^1.5.6",
+    "@types/qrcode": "1.5.6",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
-    "@types/react-inspector": "^4.0.6",
-    "@types/react-table": "^7.7.20",
+    "@types/react-inspector": "4.0.6",
+    "@types/react-table": "7.7.20",
     "@types/semver": "catalog:"
   }
 }

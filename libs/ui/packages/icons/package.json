@@ -61,19 +61,19 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "@svgr/core": "^5.5.0",
-    "@svgr/plugin-svgo": "^5.5.0",
+    "@svgr/core": "5.5.0",
+    "@svgr/plugin-svgo": "5.5.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
-    "@types/styled-system": "^5.1.13",
-    "camelcase": "^6.2.1",
+    "@types/styled-system": "5.1.22",
+    "camelcase": "6.3.0",
     "glob": "^7.2.0",
     "react": "catalog:",
     "react-native-svg": "catalog:",
-    "rimraf": "^4.4.1",
+    "rimraf": "4.4.1",
     "styled-components": "catalog:",
     "styled-system": "catalog:",
     "stylis": "catalog:",
-    "tiny-glob": "^0.2.9"
+    "tiny-glob": "0.2.9"
   }
 }

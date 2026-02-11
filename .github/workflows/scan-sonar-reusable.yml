@@ -84,7 +84,7 @@ jobs:
             cat ./coverage-libs/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
 
-      - uses: SonarSource/sonarqube-scan-action@v4
+      - uses: SonarSource/sonarqube-scan-action@689fb39b34b9aa95ebc5f8f119343ddd51542402 # v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:

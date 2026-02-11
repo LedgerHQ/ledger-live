@@ -80,10 +80,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "dotenv": "^16.4.5",
+    "dotenv": "16.4.7",
     "jest": "catalog:",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.19.3",
-    "typescript": "^5.4.5"
+    "ts-node": "10.9.2",
+    "tsx": "4.20.6",
+    "typescript": "5.8.3"
   }
 }

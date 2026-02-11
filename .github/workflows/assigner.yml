@@ -11,4 +11,4 @@ jobs:
   assign-author:
     runs-on: ubuntu-22.04
     steps:
-      - uses: toshimaru/auto-author-assign@v1.4.0
+      - uses: toshimaru/auto-author-assign@759f5c7fab82b38cce0e366dfb205997d5fd9aab # v1.4.0

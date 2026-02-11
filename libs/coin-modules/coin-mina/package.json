@@ -119,9 +119,9 @@
   },
   "devDependencies": {
     "@types/bs58check": "catalog:",
-    "@types/invariant": "^2.2.2",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "4.17.14",
     "expect": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",

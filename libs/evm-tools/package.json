@@ -53,9 +53,9 @@
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
-    "@types/crypto-js": "^4.1.1",
+    "@types/crypto-js": "4.2.2",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"

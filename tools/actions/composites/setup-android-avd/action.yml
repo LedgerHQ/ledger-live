@@ -51,7 +51,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         ref: ${{ inputs.ref }}
         repository: LedgerHQ/ledger-live
@@ -68,7 +68,7 @@ runs:
       run: mkdir -p /home/runner/.android/
 
     - name: Create AVD and generate snapshot
-      uses: reactivecircus/android-emulator-runner@v2
+      uses: reactivecircus/android-emulator-runner@b530d96654c385303d652368551fb075bc2f0b6b # v2
       id: create-avd
       with:
         api-level: ${{ inputs.avd_api }}

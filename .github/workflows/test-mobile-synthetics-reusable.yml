@@ -180,7 +180,7 @@ jobs:
           path: ./
 
       - name: Format Slack message
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         id: message
         with:
           script: |
@@ -248,7 +248,7 @@ jobs:
             fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
         with:
           channel-id: "C0895PWD890"
           payload-file-path: "./payload-slack-content.json"

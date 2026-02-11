@@ -16,7 +16,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/github-script@v7
+    - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
       name: prepare status
       id: status
       with:
@@ -71,7 +71,7 @@ runs:
 
     - name: post to a Slack channel
       id: slack
-      uses: slackapi/slack-github-action@v1.23.0
+      uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
       with:
         channel-id: "C08JQKWS9KK"
         payload-file-path: ${{ github.workspace }}/slack_notification.json

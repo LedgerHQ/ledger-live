@@ -24,7 +24,7 @@ jobs:
 
       - name: Analyze E2E requirements
         id: analyze
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const paths = '${{ inputs.affected_paths }}';
@@ -85,7 +85,7 @@ jobs:
 
       - name: Post PR comment
         if: steps.analyze.outputs.needs_e2e == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const desktop = '${{ steps.analyze.outputs.desktop }}' === 'true';

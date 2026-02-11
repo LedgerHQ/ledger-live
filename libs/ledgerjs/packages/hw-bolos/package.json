@@ -44,12 +44,12 @@
     "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "documentation": "14.0.2",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
+    "rimraf": "4.4.1",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   }
 }

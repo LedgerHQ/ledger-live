@@ -52,9 +52,9 @@
     "@types/node": "22.10.1",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
+    "rimraf": "4.4.1",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   }
 }

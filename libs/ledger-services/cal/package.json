@@ -61,14 +61,14 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
-    "dotenv": "^16.4.5",
+    "@types/node": "22.10.10",
+    "dotenv": "16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.9.2"
+    "ts-node": "10.9.2"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

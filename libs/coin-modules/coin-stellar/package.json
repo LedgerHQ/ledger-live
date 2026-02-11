@@ -137,10 +137,10 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@faker-js/faker": "^8.4.1",
-    "@types/invariant": "^2.2.2",
+    "@faker-js/faker": "8.4.1",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.10.10",
     "jest": "catalog:",
     "msw": "catalog:",
     "nock": "14.0.2",

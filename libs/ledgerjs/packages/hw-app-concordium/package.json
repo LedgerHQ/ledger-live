@@ -40,11 +40,11 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "22.19.3",
     "documentation": "14.0.2",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

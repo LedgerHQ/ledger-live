@@ -42,7 +42,7 @@ jobs:
         run: |
           git fetch origin ${{ inputs.base_branch }}:${{ inputs.base_branch }} --depth=1
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         id: clean-refs
         with:
           script: |

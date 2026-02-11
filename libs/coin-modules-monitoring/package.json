@@ -31,10 +31,10 @@
     "@swc/jest": "catalog:",
     "@types/command-line-args": "5.2.3",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
-    "bignumber.js": "^9.1.2",
+    "@types/node": "22.10.10",
+    "bignumber.js": "9.1.2",
     "jest": "catalog:",
-    "tsx": "^4.7.1"
+    "tsx": "4.10.3"
   },
   "typesVersions": {
     "*": {

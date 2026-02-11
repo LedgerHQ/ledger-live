@@ -51,8 +51,8 @@
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0",
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2",
     "ws": "catalog:"
   }
 }

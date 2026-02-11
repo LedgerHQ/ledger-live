@@ -35,7 +35,7 @@
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "prando": "6"
+    "prando": "6.0.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
