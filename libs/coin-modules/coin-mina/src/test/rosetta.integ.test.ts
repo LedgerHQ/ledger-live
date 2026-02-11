@@ -23,6 +23,5 @@ test("get metadata for a transactions", async () => {
     10000000,
   );
 
-  expect(metadata).toBeDefined();
   expect(metadata.suggested_fee).toHaveLength(1);
 });

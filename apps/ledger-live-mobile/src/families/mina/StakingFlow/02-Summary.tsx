@@ -2,18 +2,16 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import { Icons, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Animated, StyleProp, StyleSheet, TextStyle, View } from "react-native";
 import Config from "react-native-config";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -24,6 +22,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import Touchable from "~/components/Touchable";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
+import { useSelector } from "~/context/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
@@ -59,6 +58,7 @@ function StakingSummary({ navigation, route }: Props) {
     },
   );
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (!transaction) return;
     const bridge = getAccountBridge(account);
@@ -116,11 +116,12 @@ function StakingSummary({ navigation, route }: Props) {
   const color = getCurrencyColor(currency);
 
   const onContinue = useCallback(async () => {
+    if (transaction?.family !== "mina") return;
     navigation.navigate(ScreenName.MinaStakingSelectDevice, {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction: transaction as MinaTransaction,
+      transaction,
       status,
     });
   }, [route.params, navigation, account.id, parentAccount?.id, transaction, status]);
@@ -270,11 +271,11 @@ function SummaryWords({
   validatorName,
   account,
   onChangeValidator,
-}: {
+}: Readonly<{
   validatorName: string;
   account: AccountLike;
   onChangeValidator: () => void;
-}) {
+}>) {
   const unit = useAccountUnit(account);
   const formattedAmount = formatCurrencyUnit(unit, account.spendableBalance, {
     disableRounding: true,

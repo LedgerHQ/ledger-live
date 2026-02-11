@@ -1,16 +1,15 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccount, getBlockInfo, getDelegateAddress, getTransactions } from "../api";
-import { getEpochInfo } from "../api/graphql";
-import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getAccount, getBlockInfo, getTransactions } from "../api";
-import { RosettaTransaction } from "../api/rosetta/types";
+import { getAccount, getBlockInfo, getDelegateAddress, getTransactions } from "../api";
 import { fetchValidators } from "../api/fetchValidators";
+import { getEpochInfo } from "../api/graphql";
+import { RosettaTransaction } from "../api/rosetta/types";
+import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,

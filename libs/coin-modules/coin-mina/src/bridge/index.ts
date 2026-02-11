@@ -6,7 +6,9 @@ import {
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { MinaCoinConfig, setCoinConfig } from "../config";
+import resolver from "../signer/getAddress";
 import type {
   MinaAccount,
   MinaAccountRaw,
@@ -14,12 +16,6 @@ import type {
   Transaction,
   TransactionStatus,
 } from "../types/common";
-import resolver from "../signer/getAddress";
-import { sync, getAccountShape, assignToAccountRaw, assignFromAccountRaw } from "./synchronisation";
-import { MinaSigner } from "../types/signer";
-import { MinaCoinConfig, setCoinConfig } from "../config";
-import resolver from "../signer/getAddress";
-import type { Transaction } from "../types/common";
 import { MinaSigner } from "../types/signer";
 import broadcast from "./broadcast";
 import makeCliTools from "./cli-transaction";
@@ -28,7 +24,7 @@ import estimateMaxSpendable from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
-import { sync, getAccountShape } from "./synchronisation";
+import { sync, getAccountShape, assignToAccountRaw, assignFromAccountRaw } from "./synchronisation";
 import { validateAddress } from "./validateAddress";
 
 export { makeCliTools };

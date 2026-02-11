@@ -1,18 +1,18 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { MinaAccount, ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useMemo, useState } from "react";
-import { Trans } from "react-i18next";
-import { FlatList, StyleSheet, View } from "react-native";
+import { Trans } from "~/context/Locale";
+import { FlatList, type ListRenderItemInfo, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+import { useSelector } from "~/context/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { MinaStakingFlowParamList } from "./types";
@@ -23,6 +23,10 @@ type Props = CompositeScreenProps<
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
+function isMinaAccount(account: AccountLike): account is MinaAccount {
+  return account.type === "Account";
+}
+
 function StakingValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
@@ -32,8 +36,10 @@ function StakingValidator({ navigation, route }: Props) {
   invariant(account.type === "Account", "account must be of type Account");
 
   const unit = useAccountUnit(account);
-  const mainAccount = getMainAccount<MinaAccount>(account as MinaAccount, undefined);
-  const blockProducers = mainAccount?.resources?.blockProducers || [];
+  const minaResources = isMinaAccount(account) ? account.resources : undefined;
+  const blockProducers = useMemo(() => {
+    return minaResources?.blockProducers || [];
+  }, [minaResources?.blockProducers]);
 
   // Sort validators by stake (highest first) and filter by search
   const validators = useMemo(() => {
@@ -58,7 +64,7 @@ function StakingValidator({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: ValidatorInfo }) => (
+    ({ item }: ListRenderItemInfo<ValidatorInfo>) => (
       <ValidatorRow validator={item} onPress={onItemPress} unit={unit} />
     ),
     [onItemPress, unit],
