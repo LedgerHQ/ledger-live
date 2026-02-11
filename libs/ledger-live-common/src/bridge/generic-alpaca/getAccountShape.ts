@@ -32,7 +32,13 @@ function isInternalLiveOp(operation: OperationCommon): boolean {
 
 /** True when the op is a main-account (native) op, not a token/sub-account op */
 function isNativeLiveOp(operation: OperationCommon): boolean {
-  return !operation.extra?.assetReference;
+  const assetReference = operation.extra?.assetReference;
+  const assetOwner = operation.extra?.assetOwner;
+  const hasAssetReference = typeof assetReference === "string" && assetReference.length > 0;
+  const hasAssetOwner = typeof assetOwner === "string" && assetOwner.length > 0;
+
+  // Native ops are those that do not have a non-empty asset reference/owner
+  return !(hasAssetReference || hasAssetOwner);
 }
 
 /**
