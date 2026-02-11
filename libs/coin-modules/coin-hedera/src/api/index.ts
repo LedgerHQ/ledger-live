@@ -71,6 +71,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
     listOperations: async (address, { cursor, limit, order }) => {
+      // FIXME This listOperations implementation ignores the required minHeight option entirely.
+      //  Implementations must error when minHeight != 0 is not supported, this should either filter
+      //  by minHeight or explicitly throw a "not supported" error when minHeight is non-zero.
       const mirrorTokens = await apiClient.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
