@@ -114,6 +114,9 @@ async function operations(
   address: string,
   { minHeight, cursor, order }: ApiListOperationsOptions,
 ): Promise<Page<Operation>> {
+  // FIXME The public API type (ListOperationsOptions) includes an optional limit, but this wrapper always forces
+  //  limit: 200 and silently ignores any caller-provided limit. Either honor options.limit (possibly as a capped/soft
+  //  limit) or throw a "not supported" error when limit is provided.
   const options: ListOperationsOptions = {
     limit: 200,
     minHeight: minHeight,

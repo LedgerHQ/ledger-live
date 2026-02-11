@@ -1,4 +1,4 @@
-import type {
+import {
   Api,
   Block,
   BlockInfo,
@@ -12,6 +12,7 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
+  ListOperationsOptions,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
