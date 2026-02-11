@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { lock } from "~/renderer/actions/application";
-import { ItemContainer } from "~/renderer/components/TopBar/shared";
+import { ItemContainer, Bar } from "~/renderer/components/TopBar/shared";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
@@ -13,6 +13,7 @@ import { IconsLegacy } from "@ledgerhq/react-ui";
 import { NavBar, NavBarTrailing, NavBarTitle } from "@ledgerhq/lumen-ui-react";
 import { TopBarViewProps } from "./types";
 import { TopBarActionsList } from "./components/ActionsList";
+import FirmwareUpdateBannerEntry from "~/renderer/components/FirmwareUpdateBanner";
 
 const TopBarView = ({ slots }: TopBarViewProps) => {
   const { t } = useTranslation();
@@ -28,6 +29,9 @@ const TopBarView = ({ slots }: TopBarViewProps) => {
       </NavBarTitle>
       <NavBarTrailing className="h-48 gap-12">
         <LiveAppDrawer />
+
+        <FirmwareUpdateBannerEntry />
+        <Bar />
 
         <TopBarActionsList slots={slots} />
 

@@ -5,20 +5,23 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useDispatch } from "LLD/hooks/redux";
 import UpdateModal, { Props as UpdateModalProps } from "~/renderer/modals/UpdateFirmwareModal";
 import { StepId } from "~/renderer/modals/UpdateFirmwareModal/types";
-import Text from "~/renderer/components/Text";
-import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
-import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { Button } from "@ledgerhq/react-ui";
+import { openURL } from "~/renderer/linking";
+import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
+import Text from "~/renderer/components/Text";
+import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import Box from "~/renderer/components/Box";
+import { osUpdateRequested } from "~/renderer/reducers/manager";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -63,9 +66,12 @@ const FirmwareUpdate = (props: Props) => {
     error,
     onReset,
   } = props;
+  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
+  const dispatch = useDispatch();
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
   const firmwareUpdateCompletedRef = useRef(false);
+  const openedFromOsUpdateRequestedRef = useRef(false);
   const [autoOpened, setAutoOpened] = useState(false);
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
@@ -84,13 +90,15 @@ const FirmwareUpdate = (props: Props) => {
   }, []);
 
   const onRequestClose = useCallback(() => {
+    dispatch(osUpdateRequested(false));
+    openedFromOsUpdateRequestedRef.current = false;
     setPreventResetOnDeviceChange(false);
     setDrawer();
     setKeepScreenAwake(false);
     if (firmwareUpdateCompletedRef.current) {
       onReset([]);
     }
-  }, [onReset, setDrawer, setPreventResetOnDeviceChange]);
+  }, [dispatch, onReset, setDrawer, setPreventResetOnDeviceChange]);
 
   const onOpenDrawer = useCallback(() => {
     tracer.trace("Opening drawer", { hasFirmware: !!firmware, function: "onOpenDrawer" });
@@ -150,7 +158,7 @@ const FirmwareUpdate = (props: Props) => {
   ]);
 
   useEffect(() => {
-    // NB Open automatically the firmware update drawer if needed
+    // NB Open automatically the firmware update drawer if needed (OSU mode)
     if (firmware && modal === "install" && !autoOpened) {
       track("Manager Firmware Update Auto", {
         firmwareName: firmware.final.name,
@@ -161,6 +169,21 @@ const FirmwareUpdate = (props: Props) => {
       onOpenDrawer();
     }
   }, [autoOpened, modal, onOpenDrawer, firmware, tracer]);
+
+  useEffect(() => {
+    // Open drawer when OS update was requested from banner (disclaimer flow)
+    if (
+      props.openFirmwareUpdate &&
+      firmware &&
+      !deviceInfo.isOSU &&
+      !openedFromOsUpdateRequestedRef.current
+    ) {
+      openedFromOsUpdateRequestedRef.current = true;
+      onOpenDrawer();
+    }
+  }, [props.openFirmwareUpdate, firmware, deviceInfo.isOSU, onOpenDrawer]);
+
+  if (isWallet40Enabled) return null;
 
   if (!firmware) {
     if (!isDeprecated) return null;
@@ -212,5 +235,4 @@ const FirmwareUpdate = (props: Props) => {
     />
   );
 };
-
 export default FirmwareUpdate;
