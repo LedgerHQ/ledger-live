@@ -315,25 +315,46 @@ export async function getRelayFeeFloorSatVb(
 /**
  * Incremental relay fee (sat/vB) for RBF: replacement must increase fee by at least this much
  * per vB (and in total). When the explorer does not provide incremental_fee, use a safer
- * default (1 sat/vB) so replacements are accepted by stricter nodes
+ * default (1 sat/vB) so replacements are accepted by stricter nodes.
+ *
+ * When originalFeeRateSatVb is provided, the returned bump is: if 10% of original > 1 sat/vB
+ * then use 10%, otherwise use 1 sat/vB (e.g. 15 sat/vB → 10% = 1.5 → bump 2; 5 sat/vB → 10% = 0.5 → bump 1).
  */
 export async function getIncrementalFeeFloorSatVb(
   explorer: unknown,
-  defaultFloor: BigNumber = new BigNumber(1),
+  originalFeeRateSatVb?: BigNumber,
 ): Promise<BigNumber> {
+  const defaultBump = new BigNumber(1);
+
+  // Minimum bump: max(ceil(10% of original), 1 sat/vB)
+  const tenPercentBump =
+    originalFeeRateSatVb !== undefined &&
+    originalFeeRateSatVb.isFinite() &&
+    originalFeeRateSatVb.gte(0)
+      ? originalFeeRateSatVb.times(0.1).integerValue(BigNumber.ROUND_CEIL)
+      : defaultBump;
+  const minBumpFromRule = BigNumber.max(tenPercentBump, defaultBump);
+
   try {
     const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };
-    if (typeof maybeExplorer?.getNetwork !== "function") return defaultFloor;
+    if (typeof maybeExplorer?.getNetwork !== "function") {
+      return BigNumber.max(minBumpFromRule, defaultBump);
+    }
 
     const net = await maybeExplorer.getNetwork();
     const incremental = net?.incremental_fee;
-    if (incremental === undefined || incremental === null) return defaultFloor;
+    if (incremental === undefined || incremental === null) {
+      return BigNumber.max(minBumpFromRule, defaultBump);
+    }
 
     const relSatPerVB = btcPerKbToSatPerVB(incremental);
-    if (!relSatPerVB.isFinite() || relSatPerVB.lt(0)) return defaultFloor;
+    if (!relSatPerVB.isFinite() || relSatPerVB.lt(0)) {
+      return BigNumber.max(minBumpFromRule, defaultBump);
+    }
 
-    return BigNumber.max(relSatPerVB, 1);
+    const bump = BigNumber.max(relSatPerVB, minBumpFromRule, defaultBump);
+    return bump;
   } catch {
-    return defaultFloor;
+    return BigNumber.max(minBumpFromRule, defaultBump);
   }
 }

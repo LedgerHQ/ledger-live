@@ -118,14 +118,14 @@ describe("validateEditTransaction", () => {
     const transaction = makeTransaction({ feePerByte: new BigNumber(11) });
     const transactionToUpdate = makeTransaction({
       rbf: true,
-      feePerByte: undefined as unknown as typeof transaction.feePerByte,
+      feePerByte: null as unknown as typeof transaction.feePerByte,
+      replaceTxId: "orig-txid",
     });
 
     const result = validateEditTransaction({
       transaction,
       transactionToUpdate,
       editType: "speedup",
-      originalFeePerByte: new BigNumber(10),
     });
 
     expect(result.errors.replacementTransactionUnderpriced).toBeInstanceOf(
