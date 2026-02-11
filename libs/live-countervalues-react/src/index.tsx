@@ -25,7 +25,7 @@ import React, {
 } from "react";
 import { useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
-export { CountervaluesMarketcapProvider, useMarketcapIds } from "./CountervaluesMarketcapProvider";
+export { useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
 export interface PollingState {
   isPolling: boolean;

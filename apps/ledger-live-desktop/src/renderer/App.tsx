@@ -18,7 +18,6 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
-import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatusProviderWrapper";
@@ -81,26 +80,24 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
               <UpdaterProvider>
                 <AppDataStorageProvider>
                   <DeviceManagementKitProvider>
-                    <CountervaluesMarketcapBridgedProvider>
-                      <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                        <ToastProvider>
-                          <ServiceStatusProviderWrapper>
-                            <Router>
-                              <PostOnboardingProviderWrapped>
-                                <PlatformAppProviderWrapper>
-                                  <DrawerProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </DrawerProvider>
-                                </PlatformAppProviderWrapper>
-                              </PostOnboardingProviderWrapped>
-                            </Router>
-                          </ServiceStatusProviderWrapper>
-                        </ToastProvider>
-                      </CountervaluesBridgedProvider>
-                    </CountervaluesMarketcapBridgedProvider>
+                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                      <ToastProvider>
+                        <ServiceStatusProviderWrapper>
+                          <Router>
+                            <PostOnboardingProviderWrapped>
+                              <PlatformAppProviderWrapper>
+                                <DrawerProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                    <ReactQueryDevtoolsProvider />
+                                  </QueryClientProvider>
+                                </DrawerProvider>
+                              </PlatformAppProviderWrapper>
+                            </PostOnboardingProviderWrapped>
+                          </Router>
+                        </ServiceStatusProviderWrapper>
+                      </ToastProvider>
+                    </CountervaluesBridgedProvider>
                   </DeviceManagementKitProvider>
                 </AppDataStorageProvider>
               </UpdaterProvider>
