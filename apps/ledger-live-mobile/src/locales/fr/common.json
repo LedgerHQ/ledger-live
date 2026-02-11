@@ -10,6 +10,9 @@
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
+    "fee" : "Frais",
+    "stake" : "Staké",
+    "validator" : "Validateur",
     "delete" : "Effacer",
     "paste" : "Coller",
     "yes" : "Oui",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "Pour vous"
     },
+    "perpsEntry" : {
+      "title" : "Perpétuels",
+      "description" : "Tradez avec effet de levier"
+    },
     "recommended" : {
       "title" : "Recommandé"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "Transférer",
       "swap" : "Échanger",
       "buy" : "Acheter",
+      "connect" : "Connecter",
+      "buyLedger" : "Acheter un Ledger",
       "transferDrawer" : {
         "title" : "Transférer",
         "receiveCrypto" : "Recevoir des cryptos",
@@ -2988,7 +2997,6 @@
     "yield" : "Rendement",
     "sell" : "Vendre",
     "swap" : "Échanger",
-    "perps" : "Perpétuels",
     "manage" : "Gérer",
     "lastTransactions" : "Dernières transactions",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "Recevoir",
         "buyCrypto" : "Acheter"
       },
-      "addAccountCta" : "Ajouter un compte"
+      "addAccountCta" : "Ajouter un compte",
+      "addCryptoAccount" : "Ajouter un compte crypto"
     },
     "settings" : {
       "header" : "Paramètres du compte",
@@ -3675,10 +3684,6 @@
       "title" : "Staker",
       "description" : "Obtenez des récompenses sur vos cryptos"
     },
-    "perps" : {
-      "title" : "Perpétuels",
-      "description" : "Tradez des contrats perpétuels sur crypto-actifs."
-    },
     "swap" : {
       "title" : "Swap",
       "description" : "Échangez une crypto contre une autre",
@@ -3875,7 +3880,8 @@
         "title" : "Choisissez une offre"
       },
       "twoStepApproval" : {
-        "title" : "Suivez les étapes"
+        "title" : "Suivez les étapes",
+        "completedTitle" : "Statut de la transaction"
       },
       "loader" : {
         "title" : "Échange en cours de traitement",
@@ -4573,6 +4579,7 @@
       },
       "acceptTerms" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
+      "acceptTermsSponsored" : "Pour bénéficier de la gratuité des frais de réseau, vous acceptez également de partager les détails de votre transaction (y compris votre adresse de wallet) avec Blink Labs.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place des procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
@@ -6088,6 +6095,52 @@
       "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse copiée",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redéléguer",
+      "earn" : "Gagner"
+    },
+    "stakeBanner" : {
+      "title" : "Gagner des récompenses avec MINA",
+      "altTitle" : "Gérer votre délégation de MINA",
+      "description" : "Déléguez vos MINA à un producteur de blocs et percevez les récompenses générées. Les récompenses sont calculées en fonction du montant délégué.",
+      "altDescription" : "Modifiez vos paramètres de délégation ou arrêtez la délégation de vos MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Délégué à",
+      "stakedBalance" : "Solde de staking",
+      "producerAddress" : "Adresse du producteur",
+      "delegatedToTooltip" : "Nom du producteur de blocs auquel vous accordez la délégation",
+      "stakedBalanceTooltip" : "Montant total de MINA actuellement stakés avec ce validateur",
+      "producerAddressTooltip" : "Adresse publique du producteur de blocs auquel vous accordez la délégation"
+    },
+    "delegators" : "Délégants",
+    "memoPlaceholder" : "Mémo facultatif",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choisir un validateur",
+        "connectDevice" : "Connecter votre appareil",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Staker des MINA",
+      "help" : "Pour déléguer vos MINA, sélectionnez un validateur dans la liste ci-dessous.",
+      "success" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre demande de modification de délégation a été envoyée."
+      },
+      "error" : {
+        "title" : "Erreur lors de l’émission de la transaction"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "showAll" : "Afficher tout",
+      "showLess" : "Afficher moins",
+      "iDelegate" : "Je délègue"
+    }
+  },
   "stellar" : {
     "token" : "Actifs",
     "memo" : {
@@ -6492,9 +6545,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Mémo facultatif"
   },
   "near" : {
     "info" : {
@@ -8387,9 +8437,6 @@
       "extremeGreed" : "Cupidité+"
     },
     "tileTitle" : "Psychologie"
-  },
-  "perps" : {
-    "title" : "Perpétuels"
   },
   "analyticsAllocation" : {
     "header" : {
