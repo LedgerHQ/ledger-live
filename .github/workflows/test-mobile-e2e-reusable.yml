@@ -427,9 +427,10 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - name: Install scrcpy
+      - name: Check scrcpy 3.x
         run: |
-          brew install scrcpy
+          which scrcpy
+          scrcpy --version
 
       - name: Boot iOS Simulator in Background
         run: |
@@ -625,21 +626,12 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install scrcpy 3.x and dependencies
+      - name: Checkscrcpy 3.x and dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
-          
-          # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
-          # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
-          SCRCPY_VERSION="3.3.4"
-          curl -L "https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz" -o /tmp/scrcpy.tar.gz
-          tar -xzf /tmp/scrcpy.tar.gz -C /tmp
-          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
-          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/bin/
-          
+          which scrcpy
           scrcpy --version
-          ls -la /usr/local/bin/scrcpy*
+          which pngquant
+          pngquant --version
 
       - name: Set shard test files from pre-computed matrix
         run: |
