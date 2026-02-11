@@ -63,9 +63,11 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
 
   const onResult = useCallback(
     (payload: AppResult) => {
+      // clear device state so the DeviceActionModal closes cleanly and BLE scanning can restart
+      selectDevice(null);
       goToFollowInstructions(payload.device);
     },
-    [goToFollowInstructions],
+    [goToFollowInstructions, selectDevice],
   );
 
   const onError = (error: Error) => {
