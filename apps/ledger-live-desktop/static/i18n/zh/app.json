@@ -152,7 +152,8 @@
     "quote" : "报价",
     "memoTag" : {
       "learnMore" : "详细了解“标签/备忘标签”"
-    }
+    },
+    "stake" : "质押"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "赚取",
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
+    "perps" : "永续合约",
     "refer" : "推荐好友",
     "lend" : "借出",
     "catalog" : "探索",
@@ -809,7 +811,15 @@
     }
   },
   "card" : {
-    "backToCard" : "所有卡片"
+    "backToCard" : "所有卡片",
+    "title" : "卡",
+    "imageAlt" : "卡图片",
+    "spendYourCrypto" : "使用加密货币消费",
+    "payDescription" : "使用加密货币卡进行线上或线下支付",
+    "exploreCards" : "了解加密货币卡",
+    "iAlreadyHaveACard" : "我已经有一张卡",
+    "unlockLiquidity" : "释放流动性",
+    "exploreCryptoCardsDescription" : "探索我们的加密货币卡，找到最适合您的那一款"
   },
   "lend" : {
     "title" : "借出加密货币",
@@ -1783,6 +1793,7 @@
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
       "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
+      "acceptTermsSponsored" : "为享受免网络费用，您也同意与 Blinklabs 共享您的交易详情（包括钱包地址）。",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
       "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服。</2>",
@@ -2205,6 +2216,19 @@
       "description" : "您可能需要有<0>标签/备忘标签</0>才能从交易所接收该笔资产。您可以使用任意数字组合，例如 1234。"
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "银行转账",
+          "description" : "通过发送现金接收稳定币"
+        },
+        "fromCrypto" : {
+          "title" : "接收加密货币"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "发送",
     "totalSpent" : "总借额",
@@ -2331,6 +2355,15 @@
     "addressNotFound" : "未找到地址",
     "alreadyUsed" : "已使用 · {{date}}",
     "recentSendWillAppear" : "您最近的发送会显示在此处",
+    "relativeDate" : {
+      "justNow" : "刚刚",
+      "minutesAgo_one" : "1 min ago",
+      "minutesAgo_other" : "{{count}} min ago",
+      "hoursAgo_one" : "1 小时前",
+      "hoursAgo_other" : "{{count}} 小时前",
+      "daysAgo_one" : "1 天前",
+      "daysAgo_other" : "{{count}} 天前"
+    },
     "remove" : "删除",
     "enterTag" : "输入备注 {{tag}}",
     "firstInteraction" : {
@@ -4506,6 +4539,10 @@
           "title" : "快速生成",
           "desc" : "生成 10 个随机账户，币种随机"
         },
+        "emptyGenerate" : {
+          "title" : "空账户生成",
+          "desc" : "生成空账户"
+        },
         "currencySelector" : {
           "placeholder" : "选择货币...",
           "searchPlaceholder" : "搜索",
@@ -4521,7 +4558,8 @@
         "buttons" : {
           "generateAccounts" : "生成 {{count}} 个账户",
           "generateAccounts_other" : "生成 {{count}} 个账户",
-          "generateAccountsQuick" : "生成 {{count}} 个账户"
+          "generateAccountsQuick" : "生成 {{count}} 个账户",
+          "generateEmptyAccount" : "生成空账户"
         },
         "alerts" : {
           "selectCurrency" : "请至少选择一种货币",
@@ -4567,9 +4605,13 @@
       "walletFeaturesDevTool" : {
         "title" : "钱包功能开发工具",
         "description" : "切换桌面版 Wallet 4.0 功能（lwdWallet40 功能标帜）。",
+        "mainFeatureToggle" : "主功能切换",
         "enableAll" : "全部启用",
         "disableAll" : "全部禁用",
         "featureParameters" : "功能参数",
+        "tourState" : "Tour State",
+        "drawerPreview" : "Drawer Preview",
+        "openDrawer" : "打开抽屉",
         "showJson" : "显示 JSON",
         "hideJson" : "隐藏 JSON"
       },
@@ -6336,7 +6378,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "处理出错",
-      "description" : "Changelly 无法处理此交易。错误代码 8HBB-{{randomCode}}"
+      "description" : "互换提供商无法处理此交易。错误代码 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "服务提供商不可用",
@@ -6634,7 +6676,7 @@
       "description" : "出错了，请重试；如有疑问，请联系 Ledger 客服。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "请在以太坊应用程序设置中启用盲签名或合约数据"
+      "title" : "在以太坊应用程序中启用盲签名或合约数据"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "请在 Celo 应用程序设置中启用合约数据"
@@ -7159,6 +7201,50 @@
     "memoPlaceholder" : "输入标签/备忘标签",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "费用",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "更改委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 ",
+      "changeCTA" : "更改"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金"
+    }
+  },
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
@@ -7558,7 +7644,7 @@
       "alreadySync" : "我已经开启了",
       "learnMore" : "Ledger Sync 如何运作？",
       "titleModal" : "同步您的钱包",
-      "descriptionModal" : "在您换用电脑或使用手机时，及时更新自己的资产组合——Ledger 设备为您保驾护航。",
+      "descriptionModal" : "无论更换电脑还是使用手机，都能让您的资产组合保持最新状态，并始终由 Ledger 设备提供安全保护。",
       "ctaModal" : "继续"
     },
     "entryPoints" : {
@@ -7824,7 +7910,15 @@
   },
   "portfolio" : {
     "title" : "首页",
-    "today" : "今天"
+    "today" : "今天",
+    "addAccountCta" : "添加加密货币账户",
+    "noBalanceTitle" : "保护您的加密货币",
+    "perpsEntry" : {
+      "title" : "永续合约",
+      "description" : "杠杆交易",
+      "cta" : "探索"
+    },
+    "noDeviceTitle" : "最安全的钱包"
   },
   "marketBanner" : {
     "title" : "探索市场",
@@ -7848,11 +7942,25 @@
       "cta" : "知道了"
     }
   },
+  "quickActions" : {
+    "send" : "发送",
+    "receive" : "接收",
+    "buy" : "买入",
+    "sell" : "卖出",
+    "connect" : "连接",
+    "buyALedger" : "购买 Ledger 设备"
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "refreshToolTip" : "Tap to refresh",
+      "errorToolTip" : "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7985,56 @@
       "transparentBalanceTooltip" : "公开可见的余额",
       "privateBalance" : "私密余额",
       "privateBalanceTooltip" : "对外隐藏的余额"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "显示余额",
+        "pausedAt" : "已暂停于 ",
+        "lastSync" : "上次同步：{{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "启用 Zcash 私密余额",
+          "breadcrumbs" : {
+            "0" : "起始点",
+            "1" : "统一完整查看密钥 (UFVK)",
+            "2" : "设备",
+            "3" : "确认"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "起始高度是指您的钱包在区块链上开始扫描您资金的点位。",
+              "cta" : "了解更多",
+              "label" : "起始高度",
+              "tooltip" : "默认：今日日期。仅针对过去存在私密（屏蔽）交易活动的现有账户进行更改。",
+              "syncFromZero" : "该账户过去接收过受屏蔽的 ZEC，但无法检索到其起始高度。从区块 0 开始扫描（可能需要较长时间）。",
+              "error" : "无效日期"
+            },
+            "ufvk" : {
+              "text" : "首先，您必须导出您的\"统一完整查看密钥\"，即：Unified Full Viewing Key (UFVK)。此操作需要您在 Ledger 设备上确认。"
+            },
+            "device" : {
+              "text" : "在您的 Ledger 设备上确认导出 UFVK"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK 已成功导入",
+                "text" : "您现在可以接收屏蔽 ZEC 并签署私密交易。",
+                "info" : {
+                  "text" : "您的统一完整查看密钥 (UFVK) 仍存储在您的本地计算机上，绝不会传输或暴露给外部系统。",
+                  "cta" : "了解更多"
+                },
+                "warning" : "起始高度较早的账户可能需要更长的同步时间（最长 2 小时）。请保持应用程序开启直至同步完成。"
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "开始同步",
+      "datepicker" : {
+        "label" : "起始高度",
+        "tooltip" : "起始高度是指您的钱包在区块链上开始扫描您资金的点位。"
+      }
     }
   }
 }
