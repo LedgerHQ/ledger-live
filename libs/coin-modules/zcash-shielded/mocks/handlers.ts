@@ -2,6 +2,8 @@ import { http, HttpResponse } from "msw";
 import { blocks, transactions } from "../tests/testAccounts";
 import { JSON_RPC_SERVER } from "../src/consts";
 
+const ERROR_CODE = -5;
+
 export const handlers = [
   http.post(`${JSON_RPC_SERVER}`, async ({ request }) => {
     const body = await request.clone().json();
@@ -20,7 +22,7 @@ export const handlers = [
 
         return HttpResponse.json({
           error: {
-            code: -5,
+            code: ERROR_CODE,
             message: "block height not in best chain",
           },
         });
@@ -38,7 +40,7 @@ export const handlers = [
 
         return HttpResponse.json({
           error: {
-            code: -5,
+            code: ERROR_CODE,
             message: "No such mempool or main chain transaction",
           },
         });
@@ -49,7 +51,7 @@ export const handlers = [
 
     return HttpResponse.json({
       error: {
-        code: -5,
+        code: ERROR_CODE,
         message: "Method not found",
       },
     });

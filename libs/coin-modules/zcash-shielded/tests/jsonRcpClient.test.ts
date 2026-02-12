@@ -2,6 +2,7 @@ import { JsonRpcClient } from "../src/jsonRpcClient";
 import { blockWithMyTx, txNotShielded } from "./testAccounts";
 import { server } from "../mocks/node";
 import { HttpResponse, http } from "msw";
+import { JSON_RPC_SERVER } from "../src/consts";
 
 beforeAll(() =>
   server.listen({
@@ -10,8 +11,6 @@ beforeAll(() =>
 );
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-const JSON_RPC_SERVER = "http://localhost:18232";
 
 describe("rpcClient", () => {
   describe("getBlock", () => {
