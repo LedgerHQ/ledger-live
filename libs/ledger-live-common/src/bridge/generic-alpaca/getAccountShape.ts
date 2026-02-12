@@ -6,9 +6,9 @@ import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { Operation } from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -28,6 +28,71 @@ function isIncomingCoreOp(operation: Operation): boolean {
 
 function isInternalLiveOp(operation: OperationCommon): boolean {
   return !!operation.extra?.internal;
+}
+
+/** True when the op is a main-account (native) op, not a token/sub-account op */
+function isNativeLiveOp(operation: OperationCommon): boolean {
+  return !operation.extra?.assetReference;
+}
+
+/**
+ * Emit one parent operation per tx hash so the account has a single top-level op per tx
+ * (e.g. pure ERC20 shows one FEES op with token subOp, not FEES + token as two top-level ops).
+ * - If the hash has a native op: use it as parent and attach subOperations.
+ * - If the hash has only token ops: create a synthetic FEES parent and attach token ops as subOperations.
+ */
+function buildOneParentOpPerHash(
+  newSubAccounts: TokenAccount[],
+  newNonInternalOperations: OperationCommon[],
+  newInternalOperations: OperationCommon[],
+  accountId: string,
+): OperationCommon[] {
+  const seenHashes = new Set<string>();
+  const result: OperationCommon[] = [];
+
+  for (const op of newNonInternalOperations) {
+    if (seenHashes.has(op.hash)) continue;
+    seenHashes.add(op.hash);
+
+    const transactionOps = newNonInternalOperations.filter(o => o.hash === op.hash);
+    const nativeOp = transactionOps.find(isNativeLiveOp);
+    const subOperations = inferSubOperations(op.hash, newSubAccounts);
+    const internalOperations = newInternalOperations.filter(it => it.hash === op.hash);
+
+    if (nativeOp) {
+      result.push(
+        cleanedOperation({
+          ...nativeOp,
+          subOperations,
+          internalOperations,
+        }),
+      );
+    } else {
+      const firstOp = transactionOps[0];
+      result.push(
+        cleanedOperation({
+          id: encodeOperationId(accountId, firstOp.hash, "FEES"),
+          hash: firstOp.hash,
+          accountId,
+          type: "FEES",
+          value: firstOp.fee,
+          fee: firstOp.fee,
+          blockHash: firstOp.blockHash,
+          blockHeight: firstOp.blockHeight,
+          senders: firstOp.senders,
+          recipients: firstOp.recipients,
+          date: firstOp.date,
+          transactionSequenceNumber: firstOp.transactionSequenceNumber,
+          hasFailed: firstOp.hasFailed,
+          extra: {},
+          subOperations,
+          internalOperations,
+        }),
+      );
+    }
+  }
+
+  return result;
 }
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
@@ -65,18 +130,19 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
+    const cursor = oldOps[0]?.extra?.pagingToken || "";
     const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
 
     // Calculate minHeight for pagination
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
-    const paginationParams: Pagination = { minHeight, order: "desc" };
-    if (lastPagingToken && !syncFromScratch) {
-      paginationParams.lastPagingToken = lastPagingToken;
-    }
+    const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const [newCoreOps] = await alpacaApi.listOperations(address, paginationParams);
+    const { items: newCoreOps } = await alpacaApi.listOperations(address, {
+      minHeight,
+      cursor: paginationCursor,
+      order: "desc",
+    });
     const newOps = newCoreOps
       .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
       .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
@@ -87,7 +153,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         operation?.extra?.assetOwner &&
         !["OPT_IN", "OPT_OUT"].includes(operation.type),
     );
-    const newInternalOperations = newOps.filter(isInternalLiveOp);
+
+    const newInternalOperations: OperationCommon[] = [];
+    const newNonInternalOperations: OperationCommon[] = [];
+    for (const op of newOps) {
+      if (isInternalLiveOp(op)) newInternalOperations.push(op);
+      else newNonInternalOperations.push(op);
+    }
+
     const newSubAccounts = await buildSubAccounts({
       accountId,
       allTokenAssetsBalances,
@@ -99,18 +172,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       ? newSubAccounts
       : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
 
-    const newOpsWithSubs = newOps
-      .filter(operation => !isInternalLiveOp(operation))
-      .map(op => {
-        const subOperations = inferSubOperations(op.hash, newSubAccounts);
-        const internalOperations = newInternalOperations.filter(it => it.hash === op.hash);
-
-        return cleanedOperation({
-          ...op,
-          subOperations,
-          internalOperations,
-        });
-      });
+    const newOpsWithSubs = buildOneParentOpPerHash(
+      newSubAccounts,
+      newNonInternalOperations,
+      newInternalOperations,
+      accountId,
+    );
     // Try to refresh known pending and broadcasted operations (if not already updated)
     // Useful for integrations without explorers
     const operationsToRefresh = initialAccount?.pendingOperations.filter(

@@ -23,7 +23,7 @@ describe("When getting the account shape", () => {
   it("returns the account with correct balance and spendable balance", async () => {
     // Given
     mockCreateApi.mockReturnValue({
-      listOperations: jest.fn().mockResolvedValueOnce([[]]),
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [] }),
       lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
     });
     mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
@@ -41,7 +41,7 @@ describe("When getting the account shape", () => {
   it("returns the account with 0 operations", async () => {
     // Given
     mockCreateApi.mockReturnValue({
-      listOperations: jest.fn().mockResolvedValueOnce([[]]),
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [] }),
       lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
     });
     mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
@@ -59,7 +59,7 @@ describe("When getting the account shape", () => {
 
   it("returns the account with 1 erc20 operation", async () => {
     mockCreateApi.mockReturnValue({
-      listOperations: jest.fn().mockResolvedValueOnce([[erc20Operation]]),
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [erc20Operation] }),
       lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
     });
     // Given
@@ -122,7 +122,7 @@ describe("When getting the account shape", () => {
   it("returns the account with 1 native operation", async () => {
     // Given
     mockCreateApi.mockReturnValue({
-      listOperations: jest.fn().mockResolvedValueOnce([[nativeOperation]]),
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
       lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
     });
     mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
@@ -159,7 +159,7 @@ describe("When getting the account shape", () => {
   it("returns the account with correct id, and celo resources", async () => {
     // Given
     mockCreateApi.mockReturnValue({
-      listOperations: jest.fn().mockResolvedValueOnce([[nativeOperation]]),
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
       lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
     });
     mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(20));

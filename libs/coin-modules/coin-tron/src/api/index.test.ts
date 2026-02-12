@@ -1,4 +1,4 @@
-import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
 import {
@@ -22,7 +22,7 @@ jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
-  listOperations: jest.fn(),
+  listOperations: jest.fn().mockResolvedValue([[], undefined]),
   lastBlock: jest.fn(),
 }));
 
@@ -68,7 +68,7 @@ describe("createApi", () => {
     await api.getBalance("address");
     await api.lastBlock();
     const minHeight = 14;
-    await api.listOperations("address", { minHeight: minHeight, order: "asc" } as Pagination);
+    await api.listOperations("address", { minHeight, order: "asc" });
 
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");

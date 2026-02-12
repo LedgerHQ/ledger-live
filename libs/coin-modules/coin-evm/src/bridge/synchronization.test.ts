@@ -43,19 +43,19 @@ jest.mock("../network/explorer/etherscan", () => {
   return {
     __esModule: true,
     ...actual,
-    getLastOperations: mockGetLastOperations,
-    getLastCoinOperations: jest.fn(),
-    getLastTokenOperations: jest.fn(),
-    getLastNftOperations: jest.fn(),
-    getLastInternalOperations: jest.fn(),
-    getLastERC1155Operations: jest.fn(),
-    getLastERC721Operations: jest.fn(),
+    getOperations: mockGetLastOperations,
+    getCoinOperations: jest.fn(),
+    getTokenOperations: jest.fn(),
+    getNftOperations: jest.fn(),
+    getInternalOperations: jest.fn(),
+    getERC1155Operations: jest.fn(),
+    getERC721Operations: jest.fn(),
     default: {
       explorerApi: {
-        getLastOperations: mockGetLastOperations,
+        getOperations: mockGetLastOperations,
       },
-      explorerApiNoChache: {
-        getLastOperations: mockGetLastOperations,
+      explorerApiNoCache: {
+        getOperations: mockGetLastOperations,
       },
     },
   };
@@ -72,9 +72,9 @@ jest.mock("../network/explorer/none", () => {
   return {
     __esModule: true,
     ...jest.requireActual("../network/explorer/none"),
-    getLastOperations: mockGetLastOperations,
+    getOperations: mockGetLastOperations,
     default: {
-      getLastOperations: mockGetLastOperations,
+      getOperations: mockGetLastOperations,
     },
   };
 });
@@ -249,7 +249,7 @@ describe("EVM Family", () => {
             },
           };
         });
-        const spy = jest.spyOn(noneExplorer?.default, "getLastOperations");
+        const spy = jest.spyOn(noneExplorer?.default, "getOperations");
 
         await synchronization.getAccountShape(
           {
@@ -277,25 +277,25 @@ describe("EVM Family", () => {
       describe("With no transactions fetched", () => {
         beforeAll(() => {
           // @ts-expect-error reseting cache
-          etherscanAPI?.default.explorerApi.getLastOperations.reset();
-          jest.spyOn(etherscanAPI, "getLastOperations").mockImplementation(() =>
+          etherscanAPI?.default.explorerApi.getOperations.reset();
+          jest.spyOn(etherscanAPI, "getOperations").mockImplementation(() =>
             Promise.resolve({
               lastCoinOperations: [],
               lastTokenOperations: [],
               lastNftOperations: [],
               lastInternalOperations: [],
+              nextPagingToken: "",
             }),
           );
-          jest
-            .spyOn(etherscanAPI?.default.explorerApi, "getLastOperations")
-            .mockImplementation(() =>
-              Promise.resolve({
-                lastCoinOperations: [],
-                lastTokenOperations: [],
-                lastNftOperations: [],
-                lastInternalOperations: [],
-              }),
-            );
+          jest.spyOn(etherscanAPI?.default.explorerApi, "getOperations").mockImplementation(() =>
+            Promise.resolve({
+              lastCoinOperations: [],
+              lastTokenOperations: [],
+              lastNftOperations: [],
+              lastInternalOperations: [],
+              nextPagingToken: "",
+            }),
+          );
         });
 
         afterAll(() => {
@@ -378,7 +378,7 @@ describe("EVM Family", () => {
             {} as any,
           );
 
-          expect(etherscanAPI?.default.explorerApi.getLastOperations).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.explorerApi.getOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -406,7 +406,7 @@ describe("EVM Family", () => {
             {} as any,
           );
 
-          expect(etherscanAPI?.default.explorerApi.getLastOperations).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.explorerApi.getOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -418,8 +418,8 @@ describe("EVM Family", () => {
 
       describe("With transactions fetched", () => {
         beforeAll(() => {
-          // Mock getLastOperations to return combined operations data
-          (etherscanAPI.default.explorerApi.getLastOperations as jest.Mock).mockResolvedValue({
+          // Mock getOperations to return combined operations data
+          (etherscanAPI.default.explorerApi.getOperations as jest.Mock).mockResolvedValue({
             lastCoinOperations: [{ ...coinOperations[0] }, { ...coinOperations[1] }],
             lastTokenOperations: [{ ...tokenOperations[0] }, { ...tokenOperations[1] }],
             lastNftOperations: [
@@ -434,6 +434,7 @@ describe("EVM Family", () => {
               { ...internalOperations[1] },
               { ...internalOperations[2] },
             ],
+            nextPagingToken: "",
           });
           jest
             .spyOn(nodeApi, "getTokenBalance")
@@ -527,12 +528,13 @@ describe("EVM Family", () => {
 
         it("should return a partial account based on blockHeight", async () => {
           jest
-            .spyOn(etherscanAPI?.default.explorerApi, "getLastOperations")
+            .spyOn(etherscanAPI?.default.explorerApi, "getOperations")
             .mockImplementationOnce(async () => ({
               lastTokenOperations: [],
               lastNftOperations: [],
               lastCoinOperations: [coinOperations[2]],
               lastInternalOperations: [],
+              nextPagingToken: "",
             }));
           const operations = [
             {
@@ -635,11 +637,12 @@ describe("EVM Family", () => {
 
       describe("With pending operations", () => {
         beforeAll(() => {
-          (etherscanAPI.default.getLastOperations as jest.Mock).mockResolvedValue({
+          (etherscanAPI.default.getOperations as jest.Mock).mockResolvedValue({
             lastCoinOperations: [],
             lastTokenOperations: [],
             lastNftOperations: [],
             lastInternalOperations: [],
+            nextPagingToken: "",
           });
         });
 
@@ -676,8 +679,8 @@ describe("EVM Family", () => {
 
       describe("With Blockscout", () => {
         beforeAll(() => {
-          // Mock getLastOperations for blockscout explorer
-          (etherscanAPI.default.explorerApi.getLastOperations as jest.Mock).mockResolvedValue({
+          // Mock getOperations for blockscout explorer
+          (etherscanAPI.default.explorerApi.getOperations as jest.Mock).mockResolvedValue({
             lastCoinOperations: [{ ...coinOperations[0] }, { ...coinOperations[1] }],
             lastTokenOperations: [{ ...tokenOperations[0] }, { ...tokenOperations[1] }],
             lastNftOperations: [
@@ -690,6 +693,7 @@ describe("EVM Family", () => {
               { ...internalOperations[1] },
               { ...internalOperations[2] },
             ],
+            nextPagingToken: "",
           });
           jest
             .spyOn(nodeApi, "getTokenBalance")
@@ -731,7 +735,7 @@ describe("EVM Family", () => {
           );
 
           // Verify the mock was called
-          expect(etherscanAPI.default.explorerApi.getLastOperations).toHaveBeenCalled();
+          expect(etherscanAPI.default.explorerApi.getOperations).toHaveBeenCalled();
           expect(typeof accountShape.id).toBe("string");
         });
       });

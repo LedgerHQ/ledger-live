@@ -22,7 +22,7 @@ describe.skip("devnet", () => {
           minHeight: 0,
         },
       );
-      expect(ops.length).toBeGreaterThan(0);
+      expect(ops.items.length).toBeGreaterThan(0);
     });
   });
 });

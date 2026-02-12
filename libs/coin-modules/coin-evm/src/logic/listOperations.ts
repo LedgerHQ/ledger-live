@@ -1,9 +1,4 @@
-import {
-  AssetInfo,
-  MemoNotSupported,
-  Operation,
-  Pagination,
-} from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, Cursor, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
@@ -13,6 +8,13 @@ type AssetConfig =
   | { type: "native"; internal?: boolean }
   | { type: "token"; owner: string; parents: Record<string, LiveOperation> };
 
+type ListOperationsOptions = {
+  minHeight: number;
+  cursor?: Cursor;
+  limit?: number;
+  order?: "asc" | "desc";
+};
+
 function extractStandard(op: LiveOperation): string {
   if (!op.standard) return "erc20";
   if (["ERC721", "ERC1155"].includes(op.standard)) return op.standard.toLowerCase();
@@ -21,8 +23,7 @@ function extractStandard(op: LiveOperation): string {
 }
 
 function extractType(asset: AssetConfig, op: LiveOperation): OperationType {
-  if (asset.type === "native") return op.type;
-  if (op.hash in asset.parents) return asset.parents[op.hash].type;
+  if (asset.type === "native" || asset.type === "token") return op.type;
 
   return "NONE";
 }
@@ -32,10 +33,9 @@ function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
     return BigInt(op.value.toFixed(0)) - BigInt(op.fee.toFixed(0));
   }
 
-  if (asset.type === "token" && op.hash in asset.parents) {
-    return BigInt(asset.parents[op.hash].value.toFixed(0));
-  }
-
+  // Note: always use the operation's own value here (eg: in the case of a token transfer, the token transfer amount)
+  // The operation amount must match the operation asset. If the parent operation additionally contains a native coin
+  // transfer, a separate operation will be emitted.
   return BigInt(op.value.toFixed(0));
 }
 
@@ -116,36 +116,67 @@ function toOperation(
   };
 }
 
+type ListOperationsParams = ListOperationsOptions & {
+  // TODO: remove after all callers use `cursor`.
+  pagingToken?: Cursor;
+};
+
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  pagination: Pagination,
-): Promise<[Operation<MemoNotSupported>[], string]> {
+  {
+    minHeight,
+    order = "desc",
+    limit,
+    cursor,
+    pagingToken: legacyPagingToken,
+  }: ListOperationsParams,
+): Promise<[Operation<MemoNotSupported>[], Cursor | undefined]> {
   const explorerApi = getExplorerApi(currency);
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
-    await explorerApi.getLastOperations(
-      currency,
-      address,
-      `js:2:${currency.id}:${address}:`,
-      pagination.minHeight,
-    );
+  const {
+    lastCoinOperations,
+    lastTokenOperations,
+    lastNftOperations,
+    lastInternalOperations,
+    nextPagingToken,
+  } = await explorerApi.getOperations(
+    currency,
+    address,
+    `js:2:${currency.id}:${address}:`,
+    minHeight,
+    undefined,
+    cursor ?? legacyPagingToken,
+    limit,
+    limit === undefined ? "desc" : order,
+  );
 
-  const isNativeOperation = (coinOperation: LiveOperation): boolean =>
-    ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
-  const isTokenOrInternalOperation = (coinOperation: LiveOperation): boolean =>
-    [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
-      .map(op => op.hash)
-      .includes(coinOperation.hash);
+  const tokenOrNftHashes = new Set(
+    [...lastTokenOperations, ...lastNftOperations].map(op => op.hash),
+  );
+  const tokenNftOrInternalHashes = new Set([
+    ...tokenOrNftHashes,
+    ...lastInternalOperations.map(op => op.hash),
+  ]);
 
   const parents: Record<string, LiveOperation> = {};
   const nativeOperations: Operation<MemoNotSupported>[] = [];
 
   for (const coinOperation of lastCoinOperations) {
-    if (isTokenOrInternalOperation(coinOperation)) {
+    // Store parent reference for token/NFT/internal operations
+    if (tokenNftOrInternalHashes.has(coinOperation.hash)) {
       parents[coinOperation.hash] = coinOperation;
     }
 
-    if (isNativeOperation(coinOperation)) {
+    // Emit native operation only in these cases:
+    // 1. No children token/NFT operations (pure native transfer or fees-only) => 1 operation for the native transfer
+    // 2. Has associated token/NFT operations but also has native value > 0 => 1 operation for the native transfer in
+    //    parent operation, and 1 operation for each child operation
+    // As a result:
+    //  * in the case of a simple ERC20 transfer, only 1 operation is emitted (still contains fees information in ETH)
+    //  * in the example case of a smart contact swap operation with ETH as input and an ERC20 as output, 2 separate
+    //    operations are emitted (with duplicate fees information, as it's the same on-chain transaction)
+    //  * in the case of a fees-only operation, only 1 operation is emitted with type FEES
+    if (!tokenOrNftHashes.has(coinOperation.hash) || !coinOperation.value.isZero()) {
       nativeOperations.push(toOperation(currency.id, address, { type: "native" }, coinOperation));
     }
   }
@@ -153,18 +184,17 @@ export async function listOperations(
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
   >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
-  const internalOperations = lastInternalOperations
-    .filter(op => op.hash in parents)
-    .map<Operation<MemoNotSupported>>(op =>
-      toOperation(
-        currency.id,
-        address,
-        { type: "native", internal: true },
-        // Explorers don't provide block hash and fees for internal operations.
-        // We take this values from their parent.
-        { ...op, fee: parents[op.hash].fee, blockHash: parents[op.hash].blockHash },
-      ),
+  const internalOperations = lastInternalOperations.map<Operation<MemoNotSupported>>(op => {
+    const parent = parents[op.hash];
+    return toOperation(
+      currency.id,
+      address,
+      { type: "native", internal: true },
+      // Explorers don't provide block hash and fees for internal operations.
+      // When a parent exists, we take these values from the parent; otherwise keep the internal op values.
+      parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
     );
+  });
 
   const hasValidType = (operation: Operation): boolean =>
     [
@@ -179,15 +209,23 @@ export async function listOperations(
       "NFT_OUT",
     ].includes(operation.type);
 
+  const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean => {
+    // some explorers return addresses with uppercase letters (eg eip-55 encoded addresses)
+    const isIncluded = (list: string[]): boolean =>
+      list.map(item => item.toLowerCase()).includes(address.toLowerCase());
+    return isIncluded(op.senders) || isIncluded(op.recipients);
+  };
+
   const operations = nativeOperations
     .concat(tokenOperations)
     .concat(internalOperations)
     .filter(hasValidType)
+    .filter(isAddressInvolved)
     .sort((a, b) =>
-      pagination.order === "asc"
+      order === "asc"
         ? a.tx.date.getTime() - b.tx.date.getTime()
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );
 
-  return [operations, ""];
+  return [operations, nextPagingToken];
 }

@@ -69,9 +69,12 @@ describe("get operations", () => {
 
   it("could return no operation", async () => {
     logicGetTransactions.mockResolvedValue([[], ""]);
-    const [operations, token] = await api.listOperations("addr", { minHeight: 100, order: "asc" });
+    const { items: operations, next: token } = await api.listOperations("addr", {
+      minHeight: 100,
+      order: "asc",
+    });
     expect(operations).toEqual([]);
-    expect(token).toEqual("");
+    expect(token).toBeUndefined();
   });
 
   const op: Operation = {
@@ -96,7 +99,10 @@ describe("get operations", () => {
 
   it("only does 1 iteration", async () => {
     logicGetTransactions.mockResolvedValue([[op], "888"]);
-    const [operations, token] = await api.listOperations("addr", { minHeight: 100, order: "asc" });
+    const { items: operations, next: token } = await api.listOperations("addr", {
+      minHeight: 100,
+      order: "asc",
+    });
     expect(logicGetTransactions).toHaveBeenCalledTimes(1);
     expect(operations.length).toBe(1);
     expect(token).toEqual("888");

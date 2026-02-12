@@ -59,8 +59,8 @@ describe("EVM Family", () => {
         const explorerA = getExplorerApi({ id: "etherscan-coin-no-cache" } as any);
         const explorerB = getExplorerApi({ id: "blockscout-coin-no-cache" } as any);
 
-        expect(explorerA).toBe(etherscanLikeApi.explorerApiNoChache);
-        expect(explorerB).toBe(etherscanLikeApi.explorerApiNoChache);
+        expect(explorerA).toBe(etherscanLikeApi.explorerApiNoCache);
+        expect(explorerB).toBe(etherscanLikeApi.explorerApiNoCache);
       });
 
       it("should return the ledger api", () => {
