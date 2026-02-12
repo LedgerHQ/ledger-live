@@ -4882,17 +4882,17 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@taquito/ledger-signer':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
+        specifier: ^24.0.1
+        version: 24.0.1
       '@taquito/rpc':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
+        specifier: ^24.0.1
+        version: 24.0.1
       '@taquito/taquito':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
+        specifier: ^24.0.1
+        version: 24.0.1
       '@taquito/utils':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
+        specifier: ^24.0.1
+        version: 24.0.1
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -4922,8 +4922,8 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@taquito/local-forging':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
+        specifier: ^24.0.1
+        version: 24.0.1
       '@types/invariant':
         specifier: ^2.2.37
         version: 2.2.37
@@ -6290,8 +6290,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@taquito/ledger-signer':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
+        specifier: ^24.0.1
+        version: 24.0.1
       '@ton-community/ton-ledger':
         specifier: ^7.3.0
         version: 7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
@@ -17879,23 +17879,53 @@ packages:
   '@stablelib/blake2b@1.0.1':
     resolution: {integrity: sha512-B3KyKoBAjkIFeH7romcF96i+pVFYk7K2SBQ1pZvaxV+epSBXJ+n0C66esUhyz6FF+5FbdQVm77C5fzGFcEZpKA==}
 
+  '@stablelib/bytes@1.0.1':
+    resolution: {integrity: sha512-Kre4Y4kdwuqL8BR2E9hV/R5sOrUj6NanZaZis0V6lX5yzqC3hBuVSDXUIBqQv/sCpmuWRiHLwqiT1pqqjuBXoQ==}
+
+  '@stablelib/constant-time@1.0.1':
+    resolution: {integrity: sha512-tNOs3uD0vSJcK6z1fvef4Y+buN7DXhzHDPqRLSXUel1UfqMB1PWNsnnAezrKfEwTLpN0cGH2p9NNjs6IqeD0eg==}
+
   '@stablelib/ed25519@1.0.3':
     resolution: {integrity: sha512-puIMWaX9QlRsbhxfDc5i+mNPMY+0TmQEskunY1rZEBPi1acBCVQAhnsk/1Hk50DGPtVsZtAWQg4NHGlVaO9Hqg==}
 
   '@stablelib/hash@1.0.1':
     resolution: {integrity: sha512-eTPJc/stDkdtOcrNMZ6mcMK1e6yBbqRBaNW55XA1jU8w/7QdnCF0CmMmOD1m7VSkBR44PWrMHU2l6r8YEQHMgg==}
 
+  '@stablelib/hmac@1.0.1':
+    resolution: {integrity: sha512-V2APD9NSnhVpV/QMYgCVMIYKiYG6LSqw1S65wxVoirhU/51ACio6D4yDVSwMzuTJXWZoVHbDdINioBwKy5kVmA==}
+
   '@stablelib/int@1.0.1':
     resolution: {integrity: sha512-byr69X/sDtDiIjIV6m4roLVWnNNlRGzsvxw+agj8CIEazqWGOQp2dTYgQhtyVXV9wpO6WyXRQUzLV/JRNumT2w==}
 
+  '@stablelib/keyagreement@1.0.1':
+    resolution: {integrity: sha512-VKL6xBwgJnI6l1jKrBAfn265cspaWBPAPEc62VBQrWHLqVgNRE09gQ/AnOEyKUWrrqfD+xSQ3u42gJjLDdMDQg==}
+
+  '@stablelib/nacl@1.0.4':
+    resolution: {integrity: sha512-PJ2U/MrkXSKUM8C4qFs87WeCNxri7KQwR8Cdwm9q2sweGuAtTvOJGuW0F3N+zn+ySLPJA98SYWSSpogMJ1gCmw==}
+
+  '@stablelib/pbkdf2@1.0.1':
+    resolution: {integrity: sha512-d5jwK6jW1DkMyzqY8D1Io+fRXcsUVr95lk5LKX9ghaUdAITTc1ZL0bff+R0IrwSixbHluxhnivG7vDw59AZ/Nw==}
+
+  '@stablelib/poly1305@1.0.1':
+    resolution: {integrity: sha512-1HlG3oTSuQDOhSnLwJRKeTRSAdFNVB/1djy2ZbS35rBSJ/PFqx9cf9qatinWghC2UbfOYD8AcrtbUQl8WoxabA==}
+
   '@stablelib/random@1.0.2':
     resolution: {integrity: sha512-rIsE83Xpb7clHPVRlBj8qNe5L8ISQOzjghYQm/dZ7VaM2KHYwMW5adjQjrzTZCchFnNCNhkwtnOBa9HTMJCI8w==}
+
+  '@stablelib/salsa20@1.0.2':
+    resolution: {integrity: sha512-nfjKzw0KTKrrKBasEP+j7UP4I8Xudom8lVZIBCp0kQNARXq72IlSic0oabg2FC1NU68L4RdHrNJDd8bFwrphYA==}
 
   '@stablelib/sha512@1.0.1':
     resolution: {integrity: sha512-13gl/iawHV9zvDKciLo1fQ8Bgn2Pvf7OV6amaRVKiq3pjQ3UmEpXxWiAfV8tYjUpeZroBxtyrwtdooQT/i3hzw==}
 
   '@stablelib/wipe@1.0.1':
     resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
+
+  '@stablelib/x25519@1.0.3':
+    resolution: {integrity: sha512-KnTbKmUhPhHavzobclVJQG5kuivH+qDLpe84iRqX3CLrKp881cF160JvXJ+hjn1aMyCwYOKeIZefIH/P5cJoRw==}
+
+  '@stablelib/xsalsa20@1.0.2':
+    resolution: {integrity: sha512-7XdBGbcNgBShmuhDXv1G1WPVCkjZdkb1oPMzSidO7Fve0MHntH6TjFkj5bfLI+aRE+61weO076vYpP/jmaAYog==}
 
   '@stacks/common@4.3.5':
     resolution: {integrity: sha512-UuViiQ7fn3vdtTe3739aRzbl+wbukekeQuXgqt8d7nB2HC2HodD7GcHhpUga165cO35CD6lQUtj3vXxJb5Ga+A==}
@@ -18988,41 +19018,45 @@ packages:
   '@tanstack/virtual-core@3.13.16':
     resolution: {integrity: sha512-njazUC8mDkrxWmyZmn/3eXrDcP8Msb3chSr4q6a65RmwdSbMlMCdnOphv6/8mLO7O3Fuza5s4M4DclmvAO5w0w==}
 
-  '@taquito/core@23.0.0-beta.1':
-    resolution: {integrity: sha512-URKfkBVrAWyB8DmiGiI8DBkSuW5mM7R/Oi2K/ydW7Kro+UneGwI6vAEiqIfwKN203CaA3FCWcn6hM9nUPigZPQ==}
-    engines: {node: '>=18'}
+  '@taquito/core@24.0.1':
+    resolution: {integrity: sha512-WnfWOmwOJ1KNkdGYa6DenVzSOVfmv7kHUiF+9Z9VtxmxOTPJf9mX/iBSmIeCuSJsOIkXJkswox5CTvrsnfXDcw==}
+    engines: {node: '>=20'}
 
-  '@taquito/http-utils@23.0.0-beta.1':
-    resolution: {integrity: sha512-sF8FEguCTm+NuILpLvtS0yHQixH+sQL9RktOyTvBwUxgBo+d0+V2V/LUjNYLtAVzO1kdHWTM2h44zLP39hvgvw==}
-    engines: {node: '>=18'}
+  '@taquito/http-utils@24.0.1':
+    resolution: {integrity: sha512-oNyxXtuonKKCnYy/eT9uzjN46i1KbsI2iJB+nf6FFGb4lJFHrXDiL1Tg1aITpv5Jy/aQmuCveh7fBFkfS4ekhQ==}
+    engines: {node: '>=20'}
 
-  '@taquito/ledger-signer@23.0.0-beta.1':
-    resolution: {integrity: sha512-cvZTECjcLyn2w1fqzxVwvgt8UE0amJ7giZSuNJArCT/GL/paPj6Wv2euAz9ZtlQBtlNAIgXdOrjBPQCOseWBsg==}
-    engines: {node: '>=18'}
+  '@taquito/ledger-signer@24.0.1':
+    resolution: {integrity: sha512-Z+wpOC0IE7cGQlI1yB3P6Y2NE4mbf3kGLhCr8QRuSFjcHBpbzDdrpgylDA6zFI3LLUDb+CZUBxO/W+EZlEi0KQ==}
+    engines: {node: '>=20'}
 
-  '@taquito/local-forging@23.0.0-beta.1':
-    resolution: {integrity: sha512-iNAGDLGrp8FRAiSh33J+r57XNok2U+xcJEbiEh80zKlXx+OcsR6BfWPgA+yM4Gw8HJkO01b12GnUXuuERmpQrA==}
-    engines: {node: '>=18'}
+  '@taquito/local-forging@24.0.1':
+    resolution: {integrity: sha512-GY+584pVcohF9kFHqA+grX8/b8fYbMcyaXiCA/QLA0HJSImeDX3U/tOvZhAmAZhn1X6OcThHvC2PrTtqCrsvgA==}
+    engines: {node: '>=20'}
 
-  '@taquito/michel-codec@23.0.0-beta.1':
-    resolution: {integrity: sha512-ZOn8/ueL4f6LBAxskm55jK3fj5bCGGEZ76utdFbahO5g9sJ1MVUlIdlIrmTEEC85Cgq75O1v0ocBKx9HTQSxOQ==}
-    engines: {node: '>=18'}
+  '@taquito/michel-codec@24.0.1':
+    resolution: {integrity: sha512-iPw2qQL+i8xWu1t843ztejMPHO3nJ4mY7LOBuoaSfelfGyjl5SQjYHxwI0DS3ph/KhXlfm95HcYwEILRqGhisg==}
+    engines: {node: '>=20'}
 
-  '@taquito/michelson-encoder@23.0.0-beta.1':
-    resolution: {integrity: sha512-15G9P2qmF3AZ/1wSklvULp3qTvlsz6VqZi9MEjz26bnl09aNBCOX0wRTr4fAz8MQcYN3s7c2gQuiAojtPz84zg==}
-    engines: {node: '>=18'}
+  '@taquito/michelson-encoder@24.0.1':
+    resolution: {integrity: sha512-c5hkyZegUo9l74Iia38oxumO8Oh3zbWZz2Bjvx0529N3bDeXu76EXeVwViNL8v/Ug7RVtGj07tvcUmFyErmQ9g==}
+    engines: {node: '>=20'}
 
-  '@taquito/rpc@23.0.0-beta.1':
-    resolution: {integrity: sha512-RggdLEEtAV69ULiwuHK2nAyB8KP9YonmG0eGeev9PoHGLZoO2Ic5Zpe/s5CVn++fw/yBCQUW01sKSCwwKjWIZA==}
-    engines: {node: '>=18'}
+  '@taquito/rpc@24.0.1':
+    resolution: {integrity: sha512-6NRgixtZKh6w2ivsQtFkPgYzYYQCtoXyI2ph7WMKbrKERcGxzuPM12MZb1Jwx8EepOyWqDwstSH1uH3XAWdjaA==}
+    engines: {node: '>=20'}
 
-  '@taquito/taquito@23.0.0-beta.1':
-    resolution: {integrity: sha512-eBs0y+SZrLYD45r6o+BmQzxtYaVdROLfZvIHys8cU9zqiLYglVko+hm49cio6cFkMi9yZiO+yxgen069mF4rOA==}
-    engines: {node: '>=18'}
+  '@taquito/signer@24.0.1':
+    resolution: {integrity: sha512-8khsDYeI/ByatuuAbD7gIhCGLpouU5O/0wGKRuvHcwXxgXBD8EKtY/MK+5QIu8yesNdokpiQc6m4W2YUh14kng==}
+    engines: {node: '>=20'}
 
-  '@taquito/utils@23.0.0-beta.1':
-    resolution: {integrity: sha512-2L9TllKobYvH4xMoJxPYYXrThLevbTBF2E+MhfzvFhPXnkdOhqRG0+3hgGspXlCJSM2t65X0R7V6IQPRaVZyfw==}
-    engines: {node: '>=18'}
+  '@taquito/taquito@24.0.1':
+    resolution: {integrity: sha512-ltGPi+n7Buws5du7bb8jHq13LKsnzfWQCyuKDg0rgXApfESkxLkYap6hZDKeKdz+95YFCMPW+gZvRfEZ847Xlw==}
+    engines: {node: '>=20'}
+
+  '@taquito/utils@24.0.1':
+    resolution: {integrity: sha512-YNRoCjps42vCMkW9oTpE7CnrvUPoSOWy7L49IAueRGcJT/pgyEZZT6BLEc2ahP+jAqFJK8lBpKV9qhL6NTbXWg==}
+    engines: {node: '>=20'}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -24439,6 +24473,9 @@ packages:
 
   fast-stable-stringify@1.0.0:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
+
+  fast-text-encoding@1.0.6:
+    resolution: {integrity: sha512-VhXlQgj9ioXCqGstD37E/HBeqEGV/qOD/kmbVG8h5xKBYvM1L3lR1Zn4555cQ8GkYbJa8aJSipLPndE1k6zK2w==}
 
   fast-uri@3.0.3:
     resolution: {integrity: sha512-aLrHthzCjH5He4Z2H9YZ+v6Ujb9ocRuW6ZzkJQOrTxleEijANq4v1TsaPaVG1PZcuurEzrLcWRyYBYXD5cEiaw==}
@@ -32464,6 +32501,10 @@ packages:
     resolution: {integrity: sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==}
     engines: {node: '>=18'}
 
+  tr46@6.0.0:
+    resolution: {integrity: sha512-bLVMLPtstlZ4iMQHpFHTR7GAGj2jxi8Dg0s2h2MafAE4uSWF98FC/3MomU51iQAMf8/qDUbKWf5GxuvvVcXEhw==}
+    engines: {node: '>=20'}
+
   trace-event-lib@1.4.1:
     resolution: {integrity: sha512-TOgFolKG8JFY+9d5EohGWMvwvteRafcyfPWWNIqcuD1W/FUvxWcy2MSCZ/beYHM63oYPHYHCd3tkbgCctHVP7w==}
     engines: {node: '>=12.0.0'}
@@ -33510,6 +33551,10 @@ packages:
     resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
     engines: {node: '>=12'}
 
+  webidl-conversions@8.0.1:
+    resolution: {integrity: sha512-BMhLD/Sw+GbJC21C/UgyaZX41nPt8bUTg+jWyDeg7e7YN4xOM05YPSIXceACnXVtqyEw/LMClUQMtMZ+PGGpqQ==}
+    engines: {node: '>=20'}
+
   webpack-bundle-analyzer@4.10.2:
     resolution: {integrity: sha512-vJptkMm9pk5si4Bv922ZbKLV8UTT4zib4FPgXMhgzUny0bfDDkLXAVQs3ly3fS4/TN9ROFtb0NFrm04UXFE/Vw==}
     engines: {node: '>= 10.13.0'}
@@ -33625,6 +33670,10 @@ packages:
   whatwg-url@14.2.0:
     resolution: {integrity: sha512-De72GdQZzNTUBBChsXueQUnPKDkg/5A5zp7pFDuQAj5UFoENpiACU0wlCvzpAGnTkj++ihpKwKyYewn/XNUbKw==}
     engines: {node: '>=18'}
+
+  whatwg-url@15.1.0:
+    resolution: {integrity: sha512-2ytDk0kiEj/yu90JOAp44PVPUkO9+jVhyf+SybKlRHSDlvOOZhdPIrr7xTH64l4WixO2cP+wQIcgujkGBPPz6g==}
+    engines: {node: '>=20'}
 
   whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
@@ -46543,6 +46592,10 @@ snapshots:
       '@stablelib/hash': 1.0.1
       '@stablelib/wipe': 1.0.1
 
+  '@stablelib/bytes@1.0.1': {}
+
+  '@stablelib/constant-time@1.0.1': {}
+
   '@stablelib/ed25519@1.0.3':
     dependencies:
       '@stablelib/random': 1.0.2
@@ -46551,11 +46604,47 @@ snapshots:
 
   '@stablelib/hash@1.0.1': {}
 
+  '@stablelib/hmac@1.0.1':
+    dependencies:
+      '@stablelib/constant-time': 1.0.1
+      '@stablelib/hash': 1.0.1
+      '@stablelib/wipe': 1.0.1
+
   '@stablelib/int@1.0.1': {}
+
+  '@stablelib/keyagreement@1.0.1':
+    dependencies:
+      '@stablelib/bytes': 1.0.1
+
+  '@stablelib/nacl@1.0.4':
+    dependencies:
+      '@stablelib/poly1305': 1.0.1
+      '@stablelib/random': 1.0.2
+      '@stablelib/wipe': 1.0.1
+      '@stablelib/x25519': 1.0.3
+      '@stablelib/xsalsa20': 1.0.2
+
+  '@stablelib/pbkdf2@1.0.1':
+    dependencies:
+      '@stablelib/binary': 1.0.1
+      '@stablelib/hash': 1.0.1
+      '@stablelib/hmac': 1.0.1
+      '@stablelib/wipe': 1.0.1
+
+  '@stablelib/poly1305@1.0.1':
+    dependencies:
+      '@stablelib/constant-time': 1.0.1
+      '@stablelib/wipe': 1.0.1
 
   '@stablelib/random@1.0.2':
     dependencies:
       '@stablelib/binary': 1.0.1
+      '@stablelib/wipe': 1.0.1
+
+  '@stablelib/salsa20@1.0.2':
+    dependencies:
+      '@stablelib/binary': 1.0.1
+      '@stablelib/constant-time': 1.0.1
       '@stablelib/wipe': 1.0.1
 
   '@stablelib/sha512@1.0.1':
@@ -46565,6 +46654,18 @@ snapshots:
       '@stablelib/wipe': 1.0.1
 
   '@stablelib/wipe@1.0.1': {}
+
+  '@stablelib/x25519@1.0.3':
+    dependencies:
+      '@stablelib/keyagreement': 1.0.1
+      '@stablelib/random': 1.0.2
+      '@stablelib/wipe': 1.0.1
+
+  '@stablelib/xsalsa20@1.0.2':
+    dependencies:
+      '@stablelib/binary': 1.0.1
+      '@stablelib/salsa20': 1.0.2
+      '@stablelib/wipe': 1.0.1
 
   '@stacks/common@4.3.5':
     dependencies:
@@ -47891,84 +47992,104 @@ snapshots:
 
   '@tanstack/virtual-core@3.13.16': {}
 
-  '@taquito/core@23.0.0-beta.1':
+  '@taquito/core@24.0.1':
     dependencies:
       json-stringify-safe: 5.0.1
 
-  '@taquito/http-utils@23.0.0-beta.1(patch_hash=fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3)':
+  '@taquito/http-utils@24.0.1(patch_hash=fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3)':
     dependencies:
-      '@taquito/core': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/ledger-signer@23.0.0-beta.1':
+  '@taquito/ledger-signer@24.0.1':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@stablelib/blake2b': 1.0.1
-      '@taquito/core': 23.0.0-beta.1
-      '@taquito/taquito': 23.0.0-beta.1
-      '@taquito/utils': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
+      '@taquito/taquito': 24.0.1
+      '@taquito/utils': 24.0.1
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/local-forging@23.0.0-beta.1':
+  '@taquito/local-forging@24.0.1':
     dependencies:
-      '@taquito/core': 23.0.0-beta.1
-      '@taquito/utils': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
+      '@taquito/utils': 24.0.1
       bignumber.js: 9.1.2
+      fast-text-encoding: 1.0.6
+      whatwg-url: 15.1.0
 
-  '@taquito/michel-codec@23.0.0-beta.1':
+  '@taquito/michel-codec@24.0.1':
     dependencies:
-      '@taquito/core': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
 
-  '@taquito/michelson-encoder@23.0.0-beta.1':
+  '@taquito/michelson-encoder@24.0.1':
     dependencies:
-      '@taquito/core': 23.0.0-beta.1
-      '@taquito/rpc': 23.0.0-beta.1
-      '@taquito/utils': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
+      '@taquito/rpc': 24.0.1
+      '@taquito/signer': 24.0.1
+      '@taquito/utils': 24.0.1
       bignumber.js: 9.1.2
-      elliptic: 6.6.1
       fast-json-stable-stringify: 2.1.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/rpc@23.0.0-beta.1':
+  '@taquito/rpc@24.0.1':
     dependencies:
-      '@taquito/core': 23.0.0-beta.1
-      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3)
-      '@taquito/utils': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
+      '@taquito/http-utils': 24.0.1(patch_hash=fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3)
+      '@taquito/utils': 24.0.1
       bignumber.js: 9.1.2
+      whatwg-url: 15.1.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/taquito@23.0.0-beta.1':
+  '@taquito/signer@24.0.1':
     dependencies:
-      '@taquito/core': 23.0.0-beta.1
-      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3)
-      '@taquito/local-forging': 23.0.0-beta.1
-      '@taquito/michel-codec': 23.0.0-beta.1
-      '@taquito/michelson-encoder': 23.0.0-beta.1
-      '@taquito/rpc': 23.0.0-beta.1
-      '@taquito/utils': 23.0.0-beta.1
+      '@noble/curves': 1.9.7
+      '@stablelib/blake2b': 1.0.1
+      '@stablelib/ed25519': 1.0.3
+      '@stablelib/hmac': 1.0.1
+      '@stablelib/nacl': 1.0.4
+      '@stablelib/pbkdf2': 1.0.1
+      '@stablelib/sha512': 1.0.1
+      '@taquito/core': 24.0.1
+      '@taquito/utils': 24.0.1
+      '@types/bn.js': 5.1.5
+      bip39: 3.1.0
+      bn.js: 5.2.2
+      pbkdf2: 3.1.2
+      typedarray-to-buffer: 4.0.0
+
+  '@taquito/taquito@24.0.1':
+    dependencies:
+      '@taquito/core': 24.0.1
+      '@taquito/http-utils': 24.0.1(patch_hash=fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3)
+      '@taquito/local-forging': 24.0.1
+      '@taquito/michel-codec': 24.0.1
+      '@taquito/michelson-encoder': 24.0.1
+      '@taquito/rpc': 24.0.1
+      '@taquito/signer': 24.0.1
+      '@taquito/utils': 24.0.1
       bignumber.js: 9.1.2
       rxjs: 7.8.2
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/utils@23.0.0-beta.1':
+  '@taquito/utils@24.0.1':
     dependencies:
       '@noble/curves': 1.9.7
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
-      '@taquito/core': 23.0.0-beta.1
+      '@taquito/core': 24.0.1
       '@types/bs58check': 2.1.2
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58check: 3.0.1
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      elliptic: 6.6.1
       typedarray-to-buffer: 4.0.0
 
   '@testing-library/dom@10.4.0':
@@ -55170,6 +55291,8 @@ snapshots:
   fast-sha256@1.3.0: {}
 
   fast-stable-stringify@1.0.0: {}
+
+  fast-text-encoding@1.0.6: {}
 
   fast-uri@3.0.3: {}
 
@@ -66900,7 +67023,7 @@ snapshots:
 
   tr46@0.0.3: {}
 
-  tr46@5.1.1:
+  tr46@6.0.0:
     dependencies:
       punycode: 2.3.1
 
@@ -68405,6 +68528,8 @@ snapshots:
 
   webidl-conversions@7.0.0: {}
 
+  webidl-conversions@8.0.1: {}
+
   webpack-bundle-analyzer@4.10.2:
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
@@ -68602,10 +68727,20 @@ snapshots:
       punycode: 2.3.1
       webidl-conversions: 5.0.0
 
+  whatwg-url@14.1.0:
+    dependencies:
+      tr46: 5.1.1
+      webidl-conversions: 7.0.0
+
   whatwg-url@14.2.0:
     dependencies:
       tr46: 5.1.1
       webidl-conversions: 7.0.0
+
+  whatwg-url@15.1.0:
+    dependencies:
+      tr46: 6.0.0
+      webidl-conversions: 8.0.1
 
   whatwg-url@5.0.0:
     dependencies:
