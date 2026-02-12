@@ -1,16 +1,16 @@
 ---
-"@ledgerhq/coin-internet_computer": patch
-"@ledgerhq/coin-multiversx": patch
-"@ledgerhq/coin-algorand": patch
-"@ledgerhq/coin-polkadot": patch
-"@ledgerhq/coin-cosmos": patch
-"@ledgerhq/coin-aptos": patch
-"@ledgerhq/coin-kaspa": patch
-"@ledgerhq/coin-mina": patch
-"@ledgerhq/coin-tron": patch
-"@ledgerhq/coin-sui": patch
-"@ledgerhq/coin-ton": patch
-"@ledgerhq/coin-filecoin": patch
+"@ledgerhq/coin-internet_computer": minor
+"@ledgerhq/coin-multiversx": minor
+"@ledgerhq/coin-algorand": minor
+"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/coin-cosmos": minor
+"@ledgerhq/coin-aptos": minor
+"@ledgerhq/coin-kaspa": minor
+"@ledgerhq/coin-mina": minor
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-sui": minor
+"@ledgerhq/coin-ton": minor
+"@ledgerhq/coin-filecoin": minor
 ---
 
 chore(coin-modules): align `tsconfig` and `eslintrc`
