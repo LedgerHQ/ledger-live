@@ -162,12 +162,12 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           }),
         );
       },
-      "storage.get": ({ key, storeId }) => {
-        return getStoreValue(key, storeId);
-      },
-      "storage.set": ({ key, value, storeId }) => {
-        setStoreValue(key, value, storeId);
-      },
+      "storage.get": createProtectedStorageHandler(manifest, ({ key, storeId }) =>
+        getStoreValue(key, storeId),
+      ),
+      "storage.set": createProtectedStorageHandler(manifest, ({ key, value, storeId }) =>
+        setStoreValue(key, value, storeId),
+      ),
       "transaction.sign": ({
         account,
         parentAccount,
@@ -565,3 +565,36 @@ function DefaultLoader({ isLoading }: { isLoading: boolean }) {
 }
 
 WalletAPIWebview.displayName = "WalletAPIWebview";
+
+type StorageGetArgs = {
+  key: string;
+  storeId: string;
+};
+
+type StorageSetArgs = {
+  key: string;
+  value: unknown;
+  storeId: string;
+};
+
+type StorageHandlerArgs = StorageGetArgs | StorageSetArgs;
+
+function createProtectedStorageHandler<T extends StorageHandlerArgs, R>(
+  manifest: AppManifest,
+  handler: (args: T) => R,
+) {
+  return (args: T) => {
+    const { storeId } = args;
+
+    console.log("manifest", manifest);
+
+    // Either the live app can access storage created by itself OR storage explitly listed in the manifest's permissions
+    if (storeId !== manifest.id && (!manifest.storage || !manifest.storage.includes(storeId))) {
+      // ❗ If manifest doesn't have permission, throw
+      throw new Error(`Live App "${manifest.id}" is not permitted to access storage "${storeId}".`);
+    }
+
+    // Forward call to original handler
+    return handler(args);
+  };
+}

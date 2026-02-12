@@ -6284,8 +6284,8 @@ importers:
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^2.0.1
-        version: 2.0.1(@ton/crypto@3.3.0)(react@18.3.1)
+        specifier: ^3.0.0
+        version: 3.0.0(@ton/crypto@3.3.0)
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -15048,14 +15048,6 @@ packages:
 
   '@ledgerhq/wallet-api-core@1.27.0':
     resolution: {integrity: sha512-2arGTtqK/YtleQBV6H2a3AC4a9GJeZAbQaeGn+3un8Pbe8aGSuHLd3F7/v4sDAA0/QHCtcb+CvIJj+OR4ONyxg==}
-
-  '@ledgerhq/wallet-api-server@2.0.1':
-    resolution: {integrity: sha512-24JhARZ2AilkERFNtwHUMSlYmpfE60KCMl3cmjjr1/zouoq5y8mNwgr/RfRz3UJMTMnrfb9u9eKOa4Lwa9pLhg==}
-    peerDependencies:
-      react: ^17.x || ^18.x || ^19.x
-    peerDependenciesMeta:
-      react:
-        optional: true
 
   '@ledgerhq/wallet-api-server@3.0.0':
     resolution: {integrity: sha512-ilzmIgos3ITlSKSSqjbZqyBNPrI4u0Rj3GCZcC/dWIQ9+HXoV1tuWWX6yKpfVbrHvf6PqbkIH2L618MLFjHP/A==}
@@ -41799,17 +41791,6 @@ snapshots:
       bignumber.js: 9.1.2
       uuid: 9.0.1
       zod: 3.25.76
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-server@2.0.1(@ton/crypto@3.3.0)(react@18.3.1)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.27.0(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-      picomatch: 4.0.3
-    optionalDependencies:
-      react: 18.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
