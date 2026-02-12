@@ -15,7 +15,8 @@ import {
   ExchangeFill,
   Gift,
   ShieldCheck,
-  Chart2,
+  Chart5,
+  Chart5Fill,
   Compass,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
@@ -23,6 +24,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import type { SideBarViewModel } from "./types";
 import { AnimatedLogo } from "../AnimatedLogo";
+import { cn } from "LLD/utils/cn";
 
 export interface SideBarViewProps {
   readonly viewModel: SideBarViewModel;
@@ -32,8 +34,13 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="grid h-full grid-rows-[auto_1fr] gap-24 pt-24 pb-40 pl-32">
-      <div className="flex h-48 w-0 items-center justify-center justify-self-center overflow-visible">
+    <div className="grid h-full grid-rows-[auto_1fr] gap-24 pt-32 pb-40 pl-32">
+      <div
+        className={cn(
+          "flex h-48 w-0 items-center justify-center justify-self-center overflow-visible transition-transform duration-300",
+          viewModel.collapsed && "translate-x-2",
+        )}
+      >
         <AnimatedLogo collapsed={viewModel.collapsed} />
       </div>
 
@@ -65,8 +72,8 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
             />
             <SideBarItem
               value="earn"
-              icon={Chart2}
-              activeIcon={Chart2}
+              icon={Chart5}
+              activeIcon={Chart5Fill}
               label={viewModel.earnLabel}
             />
             <SideBarItem

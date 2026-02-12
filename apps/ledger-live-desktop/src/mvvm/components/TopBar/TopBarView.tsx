@@ -36,7 +36,7 @@ const TopBarView = ({ actionsList }: TopBarViewProps) => {
   }, [navigate, location]);
 
   return (
-    <NavBar className="items-center px-32 py-24">
+    <NavBar className="items-center px-32 pt-32 pb-24">
       <NavBarTitle className="h-48">
         <Breadcrumb />
       </NavBarTitle>
