@@ -276,7 +276,7 @@ jobs:
       - name: Publish report on Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_e2e_llm_fail_video_retry
         with:
           platform: ${{ github.event_name == 'schedule' && 'linux-speculos-nightly' || (inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos') }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -284,7 +284,7 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Get summary
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+        if: ${{ !cancelled() }}
         id: summary
         uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
         with:

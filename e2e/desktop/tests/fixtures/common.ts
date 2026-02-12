@@ -258,4 +258,9 @@ export const test = base.extend<TestFixtures>({
   },
 });
 
+// Force every test to fail (e.g. to measure Allure report size with failure artifacts).
+test.afterEach(async () => {
+  throw new Error("Forced failure for report size investigation");
+});
+
 export default test;
