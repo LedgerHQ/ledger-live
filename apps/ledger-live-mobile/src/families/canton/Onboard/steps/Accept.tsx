@@ -152,17 +152,12 @@ export default function Accept({ navigation, route }: Props) {
   }, [navigation, accountsToAdd, cryptoCurrency]);
 
   const createSubscription = useCallback(
-    <T,>(
-      observable: Observable<T>,
-      onSuccess: (value: T) => void,
-      onError?: (error: Error) => void,
-    ) => {
+    <T,>(observable: Observable<T>, onSuccess: (value: T) => void) => {
       cleanupSubscription();
-      const errorHandler = onError || handleSubscriptionError;
       const subscription = observable.subscribe({
         next: onSuccess,
         error: (error: Error) => {
-          errorHandler(error);
+          handleSubscriptionError(error);
         },
       });
       subscriptionRef.current = subscription;

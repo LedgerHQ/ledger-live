@@ -23,12 +23,13 @@ permissions:
 jobs:
   scan-sonar:
     name: "Sonar Cloud"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: fetch develop
         run: |
@@ -84,10 +85,10 @@ jobs:
             cat ./coverage-libs/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
 
-      - uses: SonarSource/sonarqube-scan-action@v4
+      - uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.sources=apps,libs
-            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
+            "-Dsonar.sources=apps,libs"
+            "-Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml"
