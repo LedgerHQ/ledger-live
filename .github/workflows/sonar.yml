@@ -83,6 +83,7 @@ jobs:
           cat libs/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
           cat libs/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
-      - uses: SonarSource/sonarqube-scan-action@v6
+      - name: Sonarqube Scan
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
