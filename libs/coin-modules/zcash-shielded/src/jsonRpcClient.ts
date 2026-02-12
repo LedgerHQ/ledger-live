@@ -1,4 +1,4 @@
-import network from '@ledgerhq/live-network';
+import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import { LOG_TYPE } from "./consts";
 
