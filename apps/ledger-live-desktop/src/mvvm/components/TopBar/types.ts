@@ -10,7 +10,7 @@ type IconComponent =
 
 type TopBarAction = {
   label: string;
-  tooltip: string;
+  tooltip: string | null;
   isInteractive: boolean;
   onClick: () => void;
   icon: IconComponent;
