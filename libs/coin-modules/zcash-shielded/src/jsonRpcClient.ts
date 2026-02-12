@@ -1,3 +1,4 @@
+import network from '@ledgerhq/live-network';
 import { log } from "@ledgerhq/logs";
 import { LOG_TYPE } from "./consts";
 
@@ -119,29 +120,20 @@ export class JsonRpcClient {
   private async jsonRpcRequest<ResponseResult extends object>(
     args: JsonRpcRequestArgs,
   ): Promise<ResponseResult | undefined> {
-    const resp = await fetch(this.serverUrl, {
+    const { data } = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
+      url: this.serverUrl,
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
+      data: {
         jsonrpc: "2.0",
         ...args,
         id: 1,
-      }),
+      },
     });
 
-    if (resp.ok) {
-      const body: JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError = await resp.json();
-
-      if (body?.result) {
-        return body.result;
-      } else {
-        log(LOG_TYPE, `error: Empty response result from server - ${body?.error?.message}`);
-        return;
-      }
+    if (data.error || !data.result) {
+      log(LOG_TYPE, `error: Empty dataonse result from server - ${data?.error?.message}`);
     } else {
-      throw new Error(`Server error: ${resp.status} - ${resp.statusText}`);
+      return data.result;
     }
   }
 

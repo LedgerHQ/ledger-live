@@ -3,9 +3,11 @@ import { blockWithMyTx, txNotShielded } from "./testAccounts";
 import { server } from "../mocks/node";
 import { HttpResponse, http } from "msw";
 
-beforeAll(() => server.listen({
-  onUnhandledRequest: 'error',
-}));
+beforeAll(() =>
+  server.listen({
+    onUnhandledRequest: "error",
+  }),
+);
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -42,30 +44,26 @@ describe("rpcClient", () => {
 
   describe("server error", () => {
     test("rethrows on server errors", async () => {
-      server.use(
-        http.post(JSON_RPC_SERVER, () => new HttpResponse(null, {status: 500}))
-      );
+      server.use(http.post(JSON_RPC_SERVER, () => new HttpResponse(null, { status: 500 })));
       const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
 
       try {
         await jsonRpcClient.getRawTransaction(txNotShielded.txid);
       } catch (error) {
-        expect(error.message).toEqual("Server error: 500 - Internal Server Error")
+        expect(error.message).toMatch(/^API HTTP 500 /);
       }
     });
   });
 
   describe("network error", () => {
     test("throws on network errors", async () => {
-      server.use(
-        http.post(JSON_RPC_SERVER, () => HttpResponse.error())
-      );
+      server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.error()));
       const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
 
       try {
         await jsonRpcClient.getRawTransaction(txNotShielded.txid);
       } catch (error) {
-        expect(error.message).toEqual("Failed to fetch");
+        expect(error.message).toEqual("Network error");
       }
     });
   });
