@@ -179,7 +179,7 @@ describe("listOperations", () => {
           extra: {},
         },
         // Internal operation WITH matching parent coin operation (coin-op-6).
-        // Should be enriched with parent's fee (0) and blockHash ("coin-op-6-block-hash").
+        // Should be enriched with parent's fee (15) and blockHash ("coin-op-6-block-hash").
         {
           id: "internal-op-2",
           accountId: "",
