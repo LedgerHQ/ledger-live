@@ -205,6 +205,15 @@ describe("getFeesForTransaction", () => {
     expect(fees).toEqual(BigNumber(4));
   });
 
+  it("should return fees for lock when amount is NaN (valueToHex returns 0x0)", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "lock", amount: new BigNumber(NaN) },
+    });
+
+    expect(fees).toEqual(BigNumber(4));
+  });
+
   it("should return the correct fees for a unlock transaction", async () => {
     const fees = await getFeesForTransaction({
       account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
