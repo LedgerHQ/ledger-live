@@ -92,7 +92,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
       {onResult && result
         ? null
         : device && (
-            <Flex alignItems="center">
+            <Flex alignItems="center" testID="device-action-modal">
               <DeviceActionContainer marginBottom={showInfo ? "16px" : 0}>
                 <DeviceAction
                   action={action as unknown as Action<Req, PartialNullable<Stt>, Res>}

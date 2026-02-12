@@ -19,6 +19,7 @@ import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
 
@@ -195,13 +196,24 @@ export default function useScanDeviceAccountsViewModel({
 
   const importAccounts = useCallback(() => {
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
+
     if (currency.id.includes("canton_network")) {
-      navigation.replace(NavigatorName.CantonOnboard, {
-        screen: ScreenName.CantonOnboardAccount,
-        params: { accountsToAdd, currency },
+      const accountsNeedingOnboarding = accountsToAdd.filter(account => {
+        if (isCantonAccount(account)) {
+          return !account.cantonResources.isOnboarded;
+        }
+        return true;
       });
-      return;
+
+      if (accountsNeedingOnboarding.length > 0) {
+        navigation.replace(NavigatorName.CantonOnboard, {
+          screen: ScreenName.CantonOnboardAccount,
+          params: { accountsToAdd: accountsToAdd, currency },
+        });
+        return;
+      }
     }
+
     setIsAddinAccounts(true);
 
     dispatch(
