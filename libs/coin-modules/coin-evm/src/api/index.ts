@@ -82,9 +82,9 @@ export function createApi(
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: async (
       address: string,
-      { minHeight, order }: ListOperationsOptions,
+      options: ListOperationsOptions,
     ): Promise<Page<Operation<MemoNotSupported>>> => {
-      const [items, next] = await listOperations(currency, address, minHeight, order);
+      const [items, next] = await listOperations(currency, address, options);
       return { items, next: next || undefined };
     },
     getBlock: (height: number): Promise<Block> => getBlock(currency, height),
