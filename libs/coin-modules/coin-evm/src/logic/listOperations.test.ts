@@ -774,4 +774,51 @@ describe("listOperations", () => {
       "",
     ]);
   });
+
+  // here is the table of behavior:
+  const behaviors = [
+    // legacy behavior
+    {
+      limit: undefined,
+      order: undefined,
+      expectedExplorerOrder: "desc",
+      expectedResultOrder: "desc",
+    },
+    { limit: undefined, order: "asc", expectedExplorerOrder: "desc", expectedResultOrder: "asc" },
+    { limit: undefined, order: "desc", expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
+    // new behavior (limit is set)
+    { limit: 10, order: "asc", expectedExplorerOrder: "asc", expectedResultOrder: "asc" },
+    { limit: 10, order: "desc", expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
+    { limit: 10, order: undefined, expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
+  ];
+
+  it.each(behaviors)(
+    "etherscan explorer sort parameter is respected %s",
+    async ({ limit, order, expectedExplorerOrder, expectedResultOrder }) => {
+      setCoinConfig(
+        () =>
+          ({
+            info: { explorer: { type: "etherscan" } },
+          }) as unknown as EvmCoinConfig,
+      );
+      const getOperationsSpy = buildOperationsSpy(etherscanExplorer.explorerApi);
+      const [result] = await listOperations(currency, address, { minHeight: 0, limit, order });
+      expect(result.length).toBeGreaterThan(1);
+
+      // check how the explorer is called
+      const actualExplorerLimit = getOperationsSpy.mock.calls[0][6];
+      expect(actualExplorerLimit).toBe(limit);
+      const actualExplorerOrder = getOperationsSpy.mock.calls[0][7];
+      expect(actualExplorerOrder).toBe(expectedExplorerOrder);
+
+      // check the result order
+      const firstOperation = result[0];
+      const lastOperation = result[result.length - 1];
+      if (expectedResultOrder === "asc") {
+        expect(firstOperation.tx.date.getTime()).toBeLessThan(lastOperation.tx.date.getTime());
+      } else {
+        expect(firstOperation.tx.date.getTime()).toBeGreaterThan(lastOperation.tx.date.getTime());
+      }
+    },
+  );
 });
