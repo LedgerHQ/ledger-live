@@ -386,6 +386,11 @@ export type LLDCoinFamily<
     operation: Operation,
   ) => string | null | undefined;
 
+  /**
+   * Component allowing to add metadata cell to list of transactions
+   */
+  CustomMetadataCell?: React.ComponentType<{ operation: O }>;
+
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
   };

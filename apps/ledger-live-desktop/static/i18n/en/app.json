@@ -8023,6 +8023,14 @@
         "label": "Birthday height",
         "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       }
+    },
+    "aleo": {
+      "operations": {
+        "type": {
+          "public": "Public",
+          "private": "Private"
+        }
+      }
     }
   }
 }
