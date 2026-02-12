@@ -7,6 +7,7 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ethers } from "ethers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
@@ -365,6 +366,162 @@ describe.each([
         expect(isCorrectlyOrdered(result));
       },
     );
+
+    const isEtherscanLike = (config as EvmConfig).explorer?.type === "etherscan";
+
+    describe("pagination", () => {
+      let oldNftCurrencies: string[];
+
+      beforeAll(() => {
+        // Disable NFT fetching to speed up pagination tests
+        oldNftCurrencies = getEnv("NFT_CURRENCIES");
+        setEnv("NFT_CURRENCIES", []);
+      });
+
+      afterAll(() => {
+        setEnv("NFT_CURRENCIES", oldNftCurrencies);
+      });
+
+      const expectUniqueOperationIds = (ops: Operation[]) => {
+        const operationIds = ops.map(op => op.id);
+        const uniqueOperationIds = new Set(operationIds);
+        expect(uniqueOperationIds.size).toBe(operationIds.length);
+      };
+
+      const isOrdered = (ops: Operation[], order: "asc" | "desc") => {
+        return ops.every((op, i) => {
+          if (i === 0) return true;
+          const prevDate = ops[i - 1].tx.date.getTime();
+          const currDate = op.tx.date.getTime();
+          return order === "desc" ? currDate <= prevDate : currDate >= prevDate;
+        });
+      };
+
+      // TODO implement pagination for ledger explorer
+      // Pagination tests only make sense for etherscan-like explorers that support real pagination.
+      // Ledger explorer fetches all data in one call looping over all the pages and returns NO_TOKEN.
+      (isEtherscanLike ? it.each : it.skip.each)([
+        // note that the ASC mode is really slow
+        ["ascending", "asc"],
+        ["descending", "desc"],
+      ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
+        const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
+        const limit = 100;
+
+        // -- Page 1
+
+        const [p1Ops, p1Token] = await module.listOperations(address, {
+          minHeight: 200,
+          order,
+          limit,
+        });
+        const p1NbOps = p1Ops.length;
+
+        expect(p1NbOps).toBeGreaterThanOrEqual(limit);
+        expect(p1Token).toMatch(/^[0-9]+-[0-1]{4}$/);
+        expectUniqueOperationIds(p1Ops);
+        expect(isOrdered(p1Ops, order)).toBe(true);
+
+        // -- Page 2
+
+        const [p2Ops, p2Token] = await module.listOperations(address, {
+          minHeight: 200,
+          order,
+          limit,
+          pagingToken: p1Token,
+        });
+        const p2NbOps = p2Ops.length;
+
+        expect(p2NbOps).toBeGreaterThanOrEqual(limit);
+        expect(p2Token).toMatch(/^[0-9]+-[0-1]{4}$/);
+        expectUniqueOperationIds(p2Ops);
+        expect(isOrdered(p2Ops, order)).toBe(true);
+
+        // -- Properties assertion
+
+        const allOps = [...p1Ops, ...p2Ops];
+
+        // check that each page has no height bounds in common
+        expect(p1Ops[0]).not.toBe(p2Ops[p2NbOps - 1]);
+        expect(p1Ops[p1NbOps - 1]).not.toBe(p2Ops[0]);
+
+        // Check no page overlapping
+        const p1Heights = new Set(p1Ops.map(op => op.tx.block.height));
+        const p2Heights = new Set(p2Ops.map(op => op.tx.block.height));
+        expect(p1Heights.intersection(p2Heights).size).toBe(0);
+
+        // Check no duplicate operation ids
+        expectUniqueOperationIds(allOps);
+
+        // check total ordering across pages
+        expect(isOrdered(allOps, order)).toBe(true);
+      });
+
+      // Cache test only makes sense for etherscan-like explorers that have
+      // pagination parameters affecting cache keys.
+      // Note: We only verify functional behavior (different params = different results),
+      // not timing, as timing-based tests are inherently flaky in integration tests.
+      (isEtherscanLike ? it : it.skip)("cache key includes pagination parameters", async () => {
+        const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
+
+        // First call
+        const [firstCallResult, firstCallToken] = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 5,
+        });
+
+        // Same call again - should return same result (cached or not)
+        const [cachedResult] = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 5,
+        });
+
+        // Different limit - should return different results
+        const [greaterLimitResult] = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 10,
+        });
+
+        // Different order - should return different results
+        const [differentOrderResult] = await module.listOperations(address, {
+          minHeight: 200,
+          order: "asc",
+          limit: 5,
+        });
+
+        // Different pagingToken - should return different results
+        const [differentTokenResult] = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 5,
+          pagingToken: firstCallToken,
+        });
+
+        // Same parameters should return same results
+        expect(cachedResult.map(op => op.id)).toEqual(firstCallResult.map(op => op.id));
+
+        // Greater limit may return more operations
+        expect(firstCallResult.length).toBeLessThanOrEqual(greaterLimitResult.length);
+
+        // Different order should return operations in different order (desc has newer first)
+        if (firstCallResult.length > 0 && differentOrderResult.length > 0) {
+          expect(firstCallResult[0]?.tx.date.getTime()).toBeGreaterThanOrEqual(
+            differentOrderResult[0]?.tx.date.getTime(),
+          );
+        }
+
+        // Different pagingToken should return different operations (next page)
+        if (firstCallToken && differentTokenResult.length > 0) {
+          // The token result should not overlap with the first page
+          const firstPageIds = new Set(firstCallResult.map(op => op.id));
+          const hasOverlap = differentTokenResult.some(op => firstPageIds.has(op.id));
+          expect(hasOverlap).toBe(false);
+        }
+      });
+    });
   });
 
   describe.each([
