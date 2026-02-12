@@ -12,5 +12,8 @@ export const descriptor: CoinDescriptor = {
       hasPresets: false,
       hasCustom: false,
     },
+    amount: {
+      canSendMax: false,
+    },
   },
 };
