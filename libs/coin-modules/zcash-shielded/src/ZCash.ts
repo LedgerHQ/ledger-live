@@ -115,7 +115,46 @@ export default class ZCash {
    * @param {number} timestamp
    * @return {Promise<number>} a block height
    */
-  async findBlockHeight(timestamp: number): Promise<number> {
-    return timestamp + 42;
+  async findBlockHeight(timestamp: number): Promise<number | undefined> {
+    if (timestamp < 0 || !Number.isFinite(timestamp)) {
+      log(LOG_TYPE, `error: findBlockHeight invalid timestamp: ${timestamp}`);
+      return undefined;
+    }
+
+    const maxHeight = await this.jsonRpcClient.getBlockCount();
+    if (maxHeight === undefined) {
+      log(
+        LOG_TYPE,
+        "error: findBlockHeight failed to fetch block count from RPC node (getBlockCount returned undefined).",
+      );
+      return;
+    }
+
+    if (maxHeight <= 0) {
+      return 0;
+    }
+
+    let low = 0;
+    let high = maxHeight;
+    let candidate = 0;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const block = await this.jsonRpcClient.getBlockByHeight(mid);
+
+      if (!block) {
+        log(LOG_TYPE, `Block ${mid} not found.`);
+        return;
+      }
+
+      if (block.time <= timestamp) {
+        candidate = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    return candidate;
   }
 }

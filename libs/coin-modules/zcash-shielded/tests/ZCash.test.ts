@@ -13,6 +13,14 @@ import {
 } from "./testAccounts";
 import { server } from "./mocks/node";
 import { JSON_RPC_SERVER } from "../src/constants";
+import { JsonRpcClient } from "../src/jsonRpcClient";
+import {
+  createFindBlockHeightHandlers,
+  largeChainScenario,
+  smallChainScenario,
+  emptyChainScenario,
+} from "./mocks/findBlockHeightData";
+import { http, HttpResponse } from "msw";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -38,10 +46,129 @@ describe("estimatedSyncTime", () => {
 });
 
 describe("findBlockHeight", () => {
-  test("finds the lowest block height", async () => {
+  test("finds the highest block height at or before a given timestamp (mocked RPC)", async () => {
+    server.use(...createFindBlockHeightHandlers(largeChainScenario));
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const height = await zcash.findBlockHeight(1234);
     expect(height).toEqual(1276);
+  });
+
+  test("returns undefined when timestamp is negative", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const height = await zcash.findBlockHeight(-1);
+    expect(height).toBeUndefined();
+  });
+
+  test("returns undefined when timestamp is NaN", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const height = await zcash.findBlockHeight(NaN);
+    expect(height).toBeUndefined();
+  });
+
+  test("binary search: exact match returns that block height", async () => {
+    server.use(...createFindBlockHeightHandlers(smallChainScenario));
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    // Block 5 has time 100 + 500 = 600
+    const height = await zcash.findBlockHeight(600);
+    expect(height).toEqual(5);
+  });
+
+  test("binary search: timestamp with no exact block returns highest block at or before that time", async () => {
+    server.use(...createFindBlockHeightHandlers(smallChainScenario));
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    // Block 4 has time 500, block 5 has time 600. Timestamp 550 has no block; we return the highest height with time <= 550, i.e. block 4.
+    const height = await zcash.findBlockHeight(550);
+    expect(height).toEqual(4);
+  });
+
+  test("binary search: timestamp before first block returns 0", async () => {
+    server.use(...createFindBlockHeightHandlers(smallChainScenario));
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    // Block 0 has time 100; timestamp 50 is before genesis
+    const height = await zcash.findBlockHeight(50);
+    expect(height).toEqual(0);
+  });
+
+  test("binary search: timestamp after last block returns tip", async () => {
+    server.use(...createFindBlockHeightHandlers(smallChainScenario));
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    // Block 10 has time 1100; timestamp 2000 is in the future
+    const height = await zcash.findBlockHeight(2000);
+    expect(height).toEqual(10);
+  });
+});
+
+describe("getBlockCount", () => {
+  test("returns block count when network returns numeric result", async () => {
+    server.use(
+      http.post(JSON_RPC_SERVER, async ({ request }) => {
+        const body = await request.clone().json();
+        if (
+          body &&
+          typeof body === "object" &&
+          "method" in body &&
+          body.method === "getblockcount"
+        ) {
+          return HttpResponse.json({ result: 42 });
+        }
+      }),
+    );
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBe(42);
+  });
+
+  test("calls network with POST, nodeUrl, getblockcount method and empty params", async () => {
+    let capturedBody: unknown;
+    server.use(
+      http.post(JSON_RPC_SERVER, async ({ request }) => {
+        const body = await request.clone().json();
+        capturedBody = body;
+        return HttpResponse.json({ result: 100 });
+      }),
+    );
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    await client.getBlockCount();
+    expect(capturedBody).toEqual({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "getblockcount",
+      params: [],
+    });
+  });
+
+  test("returns undefined when RPC returns error", async () => {
+    server.use(
+      http.post(JSON_RPC_SERVER, () =>
+        HttpResponse.json({
+          error: { code: -1, message: "node error" },
+        }),
+      ),
+    );
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBeUndefined();
+  });
+
+  test("returns undefined when response has no result", async () => {
+    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({})));
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBeUndefined();
+  });
+
+  test("returns undefined when result is not a number (string)", async () => {
+    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: "100" })));
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBeUndefined();
+  });
+
+  test("returns undefined when result is not a number (object)", async () => {
+    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: {} })));
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBeUndefined();
   });
 });
 
