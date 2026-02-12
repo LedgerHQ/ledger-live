@@ -67,7 +67,6 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
-    "bluebird": "^3.7.2",
     "bip39": "^3.1.0",
     "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
@@ -75,7 +74,6 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.42",
     "@types/jest": "catalog:",
     "dotenv": "^16.4.5",
     "jest": "catalog:",

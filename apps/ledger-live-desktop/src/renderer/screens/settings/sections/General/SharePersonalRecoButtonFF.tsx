@@ -11,7 +11,7 @@ const SharePersonnalRecoButtonFF = () => {
 
   const toggleSharePersonalizedRecommendations = async (value: boolean) => {
     dispatch(setSharePersonalizedRecommendations(value));
-    await updateIdentify();
+    await updateIdentify({ force: true });
     track(
       "toggle_clicked",
       {

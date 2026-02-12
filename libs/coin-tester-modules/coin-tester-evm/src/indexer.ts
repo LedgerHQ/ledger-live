@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
-import BlueBirdPromise from "bluebird";
 import { http, HttpResponse, bypass } from "msw";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
@@ -14,6 +13,7 @@ import type {
   EtherscanOperation,
   LedgerExplorerOperation,
 } from "@ledgerhq/coin-evm/types/index";
+import { promiseAllBatched } from "@ledgerhq/live-common/promise";
 
 type TraceTransaction = {
   action: {
@@ -693,20 +693,14 @@ export const indexBlocks = async (chainId: number) => {
       [TRANSFER_EVENTS_TOPICS.ERC20, TRANSFER_EVENTS_TOPICS.ERC721, TRANSFER_EVENTS_TOPICS.ERC1155],
     ],
   });
-  await BlueBirdPromise.map(
-    blocks,
-    async blockNumber =>
-      Promise.all([
-        handleBlock(blockNumber, provider),
-        new Promise(resolve => setTimeout(resolve, 500)),
-      ]),
-    { concurrency: 10 },
+  await promiseAllBatched(10, blocks, async blockNumber =>
+    Promise.all([
+      handleBlock(blockNumber, provider),
+      new Promise(resolve => setTimeout(resolve, 500)),
+    ]),
   );
-  await BlueBirdPromise.map(
-    logs,
-    async log =>
-      Promise.all([handleLog(log, provider), new Promise(resolve => setTimeout(resolve, 500))]),
-    { concurrency: 10 },
+  await promiseAllBatched(10, logs, async log =>
+    Promise.all([handleLog(log, provider), new Promise(resolve => setTimeout(resolve, 500))]),
   );
 
   latestBlockNumber = await provider.getBlockNumber();
