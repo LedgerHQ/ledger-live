@@ -3,7 +3,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { DEFAULT_FEATURES, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -46,6 +46,7 @@ const Earn = () => {
   const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
+  const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("desktop");
   useDeepLinkListener();
 
   const stakePrograms = useVersionedStakePrograms();
@@ -92,6 +93,7 @@ const Earn = () => {
             : undefined,
           ethDepositCohort,
           uiVersion: earnUiVersion,
+          lwm40enabled: isLwm40Enabled ? "true" : "false",
         }}
       />
     </Card>

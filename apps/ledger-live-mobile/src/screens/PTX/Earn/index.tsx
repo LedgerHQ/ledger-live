@@ -19,7 +19,7 @@ import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
@@ -30,12 +30,12 @@ import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
 const appManifestNotFoundError = new Error("Earn App not found");
 
-const DEFAULT_NAVIGATION_HEIGHT = 56;
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
@@ -117,7 +117,7 @@ function Earn({ route }: Props) {
       safeAreaBottom: insets.bottom.toString(),
       safeAreaLeft: insets.left.toString(),
       safeAreaRight: insets.right.toString(),
-      navigationHeightOffset: DEFAULT_NAVIGATION_HEIGHT.toString(),
+      navigationHeightOffset: TAB_BAR_HEIGHT.toString(),
       lwm40enabled: isLwm40Enabled ? "true" : "false",
       ...params,
       ...Object.fromEntries(searchParams.entries()),
