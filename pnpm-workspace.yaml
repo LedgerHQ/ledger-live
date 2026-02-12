@@ -16,11 +16,11 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 1.13.0
+  "@ledgerhq/context-module": 1.14.0
   "@ledgerhq/crypto-icons": "1.4.0"
-  "@ledgerhq/device-management-kit": 1.0.1
-  "@ledgerhq/device-signer-kit-ethereum": 1.10.0
-  "@ledgerhq/device-signer-kit-solana": 1.6.1
+  "@ledgerhq/device-management-kit": 1.1.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.11.0
+  "@ledgerhq/device-signer-kit-solana": 1.6.2
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
   "@ledgerhq/device-transport-kit-speculos": 1.1.3

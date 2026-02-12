@@ -561,12 +561,17 @@ export default function connectAppFactory(
           unlockTimeout: 0, // Expect to fail immediately when device is locked
           requiredDerivation: requiresDerivation
             ? async () => {
-                const { currencyId, ...derivationRest } = requiresDerivation;
-                const derivation = await getAddress(transport, {
-                  currency: getCryptoCurrencyById(currencyId),
-                  ...derivationRest,
-                });
-                return derivation.address;
+                try {
+                  dmk._unsafeBypassIntentQueue({ bypass: true, sessionId });
+                  const { currencyId, ...derivationRest } = requiresDerivation;
+                  const derivation = await getAddress(transport, {
+                    currency: getCryptoCurrencyById(currencyId),
+                    ...derivationRest,
+                  });
+                  return derivation.address;
+                } finally {
+                  dmk._unsafeBypassIntentQueue({ bypass: false, sessionId });
+                }
               }
             : undefined,
         },

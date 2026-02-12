@@ -29,7 +29,7 @@ registerTransportModule({
   open: id => {
     if (id in transports) {
       const Tr = transports[id];
-      return Tr;
+      return Promise.resolve(Tr);
     }
   },
   disconnect: () => Promise.resolve(),
