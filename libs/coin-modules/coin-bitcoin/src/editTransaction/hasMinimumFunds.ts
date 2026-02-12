@@ -21,7 +21,7 @@ export const hasMinimumFundsToCancel = async ({
   }
 };
 
-export const hasMinimumFundsToSpeedUp = async ({
+export const hasMinimumFundsToSpeedUp = ({
   mainAccount,
   transactionToUpdate,
 }: {
