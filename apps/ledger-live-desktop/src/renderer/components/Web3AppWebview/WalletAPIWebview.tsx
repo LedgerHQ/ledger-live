@@ -586,11 +586,8 @@ function createProtectedStorageHandler<T extends StorageHandlerArgs, R>(
   return (args: T) => {
     const { storeId } = args;
 
-    console.log("manifest", manifest);
-
     // Either the live app can access storage created by itself OR storage explitly listed in the manifest's permissions
     if (storeId !== manifest.id && (!manifest.storage || !manifest.storage.includes(storeId))) {
-      // ❗ If manifest doesn't have permission, throw
       throw new Error(`Live App "${manifest.id}" is not permitted to access storage "${storeId}".`);
     }
 
