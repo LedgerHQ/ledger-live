@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { BleScanningState, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { Subscription } from "@ledgerhq/hw-transport";
 import getBLETransport from "./index";
@@ -43,6 +44,16 @@ export const useMockBleDevicesScanning = (enabled: boolean): BleScanningState =>
             deviceName: name,
             wired: false,
             modelId: DeviceModelId.nanoX,
+            discoveredDevice: {
+              id,
+              name,
+              deviceModel: {
+                id: DmkDeviceModelId.NANO_X,
+                model: DmkDeviceModelId.NANO_X,
+                name: "Nano X",
+              },
+              transport: "BLE",
+            },
           };
 
           setScannedDevices(prev => {

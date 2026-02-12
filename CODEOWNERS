@@ -169,6 +169,8 @@ apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/liv
 apps/ledger-live-mobile/src/components/RequiresLocation/           @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/SelectDevice2/              @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/live-devices
+**/BleDevicePairing*                                               @ledgerhq/live-devices
+apps/ledger-live-mobile/src/transport/                             @ledgerhq/live-devices
 apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices

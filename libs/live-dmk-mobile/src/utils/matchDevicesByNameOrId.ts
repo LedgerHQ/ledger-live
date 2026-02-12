@@ -77,26 +77,37 @@ export function isMatchingDeviceModel(deviceA: DeviceBaseInfo, deviceB: DeviceBa
 }
 
 /**
+ * For a given old device, find the matching new device index in the list of new devices.
+ * First try to find a matching device by deviceId, then if not found, try to find a matching device by name.
+ * Returns the index of the matching device, or -1 if no match is found.
+ */
+export function findMatchingNewDeviceIndex(
+  oldDevice: DeviceBaseInfo,
+  newDevices: DeviceBaseInfo[],
+): number {
+  const byId = newDevices.findIndex(
+    newDevice =>
+      isMatchingDeviceModel(oldDevice, newDevice) &&
+      matchDeviceByDeviceId({ deviceA: oldDevice, deviceB: newDevice }),
+  );
+  if (byId !== -1) return byId;
+
+  return newDevices.findIndex(
+    newDevice =>
+      isMatchingDeviceModel(oldDevice, newDevice) && matchDeviceByName({ oldDevice, newDevice }),
+  );
+}
+
+/**
  * For a given old device, find the matching new device in the list of new devices.
  * First try to find a matching device by deviceId, then if not found, try to find a matching device by name.
  */
-export function findMatchingNewDevice(
+export function findMatchingNewDevice<T extends DeviceBaseInfo>(
   oldDevice: DeviceBaseInfo,
-  newDevices: DeviceBaseInfo[],
-): DeviceBaseInfo | null {
-  return (
-    newDevices.find(
-      newDevice =>
-        isMatchingDeviceModel(oldDevice, newDevice) &&
-        matchDeviceByDeviceId({ deviceA: oldDevice, deviceB: newDevice }),
-    ) ??
-    newDevices.find(
-      newDevice =>
-        isMatchingDeviceModel(oldDevice, newDevice) &&
-        matchDeviceByName({ oldDevice, newDevice: newDevice }),
-    ) ??
-    null
-  );
+  newDevices: Array<T>,
+): T | null {
+  const index = findMatchingNewDeviceIndex(oldDevice, newDevices);
+  return index !== -1 ? newDevices[index] : null;
 }
 
 /**

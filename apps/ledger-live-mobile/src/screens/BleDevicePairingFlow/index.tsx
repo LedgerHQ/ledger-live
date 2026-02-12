@@ -1,4 +1,5 @@
 import { Device, DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,7 +43,8 @@ export const BleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
   const keyToReset = useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
 
   const onPairingSuccess = useCallback(
-    (device: Device) => {
+    // _discoveredDevice will be used for DMK-based device connections. Do not remove.
+    (device: Device, _discoveredDevice: DiscoveredDevice) => {
       // Navigates to the sync onboarding passing the newly paired device
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,

@@ -8,7 +8,7 @@ const MAX_LEDGERS_DISPLAYED = 3;
 
 type Props = {
   readonly deviceList: DisplayedDevice[];
-  readonly handleOnSelect: (device: DisplayedDevice) => void;
+  readonly handleOnSelect: (displayedDevice: DisplayedDevice) => void;
 };
 export function DeviceList({ deviceList, handleOnSelect }: Props) {
   const { t } = useTranslation();
@@ -17,13 +17,15 @@ export function DeviceList({ deviceList, handleOnSelect }: Props) {
   const hasMoreOrLessButton = deviceList.length > MAX_LEDGERS_DISPLAYED;
   return (
     <Flex>
-      {deviceList.slice(0, showAll ? deviceList.length : MAX_LEDGERS_DISPLAYED).map((device, i) => (
-        <DeviceItem
-          key={`${device.deviceId}-${device.deviceName ?? "no-name"}-${i}`}
-          device={device}
-          onPress={handleOnSelect}
-        />
-      ))}
+      {deviceList
+        .slice(0, showAll ? deviceList.length : MAX_LEDGERS_DISPLAYED)
+        .map((displayedDevice, i) => (
+          <DeviceItem
+            key={`${displayedDevice.device.deviceId}-${displayedDevice.device.deviceName ?? "no-name"}-${i}`}
+            displayedDevice={displayedDevice}
+            onPress={handleOnSelect}
+          />
+        ))}
       {hasMoreOrLessButton && (
         <Button
           outline
