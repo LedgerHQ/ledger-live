@@ -1,4 +1,4 @@
-import { Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import { Eye, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook } from "tests/testSetup";
 import useTopBarViewModel from "../useTopBarViewModel";
 import * as useActivityIndicatorModule from "../useActivityIndicator";
@@ -13,13 +13,14 @@ const mockUseDiscreetMode = jest.mocked(useDiscreetModeModule.useDiscreetMode);
 describe("useTopBarViewModel", () => {
   const mockHandleSync = jest.fn();
   const mockHandleDiscreet = jest.fn();
-  const mockDiscreetIcon = {} as ReturnType<typeof mockUseDiscreetMode>["discreetIcon"];
+  const mockDiscreetIcon = Eye;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseDiscreetMode.mockReturnValue({
       handleDiscreet: mockHandleDiscreet,
       discreetIcon: mockDiscreetIcon,
+      tooltip: "Discreet tooltip",
     });
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
