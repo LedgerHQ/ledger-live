@@ -13,6 +13,7 @@ import {
   DynamicContentAddLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
 } from "../actions/types";
+import { createSelector } from "~/context/selectors";
 
 export const INITIAL_STATE: DynamicContentState = {
   assetsCards: [],
@@ -93,18 +94,26 @@ export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
 
 export const notificationsCardsSelector = (s: State) => s.dynamicContent.notificationCards;
 
-export const categoriesCardsSelector = (s: State) =>
-  s.dynamicContent.categoriesCards.concat(s.dynamicContent.localCategoriesCards);
+export const categoriesCardsSelector = createSelector(
+  (s: State) => s.dynamicContent.categoriesCards,
+  (s: State) => s.dynamicContent.localCategoriesCards,
+  (categoriesCards, localCategoriesCards) => categoriesCards.concat(localCategoriesCards),
+);
 
 export const landingPageStickyCtaCardsSelector = (s: State) =>
   s.dynamicContent.landingPageStickyCtaCards;
 
-export const mobileCardsSelector = (s: State) =>
-  s.dynamicContent.mobileCards.concat(s.dynamicContent.localMobileCards);
+export const mobileCardsSelector = createSelector(
+  (s: State) => s.dynamicContent.mobileCards,
+  (s: State) => s.dynamicContent.localMobileCards,
+  (mobileCards, localMobileCards) => mobileCards.concat(localMobileCards),
+);
 
 export const mobileCardsFromBrazeSelector = (s: State) => s.dynamicContent.mobileCards;
 
 export const localMobileCardsSelector = (s: State) => s.dynamicContent.localMobileCards;
+
+export const localCategoriesCardsSelector = (s: State) => s.dynamicContent.localCategoriesCards;
 
 export const isDynamicContentLoadingSelector: (s: State) => boolean = (s: State) =>
   s.dynamicContent.isLoading;

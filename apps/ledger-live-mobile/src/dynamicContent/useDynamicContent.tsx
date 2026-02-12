@@ -91,9 +91,11 @@ const useDynamicContent = () => {
       event: "contentcard_clicked" | "contentcard_dismissed",
       params: Record<string, string | number | undefined>,
     ) => {
+      const cardId = params.campaign;
+      if (typeof cardId === "string" && localMobileCards.some(c => c.id === cardId)) return;
       track(event, params);
     },
-    [],
+    [localMobileCards],
   );
 
   return {
