@@ -20,13 +20,13 @@ import { MainTabBar } from "LLM/components/MainTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import CardLandingNavigator, { CardTabIcon } from "./CardLandingNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { MainNavigatorTopBarHeader } from "./MainNavigatorTopBarHeader";
 import { useTransferDrawerController } from "LLM/features/QuickActions";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
-
 // NB The default behaviour is not reset route params, leading to always having the same
 // search query or preselected tab after the first time (ie from Swap/Sell), that's why we
 // override the navigation from tabs.
@@ -209,6 +209,24 @@ export default function MainNavigator() {
           })}
         />
       )}
+      <Tab.Screen
+        name={NavigatorName.CardTab}
+        component={CardLandingNavigator}
+        options={{
+          ...(!shouldDisplayWallet40MainNav && { headerShown: false }),
+          tabBarIcon: CardTabIcon,
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              navigation.navigate(NavigatorName.CardTab, {
+                screen: ScreenName.Card,
+              });
+            });
+          },
+        })}
+      />
       <Tab.Screen
         name={NavigatorName.MyLedger}
         component={MyLedgerNavigator}

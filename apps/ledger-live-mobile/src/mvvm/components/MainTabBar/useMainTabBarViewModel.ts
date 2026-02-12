@@ -7,6 +7,8 @@ import {
   Exchange,
   ExchangeFill,
   Compass,
+  CreditCard,
+  CreditCardFill,
   LedgerDevices,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const";
@@ -27,6 +29,7 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [ScreenName.Transfer]: { icon: Exchange, activeIcon: ExchangeFill },
   [NavigatorName.Discover]: { icon: Compass },
   [NavigatorName.Web3HubTab]: { icon: Compass },
+  [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
   [NavigatorName.MyLedger]: { icon: LedgerDevices },
 };
 
@@ -36,6 +39,7 @@ const LABEL_MAP: Partial<Record<string, string>> = {
   [ScreenName.Transfer]: "Transfer",
   [NavigatorName.Discover]: "Discover",
   [NavigatorName.Web3HubTab]: "Discover",
+  [NavigatorName.CardTab]: "Card",
   [NavigatorName.MyLedger]: "Ledger",
 };
 
