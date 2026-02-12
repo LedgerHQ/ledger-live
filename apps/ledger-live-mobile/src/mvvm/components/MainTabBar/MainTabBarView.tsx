@@ -1,7 +1,11 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
-import { TabBar, TabBarItem } from "@ledgerhq/lumen-ui-rnative";
+import LinearGradient from "react-native-linear-gradient";
+import { Box, TabBar, TabBarItem } from "@ledgerhq/lumen-ui-rnative";
 import type { MainTabBarViewProps } from "./types";
+
+const GRADIENT_LOCATIONS: number[] = [0, 0.4, 1];
 
 export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
   activeRouteName,
@@ -10,6 +14,7 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
   hideTabBar,
   bottomInset,
   bottomOffset,
+  gradientColors,
 }) => {
   if (hideTabBar) {
     return null;
@@ -19,14 +24,24 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
     <Animated.View
       entering={FadeInDown}
       exiting={FadeOutDown}
-      style={{
-        position: "absolute",
-        bottom: bottomOffset,
-        left: 0,
-        right: 0,
-        paddingBottom: bottomInset,
-      }}
+      pointerEvents="box-none"
+      style={[
+        styles.container,
+        {
+          bottom: bottomOffset,
+          paddingBottom: bottomInset,
+        },
+      ]}
     >
+      <Box lx={{ height: "s4" }} pointerEvents="none" />
+
+      <LinearGradient
+        colors={gradientColors}
+        locations={GRADIENT_LOCATIONS}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+
       <TabBar active={activeRouteName} onTabPress={onTabPress} lx={{ marginHorizontal: "s16" }}>
         {tabItems.map(item => (
           <TabBarItem
@@ -41,3 +56,11 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+  },
+});
