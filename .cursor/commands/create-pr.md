@@ -149,10 +149,18 @@ After creating the PR, use the URL from the `gh pr create` output to generate a 
 
 ## Template Fill Rules
 
-1. **PR Title**: `{{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
+1. **PR Title**: `:gitmoji: {{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
 
-   - Example: `feat(mobile): add dark mode toggle`
-   - Example: `fix(desktop): resolve transaction signing issue`
+   Map `$CHANGE_TYPE` to gitmoji:
+   - `feat` → `:sparkles:`
+   - `fix` → `:bug:`
+   - `refactor` → `:recycle:`
+   - `test` → `:white_check_mark:`
+   - `docs` → `:memo:`
+   - `chore` → `:wrench:`
+
+   - Example: `:sparkles: feat(mobile): add dark mode toggle`
+   - Example: `:bug: fix(desktop): resolve transaction signing issue`
 
 2. **TEST_CHECKBOX**:
 
@@ -217,7 +225,7 @@ For a feature adding portfolio analytics:
 Add portfolio analytics dashboard with performance metrics
 ```
 
-**PR Title**: `feat(portfolio): add analytics dashboard`
+**PR Title**: `:sparkles: feat(portfolio): add analytics dashboard`
 
 **PR Body**:
 

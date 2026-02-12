@@ -46,9 +46,25 @@ We use [**changesets**](https://github.com/changesets/changesets) to handle the 
 
 #### Commit message
 
-We use the standard [**Conventional Commits**](https://www.conventionalcommits.org/) specification and enforce it using [**commitlint**](https://commitlint.js.org/).
+We use the [**Conventional Commits**](https://www.conventionalcommits.org/) specification combined with Gitmoji and enforce it using [**commitlint**](https://commitlint.js.org/).
+You can use `[.cursor/commands/commit.md]` to follow our conventions.
 
-You can use the `pnpm commit` prompt to ensure that your commit messages are valid, as well as the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch are valid.
+Every commit message must follow the format:
+
+```
+:gitmoji: type(scope?): description
+```
+
+For example:
+
+```
+:sparkles: feat(desktop): add dark mode toggle
+:bug: fix(mobile): resolve transaction signing issue
+:memo: docs(common): update API documentation
+:recycle: refactor(account): simplify account syncing logic
+```
+
+You can use the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch is valid.
 
 #### Rebase & Merge strategies
 
