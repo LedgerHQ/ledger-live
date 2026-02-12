@@ -7,7 +7,7 @@ import RemoveDeviceMenu from "./RemoveDeviceMenu";
 import { type DisplayedDevice } from "./DisplayedDevice";
 
 type Props = {
-  device: DisplayedDevice;
+  displayedDevice: DisplayedDevice;
   isScanning?: boolean;
   onPress: (_: DisplayedDevice) => void;
 };
@@ -30,13 +30,14 @@ function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {
   }
 }
 
-export default function DeviceItem({ device, onPress }: Props) {
-  const { wired, available } = device;
+export default function DeviceItem({ displayedDevice, onPress }: Props) {
+  const { available } = displayedDevice;
+  const { wired } = displayedDevice.device;
   const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] = useState<boolean>(false);
 
   const wording = wired ? "usb" : available ? "available" : "unavailable";
   const color = wording === "unavailable" ? "neutral.c60" : "primary.c80";
-  const testID = `device-item-${device.deviceId}`;
+  const testID = `device-item-${displayedDevice.device.deviceId}`;
 
   const onItemContextPress = useCallback(() => {
     setIsRemoveDeviceMenuOpen(true);
@@ -44,7 +45,7 @@ export default function DeviceItem({ device, onPress }: Props) {
 
   return (
     <Touchable
-      onPress={() => onPress(device)}
+      onPress={() => onPress(displayedDevice)}
       touchableTestID={testID}
       testID={testID}
       accessibilityRole="button"
@@ -58,11 +59,11 @@ export default function DeviceItem({ device, onPress }: Props) {
         padding={4}
       >
         <Flex width={24}>
-          <DeviceIcon deviceModelId={device.modelId} />
+          <DeviceIcon deviceModelId={displayedDevice.device.modelId} />
         </Flex>
         <Flex ml={5} flex={1}>
           <Text color="neutral.c100" fontWeight="semiBold" fontSize="16px">
-            {device.deviceName}
+            {displayedDevice.device.deviceName}
           </Text>
           <Text color={color} fontSize="12px">
             <Trans i18nKey={`manager.selectDevice.item.${wording}`} />
@@ -75,7 +76,7 @@ export default function DeviceItem({ device, onPress }: Props) {
             </Touchable>
             <RemoveDeviceMenu
               open={isRemoveDeviceMenuOpen}
-              device={device}
+              device={displayedDevice.device}
               onHideMenu={() => setIsRemoveDeviceMenuOpen(false)}
             />
           </>

@@ -21,8 +21,7 @@ const BleDevicePairingScreen: React.FC<Props> = ({ navigation, route }) => {
     route.params;
 
   const onPairingSuccess = useCallback(
-    // TODO: _discoveredDevice will be used for DMK-based device connections.
-    // Do not remove - see SelectDevice2/DISCOVERED_DEVICE_MIGRATION.md
+    // _discoveredDevice will be used for DMK-based device connections. Do not remove.
     (device: Device, _discoveredDevice: DiscoveredDevice) => {
       navigation.navigate(ScreenName.DebugFeatures, { pairedDevice: device });
     },

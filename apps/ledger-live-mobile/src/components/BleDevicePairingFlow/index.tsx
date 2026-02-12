@@ -60,6 +60,8 @@ export type BleDevicePairingFlowProps = {
 
   /**
    * During pairing step: callback called when the pairing is done and successful
+   * @param device - The device that was paired. (legacy Device type)
+   * @param discoveredDevice - The discovered device that was paired. (directly compatible with DeviceManagementKit.connect())
    */
   onPairingSuccess: (device: Device, discoveredDevice: DiscoveredDevice) => void;
 

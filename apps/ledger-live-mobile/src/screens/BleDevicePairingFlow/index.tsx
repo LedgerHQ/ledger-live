@@ -43,8 +43,7 @@ export const BleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
   const keyToReset = useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
 
   const onPairingSuccess = useCallback(
-    // TODO: _discoveredDevice will be used for DMK-based device connections.
-    // Do not remove - see SelectDevice2/DISCOVERED_DEVICE_MIGRATION.md
+    // _discoveredDevice will be used for DMK-based device connections. Do not remove.
     (device: Device, _discoveredDevice: DiscoveredDevice) => {
       // Navigates to the sync onboarding passing the newly paired device
       navigation.navigate(NavigatorName.BaseOnboarding, {

@@ -1,24 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { BleScanningState, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
-import { DiscoveredDevice, DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { Subscription } from "@ledgerhq/hw-transport";
 import getBLETransport from "./index";
-
-/**
- * Creates a mock DiscoveredDevice for e2e tests.
- * This mock object satisfies the DiscoveredDevice type structure but won't be used
- * for actual DMK connections in test environments.
- */
-const createMockDiscoveredDevice = (id: string, name: string): DiscoveredDevice =>
-  ({
-    id,
-    name,
-    deviceModel: {
-      model: DmkDeviceModelId.NANO_X,
-    },
-    transport: "BLE",
-  }) as DiscoveredDevice;
 
 /**
  * Mock hook for BLE device scanning in e2e tests.
@@ -59,7 +44,16 @@ export const useMockBleDevicesScanning = (enabled: boolean): BleScanningState =>
             deviceName: name,
             wired: false,
             modelId: DeviceModelId.nanoX,
-            discoveredDevice: createMockDiscoveredDevice(id, name),
+            discoveredDevice: {
+              id,
+              name,
+              deviceModel: {
+                id: DmkDeviceModelId.NANO_X,
+                model: DmkDeviceModelId.NANO_X,
+                name: "Nano X",
+              },
+              transport: "BLE",
+            },
           };
 
           setScannedDevices(prev => {
