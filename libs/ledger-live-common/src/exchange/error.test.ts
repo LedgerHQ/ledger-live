@@ -4,11 +4,60 @@ import {
   CompleteExchangeError,
   convertTransportError,
   getErrorDetails,
+  getErrorName,
   getErrorMessage,
   getSwapStepFromError,
 } from "./error";
 
 describe("exchange/error", () => {
+  describe("getErrorName", () => {
+    it("should return name from error object", () => {
+      const error = { name: "ValidationError" };
+      expect(getErrorName(error)).toBe("ValidationError");
+    });
+
+    it("should return name from cause when error has no direct name", () => {
+      const error = { cause: { name: "NetworkError" } };
+      expect(getErrorName(error)).toBe("NetworkError");
+    });
+
+    it("should prioritize direct name over cause.name", () => {
+      const error = {
+        name: "OuterError",
+        cause: { name: "InnerError" },
+      };
+      expect(getErrorName(error)).toBe("OuterError");
+    });
+
+    it("should return undefined for string error", () => {
+      expect(getErrorName("error string")).toBeUndefined();
+    });
+
+    it("should return undefined for null", () => {
+      expect(getErrorName(null)).toBeUndefined();
+    });
+
+    it("should return undefined for undefined", () => {
+      expect(getErrorName(undefined)).toBeUndefined();
+    });
+
+    it("should return undefined for object without name or cause", () => {
+      const error = { code: "ERR001", message: "Something failed" };
+      expect(getErrorName(error)).toBeUndefined();
+    });
+
+    it("should return undefined when cause exists but has no name", () => {
+      const error = { cause: { message: "nested error" } };
+      expect(getErrorName(error)).toBeUndefined();
+    });
+
+    it("should prefer cause.name when top-level name is generic 'Error'", () => {
+      const error = new Error("something");
+      Object.assign(error, { cause: { name: "SpecificError" } });
+      expect(getErrorName(error)).toBe("SpecificError");
+    });
+  });
+
   describe("getErrorMessage", () => {
     it("should return string error as-is", () => {
       expect(getErrorMessage("error string")).toBe("error string");

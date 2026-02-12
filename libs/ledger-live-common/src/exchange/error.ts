@@ -78,6 +78,10 @@ export function getErrorDetails(error: unknown): ErrorDetails {
   };
 }
 
+export function getErrorName(error: unknown): string | undefined {
+  return getErrorDetails(error).name;
+}
+
 export function getErrorMessage(error: unknown): string {
   return getErrorDetails(error).message;
 }
