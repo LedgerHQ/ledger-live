@@ -135,6 +135,8 @@ function Earn({ route }: Props) {
       earnUiVersion,
       params,
       searchParams,
+      insets.top,
+      insets.bottom,
       insets.left,
       insets.right,
       isLwm40Enabled,
@@ -175,17 +177,10 @@ function Earn({ route }: Props) {
   if (manifest) {
     return (
       <View style={{ flex: 1 }}>
-        {hideMainNavigator ? (
-          <Container>
-            <TrackScreen category="EarnDashboard" name="Earn" />
-            <EarnWebview manifest={manifest} inputs={webviewInputs} />
-          </Container>
-        ) : (
-          <Container>
-            <TrackScreen category="EarnDashboard" name="Earn" />
-            <EarnWebview manifest={manifest} inputs={webviewInputs} />
-          </Container>
-        )}
+        <Container>
+          <TrackScreen category="EarnDashboard" name="Earn" />
+          <EarnWebview manifest={manifest} inputs={webviewInputs} />
+        </Container>
       </View>
     );
   }

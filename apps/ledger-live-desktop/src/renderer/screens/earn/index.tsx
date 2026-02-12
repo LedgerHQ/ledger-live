@@ -66,9 +66,8 @@ const Earn = () => {
     return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
   }
 
-
   // if LWM40 is enabled, use Box for transparency, otherwise use Card
-  const Container = isLwm40Enabled ? Box: Card;
+  const Container = isLwm40Enabled ? Box : Card;
 
   return (
     <Container grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
