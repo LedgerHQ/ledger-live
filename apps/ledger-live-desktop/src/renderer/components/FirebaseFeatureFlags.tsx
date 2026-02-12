@@ -6,8 +6,13 @@ import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
-import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
+import {
+  setOverriddenFeatureFlag,
+  setOverriddenFeatureFlags,
+  setSelectedTimeRange,
+} from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 
 export const FirebaseFeatureFlagsProvider = ({
   children,
@@ -15,8 +20,10 @@ export const FirebaseFeatureFlagsProvider = ({
 }: Props): React.JSX.Element => {
   const { config: remoteConfig } = useFirebaseRemoteConfig();
 
-  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
+  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
+  const { shouldDisplayGraphRework: isWallet40GraphReworkEnabled } =
+    useWalletFeaturesConfig("desktop");
 
   const overrideFeature = useCallback(
     (key: FeatureId, value: Feature): void => {
@@ -54,6 +61,15 @@ export const FirebaseFeatureFlagsProvider = ({
     }
     return () => setAnalyticsFeatureFlagMethod(null);
   }, [remoteConfig, wrappedGetFeature]);
+
+  // That's temporary until wallet 4.0 is 100% enabled
+  // We need to set the selected time range to day at each app launch for the wallet 4.0 feature flag
+  useEffect(() => {
+    if (isWallet40GraphReworkEnabled) {
+      dispatch(setSelectedTimeRange("day"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run only once
+  }, []);
 
   const contextValue = useMemo(
     () => ({
