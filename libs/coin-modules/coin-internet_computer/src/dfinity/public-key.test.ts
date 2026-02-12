@@ -47,13 +47,13 @@ describe("validatePublicKey", () => {
   });
 
   it("should throw for non-string input", () => {
-    expect(() => validatePublicKey(null as unknown as string)).toThrow(
-      "Public key must be a non-empty string",
-    );
+    const nullValue: string = null as any;
+    expect(() => validatePublicKey(nullValue)).toThrow("Public key must be a non-empty string");
   });
 
   it("should throw for undefined input", () => {
-    expect(() => validatePublicKey(undefined as unknown as string)).toThrow(
+    const undefinedValue: string = undefined as any;
+    expect(() => validatePublicKey(undefinedValue)).toThrow(
       "Public key must be a non-empty string",
     );
   });

@@ -1,3 +1,4 @@
+import type { IDL } from "@icp-sdk/core/candid";
 const mockEncode = jest.fn();
 const mockDecode = jest.fn();
 
@@ -52,23 +53,23 @@ describe("fromNullable", () => {
 describe("getCanisterIdlFunc", () => {
   it("should return the function class for a known method", () => {
     const mockFuncClass = { argTypes: [], retTypes: [] };
-    const mockIdlFactory = jest.fn().mockReturnValue({
+    const mockIdlFactory: IDL.InterfaceFactory = jest.fn().mockReturnValue({
       _fields: [
         ["transfer", mockFuncClass],
         ["balance", { argTypes: [], retTypes: [] }],
       ],
-    });
+    }) as any;
 
-    const result = getCanisterIdlFunc(mockIdlFactory as any, "transfer");
+    const result = getCanisterIdlFunc(mockIdlFactory, "transfer");
     expect(result).toBe(mockFuncClass);
   });
 
   it("should throw for an unknown method", () => {
-    const mockIdlFactory = jest.fn().mockReturnValue({
+    const mockIdlFactory: IDL.InterfaceFactory = jest.fn().mockReturnValue({
       _fields: [["transfer", { argTypes: [], retTypes: [] }]],
-    });
+    }) as any;
 
-    expect(() => getCanisterIdlFunc(mockIdlFactory as any, "nonexistent")).toThrow(
+    expect(() => getCanisterIdlFunc(mockIdlFactory, "nonexistent")).toThrow(
       /Method nonexistent not found/,
     );
   });
@@ -83,7 +84,7 @@ describe("encodeCanisterIdlFunc", () => {
     const encodedBuffer = new Uint8Array([1, 2, 3, 4]);
     mockEncode.mockReturnValue(encodedBuffer);
 
-    const mockFunc = { argTypes: ["nat64"] } as any;
+    const mockFunc: IDL.FuncClass = { argTypes: ["nat64"] } as any;
     const result = encodeCanisterIdlFunc(mockFunc, [100]);
 
     expect(result).toBeInstanceOf(Uint8Array);
@@ -96,7 +97,7 @@ describe("encodeCanisterIdlFunc", () => {
     view.set([10, 20, 30, 40]);
     mockEncode.mockReturnValue(view);
 
-    const mockFunc = { argTypes: [] } as any;
+    const mockFunc: IDL.FuncClass = { argTypes: [] } as any;
     const result = encodeCanisterIdlFunc(mockFunc, []);
 
     expect(result).toBeInstanceOf(Uint8Array);
@@ -113,7 +114,7 @@ describe("decodeCanisterIdlFunc", () => {
     const decoded = { amount: BigInt(100) };
     mockDecode.mockReturnValue(decoded);
 
-    const mockFunc = { retTypes: ["record"] } as any;
+    const mockFunc: IDL.FuncClass = { retTypes: ["record"] } as any;
     const buffer = new Uint8Array([1, 2, 3]);
     const result = decodeCanisterIdlFunc(mockFunc, buffer);
 

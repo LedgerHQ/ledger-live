@@ -7,7 +7,7 @@ const validBase64RegExp = new RegExp(
 );
 
 export const getPath = (path: string): string =>
-  path && path.substr(0, 2) !== "m/" ? `m/${path}` : path;
+  path && path.substring(0, 2) !== "m/" ? `m/${path}` : path;
 
 export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg);
 export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg);
@@ -32,7 +32,7 @@ export const normalizeEpochTimestamp = (timestamp: string): number => {
   return parseInt(timestamp.slice(0, 13));
 };
 
-function randomIntFromInterval(min: any, max: any): string {
+function randomIntFromInterval(min: number, max: number): string {
   const minBig = new BigNumber(min);
   const maxBig = new BigNumber(max);
 

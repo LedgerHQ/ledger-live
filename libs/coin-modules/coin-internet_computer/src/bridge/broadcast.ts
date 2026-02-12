@@ -12,12 +12,9 @@ interface BroadcastRawData {
 
 // Type guard to validate rawData shape
 function isBroadcastRawData(data: unknown): data is BroadcastRawData {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    "encodedSignedCallBlob" in data &&
-    typeof (data as any).encodedSignedCallBlob === "string"
-  );
+  if (typeof data !== "object" || data === null) return false;
+  if (!("encodedSignedCallBlob" in data)) return false;
+  return typeof data.encodedSignedCallBlob === "string";
 }
 
 // Main broadcast function for handling Internet Computer transactions

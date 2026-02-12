@@ -21,7 +21,7 @@ export interface TransactionParams {
  * @param value - Values to encode
  * @returns CBOR encoded buffer
  */
-export function encode(...value: any): Buffer {
+export function encode(...value: unknown[]): Buffer {
   const encoder = new cbor.Encoder({ canonical: true });
   return encoder._encodeAll(value);
 }

@@ -16,7 +16,9 @@ export const getCanisterIdlFunc = (
   idlFactory: IDL.InterfaceFactory,
   methodName: string,
 ): IDL.FuncClass => {
-  const fields = idlFactory({ IDL })._fields as IDLField[];
+  const service = idlFactory({ IDL });
+  // _fields is not part of the public IDL.ServiceClass type but is present at runtime
+  const fields: IDLField[] = Reflect.get(service, "_fields");
   const func = fields.find(f => f[0] === methodName);
   invariant(func, `[ICP](getCanisterIdlFunc) Method ${methodName} not found`);
   return func[1];
@@ -36,6 +38,7 @@ export const encodeCanisterIdlFunc = (func: IDL.FuncClass, args: unknown[]): Uin
  * Decodes a response buffer using the specified IDL function's return types.
  */
 export const decodeCanisterIdlFunc = <T>(func: IDL.FuncClass, buffer: Uint8Array): T => {
+  // IDL.decode returns an opaque type; caller provides the expected shape via T
   return IDL.decode(func.retTypes, buffer) as T;
 };
 
