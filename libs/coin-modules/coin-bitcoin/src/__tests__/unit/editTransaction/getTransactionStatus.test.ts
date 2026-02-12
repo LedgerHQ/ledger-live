@@ -68,11 +68,7 @@ describe("validateEditTransaction", () => {
     );
   });
 
-<<<<<<< HEAD
   it("sets error when new feePerByte is missing (replacement must have a fee)", () => {
-=======
-  it("returns empty errors and warnings when original or new feePerByte is missing", () => {
->>>>>>> a01d6c054a (fix: tests and all functions)
     const baseTx = makeTransaction({ rbf: true, feePerByte: new BigNumber(5) });
     const baseEdited = makeTransaction({ feePerByte: new BigNumber(10) });
 
@@ -158,15 +154,9 @@ describe("validateEditTransaction", () => {
     );
   });
 
-<<<<<<< HEAD
   it("returns errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
     // Original 10 => min is 11. New 12 is OK.
     const transaction = makeTransaction({ feePerByte: new BigNumber(12) });
-=======
-  it("returns no errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
-    // Original 10 => min is 11. New 11 is OK.
-    const transaction = makeTransaction({ feePerByte: new BigNumber(11) });
->>>>>>> a01d6c054a (fix: tests and all functions)
     const transactionToUpdate = makeTransaction({
       rbf: true,
       feePerByte: new BigNumber(10),
@@ -184,11 +174,7 @@ describe("validateEditTransaction", () => {
 });
 
 describe("getEditTransactionStatus", () => {
-<<<<<<< HEAD
   it("merges edit transaction errors into existing status errors", async () => {
-=======
-  it("merges edit transaction errors into existing status errors", () => {
->>>>>>> a01d6c054a (fix: tests and all functions)
     const transaction = makeTransaction({ feePerByte: new BigNumber(10) });
     const transactionToUpdate = makeTransaction({
       rbf: false,
@@ -213,11 +199,7 @@ describe("getEditTransactionStatus", () => {
     );
   });
 
-<<<<<<< HEAD
   it("keeps original errors when validateEditTransaction returns no errors", async () => {
-=======
-  it("keeps original errors when validateEditTransaction returns no errors", () => {
->>>>>>> a01d6c054a (fix: tests and all functions)
     const transaction = makeTransaction({ feePerByte: new BigNumber(10) });
     const transactionToUpdate = makeTransaction({
       rbf: true,
