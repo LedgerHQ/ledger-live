@@ -51,16 +51,16 @@ jobs:
         run: |
           pnpm desktop test:jest:coverage
           pnpm mobile test:jest:coverage
-      
+
       - name: Generate Unit test coverage for libs
         run: |
-          
+
           mkdir -p libs/coverage
           touch libs/coverage/lcov.info
           touch libs/coverage/sonar-executionTests-report.xml
-         
+
           pnpm turbo run coverage --filter="./libs/**" --concurrency=4 -- --runInBand=1
-          
+
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
             echo "Processing library at path: $lib"
