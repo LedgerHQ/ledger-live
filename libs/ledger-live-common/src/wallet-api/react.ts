@@ -120,6 +120,7 @@ export interface UiHook {
     account: AccountLike;
     parentAccount: Account | undefined;
     transaction: string;
+    broadcast?: boolean;
     options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
     onSuccess: (signedOperation: SignedOperation) => void;
     onError: (error: Error) => void;
@@ -707,6 +708,7 @@ export function useWalletAPIServer({
               account,
               parentAccount,
               transaction: tx,
+              broadcast: broadcast ?? false,
               options: undefined,
               onSuccess: signedOperation => {
                 if (done) return;
@@ -834,6 +836,7 @@ export function useWalletAPIServer({
                 account,
                 parentAccount,
                 transaction: tx,
+                broadcast,
                 options,
                 onSuccess: signedOperation => {
                   if (done) return;

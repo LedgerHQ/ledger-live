@@ -147,7 +147,6 @@ export type Transaction = TransactionCommon & {
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
   psbt?: string;
-  finalizePsbt?: boolean;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {

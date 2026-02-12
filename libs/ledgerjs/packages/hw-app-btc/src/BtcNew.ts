@@ -24,6 +24,16 @@ import { extract } from "./newops/psbtExtractor";
 import { finalize } from "./newops/psbtFinalizer";
 import { serializeTransaction } from "./serializeTransaction";
 import type { Transaction } from "./types";
+import type { SignPsbtBufferOptions } from "./signPsbt/types";
+import { deserializePsbt } from "./signPsbt/parsePsbt";
+import { analyzeAllInputs } from "./signPsbt/inputAnalysis";
+import { determineAccountType } from "./signPsbt/accountTypeResolver";
+import { populateMissingBip32Derivations } from "./signPsbt/derivationPopulation";
+import {
+  createWalletPolicy,
+  createProgressCallback,
+  finalizePsbtAndExtract,
+} from "./signPsbt/signAndFinalize";
 
 // Replacement for pointCompress from tiny-secp256k1
 function pointCompress(point: Uint8Array, compressed = true): Uint8Array {
@@ -305,7 +315,7 @@ export default class BtcNew {
    * or inputs from different accounts are not supported and will throw an error.
    *
    * @param psbtBuffer - Raw PSBT buffer (v0 or v2) to be signed.
-   * @param options - Optional signing configuration.
+   * @param options - Signing configuration.
    * @param options.finalizePsbt - Whether to finalize the PSBT after signing
    *   (default: true). If true, the returned `tx` is a fully signed
    *   transaction ready for broadcast.
@@ -318,25 +328,20 @@ export default class BtcNew {
    * @param options.onDeviceSignatureRequested - Callback when signature is about to be requested from device.
    * @param options.onDeviceSignatureGranted - Callback when the first signature is granted by device.
    * @param options.onDeviceStreaming - Callback to track signing progress with index and total.
+   * @param options.addressScanLimit - Maximum address index to scan per
+   *   change level (0 and 1) when populating missing BIP32 derivations
+   *   (default: 20). This is **not** a BIP44 gap limit — no on-chain usage
+   *   data is checked. Increase this value if your wallet uses addresses
+   *   beyond index 19.
    *
    * @returns An object containing:
-   * - `psbt`: a non-finalized PSBT buffer including signatures.
-   * - `tx`: the fully signed transaction hex string (if `finalizePsbt` is
-   *   true), or the hex of the transaction that would be extracted after
-   *   finalization.
+   * - `psbt`: the serialized PSBT (with signatures; finalized if
+   *   `finalizePsbt` is true).
+   * - `tx`: the fully signed transaction hex string, only when
+   *   `finalizePsbt` is true; omitted when not finalizing.
    */
-  async signPsbtBuffer(
-    psbtBuffer: Buffer,
-    options?: {
-      finalizePsbt?: boolean;
-      accountPath?: string;
-      addressFormat?: AddressFormat;
-      onDeviceSignatureRequested?: () => void;
-      onDeviceSignatureGranted?: () => void;
-      onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
-    },
-  ) {
-    const psbt = this.deserializePsbt(psbtBuffer);
+  async signPsbtBuffer(psbtBuffer: Buffer, options: SignPsbtBufferOptions) {
+    const psbt = deserializePsbt(psbtBuffer);
     const inputCount = psbt.getGlobalInputCount();
 
     if (inputCount === 0) {
@@ -344,7 +349,21 @@ export default class BtcNew {
     }
 
     const masterFp = await this.client.getMasterFingerprint();
-    const { accountPath, detectedScriptType, internalInputIndices } = this.analyzeAllInputs(
+
+    const preliminaryAccountPath = pathStringToArray(options.accountPath);
+
+    if (preliminaryAccountPath && preliminaryAccountPath.length > 0) {
+      await populateMissingBip32Derivations(
+        this.client,
+        psbt,
+        inputCount,
+        masterFp,
+        preliminaryAccountPath,
+        options?.addressScanLimit,
+      );
+    }
+
+    const { accountPath, detectedScriptType, internalInputIndices } = analyzeAllInputs(
       psbt,
       inputCount,
       masterFp,
@@ -354,7 +373,7 @@ export default class BtcNew {
     const accountXpub = await this.client.getExtendedPubkey(false, accountPath);
     const referenceInputIndex = internalInputIndices.length > 0 ? internalInputIndices[0] : 0;
 
-    const accountType = this.determineAccountType(
+    const accountType = determineAccountType(
       psbt,
       referenceInputIndex,
       masterFp,
@@ -363,408 +382,12 @@ export default class BtcNew {
       options?.addressFormat,
     );
 
-    const walletPolicy = this.createWalletPolicy(masterFp, accountPath, accountXpub, accountType);
-    const progressCallback = this.createProgressCallback(inputCount, options);
+    const walletPolicy = createWalletPolicy(masterFp, accountPath, accountXpub, accountType);
+    const progressCallback = createProgressCallback(inputCount, options);
 
     await this.signPsbt(psbt, walletPolicy, progressCallback);
 
-    return this.finalizePsbtAndExtract(psbt, options?.finalizePsbt);
-  }
-
-  private deserializePsbt(psbtBuffer: Buffer): PsbtV2 {
-    const psbtVersion = PsbtV2.getPsbtVersionNumber(psbtBuffer);
-    const psbt = psbtVersion === 2 ? new PsbtV2() : PsbtV2.fromV0(psbtBuffer, true);
-
-    if (psbtVersion === 2) {
-      psbt.deserialize(psbtBuffer);
-    }
-
-    return psbt;
-  }
-
-  private analyzeAllInputs(
-    psbt: PsbtV2,
-    inputCount: number,
-    masterFp: Buffer,
-    accountPathOption?: string,
-  ): {
-    accountPath: number[];
-    detectedScriptType: string | undefined;
-    internalInputIndices: number[];
-  } {
-    const internalInputIndices: number[] = [];
-    let accountPath: number[] = [];
-    let detectedScriptType: string | undefined;
-
-    for (let i = 0; i < inputCount; i++) {
-      const inputInfo = this.analyzeInput(psbt, i, masterFp);
-
-      if (!inputInfo.isInternal) {
-        continue;
-      }
-
-      internalInputIndices.push(i);
-      this.validateAccountPathConsistency(accountPath, inputInfo.accountPath, i);
-
-      if (accountPath.length === 0) {
-        accountPath = inputInfo.accountPath;
-      }
-
-      this.validateScriptTypeConsistency(detectedScriptType, inputInfo.scriptType, i);
-
-      if (!detectedScriptType) {
-        detectedScriptType = inputInfo.scriptType;
-      }
-    }
-
-    if (internalInputIndices.length === 0) {
-      accountPath = this.resolveAccountPathFromOptions(accountPathOption);
-    }
-
-    return { accountPath, detectedScriptType, internalInputIndices };
-  }
-
-  private validateAccountPathConsistency(
-    accountPath: number[],
-    newAccountPath: number[],
-    inputIndex: number,
-  ): void {
-    if (accountPath.length > 0 && !this.arePathsEqual(accountPath, newAccountPath)) {
-      throw new Error(
-        `Mixed accounts detected in PSBT. Input ${inputIndex} uses account path ` +
-          `${pathArrayToString(newAccountPath)} but expected ` +
-          `${pathArrayToString(accountPath)}. All internal inputs must belong to the same account.`,
-      );
-    }
-  }
-
-  private validateScriptTypeConsistency(
-    detectedScriptType: string | undefined,
-    newScriptType: string | undefined,
-    inputIndex: number,
-  ): void {
-    if (detectedScriptType && newScriptType && detectedScriptType !== newScriptType) {
-      throw new Error(
-        `Mixed input types detected in PSBT. Input ${inputIndex} uses ${newScriptType} ` +
-          `but expected ${detectedScriptType}. All internal inputs must use the same script type.`,
-      );
-    }
-  }
-
-  private resolveAccountPathFromOptions(accountPathOption?: string): number[] {
-    if (!accountPathOption) {
-      throw new Error(
-        "No internal inputs found in PSBT (no BIP32 derivation matching device fingerprint) " +
-          "and no account path provided in options. Please provide accountPath in options " +
-          "(e.g., \"m/84'/0'/0'\" for native segwit)",
-      );
-    }
-    return pathStringToArray(accountPathOption);
-  }
-
-  private createWalletPolicy(
-    masterFp: Buffer,
-    accountPath: number[],
-    accountXpub: string,
-    accountType: AccountType,
-  ): WalletPolicy {
-    const key = createKey(masterFp, accountPath, accountXpub);
-    return new WalletPolicy(accountType.getDescriptorTemplate(), key);
-  }
-
-  private createProgressCallback(
-    inputCount: number,
-    options?: {
-      onDeviceSignatureRequested?: () => void;
-      onDeviceSignatureGranted?: () => void;
-      onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
-    },
-  ): () => void {
-    let notifyCount = 0;
-    let firstSigned = false;
-
-    const progress = () => {
-      if (!options?.onDeviceStreaming) return;
-      options.onDeviceStreaming({
-        total: 2 * inputCount,
-        index: notifyCount,
-        progress: ++notifyCount / (2 * inputCount),
-      });
-    };
-
-    if (options?.onDeviceSignatureRequested) options.onDeviceSignatureRequested();
-
-    return () => {
-      if (!firstSigned) {
-        firstSigned = true;
-        if (options?.onDeviceSignatureGranted) options.onDeviceSignatureGranted();
-      }
-      progress();
-    };
-  }
-
-  private finalizePsbtAndExtract(
-    psbt: PsbtV2,
-    shouldFinalize?: boolean,
-  ): { psbt: Buffer; tx: string } {
-    if (shouldFinalize ?? true) {
-      finalize(psbt);
-    }
-    const serializedTx = extract(psbt);
-
-    return {
-      psbt: psbt.serialize(),
-      tx: serializedTx.toString("hex"),
-    };
-  }
-
-  /**
-   * Analyzes a single input to determine if it's internal (can be signed by the device)
-   * and extracts its account path and script type.
-   */
-  private analyzeInput(
-    psbt: PsbtV2,
-    inputIndex: number,
-    masterFp: Buffer,
-  ): {
-    isInternal: boolean;
-    accountPath: number[];
-    scriptType: string | undefined;
-  } {
-    const derivationResult = this.checkBip32Derivation(psbt, inputIndex, masterFp);
-    const scriptType = this.determineInputScriptType(psbt, inputIndex);
-
-    return {
-      isInternal: derivationResult.isInternal,
-      accountPath: derivationResult.accountPath,
-      scriptType,
-    };
-  }
-
-  private checkBip32Derivation(
-    psbt: PsbtV2,
-    inputIndex: number,
-    masterFp: Buffer,
-  ): { isInternal: boolean; accountPath: number[] } {
-    // Check standard BIP32 derivation
-    const standardResult = this.checkStandardBip32Derivation(psbt, inputIndex, masterFp);
-    if (standardResult.isInternal) {
-      return standardResult;
-    }
-
-    // Check TAP_BIP32_DERIVATION for taproot inputs
-    return this.checkTaprootBip32Derivation(psbt, inputIndex, masterFp);
-  }
-
-  private checkStandardBip32Derivation(
-    psbt: PsbtV2,
-    inputIndex: number,
-    masterFp: Buffer,
-  ): { isInternal: boolean; accountPath: number[] } {
-    const keyDatas = psbt.getInputKeyDatas(inputIndex, psbtIn.BIP32_DERIVATION);
-
-    for (const pubkey of keyDatas) {
-      const derivationInfo = psbt.getInputBip32Derivation(inputIndex, pubkey);
-      if (derivationInfo?.masterFingerprint.equals(masterFp)) {
-        return this.extractAccountPath(derivationInfo.path);
-      }
-    }
-
-    return { isInternal: false, accountPath: [] };
-  }
-
-  private checkTaprootBip32Derivation(
-    psbt: PsbtV2,
-    inputIndex: number,
-    masterFp: Buffer,
-  ): { isInternal: boolean; accountPath: number[] } {
-    const tapKeyDatas = psbt.getInputKeyDatas(inputIndex, psbtIn.TAP_BIP32_DERIVATION);
-
-    for (const pubkey of tapKeyDatas) {
-      const derivationInfo = psbt.getInputTapBip32Derivation(inputIndex, pubkey);
-      if (derivationInfo?.masterFingerprint.equals(masterFp)) {
-        return this.extractAccountPath(derivationInfo.path);
-      }
-    }
-
-    return { isInternal: false, accountPath: [] };
-  }
-
-  private extractAccountPath(fullPath: number[]): { isInternal: true; accountPath: number[] } {
-    // Extract account path (full path minus last 2 elements for change/index)
-    const accountPath = fullPath.length >= 2 ? fullPath.slice(0, -2) : [];
-    return { isInternal: true, accountPath };
-  }
-
-  private determineInputScriptType(psbt: PsbtV2, inputIndex: number): string | undefined {
-    const witnessUtxo = psbt.getInputWitnessUtxo(inputIndex);
-    if (witnessUtxo) {
-      return this.detectScriptType(witnessUtxo.scriptPubKey);
-    }
-
-    const redeemScript = psbt.getInputRedeemScript(inputIndex);
-    if (redeemScript) {
-      return "p2sh-p2wpkh";
-    }
-
-    return undefined;
-  }
-
-  /**
-   * Detects the script type from a scriptPubKey.
-   */
-  private detectScriptType(scriptPubKey: Buffer): string | undefined {
-    if (scriptPubKey.length === 22 && scriptPubKey[0] === 0x00 && scriptPubKey[1] === 0x14) {
-      return "p2wpkh";
-    }
-    if (scriptPubKey.length === 34 && scriptPubKey[0] === 0x51 && scriptPubKey[1] === 0x20) {
-      return "p2tr";
-    }
-    if (scriptPubKey.length === 23 && scriptPubKey[0] === 0xa9 && scriptPubKey[22] === 0x87) {
-      return "p2sh";
-    }
-    if (scriptPubKey.length === 25 && scriptPubKey[0] === 0x76 && scriptPubKey[1] === 0xa9) {
-      return "p2pkh";
-    }
-    return undefined;
-  }
-
-  /**
-   * Compares two derivation paths for equality.
-   */
-  private arePathsEqual(path1: number[], path2: number[]): boolean {
-    if (path1.length !== path2.length) return false;
-    return path1.every((elem, idx) => elem === path2[idx]);
-  }
-
-  /**
-   * Determines the account type based on detected script type, account path, or options.
-   */
-  private determineAccountType(
-    psbt: PsbtV2,
-    inputIndex: number,
-    masterFp: Buffer,
-    detectedScriptType: string | undefined,
-    accountPath: number[],
-    addressFormat?: AddressFormat,
-  ): AccountType {
-    // Use detected script type if available
-    if (detectedScriptType) {
-      return this.createAccountTypeFromScriptType(detectedScriptType, psbt, masterFp);
-    }
-
-    // Fall back to witness UTXO analysis
-    const witnessUtxoType = this.determineAccountTypeFromWitnessUtxo(psbt, inputIndex, masterFp);
-    if (witnessUtxoType) {
-      return witnessUtxoType;
-    }
-
-    // Try redeem script
-    if (psbt.getInputRedeemScript(inputIndex)) {
-      return new p2wpkhWrapped(psbt, masterFp);
-    }
-
-    // Use address format option
-    if (addressFormat) {
-      return this.createAccountTypeFromAddressFormat(addressFormat, psbt, masterFp);
-    }
-
-    // Infer from account path purpose
-    const purposeBasedType = this.determineAccountTypeFromPurpose(accountPath, psbt, masterFp);
-    if (purposeBasedType) {
-      return purposeBasedType;
-    }
-
-    // Default to native segwit
-    return new p2wpkh(psbt, masterFp);
-  }
-
-  private createAccountTypeFromScriptType(
-    scriptType: string,
-    psbt: PsbtV2,
-    masterFp: Buffer,
-  ): AccountType {
-    switch (scriptType) {
-      case "p2wpkh":
-        return new p2wpkh(psbt, masterFp);
-      case "p2tr":
-        return new p2tr(psbt, masterFp);
-      case "p2sh":
-      case "p2sh-p2wpkh":
-        return new p2wpkhWrapped(psbt, masterFp);
-      case "p2pkh":
-        return new p2pkh(psbt, masterFp);
-      default:
-        return new p2wpkh(psbt, masterFp);
-    }
-  }
-
-  private determineAccountTypeFromWitnessUtxo(
-    psbt: PsbtV2,
-    inputIndex: number,
-    masterFp: Buffer,
-  ): AccountType | null {
-    const witnessUtxo = psbt.getInputWitnessUtxo(inputIndex);
-    if (!witnessUtxo) {
-      return null;
-    }
-
-    const scriptPubKey = witnessUtxo.scriptPubKey;
-
-    if (scriptPubKey.length === 22 && scriptPubKey[0] === 0x00 && scriptPubKey[1] === 0x14) {
-      return new p2wpkh(psbt, masterFp);
-    }
-    if (scriptPubKey.length === 34 && scriptPubKey[0] === 0x51 && scriptPubKey[1] === 0x20) {
-      return new p2tr(psbt, masterFp);
-    }
-    if (scriptPubKey.length === 23 && scriptPubKey[0] === 0xa9 && scriptPubKey[22] === 0x87) {
-      return new p2wpkhWrapped(psbt, masterFp);
-    }
-    if (scriptPubKey.length === 25 && scriptPubKey[0] === 0x76 && scriptPubKey[1] === 0xa9) {
-      return new p2pkh(psbt, masterFp);
-    }
-
-    throw new Error(`Unsupported script type: ${scriptPubKey.toString("hex")}`);
-  }
-
-  private createAccountTypeFromAddressFormat(
-    addressFormat: AddressFormat,
-    psbt: PsbtV2,
-    masterFp: Buffer,
-  ): AccountType {
-    const descrTemplate = descrTemplFrom(addressFormat);
-
-    if (descrTemplate === "pkh(@0)") return new p2pkh(psbt, masterFp);
-    if (descrTemplate === "wpkh(@0)") return new p2wpkh(psbt, masterFp);
-    if (descrTemplate === "sh(wpkh(@0))") return new p2wpkhWrapped(psbt, masterFp);
-    if (descrTemplate === "tr(@0)") return new p2tr(psbt, masterFp);
-
-    throw new Error(`Unsupported descriptor template: ${descrTemplate}`);
-  }
-
-  private determineAccountTypeFromPurpose(
-    accountPath: number[],
-    psbt: PsbtV2,
-    masterFp: Buffer,
-  ): AccountType | null {
-    if (accountPath.length < 1) {
-      return null;
-    }
-
-    const purpose = accountPath[0] - 0x80000000;
-
-    switch (purpose) {
-      case 44:
-        return new p2pkh(psbt, masterFp);
-      case 49:
-        return new p2wpkhWrapped(psbt, masterFp);
-      case 84:
-        return new p2wpkh(psbt, masterFp);
-      case 86:
-        return new p2tr(psbt, masterFp);
-      default:
-        return null;
-    }
+    return finalizePsbtAndExtract(psbt, options?.finalizePsbt);
   }
 
   /**

@@ -127,7 +127,7 @@ export const mockSigner: BitcoinSigner = {
   }),
   createPaymentTransaction: (_arg: CreateTransaction): Promise<string> =>
     Promise.resolve("createPaymentTransactionReturn"),
-  signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
+  signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx?: string }> {
     return Promise.resolve({ psbt: Buffer.from(""), tx: "" });
   },
 };

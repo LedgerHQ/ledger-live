@@ -41,3 +41,31 @@ export const ZCASH_ACTIVATION_HEIGHTS = {
 export const zCashEncCiphertextSize = 580; //https://zips.z.cash/zip-0225
 export const zCashOutCiphertextSize = 80; //https://zips.z.cash/zip-0225
 export const zCashProofsSaplingSize = 192; //https://zips.z.cash/zip-0225
+
+/**
+ * Script type detection constants.
+ * Extracted magic bytes for scriptPubKey analysis.
+ */
+export const SCRIPT_CONSTANTS = {
+  // P2WPKH (Native SegWit): OP_0 <20-byte-hash>
+  P2WPKH: {
+    LENGTH: 22,
+    PREFIX: [0x00, 0x14] as const,
+  },
+  // P2TR (Taproot): OP_1 <32-byte-x-only-pubkey>
+  P2TR: {
+    LENGTH: 34,
+    PREFIX: [0x51, 0x20] as const,
+  },
+  // P2SH (Pay-to-Script-Hash): OP_HASH160 <20-byte-hash> OP_EQUAL
+  P2SH: {
+    LENGTH: 23,
+    PREFIX: 0xa9,
+    SUFFIX: 0x87,
+  },
+  // P2PKH (Legacy): OP_DUP OP_HASH160 <20-byte-hash> OP_EQUALVERIFY OP_CHECKSIG
+  P2PKH: {
+    LENGTH: 25,
+    PREFIX: [0x76, 0xa9] as const,
+  },
+} as const;

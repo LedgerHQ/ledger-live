@@ -272,6 +272,9 @@ export class PsbtV2 {
     const buf = this.getOutput(outputIndex, psbtOut.TAP_BIP32_DERIVATION, pubkey);
     return this.decodeTapBip32Derivation(buf);
   }
+  getOutputKeyDatas(outputIndex: number, keyType: number): Buffer[] {
+    return this.getKeyDatas(this.outputMaps[outputIndex], keyType);
+  }
 
   deleteInputEntries(inputIndex: number, keyTypes: psbtIn[]) {
     const map = this.inputMaps[inputIndex];

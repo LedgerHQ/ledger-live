@@ -28,99 +28,141 @@ For a smooth and quick integration:
 #### Table of Contents
 
 *   [bippath](#bippath)
-*   [Btc](#btc)
+*   [deriveChildPublicKey](#derivechildpublickey)
     *   [Parameters](#parameters)
+*   [Btc](#btc)
+    *   [Parameters](#parameters-1)
     *   [Examples](#examples)
     *   [getWalletXpub](#getwalletxpub)
-        *   [Parameters](#parameters-1)
-    *   [getWalletPublicKey](#getwalletpublickey)
         *   [Parameters](#parameters-2)
+    *   [getWalletPublicKey](#getwalletpublickey)
+        *   [Parameters](#parameters-3)
         *   [Examples](#examples-1)
     *   [signMessage](#signmessage)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-4)
         *   [Examples](#examples-2)
     *   [createPaymentTransaction](#createpaymenttransaction)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-5)
         *   [Examples](#examples-3)
     *   [signPsbtBuffer](#signpsbtbuffer)
-        *   [Parameters](#parameters-5)
-        *   [Examples](#examples-4)
-    *   [signP2SHTransaction](#signp2shtransaction)
         *   [Parameters](#parameters-6)
-        *   [Examples](#examples-5)
-    *   [splitTransaction](#splittransaction)
+    *   [signP2SHTransaction](#signp2shtransaction)
         *   [Parameters](#parameters-7)
-        *   [Examples](#examples-6)
-    *   [serializeTransactionOutputs](#serializetransactionoutputs)
+        *   [Examples](#examples-4)
+    *   [splitTransaction](#splittransaction)
         *   [Parameters](#parameters-8)
-        *   [Examples](#examples-7)
-    *   [getTrustedInput](#gettrustedinput)
+        *   [Examples](#examples-5)
+    *   [serializeTransactionOutputs](#serializetransactionoutputs)
         *   [Parameters](#parameters-9)
-    *   [getTrustedInputBIP143](#gettrustedinputbip143)
+        *   [Examples](#examples-6)
+    *   [getTrustedInput](#gettrustedinput)
         *   [Parameters](#parameters-10)
+    *   [getTrustedInputBIP143](#gettrustedinputbip143)
+        *   [Parameters](#parameters-11)
 *   [BtcNew](#btcnew)
     *   [getWalletXpub](#getwalletxpub-1)
-        *   [Parameters](#parameters-11)
-    *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-12)
-    *   [createPaymentTransaction](#createpaymenttransaction-1)
+    *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-13)
-    *   [signPsbtBuffer](#signpsbtbuffer-1)
+    *   [createPaymentTransaction](#createpaymenttransaction-1)
         *   [Parameters](#parameters-14)
-    *   [signMessage](#signmessage-1)
+    *   [signPsbtBuffer](#signpsbtbuffer-1)
         *   [Parameters](#parameters-15)
+    *   [signMessage](#signmessage-1)
+        *   [Parameters](#parameters-16)
 *   [descrTemplFrom](#descrtemplfrom)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-17)
 *   [BtcOld](#btcold)
     *   [getWalletPublicKey](#getwalletpublickey-2)
-        *   [Parameters](#parameters-17)
-        *   [Examples](#examples-8)
-    *   [createPaymentTransaction](#createpaymenttransaction-2)
         *   [Parameters](#parameters-18)
-        *   [Examples](#examples-9)
+        *   [Examples](#examples-7)
+    *   [createPaymentTransaction](#createpaymenttransaction-2)
+        *   [Parameters](#parameters-19)
+        *   [Examples](#examples-8)
+*   [SCRIPT\_CONSTANTS](#script_constants)
 *   [CreateTransactionArg](#createtransactionarg)
     *   [Properties](#properties)
 *   [AddressFormat](#addressformat)
 *   [AccountType](#accounttype)
     *   [spendingCondition](#spendingcondition)
-        *   [Parameters](#parameters-19)
-    *   [setInput](#setinput)
         *   [Parameters](#parameters-20)
-    *   [setOwnOutput](#setownoutput)
+    *   [setInput](#setinput)
         *   [Parameters](#parameters-21)
+    *   [setOwnOutput](#setownoutput)
+        *   [Parameters](#parameters-22)
     *   [getDescriptorTemplate](#getdescriptortemplate)
 *   [SingleKeyAccount](#singlekeyaccount)
 *   [getTaprootOutputKey](#gettaprootoutputkey)
-    *   [Parameters](#parameters-22)
-*   [AppClient](#appclient)
     *   [Parameters](#parameters-23)
-*   [ClientCommandInterpreter](#clientcommandinterpreter)
+*   [AppClient](#appclient)
     *   [Parameters](#parameters-24)
-*   [MerkelizedPsbt](#merkelizedpsbt)
+*   [ClientCommandInterpreter](#clientcommandinterpreter)
     *   [Parameters](#parameters-25)
-*   [Merkle](#merkle)
+*   [MerkelizedPsbt](#merkelizedpsbt)
     *   [Parameters](#parameters-26)
-*   [MerkleMap](#merklemap)
+*   [Merkle](#merkle)
     *   [Parameters](#parameters-27)
-*   [WalletPolicy](#walletpolicy)
+*   [MerkleMap](#merklemap)
     *   [Parameters](#parameters-28)
-*   [extract](#extract)
+*   [WalletPolicy](#walletpolicy)
     *   [Parameters](#parameters-29)
-*   [finalize](#finalize)
+*   [extract](#extract)
     *   [Parameters](#parameters-30)
-*   [clearFinalizedInput](#clearfinalizedinput)
+*   [finalize](#finalize)
     *   [Parameters](#parameters-31)
-*   [writePush](#writepush)
+*   [clearFinalizedInput](#clearfinalizedinput)
     *   [Parameters](#parameters-32)
-*   [serializeTransactionOutputs](#serializetransactionoutputs-1)
+*   [writePush](#writepush)
     *   [Parameters](#parameters-33)
-    *   [Examples](#examples-10)
+*   [serializeTransactionOutputs](#serializetransactionoutputs-1)
+    *   [Parameters](#parameters-34)
+    *   [Examples](#examples-9)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
-*   [splitSaplingPart](#splitsaplingpart)
-    *   [Parameters](#parameters-34)
-*   [splitOrchardPart](#splitorchardpart)
+*   [detectScriptType](#detectscripttype)
     *   [Parameters](#parameters-35)
+*   [determineAccountType](#determineaccounttype)
+    *   [Parameters](#parameters-36)
+*   [getDerivationAccessors](#getderivationaccessors)
+    *   [Parameters](#parameters-37)
+*   [checkElementBip32Derivation](#checkelementbip32derivation)
+    *   [Parameters](#parameters-38)
+*   [checkOutputBip32Derivation](#checkoutputbip32derivation)
+    *   [Parameters](#parameters-39)
+*   [getScriptPubKeyFromNonWitnessUtxo](#getscriptpubkeyfromnonwitnessutxo)
+    *   [Parameters](#parameters-40)
+*   [getInputScriptPubKey](#getinputscriptpubkey)
+    *   [Parameters](#parameters-41)
+*   [buildScriptPubKeyLookupMap](#buildscriptpubkeylookupmap)
+    *   [Parameters](#parameters-42)
+*   [fixDerivationFingerprints](#fixderivationfingerprints)
+    *   [Parameters](#parameters-43)
+*   [setElementBip32DerivationData](#setelementbip32derivationdata)
+    *   [Parameters](#parameters-44)
+*   [populateMissingBip32Derivations](#populatemissingbip32derivations)
+    *   [Parameters](#parameters-45)
+*   [determineInputScriptType](#determineinputscripttype)
+    *   [Parameters](#parameters-46)
+*   [analyzeInput](#analyzeinput)
+    *   [Parameters](#parameters-47)
+*   [analyzeAllInputs](#analyzeallinputs)
+    *   [Parameters](#parameters-48)
+*   [deserializePsbt](#deserializepsbt)
+    *   [Parameters](#parameters-49)
+*   [createWalletPolicy](#createwalletpolicy)
+    *   [Parameters](#parameters-50)
+*   [createProgressCallback](#createprogresscallback)
+    *   [Parameters](#parameters-51)
+*   [finalizePsbtAndExtract](#finalizepsbtandextract)
+    *   [Parameters](#parameters-52)
+*   [SignPsbtBufferOptions](#signpsbtbufferoptions)
+*   [DerivationElementType](#derivationelementtype)
+*   [DerivationAccessors](#derivationaccessors)
+*   [ScriptType](#scripttype)
+*   [splitSaplingPart](#splitsaplingpart)
+    *   [Parameters](#parameters-53)
+*   [splitOrchardPart](#splitorchardpart)
+    *   [Parameters](#parameters-54)
 *   [TransactionInput](#transactioninput)
 *   [TransactionOutput](#transactionoutput)
 *   [Transaction](#transaction)
@@ -133,7 +175,25 @@ BIP32 Path Handling for Bitcoin Wallets
 This file provides utility functions to handle BIP32 paths,
 which are commonly used in hierarchical deterministic (HD) wallets.
 It includes functions to convert BIP32 paths to and from different formats,
-extract components from extended public keys (xpubs), and manipulate path elements.
+extract components from extended public keys (xpubs), manipulate path elements,
+and derive child public keys locally (for non-hardened derivation).
+
+### deriveChildPublicKey
+
+Derives a child public key from a parent public key using BIP32 non-hardened derivation.
+This allows deriving child keys locally without device interaction.
+
+#### Parameters
+
+*   `parentPubkey` **[Buffer](https://nodejs.org/api/buffer.html)** The parent compressed public key (33 bytes)
+*   `parentChaincode` **[Buffer](https://nodejs.org/api/buffer.html)** The parent chaincode (32 bytes)
+*   `index` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The child index (must be non-hardened, i.e., < 0x80000000)
+
+<!---->
+
+*   Throws **any** Error if attempting hardened derivation or invalid inputs
+
+Returns **{pubkey: [Buffer](https://nodejs.org/api/buffer.html), chaincode: [Buffer](https://nodejs.org/api/buffer.html)}** The derived child public key and chaincode
 
 ### Btc
 
@@ -255,32 +315,46 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### signPsbtBuffer
 
-Sign a PSBT Buffer
+Signs a PSBT buffer using the Bitcoin app (new protocol).
 
-This method can handle PSBTs with or without BIP32 derivation information.
-It processes a PSBT buffer and signs the transaction inputs according to the
-wallet policy and derivation paths.
+*   If the PSBT is v2, it is deserialized directly.
+*   If the PSBT is v0, it is converted to v2 internally.
+*   The account type (legacy, wrapped segwit, native segwit, taproot) is
+    inferred from PSBT data when possible, or from the provided options.
+
+Note: All internal inputs (inputs that can be signed by the device) must
+belong to the same account and use the same account type. Mixed input types
+or inputs from different accounts are not supported and will throw an error.
 
 ##### Parameters
 
-*   `psbt` **[Buffer](https://nodejs.org/api/buffer.html)** The PSBT (Partially Signed Bitcoin Transaction) buffer to be signed
-*   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Optional configuration for signing
+*   `psbt` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `opts` **[SignPsbtBufferOptions](#signpsbtbufferoptions)**&#x20;
+*   `psbtBuffer`  Raw PSBT buffer (v0 or v2) to be signed.
+*   `options`  Signing configuration.
 
-    *   `opts.finalizePsbt` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** Whether to finalize the PSBT after signing (default: true)
-    *   `opts.accountPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** BIP32 derivation path for the account (e.g., "m/84'/0'/0'")
-    *   `opts.addressFormat` **[AddressFormat](#addressformat)?** Address format to use for signing (e.g., 'p2wpkh', 'p2sh-p2wpkh', 'p2pkh')
+    *   `options.finalizePsbt`  Whether to finalize the PSBT after signing
+        (default: true). If true, the returned `tx` is a fully signed
+        transaction ready for broadcast.
+    *   `options.accountPath`  BIP32 account path (for example,
+        "m/84'/0'/0'") used when BIP32 derivation information is missing from
+        the PSBT. Required if the PSBT does not contain BIP32 derivation data.
+    *   `options.addressFormat`  Explicit address format to use when the
+        account type cannot be inferred from the PSBT ("legacy", "p2sh",
+        "bech32", or "bech32m").
+    *   `options.onDeviceSignatureRequested`  Callback when signature is about to be requested from device.
+    *   `options.onDeviceSignatureGranted`  Callback when the first signature is granted by device.
+    *   `options.onDeviceStreaming`  Callback to track signing progress with index and total.
+    *   `options.addressScanLimit`  Maximum address index to scan per
+        change level (0 and 1) when populating missing BIP32 derivations
+        (default: 20). This is **not** a BIP44 gap limit — no on-chain usage
+        data is checked. Increase this value if your wallet uses addresses
+        beyond index 19.
 
-##### Examples
-
-```javascript
-const { psbt: signedPsbt, tx } = await btc.signPsbtBuffer(psbtBuffer, {
-  finalizePsbt: true,
-  accountPath: "m/84'/0'/0'",
-  addressFormat: 'p2wpkh'
-});
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{psbt: [Buffer](https://nodejs.org/api/buffer.html), tx: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** A promise that resolves to an object containing the signed PSBT buffer and the transaction hex string
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{psbt: [Buffer](https://nodejs.org/api/buffer.html), tx: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}>** An object containing:*   `psbt`: the serialized PSBT (with signatures; finalized if
+    `finalizePsbt` is true).
+*   `tx`: the fully signed transaction hex string, only when
+    `finalizePsbt` is true; omitted when not finalizing.
 
 #### signP2SHTransaction
 
@@ -472,7 +546,7 @@ or inputs from different accounts are not supported and will throw an error.
 ##### Parameters
 
 *   `psbtBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** Raw PSBT buffer (v0 or v2) to be signed.
-*   `options` **{finalizePsbt: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, accountPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, addressFormat: [AddressFormat](#addressformat)?, onDeviceSignatureRequested: function (): void?, onDeviceSignatureGranted: function (): void?, onDeviceStreaming: function (arg: {progress: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), total: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}): void?}?** Optional signing configuration.
+*   `options` **[SignPsbtBufferOptions](#signpsbtbufferoptions)** Signing configuration.
 
     *   `options.finalizePsbt`  Whether to finalize the PSBT after signing
         (default: true). If true, the returned `tx` is a fully signed
@@ -486,11 +560,16 @@ or inputs from different accounts are not supported and will throw an error.
     *   `options.onDeviceSignatureRequested`  Callback when signature is about to be requested from device.
     *   `options.onDeviceSignatureGranted`  Callback when the first signature is granted by device.
     *   `options.onDeviceStreaming`  Callback to track signing progress with index and total.
+    *   `options.addressScanLimit`  Maximum address index to scan per
+        change level (0 and 1) when populating missing BIP32 derivations
+        (default: 20). This is **not** a BIP44 gap limit — no on-chain usage
+        data is checked. Increase this value if your wallet uses addresses
+        beyond index 19.
 
-Returns **any** An object containing:*   `psbt`: a non-finalized PSBT buffer including signatures.
-*   `tx`: the fully signed transaction hex string (if `finalizePsbt` is
-    true), or the hex of the transaction that would be extracted after
-    finalization.
+Returns **any** An object containing:*   `psbt`: the serialized PSBT (with signatures; finalized if
+    `finalizePsbt` is true).
+*   `tx`: the fully signed transaction hex string, only when
+    `finalizePsbt` is true; omitted when not finalizing.
 
 #### signMessage
 
@@ -588,6 +667,11 @@ outputScriptHex: "01905f0100000000001976a91472a5d75c8d2d0565b656a5232703b167d50d
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the signed transaction ready to be broadcast
+
+### SCRIPT\_CONSTANTS
+
+Script type detection constants.
+Extracted magic bytes for scriptPubKey analysis.
 
 ### CreateTransactionArg
 
@@ -869,6 +953,252 @@ Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Referen
 *   `sigHashType` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 *   `segwit` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `transactionVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
+
+### detectScriptType
+
+Detects the script type from a scriptPubKey.
+
+#### Parameters
+
+*   `scriptPubKey` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+
+Returns **([ScriptType](#scripttype) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+
+### determineAccountType
+
+Determines the account type based on detected script type, account path, or options.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `inputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `detectedScriptType` **([ScriptType](#scripttype) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+*   `accountPath` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**&#x20;
+*   `addressFormat` **[AddressFormat](#addressformat)?**&#x20;
+
+Returns **[AccountType](#accounttype)**&#x20;
+
+### getDerivationAccessors
+
+Returns accessors for BIP32 derivation operations based on element type.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `type` **[DerivationElementType](#derivationelementtype)**&#x20;
+
+Returns **[DerivationAccessors](#derivationaccessors)**&#x20;
+
+### checkElementBip32Derivation
+
+Generic method to check BIP32 derivation for either an input or output.
+
+#### Parameters
+
+*   `accessors` **[DerivationAccessors](#derivationaccessors)**&#x20;
+*   `elementIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+
+Returns **{isInternal: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), accountPath: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>}**&#x20;
+
+### checkOutputBip32Derivation
+
+Checks if an output has a valid BIP32 derivation with the correct master fingerprint.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `outputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+
+### getScriptPubKeyFromNonWitnessUtxo
+
+Extracts the scriptPubKey from a non-witness UTXO by parsing the previous transaction.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `inputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **([Buffer](https://nodejs.org/api/buffer.html) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+
+### getInputScriptPubKey
+
+Extracts the scriptPubKey from an input's UTXO data.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `inputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **([Buffer](https://nodejs.org/api/buffer.html) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+
+### buildScriptPubKeyLookupMap
+
+Builds a pre-computed lookup map from scriptPubKey hex to { pubkey, path }.
+
+#### Parameters
+
+*   `accountPubkey` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `accountChaincode` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `accountPath` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**&#x20;
+*   `accountType` **[AccountType](#accounttype)**&#x20;
+*   `addressScanLimit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
+
+Returns **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), {pubkey: [Buffer](https://nodejs.org/api/buffer.html), path: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>}>**&#x20;
+
+### fixDerivationFingerprints
+
+Generic method to fix BIP32 derivations with wrong master fingerprint.
+
+#### Parameters
+
+*   `client` **SignPsbtClient**&#x20;
+*   `accessors` **[DerivationAccessors](#derivationaccessors)**&#x20;
+*   `elementIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `elementType` **(`"input"` | `"output"`)**  (optional, default `"input"`)
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**&#x20;
+
+### setElementBip32DerivationData
+
+Generic method to set BIP32 derivation data on an input or output.
+
+#### Parameters
+
+*   `accessors` **[DerivationAccessors](#derivationaccessors)**&#x20;
+*   `elementIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `pubkey` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `path` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**&#x20;
+*   `accountType` **[AccountType](#accounttype)**&#x20;
+
+Returns **void**&#x20;
+
+### populateMissingBip32Derivations
+
+Populates missing BIP32 derivations using a two-phase approach.
+
+#### Parameters
+
+*   `client` **SignPsbtClient**&#x20;
+*   `psbt` **PsbtV2**&#x20;
+*   `inputCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `accountPath` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**&#x20;
+*   `addressScanLimit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
+
+### determineInputScriptType
+
+Determines the script type for a single input from witness UTXO or redeem script.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `inputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **([ScriptType](#scripttype) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+
+### analyzeInput
+
+Analyzes a single input to determine if it's internal and extracts account path and script type.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `inputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+
+Returns **{isInternal: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), accountPath: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>, scriptType: ([ScriptType](#scripttype) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))}**&#x20;
+
+### analyzeAllInputs
+
+Analyzes all inputs and returns resolved account path, detected script type, and internal input indices.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `inputCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `accountPathOption` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+
+Returns **{accountPath: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>, detectedScriptType: ([ScriptType](#scripttype) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), internalInputIndices: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>}**&#x20;
+
+### deserializePsbt
+
+Deserializes a raw PSBT buffer (v0 or v2) into a PsbtV2 instance.
+
+#### Parameters
+
+*   `psbtBuffer` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+
+Returns **PsbtV2**&#x20;
+
+### createWalletPolicy
+
+Creates a WalletPolicy for the given account.
+
+#### Parameters
+
+*   `masterFp` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `accountPath` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**&#x20;
+*   `accountXpub` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `accountType` **[AccountType](#accounttype)**&#x20;
+
+Returns **[WalletPolicy](#walletpolicy)**&#x20;
+
+### createProgressCallback
+
+Creates a progress callback that notifies onDeviceStreaming and onDeviceSignatureGranted.
+
+#### Parameters
+
+*   `inputCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `options` **{onDeviceSignatureRequested: function (): void?, onDeviceSignatureGranted: function (): void?, onDeviceStreaming: function (arg: {progress: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), total: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}): void?}?**&#x20;
+
+Returns **function (): void**&#x20;
+
+### finalizePsbtAndExtract
+
+Optionally finalizes the PSBT and, when finalizing, extracts the transaction.
+When not finalizing, only the serialized PSBT (with partial signatures) is
+returned; extraction is not performed because FINAL\_SCRIPTWITNESS is not set.
+
+#### Parameters
+
+*   `psbt` **PsbtV2**&#x20;
+*   `shouldFinalize` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
+
+Returns **{psbt: [Buffer](https://nodejs.org/api/buffer.html), tx: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}**&#x20;
+
+### SignPsbtBufferOptions
+
+Options for signPsbtBuffer. Used internally by signPsbt modules.
+
+### DerivationElementType
+
+Discriminator for input vs output derivation handling.
+Used to consolidate duplicate code for BIP32 derivation operations.
+
+Type: (`"input"` | `"output"`)
+
+### DerivationAccessors
+
+Accessors for BIP32 derivation operations that abstract over inputs vs outputs.
+This allows reusing the same derivation logic for both element types.
+
+### ScriptType
+
+Union type for supported Bitcoin script types.
+Provides type safety for script type detection and handling.
+
+Type: (`"p2wpkh"` | `"p2tr"` | `"p2sh"` | `"p2sh-p2wpkh"` | `"p2pkh"`)
 
 ### splitSaplingPart
 
