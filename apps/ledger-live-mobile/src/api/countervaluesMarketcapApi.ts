@@ -16,10 +16,4 @@ export const countervaluesMarketcapApi = createApi({
   }),
 });
 
-export const selectCountervaluesMarketcapIdsResult =
-  countervaluesMarketcapApi.endpoints.getMarketcapIds.select();
-export const selectCountervaluesMarketcapIds = (
-  state: Parameters<typeof selectCountervaluesMarketcapIdsResult>[0],
-): string[] => selectCountervaluesMarketcapIdsResult(state).data ?? [];
-
 export const { useGetMarketcapIdsQuery } = countervaluesMarketcapApi;
