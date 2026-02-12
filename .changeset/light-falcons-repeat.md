@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/live-dmk-speculos": patch
+"ledger-live-desktop": minor
+"@ledgerhq/live-dmk-speculos": minor
 ---
 
 Expose DMK context in renderer for E2E
