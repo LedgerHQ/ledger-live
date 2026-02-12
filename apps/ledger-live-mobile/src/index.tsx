@@ -217,8 +217,11 @@ function App() {
       });
     };
     initializeDatadogProvider(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      datadogFF?.params as PartialInitializationConfiguration,
+      {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        ...(datadogFF?.params as PartialInitializationConfiguration),
+        ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
+      },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     )
       .then(setUserEquipmentId)
