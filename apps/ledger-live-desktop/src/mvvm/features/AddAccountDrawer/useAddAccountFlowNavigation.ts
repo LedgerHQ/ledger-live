@@ -1,6 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeEmptyTokenAccount, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useCallback, useMemo, useState } from "react";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
@@ -9,6 +8,7 @@ import {
 } from "./analytics/addAccount.types";
 import useAddAccountAnalytics from "./analytics/useAddAccountAnalytics";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, WarningReason } from "./domain";
+import { getAccountToReturn } from "./utils/getAccountToReturn";
 import { useNavigation } from "./useNavigation";
 
 interface UseAddAccountFlowNavigationProps {
@@ -30,28 +30,6 @@ export const useAddAccountFlowNavigation = ({
   const [accountToFund, setAccountToFund] = useState<Account>();
   const [accountToEdit, setAccountToEdit] = useState<Account>();
 
-  // Helper function to get the correct account to return based on originalCurrency
-  const getAccountToReturn = useCallback(
-    (parentAccount: Account): { account: Account | TokenAccount; parent?: Account } => {
-      if (originalCurrency?.type === "TokenCurrency") {
-        // Find existing token account or create an empty one
-        const existingTokenAccount = parentAccount.subAccounts?.find(
-          (subAcc): subAcc is TokenAccount =>
-            subAcc.type === "TokenAccount" && subAcc.token.id === originalCurrency.id,
-        );
-        const tokenAccount =
-          existingTokenAccount || makeEmptyTokenAccount(parentAccount, originalCurrency);
-        // Use getMainAccount to get the parent account (which is the main account for a token)
-        const mainAccount = getMainAccount(tokenAccount, parentAccount);
-        return { account: tokenAccount, parent: mainAccount };
-      }
-      // For non-token accounts, the account itself is the main account
-      // Using getMainAccount for consistency (returns parentAccount since it's already an Account)
-      return { account: getMainAccount(parentAccount, undefined) };
-    },
-    [originalCurrency],
-  );
-
   const navigateToWarningScreen = useCallback(
     (reason?: WarningReason, account?: Account) => {
       if (!warningReason && !emptyAccount) {
@@ -67,26 +45,26 @@ export const useAddAccountFlowNavigation = ({
     (account: Account) => {
       setAccountToFund(account);
       if (onAccountSelected) {
-        const { account: accountToReturn, parent } = getAccountToReturn(account);
+        const { account: accountToReturn, parent } = getAccountToReturn(account, originalCurrency);
         onAccountSelected(accountToReturn, parent);
       } else {
         goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT);
       }
     },
-    [onAccountSelected, goToStep, getAccountToReturn],
+    [originalCurrency, onAccountSelected, goToStep],
   );
 
   const navigateToEditAccountName = useCallback(
     (account: Account) => {
       setAccountToEdit(account);
       if (onAccountSelected) {
-        const { account: accountToReturn, parent } = getAccountToReturn(account);
+        const { account: accountToReturn, parent } = getAccountToReturn(account, originalCurrency);
         onAccountSelected(accountToReturn, parent);
       } else {
         goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME);
       }
     },
-    [onAccountSelected, goToStep, getAccountToReturn],
+    [originalCurrency, onAccountSelected, goToStep],
   );
 
   const navigateToSelectAccount = useCallback(() => {
