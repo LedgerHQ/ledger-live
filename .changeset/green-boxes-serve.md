@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-fix(live-24405): more error details in the swap /cancelled error
+fix(live-24405): enrich swap error logging with step context and cause details in postSwapCancelled

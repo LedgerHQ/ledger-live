@@ -632,7 +632,8 @@ export const handlers = ({
                 cause: rawErrorCause,
               } = getErrorDetails(error);
               const causeSuffix = rawErrorCause ? `, ${JSON.stringify(rawErrorCause)}` : "";
-              const errorMessageWithCause = rawErrorMessage + causeSuffix;
+              const errorMessageWithCause =
+                rawErrorMessage + causeSuffix || rawErrorName || "Unknown error";
 
               const completeExchangeError =
                 // step provided in libs/ledger-live-common/src/exchange/platform/transfer/completeExchange.ts
