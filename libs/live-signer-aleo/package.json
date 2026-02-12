@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-aleo",
-  "version": "0.11.3",
+  "version": "0.12.0-next.0",
   "private": true,
   "description": "Ledger Hardware Wallet Aleo Application API",
   "keywords": [

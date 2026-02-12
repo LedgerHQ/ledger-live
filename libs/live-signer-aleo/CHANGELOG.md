@@ -1,5 +1,18 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#14387](https://github.com/LedgerHQ/ledger-live/pull/14387) [`8a258aa`](https://github.com/LedgerHQ/ledger-live/commit/8a258aa0655123d22f955067acffaf9f74661165) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo derivation config
+  fix: missing verify in aleo getAddress
+  chore: better error handling in mocked aleo DMK
+
+### Patch Changes
+
+- Updated dependencies [[`8a258aa`](https://github.com/LedgerHQ/ledger-live/commit/8a258aa0655123d22f955067acffaf9f74661165)]:
+  - @ledgerhq/coin-aleo@1.2.0-next.0
+
 ## 0.11.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.33.0-next.0
+
+### Minor Changes
+
+- [#14131](https://github.com/LedgerHQ/ledger-live/pull/14131) [`8006565`](https://github.com/LedgerHQ/ledger-live/commit/8006565f77487fa0e38bf5f8d7bb4cda4cdba1f5) Thanks [@Canestin](https://github.com/Canestin)! - chore: remove ethereum holesky
+
 ## 7.32.0
 
 ### Minor Changes

@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.140.0",
+  "version": "2.141.0-next.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tools/rspack/tsconfig.json node --require ts-node/register ./tools/main-rspack.ts",
