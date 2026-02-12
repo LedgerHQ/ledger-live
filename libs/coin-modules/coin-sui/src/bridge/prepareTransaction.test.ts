@@ -1,8 +1,8 @@
+import { faker } from "@faker-js/faker";
 import BigNumber from "bignumber.js";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
-import { faker } from "@faker-js/faker";
-import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
 const mockGetFeesForTransaction = jest.fn();
 jest.mock("./getFeesForTransaction", () => ({

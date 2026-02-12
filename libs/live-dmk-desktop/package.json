@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-desktop",
-  "version": "0.15.2",
+  "version": "0.15.3",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",

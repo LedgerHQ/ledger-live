@@ -132,8 +132,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Hoodi unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
@@ -535,8 +533,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format EtherGem unit (EGEM) 1`] = `"0.012345678900000000- -EGEM"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Hoodi unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -940,8 +936,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Hoodi unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
@@ -1343,8 +1337,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format EtherGem unit (EGEM) 1`] = `"0,012345678900000000- -EGEM"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Hoodi unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1748,8 +1740,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Hoodi unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
@@ -2151,8 +2141,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format EtherGem unit (EGEM) 1`] = `"0.012345678900000000- -EGEM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Hoodi unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -2556,8 +2544,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Hoodi unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
@@ -2959,8 +2945,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format EtherGem unit (EGEM) 1`] = `"0,012345678900000000- -EGEM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Hoodi unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -3364,8 +3348,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Hoodi unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
@@ -3768,8 +3750,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Hoodi unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
@@ -4171,8 +4151,6 @@ exports[`formatCurrencyUnit with default options should correctly format Ether1 
 exports[`formatCurrencyUnit with default options should correctly format EtherGem unit (EGEM) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Ethereum Classic unit (ETC) 1`] = `"0.0123456"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Ethereum Holesky unit (ether) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Ethereum Hoodi unit (ether) 1`] = `"0.0123456"`;
 

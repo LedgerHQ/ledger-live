@@ -1,5 +1,5 @@
-import { fetchNominations } from "./nominations";
 import getApiPromise from "./apiPromise";
+import { fetchNominations } from "./nominations";
 
 jest.mock("./apiPromise", () => jest.fn());
 

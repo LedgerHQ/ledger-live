@@ -6,7 +6,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 export interface SwapNavigationState {
   defaultAmountFrom: string;
   from: string;
-  defaultCurrency: CryptoOrTokenCurrency;
+  defaultCurrency: string;
   defaultToken?: { toTokenId: string };
   defaultAccountId?: string;
   defaultParentAccountId?: string;
@@ -28,7 +28,7 @@ export function buildSwapNavigationState({
   const baseState: SwapNavigationState = {
     defaultAmountFrom: "0",
     from: fromPath,
-    defaultCurrency,
+    defaultCurrency: defaultCurrency.id,
   };
 
   if (isTokenCurrency(defaultCurrency) && !account) {

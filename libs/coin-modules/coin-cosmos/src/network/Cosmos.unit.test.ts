@@ -289,9 +289,7 @@ describe("CosmosApi", () => {
         }
       });
       const txs = await cosmosApi.getTransactions("address", 50);
-      expect(txs.find(tx => tx.txhash === "senderhash")).toBeDefined();
-      expect(txs.find(tx => tx.txhash === "recipienthash")).toBeDefined();
-      expect(txs.length).toEqual(2);
+      expect(txs).toEqual([{ txhash: "senderhash" }, { txhash: "recipienthash" }]);
     });
 
     it("should return every pages of transactions", async () => {

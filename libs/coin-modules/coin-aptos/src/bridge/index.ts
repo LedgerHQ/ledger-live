@@ -1,3 +1,4 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,
@@ -5,22 +6,21 @@ import {
   makeSync,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import resolver from "../signer";
-import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
-import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "../types";
-import getTransactionStatus from "./getTransactionStatus";
-import estimateMaxSpendable from "./estimateMaxSpendable";
-import prepareTransaction from "./prepareTransaction";
-import { getAccountShape } from "./synchronisation";
-import buildSignOperation from "./signOperation";
-import broadcast from "./broadcast";
-import createTransaction from "../logic/createTransaction";
-import { hydrate, preloadWithValidators } from "../preload";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import createTransaction from "../logic/createTransaction";
 import { validateAddress } from "../logic/validateAddress";
+import { hydrate, preloadWithValidators } from "../preload";
+import resolver from "../signer";
+import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "../types";
+import broadcast from "./broadcast";
+import estimateMaxSpendable from "./estimateMaxSpendable";
+import getTransactionStatus from "./getTransactionStatus";
+import prepareTransaction from "./prepareTransaction";
+import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
+import buildSignOperation from "./signOperation";
+import { getAccountShape } from "./synchronisation";
 
 function makePreload() {
   return (currency: CryptoCurrency) => preloadWithValidators(currency);

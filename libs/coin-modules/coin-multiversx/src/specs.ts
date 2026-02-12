@@ -1,17 +1,15 @@
-import type {
-  MultiversXAccount,
-  MultiversXOperation,
-  MultiversXOperationRaw,
-  Transaction,
-} from "./types";
-import invariant from "invariant";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { botTest, pickSiblings, genericTestDestination } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { toOperationRaw } from "@ledgerhq/coin-framework/serialization";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import expect from "expect";
+import invariant from "invariant";
+import sample from "lodash/sample";
+import { MIN_DELEGATION_AMOUNT } from "./constants";
 import {
   acceptDelegateTransaction,
   acceptEsdtTransferTransaction,
@@ -19,10 +17,12 @@ import {
   acceptUndelegateTransaction,
   acceptWithdrawTransaction,
 } from "./speculos-deviceActions";
-import BigNumber from "bignumber.js";
-import { MIN_DELEGATION_AMOUNT } from "./constants";
-import { TokenAccount } from "@ledgerhq/types-live";
-import sample from "lodash/sample";
+import type {
+  MultiversXAccount,
+  MultiversXOperation,
+  MultiversXOperationRaw,
+  Transaction,
+} from "./types";
 
 const currency = getCryptoCurrencyById("elrond");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");

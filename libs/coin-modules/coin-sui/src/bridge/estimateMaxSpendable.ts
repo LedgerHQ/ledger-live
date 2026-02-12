@@ -1,10 +1,10 @@
-import { BigNumber } from "bignumber.js";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import type { SuiAccount, Transaction } from "../types";
-import getFeesForTransaction from "./getFeesForTransaction";
-import createTransaction from "./createTransaction";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { ONE_SUI } from "../constants";
+import type { SuiAccount, Transaction } from "../types";
+import createTransaction from "./createTransaction";
+import getFeesForTransaction from "./getFeesForTransaction";
 
 /**
  * Returns the maximum possible amount for transaction

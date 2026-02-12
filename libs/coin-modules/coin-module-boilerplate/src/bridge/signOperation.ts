@@ -4,7 +4,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
+import { combine, craftTransaction, getNextValidSequence } from "../logic";
 import { Transaction, BoilerplateSigner } from "../types";
 
 export const buildSignOperation =

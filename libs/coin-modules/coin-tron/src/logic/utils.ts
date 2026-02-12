@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
+import BigNumber from "bignumber.js";
 import get from "lodash/get";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
@@ -215,15 +215,6 @@ const CONTRACT_TYPE: Record<number, ContractInfo> = {
   59: { name: "CancelAllUnfreezeV2Contract" },
 };
 const convertNumberToContractType = (value: number): ContractInfo => CONTRACT_TYPE[value];
-
-/**
- * Convert for instance: "41FD49EDA0F23FF7EC1D03B52C3A45991C24CD440E" to "TZ4UXDV5ZhNW7fb2AMSbgfAEZ7hWsnYS2g"
- * @param address
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function convertHexToBase58(address: string): string {
-  return TronWeb.address.fromHex(address);
-}
 
 function convertBufferToHex(address: Buffer): string {
   return (TronWeb.utils.bytes.byteArray2hexStr(address) as string).toLowerCase();

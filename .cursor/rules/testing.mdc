@@ -1,7 +1,7 @@
 ---
-globs: ["*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**"]
 description: General, Desktop, and Mobile testing patterns for Ledger Wallet
-alwaysApply: true
+globs: ["*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**"]
+alwaysApply: false
 ---
 
 # Testing Rules

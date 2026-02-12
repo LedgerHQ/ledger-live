@@ -452,6 +452,7 @@
     "src/flows/send/hooks/useSendFlowAccount.ts",
     "src/flows/send/types.ts",
     "src/flows/send/uiConfig.ts",
+    "src/flows/send/utils.ts",
     "src/flows/wizard/types.ts",
     "src/hooks/useAppVersionBlockCheck.ts",
     "src/hooks/useHtmlLinkSegments.ts",
@@ -558,7 +559,14 @@
     "@react-native/assets-registry/registry",
     "@react-native/normalize-colors",
     "@react-native/virtualized-lists",
+    "@solana/codecs-numbers",
     "@solana/buffer-layout",
+    [
+      "@solana/codecs-numbers",
+      [
+        "node_modules/@solana/web3.js/lib/index.cjs.js"
+      ]
+    ],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",

@@ -1,6 +1,6 @@
-import { lastBlock } from "./lastBlock";
-import { getLastBlock } from "../network";
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import { getLastBlock } from "../network";
+import { lastBlock } from "./lastBlock";
 
 jest.mock("../network");
 

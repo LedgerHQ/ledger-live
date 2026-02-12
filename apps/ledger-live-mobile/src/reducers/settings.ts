@@ -8,7 +8,7 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, FeatureId } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
@@ -83,6 +83,7 @@ import {
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -168,6 +169,7 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
+  generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
 };
 
@@ -194,14 +196,24 @@ export function filterValidSettings(
   ) as Partial<SettingsState>;
 }
 
+const LWM_WALLET_40: FeatureId = "lwmWallet40";
+
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
     const filteredPayload = filterValidSettings(payload);
+    const wallet40FF = getFeature({
+      key: LWM_WALLET_40,
+      localOverrides: filteredPayload.overriddenFeatureFlags,
+    });
+    const isWallet40Enabled = wallet40FF?.enabled === true;
+    const isWallet40GraphReworkEnabled =
+      wallet40FF?.params?.graphRework === true && isWallet40Enabled;
     return {
       ...state,
       ...filteredPayload,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
+      ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
   },
 

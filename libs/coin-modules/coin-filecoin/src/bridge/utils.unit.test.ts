@@ -10,18 +10,18 @@ test("methodToString", () => {
 });
 
 test("isValidHex", () => {
-  expect(isValidHex("0x0001aaeeff")).toBeTruthy();
-  expect(isValidHex("0001aaeeff")).toBeTruthy();
-  expect(isValidHex("0x0001rreeta")).toBeFalsy();
-  expect(isValidHex("0x0001aaeef")).toBeFalsy();
+  expect(isValidHex("0x0001aaeeff")).toBe(true);
+  expect(isValidHex("0001aaeeff")).toBe(true);
+  expect(isValidHex("0x0001rreeta")).toBe(false);
+  expect(isValidHex("0x0001aaeef")).toBe(false);
 });
 
 test("isValidBase64", () => {
-  expect(isValidBase64("YXNkYWZhc2Rmc2Rm")).toBeTruthy();
+  expect(isValidBase64("YXNkYWZhc2Rmc2Rm")).toBe(true);
   expect(
     isValidBase64(
       "YXNmZHNhZGZzYWRmYXNkZnNhZGZzYWRmYXNkZnNhZGYyNTEyMzQxMjIzcjZmYXM0MmZhczJkMTNhc2M=",
     ),
-  ).toBeTruthy();
-  expect(isValidBase64("asdasd````")).toBeFalsy();
+  ).toBe(true);
+  expect(isValidBase64("asdasd````")).toBe(false);
 });

@@ -1,6 +1,6 @@
-import { defaultOptions, listOperations, Options } from "./listOperations";
-import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import coinConfig from "../config";
+import { defaultOptions, listOperations, Options } from "./listOperations";
 
 describe("listOperations", () => {
   beforeAll(() => {
@@ -32,10 +32,12 @@ describe("listOperations", () => {
 
     describe("List", () => {
       it("should fetch operations successfully", async () => {
-        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations).toBeInstanceOf(Array);
         expect(operations.length).toBeGreaterThanOrEqual(historySize);
         expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
-        expect(operations.find(op => op.tx.hash === txHashAtMinHeight)).toBeDefined();
+        expect(operations).toContainEqual(
+          expect.objectContaining({ tx: expect.objectContaining({ hash: txHashAtMinHeight }) }),
+        );
       });
     });
   });
@@ -57,11 +59,15 @@ describe("listOperations", () => {
 
     describe("List", () => {
       it("should fetch operations successfully", async () => {
-        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations).toBeInstanceOf(Array);
         expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
         expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
-        expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
-        expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
+        expect(operations).toContainEqual(
+          expect.objectContaining({ tx: expect.objectContaining({ hash: oldestNativeTxHash }) }),
+        );
+        expect(operations).toContainEqual(
+          expect.objectContaining({ tx: expect.objectContaining({ hash: oldestTrc20TxHash }) }),
+        );
         for (let i = 0; i < operations.length - 2; i++) {
           // transactions are sorted by descencing order (newest first)
           // even if we query oldest tx ("asc" order)
@@ -93,11 +99,15 @@ describe("listOperations", () => {
 
     describe("List", () => {
       it("should fetch operations successfully", async () => {
-        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations).toBeInstanceOf(Array);
         expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
         expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
-        expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
-        expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
+        expect(operations).toContainEqual(
+          expect.objectContaining({ tx: expect.objectContaining({ hash: oldestNativeTxHash }) }),
+        );
+        expect(operations).toContainEqual(
+          expect.objectContaining({ tx: expect.objectContaining({ hash: oldestTrc20TxHash }) }),
+        );
         for (let i = 0; i < operations.length - 2; i++) {
           // transactions are sorted by descencing order (newest first)
           // even if we query oldest tx ("asc" order)
@@ -128,7 +138,7 @@ describe("listOperations", () => {
 
     describe("List", () => {
       it("should fetch operations successfully", async () => {
-        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations).toBeInstanceOf(Array);
       });
 
       it("should fetch all operations", async () => {
@@ -156,19 +166,27 @@ describe("listOperations", () => {
       it("should return 0 fees when only bandwidth is used", async () => {
         // https://tronscan.org/#/transaction/242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7
         // Sends LOVE using bandwidth only
-        const txHash = "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7";
-        const operation = operations.find(op => op.tx.hash === txHash);
-        expect(operation).toBeDefined();
-        expect(operation!.tx.fees).toEqual(BigInt(0));
+        expect(operations).toContainEqual(
+          expect.objectContaining({
+            tx: expect.objectContaining({
+              hash: "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7",
+              fees: 0n,
+            }),
+          }),
+        );
       });
 
       it("should return TRX fees", async () => {
         // https://tronscan.org/#/transaction/548f235c69eaab2aedaddb5b4763303316d02c2ec4d25617cc3c2a26e1b4a201
         // Sends USDT using 0.29975 TRX
-        const txHash = "548f235c69eaab2aedaddb5b4763303316d02c2ec4d25617cc3c2a26e1b4a201";
-        const operation = operations.find(op => op.tx.hash === txHash);
-        expect(operation).toBeDefined();
-        expect(operation!.tx.fees).toEqual(BigInt(0.29975 * magnitudeMultiplier));
+        expect(operations).toContainEqual(
+          expect.objectContaining({
+            tx: expect.objectContaining({
+              hash: "548f235c69eaab2aedaddb5b4763303316d02c2ec4d25617cc3c2a26e1b4a201",
+              fees: BigInt(0.29975 * magnitudeMultiplier),
+            }),
+          }),
+        );
       });
     });
 
@@ -285,27 +303,29 @@ describe("listOperations", () => {
         it("should return claim reward txs correctly", () => {
           // https://tronscan.org/#/transaction/e37f3da07f6ed4c2b6092afb2f9940702b2f675d6111c0886341578fd8b81b11
           // Claimed 0.137718 TRX
-          const txHash = "e37f3da07f6ed4c2b6092afb2f9940702b2f675d6111c0886341578fd8b81b11";
-          const operation = operations.find(op => op.tx.hash === txHash);
-          expect(operation).toBeDefined();
-          expect(operation!.id).toEqual(txHash);
-          expect(operation!.type).toEqual("UNKNOWN");
-          expect(operation!.value).toEqual(BigInt(0.137718 * magnitudeMultiplier));
-          expect(operation?.tx.block.height).toEqual(40803577);
-          // What is expected here ? senders or recipients ?
-          // expect(operation!.recipients.includes(testingAccount)).toEqual(true);
-          expect(operation!.senders.includes(testingAccount)).toEqual(true);
-          expect(operation!.tx.fees).toEqual(BigInt(0));
+          expect(operations).toContainEqual(
+            expect.objectContaining({
+              id: "e37f3da07f6ed4c2b6092afb2f9940702b2f675d6111c0886341578fd8b81b11",
+              type: "UNKNOWN",
+              value: BigInt(0.137718 * magnitudeMultiplier),
+              tx: expect.objectContaining({
+                block: expect.objectContaining({ height: 40803577 }),
+                fees: 0n,
+              }),
+              senders: expect.arrayContaining([testingAccount]),
+            }),
+          );
         });
 
         it("should return vote txs correctly", () => {
           // https://tronscan.org/#/transaction/9e21ee1c13ba497ed7341d5ba5b97613998a9635530c58779f8d5190e428a1e5
           // Voted for 3 SRs with 18 votes
-          const txHash = "9e21ee1c13ba497ed7341d5ba5b97613998a9635530c58779f8d5190e428a1e5";
-          const operation = operations.find(op => op.tx.hash === txHash);
-          expect(operation).toBeDefined();
-          expect(operation!.id).toEqual(txHash);
-          expect(operation!.type).toEqual("UNKNOWN");
+          expect(operations).toContainEqual(
+            expect.objectContaining({
+              id: "9e21ee1c13ba497ed7341d5ba5b97613998a9635530c58779f8d5190e428a1e5",
+              type: "UNKNOWN",
+            }),
+          );
         });
       });
     });

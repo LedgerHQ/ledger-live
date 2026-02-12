@@ -13,6 +13,7 @@ import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/e
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
@@ -206,6 +207,10 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
+  [NavigatorName.SendFlow]: {
+    onClose?: () => void;
+    params?: SendFlowInitParams;
+  };
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };

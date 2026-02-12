@@ -1,8 +1,8 @@
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

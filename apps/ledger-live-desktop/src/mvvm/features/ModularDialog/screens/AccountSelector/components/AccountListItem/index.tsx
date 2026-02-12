@@ -8,7 +8,7 @@ import {
   ListItemContent,
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
-import { formatAddress } from "../../../../components/Address/formatAddress";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 
 export type Account = {
   address: string;

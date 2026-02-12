@@ -1,11 +1,11 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { AccountLike } from "@ledgerhq/types-live";
 import { CosmosValidatorsManager } from "./CosmosValidatorsManager";
 import type { CosmosDelegationInfo } from "./types";
 import { Transaction as CosmosTransaction } from "./types";

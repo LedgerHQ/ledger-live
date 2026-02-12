@@ -129,11 +129,13 @@ export class EarnPage extends WebViewAppPage {
         break;
       }
       case "Stader Labs": {
-        await this.expectUrlToContainAll(url, [
+        const expectedStringArray = [
           account.currency.id,
           `staderlabs.com/${account.currency.ticker}`,
-          account.address,
-        ]);
+          // defensive optional spread as account address might not be set
+          ...(account.address ? [account.address] : []),
+        ];
+        await this.expectUrlToContainAll(url, expectedStringArray);
         break;
       }
       case "Kiln staking Pool": {

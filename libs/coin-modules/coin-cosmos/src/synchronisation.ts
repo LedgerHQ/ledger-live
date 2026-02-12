@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import {
   AccountShapeInfo,
@@ -7,9 +6,10 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { OperationType } from "@ledgerhq/types-live";
-import { CosmosAPI } from "./network/Cosmos";
+import { BigNumber } from "bignumber.js";
 import { getMainMessage, isAccountEmpty } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
+import { CosmosAPI } from "./network/Cosmos";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
 export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any) => {

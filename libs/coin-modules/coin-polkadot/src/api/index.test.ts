@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { createApi } from ".";
+import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
+import type { AnyTuple } from "@polkadot/types/types";
 import type { PolkadotConfig } from "../config";
 import * as logic from "../logic";
-import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { CoreTransaction } from "../types";
-import type { AnyTuple } from "@polkadot/types/types";
+import { createApi } from ".";
 
 // Module-level mocks for logic functions that need to be spied on
 const mockBroadcast = jest.fn();

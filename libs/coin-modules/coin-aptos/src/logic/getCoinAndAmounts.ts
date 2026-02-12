@@ -1,3 +1,4 @@
+import { MoveResource, WriteSetChangeWriteResource, Event } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 import {
   ADD_STAKE_EVENTS,
@@ -16,7 +17,6 @@ import {
   AptosMoveResource,
   AptosTransaction,
 } from "../types";
-import { MoveResource, WriteSetChangeWriteResource, Event } from "@aptos-labs/ts-sdk";
 import { getResourceAddress } from "./getResourceAddress";
 import { isWriteSetChangeWriteResource } from "./isWriteSetChangeWriteResource";
 

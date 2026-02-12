@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-core",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Ledger Live device core module",
   "license": "Apache-2.0",
   "keywords": [

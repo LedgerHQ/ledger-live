@@ -1,9 +1,9 @@
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import bs58check from "bs58check";
 import get from "lodash/get";
 import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType, TronTransactionInfo } from "../types";
 import { TransactionTronAPI, Trc20API } from "./types";
-import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import bs58check from "bs58check";
 
 export const decode58Check = (base58: string): string =>
   Buffer.from(bs58check.decode(base58)).toString("hex");

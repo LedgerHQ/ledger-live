@@ -1,17 +1,18 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { craftTransaction, estimateFees } from "../common-logic";
+import { craftTransaction, estimateFees } from "../logic";
 import { getNextSequence } from "../network/node";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../network/node");
-jest.mock("../common-logic");
+jest.mock("../logic");
 
 describe("prepareTransaction", () => {
   let estimateFeesSpy: jest.SpyInstance;
   let getNextSequenceSpy: jest.SpyInstance;
   let craftTransactionSpy: jest.SpyInstance;
+
   beforeEach(() => {
     getNextSequenceSpy = jest.spyOn({ getNextSequence }, "getNextSequence");
     estimateFeesSpy = jest.spyOn({ estimateFees }, "estimateFees");

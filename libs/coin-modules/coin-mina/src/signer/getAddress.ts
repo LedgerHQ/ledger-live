@@ -1,10 +1,10 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { MinaSigner } from "../types/signer";
-import { getAccountNumFromPath } from "../common-logic";
-import invariant from "invariant";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { UserRefusedAddress } from "@ledgerhq/errors";
+import invariant from "invariant";
+import { getAccountNumFromPath } from "../common-logic";
+import { MinaSigner } from "../types/signer";
 
 const USER_REFUSED_ACTION = "27013";
 

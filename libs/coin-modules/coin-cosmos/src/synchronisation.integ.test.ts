@@ -2,6 +2,7 @@ import { AccountShapeInfo } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers"
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import cryptoFactory from "./chain/chain";
 import { getAccountShape } from "./synchronisation";
 import { CosmosAccount } from "./types";
 
@@ -13,8 +14,6 @@ jest.mock("./chain/chain", () => {
     default: jest.fn(actual.default),
   };
 });
-
-import cryptoFactory from "./chain/chain";
 
 const testAccounts = [
   {
@@ -72,7 +71,6 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
   }
 
   it("should validate delegated balance for %s", async () => {
-    expect(result).toBeDefined();
     expect(result.balance?.isGreaterThanOrEqualTo(0)).toBe(true);
     expect(result.blockHeight).toBeGreaterThanOrEqual(0);
     expect(result.id).toEqual(`js:2:${id}:${address}:`);
@@ -92,7 +90,7 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
       sumOf(cosmosResources.unbondings.map(d => d.amount)),
     );
 
-    expect(cosmosResources.withdrawAddress).toBeDefined();
+    expect(cosmosResources.withdrawAddress).toEqual(address);
 
     if (result.operations) {
       expect(result.operationsCount).toEqual(result.operations.length);
@@ -105,7 +103,7 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
           /IN|OUT|REWARD|DELEGATE|UNDELEGATE|CLAIMREWARD|SEND|MULTISEND|FAILURE/,
         );
         expect(operation.value.isGreaterThanOrEqualTo(0)).toBe(true);
-        expect(operation.transactionSequenceNumber).toBeDefined();
+        expect(operation.transactionSequenceNumber?.isGreaterThanOrEqualTo(0)).toBe(true);
 
         if (["REWARD", "DELEGATE", "UNDELEGATE", "CLAIMREWARD"].includes(operation.type)) {
           expect(operation.recipients).toHaveLength(0);
@@ -113,15 +111,15 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
 
           const extra = operation.extra as { validators: { address: string; amount: BigNumber }[] };
           extra.validators.forEach(validator => {
-            expect(validator.address).toBeDefined();
+            expect(validator.address).toMatch(/^cosmos/);
             expect(validator.amount.isGreaterThanOrEqualTo(0)).toBe(true);
           });
         }
 
         if (operation.type.toString() === "FAILURE") {
           expect(operation.hasFailed).toBe(true);
-          expect(operation.recipients).toBeDefined();
-          expect(operation.senders).toBeDefined();
+          expect(operation.recipients).toEqual(expect.any(Array));
+          expect(operation.senders).toEqual(expect.any(Array));
           expect(operation.value.isEqualTo(0)).toBe(true);
         }
       });
@@ -170,14 +168,13 @@ describe("Testing CosmosHub opperation", () => {
   });
 
   it("should fetch operations successfully", async () => {
-    expect(Array.isArray(operations)).toBeDefined();
+    expect(operations).toBeInstanceOf(Array);
   });
 
   it("IN", () => {
     // https://www.mintscan.io/cosmos/tx/E41F77C766C9403D5CA1975AC5F97AA969D860C2CFE691603023FD2EF16AC715
     const txHash = "E41F77C766C9403D5CA1975AC5F97AA969D860C2CFE691603023FD2EF16AC715";
     const operation = operations.find(op => op.hash === txHash);
-    expect(operation).toBeDefined();
     expect(operation!.fee.isEqualTo(BigNumber(2000))).toBe(true);
     expect(operation!.accountId).toContain(
       "js:2:cosmos:cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq:",
@@ -191,7 +188,6 @@ describe("Testing CosmosHub opperation", () => {
     // https://www.mintscan.io/cosmos/tx/5C01CCC7EF8FF6540FE5F3D652EB3D618F1E8C60E775EFC43884C2946CDCBE1C
     const txHash = "5C01CCC7EF8FF6540FE5F3D652EB3D618F1E8C60E775EFC43884C2946CDCBE1C";
     const operation = operations.find(op => op.hash === txHash);
-    expect(operation).toBeDefined();
     expect(operation!.fee.isEqualTo(BigNumber(3500))).toBe(true);
     expect(operation!.accountId).toContain(
       "js:2:cosmos:cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq:",
@@ -204,13 +200,12 @@ describe("Testing CosmosHub opperation", () => {
     // https://www.mintscan.io/cosmos/tx/54B9DA62586F76D761801AA7ADBE7E292882F08CAB4F0D5D24A91D54401C16DB
     const txHash = "54B9DA62586F76D761801AA7ADBE7E292882F08CAB4F0D5D24A91D54401C16DB";
     const operation = operations.find(op => op.hash === txHash);
-    expect(operation).toBeDefined();
     expect(operation!.fee.isEqualTo(BigNumber(6250))).toBe(true);
     expect(operation!.accountId).toContain(
       "js:2:cosmos:cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq:",
     );
     expect(operation!.hasFailed).toBe(false);
-    expect(Array.isArray(operation?.extra)).toBeDefined();
+    expect(operation?.extra).toEqual({ validators: expect.any(Array), memo: "" });
     if (operation && Array.isArray(operation.extra)) {
       expect(operation.extra.length).toEqual(1);
       expect(operation.extra[0].validators[0].amount.isEqualTo(BigNumber(10100000000))).toBe(true);
@@ -259,7 +254,7 @@ describe("Testing Injective opperation", () => {
   });
 
   it("should fetch operations successfully", async () => {
-    expect(Array.isArray(operations)).toBeDefined();
+    expect(operations).toBeInstanceOf(Array);
   });
 
   // We do not use a full archive node on Injective, so history is partial
@@ -267,7 +262,6 @@ describe("Testing Injective opperation", () => {
     // https://www.mintscan.io/injective/tx/112C82608F1D08D8AF60323BBEDBCD21066B9E1406B57BD2FC11904BD1FA7FF7
     const txHash = "112C82608F1D08D8AF60323BBEDBCD21066B9E1406B57BD2FC11904BD1FA7FF7";
     const operation = operations.find(op => op.hash === txHash);
-    expect(operation).toBeDefined();
     expect(operation?.recipients[0]).toMatch("inj1k6dn0f8mfgvtxfv0ja8ld6049xkjv3a3nyf2tl");
     expect(operation!.fee.isEqualTo(BigNumber(143370000000000))).toBe(true);
     expect(operation!.accountId).toContain("inj1vmzrwxhgllkjaswzawaue7m7f9qcrc0rfth2v2");

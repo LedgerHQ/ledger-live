@@ -1,8 +1,3 @@
-import { BigNumber } from "bignumber.js";
-import expect from "expect";
-import invariant from "invariant";
-import sample from "lodash/sample";
-import sampleSize from "lodash/sampleSize";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
@@ -16,6 +11,11 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
+import sample from "lodash/sample";
+import sampleSize from "lodash/sampleSize";
 import { canDelegate, canRedelegate, canUndelegate, getMaxDelegationAvailable } from "./logic";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { acceptTransaction } from "./speculos-deviceActions";

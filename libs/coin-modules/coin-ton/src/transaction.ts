@@ -8,8 +8,8 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import { Address, Cell } from "@ton/core";
+import BigNumber from "bignumber.js";
 import type {
   TonPayloadChangeDnsRecord,
   TonPayloadChangeDnsRecordRaw,

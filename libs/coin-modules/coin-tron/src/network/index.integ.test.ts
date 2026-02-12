@@ -1,3 +1,7 @@
+import BigNumber from "bignumber.js";
+import expect from "expect";
+import coinConfig from "../config";
+import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
 import {
   craftStandardTransaction,
   defaultFetchParams,
@@ -6,10 +10,6 @@ import {
   fetchTronTxDetail,
   getTronAccountNetwork,
 } from ".";
-import coinConfig from "../config";
-import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
-import BigNumber from "bignumber.js";
-import expect from "expect";
 
 /**
  * Tests used to help to develop and debug. Can't be reliable for the CI.

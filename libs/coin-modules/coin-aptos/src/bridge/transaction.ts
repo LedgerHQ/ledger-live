@@ -1,6 +1,4 @@
-import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../types";
-
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -9,7 +7,8 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "../types";
 
 export const formatTransaction = (
   { mode, amount, fees, recipient, useAllAmount }: Transaction,

@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
-import { AptosTransaction } from "../../types";
-import { getCoinAndAmounts } from "../../logic/getCoinAndAmounts";
 import {
   APTOS_ASSET_ID,
   APTOS_COIN_CHANGE,
   APTOS_FUNGIBLE_STORE,
   APTOS_OBJECT_CORE,
 } from "../../constants";
+import { getCoinAndAmounts } from "../../logic/getCoinAndAmounts";
+import { AptosTransaction } from "../../types";
 
 describe("getCoinAndAmounts", () => {
   it("should calculate the correct legacy coins amounts for withdraw and deposit events", () => {

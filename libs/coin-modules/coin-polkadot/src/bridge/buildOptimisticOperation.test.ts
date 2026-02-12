@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { PolkadotAccount, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import BigNumber from "bignumber.js";
 
 describe("buildOptimisticOperation", () => {
   it.each([

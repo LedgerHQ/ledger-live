@@ -1,5 +1,35 @@
 # @ledgerhq/coin-module-boilerplate
 
+## 4.13.0
+
+### Minor Changes
+
+- [#14132](https://github.com/LedgerHQ/ledger-live/pull/14132) [`982a7e9`](https://github.com/LedgerHQ/ledger-live/commit/982a7e9c73867b7c7b90ccae6df575d59c06806c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-modules): promote compiler options for tracking unused vars$
+
+### Patch Changes
+
+- Updated dependencies [[`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014)]:
+  - @ledgerhq/types-live@6.96.0
+  - @ledgerhq/coin-framework@6.15.0
+  - @ledgerhq/live-env@2.27.0
+  - @ledgerhq/cryptoassets@13.38.1
+  - @ledgerhq/live-network@2.2.2
+
+## 4.13.0-next.0
+
+### Minor Changes
+
+- [#14132](https://github.com/LedgerHQ/ledger-live/pull/14132) [`982a7e9`](https://github.com/LedgerHQ/ledger-live/commit/982a7e9c73867b7c7b90ccae6df575d59c06806c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-modules): promote compiler options for tracking unused vars$
+
+### Patch Changes
+
+- Updated dependencies [[`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014)]:
+  - @ledgerhq/types-live@6.96.0-next.0
+  - @ledgerhq/coin-framework@6.15.0-next.0
+  - @ledgerhq/live-env@2.27.0-next.0
+  - @ledgerhq/cryptoassets@13.38.1-next.0
+  - @ledgerhq/live-network@2.2.2-next.0
+
 ## 4.12.2
 
 ### Patch Changes

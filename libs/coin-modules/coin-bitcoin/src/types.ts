@@ -179,8 +179,11 @@ export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources } & 
 };
 
 export type PrivateInfo = {
-  key: string;
+  key: string | null;
   balance: BigNumber;
+  syncState: "disabled" | "ready" | "running" | "paused" | "complete" | "outdated";
+  progress: number;
+  lastSyncTimestamp: number | null;
 };
 
 export type BitcoinAccountRaw = AccountRaw & {

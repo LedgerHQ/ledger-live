@@ -1,14 +1,14 @@
-import { Observable } from "rxjs";
+import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransactionToSign } from "./buildTransaction";
-import type { MultiversXAccount, Transaction } from "./types";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { extractTokenId } from "./logic";
 import { CHAIN_ID } from "./constants";
+import { extractTokenId } from "./logic";
 import { MultiversXSigner } from "./signer";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { MultiversXAccount, Transaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware

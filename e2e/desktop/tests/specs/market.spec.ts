@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 test.describe("Market", () => {
   test.use({
-    //todo:  remove feature flag when market banner is enabled for all users
+    //TODO: remove feature flag when market banner is enabled for all users
     userdata: "speculos-tests-app",
     featureFlags: {
       lwdWallet40: {

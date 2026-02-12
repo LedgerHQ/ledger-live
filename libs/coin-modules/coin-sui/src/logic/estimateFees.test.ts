@@ -1,6 +1,6 @@
-import { estimateFees } from "./estimateFees";
-import suiAPI from "../network";
 import { BigNumber } from "bignumber.js";
+import suiAPI from "../network";
+import { estimateFees } from "./estimateFees";
 
 // Mock the suiAPI module
 jest.mock("../network", () => ({

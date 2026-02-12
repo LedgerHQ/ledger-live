@@ -44,7 +44,7 @@ describe("useSwapNavigation (Market actions)", () => {
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith("/swap", {
       state: expect.objectContaining({
-        defaultCurrency: bitcoin,
+        defaultCurrency: bitcoin.id,
         from: "/market",
         defaultAccountId: account.id,
         defaultAmountFrom: "0",
@@ -71,7 +71,7 @@ describe("useSwapNavigation (Market actions)", () => {
     const callState = mockNavigate.mock.calls[0][1].state;
     expect(callState.defaultAccountId).toBe(tokenAccount.id);
     expect(callState.defaultParentAccountId).toBe(ethAccount.id);
-    expect(callState.defaultCurrency).toEqual(usdcToken);
+    expect(callState.defaultCurrency).toBe(usdcToken.id);
     expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
   });
 
@@ -86,7 +86,7 @@ describe("useSwapNavigation (Market actions)", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith("/swap", {
       state: expect.objectContaining({
-        defaultCurrency: usdcToken,
+        defaultCurrency: usdcToken.id,
         from: "/market",
         defaultToken: { toTokenId: usdcToken.id },
         defaultAmountFrom: "0",
@@ -107,7 +107,7 @@ describe("useSwapNavigation (Market actions)", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith("/swap", {
       state: expect.objectContaining({
-        defaultCurrency: bitcoin,
+        defaultCurrency: bitcoin.id,
         from: "/market",
         defaultAmountFrom: "0",
       }),
@@ -131,7 +131,7 @@ describe("useSwapNavigation (Market actions)", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/swap", {
       state: expect.objectContaining({
         defaultAccountId: account.id,
-        defaultCurrency: bitcoin,
+        defaultCurrency: bitcoin.id,
       }),
     });
     expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();

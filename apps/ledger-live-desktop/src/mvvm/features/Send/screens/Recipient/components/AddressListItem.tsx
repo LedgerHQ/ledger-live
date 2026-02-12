@@ -10,8 +10,8 @@ import {
   ListItemSpot,
 } from "@ledgerhq/lumen-ui-react";
 import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
-import { formatRelativeDate } from "../utils/dateFormatter";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
 import { cn } from "LLD/utils/cn";
 import type { AddressListItemProps } from "../types";
 
@@ -30,6 +30,7 @@ export function AddressListItem({
   hideDescription = false,
 }: AddressListItemProps) {
   const { t } = useTranslation();
+  const formatRelativeDate = useFormatRelativeDate();
   const displayName = name ?? formatAddress(address, { prefixLength: 5, suffixLength: 5 });
 
   const fallbackDescription = date

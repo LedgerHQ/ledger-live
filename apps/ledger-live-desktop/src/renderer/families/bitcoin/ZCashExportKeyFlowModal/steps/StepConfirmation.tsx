@@ -1,13 +1,15 @@
 import React from "react";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
+import { Text, Alert } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
-import type { StepProps } from "../types";
-import { Text, Alert } from "@ledgerhq/react-ui";
 import { Container } from "../shared/Container";
+import { readyZcashSync, startZcashSync } from "~/renderer/reducers/zcashSync";
+import type { StepProps } from "../types";
 
 function StepConfirmation({ t }: Readonly<StepProps>) {
   return (
@@ -61,12 +63,24 @@ function StepConfirmation({ t }: Readonly<StepProps>) {
 }
 
 export function StepConfirmationFooter({ closeModal }: Readonly<StepProps>) {
+  const dispatch = useDispatch();
+
+  const handleCloseModal = () => {
+    dispatch(readyZcashSync());
+    closeModal();
+  };
+
+  const handleStartSync = () => {
+    dispatch(startZcashSync());
+    closeModal();
+  };
+
   return (
     <Box horizontal alignItems="right">
-      <Button data-testid="modal-close-button" ml={2} onClick={closeModal}>
+      <Button data-testid="modal-close-button" ml={2} onClick={handleCloseModal}>
         <Trans i18nKey="common.close" />
       </Button>
-      <Button id="export-key-start-sync-button" primary onClick={closeModal}>
+      <Button id="export-key-start-sync-button" primary onClick={handleStartSync}>
         <Trans i18nKey="zcash.shielded.startSync" />
       </Button>
     </Box>

@@ -1,13 +1,13 @@
+import { Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import BigNumber from "bignumber.js";
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
   MsgBeginRedelegate,
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 
 import { buildTransaction, txToMessages } from "./buildTransaction";
 import { CosmosAccount, CosmosDelegationInfo, Transaction } from "./types";
@@ -32,7 +32,6 @@ describe("txToMessages", () => {
         transaction.amount = new BigNumber(1000);
         const { aminoMsgs } = txToMessages(account, transaction);
         const [aminoMsg] = aminoMsgs;
-        expect(aminoMsg).toBeTruthy();
         expect(aminoMsg.type).toContain("MsgSend");
         expect(aminoMsg.value.to_address).toEqual(transaction.recipient);
         expect(aminoMsg.value.from_address).toEqual(account.freshAddress);
@@ -81,7 +80,6 @@ describe("txToMessages", () => {
         const { protoMsgs } = txToMessages(account, transaction);
         const [protoMsg] = protoMsgs;
         const value = MsgSend.decode(protoMsg.value);
-        expect(protoMsg).toBeTruthy();
         expect(protoMsg.typeUrl).toContain("MsgSend");
         expect(value.toAddress).toEqual(transaction.recipient);
         expect(value.fromAddress).toEqual(account.freshAddress);
@@ -135,7 +133,6 @@ describe("txToMessages", () => {
         ];
         const { aminoMsgs } = txToMessages(account, transaction);
         const [message] = aminoMsgs;
-        expect(message).toBeTruthy();
         expect(message.type).toContain("MsgDelegate");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
         expect(message.value.delegator_address).toEqual(account.freshAddress);
@@ -195,7 +192,6 @@ describe("txToMessages", () => {
         ];
         const { protoMsgs } = txToMessages(account, transaction);
         const [message] = protoMsgs;
-        expect(message).toBeTruthy();
         expect(message.typeUrl).toContain("MsgDelegate");
         const value = MsgDelegate.decode(message.value);
         expect(value.validatorAddress).toEqual(transaction.validators[0].address);
@@ -262,7 +258,6 @@ describe("txToMessages", () => {
         ];
         const { aminoMsgs } = txToMessages(account, transaction);
         const [message] = aminoMsgs;
-        expect(message).toBeTruthy();
         expect(message.type).toContain("MsgUndelegate");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
         expect(message.value.delegator_address).toEqual(account.freshAddress);
@@ -334,7 +329,6 @@ describe("txToMessages", () => {
         ];
         const { protoMsgs } = txToMessages(account, transaction);
         const [message] = protoMsgs;
-        expect(message).toBeTruthy();
         expect(message.typeUrl).toContain("MsgUndelegate");
         const value = MsgUndelegate.decode(message.value);
         expect(value.validatorAddress).toEqual(transaction.validators[0].address);
@@ -414,7 +408,6 @@ describe("txToMessages", () => {
         ];
         const { aminoMsgs } = txToMessages(account, transaction);
         const [message] = aminoMsgs;
-        expect(message).toBeTruthy();
         expect(message.type).toContain("MsgBeginRedelegate");
         expect(message.value.validator_src_address).toEqual(transaction.sourceValidator);
         expect(message.value.validator_dst_address).toEqual(transaction.validators[0].address);
@@ -491,7 +484,6 @@ describe("txToMessages", () => {
         ];
         const { protoMsgs } = txToMessages(account, transaction);
         const [message] = protoMsgs;
-        expect(message).toBeTruthy();
         expect(message.typeUrl).toContain("MsgBeginRedelegate");
         const value = MsgBeginRedelegate.decode(message.value);
         expect(value.validatorSrcAddress).toEqual(transaction.sourceValidator);
@@ -511,7 +503,6 @@ describe("txToMessages", () => {
         ];
         const { protoMsgs } = txToMessages(account, transaction);
         const [message] = protoMsgs;
-        expect(message).toBeTruthy();
         const value = MsgBeginRedelegate.decode(message.value);
         expect(value.amount?.amount.includes("e")).toEqual(false);
       });
@@ -576,7 +567,6 @@ describe("txToMessages", () => {
         ];
         const { aminoMsgs } = txToMessages(account, transaction);
         const [message] = aminoMsgs;
-        expect(message).toBeTruthy();
         expect(message.type).toContain("MsgWithdrawDelegationReward");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
         expect(message.value.delegator_address).toEqual(account.freshAddress);
@@ -610,7 +600,6 @@ describe("txToMessages", () => {
         ];
         const { protoMsgs } = txToMessages(account, transaction);
         const [message] = protoMsgs;
-        expect(message).toBeTruthy();
         expect(message.typeUrl).toContain("MsgWithdrawDelegatorReward");
         const value = MsgWithdrawDelegatorReward.decode(message.value);
         expect(value.validatorAddress).toEqual(transaction.validators[0].address);
@@ -651,11 +640,9 @@ describe("txToMessages", () => {
         ];
         const { aminoMsgs } = txToMessages(account, transaction);
         const [withDrawMessage, delegateMessage] = aminoMsgs;
-        expect(withDrawMessage).toBeTruthy();
         expect(withDrawMessage.type).toContain("MsgWithdrawDelegationReward");
         expect(withDrawMessage.value.validator_address).toEqual(transaction.validators[0].address);
         expect(withDrawMessage.value.delegator_address).toEqual(account.freshAddress);
-        expect(delegateMessage).toBeTruthy();
         expect(delegateMessage.type).toContain("MsgDelegate");
         expect(delegateMessage.value.validator_address).toEqual(transaction.validators[0].address);
         expect(delegateMessage.value.delegator_address).toEqual(account.freshAddress);
@@ -688,12 +675,10 @@ describe("txToMessages", () => {
         ];
         const { protoMsgs } = txToMessages(account, transaction);
         const [withDrawMessage, delegateMessage] = protoMsgs;
-        expect(withDrawMessage).toBeTruthy();
         expect(withDrawMessage.typeUrl).toContain("MsgWithdrawDelegatorReward");
         const withDrawMessageValue = MsgWithdrawDelegatorReward.decode(withDrawMessage.value);
         expect(withDrawMessageValue.validatorAddress).toEqual(transaction.validators[0].address);
         expect(withDrawMessageValue.delegatorAddress).toEqual(account.freshAddress);
-        expect(delegateMessage).toBeTruthy();
         expect(delegateMessage.typeUrl).toContain("MsgDelegate");
         const delegateMessageValue = MsgDelegate.decode(delegateMessage.value);
         expect(delegateMessageValue.validatorAddress).toEqual(transaction.validators[0].address);

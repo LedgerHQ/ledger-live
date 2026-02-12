@@ -1,5 +1,5 @@
-import flatMap from "lodash/flatMap";
 import type { AccountLike } from "@ledgerhq/types-live";
+import flatMap from "lodash/flatMap";
 import { Transaction } from "../types/bridge";
 
 const options = [

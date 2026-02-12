@@ -1,10 +1,10 @@
-import invariant from "invariant";
-import type { Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { MultiversXAccount, MultiversXOperation } from "./types";
+import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import type { MultiversXAccount, MultiversXOperation } from "./types";
 
 function formatAccountSpecifics(account: MultiversXAccount): string {
   const { multiversxResources } = account;

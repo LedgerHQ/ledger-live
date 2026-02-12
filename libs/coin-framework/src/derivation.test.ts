@@ -208,6 +208,16 @@ describe("getSeedIdentifierDerivation", () => {
       mode: "" as DerivationMode,
       expectedSeedPath: `44'/52752'/0'`,
     },
+    {
+      currencyId: "aleo",
+      mode: asDerivationMode("aleo"),
+      expectedSeedPath: `44'/683'/0`,
+    },
+    {
+      currencyId: "aleo_testnet",
+      mode: asDerivationMode("aleo"),
+      expectedSeedPath: `44'/683'/0`,
+    },
   ])("$currencyId", ({ currencyId, mode, expectedSeedPath }) => {
     const fun = getSeedIdentifierDerivation(getCryptoCurrencyById(currencyId), mode);
 

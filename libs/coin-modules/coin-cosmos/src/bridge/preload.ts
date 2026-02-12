@@ -2,10 +2,10 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import cryptoFactory from "../chain/chain";
 import cosmosCoinConfig from "../config";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import type { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
-import cryptoFactory from "../chain/chain";
 
 export const getPreloadStrategy = () => ({
   preloadMaxAge: 30 * 1000,

@@ -8,8 +8,8 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "../common-logic/validateAddress";
 import boilerplateCoinConfig, { type BoilerplateCoinConfig } from "../config";
+import { validateAddress } from "../logic/validateAddress";
 import resolver from "../signer";
 import { BoilerplateSigner } from "../types";
 import type { Transaction } from "../types";

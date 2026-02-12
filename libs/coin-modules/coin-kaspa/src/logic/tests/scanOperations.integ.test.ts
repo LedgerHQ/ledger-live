@@ -1,5 +1,5 @@
-import expect from "expect";
 import { BigNumber } from "bignumber.js";
+import expect from "expect";
 import { scanOperations } from "../scanOperations";
 
 describe("scan transactions for multiple addresses", () => {

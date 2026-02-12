@@ -1,5 +1,5 @@
-import { API_BASE } from "./config";
 import { ApiResponseSubmitTransaction } from "../types";
+import { API_BASE } from "./config";
 
 export const submitTransaction = async (
   transactionJson: string,

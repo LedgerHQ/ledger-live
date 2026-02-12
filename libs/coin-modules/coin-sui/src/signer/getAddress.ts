@@ -1,7 +1,7 @@
-import { log } from "@ledgerhq/logs";
 import type { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { log } from "@ledgerhq/logs";
 import type { SuiSigner } from "../types";
 import { ensureAddressFormat } from "../utils";
 

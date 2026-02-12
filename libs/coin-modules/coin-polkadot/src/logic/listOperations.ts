@@ -1,7 +1,7 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import network from "../network";
 import { PolkadotOperation } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function listOperations(
   addr: string,

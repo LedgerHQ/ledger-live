@@ -1,4 +1,7 @@
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import { isValidAddress } from "../common-logic";
+import { MINA_TOKEN_ID } from "../consts";
 import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types/common";
 import {
   fetchAccountBalance,
@@ -8,10 +11,7 @@ import {
   rosettaGetBlockInfo,
   rosettaSubmitTransaction,
 } from "./rosetta";
-import { MINA_TOKEN_ID } from "../consts";
-import { isValidAddress } from "../common-logic";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "./rosetta/types";
-import { log } from "@ledgerhq/logs";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();

@@ -264,13 +264,13 @@
           "operations": [],
           "pendingOperations": [],
           "currencyId": "ethereum",
-          "lastSyncDate": "2025-09-19T09:39:15.445Z",
-          "balance": "23979696119907000",
-          "spendableBalance": "23979696119907000",
+          "lastSyncDate": "2026-02-10T14:48:00.625Z",
+          "balance": "48979696119907000",
+          "spendableBalance": "48979696119907000",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [], "latestDate": 1758272400000 },
-            "DAY": { "balances": [], "latestDate": 1758232800000 },
-            "WEEK": { "balances": [], "latestDate": 1757800800000 }
+            "HOUR": { "balances": [], "latestDate": 1770732000000 },
+            "DAY": { "balances": [], "latestDate": 1770732000000 },
+            "WEEK": { "balances": [], "latestDate": 1770732000000 }
           },
           "subAccounts": [],
           "swapHistory": [],

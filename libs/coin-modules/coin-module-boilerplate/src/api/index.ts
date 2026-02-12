@@ -12,6 +12,7 @@ import {
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
+import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -21,8 +22,7 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
-} from "../common-logic";
-import coinConfig, { type BoilerplateConfig } from "../config";
+} from "../logic";
 
 export function createApi(config: BoilerplateConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

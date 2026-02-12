@@ -1,4 +1,3 @@
-import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
@@ -9,6 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/client";
+import type { BigNumber } from "bignumber.js";
 
 export type MappedStake = StakeObject & {
   rank: number;
@@ -45,6 +45,7 @@ export type Transaction = TransactionCommon & {
   skipVerify?: boolean;
   coinType: string;
   stakedSuiId?: string;
+  tokenId?: string;
   // add here all transaction-specific fields when implement other modes than "send"
 };
 

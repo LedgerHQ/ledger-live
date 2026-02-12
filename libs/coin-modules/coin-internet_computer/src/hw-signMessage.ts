@@ -1,8 +1,8 @@
-import { log } from "@ledgerhq/logs";
-import { getBufferFromString } from "./common-logic/utils";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { ICPSigner } from "./types";
+import { log } from "@ledgerhq/logs";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
+import { getBufferFromString } from "./common-logic/utils";
+import { ICPSigner } from "./types";
 
 function bufferToArrayBuffer(buffer: Buffer): Buffer {
   const sig = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);

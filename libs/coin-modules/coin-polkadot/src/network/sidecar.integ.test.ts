@@ -1,4 +1,6 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import {
   getAccount,
   getStakingInfo,
@@ -14,8 +16,6 @@ import {
   getLastBlock,
   fetchChainSpec,
 } from "./sidecar";
-import coinConfig from "../config";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const CURRENCY_CONFIGS = {
   polkadot: {

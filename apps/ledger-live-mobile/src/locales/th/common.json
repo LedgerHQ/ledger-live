@@ -467,6 +467,9 @@
       "title" : "การยืนยันอุปกรณ์ล้มเหลว",
       "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Enable Blind signing or Contract data in Ethereum app"
+    },
     "HardResetFail" : {
       "title" : "ขออภัย ไม่สามารถรีเซ็ตได้",
       "description" : "โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
@@ -2681,6 +2684,10 @@
       "seeMarket" : "ดูทั้งหมด"
     },
     "walletBalance" : "ยอดคงเหลือในวอลเล็ต",
+    "balance" : {
+      "noSigner" : "วอลเล็ตที่ปลอดภัย\nที่สุด",
+      "noFund" : "ปกป้องคริปโตของคุณ"
+    },
     "seeAllAssets" : "ดูสินทรัพย์ทั้งหมด",
     "seeAllAccounts" : "ดูบัญชีทั้งหมด",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "ส่ง",
       "deposit" : "รับ",
       "stake" : "Stake"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "การโอน",
+      "swap" : "สวอป",
+      "buy" : "ซื้อ",
+      "transferDrawer" : {
+        "title" : "การโอน",
+        "receiveCrypto" : "รับคริปโต",
+        "sendCrypto" : "ส่งคริปโต",
+        "bankTransfer" : "การโอนเงินผ่านธนาคาร",
+        "bankTransferDescription" : "รับสเตเบิลคอยน์ด้วยการส่งเงินสด"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "ผลตอบแทน",
     "sell" : "ขาย",
     "swap" : "สวอป",
+    "perps" : "โทเคน Perps",
     "manage" : "จัดการ",
     "lastTransactions" : "ธุรกรรมล่าสุด",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "เปิดการแจ้งเตือน",
-      "titleVariantB" : "รับประโยชน์สูงสุดจากแอป Ledger Wallet",
+      "titleVariantB" : "เรื่องสำคัญ ต้องห้ามพลาด!",
       "desc" : "รับข้อมูลอัปเดตล่าสุดเกี่ยวกับแอป Ledger Wallet, ผลิตภัณฑ์ Ledger, ตลาด ตลอดจนคำแนะนำส่วนบุคคล ยกเลิกได้ทุกเมื่อในการตั้งค่า",
-      "descVariantB" : "เราจะส่งเคล็ดลับที่ปรับเข้ากับบุคคล คู่มือการติดตั้ง และข่าวสารตลาดที่เกี่ยวข้องให้กับคุณ",
+      "descVariantB" : "รับการแจ้งเตือนแบบเรียลไทม์ทั้งเรื่องโทเคนใหม่ โอกาสสร้างรายได้ และสัญญาณการเปลี่ยนแปลงในตลาด โดยที่คุณสามารถยกเลิกรับได้ทุกเมื่อ",
       "allow" : "อนุญาตการแจ้งเตือน",
       "later" : "อาจดำเนินการในภายหลัง"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "Stake",
       "description" : "รับ Reward จากคริปโตของคุณ"
+    },
+    "perps" : {
+      "title" : "โทเคน Perps",
+      "description" : "เทรดสัญญาซื้อขายล่วงหน้าแบบไม่จำกัดระยะเวลาในคริปโต"
     },
     "swap" : {
       "title" : "สวอป",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "ผู้ให้บริการไม่พร้อมใช้งาน",
-      "description" : "Changelly ไม่สามารถประมวลผลธุรกรรมนี้ได้ รหัสข้อผิดพลาด 8HBB-{{randomCode}}"
+      "description" : "ผู้ให้บริการสวอปไม่สามารถประมวลผลธุรกรรมนี้ได้ รหัสข้อผิดพลาด 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "ผู้ให้บริการไม่พร้อมให้บริการ",
@@ -8284,6 +8308,11 @@
       "preapprove" : "เพิ่มบัญชีสำเร็จ",
       "validator" : "ผู้ตรวจสอบ Ledger",
       "title" : "รับเงินทุนโดยอัตโนมัติ",
+      "processing" : {
+        "title" : "กำลังประมวลผลธุรกรรม",
+        "description" : "ขั้นตอนนี้อาจใช้เวลาถึง 1 นาที",
+        "keepDeviceNearby" : "อยู่ในแอป Ledger Wallet และเก็บอุปกรณ์ Ledger ของคุณไว้ใกล้ ๆ"
+      },
       "reonboard" : {
         "title" : "จำเป็นต้องอัปเดตบัญชี",
         "account" : "บัญชี",
@@ -8356,7 +8385,11 @@
       "neutral" : "ปกติ",
       "greed" : "โลภ",
       "extremeGreed" : "โลภขั้นสุด"
-    }
+    },
+    "tileTitle" : "อารมณ์"
+  },
+  "perps" : {
+    "title" : "โทเคน Perps"
   },
   "analyticsAllocation" : {
     "header" : {

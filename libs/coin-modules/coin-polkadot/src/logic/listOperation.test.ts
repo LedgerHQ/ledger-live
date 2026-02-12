@@ -1,7 +1,7 @@
-import { PolkadotOperation, PolkadotOperationExtra } from "../types";
-import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
-import { listOperations } from "./listOperations";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
+import { PolkadotOperation, PolkadotOperationExtra } from "../types";
+import { listOperations } from "./listOperations";
 
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => {

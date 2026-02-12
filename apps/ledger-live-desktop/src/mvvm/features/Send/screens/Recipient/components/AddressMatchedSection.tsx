@@ -1,10 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Banner, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
-import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { AddressListItem } from "./AddressListItem";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
-import { formatRelativeDate } from "../utils/dateFormatter";
+import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
 import type { AddressSearchResult } from "../types";
 
 type AddressMatchedSectionProps = Readonly<{
@@ -25,6 +25,7 @@ export function AddressMatchedSection({
   hasBridgeError = false,
 }: AddressMatchedSectionProps) {
   const { t } = useTranslation();
+  const formatRelativeDate = useFormatRelativeDate();
 
   const { matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } = searchResult;
 
@@ -53,7 +54,9 @@ export function AddressMatchedSection({
 
   const getRecentDescription = (): string => {
     if (matchedRecentAddress) {
-      return `Already used · ${formatRelativeDate(matchedRecentAddress.lastUsedAt)}`;
+      return t("newSendFlow.alreadyUsed", {
+        date: formatRelativeDate(matchedRecentAddress.lastUsedAt),
+      });
     }
     return formattedAddress;
   };

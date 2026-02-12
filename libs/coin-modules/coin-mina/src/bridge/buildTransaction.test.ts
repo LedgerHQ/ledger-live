@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/types-live";
-import { buildTransaction } from "./buildTransaction";
-import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "../consts";
-import { getAccountNumFromPath } from "../common-logic";
 import { BigNumber } from "bignumber.js";
+import { getAccountNumFromPath } from "../common-logic";
+import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "../consts";
 import { Transaction } from "../types";
+import { buildTransaction } from "./buildTransaction";
 jest.mock("../common-logic");
 
 describe("buildTransaction", () => {

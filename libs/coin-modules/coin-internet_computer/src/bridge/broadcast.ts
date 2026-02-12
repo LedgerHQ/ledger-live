@@ -1,9 +1,9 @@
-import { AccountBridge } from "@ledgerhq/types-live";
-import { broadcastTxn } from "../api";
-import { Transaction } from "../types";
 import { log } from "@ledgerhq/logs";
+import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { broadcastTxn } from "../api";
 import { MAINNET_LEDGER_CANISTER_ID } from "../consts";
+import { Transaction } from "../types";
 
 // Interface to structure raw data for broadcasting transactions
 interface BroadcastRawData {

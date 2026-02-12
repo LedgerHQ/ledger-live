@@ -1,9 +1,9 @@
-import { BigNumber } from "bignumber.js";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account";
-import type { Transaction } from "./types";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { getFees } from "./api";
 import { createTransaction } from "./createTransaction";
+import type { Transaction } from "./types";
 
 /**
  * Returns the maximum possible amount for transaction

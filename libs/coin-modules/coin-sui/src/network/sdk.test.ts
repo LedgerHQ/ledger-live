@@ -1,7 +1,14 @@
-import * as sdkOriginal from "./sdk";
-import coinConfig from "../config";
-
+import assert, { fail } from "assert";
+import { SuiClient } from "@mysten/sui/client";
+import type {
+  TransactionBlockData,
+  SuiTransactionBlockResponse,
+  SuiTransactionBlockKind,
+  PaginatedTransactionResponse,
+} from "@mysten/sui/client";
 import { BigNumber } from "bignumber.js";
+import coinConfig from "../config";
+import * as sdkOriginal from "./sdk";
 
 // Create a mutable copy of the sdk module for mocking specific functions
 const mockLoadOperations = jest.fn<
@@ -67,14 +74,6 @@ const sdk = new Proxy(sdkOriginal, {
     return target[prop as keyof typeof target];
   },
 });
-import { SuiClient } from "@mysten/sui/client";
-import type {
-  TransactionBlockData,
-  SuiTransactionBlockResponse,
-  SuiTransactionBlockKind,
-  PaginatedTransactionResponse,
-} from "@mysten/sui/client";
-import assert, { fail } from "assert";
 
 // Mock SUI client for tests
 jest.mock("@mysten/sui/client", () => {
@@ -127,6 +126,7 @@ jest.mock("@mysten/sui/client", () => {
           status: { status: "success" },
         },
       }),
+      multiGetObjects: jest.fn().mockResolvedValue([]),
     })),
     getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
   };
@@ -155,6 +155,7 @@ jest.mock("@mysten/sui/transactions", () => {
         },
         build: jest.fn().mockResolvedValue(mockTxb),
         setGasBudgetIfNotSet: jest.fn(),
+        getData: jest.fn().mockImplementation(() => ({ gasData: {}, inputs: [] })),
       };
     }),
   };
@@ -422,7 +423,6 @@ describe("SDK Functions", () => {
 
   test("getOperationDate should return correct date", () => {
     const date = sdk.getOperationDate(mockTransaction);
-    expect(date).toBeDefined();
     expect(date).toBeInstanceOf(Date);
   });
 
@@ -652,7 +652,7 @@ describe("SDK Functions", () => {
     };
 
     const tx = await sdk.createTransaction(address, transaction);
-    expect(tx).toBeDefined();
+    expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
   test("executeTransactionBlock should execute a transaction", async () => {
@@ -662,12 +662,10 @@ describe("SDK Functions", () => {
       options: { showEffects: true },
     });
 
-    expect(result).toHaveProperty("digest", "transaction_digest_123");
-    expect(result?.effects).toBeDefined();
-    if (result?.effects) {
-      expect(result.effects).toHaveProperty("status");
-      expect(result.effects.status).toHaveProperty("status", "success");
-    }
+    expect(result).toEqual({
+      digest: "transaction_digest_123",
+      effects: { status: { status: "success" } },
+    });
   });
 });
 
@@ -807,7 +805,7 @@ describe("Staking Operations", () => {
       };
 
       const tx = await sdk.createTransaction(address, transaction);
-      expect(tx).toBeDefined();
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
     test("createTransaction should build undelegate transaction with specific amount", async () => {
@@ -822,7 +820,7 @@ describe("Staking Operations", () => {
       };
 
       const tx = await sdk.createTransaction(address, transaction);
-      expect(tx).toBeDefined();
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
     test("createTransaction should build undelegate transaction with all amount", async () => {
@@ -837,7 +835,7 @@ describe("Staking Operations", () => {
       };
 
       const tx = await sdk.createTransaction(address, transaction);
-      expect(tx).toBeDefined();
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
   });
 
@@ -2199,16 +2197,12 @@ describe("getCoinsForAmount", () => {
 
     test("handles no data in asc mode", () => {
       const r = sdk.dedupOperations(outs, ins, "asc");
-      expect(r).toBeDefined();
-      expect(r.operations).toBeDefined();
-      expect(r.operations.length).toBe(0);
+      expect(r).toEqual({ operations: [] });
     });
 
     test("handles no data in desc mode", () => {
       const r = sdk.dedupOperations(outs, ins, "desc");
-      expect(r).toBeDefined();
-      expect(r.operations).toBeDefined();
-      expect(r.operations.length).toBe(0);
+      expect(r).toEqual({ operations: [] });
     });
   });
 

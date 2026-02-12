@@ -1,14 +1,14 @@
-import BigNumber from "bignumber.js";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { getMaxSendBalance } from "../bridge/logic";
+import { MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";
 import {
   AptosAccount,
   AptosMappedStakingPosition,
   AptosStakingPosition,
   AptosValidator,
 } from "../types";
-import { MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";
-import { getMaxSendBalance } from "../bridge/logic";
 
 export const mapStakingPositions = (
   stakingPositions: AptosStakingPosition[],
