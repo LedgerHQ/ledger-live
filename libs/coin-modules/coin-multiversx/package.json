@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "0.10.3",
+  "version": "0.11.0-next.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",

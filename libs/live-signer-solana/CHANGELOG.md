@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-solana
 
+## 0.11.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c4e7d20`](https://github.com/LedgerHQ/ledger-live/commit/c4e7d20ce631d43d7c8847d3f56187f68140fbab), [`6b74a70`](https://github.com/LedgerHQ/ledger-live/commit/6b74a7029baab853b3032122be5e7fbf39969128)]:
+  - @ledgerhq/coin-solana@0.45.0-next.0
+
 ## 0.11.0
 
 ### Minor Changes

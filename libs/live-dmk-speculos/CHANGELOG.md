@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#14218](https://github.com/LedgerHQ/ledger-live/pull/14218) [`2407e23`](https://github.com/LedgerHQ/ledger-live/commit/2407e2350ca699b4b506bdfb1563ade32b022e0f) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Expose DMK context in renderer for E2E
+
 ## 0.5.2
 
 ### Patch Changes

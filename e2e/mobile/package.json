@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-mobile-e2e-tests",
-  "version": "0.12.0",
+  "version": "0.13.0-next.0",
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --cache",

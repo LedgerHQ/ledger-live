@@ -1,5 +1,17 @@
 # dummy-wallet-app
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#14203](https://github.com/LedgerHQ/ledger-live/pull/14203) [`6b74a70`](https://github.com/LedgerHQ/ledger-live/commit/6b74a7029baab853b3032122be5e7fbf39969128) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - deps: fix Solana related dependencies
+
+### Patch Changes
+
+- Updated dependencies [[`d221665`](https://github.com/LedgerHQ/ledger-live/commit/d221665087351c7c59312bc557c758a0026c36c9), [`a54870f`](https://github.com/LedgerHQ/ledger-live/commit/a54870f2aa2371822807350b026619379d38bb1c), [`c039174`](https://github.com/LedgerHQ/ledger-live/commit/c03917424131f87923a8151d75e04de272c42aab), [`9da7bfe`](https://github.com/LedgerHQ/ledger-live/commit/9da7bfe1696fec2fc0eea424791e56008349bcdd), [`3e78638`](https://github.com/LedgerHQ/ledger-live/commit/3e7863810cbf421ce091cc5e94116a9f4d3930ac), [`d5da9e0`](https://github.com/LedgerHQ/ledger-live/commit/d5da9e04d7a92b3f7f9df9d462bdd101cadbd300), [`595fee5`](https://github.com/LedgerHQ/ledger-live/commit/595fee5e8be4280e34b87cf2258c7a8dcdeb82d5), [`6b74a70`](https://github.com/LedgerHQ/ledger-live/commit/6b74a7029baab853b3032122be5e7fbf39969128), [`c61dc02`](https://github.com/LedgerHQ/ledger-live/commit/c61dc0268072ca43cf726efd17dc11f21eb37ce8), [`8006565`](https://github.com/LedgerHQ/ledger-live/commit/8006565f77487fa0e38bf5f8d7bb4cda4cdba1f5), [`e3255a5`](https://github.com/LedgerHQ/ledger-live/commit/e3255a58ed749bfa63f46f837e4454cccf13c6e3), [`2ec4196`](https://github.com/LedgerHQ/ledger-live/commit/2ec419630bceab7a9600711742a18034ba9ff3cc), [`95805b8`](https://github.com/LedgerHQ/ledger-live/commit/95805b8344c1577b3cd917d76b882e28dd134ee0), [`de9d068`](https://github.com/LedgerHQ/ledger-live/commit/de9d068800ed2ae72aca0126855480d3eeb12989)]:
+  - @ledgerhq/live-common@34.61.0-next.0
+  - @ledgerhq/hw-app-eth@7.4.0-next.0
+
 ## 0.12.3
 
 ### Patch Changes
