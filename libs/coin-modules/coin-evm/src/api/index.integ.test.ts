@@ -397,17 +397,14 @@ describe.each([
         });
       };
 
-      it.each([
+      // TODO implement pagination for ledger explorer
+      // Pagination tests only make sense for etherscan-like explorers that support real pagination.
+      // Ledger explorer fetches all data in one call looping over all the pages and returns NO_TOKEN.
+      (isEtherscanLike ? it.each : it.skip.each)([
         // note that the ASC mode is really slow
         ["ascending", "asc"],
         ["descending", "desc"],
       ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
-        // TODO implement pagination for ledger explorer
-        // Pagination tests only make sense for etherscan-like explorers that support real pagination.
-        // Ledger explorer fetches all data in one call looping over all the pages and returns NO_TOKEN.
-        if (!isEtherscanLike) {
-          return;
-        }
         const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
         const limit = 100;
 

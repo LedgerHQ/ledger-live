@@ -216,6 +216,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -235,6 +236,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 0,
+          endBlock: undefined,
         },
       });
     });
@@ -251,6 +253,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -270,6 +273,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 50,
+          endBlock: undefined,
         },
       });
     });
@@ -287,6 +291,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -443,6 +448,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -464,6 +470,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 0,
+          endBlock: undefined,
         },
       });
     });
@@ -480,6 +487,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -501,6 +509,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 50,
+          endBlock: undefined,
         },
       });
     });
@@ -518,6 +527,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -676,6 +686,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -713,6 +724,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -751,6 +763,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -909,6 +922,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -946,6 +960,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -984,6 +999,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -1100,6 +1116,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       // Verify operations are sorted by date descending
@@ -1274,6 +1291,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(3);
@@ -1295,6 +1313,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 0,
+          endBlock: undefined,
         },
       });
     });
@@ -1311,6 +1330,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(3);
@@ -1332,6 +1352,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 50,
+          endBlock: undefined,
         },
       });
     });
@@ -1349,6 +1370,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(3);
@@ -1393,6 +1415,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations).toEqual(
