@@ -150,6 +150,23 @@ describe("parseDeepLink", () => {
         fromToken: "btc",
         toToken: "eth",
         affiliate: undefined,
+        fromPath: undefined,
+      });
+    });
+
+    it("creates swap route with fromPath", () => {
+      const parsed = parseDeepLink(
+        "ledgerwallet://swap?fromToken=btc&toToken=eth&fromPath=%2Fmarket%2Fbitcoin",
+      );
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "swap",
+        amountFrom: undefined,
+        fromToken: "btc",
+        toToken: "eth",
+        affiliate: undefined,
+        fromPath: "/market",
       });
     });
 

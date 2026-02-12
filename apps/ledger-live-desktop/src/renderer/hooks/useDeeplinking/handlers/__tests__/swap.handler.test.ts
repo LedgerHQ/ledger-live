@@ -68,6 +68,25 @@ describe("swap.handler", () => {
       });
     });
 
+    it("sets from when fromPath is provided", () => {
+      const context = createMockContext();
+
+      swapHandler(
+        {
+          type: "swap",
+          fromToken: "bitcoin",
+          toToken: "ethereum",
+          fromPath: "/market",
+        },
+        context,
+      );
+
+      expect(context.navigate).toHaveBeenCalledWith("/swap", {
+        defaultToken: { fromTokenId: "bitcoin", toTokenId: "ethereum" },
+        from: "/market",
+      });
+    });
+
     it("combines all parameters", () => {
       const context = createMockContext();
 
@@ -78,6 +97,7 @@ describe("swap.handler", () => {
           toToken: "ethereum",
           amountFrom: "1.5",
           affiliate: "partner",
+          fromPath: "/market/bitcoin",
         },
         context,
       );
@@ -86,6 +106,7 @@ describe("swap.handler", () => {
         defaultToken: { fromTokenId: "bitcoin", toTokenId: "ethereum" },
         defaultAmountFrom: "1.5",
         affiliate: "partner",
+        from: "/market/bitcoin",
       });
     });
   });
