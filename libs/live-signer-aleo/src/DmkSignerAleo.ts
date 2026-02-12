@@ -1,4 +1,4 @@
-import type { AleoSigner } from "@ledgerhq/coin-aleo/lib/types/signer";
+import type { AleoSigner } from "@ledgerhq/coin-aleo/types/signer";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 
@@ -14,8 +14,12 @@ export class DmkSignerAleo implements AleoSigner {
   }
 
   private _mapError<E extends DAError>(error: E): Error {
+    if (!("_tag" in error) || typeof error._tag !== "string") {
+      return new Error("Unknown error");
+    }
+
     if (!("errorCode" in error)) {
-      return new Error("error.errorCode is missing");
+      return new Error(error._tag);
     }
 
     switch (error.errorCode) {
@@ -24,7 +28,7 @@ export class DmkSignerAleo implements AleoSigner {
       case "6985":
         return new UserRefusedOnDevice();
       default:
-        return new Error(error.message || "Unknown error");
+        return new Error(error._tag);
     }
   }
 
