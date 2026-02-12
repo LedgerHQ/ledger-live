@@ -538,8 +538,8 @@ importers:
         specifier: 1.30.0
         version: 1.30.0(eslint@8.57.0)
       zx:
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: 8.8.5
+        version: 8.8.5
 
   apps/cli:
     dependencies:
@@ -20728,7 +20728,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -30168,7 +30168,7 @@ packages:
   react-lottie@1.2.10:
     resolution: {integrity: sha512-x0eWX3Z6zSx1XM5QSjnLupc6D22LlMCB0PH06O/N/epR2hsLaj1Vxd9RtMnbbEHjJ/qlsgHJ6bpN3vnZI92hjw==}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -34009,8 +34009,8 @@ packages:
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
-  zx@8.4.1:
-    resolution: {integrity: sha512-1Cb+Tfwt/daKV6wckBeDbB6h3IMauqj9KWp+EcbYzi9doeJeIHCktxp/yWspXOXRdoUzBCQSKoUgm3g8r9fz5A==}
+  zx@8.8.5:
+    resolution: {integrity: sha512-SNgDF5L0gfN7FwVOdEFguY3orU5AkfFZm9B5YSHog/UDHv+lvmd82ZAsOenOkQixigwH2+yyH198AwNdKhj+RA==}
     engines: {node: '>= 12.17.0'}
     hasBin: true
 
@@ -69013,4 +69013,4 @@ snapshots:
 
   zwitch@2.0.4: {}
 
-  zx@8.4.1: {}
+  zx@8.8.5: {}
