@@ -9,6 +9,7 @@ import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
+import { isLastRetry } from "tests/utils/testInfoUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
@@ -194,6 +195,7 @@ export const test = base.extend<TestFixtures>({
         userdataDestinationPath,
         simulateCamera,
         windowSize,
+        recordVideo: isLastRetry(testInfo),
       });
 
       await use(electronApp);

@@ -4,6 +4,7 @@ import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
 import * as allure from "allure-js-commons";
+import { isLastRetry } from "tests/utils/testInfoUtils";
 
 const readFileAsync = promisify(readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -36,16 +37,18 @@ export async function captureArtifacts(
     });
   }
 
-  const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
+  if (isLastRetry(testInfo)) {
+    const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
 
-  await page.evaluate(filePath => {
-    window.saveLogs(filePath);
-  }, filePath);
+    await page.evaluate(filePath => {
+      window.saveLogs(filePath);
+    }, filePath);
 
-  await testInfo.attach("Test logs", {
-    path: filePath,
-    contentType: "application/json",
-  });
+    await testInfo.attach("Test logs", {
+      path: filePath,
+      contentType: "application/json",
+    });
+  }
 
   const video = page.video();
   const videoPath = video ? await video.path() : null;
