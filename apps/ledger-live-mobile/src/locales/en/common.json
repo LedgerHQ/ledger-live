@@ -2638,7 +2638,8 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn"
+    "earn": "Earn",
+    "card": "Card"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -8419,6 +8420,14 @@
     },
     "actions": {
       "swap": "Swap"
+    }
+  },
+  "cardLanding": {
+    "title": "Spend your\ncrypto",
+    "subtitle": "Pay online or in store with a crypto card",
+    "ctas": {
+      "exploreCards": "Explore cards",
+      "iHaveACard": "I have a card"
     }
   },
   "walletV4Tour": {
