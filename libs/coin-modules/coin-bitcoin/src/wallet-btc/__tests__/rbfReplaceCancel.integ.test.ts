@@ -24,15 +24,11 @@ import { buildTransaction } from "../../buildTransaction";
 import { removeReplaced } from "../../synchronisation";
 import type { BitcoinAccount, Transaction as BtcTransaction } from "../../types";
 import type { BtcOperation } from "../../types";
-<<<<<<< HEAD
 import {
   RbfFixtureResult,
   buildRbfFixtureTxs,
   buildRbfFixtureTxsWithTwoUtxos,
 } from "./fixtures/rbf.fixtures";
-=======
-import { buildRbfFixtureTxs, buildRbfFixtureTxsWithTwoUtxos } from "./fixtures/rbf.fixtures";
->>>>>>> c0f45c2cd7 (fix: mv to correct branch)
 
 jest.setTimeout(30000);
 
@@ -118,11 +114,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
   let bitcoinAccount: BitcoinAccount;
   let originalTxId: string;
   let mockExplorer: ReturnType<typeof createMockExplorer>;
-<<<<<<< HEAD
   let fixture: RbfFixtureResult;
-=======
-  let fixture: ReturnType<typeof buildRbfFixtureTxs>;
->>>>>>> c0f45c2cd7 (fix: mv to correct branch)
 
   beforeAll(async () => {
     fixture = buildRbfFixtureTxs({
