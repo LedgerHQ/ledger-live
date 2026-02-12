@@ -34,14 +34,13 @@ import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
   filterScannedDevice,
   findMatchingNewDevice,
-  HIDDiscoveredDevice,
   ScannedDevice,
   useBleDevicesScanning,
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DisplayedDevice } from "./DisplayedDevice";
+import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
@@ -49,6 +48,12 @@ import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
 import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
 import { useMockHidDevicesDiscovery } from "~/transport/useMockHidDiscovery";
+import { makeMockDiscoveredDevice } from "~/transport/mockDiscoveredDevice";
+import {
+  mapScannedDeviceToDisplayedAvailableDevice,
+  mapHidDeviceToDisplayedAvailableDevice,
+  mapDeviceLikeToDisplayedDevice,
+} from "./mappers";
 
 export type { SetHeaderOptionsRequest };
 
@@ -63,9 +68,9 @@ type Props = {
   /**
    * Callback to be called when a device is selected.
    * @param device - The device that was selected. (legacy Device type)
-   * @param discoveredDevice - The discovered device that was selected. (directly compatible with DeviceManagementKit.connect(), undefined for (legacy)mock transports)
+   * @param discoveredDevice - The discovered device that was selected. Directly compatible with DeviceManagementKit.connect()
    */
-  onSelect: (device: Device, discoveredDevice?: DiscoveredDevice) => void;
+  onSelect: (device: Device, discoveredDevice: DiscoveredDevice) => void;
   /**
    * This component has side-effects because it performs BLE scanning.
    * BLE Scanning and BLE connection cannot occur at the same time.
@@ -143,10 +148,8 @@ export default function SelectDevice({
   const bleKnownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const [deviceToCheckLockedStatus, setDeviceToCheckLockedStatus] = useState<Device | null>(null);
-  const [discoveredDeviceToCheckLockedStatus, setDiscoveredDeviceToCheckLockedStatus] = useState<
-    DiscoveredDevice | undefined
-  >(undefined);
+  const [deviceToCheckLockedStatus, setDeviceToCheckLockedStatus] =
+    useState<DisplayedAvailableDevice | null>(null);
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
@@ -162,8 +165,6 @@ export default function SelectDevice({
   const mockHidState = useMockHidDevicesDiscovery(isMockMode);
   const realHidState = useHidDevicesDiscovery(!isMockMode);
   const { hidDevices } = isMockMode ? mockHidState : realHidState;
-
-  const USBDevice = hidDevices.length > 0 ? hidDevices[0] : undefined;
 
   const scanningEnabled =
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
@@ -184,7 +185,7 @@ export default function SelectDevice({
   }, [scannedDevices, filterByDeviceModelId]);
 
   // To be able to triggers the device selection once all the bluetooth requirements are respected
-  const [selectedBleDevice, setSelectedBleDevice] = useState<Device | null>(null);
+  const [selectedBleDevice, setSelectedBleDevice] = useState<DisplayedDevice | null>(null);
   const isBleRequired = Boolean(selectedBleDevice);
 
   const [showSelectedBleDeviceNotAvailableDrawer, setShowSelectedBleDeviceNotAvailableDrawer] =
@@ -206,11 +207,10 @@ export default function SelectDevice({
   }, []);
 
   const notifyDeviceSelected = useCallback(
-    (device: Device, discoveredDevice?: DiscoveredDevice) => {
+    (device: Device, discoveredDevice: DiscoveredDevice) => {
       dispatch(updateMainNavigatorVisibility(true));
       dispatch(setLastConnectedDevice(device));
       dispatch(setHasConnectedDevice(true));
-      console.log("[SelectDevice2] onSelect(discoveredDevice):", discoveredDevice);
       onSelect(device, discoveredDevice);
       dispatch(setReadOnlyMode(false));
       if (!device.wired) {
@@ -227,36 +227,40 @@ export default function SelectDevice({
   );
 
   const checkDeviceStatus = useCallback(
-    (device: Device, discoveredDevice?: DiscoveredDevice) => {
+    (displayedDevice: DisplayedAvailableDevice) => {
       const isMockEnv = getEnv("MOCK");
-      const isSpeculos = device.deviceId.startsWith("speculos|");
+      const isSpeculos = displayedDevice.device.deviceId.startsWith("speculos|");
       if (performDeviceLockedCheck && !isMockEnv && !isSpeculos) {
-        setDeviceToCheckLockedStatus(device);
-        setDiscoveredDeviceToCheckLockedStatus(discoveredDevice);
+        setDeviceToCheckLockedStatus(displayedDevice);
       } else {
-        notifyDeviceSelected(device, discoveredDevice);
+        notifyDeviceSelected(displayedDevice.device, displayedDevice.discoveredDevice);
       }
     },
     [performDeviceLockedCheck, notifyDeviceSelected],
   );
 
   const handleDeviceUnlocked = useCallback(() => {
+    if (deviceToCheckLockedStatus) {
+      notifyDeviceSelected(
+        deviceToCheckLockedStatus.device,
+        deviceToCheckLockedStatus.discoveredDevice,
+      );
+    }
     setDeviceToCheckLockedStatus(null);
-    setDiscoveredDeviceToCheckLockedStatus(undefined);
-    deviceToCheckLockedStatus &&
-      notifyDeviceSelected(deviceToCheckLockedStatus, discoveredDeviceToCheckLockedStatus);
-  }, [notifyDeviceSelected, deviceToCheckLockedStatus, discoveredDeviceToCheckLockedStatus]);
+  }, [notifyDeviceSelected, deviceToCheckLockedStatus]);
 
   const handleDeviceLockedCheckClosed = useCallback(() => {
     setDeviceToCheckLockedStatus(null);
-    setDiscoveredDeviceToCheckLockedStatus(undefined);
   }, []);
 
+  /**
+   * Called when user selects a device manually
+   */
   const handleOnSelect = useCallback(
-    (device: DisplayedDevice) => {
+    (displayedDevice: DisplayedDevice) => {
       dispatch(updateMainNavigatorVisibility(true));
 
-      const { modelId, wired, deviceId, discoveredDevice } = device;
+      const { modelId, wired, deviceId } = displayedDevice.device;
       track("Device selection", {
         modelId,
         connectionType: wired ? "USB" : "BLE",
@@ -265,12 +269,13 @@ export default function SelectDevice({
       const isMockEnv = getEnv("MOCK");
       const isNonBleDebugDevice =
         deviceId.includes("httpdebug") || deviceId.startsWith("speculos|");
-
       if (!wired && !isMockEnv && !isNonBleDebugDevice) {
-        setSelectedBleDevice(device);
+        setSelectedBleDevice(displayedDevice);
       } else {
+        // it's a wired or mock/debug device, so it's available.
+        if (!displayedDevice.available) return;
         setSelectedBleDevice(null);
-        checkDeviceStatus(device, discoveredDevice);
+        checkDeviceStatus(displayedDevice);
       }
 
       setIsPairingDevices(false);
@@ -285,7 +290,7 @@ export default function SelectDevice({
    */
   const availableDeviceMatchingSelectedBleDevice = useMemo<ScannedDevice | null>(() => {
     if (!selectedBleDevice) return null;
-    return (findMatchingNewDevice(selectedBleDevice, scannedDevices) as ScannedDevice) ?? null;
+    return findMatchingNewDevice(selectedBleDevice.device, scannedDevices);
   }, [selectedBleDevice, scannedDevices]);
 
   useEffect(() => {
@@ -295,8 +300,7 @@ export default function SelectDevice({
       setSelectedBleDevice(null);
       setShowSelectedBleDeviceNotAvailableDrawer(false);
       checkDeviceStatus(
-        { ...availableDeviceMatchingSelectedBleDevice, wired: false },
-        availableDeviceMatchingSelectedBleDevice.discoveredDevice,
+        mapScannedDeviceToDisplayedAvailableDevice(availableDeviceMatchingSelectedBleDevice),
       );
       return;
     }
@@ -308,8 +312,7 @@ export default function SelectDevice({
         return;
       }
       checkDeviceStatus(
-        { ...availableDeviceMatchingSelectedBleDevice, wired: false },
-        availableDeviceMatchingSelectedBleDevice.discoveredDevice,
+        mapScannedDeviceToDisplayedAvailableDevice(availableDeviceMatchingSelectedBleDevice),
       );
       setSelectedBleDevice(null);
       setShowSelectedBleDeviceNotAvailableDrawer(false);
@@ -350,78 +353,51 @@ export default function SelectDevice({
   }, []);
 
   /**
-   * Callback for auto-selection that converts Device to DisplayedDevice.
-   * Tries to find discoveredDevice from scannedDevices (BLE) or hidDevices (USB).
-   */
-  const handleAutoSelect = useCallback(
-    (device: Device) => {
-      let discoveredDevice: DiscoveredDevice | undefined;
-      if (device.wired) {
-        const matchingHidDevice = findMatchingNewDevice(
-          device,
-          hidDevices,
-        ) as HIDDiscoveredDevice | null;
-        discoveredDevice = matchingHidDevice?.discoveredDevice;
-      } else {
-        const matchingScannedDevice = findMatchingNewDevice(
-          device,
-          scannedDevices,
-        ) as ScannedDevice | null;
-        discoveredDevice = matchingScannedDevice?.discoveredDevice;
-      }
-      handleOnSelect({
-        ...device,
-        available: true,
-        discoveredDevice,
-      });
-    },
-    [handleOnSelect, scannedDevices, hidDevices],
-  );
-
-  /**
    * Auto selection of the last connected device
    */
   useAutoSelectDevice({
     enabled: isFocused,
     deviceToAutoSelect: autoSelectLastConnectedDevice ? lastConnectedDevice : null,
-    availableUSBDevice: USBDevice,
-    onAutoSelect: handleAutoSelect,
+    hidDevices,
+    onAutoSelect: handleOnSelect,
     usbDeviceToSelectExpirationDuration: 1200,
   });
 
   const deviceList = useMemo(() => {
     let devices: DisplayedDevice[] = bleKnownDevices
-      .map(device => {
-        const matchingScannedDevice = findMatchingNewDevice(
+      .map((knownDevice): DisplayedDevice => {
+        const matchingNewDevice = findMatchingNewDevice(
           {
-            deviceId: device.id,
-            deviceName: device.name,
-            modelId: device.modelId,
+            deviceId: knownDevice.id,
+            deviceName: knownDevice.name,
+            modelId: knownDevice.modelId,
           },
           filteredScannedDevices,
-        ) as ScannedDevice | null;
-        return {
-          ...device,
-          wired: false,
-          deviceId: matchingScannedDevice?.deviceId ?? device.id,
-          deviceName: matchingScannedDevice?.deviceName ?? device.name,
-          available: Boolean(matchingScannedDevice),
-          discoveredDevice: matchingScannedDevice?.discoveredDevice,
-        };
+        );
+        return matchingNewDevice
+          ? mapScannedDeviceToDisplayedAvailableDevice(matchingNewDevice)
+          : mapDeviceLikeToDisplayedDevice(knownDevice);
       })
       .sort((a, b) => Number(b.available) - Number(a.available));
 
-    if (USBDevice) {
-      devices = [{ ...USBDevice, available: true }, ...devices];
+    if (hidDevices.length > 0) {
+      devices = [mapHidDeviceToDisplayedAvailableDevice(hidDevices[0]), ...devices];
     }
     if (ProxyDevice) {
-      devices = [{ ...ProxyDevice, available: true }, ...devices];
+      devices = [
+        {
+          device: ProxyDevice,
+          available: true,
+          discoveredDevice: makeMockDiscoveredDevice(ProxyDevice),
+        },
+        ...devices,
+      ];
     }
 
     return filterByDeviceModelId
-      ? devices.filter(d => d.modelId === filterByDeviceModelId)
+      ? devices.filter(d => d.device.modelId === filterByDeviceModelId)
       : devices;
-  }, [bleKnownDevices, filteredScannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
+  }, [bleKnownDevices, filteredScannedDevices, hidDevices, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
@@ -488,7 +464,7 @@ export default function SelectDevice({
   const handleOnSelectFromPairingFlow = useCallback(
     (device: Device, discoveredDevice: DiscoveredDevice) => {
       handleOnSelect({
-        ...device,
+        device,
         available: true,
         discoveredDevice,
       });
@@ -524,7 +500,7 @@ export default function SelectDevice({
     () => ({
       category: "My Ledger",
       "number of devices connected": deviceList.length,
-      "model of devices connected": deviceList.map(d => d.modelId).sort(),
+      "model of devices connected": deviceList.map(d => d.device.modelId).sort(),
     }),
     [deviceList],
   );
@@ -539,7 +515,7 @@ export default function SelectDevice({
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <DeviceLockedCheckDrawer
         isOpen={Boolean(deviceToCheckLockedStatus)}
-        device={deviceToCheckLockedStatus}
+        device={deviceToCheckLockedStatus?.device ?? null}
         onDeviceUnlocked={handleDeviceUnlocked}
         onClose={handleDeviceLockedCheckClosed}
       />
@@ -553,7 +529,7 @@ export default function SelectDevice({
       {!!selectedBleDevice && (
         <BleDeviceNotAvailableDrawer
           isOpen={showSelectedBleDeviceNotAvailableDrawer}
-          device={selectedBleDevice}
+          device={selectedBleDevice.device}
           onClose={handleBleDeviceNotAvailableDrawerClose}
           redirectToScan={openBlePairingFlow}
         />
@@ -655,7 +631,7 @@ export default function SelectDevice({
                     </Touchable>
                   )}
                   {Platform.OS === "android" &&
-                    USBDevice === undefined &&
+                    hidDevices.length === 0 &&
                     ProxyDevice === undefined && (
                       <Text
                         color="neutral.c100"
