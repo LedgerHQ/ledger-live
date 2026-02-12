@@ -36,10 +36,10 @@ export enum MobileViewState {
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
-  isPtxUiV2?: boolean;
+  isLwm40Enabled?: boolean;
 };
 /** Subset of WebPTXPlayer functionality required for Earn live app. */
-export const EarnWebview = ({ manifest, inputs, isPtxUiV2 }: Props) => {
+export const EarnWebview = ({ manifest, inputs, isLwm40Enabled }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
@@ -139,7 +139,7 @@ export const EarnWebview = ({ manifest, inputs, isPtxUiV2 }: Props) => {
     };
   }, [customEarnHandlers, customDeeplinkHandlers]);
 
-  const Container = isPtxUiV2 ? View : SafeAreaView;
+  const Container = isLwm40Enabled ? View : SafeAreaView;
 
   return (
     <Container style={[styles.root]}>

@@ -149,7 +149,7 @@ function Earn({ route }: Props) {
     }
     return (
       <View style={{ flex: 1, overflow: "visible" }}>
-        <EarnBackground />
+        {isPtxUiV2 && <EarnBackground />}
         <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
           {displayManifest ? (
             <Fragment>
@@ -157,7 +157,7 @@ function Earn({ route }: Props) {
               <EarnWebview
                 manifest={displayManifest}
                 inputs={webviewInputs}
-                isPtxUiV2={isPtxUiV2}
+                isLwm40Enabled={isLwm40Enabled}
               />
             </Fragment>
           ) : (

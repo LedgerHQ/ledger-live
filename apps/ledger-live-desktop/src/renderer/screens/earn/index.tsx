@@ -26,6 +26,7 @@ import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener
 import { useLocation } from "react-router";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
+import Box from "~/renderer/components/Box";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
@@ -65,8 +66,12 @@ const Earn = () => {
     return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
   }
 
+
+  // if LWM40 is enabled, use Box for transparency, otherwise use Card
+  const Container = isLwm40Enabled ? Box: Card;
+
   return (
-    <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
+    <Container grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
       <WebPlatformPlayer
         config={{
           topBarConfig: {
@@ -96,7 +101,7 @@ const Earn = () => {
           lwm40enabled: isLwm40Enabled ? "true" : "false",
         }}
       />
-    </Card>
+    </Container>
   );
 };
 
