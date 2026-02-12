@@ -79,7 +79,6 @@ export const StepFeesFooter = ({
   };
 
   const { errors } = status;
-  console.log("Errors in StepFeesFooter:", errors);
   const hasErrors = !!Object.keys(errors).length;
   const disabled = bridgePending || hasErrors || transactionHasBeenValidated;
 
@@ -95,7 +94,7 @@ export const StepFeesFooter = ({
   const errorsToDisplay: Record<string, Error> | undefined = replacementTransactionUnderpriced
     ? { replacementTransactionUnderpriced: replacementTransactionUnderpriced }
     : undefined;
-  console.log("Errors to display in StepFeesFooter:", errorsToDisplay);
+
   return (
     <>
       <TransactionErrorBanner

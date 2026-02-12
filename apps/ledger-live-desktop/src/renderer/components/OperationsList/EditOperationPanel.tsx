@@ -39,7 +39,6 @@ const EditOperationPanel = (props: Props) => {
       // For Bitcoin RBF, we can edit pending transactions even without transactionRaw
       // The edit modal will fetch the transaction from the blockchain using the hash
       // If transactionRaw exists, check if RBF is explicitly disabled
-      console.log("Checking Bitcoin RBF support for operation:", operation);
       if (operation.transactionRaw) {
         const bitcoinTxRaw = operation.transactionRaw as {
           family?: string;
