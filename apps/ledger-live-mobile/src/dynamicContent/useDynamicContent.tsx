@@ -6,6 +6,8 @@ import {
   assetsCardsSelector,
   categoriesCardsSelector,
   mobileCardsSelector,
+  mobileCardsFromBrazeSelector,
+  localMobileCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
   landingPageStickyCtaCardsSelector,
@@ -19,7 +21,7 @@ import {
 } from "./types";
 import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
-import { setDynamicContentMobileCards } from "~/actions/dynamicContent";
+import { setDynamicContentMobileCards, removeLocalCard } from "~/actions/dynamicContent";
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();
@@ -29,6 +31,8 @@ const useDynamicContent = () => {
   const categoriesCards = useSelector(categoriesCardsSelector);
   const landingPageStickyCtaCards = useSelector(landingPageStickyCtaCardsSelector);
   const mobileCards = useSelector(mobileCardsSelector);
+  const mobileCardsFromBraze = useSelector(mobileCardsFromBrazeSelector);
+  const localMobileCards = useSelector(localMobileCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
   const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =
@@ -71,10 +75,15 @@ const useDynamicContent = () => {
   const dismissCard = useCallback(
     (cardId: string) => {
       dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
-      dispatch(setDynamicContentMobileCards(mobileCards.filter(n => n.id !== cardId)));
+      const isLocal = localMobileCards.some(c => c.id === cardId);
+      if (isLocal) {
+        dispatch(removeLocalCard(cardId));
+      } else {
+        dispatch(setDynamicContentMobileCards(mobileCardsFromBraze.filter(n => n.id !== cardId)));
+      }
       logDismissCard(cardId);
     },
-    [dispatch, hiddenCards, mobileCards, logDismissCard],
+    [dispatch, hiddenCards, localMobileCards, mobileCardsFromBraze, logDismissCard],
   );
 
   const trackContentCardEvent = useCallback(

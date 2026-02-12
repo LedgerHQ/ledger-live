@@ -147,6 +147,10 @@ export type DynamicContentState = {
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
+  /** Local/debug category cards (merged in selectors, not from Braze) */
+  localCategoriesCards: CategoryContentCard[];
+  /** Local/debug mobile cards (merged in selectors, not from Braze) */
+  localMobileCards: BrazeContentCard[];
 };
 
 // === IN VIEW STATE ===
