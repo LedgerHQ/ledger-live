@@ -60,6 +60,11 @@ type Navigation = BaseComposite<
 >;
 
 type Props = {
+  /**
+   * Callback to be called when a device is selected.
+   * @param device - The device that was selected. (legacy Device type)
+   * @param discoveredDevice - The discovered device that was selected. (directly compatible with DeviceManagementKit.connect(), undefined for (legacy)mock transports)
+   */
   onSelect: (device: Device, discoveredDevice?: DiscoveredDevice) => void;
   /**
    * This component has side-effects because it performs BLE scanning.
