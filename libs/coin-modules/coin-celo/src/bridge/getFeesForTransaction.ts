@@ -1,6 +1,6 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { BigNumber } from "bignumber.js";
-import type { CeloAccount, Transaction } from "../types";
+import type { CeloAccount, RevokeTxo, Transaction } from "../types";
 import { celoKit } from "../network/sdk";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import buildTransaction from "./buildTransaction";
@@ -11,9 +11,6 @@ import {
   MIN_GAS_FOR_NATIVE_TRANSFER,
 } from "../constants";
 import { valueToHex } from "./utils";
-
-/** Celo revoke txo from contractkit (has _method.name at runtime). */
-type RevokeTxo = { _method: { name: string } };
 
 const getFeesForTransaction = async ({
   account,

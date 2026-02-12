@@ -1,4 +1,4 @@
-import type { CeloAccount, Transaction } from "../types";
+import type { CeloAccount, RevokeTxo, Transaction } from "../types";
 import { CeloTx } from "@celo/connect";
 import { celoKit } from "../network/sdk";
 import { BigNumber } from "bignumber.js";
@@ -10,9 +10,6 @@ import {
   MAX_FEES_THRESHOLD_MULTIPLIER,
 } from "../constants";
 import { valueToHex } from "./utils";
-
-/** Celo revoke txo from contractkit (has _method.name at runtime). */
-type RevokeTxo = { _method: { name: string } };
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
