@@ -778,6 +778,7 @@
     }
   },
   "exchange": {
+    "pageHeader": "Buy or sell",
     "chooseProvider": "Choose from {{providerCount}} provider",
     "chooseProviders": "Choose from {{providerCount}} providers",
     "title": "Buy and sell crypto",
