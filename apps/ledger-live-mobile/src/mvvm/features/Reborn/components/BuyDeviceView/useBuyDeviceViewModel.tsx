@@ -24,6 +24,19 @@ type NavigationProp = BaseNavigationComposite<
   | StackNavigatorNavigation<OnboardingNavigatorParamList, ScreenName.GetDevice>
 >;
 
+const getIsBaseOnboarding = (navigation: NavigationProp) => {
+  let parent = navigation.getParent();
+  while (parent) {
+    const currentNavigation = parent.getState().routes[0].name;
+    const isBaseOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
+
+    if (isBaseOnboarding) return true;
+
+    parent = parent.getParent();
+  }
+  return false;
+};
+
 const useBuyDeviceViewModel = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
@@ -31,8 +44,7 @@ const useBuyDeviceViewModel = () => {
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const dispatch = useDispatch();
-  const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
-  const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
+  const isInOnboarding = getIsBaseOnboarding(navigation);
 
   const { closeDrawer } = useRebornBuyDeviceDrawerController();
 
@@ -56,20 +68,14 @@ const useBuyDeviceViewModel = () => {
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
-      if (isInOnboarding) {
-        // FIXME: ScreenName.PurchaseDevice does not exist when coming from the Onboarding navigator
-        // @ts-expect-error This seem very impossible to type because ts is right…
-        navigation.navigate(ScreenName.PurchaseDevice);
-      } else {
-        navigation.navigate(NavigatorName.BuyDevice, {
-          screen: ScreenName.PurchaseDevice,
-        });
-      }
+      navigation.navigate(NavigatorName.BuyDevice, {
+        screen: ScreenName.PurchaseDevice,
+      });
     } else {
       Linking.openURL(urls.buyFlex);
     }
     closeDrawer();
-  }, [buyDeviceFromLive?.enabled, navigation, closeDrawer, isInOnboarding]);
+  }, [buyDeviceFromLive?.enabled, navigation, closeDrawer]);
 
   const videoMounted = !useIsAppInBackground();
 
