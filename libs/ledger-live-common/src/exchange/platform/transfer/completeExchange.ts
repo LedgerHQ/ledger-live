@@ -165,11 +165,8 @@ const completeExchange = (
           throw new TransactionRefusedOnDevice();
         }
 
-        const converted = convertTransportError(currentStep, e);
-        if (converted instanceof CompleteExchangeError) throw converted;
-        // Preserve CompleteExchangeError instances thrown from inner code
-        if (e instanceof CompleteExchangeError) throw e;
         // Preserve known error types checked by instanceof downstream
+        if (e instanceof CompleteExchangeError) throw e;
         if (e instanceof WrongDeviceForAccount || e instanceof TransactionRefusedOnDevice) throw e;
         // Wrap any remaining unknown errors with the current step context
         throw new CompleteExchangeError(
