@@ -1,0 +1,4397 @@
+syntax = "proto3";
+
+package concordium.v2;
+
+// This specifies the package we want to use for our generated Go code.
+// Has no effect on code generated on other languages.
+option go_package = "./pb";
+
+// This specifies the package we want to use for our generated Java classes.
+// Has no effect on code generated on other languages.
+option java_package = "com.concordium.grpc.v2";
+
+// This specifies that separate .java files will be generated for each of the Java classes/enums/etc. generated for the top-level messages, services, and enumerations,
+// and the wrapper Java class generated for this .proto file won't contain any nested classes/enums/etc.
+// If not generating Java code, this option has no effect.
+option java_multiple_files = true;
+
+// This specifies the package we want to use for our generated C# classes.
+// Has no effect on code generated on other languages.
+option csharp_namespace = "Concordium.Grpc.V2";
+
+import "v2/concordium/kernel.proto";
+import "v2/concordium/protocol-level-tokens.proto";
+
+// A message that contains no information.
+message Empty {
+}
+
+// Hash of a block. This is always 32 bytes long.
+message BlockHash {
+  bytes value = 1;
+}
+
+// A SHA256 hash. This is always 32 bytes long.
+message Sha256Hash {
+  bytes value = 1;
+}
+
+// Hash of a transaction. This is always 32 bytes long.
+message TransactionHash {
+  bytes value = 1;
+}
+
+// Hash of the state after some block. This is always 32 bytes long.
+message StateHash {
+  bytes value = 1;
+}
+
+// The absolute height of a block. This is the number of ancestors of a block
+// since the genesis block. In particular, the chain genesis block has absolute
+// height 0.
+message AbsoluteBlockHeight {
+  uint64 value = 1;
+}
+
+// The height of a block relative to the last genesis. This differs from the
+// absolute block height in that it counts height from the last protocol update.
+message BlockHeight {
+  uint64 value = 1;
+}
+
+// The ID of a validator, which is the index of its account.
+message BakerId {
+  uint64 value = 1;
+}
+
+// Index of the account in the account table. These are assigned sequentially
+// in the order of creation of accounts. The first account has index 0.
+message AccountIndex {
+  uint64 value = 1;
+}
+
+// A smart contract module reference. This is always 32 bytes long.
+message ModuleRef {
+  bytes value = 1;
+}
+
+// Source bytes of a versioned smart contract module.
+message VersionedModuleSource {
+  // Source bytes of a smart contract v0 module.
+  message ModuleSourceV0 {
+    bytes value = 1;
+  }
+
+  // Source bytes of a smart contract v1 module.
+  message ModuleSourceV1 {
+    bytes value = 1;
+  }
+
+  // This field will not be extended in future versions of the API, instead new data versions will
+  // use optional fields in `ModuleSourceV1`.
+  oneof module {
+    ModuleSourceV0 v0 = 1;
+    ModuleSourceV1 v1 = 2;
+  }
+}
+
+// Unix timestamp in milliseconds.
+message Timestamp {
+  uint64 value = 1;
+}
+
+// An individual release of a locked balance.
+message Release {
+  // Effective time of the release in milliseconds since unix epoch.
+  Timestamp timestamp = 1;
+  // Amount to be released.
+  Amount amount = 2;
+  // List of transaction hashes that contribute a balance to this release.
+  repeated TransactionHash transactions = 3;
+}
+
+// A new individual release. Part of a single transfer with schedule transaction.
+message NewRelease {
+  // Effective time of the release in milliseconds since unix epoch.
+  Timestamp timestamp = 1;
+  // Amount to be released.
+  Amount amount = 2;
+}
+
+// State of the account's release schedule. This is the balance of the account
+// that is owned by the account, but cannot be used until the release point.
+message ReleaseSchedule {
+  // Total amount locked in the release schedule.
+  Amount total = 1;
+  // A list of releases, ordered by increasing timestamp.
+  repeated Release schedules = 2;
+}
+
+// An encrypted amount, in two chunks in "little endian limbs". That is, the
+// first chunk represents the low 32 bits of an amount, and the second chunk
+// represents the high 32 bits. The chunks are serialized in order and
+// represented as a byte array.
+// Always 192 bytes.
+message EncryptedAmount {
+  bytes value = 1;
+}
+
+message EncryptedBalance {
+  // Encrypted amount that is a result of this account's actions.
+  // In particular this list includes the aggregate of
+  //
+  // - remaining amounts that result when transferring to public balance
+  // - remaining amounts when transferring to another account
+  // - encrypted amounts that are transferred from public balance
+  //
+  // When a transfer is made all of these must always be used.
+  EncryptedAmount self_amount = 1;
+  // Starting index for incoming encrypted amounts. If an aggregated amount
+  // is present then this index is associated with such an amount and the
+  // list of incoming encrypted amounts starts at the index `start_index
+  // + 1`.
+  uint64 start_index = 2;
+  // If present, the amount that has resulted from aggregating other amounts
+  // If this field is present so is `num_aggregated`.
+  optional EncryptedAmount aggregated_amount = 3;
+  // The number of aggregated amounts (must be at least 2 if present). This
+  // field is present if and only if `aggregated_amount` is present.
+  optional uint32 num_aggregated = 4;
+  // Amounts starting at `start_index` (or at `start_index + 1` if there is
+  // an aggregated amount present). They are assumed to be numbered
+  // sequentially. The length of this list is bounded by the maximum number
+  // of incoming amounts on the accounts, which is currently 32. After
+  // that aggregation kicks in.
+  repeated EncryptedAmount incoming_amounts = 5;
+}
+
+// Entity to which the account delegates a portion of its stake.
+message DelegationTarget {
+  // This field might be extended in future versions of the API.
+  oneof target {
+    // Delegate passively, i.e., to no specific validator.
+    Empty passive = 1;
+    // Delegate to a specific validator.
+    BakerId baker = 2;
+  }
+}
+
+// Validator's public key used to check whether they won the lottery or not.
+message BakerElectionVerifyKey {
+  bytes value = 1;
+}
+
+// Validator's public key used to check that they are indeed the ones who
+// produced the block.
+message BakerSignatureVerifyKey {
+  bytes value = 1;
+}
+
+// Validator's public key used to check signatures on finalization records.
+// This is only used if the validator has sufficient stake to participate in
+// finalization.
+message BakerAggregationVerifyKey {
+  bytes value = 1;
+}
+
+// Information about a validator.
+message BakerInfo {
+  // Identity of the validator. This is actually the account index of
+  // the account controlling the validator.
+  BakerId baker_id = 1;
+  // Validator's public key used to check whether they won the lottery or not.
+  BakerElectionVerifyKey election_key = 2;
+  // Validator's public key used to check that they are indeed the ones who
+  // produced the block.
+  BakerSignatureVerifyKey signature_key = 3;
+  // Validator's public key used to check signatures on finalization records.
+  // This is only used if the validator has sufficient stake to participate in
+  // finalization.
+  BakerAggregationVerifyKey aggregation_key = 4;
+}
+
+// Pending change to the stake either of a validator or delegator.
+message StakePendingChange {
+  message Reduce {
+    Amount new_stake = 1;
+    // Unix timestamp in milliseconds when the change takes effect.
+    Timestamp effective_time = 2;
+  }
+
+  // This field will not be extended in future versions of the API, since it is not used starting
+  // from Concordium Protocol Version 7.
+  oneof change {
+    Reduce reduce = 1;
+    // Remove the stake. The value is a Unix timestamp of the effective time in
+    // milliseconds.
+    Timestamp remove = 2;
+  }
+}
+
+// Information about how open the pool is to new delegators.
+//
+// This type might be extended in future versions of the API.
+enum OpenStatus {
+  OPEN_STATUS_OPEN_FOR_ALL = 0;
+  OPEN_STATUS_CLOSED_FOR_NEW = 1;
+  OPEN_STATUS_CLOSED_FOR_ALL = 2;
+}
+
+// A fraction of an amount with a precision of `1/100_000`.
+message AmountFraction {
+  // Must not exceed 100000.
+  uint32 parts_per_hundred_thousand = 1;
+}
+
+// Distribution of the rewards for the particular pool.
+message CommissionRates {
+  // Fraction of finalization rewards charged by the pool owner.
+  AmountFraction finalization = 1;
+  // Fraction of block production rewards charged by the pool owner.
+  AmountFraction baking = 2;
+  // Fraction of transaction rewards charged by the pool owner.
+  AmountFraction transaction = 3;
+}
+
+// Additional information about a validator pool.
+// This information is added with the introduction of delegation.
+message BakerPoolInfo {
+  // Whether the pool allows delegators.
+  OpenStatus open_status = 1;
+  // The URL that links to the metadata about the pool.
+  string url = 2;
+  // The commission rates charged by the pool owner.
+  CommissionRates commission_rates = 3;
+}
+
+// Information about the account stake, if the account is either a validator or a
+// delegator.
+message AccountStakingInfo {
+  message Baker {
+    // Amount staked at present.
+    Amount staked_amount = 1;
+    // A flag indicating whether rewards paid to the validator are automatically
+    // restaked or not.
+    bool restake_earnings = 2;
+    // Information about the validator that is staking.
+    BakerInfo baker_info = 3;
+    // If present, any pending change to the delegated stake.
+    // Starting from Concordium Protocol Version 7 this will never be present, due to changes for
+    // the staking cooldown.
+    optional StakePendingChange pending_change = 4;
+    // Present if the account is currently a validator, i.e., it is in the validator
+    // committee of the current epoch.
+    optional BakerPoolInfo pool_info = 5;
+    // A flag indicating whether the account is currently suspended or not. The
+    // flag has a meaning from protocol version 8 onwards. In protocol version 8
+    // it signals whether an account has been suspended and is not participating
+    // in the consensus algorithm. For protocol version < 8 the flag will always
+    // be set to false.
+    bool is_suspended = 6;
+  }
+
+  message Delegator {
+    // The amount that the account delegates.
+    Amount staked_amount = 1;
+    // Whether the earnings are automatically added to the staked amount.
+    bool restake_earnings = 2;
+    // The entity to which the account delegates.
+    DelegationTarget target = 3;
+    // If present, any pending change to the delegated stake.
+    optional StakePendingChange pending_change = 4;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof staking_info {
+    // The account is a validator.
+    Baker baker = 1;
+    // The account is a delegator.
+    Delegator delegator = 2;
+  }
+}
+
+// A sequence number that determines the ordering of transactions from the
+// account. The minimum sequence number is 1.
+message SequenceNumber {
+  // The sequence number.
+  uint64 value = 1;
+}
+
+// A sequence number that determines the ordering of update transactions.
+// Equivalent to `SequenceNumber` for account transactions.
+// Update sequence numbers are per update type and the minimum value is 1.
+message UpdateSequenceNumber {
+  // The sequence number.
+  uint64 value = 1;
+}
+
+// An amount of microCCD.
+message Amount {
+  uint64 value = 1;
+}
+
+// Index of a credential on an account.
+message CredentialIndex {
+  uint32 value = 1;
+}
+
+// The number of signatures required to sign.
+message SignatureThreshold {
+  uint32 value = 1;
+}
+
+// The number of credentials required to sign an account transaction.
+message AccountThreshold {
+  uint32 value = 1;
+}
+
+// An account encryption key. Always 96 bytes.
+message EncryptionKey {
+  bytes value = 1;
+}
+
+// An address of either a contract or an account.
+message Address {
+  // This field will not be extended in future versions of the API.
+  oneof type {
+    AccountAddress account = 1;
+    ContractAddress contract = 2;
+  }
+}
+
+// A public key used to verify transaction signatures from an account.
+message AccountVerifyKey {
+  // This field might be extended in future versions of the API.
+  oneof key {
+    bytes ed25519_key = 1;
+  }
+}
+
+// Public keys of a single credential.
+message CredentialPublicKeys {
+  map<uint32, AccountVerifyKey> keys = 1;
+  SignatureThreshold threshold = 2;
+}
+
+// A registration ID of a credential, derived from the secret PRF key and a
+// nonce. This is always 48 bytes long.
+message CredentialRegistrationId {
+  bytes value = 1;
+}
+
+// An index of the identity provider that identifies them uniquely in the
+// context of a specific chain.
+message IdentityProviderIdentity {
+  uint32 value = 1;
+}
+
+// Representation of the pair of a year and month.
+message YearMonth {
+  uint32 year = 1;
+  uint32 month = 2;
+}
+
+// Policy on a credential.
+message Policy {
+  // The year and month when the identity object from which the credential is
+  // derived was created.
+  YearMonth created_at = 1;
+  // The last year and month when the credential is still valid. After this
+  // expires an account can no longer be created from the credential.
+  YearMonth valid_to = 2;
+  // Mapping from attribute tags to attribute values. Attribute tags are always
+  // representable in a single `u8`, attribute values are never more than 31
+  // bytes in length.
+  map<uint32, bytes> attributes = 3;
+}
+
+// Values contained in an initial credential.
+message InitialCredentialValues {
+  // Public keys of the credential.
+  CredentialPublicKeys keys = 1;
+  // Its registration ID.
+  CredentialRegistrationId cred_id = 2;
+  // The identity provider who signed the identity object from which this
+  // credential is derived.
+  IdentityProviderIdentity ip_id = 3;
+  // Policy of this credential.
+  Policy policy = 4;
+}
+
+// Data relating to a single anonymity revoker sent by the account holder to
+// the chain.
+message ChainArData {
+  // Share of the encryption of IdCredPub.
+  bytes enc_id_cred_pub_share = 1;
+}
+
+// The number of anonymity revokers needed to revoke anonymity of a credential
+// holder.
+message ArThreshold {
+  uint32 value = 1;
+}
+
+// A single commitment in the G1 group of the BLS curve. This is always 48 bytes
+// in length.
+message Commitment {
+  bytes value = 1;
+}
+
+// Commitments that are part of a normal credential.
+message CredentialCommitments {
+  // Commitment to the PRF key.
+  Commitment prf = 1;
+  // Commitment to the counter used to generate the credential registration id.
+  Commitment cred_counter = 2;
+  // Commitment to the `max_accounts` value, which determines the maximum number
+  // of credentials that may be created from the identity object.
+  Commitment max_accounts = 3;
+  // Commitments to the attributes which have not been revealed in the policy.
+  map<uint32, Commitment> attributes = 4;
+  // List of commitments to the coefficients of the sharing polynomial. This
+  // polynomial is used in a shared encryption of `id_cred_pub` among the
+  // anonymity revokers.
+  repeated Commitment id_cred_sec_sharing_coeff = 5;
+}
+
+// Values contained in a normal (non-initial) credential.
+message NormalCredentialValues {
+  // Public keys of the credential.
+  CredentialPublicKeys keys = 1;
+  // Its registration ID.
+  CredentialRegistrationId cred_id = 2;
+  // The identity provider who signed the identity object from which this
+  // credential is derived.
+  IdentityProviderIdentity ip_id = 3;
+  // Policy of this credential.
+  Policy policy = 4;
+  // The number of anonymity revokers that must work together to revoke the
+  // anonymity of the credential holder.
+  ArThreshold ar_threshold = 5;
+  // Mapping from anonymity revoker identities to revocation data for the given anonymity revoker.
+  map<uint32, ChainArData> ar_data = 6;
+  // Commitments to attributes which have not been revealed.
+  CredentialCommitments commitments = 7;
+}
+
+// Credential that is part of an account.
+message AccountCredential {
+  // This field might be extended in future versions of the API.
+  oneof credential_values {
+    InitialCredentialValues initial = 1;
+    NormalCredentialValues normal = 2;
+  }
+}
+
+message Cooldown {
+  // The status of a cooldown. When stake is removed from a validator or delegator
+  // (from protocol version 7) it first enters the pre-pre-cooldown state.
+  // The next time the stake snaphot is taken (at the epoch transition before
+  // a payday) it enters the pre-cooldown state. At the subsequent payday, it
+  // enters the cooldown state. At the payday after the end of the cooldown
+  // period, the stake is finally released.
+  //
+  // This type might be extended in future versions of the API.
+  enum CooldownStatus {
+      // The amount is in cooldown and will expire at the specified time, becoming available
+      // at the subsequent pay day.
+      COOLDOWN = 0;
+      // The amount will enter cooldown at the next pay day. The specified end time is
+      // projected to be the end of the cooldown period, but the actual end time will be
+      // determined at the payday, and may be different if the global cooldown period
+      // changes.
+      PRE_COOLDOWN = 1;
+      // The amount will enter pre-cooldown at the next snapshot epoch (i.e. the epoch
+      // transition before a pay day transition). As with pre-cooldown, the specified
+      // end time is projected, but the actual end time will be determined later.
+      PRE_PRE_COOLDOWN = 2;
+  }
+  // The time in milliseconds since the Unix epoch when the cooldown period
+  // ends.
+  Timestamp end_time = 1;
+  // The amount that is in cooldown and set to be released at the end of the
+  // cooldown period.
+  Amount amount = 2;
+  // The status of the cooldown.
+  CooldownStatus status = 3;
+}
+
+// The token state at the block level.
+message TokenInfo {
+  // The unique token id.
+  plt.TokenId token_id = 1;
+  // The associated block level state.
+  plt.TokenState token_state = 2;
+}
+
+// Information about the account at a particular point in time.
+message AccountInfo {
+  // Protocol level token (PLT).
+  message Token {
+    // The unique token id
+    plt.TokenId token_id = 1;
+    // The associated token account level state
+    plt.TokenAccountState token_account_state = 2;
+  }
+
+  // Next sequence number to be used for transactions signed from this account.
+  SequenceNumber sequence_number = 1;
+  // Current (unencrypted) balance of the account.
+  Amount amount = 2;
+  // Release schedule for any locked up amount. This could be an empty
+  // release schedule.
+  ReleaseSchedule schedule = 3;
+  // Map of all currently active credentials on the account.
+  // This includes public keys that can sign for the given credentials, as
+  // well as any revealed attributes. This map always contains a credential
+  // with index 0.
+  map<uint32, AccountCredential> creds = 4;
+  // Lower bound on how many credentials must sign any given transaction from
+  // this account.
+  AccountThreshold threshold = 5;
+  // The encrypted balance of the account.
+  EncryptedBalance encrypted_balance = 6;
+  // The public key for sending encrypted balances to the account.
+  EncryptionKey encryption_key = 7;
+  // Internal index of the account. Accounts on the chain get sequential
+  // indices. These should generally not be used outside of the chain,
+  // the account address is meant to be used to refer to accounts,
+  // however the account index serves the role of the validator id, if the
+  // account is a validator. Hence it is exposed here as well.
+  AccountIndex index = 8;
+  // Present if the account is a validator or delegator. In that case
+  // it is the information about the validator or delegator.
+  optional AccountStakingInfo stake = 9;
+  // Canonical address of the account. This is derived from the first credential
+  // that created the account.
+  AccountAddress address = 10;
+  // The stake on the account that is in cooldown.
+  // There can be multiple amounts in cooldown that expire at different times.
+  // This was introduced in protocol version 7, and so is not present in
+  // earlier protocol versions.
+  repeated Cooldown cooldowns = 11;
+  // The available (unencrypted) balance of CCD's of the account (i.e. that
+  // can be transferred or used to pay for transactions). This is the balance
+  // minus the locked amount. The locked amount is the maximum of the amount
+  // in the release schedule and the total amount that is actively staked or in
+  // cooldown (inactive stake). This was introduced in node version 7.0.
+  Amount available_balance = 12;
+
+  // The protocol level tokens (PLT) held by the account.
+  repeated Token tokens = 13;
+}
+
+// Input to queries which take a block as a parameter.
+message BlockHashInput {
+  // Request using a relative block height.
+  message RelativeHeight {
+    // Genesis index to start from.
+    GenesisIndex genesis_index = 1;
+    // Height starting from the genesis block at the genesis index.
+    BlockHeight height = 2;
+     // Whether to return results only from the specified genesis index (`true`),
+    // or allow results from more recent genesis indices as well (`false`).
+    bool restrict = 3;
+  }
+  // This field might be extended in future versions of the API.
+  oneof block_hash_input {
+    // Query for the best block.
+    Empty best = 1;
+    // Query for the last finalized block.
+    Empty last_final = 2;
+    // Query for the block specified by the hash. This hash should always be 32 bytes.
+    BlockHash given = 3;
+    // Query for a block at absolute height, if a unique block can be identified at that height.
+    AbsoluteBlockHeight absolute_height = 4;
+    // Query for a block at height relative to a genesis index.
+    RelativeHeight relative_height = 5;
+  }
+}
+
+// Input to queries which take an epoch as a parameter.
+message EpochRequest {
+    // Request an epoch by number at a given genesis index.
+    message RelativeEpoch {
+        // The genesis index to query at. The query is restricted to this genesis index, and
+        // will not return results for other indices even if the epoch number is out of bounds.
+        GenesisIndex genesis_index = 1;
+        // The epoch number to query at.
+        Epoch epoch = 2;
+    }
+    // This field might be extended in future versions of the API.
+    oneof epoch_request_input {
+        // Query by genesis index and epoch number.
+        RelativeEpoch relative_epoch = 1;
+        // Query for the epoch of a specified block.
+        BlockHashInput block_hash = 2;
+    }
+}
+
+// Input to queries which take an account as a parameter.
+message AccountIdentifierInput {
+  // This field might be extended in future versions of the API.
+  oneof account_identifier_input {
+    // Identify the account by the address of the account.
+    AccountAddress address = 1;
+    // Identify the account by the credential that belongs or has belonged to it.
+    CredentialRegistrationId cred_id = 2;
+    // Identify the account via its index.
+    AccountIndex account_index = 3;
+  }
+}
+
+// Request for account information.
+message AccountInfoRequest {
+  // Block in which to query the account information.
+  BlockHashInput block_hash = 1;
+  // Specification of the account.
+  AccountIdentifierInput account_identifier = 2;
+}
+
+// Request for token information.
+message TokenInfoRequest {
+  // Block in which to query the token information.
+  BlockHashInput block_hash = 1;
+  // Specification of the token identifier.
+  plt.TokenId token_id = 2;
+}
+
+// Information about a finalized block that is part of the streaming response.
+message FinalizedBlockInfo {
+  // Hash of the block.
+  BlockHash hash = 1;
+  // Absolute height of the block, height 0 is the genesis block.
+  AbsoluteBlockHeight height = 2;
+}
+
+// Request the ancestors for the given block.
+message AncestorsRequest {
+  // The block to get ancestors of.
+  BlockHashInput block_hash = 1;
+  // The maximum number of ancestors returned.
+  uint64 amount = 2;
+}
+
+// Request for getting the source of a smart contract module.
+message ModuleSourceRequest {
+  // The block to be used for the query.
+  BlockHashInput block_hash = 1;
+  // The reference of the module.
+  ModuleRef module_ref = 2;
+}
+
+// Address of a smart contract instance.
+message ContractAddress {
+  // The index of the smart contract.
+  uint64 index = 1;
+  // The subindex of the smart contract instance.
+  // Currently not used, so it is always 0.
+  uint64 subindex = 2;
+}
+
+// Request for getting information about a smart contract instance.
+message InstanceInfoRequest {
+  // The block to be used for the query.
+  BlockHashInput block_hash = 1;
+  // The address of the smart contract instance.
+  ContractAddress address = 2;
+}
+
+// Information about a smart contract instance.
+message InstanceInfo {
+
+  // Version 0 smart contract instance information.
+  message V0 {
+    // The state of the instance.
+    ContractStateV0 model = 1;
+    // The account address which deployed the instance.
+    AccountAddress owner = 2;
+    // The amount of CCD tokens in the balance of the instance.
+    Amount amount = 3;
+    // A list of endpoints exposed by the instance.
+    repeated ReceiveName methods = 4;
+    // The name of the smart contract of the instance.
+    InitName name = 5;
+    // The module reference for the smart contract module of the instance.
+    ModuleRef source_module = 6;
+  }
+
+  // Version 1 smart contract instance information.
+  message V1 {
+    // The account address which deployed the instance.
+    AccountAddress owner = 2;
+    // The amount of CCD tokens in the balance of the instance.
+    Amount amount = 3;
+    // A list of endpoints exposed by the instance.
+    repeated ReceiveName methods = 4;
+    // The name of the smart contract of the instance.
+    InitName name = 5;
+    // The module reference for the smart contract module of the instance.
+    ModuleRef source_module = 6;
+  }
+
+  // The information depends on the smart contract version used by the instance.
+  //
+  // This field will not be extended in future versions of the API, instead new data versions will
+  // use optional fields in `InstanceInfo.V1`.
+  oneof version {
+    V0 v0 = 1;
+    V1 v1 = 2;
+  }
+}
+
+// A smart contract instance key-value pair.
+message InstanceStateKVPair {
+  bytes key = 1;
+  bytes value = 2;
+}
+
+// Request for a specific key of a smart contract instance state.
+message InstanceStateLookupRequest {
+  // The block to be used for the query.
+  BlockHashInput block_hash = 1;
+  // The address of the smart contract instance.
+  ContractAddress address = 2;
+  // Key to look up. If the instance is a V0 instance then this will not be used.
+  bytes key = 3;
+}
+
+// Value at the requested key of a smart contract instance state. For V0
+// contracts this will always be the entire state of the contract.
+message InstanceStateValueAtKey {
+  bytes value = 1;
+}
+
+// The receive name of a smart contract function. Expected format:
+// `<contract_name>.<func_name>`. It must only consist of atmost 100 ASCII
+// alphanumeric or punctuation characters, and must contain a '.'.
+message ReceiveName {
+  string value = 1;
+}
+
+// The init name of a smart contract function. Expected format:
+// `init_<contract_name>`. It must only consist of atmost 100 ASCII alphanumeric
+// or punctuation characters, must not contain a '.' and must start with
+// 'init_'.
+message InitName {
+  string value = 1;
+}
+
+// Parameter to a smart contract initialization or invocation.
+message Parameter {
+  bytes value = 1;
+}
+
+// A smart contract v0 state.
+message ContractStateV0 {
+  bytes value = 1;
+}
+
+// Status of a block item known to the node.
+message BlockItemStatus {
+
+  message Committed {
+    repeated BlockItemSummaryInBlock outcomes = 1;
+  }
+
+  message Finalized {
+    BlockItemSummaryInBlock outcome = 1;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof status {
+    // Block item is received, but not yet in any blocks.
+    Empty received = 1;
+    // Block item is committed to one or more blocks. The outcomes are listed
+    // for each block. Note that in the vast majority of cases the outcome of a
+    // transaction should not be dependent on the block it is in, but this
+    // can in principle happen.
+    Committed committed = 2;
+    // Block item is finalized in the given block, with the given summary.
+    Finalized finalized = 3;
+  }
+}
+
+// A block item summary together with a block hash. Used in BlockItemStatus.
+message BlockItemSummaryInBlock {
+  // The block hash.
+  BlockHash block_hash = 1;
+  // The block item summary.
+  BlockItemSummary outcome = 2;
+}
+
+// Energy is used to count exact execution cost.
+// This cost is then converted to CCD amounts.
+message Energy {
+  uint64 value = 1;
+}
+
+// A number representing a slot for producing a block.
+message Slot {
+  uint64 value = 1;
+}
+
+// The response for getNextAccountSequenceNumber.
+message NextAccountSequenceNumber {
+  // The best guess for the available account sequence number.
+  SequenceNumber sequence_number = 1;
+  // Whether the guess relies on any non-finalized transactions. If true all of the relevant transactions are finalized.
+  bool all_final = 2;
+}
+
+// A duration of milliseconds.
+message Duration {
+  uint64 value = 1;
+}
+
+// A reason for why a transaction was rejected. Rejected means included in a
+// block, but the desired action was not achieved. The only effect of a
+// rejected transaction is payment.
+message RejectReason {
+
+  message InvalidInitMethod {
+    ModuleRef module_ref = 1;
+    InitName init_name = 2;
+  }
+
+  message InvalidReceiveMethod {
+    ModuleRef module_ref = 1;
+    ReceiveName receive_name = 2;
+  }
+
+  message AmountTooLarge {
+    Address address = 1;
+    Amount amount = 2;
+  }
+
+  message RejectedInit {
+    int32 reject_reason = 1;
+  }
+
+  message RejectedReceive {
+    int32 reject_reason = 1;
+    ContractAddress contract_address = 2;
+    ReceiveName receive_name = 3;
+    Parameter parameter = 4;
+  }
+
+  message DuplicateCredIds {
+    repeated CredentialRegistrationId ids = 1;
+  }
+
+  message NonExistentCredIds {
+    repeated CredentialRegistrationId ids = 1;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof reason {
+    // Raised while validating a Wasm module that is not well formed.
+    Empty module_not_wf = 1;
+    // The smart contract module hash already exists.
+    ModuleRef module_hash_already_exists = 2;
+    // Account does not exist.
+    AccountAddress invalid_account_reference = 3;
+    // Reference to a non-existing contract init method.
+    InvalidInitMethod invalid_init_method = 4;
+    // Reference to a non-existing contract receive method.
+    InvalidReceiveMethod invalid_receive_method = 5;
+    // Reference to a non-existing smart contract module.
+    ModuleRef invalid_module_reference = 6;
+    // Contract instance does not exist.
+    ContractAddress invalid_contract_address = 7;
+    // Runtime exception occurred when running either the init or receive
+    // method.
+    Empty runtime_failure = 8;
+    // When one wishes to transfer an amount from A to B but there
+    // are not enough funds on account/contract A to make this
+    // possible. The data are the from address and the amount to transfer.
+    AmountTooLarge amount_too_large = 9;
+    // Serialization of the body failed.
+    Empty serialization_failure = 10;
+    // We ran of out energy to process this transaction.
+    Empty out_of_energy = 11;
+    // Rejected due to contract logic in init function of a contract.
+    RejectedInit rejected_init = 12;
+    // Rejected due to contract logic in receive function of a contract.
+    RejectedReceive rejected_receive = 13;
+    // Proof that the validator owns relevant private keys is not valid.
+    Empty invalid_proof = 14;
+    // Tried to add validator for an account that already has a validator.
+    BakerId already_a_baker = 15;
+    // Tried to remove a validator for an account that has no validator.
+    AccountAddress not_a_baker = 16;
+    // The amount on the account was insufficient to cover the proposed stake.
+    Empty insufficient_balance_for_baker_stake = 17;
+    // The amount provided is under the threshold required for becoming a validator.
+    Empty stake_under_minimum_threshold_for_baking = 18;
+    // The change could not be made because the validator is in cooldown for
+    // another change.
+    Empty baker_in_cooldown = 19;
+    // A validator with the given aggregation key already exists.
+    BakerAggregationVerifyKey duplicate_aggregation_key = 20;
+    // Encountered credential ID that does not exist.
+    Empty non_existent_credential_id = 21;
+    // Attempted to add an account key to a key index already in use.
+    Empty key_index_already_in_use = 22;
+    // When the account threshold is updated, it must not exceed the amount of
+    // existing keys.
+    Empty invalid_account_threshold = 23;
+    // When the credential key threshold is updated, it must not exceed the
+    // amount of existing keys.
+    Empty invalid_credential_key_sign_threshold = 24;
+    // Proof for an encrypted amount transfer did not validate.
+    Empty invalid_encrypted_amount_transfer_proof = 25;
+    // Proof for a secret to public transfer did not validate.
+    Empty invalid_transfer_to_public_proof = 26;
+    // Account tried to transfer an encrypted amount to itself, that's not
+    // allowed.
+    AccountAddress encrypted_amount_self_transfer = 27;
+    // The provided index is below the start index or above `startIndex +
+    // length incomingAmounts`.
+    Empty invalid_index_on_encrypted_transfer = 28;
+    // The transfer with schedule is going to send 0 tokens.
+    Empty zero_scheduledAmount = 29;
+    // The transfer with schedule has a non strictly increasing schedule.
+    Empty non_increasing_schedule = 30;
+    // The first scheduled release in a transfer with schedule has already
+    // expired.
+    Empty first_scheduled_release_expired = 31;
+    // Account tried to transfer with schedule to itself, that's not allowed.
+    AccountAddress scheduled_self_transfer = 32;
+    // At least one of the credentials was either malformed or its proof was
+    // incorrect.
+    Empty invalid_credentials = 33;
+    // Some of the credential IDs already exist or are duplicated in the
+    // transaction.
+    DuplicateCredIds duplicate_cred_ids = 34;
+    // A credential id that was to be removed is not part of the account.
+    NonExistentCredIds non_existent_cred_ids = 35;
+    // Attemp to remove the first credential.
+    Empty remove_first_credential = 36;
+    // The credential holder of the keys to be updated did not sign the
+    // transaction.
+    Empty credential_holder_did_not_sign = 37;
+    // Account is not allowed to have multiple credentials because it contains
+    // a non-zero encrypted transfer.
+    Empty not_allowed_multiple_credentials = 38;
+    // The account is not allowed to receive encrypted transfers because it has
+    // multiple credentials.
+    Empty not_allowed_to_receive_encrypted = 39;
+    // The account is not allowed to send encrypted transfers (or transfer
+    // from/to public to/from encrypted).
+    Empty not_allowed_to_handle_encrypted = 40;
+    // A `ConfigureBaker` transaction is missing one or more arguments in order
+    // to add a validator.
+    Empty missing_baker_add_parameters = 41;
+    // Finalization reward commission is not in the valid range for a validator.
+    Empty finalization_reward_commission_not_in_range = 42;
+    // Block production reward commission is not in the valid range for a validator.
+    Empty baking_reward_commission_not_in_range = 43;
+    // Transaction fee commission is not in the valid range for a validator.
+    Empty transaction_fee_commission_not_in_range = 44;
+    // Tried to add validator for an account that already has a delegator.
+    Empty already_a_delegator = 45;
+    // The amount on the account was insufficient to cover the proposed stake.
+    Empty insufficient_balance_for_delegation_stake = 46;
+    // A configure delegation transaction is missing one or more arguments in
+    // order to add a delegator.
+    Empty missing_delegation_add_parameters = 47;
+    // Delegation stake when adding a delegator was 0.
+    Empty insufficient_delegation_stake = 48;
+    // Account is not a delegation account.
+    Empty delegator_in_cooldown = 49;
+    // Account is not a delegation account.
+    AccountAddress not_a_delegator = 50;
+    // Delegation target is not a validator
+    BakerId delegation_target_not_a_baker = 51;
+    // The amount would result in pool capital higher than the maximum
+    // threshold.
+    Empty stake_over_maximum_threshold_for_pool = 52;
+    // The amount would result in pool with a too high fraction of delegated
+    // capital.
+    Empty pool_would_become_over_delegated = 53;
+    // The pool is not open to delegators.
+    Empty pool_closed = 54;
+    // The provided identifier does not match a token currently on chain.
+    // Introduced in protocol version 9.
+    plt.TokenId non_existent_token_id = 55;
+    // The token update transaction failed.
+    // Introduced in protocol version 9.
+    plt.TokenModuleRejectReason token_update_transaction_failed = 56;
+  }
+}
+
+// Version of smart contract.
+//
+// This type might be extended in future versions of the API.
+enum ContractVersion {
+  V0 = 0;
+  V1 = 1;
+}
+
+
+// Data generated as part of initializing a single contract instance.
+message ContractInitializedEvent {
+  // Contract version.
+  ContractVersion contract_version = 1;
+  // Module with the source code of the contract.
+  ModuleRef origin_ref = 2;
+  // The newly assigned address of the contract.
+  ContractAddress address = 3;
+  // The amount the instance was initialized with.
+  Amount amount = 4;
+  // The name of the contract.
+  InitName init_name = 5;
+  // Any contract events that might have been genereated by the contract initialization.
+  repeated ContractEvent events = 6;
+  // The parameter passed to the initializer.
+  Parameter parameter = 7;
+}
+
+// An event generated by a smart contract.
+message ContractEvent {
+  bytes value = 1;
+}
+
+// Data generated as part of updating a single contract instance.
+// In general a single Update transaction will
+// generate one or more of these events, together with possibly some transfers.
+message InstanceUpdatedEvent {
+  // Contract version.
+  ContractVersion contract_version = 1;
+  // Address of the affected instance.
+  ContractAddress address = 2;
+  // The origin of the message to the smart contract. This can be
+  // either an account or a smart contract.
+  Address instigator = 3;
+  // The amount the method was invoked with.
+  Amount amount = 4;
+  // The parameter passed to the method.
+  Parameter parameter = 5;
+  // The name of the method that was executed.
+  ReceiveName receive_name = 6;
+  // Any contract events that might have been generated by the contract execution.
+  repeated ContractEvent events = 7;
+}
+
+// Effects produced by successful smart contract invocations.
+// A single invocation will produce a sequence of these effects.
+message ContractTraceElement {
+  // A contract transferred an amount of CCD to an account.
+  message Transferred {
+    // Sender contract.
+    ContractAddress sender = 1;
+    // Amount transferred.
+    Amount amount = 2;
+    // Receiver account.
+    AccountAddress receiver = 3;
+  }
+  // A contract was interrupted.
+  // This occurs when a contract invokes another contract or makes a transfer to an account.
+  message Interrupted {
+    // The contract interrupted.
+    ContractAddress address = 1;
+    // The events generated up until the interruption.
+    repeated ContractEvent events = 2;
+  }
+  // A previously interrupted contract was resumed.
+  message Resumed {
+    // The contract resumed.
+    ContractAddress address = 1;
+    // Whether the action that caused the interruption (invoke contract or make transfer) was successful or not.
+    bool success = 2;
+  }
+
+  // A previously interrupted contract was resumed.
+  // This message can occur starting from protocol version 5.
+  message Upgraded {
+    // The that was upgraded.
+    ContractAddress address = 1;
+    // The module from which the contract was upgraded.
+    ModuleRef from = 2;
+    // The module to which it was upgraded.
+    ModuleRef to = 3;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof element {
+    // A contract instance was updated.
+    InstanceUpdatedEvent updated = 1;
+    // A contract transferred an amount of CCD to an account.
+    Transferred transferred = 2;
+    // A contract was interrupted.
+    // This occurs when a contract invokes another contract or makes a transfer to an account.
+    Interrupted interrupted = 3;
+    // A previously interrupted contract was resumed.
+    Resumed resumed = 4;
+    // A contract was upgraded.
+    // This trace element can occur starting from protocol version 5.
+    Upgraded upgraded = 5;
+  }
+}
+
+// Result of a successful change of validator keys.
+message BakerKeysEvent {
+    // ID of the validator whose keys were changed.
+    BakerId baker_id = 1;
+    // Account address of the validator.
+    AccountAddress account = 2;
+    // The new public key for verifying block signatures.
+    BakerSignatureVerifyKey sign_key = 3;
+    // The new public key for verifying whether the validator won the block
+    // lottery.
+    BakerElectionVerifyKey election_key = 4;
+    // The new public key for verifying finalization records.
+    BakerAggregationVerifyKey aggregation_key = 5;
+}
+
+// The associated transaction type can no longer be created starting from protocol version 4.
+// Hence, this message does not occur anymore.
+// The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+message BakerStakeUpdatedData {
+  // Affected validator.
+  BakerId baker_id = 1;
+  // New stake.
+  Amount new_stake = 2;
+  // A boolean which indicates whether it increased
+  // (`true`) or decreased (`false`).
+  bool increased = 3;
+}
+
+// Event generated when one or more encrypted amounts are consumed from the account.
+message EncryptedAmountRemovedEvent {
+  // The affected account.
+  AccountAddress account = 1;
+  // The new self encrypted amount on the affected account.
+  EncryptedAmount new_amount = 2;
+  // The input encrypted amount that was removed.
+  EncryptedAmount input_amount = 3;
+  // The index indicating which amounts were used.
+  uint64 up_to_index = 4;
+}
+
+// Event generated when an account receives a new encrypted amount.
+message NewEncryptedAmountEvent {
+    // The account onto which the amount was added.
+    AccountAddress receiver = 1;
+    // The index the amount was assigned.
+    uint64 new_index = 2;
+    // The encrypted amount that was added.
+    EncryptedAmount encrypted_amount = 3;
+}
+
+message EncryptedSelfAmountAddedEvent {
+ // The affected account.
+ AccountAddress account = 1;
+ // The new self encrypted amount of the account.
+ EncryptedAmount new_amount = 2;
+ // The amount that was transferred from public to encrypted balance.
+ Amount amount = 3;
+}
+
+// Data registered on the chain with a register data transaction.
+message RegisteredData {
+  bytes value = 1;
+}
+
+// Events that may result from the `ConfigureBaker` transaction which adds, modify, or removes a validator pool starting in protocol version 4.
+// Before protocol version 4, distinct transaction types (`BakerAdded`, `BakerRemoved`, `BakerStakeUpdated`, `BakerRestakeEarningsUpdated`,
+// and `BakerKeysUpdated`) existed which emitted validator related events instead.
+message BakerEvent {
+  // A validator was added.
+  // This message/event is always accompanied by `BakerEvent::BakerSetRestakeEarnings`, and starting from protocol version 4 also `BakerEvent::BakerSetOpenStatus`,
+  // `BakerEvent::BakerSetMetadataURL`, `BakerEvent::BakerSetTransactionFeeCommission`, `BakerEvent::BakerSetBakingRewardCommission` and `BakerEvent::BakerSetFinalizationRewardCommission` events in the same transaction.
+  message BakerAdded {
+    // The keys with which the validator registered.
+    BakerKeysEvent keys_event = 1;
+    // The amount the account staked to become a validator. This amount is
+    // locked.
+    Amount stake = 2;
+    // Whether the validator will automatically add earnings to their stake or
+    // not.
+    bool restake_earnings = 3;
+  }
+  // Validator stake increased.
+  message BakerStakeIncreased {
+    // Validator's id.
+    BakerId baker_id = 1;
+    // The new stake.
+    Amount new_stake = 2;
+  }
+  // The validator's stake was decreased.
+  // The behavior of decreasing the stake of validators changed in protocol version 7
+  // (see https://proposals.concordium.com/updates/P7.html for more details).
+  message BakerStakeDecreased {
+    // Validator's id.
+    BakerId baker_id = 1;
+    // The new stake.
+    Amount new_stake = 2;
+  }
+  message BakerRestakeEarningsUpdated {
+    // Validator's id.
+    BakerId baker_id = 1;
+    // The new value of the flag.
+    bool restake_earnings = 2;
+  }
+  // Updated open status for a validator pool.
+  // This message can occur starting from protocol version 4.
+  message BakerSetOpenStatus {
+    // Validator's id.
+    BakerId baker_id = 1;
+    // The new open status.
+    OpenStatus open_status = 2;
+  }
+  // Updated metadata url for a validator pool.
+  // This message can occur starting from protocol version 4.
+  message BakerSetMetadataUrl {
+    // Validator's id.
+    BakerId baker_id = 1;
+    // The URL.
+    string url = 2;
+  }
+  // Updated transaction fee commission for a validator pool.
+  // This message can occur starting from protocol version 4.
+  message BakerSetTransactionFeeCommission {
+    // Validator's id.
+    BakerId baker_id = 1;
+    // The transaction fee commission.
+    AmountFraction transaction_fee_commission = 2;
+  }
+  // Updated block production reward commission for validator pool.
+  // This message can occur starting from protocol version 4.
+  message BakerSetBakingRewardCommission {
+    // Validator's id
+    BakerId baker_id = 1;
+    // The block production reward commission
+    AmountFraction baking_reward_commission = 2;
+  }
+  // Updated finalization reward commission for validator pool.
+  // This message can occur starting from protocol version 4.
+  message BakerSetFinalizationRewardCommission {
+    // Validator's id
+    BakerId baker_id = 1;
+    // The finalization reward commission
+    AmountFraction finalization_reward_commission = 2;
+  }
+  // Removed an existing delegator.
+  // An existing delegation was removed by a transaction sent from a delegator that switched its staking behavior to being a validator.
+  // If the account is a delegator in the current payday, it will remain so until the
+  // next payday with respect to staking reward payouts, although the delegation record will be removed from the account immediately.
+  // If the cause of the delegation removal is a transaction sent by the delegator that decreased the delegator's stake to 0,
+  // the `DelegationEvent::DelegationRemoved` is emitted instead of this event/message.
+  // This message can occur starting from protocol version 7.
+  message DelegationRemoved {
+    // Delegator's id.
+    DelegatorId delegator_id = 1;
+  }
+
+  // The validator has been suspended by a transaction sent from the validator itself.
+  // If the validator is suspended by the protocol (e.g., due to inactivity), the `BlockSpecialEvent::ValidatorSuspended`
+  // event is emitted instead of this event.
+  // This message can occur starting from protocol version 8.
+  message BakerSuspended {
+    // Suspended validator's id
+    BakerId baker_id = 1;
+  }
+
+  // A validator has been resumed by a transaction sent from the validator itself.
+  // This message can occur starting from protocol version 8.
+  message BakerResumed {
+    // The resumed validator's id
+    BakerId baker_id = 1;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof event {
+    // A validator was added.
+    // This event is always accompanied by `BakerEvent::BakerSetRestakeEarnings`, and starting from protocol version 4 also `BakerEvent::BakerSetOpenStatus`,
+    // `BakerEvent::BakerSetMetadataURL`, `BakerEvent::BakerSetTransactionFeeCommission`, `BakerEvent::BakerSetBakingRewardCommission` and `BakerEvent::BakerSetFinalizationRewardCommission` events in the same transaction.
+    BakerAdded baker_added = 1;
+    // A validator was removed by a transaction sent by the validator that decreased the validator's own stake to 0.
+    // When a validator is removed, it results in its delegators targeting the pool to be moved to the passive delegation.
+    // The behavior of validators being removed changed in protocol version 7
+    // (see https://proposals.concordium.com/updates/P7.html for more details).
+    // If the cause of the validator removal is a transaction from an existing validator that switched its staking behavior to `delegation`,
+    // the `DelegationEvent::BakerRemoved` is emitted instead of this event.
+    BakerId baker_removed = 2;
+    // The validator's stake was increased.
+    BakerStakeIncreased baker_stake_increased = 3;
+    // The validator's stake was decreased.
+    // The behavior of decreasing the stake of validators changed in protocol version 7
+    // (see https://proposals.concordium.com/updates/P7.html for more details).
+    BakerStakeDecreased baker_stake_decreased = 4;
+    // The validator's setting for restaking earnings was updated.
+    BakerRestakeEarningsUpdated baker_restake_earnings_updated = 5;
+    // Validator keys were updated.
+    BakerKeysEvent baker_keys_updated = 6;
+    // The validator's open status was updated.
+    BakerSetOpenStatus baker_set_open_status = 7;
+    // The validator's metadata URL was updated.
+    BakerSetMetadataUrl baker_set_metadata_url = 8;
+    // The validator's transaction fee commission was updated.
+    BakerSetTransactionFeeCommission baker_set_transaction_fee_commission = 9;
+    // The validator's block production reward commission was updated.
+    BakerSetBakingRewardCommission baker_set_baking_reward_commission = 10;
+    // The validator's finalization reward commission was updated.
+    BakerSetFinalizationRewardCommission baker_set_finalization_reward_commission = 11;
+    // An existing delegation was removed by a transaction sent from a delegator that switched its staking behavior to being a validator.
+    // This event is always accompanied by `BakerEvent::BakerAdded`, `BakerEvent::BakerSetRestakeEarnings`, and starting from protocol version 4 also `BakerEvent::BakerSetOpenStatus`,
+    // `BakerEvent::BakerSetMetadataURL`, `BakerEvent::BakerSetTransactionFeeCommission`, `BakerEvent::BakerSetBakingRewardCommission` and `BakerEvent::BakerSetFinalizationRewardCommission` events in the same transaction.
+    // If the account is a delegator in the current payday, it will remain so until the
+    // next payday with respect to staking reward payouts, although the delegation record will be removed from the account immediately.
+    // If the cause of the delegation removal is a transaction sent by the delegator that decreased the delegator's stake to 0,
+    // the `DelegationEvent::DelegationRemoved` is emitted instead of this event.
+    // This event was introduced in protocol version version 7.
+    DelegationRemoved delegation_removed = 12;
+    // The validator has been suspended by a transaction sent from the validator itself.
+    // If the validator is suspended by the protocol (e.g., due to inactivity), the `BlockSpecialEvent::ValidatorSuspended`
+    // event is emitted instead of this event.
+    // This event can occur starting from protocol version 8.
+    BakerSuspended baker_suspended = 13;
+    // The validator has been resumed by a transaction sent from the validator itself.
+    // This event can occur starting from protocol version 8.
+    BakerResumed baker_resumed = 14;
+  }
+}
+
+// The identifier for a delegator.
+message DelegatorId {
+  AccountIndex id = 1;
+}
+
+// Events that may result from the `ConfigureDelegation` transaction which adds, modify, or removes a delegator starting in protocol version 4.
+// There was no delegation feature before protocol version 4.
+message DelegationEvent {
+  message DelegationStakeIncreased {
+    // Delegator's id
+    DelegatorId delegator_id = 1;
+    // New stake
+    Amount new_stake = 2;
+  }
+  message DelegationStakeDecreased {
+    // Delegator's id
+    DelegatorId delegator_id = 1;
+    // New stake
+    Amount new_stake = 2;
+  }
+  message DelegationSetRestakeEarnings {
+    // Delegator's id
+    DelegatorId delegator_id = 1;
+    // Whether earnings will be restaked
+    bool restake_earnings = 2;
+  }
+  message DelegationSetDelegationTarget {
+    // Delegator's id
+    DelegatorId delegator_id = 1;
+    // New delegation target (either to a validator pool or passive delegation)
+    DelegationTarget delegation_target = 2;
+  }
+  // This message can occur starting from protocol version 7.
+  message BakerRemoved {
+    // Validator's id
+    BakerId baker_id = 1;
+  }
+  // This field might be extended in future versions of the API.
+  oneof event {
+    // The delegator's stake increased.
+    DelegationStakeIncreased delegation_stake_increased = 1;
+    // The delegator's stake decreased.
+    DelegationStakeDecreased delegation_stake_decreased = 2;
+    // The delegator's restaking setting was updated.
+    DelegationSetRestakeEarnings delegation_set_restake_earnings = 3;
+    // The delegator's delegation target (either a validator pool or passive delegation) was updated by a transaction from the delegator.
+    DelegationSetDelegationTarget delegation_set_delegation_target = 4;
+    // A delegator was added.
+    // This event is always accompanied by `DelegationEvent::DelegationSetDelegationTarget`, `DelegationEvent::DelegationSetRestakeEarnings `, and `DelegationEvent::DelegationStakeIncreased` events in the same transaction.
+    DelegatorId delegation_added = 5;
+    // A delegator was removed by a transaction sent from the delegator that decreased the delegators's stake to 0.
+    // If the account is a delegator in the current payday, it will remain so until the
+    // next payday with respect to staking reward payouts, although the delegation record will be removed from the account immediately.
+    // If the cause of the delegation removal is a transaction sent from a delegator that switched its staking behavior to being a validator,
+    // the `BakerEvent::DelegationRemoved` is emitted instead of this event.
+    DelegatorId delegation_removed = 6;
+    // An existing validator was removed by a transaction sent from an validator that switched its staking behavior to `delegation`.
+    // This event is always accompanied by `DelegationEvent::DelegationAdded`, `DelegationEvent::DelegationSetDelegationTarget`, `DelegationEvent::DelegationSetRestakeEarnings `, and `DelegationEvent::DelegationStakeIncreased` events in the same transaction.
+    // When a validator is removed, it results in its delegators targeting the pool to be moved to the passive delegation.
+    // The behavior of validators being removed changed in protocol version 7.
+    // (see https://proposals.concordium.com/updates/P7.html for more details).
+    // If the cause of the validator removal is a transaction that decreased the validator's own stake to 0,
+    // the `BakerEvent::BakerRemoved` is emitted instead of this event.
+    // This event can occur starting from protocol version 7.
+    BakerRemoved baker_removed = 7;
+  }
+}
+
+// Effects of an account transaction. All variants except `None`
+// correspond to a unique transaction that was successful.
+message AccountTransactionEffects {
+  // No effects other than payment from this transaction.
+  // The rejection reason indicates why the transaction failed.
+  message None {
+    // Transaction type of a failed transaction, if known.
+    // In case of serialization failure this will not be set.
+    optional TransactionType transaction_type = 1;
+    // Reason for rejection of the transaction.
+    RejectReason reject_reason = 2;
+  }
+  // A contract update transaction was issued and produced the given trace.
+  // This is the result of Update transaction.
+  message ContractUpdateIssued {
+    repeated ContractTraceElement effects = 1;
+  }
+  // A simple account to account transfer occurred. This is the result of a
+  // successful Transfer transaction.
+  message AccountTransfer {
+    // Amount that was transferred.
+    Amount amount = 1;
+    // Receiver account.
+    AccountAddress receiver = 2;
+    // Memo.
+    // This field can occur starting from protocol version 2.
+    optional Memo memo = 3;
+  }
+  // A validator updated its stake. This is the result of a
+  // successful `UpdateBakerStake` transaction.
+  // The associated transaction type can no longer be created starting from protocol version 4.
+  // Hence, this message does not occur anymore.
+  // The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+  message BakerStakeUpdated {
+    // If the stake was updated (that is, it changed and did not stay the
+    // same) then this is present, otherwise it is not present.
+    optional BakerStakeUpdatedData update = 1;
+  }
+  // An encrypted amount was transferred. This is the result of a successful
+  // EncryptedAmountTransfer transaction.
+  // The associated transaction type can no longer be created starting from protocol 7.
+  // Hence, this message does not occur anymore.
+  message EncryptedAmountTransferred {
+    EncryptedAmountRemovedEvent removed = 1;
+    NewEncryptedAmountEvent added = 2;
+    // This field can occur starting from protocol version 2.
+    optional Memo memo = 3;
+  }
+  // An account transferred part of its encrypted balance to its public
+  // balance. This is the result of a successful TransferToPublic transaction.
+  message TransferredToPublic {
+    EncryptedAmountRemovedEvent removed = 1;
+    Amount amount = 2;
+  }
+  // A transfer with schedule was performed. This is the result of a
+  // successful TransferWithSchedule transaction.
+  message TransferredWithSchedule {
+    // Receiver account.
+    AccountAddress receiver = 1;
+    // The list of releases. Ordered by increasing timestamp.
+    repeated NewRelease amount = 2;
+    // Optional memo.
+    // This field can occur starting from protocol version 2.
+    optional Memo memo = 3;
+  }
+  // Account's credentials were updated. This is the result of a
+  // successful UpdateCredentials transaction.
+  message CredentialsUpdated {
+    // The credential ids that were added.
+    repeated CredentialRegistrationId new_cred_ids = 1;
+    // The credentials that were removed.
+    repeated CredentialRegistrationId removed_cred_ids = 2;
+    // The (possibly) updated account threshold.
+    AccountThreshold new_threshold = 3;
+  }
+  // A validator was configured. The details of what happened are contained in
+  // the list of `BakerEvents`.
+  // The associated transaction type is available starting from protocol version 4 and replaces the existing transaction types and effects from earlier protocols (`BakerAdded`,
+  // `BakerRemoved`, `BakerStakeUpdated`, `BakerRestakeEarningsUpdated`, and `BakerKeysUpdated`).
+  message BakerConfigured {
+    repeated BakerEvent events = 1;
+  }
+  // An account configured delegation. The details of what happened are
+  // contained in the list of DelegationEvents.
+  // The associated transaction type is available starting from protocol version 4 and replaces the existing transaction types and effects from earlier protocols (`BakerAdded`,
+  // `BakerRemoved`, `BakerStakeUpdated`, `BakerRestakeEarningsUpdated`, and `BakerKeysUpdated`).
+  message DelegationConfigured {
+    repeated DelegationEvent events = 1;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof effect {
+    // No effects other than payment from this transaction.
+    // The rejection reason indicates why the transaction failed.
+    None none = 1;
+    // A smart contract module with the attached reference was deployed.
+    ModuleRef module_deployed = 2;
+    // A smart contract was initialized.
+    ContractInitializedEvent contract_initialized = 3;
+    // A smart contract instance updated was issued.
+    ContractUpdateIssued contract_update_issued = 4;
+    // A simple account to account transfer occurred.
+    AccountTransfer account_transfer = 5;
+    // A validator was added.
+    // The associated transaction type can no longer be created starting from protocol version 4.
+    // Hence, this effect does not occur anymore.
+    // The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+    BakerEvent.BakerAdded baker_added = 6;
+    // A validator was removed. 
+    // The associated transaction type can no longer be created starting from protocol version 4.
+    // Hence, this effect does not occur anymore.
+    // The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+    BakerId baker_removed = 7;
+    // A validator's stake was updated.
+    // The associated transaction type can no longer be created starting from protocol version 4.
+    // Hence, this effect does not occur anymore.
+    // The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+    BakerStakeUpdated baker_stake_updated = 8;
+    // A validator's restake earnings setting was updated.
+    // The associated transaction type can no longer be created starting from protocol version 4.
+    // Hence, this effect does not occur anymore.
+    // The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+    BakerEvent.BakerRestakeEarningsUpdated baker_restake_earnings_updated = 9;
+    // A validator's keys were updated.
+    // The associated transaction type can no longer be created starting from protocol version 4.
+    // Hence, this effect does not occur anymore.
+    // The functionality was replaced in protocol version 4 by the `BakerConfigured` transaction type.
+    BakerKeysEvent baker_keys_updated = 10;
+    // An encrypted amount was transferred.
+    // The associated transaction type can no longer be created starting from protocol 7.
+    // Hence, this effect does not occur anymore.
+    EncryptedAmountTransferred encrypted_amount_transferred = 11;
+    // An account transferred part of its public balance to its encrypted
+    // balance.
+    // The associated transaction type can no longer be created starting from protocol 7.
+    // Hence, this effect does not occur anymore.
+    EncryptedSelfAmountAddedEvent transferred_to_encrypted = 12;
+    // An account transferred part of its encrypted balance to its public balance.
+    TransferredToPublic transferred_to_public = 13;
+    // A transfer with a release schedule was made.
+    TransferredWithSchedule transferred_with_schedule = 14;
+    // Keys of a specific credential were updated.
+    CredentialRegistrationId credential_keys_updated = 15;
+    // Account credentials were updated.
+    CredentialsUpdated credentials_updated = 16;
+    // Some data was registered on the chain.
+    RegisteredData data_registered = 17;
+    // A validator was configured. The details of what happened are contained in a list of `BakerEvents`.
+    // The associated transaction type is available starting from protocol version 4 and replaces the existing transaction types and effects from earlier protocols (`BakerAdded`,
+    // `BakerRemoved`, `BakerStakeUpdated`, `BakerRestakeEarningsUpdated`, and `BakerKeysUpdated`).
+    BakerConfigured baker_configured = 18;
+    // A delegator was configured. The details of what happened are contained in a list of DelegatorEvents.
+    // This transaction type is available starting from protocol version 4.
+    DelegationConfigured delegation_configured = 19;
+    // Token update transaction effect.
+    plt.TokenEffect token_update_effect = 20;
+  }
+}
+
+// Election difficulty parameter.
+message ElectionDifficulty {
+  AmountFraction value = 1;
+}
+
+// Parameters that determine timeouts in the consensus protocol used from protocol version 6.
+message TimeoutParameters {
+  // The base value for triggering a timeout
+  Duration timeout_base = 1;
+  // Factor for increasing the timeout. Must be greater than 1.
+  Ratio timeout_increase = 2;
+  // Factor for decreasing the timeout. Must be between 0 and 1.
+  Ratio timeout_decrease = 3;
+}
+
+// Finalization committee parameters used from protocol version 6
+message FinalizationCommitteeParameters {
+  // The minimum size of a finalization committee before `finalizer_relative_stake_threshold` takes effect.
+  uint32 minimum_finalizers = 1;
+  // The maximum size of a finalization committee.
+  uint32 maximum_finalizers = 2;
+  // The threshold for determining the stake required for being eligible the finalization committee.
+  // The amount is given by `total stake in pools * finalizer_relative_stake_threshold`
+  AmountFraction finalizer_relative_stake_threshold = 3;
+}
+
+message ValidatorScoreParameters {
+  // The maximal number of missed rounds before a validator gets suspended.
+  uint64 maximum_missed_rounds = 1;
+}
+
+// Parameters for the consensus protocol used from protocol version 6.
+message ConsensusParametersV1 {
+  // Parameters controlling round timeouts.
+  TimeoutParameters timeout_parameters = 1;
+  // Minimum time interval between blocks.
+  Duration min_block_time = 2;
+  // Maximum energy allowed per block.
+  Energy block_energy_limit = 3;
+}
+
+// Represents an exchange rate.
+message ExchangeRate {
+  Ratio value = 1;
+}
+
+// Represents a ratio, i.e., 'numerator / denominator'.
+message Ratio {
+  // The numerator.
+  uint64 numerator = 1;
+  // The denominator.
+  uint64 denominator = 2;
+}
+
+// A public key used for chain updates.
+message UpdatePublicKey {
+  bytes value = 1;
+}
+
+// The threshold for how many UpdatePublicKeys are need to make a certain chain update.
+message UpdateKeysThreshold {
+  // Is ensured to be within between 1 and 2^16.
+  uint32 value = 1;
+}
+
+// Index of a key in an authorizations update payload.
+message UpdateKeysIndex {
+  uint32 value = 1;
+}
+
+// Represents root or level 1 keys.
+message HigherLevelKeys {
+  // The keys.
+  repeated UpdatePublicKey keys = 1;
+  // The number of keys needed to make a chain update.
+  UpdateKeysThreshold threshold = 2;
+}
+
+// An access structure which specifies which UpdatePublicKeys in a HigherLevelKeys that are allowed
+// to make chain update of a specific type. The threshold defines the minimum number of allowed keys needed
+// to make the actual update.
+message AccessStructure {
+  // Unique indexes into the set of keys in AuthorizationV0.
+  repeated UpdateKeysIndex access_public_keys = 1;
+  // Number of keys requred to authorize an update.
+  UpdateKeysThreshold access_threshold = 2;
+}
+
+// The set of keys authorized for chain updates, together with access structures
+// determining which keys are authorized for which update types.
+// This is the payload of an update to authorization.
+message AuthorizationsV0 {
+  // The set of keys authorized for chain updates.
+  repeated UpdatePublicKey keys = 1;
+  // New emergency keys.
+  AccessStructure emergency = 2;
+  // New protocol update keys.
+  AccessStructure protocol = 3;
+  // Access structure for updating the consensus parameters.
+  // Previously, this was the election difficulty.
+  AccessStructure parameter_consensus = 4;
+  // Access structure for updating the euro per energy.
+  AccessStructure parameter_euro_per_energy = 5;
+  // Access structure for updating the micro CCD per euro.
+  AccessStructure parameter_micro_CCD_per_euro = 6;
+  // Access structure for updating the foundation account.
+  AccessStructure parameter_foundation_account = 7;
+  // Access structure for updating the mint distribution.
+  AccessStructure parameter_mint_distribution = 8;
+  // Access structure for updating the transaction fee distribution.
+  AccessStructure parameter_transaction_fee_distribution = 9;
+  // Access structure for updating the gas rewards.
+  AccessStructure parameter_gas_rewards = 10;
+  // Access structure for updating the pool parameters. For V0 this is only
+  // the validator stake threshold, for V1 there are more.
+  AccessStructure pool_parameters = 11;
+  // Access structure for adding new anonymity revokers.
+  AccessStructure add_anonymity_revoker = 12;
+  // Access structure for adding new identity providers.
+  AccessStructure add_identity_provider = 13;
+}
+
+// The set of keys authorized for chain updates, together with access structures
+// determining which keys are authorized for which update types.
+// This is the payload of an update to authorization.
+message AuthorizationsV1 {
+  AuthorizationsV0 v0 = 1;
+  // Access structure for updating the cooldown periods related to validation and delegation.
+  AccessStructure parameter_cooldown = 2;
+  // Access structure for updating the length of the reward period.
+  AccessStructure parameter_time = 3;
+  // Access structure for creating a protocol level token.
+  // This is present from protocol version 9.
+  optional AccessStructure create_plt = 4;
+}
+
+// Description either of an anonymity revoker or identity provider.
+// Metadata that should be visible on the chain.
+message Description {
+  // The name.
+  string name = 1;
+  // A link to more information about the anonymity revoker or identity provider.
+  string url = 2;
+  // A free form description of the revoker or provider.
+  string description = 3;
+}
+
+// Information on a single anonymity revoker help by the identity provider.
+// Typically an identity provider will hold more than one.
+message ArInfo {
+  // Identity of the anonymity revoker on the chain. This defines their
+  // evaluateion point for secret sharing, and thus it cannot be 0.
+  message ArIdentity {
+    uint32 value = 1;
+  }
+  // Public key of an anonymity revoker.
+  message ArPublicKey {
+    bytes value = 1;
+  }
+  // Unique identifier of the anonymity revoker.
+  ArIdentity identity = 1;
+  // Description of the anonymity revoker.
+  Description description = 2;
+  // Elgamal encryption key of the anonymity revoker.
+  ArPublicKey public_key = 3;
+}
+
+// A succinct identifier of an identity provider on the chain.
+// In credential deployments, and other interactions with the chain this is
+// used to identify which identity provider is meant.
+message IpIdentity {
+  uint32 value = 1;
+}
+
+// Public information about an identity provider.
+message IpInfo {
+  // Pointcheval-Sanders public key of the identity provider.
+  message IpVerifyKey {
+    bytes value = 1;
+  }
+  // Ed25519 public key of the identity provider.
+  message IpCdiVerifyKey {
+    bytes value = 1;
+  }
+  // Unique identifier of the identity provider.
+  IpIdentity identity = 1;
+  // Description of the identity provider.
+  Description description = 2;
+  // Pointcheval-Sanders public key of the identity provider.
+  IpVerifyKey verify_key = 3;
+  // Ed25519 public key of the identity provider.
+  IpCdiVerifyKey cdi_verify_key = 4;
+}
+
+// A duration in seconds.
+message DurationSeconds {
+  uint64 value = 1;
+}
+
+// Inclusive range of amount fractions.
+message InclusiveRangeAmountFraction {
+  AmountFraction min = 1;
+  AmountFraction max_ = 2;
+}
+
+// Ranges of allowed commission values that pools may choose from.
+message CommissionRanges {
+  // The range of allowed finalization commissions.
+  InclusiveRangeAmountFraction finalization = 1;
+  // The range of allowed validator commissions.
+  InclusiveRangeAmountFraction baking = 2;
+  // The range of allowed transaction commissions.
+  InclusiveRangeAmountFraction transaction = 3;
+}
+
+// The capital bound is a chain parameter that is set to guarantee network decentralization by preventing 
+// a single validator from gaining excessive power in the consensus protocol.
+// The capital bound is required to be set to a value greater than 0 (capital_bound > 0).
+// The value roughly describes the maximum proportion of the total stake in the protocol (from all validators including passive delegation) 
+// to the stake of a validator that a validator can achieve where the total stake of the validator is considered effective
+// (meaning the validator's total stake is used for caculating the lottery power or finalizer weight in the consensus).
+// Once a validator passes this bound, some of the validator's total stake no longer contributes to the validator's effective stake.
+// Delegators are prevented from increasing their delegation to the pool 
+// (via sending a `ConfigureDelegation` transaction) if that would cause the pool to exceed the capital bound cap.
+// See the comment at the `delegated_capital_cap` type for the exact formula.
+message CapitalBound {
+  AmountFraction value = 1;
+}
+
+// The leverage factor (leverage bound) is a chain parameter that is set to guarantee that each validator 
+// has skin in the game with respect to its delegators by providing some of the CCD staked at the validator's pool from the validator's funds.  
+// The leverage factor is required to be set to a value greater than or equal to 1 (1 <= leverage_factor).
+// The leverage factor is the maximum proportion of total stake of a validator (including the validator's own stake and the delegated 
+// stake to the validator) to the validator's own stake (excluding delegated stake to the validator)
+// that a validator can achieve where the total stake of the validator is considered effective
+// (meaning the validator's total stake is used for caculating the lottery power or finalizer weight in the consensus).
+// Once a validator passes this bound, some of the validator's total stake no longer contributes to the validator's effective stake.
+// Delegators are prevented from increasing their delegation to the pool 
+// (via sending a `ConfigureDelegation` transaction) if that would cause the pool to exceed the leverage bound cap.
+// See the comment at the `delegated_capital_cap` type for the exact formula.
+message LeverageFactor {
+  Ratio value = 1;
+}
+
+// A chain epoch.
+message Epoch {
+  uint64 value = 1;
+}
+
+// A round.
+message Round {
+  uint64 value = 1;
+}
+
+// Length of a reward period in epochs.
+// Must always be a strictly positive number.
+message RewardPeriodLength {
+  Epoch value = 1;
+}
+
+// A minting rate of CCD.
+// The value is `mantissa * 10^(-exponent)`.
+message MintRate {
+  uint32 mantissa = 1;
+  // This will never exceed 255 and can thus be stored in a single byte.
+  uint32 exponent = 2;
+}
+
+message CooldownParametersCpv1 {
+  // Number of seconds that pool owners must cooldown
+  // when reducing their equity capital or closing the pool.
+  DurationSeconds pool_owner_cooldown = 1;
+  // Number of seconds that a delegator must cooldown
+  // when reducing their delegated stake.
+  DurationSeconds delegator_cooldown = 2;
+}
+
+// Parameters related to staking pools.
+message PoolParametersCpv1 {
+  // Fraction of finalization rewards charged by the passive delegation.
+  AmountFraction passive_finalization_commission = 1;
+  // Fraction of block production rewards charged by the passive delegation.
+  AmountFraction passive_baking_commission = 2;
+  // Fraction of transaction rewards charged by the L-pool.
+  AmountFraction passive_transaction_commission = 3;
+  // Bounds on the commission rates that may be charged by validators.
+  CommissionRanges commission_bounds = 4;
+  // Minimum equity capital required for a new validator.
+  Amount minimum_equity_capital = 5;
+  // Maximum fraction of the total staked capital of that a new validator can
+  // have.
+  CapitalBound capital_bound = 6;
+  // The maximum leverage that a validator can have as a ratio of total stake
+  // to equity capital.
+  LeverageFactor leverage_bound = 7;
+}
+
+// The time parameters are introduced as of protocol version 4, and consist of
+// the reward period length and the mint rate per payday. These are coupled as
+// a change to either affects the overall rate of minting.
+message TimeParametersCpv1 {
+  RewardPeriodLength reward_period_length = 1;
+  MintRate mint_per_payday = 2;
+}
+
+// Mint distribution payload as it looks in protocol version 4 and onward.
+message MintDistributionCpv1 {
+  AmountFraction baking_reward = 1;
+  AmountFraction finalization_reward = 2;
+}
+
+message ProtocolUpdate {
+  // A brief message about the update.
+  string message_ = 1;
+  // A URL of a document describing the update.
+  string specification_url = 2;
+  // SHA256 hash of the specification document.
+  Sha256Hash specificationHash = 3;
+  // Auxiliary data whose interpretation is defined by the new specification.
+  bytes specification_auxiliary_data = 4;
+}
+// The minting rate and the distribution of newly-minted CCD among validators,
+// finalizers, and the foundation account. It must be the case that
+// baking_reward + finalization_reward <= 1. The remaining amount is the
+// platform development charge.
+message MintDistributionCpv0 {
+  // Mint rate per slot.
+  MintRate mint_per_slot = 1;
+  // The fraction of newly created CCD allocated to validator rewards.
+  AmountFraction baking_reward = 2;
+  // The fraction of newly created CCD allocated to finalization rewards.
+  AmountFraction finalization_reward = 3;
+}
+
+// Parameters determining the distribution of transaction fees.
+message TransactionFeeDistribution {
+  // The fraction allocated to the validator.
+  AmountFraction baker = 1;
+  // The fraction allocated to the GAS account.
+  AmountFraction gas_account = 2;
+}
+
+// Distribution of gas rewards for chain parameters version 0 and 1.
+message GasRewards {
+  // The fraction paid to the validator.
+  AmountFraction baker = 1;
+  // Fraction paid for including a finalization proof in a block.
+  AmountFraction finalization_proof = 2;
+  // Fraction paid for including each account creation transaction in a block.
+  AmountFraction account_creation = 3;
+  // Fraction paid for including an update transaction in a block.
+  AmountFraction chain_update = 4;
+}
+
+// Distribution of gas rewards for chain parameters version 2.
+message GasRewardsCpv2 {
+  // The fraction paid to the validator.
+  AmountFraction baker = 1;
+  // Fraction paid for including each account creation transaction in a block.
+  AmountFraction account_creation = 3;
+  // Fraction paid for including an update transaction in a block.
+  AmountFraction chain_update = 4;
+}
+
+// Minimum stake needed to become a validator. This only applies to protocol version 1-3.
+message BakerStakeThreshold {
+  // Minimum threshold required for registering as a validator.
+  Amount baker_stake_threshold = 1;
+}
+
+// Root updates are the highest kind of key updates. They can update every other set of keys,
+// even themselves. They can only be performed by Root level keys.
+message RootUpdate {
+  // This field will not be extended in future versions of the API, instead new data versions will
+  // use optional fields in either `HigherLevelKeys` or `AuthorizationsV1`.
+  oneof update_type {
+    // The root keys were updated.
+    HigherLevelKeys root_keys_update = 1;
+    // The level 1 keys were updated.
+    HigherLevelKeys level_1_keys_update = 2;
+    // The level 2 keys were updated.
+    AuthorizationsV0 level_2_keys_update_v0 = 3;
+    // The level 2 keys were updated. This is similar to `level_2_keys_update_v0` except that a few more keys can be updated.
+    AuthorizationsV1 level_2_keys_update_v1 = 4;
+  }
+}
+// Level 1 updates are the intermediate update kind.
+// They can update themselves or level 2 keys. They can only be performed by level 1 keys.
+message Level1Update {
+  // This field will not be extended in future versions of the API, instead new data versions will
+  // use optional fields in either `HigherLevelKeys` or `AuthorizationsV1`.
+  oneof update_type {
+    // The level 1 keys were updated.
+    HigherLevelKeys level_1_keys_update = 1;
+    // The level 2 keys were updated.
+    AuthorizationsV0 level_2_keys_update_v0 = 2;
+    // The level 2 keys were updated. This is similar to `level_2_keys_update_v0` except that a few more keys can be updated.
+    AuthorizationsV1 level_2_keys_update_v1 = 3;
+  }
+}
+
+// The payload of a chain update.
+message UpdatePayload {
+  // This field might be extended in future versions of the API.
+  oneof payload {
+    // The protocol version was updated.
+    ProtocolUpdate protocol_update = 1;
+    // The election difficulty was updated.
+    ElectionDifficulty election_difficulty_update = 2;
+    // The euro per energy exchange rate was updated.
+    ExchangeRate euro_per_energy_update = 3;
+    // The microCCD per euro exchange rate was updated.
+    ExchangeRate micro_ccd_per_euro_update = 4;
+    // The foundation account address was updated.
+    AccountAddress foundation_account_update = 5;
+    // The mint distribution was updated.
+    MintDistributionCpv0 mint_distribution_update = 6;
+    // The transaction fee distribtuion was updated.
+    TransactionFeeDistribution transaction_fee_distribution_update = 7;
+    // The gas rewards were updated.
+    GasRewards gas_rewards_update = 8;
+    // The minimum amount of CCD needed to be come a validator was updated.
+    BakerStakeThreshold baker_stake_threshold_update = 9;
+    // The root keys were updated.
+    RootUpdate root_update = 10;
+    // The level 1 keys were updated.
+    Level1Update level_1_update = 11;
+    // An anonymity revoker was added.
+    ArInfo add_anonymity_revoker_update = 12;
+    // An identity provider was added.
+    IpInfo add_identity_provider_update = 13;
+    // The cooldown parameters were updated.
+    CooldownParametersCpv1 cooldown_parameters_cpv_1_update = 14;
+    // The pool parameters were updated.
+    PoolParametersCpv1 pool_parameters_cpv_1_update = 15;
+    // The time parameters were updated.
+    TimeParametersCpv1 time_parameters_cpv_1_update = 16;
+    // The mint distribution was updated.
+    MintDistributionCpv1 mint_distribution_cpv_1_update = 17;
+    // The gas rewards were updated (chain parameters version 2).
+    GasRewardsCpv2 gas_rewards_cpv_2_update = 18;
+    // The consensus timeouts were updated (chain parameters version 2).
+    TimeoutParameters timeout_parameters_update = 19;
+    // The minimum time between blocks was updated (chain parameters version 2).
+    Duration min_block_time_update = 20;
+    // The block energy limit was updated (chain parameters version 2).
+    Energy block_energy_limit_update = 21;
+    // Finalization committee parameters (chain parameters version 2).
+    FinalizationCommitteeParameters finalization_committee_parameters_update = 22;
+    // Validator score parameters (chain parameters version 3)
+    ValidatorScoreParameters validator_score_parameters_update = 23;
+    // Create a new protocol-level token.
+    plt.CreatePLT create_plt_update = 24;
+  }
+}
+
+// Details about the sponsor of a transaction.
+message SponsorDetails {
+  // The cost of the transaction. Paid by the sponsor.
+  Amount cost = 1;
+  // The sponsor of the transaction.
+  AccountAddress sponsor = 2;
+}
+
+// Details about an account transaction.
+message AccountTransactionDetails {
+  // The cost of the transaction. Paid by the sender. This will be zero if the
+  // transaction is sponsored.
+  Amount cost = 1;
+  // The sender of the transaction.
+  AccountAddress sender = 2;
+  // The effects of the transaction.
+  AccountTransactionEffects effects = 3;
+  // The optional sponsor details of the transaction.
+  optional SponsorDetails sponsor = 4;
+}
+
+// Details of an account creation. These transactions are free, and we only
+// ever get a response for them if the account is created, hence no failure
+// cases.
+message AccountCreationDetails {
+  // Whether this is an initial or normal account.
+  CredentialType credential_type = 1;
+  // Address of the newly created account.
+  AccountAddress address = 2;
+  // Credential registration ID of the first credential.
+  CredentialRegistrationId reg_id = 3;
+}
+
+// The type of a credential.
+//
+// This type might be extended in future versions of the API.
+enum CredentialType {
+  // An initial credential created by the identity provider.
+  CREDENTIAL_TYPE_INITIAL = 0;
+  // A normal credential type created by the account.
+  CREDENTIAL_TYPE_NORMAL = 1;
+}
+
+// Transaction time specified as seconds since unix epoch.
+message TransactionTime {
+  uint64 value = 1;
+}
+
+// Details of an successful update instruction. These are free, and we only ever get a
+// response for them if the update is successfully enqueued, hence no failure
+// cases.
+message UpdateDetails {
+  // The time at which the update will be effective.
+  TransactionTime effective_time = 1;
+  // The payload for the update.
+  UpdatePayload payload = 2;
+}
+
+// Summary of the outcome of a block item in structured form.
+// The summary determines which transaction type it was.
+message BlockItemSummary {
+  message TransactionIndex {
+    uint64 value = 1;
+  }
+
+  // Index of the transaction in the block where it is included.
+  TransactionIndex index = 1;
+  // The amount of NRG the transaction cost.
+  Energy energy_cost = 2;
+  // Hash of the transaction.
+  TransactionHash hash = 3;
+  // Details that are specific to different transaction types.
+  //
+  // This field might be extended in future versions of the API.
+  oneof details {
+    // Details about an account transaction.
+    AccountTransactionDetails account_transaction = 4;
+    // Details about an account creation.
+    AccountCreationDetails account_creation = 5;
+    // Details about a successful chain update.
+    UpdateDetails update = 6;
+    // Details about the creation of a protocol-level token.
+    plt.TokenCreationDetails token_creation = 7;
+  }
+}
+
+// The type of chain update.
+//
+// This type might be extended in future versions of the API.
+enum UpdateType {
+    UPDATE_PROTOCOL = 0;
+    UPDATE_ELECTION_DIFFICULTY = 1;
+    UPDATE_EURO_PER_ENERGY = 2;
+    UPDATE_MICRO_CCD_PER_EURO = 3;
+    UPDATE_FOUNDATION_ACCOUNT = 4;
+    UPDATE_MINT_DISTRIBUTION = 5;
+    UPDATE_TRANSACTION_FEE_DISTRIBUTION = 6;
+    UPDATE_GAS_REWARDS = 7;
+    UPDATE_POOL_PARAMETERS = 8;
+    ADD_ANONYMITY_REVOKER = 9;
+    ADD_IDENTITY_PROVIDER = 10;
+    UPDATE_ROOT_KEYS = 11;
+    UPDATE_LEVEL1_KEYS = 12;
+    UPDATE_LEVEL2_KEYS = 13;
+    UPDATE_COOLDOWN_PARAMETERS = 14;
+    UPDATE_TIME_PARAMETERS = 15;
+    UPDATE_TIMEOUT_PARAMETERS = 16;
+    UPDATE_MIN_BLOCK_TIME = 17;
+    UPDATE_BLOCK_ENERGY_LIMIT = 18;
+    UPDATE_FINALIZATION_COMMITTEE_PARAMETERS = 19;
+    UPDATE_VALIDATOR_SCORE_PARAMETERS = 20;
+    UPDATE_CREATE_PLT = 21;
+}
+
+// The type of transaction.
+//
+// This type might be extended in future versions of the API.
+enum TransactionType {
+  DEPLOY_MODULE = 0;
+  INIT_CONTRACT = 1;
+  UPDATE = 2;
+  TRANSFER = 3;
+  // Deprecated in protocol version 4.
+  ADD_BAKER = 4;
+  // Deprecated in protocol version 4.
+  REMOVE_BAKER = 5;
+  // Deprecated in protocol version 4.
+  UPDATE_BAKER_STAKE = 6;
+  // Deprecated in protocol version 4.
+  UPDATE_BAKER_RESTAKE_EARNINGS = 7;
+  // Deprecated in protocol version 4.
+  UPDATE_BAKER_KEYS = 8;
+  UPDATE_CREDENTIAL_KEYS = 9;
+  // Deprecated in protocol version 7.
+  ENCRYPTED_AMOUNT_TRANSFER = 10;
+  // Deprecated in protocol version 7.
+  TRANSFER_TO_ENCRYPTED = 11;
+  TRANSFER_TO_PUBLIC = 12;
+  TRANSFER_WITH_SCHEDULE = 13;
+  UPDATE_CREDENTIALS = 14;
+  REGISTER_DATA = 15;
+  // Introduced in protocol version 2.
+  TRANSFER_WITH_MEMO = 16;
+  // Deprecated in protocol version 7.
+  // Introduced in protocol version 2.
+  ENCRYPTED_AMOUNT_TRANSFER_WITH_MEMO = 17;
+  // Introduced in protocol version 2.
+  TRANSFER_WITH_SCHEDULE_AND_MEMO = 18;
+  // Introduced in protocol version 4.
+  CONFIGURE_BAKER = 19;
+  // Introduced in protocol version 4.
+  CONFIGURE_DELEGATION = 20;
+  // Introduced in protocol version 9.
+  TOKEN_UPDATE = 21;
+}
+
+// The different versions of the protocol.
+//
+// This type might be extended in future versions of the API.
+enum ProtocolVersion {
+  PROTOCOL_VERSION_1 = 0;
+  PROTOCOL_VERSION_2 = 1;
+  PROTOCOL_VERSION_3 = 2;
+  PROTOCOL_VERSION_4 = 3;
+  PROTOCOL_VERSION_5 = 4;
+  PROTOCOL_VERSION_6 = 5;
+  PROTOCOL_VERSION_7 = 6;
+  PROTOCOL_VERSION_8 = 7;
+  PROTOCOL_VERSION_9 = 8;
+  PROTOCOL_VERSION_10 = 9;
+  PROTOCOL_VERSION_11 = 10;
+}
+
+// The number of chain restarts via a protocol update. An effected
+// protocol update instruction might not change the protocol version
+// specified in the previous field, but it always increments the genesis
+// index.
+message GenesisIndex {
+  uint32 value = 1;
+}
+
+// The response for GetConsensusInfo.
+message ConsensusInfo {
+  // Hash of the current best block.
+  BlockHash best_block = 1;
+  // Hash of the (original) genesis block.
+  BlockHash genesis_block = 2;
+  // Time of the (original) genesis block.
+  Timestamp genesis_time = 3;
+  // (Current) slot duration in milliseconds. Present only in protocol versions 1-5.
+  optional Duration slot_duration = 4;
+  // (Current) epoch duration in milliseconds.
+  Duration epoch_duration = 5;
+  // Hash of the last finalized block.
+  BlockHash last_finalized_block = 6;
+  // Absolute height of the best block.
+  AbsoluteBlockHeight best_block_height = 7;
+  // Absolute height of the last finalized block.
+  AbsoluteBlockHeight last_finalized_block_height = 8;
+  // Total number of blocks received.
+  uint32 blocks_received_count = 9;
+  // The last time a block was received.
+  optional Timestamp block_last_received_time = 10;
+  // Exponential moving average latency between a block's slot time and received time.
+  double block_receive_latency_ema = 11;
+  // Standard deviation of exponential moving average latency between a block's slot time and received time.
+  double block_receive_latency_emsd = 12;
+  // Exponential moving average time between receiving blocks.
+  optional double block_receive_period_ema = 13;
+  // Standard deviation of exponential moving average time between receiving blocks.
+  optional double block_receive_period_emsd = 14;
+  // Total number of blocks received and verified.
+  uint32 blocks_verified_count = 15;
+  // The last time a block was verified (added to the tree).
+  optional Timestamp block_last_arrived_time = 16;
+  // Exponential moving average latency between a block's slot time and its arrival.
+  double block_arrive_latency_ema = 17;
+  // Standard deviation of exponential moving average latency between a block's slot time and its arrival.
+  double block_arrive_latency_emsd = 18;
+  // Exponential moving average time between block arrivals.
+  optional double block_arrive_period_ema = 19;
+  // Standard deviation of exponential moving average time between block arrivals.
+  optional double block_arrive_period_emsd = 20;
+  // Exponential moving average number of transactions per block.
+  double transactions_per_block_ema = 21;
+  // Standard deviation of exponential moving average number of transactions per block.
+  double transactions_per_block_emsd = 22;
+  // Number of finalizations.
+  uint32 finalization_count = 23;
+  // Time of last verified finalization.
+  optional Timestamp last_finalized_time = 24;
+  // Exponential moving average time between finalizations.
+  optional double finalization_period_ema = 25;
+  // Standard deviation of exponential moving average time between finalizations.
+  optional double finalization_period_emsd = 26;
+  // Currently active protocol version.
+  ProtocolVersion protocol_version = 27;
+  // The number of chain restarts via a protocol update. A completed
+  // protocol update instruction might not change the protocol version
+  // specified in the previous field, but it always increments the genesis
+  // index.
+  GenesisIndex genesis_index = 28;
+  // Block hash of the genesis block of current era, i.e., since the last protocol update.
+  // Initially this is equal to 'genesis_block'.
+  BlockHash current_era_genesis_block = 29;
+  // Time when the current era started.
+  Timestamp current_era_genesis_time = 30;
+  // The current duration to wait before a round times out. Present from protocol version 6.
+  optional Duration current_timeout_duration = 31;
+  // The current round. Present from protocol version 6.
+  optional Round current_round = 32;
+  // The current epoch. Present from protocol version 6.
+  optional Epoch current_epoch = 33;
+  // The first block in the epoch with timestamp at least this is considered to be the trigger block
+  // for the epoch transition. Present from protocol version 6.
+  optional Timestamp trigger_block_time = 34;
+}
+
+// Information about an arrived block that is part of the streaming response.
+message ArrivedBlockInfo {
+  // Hash of the block.
+  BlockHash hash = 1;
+  // Absolute height of the block, height 0 is the genesis block.
+  AbsoluteBlockHeight height = 2;
+}
+
+// The response for GetCryptographicParameters.
+message CryptographicParameters {
+  // A free-form string used to distinguish between different chains even if they share other parameters.
+  string genesis_string = 1;
+  // Generators for the bulletproofs.
+  // It is a serialized list of 256 group elements in the G1 group of the BLS12-381 curve.
+  bytes bulletproof_generators = 2;
+  // A shared commitment key known to the chain and the account holder (and therefore it is public).
+  // The account holder uses this commitment key to generate commitments to values in the attribute list.
+  // It is a serialized pair of group elements  in the G1 group of the BLS12-381 curve.
+  bytes on_chain_commitment_key = 3;
+}
+
+// The response for GetBlockInfo.
+message BlockInfo {
+  // Hash of the block.
+  BlockHash hash = 1;
+  // Absolute height of the block, height 0 is the genesis block.
+  AbsoluteBlockHeight height = 2;
+  // The parent block hash. For a re-genesis block, this will be the terminal block of the
+  // previous chain. For the initial genesis block, this will be the hash of the block itself.
+  BlockHash parent_block = 3;
+  // The last finalized block when this block was baked.
+  BlockHash last_finalized_block = 4;
+  // The genesis index for this block. This counts the number of protocol updates that have
+  // preceded this block, and defines the era of the block.
+  GenesisIndex genesis_index = 5;
+  // The height of this block relative to the (re)genesis block of its era.
+  BlockHeight era_block_height = 6;
+  // The time the block was received.
+  Timestamp receive_time = 7;
+  // The time the block was verified.
+  Timestamp arrive_time = 8;
+  // The slot number in which the block was baked. Present in protocol versions 1-5.
+  optional Slot slot_number = 9;
+  // The time of the slot in which the block was baked.
+  Timestamp slot_time = 10;
+  // The validator id of the account producing this block. Not provided for a genesis block.
+  optional BakerId baker = 11;
+  // Whether the block is finalized.
+  bool finalized = 12;
+  // The number of transactions in the block.
+  uint32 transaction_count = 13;
+  // The energy cost of the transactions in the block.
+  Energy transactions_energy_cost = 14;
+  // The total byte size of all transactions in the block.
+  uint32 transactions_size = 15;
+  // The hash of the block state after this block.
+  StateHash state_hash = 16;
+  // Protocol version to which the block belongs.
+  ProtocolVersion protocol_version = 17;
+  // Block round. Present from protocol version 6.
+  optional Round round = 18;
+  // Block epoch. Present from protocol version 6.
+  optional Epoch epoch = 19;
+}
+
+// Request for GetPoolInfo.
+message PoolInfoRequest {
+  // Block in which to query the pool information.
+  BlockHashInput block_hash = 1;
+  // The validator id of the pool owner.
+  BakerId baker = 2;
+}
+
+// A pending change to a validator pool.
+message PoolPendingChange {
+  // A reduction in validator equity capital is pending.
+  message Reduce {
+    // New validator equity capital.
+    Amount reduced_equity_capital = 1;
+    // Timestamp when the change takes effect.
+    Timestamp effective_time = 2;
+  }
+
+  // Removal of the pool is pending.
+  message Remove {
+    // Timestamp when the change takes effect.
+    Timestamp effective_time = 1;
+  }
+
+  // This field will not be extended in future versions of the API, since it is not used starting
+  // from Concordium Protocol Version 7.
+  oneof change {
+    Reduce reduce = 1;
+    Remove remove = 2;
+  }
+}
+
+// Information about a validator pool in the current reward period.
+message PoolCurrentPaydayInfo {
+  // The number of blocks baked in the current reward period.
+  uint64 blocks_baked = 1;
+  // Whether the validator has contributed a finalization proof in the current reward period.
+  bool finalization_live = 2;
+  // The transaction fees accruing to the pool in the current reward period.
+  Amount transaction_fees_earned = 3;
+  // The effective stake of the validator in the current reward period.
+  Amount effective_stake = 4;
+  // The lottery power of the validator in the current reward period.
+  double lottery_power = 5;
+  // The effective equity capital of the validator for the current reward period.
+  Amount baker_equity_capital = 6;
+  // The effective delegated capital to the pool for the current reward period.
+  Amount delegated_capital = 7;
+  // The commission rates that apply for the current reward period.
+  CommissionRates commission_rates = 8;
+  // A flag indicating whether the pool owner is primed for suspension.
+  // Absent if the protocol version does not support validator suspension.
+  optional bool is_primed_for_suspension = 9;
+  // The number of missed rounds in the current reward period.
+  // Absent if the protocol version does not support validator suspension.
+  optional uint64 missed_rounds = 10;
+}
+
+// Type for the response of GetPoolInfo.
+// Contains information about a given pool at the end of a given block.
+// From protocol version 7, pool removal has immediate effect, however, the
+// pool may still be present for the current (and possibly next) reward period.
+// In this case, the `current_payday_info` field will be set, but the
+// `equity_capital`, `delegated_capital`, `delegated_capital_cap` and,
+// `pool_info` fields will all be absent. The `equity_pending_change` field
+// will also be absent, as stake changes are immediate.
+message PoolInfoResponse {
+  // The validator id of the pool owner.
+  BakerId baker = 1;
+  // The account address of the pool owner.
+  AccountAddress address = 2;
+  // The equity capital provided by the pool owner. Absent if the pool is removed.
+  optional Amount equity_capital = 3;
+  // The capital delegated to the pool by other accounts. Absent if the pool is removed.
+  optional Amount delegated_capital = 4;
+  // The maximum amount that may be delegated to the pool, accounting for leverage and capital bounds.
+  // Absent if the pool is removed.
+  // 
+  // leverage_bound_cap for pool p: Lₚ = λ * Cₚ - Cₚ = (λ - 1) * Cₚ
+  // capital_bound_cap for pool p: Bₚ = max (0, floor( (κ * (T - Dₚ) - Cₚ) / (1 - K) ))
+  // delegated_capital_cap for pool p = min (Lₚ, Bₚ)
+  //
+  // Where
+  // κ is the `CapitalBound`.
+  // λ is the `LeverageFactor`.
+  // T is the total staked capital on the whole chain (including passive
+  // delegation).
+  // Dₚ is the delegated capital of pool p.
+  // Cₚ is the equity capital (staked by the pool owner excluding delegated stake
+  // to the pool) of pool p.
+  optional Amount delegated_capital_cap = 5;
+  // The pool info associated with the pool: open status, metadata URL and commission rates.
+  // Absent if the pool is removed.
+  optional BakerPoolInfo pool_info = 6;
+  // Any pending change to the equity capital.
+  // This is not used from protocol version 7 onwards, as stake changes are immediate.
+  optional PoolPendingChange equity_pending_change = 7;
+  // Information of the pool in the current reward period.
+  optional PoolCurrentPaydayInfo current_payday_info = 8;
+  // Total capital staked across all pools, including passive delegation.
+  Amount all_pool_total_capital = 9;
+  // A flag indicating whether the pool owner is suspended.
+  // Absent if the protocol version does not support validator suspension (meaning prior protocol version 8) or the pool is removed.
+  optional bool is_suspended = 10;
+}
+
+// Type for the response of GetPassiveDelegationInfo.
+// Contains information about passive delegators at the end of a given block.
+message PassiveDelegationInfo {
+  // The total capital delegated passively.
+  Amount delegated_capital = 1;
+  // The passive delegation commission rates.
+  CommissionRates commission_rates = 2;
+  // The transaction fees accruing to the passive delegators in the current reward period.
+  Amount current_payday_transaction_fees_earned = 3;
+  // The effective delegated capital of passive delegators for the current reward period.
+  Amount current_payday_delegated_capital = 4;
+  // Total capital staked across all pools, including passive delegation.
+  Amount all_pool_total_capital = 5;
+}
+
+// Request for GetBlocksAtHeight.
+message BlocksAtHeightRequest {
+  // Request using an absolute block height.
+  message Absolute {
+    // The absolute block height.
+    AbsoluteBlockHeight height = 1;
+  }
+
+  // Request using a relative block height.
+  message Relative {
+    // Genesis index to start from.
+    GenesisIndex genesis_index = 1;
+    // Height starting from the genesis block at the genesis index.
+    BlockHeight height = 2;
+    // Whether to return results only from the specified genesis index (`true`),
+    // or allow results from more recent genesis indices as well (`false`).
+    bool restrict = 3;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof blocks_at_height {
+    Absolute absolute = 1;
+    Relative relative = 2;
+  }
+}
+
+// Response for GetBlocksAtHeight.
+message BlocksAtHeightResponse {
+  // Live blocks at the given height.
+  repeated BlockHash blocks = 1;
+}
+
+// Type for the response of GetTokenomicsInfo.
+// Contains information related to tokenomics at the end of a given block.
+message TokenomicsInfo {
+  // Version 0 tokenomics.
+  message V0 {
+    // The total CCD in existence.
+    Amount total_amount = 1;
+    // The total CCD in encrypted balances.
+    Amount total_encrypted_amount = 2;
+    // The amount in the block production reward account.
+    Amount baking_reward_account = 3;
+    // The amount in the finalization reward account.
+    Amount finalization_reward_account = 4;
+    // The amount in the GAS account.
+    Amount gas_account = 5;
+    // The protocol version.
+    ProtocolVersion protocol_version = 6;
+  }
+  // Version 1 tokenomics.
+  message V1 {
+    // The total CCD in existence.
+    Amount total_amount = 1;
+    // The total CCD in encrypted balances.
+    Amount total_encrypted_amount = 2;
+    // The amount in the block production reward account.
+    Amount baking_reward_account = 3;
+    // The amount in the finalization reward account.
+    Amount finalization_reward_account = 4;
+    // The amount in the GAS account.
+    Amount gas_account = 5;
+    // The transaction reward fraction accruing to the foundation (to be paid at next payday).
+    Amount foundation_transaction_rewards = 6;
+    // The time of the next payday.
+    Timestamp next_payday_time = 7;
+    // The rate at which CCD will be minted (as a proportion of the total supply) at the next payday.
+    MintRate next_payday_mint_rate = 8;
+    // The total capital put up as stake by validators and delegators.
+    Amount total_staked_capital = 9;
+    // The protocol version.
+    ProtocolVersion protocol_version = 10;
+  }
+
+  // This field will not be extended in future versions of the API, instead new data versions will
+  // use optional fields in `TokenomicsInfo.V1`.
+  oneof tokenomics {
+    V0 v0 = 1;
+    V1 v1 = 2;
+  }
+}
+
+// Request for InvokeInstance.
+message InvokeInstanceRequest {
+  // Block to invoke the contract. The invocation will be at the end of the given block.
+  BlockHashInput block_hash = 1;
+  // Invoker of the contract. If this is not supplied then the contract will be
+  // invoked by an account with address 0, no credentials and sufficient amount
+  // of CCD to cover the transfer amount. If given, the relevant address (either
+  // account or contract) must exist in the blockstate.
+  optional Address invoker = 2;
+  // Address of the contract instance to invoke.
+  ContractAddress instance = 3;
+  // Amount to invoke the smart contract instance with.
+  Amount amount = 4;
+  // The entrypoint of the smart contract instance to invoke.
+  ReceiveName entrypoint = 5;
+  // The parameter bytes to include in the invocation of the entrypoint.
+  Parameter parameter = 6;
+  // And what amount of energy to allow for execution. This cannot exceed
+  // `100_000_000_000`, but in practice it should be much less. The maximum
+  // block energy is typically in the range of a few million.
+  Energy energy = 7;
+}
+
+// Response type for InvokeInstance.
+message InvokeInstanceResponse {
+  // Contract execution failed.
+  message Failure {
+    // If invoking a V0 contract this is not provided, otherwise it is
+    // potentially return value produced by the call unless the call failed with
+    // out of energy or runtime error. If the V1 contract terminated with a
+    // logic error then the return value is present.
+    optional bytes return_value = 1;
+    // Energy used by the execution.
+    Energy used_energy = 2;
+    // Contract execution failed for the given reason.
+    RejectReason reason = 3;
+  }
+
+  // Contract execution succeeded.
+  message Success {
+    // If invoking a V0 contract this is absent. Otherwise it is the return
+    // value produced by the contract.
+    optional bytes return_value = 1;
+    // Energy used by the execution.
+    Energy used_energy = 2;
+    // Effects produced by contract execution.
+    repeated ContractTraceElement effects = 3;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof result {
+    Success success = 1;
+    Failure failure = 2;
+  }
+}
+
+// Request for GetPoolDelegators and GetPoolDelegatorsRewardPeriod.
+message GetPoolDelegatorsRequest {
+  // Block in which to query the delegators.
+  BlockHashInput block_hash = 1;
+  // The validator id of the pool owner.
+  BakerId baker = 2;
+}
+
+// Stream item for GetPoolDelegators and GetPassiveDelegators.
+message DelegatorInfo {
+  // The delegator account address.
+  AccountAddress account = 1;
+  // The amount of stake currently staked to the pool.
+  Amount stake = 2;
+  // Pending change to the current stake of the delegator.
+  optional StakePendingChange pending_change = 3;
+}
+
+// Stream item for GetPoolDelegatorsRewardPeriod and GetPassiveDelegatorsRewardPeriod.
+message DelegatorRewardPeriodInfo {
+  // The delegator account address.
+  AccountAddress account = 1;
+  // The amount of stake currently staked to the pool.
+  Amount stake = 2;
+}
+
+// Response type for GetBranches.
+message Branch {
+  // The hash of the block.
+  BlockHash block_hash = 1;
+  // Further blocks branching of this block.
+  repeated Branch children = 2;
+}
+
+// The leadership election nonce is an unpredictable value updated once an
+// epoch to make sure that validators cannot predict too far in the future when
+// they will win the right to bake blocks.
+message LeadershipElectionNonce {
+  bytes value = 1;
+}
+
+// Response type for GetElectionInfo.
+// Contains information related to validator election for a perticular block.
+// The `ElectionInfo` will be the same for all blocks in the same epoch. 
+// Moreover, from protocol version 4, it is the same for all blocks in the same payday.
+message ElectionInfo {
+  message Baker {
+    // The ID of the validator.
+    BakerId baker = 1;
+    // The account address of the validator.
+    AccountAddress account = 2;
+    // The lottery power of the validator, rounded to the nearest representable "double".
+    double lottery_power = 3;
+  }
+
+  // Block production lottery election difficulty. Present only in protocol versions 1-5.
+  optional ElectionDifficulty election_difficulty = 1;
+  // Current leadership election nonce for the lottery.
+  LeadershipElectionNonce election_nonce = 2;
+  // List of the currently eligible validators.
+  repeated Baker baker_election_info = 3;
+}
+
+// A protocol generated event that is not directly caused by a transaction. This
+// includes minting new CCD, rewarding different validators and delegators, etc.
+message BlockSpecialEvent {
+  // A representation of a mapping from an account address to an amount.
+  message AccountAmounts {
+    // The entry for the map.
+    message Entry {
+      // The key type
+      AccountAddress account = 1;
+      // The value type
+      Amount amount = 2;
+    }
+
+    repeated Entry entries = 1;
+  }
+
+  // Rewards issued to each validator at the end of an epoch for producing blocks in the epoch,
+  // in proportion to the number of blocks they contributed. This only occurs in protocol versions
+  // 1 to 3. From protocol version 4, it is replaced by `PaydayPoolReward` and `PaydayAccountReward` messages.
+  message BakingRewards {
+    // The amount awarded to each validator.
+    AccountAmounts baker_rewards = 1;
+    // The remaining balance of the validator reward account.
+    Amount remainder = 2;
+  }
+
+  // Minting of new CCDs.
+  // Starting from protocol version 4, this event occurs only in each payday block.
+  // Before protocol version 4, this event occured every block (slot).
+  message Mint {
+    // The amount allocated to the banking reward account.
+    Amount mint_baking_reward = 1;
+    // The amount allocated to the finalization reward account.
+    Amount mint_finalization_reward = 2;
+    // The amount allocated as the platform development charge.
+    Amount mint_platform_development_charge = 3;
+    // The account to which the platform development charge is paid.
+    AccountAddress foundation_account = 4;
+  }
+
+  // Payment to each finalizer on inclusion of a finalization record in a block.
+  message FinalizationRewards {
+    // The amount awarded to each finalizer.
+    AccountAmounts finalization_rewards = 1;
+    // The remaining balance of the finalization reward account.
+    Amount remainder = 2;
+  }
+
+  // Disbursement of fees from a block between the GAS account,
+  // the validator, and the foundation. It should always be that:
+  //
+  // ```transaction_fees + old_gas_account = new_gas_account + baker_reward + foundation_charge```
+  message BlockReward {
+    // The total fees paid for transactions in the block.
+    Amount transaction_fees = 1;
+    // The old balance of the GAS account.
+    Amount old_gas_account = 2;
+    // The new balance of the GAS account.
+    Amount new_gas_account = 3;
+    // The amount awarded to the validator.
+    Amount baker_reward = 4;
+    // The amount awarded to the foundation.
+    Amount foundation_charge = 5;
+    // The validator of the block, who receives the award.
+    AccountAddress baker = 6;
+    // The foundation account.
+    AccountAddress foundation_account = 7;
+  }
+
+  // Foundation tax paid at a payday block starting from protocol version 4.
+  message PaydayFoundationReward {
+    // The account that got rewarded.
+    AccountAddress foundation_account = 1;
+    // The transaction fee reward at payday to the account.
+    Amount development_charge = 2;
+  }
+
+  // Reward payment to the given account at a payday block starting from protocol version 4.
+  // When listed in a block summary, the delegated pool of the account is
+  // given by the last `PaydayPoolReward` outcome included before this outcome.
+  //
+  // For example:
+  // PaydayPoolReward to pool 1
+  // PaydayAccountReward to account 5
+  // PaydayAccountReward to account 6
+  // PaydayAccountReward to account 1 (is the payout to the validator itself)
+  // PaydayPoolReward to `None`
+  // PaydayAccountReward to account 10
+  // PaydayAccountReward to account 3
+  // Means 5, 6 are receiving rewards from delegating to validator 1 and 10, 3 are receiving rewards from passive
+  // delegation.
+  message PaydayAccountReward {
+    // The account that got rewarded.
+    AccountAddress account = 1;
+    // The transaction fee reward at payday to the account.
+    Amount transaction_fees = 2;
+    // The block production reward at payday to the account.
+    Amount baker_reward = 3;
+    // The finalization reward at payday to the account.
+    Amount finalization_reward = 4;
+  }
+
+  // Amounts accrued to accounts for each baked block.
+  message BlockAccrueReward {
+    // The total fees paid for transactions in the block.
+    Amount transaction_fees = 1;
+    // The old balance of the GAS account.
+    Amount old_gas_account = 2;
+    // The new balance of the GAS account.
+    Amount new_gas_account = 3;
+    // The amount awarded to the validator.
+    Amount baker_reward = 4;
+    // The amount awarded to the passive delegators.
+    Amount passive_reward = 5;
+    // The amount awarded to the foundation.
+    Amount foundation_charge = 6;
+    // The validator of the block, who will receive the award.
+    BakerId baker = 7;
+  }
+
+  // Payment distributed to a pool or passive delegators at a payday block starting from protocol version 4.
+  // When listed in a block summary, the reward distribution to the delagtors of the given pool is
+  // given by the following `PaydayAccountReward` outcomes included after this outcome.
+  //
+  // For example:
+  // PaydayPoolReward to pool 1
+  // PaydayAccountReward to account 5
+  // PaydayAccountReward to account 6
+  // PaydayAccountReward to account 1 (is the payout to the validator itself)
+  // PaydayPoolReward to `None`
+  // PaydayAccountReward to account 10
+  // PaydayAccountReward to account 3
+  // Means 5, 6 are receiving rewards from delegating to validator 1 and 10, 3 are receiving rewards from passive
+  // delegation.
+  message PaydayPoolReward {
+    // The pool owner (passive delegators when not present).
+    optional BakerId pool_owner = 1;
+    // Accrued transaction fees for pool.
+    Amount transaction_fees = 2;
+    // Accrued block production rewards for pool.
+    Amount baker_reward = 3;
+    // Accrued finalization rewards for pool.
+    Amount finalization_reward = 4;
+  }
+
+  // The id of a validator that got suspended due to too many missed rounds.
+  // The message can occur starting from protocol version 8.
+  message ValidatorSuspended {
+    // The id of the suspended validator.
+    BakerId baker_id = 1;
+    // The account of the suspended validator.
+    AccountAddress account = 2;
+  }
+
+  // The id of a validator that is primed for suspension at the next snapshot
+  // epoch due to too many missed rounds.
+  // The message can occur starting from protocol version 8.
+  message ValidatorPrimedForSuspension {
+    // The id of the primed validator.
+    BakerId baker_id = 1;
+    // The account of the primed validator.
+    AccountAddress account = 2;
+  }
+
+  // This field might be extended in future versions of the API.
+  oneof event {
+    // Rewards issued to each validator at the end of an epoch for producing blocks in the epoch,
+    // in proportion to the number of blocks they contributed. This only occurs in protocol versions
+    // 1 to 3. From protocol version 4, it is replaced by `PaydayPoolReward` and `PaydayAccountReward` messages.
+    BakingRewards baking_rewards = 1;
+    // Minting of new CCDs.
+    // Starting from protocol version 4, this event occurs in each payday block.
+    // Before protocol version 4, this event occured every block (slot).
+    Mint mint = 2;
+    FinalizationRewards finalization_rewards = 3;
+    BlockReward block_reward = 4;
+    // Foundation rewards paid out at a payday block starting from protocol version 4.
+    PaydayFoundationReward payday_foundation_reward = 5;
+    // Reward payment to the given account at a payday block (from passive deleagtion or delegation to a validator or being a validator) starting from protocol version 4.
+    // When listed in a block summary, the delegated pool of the account is
+    // given by the last `PaydayPoolReward` outcome included before this outcome.
+    PaydayAccountReward payday_account_reward = 6;
+    BlockAccrueReward block_accrue_reward = 7;
+    // Payment distributed to a pool or passive delegators at a payday block starting from protocol version 4.
+    // When listed in a block summary, the reward distribution to the delagtors of the given pool is
+    // given by the following `PaydayAccountReward` outcomes included after this outcome.
+    PaydayPoolReward payday_pool_reward = 8;
+    // The protocol suspends validators due to inactivity.
+    // If the validator is suspended  by a transaction sent from the validator itself, the `BakerEvent::BakerSuspended`
+    // event is emitted instead of this event.
+    // The event can occur starting from protocol version 8.
+    ValidatorSuspended validator_suspended = 9;
+    // The protocol primes validators for suspension due to inactivity.
+    // The event can occur starting from protocol version 8.
+    ValidatorPrimedForSuspension validator_primed_for_suspension = 10;
+  }
+}
+
+// A pending update.
+message PendingUpdate {
+  // The effective time of the update.
+  TransactionTime effective_time = 1;
+  // The effect of the update.
+  //
+  // This field might be extended in future versions of the API.
+  oneof effect {
+    // Updates to the root keys.
+    HigherLevelKeys root_keys = 2;
+    // Updates to the level 1 keys.
+    HigherLevelKeys level1_keys = 3;
+    // Updates to the level 2 keys.
+    AuthorizationsV0 level2_keys_cpv_0 = 4;
+    // Updates to the level 2 keys.
+    AuthorizationsV1 level2_keys_cpv_1 = 5;
+    // Protocol updates.
+    ProtocolUpdate protocol = 6;
+    // Updates to the election difficulty parameter.
+    ElectionDifficulty election_difficulty = 7;
+    // Updates to the euro:energy exchange rate.
+    ExchangeRate euro_per_energy = 8;
+    // Updates to the CCD:EUR exchange rate.
+    ExchangeRate micro_ccd_per_euro = 9;
+    // Updates to the foundation account.
+    AccountAddress foundation_account = 10;
+    // Updates to the mint distribution. Is only relevant prior to protocol version 4.
+    MintDistributionCpv0 mint_distribution_cpv_0 = 11;
+    // The mint distribution was updated. Introduced in protocol version 4.
+    MintDistributionCpv1 mint_distribution_cpv_1 = 12;
+    // Updates to the transaction fee distribution.
+    TransactionFeeDistribution transaction_fee_distribution = 13;
+    // Updates to the GAS rewards.
+    GasRewards gas_rewards = 14;
+    // Updates validator stake threshold. Is only relevant prior to protocol version 4.
+    BakerStakeThreshold pool_parameters_cpv_0 = 15;
+    // Updates pool parameters. Introduced in protocol version 4.
+    PoolParametersCpv1 pool_parameters_cpv_1 = 16;
+    // Adds a new anonymity revoker.
+    ArInfo add_anonymity_revoker = 17;
+    // Adds a new identity provider.
+    IpInfo add_identity_provider = 18;
+    // Updates to cooldown parameters for chain parameters version 1 introduced in protocol version 4.
+    CooldownParametersCpv1 cooldown_parameters = 19;
+    // Updates to time parameters for chain parameters version 1 introduced in protocol version 4.
+    TimeParametersCpv1 time_parameters = 20;
+    // Updates to the GAS rewards effective from protocol version 6 (chain parameters version 2).
+    GasRewardsCpv2 gas_rewards_cpv_2 = 21;
+    // Updates to the consensus timeouts for chain parameters version 2.
+    TimeoutParameters timeout_parameters = 22;
+    // Updates to the the minimum time between blocks for chain parameters version 2.
+    Duration min_block_time = 23;
+    // Updates to the block energy limit for chain parameters version 2.
+    Energy block_energy_limit = 24;
+    // Updates to the finalization committee for for chain parameters version 2.
+    FinalizationCommitteeParameters finalization_committee_parameters = 25;
+    // Updates to the validator score parameters for chain parameters version 3.
+    ValidatorScoreParameters validator_score_parameters = 26;
+  }
+}
+
+// The response for `GetNextUpdateSequenceNumbers`.
+message NextUpdateSequenceNumbers {
+  // Updates to the root keys.
+  SequenceNumber root_keys = 1;
+  // Updates to the level 1 keys.
+  SequenceNumber level1_keys = 2;
+  // Updates to the level 2 keys.
+  SequenceNumber level2_keys = 3;
+  // Protocol updates.
+  SequenceNumber protocol = 4;
+  // Updates to the election difficulty parameter.
+  SequenceNumber election_difficulty = 5;
+  // Updates to the euro:energy exchange rate.
+  SequenceNumber euro_per_energy = 6;
+  // Updates to the CCD:EUR exchange rate.
+  SequenceNumber micro_ccd_per_euro = 7;
+  // Updates to the foundation account.
+  SequenceNumber foundation_account = 8;
+  // Updates to the mint distribution.
+  SequenceNumber mint_distribution = 9;
+  // Updates to the transaction fee distribution.
+  SequenceNumber transaction_fee_distribution = 10;
+  // Updates to the GAS rewards.
+  SequenceNumber gas_rewards = 11;
+  // Updates pool parameters.
+  SequenceNumber pool_parameters = 12;
+  // Adds a new anonymity revoker.
+  SequenceNumber add_anonymity_revoker = 13;
+  // Adds a new identity provider.
+  SequenceNumber add_identity_provider = 14;
+  // Updates to cooldown parameters for chain parameters version 1 introduced in protocol version 4.
+  SequenceNumber cooldown_parameters = 15;
+  // Updates to time parameters for chain parameters version 1 introduced in protocol version 4.
+  SequenceNumber time_parameters = 16;
+  // Updates to the timeout parameters
+  SequenceNumber timeout_parameters = 17;
+  // Updates to the the minimum time between blocks for chain parameters version 2.
+  SequenceNumber min_block_time = 18;
+  // Updates to the block energy limit for chain parameters version 2.
+  SequenceNumber block_energy_limit = 19;
+  // Updates to the finalization committee parameters
+  SequenceNumber finalization_committee_parameters = 20;
+  // Updates to the validator score parameters for chain parameters version 3.
+  SequenceNumber validator_score_parameters = 21;
+  // Updates to the protocol level tokens. Introduced in protocol version 9.
+  SequenceNumber protocol_level_tokens = 22;
+}
+
+// A request to send a new block item to the chain.
+// An IP address
+message IpAddress {
+  string value = 1;
+}
+
+// A port
+// Valid port numbers are expected thus
+// the value is expected to be in the range (0..u16::MAX).
+message Port {
+  uint32 value = 1;
+}
+
+// A socket address consisting of
+// an IP + port.
+message IpSocketAddress {
+  IpAddress ip = 1;
+  Port port = 2;
+}
+
+// A peer id
+// An identifier that the peer wants to be
+// be recoknized by.
+// The underlying value is simply a u64.
+// Note. There is no authenticity of the peer id and
+// as such it is only used for logging purposes.
+message PeerId {
+  string value = 1;
+}
+
+// A banned peer
+message BannedPeer {
+    // The IP address of the banned peer.
+    IpAddress ip_address = 1;
+}
+
+// The banned peers given by their IP addresses.
+message BannedPeers {
+  repeated BannedPeer peers = 1;
+}
+
+// A peer to ban specified by its IP.
+// Note. This will ban all peers located behind the
+// specified IP even though they are using different ports.
+message PeerToBan {
+  IpAddress ip_address = 1;
+}
+
+// Request to enable dumping of network packages.
+message DumpRequest {
+  // Which file to dump the packages into.
+  // Requires a valid path.
+  string file = 1;
+
+  // Whether the node should dump raw packages.
+  bool raw = 2;
+}
+
+// Peers and their associated network related statistics
+message PeersInfo {
+  // A peer that the node is connected to.
+  message Peer {
+      // This type might be extended in future versions of the API.
+      enum CatchupStatus {
+          // The peer does not have any data unknown to us. If we receive a message from the
+          // peer that refers to unknown data (e.g., an unknown block) the peer is marked as pending.
+          UPTODATE = 0;
+          // The peer might have some data unknown to us. A peer can be in this state either because
+          // it sent a message that refers to data unknown to us, or before we have established a baseline with it.
+          // The latter happens during node startup, as well as upon protocol updates until the initial catchup handshake
+          // completes.
+          PENDING = 1;
+          // The node is currently catching up by requesting blocks from this peer.
+          // There will be at most one peer with this status at a time.
+          // Once the peer has responded to the request, its status will be changed to:
+          // - 'UPTODATE' if the peer has no more data that is not known to us
+          // - 'PENDING' if the node has more data that is unknown to us.
+          CATCHINGUP = 2;
+      }
+      // Network statistics for the peer
+      message NetworkStats {
+        // The number of messages sent to the peer.
+        // Packets are blocks, transactions, catchup messages, finalization records
+        // and network messages such as pings and peer requests.
+        uint64 packets_sent = 2;
+
+        // The number of messages received from the peer.
+        // Packets are blocks, transactions, catchup messages, finalization records
+        // and network messages such as pings and peer requests.
+        uint64 packets_received = 3;
+
+        // The connection latency (i.e., ping time) in milliseconds.
+        uint64 latency = 4;
+      }
+
+      // The identifier of the peer that it
+      // wishes to be identified by.
+      PeerId peer_id = 1;
+      // The port of the peer.
+      IpSocketAddress socket_address = 2;
+      // Network related statistics for the peer.
+      NetworkStats network_stats = 3;
+      // Consensus related information of the peer.
+      //
+      // This field might be extended in future versions of the API.
+      oneof consensus_info {
+        // The peer is of type `Bootstrapper` is not participating in consensus
+        // and thus has no catchup status.
+        Empty bootstrapper = 4;
+        // The peer is a regular node and have
+        // an associated catchup status.
+        CatchupStatus node_catchup_status = 5;
+      }
+  }
+
+  repeated Peer peers = 1;
+}
+
+// Node info response
+// Contains various information of the
+// enquired node.
+message NodeInfo {
+  // Network related information of the node.
+  message NetworkInfo {
+    // The node id.
+    PeerId node_id = 1;
+    // Total number of packets sent by the node.
+    uint64 peer_total_sent = 2;
+    // Total number of packets received by the node.
+    uint64 peer_total_received = 3;
+    // Average outbound throughput in bytes per second.
+    uint64 avg_bps_in = 4;
+    // Average inbound throughput in bytes per second.
+    uint64 avg_bps_out = 5;
+  }
+
+  // Consensus info for a node configured with validator keys.
+  message BakerConsensusInfo {
+    // The committee information of a node configured with
+    // validator keys but somehow the node is _not_ part of the
+    // current validation committee.
+    //
+    // This type might be extended in future versions of the API.
+    enum PassiveCommitteeInfo {
+      // The node is started with validator keys however it is currently not in the validation committee.
+      // The node is __not__ baking.
+      NOT_IN_COMMITTEE = 0;
+      // The account is registered as a validator but not in the current `Epoch`.
+      // The node is __not__ baking.
+      ADDED_BUT_NOT_ACTIVE_IN_COMMITTEE = 1;
+      // The node has configured invalid validator keys i.e., the configured
+      // validator keys do not match the current keys on the validator account.
+      // The node is __not__ baking.
+      ADDED_BUT_WRONG_KEYS = 2;
+    }
+
+    // Tagging message type for a node that
+    // is configured with validator keys and active in
+    // the current validation committee
+    message ActiveBakerCommitteeInfo {
+    }
+
+    // Tagging message type for a node that
+    // is configured with validator keys and active in
+    // the current finalizer committee (and also validation committee).
+    message ActiveFinalizerCommitteeInfo {
+    }
+
+    BakerId baker_id = 1;
+
+    // Status of the validator configured node.
+    //
+    // This field might be extended in future versions of the API.
+    oneof status {
+      // The node is currently not baking.
+      PassiveCommitteeInfo passive_committee_info = 2;
+      // The node is configured with validator keys and
+      // is member of the validation committee.
+      ActiveBakerCommitteeInfo active_baker_committee_info = 3;
+      // The node is configured with validator keys and
+      // is member of the validator and finalization committees.
+      ActiveFinalizerCommitteeInfo active_finalizer_committee_info = 4;
+    }
+  }
+
+  // The node is a regular node.
+  message Node {
+    // This field might be extended in future versions of the API.
+    oneof consensus_status {
+      // The node is not running consensus.
+      // This is the case only when the node is
+      // not supporting the protocol on the chain.
+      // The node does not process blocks.
+      Empty not_running = 1;
+      // Consensus info for a node that is
+      // not configured with validator keys.
+      // The node is only processing blocks and
+      // relaying blocks and transactions and responding to
+      // catchup messages.
+      Empty passive = 2;
+      // The node is configured with validator credentials and consensus is running.
+      BakerConsensusInfo active = 3;
+    }
+  }
+
+  // The version of the node.
+  string peer_version = 1;
+  // local time of the node.
+  Timestamp local_time = 3;
+  // Number of milliseconds that the node
+  // has been alive.
+  Duration peer_uptime = 4;
+  // Information related to the p2p protocol.
+  NetworkInfo network_info = 5;
+  // Details of the node.
+  //
+  // This field might be extended in future versions of the API.
+  oneof details {
+    // The node is a bootstrapper and is not running consensus.
+    Empty bootstrapper = 6;
+    // The node is a regular node and runs the consensus
+    // protocol.
+    Node node = 7;
+  }
+}
+
+message SendBlockItemRequest {
+  // This field might be extended in future versions of the API.
+  oneof block_item {
+    // Account transactions are messages which are signed and paid for by an account.
+    AccountTransaction account_transaction = 1;
+    // Credential deployments create new accounts. They are not paid for
+    // directly by the sender. Instead, validators are rewarded by the protocol for
+    // including them.
+    CredentialDeployment credential_deployment = 2;
+    // Update instructions are messages which can update the chain parameters. Including which keys are allowed
+    // to make future update instructions.
+    UpdateInstruction update_instruction = 3;
+    // Account transactions v1 are messages which are signed and paid for by
+    // either an account or a sponsor.
+    AccountTransactionV1 account_transaction_v1 = 4;
+    // A block item which has already been serialized to the format expected by the node.
+    bytes  raw_block_item = 5;
+  }
+}
+
+// Credential deployments create new accounts. They are not paid for
+// directly by the sender. Instead, validators are rewarded by the protocol for
+// including them.
+message CredentialDeployment {
+  TransactionTime message_expiry = 1;
+  // The credential to be added.
+  //
+  // This field will not be extended in future versions of the API and the Concordium Node API will
+  // always output the `raw_payload` in queries.
+  oneof payload {
+    // A raw payload, which is just the encoded payload.
+    // A typed variant might be added in the future.
+    bytes raw_payload = 2;
+  }
+}
+
+// A single signature. Used when sending block items to a node with
+// `SendBlockItem`.
+message Signature {
+  bytes value = 1;
+}
+
+// A signature on an update instruction.
+// The type `UpdateKeysIndex` is not used directly, as messages cannot be keys in maps.
+message SignatureMap {
+  map<uint32, Signature> signatures = 1;
+}
+
+// Wrapper for a map from indexes to signatures.
+// Needed because protobuf doesn't allow nested maps directly.
+// The keys in the SignatureMap must not exceed 2^8.
+message AccountSignatureMap {
+  map<uint32, Signature> signatures = 1;
+}
+
+message AccountTransactionSignature {
+  // A map from `CredentialIndex` to `SignatureMap`s.
+  // The type `CredentialIndex` is not used directly, as messages cannot be keys in maps.
+  // The map cannot contain more than 2^8 signatures.
+  map<uint32, AccountSignatureMap> signatures = 1;
+}
+
+// Account transaction signatures from the sender and optionally the sponsor of
+// the transaction.
+message AccountTransactionV1Signatures {
+  // Signatures from the sender of the transaction.
+  AccountTransactionSignature sender_signatures = 1;
+  // The optional signature of the sponsor of the transaction.
+  optional AccountTransactionSignature sponsor_signatures = 2;
+}
+
+// Header of an account transaction that contains basic data to check whether
+// the sender and the transaction are valid. The header is shared by all transaction types.
+message AccountTransactionHeader {
+  // Sender of the transaction.
+  AccountAddress sender = 1;
+  // Sequence number of the transaction.
+  SequenceNumber sequence_number = 2;
+  // Maximum amount of energy the transaction can take to execute.
+  Energy energy_amount = 3;
+  // Latest time the transaction can included in a block.
+  TransactionTime expiry = 5;
+}
+
+// Header v1 of an account transaction with support for sponsored transactions.
+message AccountTransactionHeaderV1 {
+  // Sender of the transaction.
+  AccountAddress sender = 1;
+  // Sequence number of the transaction.
+  SequenceNumber sequence_number = 2;
+  // Maximum amount of energy the transaction can take to execute.
+  Energy energy_amount = 3;
+  // Latest time the transaction can included in a block.
+  TransactionTime expiry = 5;
+  // The optional address of the account that sponsors the transaction, i.e.
+  // pays the transaction fees associated with the execution.
+  optional AccountAddress sponsor = 6;
+}
+
+// Data required to initialize a new contract instance.
+message InitContractPayload {
+  // Amount of CCD to send to the instance.
+  Amount amount = 1;
+  // Reference to the module from which the instance will be created.
+  ModuleRef module_ref = 2;
+  // Name of the contract to initialize. This is expected to be in the format
+  // `init_name`.
+  InitName init_name = 3;
+  // Parameter to call the `init` of the contract with.
+  Parameter parameter = 4;
+}
+
+// Data required to update a contract instance.
+message UpdateContractPayload {
+  // Amount of CCD to send to the instance.
+  Amount amount = 1;
+  // Address of the instance to update.
+  ContractAddress address = 2;
+  // Name of the entrypoint to call to update the instance.
+  // This is expected to be in the format `contractName.entrypointName`.
+  ReceiveName receive_name = 3;
+  // Parameter to pass to the entrypoint.
+  Parameter parameter = 4;
+}
+
+// Payload of a transfer between two accounts.
+message TransferPayload {
+  // Amount of CCD to send.
+  Amount amount = 1;
+  // Receiver address.
+  AccountAddress receiver = 2;
+}
+
+// Payload of a transfer between two accounts with a memo.
+// This message can occur starting from protocol version 2.
+message TransferWithMemoPayload {
+  // Amount of CCD to send.
+  Amount amount = 1;
+  // Receiver address.
+  AccountAddress receiver = 2;
+  // Memo to include with the transfer.
+  Memo memo = 3;
+}
+
+// The payload for an account transaction.
+message AccountTransactionPayload {
+  // This field will not be extended in future versions of the API and the Concordium Node API will
+  // always output the `raw_payload` in queries.
+  oneof payload {
+    // A pre-serialized payload in the binary serialization format defined
+    // by the protocol.
+    bytes raw_payload = 1;
+    VersionedModuleSource deploy_module = 2;
+    InitContractPayload init_contract = 3;
+    UpdateContractPayload update_contract = 4;
+    TransferPayload transfer = 5;
+    // This payload can occur starting from protocol version 2.
+    TransferWithMemoPayload transfer_with_memo = 6;
+    RegisteredData register_data = 7;
+  }
+}
+
+// An unsigned account transaction. This is used with the
+// `GetTransactionSignHash` endpoint to obtain the message to sign.
+message PreAccountTransaction {
+  AccountTransactionHeader header = 1;
+  AccountTransactionPayload payload = 2;
+}
+
+// An unsigned account transaction v1. This is used with the
+// `GetTransactionSignHash` endpoint to obtain the message to sign.
+message PreAccountTransactionV1 {
+  AccountTransactionHeaderV1 header = 1;
+  AccountTransactionPayload payload = 2;
+}
+
+// Account transactions are messages which are signed and paid for by the sender
+// account.
+message AccountTransaction {
+  AccountTransactionSignature signature = 1;
+  AccountTransactionHeader header = 2;
+  AccountTransactionPayload payload = 3;
+}
+
+// Account transactions v1 are messages which are signed and paid for by the sender
+// account or by the sponsor.
+message AccountTransactionV1 {
+  // The signatures on the transaction by the source account and other
+  // relevant parties such as sponsors.
+  AccountTransactionV1Signatures signatures = 1;
+  // The transaction header data.
+  AccountTransactionHeaderV1 header = 2;
+  // The account transaction payload.
+  AccountTransactionPayload payload = 3;
+}
+
+message UpdateInstructionHeader {
+  UpdateSequenceNumber sequence_number = 1;
+  TransactionTime effective_time = 2;
+  TransactionTime timeout = 3;
+}
+
+// The payload for an UpdateInstruction.
+message UpdateInstructionPayload {
+  // This field might be extended in future versions of the API.
+  oneof payload {
+    // A raw payload encoded according to the format defined by the protocol.
+    bytes raw_payload = 3;
+  }
+}
+
+message UpdateInstruction {
+  // A map from `UpdateKeysIndex` to `Signature`. Keys must not exceed 2^16.
+  SignatureMap signatures = 1;
+  UpdateInstructionHeader header = 2;
+  UpdateInstructionPayload payload = 3;
+}
+
+// Signature on an account transaction is defined to be the signature on the
+// hash of the `PreAccountTransaction`.
+message AccountTransactionSignHash {
+  bytes value = 1;
+}
+
+// The number of credential deployments allowed in a block. This in effect
+// determines the number of accounts that can be created in a block.
+message CredentialsPerBlockLimit {
+  uint32 value = 1;
+}
+
+// Updatable chain parameters that apply to protocol versions 1-3.
+message ChainParametersV0 {
+  // Election difficulty for consensus lottery.
+  ElectionDifficulty election_difficulty = 1;
+  // Euro per energy exchange rate.
+  ExchangeRate euro_per_energy = 2;
+  // Micro CCD per euro exchange rate.
+  ExchangeRate micro_ccd_per_euro = 3;
+  // Extra number of epochs before reduction in stake, or validator
+  // deregistration is completed.
+  Epoch baker_cooldown_epochs = 4;
+  // The limit for the number of account creations in a block.
+  CredentialsPerBlockLimit account_creation_limit = 5;
+  // Current mint distribution
+  MintDistributionCpv0 mint_distribution = 6;
+  // Current transaction fee distribution.
+  TransactionFeeDistribution transaction_fee_distribution = 7;
+  // Current gas reward parameters.
+  GasRewards gas_rewards = 8;
+  // The foundation account.
+  AccountAddress foundation_account = 9;
+  // Minimum threshold for becoming a validator.
+  Amount minimum_threshold_for_baking = 10;
+  // Keys allowed to do root updates.
+  HigherLevelKeys root_keys = 11;
+  // Keys allowed to do level1 updates;
+  HigherLevelKeys level1_keys = 12;
+  // Keys allowed to do parameter updates.
+  AuthorizationsV0 level2_keys = 13;
+}
+
+// Updatable chain parameters that apply to protocol versions 4-5.
+message ChainParametersV1 {
+  // Election difficulty for consensus lottery.
+  ElectionDifficulty election_difficulty = 1;
+  // Euro per energy exchange rate.
+  ExchangeRate euro_per_energy = 2;
+  // Micro CCD per euro exchange rate.
+  ExchangeRate micro_ccd_per_euro = 3;
+  // Extra number of epochs before reduction in stake, or validator
+  // deregistration is completed.
+  CooldownParametersCpv1 cooldown_parameters = 4;
+  // Current time parameters.
+  // The time parameters indicates the mint rate and the
+  // reward period length, i.e. the time between paydays.
+  TimeParametersCpv1 time_parameters = 5;
+  // The limit for the number of account creations in a block.
+  CredentialsPerBlockLimit account_creation_limit = 6;
+  // Current mint distribution
+  MintDistributionCpv1 mint_distribution = 7;
+  // Current transaction fee distribution.
+  TransactionFeeDistribution transaction_fee_distribution = 8;
+  // Current gas reward parameters.
+  GasRewards gas_rewards = 9;
+  // The foundation account.
+  AccountAddress foundation_account = 10;
+  // Parameters governing validator pools and their commissions.
+  PoolParametersCpv1 pool_parameters = 11;
+  // Keys allowed to do root updates.
+  HigherLevelKeys root_keys = 12;
+  // Keys allowed to do level1 updates;
+  HigherLevelKeys level1_keys = 13;
+  // Keys allowed to do parameter updates.
+  AuthorizationsV1 level2_keys = 14;
+}
+
+// Updatable chain parameters that apply to protocol versions 6.
+message ChainParametersV2 {
+  // Consensus parameters.
+  ConsensusParametersV1 consensus_parameters = 1;
+  // Euro per energy exchange rate.
+  ExchangeRate euro_per_energy = 2;
+  // Micro CCD per euro exchange rate.
+  ExchangeRate micro_ccd_per_euro = 3;
+  // Extra number of epochs before reduction in stake, or validator
+  // deregistration is completed.
+  CooldownParametersCpv1 cooldown_parameters = 4;
+  // Current time parameters.
+  // The time parameters indicates the mint rate and the
+  // reward period length, i.e. the time between paydays.
+  TimeParametersCpv1 time_parameters = 5;
+  // The limit for the number of account creations in a block.
+  CredentialsPerBlockLimit account_creation_limit = 6;
+  // Current mint distribution
+  MintDistributionCpv1 mint_distribution = 7;
+  // Current transaction fee distribution.
+  TransactionFeeDistribution transaction_fee_distribution = 8;
+  // Current gas reward parameters.
+  GasRewardsCpv2 gas_rewards = 9;
+  // The foundation account.
+  AccountAddress foundation_account = 10;
+  // Parameters governing validator pools and their commissions.
+  PoolParametersCpv1 pool_parameters = 11;
+  // Keys allowed to do root updates.
+  HigherLevelKeys root_keys = 12;
+  // Keys allowed to do level1 updates;
+  HigherLevelKeys level1_keys = 13;
+  // Keys allowed to do parameter updates.
+  AuthorizationsV1 level2_keys = 14;
+  // Finalization committee parameters
+  FinalizationCommitteeParameters finalization_committee_parameters = 15;
+}
+
+// Updatable chain parameters that apply to protocol versions 8.
+message ChainParametersV3 {
+  // Consensus parameters.
+  ConsensusParametersV1 consensus_parameters = 1;
+  // Euro per energy exchange rate.
+  ExchangeRate euro_per_energy = 2;
+  // Micro CCD per euro exchange rate.
+  ExchangeRate micro_ccd_per_euro = 3;
+  // Extra number of epochs before reduction in stake, or validator
+  // deregistration is completed.
+  CooldownParametersCpv1 cooldown_parameters = 4;
+  // Current time parameters.
+  // The time parameters indicates the mint rate and the
+  // reward period length, i.e. the time between paydays.
+  TimeParametersCpv1 time_parameters = 5;
+  // The limit for the number of account creations in a block.
+  CredentialsPerBlockLimit account_creation_limit = 6;
+  // Current mint distribution
+  MintDistributionCpv1 mint_distribution = 7;
+  // Current transaction fee distribution.
+  TransactionFeeDistribution transaction_fee_distribution = 8;
+  // Current gas reward parameters.
+  GasRewardsCpv2 gas_rewards = 9;
+  // The foundation account.
+  AccountAddress foundation_account = 10;
+  // Parameters governing validator pools and their commissions.
+  PoolParametersCpv1 pool_parameters = 11;
+  // Keys allowed to do root updates.
+  HigherLevelKeys root_keys = 12;
+  // Keys allowed to do level1 updates;
+  HigherLevelKeys level1_keys = 13;
+  // Keys allowed to do parameter updates.
+  AuthorizationsV1 level2_keys = 14;
+  // Finalization committee parameters
+  FinalizationCommitteeParameters finalization_committee_parameters = 15;
+  // Validator score parameters
+  ValidatorScoreParameters validator_score_parameters = 16;
+}
+
+// Chain parameters.
+message ChainParameters {
+  // This field will not be extended in future versions of the API, instead new data versions will
+  // use optional fields in `ChainParametersV3`.
+  oneof parameters {
+    // Chain parameters that apply when the block is a protocol version 1-3 block.
+    ChainParametersV0 v0 = 1;
+    // Chain parameters that apply when the block is a protocol version 4-5 block.
+    ChainParametersV1 v1 = 2;
+    // Chain parameters that apply when the block is a protocol version 6-7 block.
+    ChainParametersV2 v2 = 3;
+    // Chain parameters that apply when the block is a protocol version 8- block.
+    ChainParametersV3 v3 = 4;
+  }
+}
+
+// Details about a finalizer for the finalization round.
+message FinalizationSummaryParty {
+  // Validator ID. Every finalizer is in particular a validator.
+  BakerId baker = 1;
+  // The weight of the finalizer in the committee. This is an "absolute" weight.
+  uint64 weight = 2;
+  // Whether the finalizer's signature was present on the particular finalization record.
+  bool signed = 3;
+}
+
+// Index of the finalization round. This increases on each successfully
+// completed finalization.
+message FinalizationIndex {
+  uint64 value = 1;
+}
+
+// Details about a finalization record included in a block.
+message FinalizationSummary {
+  // Block that was finalized by the finalization record.
+  BlockHash block = 1;
+  // Index of the finalization round that finalized the block.
+  FinalizationIndex index = 2;
+  // Finalization delay used for the finalization round.
+  BlockHeight delay = 3;
+  // List of all finalizers with information about whether they signed the
+  // finalization record or not.
+  repeated FinalizationSummaryParty finalizers = 4;
+}
+
+// Finalization summary that may or may not be part of the block.
+message BlockFinalizationSummary {
+  // This field will not be extended in future versions of the API.
+  oneof summary {
+    // There is no finalization data in the block.
+    Empty none = 1;
+    // There is a single finalization record with the block.
+    FinalizationSummary record = 2;
+  }
+}
+
+message BlockItem {
+  // The hash of the block item that identifies it to the chain.
+  TransactionHash hash = 1;
+
+  // This field might be extended in future versions of the API.
+  oneof block_item {
+    // Account transactions are messages which are signed and paid for by an account.
+    AccountTransaction account_transaction = 2;
+    // Credential deployments create new accounts. They are not paid for
+    // directly by the sender. Instead, validators are rewarded by the protocol for
+    // including them.
+    CredentialDeployment credential_deployment = 3;
+    // Update instructions are messages which can update the chain parameters. Including which keys are allowed
+    // to make future update instructions.
+    UpdateInstruction update_instruction = 4;
+    // Account transactions v1 are messages which are signed and paid for by
+    // either an account or a sponsor.
+    AccountTransactionV1 account_transaction_v1 = 5;
+    // A block item which has already been serialized to the format expected by the node.
+    bytes  raw_block_item = 6;
+  }
+}
+
+// Information about a particular validator with respect to
+// the current reward period. The below values are historical value from the last payday block.
+message BakerRewardPeriodInfo {
+  // The validator id and public keys for the validator.
+  BakerInfo baker = 1;
+  // The effective stake of the validator for the consensus protocol.
+  // The returned amount accounts for delegation, capital bounds and leverage bounds.
+  Amount effective_stake = 2;
+  // The effective commission rate for the validator that applies for the reward period.
+  CommissionRates commission_rates = 3;
+  // The amount staked by the validator itself.
+  Amount equity_capital = 4;
+  // The total amount of capital delegated to this validator pool.
+  Amount delegated_capital = 5;
+  // Whether the validator is a finalizer or not.
+  bool is_finalizer = 6;
+}
+
+// The signature of a 'QuorumCertificate' or 'QuorumMessage'.
+message QuorumSignature {
+  // The bytes representing the raw aggregate signature.
+  // The bytes have a fixed length of 48 bytes.
+  bytes value = 1;
+}
+
+// A quorum certificate is the certificate that the
+// finalization comittee issues in order to certify a block.
+// A block must be certified before it will be part of the
+// authorative part of the chain.
+message QuorumCertificate {
+  // The hash of the block that the quorum certificate refers to.
+  BlockHash block_hash = 1;
+  // The round of the block.
+  Round round = 2;
+  // The epoch of the block.
+  Epoch epoch = 3;
+  // The aggregated signature by the finalization committee on the block.
+  QuorumSignature aggregate_signature = 4;
+  // A list of the finalizers that formed the quorum certificate
+  // i.e., the ones who have contributed to the 'aggregate_siganture'.
+  // The finalizers are identified by their validator id as this is stable
+  // across protocols and epochs.
+  repeated BakerId signatories = 5;
+}
+
+// The finalizer round is a map from a 'Round'
+// to the list of finalizers (identified by their validator id) that signed
+// off the round.
+message FinalizerRound {
+  // The round that was signed off.
+  Round round = 1;
+  // The finalizers (identified by their validator id) that
+  // signed off the in 'round'.
+  repeated BakerId finalizers = 2;
+}
+
+// The signature of a 'TimeoutCertificate'.
+message TimeoutSignature {
+  // The bytes representing the raw aggregate signature.
+  // The bytes have a fixed length of 48 bytes.
+  bytes value = 1;
+}
+
+// A timeout certificate is the certificate that the
+// finalization committee issues when a round times out,
+// thus making it possible for the protocol to proceed to the
+// next round.
+message TimeoutCertificate {
+  // The round that timed out.
+  Round round = 1;
+  // The minimum epoch of which signatures are included
+  // in the 'aggregate_signature'.
+  Epoch min_epoch = 2;
+  // The rounds of which finalizers have their best
+  // QCs in the 'min_epoch'.
+  repeated FinalizerRound qc_rounds_first_epoch = 3;
+  // The rounds of which finalizers have their best
+  // QCs in the epoch 'min_epoch' + 1.
+  repeated FinalizerRound qc_rounds_second_epoch = 4;
+  // The aggregated signature by the finalization committee that witnessed
+  // the 'round' timed out.
+  TimeoutSignature aggregate_signature = 5;
+}
+
+// A proof that establishes that the successor block of
+// a 'EpochFinalizationEntry' is the immediate successor of
+// the finalized block.
+message SuccessorProof {
+  // The proof represented as raw bytes.
+  // The bytes have a fixed length of 32 bytes.
+  bytes value = 1;
+}
+
+// The epoch finalization entry is the proof that
+// makes the protocol able to advance to a new epoch.
+// I.e. the 'EpochFinalizationEntry' is present if and only if
+// the block is the first block of a new 'Epoch'.
+message EpochFinalizationEntry {
+  // The quorum certificate for the finalized block.
+  QuorumCertificate finalized_qc = 1;
+  // The quorum certificate for the block that finalizes
+  // the block that 'finalized_qc' points to.
+  QuorumCertificate successor_qc = 2;
+  // A proof that the successor block is an immediate
+  // successor of the finalized block.
+  SuccessorProof successor_proof = 3;
+}
+
+
+// Certificates for a block for protocols supporting ConcordiumBFT.
+message BlockCertificates {
+  // The quorum certificate. Is present if and only if the block is
+  // not a genesis block.
+  optional QuorumCertificate quorum_certificate = 1;
+  // The timeout certificate. Is present only if the round prior to the
+  // round of the block timed out.
+  optional TimeoutCertificate timeout_certificate = 2;
+  // The epoch finalization entry. Is present only if the block initiates
+  // a new epoch.
+  optional EpochFinalizationEntry epoch_finalization_entry = 3;
+}
+
+// Details of which validator won the lottery in a given round in consensus version 1.
+message WinningBaker {
+    // The round number.
+    Round round = 1;
+    // The validator that won the round.
+    BakerId winner = 2;
+    // True if the validator produced a block in this round on the finalized chain, and False otherwise.
+    bool present = 3;
+}
+
+// An operation to dry run.  The first operation in a dry-run sequence should be
+// `load_block_state`: any other operation will be met with `NoState` until a
+// state is successfully loaded.
+message DryRunRequest {
+    // This field might be extended in future versions of the API.
+    oneof request {
+        // Load the state of the specified block to use for subsequent requests.
+        // The state is taken at the end of execution of the block, and the block’s
+        // timestamp is used as the current timestamp.
+        //
+        // The energy cost for this operation is 2000.
+        BlockHashInput load_block_state = 1;
+        // Run a query on the state.
+        DryRunStateQuery state_query = 2;
+        // Run a (non-transaction) operation to modify the state.
+        DryRunStateOperation state_operation = 3;
+    }
+}
+
+// Run a query as part of a dry run. Queries do not update the block state.
+message DryRunStateQuery {
+    // This field might be extended in future versions of the API.
+    oneof query {
+        // Look up information on a particular account.
+        //
+        // The energy cost for this query is 200.
+        AccountIdentifierInput get_account_info = 1;
+        // Look up information about a particular smart contract.
+        //
+        // The energy cost for this query is 200.
+        ContractAddress get_instance_info = 2;
+        // Invoke an entrypoint on a smart contract instance.
+        // No changes made to the state are retained at the completion of the operation.
+        //
+        // The energy cost for this query is 200 plus the energy used by the smart contract
+        // execution.
+        DryRunInvokeInstance invoke_instance = 3;
+    }
+}
+
+// Invoke an entrypoint on a smart contract instance.
+message DryRunInvokeInstance {
+    // Invoker of the contract. If this is not supplied then the contract will be
+    // invoked by an account with address 0, no credentials and sufficient amount
+    // of CCD to cover the transfer amount. If given, the relevant address (either
+    // account or contract) must exist in the blockstate.
+    optional Address invoker = 1;
+    // Address of the contract instance to invoke.
+    ContractAddress instance = 2;
+    // Amount to invoke the smart contract instance with.
+    Amount amount = 3;
+    // The entrypoint of the smart contract instance to invoke.
+    ReceiveName entrypoint = 4;
+    // The parameter bytes to include in the invocation of the entrypoint.
+    Parameter parameter = 5;
+    // The maximum energy to allow for the invocation. Note that the node imposes an energy
+    // quota that is enforced in addition to this limit.
+    Energy energy = 6;
+}
+
+// An operation that can update the state as part of a dry run.
+message DryRunStateOperation {
+    // This field might be extended in future versions of the API.
+    oneof operation {
+        // Sets the current block time to the given timestamp for the purposes of future
+        // transactions.
+        //
+        // The energy cost of this operation is 50.
+        Timestamp set_timestamp = 1;
+        // Add a specified amount of newly-minted CCDs to a specified account.
+        // The amount cannot cause the total circulating supply to overflow.
+        //
+        // The energy cost of this operation is 400.
+        DryRunMintToAccount mint_to_account = 2;
+        // Dry run a transaction, updating the state if it succeeds.
+        //
+        // The energy cost of this operation is 400 plus the energy used by executing the
+        // transaction.
+        DryRunTransaction run_transaction = 3;
+    }
+}
+
+// Mint a specified amount and credit it to the specified account as part of a dry run.
+message DryRunMintToAccount {
+    // The account to mint to.
+    AccountAddress account = 1;
+    // The amount to mint and credit to the account.
+    Amount amount = 2;
+}
+
+// Dry run an account transaction
+message DryRunTransaction {
+    // The account to use as the sender of the transaction.
+    AccountAddress sender = 1;
+    // The energy limit set for executing the transaction.
+    Energy energy_amount = 2;
+    // The payload of the transaction.
+    AccountTransactionPayload payload = 3;
+    // Which credentials and keys should be treated as having signed the transaction.
+    // If none is given, then the transaction is treated as having one signature for credential 0,
+    // key 0. Therefore, this is only required when the transaction is from a multi-signature
+    // account. There are two reasons why you might want to specify signatures:
+    //   * The cost of the transaction depends on the number of signatures, so if you want to
+    //     get the correct cost for a multi-signature transaction, then specifying the signatures
+    //     supports this.
+    //   * When changing account keys on a multi-credential account, the transaction must be signed
+    //     by the credential whose keys are being changed.
+    //
+    // Note that the signature thresholds are not checked as part of the dry run. Duplicated
+    // signatures are only counted once.
+    repeated DryRunSignature signatures = 4;
+}
+
+// A dry run signature is a pair of a credential index and key index, identifying the credential
+// and key that is presumed to have signed the transaction. No actual cryptographic signature is
+// included.
+message DryRunSignature {
+    // Credential index. Must not exceed 255.
+    uint32 credential = 1;
+    // Key index. Must not exceed 255.
+    uint32 key = 2;
+}
+
+// A response to a `DryRunRequest`.
+message DryRunResponse {
+    // This field might be extended in future versions of the API.
+    oneof response {
+        // The request produced an error. The request otherwise has no effect on the state.
+        DryRunErrorResponse error = 1;
+        // The request was successful.
+        DryRunSuccessResponse success = 2;
+    }
+    // The remaining available energy quota after the dry run operation.
+    Energy quota_remaining = 3;
+}
+
+message DryRunErrorResponse {
+    // The current block state is undefined. It should be initialized with
+    // a 'load_block_state' request before any other operations.
+    message NoState {
+    }
+
+    // The requested block was not found, so its state could not be loaded.
+    message BlockNotFound {
+    }
+
+    // The specified account was not found.
+    message AccountNotFound {
+    }
+
+    // The specified instance was not found.
+    message InstanceNotFound {
+    }
+
+    // The amount that was requested to be minted would overflow the total supply.
+    message AmountOverLimit {
+        // The maximum amount that can be minted without overflowing the supply.
+        Amount amount_limit = 1;
+    }
+
+    // The sender account for the transaction has insufficient balance to pay the preliminary fees
+    // for the transaction to be included in a block.
+    message BalanceInsufficient {
+        // The minimum balance required to perform the operation.
+        Amount required_amount = 1;
+        // The currently-available balance on the account to pay for the operation.
+        Amount available_amount = 2;
+    }
+
+    // The energy made available for the transaction is insufficient to cover the basic processing
+    // required to include a transaction in a block.
+    message EnergyInsufficient {
+        // The minimum energy required for the transaction to be included in the chain.
+        // Note that, even if the energy supplied for the transaction is enough to prevent a
+        // `EnergyInsufficient`, the transaction can still be rejected for having
+        // insufficient energy. In that case, a `TransactionExecuted` response will be
+        // produced, but indicate the transaction was rejected.
+        Energy energy_required = 1;
+    }
+
+    // Invoking the smart contract instance failed.
+    message InvokeFailure {
+        // If invoking a V0 contract this is not provided, otherwise it is
+        // potentially return value produced by the call unless the call failed with
+        // out of energy or runtime error. If the V1 contract terminated with a
+        // logic error then the return value is present.
+        optional bytes return_value = 1;
+        // Energy used by the execution.
+        Energy used_energy = 2;
+        // Contract execution failed for the given reason.
+        RejectReason reason = 3;
+    }
+
+    // This field might be extended in future versions of the API.
+    oneof error {
+        // The current block state is undefined. It should be initialized with
+        // a 'load_block_state' request before any other operations.
+        NoState no_state = 1;
+        // The requested block was not found, so its state could not be loaded.
+        // Response to 'load_block_state'.
+        BlockNotFound block_not_found = 2;
+        // The specified account was not found.
+        // Response to 'get_account_info', 'mint_to_account' and 'run_transaction'.
+        AccountNotFound account_not_found = 3;
+        // The specified instance was not found.
+        // Response to 'get_instance_info'.
+        InstanceNotFound instance_not_found = 4;
+        // The amount to mint would overflow the total CCD supply.
+        // Response to 'mint_to_account'.
+        AmountOverLimit amount_over_limit = 5;
+        // The balance of the sender account is not sufficient to pay for the operation.
+        // Response to 'run_transaction'.
+        BalanceInsufficient balance_insufficient = 6;
+        // The energy supplied for the transaction was not sufficient to perform the basic checks.
+        // Response to 'run_transaction'.
+        EnergyInsufficient energy_insufficient = 8;
+        // The contract invocation failed.
+        // Response to 'invoke_instance'.
+        InvokeFailure invoke_failed = 9;
+    }
+}
+
+
+// The dry run operation completed successfully.
+message DryRunSuccessResponse {
+    // The block state at the specified block was successfully loaded.
+    message BlockStateLoaded {
+        // The timestamp of the block, taken to be the current timestamp.
+        Timestamp current_timestamp = 1;
+        // The hash of the block that was loaded.
+        BlockHash block_hash = 2;
+        // The protocol version at the specified block. The behavior of operations can vary across
+        // protocol versions.
+        ProtocolVersion protocol_version = 3;
+    }
+
+    // The current apparent timestamp was updated to the specified value.
+    message TimestampSet {
+
+    }
+
+    // The specified amount was minted to the specified account.
+    message MintedToAccount {
+
+    }
+
+    // The transaction was executed.
+    message TransactionExecuted {
+        // The amount of energy actually expended in executing the transaction.
+        Energy energy_cost = 1;
+        // The details of the outcome of the transaction.
+        AccountTransactionDetails details = 2;
+        // If this is an invocation of a V1 contract that produced a return value, this is that
+        // value. Otherwise it is absent.
+        optional bytes return_value = 3;
+    }
+
+    // The smart contract instance was invoked successfully.
+    message InvokeSuccess {
+        // If invoking a V0 contract this is absent. Otherwise it is the return
+        // value produced by the contract.
+        optional bytes return_value = 1;
+        // Energy used by the execution.
+        Energy used_energy = 2;
+        // Effects produced by contract execution.
+        repeated ContractTraceElement effects = 3;
+    }
+
+    // This field might be extended in future versions of the API.
+    oneof response {
+        // The state from the specified block was successfully loaded.
+        // Response to 'load_block_state'.
+        BlockStateLoaded block_state_loaded = 1;
+        // Details of the requested account.
+        // Response to 'get_account_info'.
+        AccountInfo account_info = 2;
+        // Details of the requested smart contract instance.
+        // Response to 'get_instance_info'.
+        InstanceInfo instance_info = 3;
+        // The smart contract instance was invoked successfully.
+        InvokeSuccess invoke_succeeded = 4;
+        // The current timestamp was set successfully.
+        // Response to 'set_timestamp'.
+        TimestampSet timestamp_set = 5;
+        // The specified amount was minted and credited to the account.
+        // Response to 'mint_to_account'.
+        MintedToAccount minted_to_account = 6;
+        // The specified transaction was executed. Note that the transaction could still have
+        // been rejected.
+        // Response to 'run_transaction'.
+        TransactionExecuted transaction_executed = 7;
+    }
+}
+
+// The index of a particular finalizer in the finalization committee.
+message FinalizerIndex {
+    uint32 value = 1;
+}
+
+// The message that is multicast by a finalizer when validating and signing a block.
+message QuorumMessage {
+    // Signature on the relevant quorum signature message.
+    QuorumSignature signature = 1;
+    // Hash of the block that is signed.
+    BlockHash block = 2;
+    // Index of the finalizer signing the message.
+    FinalizerIndex finalizer = 3;
+    // Round of the block.
+    Round round = 4;
+    // Epoch of the block.
+    Epoch epoch = 5;
+}
+
+message RawQuorumCertificate {
+    // The hash of the block that the quorum certificate refers to.
+    BlockHash block_hash = 1;
+    // The round of the block.
+    Round round = 2;
+    // The epoch of the block.
+    Epoch epoch = 3;
+    // The aggregated signature by the finalization committee on the block.
+    QuorumSignature aggregate_signature = 4;
+    // A list of the finalizers that formed the quorum certificate
+    // i.e., the ones who have contributed to the 'aggregate_signature'.
+    // The finalizers are identified by their finalizer index, which refers to the
+    // finalization committee for the epoch.
+    repeated FinalizerIndex signatories = 5;
+}
+
+// A (non-aggregate) signature of a validator. This is used to sign blocks produced by
+// the validator as well as some finalization messages.
+message BlockSignature {
+    bytes value = 1;
+}
+
+// A timeout message including the sender's signature.
+message TimeoutMessage {
+    // Index of the finalizer signing the message.
+    FinalizerIndex finalizer = 1;
+    // Round which timed out.
+    Round round = 2;
+    // Current epoch number of the finalizer sending the timeout message.
+    // This can be different from the epoch of the quorum certificate.
+    Epoch epoch = 3;
+    // Highest quorum certificate known to the finalizer at the time of timeout.
+    RawQuorumCertificate quorum_certificate = 4;
+    // Signature on the appropriate timeout signature message.
+    TimeoutSignature signature = 5;
+    // Signature of the finalizer on the timeout message as a whole.
+    BlockSignature message_signature = 6;
+}
+
+message RawFinalizerRound {
+    // The round that was signed off.
+    Round round = 1;
+    // The finalizers (identified by their 'FinalizerIndex') that
+    // signed off in 'round'.
+    repeated FinalizerIndex finalizers = 2;
+}
+
+// A timeout certificate is the certificate that the
+// finalization committee issues when a round times out,
+// thus making it possible for the protocol to proceed to the
+// next round.
+message RawTimeoutCertificate {
+    // The round that timed out.
+    Round round = 1;
+    // The minimum epoch of which signatures are included
+    // in the 'aggregate_signature'.
+    Epoch min_epoch = 2;
+    // The rounds of which finalizers have their best
+    // QCs in the 'min_epoch'.
+    repeated RawFinalizerRound qc_rounds_first_epoch = 3;
+    // The rounds of which finalizers have their best
+    // QCs in the epoch 'min_epoch' + 1.
+    repeated RawFinalizerRound qc_rounds_second_epoch = 4;
+    // The aggregated signature by the finalization committee that witnessed
+    // the 'round' timed out.
+    TimeoutSignature aggregate_signature = 5;
+}
+
+message PersistentRoundStatus {
+    // The last signed quorum message by the node.
+    optional QuorumMessage last_signed_quorum_message = 1;
+    // The last signed timeout message by the node.
+    optional TimeoutMessage last_signed_timeout_message = 2;
+    // The last round the node baked in.
+    Round last_baked_round = 3;
+    // The latest timeout certificate seen by the node. May be absent if the node has seen a
+    // quorum certificate for a more recent round.
+    optional RawTimeoutCertificate latest_timeout = 4;
+}
+
+message RoundTimeout {
+    // Timeout certificate for the round that timed out.
+    RawTimeoutCertificate timeout_certificate = 1;
+    // The highest known quorum certificate when the round timed out.
+    RawQuorumCertificate quorum_certificate = 2;
+}
+
+message RawFinalizationEntry {
+    // The quorum certificate for the finalized block.
+    RawQuorumCertificate finalized_qc = 1;
+    // The quorum certificate for the block that finalizes
+    // the block that 'finalized_qc' points to.
+    RawQuorumCertificate successor_qc = 2;
+    // A proof that the successor block is an immediate
+    // successor of the finalized block.
+    SuccessorProof successor_proof = 3;
+  }
+  
+
+// The current round status.
+message RoundStatus {
+    // The current round from the perspective of the node.
+    // This should always be higher than the round of the highest certified block.
+    // If the previous round did not timeout, it should be one more than the round of
+    // the `highest_certified_block`. Otherwise, it should be one more than the round of
+    // the `previous_round_timeout`.
+    Round current_round = 1;
+    // The quorum certificate for the highest certified block.
+    RawQuorumCertificate highest_certified_block = 2;
+    // If the last round timed out, this is the timeout certificate for that round and
+    // the highest quorum certificate at the time the round timed out.
+    optional RoundTimeout previous_round_timeout = 3;
+    // Flag indicating whether the node should attempt to bake in the current round.
+    // This is set to true when the round is advanced, and set to false once the node has
+    // attempted to bake for the round.
+    bool round_eligible_to_bake = 4;
+    // The current epoch. This should either be the same as the epoch of the last finalized
+    // block (if its timestamp is before the trigger block time) or the next epoch from the last
+    // finalized block (if its timestamp is at least the trigger block time).
+    Epoch current_epoch = 5;
+    // If present, an epoch finalization entry for the epoch before `current_epoch`.
+    // An entry must be present if the current epoch is greater than the epoch of the last
+    // finalized block.
+    optional RawFinalizationEntry last_epoch_finalization_entry = 6;
+    // The current duration the node will wait before a round times out.
+    Duration current_timeout = 7;
+}
+
+message BlockTableSummary {
+    // The number of blocks in the dead block cache.
+    uint64 dead_block_cache_size = 1;
+    // The blocks that are currently live (not dead and not finalized).
+    repeated BlockHash live_blocks = 2;
+}
+
+// A list of block hashes at a particular branch height.
+message BranchBlocks {
+    repeated BlockHash blocks_at_branch_height = 1;
+}
+
+message RoundExistingBlock {
+    // The round for which the node saw a block.
+    Round round = 1;
+    // The validator that baked the block.
+    BakerId baker = 2;
+    // The hash of the block.
+    BlockHash block = 3;
+}
+
+message RoundExistingQC {
+    // The round for which a QC was seen.
+    Round round = 1;
+    // The epoch of the QC.
+    Epoch epoch = 2;
+}
+
+// The keys and stake of a specific validator.
+message FullBakerInfo {
+    // The validator's identity.
+    BakerId baker_identity = 1;
+    // The validator's election verify key.
+    BakerElectionVerifyKey election_verify_key = 2;
+    // The validator's signature verify key.
+    BakerSignatureVerifyKey signature_verify_key = 3;
+    // The validator's aggregation verify key.
+    BakerAggregationVerifyKey aggregation_verify_key = 4;
+    // The stake of the validator.
+    Amount stake = 5;
+}
+
+// The hash of the finalization committee, derived from the weights and aggregation
+// keys of the finalizers.
+message FinalizationCommitteeHash {
+    bytes value = 1;
+}
+
+message BakersAndFinalizers {
+    // The set of validators.
+    repeated FullBakerInfo bakers = 1;
+    // The IDs of the validators that are finalizers.
+    // The order determines the finalizer index.
+    repeated BakerId finalizers = 2;
+    // The total effective stake of the validators.
+    Amount baker_total_stake = 3;
+    // The total effective stake of the finalizers.
+    Amount finalizer_total_stake = 4;
+    // The hash of the finalization committee.
+    FinalizationCommitteeHash finalization_committee_hash = 5;
+}
+
+message EpochBakers {
+    // The validators and finalizers for the previous epoch.
+    // If the current epoch is 0, then this is the same as the validators for the current epoch.
+    BakersAndFinalizers previous_epoch_bakers = 1;
+    // The validators and finalizers for the current epoch.
+    // If this is absent, it should be treated as the same as the validators for the previous epoch.
+    optional BakersAndFinalizers current_epoch_bakers = 2;
+    // The validators and finalizers for the next epoch.
+    // If this is absent, it should be treated as the same as the validators for the current epoch.
+    optional BakersAndFinalizers next_epoch_bakers = 3;
+    // The first epoch of the next payday.
+    Epoch next_payday = 4;
+}
+
+message TimeoutMessages {
+    // The first epoch for which timeout messages are present.
+    Epoch first_epoch = 1;
+    // The timeout messages for the first epoch.
+    // There should always be at least one.
+    repeated TimeoutMessage first_epoch_timeouts = 2;
+    // The timeout messages for `first_epoch + 1`.
+    repeated TimeoutMessage second_epoch_timeouts = 3;
+}
+
+message AggregatedSignatures {
+    // The block hash for which the signatures are aggregated.
+    BlockHash signed_block = 1;
+    // The total weight of the finalizers that signed the block.
+    Amount signature_weight = 2;
+    // The aggregate signature of the finalizers.
+    QuorumSignature aggregate_signature = 3;
+    // The set of finalizers that have signed.
+    repeated FinalizerIndex signatories = 4;
+}
+
+message QuorumMessages {
+    // The collected quorum messages for the current round.
+    repeated QuorumMessage quorum_messages = 1;
+    // The current aggregate of the valid quorum messages.
+    repeated AggregatedSignatures aggregated_signatures = 2;
+}
+
+message ConsensusDetailedStatusQuery {
+    // If specified, this determines the genesis index to get status for.
+    // If not specified, the status is returned for the latest genesis index.
+    optional GenesisIndex genesis_index = 1;
+}
+
+message ConsensusDetailedStatus {
+    // The hash of the genesis block.
+    BlockHash genesis_block = 1;
+    // The persisted elements of the round status.
+    PersistentRoundStatus persistent_round_status = 2;
+    // The status of the current round.
+    RoundStatus round_status = 3;
+    // The number of non-finalized transactions.
+    uint64 non_finalized_transaction_count = 4;
+    // The purge counter for the transaction table.
+    int64 transaction_table_purge_counter = 5;
+    // Summary of the block table.
+    BlockTableSummary block_table = 6;
+    // The live blocks organized by height after the last finalized block.
+    repeated BranchBlocks branches = 7;
+    // Which validators the node has seen legally-signed blocks with live parents from in
+    // non-finalized rounds.
+    repeated RoundExistingBlock round_existing_blocks = 8;
+    // Which non-finalized rounds the node has seen quorum certificates for.
+    repeated RoundExistingQC round_existing_qcs = 9;
+    // The absolute block height of the genesis block of the era.
+    AbsoluteBlockHeight genesis_block_height = 10;
+    // The hash of the last finalized block.
+    BlockHash last_finalized_block = 11;
+    // The height of the last finalized block.
+    BlockHeight last_finalized_block_height = 12;
+    // Unless the last finalized block is the genesis block, this should be a finalization
+    // entry for the last finalized block.
+    // As this includes a quorum certificate for the last finalized block, that can be used
+    // to determine the epoch and round of the last finalized block.
+    optional RawFinalizationEntry latest_finalization_entry = 13;
+    // The validators and finalizers for the previous, current and next epoch, relative to the last
+    // finalized block.
+    EpochBakers epoch_bakers = 14;
+    // The timeout messages collected by the node for the current round.
+    optional TimeoutMessages timeout_messages = 15;
+    // If a protocol update has occurred, this is the hash of the terminal block.
+    optional BlockHash terminal_block = 16;
+}
+
+// Indicates that an account is pending -- either a scheduled release or a cooldown -- and
+// when the first release or cooldown will elapse.
+message AccountPending {
+    AccountIndex account_index = 1;
+    Timestamp first_timestamp = 2;
+}

@@ -4,7 +4,7 @@ import type { Transaction, TransactionStatus } from "../types";
 
 // This method adds additional fields that need to be reviewed when signing a transaction on the device.
 async function getDeviceTransactionConfig({
-  transaction: {},
+  transaction,
   status: { amount, estimatedFees },
 }: {
   account: AccountLike;
@@ -18,6 +18,14 @@ async function getDeviceTransactionConfig({
     fields.push({
       type: "amount",
       label: "Amount",
+    });
+  }
+
+  if (transaction.memo) {
+    fields.push({
+      type: "text",
+      label: "Memo",
+      value: transaction.memo,
     });
   }
 

@@ -92,6 +92,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 ## Hoodies
 libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
 libs/coin-modules/coin-canton/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
+libs/coin-modules/coin-concordium/                                       @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
 
 ## Blockydevs
 libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-blockydevs

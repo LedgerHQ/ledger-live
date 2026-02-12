@@ -14,19 +14,16 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util",
     "jest-get-type",
     "jest-matcher-utils",
     "jest-message-util"
   ],
   "ignoreUnimported": [
-    "src/network/mock-network.ts",
     "src/test/bot-specs.ts",
-    "src/types/assets.ts"
+    "src/test/concordiumTestUtils.ts",
+    "src/test/fixtures.ts",
+    "src/test/testHelpers.ts",
+    "src/types/errors.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/devices"
-  ]
+  "ignoreUnused": []
 }

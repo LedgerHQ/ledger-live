@@ -1,54 +1,56 @@
 import {
   AlpacaApi,
-  Block,
-  BlockInfo,
+  CraftedTransaction,
   Cursor,
-  Page,
-  Validator,
   FeeEstimation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
+  Validator,
 } from "@ledgerhq/coin-framework/api/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import coinConfig, { type ConcordiumConfig } from "../config";
 import {
-  broadcast,
+  serializeTransfer,
+  serializeTransferWithMemo,
+} from "@ledgerhq/hw-app-concordium/lib/serialization";
+import { TransactionType } from "@ledgerhq/hw-app-concordium/lib/types";
+import { encodeMemoToCbor } from "@ledgerhq/hw-app-concordium/lib/cbor";
+import {
+  broadcast as broadcastLogic,
   combine,
-  craftTransaction,
-  estimateFees,
+  craftTransaction as craftTransactionLogic,
+  craftRawTransaction as craftRawTransactionLogic,
+  estimateFees as estimateFeesLogic,
   getBalance,
+  getBlock as getBlockLogic,
+  getBlockInfo as getBlockInfoLogic,
   getNextValidSequence,
   lastBlock,
   listOperations,
-} from "../common-logic";
+} from "../logic";
+import coinConfig from "../config";
+import type { ConcordiumConfig, ConcordiumMemo } from "../types";
 
-export function createApi(config: ConcordiumConfig): AlpacaApi {
+export function createApi(config: ConcordiumConfig): AlpacaApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  const currency = getCryptoCurrencyById("concordium");
 
   return {
-    broadcast,
+    broadcast: (tx: string) => broadcastLogic(tx, currency),
     combine,
-    craftTransaction: craft,
-    craftRawTransaction: (
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: estimate,
-    getBalance,
-    lastBlock,
-    listOperations,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    craftTransaction: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
+      craftTransaction(transactionIntent, currency),
+    craftRawTransaction,
+    estimateFees: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
+      estimateFees(transactionIntent, currency),
+    getBalance: (address: string) => getBalance(address, currency),
+    lastBlock: () => lastBlock(currency),
+    listOperations: (address: string, pagination) => listOperations(address, pagination, currency),
+    getBlock: (height: number) => getBlockLogic(height, currency),
+    getBlockInfo: (height: number) => getBlockInfoLogic(height, currency),
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -61,28 +63,59 @@ export function createApi(config: ConcordiumConfig): AlpacaApi {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const tx = await craftTransaction(
+async function craftTransaction(
+  transactionIntent: TransactionIntent<ConcordiumMemo>,
+  currency: CryptoCurrency,
+): Promise<CraftedTransaction> {
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currency);
+  const memo =
+    "memo" in transactionIntent && transactionIntent.memo?.type === "string"
+      ? transactionIntent.memo.value
+      : undefined;
+  const structuredTransaction = await craftTransactionLogic(
     { address: transactionIntent.sender, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: new BigNumber(transactionIntent.amount.toString()),
+      ...(memo ? { memo } : {}),
     },
   );
-  return { transaction: tx.serializedTransaction };
+  const serialized =
+    structuredTransaction.type === TransactionType.TransferWithMemo
+      ? serializeTransferWithMemo(structuredTransaction)
+      : serializeTransfer(structuredTransaction);
+  return { transaction: serialized.toString("hex") };
 }
 
-async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
-  const { serializedTransaction } = await craftTransaction(
-    { address: transactionIntent.sender },
-    {
-      recipient: transactionIntent.recipient,
-      amount: new BigNumber(transactionIntent.amount.toString()),
-    },
+async function craftRawTransaction(
+  transaction: string,
+  sender: string,
+  publicKey: string,
+  sequence: bigint,
+): Promise<CraftedTransaction> {
+  const { serializedTransaction } = await craftRawTransactionLogic(
+    transaction,
+    sender,
+    publicKey,
+    sequence,
   );
+  return { transaction: serializedTransaction };
+}
 
-  const value = await estimateFees(serializedTransaction);
+async function estimateFees(
+  transactionIntent: TransactionIntent<ConcordiumMemo>,
+  currency: CryptoCurrency,
+): Promise<FeeEstimation> {
+  const memo =
+    "memo" in transactionIntent && transactionIntent.memo?.type === "string"
+      ? transactionIntent.memo.value
+      : undefined;
 
-  return { value };
+  const transactionType = memo ? TransactionType.TransferWithMemo : TransactionType.Transfer;
+
+  const memoSize = memo ? encodeMemoToCbor(memo).length : undefined;
+
+  const estimation = await estimateFeesLogic(currency, transactionType, memoSize);
+
+  return { value: estimation.cost };
 }

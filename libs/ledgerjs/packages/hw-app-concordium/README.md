@@ -58,38 +58,42 @@ For a smooth and quick integration:
         *   [Parameters](#parameters-7)
     *   [getPublicKey](#getpublickey)
         *   [Parameters](#parameters-8)
-    *   [signTransfer](#signtransfer)
+    *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-9)
-    *   [signTransferWithMemo](#signtransferwithmemo)
-        *   [Parameters](#parameters-10)
     *   [signCredentialDeployment](#signcredentialdeployment)
-        *   [Parameters](#parameters-11)
+        *   [Parameters](#parameters-10)
 *   [serializeTransfer](#serializetransfer)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-11)
 *   [prepareTransferAPDU](#preparetransferapdu)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-12)
 *   [serializeTransferWithMemo](#serializetransferwithmemo)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-13)
 *   [prepareTransferWithMemoAPDU](#preparetransferwithmemoapdu)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-14)
 *   [serializeTransactionPayloads](#serializetransactionpayloads)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-15)
 *   [serializeCredentialDeployment](#serializecredentialdeployment)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-16)
 *   [serializeIdOwnershipProofsPrefix](#serializeidownershipproofsprefix)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-17)
 *   [serializeIdOwnershipProofs](#serializeidownershipproofs)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-18)
 *   [serializeAccountOwnershipProofs](#serializeaccountownershipproofs)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-19)
 *   [insertAccountOwnershipProofs](#insertaccountownershipproofs)
 *   [Why Insertion Order Matters](#why-insertion-order-matters)
 *   [Serialization Order](#serialization-order)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-20)
 *   [deserializeTransfer](#deserializetransfer)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-21)
 *   [deserializeTransferWithMemo](#deserializetransferwithmemo)
+    *   [Parameters](#parameters-22)
+*   [getTransactionType](#gettransactiontype)
     *   [Parameters](#parameters-23)
+*   [deserializeTransaction](#deserializetransaction)
+    *   [Parameters](#parameters-24)
+*   [serializeTransaction](#serializetransaction)
+    *   [Parameters](#parameters-25)
 *   [IdOwnershipProofs](#idownershipproofs)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
 *   [Address](#address-1)
@@ -113,9 +117,9 @@ For a smooth and quick integration:
     *   [payload](#payload)
 *   [SigningResult](#signingresult)
 *   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-26)
 *   [chunkBuffer](#chunkbuffer)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-27)
 
 ### AccountAddress
 
@@ -288,7 +292,7 @@ Get Concordium address for a given path.
 ##### Parameters
 
 *   `originalPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path
-*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to display/verify address on device (default: true) (optional, default `true`)
+*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to display/verify address on device (default: false) (optional, default `false`)
 *   `id` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Identity number
 *   `cred` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Credential number
 *   `idp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Identity provider number
@@ -319,24 +323,14 @@ Get public key for a given path.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with public key (hex string)
 
-#### signTransfer
+#### signTransaction
 
-Sign a Transfer transaction.
-
-##### Parameters
-
-*   `tx` **[Transaction](#transaction)** Transfer transaction with type-safe payload
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SigningResult](#signingresult)>** Promise with signature and serialized transaction
-
-#### signTransferWithMemo
-
-Sign a TransferWithMemo transaction.
+Sign a transaction (Transfer or TransferWithMemo).
+Routes to the appropriate signing method based on transaction type.
 
 ##### Parameters
 
-*   `tx` **[Transaction](#transaction)** TransferWithMemo transaction with type-safe payload
+*   `tx` **[Transaction](#transaction)** Transaction to sign
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SigningResult](#signingresult)>** Promise with signature and serialized transaction
@@ -564,6 +558,56 @@ Expected format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry
 *   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized TransferWithMemo transaction
 
 Returns **[Transaction](#transaction)** Structured Transaction with all fields including memo
+
+### getTransactionType
+
+Gets the transaction type from a serialized transaction buffer.
+
+Common header format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry:8]\[type:1]
+The type byte is at offset 60 (32+8+8+4+8).
+
+Payload structure varies by type:
+
+*   Transfer (0x03): \[recipient:32]\[amount:8]
+*   TransferWithMemo (0x16): \[recipient:32]\[memo\_length:2]\[memo:N]\[amount:8]
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction buffer
+
+<!---->
+
+*   Throws **any** Error if buffer is too short or type is invalid
+
+Returns **[TransactionType](#transactiontype)** The transaction type
+
+### deserializeTransaction
+
+Deserializes a transaction buffer by automatically detecting its type.
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction buffer
+
+<!---->
+
+*   Throws **any** Error if buffer is invalid or type is unsupported
+
+Returns **[Transaction](#transaction)** The deserialized transaction
+
+### serializeTransaction
+
+Serializes a transaction by automatically using the correct serializer based on its type.
+
+#### Parameters
+
+*   `transaction` **[Transaction](#transaction)** The transaction to serialize
+
+<!---->
+
+*   Throws **any** Error if transaction type is unsupported
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** The serialized transaction buffer
 
 ### IdOwnershipProofs
 

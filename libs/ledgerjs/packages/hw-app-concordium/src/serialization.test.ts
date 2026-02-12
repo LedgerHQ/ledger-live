@@ -5,6 +5,9 @@ import {
   serializeTransferWithMemo,
   deserializeTransfer,
   deserializeTransferWithMemo,
+  deserializeTransaction,
+  serializeTransaction,
+  getTransactionType,
   prepareTransferAPDU,
   prepareTransferWithMemoAPDU,
 } from "./serialization";
@@ -1351,6 +1354,210 @@ describe("serialization", () => {
 
       // WHEN/THEN
       expect(() => prepareTransferAPDU(serialized, longPath)).toThrow(/BIP32 path too long/);
+    });
+  });
+
+  describe("getTransactionType", () => {
+    it("should detect Transfer transaction type", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+        },
+      };
+      const serialized = serializeTransfer(tx);
+
+      // WHEN
+      const detectedType = getTransactionType(serialized);
+
+      // THEN
+      expect(detectedType).toBe(TransactionType.Transfer);
+    });
+
+    it("should detect TransferWithMemo transaction type", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.TransferWithMemo,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+          memo: Buffer.from("Hello, Concordium!", "utf-8"),
+        },
+      };
+      const serialized = serializeTransferWithMemo(tx);
+
+      // WHEN
+      const detectedType = getTransactionType(serialized);
+
+      // THEN
+      expect(detectedType).toBe(TransactionType.TransferWithMemo);
+    });
+
+    it("should throw error for buffer that is too short", () => {
+      // GIVEN
+      const shortBuffer = Buffer.alloc(50); // Less than 61 bytes required
+
+      // WHEN/THEN
+      expect(() => getTransactionType(shortBuffer)).toThrow("Transaction buffer too short");
+    });
+
+    it("should throw error for unsupported transaction type", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+        },
+      };
+      const serialized = serializeTransfer(tx);
+
+      // Modify type byte to invalid value
+      const TYPE_OFFSET = 60;
+      serialized[TYPE_OFFSET] = 99; // Invalid type
+
+      // WHEN/THEN
+      expect(() => getTransactionType(serialized)).toThrow("Unsupported transaction type: 99");
+    });
+  });
+
+  describe("deserializeTransaction", () => {
+    it("should deserialize Transfer transaction", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 42n,
+          expiry: 2000n,
+          energyAmount: 1000n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 5000n,
+        },
+      };
+      const serialized = serializeTransfer(tx);
+
+      // WHEN
+      const deserialized = deserializeTransaction(serialized);
+
+      // THEN
+      expect(deserialized.type).toBe(TransactionType.Transfer);
+      expect(deserialized.header.nonce).toBe(42n);
+      expect(deserialized.payload.amount).toBe(5000n);
+    });
+
+    it("should deserialize TransferWithMemo transaction", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 99n,
+          expiry: 3000n,
+          energyAmount: 2000n,
+        },
+        type: TransactionType.TransferWithMemo,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 10000n,
+          memo: Buffer.from("Test memo", "utf-8"),
+        },
+      };
+      const serialized = serializeTransferWithMemo(tx);
+
+      // WHEN
+      const deserialized = deserializeTransaction(serialized);
+
+      // THEN
+      expect(deserialized.type).toBe(TransactionType.TransferWithMemo);
+      expect(deserialized.header.nonce).toBe(99n);
+      expect(deserialized.payload.amount).toBe(10000n);
+      expect(deserialized.payload.memo?.toString("utf-8")).toBe("Test memo");
+    });
+
+    it("should throw error for invalid buffer", () => {
+      // GIVEN
+      const invalidBuffer = Buffer.alloc(50); // Too short
+
+      // WHEN/THEN
+      expect(() => deserializeTransaction(invalidBuffer)).toThrow("Transaction buffer too short");
+    });
+  });
+
+  describe("serializeTransaction", () => {
+    it("should serialize Transfer transaction", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 123n,
+          expiry: 4000n,
+          energyAmount: 1500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 7500n,
+        },
+      };
+
+      // WHEN
+      const serialized = serializeTransaction(tx);
+
+      // THEN - Should be able to deserialize back to same transaction
+      const deserialized = deserializeTransaction(serialized);
+      expect(deserialized.type).toBe(TransactionType.Transfer);
+      expect(deserialized.header.nonce).toBe(123n);
+      expect(deserialized.payload.amount).toBe(7500n);
+    });
+
+    it("should serialize TransferWithMemo transaction", () => {
+      // GIVEN
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 456n,
+          expiry: 5000n,
+          energyAmount: 2500n,
+        },
+        type: TransactionType.TransferWithMemo,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 12000n,
+          memo: Buffer.from("Roundtrip test", "utf-8"),
+        },
+      };
+
+      // WHEN
+      const serialized = serializeTransaction(tx);
+
+      // THEN - Should be able to deserialize back to same transaction
+      const deserialized = deserializeTransaction(serialized);
+      expect(deserialized.type).toBe(TransactionType.TransferWithMemo);
+      expect(deserialized.header.nonce).toBe(456n);
+      expect(deserialized.payload.amount).toBe(12000n);
+      expect(deserialized.payload.memo?.toString("utf-8")).toBe("Roundtrip test");
     });
   });
 });

@@ -893,6 +893,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  WALLETCONNECT_PROJECT_ID: {
+    def: "053f3301d5f72cf59dbab8ebeab71f23",
+    parser: stringParser,
+    desc: "WalletConnect Project ID",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,

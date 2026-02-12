@@ -40,4 +40,5 @@ export type DerivationMode =
   | "cashaddr"
   | "celo"
   | "celoMM"
-  | "celoEvm";
+  | "celoEvm"
+  | "concordium";

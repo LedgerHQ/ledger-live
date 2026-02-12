@@ -97,6 +97,7 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
                 amount: "10000000",
                 fee: "1",
+                memo: undefined,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
@@ -115,6 +116,7 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
                 amount: "10000000",
                 fee: "1",
+                memo: undefined,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
