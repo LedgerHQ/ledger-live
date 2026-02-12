@@ -8,6 +8,7 @@ export async function launchApp({
   userdataDestinationPath,
   simulateCamera,
   windowSize,
+  recordVideo,
 }: {
   env: Record<string, string>;
   lang: string;
@@ -15,6 +16,7 @@ export async function launchApp({
   userdataDestinationPath: string;
   simulateCamera?: string;
   windowSize: { width: number; height: number };
+  recordVideo?: boolean;
 }): Promise<ElectronApplication> {
   return await electron.launch({
     args: [
@@ -31,10 +33,12 @@ export async function launchApp({
           ]
         : []),
     ],
-    recordVideo: {
-      dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-      size: windowSize,
-    },
+    ...(recordVideo && {
+      recordVideo: {
+        dir: `${path.join(__dirname, "../artifacts/videos/")}`,
+        size: windowSize,
+      },
+    }),
     env,
     colorScheme: theme,
     locale: lang,
