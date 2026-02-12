@@ -9,6 +9,7 @@ module.exports = {
     ],
   ],
   plugins: [
+    "metro-transform-plugins/private/inline-requires-plugin",
     "@babel/plugin-transform-named-capturing-groups-regex",
     "@babel/plugin-transform-export-namespace-from",
     "@babel/plugin-transform-class-static-block",

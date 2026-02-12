@@ -71,6 +71,7 @@ coverage/
 
 # Bundle artifact
 *.jsbundle
+*.jsbundle.map
 
 # Meta artifact
 mobile.metafile.*
@@ -81,6 +82,10 @@ mobile.metafile.*
 # jest
 coverage/
 **/__snapshots__/
+
+# Rsdoctor / bundle output
+assets/assets/
+assets/src/
 
 # misc
 .env

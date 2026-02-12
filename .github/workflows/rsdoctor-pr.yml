@@ -1,0 +1,75 @@
+# Proof of concept integration of RSDoctor on PRs
+# in future, we will want to integrate these back into the regular build checks flows
+# Doc: https://github.com/web-infra-dev/rsdoctor-action
+# Single job so the action runs once with both reports → one combined PR comment (no overwrite).
+
+name: "[Rsdoctor] - Bundle reports on PR"
+
+on:
+  pull_request:
+    branches: [develop, main, feat/rsdoctor]
+  push:
+    branches: [develop, main, feat/rsdoctor]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Ref to run (default: branch or PR head)"
+        type: string
+        required: false
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  NODE_OPTIONS: "--max-old-space-size=8192"
+  CI: "true"
+  RSDOCTOR: "1"
+
+jobs:
+  rsdoctor:
+    name: "Rsdoctor (Desktop + Mobile)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.inputs.ref || github.sha }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm i
+
+      - name: Build desktop dependencies
+        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+
+      - name: Build with Rsdoctor (Desktop)
+        run: pnpm --filter ledger-live-desktop run doctor
+
+      - name: Build mobile dependencies
+        run: pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+
+      - name: Build with Rsdoctor (Mobile)
+        run: pnpm --filter live-mobile run doctor
+
+      - name: Bundle Analysis (Desktop + Mobile)
+        uses: web-infra-dev/rsdoctor-action@main
+        with:
+          file_path: _rsdoctor-*/rsdoctor-data.json
+          # PR: compare against base branch. Push: use ref so action uploads baseline for that branch.
+          target_branch: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || (github.event_name == 'push' && github.ref_name) || github.event.repository.default_branch }}

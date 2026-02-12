@@ -1,7 +1,7 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
+import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE, getRsdoctorPlugin } from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron preloader script
@@ -29,6 +29,7 @@ export function createPreloaderConfig(
     },
     devtool: "source-map",
     plugins: [
+      ...getRsdoctorPlugin(),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),
