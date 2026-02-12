@@ -26,7 +26,7 @@ jobs:
       test-fail: ${{ steps.test.outcome }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -63,7 +63,7 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: outputs-*
           merge-multiple: true
@@ -90,7 +90,7 @@ jobs:
             };
 
             fs.writeFileSync("summary-cli.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary-cli.json

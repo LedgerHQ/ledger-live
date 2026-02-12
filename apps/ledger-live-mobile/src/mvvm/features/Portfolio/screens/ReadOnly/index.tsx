@@ -1,27 +1,17 @@
-import React, { useCallback, useMemo } from "react";
-import { Box, Button, Flex } from "@ledgerhq/native-ui";
-import {
-  Subheader,
-  SubheaderRow,
-  SubheaderTitle,
-  SubheaderShowMore,
-} from "@ledgerhq/lumen-ui-rnative";
+import React, { useMemo } from "react";
+import { Flex } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
-import BuyDeviceBanner, {
-  IMAGE_PROPS_BUY_DEVICE_FLEX,
-} from "LLM/features/Reborn/components/BuyDeviceBanner";
-import MarketBanner from "LLM/features/MarketBanner";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
-import Assets from "~/screens/Portfolio/Assets";
-import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { ScreenName } from "~/const";
+import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 
 type NavigationProps = BaseComposite<
@@ -30,19 +20,13 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
   const {
-    hasOrderedNano,
     assets,
     shouldDisplayGraphRework,
-    t,
+    isLNSUpsellBannerShown,
     source,
     goToAssets,
     onBackFromUpdate,
   } = useReadOnlyPortfolioViewModel(navigation);
-
-  const getCryptoSectionTitle = useCallback(
-    (): string => `${t("wallet.tabs.crypto")} (${String(assets.length)})`,
-    [t, assets.length],
-  );
 
   const data = useMemo(
     () => [
@@ -54,51 +38,14 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           isReadOnlyMode
         />
       </Box>,
-      ...(hasOrderedNano
-        ? [
-            <Box mt={7} key="SetupDeviceBanner">
-              <SetupDeviceBanner screen="Wallet" />
-            </Box>,
-          ]
-        : []),
-      <Box mx={6} mt={6} key="MarketBanner">
-        <MarketBanner />
-      </Box>,
-      <Box px={6} key="Assets">
-        <Subheader>
-          <SubheaderRow
-            onPress={goToAssets}
-            lx={{ marginBottom: "s12" }}
-            accessibilityRole="button"
-          >
-            <SubheaderTitle>{getCryptoSectionTitle()}</SubheaderTitle>
-            <SubheaderShowMore />
-          </SubheaderRow>
-        </Subheader>
-        <Assets assets={assets} />
-        <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
-          {t("portfolio.seeAllAssets")}
-        </Button>
-      </Box>,
-      ...(!hasOrderedNano
-        ? [
-            <Flex key="BuyDeviceBanner" mt={6} bg="transparent">
-              <BuyDeviceBanner
-                {...IMAGE_PROPS_BUY_DEVICE_FLEX}
-                image="buyFlex"
-                buttonLabel={t("buyDevice.bannerButtonTitle")}
-                buttonSize="small"
-                event="button_clicked"
-                eventProperties={{
-                  button: "Discover the Nano",
-                }}
-                screen="Wallet"
-              />
-            </Flex>,
-          ]
-        : []),
+      <PortfolioNoSignerContent
+        key="noSigner"
+        assets={assets}
+        goToAssets={goToAssets}
+        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+      />,
     ],
-    [hasOrderedNano, shouldDisplayGraphRework, assets, goToAssets, t, getCryptoSectionTitle],
+    [shouldDisplayGraphRework, isLNSUpsellBannerShown, assets, goToAssets],
   );
 
   return (

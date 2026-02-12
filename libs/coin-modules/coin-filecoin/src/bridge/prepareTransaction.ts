@@ -1,12 +1,12 @@
-import BigNumber from "bignumber.js";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "../network";
-import { BroadcastBlockIncl, Transaction } from "../types";
-import { Methods, calculateEstimatedFees } from "./utils";
+import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { fetchEstimatedFees } from "../api/index";
 import { getAddress, getSubAccount } from "../common-logic/utils";
 import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
+import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "../network";
+import { BroadcastBlockIncl, Transaction } from "../types";
+import { Methods, calculateEstimatedFees } from "./utils";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

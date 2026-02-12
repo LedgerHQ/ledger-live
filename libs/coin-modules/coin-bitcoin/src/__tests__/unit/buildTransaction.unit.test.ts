@@ -5,7 +5,7 @@ import wallet, { TransactionInfo } from "../../wallet-btc";
 import { fromTransactionRaw } from "../../transaction";
 import { buildTransaction } from "../../buildTransaction";
 
-import { createFixtureAccount, networkInfo } from "../fixtures/common.fixtures";
+import { createFixtureAccount, networkInfo } from "../../fixtures/common.fixtures";
 
 jest.mock("../../wallet-btc", () => ({
   ...jest.requireActual("../../wallet-btc"),

@@ -51,7 +51,7 @@ const MarketBannerView = ({
 
   return (
     <Box testID={testID} lx={{ marginBottom: "s24" }}>
-      <Subheader>
+      <Subheader testID="market-banner-title">
         <SubheaderRow
           onPress={onSectionTitlePress}
           lx={{ marginBottom: "s12" }}

@@ -1,8 +1,10 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
-import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
-import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import cosmosCoinConfig, { cosmosConfig } from "../config";
+import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
+import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
 import { hydrate } from "./preload";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
@@ -27,6 +29,10 @@ describe("hydrate", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    LiveConfig.setConfig(cosmosConfig);
+    cosmosCoinConfig.setCoinConfig(
+      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+    );
   });
 
   it("should return undefined if data is corrupted", () => {

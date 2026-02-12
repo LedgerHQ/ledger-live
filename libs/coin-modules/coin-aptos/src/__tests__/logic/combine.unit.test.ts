@@ -1,5 +1,5 @@
-import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import { Hex, generateSignedTransaction } from "@aptos-labs/ts-sdk";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import { combine } from "../../logic/combine";
 
 const hexRawTx =

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
@@ -14,8 +14,12 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { closeModal } from "~/renderer/actions/modals";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { ReceiveOptionsDialog } from "LLD/features/Receive";
 import { GlobalModalData } from "../types";
-import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
+import {
+  onboardingReceiveFlowSelector,
+  setIsOnboardingReceiveFlow,
+} from "~/renderer/reducers/onboarding";
 
 type State = {
   stepId: StepId;
@@ -44,6 +48,7 @@ function getInitialState(
 
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const noahFeature = useFeature("noah");
+  const { shouldDisplayNewReceiveDialog } = useWalletFeaturesConfig("desktop");
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isNoahActive = noahFeature?.enabled === true && props?.shouldUseReceiveOptions !== false;
   const initialState = getInitialState(
@@ -109,6 +114,16 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
     dispatch(closeModal("MODAL_RECEIVE"));
   }, [dispatch, openAssetFlow]);
 
+  const handleClose = useCallback(
+    (success = false) => {
+      if (isOnboardingReceiveFlow) {
+        dispatch(setIsOnboardingReceiveFlow({ isFlow: false, isSuccess: success }));
+      }
+      dispatch(closeModal("MODAL_RECEIVE"));
+    },
+    [dispatch, isOnboardingReceiveFlow],
+  );
+
   useEffect(() => {
     if (!hasAccounts) {
       openAddAccounts();
@@ -116,6 +131,16 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   }, [dispatch, hasAccounts, openAddAccounts, setStepId]);
 
   if (!hasAccounts) return null;
+
+  // TODO: Remove this once the new receive dialog is fully implemented
+  if (shouldDisplayNewReceiveDialog && stepId === "receiveOptions") {
+    return (
+      <ReceiveOptionsDialog
+        onClose={() => handleClose(false)}
+        onGoToAccount={() => setStepId("account")}
+      />
+    );
+  }
 
   const isModalLocked = stepId === "receive" && isAddressVerified === null;
 
@@ -134,6 +159,7 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
           onChangeAddressVerified={handleChangeAddressVerified}
           onChangeStepId={setStepId}
           params={data || {}}
+          useLegacyReceiveOptions={!shouldDisplayNewReceiveDialog}
         />
       )}
     />

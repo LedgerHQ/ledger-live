@@ -3,10 +3,10 @@ import { Account, VersionedMessage } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import { SolanaMemoIsTooLong } from "./errors";
+import * as logicValidateMemo from "./logic/validateMemo";
 import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
 import { SolanaAccount, Transaction, TransferTransaction } from "./types";
-import * as logicValidateMemo from "./logic/validateMemo";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");

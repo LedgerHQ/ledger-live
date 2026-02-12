@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 import {
   EvmTransactionEIP1559,
@@ -11,8 +11,8 @@ import {
   EvmNftTransactionRaw,
   EvmNftTransaction,
 } from "../types";
-import usdtTokenData from "./ethereum-erc20-usd__coin.json";
 import { makeAccount, makeTokenAccount } from "./common.fixtures";
+import usdtTokenData from "./ethereum-erc20-usd__coin.json";
 
 export const testData = Object.freeze(Buffer.from("testBufferString").toString("hex"));
 

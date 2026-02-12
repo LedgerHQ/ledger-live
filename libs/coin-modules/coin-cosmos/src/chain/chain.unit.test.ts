@@ -1,6 +1,15 @@
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import cosmosCoinConfig, { cosmosConfig } from "../config";
 import cryptoFactory from "./chain";
 
 describe("cryptoFactory test", () => {
+  beforeAll(() => {
+    LiveConfig.setConfig(cosmosConfig);
+    cosmosCoinConfig.setCoinConfig(
+      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+    );
+  });
+
   it("should not return null with currencies in cosmos family", () => {
     const currencies = [
       "cosmos",
@@ -13,11 +22,9 @@ describe("cryptoFactory test", () => {
       "dydx",
       "nyx",
       "onomy",
-      "sei_network",
       "persistence",
       "quicksilver",
       "secret_network",
-      "sei_network",
       "stargaze",
       "stride",
       "mantra",

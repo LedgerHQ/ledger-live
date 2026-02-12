@@ -1,9 +1,10 @@
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
+import { broadcastTransaction as broadcastLogic } from "../api";
 import broadcast from "./broadcast";
+
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../api");
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { broadcastTransaction as broadcastLogic } from "../api";
 
 describe("broadcast", () => {
   let patchOperationSpy: jest.SpyInstance;

@@ -48,7 +48,7 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
 
@@ -79,13 +79,13 @@ jobs:
           GENERATE_METAFILES: "lite"
 
       - name: Upload ${{ matrix.config.name }} app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/ledger-live-desktop-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
 
       - name: Upload bundle metafiles
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}
         with:
           name: ${{ matrix.config.output-name }}-js-bundle-metafiles
@@ -104,7 +104,7 @@ jobs:
     timeout-minutes: 5
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' || github.event_name == 'push') && needs.build-desktop-app.outputs.linux == 'success' && needs.build-desktop-app.outputs.win == 'success' && needs.build-desktop-app.outputs.mac == 'success' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
 
@@ -115,17 +115,17 @@ jobs:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         if: ${{ needs.build-desktop-app.outputs.linux == 'success' }}
         with:
           name: linux-js-bundle-metafiles
           path: linux-js-bundle-metafiles
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         if: ${{ needs.build-desktop-app.outputs.win == 'success' }}
         with:
           name: win-js-bundle-metafiles
           path: win-js-bundle-metafiles
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         if: ${{ needs.build-desktop-app.outputs.mac == 'success' }}
         with:
           name: mac-js-bundle-metafiles
@@ -159,7 +159,7 @@ jobs:
           statuses: ${{ steps.statuses.outputs.result }}
           attempt: ${{ github.run_attempt }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary-build-desktop.json

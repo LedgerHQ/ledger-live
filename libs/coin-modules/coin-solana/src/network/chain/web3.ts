@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   createAmountToUiAmountInstruction,
   createApproveCheckedInstruction,
@@ -23,9 +22,10 @@ import {
   VersionedTransaction,
   TransactionMessage,
 } from "@solana/web3.js";
+import BigNumber from "bignumber.js";
 import chunk from "lodash/chunk";
 import uniq from "lodash/uniq";
-import { ChainAPI } from ".";
+import { getTokenAccountProgramId } from "../../helpers/token";
 import { Awaited } from "../../logic";
 import {
   SolanaTokenProgram,
@@ -51,8 +51,8 @@ import { parseStakeAccountInfo } from "./account/parser";
 import { StakeAccountInfo } from "./account/stake";
 import { MintAccountInfo, TokenAccountInfo } from "./account/token";
 import { VoteAccountInfo } from "./account/vote";
-import { getTokenAccountProgramId } from "../../helpers/token";
 import { PARSED_PROGRAMS } from "./program/constants";
+import { ChainAPI } from ".";
 
 const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
 

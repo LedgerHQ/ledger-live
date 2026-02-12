@@ -1,27 +1,15 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { Link, useNavigate, useLocation } from "react-router";
-import { Transition } from "react-transition-group";
+import { useSelector } from "LLD/hooks/redux";
+import { Link } from "react-router";
+import { Transition, type TransitionStatus } from "react-transition-group";
 import styled from "styled-components";
-import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import {
-  FeatureToggle,
-  useFeature,
-  useWalletFeaturesConfig,
-} from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
-import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
-  sidebarCollapsedSelector,
-  lastSeenDeviceSelector,
   featureFlagsButtonVisibleSelector,
   overriddenFeatureFlagsSelector,
 } from "~/renderer/reducers/settings";
-import { isNavigationLocked } from "~/renderer/reducers/application";
-import { openModal } from "~/renderer/actions/modals";
-import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken } from "~/renderer/styles/helpers";
@@ -31,22 +19,12 @@ import Space from "~/renderer/components/Space";
 import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
-import { BAANX_APP_ID } from "~/renderer/screens/card/CardPlatformApp";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
-import { track } from "~/renderer/analytics/segment";
-import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
-import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { HIDE_BAR_THRESHOLD } from "~/renderer/screens/dashboard/AssetDistribution/constants";
-
-type LocationType = ReturnType<typeof useLocation>;
+import { useSideBarViewModel } from "LLD/components/SideBar/useSideBarViewModel";
 
 const MAIN_SIDEBAR_WIDTH = 230;
-
-const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
-const STARRED_ACCOUNT_ITEM_HEIGHT = 55;
 
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
   style: {
@@ -133,19 +111,12 @@ const Separator = styled(Box).attrs(() => ({
   height: 1px;
   background: ${p => p.theme.colors.neutral.c40};
 `;
-const sideBarTransitionStyles = {
-  entering: {
-    flexBasis: MAIN_SIDEBAR_WIDTH,
-  },
-  entered: {
-    flexBasis: MAIN_SIDEBAR_WIDTH,
-  },
-  exiting: {
-    flexBasis: collapsedWidth,
-  },
-  exited: {
-    flexBasis: collapsedWidth,
-  },
+const sideBarTransitionStyles: Record<TransitionStatus, React.CSSProperties> = {
+  entering: { flexBasis: MAIN_SIDEBAR_WIDTH },
+  entered: { flexBasis: MAIN_SIDEBAR_WIDTH },
+  exiting: { flexBasis: collapsedWidth },
+  exited: { flexBasis: collapsedWidth },
+  unmounted: { flexBasis: collapsedWidth },
 };
 const enableTransitions = () =>
   document.body &&
@@ -225,188 +196,43 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   ) : null;
 };
 
-// Check if the selected tab is a Live-App under discovery tab
-const checkLiveAppTabSelection = (location: LocationType, liveAppPaths: Array<string>) =>
-  liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
-
 const MainSideBar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useDispatch();
   const { t } = useTranslation();
-  const earnLabel = useGetStakeLabelLocaleBased();
-  const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
-  const isCardDisabled = !manifest;
-
-  /** redux navigation locked state */
-  const navigationLocked = useSelector(isNavigationLocked);
-  const collapsed = useSelector(sidebarCollapsedSelector);
-  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const noAccounts = useSelector(accountsSelector).length === 0;
-  const totalStarredAccounts = useSelector(starredAccountsSelector).length;
-  const displayBlueDot = useDeviceHasUpdatesAvailable(lastSeenDevice);
-
-  const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
-  const recoverFeature = useFeature("protectServicesDesktop");
-  const recoverHomePath = useAccountPath(recoverFeature);
+  const viewModel = useSideBarViewModel();
+  const nodeRef = useRef(null);
 
   const {
-    shouldDisplayMarketBanner: isMarketBannerEnabled,
-    shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
-    isEnabled: isWallet40Enabled,
-  } = useWalletFeaturesConfig("desktop");
-
-  /**
-   * Auto-collapse sidebar when wallet40 is enabled and window width becomes narrow.
-   * Uses the same threshold as the AssetDistribution responsive layout.
-   * Note: Does not auto-expand when window becomes wider; user must manually reopen.
-   */
-  const wasNarrowRef = useRef<boolean | null>(null);
-
-  useEffect(() => {
-    if (!isWallet40Enabled) return;
-
-    const handleResize = () => {
-      const isNarrow = window.innerWidth <= HIDE_BAR_THRESHOLD;
-
-      if (wasNarrowRef.current !== isNarrow) {
-        wasNarrowRef.current = isNarrow;
-        if (isNarrow) {
-          dispatch(setSidebarCollapsed(true));
-        }
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isWallet40Enabled, dispatch]);
-
-  const handleCollapse = useCallback(() => {
-    dispatch(setSidebarCollapsed(!collapsed));
-  }, [dispatch, collapsed]);
-  const push = useCallback(
-    (pathname: string) => {
-      if (location.pathname === pathname) return;
-      setTrackingSource("sidebar");
-      navigate(pathname);
-    },
-    [navigate, location.pathname],
-  );
-
-  const trackEntry = useCallback(
-    (entry: string, flagged = false) => {
-      track("menuentry_clicked", {
-        entry,
-        page: location.pathname,
-        flagged,
-      });
-    },
-    [location.pathname],
-  );
-  const handleClickCard = useCallback(() => {
-    push("/card");
-    trackEntry("card");
-  }, [push, trackEntry]);
-  const handleClickDashboard = useCallback(() => {
-    push("/");
-    trackEntry("/portfolio");
-  }, [push, trackEntry]);
-  const handleClickMarket = useCallback(() => {
-    push("/market");
-    trackEntry("market");
-  }, [push, trackEntry]);
-  const handleClickManager = useCallback(() => {
-    push("/manager");
-    trackEntry("manager");
-  }, [push, trackEntry]);
-  const handleClickAccounts = useCallback(() => {
-    push("/accounts");
-    trackEntry("accounts");
-  }, [push, trackEntry]);
-  const handleClickCatalog = useCallback(() => {
-    push("/platform");
-    trackEntry("platform");
-  }, [push, trackEntry]);
-  const handleClickExchange = useCallback(() => {
-    push("/exchange");
-    trackEntry("exchange");
-  }, [push, trackEntry]);
-  const openSendFlow = useOpenSendFlow();
-  const handleClickEarn = useCallback(() => {
-    push("/earn");
-    trackEntry("earn");
-  }, [push, trackEntry]);
-  const handleClickSwap = useCallback(() => {
-    push("/swap");
-    trackEntry("swap");
-  }, [push, trackEntry]);
-  const handleClickPerps = useCallback(() => {
-    push("/perps");
-    trackEntry("perps");
-  }, [push, trackEntry]);
-  const handleClickRefer = useCallback(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
-      push(referralProgramConfig?.params.path);
-      trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
-    }
-  }, [push, referralProgramConfig, trackEntry]);
-  const maybeRedirectToAccounts = useCallback(() => {
-    return location.pathname === "/manager" && push("/accounts");
-  }, [location.pathname, push]);
-  const handleOpenSendModal = useCallback(() => {
-    maybeRedirectToAccounts();
-    openSendFlow();
-  }, [maybeRedirectToAccounts, openSendFlow]);
-  const handleOpenReceiveModal = useCallback(() => {
-    maybeRedirectToAccounts();
-    dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts]);
-
-  const handleClickRecover = useCallback(() => {
-    const enabled = recoverFeature?.enabled;
-    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
-    const liveAppId = recoverFeature?.params?.protectId;
-
-    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
-      navigate(recoverHomePath);
-    } else if (enabled) {
-      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-    }
-    track("button_clicked2", {
-      button: "Protect",
-    });
-  }, [
-    recoverFeature?.enabled,
-    recoverFeature?.params?.openRecoverFromSidebar,
-    recoverFeature?.params?.protectId,
-    recoverHomePath,
-    navigate,
-    dispatch,
-  ]);
-
-  // Add your live-app path here if you don't want discovery and the live-app tabs to be both selected
-  const isLiveAppTabSelected = checkLiveAppTabSelection(
-    location,
-    [
-      referralProgramConfig?.params?.path, // Refer-a-friend
-    ].filter((path): path is string => !!path), // Filter undefined values,
-  );
-
-  const getMinHeightForStarredAccountsList = () => {
-    if (totalStarredAccounts === 0) {
-      return "max-content"; // let it take the full height of the placeholder
-    }
-
-    const minHeight =
-      Math.min(totalStarredAccounts, MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN) *
-      STARRED_ACCOUNT_ITEM_HEIGHT;
-
-    return minHeight + "px";
-  };
-
-  const nodeRef = useRef(null);
+    pathname: locationPathname,
+    collapsed,
+    navigationLocked,
+    noAccounts,
+    totalStarredAccounts,
+    displayBlueDot,
+    earnLabel,
+    isCardDisabled,
+    isLiveAppTabSelected,
+    isMarketBannerEnabled,
+    isQuickActionCtasEnabled,
+    isWallet40MainNavEnabled,
+    referralProgramConfig,
+    getMinHeightForStarredAccountsList,
+    handleCollapse,
+    handleClickDashboard,
+    handleClickMarket,
+    handleClickAccounts,
+    handleClickManager,
+    handleClickCatalog,
+    handleClickExchange,
+    handleClickEarn,
+    handleClickSwap,
+    handleClickPerps,
+    handleClickCard,
+    handleClickCardWallet,
+    handleClickRefer,
+    handleClickRecover,
+    handleOpenSendModal,
+    handleOpenReceiveModal,
+  } = viewModel;
 
   return (
     <Transition
@@ -421,10 +247,7 @@ const MainSideBar = () => {
       {state => {
         const secondAnim = !(state === "entered" && !collapsed);
         return (
-          <SideBar
-            ref={nodeRef}
-            style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}
-          >
+          <SideBar ref={nodeRef} style={sideBarTransitionStyles[state]}>
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}
@@ -443,7 +266,7 @@ const MainSideBar = () => {
                   icon={Icons.Home}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
-                  isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
+                  isActive={locationPathname === "/" || locationPathname.startsWith("/asset/")}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
@@ -454,7 +277,7 @@ const MainSideBar = () => {
                     icon={Icons.GraphAsc}
                     iconActiveColor="wallet"
                     onClick={handleClickMarket}
-                    isActive={location.pathname.startsWith("/market")}
+                    isActive={locationPathname.startsWith("/market")}
                     collapsed={secondAnim}
                   />
                 )}
@@ -463,7 +286,7 @@ const MainSideBar = () => {
                   label={t("sidebar.accounts")}
                   icon={Icons.Wallet}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/account")}
+                  isActive={locationPathname.startsWith("/account")}
                   onClick={handleClickAccounts}
                   disabled={noAccounts}
                   collapsed={secondAnim}
@@ -496,7 +319,7 @@ const MainSideBar = () => {
                   icon={Icons.Exchange}
                   iconActiveColor="wallet"
                   onClick={handleClickSwap}
-                  isActive={location.pathname.startsWith("/swap")}
+                  isActive={locationPathname.startsWith("/swap")}
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
@@ -507,9 +330,14 @@ const MainSideBar = () => {
                     icon={Icons.GraphAsc}
                     iconActiveColor="wallet"
                     onClick={handleClickPerps}
-                    isActive={location.pathname.startsWith("/perps")}
+                    isActive={locationPathname.startsWith("/perps")}
                     disabled={noAccounts}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      <CustomTag active type="plain" size="small">
+                        {t("common.new")}
+                      </CustomTag>
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
@@ -518,7 +346,7 @@ const MainSideBar = () => {
                   icon={Icons.Percentage}
                   iconActiveColor="wallet"
                   onClick={handleClickEarn}
-                  isActive={location.pathname === "/earn"}
+                  isActive={locationPathname === "/earn"}
                   collapsed={secondAnim}
                 />
                 {!isQuickActionCtasEnabled && (
@@ -528,7 +356,7 @@ const MainSideBar = () => {
                     icon={Icons.Dollar}
                     iconActiveColor="wallet"
                     onClick={handleClickExchange}
-                    isActive={location.pathname === "/exchange"}
+                    isActive={locationPathname === "/exchange"}
                     disabled={noAccounts}
                     collapsed={secondAnim}
                   />
@@ -538,7 +366,7 @@ const MainSideBar = () => {
                   label={t("sidebar.catalog")}
                   icon={Icons.Globe}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
+                  isActive={locationPathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
@@ -549,10 +377,10 @@ const MainSideBar = () => {
                     icon={Icons.Gift}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={
-                      referralProgramConfig?.params &&
-                      location.pathname.startsWith(referralProgramConfig.params.path)
-                    }
+                    isActive={Boolean(
+                      referralProgramConfig?.params?.path &&
+                        locationPathname.startsWith(referralProgramConfig.params.path),
+                    )}
                     collapsed={secondAnim}
                     NotifComponent={
                       referralProgramConfig?.params?.amount ? (
@@ -567,16 +395,29 @@ const MainSideBar = () => {
                     }
                   />
                 </FeatureToggle>
-                <SideBarListItem
-                  id={"card"}
-                  label={t("sidebar.card")}
-                  icon={Icons.CreditCard}
-                  iconActiveColor="wallet"
-                  isActive={location.pathname === "/card"}
-                  onClick={handleClickCard}
-                  collapsed={secondAnim}
-                  disabled={isCardDisabled}
-                />
+                {isWallet40MainNavEnabled ? (
+                  <SideBarListItem
+                    id={"card-wallet"}
+                    label={t("sidebar.card")}
+                    icon={Icons.CreditCard}
+                    iconActiveColor="wallet"
+                    isActive={locationPathname === "/card-new-wallet"}
+                    onClick={handleClickCardWallet}
+                    collapsed={secondAnim}
+                  />
+                ) : (
+                  <SideBarListItem
+                    id={"card"}
+                    label={t("sidebar.card")}
+                    icon={Icons.CreditCard}
+                    iconActiveColor="wallet"
+                    isActive={locationPathname === "/card"}
+                    onClick={handleClickCard}
+                    collapsed={secondAnim}
+                    disabled={isCardDisabled}
+                  />
+                )}
+
                 <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
                     id={"recover"}
@@ -594,7 +435,7 @@ const MainSideBar = () => {
                   icon={Icons.LedgerDevices}
                   iconActiveColor="wallet"
                   onClick={handleClickManager}
-                  isActive={location.pathname === "/manager"}
+                  isActive={locationPathname === "/manager"}
                   NotifComponent={displayBlueDot ? <Dot collapsed={collapsed} /> : null}
                   collapsed={secondAnim}
                 />
@@ -612,7 +453,7 @@ const MainSideBar = () => {
                 title={t("sidebar.stars")}
                 collapsed={secondAnim}
               >
-                <Stars pathname={location.pathname} collapsed={secondAnim} />
+                <Stars pathname={locationPathname} collapsed={secondAnim} />
               </SideBarList>
             </SideBarScrollContainer>
 

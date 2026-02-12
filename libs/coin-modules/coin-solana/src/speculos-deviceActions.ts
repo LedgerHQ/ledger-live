@@ -1,15 +1,15 @@
-import { Account } from "@ledgerhq/types-live";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import BigNumber from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import type { Transaction } from "./types";
 
 function getMainCurrency(currency: CryptoCurrency) {
   if (currency.isTestnetFor !== undefined) {

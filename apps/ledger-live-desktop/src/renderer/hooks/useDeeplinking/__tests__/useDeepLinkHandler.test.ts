@@ -96,12 +96,20 @@ jest.mock("../utils", () => ({
 
 const createMockAccount = (currencyId: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
+  const zero = new BigNumber(0);
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     id: `${currencyId}-account-1`,
     type: "Account" as const,
     name: `${currency.name} 1`,
     currency,
+    balance: zero,
+    spendableBalance: zero,
+    operations: [],
+    operationsCount: 0,
+    pendingOperations: [],
+    lastSyncDate: new Date(),
+    swapHistory: [],
   } as unknown as Account;
 };
 
@@ -112,6 +120,8 @@ const createMockTokenAccount = (parentId: string, tokenId: string): TokenAccount
     type: "TokenAccount" as const,
     parentId,
     token: { id: tokenId },
+    balance: new BigNumber(0),
+    operationsCount: 0,
   }) as unknown as TokenAccount;
 
 describe("useDeepLinkHandler", () => {

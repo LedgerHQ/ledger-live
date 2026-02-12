@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-solana",
-  "version": "1.11.1",
+  "version": "1.12.0-next.0",
   "description": "Ledger Solana Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -63,8 +63,8 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@solana/spl-token": "0.4.9",
-    "@solana/web3.js": "1.95.4",
+    "@solana/spl-token": "catalog:",
+    "@solana/web3.js": "catalog:",
     "bignumber.js": "^9",
     "bip39": "^3.1.0",
     "docker-compose": "^1",

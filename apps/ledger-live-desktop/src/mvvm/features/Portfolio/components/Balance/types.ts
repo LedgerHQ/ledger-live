@@ -6,11 +6,11 @@ export interface BalanceViewProps {
   readonly formatter: (value: number) => FormattedValue;
   readonly discreet: boolean;
   readonly valueChange: ValueChange;
-  readonly isAvailable: boolean;
   readonly navigateToAnalytics: () => void;
   readonly handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
 export type BalanceViewModelResult = BalanceViewProps & {
-  readonly hasFunds: boolean;
+  readonly hasAccount: boolean;
+  readonly hasCompletedOnboarding: boolean;
 };

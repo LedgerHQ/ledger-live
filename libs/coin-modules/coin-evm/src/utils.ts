@@ -1,10 +1,10 @@
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
-import eip55 from "eip55";
 import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import eip55 from "eip55";
 import type { Transaction as EvmTransaction } from "./types";
 import type { SeiDelegation } from "./types/staking";
 
@@ -77,6 +77,22 @@ export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
 
 export function isEthAddress(address: string): boolean {
   return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
+}
+
+/**
+ * Normalizes an Ethereum address to lowercase to avoid checksum validation issues.
+ *
+ * Some chains like RSK use EIP-1191 (chain-specific checksum) instead of EIP-55.
+ * When an address has a valid EIP-1191 checksum but not a valid EIP-55 checksum,
+ * ethers.js will throw "bad address checksum" error.
+ *
+ * Converting the address to lowercase bypasses checksum validation in ethers.js
+ * since lowercase addresses are treated as not checksummed.
+ *
+ * @see https://github.com/rsksmart/RSKIPs/blob/master/IPs/RSKIP60.md
+ */
+export function normalizeAddress(address: string): string {
+  return address.toLowerCase();
 }
 
 /**

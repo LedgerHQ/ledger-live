@@ -1,13 +1,13 @@
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { DeviceModelId } from "@ledgerhq/devices";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
-import BigNumber from "bignumber.js";
-import { DeviceModelId } from "@ledgerhq/devices";
-import type { TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { Transaction } from "../types";
 import { acceptTransaction } from "./bot-deviceActions";
 

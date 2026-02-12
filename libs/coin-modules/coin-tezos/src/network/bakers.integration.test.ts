@@ -1,11 +1,11 @@
-import { DerivationMode, type CryptoAssetsStore } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { TezosAccountRaw } from "../types";
+import { DerivationMode, type CryptoAssetsStore } from "@ledgerhq/types-live";
+import coinConfig, { TezosCoinConfig } from "../config";
 import { loadAccountDelegation, listBakers } from "../network/bakers";
 import whitelist from "../network/bakers.whitelist-default";
-import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
+import { TezosAccountRaw } from "../types";
 
 function makeAccountRaw(
   name: string,

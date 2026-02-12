@@ -18,6 +18,7 @@ import {
 } from "@stellar/stellar-sdk";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
+import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 import {
   type BalanceAsset,
   type NetworkInfo,
@@ -26,7 +27,6 @@ import {
   NetworkCongestionLevel,
   StellarOperation,
 } from "../types";
-import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 
 const FALLBACK_BASE_FEE = 100;

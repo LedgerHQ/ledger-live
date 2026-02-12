@@ -27,6 +27,7 @@ export default function FilterTokenOperationsZeroAmount() {
         isChecked={filterTokenOperationsZeroAmount}
         onChange={setFilterTokenOperationsZeroAmount}
         data-e2e="filterTokenOperationsZeroAmount_button"
+        data-testid="switch-filter-token-operations-zero-amount"
       />
     </Row>
   );

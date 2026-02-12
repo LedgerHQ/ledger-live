@@ -236,6 +236,7 @@ export function renderConfirmSwap({
   device,
   theme,
   provider,
+  transaction,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
@@ -263,7 +264,10 @@ export function renderConfirmSwap({
           </Text>
         </Wrapper>
       </Wrapper>
-      <TermsFooter provider={provider} />
+      <TermsFooter
+        provider={provider}
+        sponsored={transaction.family === "evm" && transaction.sponsored}
+      />
       <ModalLock />
     </ScrollView>
   );

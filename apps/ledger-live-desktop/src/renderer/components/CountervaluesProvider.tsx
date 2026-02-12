@@ -79,7 +79,11 @@ function useCacheManager() {
   const state = useCountervaluesState();
   useEffect(() => {
     if (!Object.keys(state.status).length) return;
-    setKey("app", "countervalues", exportCountervalues(state, userSettings.trackingPairs));
+    setKey(
+      "app",
+      "countervalues",
+      exportCountervalues(state, userSettings.trackingPairs, userSettings.selectedTimeRange),
+    );
   }, [state, userSettings]);
 }
 

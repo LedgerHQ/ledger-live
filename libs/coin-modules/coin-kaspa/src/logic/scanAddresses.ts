@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
+import { getAddressesActive, getBalancesForAddresses } from "../network";
 import { AccountAddress, AccountAddresses } from "../types";
 import KaspaBIP32 from "./bip32";
-import { getAddressesActive, getBalancesForAddresses } from "../network";
 
 // Constants to improve clarity
 const RECEIVE_ADDRESS_TYPE = 0;

@@ -233,15 +233,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "sei_network",
-    ticker: "SEI",
-    name: "SeiNetwork",
-    family: "cosmos",
-    color: "#89395b",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
     id: "quicksilver",
     ticker: "QCK",
     name: "Quicksilver",
@@ -598,15 +589,6 @@ export const expectedCurrencyList = [
     name: "Ethereum Sepolia",
     family: "ethereum",
     color: "#ff0000",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
-    id: "ethereum_holesky",
-    ticker: "ETH",
-    name: "Ethereum Holesky",
-    family: "ethereum",
-    color: "#00ff00",
     decimals: 18,
   },
   {

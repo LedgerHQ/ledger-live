@@ -1,16 +1,16 @@
 /* instanbul ignore file: don't test fixtures */
 
-import BigNumber from "bignumber.js";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import "./cryptoAssetsStore.fixtures";
 
 export const makeAccount = (

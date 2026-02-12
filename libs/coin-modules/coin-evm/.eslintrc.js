@@ -12,7 +12,14 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/explicit-function-return-type": "error",
     "import/no-cycle": ["error"],
-    "import/order": ["error"],
+    "import/order": [
+      "error",
+      {
+        alphabetize: {
+          order: "asc",
+        },
+      },
+    ],
   },
   overrides: [
     {

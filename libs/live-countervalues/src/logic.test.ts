@@ -43,18 +43,39 @@ describe("exportCountervalues", () => {
   ];
 
   describe("hourlyLimit filtering", () => {
-    test("keeps daily data regardless of age", () => {
-      const oldDailyDate = new Date(Date.now() - 60 * DAY);
-      const oldDailyKey = formatCounterValueDay(oldDailyDate);
+    test("keeps recent daily data within retention period", () => {
+      const recentDailyDate = new Date(Date.now() - 15 * DAY);
+      const recentDailyKey = formatCounterValueDay(recentDailyDate);
 
       const state = createState({
-        "USD bitcoin": new Map([[oldDailyKey, 50000]]),
+        "USD bitcoin": new Map([[recentDailyKey, 50000]]),
       });
 
       const exported = exportCountervalues(state, defaultTrackingPairs);
 
       expect(exported["USD bitcoin"]).toEqual({
-        [oldDailyKey]: 50000,
+        [recentDailyKey]: 50000,
+      });
+    });
+
+    test("filters out old daily data beyond retention period when selectedTimeRange is provided", () => {
+      const selectedTimeRange = "month"; // 30 days
+      const oldDailyDate = new Date(Date.now() - 30 * DAY - DAY);
+      const oldDailyKey = formatCounterValueDay(oldDailyDate);
+      const recentDailyDate = new Date(Date.now() - 15 * DAY);
+      const recentDailyKey = formatCounterValueDay(recentDailyDate);
+
+      const state = createState({
+        "USD bitcoin": new Map([
+          [oldDailyKey, 45000],
+          [recentDailyKey, 50000],
+        ]),
+      });
+
+      const exported = exportCountervalues(state, defaultTrackingPairs, selectedTimeRange);
+
+      expect(exported["USD bitcoin"]).toEqual({
+        [recentDailyKey]: 50000,
       });
     });
 
@@ -104,12 +125,15 @@ describe("exportCountervalues", () => {
     });
 
     test("handles mixed data with multiple pairs", () => {
+      const selectedTimeRange = "month"; // 30 days
       const oldHourlyDate = new Date(Date.now() - datapointRetention.hourly - DAY);
       const oldHourlyKey = formatCounterValueHour(oldHourlyDate);
       const recentHourlyDate = new Date(Date.now() - 2 * DAY);
       const recentHourlyKey = formatCounterValueHour(recentHourlyDate);
-      const dailyDate = new Date(Date.now() - 60 * DAY);
-      const dailyKey = formatCounterValueDay(dailyDate);
+      const recentDailyDate = new Date(Date.now() - 15 * DAY);
+      const recentDailyKey = formatCounterValueDay(recentDailyDate);
+      const oldDailyDate = new Date(Date.now() - 30 * DAY - DAY);
+      const oldDailyKey = formatCounterValueDay(oldDailyDate);
       const borderlineHourlyDate = new Date(Date.now() - datapointRetention.hourly + 1000);
       const borderlineHourlyKey = `${formatCounterValueDay(borderlineHourlyDate)}T00`;
 
@@ -118,7 +142,8 @@ describe("exportCountervalues", () => {
           [oldHourlyKey, 48000],
           [recentHourlyKey, 52000],
           ["latest", 53000],
-          [dailyKey, 45000],
+          [recentDailyKey, 50000],
+          [oldDailyKey, 45000],
         ]),
         "USD ethereum": new Map([
           [oldHourlyKey, 3000],
@@ -128,11 +153,11 @@ describe("exportCountervalues", () => {
         ]),
       });
 
-      const exported = exportCountervalues(state, defaultTrackingPairs);
+      const exported = exportCountervalues(state, defaultTrackingPairs, selectedTimeRange);
 
       expect(exported["USD bitcoin"]).toEqual({
         [recentHourlyKey]: 52000,
-        [dailyKey]: 45000,
+        [recentDailyKey]: 50000,
         latest: 53000,
       });
 
@@ -140,6 +165,55 @@ describe("exportCountervalues", () => {
         [recentHourlyKey]: 3200,
         latest: 3100,
         [borderlineHourlyKey]: 3300,
+      });
+    });
+
+    test("uses selectedTimeRange to filter daily data", () => {
+      const selectedTimeRange = "week"; // 7 days
+      const oldDailyDate = new Date(Date.now() - 7 * DAY - DAY);
+      const oldDailyKey = formatCounterValueDay(oldDailyDate);
+      const recentDailyDate = new Date(Date.now() - 3 * DAY);
+      const recentDailyKey = formatCounterValueDay(recentDailyDate);
+
+      const state = createState({
+        "USD bitcoin": new Map([
+          [oldDailyKey, 45000],
+          [recentDailyKey, 50000],
+        ]),
+      });
+
+      const exported = exportCountervalues(state, defaultTrackingPairs, selectedTimeRange);
+
+      expect(exported["USD bitcoin"]).toEqual({
+        [recentDailyKey]: 50000,
+      });
+    });
+
+    test("keeps all daily data when selectedTimeRange is undefined or 'all'", () => {
+      const veryOldDailyDate = new Date(Date.now() - 365 * DAY);
+      const veryOldDailyKey = formatCounterValueDay(veryOldDailyDate);
+      const recentDailyDate = new Date(Date.now() - 15 * DAY);
+      const recentDailyKey = formatCounterValueDay(recentDailyDate);
+
+      const state = createState({
+        "USD bitcoin": new Map([
+          [veryOldDailyKey, 45000],
+          [recentDailyKey, 50000],
+        ]),
+      });
+
+      // Test with undefined
+      const exportedUndefined = exportCountervalues(state, defaultTrackingPairs, undefined);
+      expect(exportedUndefined["USD bitcoin"]).toEqual({
+        [veryOldDailyKey]: 45000,
+        [recentDailyKey]: 50000,
+      });
+
+      // Test with "all"
+      const exportedAll = exportCountervalues(state, defaultTrackingPairs, "all");
+      expect(exportedAll["USD bitcoin"]).toEqual({
+        [veryOldDailyKey]: 45000,
+        [recentDailyKey]: 50000,
       });
     });
   });

@@ -65,7 +65,7 @@ jobs:
     runs-on: ledger-live-medium
     steps:
       - name: Download mobile application file
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: ${{ inputs.artifact-name }}
           path: ${{ github.workspace }}/downloaded_artifacts/
@@ -157,13 +157,13 @@ jobs:
           echo '${{ steps.test-results.outputs.slack-report }}' > ./slack-report.txt
 
       - name: Upload performance report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ inputs.platform }}-performance-report.json
           path: ./performance-report.json
 
       - name: Upload Slack report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ inputs.platform }}-slack-report.txt
           path: ./slack-report.txt
@@ -174,7 +174,7 @@ jobs:
     if: ${{ (inputs.enable-comparison || inputs.enable-comparison == 'true') && (inputs.enable-comparison-notification || inputs.enable-comparison-notification == 'true') && (success() || failure()) }}
     steps:
       - name: Download Slack report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: ${{ inputs.platform }}-slack-report.txt
           path: ./

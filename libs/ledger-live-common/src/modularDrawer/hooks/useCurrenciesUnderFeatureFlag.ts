@@ -18,7 +18,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
   const onomy = useFeature("currencyOnomy");
-  const seiNetwork = useFeature("currencySeiNetwork");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
@@ -108,7 +107,6 @@ export function useCurrenciesUnderFeatureFlag() {
       desmos,
       dydx,
       onomy,
-      sei_network: seiNetwork,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
@@ -197,7 +195,6 @@ export function useCurrenciesUnderFeatureFlag() {
       desmos,
       dydx,
       onomy,
-      seiNetwork,
       quicksilver,
       persistence,
       avaxCChain,

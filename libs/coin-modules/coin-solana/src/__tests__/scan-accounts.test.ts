@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
+import config, { SolanaCoinConfig } from "../config";
 import { ChainAPI } from "../network";
 import * as stakeActivationModule from "../network/chain/stake-activation/rpc";
+import { getAccount, getTokenAccountsTransactions } from "../synchronization";
 import {
   publicKeyOf,
   parsedAccountInfo,
@@ -10,10 +14,6 @@ import {
   parsedTokenInfo,
   parsedTransaction,
 } from "./fixtures/helpers.fixture";
-import config, { SolanaCoinConfig } from "../config";
-import { getAccount, getTokenAccountsTransactions } from "../synchronization";
-import { HttpResponse, http } from "msw";
-import { setupServer } from "msw/node";
 
 // Module-level mock for getStakeAccounts
 const actualGetStakeAccounts = jest.requireActual(

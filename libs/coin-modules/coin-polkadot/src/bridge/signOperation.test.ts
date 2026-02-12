@@ -1,19 +1,18 @@
-import BigNumber from "bignumber.js";
-import { u8aConcat } from "@polkadot/util";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
-import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import buildSignOperation from "./signOperation";
+import { u8aConcat } from "@polkadot/util";
+import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
-
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
-import coinConfig from "../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import buildSignOperation from "./signOperation";
 
 jest.mock("../config");
 const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);

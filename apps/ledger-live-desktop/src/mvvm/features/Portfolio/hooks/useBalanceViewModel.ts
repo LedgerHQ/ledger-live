@@ -6,6 +6,7 @@ import {
   selectedTimeRangeSelector,
   localeSelector,
   discreetModeSelector,
+  hasCompletedOnboardingSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
@@ -16,6 +17,7 @@ import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
 const NEW_FLOW_RANGE = "day" as const;
 
@@ -33,7 +35,8 @@ export const useBalanceViewModel = (
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const { hasFunds } = useAccountStatus();
+  const { hasAccount } = useAccountStatus();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const range = useLegacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
 
@@ -46,10 +49,11 @@ export const useBalanceViewModel = (
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
   const unit = counterValue.units[0];
-  const isAvailable = portfolio.balanceAvailable;
   const valueChange = portfolio.countervalueChange;
 
   const navigateToAnalytics = useCallback(() => {
+    setTrackingSource(PORTFOLIO_TRACKING_PAGE_NAME);
+
     track("button_clicked", {
       button: "analytics_page",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
@@ -81,9 +85,9 @@ export const useBalanceViewModel = (
     formatter,
     discreet,
     valueChange,
-    isAvailable,
     navigateToAnalytics,
     handleKeyDown,
-    hasFunds,
+    hasAccount,
+    hasCompletedOnboarding,
   };
 };

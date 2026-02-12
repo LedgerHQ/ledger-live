@@ -1,3 +1,4 @@
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   updateTransaction,
@@ -8,21 +9,17 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
-import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
-import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
-import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
-import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { getAccountShapeWithAPI } from "../synchronization";
-import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
-import { endpointByCurrencyId } from "../utils";
 import { broadcastWithAPI } from "../broadcast";
-import { ChainAPI, Config } from "../network";
-import { SolanaSigner } from "../signer";
+import { createTransaction } from "../createTransaction";
+import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
+import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { ChainAPI, Config } from "../network";
+import nftResolvers from "../nftResolvers";
+import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
+import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
@@ -31,8 +28,11 @@ import {
   assignFromTokenAccountRaw,
   assignToTokenAccountRaw,
 } from "../serialization";
-import nftResolvers from "../nftResolvers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { buildSignOperation } from "../signOperation";
+import { SolanaSigner } from "../signer";
+import { getAccountShapeWithAPI } from "../synchronization";
+import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
+import { endpointByCurrencyId } from "../utils";
 import { validateAddress } from "../validateAddress";
 
 function makePrepare(getChainAPI: (config: Config) => ChainAPI) {

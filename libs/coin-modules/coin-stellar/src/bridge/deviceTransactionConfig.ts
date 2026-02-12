@@ -1,5 +1,5 @@
-import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
 
 export type ExtraDeviceTransactionField =

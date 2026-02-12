@@ -1,5 +1,5 @@
-import coinConfig from "../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../config";
 
 describe("Configuration", () => {
   const mockCurrency: CryptoCurrency = {
@@ -31,13 +31,12 @@ describe("Configuration", () => {
   describe("getCoinConfig", () => {
     it("should return default config when no currency is provided", () => {
       const config = coinConfig.getCoinConfig();
-      expect(config).toBeDefined();
+      expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
     });
 
     it("should return config for specific currency", () => {
       const config = coinConfig.getCoinConfig(mockCurrency);
-      expect(config).toBeDefined();
-      expect(config.status.type).toBe("active");
+      expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
     });
   });
 });

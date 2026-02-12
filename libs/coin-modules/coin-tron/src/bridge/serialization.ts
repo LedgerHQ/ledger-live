@@ -1,3 +1,4 @@
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {
   TronTransactionInfo,
@@ -11,7 +12,6 @@ import {
   type TrongridExtraTxInfo,
   type TrongridExtraTxInfoRaw,
 } from "../types";
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export const toTronResourcesRaw = ({
   frozen,

@@ -1,6 +1,6 @@
 ---
 description: RTK Query createApi best practices
-alwaysApply: true
+alwaysApply: false
 ---
 
 # RTK Query - createApi

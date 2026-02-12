@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "1.9.3",
+  "version": "1.10.0-next.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -143,7 +143,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-concordium",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "description": "Ledger Hardware Wallet Concordium Application API",
   "keywords": [
     "Ledger",
@@ -30,11 +30,13 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
-    "bip32-path": "^0.4.2"
+    "bip32-path": "^0.4.2",
+    "bs58check": "^3.0.1"
   },
   "devDependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -47,6 +49,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
@@ -54,7 +57,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts",
+    "test-integ": "jest --config=jest.integ.config.ts",
     "unimported": "unimported"
-  },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  }
 }

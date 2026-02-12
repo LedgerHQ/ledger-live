@@ -14,10 +14,8 @@ on:
         type: boolean
         required: false
         default: false
-
 concurrency:
   group: bot-seed1
-
 jobs:
   run-bot:
     runs-on: [ledger-live-medium]
@@ -31,9 +29,9 @@ jobs:
           repositories: |
             coin-apps
             ledger-live
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Retrieving coin apps
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps

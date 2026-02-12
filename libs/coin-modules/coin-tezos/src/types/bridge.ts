@@ -1,3 +1,4 @@
+import type { Stake } from "@ledgerhq/coin-framework/api/index";
 import type {
   Account,
   AccountRaw,
@@ -7,7 +8,6 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { Stake } from "@ledgerhq/coin-framework/api/index";
 import type { BigNumber } from "bignumber.js";
 import { TezosOperationMode } from "./model";
 

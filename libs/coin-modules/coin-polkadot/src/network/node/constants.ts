@@ -1,6 +1,6 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { decorateConstants } from "@polkadot/types";
 import getApiPromise from "./apiPromise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Returns the blockchain's runtime constants.

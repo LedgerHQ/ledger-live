@@ -1,8 +1,8 @@
 import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { getNodeApi } from "../network/node";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { getNodeApi } from "../network/node";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   const nodeApi = getNodeApi(currency);
@@ -14,12 +14,10 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     time: new Date(result.timestamp),
   };
 
-  if (height > 0) {
-    const parentResult = await nodeApi.getBlockByHeight(currency, height - 1);
+  if (height > 0 && result.parentHash && !/^0x0+$/.test(result.parentHash)) {
     info.parent = {
-      height: parentResult.height,
-      hash: parentResult.hash,
-      time: new Date(parentResult.timestamp),
+      height: result.height - 1,
+      hash: result.parentHash,
     };
   }
 

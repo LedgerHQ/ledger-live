@@ -1,6 +1,5 @@
-import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { assertUnreachable } from "./utils";
+import { BigNumber } from "bignumber.js";
 import type {
   Command,
   CommandDescriptor,
@@ -8,6 +7,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "./types";
+import { assertUnreachable } from "./utils";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

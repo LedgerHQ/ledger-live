@@ -1,5 +1,5 @@
 import { Button, Icons } from "@ledgerhq/native-ui";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -13,7 +13,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
@@ -27,10 +27,13 @@ function PostWelcomeSelection() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+  const route = useRoute<NavigationProps["route"]>();
+  const userHasDevice = route.params?.userHasDevice ?? false;
   const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
   const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
   const llmRebornABtest = useFeature("llmRebornABtest");
   const localizedRebornUrl = useLocalizedUrl(urls.reborn);
+  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -87,9 +90,11 @@ function PostWelcomeSelection() {
         },
       }}
       footer={
-        <Button type="default" mb={10} onPress={openModal} testID="onboarding-noLedgerYet">
-          {t("onboarding.postWelcomeStep.noLedgerYet")}
-        </Button>
+        isWallet40Enabled && userHasDevice ? undefined : (
+          <Button type="default" mb={10} onPress={openModal} testID="onboarding-noLedgerYet">
+            {t("onboarding.postWelcomeStep.noLedgerYet")}
+          </Button>
+        )
       }
     >
       <SelectionCards

@@ -6,8 +6,8 @@ import {
 import BigNumber from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "../errors";
 import { EvmTransactionEIP1559, EvmTransactionLegacy, TransactionStatus } from "../types";
-import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
+import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");

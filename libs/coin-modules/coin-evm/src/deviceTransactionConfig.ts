@@ -1,16 +1,16 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import {
   ERC20_CLEAR_SIGNED_SELECTORS,
   ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
 } from "@ledgerhq/evm-tools/selectors/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { validateDomain } from "@ledgerhq/domain-service/utils/index";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { Transaction as EvmTransaction, TransactionStatus } from "./types";
 
 type DeviceTransactionField = CommonDeviceTransactionField;

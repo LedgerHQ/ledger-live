@@ -1,15 +1,24 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "rootDir": "./src",
     "outDir": "lib",
     "exactOptionalPropertyTypes": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "bundler"
   },
-  "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]
+  "include": [
+    "src/**/*",
+    "deviceTransactionConfig.ts",
+    "transaction.ts"
+  ]
 }

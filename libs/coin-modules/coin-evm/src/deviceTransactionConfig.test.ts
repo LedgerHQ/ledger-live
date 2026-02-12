@@ -1,14 +1,14 @@
-import eip55 from "eip55";
-import BigNumber from "bignumber.js";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import eip55 from "eip55";
+import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import { makeAccount, makeTokenAccount } from "./fixtures/common.fixtures";
 import { Transaction as EvmTransaction } from "./types";
-import getDeviceTransactionConfig from "./deviceTransactionConfig";
 
 enum NFT_CONTRACTS {
   ERC721 = "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",

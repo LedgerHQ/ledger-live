@@ -1,5 +1,23 @@
 # @ledgerhq/types-live
 
+## 6.97.0-next.0
+
+### Minor Changes
+
+- [#14247](https://github.com/LedgerHQ/ledger-live/pull/14247) [`d5da9e0`](https://github.com/LedgerHQ/ledger-live/commit/d5da9e04d7a92b3f7f9df9d462bdd101cadbd300) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: drop support for `sei_network`
+
+- [#14000](https://github.com/LedgerHQ/ledger-live/pull/14000) [`7896aa2`](https://github.com/LedgerHQ/ledger-live/commit/7896aa2dacc12e6781267fa3ca2965aa6fb018d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - implement compressed balanceHistoryCache with RLE to optimize app.json size
+
+- [#14387](https://github.com/LedgerHQ/ledger-live/pull/14387) [`8a258aa`](https://github.com/LedgerHQ/ledger-live/commit/8a258aa0655123d22f955067acffaf9f74661165) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo derivation config
+  fix: missing verify in aleo getAddress
+  chore: better error handling in mocked aleo DMK
+
+- [#14302](https://github.com/LedgerHQ/ledger-live/pull/14302) [`c61dc02`](https://github.com/LedgerHQ/ledger-live/commit/c61dc0268072ca43cf726efd17dc11f21eb37ce8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd walletv4 tour ff and hasseen flag
+
+- [#14052](https://github.com/LedgerHQ/ledger-live/pull/14052) [`2ec4196`](https://github.com/LedgerHQ/ledger-live/commit/2ec419630bceab7a9600711742a18034ba9ff3cc) Thanks [@henri-ly](https://github.com/henri-ly)! - Add feature flag for address poisoning operations filter
+
+- [#14322](https://github.com/LedgerHQ/ledger-live/pull/14322) [`de9d068`](https://github.com/LedgerHQ/ledger-live/commit/de9d068800ed2ae72aca0126855480d3eeb12989) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd walletv4 drawer
+
 ## 6.96.0
 
 ### Minor Changes

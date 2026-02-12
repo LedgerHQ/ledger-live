@@ -1,11 +1,11 @@
 import { Account } from "@ledgerhq/types-live";
 
-import { Transaction } from "../types";
-import { getAddress, getSubAccount } from "../common-logic/index";
-import { validateAddress } from "../network";
-import { Message } from "iso-filecoin/message";
-import { encodeTxnParams } from "../erc20/tokenAccounts";
 import BigNumber from "bignumber.js";
+import { Message } from "iso-filecoin/message";
+import { getAddress, getSubAccount } from "../common-logic/index";
+import { encodeTxnParams } from "../erc20/tokenAccounts";
+import { validateAddress } from "../network";
+import { Transaction } from "../types";
 import { AccountType } from "./utils";
 
 export interface toCBORResponse {

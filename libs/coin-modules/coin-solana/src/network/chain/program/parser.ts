@@ -1,6 +1,4 @@
 import { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web3.js";
-import { parseSplTokenInstruction, TokenInstructionDescriptor } from "../instruction/token";
-import { PARSED_PROGRAMS } from "./constants";
 import {
   AssociatedTokenAccountInstructionDescriptor,
   parseAssociatedTokenAccountInstruction,
@@ -8,6 +6,8 @@ import {
 import { MemoInstructionDescriptor, parseSplMemoInstruction } from "../instruction/memo";
 import { parseStakeInstruction, StakeInstructionDescriptor } from "../instruction/stake";
 import { parseSystemInstruction, SystemInstructionDescriptor } from "../instruction/system";
+import { parseSplTokenInstruction, TokenInstructionDescriptor } from "../instruction/token";
+import { PARSED_PROGRAMS } from "./constants";
 
 type UnknownProgram = {
   program: typeof PARSED_PROGRAMS.UNKNOWN;

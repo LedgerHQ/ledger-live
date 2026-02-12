@@ -2780,35 +2780,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  sei_network: {
-    type: "CryptoCurrency",
-    id: "sei_network",
-    coinType: CoinType.ATOM,
-    name: "SeiNetwork",
-    managerAppName: "Cosmos",
-    ticker: "SEI",
-    scheme: "sei_network",
-    color: "#89395b",
-    family: "cosmos",
-    units: [
-      {
-        name: "SEI",
-        code: "SEI",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-SEI",
-        code: "usei",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/sei/txs/$hash",
-        address: "https://www.mintscan.io/sei/validators/$address",
-      },
-    ],
-  },
   solana: {
     type: "CryptoCurrency",
     id: "solana",
@@ -3646,32 +3617,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "eth_sepolia",
-  },
-  ethereum_holesky: {
-    type: "CryptoCurrency",
-    id: "ethereum_holesky",
-    coinType: CoinType.ETH,
-    name: "Ethereum Holesky",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    deviceTicker: "ETH",
-    scheme: "eth_holesky",
-    color: "#00ff00",
-    units: ethereumUnits("ether", "ETH"),
-    isTestnetFor: "ethereum",
-    disableCountervalue: true,
-    family: "evm",
-    blockAvgTime: 15,
-    ethereumLikeInfo: {
-      chainId: 17000,
-    },
-    explorerViews: [
-      {
-        tx: "https://holesky.etherscan.io/tx/$hash",
-        address: "https://holesky.etherscan.io/address/$address",
-      },
-    ],
-    explorerId: "eth_holesky",
   },
   ethereum_hoodi: {
     type: "CryptoCurrency",

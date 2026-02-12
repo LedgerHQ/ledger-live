@@ -1,14 +1,14 @@
 import { AssertionError, fail } from "assert";
-import axios from "axios";
-import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
-import { getGasOptions } from "../gasTracker/ledger";
-import { Transaction as EvmTransaction } from "../../types";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import axios from "axios";
+import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../../config";
+import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
+import { makeAccount } from "../../fixtures/common.fixtures";
+import { Transaction as EvmTransaction } from "../../types";
+import { getGasOptions } from "../gasTracker/ledger";
 import * as LEDGER_API from "./ledger";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
@@ -618,38 +618,43 @@ describe("EVM Family", () => {
       });
 
       it("should return the expected payload", async () => {
-        jest.spyOn(axios, "request").mockImplementation(async ({ url }) =>
-          url?.endsWith("current")
-            ? {
-                data: {
-                  hash: "0xhashLatest",
-                  height: 456,
-                  time: new Date().toISOString(),
-                  txs: ["0xTx3", "0xTx4"],
-                },
-              }
-            : {
-                data: [
-                  {
-                    hash: "0xhash",
-                    height: 123,
-                    time: new Date().toISOString(),
-                    txs: ["0xTx1", "0xTx2"],
-                  },
-                ],
+        jest.spyOn(axios, "request").mockImplementation(async ({ url }) => {
+          if (url?.endsWith("current")) {
+            return {
+              data: {
+                hash: "0xhashLatest",
+                height: 456,
+                time: new Date().toISOString(),
+                txs: ["0xTx3", "0xTx4"],
+                prevHash: "0xparentHashLatest",
               },
-        );
+            };
+          }
+          return {
+            data: [
+              {
+                hash: "0xhash",
+                height: 123,
+                time: new Date().toISOString(),
+                txs: ["0xTx1", "0xTx2"],
+                prevHash: "0xparentHash",
+              },
+            ],
+          };
+        });
 
         expect(await LEDGER_API.getBlockByHeight(currency, 12)).toEqual({
           hash: "0xhash",
           height: 123,
           timestamp: Date.now(),
+          parentHash: "0xparentHash",
           transactionHashes: ["0xTx1", "0xTx2"],
         });
         expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
           timestamp: Date.now(),
+          parentHash: "0xparentHashLatest",
           transactionHashes: ["0xTx3", "0xTx4"],
         });
       });

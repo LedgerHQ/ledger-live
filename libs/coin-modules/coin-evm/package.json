@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.42.0",
+  "version": "2.43.0-next.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -87,12 +87,10 @@
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@types/bluebird": "^3.5.42",
     "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
-    "bluebird": "^3.7.2",
     "dotenv": "^16.4.5",
     "eslint-plugin-import": "^2.28.1",
     "fast-check": "^3.12.0",

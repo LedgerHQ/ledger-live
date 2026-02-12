@@ -137,7 +137,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onError,
           }) => {
             try {
-              // Desktop: Limitation, can't add one single account, only REPLACE_ACCOUNT redux store action has 'DB:' prefix and make the storage
+              // Desktop: add account via replaceAccounts so the db middleware persists to storage
               dispatch(replaceAccounts([parentAccount, ...existingAccounts]));
               dispatch(setAccountName(parentAccount.id, accountName));
               onSuccess();

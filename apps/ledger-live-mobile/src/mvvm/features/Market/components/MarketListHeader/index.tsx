@@ -23,6 +23,7 @@ export function MarketListHeaderLeft() {
       appearance="no-background"
       size="md"
       icon={ArrowLeft}
+      testID="market-list-header-left"
       accessibilityLabel={t("common.back")}
       onPress={handlePress}
     />

@@ -1,7 +1,7 @@
-import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { MultiversXPreloadData, MultiversXProvider } from "./types";
+import { Observable, Subject } from "rxjs";
 import { getProviders } from "./api";
+import type { MultiversXPreloadData, MultiversXProvider } from "./types";
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
 let currentPreloadedData: MultiversXPreloadData = {

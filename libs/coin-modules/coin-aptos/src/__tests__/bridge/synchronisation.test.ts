@@ -1,21 +1,21 @@
-import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { AptosAPI } from "../../network";
+import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
+import { txsToOps } from "../../bridge/logic";
 import {
   getAccountShape,
   mergeSubAccounts,
   getSubAccountShape,
   getSubAccounts,
 } from "../../bridge/synchronisation";
-import BigNumber from "bignumber.js";
-import { createFixtureAccount } from "../../bridge/bridge.fixture";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { txsToOps } from "../../bridge/logic";
+import { AptosAPI } from "../../network";
 import { AptosAccount } from "../../types";
-import { getEnv } from "@ledgerhq/live-env";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
   const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
@@ -2324,8 +2324,6 @@ describe("getStake", () => {
     } as unknown as AccountShapeInfo<AptosAccount>;
 
     const result = await getAccountShape(info, {} as SyncConfig);
-
-    expect(result.aptosResources).toBeDefined();
 
     const stakingEnabled = getEnv("APTOS_ENABLE_STAKING") === true;
     if (stakingEnabled) {

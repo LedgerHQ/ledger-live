@@ -1,5 +1,5 @@
-import { API_BASE } from "./config";
 import { ApiResponseAddressActive } from "../types";
+import { API_BASE } from "./config";
 
 export const getAddressesActive = async (
   addresses: string[],

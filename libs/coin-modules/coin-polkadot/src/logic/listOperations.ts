@@ -1,7 +1,7 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import network from "../network";
 import { PolkadotOperation } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function listOperations(
   addr: string,
@@ -28,6 +28,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
       fees: BigInt(fee.toString()),
       block: {
         height: blockHeight ?? 0,
+        hash: operation.blockHash ?? "",
         time: date,
       },
       date: date,

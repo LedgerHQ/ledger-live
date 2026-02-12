@@ -1,5 +1,12 @@
-import { Observable } from "rxjs";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { DeviceModelId } from "@ledgerhq/devices";
 import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
+import { buildTransactionWithAPI } from "./buildTransaction";
+import { ChainAPI } from "./network";
+import type { Resolution, SolanaSigner } from "./signer";
 import type {
   Command,
   CommandDescriptor,
@@ -17,14 +24,7 @@ import type {
   Transaction,
   TransferCommand,
 } from "./types";
-import { buildTransactionWithAPI } from "./buildTransaction";
-import type { Resolution, SolanaSigner } from "./signer";
-import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";
-import { ChainAPI } from "./network";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {
@@ -164,7 +164,7 @@ function buildOptimisticOperationForCommand(
     case "token.revoke":
       return optimisticOpForRevoke(account, command, commandDescriptor);
     case "stake.createAccount":
-      return optimisticOpForStakeCreateAccount(account, transaction, command, commandDescriptor);
+      return optimisticOpForStakeCreateAccount(account, command, commandDescriptor);
     case "stake.delegate":
       return optimisticOpForStakeDelegate(account, command, commandDescriptor);
     case "stake.undelegate":
@@ -344,7 +344,6 @@ function getOpExtras(command: Command): SolanaOperationExtra {
 
 function optimisticOpForStakeCreateAccount(
   account: Account,
-  transaction: Transaction,
   command: StakeCreateAccountCommand,
   commandDescriptor: CommandDescriptor,
 ): SolanaOperation {

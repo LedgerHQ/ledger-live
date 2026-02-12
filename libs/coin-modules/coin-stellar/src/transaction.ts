@@ -1,4 +1,5 @@
-import { BigNumber } from "bignumber.js";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -7,8 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { BigNumber } from "bignumber.js";
 import { getAssetCodeIssuer } from "./logic";
 import type { Transaction, TransactionRaw } from "./types";
 

@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#13817](https://github.com/LedgerHQ/ledger-live/pull/13817) [`a83545a`](https://github.com/LedgerHQ/ledger-live/commit/a83545add7d5e150208084350d7f9c51481db06d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix tests after dmk update
+
 ## 0.18.0
 
 ### Minor Changes

@@ -1,11 +1,11 @@
 import { ParsedAccountData } from "@solana/web3.js";
 import { create } from "superstruct";
+import { isTokenProgram } from "../../../helpers/token";
 import { PARSED_PROGRAMS } from "../program/constants";
 import { ParsedInfo } from "../validators";
 import { StakeAccount, StakeAccountInfo, StakeHistoryEntry } from "./stake";
 import { MintAccountInfo, TokenAccount, TokenAccountInfo } from "./token";
 import { VoteAccount, VoteAccountInfo } from "./vote";
-import { isTokenProgram } from "../../../helpers/token";
 
 export function parseMintAccountInfo(info: unknown): MintAccountInfo {
   return create(info, MintAccountInfo);

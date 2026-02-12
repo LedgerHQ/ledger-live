@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
+import { MIN_COINS_ON_SHARES_POOL } from "../../constants";
 import {
   canRestake,
   canStake,
@@ -7,8 +9,6 @@ import {
   getDelegationOpMaxAmount,
   mapStakingPositions,
 } from "../../logic/staking";
-import { createFixtureAccount } from "../../bridge/bridge.fixture";
-import { MIN_COINS_ON_SHARES_POOL } from "../../constants";
 
 const stakingPositions = [
   {

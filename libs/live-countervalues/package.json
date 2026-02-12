@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues",
-  "version": "0.12.1",
+  "version": "0.12.2-next.0",
   "description": "Ledger Live countervalues module",
   "keywords": [
     "Ledger"

@@ -1,7 +1,7 @@
-import type { PolkadotAccount, Transaction } from "../types";
-import { craftTransaction, type CreateExtrinsicArg } from "../logic";
-import { isFirstBond, getNonce } from "./utils";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { craftTransaction, type CreateExtrinsicArg } from "../logic";
+import type { PolkadotAccount, Transaction } from "../types";
+import { isFirstBond, getNonce } from "./utils";
 
 export const extractExtrinsicArg = (
   account: PolkadotAccount,

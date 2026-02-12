@@ -4,8 +4,8 @@ import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 import { TronCoinConfig } from "../config";
 import { Transaction, TronAccount } from "../types";
-import { createBridges } from "./index";
 import { defaultTronResources } from "./utils";
+import { createBridges } from "./index";
 
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {

@@ -1,5 +1,30 @@
+import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import cloneDeep from "lodash/cloneDeep";
+import usdcTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
+import {
+  SolanaRecipientMemoIsRequired,
+  SolanaTokenAccountFrozen,
+  SolanaTokenNonTransferable,
+} from "../errors";
+import getTransactionStatus from "../getTransactionStatus";
+import { calculateToken2022TransferFees } from "../helpers/token";
+import { encodeAccountIdWithTokenAccountAddress } from "../logic";
+
+import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../network";
+import { NonTransferableExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
+import { prepareTransaction } from "../prepareTransaction";
 import {
   SolanaAccount,
   SolanaTokenAccount,
@@ -9,31 +34,6 @@ import {
   Transaction,
   TransactionStatus,
 } from "../types";
-
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import {
-  SolanaRecipientMemoIsRequired,
-  SolanaTokenAccountFrozen,
-  SolanaTokenNonTransferable,
-} from "../errors";
-import { encodeAccountIdWithTokenAccountAddress } from "../logic";
-import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../network";
-import getTransactionStatus from "../getTransactionStatus";
-import { prepareTransaction } from "../prepareTransaction";
-import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
-import { NonTransferableExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
-import { PublicKey } from "@solana/web3.js";
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import { calculateToken2022TransferFees } from "../helpers/token";
-import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import usdcTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
 
 const USDC_TOKEN = usdcTokenData as unknown as TokenCurrency;
 

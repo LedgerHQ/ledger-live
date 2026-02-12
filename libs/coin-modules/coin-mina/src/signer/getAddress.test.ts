@@ -1,9 +1,9 @@
-import resolver from "./getAddress";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { MinaSigner } from "../types/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
 import { DerivationMode } from "@ledgerhq/types-live";
+import { MinaSigner } from "../types/signer";
+import resolver from "./getAddress";
 
 describe("Mina getAddress resolver", () => {
   // Mock the signer context

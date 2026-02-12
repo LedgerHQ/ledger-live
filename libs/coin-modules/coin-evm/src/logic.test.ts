@@ -1,7 +1,9 @@
-import BigNumber from "bignumber.js";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import {
   CryptoCurrency,
   CryptoCurrencyId,
@@ -9,9 +11,7 @@ import {
   Unit,
 } from "@ledgerhq/types-cryptoassets";
 import type { Operation } from "@ledgerhq/types-live";
-import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import BigNumber from "bignumber.js";
 
 jest.mock("./network/node/rpc.common", () => ({
   ...jest.requireActual("./network/node/rpc.common"),
@@ -21,14 +21,7 @@ jest.mock("./network/node/rpc.common", () => ({
 
 const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
 const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
-import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
-import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
-import wethTokenData from "./fixtures/ethereum-erc20-weth.json";
-import {
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-  Transaction as EvmTransaction,
-} from "./types";
+import { getCoinConfig } from "./config";
 import {
   deepFreeze,
   makeAccount,
@@ -36,6 +29,8 @@ import {
   makeOperation,
   makeTokenAccount,
 } from "./fixtures/common.fixtures";
+import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
+import wethTokenData from "./fixtures/ethereum-erc20-weth.json";
 import {
   attachOperations,
   createSwapHistoryMap,
@@ -47,8 +42,13 @@ import {
   legacyTransactionHasFees,
   mergeSubAccounts,
 } from "./logic";
-import { getCoinConfig } from "./config";
 import { getOptimismAdditionalFees, getScrollAdditionalFees } from "./network/node/rpc.common";
+import {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  Transaction as EvmTransaction,
+} from "./types";
+import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;

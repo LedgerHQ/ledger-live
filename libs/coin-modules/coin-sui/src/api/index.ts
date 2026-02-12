@@ -1,3 +1,9 @@
+import {
+  AlpacaApi,
+  CraftedTransaction,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type SuiConfig } from "../config";
 import {
   estimateFees,
@@ -13,12 +19,6 @@ import {
   getRewards,
   getValidators as logicGetValidators,
 } from "../logic";
-import {
-  AlpacaApi,
-  CraftedTransaction,
-  FeeEstimation,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
 
 export function createApi(config: SuiConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -48,12 +48,15 @@ export function createApi(config: SuiConfig): AlpacaApi {
 }
 
 async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const { unsigned, objects } = await craftTransaction(transactionIntent, true);
+  const { unsigned, objects, resolution } = await craftTransaction(transactionIntent, true);
 
   return {
     transaction: Buffer.from(unsigned).toString("hex"),
     details: {
       objects: objects?.map(obj => Buffer.from(obj).toString("hex")),
+      ...(resolution
+        ? { resolution: Buffer.from(JSON.stringify(resolution)).toString("hex") }
+        : {}),
     },
   };
 }

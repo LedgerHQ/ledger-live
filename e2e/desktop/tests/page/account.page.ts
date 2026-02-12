@@ -10,6 +10,7 @@ export class AccountPage extends AppPage {
   private swapButton = this.page.getByTestId("swap-account-action-button");
   private stakeButton = this.page.getByTestId("stake-button");
   private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
+  private activatePrivateBalanceButton = this.page.getByTestId("show-private-balance-button");
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private buyButton = this.page.getByRole("button", { name: "Buy" });
   private accountName = this.page.locator("#account-header-name");
@@ -57,6 +58,14 @@ export class AccountPage extends AppPage {
   @step("Click `Receive` button")
   async clickReceive() {
     await this.receiveButton.click();
+  }
+
+  @step("Click `Show balance` button")
+  async clickShowBalance() {
+    if (await this.activatePrivateBalanceButton.isVisible().catch(() => false)) {
+      await this.activatePrivateBalanceButton.click();
+      return;
+    }
   }
 
   @step("Click on add token button")

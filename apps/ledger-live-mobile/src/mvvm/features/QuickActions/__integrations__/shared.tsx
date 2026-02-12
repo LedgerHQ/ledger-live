@@ -73,6 +73,22 @@ export const overrideStateWithoutFunds = (state: State): State => ({
   },
 });
 
+export const overrideStateNoSigner = (state: State): State => ({
+  ...state,
+  accounts: {
+    ...state.accounts,
+    active: [],
+  },
+  settings: {
+    ...state.settings,
+    readOnlyModeEnabled: true,
+    overriddenFeatureFlags: {
+      ptxServiceCtaExchangeDrawer: { enabled: true },
+      noah: { enabled: true },
+    },
+  },
+});
+
 export const overrideStateReadOnly = (state: State): State => {
   const btcAccount = createMockAccount(mockBitcoinCurrency, "btc-1");
 
@@ -100,5 +116,14 @@ export const getCtaButtons = async () => {
     transferButton: within(container).getByRole("button", { name: /transfer/i }),
     swapButton: within(container).getByRole("button", { name: /swap/i }),
     buyButton: within(container).getByRole("button", { name: /buy/i }),
+  };
+};
+
+export const getNoSignerCtaButtons = async () => {
+  const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+  return {
+    container,
+    connectButton: within(container).getByRole("button", { name: /connect/i }),
+    buyLedgerButton: within(container).getByRole("button", { name: /buy a ledger/i }),
   };
 };

@@ -1,4 +1,5 @@
 import { Operation } from "@ledgerhq/coin-framework/api/index";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import {
   defaultFetchParams,
   fetchTronAccountTxs,
@@ -6,6 +7,7 @@ import {
   getBlock,
 } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
+import { Block } from "../network/types";
 
 export type Options = {
   // the soft limit is an indicative number of transactions to fetch
@@ -47,10 +49,27 @@ export async function listOperations(
   const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < softLimit;
 
   const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
-  return [
-    txs
-      // TODO: adapt directly in network calls
-      .map(tx => fromTrongridTxInfoToOperation(tx, address)),
-    "",
-  ];
+
+  const blocksByHeight = new Map<number, Block>();
+  blocksByHeight.set(minHeight, block);
+
+  const uniqueHeights = Array.from(
+    new Set(
+      txs
+        .map(tx => tx.blockHeight)
+        .filter((h): h is number => typeof h === "number" && h !== minHeight),
+    ),
+  );
+
+  await promiseAllBatched(5, uniqueHeights, async height => {
+    const fetchedBlock = await getBlock(height);
+    blocksByHeight.set(height, fetchedBlock);
+  });
+
+  const operations = txs.map(tx => {
+    const height = tx.blockHeight;
+    const txBlock = typeof height === "number" ? blocksByHeight.get(height) ?? block : block;
+    return fromTrongridTxInfoToOperation(tx, txBlock, address);
+  });
+  return [operations, ""];
 }

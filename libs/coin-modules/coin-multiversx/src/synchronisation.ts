@@ -1,12 +1,12 @@
-import { TokenAccount } from "@ledgerhq/types-live";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";
 import MultiversXBuildESDTTokenAccounts from "./buildSubAccounts";
-import { reconciliateSubAccounts } from "./reconciliation";
 import { computeDelegationBalance } from "./logic";
+import { reconciliateSubAccounts } from "./reconciliation";
 import { MultiversXAccount } from "./types";
 
 export const getAccountShape: GetAccountShape<MultiversXAccount> = async (info, syncConfig) => {

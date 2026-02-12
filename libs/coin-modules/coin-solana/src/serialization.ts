@@ -1,4 +1,13 @@
 import {
+  Account,
+  AccountRaw,
+  OperationExtra,
+  OperationExtraRaw,
+  TokenAccount,
+  TokenAccountRaw,
+} from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import {
   SolanaAccount,
   SolanaAccountRaw,
   SolanaOperationExtra,
@@ -8,15 +17,6 @@ import {
   SolanaTokenAccount,
   SolanaTokenAccountRaw,
 } from "./types";
-import {
-  Account,
-  AccountRaw,
-  OperationExtra,
-  OperationExtraRaw,
-  TokenAccount,
-  TokenAccountRaw,
-} from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 
 export function toSolanaResourcesRaw(resources: SolanaResources): SolanaResourcesRaw {
   return {

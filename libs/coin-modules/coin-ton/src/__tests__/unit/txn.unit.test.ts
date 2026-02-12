@@ -1,9 +1,10 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { Builder, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
-import { Builder, Slice } from "@ton/core";
 import flatMap from "lodash/flatMap";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { TonJettonTransfer, TonTransaction } from "../../bridge/bridgeHelpers/api.types";
 import {
   dataToSlice,
@@ -18,7 +19,6 @@ import {
   mockAddress,
   tonTransactionResponse,
 } from "../fixtures/common.fixtures";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 setupMockCryptoAssetsStore();
 

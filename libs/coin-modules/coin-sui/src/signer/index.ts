@@ -3,5 +3,6 @@
  */
 
 import getAddress from "./getAddress";
+import getResolution from "./getResolution";
 
-export default getAddress;
+export { getAddress, getResolution };

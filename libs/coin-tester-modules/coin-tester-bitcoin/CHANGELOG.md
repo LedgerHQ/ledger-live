@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`03b3105`](https://github.com/LedgerHQ/ledger-live/commit/03b3105efe8094b79ba70432e475fdc5d945c2c4), [`c039174`](https://github.com/LedgerHQ/ledger-live/commit/c03917424131f87923a8151d75e04de272c42aab), [`78d7be1`](https://github.com/LedgerHQ/ledger-live/commit/78d7be199d64e442047db1d4cc30f3ad1fe874a8), [`d5da9e0`](https://github.com/LedgerHQ/ledger-live/commit/d5da9e04d7a92b3f7f9df9d462bdd101cadbd300), [`7896aa2`](https://github.com/LedgerHQ/ledger-live/commit/7896aa2dacc12e6781267fa3ca2965aa6fb018d2), [`8a258aa`](https://github.com/LedgerHQ/ledger-live/commit/8a258aa0655123d22f955067acffaf9f74661165), [`c61dc02`](https://github.com/LedgerHQ/ledger-live/commit/c61dc0268072ca43cf726efd17dc11f21eb37ce8), [`8006565`](https://github.com/LedgerHQ/ledger-live/commit/8006565f77487fa0e38bf5f8d7bb4cda4cdba1f5), [`2ec4196`](https://github.com/LedgerHQ/ledger-live/commit/2ec419630bceab7a9600711742a18034ba9ff3cc), [`fe678a1`](https://github.com/LedgerHQ/ledger-live/commit/fe678a1d16eeda84cf8d802eee53026ea677be58), [`de9d068`](https://github.com/LedgerHQ/ledger-live/commit/de9d068800ed2ae72aca0126855480d3eeb12989)]:
+  - @ledgerhq/coin-framework@6.16.0-next.0
+  - @ledgerhq/coin-bitcoin@0.31.0-next.0
+  - @ledgerhq/cryptoassets@13.39.0-next.0
+  - @ledgerhq/types-live@6.97.0-next.0
+  - @ledgerhq/types-cryptoassets@7.33.0-next.0
+  - @ledgerhq/coin-tester@0.17.0
+
 ## 1.4.1
 
 ### Patch Changes

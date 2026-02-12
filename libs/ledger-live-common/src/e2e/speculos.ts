@@ -141,14 +141,6 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
-  Ethereum_Holesky: {
-    currency: getCryptoCurrencyById("ethereum_holesky"),
-    appQuery: {
-      model: getSpeculosModel(),
-      appName: "Ethereum",
-    },
-    dependencies: [],
-  },
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {
@@ -362,6 +354,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Vechain",
+    },
+    dependencies: [],
+  },
+  Zcash: {
+    currency: getCryptoCurrencyById("zcash"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Zcash",
     },
     dependencies: [],
   },
@@ -867,6 +867,7 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.DOGE.id:
     case Currency.BCH.id:
+    case Currency.ZEC.id:
       await sendBTCBasedCoin(tx);
       break;
     case Currency.DOT.id:
@@ -1052,3 +1053,22 @@ function expectDeviceScreenContains(substring: string, events: string[], message
     );
   }
 }
+
+export const exportUfvk = withDeviceController(
+  ({ getButtonsController }) =>
+    async (account: Account) => {
+      const buttons = getButtonsController();
+      const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
+        account.currency.speculosApp,
+      );
+      await waitFor(receiveVerifyLabel);
+
+      if (isTouchDevice()) {
+        await pressUntilTextFound(receiveConfirmLabel);
+        await pressAndRelease(DeviceLabels.CONFIRM);
+      } else {
+        await pressUntilTextFound(receiveConfirmLabel);
+        await buttons.both();
+      }
+    },
+);

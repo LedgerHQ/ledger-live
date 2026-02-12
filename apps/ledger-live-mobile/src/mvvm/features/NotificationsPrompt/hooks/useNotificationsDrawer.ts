@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/core";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 import {
   notificationsModalOpenSelector,
   notificationsDrawerSource,
@@ -93,6 +94,14 @@ export const useNotificationsDrawer = ({
         return;
       }
 
+      // Group A (variant A) never sees inactivity drawer
+      const variant = featureNewWordingNotificationsDrawer?.params?.variant;
+      const isVariantA =
+        featureNewWordingNotificationsDrawer?.enabled && variant === ABTestingVariants.variantA;
+      if (isVariantA) {
+        return;
+      }
+
       const isOptOut =
         data.osPermissionStatus !== AuthorizationStatus.AUTHORIZED ||
         !data.areAppNotificationsEnabled;
@@ -102,11 +111,17 @@ export const useNotificationsDrawer = ({
 
       const isInactive = checkIsInactive(data.storedUserData?.lastActionAt);
       if (isInactive) {
-        track("prompt_opt_in_notifications_drawer_after_inactivity");
         openDrawer("inactivity", 1000);
       }
     },
-    [featureBrazePushNotifications?.enabled, isRatingsModalOpen, openDrawer, checkIsInactive],
+    [
+      featureBrazePushNotifications?.enabled,
+      isRatingsModalOpen,
+      featureNewWordingNotificationsDrawer?.enabled,
+      featureNewWordingNotificationsDrawer?.params?.variant,
+      openDrawer,
+      checkIsInactive,
+    ],
   );
 
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(
@@ -117,6 +132,15 @@ export const useNotificationsDrawer = ({
 
       const shouldPrompt = shouldPromptOptInDrawerAfterAction();
       if (!shouldPrompt) {
+        return;
+      }
+
+      const variant = featureNewWordingNotificationsDrawer?.params?.variant;
+      const isVariantA =
+        featureNewWordingNotificationsDrawer?.enabled && variant === ABTestingVariants.variantA;
+
+      // For non-onboarding actions, Group A (variant A) never shows drawer
+      if (actionSource !== "onboarding" && isVariantA) {
         return;
       }
 
@@ -184,14 +208,15 @@ export const useNotificationsDrawer = ({
       isRatingsModalOpen,
       actionEvents,
       shouldPromptOptInDrawerAfterAction,
+      featureNewWordingNotificationsDrawer?.enabled,
+      featureNewWordingNotificationsDrawer?.params?.variant,
       openDrawer,
     ],
   );
 
   const trackButtonClicked = useCallback(
     (eventName: string) => {
-      const canShowVariant =
-        drawerSource === "onboarding" && featureNewWordingNotificationsDrawer?.enabled;
+      const canShowVariant = featureNewWordingNotificationsDrawer?.enabled;
 
       track("button_clicked", {
         button: eventName,

@@ -30,6 +30,13 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "import/no-cycle": ["error"],
-    "import/order": ["error"],
+    "import/order": [
+      "error",
+      {
+        alphabetize: {
+          order: "asc",
+        },
+      },
+    ],
   },
 };

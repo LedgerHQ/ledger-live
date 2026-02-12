@@ -1,4 +1,14 @@
-import BigNumber from "bignumber.js";
+import {
+  decodeTokenAccountId,
+  encodeTokenAccountId,
+  getSyncHash as baseGetSyncHash,
+} from "@ledgerhq/coin-framework/account/index";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getEnv } from "@ledgerhq/live-env";
+import { TokenCurrency, CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AnyMessage,
@@ -6,20 +16,10 @@ import {
   Operation,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import { TokenCurrency, CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import murmurhash from "imurmurhash";
-import { getEnv } from "@ledgerhq/live-env";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import {
-  decodeTokenAccountId,
-  encodeTokenAccountId,
-  getSyncHash as baseGetSyncHash,
-} from "@ledgerhq/coin-framework/account/index";
-import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
+import { getNodeApi } from "./network/node/index";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,

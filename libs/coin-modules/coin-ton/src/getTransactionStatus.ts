@@ -16,9 +16,9 @@ import {
   TonMinimumRequired,
   TonNotEnoughBalanceInParentAccount,
 } from "./errors";
+import { validateMemo } from "./logic/validateMemo";
 import { TonAccount, Transaction, TransactionStatus } from "./types";
 import { addressesAreEqual, findSubAccountById, isAddressValid } from "./utils";
-import { validateMemo } from "./logic/validateMemo";
 
 type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "transaction";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;

@@ -8,7 +8,7 @@ import RecoverBanner from "~/components/RecoverBanner";
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
   readonly isLNSUpsellBannerShown: boolean;
-  readonly showAssets: boolean;
+  readonly showAssets?: boolean;
 }
 
 export const PortfolioBannersSection = ({
@@ -17,7 +17,13 @@ export const PortfolioBannersSection = ({
   showAssets,
 }: PortfolioBannersSectionProps) => {
   return (
-    <SectionContainer py="0" isFirst={isFirst} key="BannersSection">
+    <SectionContainer
+      py="0"
+      mt={6}
+      isFirst={isFirst}
+      key="BannersSection"
+      testID="portfolio-banners-section"
+    >
       {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mb={6} />}
       {!isLNSUpsellBannerShown && showAssets ? (
         <ContentCardsLocation
@@ -26,7 +32,7 @@ export const PortfolioBannersSection = ({
           mb={6}
         />
       ) : null}
-      <RecoverBanner mb={6} px={6} />
+      <RecoverBanner mb={6} />
     </SectionContainer>
   );
 };

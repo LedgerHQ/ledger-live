@@ -1,11 +1,11 @@
 /* eslint-disable no-prototype-builtins */
-import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
-import polkadotAPI from "../network";
-import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
-import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
+import polkadotAPI from "../network";
+import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
+import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
 

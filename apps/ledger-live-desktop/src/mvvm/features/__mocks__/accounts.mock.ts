@@ -71,6 +71,12 @@ export const ETH_ACCOUNT_2 = genAccount("ethereum-2", {
 export const BTC_ACCOUNT = genAccount("bitcoin-1", {
   currency: bitcoinCurrency,
 });
+
+export const EMPTY_BTC_ACCOUNT = genAccount("bitcoin-empty", {
+  currency: bitcoinCurrency,
+  operationsSize: 0,
+});
+
 export const ARB_ACCOUNT = genAccount("arbitrum-1", {
   currency: arbitrumCurrency,
   tokenIds: ["arbitrum/erc20/arbitrum"],

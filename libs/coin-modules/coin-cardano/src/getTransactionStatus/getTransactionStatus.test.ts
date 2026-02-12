@@ -112,6 +112,9 @@ describe("getTransactionStatus", () => {
       {
         address: "addr1Fwc4rtTcbrhmcq3iqDJZULdyxU8nJmam3Jx6oknhY5Jqm2",
       },
+      {
+        notAddress: "no address to check if fails",
+      },
     ] as unknown as CardanoOutput[];
 
     const account = {

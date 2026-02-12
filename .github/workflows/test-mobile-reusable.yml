@@ -39,7 +39,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -66,14 +66,14 @@ jobs:
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Run unit tests
         run: pnpm mobile test:jest:coverage
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
           name: lint-mobile
           path: ${{ github.workspace }}/apps/ledger-live-mobile/lint-mobile.json
       - name: upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}
         id: generate_coverage
         with:

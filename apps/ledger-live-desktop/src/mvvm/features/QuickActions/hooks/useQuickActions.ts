@@ -1,15 +1,26 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  ArrowDown,
+  Plus,
+  Minus,
+  ArrowUp,
+  LedgerLogo,
+  Cart,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../ModularDrawer";
 import { track } from "~/renderer/analytics/segment";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 
 export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
@@ -18,6 +29,9 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
   const location = useLocation();
   const { t } = useTranslation();
   const { hasAccount, hasFunds } = useAccountStatus();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const urlLedgerShop = useLocalizedUrl(urls.ledgerShop);
+  const openLedgerShop = useCallback(() => openURL(urlLedgerShop), [urlLedgerShop]);
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -89,8 +103,46 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
     });
   }, [navigate, trackingPageName]);
 
-  return {
-    actionsList: [
+  const onConnect = useCallback(() => {
+    track("button_clicked", {
+      button: "quick_action",
+      flow: "connect",
+      page: trackingPageName,
+    });
+
+    dispatch(openModal("MODAL_CONNECT_DEVICE", { onResult: () => {} }));
+  }, [dispatch, trackingPageName]);
+
+  const onBuyALedger = useCallback(() => {
+    track("button_clicked", {
+      button: "quick_action",
+      flow: "buy_ledger",
+      page: trackingPageName,
+    });
+    openLedgerShop();
+  }, [trackingPageName, openLedgerShop]);
+
+  const actionsList = useMemo((): QuickAction[] => {
+    if (!hasCompletedOnboarding) {
+      return [
+        {
+          title: t("quickActions.connect"),
+          onAction: onConnect,
+          icon: LedgerLogo,
+          disabled: false,
+          buttonAppearance: "base",
+        },
+        {
+          title: t("quickActions.buyALedger"),
+          onAction: onBuyALedger,
+          icon: Cart,
+          disabled: false,
+          buttonAppearance: "transparent",
+        },
+      ];
+    }
+
+    return [
       {
         title: t("quickActions.receive"),
         onAction: onReceive,
@@ -116,9 +168,12 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
         title: t("quickActions.send"),
         onAction: onSend,
         icon: ArrowUp,
-        disabled: !hasAccount,
+        disabled: !hasFunds,
         buttonAppearance: "transparent",
       },
-    ],
-  };
+    ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasCompletedOnboarding, hasFunds, hasAccount]);
+
+  return { actionsList };
 };

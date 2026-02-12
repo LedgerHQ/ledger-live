@@ -1,7 +1,7 @@
 import type { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, SwapOperation } from "@ledgerhq/types-live";
+import type { Account, AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import type { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
@@ -44,10 +44,12 @@ export type SwapOperationDetails = Omit<MappedSwapOperation, "fromAccount" | "to
 export type SwapPendingOperation = { swapOperation: SwapOperation };
 
 export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams {
-  defaultAccount?: Account;
+  defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
   defaultCurrency?: CryptoCurrency | TokenCurrency;
   affiliate?: string;
+  fromPath?: string;
+  toTokenId?: string;
 }
 
 export type SwapLiveAppNavigationParams = {
@@ -55,5 +57,6 @@ export type SwapLiveAppNavigationParams = {
     tab?: "ACCOUNTS_SELECTION" | "QUOTES_LIST" | null;
     page?: SwapWebviewAllowedPageNames;
     canGoBack?: boolean;
+    isTransactionComplete?: boolean;
   };
 };

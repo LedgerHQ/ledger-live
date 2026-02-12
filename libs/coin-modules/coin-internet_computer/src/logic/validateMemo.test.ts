@@ -1,5 +1,5 @@
-import { validateMemo } from "./validateMemo";
 import { validateMemo as icpValidateMemo } from "@zondax/ledger-live-icp/utils";
+import { validateMemo } from "./validateMemo";
 
 jest.mock("@zondax/ledger-live-icp/utils");
 

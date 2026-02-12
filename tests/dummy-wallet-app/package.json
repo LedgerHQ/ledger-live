@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/dummy-wallet-app",
-  "version": "0.12.3",
+  "version": "0.13.0-next.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
@@ -10,7 +10,7 @@
     "@ledgerhq/wallet-api-client-react": "^1.4.22",
     "@ledgerhq/wallet-api-deeplink-module": "workspace:*",
     "@ledgerhq/wallet-api-simulator": "^2.0.1",
-    "@solana/web3.js": "1.95.4",
+    "@solana/web3.js": "catalog:",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
     "react": "catalog:",

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-evm",
-  "version": "0.13.0",
+  "version": "0.13.1-next.0",
   "private": true,
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [

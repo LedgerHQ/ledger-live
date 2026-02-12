@@ -174,7 +174,17 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw & {
   changeAddress: string | undefined;
 };
 
-export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
+export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources } & {
+  privateInfo?: PrivateInfo;
+};
+
+export type PrivateInfo = {
+  key: string | null;
+  balance: BigNumber;
+  syncState: "disabled" | "ready" | "running" | "paused" | "complete" | "outdated";
+  progress: number;
+  lastSyncTimestamp: number | null;
+};
 
 export type BitcoinAccountRaw = AccountRaw & {
   bitcoinResources: BitcoinResourcesRaw;

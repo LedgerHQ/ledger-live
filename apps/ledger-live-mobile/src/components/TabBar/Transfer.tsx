@@ -31,6 +31,7 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs<BaseStyledProps>(p => ({
   backgroundColor: p.theme.colors.primary.c80,
+  hitSlop: 0,
   height: MAIN_BUTTON_SIZE,
   width: MAIN_BUTTON_SIZE,
   borderRadius: MAIN_BUTTON_SIZE / 2,
@@ -38,13 +39,6 @@ const MainButton = proxyStyled(Touchable).attrs<BaseStyledProps>(p => ({
   alignItems: "center",
   justifyContent: "center",
 }))``;
-
-const hitSlop = {
-  top: 10,
-  left: 25,
-  right: 25,
-  bottom: 25,
-};
 
 export default () => null;
 
@@ -226,7 +220,6 @@ export function TransferTabIcon() {
       <MainButton
         style={({ pressed }: { pressed: boolean }) => (pressed ? { opacity: 1 } : {})}
         disabled={lockSubject.getValue()}
-        hitSlop={hitSlop}
         onPress={onPressButton}
         bottom={MAIN_BUTTON_BOTTOM}
         testID="transfer-button"

@@ -1,5 +1,5 @@
 import React from "react";
-import { Success } from "../../components/Success";
+import { GenericStatusDisplay } from "../../components/GenericStatusDisplay";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
 import { Error } from "../../components/Error";
@@ -26,12 +26,13 @@ export default function BackupDeleted({ isSuccessful }: BackupDeletedProps) {
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" height="100%">
       {isSuccessful ? (
-        <Success
+        <GenericStatusDisplay
           title={t("walletSync.manageBackup.deleteBackupSuccess.title")}
           description={t("walletSync.manageBackup.deleteBackupSuccess.description")}
           withClose
           onClose={onClose}
           analyticsPage={AnalyticsPage.BackupDeleted}
+          type="success"
           testId="walletsync-delete-backup-success-title"
         />
       ) : (

@@ -1,5 +1,5 @@
-import { IGasLimit, INetworkConfig, INonce } from "@multiversx/sdk-core";
 import { Account } from "@ledgerhq/types-live";
+import { IGasLimit, INetworkConfig, INonce } from "@multiversx/sdk-core";
 import { getAccountNonce, getNetworkConfig } from "./api";
 import {
   GAS_PRICE,

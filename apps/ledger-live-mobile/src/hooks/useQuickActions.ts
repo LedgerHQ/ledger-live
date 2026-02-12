@@ -18,6 +18,7 @@ import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/l
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useOpenSwap } from "LLM/features/Swap";
 
 export type QuickAction = {
   disabled: boolean;
@@ -31,7 +32,6 @@ type Actions =
   | "RECEIVE"
   | "BUY"
   | "SELL"
-  | "PERPS"
   | "SWAP"
   | "STAKE"
   | "WALLET_CONNECT"
@@ -50,8 +50,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
-  const ptxPerpsLiveAppMobile = useFeature("ptxPerpsLiveAppMobile");
-  const isPerpsEnabled = ptxPerpsLiveAppMobile?.enabled ?? false;
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isPtxServiceCtaExchangeDrawerDisabled = !(ptxServiceCtaExchangeDrawer?.enabled ?? true);
@@ -108,6 +106,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     sourceScreenName: route.name,
   });
 
+  const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
+
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
       SEND: {
@@ -128,29 +128,10 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       },
       SWAP: {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
-        route: [
-          NavigatorName.Swap,
-          {
-            screen: ScreenName.SwapTab,
-            params: { currency },
-          },
-        ],
+        customHandler: handleOpenSwap,
         icon: IconsLegacy.BuyCryptoMedium,
       },
     };
-
-    if (isPerpsEnabled) {
-      list.PERPS = {
-        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
-        route: [
-          NavigatorName.Perps,
-          {
-            screen: ScreenName.PerpsTab,
-          },
-        ],
-        icon: IconsLegacy.BuyCryptoMedium,
-      };
-    }
 
     if (canBeBought) {
       list.BUY = {
@@ -233,7 +214,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
-    isPerpsEnabled,
+    handleOpenSwap,
     canBeBought,
     canBeSold,
     partnerStakeRoute,

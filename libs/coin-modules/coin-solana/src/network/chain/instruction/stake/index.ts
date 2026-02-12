@@ -1,8 +1,8 @@
-import { ParsedInfo } from "../../validators";
-import { create, Infer } from "superstruct";
 import { ParsedInstruction } from "@solana/web3.js";
-import { StakeInstructionType, IX_STRUCTS, IX_TITLES } from "./types";
+import { create, Infer } from "superstruct";
 import { PARSED_PROGRAMS } from "../../program/constants";
+import { ParsedInfo } from "../../validators";
+import { StakeInstructionType, IX_STRUCTS, IX_TITLES } from "./types";
 
 export function parseStakeInstruction(
   ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.STAKE },

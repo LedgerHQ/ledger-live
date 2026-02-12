@@ -8,3 +8,4 @@ export { default as ScrollContainerHeader } from "./ScrollContainerHeader";
 export { default as ScrollListContainer } from "./ScrollListContainer";
 export { default as Row } from "./Table/Row";
 export * from "./List";
+export { Slides, useSlidesContext } from "./Slides";

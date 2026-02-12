@@ -1,5 +1,5 @@
-import { API_BASE } from "./config";
 import { ApiResponseFeeEstimate } from "../types";
+import { API_BASE } from "./config";
 
 export const getFeeEstimate = async (): Promise<ApiResponseFeeEstimate> => {
   try {

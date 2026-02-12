@@ -6,12 +6,14 @@ import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function useAnalyticsViewModel() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const counterValue = useSelector(counterValueCurrencySelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
+  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("desktop");
 
   const navigateToDashboard = useCallback(() => {
     navigate("/");
@@ -22,5 +24,6 @@ export default function useAnalyticsViewModel() {
     counterValue,
     selectedTimeRange,
     t,
+    shouldDisplayGraphRework,
   };
 }

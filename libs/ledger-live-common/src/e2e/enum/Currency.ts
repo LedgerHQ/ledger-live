@@ -25,6 +25,8 @@ export class Currency {
 
   static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS, [Network.APTOS]);
 
+  static readonly ZEC = new Currency("Zcash", "ZEC", "zcash", AppInfos.ZCASH, [Network.ZCASH]);
+
   static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
 
   static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
@@ -48,13 +50,6 @@ export class Currency {
     AppInfos.ETHEREUM,
     [Network.ETHEREUM],
     "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-  );
-  static readonly tETH = new Currency(
-    "Ethereum Holesky",
-    "𝚝ETH",
-    "ethereum_holesky",
-    AppInfos.ETHEREUM_HOLESKY,
-    [Network.ETHEREUM_HOLESKY],
   );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",

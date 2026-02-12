@@ -1,6 +1,6 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { broadcast } from "./broadcast";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const submitExtrinsicMock = jest.fn();
 jest.mock("../network", () => {

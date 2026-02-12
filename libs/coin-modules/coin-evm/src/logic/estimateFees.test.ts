@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   AssetInfo,
   BufferTxData,
@@ -7,10 +5,12 @@ import type {
   SendTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
-import { getNodeApi } from "../network/node";
-import { getGasTracker } from "../network/gasTracker";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { GasEstimationError } from "../errors";
+import { getGasTracker } from "../network/gasTracker";
+import { getNodeApi } from "../network/node";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("../network/node", () => ({ getNodeApi: jest.fn() }));

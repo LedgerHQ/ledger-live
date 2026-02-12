@@ -1,6 +1,6 @@
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import cryptoFactory from "./chain/chain";
 
 export async function validateAddress(

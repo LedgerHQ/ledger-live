@@ -12,12 +12,12 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import usePortfolioViewModel from "./usePortfolioViewModel";
-import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
+
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
   PortfolioCarouselSection,
-  PortfolioEmptyStateSection,
+  PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
@@ -40,13 +40,13 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isLNSUpsellBannerShown,
     isAddModalOpened,
     shouldDisplayGraphRework,
+    backgroundColor,
     openAddModal,
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
   } = usePortfolioViewModel(navigation);
-  const { backgroundColor } = useWallet40Theme("mobile");
 
   const data = useMemo(() => {
     const sections: React.JSX.Element[] = [];
@@ -61,7 +61,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     );
 
     if (!showAssets) {
-      sections.push(<PortfolioEmptyStateSection key="empty" openAddModal={openAddModal} />);
+      sections.push(
+        <PortfolioEmptySection key="empty" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
+      );
       return sections;
     }
 

@@ -1,5 +1,5 @@
-import { getTransactions } from "../network/chain/web3";
 import { ChainAPI } from "../network";
+import { getTransactions } from "../network/chain/web3";
 import { parsedTransaction } from "./fixtures/helpers.fixture";
 
 describe("getTransactions", () => {

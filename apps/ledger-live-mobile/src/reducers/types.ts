@@ -34,6 +34,7 @@ import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
+import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
@@ -383,6 +384,7 @@ export type State = LLMRTKApiState & {
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   ratings: RatingsState;
+  sendFlow: SendFlowState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;

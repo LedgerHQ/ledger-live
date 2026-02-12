@@ -1,5 +1,5 @@
-import { decode } from "ripple-binary-codec";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { decode } from "ripple-binary-codec";
 import { createApi } from ".";
 //import { decode, encodeForSigning } from "ripple-binary-codec";
 //import { sign } from "ripple-keypairs";

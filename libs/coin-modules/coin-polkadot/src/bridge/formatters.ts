@@ -1,9 +1,9 @@
-import invariant from "invariant";
-import type { Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { PolkadotAccount, PolkadotOperation, PolkadotResources } from "../types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Operation } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import { PolkadotAccount, PolkadotOperation, PolkadotResources } from "../types";
 
 function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
   const { validators, bondedAmount, unbondedAmount, withdrawUnbondedAmount, validatorStash } = (

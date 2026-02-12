@@ -3,9 +3,7 @@ import { getKey } from "../storage";
 import { ThunkResult } from "./types";
 
 export const toggleStarAction = (id: string, value: boolean) => {
-  const action = setAccountStarred(id, value);
-  action.type = "DB:" + action.type;
-  return action;
+  return setAccountStarred(id, value);
 };
 
 export const fetchWallet =

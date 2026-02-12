@@ -1,4 +1,5 @@
 import { Page, TestInfo } from "@playwright/test";
+import { ElectronApplication } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
@@ -19,7 +20,11 @@ export async function addBugLink(ids: string[]) {
   }
 }
 
-export async function captureArtifacts(page: Page, testInfo: TestInfo) {
+export async function captureArtifacts(
+  page: Page,
+  testInfo: TestInfo,
+  electronApp: ElectronApplication,
+) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
 
@@ -29,15 +34,6 @@ export async function captureArtifacts(page: Page, testInfo: TestInfo) {
       body: speculosScreenshot,
       contentType: "image/png",
     });
-  }
-
-  if (page.video()) {
-    const finalVideoPath = await page.video()?.path();
-    if (finalVideoPath) {
-      console.log(`Video for test recorded at: ${finalVideoPath}\n`);
-      const videoData = await readFileAsync(finalVideoPath);
-      await testInfo.attach("Test Video", { body: videoData, contentType: "video/webm" });
-    }
   }
 
   const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
@@ -50,4 +46,13 @@ export async function captureArtifacts(page: Page, testInfo: TestInfo) {
     path: filePath,
     contentType: "application/json",
   });
+
+  const video = page.video();
+  const videoPath = video ? await video.path() : null;
+  if (videoPath) {
+    await electronApp.close();
+    console.log(`Video for test recorded at: ${videoPath}\n`);
+    const videoData = await readFileAsync(videoPath);
+    await testInfo.attach("Test Video", { body: videoData, contentType: "video/webm" });
+  }
 }

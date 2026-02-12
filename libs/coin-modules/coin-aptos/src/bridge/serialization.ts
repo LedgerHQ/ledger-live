@@ -1,6 +1,6 @@
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAccount, AptosAccountRaw, AptosResources, AptosResourcesRaw } from "../types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toAptosResourcesRaw(r: AptosResources): AptosResourcesRaw {
   const { activeBalance, pendingInactiveBalance, inactiveBalance, stakingPositions } = r;

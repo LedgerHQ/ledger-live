@@ -122,7 +122,10 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
           ]}
         >
           <AppIcon isDisabled={isDisabled} size={52} name={manifest.name} icon={manifest.icon} />
-          <View style={styles.content}>
+          <View
+            style={styles.content}
+            testID={`catalog-app-card-${manifest.name.trim().toLowerCase()}`}
+          >
             <View style={styles.header}>
               <LText
                 variant="h3"

@@ -1,5 +1,18 @@
 # @ledgerhq/live-currency-format
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#14247](https://github.com/LedgerHQ/ledger-live/pull/14247) [`d5da9e0`](https://github.com/LedgerHQ/ledger-live/commit/d5da9e04d7a92b3f7f9df9d462bdd101cadbd300) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: drop support for `sei_network`
+
+- [#14131](https://github.com/LedgerHQ/ledger-live/pull/14131) [`8006565`](https://github.com/LedgerHQ/ledger-live/commit/8006565f77487fa0e38bf5f8d7bb4cda4cdba1f5) Thanks [@Canestin](https://github.com/Canestin)! - chore: remove ethereum holesky
+
+### Patch Changes
+
+- Updated dependencies [[`8006565`](https://github.com/LedgerHQ/ledger-live/commit/8006565f77487fa0e38bf5f8d7bb4cda4cdba1f5)]:
+  - @ledgerhq/types-cryptoassets@7.33.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

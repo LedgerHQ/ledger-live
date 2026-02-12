@@ -1,11 +1,8 @@
-import axios from "axios";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { Operation } from "@ledgerhq/types-live";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { LedgerExplorerUsedIncorrectly } from "../../errors";
-import { LedgerExplorerOperation } from "../../types";
-import { getCoinConfig } from "../../config";
+import axios from "axios";
 import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
@@ -13,6 +10,9 @@ import {
   ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
+import { getCoinConfig } from "../../config";
+import { LedgerExplorerUsedIncorrectly } from "../../errors";
+import { LedgerExplorerOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig } from "./types";
 
 export const DEFAULT_BATCH_SIZE = 10_000;

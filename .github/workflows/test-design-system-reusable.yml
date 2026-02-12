@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -60,14 +60,14 @@ jobs:
       - name: Upload unit test coverage (react)
         id: generate_coverage_react
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-ui-react
           path: ${{ github.workspace }}/libs/ui/packages/react/coverage
       - name: Upload unit test coverage (native)
         id: generate_coverage_native
         if: ${{ !cancelled() && hashFiles('libs/ui/packages/native/coverage/**') != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-ui-native
           path: ${{ github.workspace }}/libs/ui/packages/native/coverage
@@ -76,7 +76,7 @@ jobs:
         run: pnpm run test --continue --filter="./libs/ui/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload react-ui test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
           name: react-ui-test-results-ubuntu
@@ -89,7 +89,7 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-ui-ubuntu.txt", "${{ steps.test-ui.outcome }}", "utf-8");
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}
         with:
           name: outputs-test-ui

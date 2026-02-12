@@ -12,6 +12,7 @@ const ViewAllTile = ({ onPress }: ViewAllTileProps) => {
       onPress={onPress}
       testID="market-banner-view-all"
       appearance="card"
+      centered
       lx={{ width: "s96", flexGrow: 1 }}
       accessibilityLabel={t("marketBanner.viewAll")}
       accessibilityHint={t("marketBanner.viewAllAccessibilityHint")}

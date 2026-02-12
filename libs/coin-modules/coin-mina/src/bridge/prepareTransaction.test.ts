@@ -1,9 +1,9 @@
-import BigNumber from "bignumber.js";
-import estimateFees from "./getEstimatedFees";
-import { getNonce } from "../api";
-import { prepareTransaction } from "./prepareTransaction";
 import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getNonce } from "../api";
 import { Transaction } from "../types";
+import estimateFees from "./getEstimatedFees";
+import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../api");
 jest.mock("./getEstimatedFees");

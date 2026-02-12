@@ -1,3 +1,4 @@
+import type { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import {
   createFixtureAccount,
   createFixtureAccountWithSubAccount,
@@ -5,9 +6,8 @@ import {
   createFixtureTransactionWithSubAccount,
 } from "../../bridge/bridge.fixture";
 import buildTransaction from "../../logic/buildTransaction";
-import { AptosAPI } from "../../network";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
-import type { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import { AptosAPI } from "../../network";
 import type { TransactionOptions } from "../../types";
 
 const generateTransaction = jest.fn(() => "tx");

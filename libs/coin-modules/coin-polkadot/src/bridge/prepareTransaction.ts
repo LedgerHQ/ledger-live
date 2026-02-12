@@ -1,7 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { PolkadotAccount, Transaction } from "../types";
 import getEstimatedFees from "./getFeesForTransaction";
-import BigNumber from "bignumber.js";
 
 const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a.eq(b));
 

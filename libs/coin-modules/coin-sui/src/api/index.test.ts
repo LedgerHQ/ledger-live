@@ -1,7 +1,7 @@
-import { createApi } from "./index";
-import * as logic from "../logic";
-import type { SuiCoinConfig } from "../config";
 import { Page, Stake, Reward } from "@ledgerhq/coin-framework/lib/api/types";
+import type { SuiCoinConfig } from "../config";
+import * as logic from "../logic";
+import { createApi } from "./index";
 
 jest.mock("../logic");
 jest.mock("../config", () => ({

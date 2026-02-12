@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { GasOptions } from "../../types";
 import { EvmConfigInfo } from "../../config";
+import { GasOptions } from "../../types";
 
 export type GasTrackerApi = {
   getGasOptions: ({

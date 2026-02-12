@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "13.38.1",
+  "version": "13.39.0-next.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -40,7 +40,8 @@
     "@ledgerhq/errors": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "invariant": "2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

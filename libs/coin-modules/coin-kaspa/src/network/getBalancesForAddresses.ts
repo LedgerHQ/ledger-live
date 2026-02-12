@@ -1,5 +1,5 @@
-import { API_BASE } from "./config";
 import { ApiResponseBalance } from "../types";
+import { API_BASE } from "./config";
 
 export const getBalancesForAddresses = async (
   addresses: string[],

@@ -1,5 +1,5 @@
-import { log } from "@ledgerhq/logs";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { log } from "@ledgerhq/logs";
 import { tzkt } from "../network";
 import {
   type APIDelegationType,

@@ -1,14 +1,14 @@
-import sample from "lodash/sample";
-import invariant from "invariant";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account } from "@ledgerhq/types-live";
-import { isTezosAccount, type Transaction } from "../types";
+import invariant from "invariant";
+import sample from "lodash/sample";
 import { getAccountDelegationSync, isAccountDelegating } from "../network/bakers";
 import whitelist from "../network/bakers.whitelist-default";
+import { isTezosAccount, type Transaction } from "../types";
 import { acceptTransaction } from "./bot-deviceActions";
 
 const maxAccount = 12;

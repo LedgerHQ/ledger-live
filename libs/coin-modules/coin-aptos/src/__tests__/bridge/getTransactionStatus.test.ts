@@ -1,11 +1,3 @@
-import BigNumber from "bignumber.js";
-import {
-  createFixtureAccount,
-  createFixtureAccountWithSubAccount,
-  createFixtureTransaction,
-  createFixtureTransactionWithSubAccount,
-} from "../../bridge/bridge.fixture";
-import getTransactionStatus from "../../bridge/getTransactionStatus";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -17,6 +9,14 @@ import {
   NotEnoughToUnstake,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import BigNumber from "bignumber.js";
+import {
+  createFixtureAccount,
+  createFixtureAccountWithSubAccount,
+  createFixtureTransaction,
+  createFixtureTransactionWithSubAccount,
+} from "../../bridge/bridge.fixture";
+import getTransactionStatus from "../../bridge/getTransactionStatus";
 import { MIN_COINS_ON_SHARES_POOL } from "../../constants";
 
 const aptosResources = {

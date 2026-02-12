@@ -15,8 +15,6 @@ export class AppInfos {
 
   static readonly ETHEREUM = new AppInfos("Ethereum");
 
-  static readonly ETHEREUM_HOLESKY = new AppInfos("Ethereum Holesky");
-
   static readonly ETHEREUM_SEPOLIA = new AppInfos("Ethereum Sepolia");
 
   static readonly ETHEREUM_CLASSIC = new AppInfos("Ethereum Classic");
@@ -70,4 +68,6 @@ export class AppInfos {
   static readonly BASE = new AppInfos("Base");
 
   static readonly VECHAIN = new AppInfos("Vechain");
+
+  static readonly ZCASH = new AppInfos("Zcash");
 }

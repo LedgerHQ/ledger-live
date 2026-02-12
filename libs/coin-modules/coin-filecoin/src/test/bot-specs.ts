@@ -1,12 +1,12 @@
-import invariant from "invariant";
-import { DeviceModelId } from "@ledgerhq/devices";
-import BigNumber from "bignumber.js";
-import type { Transaction } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { generateDeviceActionFlow } from "./speculos-deviceActions";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { DeviceModelId } from "@ledgerhq/devices";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { AccountType, BotScenario } from "../bridge/utils";
+import type { Transaction } from "../types";
+import { generateDeviceActionFlow } from "./speculos-deviceActions";
 
 const F4_RECIPIENT = "f410fncojwmrseefktoco6rcnb3zv2eiqfli7muhvqma";
 const ETH_RECIPIENT = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";

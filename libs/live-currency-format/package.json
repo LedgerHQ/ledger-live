@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-currency-format",
-  "version": "0.2.1",
+  "version": "0.3.0-next.0",
   "description": "Ledger Live currency formatting utilities",
   "keywords": [
     "Ledger"

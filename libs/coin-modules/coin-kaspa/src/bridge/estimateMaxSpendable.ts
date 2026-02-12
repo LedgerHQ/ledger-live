@@ -1,8 +1,8 @@
-import type { AccountBridge } from "@ledgerhq/types-live";
-import { KaspaAccount, Transaction } from "../types";
-import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { getFeeRate } from "../logic";
+import { KaspaAccount, Transaction } from "../types";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,

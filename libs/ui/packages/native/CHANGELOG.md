@@ -1,5 +1,13 @@
 # @ledgerhq/native-ui
 
+## 0.56.0-next.0
+
+### Minor Changes
+
+- [#14303](https://github.com/LedgerHQ/ledger-live/pull/14303) [`7ac313c`](https://github.com/LedgerHQ/ledger-live/commit/7ac313c00fdfd6df29cc0767150f1ed0bbc380e2) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: slides component
+
+- [#14202](https://github.com/LedgerHQ/ledger-live/pull/14202) [`00c6ddd`](https://github.com/LedgerHQ/ledger-live/commit/00c6ddd11ebb925be63e651526f7bcfe50d0fda5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: create Slides component
+
 ## 0.55.0
 
 ### Minor Changes

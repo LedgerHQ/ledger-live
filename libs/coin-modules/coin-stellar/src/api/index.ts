@@ -14,9 +14,9 @@ import {
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-import { getEnv } from "@ledgerhq/live-env";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,
@@ -32,8 +32,8 @@ import {
   getAssetFromToken,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarBurnAddressError, StellarMemo } from "../types";
 import { fetchSequence } from "../network";
+import { StellarBurnAddressError, StellarMemo } from "../types";
 
 export function createApi(config: StellarConfig): Api<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

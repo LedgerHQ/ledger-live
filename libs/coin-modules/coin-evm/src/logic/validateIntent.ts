@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
 import type {
   AssetInfo,
   Balance,
@@ -8,6 +8,7 @@ import type {
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -24,12 +25,10 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
+import BigNumber from "bignumber.js";
+import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
-import { getGasTracker } from "../network/gasTracker";
-import estimateFees from "./estimateFees";
 import {
   getTransactionType,
   isApiGasOptions,
@@ -37,6 +36,7 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
+import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
   if (asset1.type === "native" && asset2.type === "native") return true;

@@ -1,12 +1,12 @@
+import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import flatMap from "lodash/flatMap";
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
-import flatMap from "lodash/flatMap";
-import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
-import type { Transaction, Baker } from "../types";
 import { listBakers, fetchAllBakers } from "../network/bakers";
 import defaultList from "../network/bakers.whitelist-default";
+import type { Transaction, Baker } from "../types";
 
 const options = [
   {

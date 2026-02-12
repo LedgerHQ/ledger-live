@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/zcash-shielded",
-  "version": "0.3.0",
+  "version": "0.4.0-next.0",
   "description": "ZCash library shielded accounts",
   "keywords": [
     "ZCash"
@@ -58,9 +58,13 @@
     "unimported": "unimported"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
-    "jest": "catalog:",
+    "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "@types/jest": "catalog:",
+    "jest": "catalog:"
+  },
+  "dependencies": {
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/zcash-decrypt": "0.1.0"
   }
 }

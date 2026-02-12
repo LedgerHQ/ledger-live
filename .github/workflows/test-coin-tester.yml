@@ -29,7 +29,7 @@ jobs:
       is-affected: ${{ steps.detect.outputs.is-affected }}
       matrix: ${{ steps.detect.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: develop
           fetch-depth: 0
@@ -105,7 +105,7 @@ jobs:
         chain: ${{ fromJson(needs.is-affected.outputs.matrix).chain }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop

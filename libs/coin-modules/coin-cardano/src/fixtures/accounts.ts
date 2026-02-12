@@ -3,7 +3,7 @@ import { CardanoAccount, CardanoDelegation } from "../types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BalanceHistoryCache } from "@ledgerhq/types-live";
 
-export const getCardanoTestnetAccount = (params: {
+export const getCardanoAccountFixture = (params: {
   delegation?: Partial<CardanoDelegation>;
 }): CardanoAccount => ({
   type: "Account",
@@ -20,7 +20,10 @@ export const getCardanoTestnetAccount = (params: {
   balanceHistoryCache: {} as BalanceHistoryCache,
   creationDate: new Date(),
   blockHeight: 0,
-  currency: { id: "cardano_testnet" } as CryptoCurrency,
+  currency: {
+    id: "cardano_testnet",
+    units: [{ name: "Cardano", code: "ADA", magnitude: 6 }],
+  } as CryptoCurrency,
   operationsCount: 0,
   operations: [],
   pendingOperations: [],

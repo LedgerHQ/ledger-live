@@ -53,11 +53,23 @@ export const buildOptimisticOperation = (
   const txCertificates = unsignedTransaction.getCertificates();
   const stakeRegistrationCertificates: Array<TyphonTypes.StakeRegistrationCertificate> = [];
   const stakeDeRegistrationCertificates: Array<TyphonTypes.StakeDeRegistrationCertificate> = [];
+  const stakeRegConwayCertificates: Array<TyphonTypes.StakeKeyRegistrationCertificate> = [];
+  const stakeDeRegConwayCertificates: Array<TyphonTypes.StakeKeyDeRegistrationCertificate> = [];
+
   txCertificates.forEach(c => {
-    if (c.type === TyphonTypes.CertificateType.STAKE_REGISTRATION) {
-      stakeRegistrationCertificates.push(c);
-    } else if (c.type === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION) {
-      stakeDeRegistrationCertificates.push(c);
+    switch (c.type) {
+      case TyphonTypes.CertificateType.STAKE_REGISTRATION:
+        stakeRegistrationCertificates.push(c);
+        break;
+      case TyphonTypes.CertificateType.STAKE_DE_REGISTRATION:
+        stakeDeRegistrationCertificates.push(c);
+        break;
+      case TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION:
+        stakeRegConwayCertificates.push(c);
+        break;
+      case TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION:
+        stakeDeRegConwayCertificates.push(c);
+        break;
     }
   });
 
@@ -66,6 +78,8 @@ export const buildOptimisticOperation = (
   const transactionHash = unsignedTransaction.getTransactionHash().toString("hex");
   const auxiliaryData = unsignedTransaction.getAuxiliaryData();
   const extra: CardanoOperationExtra = {};
+
+  // check for memo in auxiliary data
   if (auxiliaryData) {
     const memoMetadata = auxiliaryData.metadata.find(m => m.label === MEMO_LABEL);
     if (memoMetadata && memoMetadata.data instanceof Map) {
@@ -96,6 +110,24 @@ export const buildOptimisticOperation = (
     }
   }
 
+  if (stakeRegConwayCertificates.length) {
+    const walletRegistration = stakeRegConwayCertificates.find(
+      c =>
+        c.cert.stakeCredential.type === HashType.ADDRESS &&
+        c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
+    );
+    if (walletRegistration) {
+      extra.deposit = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(walletRegistration.cert.deposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
   if (stakeDeRegistrationCertificates.length) {
     const walletDeRegistration = stakeDeRegistrationCertificates.find(
       c =>
@@ -107,6 +139,25 @@ export const buildOptimisticOperation = (
       extra.refund = formatCurrencyUnit(
         account.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  if (stakeDeRegConwayCertificates.length) {
+    const walletDeRegistration = stakeDeRegConwayCertificates.find(
+      c =>
+        c.cert.stakeCredential.type === HashType.ADDRESS &&
+        c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
+    );
+    if (walletDeRegistration) {
+      operationValue = operationValue.minus(walletDeRegistration.cert.deposit);
+      extra.refund = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(walletDeRegistration.cert.deposit),
         {
           showCode: true,
           disableRounding: true,

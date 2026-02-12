@@ -1,5 +1,5 @@
-import { getBalances } from "../../logic/getBalances";
 import { APTOS_ASSET_ID, TOKEN_TYPE } from "../../constants";
+import { getBalances } from "../../logic/getBalances";
 import type { AptosAPI } from "../../network";
 
 describe("getBalance", () => {

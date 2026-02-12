@@ -1,5 +1,13 @@
 # @ledgerhq/zcash-shielded
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#14234](https://github.com/LedgerHQ/ledger-live/pull/14234) [`40249cb`](https://github.com/LedgerHQ/ledger-live/commit/40249cbb3c112b8bf7e8c36880b80e60154d6090) Thanks [@semeano](https://github.com/semeano)! - Add function to estimate sync time
+
+- [#13887](https://github.com/LedgerHQ/ledger-live/pull/13887) [`4e17220`](https://github.com/LedgerHQ/ledger-live/commit/4e17220d76afd31937d56aa8c285609ebbf867c8) Thanks [@alevito](https://github.com/alevito)! - Method for decrypting shielded part of a ZCash transaction
+
 ## 0.3.0
 
 ### Minor Changes

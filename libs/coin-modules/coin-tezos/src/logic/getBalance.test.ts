@@ -1,5 +1,5 @@
-import { setupServer } from "msw/node";
 import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { getBalance } from "./getBalance";
 

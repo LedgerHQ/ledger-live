@@ -1,7 +1,7 @@
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import type {
   CosmosAccount,
   CosmosDelegation,

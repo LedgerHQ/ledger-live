@@ -8,8 +8,10 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { type Transaction, TronAccount, TronSigner } from "../types";
+import tronCoinConfig, { type TronCoinConfig } from "../config";
+import { validateAddress } from "../logic";
 import signerGetAddress from "../signer";
+import { type Transaction, TronAccount, TronSigner } from "../types";
 import broadcast from "./broadcast";
 import createTransaction from "./createTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";
@@ -24,8 +26,6 @@ import {
 } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, postSync, sync } from "./synchronization";
-import tronCoinConfig, { type TronCoinConfig } from "../config";
-import { validateAddress } from "../logic";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);

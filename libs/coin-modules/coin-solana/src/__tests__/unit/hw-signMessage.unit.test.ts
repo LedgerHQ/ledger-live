@@ -1,9 +1,9 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, TypedEvmMessage } from "@ledgerhq/types-live";
+import bs58 from "bs58";
+import coinConfig from "../../config";
 import { signMessage } from "../../hw-signMessage";
 import { PubKeyDisplayMode, SolanaSigner } from "../../signer";
-import coinConfig from "../../config";
-import bs58 from "bs58";
 
 coinConfig.setCoinConfig(() => ({
   legacyOCMSMaxVersion: "1.8.0",
