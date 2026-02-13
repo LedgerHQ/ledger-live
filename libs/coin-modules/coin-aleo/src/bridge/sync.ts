@@ -2,7 +2,7 @@ import { type GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getBalance, lastBlock } from "../logic";
+import { getBalance, lastBlock, listOperations } from "../logic";
 import type { AleoAccount } from "../types";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
@@ -25,6 +25,18 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
 
   const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
   const transparentBalance = new BigNumber(nativeBalance.toString());
+
+  const latestAccountPublicOperations = await listOperations({
+    currency,
+    address,
+    ledgerAccountId,
+    fetchAllPages: true,
+    pagination: {
+      minHeight: 0,
+      order: "asc",
+      ...(lastBlockHeight > 0 && { lastPagingToken: lastBlockHeight.toString() }),
+    },
+  });
 
   return {
     type: "Account",
