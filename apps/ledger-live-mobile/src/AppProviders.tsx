@@ -1,4 +1,8 @@
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModalProvider,
+  GlobalSelectBottomSheet,
+  GlobalTooltipBottomSheet,
+} from "@ledgerhq/lumen-ui-rnative";
 import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
@@ -40,6 +44,8 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                     </InViewProvider>
                   </NotificationsProvider>
                 </PostOnboardingProviderWrapped>
+                <GlobalSelectBottomSheet />
+                <GlobalTooltipBottomSheet />
               </BottomSheetModalProvider>
             </CountervaluesBridgedProvider>
           </CountervaluesMarketcapBridgedProvider>

@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { StyleSheet } from "react-native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   AssetType,
@@ -13,7 +14,8 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
@@ -29,6 +31,7 @@ export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  useLumenBottomSheet?: boolean;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -37,7 +40,9 @@ const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
   networksConfiguration,
+  useLumenBottomSheet = false,
 }: Readonly<NetworkSelectionStepProps>) => {
+  const { t } = useTranslation();
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
@@ -103,6 +108,9 @@ const NetworkSelection = ({
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
+      {useLumenBottomSheet && (
+        <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} appearance="expanded" />
+      )}
       <BottomSheetFlatList
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
@@ -111,6 +119,7 @@ const NetworkSelection = ({
         renderItem={({ item }: { item: NetworkType }) => (
           <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
         )}
+        style={useLumenBottomSheet ? undefined : LEGACY_LIST_STYLE}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
         }}
@@ -119,5 +128,13 @@ const NetworkSelection = ({
     </Flex>
   );
 };
+
+/**
+ * Temporary: cancels QueuedDrawerGorhom's paddingHorizontal: 16 so list items
+ * align with the header. Will be removed when Gorhom fallback is deleted.
+ */
+const LEGACY_LIST_STYLE = StyleSheet.create({
+  list: { marginHorizontal: -16 },
+}).list;
 
 export default withDiscreetMode(React.memo(NetworkSelection));

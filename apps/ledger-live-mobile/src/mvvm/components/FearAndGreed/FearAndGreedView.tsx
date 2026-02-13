@@ -1,9 +1,12 @@
 import React from "react";
-import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { Text, BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import FearAndGreedCard from "./components/FearAndGreedCard";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedDrawerGorhom, {
+  BottomSheetView as GorhomBottomSheetView,
+} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 import FearAndGreedTitle from "./components/FearAndGreedTitle";
 import type { FearAndGreedViewProps } from "./types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,8 +20,30 @@ export const FearAndGreedView = ({
 }: FearAndGreedViewProps) => {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   if (!data || isError) return null;
+
+  if (isEnabled) {
+    return (
+      <>
+        <FearAndGreedCard data={data} onPress={handleOpenDrawer} />
+        <QueuedDrawerBottomSheet
+          isRequestingToBeOpened={isDrawerOpen}
+          onClose={handleCloseDrawer}
+          enableDynamicSizing
+        >
+          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+            <BottomSheetHeader />
+            <FearAndGreedTitle />
+            <Text typography="body1" lx={{ color: "base" }}>
+              {t("fearAndGreed.description")}
+            </Text>
+          </BottomSheetView>
+        </QueuedDrawerBottomSheet>
+      </>
+    );
+  }
 
   return (
     <>
@@ -28,12 +53,12 @@ export const FearAndGreedView = ({
         onClose={handleCloseDrawer}
         enableDynamicSizing
       >
-        <BottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
+        <GorhomBottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
           <FearAndGreedTitle />
           <Text typography="body1" lx={{ color: "base" }}>
             {t("fearAndGreed.description")}
           </Text>
-        </BottomSheetView>
+        </GorhomBottomSheetView>
       </QueuedDrawerGorhom>
     </>
   );

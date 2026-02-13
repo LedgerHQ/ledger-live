@@ -14,6 +14,12 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import i18next from "i18next";
 import Button from "~/components/Button";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import {
+  BottomSheetScrollView as LumenBottomSheetScrollView,
+  BottomSheetHeader,
+} from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerGorhom, {
   BottomSheetScrollView,
 } from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -32,6 +38,7 @@ const SNAP_POINTS = ["92%"];
 
 const LanguageSelect = () => {
   const { t } = useTranslation();
+  const { isEnabled } = useWalletFeaturesConfig("mobile");
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
   const supportedLocales = useSupportedLocales();
@@ -124,39 +131,69 @@ const LanguageSelect = () => {
         </Flex>
       </Pressable>
 
-      <QueuedDrawerGorhom
-        isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
-        onClose={handleLanguageSelectOnClose}
-        enableBlurKeyboardOnGesture={true}
-        snapPoints={SNAP_POINTS}
-        preventBackdropClick
-        enablePanDownToClose
-        keyboardBehavior="extend"
-      >
-        <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="center">
-          <Text
-            variant="h5"
-            fontWeight="semiBold"
-            justifyContent="center"
-            testID="language-select-drawer-title"
-          >
-            {t("syncOnboarding.languageSelect.title")}
-          </Text>
-        </Flex>
-        <ScrollViewContainer contentContainerStyle={{ paddingBottom: 24 }}>
-          <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
-            {supportedLocales.map((locale, index: number) => (
-              <SelectableList.Element
-                key={index + locale}
-                value={locale}
-                testID={`language-select-${locale}`}
-              >
-                {languages[locale]}
-              </SelectableList.Element>
-            ))}
-          </SelectableList>
-        </ScrollViewContainer>
-      </QueuedDrawerGorhom>
+      {isEnabled ? (
+        <QueuedDrawerBottomSheet
+          isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
+          onClose={handleLanguageSelectOnClose}
+          enableBlurKeyboardOnGesture={true}
+          snapPoints={SNAP_POINTS}
+          preventBackdropClick
+          enablePanDownToClose
+        >
+          <BottomSheetHeader
+            spacing
+            title={t("syncOnboarding.languageSelect.title")}
+            appearance="expanded"
+          />
+          <LumenBottomSheetScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+            <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
+              {supportedLocales.map((locale, index: number) => (
+                <SelectableList.Element
+                  key={index + locale}
+                  value={locale}
+                  testID={`language-select-${locale}`}
+                >
+                  {languages[locale]}
+                </SelectableList.Element>
+              ))}
+            </SelectableList>
+          </LumenBottomSheetScrollView>
+        </QueuedDrawerBottomSheet>
+      ) : (
+        <QueuedDrawerGorhom
+          isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
+          onClose={handleLanguageSelectOnClose}
+          enableBlurKeyboardOnGesture={true}
+          snapPoints={SNAP_POINTS}
+          preventBackdropClick
+          enablePanDownToClose
+          keyboardBehavior="extend"
+        >
+          <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="center">
+            <Text
+              variant="h5"
+              fontWeight="semiBold"
+              justifyContent="center"
+              testID="language-select-drawer-title"
+            >
+              {t("syncOnboarding.languageSelect.title")}
+            </Text>
+          </Flex>
+          <ScrollViewContainer contentContainerStyle={{ paddingBottom: 24 }}>
+            <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
+              {supportedLocales.map((locale, index: number) => (
+                <SelectableList.Element
+                  key={index + locale}
+                  value={locale}
+                  testID={`language-select-${locale}`}
+                >
+                  {languages[locale]}
+                </SelectableList.Element>
+              ))}
+            </SelectableList>
+          </ScrollViewContainer>
+        </QueuedDrawerGorhom>
+      )}
 
       <QueuedDrawer
         isRequestingToBeOpened={isRestartPromptOpened}

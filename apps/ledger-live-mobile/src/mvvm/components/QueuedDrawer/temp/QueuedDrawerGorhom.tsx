@@ -7,6 +7,7 @@ import {
   BottomSheetFlatList,
   BottomSheetScrollView,
   BottomSheetSectionList,
+  BottomSheetView,
   BottomSheetVirtualizedList,
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
@@ -22,6 +23,7 @@ export {
   BottomSheetFlatList,
   BottomSheetScrollView,
   BottomSheetSectionList,
+  BottomSheetView,
   BottomSheetVirtualizedList,
 };
 
