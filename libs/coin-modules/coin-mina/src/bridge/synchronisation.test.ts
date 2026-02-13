@@ -4,16 +4,20 @@ jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../api");
 jest.mock("../config");
-jest.mock("../api/graphql");
-jest.mock("../api/fetchValidators");
+jest.mock("../logic/account/getAccount");
+jest.mock("../logic/account/getDelegateAddress");
+jest.mock("../logic/history/getBlockInfo");
+jest.mock("../logic/history/getTransactions");
 
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
-import { getAccount, getTransactions, getBlockInfo, getDelegateAddress } from "../api";
-import { fetchValidators } from "../api/fetchValidators";
-import { getEpochInfo } from "../api/graphql";
+import { fetchValidators, getEpochInfo } from "../api";
+import { getAccount } from "../logic/account/getAccount";
+import { getDelegateAddress } from "../logic/account/getDelegateAddress";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
+import { getTransactions } from "../logic/history/getTransactions";
 import {
   createMockTxn,
   createMockAccountInfo,

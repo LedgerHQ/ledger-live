@@ -8,7 +8,7 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ValidatorInfo } from "../api/fetchValidators";
+import { ValidatorInfo } from "../api/types";
 
 export type Transaction = TransactionCommon & {
   family: "mina";
