@@ -1,10 +1,10 @@
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getAccountNumFromPath } from "../common-logic";
+import { getAccountNumFromPath } from "../logic/utils";
 import { MINA_MAINNET_NETWORK_ID } from "../consts";
 import { Transaction, TxType } from "../types";
 import { buildTransaction } from "./buildTransaction";
-jest.mock("../common-logic");
+jest.mock("../logic/utils");
 
 describe("buildTransaction", () => {
   let getAccountNumSpy: jest.SpyInstance;

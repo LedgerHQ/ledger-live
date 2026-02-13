@@ -11,8 +11,8 @@ import type {
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { Observable } from "rxjs";
-import { reEncodeRawSignature } from "../common-logic";
 import { MINA_CANCEL_RETURN_CODE } from "../consts";
+import { reEncodeRawSignature } from "../logic/utils";
 import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
 import { MinaSigner } from "../types/signer";
 import { buildTransaction } from "./buildTransaction";

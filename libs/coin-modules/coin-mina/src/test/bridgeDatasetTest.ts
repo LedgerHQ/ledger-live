@@ -8,9 +8,9 @@ import {
 } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { InvalidMemoMina, AccountCreationFeeWarning, AmountTooSmall } from "../bridge/errors";
 import { fromTransactionRaw } from "../bridge/transaction";
 import type { Transaction } from "../types/common";
+import { InvalidMemoMina, AccountCreationFeeWarning, AmountTooSmall } from "../types/errors";
 
 const ACCOUNT_ADDRESS = "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD";
 const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";
