@@ -40,7 +40,6 @@ export function ContentSection({
 }: ContentSectionProps) {
   const { t } = useTranslation();
 
-
   return (
     <OnboardLayout
       accounts={accountsToDisplay}
@@ -75,9 +74,7 @@ export function ContentSection({
         </Flex>
       )}
 
-      {showError && (
-        <ErrorSection error={error} disabled={isProcessing} onRetry={onRetry} />
-      )}
+      {showError && <ErrorSection error={error} disabled={isProcessing} onRetry={onRetry} />}
 
       {!showError &&
         displayStatus !== OnboardStatus.INIT &&

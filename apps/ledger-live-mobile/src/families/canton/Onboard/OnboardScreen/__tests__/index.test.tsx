@@ -33,12 +33,11 @@ const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel 
   const isAuthorizationPhase = hasResult && onboardingStatus !== OnboardStatus.ERROR;
   const displayStatus = isAuthorizationPhase ? authorizeStatus : onboardingStatus;
   const showError = Boolean(
-    error && (onboardingStatus === OnboardStatus.ERROR || authorizeStatus === AuthorizeStatus.ERROR),
+    error &&
+      (onboardingStatus === OnboardStatus.ERROR || authorizeStatus === AuthorizeStatus.ERROR),
   );
-  const successKey = isReonboarding
-    ? "canton.onboard.reonboard.success"
-    : "canton.onboard.success";
-  
+  const successKey = isReonboarding ? "canton.onboard.reonboard.success" : "canton.onboard.success";
+
   const statusTranslationKey = getStatusTranslationKey(displayStatus, isAuthorizationPhase);
 
   return {
