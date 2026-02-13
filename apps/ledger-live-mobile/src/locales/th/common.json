@@ -10,6 +10,9 @@
     "seeAll" : "ดูทั้งหมด",
     "seeAllWithNumber" : "ดูทั้งหมด ({{number}})",
     "back" : "ย้อนกลับ",
+    "fee" : "ค่าธรรมเนียม",
+    "stake" : "สเตค",
+    "validator" : "ผู้ตรวจสอบ",
     "delete" : "ลบ",
     "paste" : "วาง",
     "yes" : "ใช่",
@@ -468,7 +471,7 @@
       "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Enable Blind signing or Contract data in Ethereum app"
+      "title" : "เปิดใช้งาน Blind Signing หรือข้อมูลของสัญญาในแอป Ethereum"
     },
     "HardResetFail" : {
       "title" : "ขออภัย ไม่สามารถรีเซ็ตได้",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "สำหรับคุณ"
     },
+    "perpsEntry" : {
+      "title" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
+      "description" : "เทรดแบบมีเลเวอเรจ"
+    },
     "recommended" : {
       "title" : "แนะนำ"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "การโอน",
       "swap" : "สวอป",
       "buy" : "ซื้อ",
+      "connect" : "เชื่อมต่อ",
+      "buyLedger" : "ซื้อ Ledger",
       "transferDrawer" : {
         "title" : "การโอน",
         "receiveCrypto" : "รับคริปโต",
@@ -2988,7 +2997,6 @@
     "yield" : "ผลตอบแทน",
     "sell" : "ขาย",
     "swap" : "สวอป",
-    "perps" : "โทเคน Perps",
     "manage" : "จัดการ",
     "lastTransactions" : "ธุรกรรมล่าสุด",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "รับ",
         "buyCrypto" : "ซื้อ"
       },
-      "addAccountCta" : "เพิ่มบัญชี"
+      "addAccountCta" : "เพิ่มบัญชี",
+      "addCryptoAccount" : "เพิ่มบัญชีคริปโต"
     },
     "settings" : {
       "header" : "การตั้งค่าบัญชี",
@@ -3491,6 +3500,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Debug การอัปเดตระบบปฏิบัติการ"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Generate local content cards without Braze for testing.",
+        "description" : "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner" : "Add sample banner",
+        "addSampleBannerDesc" : "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel" : "Add sample action carousel",
+        "addSampleActionCarouselDesc" : "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll" : "Dismiss all local cards",
+        "dismissAllDesc" : "Remove all locally generated content cards."
       }
     }
   },
@@ -3674,10 +3694,6 @@
     "stake" : {
       "title" : "Stake",
       "description" : "รับ Reward จากคริปโตของคุณ"
-    },
-    "perps" : {
-      "title" : "โทเคน Perps",
-      "description" : "เทรดสัญญาซื้อขายล่วงหน้าแบบไม่จำกัดระยะเวลาในคริปโต"
     },
     "swap" : {
       "title" : "สวอป",
@@ -3875,7 +3891,8 @@
         "title" : "เลือกโควตราคา"
       },
       "twoStepApproval" : {
-        "title" : "ดำเนินการตามขั้นตอน"
+        "title" : "ดำเนินการตามขั้นตอน",
+        "completedTitle" : "สถานะธุรกรรม"
       },
       "loader" : {
         "title" : "กำลังประมวลผลการสวอป (Swap)",
@@ -4573,6 +4590,7 @@
       },
       "acceptTerms" : "การลงชื่อในธุรกรรมนี้จะถือว่าคุณยอมรับเงื่อนไขการใช้งานของ <0><0>{{provider}}</0>",
       "nearIntentsAcceptTerms" : "เมื่อยืนยันธุรกรรมนี้\n ถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งานของ SwapKit</0> ซึ่งเป็นเทคโนโลยีเบื้องหลัง NEAR Intents",
+      "acceptTermsSponsored" : "เพื่อรับสิทธิประโยชน์จากการใช้งานแบบไม่มีค่าธรรมเนียมเครือข่าย คุณยังยินยอมที่จะแบ่งปันรายละเอียดธุรกรรม (รวมถึงที่อยู่วอลเล็ต) ของคุณกับ Blinklabs อีกด้วย",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ<1>นโยบาย AML/KYC</1> ของ Changelly ในบางกรณี Changelly อาจดำเนินการตรวจสอบ AML/KYC ซึ่งอาจกระทบต่อการทำธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าว โปรดติดต่อ <2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "notice" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
@@ -6088,6 +6106,52 @@
       "newAddressTRC20" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งาน"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "คัดลอก Address แล้ว!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "memoPlaceholder" : "Memo (ไม่บังคับ)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน",
+      "showAll" : "แสดงทั้งหมด",
+      "showLess" : "แสดงน้อยลง",
+      "iDelegate" : "ฉันจะ Delegate"
+    }
+  },
   "stellar" : {
     "token" : "สินทรัพย์",
     "memo" : {
@@ -6492,9 +6556,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo (ไม่บังคับ)"
   },
   "near" : {
     "info" : {
@@ -8388,9 +8449,6 @@
     },
     "tileTitle" : "อารมณ์"
   },
-  "perps" : {
-    "title" : "โทเคน Perps"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "การวิเคราะห์"
@@ -8400,6 +8458,27 @@
     },
     "actions" : {
       "swap" : "สวอป"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "ดูพอร์ตการลงทุนใหม่ของคุณ",
+    "slides" : {
+      "portfolio" : {
+        "title" : "พอร์ตโฟลิโอของคุณ ในรูปแบบใหม่",
+        "description" : "เราได้ทำให้หน้าจอหลักของคุณดูง่ายขึ้น หากราฟของคุณอยู่ใช่ไหม? แค่แตะด้านล่างของยอดคงเหลือในบัญชีของคุณ"
+      },
+      "navigation" : {
+        "title" : "ทุกอย่างถูกจัดไว้อย่างลงตัว",
+        "description" : "'Ledger ของฉัน' และ 'ผู้ให้บริการ' ในตอนนี้ย้ายไปอยู่ด้านบนสุด ส่วน 'สวอป' และ 'การ์ด' ได้ย้ายไปที่ด้านล่างเพื่อให้เข้าถึงได้ง่ายขึ้น"
+      },
+      "actions" : {
+        "title" : "เทรดเร็วทันตลาด",
+        "description" : "แค่ดูเทรนด์จากแบนเนอร์ แล้วลงมือเทรดได้ทันที"
+      }
+    },
+    "cta" : {
+      "continue" : "ดำเนินการต่อ",
+      "explore" : "สำรวจพอร์ตการลงทุนใหม่ของฉัน"
     }
   }
 }
