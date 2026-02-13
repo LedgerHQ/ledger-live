@@ -192,6 +192,9 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS = "DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS",
   DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
   DYNAMIC_CONTENT_IS_LOADING = "DYNAMIC_CONTENT_IS_LOADING",
+  DYNAMIC_CONTENT_ADD_LOCAL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_CARDS",
+  DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS = "DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS",
+  DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -206,13 +209,22 @@ export type DynamicContentSetLandingStickyCtaCardsPayload =
 
 export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
 
+export type DynamicContentAddLocalCardsPayload = {
+  category: import("../dynamicContent/types").CategoryContentCard;
+  cards: import("../dynamicContent/types").BrazeContentCard[];
+};
+
+export type DynamicContentRemoveLocalCardPayload = string;
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
   | DynamicContentSetNotificationCardsPayload
   | DynamicContentSetCategoriesCardsPayload
   | DynamicContentSetLandingStickyCtaCardsPayload
-  | DynamicContentSetMobileCardsPayload;
+  | DynamicContentSetMobileCardsPayload
+  | DynamicContentAddLocalCardsPayload
+  | DynamicContentRemoveLocalCardPayload;
 
 // === RATINGS ACTIONS ===
 

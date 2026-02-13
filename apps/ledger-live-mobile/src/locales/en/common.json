@@ -3498,6 +3498,17 @@
         "firmwareUpdate": {
           "headerTitle": "Debug firmware update"
         }
+      },
+      "contentCards": {
+        "title": "Content Cards",
+        "titleDesc": "Generate local content cards without Braze for testing.",
+        "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner": "Add sample banner",
+        "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel": "Add sample action carousel",
+        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll": "Dismiss all local cards",
+        "dismissAllDesc": "Remove all locally generated content cards."
       }
     }
   },
