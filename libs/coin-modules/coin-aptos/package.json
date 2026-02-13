@@ -102,7 +102,7 @@
     "got": "11.8.5",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -111,7 +111,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.17.14",
+    "@types/lodash": "catalog:",
     "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",

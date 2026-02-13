@@ -33,7 +33,7 @@
     "base64-js": "1",
     "bignumber.js": "9",
     "isomorphic-ws": "catalog:",
-    "lodash": "4",
+    "lodash": "catalog:",
     "pako": "^2.0.4",
     "rxjs": "catalog:",
     "zod": "^3.22.4"
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/lodash": "4",
+    "@types/lodash": "catalog:",
     "@types/pako": "^2.0.0",
     "@types/ws": "^8.5.3",
     "msw": "catalog:",

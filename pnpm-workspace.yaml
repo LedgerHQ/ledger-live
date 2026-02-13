@@ -153,6 +153,8 @@ catalog:
   playwright: 1.51.1
   allure-playwright: 3.2.1
   allure-js-commons: 3.2.1
+  lodash: 4.17.23
+  "@types/lodash": 4.17.23
 
 overrides:
   node-abi: ^4.9.0

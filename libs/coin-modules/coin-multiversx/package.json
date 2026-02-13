@@ -59,7 +59,7 @@
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "protobufjs": "^7.2.6",
     "rxjs": "catalog:"
   },
@@ -67,7 +67,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.17.7",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"
