@@ -33,11 +33,11 @@
     }
   },
   "exports": {
-    "./lib/*": "./lib/ZCash.js",
-    "./lib-es/*": "./lib-es/ZCash.js",
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
     "./*": {
-      "require": "./lib/ZCash.js",
-      "default": "./lib-es/ZCash.js"
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -65,6 +65,8 @@
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/zcash-decrypt": "0.1.0"
+    "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/zcash-decrypt": "0.1.0",
+    "bignumber.js": "^9.1.2"
   }
 }

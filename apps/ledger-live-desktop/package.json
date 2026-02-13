@@ -64,6 +64,7 @@
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
+    "@ledgerhq/zcash-shielded": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
