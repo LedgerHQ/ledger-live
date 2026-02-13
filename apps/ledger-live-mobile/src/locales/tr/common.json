@@ -10,6 +10,9 @@
     "seeAll" : "Tümünü gör",
     "seeAllWithNumber" : "Tümünü gör ({{number}})",
     "back" : "Geri",
+    "fee" : "Ücret",
+    "stake" : "Stake edin",
+    "validator" : "Doğrulayıcı",
     "delete" : "Sil",
     "paste" : "Yapıştır",
     "yes" : "Evet",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "Sizin için"
     },
+    "perpsEntry" : {
+      "title" : "Süresiz vadeli sözleşmeler",
+      "description" : "Kaldıraçlı alım satım yapın"
+    },
     "recommended" : {
       "title" : "Önerilen"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "Transfer",
       "swap" : "Takas et",
       "buy" : "Satın al",
+      "connect" : "Bağlan",
+      "buyLedger" : "Ledger satın alın",
       "transferDrawer" : {
         "title" : "Transfer",
         "receiveCrypto" : "Kripto alın",
@@ -2988,7 +2997,6 @@
     "yield" : "Getiri",
     "sell" : "Sat",
     "swap" : "Takas et",
-    "perps" : "Sürekli vadeli işlemler",
     "manage" : "Yönet",
     "lastTransactions" : "Son işlemler",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
       },
-      "addAccountCta" : "Hesap ekle"
+      "addAccountCta" : "Hesap ekle",
+      "addCryptoAccount" : "Kripto hesabı ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -3491,6 +3500,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Donanım yazılımı güncellemesi için hata ayıklama"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Generate local content cards without Braze for testing.",
+        "description" : "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner" : "Add sample banner",
+        "addSampleBannerDesc" : "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel" : "Add sample action carousel",
+        "addSampleActionCarouselDesc" : "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll" : "Dismiss all local cards",
+        "dismissAllDesc" : "Remove all locally generated content cards."
       }
     }
   },
@@ -3674,10 +3694,6 @@
     "stake" : {
       "title" : "Stake et",
       "description" : "Kriptolarınızla ödüller kazanın."
-    },
-    "perps" : {
-      "title" : "Sürekli vadeli işlemler",
-      "description" : "Kriptoda sürekli vadeli işlemler yapın."
     },
     "swap" : {
       "title" : "Takas et",
@@ -3875,7 +3891,8 @@
         "title" : "Teklif seçin"
       },
       "twoStepApproval" : {
-        "title" : "Adımları tamamlayın"
+        "title" : "Adımları tamamlayın",
+        "completedTitle" : "İşlem Durumu"
       },
       "loader" : {
         "title" : "Takas İşleniyor",
@@ -4573,6 +4590,7 @@
       },
       "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
       "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
+      "acceptTermsSponsored" : "Sıfır ağ ücretinden faydalanmak için işlem ayrıntılarınızı (cüzdan adresiniz de dâhil) Blinklabs ile paylaşmayı da kabul ediyorsunuz.",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
@@ -6088,6 +6106,52 @@
       "newAddressTRC20" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adres kopyalandı!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Yetki devret",
+      "earn" : "Kazan"
+    },
+    "stakeBanner" : {
+      "title" : "MINA ile ödüller kazanın",
+      "altTitle" : "MINA yetki devrinizi yönetin",
+      "description" : "MINA’larınızın yetkisini bir Blok Üreticiye devredin ve blok üretiminden ödüller kazanın. Ödüller, yetkisini devrettiğiniz miktara göre dağıtılır.",
+      "altDescription" : "Yetki devri ayarlarınızı değiştirin veya MINA token’larınızın yetki devrini sonlandırın. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Yetkiyi devralan taraf",
+      "stakedBalance" : "Stake Bakiyesi",
+      "producerAddress" : "Üretici Adresi",
+      "delegatedToTooltip" : "Yetki devrettiğiniz blok üreticisinin adı",
+      "stakedBalanceTooltip" : "Bu doğrulayıcı ile an itibarıyla stake edilen toplam MINA miktarı",
+      "producerAddressTooltip" : "Yetki devrettiğiniz blok üreticisinin açık adresi"
+    },
+    "delegators" : "Yetki Devredenler",
+    "memoPlaceholder" : "İsteğe Bağlı Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Doğrulayıcı Seçin",
+        "connectDevice" : "Cihazı Bağlayın",
+        "confirmation" : "Onaylayın"
+      },
+      "title" : "MINA Stake Edin",
+      "help" : "MINA token’larınızın yetkisini devretmek için aşağıdaki listeden bir doğrulayıcı seçin.",
+      "success" : {
+        "title" : "İşlem başarıyla yayınlandı",
+        "description" : "Yetki devrini değiştirme talebiniz yayınlandı."
+      },
+      "error" : {
+        "title" : "İşlem yayınlanırken bir hata oluştu"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "showAll" : "Tümünü göster",
+      "showLess" : "Daha az göster",
+      "iDelegate" : "Yetkisi devredilecek:"
+    }
+  },
   "stellar" : {
     "token" : "Varlıklar",
     "memo" : {
@@ -6492,9 +6556,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "İsteğe Bağlı Memo"
   },
   "near" : {
     "info" : {
@@ -8388,9 +8449,6 @@
     },
     "tileTitle" : "Duygu"
   },
-  "perps" : {
-    "title" : "Sürekli vadeli işlemler"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "Analiz"
@@ -8400,6 +8458,27 @@
     },
     "actions" : {
       "swap" : "Takas et"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Yeni portföyünüzü keşfedin",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Portföy sayfanız yeniden tasarlandı",
+        "description" : "Ana ekranınızı daha sade bir hâle getirdik. Grafiğinizi bulamadınız mı? Bakiyenizin altındaki kısma dokunun."
+      },
+      "navigation" : {
+        "title" : "Her şey olması gereken yerde",
+        "description" : "My Ledger ve Keşfet sekmeleri artık en üstte. Takas ve Kart, daha hızlı erişim için alt kısma taşındı."
+      },
+      "actions" : {
+        "title" : "Piyasa hızında eylemler",
+        "description" : "Yeni banner ile piyasa trendlerini görün ve anında alım satım yapın."
+      }
+    },
+    "cta" : {
+      "continue" : "Devam",
+      "explore" : "Yeni portföyünüzü keşfedin"
     }
   }
 }
