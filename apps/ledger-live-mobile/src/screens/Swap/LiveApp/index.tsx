@@ -38,7 +38,10 @@ const isDefaultAccountSwapParamsList = (
   (("defaultAccount" in params && params.defaultAccount !== undefined) ||
     ("defaultCurrency" in params && params.defaultCurrency !== undefined) ||
     ("currency" in params && params.currency !== undefined) ||
-    ("affiliate" in params && params.affiliate !== undefined));
+    ("affiliate" in params && params.affiliate !== undefined) ||
+    ("fromPath" in params && params.fromPath !== undefined) ||
+    ("toTokenId" in params && params.toTokenId !== undefined) ||
+    ("fromTokenId" in params && params.fromTokenId !== undefined));
 
 export function SwapLiveApp({
   route,
