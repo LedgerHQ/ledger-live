@@ -1,9 +1,9 @@
 import {
   AssetInfo,
-  Cursor,
   ListOperationsOptions,
   MemoNotSupported,
   Operation,
+  Page,
 } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -127,7 +127,7 @@ export async function listOperations(
   currency: CryptoCurrency,
   address: string,
   options: ListOperationsOptions,
-): Promise<[Operation<MemoNotSupported>[], Cursor]> {
+): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
   const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
   const {
@@ -202,5 +202,5 @@ export async function listOperations(
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );
 
-  return [operations, nextPagingToken];
+  return { items: operations, next: nextPagingToken || undefined };
 }

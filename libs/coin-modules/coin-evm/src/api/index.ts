@@ -83,10 +83,7 @@ export function createApi(
     listOperations: async (
       address: string,
       options: ListOperationsOptions,
-    ): Promise<Page<Operation<MemoNotSupported>>> => {
-      const [items, next] = await listOperations(currency, address, options);
-      return { items, next: next || undefined };
-    },
+    ): Promise<Page<Operation<MemoNotSupported>>> => listOperations(currency, address, options),
     getBlock: (height: number): Promise<Block> => getBlock(currency, height),
     getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
     getStakes(_address: string): Promise<Page<Stake>> {
