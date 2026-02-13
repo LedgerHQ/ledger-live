@@ -10,6 +10,9 @@
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
+    "fee" : "手数料",
+    "stake" : "ステーキング",
+    "validator" : "バリデータ",
     "delete" : "削除",
     "paste" : "貼り付け",
     "yes" : "はい",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "お客様へ"
     },
+    "perpsEntry" : {
+      "title" : "無期限先物",
+      "description" : "レバレッジ取引"
+    },
     "recommended" : {
       "title" : "おすすめ"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "送金",
       "swap" : "スワップ",
       "buy" : "購入",
+      "connect" : "接続",
+      "buyLedger" : "Ledgerを購入する",
       "transferDrawer" : {
         "title" : "送金",
         "receiveCrypto" : "暗号資産を受け取る",
@@ -2988,7 +2997,6 @@
     "yield" : "イールド",
     "sell" : "売却",
     "swap" : "スワップ",
-    "perps" : "無期限先物",
     "manage" : "管理",
     "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "受け取る",
         "buyCrypto" : "購入"
       },
-      "addAccountCta" : "アカウントを追加"
+      "addAccountCta" : "アカウントを追加",
+      "addCryptoAccount" : "暗号資産アカウントを追加"
     },
     "settings" : {
       "header" : "アカウント設定",
@@ -3491,6 +3500,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "ファームウェアのアップデートをデバッグする"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Generate local content cards without Braze for testing.",
+        "description" : "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner" : "Add sample banner",
+        "addSampleBannerDesc" : "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel" : "Add sample action carousel",
+        "addSampleActionCarouselDesc" : "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll" : "Dismiss all local cards",
+        "dismissAllDesc" : "Remove all locally generated content cards."
       }
     }
   },
@@ -3674,10 +3694,6 @@
     "stake" : {
       "title" : "ステーキング",
       "description" : "お持ちの暗号資産で報酬を獲得しましょう。"
-    },
-    "perps" : {
-      "title" : "無期限先物",
-      "description" : "暗号資産の無期限先物を取引"
     },
     "swap" : {
       "title" : "スワップ",
@@ -3875,7 +3891,8 @@
         "title" : "見積もりを選択"
       },
       "twoStepApproval" : {
-        "title" : "手順を完了する"
+        "title" : "手順を完了する",
+        "completedTitle" : "トランザクションのステータス"
       },
       "loader" : {
         "title" : "スワップ処理中",
@@ -4573,6 +4590,7 @@
       },
       "acceptTerms" : "このトランザクションに署名すると、<0><0>{{provider}}</0>の利用規約</0>に同意したことになります。",
       "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
+      "acceptTermsSponsored" : "ネットワーク手数料を無料にするには、お客様のトランザクション詳細（ウォレットアドレスを含む）をBlinklabsと共有することに同意していただく必要があります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、その際には、取引の完了に影響する可能性があります。そのような場合は、Changellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
@@ -6088,6 +6106,52 @@
       "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "アドレスをコピーしました！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "再デリゲート",
+      "earn" : "報酬獲得"
+    },
+    "stakeBanner" : {
+      "title" : "MINAで報酬を獲得",
+      "altTitle" : "MINAのデリゲート（委任）管理",
+      "description" : "MINAをブロックプロデューサーにデリゲートして、ブロック生成による報酬を獲得。報酬はデリゲート量に応じて分配されます。",
+      "altDescription" : "デリゲート設定の変更や、MINAトークンのデリゲート解除ができます。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "デリゲート先：",
+      "stakedBalance" : "ステーキング済み残高",
+      "producerAddress" : "プロデューサーアドレス",
+      "delegatedToTooltip" : "デリゲート先のブロックプロデューサー名",
+      "stakedBalanceTooltip" : "現在このバリデーターにステーキングされているMINAの総量",
+      "producerAddressTooltip" : "デリゲート先のブロックプロデューサーの公開アドレス"
+    },
+    "delegators" : "デリゲーター",
+    "memoPlaceholder" : "任意のメモ",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "バリデーターを選択",
+        "connectDevice" : "デバイスを接続",
+        "confirmation" : "確認"
+      },
+      "title" : "MINAをステーキング",
+      "help" : "以下の一覧からバリデーターを選択し、MINAトークンをデリゲートしてください。",
+      "success" : {
+        "title" : "トランザクションの送信に成功しました",
+        "description" : "デリゲーションの変更リクエストが送信されました。"
+      },
+      "error" : {
+        "title" : "トランザクションの送信中にエラーが発生しました。"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "showAll" : "すべて表示",
+      "showLess" : "表示を減らす",
+      "iDelegate" : "デリゲートする"
+    }
+  },
   "stellar" : {
     "token" : "資産",
     "memo" : {
@@ -6492,9 +6556,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "任意のメモ"
   },
   "near" : {
     "info" : {
@@ -8388,9 +8449,6 @@
     },
     "tileTitle" : "市場ムード"
   },
-  "perps" : {
-    "title" : "無期限先物"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "アナリティクス"
@@ -8400,6 +8458,27 @@
     },
     "actions" : {
       "swap" : "スワップ"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "新しくなったポートフォリオ",
+    "slides" : {
+      "portfolio" : {
+        "title" : "ポートフォリオ画面を刷新",
+        "description" : "ホーム画面がよりシンプルになりました。グラフを表示するには、残高の下をタップしてください。"
+      },
+      "navigation" : {
+        "title" : "必要な機能を、最適な場所へ",
+        "description" : "「My Ledger」と「アプリ一覧」は画面上部へ。「スワップ」と「カード」はアクセスしやすい画面下部へ移動しました。"
+      },
+      "actions" : {
+        "title" : "市場の動きを逃さない",
+        "description" : "新しいバナーで市場トレンドをチェックし、すぐに取引を開始できます。"
+      }
+    },
+    "cta" : {
+      "continue" : "続行",
+      "explore" : "新しいポートフォリオを見る"
     }
   }
 }
