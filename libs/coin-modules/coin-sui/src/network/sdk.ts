@@ -415,12 +415,17 @@ export function alpacaTransactionToOp(
   const blockHash =
     checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
+  // SUI supports sponsored transactions where gasData.owner can differ from sender.
+  // If sponsored transactions need to be supported in the future, use gasData.owner instead.
+  const feesPayer = transaction.transaction?.data.sender || undefined;
+
   const op: Op = {
     id: hash,
     tx: {
       date: getOperationDate(transaction),
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
+      ...(feesPayer ? { feesPayer } : {}),
       block: {
         height: blockHeight,
         hash: blockHash,

@@ -20,7 +20,7 @@ description: Write unit and integration tests for Ledger Wallet apps. Use for Je
 ## Quick Reference
 
 ```bash
-# Inside ledger-live-desktop or ledger-live-mobile
+# Inside apps/ledger-live-desktop or apps/ledger-live-mobile
 pnpm test:jest "filename"    # Run specific file
 pnpm test:jest               # Run all tests
 pnpm test:jest --coverage    # Coverage report
@@ -31,6 +31,12 @@ pnpm test:jest --coverage    # Coverage report
 | Desktop  | `tests/testSetup`      | `tests/server.ts`     |
 | Mobile   | `@tests/test-renderer` | `__tests__/server.ts` |
 
+```bash
+# Test a coin module in libs/coin-modules
+# example for libs/coin-modules/coin-sui
+pnpn coin:sui test # Run all unit tests
+pnpm coin:sui test "filename" # Run specifit test
+pnpm coin:sui test-integ # Run all integration tests (slow)
 ---
 
 ## Test Template
