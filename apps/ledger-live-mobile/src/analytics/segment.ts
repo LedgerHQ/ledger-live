@@ -275,7 +275,7 @@ const extraProperties = async (store: AppStore) => {
   const notifications = notificationsSelector(state);
   const hasEnabledOsNotifications =
     notificationsPermissionStatusSelector(state) === AuthorizationStatus.AUTHORIZED;
-
+  console.log("HAS ENABLED", hasEnabledOsNotifications);
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,

@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2": "Buy a Ledger",
     "setupCta": "I already have a Ledger, set it up"
   },
+  "rebornBuyDevice": {
+      "title": "Connect a Ledger device",
+      "desc": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
+      "0": {
+        "title": "Full ownership",
+        "desc": "Your private keys never leave the device."
+      },
+      "1": {
+        "title": "Trade securely",
+        "desc": "Verify transactions on a secure screen."
+      },
+      "2": {
+        "title": "Access the most powerful wallet",
+        "desc": "Manage thousands of assets in one place."
+      },
+      "cta": "Connect",
+      "buyCta": "Buy your Ledger device"
+  },
   "postBuyDeviceSetupNanoWall": {
     "title": "Did you get your Ledger yet?",
     "desc": "Once you have your Ledger, set it up to unlock all features of the Ledger Wallet app.",
