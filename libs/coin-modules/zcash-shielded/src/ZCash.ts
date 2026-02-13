@@ -3,7 +3,7 @@ import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import type { ShieldedTransaction } from "./shieldedTransaction";
 import { JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction } from "./shieldedTransaction";
-import { LOG_TYPE } from "./consts";
+import { LOG_TYPE } from "./constants";
 
 /**
  * ZCash API
