@@ -41,16 +41,12 @@ export type SlidesProps = {
   FlatListProps<React.ReactElement>,
   | "data"
   | "renderItem"
-  | "keyExtractor"
   | "horizontal"
   | "pagingEnabled"
-  | "showsHorizontalScrollIndicator"
   | "onScroll"
-  | "scrollEventThrottle"
   | "onMomentumScrollEnd"
-  | "getItemLayout"
   | "initialScrollIndex"
-  | "ref"
+  | "onViewableItemsChanged"
 >;
 
 export function Slides({
@@ -128,9 +124,6 @@ export function Slides({
       const newIndex = Math.round(offsetX / width);
       if (newIndex !== currentIndex) {
         scheduleOnRN(setCurrentIndex, newIndex);
-        if (onSlideChange) {
-          scheduleOnRN(onSlideChange, newIndex);
-        }
       }
     },
   });
@@ -184,6 +177,7 @@ export function Slides({
             scrollEventThrottle={16}
             getItemLayout={getItemLayout}
             initialScrollIndex={initialSlideIndex}
+            onViewableItemsChanged={onSlideChange}
             {...flatListProps}
           />
         );

@@ -12,7 +12,7 @@ function WalletV4TourScreenDebug() {
   const dispatch = useDispatch();
 
   const hasSeenTour = useSelector(hasSeenWalletV4TourSelector);
-  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer } = useWalletV4TourDrawer();
+  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, slides } = useWalletV4TourDrawer();
 
   const handleToggleHasSeenTour = useCallback(() => {
     dispatch(setHasSeenWalletV4Tour(!hasSeenTour));
@@ -54,7 +54,11 @@ function WalletV4TourScreenDebug() {
           {"Open Drawer"}
         </Button>
       </View>
-      <WalletV4TourDrawer isDrawerOpen={isDrawerOpen} handleCloseDrawer={handleCloseDrawer} />
+      <WalletV4TourDrawer
+        isDrawerOpen={isDrawerOpen}
+        handleCloseDrawer={handleCloseDrawer}
+        slides={slides}
+      />
     </View>
   );
 }
