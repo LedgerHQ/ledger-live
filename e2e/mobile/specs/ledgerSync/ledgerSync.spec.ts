@@ -120,7 +120,6 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await goToLedgerSync();
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
     await app.ledgerSync.tapTurnOnSync();
-    await app.ledgerSync.tapUseMyLedgerDevice();
     await app.common.selectKnownDevice();
     await app.ledgerSync.activateLedgerSyncOnSpeculos();
     await app.ledgerSync.expectLedgerSyncSuccessPage();

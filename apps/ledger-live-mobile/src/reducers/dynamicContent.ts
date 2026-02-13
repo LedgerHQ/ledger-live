@@ -10,10 +10,7 @@ import {
   DynamicContentSetCategoriesCardsPayload,
   DynamicContentSetMobileCardsPayload,
   DynamicContentSetLandingStickyCtaCardsPayload,
-  DynamicContentAddLocalCardsPayload,
-  DynamicContentRemoveLocalCardPayload,
 } from "../actions/types";
-import { createSelector } from "~/context/selectors";
 
 export const INITIAL_STATE: DynamicContentState = {
   assetsCards: [],
@@ -23,8 +20,6 @@ export const INITIAL_STATE: DynamicContentState = {
   categoriesCards: [],
   mobileCards: [],
   isLoading: true,
-  localCategoriesCards: [],
-  localMobileCards: [],
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -57,34 +52,6 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     isLoading: (action as unknown as Action<boolean>).payload,
   }),
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_CARDS]: (state, action) => {
-    const { category, cards } = (action as Action<DynamicContentAddLocalCardsPayload>).payload;
-    return {
-      ...state,
-      localCategoriesCards: [...state.localCategoriesCards, category],
-      localMobileCards: [...state.localMobileCards, ...cards],
-    };
-  },
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS]: state => ({
-    ...state,
-    localCategoriesCards: [],
-    localMobileCards: [],
-  }),
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_REMOVE_LOCAL_CARD]: (state, action) => {
-    const cardId = (action as Action<DynamicContentRemoveLocalCardPayload>).payload;
-    const localMobileCards = state.localMobileCards.filter(c => c.id !== cardId);
-    const categoryIdsWithCards = new Set(
-      localMobileCards.map(c => (c.extras as { categoryId?: string })?.categoryId).filter(Boolean),
-    );
-    const localCategoriesCards = state.localCategoriesCards.filter(cat =>
-      categoryIdsWithCards.has(cat.categoryId),
-    );
-    return {
-      ...state,
-      localMobileCards,
-      localCategoriesCards,
-    };
-  },
 };
 
 // Selectors
@@ -94,26 +61,12 @@ export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
 
 export const notificationsCardsSelector = (s: State) => s.dynamicContent.notificationCards;
 
-export const categoriesCardsSelector = createSelector(
-  (s: State) => s.dynamicContent.categoriesCards,
-  (s: State) => s.dynamicContent.localCategoriesCards,
-  (categoriesCards, localCategoriesCards) => categoriesCards.concat(localCategoriesCards),
-);
+export const categoriesCardsSelector = (s: State) => s.dynamicContent.categoriesCards;
 
 export const landingPageStickyCtaCardsSelector = (s: State) =>
   s.dynamicContent.landingPageStickyCtaCards;
 
-export const mobileCardsSelector = createSelector(
-  (s: State) => s.dynamicContent.mobileCards,
-  (s: State) => s.dynamicContent.localMobileCards,
-  (mobileCards, localMobileCards) => mobileCards.concat(localMobileCards),
-);
-
-export const mobileCardsFromBrazeSelector = (s: State) => s.dynamicContent.mobileCards;
-
-export const localMobileCardsSelector = (s: State) => s.dynamicContent.localMobileCards;
-
-export const localCategoriesCardsSelector = (s: State) => s.dynamicContent.localCategoriesCards;
+export const mobileCardsSelector = (s: State) => s.dynamicContent.mobileCards;
 
 export const isDynamicContentLoadingSelector: (s: State) => boolean = (s: State) =>
   s.dynamicContent.isLoading;

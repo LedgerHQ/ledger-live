@@ -3498,17 +3498,6 @@
         "firmwareUpdate": {
           "headerTitle": "Debug firmware update"
         }
-      },
-      "contentCards": {
-        "title": "Content Cards",
-        "titleDesc": "Generate local content cards without Braze for testing.",
-        "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
-        "addSampleBanner": "Add sample banner",
-        "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
-        "addSampleActionCarousel": "Add sample action carousel",
-        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
-        "dismissAll": "Dismiss all local cards",
-        "dismissAllDesc": "Remove all locally generated content cards."
       }
     }
   },
@@ -8419,27 +8408,6 @@
     },
     "actions": {
       "swap": "Swap"
-    }
-  },
-  "walletV4Tour": {
-    "title": "Discover your new portfolio",
-    "slides": {
-      "portfolio": {
-        "title": "Your portfolio, reimagined",
-        "description": "We've decluttered your home screen. Missing your graph? Just tap below your balance."
-      },
-      "navigation": {
-        "title": "Everything in its right place",
-        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the bottom for faster access."
-      },
-      "actions": {
-        "title": "Actions at market speed",
-        "description": "Spot market trends with the new banner and trade instantly."
-      }
-    },
-    "cta": {
-      "continue": "Continue",
-      "explore": "Explore my new portfolio"
     }
   }
 }

@@ -5,8 +5,6 @@ import { useInViewContext } from "LLM/contexts/InViewContext";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
-import { localMobileCardsSelector, localCategoriesCardsSelector } from "~/reducers/dynamicContent";
-import { useSelector } from "~/context/hooks";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
 
@@ -25,15 +23,10 @@ export default function LogContentCardWrapper({
 }: Props) {
   const ref = useRef<View | null>(null);
   const { logImpressionCard } = useDynamicContent();
-  const localMobileCards = useSelector(localMobileCardsSelector);
-  const localCategoriesCards = useSelector(localCategoriesCardsSelector);
-  const isLocal =
-    localMobileCards.some(c => c.id === id) || localCategoriesCards.some(c => c.id === id);
   const isContainerVisibleRef = useRef(false);
 
   useInViewContext(
     ({ isInView, progressRatio }) => {
-      if (isLocal) return;
       if (isInView) logImpressionCard(id, displayedPosition);
 
       const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
@@ -43,7 +36,7 @@ export default function LogContentCardWrapper({
       }
       isContainerVisibleRef.current = isNowVisible;
     },
-    [isLocal, logImpressionCard, id, displayedPosition, location],
+    [id, logImpressionCard, displayedPosition, location],
     // @ts-expect-error REACT19FIXME: RefObject<View | null> not assignable to RefObject<View>
     ref,
   );

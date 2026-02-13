@@ -6,7 +6,6 @@ export default class LedgerSyncPage {
   confirmDeleteSyncId = "delete-trustchain";
   deleteSyncId = "walletSync-manage-backup";
   backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
-  useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
 
   activationButton = () => getElementById("walletsync-activation-button");
   activationTitle = () => getElementById("walletsync-activation-title");
@@ -28,11 +27,6 @@ export default class LedgerSyncPage {
   @Step("Tap on the activation button")
   async tapTurnOnSync() {
     await tapByElement(this.activationButton());
-  }
-
-  @Step("Tap on the use my ledger device button")
-  async tapUseMyLedgerDevice() {
-    await tapById(this.useMyLedgerDeviceButtonId);
   }
 
   @Step("Expect Ledger Sync success page")

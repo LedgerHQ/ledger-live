@@ -19,7 +19,6 @@ import DebugFetchCustomImage, {
 } from "~/screens/Settings/Debug/Features/FetchCustomImage";
 import DebugFirmwareUpdate from "~/screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "~/screens/Settings/Debug/Generators";
-import DebugContentCards from "~/screens/Settings/Debug/ContentCards";
 import DebugHttpTransport from "~/screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "~/screens/Settings/Debug/Information";
 import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetOfApps";
@@ -257,13 +256,6 @@ export default function SettingsNavigator() {
         component={DebugGenerators}
         options={{
           title: "Generators and Destructors",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugContentCards}
-        component={DebugContentCards}
-        options={{
-          title: t("settings.debug.contentCards.title"),
         }}
       />
       <Stack.Screen
