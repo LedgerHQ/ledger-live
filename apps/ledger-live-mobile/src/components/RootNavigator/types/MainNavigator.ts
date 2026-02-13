@@ -5,6 +5,7 @@ import { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
 import { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
+import { CardLandingNavigatorParamList } from "./CardLandingNavigator";
 
 export type MainNavigatorParamList = {
   [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList> | undefined;
@@ -13,4 +14,5 @@ export type MainNavigatorParamList = {
   [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList> | undefined;
   [NavigatorName.Web3HubTab]: NavigatorScreenParams<Web3HubTabStackParamList> | undefined;
   [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
+  [NavigatorName.CardTab]: NavigatorScreenParams<CardLandingNavigatorParamList> | undefined;
 };

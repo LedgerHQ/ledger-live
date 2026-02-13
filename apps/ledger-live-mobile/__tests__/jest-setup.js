@@ -229,6 +229,14 @@ jest.mock("react-native-device-info", () => ({
   getDeviceNameSync: jest.fn(() => "Mocked Device"),
 }));
 
+jest.mock("react-native-linear-gradient", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    default: jest.fn(({ children, ...props }) => React.createElement("View", props, children)),
+  };
+});
+
 const originalError = console.error;
 const originalWarn = console.warn;
 // eslint-disable-next-line no-console

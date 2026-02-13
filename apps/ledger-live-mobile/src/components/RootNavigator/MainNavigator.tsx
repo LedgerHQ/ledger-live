@@ -20,6 +20,7 @@ import { MainTabBar } from "LLM/components/MainTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import CardLandingNavigator from "./CardLandingNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { MainNavigatorTopBarHeader } from "./MainNavigatorTopBarHeader";
@@ -209,6 +210,31 @@ export default function MainNavigator() {
           })}
         />
       )}
+      <Tab.Screen
+        name={NavigatorName.CardTab}
+        component={CardLandingNavigator}
+        options={{
+          ...(!shouldDisplayWallet40MainNav && { headerShown: false }),
+          tabBarIcon: props => (
+            <TabIcon
+              Icon={IconsLegacy.CardMedium}
+              i18nKey="tabs.card"
+              testID="tab-bar-card"
+              {...props}
+            />
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              navigation.navigate(NavigatorName.CardTab, {
+                screen: ScreenName.Card,
+              });
+            });
+          },
+        })}
+      />
       <Tab.Screen
         name={NavigatorName.MyLedger}
         component={MyLedgerNavigator}
