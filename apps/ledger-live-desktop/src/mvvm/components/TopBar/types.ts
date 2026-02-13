@@ -4,6 +4,7 @@ import {
   Eye,
   EyeCross,
   Refresh,
+  Settings,
   Warning,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
@@ -14,6 +15,7 @@ type IconComponent =
   | typeof Eye
   | typeof EyeCross
   | typeof Refresh
+  | typeof Settings
   | typeof Spinner
   | typeof Warning;
 
@@ -23,6 +25,7 @@ type TopBarAction = {
   isInteractive: boolean;
   onClick: () => void;
   icon: IconComponent;
+  "data-testid"?: string;
 };
 
 /** A slot is either a generic action (button) or the notification indicator (button + drawer). */

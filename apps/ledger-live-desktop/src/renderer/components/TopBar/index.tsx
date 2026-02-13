@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useLocation } from "react-router";
 import styled from "styled-components";
 import { lock } from "~/renderer/actions/application";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
@@ -16,10 +15,10 @@ import HelpSideBar from "~/renderer/modals/Help";
 import ActivityIndicator from "./ActivityIndicator";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { useDiscreetMode } from "LLD/components/TopBar/hooks/useDiscreetMode";
+import { useSettings } from "LLD/components/TopBar/hooks/useSettings";
 
 const Container = styled(Box).attrs(() => ({}))`
   height: ${p => p.theme.sizes.topBarHeight}px;
@@ -39,22 +38,14 @@ const Inner = styled(Box).attrs(() => ({
 const TopBar = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
   const hasPassword = useSelector(hasPasswordSelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
   const { handleDiscreet } = useDiscreetMode();
   const discreetMode = useSelector(discreetModeSelector);
+  const { handleSettings, tooltip: settingsTooltip } = useSettings();
 
-  const navigateToSettings = useCallback(() => {
-    const url = "/settings";
-    if (location.pathname !== url) {
-      setTrackingSource("topbar");
-      navigate(url);
-    }
-  }, [navigate, location]);
   return (
     <Container color="neutral.c80">
       <Inner backgroundColor="background.default">
@@ -123,11 +114,11 @@ const TopBar = () => {
             <Box justifyContent="center">
               <Bar />
             </Box>
-            <Tooltip content={t("settings.title")} placement="bottom">
+            <Tooltip content={settingsTooltip} placement="bottom">
               <ItemContainer
                 data-testid="topbar-settings-button"
                 isInteractive
-                onClick={navigateToSettings}
+                onClick={handleSettings}
               >
                 <IconsLegacy.SettingsMedium size={18} />
               </ItemContainer>

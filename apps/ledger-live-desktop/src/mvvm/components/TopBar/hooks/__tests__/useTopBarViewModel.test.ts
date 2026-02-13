@@ -1,18 +1,22 @@
-import { Eye, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import { Eye, Refresh, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook } from "tests/testSetup";
 import useTopBarViewModel from "../useTopBarViewModel";
 import * as useActivityIndicatorModule from "../useActivityIndicator";
 import * as useDiscreetModeModule from "../useDiscreetMode";
+import * as useSettingsModule from "../useSettings";
 
 jest.mock("../useActivityIndicator");
 jest.mock("../useDiscreetMode");
+jest.mock("../useSettings");
 
 const mockUseActivityIndicator = jest.mocked(useActivityIndicatorModule.useActivityIndicator);
 const mockUseDiscreetMode = jest.mocked(useDiscreetModeModule.useDiscreetMode);
+const mockUseSettings = jest.mocked(useSettingsModule.useSettings);
 
 describe("useTopBarViewModel", () => {
   const mockHandleSync = jest.fn();
   const mockHandleDiscreet = jest.fn();
+  const mockHandleSettings = jest.fn();
   const mockDiscreetIcon = Eye;
 
   beforeEach(() => {
@@ -30,6 +34,11 @@ describe("useTopBarViewModel", () => {
       isError: false,
       tooltip: "Refresh",
       icon: Refresh,
+    });
+    mockUseSettings.mockReturnValue({
+      handleSettings: mockHandleSettings,
+      settingsIcon: Settings,
+      tooltip: "Settings",
     });
   });
 
@@ -50,7 +59,40 @@ describe("useTopBarViewModel", () => {
     }
   });
 
-  it("does not include synchronize slot when hasAccounts is false", () => {
+  it("includes notification slot, discreet action, and settings slot in correct order", () => {
+    const { result } = renderHook(() => useTopBarViewModel());
+
+    const notificationSlot = result.current.topBarSlots.find(s => s.type === "notification");
+    expect(notificationSlot).toBeDefined();
+    expect(notificationSlot).toEqual({ type: "notification" });
+
+    const slotLabels = result.current.topBarSlots.map(s =>
+      s.type === "action" ? s.action.label : "notification",
+    );
+    expect(slotLabels).toEqual(["synchronize", "notification", "discreet", "settings"]);
+
+    const discreetSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "discreet",
+    );
+    expect(discreetSlot).toBeDefined();
+    if (discreetSlot?.type === "action") {
+      expect(discreetSlot.action.onClick).toBe(mockHandleDiscreet);
+      expect(discreetSlot.action.isInteractive).toBe(true);
+    }
+
+    const settingsSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "settings",
+    );
+    expect(settingsSlot).toBeDefined();
+    if (settingsSlot?.type === "action") {
+      expect(settingsSlot.action.onClick).toBe(mockHandleSettings);
+      expect(settingsSlot.action.tooltip).toBe("Settings");
+      expect(settingsSlot.action.icon).toBe(Settings);
+      expect(settingsSlot.action.isInteractive).toBe(true);
+    }
+  });
+
+  it("does not include synchronize slot when hasAccounts is false and notification is first", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: false,
       handleSync: mockHandleSync,
@@ -67,49 +109,10 @@ describe("useTopBarViewModel", () => {
       s => s.type === "action" && s.action.label === "synchronize",
     );
     expect(syncSlot).toBeUndefined();
-  });
-
-  it("includes notification slot and discreet action in correct order", () => {
-    const { result } = renderHook(() => useTopBarViewModel());
-
-    const notificationSlot = result.current.topBarSlots.find(s => s.type === "notification");
-    expect(notificationSlot).toBeDefined();
-    expect(notificationSlot).toEqual({ type: "notification" });
-
     const slotLabels = result.current.topBarSlots.map(s =>
       s.type === "action" ? s.action.label : "notification",
     );
-    expect(slotLabels).toEqual(["synchronize", "notification", "discreet"]);
-
-    const discreetSlot = result.current.topBarSlots.find(
-      s => s.type === "action" && s.action.label === "discreet",
-    );
-    expect(discreetSlot).toBeDefined();
-    if (discreetSlot?.type === "action") {
-      expect(discreetSlot.action.onClick).toBe(mockHandleDiscreet);
-      expect(discreetSlot.action.isInteractive).toBe(true);
-    }
-  });
-
-  it("places notification slot 2nd (index 1) when hasAccounts, and 1st (index 0) when no accounts", () => {
-    const { result } = renderHook(() => useTopBarViewModel());
-    expect(result.current.topBarSlots[1].type).toBe("notification");
-
-    mockUseActivityIndicator.mockReturnValue({
-      hasAccounts: false,
-      handleSync: mockHandleSync,
-      isDisabled: false,
-      isRotating: false,
-      isError: false,
-      tooltip: "Refresh",
-      icon: Refresh,
-    });
-    const { result: resultNoAccounts } = renderHook(() => useTopBarViewModel());
-    expect(resultNoAccounts.current.topBarSlots[0].type).toBe("notification");
-    const slotLabels = resultNoAccounts.current.topBarSlots.map(s =>
-      s.type === "action" ? s.action.label : "notification",
-    );
-    expect(slotLabels).toEqual(["notification", "discreet"]);
+    expect(slotLabels).toEqual(["notification", "discreet", "settings"]);
   });
 
   it("passes isDisabled from useActivityIndicator as isInteractive false on sync action", () => {

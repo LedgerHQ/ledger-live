@@ -106,7 +106,7 @@ describe("TopBar", () => {
     expect(screen.getByTestId("topbar-action-button-discreet")).toBeVisible();
     expect(screen.getByTestId("topbar-password-lock-button")).toBeVisible();
     expect(screen.getByTestId("topbar-help-button")).toBeVisible();
-    expect(screen.getByTestId("topbar-settings-button")).toBeVisible();
+    expect(screen.getByTestId("topbar-action-button-settings")).toBeVisible();
   });
 
   describe("discreetMode", () => {
