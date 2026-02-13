@@ -59,7 +59,7 @@
     "expect": "catalog:",
     "icon-sdk-js": "1.5.2",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "prando": "^6.0.1",
     "rxjs": "catalog:"
   },
@@ -67,7 +67,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"

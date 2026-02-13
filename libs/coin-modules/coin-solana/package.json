@@ -60,7 +60,7 @@
     "expect": "catalog:",
     "invariant": "^2.2.2",
     "ky": "1.7.5",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:",
     "semver": "catalog:",
     "superstruct": "0.16.7"
@@ -71,7 +71,7 @@
     "@types/bs58": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/semver": "catalog:",
     "axios": "catalog:",
     "eslint-plugin-jest": "^27.4.2",

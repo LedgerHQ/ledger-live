@@ -15,7 +15,7 @@
     "@actions/github": "6.0.0",
     "@types/node": "22.10.10",
     "@types/unzipper": "0.10.9",
-    "lodash": "4.17.21",
+    "lodash": "catalog:",
     "node-fetch": "3.3.2",
     "stream-json": "1.8.0",
     "@rslib/core": "catalog:",

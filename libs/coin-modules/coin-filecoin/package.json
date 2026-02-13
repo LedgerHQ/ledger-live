@@ -107,14 +107,14 @@
     "ethers": "catalog:",
     "invariant": "^2.2.2",
     "iso-filecoin": "^4.1.0",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",

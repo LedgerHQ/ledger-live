@@ -78,7 +78,7 @@
     "expect": "catalog:",
     "imurmurhash": "^0.1.4",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "react-native-get-random-values": "^1.8.0",
     "rxjs": "catalog:"
   },
@@ -90,7 +90,7 @@
     "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "dotenv": "^16.4.5",
     "eslint-plugin-import": "^2.28.1",
     "fast-check": "^3.12.0",

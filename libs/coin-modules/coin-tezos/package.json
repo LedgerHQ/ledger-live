@@ -80,7 +80,7 @@
     "@taquito/utils": "^23.0.0-RC.0",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -90,7 +90,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.17.4",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",

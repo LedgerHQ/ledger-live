@@ -58,14 +58,14 @@
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "prando": "^6.0.1",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",

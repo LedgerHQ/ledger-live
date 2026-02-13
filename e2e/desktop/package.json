@@ -28,12 +28,12 @@
     "axios": "catalog:",
     "dotenv": "^16.4.7",
     "invariant": "^2.2.4",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "2.2.37",
-    "@types/lodash": "4.17.16",
+    "@types/lodash": "catalog:",
     "electron": "catalog:",
     "playwright": "catalog:"
   }

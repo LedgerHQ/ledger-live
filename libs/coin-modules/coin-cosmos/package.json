@@ -64,7 +64,7 @@
     "cosmjs-types": "0.2.1",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
     "semver": "catalog:"
@@ -73,7 +73,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
