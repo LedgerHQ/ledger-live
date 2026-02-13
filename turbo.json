@@ -317,6 +317,15 @@
       "outputs": [
         "artifacts/**"
       ]
+    },
+    "live-mobile#android:apk": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "android/app/build/generated/**",
+        "android/app/build/intermediates/**"
+      ]
     }
   }
 }
