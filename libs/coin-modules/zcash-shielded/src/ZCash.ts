@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import type { ShieldedTransaction } from "./shieldedTransaction";
-import { JsonRpcClient } from "./jsonRpcClient";
+import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction } from "./shieldedTransaction";
 import { LOG_TYPE } from "./constants";
 
@@ -15,10 +15,10 @@ export type SyncEstimatedTime = {
 };
 
 export default class ZCash {
-  nodeUrl: string;
+  jsonRpcClient: JsonRpcClient;
 
   constructor(args: { nodeUrl: string }) {
-    this.nodeUrl = args.nodeUrl;
+    this.jsonRpcClient = new JsonRpcClient(args.nodeUrl);
   }
 
   /**
@@ -52,28 +52,28 @@ export default class ZCash {
   /**
    * Scans a block for shielded transactions matching the given viewing key.
    *
-   * @param {string} blockHex Block hex
-   * @param {string} viewingKey the UFVK - unified full viewing key.
+   * @param {{
+   *    block: Block,
+   *    viewingKey: string
+   * }} args, Block and the UFVK - unified full viewing key.
    * @returns {ShieldedTransaction[]} list of shielded transactions
    */
-  async findShieldedTxsInBlock(
-    blockHex: string,
-    viewingKey: string,
-  ): Promise<ShieldedTransaction[]> {
-    // 1. retrieve block
-    const jsonRpcClient = new JsonRpcClient(this.nodeUrl);
-    const block = await jsonRpcClient.getBlock(blockHex);
+  async findShieldedTxsInBlock(args: {
+    block: Block;
+    viewingKey: string;
+  }): Promise<ShieldedTransaction[]> {
+    const { block, viewingKey } = args;
 
-    // 2. get list of tx
+    // 1. get list of tx
     const transactions = block?.tx;
     const decryptedTransactions = [];
 
-    // 3. retrieve each tx hash
+    // 2. retrieve each tx hash
     if (transactions) {
       for (const txId of transactions) {
-        const tx = await jsonRpcClient.getRawTransaction(txId);
+        const tx = await this.jsonRpcClient.getRawTransaction(txId);
 
-        // 4. call decryptTransaction for each tx hash containing orchard actions
+        // 3. call decryptTransaction for each tx hash containing orchard actions
         if (tx?.orchard.actions.length) {
           try {
             const decryptedTx = await this.decryptTransaction(tx?.hex, viewingKey);
@@ -87,7 +87,7 @@ export default class ZCash {
       }
     }
 
-    // 5. return list of transaction for the given viewingKey
+    // 4. return list of transaction for the given viewingKey
     return decryptedTransactions;
   }
 
