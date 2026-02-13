@@ -43,7 +43,10 @@ export class Drawer extends Component {
     this.page.getByTestId(`account-row-${accountName.toLowerCase()}-${index}`).first();
 
   async selectAccount(accountName: string, index = 0) {
-    await this.getAccountButton(accountName, index).click();
+    const accountButton = this.getAccountButton(accountName, index);
+    // Wait for account row to render before clicking (React 19 deferred rendering)
+    await accountButton.waitFor({ state: "visible" });
+    await accountButton.click();
   }
 
   back() {

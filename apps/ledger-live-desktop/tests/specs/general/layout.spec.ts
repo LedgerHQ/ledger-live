@@ -55,6 +55,8 @@ test("Layout @smoke", async ({ page }) => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
     await page.waitForLoadState("domcontentloaded");
+    // Wait for the Discover page content to render (React 19 deferred rendering)
+    await page.getByTestId("discover-title").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("discover.png", {
       mask: [page.getByTestId("live-icon-container")],
     });
