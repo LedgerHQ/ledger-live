@@ -20,6 +20,7 @@ import {
   VaultSigner,
   SupportedCountervaluesData,
   CurrencySettings,
+  doNotAskAgainSkipMemoSelector,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
@@ -156,6 +157,21 @@ export function useFilterTokenOperationsZeroAmount(): [
           }),
         );
       }
+    },
+    [dispatch],
+  );
+  return [value, setter];
+}
+export function useDoNotAskAgainSkipMemo(): [boolean, (doNotAskAgainSkipMemo: boolean) => void] {
+  const dispatch = useDispatch();
+  const value = useSelector(doNotAskAgainSkipMemoSelector);
+  const setter = useCallback(
+    (doNotAskAgainSkipMemo: boolean) => {
+      dispatch(
+        saveSettings({
+          doNotAskAgainSkipMemo,
+        }),
+      );
     },
     [dispatch],
   );

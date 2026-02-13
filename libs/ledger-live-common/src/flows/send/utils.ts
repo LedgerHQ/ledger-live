@@ -25,7 +25,9 @@ export function getRecipientDisplayValue(
 /**
  * Get the prefill value for recipient search when editing from Amount step.
  */
-export function getRecipientSearchPrefillValue(recipient: RecipientData | null): string {
+export function getRecipientSearchPrefillValue(
+  recipient: RecipientData | null,
+): string | undefined {
   if (!recipient) return "";
   return recipient.ensName?.trim() ? recipient.ensName : recipient.address;
 }
