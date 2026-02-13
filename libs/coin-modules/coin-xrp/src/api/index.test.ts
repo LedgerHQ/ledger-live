@@ -208,6 +208,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
+            feesPayer: opSender,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             failed: false,
             block: {
@@ -237,6 +238,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
+            feesPayer: opSender,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             failed: true,
             block: {
@@ -261,6 +263,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
+            feesPayer: opSender,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             failed: false,
             block: {

@@ -274,6 +274,7 @@ describe("listOperations", () => {
           asset: { type: "native" },
           tx: {
             fees: BigInt(10),
+            feesPayer: opSender,
             hash: "HASH_VALUE",
             block: {
               hash: "HASH_VALUE_BLOCK",
@@ -305,6 +306,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
+            feesPayer: opSender,
             date: new Date(1000000 + RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
@@ -330,6 +332,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
+            feesPayer: opSender,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,

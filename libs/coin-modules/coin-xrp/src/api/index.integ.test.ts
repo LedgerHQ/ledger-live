@@ -49,6 +49,7 @@ describe("Xrp Api (testnet)", () => {
         expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
         expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
         expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.feesPayer).toBe(SENDER);
         expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
@@ -258,9 +259,12 @@ describe("Xrp Api (mainnet)", () => {
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);
       ops.forEach(operation => {
-        const isSenderOrReceipt =
-          operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBe(true);
+        if (operation.type === "IN") {
+          expect(operation.recipients).toContain(SENDER);
+        } else if (operation.type === "OUT") {
+          expect(operation.senders).toContain(SENDER);
+        }
+        expect(operation.tx.feesPayer).toBe(operation.senders[0]);
         expect(operation.value).toBeGreaterThanOrEqual(0);
         expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
         expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -287,6 +291,7 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.senders).toContain(inTx.sender);
       expect(op.type).toEqual(inTx.type);
       expect(op.tx.fees).toEqual(BigInt(inTx.fees * 1e6));
+      expect(op.tx.feesPayer).toBe(inTx.sender);
     });
 
     it("returns OUT operation", async () => {
@@ -306,6 +311,7 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.senders).toContain(outTx.sender);
       expect(op.type).toEqual(outTx.type);
       expect(op.tx.fees).toEqual(BigInt(outTx.fees * 1e6));
+      expect(op.tx.feesPayer).toBe(SENDER);
     });
   });
 

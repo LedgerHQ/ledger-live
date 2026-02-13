@@ -175,6 +175,8 @@ const convertToCoreOperation =
       tx: {
         hash: hash,
         fees: fees,
+        // On XRP, the fee payer is always the Account that initiated the transaction.
+        feesPayer: Account,
         date: new Date(toEpochDate),
         block: {
           time: new Date(close_time_iso),
