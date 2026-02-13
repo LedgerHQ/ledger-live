@@ -45,17 +45,6 @@ const Fields: Props = ({
   const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
-  // /* TODO: How do we set default RBF to be true ? (@gre)
-  //  * Meanwhile, using this trick (please don't kill me)
-  //  */
-  // useEffect(() => {
-  //   updateTransaction((t: Transaction) =>
-  //     bridge.updateTransaction(t, {
-  //       rbf: true,
-  //     }),
-  //   );
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy }: OnClickType) => {
       track("button_clicked2", {
