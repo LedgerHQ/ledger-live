@@ -6,10 +6,10 @@ import { FlatList } from "react-native-gesture-handler";
 import { useTranslation } from "~/context/Locale";
 import { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
-import { ProgressDots } from "./components/ProgressDots";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { StyleSheet } from "react-native";
+import { ProgressIndicator } from "./components/ProgressIndicator";
 
 export const useWalletV4TourDrawer = () => {
   return useWalletV4TourDrawerViewModel();
@@ -64,7 +64,7 @@ export const WalletV4TourDrawer = ({
         </Slides.Content>
 
         <Slides.ProgressIndicator style={styles.progressIndicator}>
-          <ProgressDots />
+          <ProgressIndicator />
         </Slides.ProgressIndicator>
 
         <Slides.Footer style={{ marginBottom: bottomInset + 60 }}>
