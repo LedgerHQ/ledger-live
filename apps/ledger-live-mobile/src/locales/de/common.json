@@ -10,6 +10,9 @@
     "seeAll" : "Alles anzeigen",
     "seeAllWithNumber" : "Alle anzeigen ({{number}})",
     "back" : "Zurück",
+    "fee" : "Gebühr",
+    "stake" : "Staken",
+    "validator" : "Validator",
     "delete" : "Löschen",
     "paste" : "Einfügen",
     "yes" : "Ja",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "Für dich"
     },
+    "perpsEntry" : {
+      "title" : "Perpetuals",
+      "description" : "Traden mit Hebelwirkung"
+    },
     "recommended" : {
       "title" : "Empfohlen"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "Übertragen",
       "swap" : "Swappen",
       "buy" : "Kaufen",
+      "connect" : "Verbinden",
+      "buyLedger" : "Ledger-Gerät kaufen",
       "transferDrawer" : {
         "title" : "Übertragen",
         "receiveCrypto" : "Krypto empfangen",
@@ -2988,7 +2997,6 @@
     "yield" : "Ertrag",
     "sell" : "Verkaufen",
     "swap" : "Umtauschen",
-    "perps" : "Perps",
     "manage" : "Verwalten",
     "lastTransactions" : "Letzte Transaktionen",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "Empfangen",
         "buyCrypto" : "Kaufen"
       },
-      "addAccountCta" : "Konto hinzufügen"
+      "addAccountCta" : "Konto hinzufügen",
+      "addCryptoAccount" : "Kryptokonto hinzufügen"
     },
     "settings" : {
       "header" : "Konto-Einstellungen",
@@ -3491,6 +3500,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Debug-Firmware-Update"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Generate local content cards without Braze for testing.",
+        "description" : "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner" : "Add sample banner",
+        "addSampleBannerDesc" : "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel" : "Add sample action carousel",
+        "addSampleActionCarouselDesc" : "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll" : "Dismiss all local cards",
+        "dismissAllDesc" : "Remove all locally generated content cards."
       }
     }
   },
@@ -3674,10 +3694,6 @@
     "stake" : {
       "title" : "Staken",
       "description" : "Erhalte Prämien für deine Kryptos."
-    },
-    "perps" : {
-      "title" : "Perps",
-      "description" : "Trade Perpetuals mit Krypto-Assets."
     },
     "swap" : {
       "title" : "Umtauschen",
@@ -3875,7 +3891,8 @@
         "title" : "Angebot auswählen"
       },
       "twoStepApproval" : {
-        "title" : "Schritte erledigen"
+        "title" : "Schritte erledigen",
+        "completedTitle" : "Transaktionsstatus"
       },
       "loader" : {
         "title" : "Swap wird verarbeitet",
@@ -4573,6 +4590,7 @@
       },
       "acceptTerms" : "Durch Signieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen von <0>{{provider}}</0></0> zu.",
       "nearIntentsAcceptTerms" : "Durch Bestätigen dieser Transaktion \nakzeptiere ich die <0>Nutzungsbedingungen von SwapKit</0>, der Technologie, die NEAR Intents zugrunde liegt",
+      "acceptTermsSponsored" : "Um von entfallenden Netzwerkgebühren zu profitieren, erklärst du dich damit einverstanden, deine Transaktionsdaten (einschließlich deiner Wallet-Adresse) mit Blinklabs zu teilen.",
       "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie der <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, die in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "notice" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest. Die Adressen musst du nicht verifizieren, da diese sicher ausgetauscht werden."
     },
@@ -6088,6 +6106,52 @@
       "newAddressTRC20" : "Du musst zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse kopiert!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Erneut delegieren",
+      "earn" : "Verdienen"
+    },
+    "stakeBanner" : {
+      "title" : "Mit MINA Prämien verdienen",
+      "altTitle" : "Deine MINA-Delegation verwalten",
+      "description" : "Delegiere deine MINA an einen Blockproduzenten und verdiene Prämien aus der Blockproduktion. Die Prämien werden je nach Delegationsbetrag berechnet.",
+      "altDescription" : "Ändere deine Delegierungseinstellungen oder hebe die Delegierung deiner MINA-Token auf. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "delegiert an",
+      "stakedBalance" : "Kontostand gestaked",
+      "producerAddress" : "Produzentenadresse",
+      "delegatedToTooltip" : "Name des Blockproduzenten, an den du delegierst",
+      "stakedBalanceTooltip" : "MINA-Gesamtbetrag, der zurzeit bei diesem Validator gestaket ist",
+      "producerAddressTooltip" : "Öffentliche Adresse des Blockproduzenten, an den du delegierst"
+    },
+    "delegators" : "Delegatoren",
+    "memoPlaceholder" : "Optionales Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Validator auswählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "confirmation" : "Bestätigung"
+      },
+      "title" : "MINA staken",
+      "help" : "Wähle in der nachstehenden Liste einen Validator aus, um deine MINA-Token zu delegieren.",
+      "success" : {
+        "title" : "Transaktion erfolgreich übertragen",
+        "description" : "Dein Antrag auf Delegationsänderung wurde übertragen."
+      },
+      "error" : {
+        "title" : "Beim Übertragen der Transaktion ist ein Fehler aufgetreten"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "showAll" : "Alle anzeigen",
+      "showLess" : "Weniger anzeigen",
+      "iDelegate" : "Ich delegiere"
+    }
+  },
   "stellar" : {
     "token" : "Vermögenswerte",
     "memo" : {
@@ -6492,9 +6556,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Optionales Memo"
   },
   "near" : {
     "info" : {
@@ -8388,9 +8449,6 @@
     },
     "tileTitle" : "Stimmung"
   },
-  "perps" : {
-    "title" : "Perps"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "Analysen"
@@ -8400,6 +8458,27 @@
     },
     "actions" : {
       "swap" : "Swappen"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Entdecke dein neues Portfolio",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Dein Portfolio, neu definiert",
+        "description" : "Wir haben deinen Startbildschirm aufgeräumt. Vermisst du deinen Graphen? Tippe einfach unter deinem Saldo."
+      },
+      "navigation" : {
+        "title" : "Alles ist am richtigen Platz",
+        "description" : "„My Ledger“ und „Entdecken“ sind ganz oben. „Swap“ und „Karte“ wurden für den schnelleren Zugriff nach unten verschoben."
+      },
+      "actions" : {
+        "title" : "Maßnahmen im Markttempo",
+        "description" : "Erkenne Markttrends mit dem neuen Banner und trade sofort."
+      }
+    },
+    "cta" : {
+      "continue" : "Weiter",
+      "explore" : "Mein neues Portfolio entdecken"
     }
   }
 }
