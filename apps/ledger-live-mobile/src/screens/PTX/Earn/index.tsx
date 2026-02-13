@@ -36,7 +36,6 @@ export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenNam
 
 const appManifestNotFoundError = new Error("Earn App not found");
 
-
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
 
