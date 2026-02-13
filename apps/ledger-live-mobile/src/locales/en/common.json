@@ -4155,6 +4155,80 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "newSendFlow": {
+      "title": "Send {{currency}}",
+      "available": "Available {{amount}}",
+      "placeholder": "Enter address or ENS",
+      "placeholderNoENS": "Enter address",
+      "recent": "Recent",
+      "myAccounts": "My accounts",
+      "sendTo": "Send to {{address}}",
+      "addressMatched": "Address matched",
+      "addressNotFound": "Address not found",
+      "alreadyUsed": "Already used · {{date}}",
+      "recentSendWillAppear": "Your recent send will appear here",
+      "relativeDate": {
+        "justNow": "Just now",
+        "minutesAgo_one": "1 min ago",
+        "minutesAgo_other": "{{count}} min ago",
+        "hoursAgo_one": "1 hour ago",
+        "hoursAgo_other": "{{count}} hours ago",
+        "daysAgo_one": "1 day ago",
+        "daysAgo_other": "{{count}} days ago"
+      },
+      "remove": "Remove",
+      "enterTag": "Enter {{tag}}",
+      "firstInteraction": {
+        "title": "You’re sending to a new address",
+        "description": "Verify that the address is correct. In case of doubt send a small amount first."
+      },
+      "sanctioned": {
+        "title": "Flagged address",
+        "description": "This address has been flagged and Ledger doesn’t allow sending to it",
+        "helpCenter": "Help center"
+      },
+      "errors": {
+        "incorrectFormat": "Incorrect address format",
+        "incompatibleAsset": "Address isn’t compatible with the asset selected",
+        "walletNotExist": "Wallet doesn’t exist"
+      },
+      "skipMemo": {
+        "title": "Skip adding {{tag}}?",
+        "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
+      },
+      "tagHelp": {
+        "title": "What’s a {{tag}}?",
+        "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      },
+      "networkFeesInFiat": "Network fees in {{currency}}",
+      "feesAmount": "Fees amount ({{unit}})",
+      "gasLimit": "Gas limit ({{unit}})",
+      "feesPaid": "Fees paid to the network to proceed your transaction",
+      "insufficientBalanceFees": "Insufficient balance to cover the network fees",
+      "amountToSend": "Amount to send in ({{currency}})",
+      "coinToSend": "Coin to send",
+      "coinControlCustom": "Custom coin selection",
+      "quickActions": {
+        "quarter": "25%",
+        "half": "50%",
+        "threeQuarters": "75%",
+        "max": "Max"
+      },
+      "reviewCta": "Review",
+      "getCta": "Get {{currency}}",
+      "switchInputMode": "Switch amount input mode",
+      "aboveMaximum": "Above maximum balance",
+      "transactionSigned": "Transaction signed",
+      "processingTransaction": "Your transaction is being processed",
+      "sign": {
+        "title": "Continue on your Ledger {{wording}}",
+        "description": "Follow the instructions displayed on your Secure Touchscreen."
+      },
+      "gasOptionsSync": {
+        "warningTitle": "Unable to refresh network fees",
+        "warningDescription": "Fee presets may be outdated."
+      }
+    },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
