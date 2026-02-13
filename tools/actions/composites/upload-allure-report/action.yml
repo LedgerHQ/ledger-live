@@ -40,6 +40,9 @@ runs:
           PATH_VALUE="${BRANCH}-${SUFFIX}"
         fi
         echo "path=${PATH_VALUE}" >> "$GITHUB_OUTPUT"
+    - name: Compress PNG files
+      shell: bash
+      run: ${{ github.action_path }}/compress-pngs.sh "${{ inputs.path }}"
     - name: Publish report on Allure Server
       id: publish-report
       uses: LedgerHQ/send-to-allure-server-action@2.1.2

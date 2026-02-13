@@ -1,0 +1,34 @@
+--- a/dist/listener.js
++++ b/dist/listener.js
+@@ -75,8 +75,20 @@
+                 onError,
+             });
+         }
+-        if (deviceVideos) {
+-            const baseOptions = deviceVideos === true ? {} : deviceVideos;
++        // PATCH: Check DETOX_ENABLE_VIDEO env var to enable video dynamically
++        const enableVideoFromEnv = process.env.DETOX_ENABLE_VIDEO === 'true';
++        const effectiveDeviceVideos = enableVideoFromEnv ? (deviceVideos || true) : deviceVideos;
++        if (effectiveDeviceVideos) {
++            let baseOptions = effectiveDeviceVideos === true ? {} : effectiveDeviceVideos;
++            // If enabled via env var, optionally override options from DETOX_VIDEO_OPTIONS
++            if (enableVideoFromEnv && process.env.DETOX_VIDEO_OPTIONS) {
++                try {
++                    baseOptions = JSON.parse(process.env.DETOX_VIDEO_OPTIONS);
++                } catch (e) {
++                    console.warn('Failed to parse DETOX_VIDEO_OPTIONS; falling back to default video options.', e);
++                    baseOptions = {};
++                }
++            }
+             videoManager = new video_1.VideoManager({ device, options: baseOptions, onError });
+         }
+         if (deviceViewHierarchy && viewHierarchyFactory) {
+@@ -152,7 +164,7 @@
+     })
+         .on('test_fn_failure', async () => {
+         failing = true;
+-        await Promise.all([logs?.attachAfterFailure(api_1.allure), screenshots?.attachFailure(api_1.allure)]);
++        await Promise.all([logs?.attachAfterFailure(api_1.allure), screenshots?.attachFailure(api_1.allure), videoManager?.stopAndAttach($test, failing)]);
+     })
+         .on('test_fn_success', async () => {
+         await Promise.all([logs?.attachAfterSuccess(api_1.allure), screenshots?.attachSuccess(api_1.allure)]);
