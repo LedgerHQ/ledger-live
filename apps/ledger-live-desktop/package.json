@@ -133,7 +133,7 @@
     "invariant": "2.2.4",
     "json-rpc-2.0": "0.2.19",
     "jsqr": "1.4.0",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "prando": "5.1.2",
     "prop-types": "15.8.1",
     "qrcode": "1.5.3",
