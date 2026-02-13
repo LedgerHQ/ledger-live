@@ -83,10 +83,10 @@ describe("decryptTransaction", () => {
 describe("findShieldedTxsInBlock", () => {
   test("retrieves a list of transactions for the viewing key", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const transactions = await zcash.findShieldedTxsInBlock(
-      blockWithMyTx.hash,
-      testAccount1.viewingKey,
-    );
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: blockWithMyTx,
+      viewingKey: testAccount1.viewingKey,
+    });
 
     expect(transactions).toEqual([
       {
@@ -103,10 +103,10 @@ describe("findShieldedTxsInBlock", () => {
 
   test("retrieves an empty list of transactions when viewing key doesn't match any", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const transactions = await zcash.findShieldedTxsInBlock(
-      blockWithoutMyTx.hash,
-      testAccount1.viewingKey,
-    );
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: blockWithoutMyTx,
+      viewingKey: testAccount1.viewingKey,
+    });
     expect(transactions).toEqual([
       {
         id: txShieldedNotMine.txid,
@@ -125,10 +125,10 @@ describe("findShieldedTxsInBlock", () => {
 
   test("edge case: retrieves an empty list when the block doesn't have tx", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const transactions = await zcash.findShieldedTxsInBlock(
-      blockWithoutAnyTx.hash,
-      testAccount1.viewingKey,
-    );
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: blockWithoutAnyTx,
+      viewingKey: testAccount1.viewingKey,
+    });
     expect(transactions).toEqual([]);
   });
 });
