@@ -11,8 +11,8 @@ import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live"
 import { getExplorerApi } from "../network/explorer";
 
 type AssetConfig =
-  | { type: "native"; internal?: boolean }
-  | { type: "token"; owner: string; parents: Record<string, LiveOperation> };
+  | { type: "native"; internal?: boolean; parent?: LiveOperation }
+  | { type: "token"; owner: string; parent?: LiveOperation };
 
 function extractStandard(op: LiveOperation): string {
   if (!op.standard) return "erc20";
@@ -41,11 +41,20 @@ function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
 }
 
 function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
-  if (asset.type === "token" && op.hash in asset.parents) {
-    return asset.parents[op.hash].hasFailed ?? false;
+  if (asset.type === "token") {
+    return asset.parent?.hasFailed ?? false;
   }
 
   return op.hasFailed ?? false;
+}
+
+const unambiguousSender = (referenceOperation: LiveOperation | undefined): string | undefined =>
+  referenceOperation?.senders?.length === 1 ? referenceOperation?.senders[0] : undefined;
+
+function computeFeesPayer(asset: AssetConfig, op: LiveOperation): string | undefined {
+  const isTokenOrInternal = asset.type === "token" || (asset.type === "native" && asset.internal);
+  const referenceOperation = isTokenOrInternal ? asset.parent : op;
+  return unambiguousSender(referenceOperation);
 }
 
 function toOperation(
@@ -76,6 +85,7 @@ function toOperation(
   const type = extractType(asset, op);
   const value = computeValue(asset, op);
   const failed = computeFailed(asset, op);
+  const feesPayer = computeFeesPayer(asset, op);
 
   const internalOpDetail =
     asset.type === "native" && asset.internal ? { internal: asset.internal } : {};
@@ -86,8 +96,8 @@ function toOperation(
           assetAmount: op.value.toFixed(0),
           assetSenders: op.senders,
           assetRecipients: op.recipients,
-          parentSenders: asset.parents[op.hash]?.senders ?? [],
-          parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+          parentSenders: asset.parent?.senders ?? [],
+          parentRecipients: asset.parent?.recipients ?? [],
         }
       : {};
 
@@ -108,6 +118,7 @@ function toOperation(
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,
       failed,
+      ...(feesPayer ? { feesPayer } : {}),
     },
     details: {
       sequence: op.transactionSequenceNumber,
@@ -169,14 +180,27 @@ export async function listOperations(
 
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
-  >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
+  >(op =>
+    toOperation(
+      currency.id,
+      address,
+      { type: "token", owner: address, parent: parents[op.hash] },
+      op,
+    ),
+  );
   const internalOperations = lastInternalOperations.map<Operation<MemoNotSupported>>(op => {
     // Explorers don't provide block hash and fees for internal operations.
     // When a matching parent transaction exists, we take these values from it.
     // Otherwise, we use the internal operation's defaults.
     const parent = parents[op.hash];
-    const enrichedOp = parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op;
-    return toOperation(currency.id, address, { type: "native", internal: true }, enrichedOp);
+    return toOperation(
+      currency.id,
+      address,
+      { type: "native", internal: true },
+      // Explorers don't provide block hash and fees for internal operations.
+      // When a parent exists, we take these values from the parent; otherwise keep the internal op values.
+      parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
+    );
   });
 
   const hasValidType = (operation: Operation): boolean =>
