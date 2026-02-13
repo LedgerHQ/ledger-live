@@ -5,7 +5,9 @@ import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
-import { PAGE_NAME } from "../../constants";
+import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
+import { ScreenName } from "~/const";
+import { useNavigation } from "@react-navigation/core";
 
 const HEADER_HEIGHT = 48;
 
@@ -17,24 +19,33 @@ export interface CardLandingScreenViewModelResult {
   readonly topInset: number;
 }
 
+const TRACKING_BUTTON_EVENT = "button_clicked";
+
 export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResult => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const handleExploreCardsPress = useCallback(() => {
-    track("button_clicked", {
+    track(TRACKING_BUTTON_EVENT, {
       button: "explore cards",
       page: PAGE_NAME,
     });
-    // TODO: Navigate to country selector when available
-  }, []);
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: CARD_APP_ID,
+      name: "Card Program",
+    });
+  }, [navigation]);
 
   const handleIHaveACardPress = useCallback(() => {
-    track("button_clicked", {
+    track(TRACKING_BUTTON_EVENT, {
       button: "I have a card",
       page: PAGE_NAME,
     });
-    // TODO: Navigate to card activation flow when available
-  }, []);
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: CL_CARD_APP_ID,
+      name: "CL Card Powered by Ledger",
+    });
+  }, [navigation]);
 
   const ctas: readonly CardLandingCta[] = useMemo(
     () => [
