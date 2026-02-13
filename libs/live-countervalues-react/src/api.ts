@@ -1,13 +1,13 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const countervaluesMarketcapApi = createApi({
+export const countervaluesByMarketcapApi = createApi({
   reducerPath: "countervaluesMarketcapApi",
   baseQuery: fetchBaseQuery({
     baseUrl: getEnv("LEDGER_COUNTERVALUES_API"),
   }),
   endpoints: build => ({
-    getMarketcapIds: build.query<string[], void>({
+    getIdsByMarketcap: build.query<string[], void>({
       query: () => ({
         url: "/v3/supported/crypto",
       }),
@@ -16,4 +16,4 @@ export const countervaluesMarketcapApi = createApi({
   }),
 });
 
-export const { useGetMarketcapIdsQuery } = countervaluesMarketcapApi;
+export const { useGetIdsByMarketcapQuery } = countervaluesByMarketcapApi;
