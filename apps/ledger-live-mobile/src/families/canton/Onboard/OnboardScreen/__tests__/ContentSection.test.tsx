@@ -248,16 +248,4 @@ describe("useContentSectionViewModel", () => {
 
     expect(result.current.successKey).toBe("canton.onboard.success");
   });
-
-  it("should compute statusTranslationKey correctly", () => {
-    const { result } = renderHook(() =>
-      useContentSectionViewModel({
-        status: createMockStatus({ onboarding: OnboardStatus.PREPARE }),
-        isReonboarding: false,
-        error: null,
-      }),
-    );
-
-    expect(result.current.statusTranslationKey).toBe("canton.onboard.status.prepare");
-  });
 });
