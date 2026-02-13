@@ -13,7 +13,7 @@ export const LoadingOverlay = ({ theme }: { theme: "light" | "dark" }) => {
       <Box
         position="absolute"
         zIndex={1}
-        height={"100%"}
+        height="100%"
         width="100%"
         style={{
           backgroundImage: `linear-gradient(180deg, ${backgroundColor}, 80%, rgba(0,0,0,0))`,

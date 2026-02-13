@@ -109,5 +109,7 @@ module.exports = {
       "<rootDir>/../../node_modules/.pnpm/@tanstack+react-query@5.28.9_react@19.0.0/node_modules/@tanstack/react-query",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
+    // Global mock for .lottie (dotLottie) files
+    "\\.(lottie)$": "<rootDir>/__mocks__/lottieMock.js",
   },
 };
