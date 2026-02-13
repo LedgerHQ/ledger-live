@@ -2,8 +2,8 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getAccountNumFromPath } from "../common-logic";
 import { MINA_MAINNET_NETWORK_ID } from "../consts";
+import { getAccountNumFromPath } from "../logic/utils";
 import type { MinaUnsignedTransaction, Transaction } from "../types";
 import { TxType } from "../types";
 

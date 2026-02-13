@@ -1,8 +1,10 @@
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { getCoinConfig } from "../config";
-import { getAccount, getBlockInfo, getTransactions } from ".";
+import { getCoinConfig } from "../../config";
+import { getAccount } from "./getAccount";
+import { getBlockInfo } from "../history/getBlockInfo";
+import { getTransactions } from "../history/getTransactions";
 
-jest.mock("../config");
+jest.mock("../../config");
 describe("backend api tests", () => {
   jest.mocked(getCoinConfig).mockReturnValue({
     ...({} as unknown as CurrencyConfig),

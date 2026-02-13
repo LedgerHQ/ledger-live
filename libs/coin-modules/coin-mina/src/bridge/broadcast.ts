@@ -1,6 +1,6 @@
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
-import { broadcastTransaction } from "../api";
+import { broadcastTransaction } from "../logic/transaction/broadcast";
 import { MinaSignedTransaction } from "../types/common";
 
 const broadcast = async ({

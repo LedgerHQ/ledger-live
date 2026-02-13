@@ -8,7 +8,9 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { MinaCoinConfig, setCoinConfig } from "../config";
+import { validateAddress } from "../logic/validateAddress";
 import resolver from "../signer/getAddress";
+import makeCliTools from "../test/cli";
 import type {
   MinaAccount,
   MinaAccountRaw,
@@ -18,14 +20,12 @@ import type {
 } from "../types/common";
 import { MinaSigner } from "../types/signer";
 import broadcast from "./broadcast";
-import makeCliTools from "./cli-transaction";
 import { createTransaction } from "./createTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import { sync, getAccountShape, assignToAccountRaw, assignFromAccountRaw } from "./synchronisation";
-import { validateAddress } from "./validateAddress";
 
 export { makeCliTools };
 

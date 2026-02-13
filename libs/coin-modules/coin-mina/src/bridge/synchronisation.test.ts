@@ -3,16 +3,20 @@ jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../api");
 jest.mock("../config");
-jest.mock("../api/graphql");
-jest.mock("../api/fetchValidators");
+jest.mock("../logic/account/getAccount");
+jest.mock("../logic/account/getDelegateAddress");
+jest.mock("../logic/history/getBlockInfo");
+jest.mock("../logic/history/getTransactions");
 
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
-import { getAccount, getTransactions, getBlockInfo, getDelegateAddress } from "../api";
-import { fetchValidators } from "../api/fetchValidators";
-import { getEpochInfo } from "../api/graphql";
+import { fetchValidators, getEpochInfo } from "../api";
+import { getAccount } from "../logic/account/getAccount";
+import { getDelegateAddress } from "../logic/account/getDelegateAddress";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
+import { getTransactions } from "../logic/history/getTransactions";
 import {
   createMockTxn,
   createMockAccountInfo,
@@ -20,11 +24,6 @@ import {
   mockAccountData,
 } from "../test/fixtures";
 import { getAccountShape, mapRosettaTxnToOperation } from "./synchronisation";
-
-jest.mock("@ledgerhq/coin-framework/account/accountId");
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
-jest.mock("@ledgerhq/coin-framework/operation");
-jest.mock("../api");
 
 describe("synchronisation", () => {
   beforeEach(() => {

@@ -12,7 +12,7 @@ import { BigNumber } from "bignumber.js";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
 import { Transaction } from "../types/common";
-import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "./errors";
+import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "../types/errors";
 import getEstimatedFees from "./getEstimatedFees";
 import getTransactionStatus from "./getTransactionStatus";
 

@@ -13,7 +13,7 @@ jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
 }));
 
-import { getTransactions } from "../api";
+import { getTransactions } from "../logic/history/getTransactions";
 import { mapRosettaTxnToOperation } from "../bridge/synchronisation";
 
 describe("synchronisation", () => {

@@ -7,7 +7,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { DeviceId } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { RosettaBlockInfoResponse, RosettaTransaction } from "../api/rosetta/types";
+import { RosettaBlockInfoResponse, RosettaTransaction } from "../api/types";
 import { Transaction } from "../types";
 
 // Mock account data

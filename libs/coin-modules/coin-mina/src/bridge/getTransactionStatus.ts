@@ -9,10 +9,10 @@ import {
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { isValidAddress, getMaxAmount, getTotalSpent } from "../common-logic";
+import { isValidAddress, getMaxAmount, getTotalSpent } from "../logic/utils";
 import { validateMemo } from "../logic/validateMemo";
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "../types/common";
-import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
+import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "../types/errors";
 
 function validateRecipient(
   transaction: Transaction,

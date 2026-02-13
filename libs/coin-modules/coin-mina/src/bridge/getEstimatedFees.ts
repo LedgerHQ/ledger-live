@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getFees } from "../api";
+import { getFees } from "../logic/transaction/getFees";
 import { Transaction } from "../types/common";
 
 const getEstimatedFees = async (

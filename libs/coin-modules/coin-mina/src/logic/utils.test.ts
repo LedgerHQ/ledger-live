@@ -7,7 +7,7 @@ import {
   getMaxAmount,
   getTotalSpent,
   reEncodeRawSignature,
-} from ".";
+} from "./utils";
 
 // Create a minimal mock implementation for the tests
 type MockMinaAccount = Pick<MinaAccount, "spendableBalance" | "pendingOperations">;

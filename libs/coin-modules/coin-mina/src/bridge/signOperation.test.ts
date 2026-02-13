@@ -1,7 +1,7 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
-import { reEncodeRawSignature } from "../common-logic";
+import { reEncodeRawSignature } from "../logic/utils";
 import {
   createMockAccount,
   createMockTransaction,
@@ -15,7 +15,7 @@ import { buildSignOperation, buildOptimisticOperation } from "./signOperation";
 // Mock dependencies
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("./buildTransaction");
-jest.mock("../common-logic");
+jest.mock("../logic/utils");
 
 describe("signOperation", () => {
   // Mock reset before each test

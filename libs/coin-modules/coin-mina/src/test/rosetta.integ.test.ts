@@ -13,7 +13,7 @@ jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
 }));
 
-import { fetchTransactionMetadata } from "../api/rosetta";
+import { fetchTransactionMetadata } from "../api";
 
 test("get metadata for a transactions", async () => {
   const metadata = await fetchTransactionMetadata(

@@ -5,10 +5,11 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getAccount, getBlockInfo, getDelegateAddress, getTransactions } from "../api";
-import { fetchValidators } from "../api/fetchValidators";
-import { getEpochInfo } from "../api/graphql";
-import { RosettaTransaction } from "../api/rosetta/types";
+import { fetchValidators, getEpochInfo, RosettaTransaction } from "../api";
+import { getAccount } from "../logic/account/getAccount";
+import { getDelegateAddress } from "../logic/account/getDelegateAddress";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
+import { getTransactions } from "../logic/history/getTransactions";
 import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
 export const mapRosettaTxnToOperation = async (

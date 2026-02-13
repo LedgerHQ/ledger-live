@@ -67,8 +67,8 @@
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./logic": {
-      "require": "./lib/common-logic/index.js",
-      "default": "./lib-es/common-logic/index.js"
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
     },
     "./signer": {
       "require": "./lib/signer/index.js",
