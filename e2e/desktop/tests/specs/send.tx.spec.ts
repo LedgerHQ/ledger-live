@@ -6,7 +6,10 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "tests/utils/cliCommandsUtils";
+import {
+  getAccountAddress,
+  liveDataWithRecipientAddressCommand,
+} from "tests/utils/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -37,6 +40,11 @@ const transactionsAmountInvalid = [
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "100", Fee.MEDIUM),
     expectedErrorMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-2572",
+  },
+  {
+    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag"),
+    expectedErrorMessage: "Sorry, insufficient funds",
+    xrayTicket: "B2CQA-4281",
   },
 ];
 
@@ -70,6 +78,11 @@ const transactionsAddressInvalid = [
     address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2713",
+  },
+  {
+    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_1, "0.00001", undefined, "noTag"),
+    expectedErrorMessage: "Recipient address is the same as the sender address",
+    xrayTicket: "B2CQA-4282",
   },
 ];
 
@@ -233,6 +246,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
     xrayTicket: "B2CQA-4299",
   },
+  {
+    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
+    xrayTicket: "B2CQA-4284",
+  },
 ];
 
 test.describe("Send flows", () => {
@@ -252,6 +269,7 @@ test.describe("Send flows", () => {
           tag: [
             "@NanoSP",
             ...(transaction.transaction.accountToDebit.currency.id !== Currency.SUI.id &&
+            transaction.transaction.accountToDebit.currency.id !== Currency.HBAR.id &&
             transaction.transaction.accountToDebit.currency.id !== Currency.VET.id
               ? ["@LNS"]
               : []),
@@ -454,19 +472,19 @@ test.describe("Send flows", () => {
               add: true,
               appjson: appjsonPath,
             });
+
             if (
               transaction.transaction.accountToCredit !== Account.EMPTY &&
               transaction.transaction.accountToCredit !== Account.BTC_NATIVE_SEGWIT_1
             ) {
-              const receiveAddress = await CLI.getAddress({
-                currency: transaction.transaction.accountToCredit.currency.id,
-                path: transaction.transaction.accountToCredit.accountPath,
-                derivationMode: transaction.transaction.accountToCredit.derivationMode,
-              });
-              transaction.address = receiveAddress.address;
+              const receiveAddress = await getAccountAddress(
+                transaction.transaction.accountToCredit,
+              );
+              transaction.address = receiveAddress;
 
-              return receiveAddress.address;
+              return receiveAddress;
             }
+
             return transaction.address;
           },
         ],
