@@ -1,5 +1,11 @@
 import { useSelector, useDispatch } from "~/context/hooks";
-import { setHasSeenAnalyticsOptInPrompt } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setHasSeenAnalyticsOptInPrompt,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -14,6 +20,8 @@ import { track, updateIdentify } from "~/analytics";
 import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   Onboarding: "consent onboarding",
@@ -35,6 +43,8 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const flow = trackingKeysByFlow?.[entryPoint];
 
   const privacyPolicyUrl =
@@ -64,15 +74,32 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
         });
         break;
       case "Onboarding":
-        navigation.navigate(NavigatorName.BaseOnboarding, {
-          screen: NavigatorName.Onboarding,
-          params: {
-            screen: ScreenName.OnboardingPostWelcomeSelection,
+        if (shouldUseLazyOnboarding) {
+          dispatch(completeOnboarding());
+          dispatch(setReadOnlyMode(true));
+          dispatch(setIsReborn(true));
+          dispatch(setOnboardingHasDevice(false));
+          navigation.navigate(NavigatorName.Base, {
+            screen: NavigatorName.Main,
             params: {
-              userHasDevice: true,
+              screen: NavigatorName.Portfolio,
+              params: {
+                screen: NavigatorName.WalletTab,
+              },
             },
-          },
-        });
+          });
+          tryTriggerPushNotificationDrawerAfterAction("onboarding");
+        } else {
+          navigation.navigate(NavigatorName.BaseOnboarding, {
+            screen: NavigatorName.Onboarding,
+            params: {
+              screen: ScreenName.OnboardingPostWelcomeSelection,
+              params: {
+                userHasDevice: true,
+              },
+            },
+          });
+        }
         break;
     }
     updateIdentify(undefined, shouldWeTrack);
