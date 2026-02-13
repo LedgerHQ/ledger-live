@@ -26,6 +26,7 @@ import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
 } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { getDeviceOS, getDeviceVersion } from "./utils/deviceInfo";
 
 const jestAllure2ReporterOptions: ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
@@ -44,6 +45,8 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   environment: async ({ $ }) => ({
     SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
     SPECULOS_FIRMWARE_VERSION: await getDeviceFirmwareVersion(getSpeculosModel()),
+    DEVICE_OS: getDeviceOS(),
+    DEVICE_VERSION: getDeviceVersion(),
     path: process.cwd(),
     "version.node": process.version,
     "version.jest": await $.manifest("jest", ["version"]),
