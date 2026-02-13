@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+
 import { renderHook } from "@testing-library/react";
 import { useRecipientAddressModalViewModel } from "../useRecipientAddressModalViewModel";
 import { useSelector } from "LLD/hooks/redux";
@@ -11,6 +13,7 @@ import {
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
+import { SendFlowState } from "../../../../types";
 
 jest.mock("LLD/hooks/redux");
 jest.mock("../useAddressValidation");
@@ -49,6 +52,14 @@ const mockRecipientSearch = {
   clear: jest.fn(),
 };
 
+const DEFAULT_STATE = {
+  transaction: {
+    status: {
+      errors: {},
+    },
+  },
+} as unknown as SendFlowState;
+
 describe("useRecipientAddressModalViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,7 +78,7 @@ describe("useRecipientAddressModalViewModel", () => {
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
     mockedUseAddressValidation.mockReturnValue({
@@ -108,7 +119,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("shows search results when search value is provided", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "some_address" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 
@@ -165,7 +176,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     result.current.handleRecentAddressSelect(recentAddress);
 
-    expect(onAddressSelected).toHaveBeenCalledWith("recent_address", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith("recent_address", undefined, true);
   });
 
   it("calls onAddressSelected when handleAccountSelect is called", () => {
@@ -186,7 +197,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     result.current.handleAccountSelect(selectedAccount);
 
-    expect(onAddressSelected).toHaveBeenCalledWith("selected_fresh_address");
+    expect(onAddressSelected).toHaveBeenCalledWith("selected_fresh_address", undefined, true);
   });
 
   it("calls onAddressSelected when handleAddressSelect is called", () => {
@@ -203,7 +214,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     result.current.handleAddressSelect("new_address", "ens_name");
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
+    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
   });
 
   it("removes address from recent addresses when handleRemoveAddress is called", () => {
@@ -235,7 +246,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("shows sanctioned banner when address is sanctioned", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "sanctioned_address" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 
@@ -275,7 +286,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("shows address validation error for incorrect format", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "invalid_address" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 
@@ -315,7 +326,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("shows matched address when validation is valid", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "valid_address" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 
@@ -354,7 +365,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("identifies self-transfer error correctly", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "source_address" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 
@@ -396,7 +407,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("treats InvalidAddress as incorrect format for domain-like strings", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "invalid.eth" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 
@@ -436,7 +447,7 @@ describe("useRecipientAddressModalViewModel", () => {
   it("shows empty state when no matches and not complete", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "searching" },
-      state: {} as never,
+      state: DEFAULT_STATE,
       uiConfig: {} as never,
     });
 

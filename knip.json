@@ -47,7 +47,8 @@
         ".storybook/fsStub.js",
         ".storybook/settingsMock.ts",
         "src/renderer/mockServiceWorker.js",
-        "src/mvvm/utils/cn.ts"
+        "src/mvvm/utils/cn.ts",
+        "src/mvvm/features/Send/hooks/useAvailableBalance.ts"
       ],
       "ignoreDependencies": [
         "prop-types",

@@ -1,8 +1,10 @@
-import { useState, useMemo, useCallback, useRef } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { useCallback, useMemo, useRef, useState } from "react";
+import type { Memo } from "../../../types";
 import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
 
 export type BridgeRecipientValidationResult = {
@@ -17,6 +19,7 @@ type UseBridgeRecipientValidationProps = {
   recipient: string;
   account: AccountLike | null;
   parentAccount?: Account | null;
+  memo?: Memo;
   enabled?: boolean;
 };
 
@@ -31,6 +34,7 @@ export function useBridgeRecipientValidation({
   recipient,
   account,
   parentAccount,
+  memo,
   enabled = true,
 }: UseBridgeRecipientValidationProps): BridgeRecipientValidationResult {
   const [validationState, setValidationState] = useState<{
@@ -92,6 +96,16 @@ export function useBridgeRecipientValidation({
       let transaction = bridge.createTransaction(mainAccount);
       transaction = bridge.updateTransaction(transaction, { recipient });
 
+      if (memo) {
+        const memoUpdates = applyMemoToTransaction(
+          transaction.family,
+          memo.value,
+          memo.type,
+          transaction,
+        );
+        transaction = bridge.updateTransaction(transaction, memoUpdates);
+      }
+
       const preparedTransaction = await bridge.prepareTransaction(mainAccount, transaction);
 
       if (signal.aborted) return;
@@ -133,7 +147,7 @@ export function useBridgeRecipientValidation({
         status: null,
       });
     }
-  }, [account, parentAccount, recipient, enabled]);
+  }, [account, recipient, enabled, parentAccount, memo]);
 
   if (recipient !== lastRecipientRef.current) {
     lastRecipientRef.current = recipient;
