@@ -77,6 +77,26 @@ export const getOperationValue = ({
   return BigInt(operation.value.toFixed(0));
 };
 
+/**
+ * Extract the fee payer account from a Hedera transaction_id.
+ *
+ * Hedera transaction IDs follow the format `0.0.ACCOUNT-TIMESTAMP-NONCE`.
+ * The first segment (before the first `-`) is the Hedera native account ID
+ * of the entity that paid for the transaction fees.
+ *
+ * This always returns a Hedera-native account ID (e.g. `0.0.12345`), never
+ * an EVM address, since the Mirror Node transaction_id always uses the native format.
+ *
+ * Note: Hedera supports scheduled/sponsored transactions where the fee payer
+ * (from transaction_id) may differ from the logical sender of the transfer.
+ * This function correctly handles that case since it reads from transaction_id,
+ * which always identifies the actual fee payer.
+ */
+export function extractFeesPayer(transactionId: string | undefined): string | undefined {
+  if (!transactionId) return undefined;
+  return transactionId.split("-")[0] || undefined;
+}
+
 // this utils extracts the bodyBytes from a Hedera Transaction that are required for signing
 // hardcoded `.get(0)` is here because we are always using single node account id
 // this is because we want to avoid "signing" loop for users, as described here:

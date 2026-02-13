@@ -65,6 +65,10 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
     hash: string; // transaction hash
     block: BlockInfo; // block metadata
     fees: bigint; // network fees paid
+    // address that paid for this transaction's fees.
+    // optional as it may be unknown (e.g. the information is not available in the context of the operation).
+    // if it is unknown, it's expected that none of the sender addresses paid for the fees
+    feesPayer?: string;
     date: Date; // tx date (may differ from block time)
 
     /** If the transaction has failed, fees have been paid but other balance changes are not effective.*/

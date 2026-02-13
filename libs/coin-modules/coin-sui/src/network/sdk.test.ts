@@ -615,6 +615,7 @@ describe("SDK Functions", () => {
         hash: "mockCheckpointHash",
       },
       fees: 1009880n,
+      feesPayer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
       date: new Date("2025-03-18T10:40:54.878Z"),
     });
   });
@@ -933,7 +934,7 @@ describe("Staking Operations", () => {
         recipients: [],
         value: 0n,
         asset: { type: "native" },
-        tx: { block: expect.any(Object) },
+        tx: { block: expect.any(Object), feesPayer: address },
         details: {
           stakedAmount: 1000000000n,
         },
@@ -955,7 +956,7 @@ describe("Staking Operations", () => {
         recipients: [],
         value: 0n,
         asset: { type: "native" },
-        tx: { block: expect.any(Object) },
+        tx: { block: expect.any(Object), feesPayer: address },
         details: {
           stakedAmount: 1000000000n,
         },
