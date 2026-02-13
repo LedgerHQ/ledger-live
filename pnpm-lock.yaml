@@ -1362,6 +1362,9 @@ importers:
       '@ledgerhq/client-ids':
         specifier: workspace:^
         version: link:../../libs/client-ids
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-canton':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-canton
