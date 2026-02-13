@@ -664,6 +664,8 @@ describe("createApi", () => {
         ledgerOpType: expect.any(String),
         associatedTokenId: expect.any(String),
       });
+      // every transfer operation should have a fees payer
+      expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
     it("returns staking operations with correct metadata", async () => {
@@ -702,6 +704,8 @@ describe("createApi", () => {
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
+      // every staking operation should have a fees payer
+      expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
