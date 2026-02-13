@@ -15,5 +15,6 @@ export const useMarketPerformers = ({
     { counterCurrency, range, limit, top, sort, supported },
     {
       pollingInterval: REFETCH_TIME_ONE_MINUTE * Number(refreshRate),
+      refetchOnReconnect: true,
     },
   );

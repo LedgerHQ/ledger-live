@@ -24,7 +24,7 @@ export const useMarketBannerViewModel = () => {
     [currenciesForSwapAll],
   );
 
-  const { data, isError, isLoading } = useMarketPerformers({
+  const { data, isError, isLoading, isFetching } = useMarketPerformers({
     sort: MARKET_BANNER_DATA_SORT_ORDER,
     counterCurrency: countervalue.ticker,
     range: TIME_RANGE,
@@ -45,5 +45,9 @@ export const useMarketBannerViewModel = () => {
     );
   }, [data, isCurrencyAvailable, currenciesForSwapAllSet]);
 
-  return { data: filteredItems, isError, isLoading };
+  return {
+    data: filteredItems,
+    isError: isError && !isFetching,
+    isLoading: isLoading || (isFetching && !data),
+  };
 };
