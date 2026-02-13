@@ -1,6 +1,7 @@
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
+import { useSettings } from "./useSettings";
 
 const useTopBarViewModel = () => {
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
@@ -11,6 +12,7 @@ const useTopBarViewModel = () => {
     icon: activityIndicatorIcon,
     tooltip: activityIndicatorTooltip,
   } = useActivityIndicator();
+  const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
 
   const topBarSlots: TopBarSlot[] = [
     ...(hasAccounts
@@ -36,6 +38,16 @@ const useTopBarViewModel = () => {
         icon: discreetIcon,
         isInteractive: true,
         onClick: handleDiscreet,
+      },
+    },
+    {
+      type: "action",
+      action: {
+        label: "settings",
+        tooltip: settingsTooltip,
+        icon: settingsIcon,
+        isInteractive: true,
+        onClick: handleSettings,
       },
     },
   ];
