@@ -280,10 +280,10 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-1",
-            type: "FEES",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address1"],
-            value: 0n,
+            value: 1n,
             asset: { type: "erc20", assetReference: "contract-address", assetOwner: "address" },
             tx: {
               hash: "token-op-1-tx-hash",
@@ -308,10 +308,10 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-2",
-            type: "NONE",
+            type: "IN",
             senders: ["address"],
             recipients: ["address2"],
-            value: 0n,
+            value: 2n,
             asset: {
               assetOwner: "address",
               assetReference: "contract-address",
@@ -340,10 +340,10 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-3",
-            type: "FEES",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address1"],
-            value: 0n,
+            value: 1n,
             asset: { type: "erc20", assetReference: "contract-address", assetOwner: "address" },
             tx: {
               hash: "token-op-3-tx-hash",
@@ -429,6 +429,350 @@ describe("listOperations", () => {
         ],
       ],
     });
+  });
+
+  it("filters out operations where the requested address is not involved (case insensitive)", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const address = "address";
+    // Explorer returns: one native op for "address", and one internal op (same tx) where
+    // senders/recipients and parent senders/recipients do NOT include "address"
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-for-address",
+          accountId: "",
+          type: "OUT",
+          senders: [address.toUpperCase()],
+          recipients: ["address2"],
+          value: new BigNumber(100),
+          hash: "0xTxForAddress",
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: new BigNumber(10),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+        {
+          id: "coin-op-unrelated",
+          accountId: "",
+          type: "OUT",
+          senders: ["0xOtherA"],
+          recipients: ["0xOtherB"],
+          value: new BigNumber(0),
+          hash: "0xTxUnrelated",
+          blockHeight: 101,
+          blockHash: "0xBlockHash2",
+          fee: new BigNumber(10),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(2),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [],
+      lastNftOperations: [],
+      lastInternalOperations: [
+        {
+          id: "internal-op-unrelated",
+          accountId: "",
+          type: "IN",
+          senders: ["0xOtherA"],
+          recipients: ["0xOtherB"],
+          value: new BigNumber(50),
+          hash: "0xTxUnrelated",
+          blockHeight: 101,
+          blockHash: "0xBlockHash2",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(2),
+          extra: {},
+        },
+      ],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, address.toLowerCase(), {
+        minHeight: 1,
+        order: "asc",
+      }),
+    ).toEqual([
+      [
+        {
+          id: "coin-op-for-address",
+          type: "OUT",
+          senders: [address.toUpperCase()],
+          recipients: ["address2"],
+          value: 90n, // value - fee = 100 - 10
+          asset: { type: "native" },
+          tx: {
+            hash: "0xTxForAddress",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 10n,
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: { sequence: BigNumber(1) },
+        },
+      ],
+      "",
+    ]);
+  });
+
+  it("should use token transfer value for ERC20 operations, not parent native value", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const erc20TransferValue = new BigNumber("666"); // The actual ERC20 amount
+    const parentNativeValue = new BigNumber("0"); // No native ETH transferred
+    const txFee = new BigNumber("21000000000000"); // Tx fees
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-erc20-tx",
+          accountId: "",
+          type: "FEES", // FEES type because it's a pure ERC20 transfer
+          senders: ["address1"],
+          recipients: ["address2"], // contract address
+          value: parentNativeValue,
+          hash: "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1",
+          blockHeight: 279040,
+          blockHash: "0x172b9bcb8f7d598227ab5f7f0ce",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-op-erc20",
+          accountId: "",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
+          contract: "address2",
+          value: erc20TransferValue, // The actual ERC20 transfer amount
+          hash: "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1",
+          blockHeight: 279040,
+          blockHash: "0x172b9bcb8f7d598227ab5f7f0ce",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+    ).toEqual([
+      [
+        {
+          id: "token-op-erc20",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
+          value: 666n,
+          asset: { type: "erc20", assetReference: "address2", assetOwner: "address1" },
+          tx: {
+            hash: "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1",
+            block: {
+              height: 279040,
+              hash: "0x172b9bcb8f7d598227ab5f7f0ce",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: {
+            ledgerOpType: "OUT",
+            assetAmount: "666",
+            assetSenders: ["address1"],
+            assetRecipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
+            parentSenders: ["address1"],
+            parentRecipients: ["address2"],
+            sequence: BigNumber(1),
+          },
+        },
+      ],
+      "",
+    ]);
+  });
+
+  it("should emit both native and token operations when tx has native value > 0 and token transfers", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const nativeTransferValue = new BigNumber("1000000000000000000"); // 1 ETH
+    const erc20TransferValue = new BigNumber("500000000"); // 500 USDC
+    const txFee = new BigNumber("21000000000000"); // Tx fees
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-mixed-tx",
+          accountId: "",
+          type: "OUT", // OUT type because native ETH is transferred
+          senders: ["address1"],
+          recipients: ["address2"],
+          value: nativeTransferValue, // Native ETH transferred
+          hash: "0xMixedTransactionHash",
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-op-mixed-tx",
+          accountId: "",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address3"],
+          contract: "0xUSDCContract",
+          value: erc20TransferValue,
+          hash: "0xMixedTransactionHash", // Same tx hash
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+    ).toEqual([
+      [
+        {
+          id: "coin-op-mixed-tx",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value: 999979000000000000n, // native value - fee
+          asset: { type: "native" },
+          tx: {
+            hash: "0xMixedTransactionHash",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: { sequence: BigNumber(1) },
+        },
+        {
+          id: "token-op-mixed-tx",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address3"],
+          value: 500000000n,
+          asset: {
+            type: "erc20",
+            assetReference: "0xUSDCContract",
+            assetOwner: "address1",
+          },
+          tx: {
+            hash: "0xMixedTransactionHash",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: {
+            ledgerOpType: "OUT",
+            assetAmount: "500000000",
+            assetSenders: ["address1"],
+            assetRecipients: ["address3"],
+            parentSenders: ["address1"],
+            parentRecipients: ["address2"],
+            sequence: BigNumber(1),
+          },
+        },
+      ],
+      "",
+    ]);
+  });
+
+  it("should emit native operation with type=FEES when value=0 and no token children", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const txFee = new BigNumber("21000000000000");
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-fees-only",
+          accountId: "",
+          type: "FEES", // Explorer marks it as FEES
+          senders: ["address1"],
+          recipients: ["0xContractAddress"],
+          value: new BigNumber(0), // No value transferred
+          hash: "0xFeesOnlyTxHash",
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [], // No token operations
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+    ).toEqual([
+      [
+        {
+          id: "coin-op-fees-only",
+          type: "FEES",
+          senders: ["address1"],
+          recipients: ["0xContractAddress"],
+          value: -21000000000000n, // value - fee = 0 - fee
+          asset: { type: "native" },
+          tx: {
+            hash: "0xFeesOnlyTxHash",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: { sequence: BigNumber(1) },
+        },
+      ],
+      "",
+    ]);
   });
 
   // here is the table of behavior:
