@@ -7,7 +7,7 @@ import {
   WalletHandlers,
   ServerConfig,
   WalletAPIServer,
-  useWalletAPIServer as useWalletAPIServerRaw,
+  defaultLogger,
 } from "@ledgerhq/wallet-api-server";
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
@@ -328,12 +328,18 @@ export function useWalletAPIServer({
     };
   }, [manifest, customHandlers, getFeature]);
 
-  const { server, onMessage } = useWalletAPIServerRaw({
-    transport,
-    config,
-    permission,
-    customHandlers: mergedCustomHandlers,
-  });
+  const server = useMemo(() => {
+    const instance = new WalletAPIServer(transport, config, defaultLogger, mergedCustomHandlers);
+    instance.setPermissions(permission);
+    return instance;
+  }, [transport, config, mergedCustomHandlers, permission]);
+
+  const onMessage = useCallback(
+    (event: string) => {
+      transport.onMessage?.(event);
+    },
+    [transport],
+  );
 
   useEffect(() => {
     tracking.load(manifest);
