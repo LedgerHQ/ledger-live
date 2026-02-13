@@ -4,9 +4,9 @@ import { take, first, filter } from "rxjs/operators";
 import type { Device } from "@ledgerhq/types-devices";
 import type { Observer as TransportObserver, DescriptorEvent } from "@ledgerhq/hw-transport";
 import { HwTransportError } from "@ledgerhq/errors";
-import type { ApduMock } from "../logic/createAPDUMock";
-import { hookRejections } from "../logic/debugReject";
-import { e2eBridgeClient } from "../../e2e/bridge/client";
+import type { ApduMock } from "~/logic/createAPDUMock";
+import { hookRejections } from "~/logic/debugReject";
+import { e2eBridgeClient } from "../../../e2e/bridge/client";
 
 export type DeviceMock = {
   id: string;

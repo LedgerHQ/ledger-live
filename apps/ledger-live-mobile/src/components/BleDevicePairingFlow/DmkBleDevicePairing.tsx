@@ -9,7 +9,7 @@ import { BleFailedPairing } from "~/components/BleDevicePairingFlow/BleDevicePai
 import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
 import { BleDevicePaired } from "./BleDevicePairingContent/BleDevicePaired";
 import { BleForgetDeviceDrawer } from "./BleDevicePairingContent/BleForgetDeviceDrawer";
-import { useMockBleDevicePairing } from "~/react-native-hw-transport-ble/useMockBle";
+import { useMockBleDevicePairing } from "~/transport/bleTransport/useMockBle";
 
 type DmkBleDevicePairingProps = {
   device: Device;

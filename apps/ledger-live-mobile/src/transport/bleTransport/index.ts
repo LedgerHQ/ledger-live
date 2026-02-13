@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { DeviceManagementKitBLETransport } from "@ledgerhq/live-dmk-mobile";
 import makeMock from "./makeMock";
-import createAPDUMock from "../logic/createAPDUMock";
+import createAPDUMock from "~/logic/createAPDUMock";
 
 const names: { [key: string]: string } = {};
 

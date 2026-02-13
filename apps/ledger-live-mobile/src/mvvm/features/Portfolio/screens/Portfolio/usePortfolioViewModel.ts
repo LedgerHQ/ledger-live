@@ -20,7 +20,7 @@ import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
-import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
+import { useUpdateStoreWithHidDevice } from "~/hooks/useUpdateStoreWithHidDevice";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
@@ -56,7 +56,7 @@ const usePortfolioViewModel = (navigation: {
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
-  useListenToHidDevices();
+  useUpdateStoreWithHidDevice();
   const isFocused = useIsFocused();
   const { backgroundColor } = useWallet40Theme("mobile");
 

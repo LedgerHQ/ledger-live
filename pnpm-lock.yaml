@@ -1455,9 +1455,6 @@ importers:
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
-      '@ledgerhq/react-native-hid':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/react-native-hid
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
