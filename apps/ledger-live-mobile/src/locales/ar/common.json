@@ -10,6 +10,9 @@
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
+    "fee" : "الرسوم",
+    "stake" : "الحصة",
+    "validator" : "المدقق",
     "delete" : "حذف",
     "paste" : "لصق",
     "yes" : "نعم",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "من أجلك"
     },
+    "perpsEntry" : {
+      "title" : "العقود الدائمة",
+      "description" : "تداول باستخدام رافعة مالية"
+    },
     "recommended" : {
       "title" : "موصى به"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "تحويل",
       "swap" : "مبادلة",
       "buy" : "شراء",
+      "connect" : "اتصال",
+      "buyLedger" : "شراء Ledger",
       "transferDrawer" : {
         "title" : "تحويل",
         "receiveCrypto" : "تلقي الأصول المشفرة",
@@ -2988,7 +2997,6 @@
     "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
-    "perps" : "عقود دائمة",
     "manage" : "إدارة",
     "lastTransactions" : "المعاملات الأخيرة",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "تلقي",
         "buyCrypto" : "شراء"
       },
-      "addAccountCta" : "إضافة حساب"
+      "addAccountCta" : "إضافة حساب",
+      "addCryptoAccount" : "إضافة حساب أصل مشفر"
     },
     "settings" : {
       "header" : "إعدادات الحساب",
@@ -3491,6 +3500,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "تصحيح أخطاء تحديث البرنامج الثابت"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Generate local content cards without Braze for testing.",
+        "description" : "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner" : "Add sample banner",
+        "addSampleBannerDesc" : "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel" : "Add sample action carousel",
+        "addSampleActionCarouselDesc" : "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll" : "Dismiss all local cards",
+        "dismissAllDesc" : "Remove all locally generated content cards."
       }
     }
   },
@@ -3674,10 +3694,6 @@
     "stake" : {
       "title" : "تكديس",
       "description" : "احصل على مكافآت على أصولك المشفرة."
-    },
-    "perps" : {
-      "title" : "عقود دائمة",
-      "description" : "تداول العقود الدائمة بالأصول المشفرة."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -3875,7 +3891,8 @@
         "title" : "اختر عرض سعر"
       },
       "twoStepApproval" : {
-        "title" : "أكمل الخطوات"
+        "title" : "أكمل الخطوات",
+        "completedTitle" : "حالة المعاملة"
       },
       "loader" : {
         "title" : "المبادلة قيد المعالجة",
@@ -4573,6 +4590,7 @@
       },
       "acceptTerms" : "بتوقيع هذه المعاملة، أنت تقبل </0>شروط استخدام</0> {{provider}}<0><0>",
       "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
+      "acceptTermsSponsored" : "للاستفادة من رسوم الشبكة المجانية، أنت توافق أيضاً على مشاركة تفاصيل معاملتك (بما في ذلك عنوان محفظتك) مع Blinklabs.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -6088,6 +6106,52 @@
       "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "تم نسخ العنوان!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "إعادة التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "memoPlaceholder" : "ملاحظة اختيارية",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "showAll" : "عرض الكل",
+      "showLess" : "عرض أقل",
+      "iDelegate" : "أنا أفوّض"
+    }
+  },
   "stellar" : {
     "token" : "أصول",
     "memo" : {
@@ -6492,9 +6556,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {
@@ -8388,9 +8449,6 @@
     },
     "tileTitle" : "الحالة المزاجية"
   },
-  "perps" : {
-    "title" : "عقود دائمة"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "التحليلات"
@@ -8400,6 +8458,27 @@
     },
     "actions" : {
       "swap" : "مبادلة"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "اكتشف محفظتك الاستثمارية الجديدة",
+    "slides" : {
+      "portfolio" : {
+        "title" : "محفظتك الاستثمارية، برؤية جديدة",
+        "description" : "لقد قمنا بترتيب شاشتك الرئيسية. تفتقد رسمك البياني؟ ببساطة انقر تحت رصيدك."
+      },
+      "navigation" : {
+        "title" : "كل شيء في مكانه الصحيح",
+        "description" : "My Ledger (جهازي Ledger) و Discover (اكتشف) الآن في الجزء العلوي. Swap (مبادلة) و Card (البطاقة) نُقلا إلى الجزء السفلي لوصول أسرع."
+      },
+      "actions" : {
+        "title" : "إجراءات بسرعة السوق",
+        "description" : "حدد اتجاهات السوق بواسطة الشريط الجديد وتداول على الفور."
+      }
+    },
+    "cta" : {
+      "continue" : "متابعة",
+      "explore" : "استكشاف محفظتي الاستثمارية الجديدة"
     }
   }
 }
