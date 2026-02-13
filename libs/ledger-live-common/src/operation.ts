@@ -5,6 +5,11 @@ import {
   isStuckOperation as isStuckOperationEvm,
   getStuckAccountAndOperation as getStuckAccountAndOperationEvm,
 } from "@ledgerhq/coin-evm/operation";
+import {
+  isStuckOperation as isStuckOperationBitcoin,
+  getStuckAccountAndOperation as getStuckAccountAndOperationBitcoin,
+  isEditableOperation as isEditableOperationBitcoin,
+} from "@ledgerhq/coin-bitcoin/operation";
 import { getCurrencyConfiguration } from "./config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
@@ -27,6 +32,8 @@ export const isEditableOperation = ({
 }): boolean => {
   if (account.currency.family === "evm") {
     return isEditableOperationEvm(account, operation, hasGasTracker);
+  } else if (account.currency.family === "bitcoin") {
+    return isEditableOperationBitcoin(account, operation);
   }
 
   return false;
@@ -44,6 +51,8 @@ export const isStuckOperation = ({
 }): boolean => {
   if (family === "evm") {
     return isStuckOperationEvm(operation);
+  } else if (family === "bitcoin") {
+    return isStuckOperationBitcoin(operation);
   }
 
   return false;
@@ -67,6 +76,8 @@ export const getStuckAccountAndOperation = (
 
   if (mainAccount.currency.family === "evm") {
     return getStuckAccountAndOperationEvm(account, parentAccount, hasGasTracker);
+  } else if (mainAccount.currency.family === "bitcoin") {
+    return getStuckAccountAndOperationBitcoin(account, parentAccount);
   }
 
   return undefined;

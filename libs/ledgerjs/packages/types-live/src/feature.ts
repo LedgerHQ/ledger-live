@@ -202,6 +202,7 @@ export type Features = CurrencyFeatures & {
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
   editEvmTx: Feature_EditEvmTx;
+  editBitcoinTx: Feature_EditBitcoinTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
@@ -548,6 +549,10 @@ export type Feature_DomainInputResolution = Feature<{
 }>;
 
 export type Feature_EditEvmTx = Feature<{
+  supportedCurrencyIds: string[];
+}>;
+
+export type Feature_EditBitcoinTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 

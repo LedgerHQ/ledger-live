@@ -8,6 +8,7 @@ has been out-numbered by the last operation...
 export function shouldRetainPendingOperation(account: Account, op: Operation): boolean {
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
+
   const last = account.operations.find(o => o.senders.includes(op.senders[0]));
 
   if (
