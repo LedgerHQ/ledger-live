@@ -14,6 +14,9 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import usePortfolioViewModel from "./usePortfolioViewModel";
 
+import { Box } from "@ledgerhq/native-ui";
+import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
+
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
@@ -37,6 +40,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
+    shouldDisplayQuickActionCtas,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -68,6 +72,15 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         <PortfolioEmptySection key="empty" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
       );
       return sections;
+    }
+
+    if (shouldDisplayQuickActionCtas) {
+      sections.push(
+        <Box px={6} pt={shouldDisplayGraphRework ? 0 : 6} key="quickActions">
+          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
+          <TransferDrawer />
+        </Box>,
+      );
     }
 
     sections.push(
@@ -111,6 +124,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayGraphRework,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
+    shouldDisplayQuickActionCtas,
     isAccountListUIEnabled,
     hideEmptyTokenAccount,
     openAddModal,
