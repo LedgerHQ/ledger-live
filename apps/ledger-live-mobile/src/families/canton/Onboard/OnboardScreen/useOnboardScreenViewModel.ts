@@ -9,7 +9,12 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { accountsSelector } from "~/reducers/accounts";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
-import { useCantonBridge, useOnboardingNavigation, useOnboardingState } from "./hooks";
+import {
+  useCantonBridge,
+  useContentSectionViewModel,
+  useOnboardingNavigation,
+  useOnboardingState,
+} from "./hooks";
 import type { OnboardScreenViewModelParams } from "./types";
 
 export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenViewModelParams) {
@@ -177,6 +182,16 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
 
   const deviceActionRequest = useMemo(() => ({ currency: cryptoCurrency }), [cryptoCurrency]);
 
+  const contentSectionViewModel = useContentSectionViewModel({
+    status: {
+      onboarding: onboardingStatus,
+      authorize: authorizeStatus,
+      hasResult: !!onboardResult,
+    },
+    isReonboarding,
+    error,
+  });
+
   return {
     // State
     onboardingStatus,
@@ -196,6 +211,9 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
     // Actions
     handleConfirm,
     retryOnboarding,
+
+    // Child ViewModels
+    contentSectionViewModel,
 
     // Device
     device,

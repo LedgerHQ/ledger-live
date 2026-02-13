@@ -3,23 +3,10 @@ import React from "react";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { Trans } from "~/context/Locale";
 import { ContentSection, ProcessingScreen } from "./components";
-import { useContentSectionViewModel } from "./hooks/useContentSectionViewModel";
 import type { OnboardScreenProps } from "./types";
 import { useOnboardScreenViewModel } from "./useOnboardScreenViewModel";
 
-export default function OnboardScreen({ navigation, route }: OnboardScreenProps) {
-  const viewModel = useOnboardScreenViewModel({ navigation, route });
-
-  const contentSectionViewModel = useContentSectionViewModel({
-    status: {
-      onboarding: viewModel.onboardingStatus,
-      authorize: viewModel.authorizeStatus,
-      hasResult: !!viewModel.onboardResult,
-    },
-    isReonboarding: viewModel.isReonboarding,
-    error: viewModel.error,
-  });
-
+function OnboardScreenView(viewModel: ReturnType<typeof useOnboardScreenViewModel>) {
   if (viewModel.isNetworkProcessing) {
     return <ProcessingScreen />;
   }
@@ -59,7 +46,7 @@ export default function OnboardScreen({ navigation, route }: OnboardScreenProps)
           }}
           error={viewModel.error}
           onRetry={viewModel.retryOnboarding}
-          viewModel={contentSectionViewModel}
+          viewModel={viewModel.contentSectionViewModel}
         />
       </Flex>
       <Flex px={6}>
@@ -69,6 +56,10 @@ export default function OnboardScreen({ navigation, route }: OnboardScreenProps)
       </Flex>
     </Flex>
   );
+}
+
+export default function OnboardScreen(props: OnboardScreenProps) {
+  return <OnboardScreenView {...useOnboardScreenViewModel(props)} />;
 }
 
 export { useOnboardScreenViewModel } from "./useOnboardScreenViewModel";
