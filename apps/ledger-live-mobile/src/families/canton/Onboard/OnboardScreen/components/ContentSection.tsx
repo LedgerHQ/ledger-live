@@ -14,32 +14,32 @@ export interface ContentSectionViewModel {
 }
 
 interface ContentSectionProps {
-  readonly status: {
-    readonly onboarding: OnboardStatus;
-    readonly authorize: AuthorizeStatus;
-    readonly isProcessing: boolean;
-    readonly hasResult: boolean;
-  };
-  readonly accounts: {
-    readonly toDisplay: Account[];
-    readonly selectedIds: string[];
-    readonly isReonboarding: boolean;
-  };
+  readonly isProcessing: boolean;
+  readonly accounts: Account[];
+  readonly selectedIds: string[];
+  readonly isReonboarding: boolean;
   readonly error: Error | null;
   readonly onRetry: () => void;
-  readonly viewModel: ContentSectionViewModel;
+  readonly displayStatus: OnboardStatus | AuthorizeStatus;
+  readonly showError: boolean;
+  readonly successKey: string;
+  readonly statusTranslationKey: string;
 }
 
 export function ContentSection({
-  status,
-  accounts,
+  isProcessing,
+  accounts: accountsToDisplay,
+  selectedIds,
+  isReonboarding,
   error,
   onRetry,
-  viewModel,
+  displayStatus,
+  showError,
+  successKey,
+  statusTranslationKey,
 }: ContentSectionProps) {
   const { t } = useTranslation();
-  const { isProcessing } = status;
-  const { toDisplay: accountsToDisplay, selectedIds, isReonboarding } = accounts;
+
 
   return (
     <OnboardLayout
@@ -67,25 +67,25 @@ export function ContentSection({
         </Flex>
       )}
 
-      {viewModel.displayStatus === OnboardStatus.SUCCESS && (
+      {displayStatus === OnboardStatus.SUCCESS && (
         <Flex mx={6} mt={8}>
           <Alert type="success">
-            <Trans i18nKey={viewModel.successKey} />
+            <Trans i18nKey={successKey} />
           </Alert>
         </Flex>
       )}
 
-      {viewModel.showError && (
+      {showError && (
         <ErrorSection error={error} disabled={isProcessing} onRetry={onRetry} />
       )}
 
-      {!viewModel.showError &&
-        viewModel.displayStatus !== OnboardStatus.INIT &&
-        viewModel.displayStatus !== OnboardStatus.SUCCESS && (
+      {!showError &&
+        displayStatus !== OnboardStatus.INIT &&
+        displayStatus !== OnboardStatus.SUCCESS && (
           <Flex flexDirection="row" alignItems="center" px={4} py={6} mx={6} my={4}>
             <InfiniteLoader size={16} />
             <Text ml={4}>
-              <Trans i18nKey={viewModel.statusTranslationKey} />
+              <Trans i18nKey={statusTranslationKey} />
             </Text>
           </Flex>
         )}

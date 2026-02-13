@@ -6,17 +6,35 @@ import { ContentSection, ProcessingScreen } from "./components";
 import type { OnboardScreenProps } from "./types";
 import { useOnboardScreenViewModel } from "./useOnboardScreenViewModel";
 
-function OnboardScreenView(viewModel: ReturnType<typeof useOnboardScreenViewModel>) {
-  if (viewModel.isNetworkProcessing) {
+function OnboardScreenView({
+  isNetworkProcessing,
+  showDeviceModal,
+  device,
+  action,
+  deviceActionRequest,
+  accountsToDisplay,
+  selectedIds,
+  isReonboarding,
+  isProcessing,
+  error,
+  retryOnboarding,
+  handleConfirm,
+  confirmDisabled,
+  displayStatus,
+  showError,
+  successKey,
+  statusTranslationKey,
+}: ReturnType<typeof useOnboardScreenViewModel>) {
+  if (isNetworkProcessing) {
     return <ProcessingScreen />;
   }
 
-  if (viewModel.showDeviceModal) {
+  if (showDeviceModal) {
     return (
       <DeviceActionModal
-        device={viewModel.device}
-        action={viewModel.action}
-        request={viewModel.deviceActionRequest}
+        device={device}
+        action={action}
+        request={deviceActionRequest}
         preventBackdropClick
         noCloseButton
       />
@@ -33,24 +51,20 @@ function OnboardScreenView(viewModel: ReturnType<typeof useOnboardScreenViewMode
     >
       <Flex flexDirection="column" alignItems="stretch" flex={1}>
         <ContentSection
-          status={{
-            onboarding: viewModel.onboardingStatus,
-            authorize: viewModel.authorizeStatus,
-            isProcessing: viewModel.isProcessing,
-            hasResult: !!viewModel.onboardResult,
-          }}
-          accounts={{
-            toDisplay: viewModel.accountsToDisplay,
-            selectedIds: viewModel.selectedIds,
-            isReonboarding: viewModel.isReonboarding,
-          }}
-          error={viewModel.error}
-          onRetry={viewModel.retryOnboarding}
-          viewModel={viewModel.contentSectionViewModel}
+          isProcessing={isProcessing}
+          accounts={accountsToDisplay}
+          selectedIds={selectedIds}
+          isReonboarding={isReonboarding}
+          error={error}
+          onRetry={retryOnboarding}
+          displayStatus={displayStatus}
+          showError={showError}
+          successKey={successKey}
+          statusTranslationKey={statusTranslationKey}
         />
       </Flex>
       <Flex px={6}>
-        <Button type="main" onPress={viewModel.handleConfirm} disabled={viewModel.confirmDisabled}>
+        <Button type="main" onPress={handleConfirm} disabled={confirmDisabled}>
           <Trans i18nKey="common.confirm" />
         </Button>
       </Flex>

@@ -62,13 +62,11 @@ const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel 
       useHook: jest.fn(() => ({})),
       mapResult: jest.fn(),
     } as unknown as MockViewModel["action"],
-    contentSectionViewModel: {
-      isAuthorizationPhase,
-      displayStatus,
-      showError,
-      successKey,
-      statusTranslationKey,
-    },
+    isAuthorizationPhase,
+    displayStatus,
+    showError,
+    successKey,
+    statusTranslationKey,
     ...overrides,
   };
 };

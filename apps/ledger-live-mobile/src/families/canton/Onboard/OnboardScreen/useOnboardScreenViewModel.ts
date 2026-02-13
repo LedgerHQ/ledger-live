@@ -213,7 +213,7 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
     retryOnboarding,
 
     // Child ViewModels
-    contentSectionViewModel,
+    ...contentSectionViewModel,
 
     // Device
     device,

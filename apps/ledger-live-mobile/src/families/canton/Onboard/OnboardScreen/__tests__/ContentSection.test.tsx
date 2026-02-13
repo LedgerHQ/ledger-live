@@ -28,11 +28,16 @@ describe("ContentSection", () => {
 
     return render(
       <ContentSection
-        status={status}
-        accounts={accounts}
+        isProcessing={status.isProcessing}
+        accounts={accounts.toDisplay}
+        selectedIds={accounts.selectedIds}
+        isReonboarding={accounts.isReonboarding}
         error={error}
         onRetry={mockOnRetry}
-        viewModel={result.current}
+        displayStatus={result.current.displayStatus}
+        showError={result.current.showError}
+        successKey={result.current.successKey}
+        statusTranslationKey={result.current.statusTranslationKey}
       />,
     );
   };
