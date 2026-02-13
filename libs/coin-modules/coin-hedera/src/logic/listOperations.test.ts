@@ -71,6 +71,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
+        transaction_id: "0.0.1234567-1625097600-000000000",
         charged_tx_fee: 500000,
         result: "SUCCESS",
         memo_base64: "test-memo",
@@ -116,6 +117,7 @@ describe("listOperations", () => {
         extra: {
           pagingToken: "1625097600.000000000",
           consensusTimestamp: "1625097600.000000000",
+          transactionId: "0.0.1234567-1625097600-000000000", // <-- the transactionId is used in upstream layers to identify the fees payer
           memo: "decoded-test-memo",
         },
       },
@@ -139,6 +141,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
+        transaction_id: "0.0.12345-1625097600-000000000",
         charged_tx_fee: 500000,
         result: "SUCCESS",
         token_transfers: [
@@ -192,6 +195,7 @@ describe("listOperations", () => {
         extra: {
           pagingToken: "1625097600.000000000",
           consensusTimestamp: "1625097600.000000000",
+          transactionId: "0.0.12345-1625097600-000000000", // <-- the transactionId is used in upstream layers to identify the fees payer
         },
       },
     ]);
@@ -205,6 +209,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
+        transaction_id: "0.0.12345-1625097600-000000000",
         charged_tx_fee: 500000,
         result: "SUCCESS",
         token_transfers: [],
@@ -244,6 +249,7 @@ describe("listOperations", () => {
         extra: {
           pagingToken: "1625097600.000000000",
           consensusTimestamp: "1625097600.000000000",
+          transactionId: "0.0.12345-1625097600-000000000", // <-- the transactionId is used in upstream layers to identify the fees payer
         },
       },
     ]);
@@ -338,6 +344,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
+        transaction_id: "0.0.12345-1625097600-000000000",
         charged_tx_fee: 500000,
         result: "INVALID_SIGNATURE",
         memo_base64: "",
@@ -369,7 +376,12 @@ describe("listOperations", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toMatchObject([{ hasFailed: true }]);
+    expect(result.coinOperations).toMatchObject([
+      {
+        hasFailed: true,
+        extra: { transactionId: "0.0.12345-1625097600-000000000" }, // <-- the transactionId is used in upstream layers to identify the fees payer
+      },
+    ]);
   });
 
   it("should create REWARD operation when staking rewards are present", async () => {
@@ -378,6 +390,7 @@ describe("listOperations", () => {
     const mockTransaction: Partial<HederaMirrorTransaction> = {
       consensus_timestamp: "1625097600.000000000",
       transaction_hash: "hash1",
+      transaction_id: "0.0.1234567-1625097600-000000000",
       charged_tx_fee: 500000,
       result: "SUCCESS",
       memo_base64: "",
@@ -418,10 +431,12 @@ describe("listOperations", () => {
         fee: new BigNumber(0),
         senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
         recipients: [address],
+        extra: { transactionId: "0.0.1234567-1625097600-000000000" }, // <-- the transactionId is used in upstream layers to identify the fees payer
       },
       {
         type: "OUT",
         hash: mockTransaction.transaction_hash,
+        extra: { transactionId: "0.0.1234567-1625097600-000000000" }, // <-- the transactionId is used in upstream layers to identify the fees payer
       },
     ]);
   });
