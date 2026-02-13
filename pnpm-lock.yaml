@@ -9009,6 +9009,9 @@ importers:
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../env
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
@@ -9021,6 +9024,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react@18.3.1)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -44605,6 +44611,17 @@ snapshots:
     optionalDependencies:
       react: 19.2.0
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1)
+
+  '@reduxjs/toolkit@2.11.2(react@18.3.1)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@standard-schema/utils': 0.3.0
+      immer: 11.1.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 18.3.1
 
   '@remix-run/router@1.23.2': {}
 
