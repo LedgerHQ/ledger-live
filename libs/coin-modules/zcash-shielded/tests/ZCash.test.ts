@@ -37,7 +37,7 @@ function defineMockRpcClientNetwork(){
       });
     }
 
-    const height = data?.params[0] as number;
+    const height = parseInt(data?.params[0]);
     const time = height < 1276 ? 1000 : 1234 + (height - 1276);
     return Promise.resolve({
       data: {
@@ -71,7 +71,7 @@ function defineSmallChainMockRpcClientNetwork() {
       });
     }
 
-    const height = data?.params[0] as number;
+    const height = parseInt(data?.params[0]);
     const time = 100 + height * 100;
     return Promise.resolve({
       data: {

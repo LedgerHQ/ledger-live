@@ -97,7 +97,7 @@ describe("ZCashRpcClient", () => {
           jsonrpc: "1.0",
           id: "ledger",
           method: "getblock",
-          params: [3],
+          params: ["3"],
         },
       });
     });

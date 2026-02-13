@@ -32,7 +32,7 @@ export class ZCashRpcClient {
   }
 
   async getBlockByHeight(height: number): Promise<ZCashBlock> {
-    const response = await this.rpcCall<GetBlockRpcResponse>("getblock", [height]);
+    const response = await this.rpcCall<GetBlockRpcResponse>("getblock", [height.toString()]);
     if (
       !response ||
       typeof response !== "object" ||
