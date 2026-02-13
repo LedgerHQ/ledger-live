@@ -10,6 +10,9 @@
     "seeAll" : "Просмотреть все",
     "seeAllWithNumber" : "Посмотреть все ({{number}})",
     "back" : "Назад",
+    "fee" : "Комиссия",
+    "stake" : "Стейкать",
+    "validator" : "Валидатор",
     "delete" : "Удалить",
     "paste" : "Вставить",
     "yes" : "Да",
@@ -2676,6 +2679,10 @@
     "carousel" : {
       "title" : "Специально для вас"
     },
+    "perpsEntry" : {
+      "title" : "Бессрочные фьючерсы",
+      "description" : "Торгуйте с кредитным плечом"
+    },
     "recommended" : {
       "title" : "Рекомендуем"
     },
@@ -2713,6 +2720,8 @@
       "transfer" : "Перевод",
       "swap" : "Обмен",
       "buy" : "Купить",
+      "connect" : "Подключить",
+      "buyLedger" : "Купить Ledger",
       "transferDrawer" : {
         "title" : "Перевод",
         "receiveCrypto" : "Получить",
@@ -2988,7 +2997,6 @@
     "yield" : "Доходность",
     "sell" : "Продать",
     "swap" : "Обменять",
-    "perps" : "Бессрочные фьючерсы",
     "manage" : "Управление",
     "lastTransactions" : "Последние транзакции",
     "emptyState" : {
@@ -3000,7 +3008,8 @@
         "receiveFunds" : "Получить",
         "buyCrypto" : "Купить"
       },
-      "addAccountCta" : "Добавить счёт"
+      "addAccountCta" : "Добавить счёт",
+      "addCryptoAccount" : "Добавить криптосчёт"
     },
     "settings" : {
       "header" : "Настройки счёта",
@@ -3491,6 +3500,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Отладка обновления прошивки"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Generate local content cards without Braze for testing.",
+        "description" : "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner" : "Add sample banner",
+        "addSampleBannerDesc" : "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel" : "Add sample action carousel",
+        "addSampleActionCarouselDesc" : "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll" : "Dismiss all local cards",
+        "dismissAllDesc" : "Remove all locally generated content cards."
       }
     }
   },
@@ -3674,10 +3694,6 @@
     "stake" : {
       "title" : "Стейкинг",
       "description" : "Получайте вознаграждения с вашей крипты"
-    },
-    "perps" : {
-      "title" : "Бессрочные фьючерсы",
-      "description" : "Торгуйте бессрочными криптовалютными фьючерсами."
     },
     "swap" : {
       "title" : "Обмен",
@@ -3875,7 +3891,8 @@
         "title" : "Выберите курс"
       },
       "twoStepApproval" : {
-        "title" : "Выполните действия"
+        "title" : "Выполните действия",
+        "completedTitle" : "Статус транзакции"
       },
       "loader" : {
         "title" : "Обработка обмена",
@@ -4573,6 +4590,7 @@
       },
       "acceptTerms" : "Подписывая эту транзакцию, я принимаю <0>Условия использования <0>{{provider}}</0></0>",
       "nearIntentsAcceptTerms" : "Подтверждая эту транзакцию,\n я принимаю <0>Условия использования SwapKit</0>, технологии в основе NEAR Intents",
+      "acceptTermsSponsored" : "Чтобы воспользоваться нулевыми комиссиями сети, вы также соглашаетесь передавать данные вашей транзакции (включая адрес кошелька) компании Blinklabs.",
       "changellySimplifiedAcceptTerms" : "Подтверждая эту транзакцию, вы соглашаетесь с <0>Условиями использования</0> Changelly и её <1>Политикой AML/KYC</1>. Changelly может применять процедуры в рамках борьбы с отмыванием денег (AML) и «Знай своего клиента» (KYC), которые в некоторых случаях могут повлиять на итог ваших транзакций. Если это произойдёт, обращайтесь в <2>Поддержку Changelly</2>.",
       "notice" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки."
     },
@@ -6088,6 +6106,52 @@
       "newAddressTRC20" : "Для активации адреса на него сначала нужно отправить не менее 0,1 TRX."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Адрес скопирован!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Переделегировать",
+      "earn" : "Приумножить"
+    },
+    "stakeBanner" : {
+      "title" : "Получайте вознаграждения с MINA",
+      "altTitle" : "Управление делегированием MINA",
+      "description" : "Делегируйте ваши MINA создателю блока, чтобы получать вознаграждения за этот процесс. Вознаграждения распределяются в зависимости от суммы монет в делегировании.",
+      "altDescription" : "Измените настройки делегирования или отзовите токены MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Делегировано кому:",
+      "stakedBalance" : "Стейкается",
+      "producerAddress" : "Адрес создателя",
+      "delegatedToTooltip" : "Название создателя блока с вашим делегированием",
+      "stakedBalanceTooltip" : "Общая сумма MINA в стейкинге с этим валидатором",
+      "producerAddressTooltip" : "Публичный адрес создателя блока с вашим делегированием"
+    },
+    "delegators" : "Делегаторы",
+    "memoPlaceholder" : "Опциональное примечание/memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Выберите валидатора",
+        "connectDevice" : "Подключение устройства",
+        "confirmation" : "Подтверждение"
+      },
+      "title" : "Стейкинг MINA",
+      "help" : "Выберите валидатора из списка ниже, чтобы делегировать ваши токены MINA.",
+      "success" : {
+        "title" : "Транзакция успешно транслирована",
+        "description" : "Ваш запрос на изменение делегирования успешно транслирован."
+      },
+      "error" : {
+        "title" : "При трансляции транзакции произошёл сбой"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Общий пул",
+      "commission" : "Комиссия",
+      "showAll" : "Показать больше",
+      "showLess" : "Показать меньше",
+      "iDelegate" : "Я делегирую"
+    }
+  },
   "stellar" : {
     "token" : "Активы",
     "memo" : {
@@ -6492,9 +6556,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Опциональное примечание/memo"
   },
   "near" : {
     "info" : {
@@ -8388,9 +8449,6 @@
     },
     "tileTitle" : "Настроение"
   },
-  "perps" : {
-    "title" : "Бессрочные фьючерсы"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "Аналитика"
@@ -8400,6 +8458,27 @@
     },
     "actions" : {
       "swap" : "Обменять"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Познакомьтесь с новым портфелем",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Ваш портфель. По-новому",
+        "description" : "Мы упростили главный экран. Не нашли график? Просто нажмите под вашим балансом."
+      },
+      "navigation" : {
+        "title" : "Всё на своих местах",
+        "description" : "Вкладки «Мой Ledger» и «Исследуйте» теперь сверху. «Обмен» и «Карта» переехали в нижнюю часть экрана для быстрого доступа."
+      },
+      "actions" : {
+        "title" : "Действуйте в темпе рынка",
+        "description" : "Отслеживайте рыночные тренды на новом баннере и мгновенно реагируйте."
+      }
+    },
+    "cta" : {
+      "continue" : "Продолжить",
+      "explore" : "Исследовать новый портфель"
     }
   }
 }
