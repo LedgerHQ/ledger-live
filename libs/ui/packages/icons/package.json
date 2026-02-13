@@ -67,7 +67,7 @@
     "@types/react-dom": "^18.2.13",
     "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.1",
-    "glob": "^7.2.0",
+    "glob": "^11.0.0",
     "react": "catalog:",
     "react-native-svg": "catalog:",
     "rimraf": "^4.4.1",

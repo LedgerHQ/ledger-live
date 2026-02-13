@@ -309,7 +309,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "fs": "^0.0.1-security",
-    "glob": "^7.2.0",
+    "glob": "^11.0.0",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "jest-file-snapshot": "catalog:",
