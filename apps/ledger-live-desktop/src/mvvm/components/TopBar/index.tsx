@@ -3,8 +3,8 @@ import useTopBarViewModel from "./hooks/useTopBarViewModel";
 import TopBarView from "./TopBarView";
 
 const TopBar = () => {
-  const { topBarActionsList } = useTopBarViewModel();
+  const { topBarSlots } = useTopBarViewModel();
 
-  return <TopBarView actionsList={topBarActionsList} />;
+  return <TopBarView slots={topBarSlots} />;
 };
 export default TopBar;

@@ -33,19 +33,24 @@ describe("useTopBarViewModel", () => {
     });
   });
 
-  it("returns topBarActionsList with synchronize action when hasAccounts is true", () => {
+  it("returns topBarSlots with synchronize action when hasAccounts is true", () => {
     const { result } = renderHook(() => useTopBarViewModel());
 
-    expect(result.current.topBarActionsList).toBeDefined();
-    const syncAction = result.current.topBarActionsList.find(a => a.label === "synchronize");
-    expect(syncAction).toBeDefined();
-    expect(syncAction?.tooltip).toBe("Refresh");
-    expect(syncAction?.isInteractive).toBe(true);
-    expect(syncAction?.onClick).toBe(mockHandleSync);
-    expect(syncAction?.icon).toBeDefined();
+    expect(result.current.topBarSlots).toBeDefined();
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeDefined();
+    expect(syncSlot?.type).toBe("action");
+    if (syncSlot?.type === "action") {
+      expect(syncSlot.action.tooltip).toBe("Refresh");
+      expect(syncSlot.action.isInteractive).toBe(true);
+      expect(syncSlot.action.onClick).toBe(mockHandleSync);
+      expect(syncSlot.action.icon).toBeDefined();
+    }
   });
 
-  it("does not include synchronize action when hasAccounts is false", () => {
+  it("does not include synchronize slot when hasAccounts is false", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: false,
       handleSync: mockHandleSync,
@@ -58,17 +63,53 @@ describe("useTopBarViewModel", () => {
 
     const { result } = renderHook(() => useTopBarViewModel());
 
-    const syncAction = result.current.topBarActionsList.find(a => a.label === "synchronize");
-    expect(syncAction).toBeUndefined();
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeUndefined();
   });
 
-  it("always includes discreet action with handleDiscreet and tooltip from translation", () => {
+  it("includes notification slot and discreet action in correct order", () => {
     const { result } = renderHook(() => useTopBarViewModel());
 
-    const discreetAction = result.current.topBarActionsList.find(a => a.label === "discreet");
-    expect(discreetAction).toBeDefined();
-    expect(discreetAction?.onClick).toBe(mockHandleDiscreet);
-    expect(discreetAction?.isInteractive).toBe(true);
+    const notificationSlot = result.current.topBarSlots.find(s => s.type === "notification");
+    expect(notificationSlot).toBeDefined();
+    expect(notificationSlot).toEqual({ type: "notification" });
+
+    const slotLabels = result.current.topBarSlots.map(s =>
+      s.type === "action" ? s.action.label : "notification",
+    );
+    expect(slotLabels).toEqual(["synchronize", "notification", "discreet"]);
+
+    const discreetSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "discreet",
+    );
+    expect(discreetSlot).toBeDefined();
+    if (discreetSlot?.type === "action") {
+      expect(discreetSlot.action.onClick).toBe(mockHandleDiscreet);
+      expect(discreetSlot.action.isInteractive).toBe(true);
+    }
+  });
+
+  it("places notification slot 2nd (index 1) when hasAccounts, and 1st (index 0) when no accounts", () => {
+    const { result } = renderHook(() => useTopBarViewModel());
+    expect(result.current.topBarSlots[1].type).toBe("notification");
+
+    mockUseActivityIndicator.mockReturnValue({
+      hasAccounts: false,
+      handleSync: mockHandleSync,
+      isDisabled: false,
+      isRotating: false,
+      isError: false,
+      tooltip: "Refresh",
+      icon: Refresh,
+    });
+    const { result: resultNoAccounts } = renderHook(() => useTopBarViewModel());
+    expect(resultNoAccounts.current.topBarSlots[0].type).toBe("notification");
+    const slotLabels = resultNoAccounts.current.topBarSlots.map(s =>
+      s.type === "action" ? s.action.label : "notification",
+    );
+    expect(slotLabels).toEqual(["notification", "discreet"]);
   });
 
   it("passes isDisabled from useActivityIndicator as isInteractive false on sync action", () => {
@@ -84,9 +125,13 @@ describe("useTopBarViewModel", () => {
 
     const { result } = renderHook(() => useTopBarViewModel());
 
-    const syncAction = result.current.topBarActionsList.find(a => a.label === "synchronize");
-    expect(syncAction).toBeDefined();
-    expect(syncAction?.isInteractive).toBe(false);
-    expect(syncAction?.tooltip).toBe("Error");
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeDefined();
+    if (syncSlot?.type === "action") {
+      expect(syncSlot.action.isInteractive).toBe(false);
+      expect(syncSlot.action.tooltip).toBe("Error");
+    }
   });
 });

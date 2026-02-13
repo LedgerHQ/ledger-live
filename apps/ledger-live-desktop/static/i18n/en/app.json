@@ -7950,6 +7950,9 @@
       "hoursAgo_other": "Last sync: {{count}} hours ago. Tap to refresh",
       "daysAgo_one": "Last sync: {{count}} day ago. Tap to refresh",
       "daysAgo_other": "Last sync: {{count}} days ago. Tap to refresh"
+    },
+    "notificationIndicator": {
+      "tooltip": "Notifications"
     }
   },
   "geoBlocking": {
