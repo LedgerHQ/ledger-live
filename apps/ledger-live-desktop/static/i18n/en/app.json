@@ -8206,5 +8206,27 @@
     "downloadProgress": "{{progress}}%",
     "errorTryAgain": "Error during update, try again",
     "installAndRelaunch": "Install update and relaunch"
+  },
+  "walletV4Tour": {
+    "slides": {
+      "portfolio": {
+        "title": "Swap effortlessly",
+        "description": "Adapt your portfolio allocation anytime with the security of your Ledger device"
+      },
+      "navigation": {
+        "title": "Everything in its right place",
+        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the sidebar for faster access."
+      },
+      "actions": {
+        "title": "Actions at market speed",
+        "description": "Spot market trends with the new banner and trade instantly."
+      }
+    },
+    "cta": {
+      "continue": "Continue",
+      "explore": "Explore my new portfolio"
+    }
   }
 }
+
+

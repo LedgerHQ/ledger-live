@@ -1,7 +1,10 @@
-import React, { ReactNode, RefObject, useCallback, useMemo, useRef, useState } from "react";
-import { isValidReactElement } from "@ledgerhq/react-ui";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { animate, useMotionValue } from "framer-motion";
 import { Content } from "./components/Content";
 import { SlidesContextValue } from "./context";
+import { isValidReactElement } from "@ledgerhq/react-ui";
+
+const PROGRESS_ANIMATION_DURATION_S = 0.5;
 
 type UseSlidesViewModelParams = {
   children: ReactNode;
@@ -10,10 +13,7 @@ type UseSlidesViewModelParams = {
 };
 
 type UseSlidesViewModelReturn = {
-  scrollContainerRef: RefObject<HTMLDivElement>;
-  handleScroll: () => void;
   contextValue: SlidesContextValue;
-  totalSlides: number;
 };
 
 export function useSlidesViewModel({
@@ -21,8 +21,27 @@ export function useSlidesViewModel({
   onSlideChange,
   initialSlideIndex = 0,
 }: UseSlidesViewModelParams): UseSlidesViewModelReturn {
-  const scrollContainerRef = useRef<HTMLDivElement>(null!);
   const [currentIndex, setCurrentIndex] = useState(initialSlideIndex);
+  const [previousIndex, setPreviousIndex] = useState(initialSlideIndex);
+  const currentIndexRef = useRef(initialSlideIndex);
+  const progress = useMotionValue(initialSlideIndex);
+
+  useEffect(() => {
+    setPreviousIndex(currentIndexRef.current);
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
+
+  useEffect(() => {
+    if (currentIndex === previousIndex) {
+      progress.set(currentIndex);
+      return;
+    }
+    const controls = animate(progress, currentIndex, {
+      duration: PROGRESS_ANIMATION_DURATION_S,
+      ease: "easeOut",
+    });
+    return () => controls.stop();
+  }, [currentIndex, previousIndex, progress]);
 
   const contentChild = React.Children.toArray(children).find(
     (child): child is React.ReactElement<{ children: ReactNode }> =>
@@ -33,12 +52,13 @@ export function useSlidesViewModel({
 
   const goToSlide = useCallback(
     (index: number) => {
-      const container = scrollContainerRef.current;
-      if (!container || index < 0 || index >= totalSlides) return;
-      const slideWidth = container.offsetWidth;
-      container.scrollTo({ left: index * slideWidth, behavior: "smooth" });
+      if (index < 0 || index >= totalSlides) return;
+      if (index !== currentIndex) {
+        setCurrentIndex(index);
+        onSlideChange?.(index);
+      }
     },
-    [totalSlides],
+    [totalSlides, currentIndex, onSlideChange],
   );
 
   const goToNext = useCallback(() => {
@@ -53,24 +73,18 @@ export function useSlidesViewModel({
     }
   }, [currentIndex, goToSlide]);
 
-  const handleScroll = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const slideWidth = container.offsetWidth;
-    if (slideWidth <= 0) return;
-
-    const newIndex = Math.round(container.scrollLeft / slideWidth);
-    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
-      setCurrentIndex(newIndex);
-      onSlideChange?.(newIndex);
-    }
-  }, [currentIndex, totalSlides, onSlideChange]);
-
   const contextValue = useMemo(
-    () => ({ currentIndex, totalSlides, goToNext, goToPrevious, goToSlide }),
-    [currentIndex, totalSlides, goToNext, goToPrevious, goToSlide],
+    () => ({
+      currentIndex,
+      previousIndex,
+      progress,
+      totalSlides,
+      goToNext,
+      goToPrevious,
+      goToSlide,
+    }),
+    [currentIndex, previousIndex, totalSlides, goToNext, goToPrevious, goToSlide, progress],
   );
 
-  return { scrollContainerRef, handleScroll, contextValue, totalSlides };
+  return { contextValue };
 }
