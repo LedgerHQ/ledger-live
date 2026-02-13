@@ -11,7 +11,7 @@ import {
   decryptedOrchardData,
   txShieldedSapling,
 } from "./testAccounts";
-import { server } from "../mocks/node";
+import { server } from "./mocks/node";
 import { JSON_RPC_SERVER } from "../src/constants";
 
 beforeAll(() => server.listen());
