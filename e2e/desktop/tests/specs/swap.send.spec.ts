@@ -259,6 +259,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         ],
         { scope: "test" },
       ],
+      env: {
+        LEDGER_COUNTERVALUES_API: "https://countervalues-service.api.ledger-test.com",
+      },
     });
 
     test(
