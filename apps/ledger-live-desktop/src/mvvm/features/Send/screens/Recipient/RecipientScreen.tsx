@@ -1,12 +1,12 @@
-import React, { useCallback, useMemo } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import React, { useCallback, useMemo } from "react";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
-import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
+import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
 import { RecipientAddressModal } from "./components/RecipientAddressModal";
 
 export function RecipientScreen() {
-  const { state, uiConfig, recipientSearch } = useSendFlowData();
+  const { state, uiConfig } = useSendFlowData();
   const { transaction, close } = useSendFlowActions();
   const { navigation } = useFlowWizard();
 
@@ -19,16 +19,18 @@ export function RecipientScreen() {
   }, [state.account.currency, account]);
 
   const handleAddressSelected = useCallback(
-    (address: string, ensName?: string) => {
+    (address: string, ensName?: string, goToNextStep?: boolean) => {
       transaction.setRecipient({
+        ...state.recipient,
         address,
         ensName,
       });
 
-      recipientSearch.clear();
-      navigation.goToNextStep();
+      if (goToNextStep) {
+        navigation.goToNextStep();
+      }
     },
-    [transaction, navigation, recipientSearch],
+    [transaction, state.recipient, navigation],
   );
 
   if (!account || !currency) {
