@@ -1,5 +1,7 @@
 import {
+  decodeAccountId,
   decodeTokenAccountId,
+  encodeAccountId,
   encodeTokenAccountId,
   safeDecodeTokenId,
   safeDecodeXpubOrAddress,
@@ -9,7 +11,7 @@ import {
 import tokenData from "./__fixtures__/binance-peg_dai_token.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { AccountIdParams, CryptoAssetsStore } from "@ledgerhq/types-live";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
@@ -116,6 +118,47 @@ describe("coin-framework", () => {
           "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
 
         expect(safeDecodeXpubOrAddress(encodedXpubOrAddress)).toBe(expected);
+      });
+    });
+
+    describe("encodeAccountId", () => {
+      it("should encode with and without customData", () => {
+        const base = {
+          type: "js",
+          version: "2",
+          currencyId: "bitcoin",
+          xpubOrAddress: "xpub123",
+          derivationMode: "",
+        } as AccountIdParams;
+
+        expect(encodeAccountId(base)).toBe("js:2:bitcoin:xpub123:");
+        expect(encodeAccountId({ ...base, customData: "viewkey" })).toBe(
+          "js:2:bitcoin:xpub123::viewkey",
+        );
+        expect(encodeAccountId({ ...base, customData: "" })).toBe("js:2:bitcoin:xpub123:");
+      });
+
+      it("should safely encode double colons in customData", () => {
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: "aleo",
+          xpubOrAddress: "aleo1xyz",
+          derivationMode: "",
+          customData: "view::key::123",
+        });
+
+        expect(accountId).toBe("js:2:aleo:aleo1xyz::view~!colons!~key~!colons!~123");
+      });
+    });
+
+    describe("decodeAccountId", () => {
+      it("should decode with and without customData", () => {
+        expect(decodeAccountId("js:2:bitcoin:xpub123:").customData).toBeUndefined();
+        expect(decodeAccountId("js:2:bitcoin:xpub123::viewkey").customData).toBe("viewkey");
+        expect(decodeAccountId("js:2:aleo:aleo1xyz::view~!colons!~key").customData).toBe(
+          "view::key",
+        );
       });
     });
   });
