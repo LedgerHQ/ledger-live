@@ -41,6 +41,7 @@ jest.mock("@react-native-community/netinfo", () => {
       none: "none",
     },
     useNetInfo: mockUseNetInfo,
+    addEventListener: jest.fn(() => jest.fn()),
   };
 });
 

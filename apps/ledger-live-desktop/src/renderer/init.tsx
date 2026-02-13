@@ -33,6 +33,7 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
+import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
@@ -124,6 +125,7 @@ async function init() {
   });
   const dispatch: AppDispatch = store.dispatch;
 
+  setupListeners(store.dispatch);
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
 
