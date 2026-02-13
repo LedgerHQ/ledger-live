@@ -76,7 +76,7 @@ describe("useSendFlowTransaction", () => {
       act(() => {
         result.current.actions.setRecipient({
           address: "cosmos1abc123",
-          memo: "test memo",
+          memo: { value: "test memo" },
         });
       });
 
@@ -117,7 +117,7 @@ describe("useSendFlowTransaction", () => {
       act(() => {
         result.current.actions.setRecipient({
           address: "solana-address",
-          memo: "solana memo",
+          memo: { value: "solana memo" },
         });
       });
 
@@ -199,7 +199,7 @@ describe("useSendFlowTransaction", () => {
       act(() => {
         result.current.actions.setRecipient({
           address: "casper-address",
-          memo: "transfer-id-123",
+          memo: { value: "transfer-id-123" },
         });
       });
 
@@ -236,7 +236,7 @@ describe("useSendFlowTransaction", () => {
       act(() => {
         result.current.actions.setRecipient({
           address: "xrp-address",
-          memo: "test",
+          memo: { value: "test" },
           destinationTag: "67890",
         });
       });
