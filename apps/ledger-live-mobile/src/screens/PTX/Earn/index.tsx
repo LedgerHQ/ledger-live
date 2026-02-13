@@ -118,7 +118,7 @@ function Earn({ route }: Props) {
       safeAreaLeft: insets.left.toString(),
       safeAreaRight: insets.right.toString(),
       navigationHeightOffset: TAB_BAR_HEIGHT.toString(),
-      lwm40enabled: isLwm40Enabled ? "true" : "false",
+      lw40enabled: isLwm40Enabled ? "true" : "false",
       ...params,
       ...Object.fromEntries(searchParams.entries()),
     }),

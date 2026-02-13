@@ -47,7 +47,7 @@ const Earn = () => {
   const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
-  const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("desktop");
+  const { isEnabled: isLwd40Enabled } = useWalletFeaturesConfig("desktop");
   useDeepLinkListener();
 
   const stakePrograms = useVersionedStakePrograms();
@@ -67,7 +67,7 @@ const Earn = () => {
   }
 
   // if LWM40 is enabled, use Box for transparency, otherwise use Card
-  const Container = isLwm40Enabled ? Box : Card;
+  const Container = isLwd40Enabled ? Box : Card;
 
   return (
     <Container grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
@@ -97,7 +97,7 @@ const Earn = () => {
             : undefined,
           ethDepositCohort,
           uiVersion: earnUiVersion,
-          lwm40enabled: isLwm40Enabled ? "true" : "false",
+          lw40enabled: isLwd40Enabled ? "true" : "false",
         }}
       />
     </Container>
