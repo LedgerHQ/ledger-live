@@ -1,7 +1,7 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
@@ -45,16 +45,16 @@ const Fields: Props = ({
   const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
-  /* TODO: How do we set default RBF to be true ? (@gre)
-   * Meanwhile, using this trick (please don't kill me)
-   */
-  useEffect(() => {
-    updateTransaction((t: Transaction) =>
-      bridge.updateTransaction(t, {
-        rbf: true,
-      }),
-    );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // /* TODO: How do we set default RBF to be true ? (@gre)
+  //  * Meanwhile, using this trick (please don't kill me)
+  //  */
+  // useEffect(() => {
+  //   updateTransaction((t: Transaction) =>
+  //     bridge.updateTransaction(t, {
+  //       rbf: true,
+  //     }),
+  //   );
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy }: OnClickType) => {
