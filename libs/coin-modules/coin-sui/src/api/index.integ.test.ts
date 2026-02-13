@@ -142,7 +142,7 @@ describe("Sui Api", () => {
         minHeight: 154925948,
         order: "asc",
       });
-      expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
+      expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.items.length);
     });
 
     it("returns block height as a number", async () => {
