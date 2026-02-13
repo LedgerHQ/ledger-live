@@ -8,4 +8,5 @@ export interface ViewProps {
   unsupportedUpdateDrawerOpened: boolean;
   closeUnsupportedUpdateDrawer(): void;
   isUpdateSupportedButDeviceNotWired: boolean;
+  fullWidth?: boolean;
 }

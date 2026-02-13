@@ -43,6 +43,7 @@ export function makeOverrideInitialState(args: {
   hasCompletedOnboarding: boolean;
   wired: boolean;
   hasConnectedDevice: boolean;
+  wallet40Enabled?: boolean;
 }) {
   return (state: State): State => ({
     ...state,
@@ -53,6 +54,12 @@ export function makeOverrideInitialState(args: {
         version: args.version,
         hasCompletedOnboarding: args.hasCompletedOnboarding,
         wired: args.wired,
+      }),
+      ...(args.wallet40Enabled !== undefined && {
+        overriddenFeatureFlags: {
+          ...state.settings.overriddenFeatureFlags,
+          lwmWallet40: { enabled: args.wallet40Enabled },
+        },
       }),
     },
     appstate: {
