@@ -1,8 +1,8 @@
-import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { RecipientAddressModalView } from "./RecipientAddressModalView";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import React from "react";
 import { useRecipientAddressModalViewModel } from "../hooks/useRecipientAddressModalViewModel";
+import { RecipientAddressModalView } from "./RecipientAddressModalView";
 
 type RecipientAddressModalProps = Readonly<{
   isOpen: boolean;
@@ -10,7 +10,7 @@ type RecipientAddressModalProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoOrTokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
   recipientSupportsDomain: boolean;
 }>;
 
