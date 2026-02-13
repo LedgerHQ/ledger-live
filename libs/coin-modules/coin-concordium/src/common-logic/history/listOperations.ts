@@ -10,8 +10,13 @@ import { ConcordiumOperation } from "../../network/types";
  */
 export async function listOperations(
   address: string,
-  { minHeight }: ListOperationsOptions,
+  options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
+  // TODO: pagination/filtering options support is not implemented
+  const { minHeight, cursor, limit, order } = options;
+  if (cursor !== undefined || limit !== undefined || order !== undefined)
+    throw new Error("cursor, limit and order options are not implemented");
+
   const transactions = await getTransactions(address, { from: minHeight });
   return { items: transactions.map(convertToCoreOperation(address)), next: undefined };
 }
