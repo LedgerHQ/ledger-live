@@ -51,7 +51,7 @@ function Delta({
       ? valueChange.percentage * 100
       : valueChange.value;
 
-  const roundedDelta = parseFloat(delta.toFixed(0));
+  const roundedDelta = parseFloat(delta.toFixed(2));
 
   if (roundedDelta === 0) {
     return percentPlaceholder;
@@ -101,7 +101,7 @@ function Delta({
               value={absDelta}
             />
           ) : percent ? (
-            `${absDelta.toFixed(0)}%`
+            `${absDelta.toFixed(2)}%`
           ) : null}
           {range && ` (${t(`time.${range}`)})`}
           {isPercentSignDisplayed ? "%" : ""}
@@ -121,4 +121,8 @@ const styles = StyleSheet.create({
   },
 });
 
+/**
+ * @note Use the Delta component from the mvvm directory instead.
+ * The new one relies on Lumen UI lib.
+ */
 export default memo<Props>(Delta);
