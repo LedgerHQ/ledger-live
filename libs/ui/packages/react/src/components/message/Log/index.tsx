@@ -28,7 +28,7 @@ const TextContainer = styled(FlexBox).attrs(() => ({
   }
 `;
 
-function Log({ children, extraTextProps, ...props }: Props): JSX.Element {
+function Log({ children, extraTextProps, ...props }: Props): React.JSX.Element {
   return (
     <Container color="neutral.c100" {...props}>
       <BracketLeft />

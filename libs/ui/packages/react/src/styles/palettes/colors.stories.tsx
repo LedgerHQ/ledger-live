@@ -33,7 +33,7 @@ const CardColorWrapper = styled(Flex)`
 `;
 
 type CardColorProps = { shade: string; type: string; value: string };
-const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
+const CardColor = ({ shade, type, value }: CardColorProps): React.JSX.Element => {
   const onClick = (type: string, shade: string): void => {
     navigator.clipboard.writeText(`p.theme.colors.${type}.${shade}`);
   };
@@ -56,7 +56,7 @@ const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { type: _, ...palette } = palettes.light;
 
-export const Colors = (): JSX.Element => (
+export const Colors = (): React.JSX.Element => (
   <Flex flexDirection="column" rowGap="2rem">
     {Object.entries(palette).map(([type, shades]) => (
       <Flex key={type} flexDirection="column" rowGap="1rem">

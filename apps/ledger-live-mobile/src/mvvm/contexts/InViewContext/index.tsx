@@ -21,7 +21,7 @@ const InViewContext = createContext<InViewContext>({});
 export function useInViewContext(
   onInViewUpdate: (entry: InViewEntry) => void,
   deps: DependencyList = [],
-  target: RefObject<View>,
+  target: RefObject<View | null>,
 ) {
   const { addWatchedItem, removeWatchedItem } = useContext(InViewContext);
   const onInViewUpdateCb = useCallback(onInViewUpdate, deps); // eslint-disable-line react-hooks/exhaustive-deps

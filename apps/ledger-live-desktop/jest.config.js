@@ -45,6 +45,13 @@ const moduleNameMapper = {
   uuid: require.resolve("uuid"),
   "react-spring": require.resolve("react-spring"),
   "^react-redux": "<rootDir>/node_modules/react-redux",
+  // TODO: Remove this once we upgrade all projects React 19
+  "^react-dom/client$": require.resolve("react-dom/client"),
+  "^react/jsx-runtime$": require.resolve("react/jsx-runtime"),
+  "^react/jsx-dev-runtime$": require.resolve("react/jsx-dev-runtime"),
+  "^react-dom$": require.resolve("react-dom"),
+  "^react$": require.resolve("react"),
+  "react-test-renderer": require.resolve("react-test-renderer"),
   "@braze/web-sdk": require.resolve("@braze/web-sdk"),
   "@polkadot/x-fetch": "<rootDir>/__mocks__/x-fetch.js",
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",

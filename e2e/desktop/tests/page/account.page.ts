@@ -41,13 +41,17 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
-    // Try to navigate using name first, then fallback to ticker
+    // Wait for the token row to render before checking visibility (React 19 deferred rendering)
     const nameElement = this.tokenValue(account.currency.name);
+    const tickerElement = this.tokenRowByTicker(account.currency.ticker);
+    await Promise.race([
+      nameElement.waitFor({ state: "visible" }).catch(() => {}),
+      tickerElement.waitFor({ state: "visible" }).catch(() => {}),
+    ]);
     if (await nameElement.isVisible().catch(() => false)) {
       await nameElement.click();
       return;
     }
-    const tickerElement = this.tokenRowByTicker(account.currency.ticker);
     if (await tickerElement.isVisible().catch(() => false)) {
       await tickerElement.click();
       return;

@@ -1,5 +1,4 @@
 import React from "react";
-import { isElement } from "react-is";
 import { Props as StepperProps } from "../progress/Stepper";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";
 import { Stepper } from "..";
@@ -47,6 +46,16 @@ type SectionRenderFunc<ExtraProps> = (props: InnerProps & ExtraProps) => React.R
 type SectionStepRenderFunc<ExtraProps> = (
   args: InnerProps & ExtraProps & { children: React.ReactNode },
 ) => React.ReactNode;
+
+const REACT_ELEMENT_TYPE = Symbol.for("react.element");
+const REACT_TRANSITIONAL_ELEMENT_TYPE = Symbol.for("react.transitional.element");
+
+const isReactElementLike = (value: unknown): value is React.ReactElement =>
+  !!value &&
+  typeof value === "object" &&
+  "$$typeof" in (value as Record<string, unknown>) &&
+  ((value as { $$typeof?: unknown }).$$typeof === REACT_ELEMENT_TYPE ||
+    (value as { $$typeof?: unknown }).$$typeof === REACT_TRANSITIONAL_ELEMENT_TYPE);
 
 export interface Props<ExtraProps> {
   /**
@@ -127,11 +136,12 @@ function FlowStepper<ExtraProps>({
     stepFooter: React.ReactNode | null;
   }>(
     (acc, child, idx) => {
-      const index = (isElement(child) && child.props.index) ?? idx;
-      const label = isElement(child) && child.props.label;
-      const hidden = isElement(child) && child.props.hidden;
-      const stepHeader = isElement(child) && child.props.header;
-      const stepFooter = isElement(child) && child.props.footer;
+      const stepChild = isReactElementLike(child) ? (child as StepChild) : null;
+      const index = stepChild?.props.index ?? idx;
+      const label = stepChild?.props.label;
+      const hidden = stepChild?.props.hidden;
+      const stepHeader = stepChild?.props.header;
+      const stepFooter = stepChild?.props.footer;
 
       if (label && !hidden) {
         acc.steps[index] = label;
@@ -166,6 +176,7 @@ function FlowStepper<ExtraProps>({
       : renderFunc && renderFunc(renderArgs);
   }
 
+  console.log("FlowStepper", { activeIndex, steps, innerContents, stepHeader, stepFooter });
   return (
     <Flex flex={1} flexDirection="column" {...extraContainerProps}>
       {getSectionContents(header, stepHeader, renderStepHeader)}
@@ -224,8 +235,8 @@ export type IndexedProps<ExtraProps> = Omit<Props<ExtraProps>, "activeIndex" | "
 function FlowStepperIndexed<ExtraProps>(props: IndexedProps<ExtraProps>) {
   const { activeKey, children, ...otherProps } = props;
   const activeIndex = React.Children.toArray(children).findIndex(child => {
-    const res = isElement(child) && child.props.itemKey === activeKey;
-    return res;
+    const stepChild = isReactElementLike(child) ? (child as IndexedStepperChild) : null;
+    return stepChild?.props.itemKey === activeKey;
   });
   return (
     <FlowStepper {...otherProps} activeIndex={activeIndex}>

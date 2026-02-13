@@ -31,6 +31,7 @@ test.describe("Developer Settings", () => {
     });
 
     await test.step("take screenshot of Developer settings", async () => {
+      await page.getByTestId("developer-user-id").waitFor({ state: "visible" });
       await expect.soft(page).toHaveScreenshot("developer-settings.png", {
         mask: [page.getByTestId("developer-user-id")],
       });

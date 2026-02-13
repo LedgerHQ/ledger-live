@@ -10,7 +10,6 @@ import { useToastsActions } from "~/actions/toast";
 
 export function useCompleteActionCallback() {
   const dispatch = useDispatch();
-  // @ts-expect-error REACT19FIXME: Context $$typeof symbol mismatch between React 18 and 19
   const { getPostOnboardingAction } = useContext(PostOnboardingContext);
   const { deviceModelId } = usePostOnboardingHubState();
   const { t } = useTranslation();

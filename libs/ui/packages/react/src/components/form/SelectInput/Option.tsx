@@ -91,7 +91,7 @@ export function Option<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: Props<O, M, G>): JSX.Element {
+>(props: Props<O, M, G>): React.JSX.Element {
   const { render, children, ...innerProps } = props;
 
   return (

@@ -13,7 +13,7 @@ import { ListSkeleton } from "../components/ListSkeleton";
 import { ListData } from "../components/ListData";
 
 type MarketListVirtualization = {
-  parentRef: RefObject<HTMLDivElement>;
+  parentRef: RefObject<HTMLDivElement | null>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
 };
 

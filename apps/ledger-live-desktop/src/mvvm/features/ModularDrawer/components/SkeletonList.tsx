@@ -1,5 +1,5 @@
 import { Flex } from "@ledgerhq/react-ui/index";
-import { Skeleton } from "LLD/components/Skeleton";
+import Skeleton from "LLD/components/Skeleton";
 import React from "react";
 
 const SkeletonList = () => (

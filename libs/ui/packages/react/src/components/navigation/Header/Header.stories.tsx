@@ -10,7 +10,7 @@ export default {
   component: HeaderComponent,
 };
 
-export const Header = (args: Props): JSX.Element => {
+export const Header = (args: Props): React.JSX.Element => {
   const left = (
     <FlexBox alignItems="center" style={{ columnGap: "6px" }}>
       <Icon name="ArrowLeft" weight="Medium" />

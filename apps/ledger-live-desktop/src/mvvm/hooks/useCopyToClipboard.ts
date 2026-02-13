@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 
 export function useCopyToClipboard(callback?: (text: string) => void) {
-  const textRef = useRef<string>();
+  const textRef = useRef<string>(undefined);
 
   const copy = useCallback(() => {
     const text = textRef.current ?? "";

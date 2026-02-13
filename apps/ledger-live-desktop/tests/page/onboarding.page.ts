@@ -41,14 +41,22 @@ export class OnboardingPage extends AppPage {
     await this.getStartedButton.click();
 
     // Click on accept analytics button if it exists
-    await this.acceptAnalyticsButton.click().catch(() => {});
+    // check if the button is visible
+    if (await this.acceptAnalyticsButton.isVisible()) {
+      await this.acceptAnalyticsButton.click();
+    }
   }
 
   async hoverDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
     await this.page.hover(`[data-testid=v3-container-device-${device}]`);
   }
 
+  async waitForDeviceToBeVisible(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
+    await this.selectDeviceButton(device).waitFor({ state: "visible" });
+  }
+
   async selectDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
+    await this.waitForDeviceToBeVisible(device);
     await this.hoverDevice(device);
     await this.selectDeviceButton(device).click();
   }

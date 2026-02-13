@@ -41,7 +41,6 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
     >
       <LocalLiveAppProvider db={localLiveAppDB}>
         <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
-          {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

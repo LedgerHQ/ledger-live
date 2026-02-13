@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { GestureResponderEvent } from "react-native";
 import { AnyContentCard, ContentCardsType } from "../../dynamicContent/types";
 
@@ -19,10 +20,15 @@ export type ContentCardMetadata = {
   };
 };
 
+/** Sync component type; content card components never return a Promise (avoids React 19 FC return type). */
+export type ContentCardComponent<P extends ContentCardProps = ContentCardProps> = (
+  props: P,
+) => ReactNode;
+
 /**
  * Defines a content card item.
  */
 export interface ContentCardItem<P extends ContentCardProps = ContentCardProps> {
-  component: React.FC<P & ContentCardProps>;
+  component: ContentCardComponent<P & ContentCardProps>;
   props: P & ContentCardProps;
 }

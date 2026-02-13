@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import styled from "styled-components";
@@ -23,7 +23,7 @@ const ChildrenWrapper = styled.div`
   }
 `;
 type TransitionScaleProps = Partial<
-  CSSTransitionProps & {
+  CSSTransitionProps<HTMLDivElement> & {
     children: React.ReactNode;
     in: boolean;
     timeout?: number;
@@ -38,10 +38,19 @@ const TransitionScale = ({
   in: inProp,
   timeout = duration,
   ...TransitionProps
-}: TransitionScaleProps) => (
-  <CSSTransition {...TransitionProps} in={inProp} timeout={timeout} classNames="transition-scale">
-    <ChildrenWrapper>{children}</ChildrenWrapper>
-  </CSSTransition>
-);
+}: TransitionScaleProps) => {
+  const nodeRef = useRef<HTMLDivElement>(null);
+  return (
+    <CSSTransition
+      {...TransitionProps}
+      nodeRef={nodeRef}
+      in={inProp}
+      timeout={timeout}
+      classNames="transition-scale"
+    >
+      <ChildrenWrapper ref={nodeRef}>{children}</ChildrenWrapper>
+    </CSSTransition>
+  );
+};
 
 export default TransitionScale;

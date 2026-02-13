@@ -16,7 +16,7 @@ export default {
   },
 };
 
-export const Qrcode = (args: InputProps): JSX.Element => {
+export const Qrcode = (args: InputProps): React.JSX.Element => {
   const [value, setValue] = React.useState("");
 
   return <QrCodeInput {...args} value={value} onChange={setValue} placeholder={"Placeholder"} />;

@@ -14,7 +14,7 @@ export default {
   },
 };
 
-export const Component = (args: Props): JSX.Element => <ProgressSteps {...args} />;
+export const Component = (args: Props): React.JSX.Element => <ProgressSteps {...args} />;
 Component.args = {
   steps: [
     "Crypto Asset",
