@@ -5,7 +5,7 @@ import { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
 import { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
-import { CardLandingNavigatorParamList } from "./CardLandingNavigator";
+import type { CardLandingNavigatorParamList } from "LLM/features/Card";
 
 export type MainNavigatorParamList = {
   [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList> | undefined;
