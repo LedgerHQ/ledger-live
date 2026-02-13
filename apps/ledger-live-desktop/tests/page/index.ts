@@ -14,6 +14,7 @@ import { SwapPage } from "tests/page/swap.page";
 import { delegateModal } from "tests/page/modal/delegate.modal";
 import { PasswordlockModal } from "./modal/passwordlock.modal";
 import { OnboardingPage } from "tests/page/onboarding.page";
+import { NewSendFlowPage } from "tests/page/modal/newSendFlow.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -26,6 +27,7 @@ export class Application extends PageHolder {
   public modal = new Modal(this.page);
   public receive = new ReceiveModal(this.page);
   public send = new SendModal(this.page);
+  public newSendFlow = new NewSendFlowPage(this.page);
   public delegate = new delegateModal(this.page);
   public settings = new SettingsPage(this.page);
   public swap = new SwapPage(this.page);

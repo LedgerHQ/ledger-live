@@ -108,18 +108,34 @@ const prepareTransaction = async (
   transaction: Transaction,
 ): Promise<Transaction> => {
   // TODO it needs to set the fee if not in t as well
-  if (!transaction.networkInfo) {
+  let nextTx = transaction;
+
+  if (!nextTx.networkInfo) {
     const feeItems = await getFeeItems(account.currency);
-    return {
-      ...transaction,
+    nextTx = {
+      ...nextTx,
       networkInfo: {
         family: "bitcoin",
-        feeItems: feeItems,
+        feeItems,
       },
     };
   }
 
-  return transaction;
+  // In the new Send flow, selecting a preset updates `feesStrategy`.
+  // The real bitcoin bridge derives `feePerByte` from `feesStrategy` + `networkInfo.feeItems`.
+  // Our mock bridge must do the same, otherwise presets won't impact fees/max amount.
+  const feesStrategy = (nextTx as unknown as { feesStrategy?: string }).feesStrategy;
+  if (feesStrategy && feesStrategy !== "custom") {
+    const feeItems = (nextTx.networkInfo as any)?.feeItems;
+    const items: Array<{ speed?: string; feePerByte?: BigNumber }> = feeItems?.items ?? [];
+    const match = items.find(i => i?.speed === feesStrategy);
+    const feePerByte = match?.feePerByte ?? feeItems?.defaultFeePerByte;
+    if (BigNumber.isBigNumber(feePerByte)) {
+      nextTx = { ...nextTx, feePerByte };
+    }
+  }
+
+  return nextTx;
 };
 
 const accountBridge: AccountBridge<Transaction> = {
