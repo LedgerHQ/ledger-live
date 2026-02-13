@@ -1,5 +1,6 @@
 import {
   bitcoinFamilyAccountGetAddressLogic,
+  bitcoinFamilyAccountGetAddressesLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   bitcoinFamilyAccountGetXPubLogic,
   broadcastTransactionLogic,
@@ -17,6 +18,7 @@ import {
 } from "../mock/fixtures/cryptoCurrencies";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/lib/wallet-btc/index";
 import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
@@ -48,6 +50,7 @@ const mockedGetAccountIdFromWalletAccountId = jest.mocked(
 );
 const mockedAccountToWalletAPIAccount = jest.mocked(converters.accountToWalletAPIAccount);
 const mockedPrepareMessageToSign = jest.mocked(signMessage.prepareMessageToSign);
+const mockedGetWalletAccount = jest.mocked(getWalletAccount);
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -719,10 +722,25 @@ describe("signMessageLogic", () => {
 jest.mock("@ledgerhq/coin-bitcoin/lib/wallet-btc/index", () => ({
   ...jest.requireActual("@ledgerhq/coin-bitcoin/lib/wallet-btc/index"),
   getWalletAccount: jest.fn().mockReturnValue({
+    params: { path: "84'/0'", index: 0 },
     xpub: {
+      derivationMode: "native_segwit",
+      xpub: "xpub",
       crypto: {
-        getAddress: jest.fn().mockReturnValue("0x01"),
+        getAddress: jest
+          .fn()
+          .mockImplementation((_mode, _xpub, account, index) =>
+            Promise.resolve(account === 0 && index === 1 ? "0x01" : `addr_${account}_${index}`),
+          ),
         getPubkeyAt: jest.fn().mockReturnValue(Buffer.from("testPubkey")),
+      },
+      getXpubAddresses: jest.fn().mockResolvedValue([
+        { account: 0, index: 0, address: "bc1qfirst" },
+        { account: 0, index: 1, address: "bc1qsecond" },
+        { account: 1, index: 0, address: "bc1qchange0" },
+      ]),
+      storage: {
+        getAddressUnspentUtxos: jest.fn().mockReturnValue([]),
       },
     },
   }),
@@ -903,6 +921,167 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
     expect(mockBitcoinFamilyAccountPublicKeyRequested).toHaveBeenCalledTimes(1);
     expect(mockBitcoinFamilyAccountPublicKeyFail).toHaveBeenCalledTimes(0);
     expect(mockBitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("bitcoinFamilyAccountGetAddressesLogic", () => {
+  const mockBitcoinFamilyAccountAddressesRequested = jest.fn();
+  const mockBitcoinFamilyAccountAddressesFail = jest.fn();
+  const mockBitcoinFamilyAccountAddressesSuccess = jest.fn();
+
+  const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
+
+  const context = createContextContainingAccountId({
+    tracking: {
+      bitcoinFamilyAccountAddressesRequested: mockBitcoinFamilyAccountAddressesRequested,
+      bitcoinFamilyAccountAddressesFail: mockBitcoinFamilyAccountAddressesFail,
+      bitcoinFamilyAccountAddressesSuccess: mockBitcoinFamilyAccountAddressesSuccess,
+    },
+    accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: bitcoinCrypto }],
+  });
+
+  const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+  beforeEach(() => {
+    mockBitcoinFamilyAccountAddressesRequested.mockClear();
+    mockBitcoinFamilyAccountAddressesFail.mockClear();
+    mockBitcoinFamilyAccountAddressesSuccess.mockClear();
+    mockedGetAccountIdFromWalletAccountId.mockClear();
+  });
+
+  it("returns empty array when intentions does not include payment", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId, [
+      "ordinal",
+    ]);
+
+    expect(result).toEqual([]);
+    expect(mockBitcoinFamilyAccountAddressesRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(0);
+  });
+
+  it.each([
+    {
+      desc: "unknown accountId",
+      accountId: undefined,
+      errorMessage: `accountId ${walletAccountId} unknown`,
+    },
+    {
+      desc: "account not found",
+      accountId: "js:2:ethereum:0x010:",
+      errorMessage: "account not found",
+    },
+    {
+      desc: "account is not a bitcoin family account",
+      accountId: "js:2:ethereum:0x012:",
+      errorMessage: "account requested is not a bitcoin family account",
+    },
+  ])("rejects when $desc", async ({ accountId, errorMessage }) => {
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    await expect(bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId)).rejects.toThrow(
+      errorMessage,
+    );
+
+    expect(mockBitcoinFamilyAccountAddressesRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(0);
+  });
+
+  it("returns addresses with first external address and unused receive and change addresses", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
+
+    expect(mockBitcoinFamilyAccountAddressesRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(0);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
+
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBeGreaterThan(0);
+
+    const firstExternal = result.find((r: { path?: string }) => r.path === "m/84'/0'/0'/0/0");
+    expect(firstExternal).toBeDefined();
+    expect(firstExternal?.address).toBeDefined();
+    expect(firstExternal?.publicKey).toBe(Buffer.from("testPubkey").toString("hex"));
+    expect(firstExternal?.intention).toBe("payment");
+
+    result.forEach(
+      (item: { address: string; publicKey?: string; path?: string; intention?: string }) => {
+        expect(item).toHaveProperty("address");
+        expect(item).toHaveProperty("publicKey");
+        expect(item).toHaveProperty("path");
+        expect(item.intention).toBe("payment");
+      },
+    );
+  });
+
+  it("includes at least 2 unused receive and 2 unused change addresses", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
+
+    const receiveAddresses = result.filter((r: { path?: string }) =>
+      /\/0\/\d+$/.test(r.path ?? ""),
+    );
+    const changeAddresses = result.filter((r: { path?: string }) => /\/1\/\d+$/.test(r.path ?? ""));
+
+    expect(receiveAddresses.length).toBeGreaterThanOrEqual(2);
+    expect(changeAddresses.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("includes addresses that have UTXOs", async () => {
+    const accountId = "js:2:bitcoin:0x013:";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    const mockGetAddressUnspentUtxos = jest.fn().mockImplementation((addr: { address: string }) => {
+      // bc1qsecond (account 0, index 1) has a UTXO
+      if (addr.address === "bc1qsecond") return [{ value: "1000" }];
+      return [];
+    });
+
+    mockedGetWalletAccount.mockReturnValueOnce({
+      params: { path: "84'/0'", index: 0 },
+      xpub: {
+        derivationMode: "native_segwit",
+        xpub: "xpub",
+        crypto: {
+          getAddress: jest
+            .fn()
+            .mockImplementation((_mode: string, _xpub: string, account: number, index: number) =>
+              Promise.resolve(`addr_${account}_${index}`),
+            ),
+          getPubkeyAt: jest.fn().mockReturnValue(Buffer.from("testPubkey")),
+        },
+        getXpubAddresses: jest.fn().mockResolvedValue([
+          { account: 0, index: 0, address: "bc1qfirst" },
+          { account: 0, index: 1, address: "bc1qsecond" },
+          { account: 1, index: 0, address: "bc1qchange0" },
+        ]),
+        storage: {
+          getAddressUnspentUtxos: mockGetAddressUnspentUtxos,
+        },
+      },
+    });
+
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
+
+    // Address at index 1 (which has a UTXO) should be included
+    const addrWithUtxo = result.find((r: { path?: string }) => r.path === "m/84'/0'/0'/0/1");
+    expect(addrWithUtxo).toBeDefined();
+    expect(addrWithUtxo?.address).toBe("bc1qsecond");
+
+    // getAddressUnspentUtxos should have been called for each known address
+    expect(mockGetAddressUnspentUtxos).toHaveBeenCalledTimes(3);
+
+    expect(mockBitcoinFamilyAccountAddressesRequested).toHaveBeenCalledTimes(1);
+    expect(mockBitcoinFamilyAccountAddressesFail).toHaveBeenCalledTimes(0);
+    expect(mockBitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
   });
 });
 
