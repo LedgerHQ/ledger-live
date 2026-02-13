@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { blocks, transactions } from "../tests/testAccounts";
-import { JSON_RPC_SERVER } from "../src/consts";
+import { JSON_RPC_SERVER } from "../src/constants";
 
 const ERROR_CODE = -5;
 

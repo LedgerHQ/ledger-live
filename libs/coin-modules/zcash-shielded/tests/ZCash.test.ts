@@ -12,7 +12,7 @@ import {
   txShieldedSapling,
 } from "./testAccounts";
 import { server } from "../mocks/node";
-import { JSON_RPC_SERVER } from "../src/consts";
+import { JSON_RPC_SERVER } from "../src/constants";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());

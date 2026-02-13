@@ -2,7 +2,7 @@ import { JsonRpcClient } from "../src/jsonRpcClient";
 import { blockWithMyTx, txNotShielded } from "./testAccounts";
 import { server } from "../mocks/node";
 import { HttpResponse, http } from "msw";
-import { JSON_RPC_SERVER } from "../src/consts";
+import { JSON_RPC_SERVER } from "../src/constants";
 
 beforeAll(() =>
   server.listen({

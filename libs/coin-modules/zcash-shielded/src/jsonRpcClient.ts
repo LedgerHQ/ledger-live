@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
-import { LOG_TYPE } from "./consts";
+import { LOG_TYPE } from "./constants";
 
 type JsonRpcRequestArgs = {
   method: string;
