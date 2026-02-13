@@ -1,6 +1,13 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
-import { inferTrackingPairForAccounts, exportCountervalues } from "./logic";
+import {
+  inferTrackingPairForAccounts,
+  exportCountervalues,
+  hasNewCountervaluesToExport,
+  importCountervalues,
+  initialState,
+  loadCountervalues,
+} from "./logic";
 import type { CounterValuesState, TrackingPair } from "./types";
 import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
 
@@ -114,14 +121,12 @@ describe("exportCountervalues", () => {
       });
     });
 
-    test("keep the latest datapoint", () => {
+    test("does not export latest (history only); pair with only latest is omitted", () => {
       const state = createState({
         "USD bitcoin": new Map([["latest", 48000]]),
       });
       const exported = exportCountervalues(state, defaultTrackingPairs);
-      expect(exported["USD bitcoin"]).toEqual({
-        latest: 48000,
-      });
+      expect(exported["USD bitcoin"]).toBeUndefined();
     });
 
     test("handles mixed data with multiple pairs", () => {
@@ -158,12 +163,10 @@ describe("exportCountervalues", () => {
       expect(exported["USD bitcoin"]).toEqual({
         [recentHourlyKey]: 52000,
         [recentDailyKey]: 50000,
-        latest: 53000,
       });
 
       expect(exported["USD ethereum"]).toEqual({
         [recentHourlyKey]: 3200,
-        latest: 3100,
         [borderlineHourlyKey]: 3300,
       });
     });
@@ -219,44 +222,47 @@ describe("exportCountervalues", () => {
   });
 
   test("skips pairs that are not in trackingPairs", () => {
+    const recentDailyKey = formatCounterValueDay(new Date(Date.now() - 1 * 24 * 60 * 60 * 1000));
     const state = createState({
-      "USD bitcoin": new Map([["latest", 50000]]),
-      "EUR bitcoin": new Map([["latest", 3000]]),
+      "USD bitcoin": new Map([[recentDailyKey, 50000]]),
+      "EUR bitcoin": new Map([[recentDailyKey, 3000]]),
     });
 
     const trackingPairs: TrackingPair[] = [{ from: bitcoin, to: usd, startDate: new Date() }];
 
     const exported = exportCountervalues(state, trackingPairs);
 
-    expect(exported["USD bitcoin"]).toEqual({ latest: 50000 });
+    expect(exported["USD bitcoin"]).toEqual({ [recentDailyKey]: 50000 });
     expect(exported["EUR bitcoin"]).toBeUndefined();
   });
 
   test("skips invalid data", () => {
+    const recentDailyKey = formatCounterValueDay(new Date(Date.now() - 1 * 24 * 60 * 60 * 1000));
     const state = createState({
-      "USD bitcoin": new Map([["latest", 50000]]),
+      "USD bitcoin": new Map([[recentDailyKey, 50000]]),
       ...["ethereum/erc20/wrapped_bitcoin", "neon_evm/erc20/wrapped_bitcoin"],
     });
 
     const exported = exportCountervalues(state, defaultTrackingPairs);
 
-    expect(exported["USD bitcoin"]).toEqual({ latest: 50000 });
+    expect(exported["USD bitcoin"]).toEqual({ [recentDailyKey]: 50000 });
     expect(exported["USD ethereum"]).toBeUndefined();
   });
 
-  test("skips empty data maps", () => {
+  test("skips empty data maps and does not export pairs with only latest", () => {
+    const recentDailyKey = formatCounterValueDay(new Date(Date.now() - 1 * 24 * 60 * 60 * 1000));
     const state = createState({
-      "USD bitcoin": new Map(),
+      "USD bitcoin": new Map([[recentDailyKey, 50000]]),
       "USD ethereum": new Map([["latest", 3000]]),
     });
 
     const exported = exportCountervalues(state, defaultTrackingPairs);
 
-    expect(exported["USD bitcoin"]).toBeUndefined();
-    expect(exported["USD ethereum"]).toEqual({ latest: 3000 });
+    expect(exported["USD bitcoin"]).toEqual({ [recentDailyKey]: 50000 });
+    expect(exported["USD ethereum"]).toBeUndefined();
   });
 
-  test("preserves status in exported state", () => {
+  test("exports status when present (to track unknown pairs and avoid redoing failed HTTP)", () => {
     const state: CounterValuesState = {
       data: {
         "USD bitcoin": new Map([["2024-01-01", 55000]]),
@@ -273,16 +279,105 @@ describe("exportCountervalues", () => {
 
     const exported = exportCountervalues(state, defaultTrackingPairs);
 
-    expect(exported.status).toEqual({
-      "USD bitcoin": {
-        timestamp: 1234567890,
-        failures: 0,
-        oldestDateRequested: "2024-01-01",
-      },
-    });
+    expect(exported.status).toEqual(state.status);
+    expect(exported["USD bitcoin"]).toEqual({ "2024-01-01": 55000 });
   });
 
   function createState(data: Record<string, unknown>) {
     return { data, status: {}, cache: {} } as CounterValuesState;
   }
+});
+
+describe("hasNewCountervaluesToExport", () => {
+  function createState(data: Record<string, unknown>) {
+    return { data, status: {}, cache: {} } as CounterValuesState;
+  }
+
+  test("returns true when set of status keys changes (new or removed pair)", () => {
+    const oldState = {
+      ...createState({ "USD bitcoin": new Map([["2024-01-01", 1]]) }),
+      status: { "USD bitcoin": {} },
+      cache: {
+        "USD bitcoin": { map: new Map(), stats: { oldest: "2024-01-01", earliest: "2024-01-01" } },
+      },
+    } as CounterValuesState;
+    const newState = {
+      ...oldState,
+      status: { "USD bitcoin": {}, "USD ethereum": {} },
+      cache: {
+        ...oldState.cache,
+        "USD ethereum": { map: new Map(), stats: { oldest: "2024-01-01", earliest: "2024-01-01" } },
+      },
+    } as CounterValuesState;
+    expect(hasNewCountervaluesToExport(oldState, newState)).toBe(true);
+  });
+
+  test("returns true when cache.stats.oldest or cache.stats.earliest changes", () => {
+    const oldState = {
+      ...createState({ "USD bitcoin": new Map([["2024-01-01", 1]]) }),
+      status: { "USD bitcoin": {} },
+      cache: {
+        "USD bitcoin": {
+          map: new Map(),
+          stats: { oldest: "2024-01-01", earliest: "2024-01-01" },
+        },
+      },
+    } as CounterValuesState;
+    const newState = {
+      ...oldState,
+      cache: {
+        "USD bitcoin": {
+          map: new Map(),
+          stats: { oldest: "2024-01-01", earliest: "2024-01-02" },
+        },
+      },
+    } as CounterValuesState;
+    expect(hasNewCountervaluesToExport(oldState, newState)).toBe(true);
+  });
+
+  test("returns false when state is unchanged (same status keys and cache stats)", () => {
+    const state = {
+      ...createState({ "USD bitcoin": new Map([["2024-01-01", 1]]) }),
+      status: { "USD bitcoin": {} },
+      cache: {
+        "USD bitcoin": {
+          map: new Map(),
+          stats: { oldest: "2024-01-01", earliest: "2024-01-01" },
+        },
+      },
+    } as CounterValuesState;
+    expect(hasNewCountervaluesToExport(state, state)).toBe(false);
+  });
+});
+
+describe("checkHolesOnNextLoad", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const usd = getFiatCurrencyByTicker("USD");
+  const settings = {
+    trackingPairs: [{ from: bitcoin, to: usd, startDate: new Date() }],
+    autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
+  };
+
+  test("importCountervalues sets checkHolesOnNextLoad true so first load after restore checks holes", () => {
+    const raw = {
+      status: {},
+      "USD bitcoin": { "2024-01-01": 50000 },
+    };
+    const imported = importCountervalues(raw, settings);
+    expect(imported.checkHolesOnNextLoad).toBe(true);
+  });
+
+  test("loadCountervalues clears checkHolesOnNextLoad after run", async () => {
+    const api = await import("./api");
+    jest.spyOn(api.default, "fetchHistorical").mockResolvedValue({});
+    jest.spyOn(api.default, "fetchLatest").mockResolvedValue([50000]);
+    const withFlag = { ...initialState, checkHolesOnNextLoad: true };
+    const result = await loadCountervalues(withFlag, {
+      ...settings,
+      disableAutoRecoverErrors: true,
+    });
+    expect(result.checkHolesOnNextLoad).toBe(false);
+  });
 });

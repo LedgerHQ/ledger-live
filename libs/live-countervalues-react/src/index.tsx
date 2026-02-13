@@ -165,9 +165,10 @@ function Effect({
     );
   }, [pending, currentState, userSettings, triggerLoad, batchStrategySolver, bridge]);
 
-  // save the state when it changes
+  // restore state from persisted raw (history only so we know it's first run and check holes)
   useEffect(() => {
-    if (!savedState?.status || !Object.keys(savedState.status).length) return;
+    if (!savedState || typeof savedState !== "object") return;
+    if (!Object.keys(savedState).length) return;
     bridge.setState(importCountervalues(savedState, userSettings));
   }, [bridge, savedState, userSettings]);
 

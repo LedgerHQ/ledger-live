@@ -27,6 +27,8 @@ export type CounterValuesState = {
   status: CounterValuesStatus;
   // this "cache" layer pre-compute all direct mapping for all dates of the range (complete holes...)
   cache: Record<string, PairRateMapCache>;
+  // set by import, cleared after first loadCountervalues; triggers hole check on first run after restore
+  checkHolesOnNextLoad?: boolean;
 };
 // serialized version of CounterValuesState to be saved/restored
 // The goal here is to make a key-value map where the value is not exceeding 2MB for Android to not glitch...

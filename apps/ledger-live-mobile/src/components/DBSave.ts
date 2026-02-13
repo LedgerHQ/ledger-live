@@ -21,8 +21,8 @@ import {
   saveWalletExportState,
 } from "~/db";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
+import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { exportSelector as bleSelector } from "~/reducers/ble";
-import { useCountervaluesState } from "~/reducers/countervalues";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector } from "~/reducers/market";
 import { settingsStoreSelector } from "~/reducers/settings";
@@ -35,7 +35,10 @@ import {
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
-import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
+import {
+  exportCountervalues,
+  hasNewCountervaluesToExport,
+} from "@ledgerhq/live-countervalues/logic";
 
 type MaybeState = Maybe<State>;
 
@@ -162,30 +165,31 @@ const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identitie
 const extractIdentitiesForPersistence = (state: State) =>
   exportIdentitiesForPersistence(state.identities);
 
+const countervaluesChangesStats = (oldState: State, newState: State) => {
+  return hasNewCountervaluesToExport(
+    countervaluesStateSelector(oldState),
+    countervaluesStateSelector(newState),
+  );
+};
+
 export const ConfigureDBSaveEffects = () => {
+  // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
   const userSettings = useUserSettings();
-  const state = useCountervaluesState();
-  const rawState = useMemo(
-    () => exportCountervalues(state, trackingPairs, userSettings.selectedTimeRange),
-    [state, trackingPairs, userSettings.selectedTimeRange],
-  );
-  const lastRawState = useRef(rawState);
-  const countervaluesChangesStats = useCallback(() => {
-    const changed = lastRawState.current !== rawState;
-    const isEmptyState = !Object.keys(rawState.status).length;
-    if (!changed || isEmptyState) return false;
-    const prev = lastRawState.current;
-    lastRawState.current = rawState;
-    return !isEqual(prev, rawState);
-  }, [rawState]);
-  const countervaluesRawState = useCallback(() => rawState, [rawState]);
 
   useDBSaveEffect({
-    save: saveCountervalues,
     throttle: 2000,
     getChangesStats: countervaluesChangesStats,
-    lense: countervaluesRawState,
+    lense: useCallback(
+      (state: State) =>
+        exportCountervalues(
+          countervaluesStateSelector(state),
+          trackingPairs,
+          userSettings.selectedTimeRange,
+        ),
+      [trackingPairs, userSettings.selectedTimeRange],
+    ),
+    save: saveCountervalues,
   });
   useDBSaveEffect({
     save: saveSettings,
