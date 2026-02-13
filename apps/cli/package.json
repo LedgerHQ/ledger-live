@@ -60,7 +60,7 @@
     "express": "5.2.1",
     "got": "14.4.7",
     "invariant": "2.2.4",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "node-hid": "2.1.2",
     "pako": "2.1.0",
     "purify-ts": "2.1.0",
