@@ -24,6 +24,7 @@ import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { MainNavigatorTopBarHeader } from "./MainNavigatorTopBarHeader";
 import { useTransferDrawerController } from "LLM/features/QuickActions";
+import { useRebornBuyDeviceDrawerController } from "LLM/features/Reborn/hooks/useRebornBuyDeviceDrawerController";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -43,6 +44,7 @@ export default function MainNavigator() {
   const earnYiedlLabel = getStakeLabelLocaleBased();
   const { navigateToRebornFlow } = useRebornFlow();
   const { openDrawer: openTransferDrawer } = useTransferDrawerController();
+  const { openDrawer: openRebornBuyDeviceDrawer } = useRebornBuyDeviceDrawerController();
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
@@ -143,7 +145,8 @@ export default function MainNavigator() {
                   parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
                 }
               } else if (readOnlyModeEnabled) {
-                navigateToRebornFlow();
+                openRebornBuyDeviceDrawer();
+                // navigateToRebornFlow();
               } else
                 navigation.navigate(NavigatorName.Earn, {
                   screen: ScreenName.Earn,
