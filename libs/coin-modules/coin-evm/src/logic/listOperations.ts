@@ -169,18 +169,14 @@ export async function listOperations(
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
   >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
-  const internalOperations = lastInternalOperations
-    .filter(op => op.hash in parents)
-    .map<Operation<MemoNotSupported>>(op =>
-      toOperation(
-        currency.id,
-        address,
-        { type: "native", internal: true },
-        // Explorers don't provide block hash and fees for internal operations.
-        // We take this values from their parent.
-        { ...op, fee: parents[op.hash].fee, blockHash: parents[op.hash].blockHash },
-      ),
-    );
+  const internalOperations = lastInternalOperations.map<Operation<MemoNotSupported>>(op => {
+    // Explorers don't provide block hash and fees for internal operations.
+    // When a matching parent transaction exists, we take these values from it.
+    // Otherwise, we use the internal operation's defaults.
+    const parent = parents[op.hash];
+    const enrichedOp = parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op;
+    return toOperation(currency.id, address, { type: "native", internal: true }, enrichedOp);
+  });
 
   const hasValidType = (operation: Operation): boolean =>
     [
