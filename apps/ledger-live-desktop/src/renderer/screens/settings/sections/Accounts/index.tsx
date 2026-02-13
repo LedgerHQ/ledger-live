@@ -7,6 +7,7 @@ import FilterTokenOperationsZeroAmount from "./FilterTokenOperationsZeroAmount";
 import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
+import DoNotAskAgainSkipMemo from "./DoNotAskAgainSkipMemo";
 
 export default function SectionAccounts() {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ export default function SectionAccounts() {
         <HideEmptyTokenAccountsToggle />
       </Row>
       <FilterTokenOperationsZeroAmount />
+      <DoNotAskAgainSkipMemo />
       <BlacklistedTokens />
       <Currencies />
     </Body>

@@ -183,6 +183,7 @@ export type CoinDescriptor = {
 
 type MemoApplicationFn = (
   memoValue: string | number | undefined,
+  memoType: string | undefined,
   currentTransaction: Record<string, unknown>,
 ) => Record<string, unknown>;
 
@@ -255,7 +256,7 @@ export function getSendDescriptor(
  * Helper functions to check send flow capabilities
  */
 const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
-  solana: (memo, transaction) => {
+  solana: (memo, _type, transaction) => {
     const currentModel = (transaction.model as Record<string, unknown> | undefined) || {};
     const currentUiState = (currentModel.uiState as Record<string, unknown> | undefined) || {};
     return {
@@ -274,8 +275,8 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
     if (typeof memo === "string") return { tag: Number(memo) };
     return { tag: undefined };
   },
-  stellar: memo => ({ memoValue: memo }),
-  ton: (memo, transaction) => {
+  stellar: (memo, type) => ({ memoValue: memo, memoType: type }),
+  ton: (memo, _type, transaction) => {
     const currentComment = (transaction.comment as Record<string, unknown> | undefined) || {};
     return {
       comment: {
@@ -289,13 +290,26 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
 export function applyMemoToTransaction(
   family: string,
   memoValue: string | number | undefined,
-  currentTransaction: Record<string, unknown> = {},
+  memoTypeOrTransaction?: string | Record<string, unknown> | null,
+  currentTransaction?: Record<string, unknown>,
 ): Record<string, unknown> {
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === "object" && value !== null;
+
+  const memoType =
+    memoTypeOrTransaction === undefined || typeof memoTypeOrTransaction === "string"
+      ? memoTypeOrTransaction
+      : undefined;
+
+  const transaction = isRecord(memoTypeOrTransaction)
+    ? memoTypeOrTransaction
+    : currentTransaction ?? {};
+
   const applyFn = memoApplicationRegistry[family];
   if (!applyFn) {
     return { memo: memoValue };
   }
-  return applyFn(memoValue, currentTransaction);
+  return applyFn(memoValue, memoType, transaction);
 }
 
 export const sendFeatures = {
@@ -357,7 +371,7 @@ export const sendFeatures = {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.inputs.memo?.options;
   },
-  getMemoDefaultOption: (currency: CryptoOrTokenCurrency | undefined): string | undefined => {
+  getMemoDefaultOption: (currency: CryptoOrTokenCurrency | undefined) => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.inputs.memo?.defaultOption;
   },

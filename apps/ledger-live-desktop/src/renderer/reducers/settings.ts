@@ -127,6 +127,7 @@ export type SettingsState = {
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
+  doNotAskAgainSkipMemo: boolean;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -226,6 +227,7 @@ export const INITIAL_STATE: SettingsState = {
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
+  doNotAskAgainSkipMemo: false,
 };
 
 /* Handlers */
@@ -760,6 +762,8 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+
+export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
   const { lastSeenDevice } = state.settings;
   if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice.modelId))
