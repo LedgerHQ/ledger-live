@@ -401,7 +401,7 @@ export type ListOperationsOptions = {
   /**
    * The minimum block height for which to fetch operations (inclusive).
    *
-   * Implementation must raise a "not supported" error if minHeight is !=0 and not supported.
+   * Implementation must raise a "not supported" error if `minHeight` is non-zero and not supported.
    */
   minHeight: number;
 
