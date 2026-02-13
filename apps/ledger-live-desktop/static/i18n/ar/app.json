@@ -152,7 +152,8 @@
     "quote" : "عرض أسعار",
     "memoTag" : {
       "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
-    }
+    },
+    "stake" : "تكديس"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "اكسب",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
+    "perps" : "العقود الدائمة",
     "refer" : "ترشيح صديق",
     "lend" : "إقراض",
     "catalog" : "Discover",
@@ -809,7 +811,15 @@
     }
   },
   "card" : {
-    "backToCard" : "كل البطاقات"
+    "backToCard" : "كل البطاقات",
+    "title" : "البطاقة",
+    "imageAlt" : "صورة البطاقة",
+    "spendYourCrypto" : "أنفِق أصولك المشفرة",
+    "payDescription" : "ادفع عبر الإنترنت أو في المتاجر الفعلية باستخدام بطاقة أصول مشفرة",
+    "exploreCards" : "استكشف البطاقات",
+    "iAlreadyHaveACard" : "لديّ بطاقة بالفعل",
+    "unlockLiquidity" : "إلغاء قفل السيولة",
+    "exploreCryptoCardsDescription" : "استكشف بطاقات الأصول المشفرة لدينا واعثر على البطاقة الأكثر ملاءمةً لك"
   },
   "lend" : {
     "title" : "إقراض الأصول المشفرة",
@@ -1783,6 +1793,7 @@
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
       "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
+      "acceptTermsSponsored" : "للاستفادة من رسوم الشبكة المجانية، أنت توافق أيضاً على مشاركة تفاصيل معاملتك (بما في ذلك عنوان محفظتك) مع Blinklabs.",
       "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
       "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
@@ -2205,6 +2216,19 @@
       "description" : "ربما تحتاج إلى <0>علامة/ملاحظة (تسمية الوجهة)</0> لتلقي هذا الأصل من منصة تداول. يمكنك استخدام أي مزيج من الأرقام مثل 1234."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "تحويل بنكي",
+          "description" : "تلقي العملات المستقرة بواسطة إرسال النقود"
+        },
+        "fromCrypto" : {
+          "title" : "تلقي الأصول المشفرة"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "إرسال",
     "totalSpent" : "الإجمالي للخصم",
@@ -2331,6 +2355,15 @@
     "addressNotFound" : "لم يتم العثور على العنوان",
     "alreadyUsed" : "تم استخدامه بالفعل · {{date}}",
     "recentSendWillAppear" : "سيظهر ما أرسلته مؤخراً هنا",
+    "relativeDate" : {
+      "justNow" : "الآن",
+      "minutesAgo_one" : "1 min ago",
+      "minutesAgo_other" : "{{count}} min ago",
+      "hoursAgo_one" : "منذ 1 ساعة",
+      "hoursAgo_other" : "منذ {{count}} ساعة",
+      "daysAgo_one" : "منذ 1 يوم",
+      "daysAgo_other" : "منذ {{count}} يوم"
+    },
     "remove" : "حذف",
     "enterTag" : "أدخل {{tag}}",
     "firstInteraction" : {
@@ -4506,6 +4539,10 @@
           "title" : "إنشاء سريع",
           "desc" : "قم بإنشاء 10 حسابات عشوائية بعملات عشوائية"
         },
+        "emptyGenerate" : {
+          "title" : "إنشاء فارغ",
+          "desc" : "إنشاء حساب فارغ"
+        },
         "currencySelector" : {
           "placeholder" : "اختيار العملات...",
           "searchPlaceholder" : "بحث",
@@ -4521,7 +4558,8 @@
         "buttons" : {
           "generateAccounts" : "إنشاء {{count}} حساب",
           "generateAccounts_other" : "إنشاء {{count}} حساب",
-          "generateAccountsQuick" : "إنشاء {{count}} حساب"
+          "generateAccountsQuick" : "إنشاء {{count}} حساب",
+          "generateEmptyAccount" : "إنشاء حساب فارغ"
         },
         "alerts" : {
           "selectCurrency" : "يُرجى اختيار عملة واحدة على الأقل",
@@ -4567,9 +4605,13 @@
       "walletFeaturesDevTool" : {
         "title" : "أداة المطورين لميزات Wallet",
         "description" : "تبديل ميزات Wallet 4.0 لكمبيوتر سطح المكتب (علامة الميزة lwdWallet40).",
+        "mainFeatureToggle" : "تبديل الميزة الرئيسية",
         "enableAll" : "تمكين الكل",
         "disableAll" : "تعطيل الكل",
         "featureParameters" : "مُعلّمات الميزات",
+        "tourState" : "حالة الجولة",
+        "drawerPreview" : "معاينة الشريط",
+        "openDrawer" : "فتح الشريط",
         "showJson" : "عرض JSON",
         "hideJson" : "إخفاء JSON"
       },
@@ -6336,7 +6378,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "خطأ في المعالجة",
-      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
+      "description" : "مزود المبادلة لا يمكنه معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "المزود غير متاح",
@@ -6634,7 +6676,7 @@
       "description" : "حدث خطأ ما، يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "يرجى تمكين Blind signing (التوقيع بدون اطلاع) أو بيانات العقد (Contract data) في إعدادات (Settings) تطبيق إيثريوم"
+      "title" : "تمكين Blind signing (التوقيع بدون اطلاع) أو Contract data (بيانات العقد) في تطبيق إيثريوم"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "يُرجى تمكين بيانات العقد (Contract data) في إعدادات (Settings) تطبيق Celo"
@@ -7159,6 +7201,50 @@
     "memoPlaceholder" : "أدخِل علامة/ملاحظة (تسمية الوجهة)",
     "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "رسوم",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "تغيير التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. ",
+      "changeCTA" : "تغيير"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة"
+    }
+  },
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
@@ -7558,7 +7644,7 @@
       "alreadySync" : "لقد قمت بتشغيلها بالفعل",
       "learnMore" : "كيف تعمل مزامنة Ledger؟",
       "titleModal" : "مزامنة محفظتك",
-      "descriptionModal" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف — كل ذلك مؤمَّن بواسطة جهازك Ledger.",
+      "descriptionModal" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف — مؤمَّنة بواسطة جهازك Ledger.",
       "ctaModal" : "متابعة"
     },
     "entryPoints" : {
@@ -7824,7 +7910,15 @@
   },
   "portfolio" : {
     "title" : "الصفحة الرئيسية",
-    "today" : "اليوم"
+    "today" : "اليوم",
+    "addAccountCta" : "إضافة حساب أصل مشفر",
+    "noBalanceTitle" : "تأمين أصولك المشفرة",
+    "perpsEntry" : {
+      "title" : "العقود الدائمة",
+      "description" : "تداول باستخدام رافعة مالية",
+      "cta" : "اكتشف"
+    },
+    "noDeviceTitle" : "المحفظة الأكثر أماناً"
   },
   "marketBanner" : {
     "title" : "استكشف السوق",
@@ -7848,11 +7942,32 @@
       "cta" : "فهمت ذلك"
     }
   },
+  "quickActions" : {
+    "send" : "إرسال",
+    "receive" : "تلقي",
+    "buy" : "شراء",
+    "sell" : "بيع",
+    "connect" : "اتصال",
+    "buyALedger" : "شراء Ledger"
+  },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "errorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. قائمة الحسابات المتأثرة: {{accounts}}. انقر لإعادة المحاولة",
+      "emptyErrorToolTip" : "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "upToDate" : "You're up to date",
+      "minutesAgo_one" : "Last sync: {{count}} min ago. Tap to refresh",
+      "minutesAgo_other" : "Last sync: {{count}} mins ago. Tap to refresh",
+      "hoursAgo_one" : "Last sync: {{count}} hour ago. Tap to refresh",
+      "hoursAgo_other" : "Last sync: {{count}} hours ago. Tap to refresh",
+      "daysAgo_one" : "Last sync: {{count}} day ago. Tap to refresh",
+      "daysAgo_other" : "Last sync: {{count}} days ago. Tap to refresh"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7992,56 @@
       "transparentBalanceTooltip" : "الرصيد المرئي للعامة",
       "privateBalance" : "الرصيد الخاص",
       "privateBalanceTooltip" : "الرصيد المخفي عن العامة"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "عرض الرصيد",
+        "pausedAt" : "تم الإيقاف مؤقتاً في ",
+        "lastSync" : "آخر مزامنة: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "تمكين رصيد ZCash الخاص",
+          "breadcrumbs" : {
+            "0" : "يوم الميلاد",
+            "1" : "مفتاح العرض الكامل الموحد (UFVK)",
+            "2" : "الجهاز",
+            "3" : "التأكيد"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "طول الميلاد هو النقطة على سلسلة الكتل (بلوكتشين) التي تبدأ فيها محفظتك المسح بحثاً عن أموالك.",
+              "cta" : "تعرّف على المزيد",
+              "label" : "طول يوم الميلاد",
+              "tooltip" : "افتراضي: تاريخ اليوم. قم بتغييره فقط للحسابات القائمة التي لها نشاط خاص (محمي).",
+              "syncFromZero" : "هذا الحساب تلقى ZEC محميةً في الماضي، لكنني لا أستطيع استعادة طول الميلاد. قم بالمسح من الكتلة 0 (قد يستغرق هذا وقتاً طويلاً).",
+              "error" : "تاريخ غير صالح"
+            },
+            "ufvk" : {
+              "text" : "للبدء، يجب عليك تصدير مفتاح العرض الكامل الموحد (UFVK) الخاص بك. يتطلب هذا الإجراء تأكيدك على جهازك Ledger."
+            },
+            "device" : {
+              "text" : "قم بتأكيد تصدير مفتاح العرض الكامل الموحد (UFVK) على جهازك Ledger"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "تم استيراد مفتاح العرض الكامل الموحد (UFVK) بنجاح",
+                "text" : "ستتمكن من تلقي ZEC المحمية وتوقيع المعاملات الخاصة.",
+                "info" : {
+                  "text" : "مفتاح العرض الكامل الموحد الخاص بك يبقى محفوظاً محلياً على الكمبيوتر الخاص بك ولا يُرسَل أو يتم كشفه أبداً لأنظمة خارجية.",
+                  "cta" : "تعرّف على المزيد"
+                },
+                "warning" : "الحسابات ذات طول ميلاد أقدم قد تتطلب وقت مزامنةً أكبر (حتى ساعتين). يُرجى إبقاء التطبيق مفتوحاً حتى انتهاء المزامنة."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "بدء المزامنة",
+      "datepicker" : {
+        "label" : "طول يوم الميلاد",
+        "tooltip" : "طول يوم الميلاد هو النقطة على سلسلة الكتل (بلوكتشين) التي تبدأ فيها محفظتك المسح بحثاً عن أموالك."
+      }
     }
   }
 }
