@@ -19,11 +19,11 @@ async function getAccountBalance(
   currency: CryptoCurrency,
   address: string,
 ): Promise<string | null> {
-  const { nodeUrl } = getNetworkConfig(currency);
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
 
   const res = await network<string | null>({
     method: "GET",
-    url: `${nodeUrl}/programs/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
+    url: `${nodeUrl}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
   });
 
   return res.data;
