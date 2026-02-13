@@ -159,13 +159,4 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  headerLeft: {
-    display: "flex",
-    flexDirection: "row",
-    paddingRight: 8,
-  },
-  buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-  },
 });
