@@ -16,7 +16,7 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
       excludeUTXOs: [],
     },
     recipient: "",
-    rbf: false,
+    rbf: true,
     feePerByte: null,
     networkInfo: null,
     useAllAmount: false,
