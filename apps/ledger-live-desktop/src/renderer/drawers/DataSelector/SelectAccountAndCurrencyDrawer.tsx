@@ -13,7 +13,7 @@ import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssets
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import BigSpinner from "~/renderer/components/BigSpinner";
-import { useMarketcapIds } from "@ledgerhq/live-countervalues-react";
+import { useIdsByMarketCap } from "@ledgerhq/live-countervalues-react";
 
 const TRACK_PAGE_NAME = "Asset/Network selection";
 
@@ -81,7 +81,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
 
   // Pagination is a bit strange with this because we order by market cap
   // but it works fine and keeps the old/expected order as much as possible
-  const ids = useMarketcapIds();
+  const ids = useIdsByMarketCap();
 
   // TODO: Make sure we don't have delisted tokens here too
   const assetsToDisplay = useMemo(() => {

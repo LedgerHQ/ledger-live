@@ -76,6 +76,6 @@ function getMarketcapSnapshot() {
   return marketcapStore.ids;
 }
 
-export function useMarketcapIds(): string[] {
+export function useIdsByMarketCap(): string[] {
   return useSyncExternalStore(subscribeMarketcap, getMarketcapSnapshot, getMarketcapSnapshot);
 }

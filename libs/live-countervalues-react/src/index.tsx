@@ -23,9 +23,9 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { useMarketcapIds } from "./CountervaluesMarketcapProvider";
+import { useIdsByMarketCap } from "./useIdsByMarketCap";
 
-export { useMarketcapIds } from "./CountervaluesMarketcapProvider";
+export { useIdsByMarketCap } from "./useIdsByMarketCap";
 
 export interface PollingState {
   isPolling: boolean;
@@ -117,7 +117,7 @@ function Effect({
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
 
-  const marketcapIds = useMarketcapIds();
+  const marketcapIds = useIdsByMarketCap();
 
   const batchStrategySolver = useMemo(
     () => ({
