@@ -152,7 +152,8 @@
     "quote": "Quote",
     "memoTag": {
       "learnMore": "Learn more about Tag/Memo"
-    }
+    },
+    "memo": "Memo"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -2381,12 +2382,15 @@
       "walletNotExist": "Wallet doesn’t exist"
     },
     "skipMemo": {
-      "title": "Skip adding {{tag}}?",
-      "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
+      "title": "Skip adding {{memoLabel}}?",
+      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient",
+      "notRequired": "{{memoLabel}} not required by recipient?",
+      "confirm": "Yes skip",
+      "neverAskAgain": "Don't show this warning again"
     },
     "tagHelp": {
-      "title": "What’s a {{tag}}?",
-      "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      "inputLabel": "Enter {{memoLabel}}",
+      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} memo may result in a loss of funds."
     },
     "networkFeesInFiat": "Network fees in {{currency}}",
     "feesAmount": "Fees amount ({{unit}})",
@@ -4923,6 +4927,10 @@
       "filterTokenOperationsZeroAmount": {
         "title": "Hide token transactions when value is 0",
         "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
+      },
+      "doNotAskAgainSkipMemo": {
+        "title": "Do not ask again skip memo on send",
+        "desc": "Disable the warning about skipping the memo when sending funds"
       }
     }
   },
@@ -5837,11 +5845,13 @@
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
-      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient",
+      "memo": "Transfer ID (Memo)"
     },
     "ton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment"
+      "comment": "Comment",
+      "memo": "Comment"
     },
     "canton": {
       "commentPlaceholder": "Optional",
@@ -5999,6 +6009,9 @@
     },
     "mina": {
       "memoPlaceholder": "Optional Memo"
+    },
+    "xrp": {
+      "memo": "Tag"
     }
   },
   "errors": {

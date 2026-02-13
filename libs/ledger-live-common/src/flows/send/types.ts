@@ -33,10 +33,12 @@ export type SendFlowUiConfig = Readonly<{
   hasCoinControl: boolean;
 }>;
 
+export type Memo = { value: string; type?: string };
+
 export type RecipientData = Readonly<{
-  address: string;
+  address?: string;
   ensName?: string;
-  memo?: string;
+  memo?: Memo;
   destinationTag?: string;
 }>;
 
