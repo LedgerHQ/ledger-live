@@ -24,15 +24,7 @@ Every PR that changes user-facing behavior or library APIs must include a change
 When a PR adds or updates dependencies in any `package.json`:
 
 - The dependency must be justified (not duplicating an existing capability).
-- Check the bundle size impact on [bundlephobia](https://bundlephobia.com).
 - Peer dependency compatibility must be verified.
-
-## Git Conventions
-
-- **Branch prefixes**: `feat/`, `bugfix/`, `support/`, `chore` — kebab-case.
-- **Commits**: [Conventional Commits](https://www.conventionalcommits.org/) — `<type>[scope]: <description>`.
-- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`.
-- One commit = one logical change. Never mix refactor + fix + feature.
 
 ## Privacy & Security — `@ledgerhq/client-ids`
 
