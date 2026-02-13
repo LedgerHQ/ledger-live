@@ -131,20 +131,27 @@ export function useListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const [oldestEditableOperation] = account.pendingOperations
-    .filter(pendingOperation => {
-      return isEditableOperation({ account: mainAccount, operation: pendingOperation });
-    })
-    .sort((a, b) => {
-      if (a.transactionSequenceNumber!.isLessThan(b.transactionSequenceNumber!)) {
-        return -1;
-      }
-      if (a.transactionSequenceNumber!.isGreaterThan(b.transactionSequenceNumber!)) {
-        return 1;
-      }
-      return 0;
-    });
+  const editablePendingOperations = account.pendingOperations.filter(pendingOperation =>
+    isEditableOperation({ account: mainAccount, operation: pendingOperation }),
+  );
 
+  const [oldestEditableOperation] =
+    mainAccount.currency.family === "bitcoin"
+      ? editablePendingOperations.sort(
+          (a, b) =>
+            (a.date instanceof Date ? a.date : new Date(a.date)).getTime() -
+            (b.date instanceof Date ? b.date : new Date(b.date)).getTime(),
+        )
+      : editablePendingOperations.sort((a, b) => {
+          const aSeq = a.transactionSequenceNumber;
+          const bSeq = b.transactionSequenceNumber;
+          if (aSeq != null && bSeq != null) {
+            if (aSeq.isLessThan(bSeq)) return -1;
+            if (aSeq.isGreaterThan(bSeq)) return 1;
+            return 0;
+          }
+          return 0;
+        });
   const isOperationStuck =
     oldestEditableOperation &&
     isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });

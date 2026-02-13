@@ -83,6 +83,7 @@
     "@formatjs/intl-relativetimeformat": "11.2.12",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/client-ids": "workspace:^",
+    "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",

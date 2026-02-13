@@ -191,6 +191,11 @@ export const DEFAULT_FEATURES: Features = {
     params: { supportedCurrencyIds: ["ethereum"] },
   },
 
+  editBitcoinTx: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["bitcoin"] },
+  },
+
   referralProgramDesktopSidebar: {
     enabled: false,
     params: { amount: "$20", isNew: true, path: "/discover/refer-a-friend" },

@@ -34,6 +34,7 @@ import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/Del
 import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
 import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
+import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
@@ -283,6 +284,9 @@ export type BaseNavigatorStackParamList = {
 
   // EVM
   [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+
+  // Bitcoin edit transaction (RBF)
+  [NavigatorName.BitcoinEditTransaction]: NavigatorScreenParams<BitcoinEditTransactionParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

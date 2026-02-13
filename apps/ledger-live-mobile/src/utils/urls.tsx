@@ -275,6 +275,10 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  // TODO: creat a specific article for Bitcoin transaction editing and link it here instead of the general one used for EVM chains
+  editBitcoinTx: {
+    learnMore: "https://support.ledger.com/article/9756122596765-zd",
+  },
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
   },
