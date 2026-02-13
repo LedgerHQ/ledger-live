@@ -7,7 +7,7 @@ export const descriptor: CoinDescriptor = {
       memo: {
         type: "typed",
         options: StellarMemoType,
-        defaultOption: "MEMO_ID",
+        defaultOption: "MEMO_TEXT",
       },
     },
     fees: {
