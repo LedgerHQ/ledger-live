@@ -9,6 +9,9 @@ import { createApi } from ".";
  * Unrevealed mainnet account (see tzkt explorer).
  *
  * If this account is revealed, tests will fail and will need to be updated with a new one.
+ * New unreveal account if necessary
+ * Hash: tz1Y7xGN7jVjTTjaz6fpAeCMLiEENRkzHk4i
+ * Public Key: edpkuidtssPLLHKZCo9uKDGy4nnXKeBn1Kv5h4DdWZ3d8G5tcUBy4B
  */
 const UNREVEALED_SENDER = "tz2RZHPmNVQY7h1oopsvDBMrp8i48zhc9cAL";
 const UNREVEALED_PUBLIC_KEY = "0268eae382350b43ba1af0e1140e4b68dc9d2084836494554860c1be0605a7af2d";
@@ -96,8 +99,10 @@ describe("Tezos Api - Mainnet", () => {
     it("includes a properly estimated reveal operation when delegating from an unrevealed account with senderPublicKey", async () => {
       const sender = UNREVEALED_SENDER;
       const account = await api.getAccountByAddress(sender);
-      expect(account.type).toBe("user");
-      expect(account.revealed).toBe(false);
+      expect(account).toMatchObject({
+        type: "user",
+        revealed: false,
+      });
 
       const delegate = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
       const intent = {
@@ -159,8 +164,8 @@ describe("Tezos Api - Mainnet", () => {
           intentType: "transaction",
           asset: { type: "native" },
           type: "delegate",
-          sender: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V",
-          senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+          sender: UNREVEALED_SENDER,
+          senderPublicKey: UNREVEALED_PUBLIC_KEY,
           recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
           amount: BigInt(0),
         });
@@ -176,8 +181,8 @@ describe("Tezos Api - Mainnet", () => {
               intentType: "transaction",
               asset: { type: "native" },
               type: "delegate",
-              sender: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V",
-              senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+              sender: UNREVEALED_SENDER,
+              senderPublicKey: UNREVEALED_PUBLIC_KEY,
               recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
               amount: BigInt(0),
             },
@@ -207,8 +212,8 @@ describe("Tezos Api - Mainnet", () => {
               intentType: "transaction",
               asset: { type: "native" },
               type: "delegate",
-              sender: "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V",
-              senderPublicKey: "021bab48f41fc555e0fcf322a28e31b56f4369242f65324758ec8bbae3e84109a5",
+              sender: "tz1Y7xGN7jVjTTjaz6fpAeCMLiEENRkzHk4i",
+              senderPublicKey: "edpkuidtssPLLHKZCo9uKDGy4nnXKeBn1Kv5h4DdWZ3d8G5tcUBy4B",
               recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
               amount: BigInt(0),
             },
