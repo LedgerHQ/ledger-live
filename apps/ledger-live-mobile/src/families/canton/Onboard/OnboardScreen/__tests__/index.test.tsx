@@ -6,6 +6,7 @@ import React from "react";
 import OnboardScreen from "../index";
 import type { OnboardScreenProps } from "../types";
 import * as UseOnboardScreenViewModel from "../useOnboardScreenViewModel";
+import { getStatusTranslationKey } from "../hooks";
 import {
   createMockAccount,
   createMockCurrency,
@@ -21,36 +22,56 @@ jest.mock("../useOnboardScreenViewModel", () => ({
 
 type MockViewModel = ReturnType<typeof UseOnboardScreenViewModel.useOnboardScreenViewModel>;
 
-const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel => ({
-  onboardingStatus: OnboardStatus.INIT,
-  authorizeStatus: AuthorizeStatus.INIT,
-  onboardResult: null,
-  error: null,
-  accountsToDisplay: [createMockAccount()],
-  selectedIds: ["test-account-id"],
-  isReonboarding: false,
-  isProcessing: false,
-  showDeviceModal: false,
-  isNetworkProcessing: false,
-  confirmDisabled: false,
-  handleConfirm: jest.fn(),
-  retryOnboarding: jest.fn(),
-  device: createMockDevice(),
-  cryptoCurrency: createMockCurrency() as CryptoCurrency,
-  deviceActionRequest: { currency: createMockCurrency() as CryptoCurrency },
-  action: {
-    useHook: jest.fn(() => ({})),
-    mapResult: jest.fn(),
-  } as unknown as MockViewModel["action"],
-  contentSectionViewModel: {
-    isAuthorizationPhase: false,
-    displayStatus: OnboardStatus.INIT,
-    showError: false,
-    successKey: "canton.onboard.success",
-    statusTranslationKey: "canton.onboard.status.default",
-  },
-  ...overrides,
-});
+const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel => {
+  const onboardingStatus = overrides?.onboardingStatus ?? OnboardStatus.INIT;
+  const authorizeStatus = overrides?.authorizeStatus ?? AuthorizeStatus.INIT;
+  const onboardResult = overrides?.onboardResult ?? null;
+  const error = overrides?.error ?? null;
+  const isReonboarding = overrides?.isReonboarding ?? false;
+
+  const hasResult = !!onboardResult;
+  const isAuthorizationPhase = hasResult && onboardingStatus !== OnboardStatus.ERROR;
+  const displayStatus = isAuthorizationPhase ? authorizeStatus : onboardingStatus;
+  const showError = Boolean(
+    error && (onboardingStatus === OnboardStatus.ERROR || authorizeStatus === AuthorizeStatus.ERROR),
+  );
+  const successKey = isReonboarding
+    ? "canton.onboard.reonboard.success"
+    : "canton.onboard.success";
+  
+  const statusTranslationKey = getStatusTranslationKey(displayStatus, isAuthorizationPhase);
+
+  return {
+    onboardingStatus,
+    authorizeStatus,
+    onboardResult,
+    error,
+    accountsToDisplay: [createMockAccount()],
+    selectedIds: ["test-account-id"],
+    isReonboarding,
+    isProcessing: false,
+    showDeviceModal: false,
+    isNetworkProcessing: false,
+    confirmDisabled: false,
+    handleConfirm: jest.fn(),
+    retryOnboarding: jest.fn(),
+    device: createMockDevice(),
+    cryptoCurrency: createMockCurrency() as CryptoCurrency,
+    deviceActionRequest: { currency: createMockCurrency() as CryptoCurrency },
+    action: {
+      useHook: jest.fn(() => ({})),
+      mapResult: jest.fn(),
+    } as unknown as MockViewModel["action"],
+    contentSectionViewModel: {
+      isAuthorizationPhase,
+      displayStatus,
+      showError,
+      successKey,
+      statusTranslationKey,
+    },
+    ...overrides,
+  };
+};
 
 describe("OnboardScreen Component", () => {
   const mockRouteParams = createMockRouteParams();
