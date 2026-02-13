@@ -28,6 +28,7 @@ export type Props = {
   onClose?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
+  preventKeyboardDismissOnClose?: boolean;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
@@ -49,6 +50,7 @@ const QueuedDrawerNative = ({
   noCloseButton,
   hasBackButton,
   preventBackdropClick,
+  preventKeyboardDismissOnClose,
   style,
   containerStyle,
   children,
@@ -79,6 +81,7 @@ const QueuedDrawerNative = ({
     onBack,
     onModalHide,
     preventBackdropClick,
+    preventKeyboardDismissOnClose,
   });
 
   const translateY = useSharedValue(1000);

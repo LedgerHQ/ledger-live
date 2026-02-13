@@ -13,6 +13,7 @@ interface UseQueuedDrawerNativeProps {
   onBack?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
+  preventKeyboardDismissOnClose?: boolean;
 }
 
 const useQueuedDrawerNative = ({
@@ -22,6 +23,7 @@ const useQueuedDrawerNative = ({
   onBack,
   onModalHide,
   preventBackdropClick,
+  preventKeyboardDismissOnClose = false,
 }: UseQueuedDrawerNativeProps) => {
   const { addDrawerToQueue } = useQueuedDrawerContext();
   const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
@@ -76,10 +78,12 @@ const useQueuedDrawerNative = ({
 
   const handleDismiss = useCallback(() => {
     logDrawer("Native modal dismissed");
-    Keyboard.dismiss();
+    if (!preventKeyboardDismissOnClose) {
+      Keyboard.dismiss();
+    }
     handleClose();
     onModalHideRef.current?.();
-  }, [handleClose]);
+  }, [handleClose, preventKeyboardDismissOnClose]);
 
   // Queue management effect
   useEffect(() => {
