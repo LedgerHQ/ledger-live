@@ -20,7 +20,7 @@ import { MainTabBar } from "LLM/components/MainTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import CardLandingNavigator from "./CardLandingNavigator";
+import CardLandingNavigator from "LLM/features/Card";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { MainNavigatorTopBarHeader } from "./MainNavigatorTopBarHeader";
