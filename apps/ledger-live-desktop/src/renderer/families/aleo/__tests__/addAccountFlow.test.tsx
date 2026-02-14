@@ -1,5 +1,7 @@
 import React from "react";
 import { setEnv } from "@ledgerhq/live-env";
+import type { Account } from "@ledgerhq/types-live";
+import { act } from "react-dom/test-utils";
 import { render, screen, userEvent } from "tests/testSetup";
 import { urls } from "~/config/urls";
 import { track, trackPage } from "~/renderer/analytics/segment";
@@ -7,6 +9,7 @@ import { openURL } from "~/renderer/linking";
 import type { State } from "~/renderer/reducers";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import { ALEO_ACCOUNT_1, ALEO_ACCOUNT_2, ALEO_ACCOUNT_3 } from "../__mocks__/account.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
 
 beforeEach(async () => {
@@ -20,7 +23,16 @@ const mockAppState = {
   opened: true,
 };
 
+const mockAccountBridge = {
+  assignToAccountRaw: () => {},
+  assignToTokenAccountRaw: () => {},
+  toOperationExtraRaw: (extra: unknown) => extra,
+};
+
 const mockNavigate = jest.fn();
+
+let triggerNext: (accounts: Account[]) => void = () => null;
+let triggerComplete: () => void = () => null;
 
 jest.mock("@ledgerhq/crypto-icons", () => ({
   CryptoIcon: jest.fn(),
@@ -42,6 +54,29 @@ jest.mock("~/renderer/reducers/devices", () => {
   };
 });
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  __esModule: true,
+  getCurrencyBridge: () => ({
+    scanAccounts: () => ({
+      pipe: () => ({
+        subscribe: ({
+          next,
+          complete,
+        }: {
+          next: (accounts: Account[]) => void;
+          complete: () => void;
+        }) => {
+          triggerNext = accounts => next(accounts);
+          triggerComplete = () => complete();
+        },
+      }),
+    }),
+    preload: () => true,
+    hydrate: () => true,
+  }),
+  getAccountBridge: () => mockAccountBridge,
+}));
+
 jest.mock("~/renderer/animations", () => ({
   __esModule: true,
   default: () => null,
@@ -57,6 +92,11 @@ jest.mock("~/renderer/linking", () => ({
   ...jest.requireActual("~/renderer/linking"),
   openURL: jest.fn(),
 }));
+
+const mockScanAccountsSubscription = async (accounts: Account[]) => {
+  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
+  await act(() => triggerComplete());
+};
 
 const setup = (state?: Partial<State>) => {
   const initialState = {
@@ -102,5 +142,24 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     expect(openURL).toHaveBeenCalledTimes(1);
     expect(openURL).toHaveBeenCalledWith(urls.aleo.viewKeyLearnMore);
+  });
+
+  it("should find and add Aleo accounts", async () => {
+    setup();
+
+    expectTrackPage(1, "device connection", { flow: "Add account" });
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    expectTrackPage(2, "confirm view key warning", { flow: "Add account" });
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, ALEO_ACCOUNT_2, ALEO_ACCOUNT_3]);
+    expectTrackPage(3, "looking for accounts", { flow: "Add account" });
+    expect(screen.getByText(/found 3 accounts/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Share view keys" }));
+
+    expect(screen.getByText(/view key approve step/i)).toBeInTheDocument();
+    expectTrackPage(4, "approve view key share", { flow: "Add account" });
   });
 });
