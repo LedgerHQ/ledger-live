@@ -220,6 +220,9 @@ export const urls = {
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
+  aleo: {
+    viewKeyLearnMore: "", // TODO: Add Ledger support article for Aleo view keys
+  },
 };
 
 export const vaultSigner = {

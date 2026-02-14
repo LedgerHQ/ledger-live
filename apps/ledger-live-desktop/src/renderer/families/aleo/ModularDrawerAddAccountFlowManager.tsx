@@ -56,12 +56,14 @@ const ModularDrawerAddAccountFlowManager = ({
     emptyAccount,
     accountToEdit,
     accountToFund,
+    closeDrawer,
     navigateBack,
     navigateToViewKeyWarning,
     navigateToWarningScreen,
     navigateToEditAccountName,
     navigateToFundAccount,
     navigateToSelectAccount,
+    navigateToScanAccounts,
     navigateToConnectDevice,
   } = useAddAccountFlowNavigation({
     selectedAccounts,
@@ -95,7 +97,7 @@ const ModularDrawerAddAccountFlowManager = ({
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_WARNING:
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <ViewKeyWarning />
+            <ViewKeyWarning onAllow={navigateToScanAccounts} onCancel={closeDrawer} />
           </StepContainer>
         );
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
