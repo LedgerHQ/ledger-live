@@ -9,6 +9,7 @@ export const WALLET_40_PARAMS = [
   { key: "quickActionCtas", label: "Quick Action CTAs" },
   { key: "tour", label: "Tour" },
   { key: "mainNavigation", label: "Main Navigation" },
+  { key: "lazyOnboarding", label: "Lazy Onboarding" },
 ] as const;
 
 type WalletFeatureParamKey = (typeof WALLET_40_PARAMS)[number]["key"];
