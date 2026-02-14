@@ -2761,6 +2761,17 @@
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
+      },
+      "selfTransactionFlow": {
+        "title": "DRep Delegation Self Transaction",
+        "steps": {
+          "starter": {
+            "description": [
+              "You currently have unclaimed staking rewards in your account. It is required to delegate to a DRep to claim staking rewards and to un-delegate your wallet.",
+              "This step will delegate your account to Abstain Auto DRep on the Cardano network. Once processed, you can un-delegate your wallet as usual."
+            ]
+          }
+        }
       }
     }
   },

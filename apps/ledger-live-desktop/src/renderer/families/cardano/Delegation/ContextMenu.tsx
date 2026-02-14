@@ -32,11 +32,20 @@ type Props = {
 const ContextMenu = ({ account }: Props) => {
   const dispatch = useDispatch();
   const theme = useTheme();
+
+  const hasRewardsWithNoDrepDelegation =
+    account.cardanoResources.delegation?.rewards.isGreaterThan(0) &&
+    account.cardanoResources.delegation?.dRepHex === undefined;
+
+  const modalNameForUndelegate = hasRewardsWithNoDrepDelegation
+    ? "MODAL_CARDANO_UNDELEGATE_SELF_TX_INFO"
+    : "MODAL_CARDANO_UNDELEGATE";
+
   const items = [
     {
       key: "redelegate",
       label: (
-        <Box color="neutral.c100">
+        <Box color="neutral.c100" data-testid="delegation-redelegate-button">
           <Trans i18nKey="cardano.delegation.changeDelegation" />
         </Box>
       ),
@@ -55,7 +64,7 @@ const ContextMenu = ({ account }: Props) => {
     {
       key: "stopDelegation",
       label: (
-        <Box color="alertRed">
+        <Box color="alertRed" data-testid="delegation-undelegate-button">
           <Trans i18nKey="delegation.contextMenu.stopDelegation" />
         </Box>
       ),
@@ -66,7 +75,7 @@ const ContextMenu = ({ account }: Props) => {
       ),
       onClick: () =>
         dispatch(
-          openModal("MODAL_CARDANO_UNDELEGATE", {
+          openModal(modalNameForUndelegate, {
             account,
           }),
         ),
@@ -95,6 +104,7 @@ const ContextMenu = ({ account }: Props) => {
     <DropDownSelector items={items} renderItem={renderItem}>
       {() => (
         <Container
+          data-testid="delegation-context-menu-button"
           style={{
             width: 34,
             padding: 0,

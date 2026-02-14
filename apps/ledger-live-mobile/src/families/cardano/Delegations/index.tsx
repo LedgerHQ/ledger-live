@@ -26,11 +26,12 @@ import { urls } from "~/utils/urls";
 import { ScreenName, NavigatorName } from "~/const";
 import RedelegateIcon from "~/icons/Redelegate";
 import UndelegateIcon from "~/icons/Undelegate";
-import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import DelegationRow from "./Row";
+import DRepDelegationSelfTransactionInfoDrawer from "./DRepDelegationSelfTransactionInfoDrawer";
 
 type Props = {
   account: CardanoAccount;
@@ -52,6 +53,8 @@ function Delegations({ account }: Props) {
   const d = cardanoResources.delegation;
 
   const [delegation, setDelegation] = useState<CardanoDelegation>();
+
+  const [isDRepSelfTrxDrawerOpen, setDRepSelfTrxDrawerOpen] = useState(false);
 
   const onNavigate = useCallback(
     ({
@@ -87,15 +90,24 @@ function Delegations({ account }: Props) {
   }, [onNavigate]);
 
   const onUndelegate = useCallback(() => {
-    onNavigate({
-      route: NavigatorName.CardanoUndelegationFlow,
-      screen: ScreenName.CardanoUndelegationSummary,
-      params: {
-        accountId: account.id,
-        delegation,
-      },
-    });
-  }, [onNavigate, delegation, account]);
+    const hasRewardsWithNoDrepDelegation =
+      account.cardanoResources.delegation?.rewards.isGreaterThan(0) &&
+      account.cardanoResources.delegation?.dRepHex === undefined;
+
+    if (hasRewardsWithNoDrepDelegation) {
+      setDelegation(undefined);
+      setDRepSelfTrxDrawerOpen(true);
+    } else {
+      onNavigate({
+        route: NavigatorName.CardanoUndelegationFlow,
+        screen: ScreenName.CardanoUndelegationSummary,
+        params: {
+          accountId: account.id,
+          delegation,
+        },
+      });
+    }
+  }, [setDRepSelfTrxDrawerOpen, onNavigate, delegation, account]);
 
   const onCloseDrawer = useCallback(() => {
     setDelegation(undefined);
@@ -239,6 +251,12 @@ function Delegations({ account }: Props) {
         amount={mainAccount.balance}
         data={data}
         actions={actions}
+      />
+
+      <DRepDelegationSelfTransactionInfoDrawer
+        account={account}
+        isOpen={isDRepSelfTrxDrawerOpen}
+        onClose={() => setDRepSelfTrxDrawerOpen(false)}
       />
 
       {d && d.poolId ? (

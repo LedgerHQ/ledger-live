@@ -5220,7 +5220,11 @@
     "undelegation": {
       "undelegate": "Undelegate",
       "undelegationMessage": "By un-delegating you will not receive any rewards for current and upcoming epochs",
-      "verificationSuccessTitle": "You have successfully undelegated your assets"
+      "verificationSuccessTitle": "You have successfully undelegated your assets",
+      "dRepDelegationSelfTransactionDrawer": {
+        "title": "DRep Delegation Self Transaction",
+        "description": "You currently have unclaimed staking rewards in your account. It is required to delegate to a DRep to claim staking rewards and to un-delegate your wallet.\n\nThis step will delegate your account to Abstain Auto DRep on the Cardano network. Once processed, you can un-delegate your wallet as usual."
+      }
     },
     "delegation": {
       "pool": "Pool",
