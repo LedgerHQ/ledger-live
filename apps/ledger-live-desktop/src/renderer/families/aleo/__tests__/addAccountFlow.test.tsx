@@ -1,4 +1,5 @@
 import React from "react";
+import { Observable, Subject } from "rxjs";
 import { setEnv } from "@ledgerhq/live-env";
 import type { Account } from "@ledgerhq/types-live";
 import { act } from "react-dom/test-utils";
@@ -31,6 +32,7 @@ const mockAccountBridge = {
 
 const mockNavigate = jest.fn();
 
+let progress$: Subject<unknown>;
 let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
 
@@ -44,6 +46,17 @@ jest.mock("@ledgerhq/live-common/hw/actions/app", () => ({
     useHook: () => mockAppState,
     mapResult: () => ({ device: { deviceId: 123456 } }),
   }),
+}));
+
+jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/hw/deviceAccess"),
+  // return the observable directly, bypassing transport creation
+  withDevice: () => (job: () => Observable<unknown>) => job(),
+}));
+
+jest.mock("@ledgerhq/live-common/families/aleo/hw/getViewKey/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/aleo/hw/getViewKey/index"),
+  getViewKeyExec: jest.fn(() => progress$.asObservable()),
 }));
 
 jest.mock("~/renderer/reducers/devices", () => {
@@ -98,6 +111,34 @@ const mockScanAccountsSubscription = async (accounts: Account[]) => {
   await act(() => triggerComplete());
 };
 
+const mockViewKeyProgressSubscription = async (
+  progressSteps: {
+    accountId: string;
+    viewKey: string | null;
+  }[],
+) => {
+  const total = progressSteps.length;
+  const viewKeys: Record<string, string | null> = {};
+
+  for (const [index, step] of progressSteps.entries()) {
+    if (step.viewKey !== null) {
+      viewKeys[step.accountId] = step.viewKey;
+    }
+
+    await act(async () => {
+      progress$.next({
+        viewKeys,
+        completed: index + 1,
+        total,
+      });
+    });
+  }
+
+  await act(async () => {
+    progress$.complete();
+  });
+};
+
 const setup = (state?: Partial<State>) => {
   const initialState = {
     ...state,
@@ -124,7 +165,12 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   beforeEach(() => {
     jest.mocked(track).mockReset();
     jest.mocked(trackPage).mockReset();
+    progress$ = new Subject();
     setEnv("EXPERIMENTAL_CURRENCIES", "aleo");
+  });
+
+  afterEach(() => {
+    progress$.complete();
   });
 
   it("should render warning step", async () => {
@@ -154,12 +200,20 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await userEvent.click(screen.getByRole("button", { name: "Allow" }));
 
     expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
-    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, ALEO_ACCOUNT_2, ALEO_ACCOUNT_3]);
     expectTrackPage(3, "looking for accounts", { flow: "Add account" });
-    expect(screen.getByText(/found 3 accounts/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, ALEO_ACCOUNT_2, ALEO_ACCOUNT_3]);
+
+    expect(screen.getByText(/we found 3 accounts/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Share view keys" }));
 
-    expect(screen.getByText(/view key approve step/i)).toBeInTheDocument();
+    expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
     expectTrackPage(4, "approve view key share", { flow: "Add account" });
+    expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(3);
+
+    await mockViewKeyProgressSubscription([
+      { accountId: ALEO_ACCOUNT_1.id, viewKey: "vk_1" },
+      { accountId: ALEO_ACCOUNT_2.id, viewKey: null }, // rejected
+      { accountId: ALEO_ACCOUNT_3.id, viewKey: "vk_3" },
+    ]);
   });
 });
