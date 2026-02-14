@@ -205,6 +205,15 @@ describe("getFeesForTransaction", () => {
     expect(fees).toEqual(BigNumber(4));
   });
 
+  it("should return fees for lock when amount is NaN (valueToHex returns 0x0)", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "lock", amount: new BigNumber(NaN) },
+    });
+
+    expect(fees).toEqual(BigNumber(4));
+  });
+
   it("should return the correct fees for a unlock transaction", async () => {
     const fees = await getFeesForTransaction({
       account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
@@ -230,5 +239,27 @@ describe("getFeesForTransaction", () => {
     });
 
     expect(fees).toEqual(BigNumber(6));
+  });
+
+  it("should return fees for send when amount is less than 1 CELO but greater than gas fee", async () => {
+    const oneCelo = new BigNumber(10).pow(18);
+    const pointOneCelo = new BigNumber(10).pow(17);
+
+    const fees = await getFeesForTransaction({
+      account: {
+        ...accountFixture,
+        balance: oneCelo,
+        spendableBalance: oneCelo,
+      },
+      transaction: {
+        ...transactionFixture,
+        mode: "send",
+        amount: pointOneCelo,
+      },
+    });
+
+    expect(fees).toBeInstanceOf(BigNumber);
+    expect(fees.gt(0)).toBe(true);
+    expect(fees.lt(pointOneCelo)).toBe(true);
   });
 });

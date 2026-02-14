@@ -1,4 +1,4 @@
-import type { CeloAccount, Transaction } from "../types";
+import type { CeloAccount, RevokeTxo, Transaction } from "../types";
 import { CeloTx } from "@celo/connect";
 import { celoKit } from "../network/sdk";
 import { BigNumber } from "bignumber.js";
@@ -9,6 +9,7 @@ import {
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
 } from "../constants";
+import { valueToHex } from "./utils";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
@@ -21,14 +22,15 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
 
   if (transaction.mode === "lock") {
     const lockedGold = await kit.contracts.getLockedGold();
+    const valueHex = valueToHex(value);
     celoTransaction = {
       from: account.freshAddress,
-      value: value.toFixed(),
+      value: valueHex,
       to: lockedGold.address,
       data: lockedGold.lock().txo.encodeABI(),
       gas: await lockedGold.lock().txo.estimateGas({
         from: account.freshAddress,
-        value: value.toFixed(),
+        value: valueHex,
       }),
     };
   } else if (transaction.mode === "unlock") {
@@ -50,7 +52,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       data: lockedGold.withdraw(transaction.index || 0).txo.encodeABI(),
       gas: await lockedGold.withdraw(transaction.index || 0).txo.estimateGas({
         from: account.freshAddress,
-        value: value.toFixed(),
+        value: valueToHex(value),
       }),
     };
   } else if (transaction.mode === "vote") {
@@ -76,7 +78,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
 
     const revoke = revokes.find(transactionObject => {
       return (
-        (transactionObject.txo as any)._method.name ===
+        (transactionObject.txo as unknown as RevokeTxo)._method.name ===
         (transaction.index === 0 ? "revokePending" : "revokeActive")
       );
     });
@@ -132,14 +134,14 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       from: account.freshAddress,
       to: transaction.recipient,
       data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      value: value.toFixed(),
+      value: valueToHex(value),
     };
   } else {
     // Send
     celoTransaction = {
       from: account.freshAddress,
       to: transaction.recipient,
-      value: value.toFixed(),
+      value: valueToHex(value),
     };
   }
 
@@ -173,7 +175,7 @@ const transactionValue = (account: CeloAccount, transaction: Transaction): BigNu
       const revoke = getVote(account, transaction.recipient, transaction.index);
       if (revoke?.amount) value = revoke.amount;
     } else {
-      value = account.spendableBalance.minus(transaction.fees || 0);
+      value = BigNumber.max(0, account.spendableBalance.minus(transaction.fees || 0));
     }
   }
 

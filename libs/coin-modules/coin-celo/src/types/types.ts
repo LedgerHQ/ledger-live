@@ -25,6 +25,9 @@ export type CeloOperationMode =
 export type CeloVoteType = "pending" | "active";
 export type CeloVoteStatus = CeloVoteType | "awaitingActivation";
 
+/** Celo revoke txo from contractkit (has _method.name at runtime). */
+export type RevokeTxo = { _method: { name: string } };
+
 export type CeloPendingWithdrawal = {
   value: BigNumber;
   time: BigNumber;
