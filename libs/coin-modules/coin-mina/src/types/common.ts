@@ -7,7 +7,8 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
+import { ValidatorInfo } from "../api/fetchValidators";
 
 export type Transaction = TransactionCommon & {
   family: "mina";
@@ -17,6 +18,7 @@ export type Transaction = TransactionCommon & {
   };
   memo: string | undefined;
   nonce: number;
+  txType?: "stake";
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -27,9 +29,23 @@ export type TransactionRaw = TransactionCommonRaw & {
   };
   memo: string | undefined;
   nonce: number;
+  txType?: "stake";
 };
 
-export type MinaAccount = Account;
+export interface MinaAccount extends Account {
+  resources?: {
+    blockProducers: ValidatorInfo[];
+    stakingActive: boolean;
+    delegateInfo: ValidatorInfo | undefined;
+    epochInfo: {
+      epoch: string;
+      slot: string;
+      globalSlot: string;
+      startTime: string;
+      endTime: string;
+    };
+  };
+}
 
 export type MinaAPIAccount = {
   blockHeight: number;
@@ -37,7 +53,20 @@ export type MinaAPIAccount = {
   spendableBalance: BigNumber;
 };
 
-export type MinaAccountRaw = AccountRaw;
+export type MinaAccountRaw = AccountRaw & {
+  resources?: {
+    blockProducers: ValidatorInfo[];
+    stakingActive: boolean;
+    delegateInfo: ValidatorInfo | undefined;
+    epochInfo: {
+      epoch: string;
+      slot: string;
+      globalSlot: string;
+      startTime: string;
+      endTime: string;
+    };
+  };
+};
 
 export type TransactionStatus = TransactionStatusCommon;
 
@@ -51,7 +80,7 @@ export type StatusErrorMap = {
 };
 
 export type MinaUnsignedTransaction = {
-  txType: number;
+  txType: TxType;
   senderAccount: number;
   senderAddress: string;
   receiverAddress: string;
@@ -68,3 +97,8 @@ export interface MinaSignedTransaction {
 }
 
 export type MinaOperation = Operation<{ memo: string | undefined; accountCreationFee: string }>;
+
+export enum TxType {
+  PAYMENT = 0x00,
+  DELEGATION = 0x04,
+}

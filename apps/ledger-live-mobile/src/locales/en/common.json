@@ -10,6 +10,9 @@
     "seeAll": "See all",
     "seeAllWithNumber": "See all ({{number}})",
     "back": "Back",
+    "fee": "Fee",
+    "stake": "Stake",
+    "validator": "Validator",
     "delete": "Delete",
     "paste": "Paste",
     "yes": "Yes",
@@ -6102,6 +6105,52 @@
       "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
     }
   },
+  "mina": {
+    "copyLinkCopied": "Address copied!",
+    "accountHeaderManageActions": {
+      "changeDelegation": "Redelegate",
+      "earn": "Earn"
+    },
+    "stakeBanner": {
+      "title": "Earn rewards with MINA",
+      "altTitle": "Manage your MINA delegation",
+      "description": "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription": "Change your delegation settings or undelegate your MINA tokens. "
+    },
+    "summaryFooter": {
+      "delegatedTo": "Delegated to",
+      "stakedBalance": "Staked Balance",
+      "producerAddress": "Producer Address",
+      "delegatedToTooltip": "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip": "Total amount of MINA currently staked with this validator",
+      "producerAddressTooltip": "Public address of the block producer you are delegating to"
+    },
+    "delegators": "Delegators",
+    "memoPlaceholder": "Optional Memo",
+    "selectValidator": {
+      "stepLabels": {
+        "chooseValidator": "Choose Validator",
+        "connectDevice": "Connect Device",
+        "confirmation": "Confirmation"
+      },
+      "title": "Stake MINA",
+      "help": "Select a validator from the list below to delegate your MINA tokens.",
+      "success": {
+        "title": "Transaction successfully broadcasted",
+        "description": "Your delegation change request has been broadcasted."
+      },
+      "error": {
+        "title": "An error occurred while broadcasting the transaction"
+      }
+    },
+    "delegation": {
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "showAll": "Show all",
+      "showLess": "Show less",
+      "iDelegate": "I delegate"
+    }
+  },
   "stellar": {
     "token": "Assets",
     "memo": {
@@ -6510,9 +6559,6 @@
         }
       }
     }
-  },
-  "mina": {
-    "memoPlaceholder": "Optional Memo"
   },
   "near": {
     "info": {

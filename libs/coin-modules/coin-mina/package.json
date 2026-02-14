@@ -110,6 +110,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "expect": "catalog:",
@@ -118,6 +119,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bs58check": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
