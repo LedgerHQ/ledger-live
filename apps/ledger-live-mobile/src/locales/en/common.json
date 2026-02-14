@@ -8329,22 +8329,36 @@
       "authorize": "Authorize",
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
-      "title": "Automatically accept incoming funds",
+      "title": "Onboarding",
+      "success": "Account onboarded successfully",
+      "status": {
+        "prepare": "Preparing account onboarding transaction.\nThis may take up to 1 minute...",
+        "submit": "Onboarding account...",
+        "default": "Processing..."
+      },
       "processing": {
         "title": "Processing transaction",
-        "description": "This process may take up to 1 minute",
+        "description": "Please wait",
         "keepDeviceNearby": "Stay in the Ledger Wallet app and keep your Ledger nearby."
       },
       "reonboard": {
         "title": "Account Update Required",
         "account": "Account",
         "authorize": "Re-authorize Validator",
+        "success": "Account updated successfully",
         "warning": {
           "title": "Topology Change Detected",
           "description": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it."
         }
       },
       "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
+    },
+    "authorize": {
+      "status": {
+        "prepare": "Preparing authorization...",
+        "submit": "Authorizing validator...",
+        "default": "Processing..."
+      }
     },
     "tooManyUtxos": {
       "title": "Action Needed: Too Many UTXOs",
