@@ -1,14 +1,16 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
-  ApyIndicator,
   AssetItem,
   AssetType,
   MarketPriceIndicator,
   MarketPercentIndicator,
 } from "@ledgerhq/native-ui/pre-ldls/index";
+import { Tag } from "@ledgerhq/lumen-ui-rnative";
+import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import SkeletonList from "../../components/Skeleton/SkeletonList";
 import {
   useModularDrawerAnalytics,
@@ -31,6 +33,7 @@ import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import Config from "react-native-config";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -75,8 +78,20 @@ const AssetSelection = ({
 
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
+  // Determine APY appearance based on user's region (UK users see grey, others see green)
+  const region = getCountryLocale();
+  const apyAppearance = getApyAppearance(region);
+
+  // Create ApyIndicator component with the appearance pre-configured
+  const ApyIndicatorWithAppearance = useMemo(
+    () =>
+      ({ value, type }: { value: number; type: ApyType }) =>
+        <Tag size="sm" appearance={apyAppearance} label={`~ ${value}% ${type}`} />,
+    [apyAppearance],
+  );
+
   const assetConfigurationDeps = {
-    ApyIndicator,
+    ApyIndicator: ApyIndicatorWithAppearance,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   AssetType,
@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import {
   useModularDrawerAnalytics,
   TrackDrawerScreen,
@@ -24,6 +25,7 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -75,11 +77,30 @@ const NetworkSelection = ({
     ],
   );
 
+  // Determine APY appearance based on user's region (UK users see grey, others see green)
+  const region = getCountryLocale();
+  const apyAppearance = getApyAppearance(region);
+
+  // Create wrapped APY functions with the appearance pre-configured
+  const accountsApyWithAppearance = useMemo(
+    () =>
+      (props: Parameters<typeof accountsApy>[0]) =>
+        accountsApy({ ...props, appearance: apyAppearance }),
+    [apyAppearance],
+  );
+
+  const accountsCountAndApyWithAppearance = useMemo(
+    () =>
+      (props: Parameters<typeof accountsCountAndApy>[0]) =>
+        accountsCountAndApy({ ...props, appearance: apyAppearance }),
+    [apyAppearance],
+  );
+
   const networkConfigurationDeps = {
     useAccountData,
     accountsCount,
-    accountsCountAndApy,
-    accountsApy,
+    accountsCountAndApy: accountsCountAndApyWithAppearance,
+    accountsApy: accountsApyWithAppearance,
     useBalanceDeps,
     balanceItem,
   };

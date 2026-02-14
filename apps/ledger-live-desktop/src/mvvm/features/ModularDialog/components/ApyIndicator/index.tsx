@@ -2,6 +2,14 @@ import React from "react";
 import { Tag } from "@ledgerhq/lumen-ui-react";
 import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
 
-export const ApyIndicator = ({ value, type }: { value: number; type: ApyType }) => {
-  return <Tag size="sm" appearance="gray" label={`~ ${value}% ${type}`} />;
+type ApyAppearance = "gray" | "success";
+
+type ApyIndicatorProps = {
+  value: number;
+  type: ApyType;
+  appearance?: ApyAppearance;
+};
+
+export const ApyIndicator = ({ value, type, appearance = "gray" }: ApyIndicatorProps) => {
+  return <Tag size="sm" appearance={appearance} label={`~ ${value}% ${type}`} />;
 };

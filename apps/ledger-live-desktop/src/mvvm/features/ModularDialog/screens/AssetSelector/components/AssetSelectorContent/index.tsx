@@ -14,8 +14,10 @@ import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
+import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import { AssetVirtualList } from "../AssetVirtualList";
 import { ApyIndicator } from "../../../../components/ApyIndicator";
+import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 
 export type AssetSelectorContentProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -42,8 +44,20 @@ export const AssetSelectorContent = ({
 }: AssetSelectorContentProps) => {
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
+  // Determine APY appearance based on user's region (UK users see grey, others see green)
+  const { region } = getParsedSystemDeviceLocale();
+  const apyAppearance = getApyAppearance(region);
+
+  // Create a wrapped ApyIndicator with the appearance pre-configured
+  const ApyIndicatorWithAppearance = useMemo(
+    () =>
+      ({ value, type }: { value: number; type: Parameters<typeof ApyIndicator>[0]["type"] }) =>
+        <ApyIndicator value={value} type={type} appearance={apyAppearance} />,
+    [apyAppearance],
+  );
+
   const assetConfigurationDeps = {
-    ApyIndicator,
+    ApyIndicator: ApyIndicatorWithAppearance,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,

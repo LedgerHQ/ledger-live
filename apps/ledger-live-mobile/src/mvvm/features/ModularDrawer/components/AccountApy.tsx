@@ -1,7 +1,17 @@
 import React from "react";
-import { ApyIndicator } from "@ledgerhq/native-ui/pre-ldls/index";
+import { Tag } from "@ledgerhq/lumen-ui-rnative";
 import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
 
-export const accountsApy = ({ value, type }: { value?: number; type?: ApyType }) => {
-  return value && type ? <ApyIndicator value={value} type={type} /> : undefined;
+type ApyAppearance = "gray" | "success";
+
+type AccountsApyProps = {
+  value?: number;
+  type?: ApyType;
+  appearance?: ApyAppearance;
+};
+
+export const accountsApy = ({ value, type, appearance = "gray" }: AccountsApyProps) => {
+  if (!value || !type) return undefined;
+
+  return <Tag size="sm" appearance={appearance} label={`~ ${value}% ${type}`} />;
 };
