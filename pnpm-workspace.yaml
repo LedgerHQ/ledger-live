@@ -149,8 +149,8 @@ catalog:
   "styled-system": 5.1.5
   "stylis": 4.0.0
   "@tanstack/react-virtual": 3.13.16
-  "@playwright/test": 1.51.1
-  playwright: 1.51.1
+  "@playwright/test": 1.58.2
+  playwright: 1.58.2
   allure-playwright: 3.2.1
   allure-js-commons: 3.2.1
 
