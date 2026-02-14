@@ -49,7 +49,7 @@
     "timemachine": "^0.3.2",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ws": "^8.16.0"
+    "ws": "^8.18.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
