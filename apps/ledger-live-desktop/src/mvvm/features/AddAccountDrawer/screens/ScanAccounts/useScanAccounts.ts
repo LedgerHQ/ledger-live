@@ -40,6 +40,7 @@ const deselectImportable = (importable: Account[]) => (selected: string[]) => {
 export interface UseScanAccountsProps {
   currency: CryptoCurrency;
   deviceId: string;
+  deferAccountAddition?: boolean;
   onComplete: (accounts: Account[]) => void;
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
 }
@@ -47,6 +48,7 @@ export interface UseScanAccountsProps {
 export function useScanAccounts({
   currency,
   deviceId,
+  deferAccountAddition = false,
   onComplete,
   navigateToWarningScreen,
 }: UseScanAccountsProps) {
@@ -192,14 +194,18 @@ export function useScanAccounts({
     if (accountsToImport.length > 0) {
       setHasImportedAccounts(true);
     }
-    dispatch(
-      addAccountsAction({
-        existingAccounts,
-        scannedAccounts,
-        selectedIds: filteredSelectedIds,
-        renamings: {},
-      }),
-    );
+
+    if (!deferAccountAddition) {
+      dispatch(
+        addAccountsAction({
+          existingAccounts,
+          scannedAccounts,
+          selectedIds: filteredSelectedIds,
+          renamings: {},
+        }),
+      );
+    }
+
     onComplete(accountsToImport);
   }, [
     trackAddAccountEvent,
@@ -213,6 +219,7 @@ export function useScanAccounts({
     selectedCantonCreatableAccounts,
     filteredSelectedIds,
     scannedAccounts,
+    deferAccountAddition,
   ]);
 
   const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);
