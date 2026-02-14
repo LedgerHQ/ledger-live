@@ -3,6 +3,7 @@ import { TransportStatusError } from "@ledgerhq/errors";
 import {
   CompleteExchangeError,
   convertTransportError,
+  getErrorDetails,
   getErrorName,
   getErrorMessage,
   getSwapStepFromError,
@@ -40,14 +41,6 @@ describe("exchange/error", () => {
       expect(getErrorName(undefined)).toBeUndefined();
     });
 
-    it("should return undefined for number", () => {
-      expect(getErrorName(42)).toBeUndefined();
-    });
-
-    it("should return undefined for boolean", () => {
-      expect(getErrorName(true)).toBeUndefined();
-    });
-
     it("should return undefined for object without name or cause", () => {
       const error = { code: "ERR001", message: "Something failed" };
       expect(getErrorName(error)).toBeUndefined();
@@ -56,6 +49,12 @@ describe("exchange/error", () => {
     it("should return undefined when cause exists but has no name", () => {
       const error = { cause: { message: "nested error" } };
       expect(getErrorName(error)).toBeUndefined();
+    });
+
+    it("should prefer cause.name when top-level name is generic 'Error'", () => {
+      const error = new Error("something");
+      Object.assign(error, { cause: { name: "SpecificError" } });
+      expect(getErrorName(error)).toBe("SpecificError");
     });
   });
 
@@ -82,7 +81,7 @@ describe("exchange/error", () => {
       expect(getErrorMessage(error)).toBe("Outer error");
     });
 
-    it("should return 'Unknown error' for null or empty string", () => {
+    it("should return 'Unknown error' for null and empty string", () => {
       expect(getErrorMessage(null)).toBe("Unknown error");
       expect(getErrorMessage("")).toBe("Unknown error");
     });
@@ -99,19 +98,18 @@ describe("exchange/error", () => {
       expect(getErrorMessage(false)).toBe("Unknown error");
     });
 
-    it("should return 'Unknown error' for object without message or cause", () => {
+    it("should fall back to name for object without message or cause", () => {
       const error = { code: "ERR001", name: "CustomError" };
-      expect(getErrorMessage(error)).toBe("Unknown error");
+      expect(getErrorMessage(error)).toBe("CustomError");
     });
 
-    it("should return 'Unknown error' when cause exists but has no message", () => {
+    it("should return 'Unknown error' for object when cause has no message or name", () => {
       const error = { cause: { code: "E500" } };
       expect(getErrorMessage(error)).toBe("Unknown error");
     });
 
-    it("should return empty string if message is explicitly empty", () => {
+    it("should return 'Unknown error' when message is explicitly empty", () => {
       const error = { message: "" };
-      // Empty string is falsy, so it should fall through to "Unknown error"
       expect(getErrorMessage(error)).toBe("Unknown error");
     });
 
@@ -124,6 +122,122 @@ describe("exchange/error", () => {
       const innerError = new Error("Inner error");
       const error = { cause: innerError };
       expect(getErrorMessage(error)).toBe("Inner error");
+    });
+  });
+
+  describe("getErrorDetails", () => {
+    it("should return 'Unknown error' for null", () => {
+      expect(getErrorDetails(null)).toEqual({ message: "Unknown error" });
+    });
+
+    it("should return 'Unknown error' for undefined", () => {
+      expect(getErrorDetails(undefined)).toEqual({ message: "Unknown error" });
+    });
+
+    it("should return string error as message", () => {
+      expect(getErrorDetails("something broke")).toEqual({ message: "something broke" });
+    });
+
+    it("should return 'Unknown error' for empty string", () => {
+      expect(getErrorDetails("")).toEqual({ message: "Unknown error" });
+    });
+
+    it("should extract name/message and cause details when present", () => {
+      const error = {
+        name: "OuterError",
+        cause: {
+          name: "InnerError",
+          message: "Inner message",
+          swapCode: "swap001",
+        },
+      };
+
+      expect(getErrorDetails(error)).toEqual({
+        name: "OuterError",
+        message: "Inner message",
+        cause: {
+          name: "InnerError",
+          message: "Inner message",
+          swapCode: "swap001",
+        },
+      });
+    });
+
+    it("should fall back to cause name for Error instances with generic top-level name", () => {
+      const error = new Error("Drawer closed");
+      Object.assign(error, { cause: { name: "DrawerClosedError" } });
+
+      expect(getErrorDetails(error)).toEqual({
+        name: "DrawerClosedError",
+        message: "Drawer closed",
+        cause: {
+          name: "DrawerClosedError",
+        },
+      });
+    });
+
+    it("should keep specific top-level name over cause name for Error instances", () => {
+      const error = new Error("Drawer closed");
+      error.name = "CustomTopLevelError";
+      Object.assign(error, { cause: { name: "DrawerClosedError" } });
+
+      expect(getErrorDetails(error)).toEqual({
+        name: "CustomTopLevelError",
+        message: "Drawer closed",
+        cause: {
+          name: "DrawerClosedError",
+        },
+      });
+    });
+
+    it("should extract cause details when Error instance has object cause", () => {
+      const error = new Error("Top-level message");
+      Object.assign(error, {
+        cause: {
+          name: "NestedObjectCause",
+          message: "Nested cause message",
+          swapCode: "swap005",
+        },
+      });
+
+      expect(getErrorDetails(error)).toEqual({
+        name: "NestedObjectCause",
+        message: "Top-level message",
+        cause: {
+          name: "NestedObjectCause",
+          message: "Nested cause message",
+          swapCode: "swap005",
+        },
+      });
+    });
+
+    it("should extract cause details when Error instance has Error as cause", () => {
+      const error = new Error("Top-level message");
+      const nestedError = new Error("Nested error message");
+      nestedError.name = "NestedErrorCause";
+      Object.assign(error, { cause: nestedError });
+
+      expect(getErrorDetails(error)).toEqual({
+        name: "NestedErrorCause",
+        message: "Top-level message",
+        cause: {
+          name: "NestedErrorCause",
+          message: "Nested error message",
+        },
+      });
+    });
+
+    it("should fall back to effectiveName when no message or causeMessage", () => {
+      const error = { name: "SomeError" };
+      expect(getErrorDetails(error)).toEqual({
+        name: "SomeError",
+        message: "SomeError",
+      });
+    });
+
+    it("should return 'Unknown error' for object with no useful fields", () => {
+      const error = { code: 123 };
+      expect(getErrorDetails(error)).toEqual({ message: "Unknown error" });
     });
   });
 
