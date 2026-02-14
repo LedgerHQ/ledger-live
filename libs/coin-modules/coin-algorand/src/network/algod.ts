@@ -1,28 +1,20 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
-import {
+import coinConfig from "../config";
+import type {
   AlgoAccount,
   AlgoAsset,
   AlgoTransactionBroadcastResponse,
   AlgoTransactionParams,
-} from "./algodv2.types";
+  ExplorerAccount,
+  ExplorerTransactionParams,
+  ExplorerBroadcastReturn,
+  ExplorerBlock,
+} from "./types";
 
-const BASE_URL = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
-const NODE_URL = `${BASE_URL}/ps2/v2`;
+const getNodeUrl = (): string => coinConfig.getCoinConfig().node;
 
-const fullUrl = (route: string): string => `${NODE_URL}${route}`;
-
-type ExplorerAccount = {
-  assets: {
-    "asset-id": number;
-    amount: number;
-  }[];
-  round: number;
-  address: string;
-  amount: number;
-  "pending-rewards": number;
-};
+const fullUrl = (route: string): string => `${getNodeUrl()}${route}`;
 
 export const getAccount = async (address: string): Promise<AlgoAccount> => {
   const { data } = await network<ExplorerAccount>({
@@ -30,8 +22,7 @@ export const getAccount = async (address: string): Promise<AlgoAccount> => {
   });
 
   const assets: AlgoAsset[] = data.assets
-    ? // FIXME: what is the type of `a`?
-      data.assets.map((a): AlgoAsset => {
+    ? data.assets.map((a): AlgoAsset => {
         return {
           assetId: a["asset-id"].toString(),
           balance: new BigNumber(a.amount),
@@ -48,18 +39,8 @@ export const getAccount = async (address: string): Promise<AlgoAccount> => {
   };
 };
 
-type ExplorerTransactioParams = {
-  "consensus-version": string;
-  fee: number;
-  "genesis-hash": string;
-  "genesis-id": string;
-  "first-round"?: number;
-  "last-round": number;
-  "min-fee": number;
-};
-
 export const getTransactionParams = async (): Promise<AlgoTransactionParams> => {
-  const { data } = await network<ExplorerTransactioParams>({
+  const { data } = await network<ExplorerTransactionParams>({
     url: fullUrl(`/transactions/params`),
   });
 
@@ -73,8 +54,6 @@ export const getTransactionParams = async (): Promise<AlgoTransactionParams> => 
   };
 };
 
-type ExplorerBroadcastReturn = { txId: string };
-
 export const broadcastTransaction = async (payload: Buffer): Promise<string> => {
   const { data }: { data: AlgoTransactionBroadcastResponse } = await network<
     ExplorerBroadcastReturn,
@@ -87,4 +66,12 @@ export const broadcastTransaction = async (payload: Buffer): Promise<string> => 
   });
 
   return data.txId;
+};
+
+export const getBlock = async (round: number): Promise<ExplorerBlock> => {
+  const { data } = await network<ExplorerBlock>({
+    url: fullUrl(`/blocks/${round}`),
+  });
+
+  return data;
 };

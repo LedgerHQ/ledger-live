@@ -1,5 +1,9 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"
+  ],
   "entry": [
     "src/account.ts",
     "src/bridge/js.ts",
@@ -16,7 +20,23 @@
     "src/tokens.ts"
   ],
   "ignoreUnimported": [
-    "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/api/index.ts",
+    "src/logic/broadcast.ts",
+    "src/logic/combine.ts",
+    "src/logic/common.ts",
+    "src/logic/craftTransaction.ts",
+    "src/logic/estimateFees.ts",
+    "src/logic/getBalance.ts",
+    "src/logic/getBlockInfo.ts",
+    "src/logic/index.ts",
+    "src/logic/lastBlock.ts",
+    "src/logic/listOperations.ts",
+    "src/logic/validateAddress.ts",
+    "src/logic/validateIntent.ts",
+    "src/supportedFeatures.ts",
+    "src/test/bridge.dataset.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/live-env"
   ]
 }

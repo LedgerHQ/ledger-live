@@ -9,14 +9,16 @@ import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { AlgoTransactionType } from "./api";
-import algorandAPI, {
+import { computeAlgoMaxSpendable } from "./bridgeLogic";
+import {
+  getAccount,
+  getAllAccountTransactions,
   type AlgoAsset,
   type AlgoAssetTransferInfo,
   type AlgoPaymentInfo,
   type AlgoTransaction,
-} from "./api";
-import { computeAlgoMaxSpendable } from "./logic";
+  AlgoTransactionType,
+} from "./network";
 import { addPrefixToken, extractTokenId } from "./tokens";
 import { AlgorandAccount, AlgorandOperation } from "./types";
 
@@ -230,7 +232,7 @@ export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, sy
     derivationMode,
   });
 
-  const { round, balance, pendingRewards, assets } = await algorandAPI.getAccount(address);
+  const { round, balance, pendingRewards, assets } = await getAccount(address);
 
   const nbAssets = assets.length;
 
@@ -241,10 +243,7 @@ export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, sy
     mode: "send",
   });
 
-  const newTransactions: AlgoTransaction[] = await algorandAPI.getAccountTransactions(
-    address,
-    startAt,
-  );
+  const newTransactions: AlgoTransaction[] = await getAllAccountTransactions(address, startAt);
 
   const subAccounts = await buildSubAccounts({
     currency,
