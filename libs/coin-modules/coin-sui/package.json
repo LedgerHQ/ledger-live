@@ -146,7 +146,7 @@
     "@mysten/signers": "0.6.2",
     "@mysten/sui": "1.45.2",
     "bignumber.js": "^9.1.2",
-    "lodash": "4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -155,7 +155,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"

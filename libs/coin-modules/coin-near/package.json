@@ -55,7 +55,7 @@
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "near-api-js": "^3.0.2",
     "rxjs": "catalog:"
   },
@@ -63,7 +63,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",

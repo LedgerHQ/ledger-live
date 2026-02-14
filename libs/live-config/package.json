@@ -29,11 +29,11 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "catalog:"
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.202",
+    "@types/lodash": "catalog:",
     "@types/node": "^22.10.10",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

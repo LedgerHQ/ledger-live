@@ -102,7 +102,7 @@
     "eip55": "^2.1.0",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "lru-cache": "^7.14.1",
     "prando": "^6.0.1",
     "rxjs": "catalog:"
@@ -112,7 +112,7 @@
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",
     "jest": "catalog:",
