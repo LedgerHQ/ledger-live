@@ -374,6 +374,111 @@ export const bitcoinFamilyAccountGetXPubLogic = (
   return Promise.resolve(account.xpub);
 };
 
+export interface BitcoinGetAddressesResultItem {
+  address: string;
+  publicKey?: string;
+  path?: string;
+  intention?: string;
+}
+
+const PAYMENT_INTENTION = "payment" as const;
+
+export const bitcoinFamilyAccountGetAddressesLogic = async (
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+  intentions?: string[],
+): Promise<BitcoinGetAddressesResultItem[]> => {
+  tracking.bitcoinFamilyAccountAddressesRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.bitcoinFamilyAccountAddressesFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
+
+  const account = accounts.find(account => account.id === accountId);
+  if (account === undefined) {
+    tracking.bitcoinFamilyAccountAddressesFail(manifest);
+    return Promise.reject(new Error("account not found"));
+  }
+
+  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+    tracking.bitcoinFamilyAccountAddressesFail(manifest);
+    return Promise.reject(new Error("account requested is not a bitcoin family account"));
+  }
+
+  if (
+    intentions !== undefined &&
+    intentions.length > 0 &&
+    !intentions.includes(PAYMENT_INTENTION)
+  ) {
+    tracking.bitcoinFamilyAccountAddressesSuccess(manifest);
+    return [];
+  }
+
+  try {
+    const walletAccount = getWalletAccount(account);
+    const { xpub } = walletAccount;
+    const { path: rootPath, index: accountIndex } = walletAccount.params;
+
+    const allAddresses = await xpub.getXpubAddresses();
+
+    let maxReceiveIndex = 0;
+    let maxChangeIndex = 0;
+    const receiveIndicesToInclude = new Set<number>([0]);
+    const changeIndicesToInclude = new Set<number>();
+
+    for (const a of allAddresses) {
+      const hasUtxo = xpub.storage.getAddressUnspentUtxos(a).length > 0;
+      if (a.account === 0) {
+        if (a.index > maxReceiveIndex) maxReceiveIndex = a.index;
+        if (hasUtxo) receiveIndicesToInclude.add(a.index);
+      } else if (a.account === 1) {
+        if (a.index > maxChangeIndex) maxChangeIndex = a.index;
+        if (hasUtxo) changeIndicesToInclude.add(a.index);
+      }
+    }
+
+    receiveIndicesToInclude.add(maxReceiveIndex + 1);
+    receiveIndicesToInclude.add(maxReceiveIndex + 2);
+    changeIndicesToInclude.add(maxChangeIndex + 1);
+    changeIndicesToInclude.add(maxChangeIndex + 2);
+
+    const buildPath = (addressAccount: number, addressIndex: number): string =>
+      `m/${rootPath}/${accountIndex}'/${addressAccount}/${addressIndex}`;
+
+    const toInclude: Array<{ account: number; index: number }> = [];
+    receiveIndicesToInclude.forEach(index => toInclude.push({ account: 0, index }));
+    changeIndicesToInclude.forEach(index => toInclude.push({ account: 1, index }));
+
+    const storedAddressByAccountIndex = new Map<string, string>();
+    for (const a of allAddresses) {
+      storedAddressByAccountIndex.set(`${a.account}:${a.index}`, a.address);
+    }
+
+    const result: BitcoinGetAddressesResultItem[] = [];
+    for (const { account: addrAccount, index: addrIndex } of toInclude) {
+      const key = `${addrAccount}:${addrIndex}`;
+      const addressStr =
+        storedAddressByAccountIndex.get(key) ??
+        (await xpub.crypto.getAddress(xpub.derivationMode, xpub.xpub, addrAccount, addrIndex));
+      const publicKey = await xpub.crypto.getPubkeyAt(xpub.xpub, addrAccount, addrIndex);
+      result.push({
+        address: addressStr,
+        publicKey: publicKey.toString("hex"),
+        path: buildPath(addrAccount, addrIndex),
+        intention: PAYMENT_INTENTION,
+      });
+    }
+
+    tracking.bitcoinFamilyAccountAddressesSuccess(manifest);
+    return result;
+  } catch (error) {
+    tracking.bitcoinFamilyAccountAddressesFail(manifest);
+    throw error;
+  }
+};
+
 export function startExchangeLogic(
   { manifest, tracking }: WalletAPIContext,
   exchangeType: "SWAP" | "FUND" | "SELL" | "SWAP_NG" | "SELL_NG" | "FUND_NG",

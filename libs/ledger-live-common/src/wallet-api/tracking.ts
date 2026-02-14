@@ -269,6 +269,15 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     bitcoinFamilyAccountXpubSuccess: (manifest: AppManifest) => {
       track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
     },
+    bitcoinFamilyAccountAddressesRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account addresses requested", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressesFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account addresses fail", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressesSuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account addresses success", getEventData(manifest));
+    },
 
     // currency.list handler tracking
     currencyListRequested: (manifest: AppManifest) => {
