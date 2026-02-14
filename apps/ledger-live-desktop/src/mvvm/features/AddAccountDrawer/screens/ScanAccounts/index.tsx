@@ -12,7 +12,7 @@ import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ScrollContainer } from "../../components/ScrollContainer";
 import { FormattedAccountItem } from "../../components/FormattedAccountItem";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
-import { Footer } from "./components/Footer";
+import { Footer, type FooterProps } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
 import { useFormatAccount } from "./useFormatAccount";
 import { useScanAccounts, type UseScanAccountsProps } from "./useScanAccounts";
@@ -20,15 +20,19 @@ import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
+  deferAccountAddition?: boolean;
   onRetry?: () => void;
+  FooterComponent?: React.ComponentType<FooterProps>;
 }
 
 const ScanAccounts = ({
   currency,
   deviceId,
+  deferAccountAddition,
   onComplete,
   navigateToWarningScreen,
   onRetry,
+  FooterComponent = Footer,
 }: Props) => {
   const source = useSelector(modularDrawerSourceSelector);
   const { colors } = useTheme();
@@ -52,6 +56,7 @@ const ScanAccounts = ({
   } = useScanAccounts({
     currency,
     deviceId,
+    deferAccountAddition,
     navigateToWarningScreen,
     onComplete,
   });
@@ -139,7 +144,7 @@ const ScanAccounts = ({
           </>
         ) : null}
       </ScrollContainer>
-      <Footer
+      <FooterComponent
         handleConfirm={handleConfirm}
         importableAccounts={importableAccounts}
         scanning={scanning}
