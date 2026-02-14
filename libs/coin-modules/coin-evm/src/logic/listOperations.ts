@@ -1,8 +1,9 @@
 import {
   AssetInfo,
+  ListOperationsOptions,
   MemoNotSupported,
   Operation,
-  Pagination,
+  Page,
 } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -125,10 +126,10 @@ function toOperation(
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  pagination: Pagination,
-): Promise<[Operation<MemoNotSupported>[], string]> {
+  options: ListOperationsOptions,
+): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
-  const explorerOrder = pagination.limit === undefined ? "desc" : pagination.order ?? "desc";
+  const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -139,10 +140,10 @@ export async function listOperations(
     currency,
     address,
     `js:2:${currency.id}:${address}:`,
-    pagination.minHeight,
+    options.minHeight,
     undefined,
-    pagination.pagingToken,
-    pagination.limit,
+    options.cursor,
+    options.limit,
     explorerOrder,
   );
 
@@ -196,10 +197,10 @@ export async function listOperations(
     .concat(internalOperations)
     .filter(hasValidType)
     .sort((a, b) =>
-      pagination.order === "asc"
+      options.order === "asc"
         ? a.tx.date.getTime() - b.tx.date.getTime()
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );
 
-  return [operations, nextPagingToken];
+  return { items: operations, next: nextPagingToken || undefined };
 }

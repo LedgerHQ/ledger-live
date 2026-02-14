@@ -26,7 +26,7 @@ describe("Stellar Api", () => {
 
   describe("listOperations can handle 429 errors", () => {
     it("retrieved operations", async () => {
-      const [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      const { items: txs } = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
       expect(txs.length).toBe(0);
     });
   });

@@ -387,21 +387,6 @@ export type CraftedTransaction = {
   details?: Record<string, unknown>;
 };
 
-// TODO rename start to minHeight
-//       and add a `token: string` field to the pagination if we really need to support pagination
-//       (which is not the case for now)
-//       for now start is used as a minHeight from which we want to fetch ALL operations
-//       limit is unused for now
-//       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-// Future-proof pagination type as suggested in the comment
-export type Pagination = {
-  minHeight: number;
-  lastPagingToken?: string;
-  pagingToken?: string;
-  limit?: number;
-  order?: "asc" | "desc";
-};
-// NOTE: future proof export type Pagination = Record<string, unknown>;
 /** A pagination cursor. */
 export type Cursor = string;
 
@@ -409,6 +394,39 @@ export type Cursor = string;
 export type Page<T> = {
   items: T[];
   next?: Cursor | undefined;
+};
+
+/** Options for {@link AlpacaApi#listOperations}. */
+export type ListOperationsOptions = {
+  /**
+   * The minimum block height for which to fetch operations (inclusive).
+   *
+   * Implementation must raise a "not supported" error if `minHeight` is non-zero and not supported.
+   */
+  minHeight: number;
+
+  /**
+   * A pagination cursor to resume listing.
+   *
+   * Implementation must guarantee the cursor is not volatile, i.e. it can be used long after the last request and still
+   * provide consistent results - for instance, a date or transaction hash.
+   */
+  cursor?: Cursor;
+
+  /**
+   * The maximum number of operations to fetch (note this is a soft limit, the implementation may return less or more
+   * operations to not waste RPC calls).
+   *
+   * Implementation must raise a "not supported" error if limit is set and not supported.
+   */
+  limit?: number;
+
+  /**
+   * The chronological order of the operations (within one page as well as globally when concatenating all pages).
+   *
+   * Implementation must raise a "not supported" error if order is set and not supported.
+   */
+  order?: "asc" | "desc";
 };
 
 /** A network validator */
@@ -455,27 +473,87 @@ export type AlpacaApi<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
 > = {
-  broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
-  combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<MemoType, TxDataType>,
-    customFeesParameters?: FeeEstimation["parameters"],
-  ) => Promise<FeeEstimation>;
-  craftTransaction: (
-    transactionIntent: TransactionIntent<MemoType, TxDataType>,
-    customFees?: FeeEstimation,
-  ) => Promise<CraftedTransaction>;
-  craftRawTransaction: (
-    transaction: string,
-    sender: string,
-    publicKey: string,
-    sequence: bigint,
-  ) => Promise<CraftedTransaction>;
-  getBalance: (address: string) => Promise<Balance[]>;
+  // blockchain API
+
+  /**
+   * Get the latest block information from the network.
+   *
+   * This must return the same result as {@link getBlockInfo} for the latest block height.
+   *
+   * @returns the latest block metadata (height, hash, time)
+   * @see getBlockInfo
+   * @see getBlock
+   */
   lastBlock: () => Promise<BlockInfo>;
+
+  /**
+   * Get block information for a specific block height.
+   *
+   * This must return the same result as {@link lastBlock} for the latest block height.
+   *
+   * This API is optional and may not be supported on all networks: implementation should raise a "not supported" error
+   * in such case.
+   *
+   * @param height the block height to query
+   * @returns the block metadata (height, hash, time)
+   * @throws "not supported" if the blockchain does not support querying historical blocks
+   */
   getBlockInfo: (height: number) => Promise<BlockInfo>;
+
+  /**
+   * Get a full block with all its transactions.
+   *
+   * This returns the complete block data including all transactions and their operations.
+   *
+   * This must return the same block info as {@link getBlockInfo} for the same height.
+   *
+   * This API is optional and may not be supported on all networks: implementation should raise a "not supported" error
+   * in such case.
+   *
+   * @param height the block height to query
+   * @returns the complete block with transactions
+   * @throws "not supported" if the blockchain does not support querying full blocks
+   */
   getBlock: (height: number) => Promise<Block>;
-  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
+
+  /**
+   * Get the list of validators available on the network.
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *         i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *         a date or transaction hash).
+   *         The concrete implementation may return all validators in a single page when the underlying SDK
+   *         does not provide cursor-based pagination.
+   */
+  getValidators: (cursor?: Cursor) => Promise<Page<Validator>>;
+
+  // account read API
+
+  /**
+   * Get the balance(s) for an address/account.
+   *
+   * Returns all asset balances associated with the address, including the native asset and any tokens/sub-assets. Each
+   * balance includes the total value and optionally locked/staked amounts.
+   *
+   * If account is not found, implementation must return an empty balance.
+   *
+   * @param address the account address
+   * @returns an array of balances for all assets held by the address
+   * @see getStakes
+   * @see listOperations
+   */
+  getBalance: (address: string) => Promise<Balance[]>;
+
+  /**
+   * List operations for an address/account.
+   *
+   * If account is not found, implementation must return an empty result.
+   *
+   * @param address the owner account address
+   * @param options see {@link ListOperationsOptions}
+   * @returns a page of operations
+   * @see getBalance
+   */
+  listOperations: (address: string, options: ListOperationsOptions) => Promise<Page<Operation>>;
 
   /**
    * Get staking positions owned by an address/account.
@@ -489,6 +567,9 @@ export type AlpacaApi<
    * optional: implementation should raise a "not supported" error in such case.
    *
    * @param address the owner account address
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *               i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *               a date or transaction hash)
    * @see getBalance
    * @see getRewards
    */
@@ -518,15 +599,80 @@ export type AlpacaApi<
    * @see getStakes
    */
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
+
+  // transaction API
+
   /**
-   * Get the list of validators available on the network.
-   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
-   *         i.e. it can be used long after the last request and still provide consistent results - for instance,
-   *         a date or transaction hash).
-   *         The concrete implementation may return all validators in a single page when the underlying SDK
-   *         does not provide cursor-based pagination.
+   * Craft an unsigned transaction from a transaction intent.
+   *
+   * The crafted transaction is ready to be signed by the hardware wallet and then combined
+   * with the signature using {@link combine}.
+   *
+   * @param transactionIntent the transaction intent describing what the user wants to do
+   * @param customFees optional custom fees to use instead of the default estimation
+   * @returns the crafted transaction with optional blockchain-specific details
+   * @see craftRawTransaction
    */
-  getValidators: (cursor?: Cursor) => Promise<Page<Validator>>;
+  craftTransaction: (
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    customFees?: FeeEstimation,
+  ) => Promise<CraftedTransaction>;
+
+  /**
+   * Craft an unsigned transaction from a raw/pre-built transaction.
+   *
+   * This is an alternative to {@link craftTransaction} for cases where the transaction
+   * is already built externally (e.g., by a dApp or smart contract interaction).
+   *
+   * @param transaction the raw transaction to wrap/prepare for signing
+   * @param sender the sender address
+   * @param publicKey the sender's public key
+   * @param sequence the account sequence/nonce (to prevent replay attacks)
+   * @returns the crafted transaction ready for signing
+   * @throws "not supported" if the blockchain does not support raw transaction crafting
+   * @see craftTransaction
+   */
+  craftRawTransaction: (
+    transaction: string,
+    sender: string,
+    publicKey: string,
+    sequence: bigint,
+  ) => Promise<CraftedTransaction>;
+
+  /**
+   * Estimate the fees for a transaction intent.
+   *
+   * The estimation should be based on current network conditions (e.g., gas price, fee rate).
+   *
+   * @param transactionIntent the transaction intent describing what the user wants to do
+   * @param customFeesParameters optional blockchain-specific parameters to customize the fee estimation
+   *        (e.g., gas limit, priority fee)
+   * @returns the estimated fees and optional parameters that can be passed to {@link craftTransaction}
+   */
+  estimateFees: (
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    customFeesParameters?: FeeEstimation["parameters"],
+  ) => Promise<FeeEstimation>;
+
+  /**
+   * Combine a crafted transaction with a signature to produce a signed transaction ready for broadcast.
+   *
+   * @param tx the unsigned/crafted transaction (as returned by {@link craftTransaction})
+   * @param signature the signature produced by the hardware wallet
+   * @param pubkey the public key used to sign (required for some blockchains to verify/embed in the transaction)
+   * @returns the signed transaction ready for {@link broadcast}
+   */
+  combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
+
+  /**
+   * Broadcast a signed transaction to the network.
+   *
+   * @param tx the signed transaction (encoding is blockchain dependent, typically hex-encoded)
+   * @param broadcastConfig optional configuration for the broadcast (e.g., retry settings)
+   * @returns the transaction hash/digest once successfully submitted to the network
+   * @throws if the transaction is rejected by the network (e.g., invalid signature, insufficient funds)
+   */
+  broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
 };
 
 export type ChainSpecificRules = {

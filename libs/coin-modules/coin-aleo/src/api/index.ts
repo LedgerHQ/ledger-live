@@ -12,6 +12,7 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
+  ListOperationsOptions,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type AleoConfig } from "../config";
 
@@ -48,7 +49,7 @@ export function createApi(config: AleoConfig, _currencyId: string): Api {
     lastBlock: async (): Promise<BlockInfo> => {
       throw new Error("lastBlock is not supported");
     },
-    listOperations: async (_address, _pagination) => {
+    listOperations: async (_address: string, _options: ListOperationsOptions) => {
       throw new Error("listOperations is not supported");
     },
     getBlock(_height): Promise<Block> {

@@ -3,11 +3,11 @@ import {
   Block,
   BlockInfo,
   Cursor,
+  ListOperationsOptions,
   Page,
   Validator,
   IncorrectTypeError,
   type Operation,
-  type Pagination,
   Reward,
   Stake,
   CraftedTransaction,
@@ -356,14 +356,17 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
 
 async function operations(
   address: string,
-  pagination: Pagination = { minHeight: 0, order: "asc" },
-): Promise<[Operation[], string]> {
-  const [operations, newNextCursor] = await listOperations(address, {
+  { minHeight = 0, cursor, order = "asc" }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  // FIXME This wrapper hard-codes limit: 200 and ignores any caller-provided limit from ListOperationsOptions. Either
+  //  forward options.limit (as a soft/capped limit) or throw a "not supported" error when limit is set to match the
+  //  ListOperationsOptions contract.
+  const [items, newNextCursor] = await listOperations(address, {
     limit: 200,
-    token: pagination.lastPagingToken,
-    sort: pagination.order === "asc" ? "Ascending" : "Descending",
-    minHeight: pagination.minHeight,
+    token: cursor,
+    sort: order === "asc" ? "Ascending" : "Descending",
+    minHeight: minHeight,
   });
 
-  return [operations, newNextCursor || ""];
+  return { items, next: newNextCursor || undefined };
 }

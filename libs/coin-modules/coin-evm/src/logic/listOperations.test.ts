@@ -238,8 +238,8 @@ describe("listOperations", () => {
     const seed = `js:2:${currency.id}:${address}:`;
 
     expect({ result, calls: getOperationsSpy.mock.calls }).toEqual({
-      result: [
-        [
+      result: {
+        items: [
           {
             id: "coin-op-1",
             type: "IN",
@@ -462,8 +462,8 @@ describe("listOperations", () => {
             },
           },
         ],
-        "",
-      ],
+        next: undefined,
+      },
       calls: [
         [
           currency,
@@ -507,7 +507,11 @@ describe("listOperations", () => {
           }) as unknown as EvmCoinConfig,
       );
       const getOperationsSpy = buildOperationsSpy(etherscanExplorer.explorerApi);
-      const [result] = await listOperations(currency, address, { minHeight: 0, limit, order });
+      const { items: result } = await listOperations(currency, address, {
+        minHeight: 0,
+        limit,
+        order,
+      });
       expect(result.length).toBeGreaterThan(1);
 
       // check how the explorer is called

@@ -3,11 +3,11 @@ import {
   Block,
   BlockInfo,
   Cursor,
+  ListOperationsOptions,
   Page,
   Validator,
   FeeEstimation,
   Operation,
-  Pagination,
   Reward,
   Stake,
   TransactionIntent,
@@ -70,12 +70,16 @@ async function estimate(transactionIntent: TransactionIntent<TronMemo>): Promise
 
 async function listOperations(
   address: string,
-  pagination: Pagination,
-): Promise<[Operation[], string]> {
+  { minHeight, order }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  // FIXME ListOperationsOptions allows cursor and limit, but this wrapper ignores both (always using softLimit: 200
+  //  and not validating cursor). If cursor/limit are not supported, please explicitly throw when they are provided;
+  //  otherwise, plumb them through (e.g., map limit to softLimit).
   const options: Options = {
     softLimit: 200,
-    minHeight: pagination.minHeight,
-    order: pagination.order || "asc",
+    minHeight: minHeight,
+    order: order || "asc",
   } as const;
-  return logicListOperations(address, options);
+  const [items, next] = await logicListOperations(address, options);
+  return { items, next: next || undefined };
 }

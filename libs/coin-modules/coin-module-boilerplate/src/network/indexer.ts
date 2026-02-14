@@ -1,10 +1,16 @@
+import { Cursor } from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { AccountTxResponse } from "./types";
 
 export const getTransactions = async (
   address: string,
-  params: { from: number; size?: number },
+  params: {
+    minHeight: number;
+    cursor?: Cursor;
+    limit?: number;
+    order?: "asc" | "desc";
+  },
 ): Promise<AccountTxResponse["transactions"]> => {
   const { data } = await network<AccountTxResponse>({
     // NOTE: add INDEXER_BOILERPLATE to libs/env/src/env.ts

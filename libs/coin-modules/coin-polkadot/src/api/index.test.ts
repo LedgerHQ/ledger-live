@@ -172,7 +172,7 @@ describe("index", () => {
 
       mockListOperations.mockResolvedValue([[], 2]);
       const result = await api.listOperations("some random address", { minHeight: 0 });
-      expect(result).toEqual([[], "2"]);
+      expect(result).toEqual({ items: [], next: "2" });
     });
   });
 });
