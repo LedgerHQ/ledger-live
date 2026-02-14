@@ -1543,5 +1543,8 @@
   },
   "arbitrum/erc20/stargatetoken": {
     "icon": "STG.png"
+  },
+  "aleo": {
+    "icon": "ALEO.png"
   }
 }

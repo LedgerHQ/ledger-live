@@ -8034,6 +8034,12 @@
           "allow": "Allow",
           "cancel": "Cancel"
         }
+      },
+      "stepScanAccounts": {
+        "cta": {
+          "shareKey_one": "Share view key",
+          "shareKey_other": "Share view keys"
+        }
       }
     }
   }

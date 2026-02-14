@@ -89,6 +89,10 @@ export const useAddAccountFlowNavigation = ({
     goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_WARNING);
   }, [goToStep]);
 
+  const navigateToViewKeyApprove = useCallback(() => {
+    goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_APPROVE);
+  }, [goToStep]);
+
   const closeDrawer = useCallback(() => {
     setDrawer();
   }, []);
@@ -145,7 +149,9 @@ export const useAddAccountFlowNavigation = ({
         case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
         case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
         case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_WARNING:
         case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_APPROVE:
         default: {
           return undefined;
         }
@@ -177,6 +183,7 @@ export const useAddAccountFlowNavigation = ({
     navigateToSelectAccount,
     navigateToWarningScreen,
     navigateToViewKeyWarning,
+    navigateToViewKeyApprove,
     navigationDirection,
     warningReason,
   };

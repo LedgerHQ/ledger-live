@@ -30,7 +30,9 @@ import {
   type AleoModularDrawerAddAccountStep,
 } from "./AddAccountDrawer/domain";
 import { useAddAccountFlowNavigation } from "./AddAccountDrawer/useAddAccountFlowNavigation";
+import { AleoScanAccountsFooter } from "./AddAccountDrawer/ScanAccountsFooter";
 import { ViewKeyWarning } from "./AddAccountDrawer/ViewKeyWarning";
+import { ViewKeyApprove } from "./AddAccountDrawer/ViewKeyApprove";
 
 const StepContainer = styled(Flex)`
   flex: 1;
@@ -59,6 +61,7 @@ const ModularDrawerAddAccountFlowManager = ({
     closeDrawer,
     navigateBack,
     navigateToViewKeyWarning,
+    navigateToViewKeyApprove,
     navigateToWarningScreen,
     navigateToEditAccountName,
     navigateToFundAccount,
@@ -112,9 +115,19 @@ const ModularDrawerAddAccountFlowManager = ({
               onRetry={navigateToConnectDevice}
               onComplete={accounts => {
                 setSelectedAccounts(accounts);
+                navigateToViewKeyApprove();
               }}
+              analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
               navigateToWarningScreen={navigateToWarningScreen}
+              FooterComponent={AleoScanAccountsFooter}
+              deferAccountAddition
             />
+          </StepContainer>
+        );
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_APPROVE:
+        return (
+          <StepContainer paddingX="8px" data-test-id="content">
+            <ViewKeyApprove />
           </StepContainer>
         );
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
