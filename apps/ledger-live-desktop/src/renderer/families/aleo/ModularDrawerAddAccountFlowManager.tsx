@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { ModularDrawerAddAccountStep } from "LLD/features/AddAccountDrawer/domain";
@@ -85,6 +86,8 @@ const ModularDrawerAddAccountFlowManager = ({
     [navigateToViewKeyWarning],
   );
 
+  const handleViewKeyApproval = useCallback((_result: ViewKeysByAccountId) => {}, []);
+
   const renderStepContent = (step: AleoModularDrawerAddAccountStep) => {
     switch (step) {
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
@@ -127,7 +130,12 @@ const ModularDrawerAddAccountFlowManager = ({
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_APPROVE:
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <ViewKeyApprove />
+            <ViewKeyApprove
+              selectedAccounts={selectedAccounts}
+              currency={cryptoCurrency}
+              onCancel={closeDrawer}
+              onResult={handleViewKeyApproval}
+            />
           </StepContainer>
         );
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
