@@ -1,4 +1,90 @@
 import ZCash from "../src/ZCash";
+import type { GetBlockRpcResponse, ZCashBlock } from "../src/network/types";
+import network from "@ledgerhq/live-network";
+import { ZCashRpcClient } from "../src/network/rpc";
+
+jest.mock("@ledgerhq/live-network");
+let mockedNetwork = jest.mocked(network);
+
+type networkRpcRequest = {
+  method: string;
+  url: string;
+  data: {
+    jsonrpc: string;
+    id: string;
+    method: string;
+    params: unknown[];
+  }
+}
+
+/**
+ * Mock RPC client: blocks 0..1275 have time 1000, block 1276+ have time 1234, 1235, ...
+ * findBlockHeight returns highest block with time <= timestamp; findBlockHeight(1234) => 1276.
+ */
+function defineMockRpcClientNetwork(){
+  mockedNetwork.mockImplementation(({ data }: { data?: networkRpcRequest }) => {
+    if (data?.method !== "getblockcount" && data?.method !== "getblock") {
+      return Promise.reject({error: "invalid method"});
+    }
+
+    if (data?.method === "getblockcount") {
+      return Promise.resolve({
+        data: {
+          error: undefined,
+          result: 2000,
+        },
+        status: 200,
+      });
+    }
+
+    const height = parseInt(data?.params[0]);
+    const time = height < 1276 ? 1000 : 1234 + (height - 1276);
+    return Promise.resolve({
+      data: {
+        error: undefined,
+        result: {
+          height,
+          time,
+          hash: `hash${height}`,
+        }},
+      status: 200,
+    });
+  });
+}
+
+/**
+ * Mock RPC client for a small chain (heights 0..10) with times 100, 200, ..., 1100.
+ * findBlockHeight returns highest block with time <= timestamp: (500) => 5, (100) => 0, (2000) => 10.
+ */
+function defineSmallChainMockRpcClientNetwork() {
+  mockedNetwork.mockImplementation(({ data }: { data?: networkRpcRequest }) => {
+    if (data?.method !== "getblockcount" && data?.method !== "getblock") {
+      return Promise.reject({error: "invalid method"});
+    }
+
+    if (data?.method === "getblockcount") {
+      return Promise.resolve({
+        data: {
+          result: 10,
+        },
+        status: 200,
+      });
+    }
+
+    const height = parseInt(data?.params[0]);
+    const time = 100 + height * 100;
+    return Promise.resolve({
+      data: {
+        error: undefined,
+        result: {
+          height,
+          time,
+          hash: `hash${height}`,
+        }},
+      status: 200,
+    });
+  });
+}
 
 const testAccount1 = {
   transactions: [
@@ -31,10 +117,65 @@ describe("estimatedSyncTime", () => {
 });
 
 describe("findBlockHeight", () => {
-  test("finds the lowest block height", async () => {
-    const zcash = new ZCash();
+  beforeEach(() => {
+    mockedNetwork.mockClear();
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test("finds the highest block height at or before a given timestamp (mocked RPC)", async () => {
+    defineMockRpcClientNetwork();
+    const zcash = new ZCash("node");
     const height = await zcash.findBlockHeight(1234);
     expect(height).toEqual(1276);
+  });
+
+  test("throws when no RPC client was provided", async () => {
+    const zcash = new ZCash();
+    await expect(zcash.findBlockHeight(1234)).rejects.toThrow(
+      "ZCash findBlockHeight requires an RPC client",
+    );
+  });
+
+  test("returns 0 when chain is empty", async () => {
+    mockedNetwork.mockImplementation(() => Promise.resolve({ data: { result: 0 }, status: 200 }));
+    const zcash = new ZCash("node");
+    const height = await zcash.findBlockHeight(1234);
+    expect(height).toEqual(0);
+  });
+
+  test("binary search: exact match returns that block height", async () => {
+    defineSmallChainMockRpcClientNetwork();
+    const zcash = new ZCash("node");
+    // Block 5 has time 100 + 500 = 600
+    const height = await zcash.findBlockHeight(600);
+    expect(height).toEqual(5);
+  });
+
+  test("binary search: timestamp with no exact block returns highest block at or before that time", async () => {
+    defineSmallChainMockRpcClientNetwork();
+    const zcash = new ZCash("node");
+    // Block 4 has time 500, block 5 has time 600. Timestamp 550 has no block; we return the highest height with time <= 550, i.e. block 4.
+    const height = await zcash.findBlockHeight(550);
+    expect(height).toEqual(4);
+  });
+
+  test("binary search: timestamp before first block returns 0", async () => {
+    defineSmallChainMockRpcClientNetwork();
+    const zcash = new ZCash("node");
+    // Block 0 has time 100; timestamp 50 is before genesis
+    const height = await zcash.findBlockHeight(50);
+    expect(height).toEqual(0);
+  });
+
+  test("binary search: timestamp after last block returns tip", async () => {
+    defineSmallChainMockRpcClientNetwork();
+    const zcash = new ZCash("node");
+    // Block 10 has time 1100; timestamp 2000 is in the future
+    const height = await zcash.findBlockHeight(2000);
+    expect(height).toEqual(10);
   });
 });
 

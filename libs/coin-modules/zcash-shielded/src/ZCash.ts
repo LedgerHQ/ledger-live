@@ -1,5 +1,6 @@
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { log } from "@ledgerhq/logs";
+import { ZCashRpcClient } from "./network/rpc";
 
 /**
  * ZCash API
@@ -11,6 +12,12 @@ export type SyncEstimatedTime = {
 };
 
 export default class ZCash {
+  private readonly rpcClient: ZCashRpcClient | null;
+
+  constructor(nodeUrl?: string) {
+    this.rpcClient = nodeUrl ? new ZCashRpcClient(nodeUrl) : null;
+  }
+
   /**
    * Estimates sync time given a total number of blocks to process.
    * This is a curried function that returns a function that returns the estimated sync time.
@@ -58,12 +65,41 @@ export default class ZCash {
   }
 
   /**
-   * Finds the lowest block height correspondent to a given timestamp.
+   * Finds the highest block height whose block time is <= the given timestamp
+   * (seconds since epoch). Uses binary search over block heights.
    *
-   * @param {number} timestamp
-   * @return {Promise<number>} a block height
+   * @param timestamp seconds since epoch (Jan 1 1970 GMT)
+   * @return the highest block height with block.time <= timestamp, or 0 if timestamp is before genesis, or tip height if timestamp is after the last block
+   * @throws if no RPC client was provided to the constructor
    */
   async findBlockHeight(timestamp: number): Promise<number> {
-    return timestamp + 42;
+    if (!this.rpcClient) {
+      throw new Error(
+        "ZCash findBlockHeight requires an RPC client; pass { nodeUrl } in the constructor.",
+      );
+    }
+
+    const maxHeight = await this.rpcClient.getBlockCount();
+    if (maxHeight <= 0) {
+      return 0;
+    }
+
+    let low = 0;
+    let high = maxHeight;
+    let candidate = 0;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const block = await this.rpcClient.getBlockByHeight(mid);
+
+      if (block.time <= timestamp) {
+        candidate = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    return candidate;
   }
 }

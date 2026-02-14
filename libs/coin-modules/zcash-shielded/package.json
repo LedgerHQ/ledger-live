@@ -64,6 +64,7 @@
     "jest": "catalog:"
   },
   "dependencies": {
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.1.0"
   }

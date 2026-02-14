@@ -5267,6 +5267,9 @@ importers:
 
   libs/coin-modules/zcash-shielded:
     dependencies:
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
