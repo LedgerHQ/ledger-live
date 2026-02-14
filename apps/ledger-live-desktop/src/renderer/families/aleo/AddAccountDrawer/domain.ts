@@ -20,3 +20,13 @@ export const ALEO_ADD_ACCOUNT_STEP_ORDER: AleoModularDrawerAddAccountStep[] = [
   ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME,
   ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT,
 ];
+
+export const ALEO_ACCOUNT_SHARING_STATUS = {
+  CONFIRMED: "confirmed",
+  REJECTED: "rejected",
+  PENDING: "pending",
+  WAITING: "waiting",
+} as const;
+
+export type AleoAccountSharingStatus =
+  (typeof ALEO_ACCOUNT_SHARING_STATUS)[keyof typeof ALEO_ACCOUNT_SHARING_STATUS];
