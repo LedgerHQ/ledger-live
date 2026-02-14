@@ -18,7 +18,7 @@
   },
   "main": "lib/ZCash.js",
   "module": "lib-es/ZCash.js",
-  "types": "lib/ZCash.d.ts",
+  "types": "lib/types.d.ts",
   "typesVersions": {
     "*": {
       "lib/*": [
@@ -64,7 +64,10 @@
     "jest": "catalog:"
   },
   "dependencies": {
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/zcash-decrypt": "0.1.0"
+    "@ledgerhq/zcash-decrypt": "0.1.0",
+    "jest": "catalog:",
+    "msw": "catalog:"
   }
 }
