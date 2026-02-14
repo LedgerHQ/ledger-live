@@ -15,6 +15,6 @@ export default {
   },
 };
 
-export const Log = (args: Props): JSX.Element => {
+export const Log = (args: Props): React.JSX.Element => {
   return <LogComponent {...args} />;
 };

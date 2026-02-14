@@ -41,13 +41,17 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
-    // Try to navigate using name first, then fallback to ticker
+    // Wait for the token row to render before checking visibility (React 19 deferred rendering)
     const nameElement = this.tokenValue(account.currency.name);
+    const tickerElement = this.tokenRowByTicker(account.currency.ticker);
+    await Promise.race([
+      nameElement.waitFor({ state: "visible" }).catch(() => {}),
+      tickerElement.waitFor({ state: "visible" }).catch(() => {}),
+    ]);
     if (await nameElement.isVisible().catch(() => false)) {
       await nameElement.click();
       return;
     }
-    const tickerElement = this.tokenRowByTicker(account.currency.ticker);
     if (await tickerElement.isVisible().catch(() => false)) {
       await tickerElement.click();
       return;
@@ -113,6 +117,8 @@ export class AccountPage extends AppPage {
   @step("Scroll to operations")
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
+    // Wait for the operation list to be attached and stable before scrolling (React 19 deferred rendering)
+    await operationList.waitFor({ state: "attached" });
     await operationList.scrollIntoViewIfNeeded();
   }
 
@@ -151,11 +157,16 @@ export class AccountPage extends AppPage {
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
     const nameButton = this.accountButton(account.currency.name);
+    const tickerButton = this.accountButton(account.currency.ticker);
+    // Wait for the token row to render before checking visibility (React 19 deferred rendering)
+    await Promise.race([
+      nameButton.waitFor({ state: "visible" }).catch(() => {}),
+      tickerButton.waitFor({ state: "visible" }).catch(() => {}),
+    ]);
     if (await nameButton.isVisible().catch(() => false)) {
       await expect(nameButton).toBeVisible();
       return;
     }
-    const tickerButton = this.accountButton(account.currency.ticker);
     if (await tickerButton.isVisible().catch(() => false)) {
       await expect(tickerButton).toBeVisible();
       return;

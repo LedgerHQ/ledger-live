@@ -4,7 +4,8 @@ import { DesyncOverlay } from "../components/DesyncOverlay";
 
 describe("DesyncOverlay", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    // React 19's act() uses queueMicrotask for scheduling — faking it causes act() to hang
+    jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
   });
 
   afterEach(() => {

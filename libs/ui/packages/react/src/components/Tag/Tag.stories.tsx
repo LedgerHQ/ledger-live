@@ -30,7 +30,7 @@ export default {
   },
 };
 
-export const Overview = ((): JSX.Element => (
+export const Overview = ((): React.JSX.Element => (
   <Flex flexDirection="column">
     {sizes.map(size => (
       <Flex flexDirection="column" marginBottom={5}>
@@ -60,7 +60,7 @@ export const Overview = ((): JSX.Element => (
   </Flex>
 )).bind({});
 
-const Template: StoryTemplate<TagProps> = (args: TagProps): JSX.Element => (
+const Template: StoryTemplate<TagProps> = (args: TagProps): React.JSX.Element => (
   <Tag {...args}>{args.children}</Tag>
 );
 

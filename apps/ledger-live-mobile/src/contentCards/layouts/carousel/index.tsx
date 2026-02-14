@@ -82,7 +82,6 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
       isContainerVisibleRef.current = isNowVisible;
     },
     [logImpressionCard, items],
-    // @ts-expect-error REACT19FIXME: RefObject<View | null> not assignable to RefObject<View>
     viewRef,
   );
   const handleViewableItemsChanged = useCallback(

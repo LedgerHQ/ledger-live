@@ -59,7 +59,7 @@ export const CardButton = ({
 }: {
   onClick: () => void;
   title: string;
-  iconRight?: JSX.Element;
+  iconRight?: React.JSX.Element;
   variant?: "default" | "dashed";
 }) => {
   return (

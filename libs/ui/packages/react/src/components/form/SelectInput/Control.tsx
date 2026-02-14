@@ -26,7 +26,7 @@ export function Control<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: ControlProps<O, M, G>): JSX.Element {
+>(props: ControlProps<O, M, G>): React.JSX.Element {
   const { isFocused, selectProps, children } = props;
 
   const { isDisabled, error, renderLeft } = selectProps as SelectProps<O, M, G>;

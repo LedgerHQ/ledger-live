@@ -170,7 +170,7 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
   columns: [
     {
       layout: "64px",
-      render: ({ elt }: CellProps<Account>): JSX.Element =>
+      render: ({ elt }: CellProps<Account>): React.JSX.Element =>
         elt.currency.abbrev === "BTC" ? svgBtc : elt.currency.abbrev === "ETH" ? svgEth : svgUsdt,
     },
     Columns.text({

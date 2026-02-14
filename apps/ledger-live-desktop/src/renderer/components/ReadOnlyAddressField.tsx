@@ -78,7 +78,7 @@ type Props = {
 function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
   const [copyFeedback, setCopyFeedback] = useState(false);
   const [clibboardChanged, setClipboardChanged] = useState(false);
-  const copyTimeout = useRef<NodeJS.Timeout | undefined>();
+  const copyTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const onCopy = useCallback(() => {
     clipboard.writeText(address);
     setCopyFeedback(true);

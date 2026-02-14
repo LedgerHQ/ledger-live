@@ -86,7 +86,7 @@ function SelectInput<O, M extends boolean, G extends GroupBase<O>>({
   unwrapped,
   extendStyles,
   ...props
-}: Props<O, M, G>): JSX.Element {
+}: Props<O, M, G>): React.JSX.Element {
   const theme = useTheme();
   const styles = useMemo(
     () => (extendStyles ? extendStyles(stylesFn<O, M, G>(theme)) : stylesFn<O, M, G>(theme)),

@@ -45,6 +45,9 @@ test("Layout @smoke", async ({ page }) => {
 
   await test.step("go to accounts", async () => {
     await layout.goToAccounts();
+    await page.waitForLoadState("networkidle");
+    // Wait for accounts list to render (React 19 concurrent rendering may defer the paint)
+    await page.getByTestId("accounts-account-row-item").first().waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("accounts.png");
   });
 
@@ -52,6 +55,8 @@ test("Layout @smoke", async ({ page }) => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
     await page.waitForLoadState("domcontentloaded");
+    // Wait for the Discover page content to render (React 19 deferred rendering)
+    await page.getByTestId("discover-title").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("discover.png", {
       mask: [page.getByTestId("live-icon-container")],
     });
@@ -75,6 +80,7 @@ test("Layout @smoke", async ({ page }) => {
 
   await test.step("can toggle discreet mode", async () => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
+    await page.getByTestId("portfolio-container").waitFor({ state: "visible" });
     await layout.toggleDiscreetMode();
     await expect.soft(page).toHaveScreenshot("discreet-mode.png", {
       mask: [page.locator("canvas")],

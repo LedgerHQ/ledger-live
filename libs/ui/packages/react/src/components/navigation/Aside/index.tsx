@@ -18,7 +18,7 @@ const Wrapper = styled(FlexBox)<ExtraWrapperProps>`
   ${typography}
 `;
 
-export default function Aside({ header, footer, children, ...props }: Props): JSX.Element {
+export default function Aside({ header, footer, children, ...props }: Props): React.JSX.Element {
   return (
     <Wrapper display="inline-flex" flexDirection="column" height="100vh" {...props}>
       {header}

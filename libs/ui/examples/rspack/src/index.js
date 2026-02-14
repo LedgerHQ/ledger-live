@@ -1,10 +1,11 @@
+"use client";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { StyleProvider } from "@ledgerhq/react-ui";
 import "@ledgerhq/react-ui/assets/fonts";
 import { App } from "./App";
 
-function Root({ children }) {
+function Root() {
   const [palette, setPalette] = React.useState("light");
   const isLight = palette === "light";
 
@@ -15,4 +16,6 @@ function Root({ children }) {
   );
 }
 
-ReactDOM.render(<Root />, document.getElementById("root"));
+// eslint-disable-next-line no-undef
+const root = createRoot(document.getElementById("root"));
+root.render(<Root />);

@@ -1,7 +1,7 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
-type CryptoIconSize = "16px" | "20px" | "24px" | "32px" | "40px" | "48px" | "56px";
+export type CryptoIconSize = "16px" | "20px" | "24px" | "32px" | "40px" | "48px" | "56px";
 
 const SIZE_TO_RADIUS: Record<CryptoIconSize, string> = {
   "16px": "4px",

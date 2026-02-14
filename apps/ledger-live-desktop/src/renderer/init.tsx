@@ -1,3 +1,4 @@
+import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
@@ -8,10 +9,6 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
-// We can't use new createRoot for now. We have issues we react-redux 7.x and lazy load of components
-// https://github.com/reduxjs/react-redux/issues/1977
-// eslint-disable-next-line react/no-deprecated
-import { render } from "react-dom";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
@@ -311,7 +308,8 @@ async function init() {
 }
 function r(Comp: React.JSX.Element) {
   if (rootNode) {
-    render(Comp, rootNode);
+    const root = createRoot(rootNode);
+    root.render(Comp);
   }
 }
 

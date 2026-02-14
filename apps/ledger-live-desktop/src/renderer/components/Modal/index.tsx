@@ -1,88 +1,48 @@
-import React, { PureComponent, createRef } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+  type UIEvent,
+  type CSSProperties,
+} from "react";
 import { createPortal } from "react-dom";
-import { connect } from "react-redux";
-import styled, { CSSProperties, DefaultTheme } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import noop from "lodash/noop";
 import { Transition, TransitionStatus } from "react-transition-group";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closeModal } from "~/renderer/actions/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import { ModalData } from "~/renderer/modals/types";
 import Snow, { isSnowTime } from "~/renderer/extra/Snow";
-import { State } from "~/renderer/reducers";
-import { Dispatch } from "redux";
+import type { State } from "~/renderer/reducers";
+
 export { default as ModalBody } from "./ModalBody";
 
-const mapStateToProps = <Name extends keyof ModalData>(
-  state: State,
-  { name, isOpened, onBeforeOpen }: Props<Name>,
-) => {
-  const data = name ? getModalData(state, name) : undefined;
-  const modalOpened = isOpened || (name && isModalOpened(state, name));
-  if (onBeforeOpen && modalOpened) {
-    onBeforeOpen({ data });
-  }
-  return {
-    isOpened: !!modalOpened,
-    data,
-  };
+const transitionsOpacity: Record<TransitionStatus, { opacity: number }> = {
+  entering: { opacity: 0 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
+  exited: { opacity: 0 },
+  unmounted: { opacity: 0 },
+};
+const transitionsScale: Record<TransitionStatus, { transform: string }> = {
+  entering: { transform: "scale(1.1)" },
+  entered: { transform: "scale(1)" },
+  exiting: { transform: "scale(1.1)" },
+  exited: { transform: "scale(1.1)" },
+  unmounted: { transform: "scale(1.1)" },
 };
 
-const mapDispatchToProps = <Name extends keyof ModalData>(
-  dispatch: Dispatch,
-  { name, onClose = noop }: Props<Name>,
-) => ({
-  onClose: name
-    ? () => {
-        dispatch(closeModal(name));
-        onClose();
-      }
-    : onClose,
-});
-
-const transitionsOpacity = {
-  entering: {
-    opacity: 0,
-  },
-  entered: {
-    opacity: 1,
-  },
-  exiting: {
-    opacity: 0,
-  },
-  exited: {
-    opacity: 0,
-  },
-};
-const transitionsScale = {
-  entering: {
-    transform: "scale(1.1)",
-  },
-  entered: {
-    transform: "scale(1)",
-  },
-  exiting: {
-    transform: "scale(1.1)",
-  },
-  exited: {
-    transform: "scale(1.1)",
-  },
-};
-const Container = styled.div.attrs<{
-  state: TransitionStatus;
-  centered?: boolean;
-  isOpened?: boolean;
-}>(p => ({
-  style: {
-    ...transitionsOpacity[p.state as keyof typeof transitionsOpacity],
-    justifyContent: p.centered ? "center" : "flex-start",
-    pointerEvents: p.isOpened ? "auto" : "none",
-  },
-}))<{
+type ContainerProps = {
   state: TransitionStatus;
   centered?: boolean;
   isOpened?: boolean;
   backdropColor?: boolean | null;
-}>`
+};
+
+const Container = styled.div<ContainerProps>`
   background-color: ${p => (p.backdropColor ? "rgba(0, 0, 0, 0.4)" : "rgba(0,0,0,0)")};
   opacity: 0;
   position: fixed;
@@ -97,15 +57,13 @@ const Container = styled.div.attrs<{
   align-items: center;
   transition: opacity 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-const BodyWrapper = styled.div.attrs<{ state: TransitionStatus }>(p => ({
-  style: {
-    ...transitionsOpacity[p.state as keyof typeof transitionsOpacity],
-    ...transitionsScale[p.state as keyof typeof transitionsScale],
-  } as CSSProperties,
-}))<{ state: TransitionStatus; width?: number }>`
+
+type BodyWrapperProps = { state: TransitionStatus; width?: number };
+
+const BodyWrapper = styled.div<BodyWrapperProps>`
   background: ${p => p.theme.colors.background.card};
   color: ${p => p.theme.colors.neutral.c80};
-  width: ${p => p.width || 500}px;
+  width: ${p => p.width ?? 500}px;
   border-radius: 3px;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
   flex-shrink: 1;
@@ -117,172 +75,202 @@ const BodyWrapper = styled.div.attrs<{ state: TransitionStatus }>(p => ({
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
   outline: none;
 `;
+
 export type RenderProps<Name extends keyof ModalData> = {
   onClose: () => void;
   data: ModalData[Name];
 };
 
-type Props<Name extends keyof ModalData> = {
+export type Props<Name extends keyof ModalData> = {
   isOpened?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
   centered?: boolean;
-  onClose?: (() => void) | undefined;
-  onHide?: (() => void) | undefined;
-  render?: (a: RenderProps<Name>) => React.ReactNode;
+  onClose?: () => void;
+  onHide?: () => void;
+  render?: (a: RenderProps<Name>) => ReactNode;
   data?: ModalData[Name];
   preventBackdropClick?: boolean;
   width?: number;
   theme?: DefaultTheme;
   name?: Name;
-  // eslint-disable-line
   onBeforeOpen?: (a: { data: ModalData[Name] | undefined }) => void;
-  // eslint-disable-line
-  backdropColor?: boolean | undefined | null;
+  backdropColor?: boolean | null;
   bodyStyle?: CSSProperties;
 };
-class Modal<Name extends keyof ModalData> extends PureComponent<
-  Props<Name>,
-  {
-    directlyClickedBackdrop: boolean;
-  }
-> {
-  state = {
-    directlyClickedBackdrop: false,
-  };
-  nodeRef = createRef<HTMLDivElement>();
 
-  componentDidMount() {
-    document.addEventListener("keyup", this.handleKeyup);
-    document.addEventListener("keydown", this.preventFocusEscape);
-  }
+function ModalInner<Name extends keyof ModalData>(props: Props<Name>) {
+  const {
+    name,
+    isOpened: isOpenedProp,
+    onClose: onCloseProp = noop,
+    onHide,
+    onBeforeOpen,
+    children,
+    render,
+    centered,
+    width,
+    backdropColor,
+    bodyStyle,
+    preventBackdropClick,
+  } = props;
 
-  componentDidUpdate({ isOpened, onHide }: Props<Name>) {
-    if (!isOpened && onHide) onHide();
-  }
+  const dispatch = useDispatch();
+  const reduxData = useSelector((state: State) => (name ? getModalData(state, name) : undefined));
+  const reduxOpened = useSelector((state: State) => (name ? isModalOpened(state, name) : false));
 
-  componentWillUnmount() {
-    document.removeEventListener("keyup", this.handleKeyup);
-    document.removeEventListener("keydown", this.preventFocusEscape);
-  }
+  const isOpened = isOpenedProp ?? reduxOpened;
+  const data = props.data ?? reduxData;
 
-  handleKeyup = (e: KeyboardEvent) => {
-    const { onClose, preventBackdropClick } = this.props;
-    if (e.key === "Escape" && onClose && !preventBackdropClick) {
-      onClose();
+  const [directlyClickedBackdrop, setDirectlyClickedBackdrop] = useState(false);
+  const nodeRef = useRef<HTMLDivElement>(null);
+
+  const onClose = useCallback(() => {
+    if (name) {
+      dispatch(closeModal(name));
     }
-  };
+    onCloseProp();
+  }, [name, onCloseProp, dispatch]);
 
-  preventFocusEscape = (e: KeyboardEvent) => {
-    if (e.key === "Tab") {
-      const { target } = e;
-      const focusableQuery =
-        "input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), *[tabindex]";
-      const modalWrapper = document.getElementById("modals");
-      if (!modalWrapper || !(target instanceof window.HTMLElement)) return;
-      const focusableElements = modalWrapper.querySelectorAll(
-        focusableQuery,
-      ) as NodeListOf<HTMLElement>;
-      if (!focusableElements.length) return;
-      const firstFocusable = focusableElements[0];
-      const lastFocusable = focusableElements[focusableElements.length - 1];
-      if (e.shiftKey && firstFocusable.isSameNode(target)) {
-        lastFocusable.focus();
-        e.stopPropagation();
-        e.preventDefault();
-      } else if (!e.shiftKey && lastFocusable.isSameNode(target)) {
-        firstFocusable.focus();
-        e.stopPropagation();
-        e.preventDefault();
+  useEffect(() => {
+    if (isOpened && onBeforeOpen) {
+      onBeforeOpen({ data });
+    }
+  }, [isOpened, data, onBeforeOpen]);
+
+  const prevOpenedRef = useRef(isOpened);
+  useEffect(() => {
+    if (prevOpenedRef.current && !isOpened && onHide) {
+      onHide();
+    }
+    prevOpenedRef.current = isOpened;
+  }, [isOpened, onHide]);
+
+  useEffect(() => {
+    const handleKeyup = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onClose && !preventBackdropClick) {
+        onClose();
       }
-    }
-  };
+    };
+    const preventFocusEscape = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        const { target } = e;
+        const focusableQuery =
+          "input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), *[tabindex]";
+        const modalWrapper = document.getElementById("modals");
+        if (!modalWrapper || !(target instanceof window.HTMLElement)) return;
+        /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
+        const focusableElements = modalWrapper.querySelectorAll(
+          focusableQuery,
+        ) as NodeListOf<HTMLElement>;
+        if (!focusableElements.length) return;
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+        if (e.shiftKey && firstFocusable.isSameNode(target)) {
+          lastFocusable.focus();
+          e.stopPropagation();
+          e.preventDefault();
+        } else if (!e.shiftKey && lastFocusable.isSameNode(target)) {
+          firstFocusable.focus();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }
+    };
+    document.addEventListener("keyup", handleKeyup);
+    document.addEventListener("keydown", preventFocusEscape);
+    return () => {
+      document.removeEventListener("keyup", handleKeyup);
+      document.removeEventListener("keydown", preventFocusEscape);
+    };
+  }, [onClose, preventBackdropClick]);
 
-  handleClickOnBackdrop = () => {
-    const { preventBackdropClick, onClose } = this.props;
-    const { directlyClickedBackdrop } = this.state;
+  const handleClickOnBackdrop = useCallback(() => {
     if (directlyClickedBackdrop && !preventBackdropClick && onClose) {
       onClose();
     }
-  };
+  }, [directlyClickedBackdrop, preventBackdropClick, onClose]);
 
-  onDirectMouseDown = () =>
-    this.setState({
-      directlyClickedBackdrop: true,
-    });
+  const setFocus = useCallback((el: HTMLDivElement | null) => {
+    if (el && !el.contains(document.activeElement)) {
+      el.focus();
+    }
+  }, []);
 
-  onIndirectMouseDown = () =>
-    this.setState({
-      directlyClickedBackdrop: false,
-    });
-
-  /** combined with tab-index 0 this will allow tab navigation into the modal disabling tab navigation behind it */
-  setFocus = (r: HTMLDivElement) => {
-    /** only pull focus if focus is out of modal ie: no input autofocused in modal */
-    if (r && !r.contains(document.activeElement)) r.focus();
-  };
-
-  swallowClick = (e: React.UIEvent) => {
+  const swallowClick = useCallback((e: UIEvent) => {
     e.preventDefault();
     e.stopPropagation();
+  }, []);
+
+  const domNode = document.getElementById("modals");
+  const renderProps: RenderProps<Name> = {
+    onClose,
+    // data is defined when modal is opened and render is used
+    /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
+    data: data as ModalData[Name],
   };
 
-  render() {
-    const domNode = document.getElementById("modals");
-    const { children, render, centered, onClose, data, isOpened, width, backdropColor, bodyStyle } =
-      this.props;
-    const renderProps = {
-      onClose: onClose!,
-      data: data!,
-    };
-    const modal = (
-      <Transition
-        in={isOpened}
-        appear
-        mountOnEnter
-        unmountOnExit
-        timeout={{
-          appear: 100,
-          enter: 100,
-          exit: 200,
-        }}
-        nodeRef={this.nodeRef}
-      >
-        {state => {
-          return (
-            <Container
-              ref={this.nodeRef}
-              data-testid="modal-backdrop"
+  const modal = (
+    <Transition
+      in={isOpened}
+      appear
+      mountOnEnter
+      unmountOnExit
+      timeout={{ appear: 100, enter: 100, exit: 200 }}
+      nodeRef={nodeRef}
+    >
+      {state => {
+        const containerStyle: CSSProperties = {
+          ...transitionsOpacity[state],
+          justifyContent: centered ? "center" : "flex-start",
+          pointerEvents: isOpened ? "auto" : "none",
+        };
+        const bodyStyleComputed: CSSProperties = {
+          ...transitionsOpacity[state],
+          ...transitionsScale[state],
+          ...(bodyStyle ?? {}),
+        };
+        return (
+          <Container
+            ref={nodeRef}
+            data-testid="modal-backdrop"
+            state={state}
+            centered={centered}
+            isOpened={isOpened}
+            onMouseDown={() => setDirectlyClickedBackdrop(true)}
+            onClick={handleClickOnBackdrop}
+            backdropColor={backdropColor}
+            style={containerStyle}
+          >
+            {isSnowTime() ? <Snow numFlakes={100} /> : null}
+            <BodyWrapper
+              tabIndex={0}
+              ref={setFocus}
               state={state}
-              centered={centered}
-              isOpened={isOpened}
-              onMouseDown={this.onDirectMouseDown}
-              onClick={this.handleClickOnBackdrop}
-              backdropColor={backdropColor}
+              width={width}
+              onClick={swallowClick}
+              onMouseDown={e => {
+                setDirectlyClickedBackdrop(false);
+                e.stopPropagation();
+              }}
+              data-testid="modal-container"
+              style={bodyStyleComputed}
             >
-              {isSnowTime() ? <Snow numFlakes={100} /> : null}
-              <BodyWrapper
-                tabIndex={0}
-                ref={this.setFocus}
-                state={state}
-                width={width}
-                onClick={this.swallowClick}
-                onMouseDown={e => {
-                  this.onIndirectMouseDown();
-                  e.stopPropagation();
-                }}
-                data-testid="modal-container"
-                style={bodyStyle}
-              >
-                {render && render(renderProps)}
-                {children}
-              </BodyWrapper>
-            </Container>
-          );
-        }}
-      </Transition>
-    );
-    return domNode ? createPortal(modal, domNode) : null;
-  }
+              {render?.(renderProps)}
+              {children}
+            </BodyWrapper>
+          </Container>
+        );
+      }}
+    </Transition>
+  );
+
+  return domNode ? createPortal(modal, domNode) : null;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Modal) as unknown as typeof Modal; // to preserve generics
+// Cast preserves generic so <Modal name="MODAL_XXX" /> infers Name from name prop
+/* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
+const Modal = ModalInner as <Name extends keyof ModalData>(
+  props: Props<Name>,
+) => React.ReactElement | null;
+
+export default Modal;

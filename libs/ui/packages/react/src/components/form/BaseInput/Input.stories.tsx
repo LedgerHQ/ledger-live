@@ -25,13 +25,13 @@ export default {
   },
 };
 
-export const Base = (args: InputProps): JSX.Element => {
+export const Base = (args: InputProps): React.JSX.Element => {
   const [value, setValue] = React.useState("");
 
   return <Input {...args} value={value} onChange={setValue} placeholder={"Placeholder"} />;
 };
 
-export const RenderSideExemple = (): JSX.Element => {
+export const RenderSideExemple = (): React.JSX.Element => {
   const [disabled, setDisabled] = useState(false);
   const [error, setError] = React.useState("");
   const [value, setValue] = React.useState("test@ledger.fr");
@@ -82,7 +82,7 @@ function deserialize(value: string) {
   return value.replace(/\./g, "");
 }
 
-export const CustomSerializer = (args: InputProps): JSX.Element => {
+export const CustomSerializer = (args: InputProps): React.JSX.Element => {
   const [value, setValue] = React.useState("");
 
   return (

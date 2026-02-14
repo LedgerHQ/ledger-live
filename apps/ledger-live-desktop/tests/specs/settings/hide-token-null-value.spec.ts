@@ -28,13 +28,13 @@ test("Hide Token Null Value", async ({ page }) => {
     const mainAccountOperationRowNoValue = page.getByTestId(
       "operation-row-mock_op_0_mock:1:ethereum:true_ethereum_1:",
     );
-    expect(mainAccountOperationRowNoValue).toBeVisible();
+    await expect(mainAccountOperationRowNoValue).toBeVisible();
     expect(await mainAccountOperationRowNoValue.textContent()).not.toContain("ETH");
 
     const mainAccountOperationWithValue = page.getByTestId(
       "operation-row-mock_op_1_mock:1:ethereum:true_ethereum_1:",
     );
-    expect(mainAccountOperationWithValue).toBeVisible();
+    await expect(mainAccountOperationWithValue).toBeVisible();
     expect(await mainAccountOperationWithValue.textContent()).toContain("ETH");
 
     await page.getByTestId("token-row-USDC").click();
@@ -43,13 +43,13 @@ test("Hide Token Null Value", async ({ page }) => {
     const tokenAccountOperationRowNoValue = page.getByTestId(
       "operation-row-mock_op_0_mock:1:ethereum:true_ethereum_1:|1",
     );
-    expect(tokenAccountOperationRowNoValue).toBeVisible();
+    await expect(tokenAccountOperationRowNoValue).toBeVisible();
     expect(await tokenAccountOperationRowNoValue.textContent()).not.toContain("USDC");
 
     const tokenAccountOperationRowWithValue = page.getByTestId(
       "operation-row-mock_op_1_mock:1:ethereum:true_ethereum_1:|1",
     );
-    expect(tokenAccountOperationRowWithValue).toBeVisible();
+    await expect(tokenAccountOperationRowWithValue).toBeVisible();
     expect(await tokenAccountOperationRowWithValue.textContent()).toContain("USDC");
   });
 
@@ -65,13 +65,13 @@ test("Hide Token Null Value", async ({ page }) => {
     const mainAccountOperationRowNoValue = page.getByTestId(
       "operation-row-mock_op_0_mock:1:ethereum:true_ethereum_1:",
     );
-    expect(mainAccountOperationRowNoValue).toBeVisible();
+    await expect(mainAccountOperationRowNoValue).toBeVisible();
     expect(await mainAccountOperationRowNoValue.textContent()).not.toContain("ETH");
 
     const mainAccountOperationWithValue = page.getByTestId(
       "operation-row-mock_op_1_mock:1:ethereum:true_ethereum_1:",
     );
-    expect(mainAccountOperationWithValue).toBeVisible();
+    await expect(mainAccountOperationWithValue).toBeVisible();
     expect(await mainAccountOperationWithValue.textContent()).toContain("ETH");
 
     await page.getByTestId("token-row-USDC").click();
@@ -84,7 +84,7 @@ test("Hide Token Null Value", async ({ page }) => {
     const tokenAccountOperationRowWithValue = page.getByTestId(
       "operation-row-mock_op_1_mock:1:ethereum:true_ethereum_1:|1",
     );
-    expect(tokenAccountOperationRowWithValue).toBeVisible();
+    await expect(tokenAccountOperationRowWithValue).toBeVisible();
     expect(await tokenAccountOperationRowWithValue.textContent()).toContain("USDC");
   });
 });

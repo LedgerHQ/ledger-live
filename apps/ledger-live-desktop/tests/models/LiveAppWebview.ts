@@ -99,14 +99,16 @@ export class LiveAppWebview {
 
   async checkDevToolsClosed() {
     const all = this.electronApp.windows();
-    const titles = await Promise.all(all.map(page => page.title()));
+    // Some windows may already be closed by the time we query titles - handle gracefully
+    const titles = await Promise.all(all.map(page => page.title().catch(() => "")));
     const devToolsIndex = titles.findIndex(title => title === "DevTools");
     const devtools = devToolsIndex !== -1 ? all[devToolsIndex] : undefined;
     await devtools?.waitForEvent("close", { timeout: this.defaultWebViewTimeout });
 
     const newAll = this.electronApp.windows();
     expect(newAll.length).toBe(1);
-    expect(Promise.all(newAll.map(w => w.title()))).resolves.not.toContain("DevTools");
+    const newTitles = await Promise.all(newAll.map(w => w.title().catch(() => "")));
+    expect(newTitles).not.toContain("DevTools");
   }
 
   async getLiveAppDappURL() {

@@ -76,16 +76,18 @@ function VirtualMenuList<
   const parentRef = useRef<HTMLDivElement>(null);
   const hasScrolledRef = useRef(false);
 
+  type ChildWithInnerProps = React.ReactElement<{ innerProps?: Record<string, unknown> }>;
+
   const childrenArray = useMemo(
     () =>
       React.Children.toArray(children).map(child => {
-        if (!React.isValidElement(child) || !child.props.innerProps) return child;
-
-        const { onMouseMove, onMouseOver, ...restInnerProps } = child.props.innerProps;
-        return React.cloneElement(
-          child as React.ReactElement<{ innerProps?: Record<string, unknown> }>,
-          { innerProps: restInnerProps },
-        );
+        if (!React.isValidElement(child)) return child;
+        const props = (child as ChildWithInnerProps).props;
+        if (!props.innerProps) return child;
+        const { onMouseMove, onMouseOver, ...restInnerProps } = props.innerProps;
+        return React.cloneElement(child as ChildWithInnerProps, {
+          innerProps: restInnerProps,
+        });
       }),
     [children],
   );

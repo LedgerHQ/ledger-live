@@ -46,8 +46,17 @@ export class PortfolioPage extends AppPage {
   @step("Navigate to asset $0")
   async navigateToAsset(asset: string) {
     const assetRowLocator = this.assetRow(asset);
-    if (!(await assetRowLocator.isVisible())) {
-      await this.showAllButton.click();
+    // Wait for the asset distribution to render before interacting
+    const isVisible = await assetRowLocator.isVisible();
+    if (!isVisible) {
+      // Asset row not immediately visible - check if "Show all" button exists
+      const showAllVisible = await this.showAllButton.isVisible();
+      if (showAllVisible) {
+        await this.showAllButton.click();
+      } else {
+        // Neither visible yet - wait for the asset row to appear (distribution still loading)
+        await assetRowLocator.waitFor({ state: "visible" });
+      }
     }
     await assetRowLocator.click();
   }

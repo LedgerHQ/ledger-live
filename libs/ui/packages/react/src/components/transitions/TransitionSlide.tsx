@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import styled from "styled-components";
@@ -52,7 +52,7 @@ const ChildrenWrapper = styled.div<{ fixed?: boolean; reverseExit?: boolean }>`
   }
 `;
 type TransitionSlideProps = Partial<
-  CSSTransitionProps & {
+  CSSTransitionProps<HTMLDivElement> & {
     children: React.ReactNode;
     fixed: boolean;
     reverseExit?: boolean;
@@ -66,12 +66,20 @@ const TransitionSlide = ({
   direction = "left",
   reverseExit,
   ...props
-}: TransitionSlideProps) => (
-  <CSSTransition {...props} timeout={duration} classNames={`transition-${direction}`}>
-    <ChildrenWrapper fixed={fixed} reverseExit={reverseExit}>
-      {children}
-    </ChildrenWrapper>
-  </CSSTransition>
-);
+}: TransitionSlideProps) => {
+  const nodeRef = useRef<HTMLDivElement>(null);
+  return (
+    <CSSTransition
+      {...props}
+      nodeRef={nodeRef}
+      timeout={duration}
+      classNames={`transition-${direction}`}
+    >
+      <ChildrenWrapper ref={nodeRef} fixed={fixed} reverseExit={reverseExit}>
+        {children}
+      </ChildrenWrapper>
+    </CSSTransition>
+  );
+};
 
 export default TransitionSlide;

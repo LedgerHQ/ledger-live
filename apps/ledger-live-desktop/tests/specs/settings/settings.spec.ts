@@ -11,6 +11,7 @@ test("Settings", async ({ page }) => {
 
   await test.step("go to settings", async () => {
     await layout.goToSettings();
+    await page.getByTestId("settings-accounts-tab").waitFor({ state: "visible" });
     await expect(page).toHaveScreenshot("settings-general-page.png");
   });
 

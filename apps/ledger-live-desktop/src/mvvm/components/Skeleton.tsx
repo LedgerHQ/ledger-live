@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
-import { connect, ConnectedProps } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { layout, LayoutProps, space, SpaceProps } from "styled-system";
-import { State } from "~/renderer/reducers";
+import type { FC, ReactNode } from "react";
 
 type OwnProps = {
   width?: number;
@@ -12,19 +12,10 @@ type OwnProps = {
   barHeight?: number;
   full?: boolean;
   mt?: string | number;
-  children?: React.ReactNode;
+  children?: ReactNode;
   show?: boolean;
 };
 
-const mapStateToProps = (state: State) => ({
-  alwaysShowSkeletons: alwaysShowSkeletonsSelector(state),
-});
-
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-type Props = PropsFromRedux & OwnProps;
 const Wrapper = styled.div<
   {
     full?: boolean;
@@ -98,16 +89,8 @@ const Item = styled.div<{
     }
   }
 `;
-const SkeletonComponent: React.FC<Props> = ({
-  width,
-  barHeight,
-  minHeight,
-  full,
-  children,
-  mt,
-  show,
-  alwaysShowSkeletons,
-}) => {
+const Skeleton: FC<OwnProps> = ({ width, barHeight, minHeight, full, children, mt, show }) => {
+  const alwaysShowSkeletons = useSelector(alwaysShowSkeletonsSelector);
   const isSkeletonVisible: boolean = show || alwaysShowSkeletons;
   const content = isSkeletonVisible ?? (isSkeletonVisible || !children) ? "" : children;
   const key = content ? "content" : "holder";
@@ -126,4 +109,4 @@ const SkeletonComponent: React.FC<Props> = ({
   );
 };
 
-export const Skeleton = connector(SkeletonComponent);
+export default Skeleton;

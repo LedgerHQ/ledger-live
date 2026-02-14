@@ -39,7 +39,11 @@ const Item = styled(Flex).attrs({
   background-color: ${p => (p.active ? p.theme.colors.opacityDefault.c10 : "unset")};
 `;
 
-export default function BarTabs({ children, onTabChange, initialActiveIndex }: Props): JSX.Element {
+export default function BarTabs({
+  children,
+  onTabChange,
+  initialActiveIndex,
+}: Props): React.JSX.Element {
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
 
   useEffect(() => {

@@ -154,7 +154,12 @@ export default class Markdown extends PureComponent<Props> {
   render() {
     const { children } = this.props;
     return (
-      <div id="terms-markdown" ref={c => (this.parent = c)}>
+      <div
+        id="terms-markdown"
+        ref={c => {
+          this.parent = c;
+        }}
+      >
         {/* @ts-expect-error ReactMarkdown being weird, also we are using v4, and v8 has been out for a while */}
         <ReactMarkdown>{children}</ReactMarkdown>
       </div>

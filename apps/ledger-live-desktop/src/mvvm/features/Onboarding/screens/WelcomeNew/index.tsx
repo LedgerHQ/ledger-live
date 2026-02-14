@@ -57,7 +57,9 @@ export function WelcomeNew() {
     <WelcomeContainer ref={containerRef}>
       {VIDEO_SLIDES.map(({ video, id }, index) => (
         <VideoBackground
-          ref={el => (videoRefs.current[index] = el)}
+          ref={el => {
+            videoRefs.current[index] = el;
+          }}
           autoPlay={index === currentSlide && isVisible}
           muted
           key={`video-${id}`}
@@ -69,7 +71,6 @@ export function WelcomeNew() {
           <source src={video} type="video/webm" />
         </VideoBackground>
       ))}
-
       <ContentOverlay>
         <TopSection>
           <Box onClick={() => handleOpenFeatureFlagsDrawer("1")}>
@@ -152,11 +153,9 @@ export function WelcomeNew() {
           </TermsAndConditionsText>
         </BottomSection>
       </ContentOverlay>
-
       {isFeatureFlagsAnalyticsPrefDisplayed && (
         <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
       )}
-
       <WalletSyncDrawer currentPage={AnalyticsPage.Onboarding} onClose={closeDrawer} />
     </WelcomeContainer>
   );

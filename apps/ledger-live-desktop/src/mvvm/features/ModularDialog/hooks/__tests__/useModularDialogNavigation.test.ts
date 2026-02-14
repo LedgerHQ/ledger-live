@@ -1,6 +1,5 @@
-import { renderHook } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { useModularDialogNavigation } from "../useModularDialogNavigation";
-import { act } from "react-dom/test-utils";
 
 describe("useModularDialogNavigation", () => {
   it("should initialize with ASSET_SELECTION and FORWARD direction", () => {

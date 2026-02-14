@@ -79,7 +79,7 @@ const Drawer = () => {
     setDrawer();
   }, [setDrawer, state?.props?.onRequestClose, track]);
 
-  const refsMapRef = useRef<Map<string, React.RefObject<HTMLDivElement>>>(new Map());
+  const refsMapRef = useRef<Map<string, React.RefObject<HTMLDivElement | null>>>(new Map());
 
   useEffect(() => {
     const refsMap = refsMapRef.current;
