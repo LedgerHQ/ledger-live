@@ -39,8 +39,30 @@ export function createRendererConfig(
       // .web.tsx/.web.ts are resolved first for desktop platform
       // This enables shared features packages with .web and .native variants
       extensions: process.env.V3
-        ? [".v3.tsx", ".v3.ts", ".web.tsx", ".web.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
-        : [".web.tsx", ".web.ts", ".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
+        ? [
+            ".v3.tsx",
+            ".v3.ts",
+            ".web.tsx",
+            ".web.ts",
+            ".tsx",
+            ".ts",
+            ".js",
+            ".jsx",
+            ".json",
+            ".lottie",
+          ]
+        : [
+            ".web.tsx",
+            ".web.ts",
+            ".tsx",
+            ".ts",
+            ".v3.tsx",
+            ".v3.ts",
+            ".js",
+            ".jsx",
+            ".json",
+            ".lottie",
+          ],
       mainFields: ["browser", "module", "main"],
       // Don't require file extensions in imports for ESM modules
       fullySpecified: false,
@@ -204,6 +226,14 @@ export function createRendererConfig(
         // Image files
         {
           test: /\.(png|jpg|jpeg|gif|svg|webp)$/,
+          type: "asset/resource",
+          generator: {
+            filename: "assets/[name]-[hash][ext]",
+          },
+        },
+        // .lottie files (dotLottie) - emit as asset, import returns URL
+        {
+          test: /\.lottie$/,
           type: "asset/resource",
           generator: {
             filename: "assets/[name]-[hash][ext]",

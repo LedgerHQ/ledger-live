@@ -34,12 +34,14 @@ const testPathIgnorePatterns = [
 ];
 
 const moduleNameMapper = {
+  ".*\\.lottie$": "<rootDir>/fileMock.js",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@features/(.*)$": "<rootDir>/../../features/$1/src",
   "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
-  "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+  "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":
     "<rootDir>/fileMock.js",
+  "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
   "styled-components": require.resolve("styled-components"),
   electron: "<rootDir>/tests/mocks/electron.ts",
   uuid: require.resolve("uuid"),

@@ -43,7 +43,7 @@ export const commonConfig: RspackOptions = {
   resolve: {
     // Platform-specific file resolution:
     // .web.tsx/.web.ts are resolved first for desktop platform
-    extensions: [".web.tsx", ".web.ts", ".tsx", ".ts", ".jsx", ".js", ".json"],
+    extensions: [".web.tsx", ".web.ts", ".tsx", ".ts", ".jsx", ".js", ".json", ".lottie"],
     alias: {
       "~": srcFolder,
       // @features/* aliases are dynamically generated for each feature
@@ -106,6 +106,13 @@ export const commonConfig: RspackOptions = {
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|webp)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/[name]-[hash][ext]",
+        },
+      },
+      {
+        test: /\.lottie$/,
         type: "asset/resource",
         generator: {
           filename: "assets/[name]-[hash][ext]",
