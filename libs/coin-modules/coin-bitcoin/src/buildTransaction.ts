@@ -6,8 +6,9 @@ import {
   type TransactionInfo as WalletTxInfo,
 } from "./wallet-btc";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 
-import type { Transaction, UtxoStrategy } from "./types";
+import type { Transaction, UtxoStrategy, BtcOperationExtra } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
@@ -51,6 +52,12 @@ export const buildTransaction = async (
 
   log("btcwallet", "building transaction", transaction);
 
+  const mainAccount = transaction.replaceTxId ? getMainAccount(account, undefined) : undefined;
+  const pendingOperations = mainAccount?.pendingOperations?.map(op => {
+    const extra = op.extra as BtcOperationExtra | undefined;
+    return extra !== undefined && extra !== null ? { hash: op.hash, extra } : { hash: op.hash };
+  });
+
   const txInfo = await wallet.buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
@@ -61,8 +68,9 @@ export const buildTransaction = async (
     sequence: transaction.rbf ? 0 : 0xffffffff,
     opReturnData,
     changeAddress,
+    originalTxId: transaction?.replaceTxId,
+    pendingOperations,
   });
-
   log("btcwallet", "txInfo", txInfo);
 
   return txInfo;

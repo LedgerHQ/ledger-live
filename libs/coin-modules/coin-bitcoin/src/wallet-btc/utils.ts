@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import * as btc from "bitcoinjs-lib";
 import { DerivationModes } from "./types";
 import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
@@ -6,6 +7,7 @@ import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "@ledgerhq/coin-framework/errors";
 import varuint from "varuint-bitcoin";
 import { NetworkInfoResponse } from "./explorer/types";
+import { bech32m } from "../bech32m";
 
 export function byteSize(count: number): number {
   if (count < 0xfd) {
@@ -179,6 +181,28 @@ export function isTaprootAddress(address: string, currency?: Currency): boolean 
   }
 }
 
+/** P2TR (witness v1) output script: OP_1 (0x51) OP_PUSH32 (0x20) <32-byte schnorr pubkey> */
+const P2TR_SCRIPT_LENGTH = 34;
+const OP_1 = 0x51;
+const OP_PUSH_32 = 0x20;
+
+/**
+ * Decode a Bitcoin output script to a base58 or bech32(m) address.
+ * Handles P2TR (Taproot) scripts that bitcoinjs-lib's fromOutputScript may not support.
+ */
+export function scriptToAddress(script: Buffer, network: { bech32: string } & btc.Network): string {
+  try {
+    return btc.address.fromOutputScript(script, network);
+  } catch (err) {
+    // P2TR (Taproot): OP_1 OP_PUSH32 <32 bytes> — bitcoinjs-lib may not support it
+    if (script.length === P2TR_SCRIPT_LENGTH && script[0] === OP_1 && script[1] === OP_PUSH_32) {
+      const words = [1, ...bech32m.toWords(Array.from(script.subarray(2, 34)))];
+      return bech32m.encode(network.bech32, words);
+    }
+    throw err;
+  }
+}
+
 export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/1f44f722d30cd14a1861c8546e6b455f73862c1e/src/bufferutils.js#L78
   varuint.encode(i, buffer, offset);
@@ -309,5 +333,52 @@ export async function getRelayFeeFloorSatVb(
     return BigNumber.max(relSatPerVB, 1);
   } catch {
     return defaultFloor;
+  }
+}
+
+/**
+ * Incremental relay fee (sat/vB) for RBF: replacement must increase fee by at least this much
+ * per vB (and in total). When the explorer does not provide incremental_fee, use a safer
+ * default (1 sat/vB) so replacements are accepted by stricter nodes.
+ *
+ * When originalFeeRateSatVb is provided, the returned bump is: if 10% of original > 1 sat/vB
+ * then use 10%, otherwise use 1 sat/vB (e.g. 15 sat/vB → 10% = 1.5 → bump 2; 5 sat/vB → 10% = 0.5 → bump 1).
+ */
+export async function getIncrementalFeeFloorSatVb(
+  explorer: unknown,
+  originalFeeRateSatVb?: BigNumber,
+): Promise<BigNumber> {
+  const defaultBump = new BigNumber(1);
+
+  // Minimum bump: max(ceil(10% of original), 1 sat/vB)
+  const tenPercentBump =
+    originalFeeRateSatVb !== undefined &&
+    originalFeeRateSatVb.isFinite() &&
+    originalFeeRateSatVb.gte(0)
+      ? originalFeeRateSatVb.times(0.1).integerValue(BigNumber.ROUND_CEIL)
+      : defaultBump;
+  const minBumpFromRule = BigNumber.max(tenPercentBump, defaultBump);
+
+  try {
+    const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };
+    if (typeof maybeExplorer?.getNetwork !== "function") {
+      return BigNumber.max(minBumpFromRule, defaultBump);
+    }
+
+    const net = await maybeExplorer.getNetwork();
+    const incremental = net?.incremental_fee;
+    if (incremental === undefined || incremental === null) {
+      return BigNumber.max(minBumpFromRule, defaultBump);
+    }
+
+    const relSatPerVB = btcPerKbToSatPerVB(incremental);
+    if (!relSatPerVB.isFinite() || relSatPerVB.lt(0)) {
+      return BigNumber.max(minBumpFromRule, defaultBump);
+    }
+
+    const bump = BigNumber.max(relSatPerVB, minBumpFromRule, defaultBump);
+    return bump;
+  } catch {
+    return BigNumber.max(minBumpFromRule, defaultBump);
   }
 }
