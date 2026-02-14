@@ -15,6 +15,7 @@ import { fromAsyncOperation } from "./observable";
 type SignPsbtOptions = {
   accountPath: string;
   addressFormat: string;
+  finalizePsbt: boolean;
   onDeviceSignatureRequested?: () => void;
   onDeviceSignatureGranted?: () => void;
   onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
@@ -36,7 +37,7 @@ const signPsbtWithDevice = async (
       accountPath: options.accountPath,
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       addressFormat: options.addressFormat as AddressFormat,
-      finalizePsbt: true,
+      finalizePsbt: options.finalizePsbt,
       onDeviceSignatureRequested: options.onDeviceSignatureRequested,
       onDeviceSignatureGranted: options.onDeviceSignatureGranted,
       onDeviceStreaming: options.onDeviceStreaming,
@@ -45,7 +46,7 @@ const signPsbtWithDevice = async (
 
 export const buildSignRawOperation =
   (signerContext: SignerContext): AccountBridge<Transaction>["signRawOperation"] =>
-  ({ account, deviceId, transaction: psbt }) =>
+  ({ account, deviceId, transaction: psbt, broadcast }) =>
     fromAsyncOperation(async o => {
       const { currency } = account;
       const walletAccount = getWalletAccount(account);
@@ -63,6 +64,7 @@ export const buildSignRawOperation =
       const psbtResult = await signPsbtWithDevice(signerContext, deviceId, currency, psbtBuffer, {
         accountPath: `${walletAccount.params.path}/${walletAccount.params.index}'`,
         addressFormat: getAddressFormatDerivationMode(account.derivationMode),
+        finalizePsbt: broadcast ?? true,
         onDeviceSignatureRequested: () => o.next({ type: "device-signature-requested" }),
         onDeviceSignatureGranted: () => o.next({ type: "device-signature-granted" }),
         onDeviceStreaming: arg => o.next({ type: "device-streaming", ...arg }),
@@ -90,13 +92,15 @@ export const buildSignRawOperation =
         extra: { psbt: true },
       });
 
+      const base64Psbt = psbtResult.psbt.toString("base64");
+
       o.next({
         type: "signed",
         signedOperation: {
           operation,
           // Ensure non-empty signature: if not finalized, fall back to the PSBT (base64)
-          signature: psbtResult.tx || psbtResult.psbt.toString("base64"),
-          rawData: { psbtSigned: psbtResult.psbt.toString("base64") },
+          signature: psbtResult.tx || base64Psbt,
+          rawData: { psbtSigned: base64Psbt },
         },
       });
     });

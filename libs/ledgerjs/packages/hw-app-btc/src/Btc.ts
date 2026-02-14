@@ -11,9 +11,10 @@ import { serializeTransactionOutputs } from "./serializeTransaction";
 import type { SignP2SHTransactionArg } from "./signP2SHTransaction";
 import { splitTransaction } from "./splitTransaction";
 import type { Transaction } from "./types";
-export type { AddressFormat };
+import type { SignPsbtBufferOptions } from "./signPsbt/types";
 import { signP2SHTransaction } from "./signP2SHTransaction";
 import { checkIsBtcLegacy, getAppAndVersion } from "./getAppAndVersion";
+export type { AddressFormat };
 
 /**
  * @class Btc
@@ -210,38 +211,47 @@ export default class Btc {
   }
 
   /**
-   * Sign a PSBT Buffer
+   * Signs a PSBT buffer using the Bitcoin app (new protocol).
    *
-   * This method can handle PSBTs with or without BIP32 derivation information.
-   * It processes a PSBT buffer and signs the transaction inputs according to the
-   * wallet policy and derivation paths.
+   * - If the PSBT is v2, it is deserialized directly.
+   * - If the PSBT is v0, it is converted to v2 internally.
+   * - The account type (legacy, wrapped segwit, native segwit, taproot) is
+   *   inferred from PSBT data when possible, or from the provided options.
    *
-   * @param {Buffer} psbt - The PSBT (Partially Signed Bitcoin Transaction) buffer to be signed
-   * @param {Object} [opts] - Optional configuration for signing
-   * @param {boolean} [opts.finalizePsbt] - Whether to finalize the PSBT after signing (default: true)
-   * @param {string} [opts.accountPath] - BIP32 derivation path for the account (e.g., "m/84'/0'/0'")
-   * @param {AddressFormat} [opts.addressFormat] - Address format to use for signing (e.g., 'p2wpkh', 'p2sh-p2wpkh', 'p2pkh')
+   * Note: All internal inputs (inputs that can be signed by the device) must
+   * belong to the same account and use the same account type. Mixed input types
+   * or inputs from different accounts are not supported and will throw an error.
    *
-   * @returns {Promise<{psbt: Buffer, tx: string}>} A promise that resolves to an object containing the signed PSBT buffer and the transaction hex string
+   * @param psbtBuffer - Raw PSBT buffer (v0 or v2) to be signed.
+   * @param options - Signing configuration.
+   * @param options.finalizePsbt - Whether to finalize the PSBT after signing
+   *   (default: true). If true, the returned `tx` is a fully signed
+   *   transaction ready for broadcast.
+   * @param options.accountPath - BIP32 account path (for example,
+   *   "m/84'/0'/0'") used when BIP32 derivation information is missing from
+   *   the PSBT. Required if the PSBT does not contain BIP32 derivation data.
+   * @param options.addressFormat - Explicit address format to use when the
+   *   account type cannot be inferred from the PSBT ("legacy", "p2sh",
+   *   "bech32", or "bech32m").
+   * @param options.onDeviceSignatureRequested - Callback when signature is about to be requested from device.
+   * @param options.onDeviceSignatureGranted - Callback when the first signature is granted by device.
+   * @param options.onDeviceStreaming - Callback to track signing progress with index and total.
+   * @param options.addressScanLimit - Maximum address index to scan per
+   *   change level (0 and 1) when populating missing BIP32 derivations
+   *   (default: 20). This is **not** a BIP44 gap limit — no on-chain usage
+   *   data is checked. Increase this value if your wallet uses addresses
+   *   beyond index 19.
    *
-   * @example
-   * const { psbt: signedPsbt, tx } = await btc.signPsbtBuffer(psbtBuffer, {
-   *   finalizePsbt: true,
-   *   accountPath: "m/84'/0'/0'",
-   *   addressFormat: 'p2wpkh'
-   * });
+   * @returns An object containing:
+   * - `psbt`: the serialized PSBT (with signatures; finalized if
+   *   `finalizePsbt` is true).
+   * - `tx`: the fully signed transaction hex string, only when
+   *   `finalizePsbt` is true; omitted when not finalizing.
    */
   async signPsbtBuffer(
     psbt: Buffer,
-    opts?: {
-      finalizePsbt?: boolean;
-      accountPath?: string;
-      addressFormat?: AddressFormat;
-      onDeviceSignatureRequested?: () => void;
-      onDeviceSignatureGranted?: () => void;
-      onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
-    },
-  ): Promise<{ psbt: Buffer; tx: string }> {
+    opts: SignPsbtBufferOptions,
+  ): Promise<{ psbt: Buffer; tx?: string }> {
     if (this._impl instanceof BtcOld) {
       throw new TypeError("signPsbtBuffer is not supported with the legacy Bitcoin app");
     }

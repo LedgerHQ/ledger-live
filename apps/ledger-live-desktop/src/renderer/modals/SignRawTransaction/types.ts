@@ -30,5 +30,6 @@ export type StepProps = {
   manifestId?: string;
   manifestName?: string;
   location?: HOOKS_TRACKING_LOCATIONS;
+  broadcast?: boolean;
 };
 export type St = Step<StepId, StepProps>;
