@@ -733,6 +733,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Use speculos websocket interface instead of Rest API",
   },
+  SPECULOS_USE_CONTAINER_POOL: {
+    def: false,
+    parser: boolParser,
+    desc: "Use container pooling for Speculos in CI to reuse containers and avoid network reset issues",
+  },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v5",
     parser: stringParser,

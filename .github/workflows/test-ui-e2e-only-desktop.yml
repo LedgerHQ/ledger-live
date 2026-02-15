@@ -113,6 +113,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
+      SPECULOS_USE_CONTAINER_POOL: true
     runs-on: [ledger-live-4xlarge-e2e]
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}

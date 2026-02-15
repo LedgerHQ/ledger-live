@@ -37,7 +37,24 @@ export type SpeculosDeviceInternal =
 
 // FIXME we need to figure out a better system, using a filesystem file?
 const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
+const useContainerPool = process.env.CI && getEnv("SPECULOS_USE_CONTAINER_POOL");
 const data: Record<string, SpeculosDeviceInternal | undefined> = {};
+
+// Container pool for reusing Docker containers in CI
+type PooledContainer = {
+  containerName: string;
+  model: DeviceModelId;
+  firmware: string;
+  seed: string;
+  ports: Awaited<ReturnType<typeof getPorts>>;
+  inUse: boolean;
+  lastUsed: number;
+  useCount: number;
+};
+
+const containerPool: Map<string, PooledContainer> = new Map();
+const MAX_CONTAINER_USES = 50; // Recreate container after this many uses to prevent degradation
+const CONTAINER_IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 export function getMemorySpeculosDeviceInternal(id: string): SpeculosDeviceInternal | undefined {
   return data[id];
@@ -76,15 +93,76 @@ export async function releaseSpeculosDevice(id: string) {
   const obj = data[id];
 
   if (obj) {
+    if (useContainerPool) {
+      // In pool mode, just mark container as available and close transport
+      await obj.transport.close();
+      delete data[id];
+
+      // Find and mark container as not in use
+      for (const pooled of containerPool.values()) {
+        if (pooled.containerName === id) {
+          pooled.inUse = false;
+          pooled.lastUsed = Date.now();
+          log("speculos", `released container ${id} to pool (uses: ${pooled.useCount})`);
+          return;
+        }
+      }
+    }
     await obj.destroy();
   }
 }
 
 /**
+ * Generate a pool key based on device configuration
+ */
+function getPoolKey(model: DeviceModelId, firmware: string, seed: string): string {
+  return `${model}-${firmware}-${seed}`;
+}
+
+/**
+ * Generate a stable container name for pooled containers
+ */
+function getPooledContainerName(model: DeviceModelId, firmware: string, seed: string): string {
+  const hash = seed.split('').reduce((acc, char) => {
+    return ((acc << 5) - acc) + char.charCodeAt(0);
+  }, 0);
+  const shortHash = Math.abs(hash).toString(36).substring(0, 8);
+  return `speculos-pool-${reverseModelMap[model]}-${firmware.replace(/\./g, '')}-${shortHash}`;
+}
+
+/**
  * Close all speculos devices
  */
-export function closeAllSpeculosDevices() {
-  return Promise.all(Object.keys(data).map(releaseSpeculosDevice));
+export async function closeAllSpeculosDevices() {
+  await Promise.all(Object.keys(data).map(releaseSpeculosDevice));
+
+  // Clean up container pool in CI
+  if (useContainerPool) {
+    log("speculos", `cleaning up ${containerPool.size} pooled containers`);
+    await cleanupContainerPool();
+  }
+}
+
+/**
+ * Clean up all pooled containers
+ */
+async function cleanupContainerPool() {
+  const cleanupPromises = Array.from(containerPool.values()).map(async (pooled) => {
+    return new Promise<void>((resolve, reject) => {
+      exec(`docker rm -f ${pooled.containerName}`, (error, stdout, stderr) => {
+        if (error) {
+          log("speculos-error", `failed to cleanup ${pooled.containerName}: ${error} ${stderr}`);
+          reject(error);
+        } else {
+          log("speculos", `cleaned up pooled container ${pooled.containerName}`);
+          resolve();
+        }
+      });
+    });
+  });
+
+  await Promise.all(cleanupPromises);
+  containerPool.clear();
 }
 
 // to keep in sync from https://github.com/LedgerHQ/speculos/tree/master/speculos/cxlib
@@ -173,9 +251,174 @@ export function conventionalAppSubpath(
   return `${reverseModelMap[model]}/${firmware}/${appName.replace(/ /g, "")}/app_${appVersion}.elf`;
 }
 
+/**
+ * Check if a Docker container is running and healthy
+ */
+async function isContainerHealthy(containerName: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    exec(`docker ps --filter "name=${containerName}" --filter "status=running" --format "{{.Names}}"`, (error, stdout) => {
+      if (error || !stdout.trim()) {
+        resolve(false);
+      } else {
+        resolve(stdout.trim() === containerName);
+      }
+    });
+  });
+}
+
+/**
+ * Stop the current Speculos process in a running container
+ */
+async function stopSpeculosInContainer(containerName: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    exec(`docker exec ${containerName} pkill -9 speculos || true`, (error, stdout, stderr) => {
+      if (error && !stderr.includes("no process found")) {
+        log("speculos-error", `failed to stop speculos in ${containerName}: ${error} ${stderr}`);
+        reject(error);
+      } else {
+        log("speculos", `stopped speculos process in ${containerName}`);
+        // Give it a moment to clean up
+        setTimeout(resolve, 500);
+      }
+    });
+  });
+}
+
+/**
+ * Start a new Speculos app in an existing container
+ */
+async function startSpeculosInContainer(
+  containerName: string,
+  model: DeviceModelId,
+  firmware: string,
+  appPath: string,
+  seed: string,
+  dependency?: string,
+  dependencies?: Dependency[],
+): Promise<void> {
+  const sdk = inferSDK(firmware, reverseModelMap[model]);
+
+  const speculosArgs = [
+    "--model", getSpeculosModel(model),
+    appPath,
+    ...(dependency ? ["-l", `${dependency}:${dependency}`] : []),
+    ...(dependencies !== undefined
+      ? dependencies.flatMap(dep => ["-l", `${dep.name}:${dep.name}`])
+      : []),
+    ...(sdk ? ["--sdk", sdk] : []),
+    "--display", "headless",
+    ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []),
+    ...(isSpeculosWebsocket
+      ? ["--apdu-port", "40000", "--button-port", "42000", "--automation-port", "43000"]
+      : ["--api-port", "40000"]),
+    "--seed", seed,
+  ].join(" ");
+
+  return new Promise((resolve, reject) => {
+    const cmd = `docker exec -d ${containerName} sh -c "speculos ${speculosArgs}"`;
+    log("speculos", `starting app in container: ${cmd}`);
+
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        log("speculos-error", `failed to start speculos in ${containerName}: ${error} ${stderr}`);
+        reject(error);
+      } else {
+        log("speculos", `started speculos in ${containerName}`);
+        // Give Speculos time to initialize
+        setTimeout(resolve, 1000);
+      }
+    });
+  });
+}
+
 interface Dependency {
   name: string;
   appVersion?: string;
+}
+
+/**
+ * Get or create a pooled container for reuse
+ */
+async function getOrCreatePooledContainer(
+  model: DeviceModelId,
+  firmware: string,
+  seed: string,
+  coinapps: string,
+): Promise<PooledContainer> {
+  const poolKey = getPoolKey(model, firmware, seed);
+
+  // Check if we have an available container in the pool
+  let pooled = containerPool.get(poolKey);
+
+  if (pooled) {
+    // Check if container is healthy
+    const isHealthy = await isContainerHealthy(pooled.containerName);
+
+    if (isHealthy && pooled.useCount < MAX_CONTAINER_USES) {
+      // Mark as in use and return
+      pooled.inUse = true;
+      pooled.useCount++;
+      log("speculos", `reusing pooled container ${pooled.containerName} (use ${pooled.useCount}/${MAX_CONTAINER_USES})`);
+      return pooled;
+    } else {
+      // Container is unhealthy or exceeded max uses, remove it
+      log("speculos", `removing unhealthy or overused container ${pooled.containerName}`);
+      await new Promise<void>((resolve) => {
+        exec(`docker rm -f ${pooled!.containerName}`, () => resolve());
+      });
+      containerPool.delete(poolKey);
+    }
+  }
+
+  // Create a new pooled container
+  const containerName = getPooledContainerName(model, firmware, seed);
+  const ports = await getPorts(isSpeculosWebsocket);
+
+  log("speculos", `creating new pooled container ${containerName}`);
+
+  // Create container without starting Speculos yet (we'll start it per-app)
+  const createParams = [
+    "run", "-d",
+    "-v", `${coinapps}:/speculos/apps`,
+    ...(isSpeculosWebsocket
+      ? [
+          "-p", `${ports.apduPort}:40000`,
+          "-p", `${ports.vncPort}:41000`,
+          "-p", `${ports.buttonPort}:42000`,
+          "-p", `${ports.automationPort}:43000`,
+        ]
+      : [
+          "-p", `${ports.apiPort}:40000`,
+          "-p", `${ports.vncPort}:41000`,
+        ]),
+    "--name", containerName,
+    "--restart", "unless-stopped",
+    process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
+    "tail", "-f", "/dev/null", // Keep container alive without running speculos yet
+  ];
+
+  return new Promise((resolve, reject) => {
+    exec(`docker ${createParams.join(" ")}`, async (error, stdout, stderr) => {
+      if (error) {
+        log("speculos-error", `failed to create pooled container: ${error} ${stderr}`);
+        reject(error);
+      } else {
+        pooled = {
+          containerName,
+          model,
+          firmware,
+          seed,
+          ports,
+          inUse: true,
+          lastUsed: Date.now(),
+          useCount: 1,
+        };
+        containerPool.set(poolKey, pooled);
+        log("speculos", `created pooled container ${containerName}`);
+        resolve(pooled);
+      }
+    });
+  });
 }
 
 export type DeviceParams = {
@@ -211,13 +454,21 @@ export async function createSpeculosDevice(
     dependency,
     dependencies,
   } = arg;
+
+  const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
+  const appPath = `./apps/${subpath}`;
+
+  // Use container pooling if enabled in CI
+  if (useContainerPool) {
+    return createSpeculosDevicePooled(arg, appPath, maxRetry);
+  }
+
+  // Original implementation for non-pooled mode
   const speculosID = `speculosID-${randomUUID()}`;
   const ports = await getPorts(isSpeculosWebsocket);
 
   const sdk = inferSDK(firmware, model);
 
-  const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
-  const appPath = `./apps/${subpath}`;
 
   const params = [
     "run",
@@ -399,3 +650,110 @@ export async function createSpeculosDevice(
 
   return device;
 }
+
+/**
+ * Create a speculos device using container pooling (CI mode)
+ * Reuses existing containers and swaps apps instead of creating new containers
+ */
+async function createSpeculosDevicePooled(
+  arg: DeviceParams,
+  appPath: string,
+  maxRetry: number,
+): Promise<SpeculosDevice> {
+  const { model, firmware, appName, appVersion, seed, coinapps, dependency, dependencies } = arg;
+
+  try {
+    // Get or create a pooled container
+    const pooled = await getOrCreatePooledContainer(model, firmware, seed, coinapps);
+    const containerName = pooled.containerName;
+    const ports = pooled.ports;
+
+    log("speculos", `using pooled container ${containerName} for ${appName}:${appVersion}`);
+
+    // Stop any existing Speculos process in the container
+    await stopSpeculosInContainer(containerName);
+
+    // Start the new app in the container
+    await startSpeculosInContainer(
+      containerName,
+      model,
+      firmware,
+      appPath,
+      seed,
+      dependency,
+      dependencies,
+    );
+
+    // Wait a bit for Speculos to be ready
+    await delay(1500);
+
+    // Create transport connection
+    let transport: SpeculosTransport;
+    if (isSpeculosWebsocket) {
+      transport = await SpeculosTransportWebsocket.open({
+        apduPort: ports.apduPort as number,
+        buttonPort: ports.buttonPort as number,
+        automationPort: ports.automationPort as number,
+      });
+    } else {
+      transport = await DeviceManagementKitTransportSpeculos.open({
+        apiPort: ports.apiPort?.toString(),
+      });
+    }
+
+    // Create a dummy process object (container is managed separately)
+    const dummyProcess = {
+      kill: () => {},
+      on: () => {},
+      stdout: { on: () => {} },
+      stderr: { on: () => {} },
+    } as unknown as ChildProcessWithoutNullStreams;
+
+    // Store the device in the data map
+    if (isSpeculosWebsocket) {
+      data[containerName] = {
+        process: dummyProcess,
+        apduPort: ports.apduPort as number,
+        buttonPort: ports.buttonPort as number,
+        automationPort: ports.automationPort as number,
+        transport: transport as SpeculosTransportWebsocket,
+        destroy: async () => {
+          // In pooled mode, destroy just closes the transport
+          await transport.close();
+        },
+      };
+    } else {
+      data[containerName] = {
+        process: dummyProcess,
+        apiPort: ports.apiPort?.toString(),
+        transport: transport as DeviceManagementKitTransportSpeculos,
+        destroy: async () => {
+          // In pooled mode, destroy just closes the transport
+          await transport.close();
+        },
+      };
+    }
+
+    const device = {
+      id: containerName,
+      transport,
+      appPath,
+      ports,
+    };
+
+    if (arg.onSpeculosDeviceCreated != null) {
+      await arg.onSpeculosDeviceCreated(device);
+    }
+
+    return device;
+  } catch (error) {
+    log("speculos-error", `failed to create pooled device: ${error}`);
+    if (maxRetry > 0) {
+      log("speculos", `retrying pooled device creation (${maxRetry} retries left)`);
+      await delay(1000);
+      return createSpeculosDevicePooled(arg, appPath, maxRetry - 1);
+    }
+    throw error;
+  }
+}
+
