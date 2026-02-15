@@ -41,7 +41,8 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
   }
 
   setEnv("SPECULOS_API_PORT", device.port);
-  process.env.SPECULOS_API_PORT = device.port.toString();
+  // ????
+  // process.env.SPECULOS_API_PORT = device.port.toString();
 
   if (device.appVersion) {
     allure.parameter("App name:", device.appName || "");

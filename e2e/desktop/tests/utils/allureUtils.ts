@@ -51,32 +51,32 @@ export async function captureArtifacts(
     });
   }
 
-  if (isLastRetry(testInfo)) {
-    const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
+  // if (isLastRetry(testInfo)) {
+  const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
 
-    await page.evaluate(filePath => {
-      window.saveLogs(filePath);
-    }, filePath);
+  await page.evaluate(filePath => {
+    window.saveLogs(filePath);
+  }, filePath);
 
-    await testInfo.attach("Test logs", {
-      path: filePath,
-      contentType: "application/json",
-    });
+  await testInfo.attach("Test logs", {
+    path: filePath,
+    contentType: "application/json",
+  });
 
-    await attachIfExists(
-      testInfo,
-      "Network failures",
-      testInfo.outputPath("network.log"),
-      "text/plain",
-    );
+  await attachIfExists(
+    testInfo,
+    "Network failures",
+    testInfo.outputPath("network.log"),
+    "text/plain",
+  );
 
-    await attachIfExists(
-      testInfo,
-      "Chromium netlog",
-      testInfo.outputPath("netlog.json"),
-      "application/json",
-    );
-  }
+  await attachIfExists(
+    testInfo,
+    "Chromium netlog",
+    testInfo.outputPath("netlog.json"),
+    "application/json",
+  );
+  // }
 
   const video = page.video();
   const videoPath = video ? await video.path() : null;
