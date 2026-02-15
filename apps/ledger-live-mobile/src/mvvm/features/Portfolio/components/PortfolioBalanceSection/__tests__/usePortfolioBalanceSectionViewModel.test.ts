@@ -14,7 +14,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.state).toBe("noSigner");
     });
 
-    it("should return 'noFund' state when isReadOnlyMode is false and showAssets is false", () => {
+    it("should return 'noAccounts' state when isReadOnlyMode is false and showAssets is false", () => {
       const { result } = renderHook(() =>
         usePortfolioBalanceSectionViewModel({
           showAssets: false,
@@ -22,7 +22,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
         }),
       );
 
-      expect(result.current.state).toBe("noFund");
+      expect(result.current.state).toBe("noAccounts");
     });
 
     it("should return 'normal' state when isReadOnlyMode is false and showAssets is true", () => {
@@ -36,7 +36,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.state).toBe("normal");
     });
 
-    it("should prioritize noSigner over noFund when both conditions are met", () => {
+    it("should prioritize noSigner over noAccounts when both conditions are met", () => {
       const { result } = renderHook(() =>
         usePortfolioBalanceSectionViewModel({
           showAssets: false,
