@@ -9,6 +9,20 @@ import { isLastRetry } from "tests/utils/testInfoUtils";
 const readFileAsync = promisify(readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";
 
+async function attachIfExists(
+  testInfo: TestInfo,
+  name: string,
+  filePath: string,
+  contentType: string,
+) {
+  try {
+    const data = await readFileAsync(filePath);
+    await testInfo.attach(name, { body: data, contentType });
+  } catch {
+    // File does not exist → silently ignore
+  }
+}
+
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {
     await allure.tms(id);
@@ -49,6 +63,20 @@ export async function captureArtifacts(
       contentType: "application/json",
     });
   }
+
+  await attachIfExists(
+    testInfo,
+    "Network failures",
+    testInfo.outputPath("network.log"),
+    "text/plain",
+  );
+
+  await attachIfExists(
+    testInfo,
+    "Chromium netlog",
+    testInfo.outputPath("netlog.json"),
+    "application/json",
+  );
 
   const video = page.video();
   const videoPath = video ? await video.path() : null;
