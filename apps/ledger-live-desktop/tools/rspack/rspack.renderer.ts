@@ -2,7 +2,13 @@ import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, lldRoot } from "./utils";
+import {
+  buildRendererEnv,
+  buildDotEnvDefine,
+  DOTENV_FILE,
+  lldRoot,
+  getRsdoctorPlugin,
+} from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron renderer process
@@ -225,6 +231,7 @@ export function createRendererConfig(
       ],
     },
     plugins: [
+      ...getRsdoctorPlugin(),
       // ElectronTargetPlugin for proper node/electron module handling
       new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({

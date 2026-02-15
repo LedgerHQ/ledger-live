@@ -1,4 +1,5 @@
 import childProcess from "child_process";
+import type { Plugins } from "@rspack/core";
 import fs from "fs";
 import path from "path";
 import * as dotenv from "dotenv";
@@ -101,3 +102,16 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
 }
 
 export { pkg, GIT_REVISION, PRERELEASE, CHANNEL, SENTRY_URL };
+
+/**
+ * When RSDOCTOR env is set (and not "0"), returns the RsdoctorRspackPlugin instance
+ * so build analysis runs for all bundles. By default rsdoctor is off.
+ */
+export function getRsdoctorPlugin(): Plugins {
+  if (process.env.RSDOCTOR && process.env.RSDOCTOR !== "0") {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+    return [new RsdoctorRspackPlugin()] as Plugins;
+  }
+  return [];
+}

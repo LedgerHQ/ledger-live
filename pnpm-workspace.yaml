@@ -160,3 +160,4 @@ overrides:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  - "@rsdoctor/*"
