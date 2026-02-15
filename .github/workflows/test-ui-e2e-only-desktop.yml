@@ -233,8 +233,6 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          REMOTE_SPECULOS: "true"
-          GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
