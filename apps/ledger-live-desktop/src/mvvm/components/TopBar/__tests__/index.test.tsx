@@ -75,13 +75,14 @@ describe("TopBar", () => {
     expect(screen.queryByTestId("topbar-action-button-synchronize")).toBeNull();
   });
 
-  it("renders all slot actions and help when hasAccounts is true", () => {
+  it("renders all slot actions when hasAccounts is true", () => {
     render(<TopBar />, {
       initialState: getDefaultInitialState({
         accounts: [mockAccount],
       }),
     });
 
+    expect(screen.getByTestId("topbar-action-button-my-ledger")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-synchronize")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-notifications")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-discreet")).toBeVisible();

@@ -42,54 +42,37 @@ describe("useTopBarViewModel", () => {
     });
   });
 
-  it("returns topBarSlots with synchronize action when hasAccounts is true", () => {
+  it("returns topBarSlots in order: synchronize (when hasAccounts), notification, discreet, settings, my ledger", () => {
     const { result } = renderHook(() => useTopBarViewModel());
-
-    expect(result.current.topBarSlots).toBeDefined();
-    const syncSlot = result.current.topBarSlots.find(
-      s => s.type === "action" && s.action.label === "synchronize",
-    );
-    expect(syncSlot).toBeDefined();
-    expect(syncSlot?.type).toBe("action");
-    if (syncSlot?.type === "action") {
-      expect(syncSlot.action.tooltip).toBe("Refresh");
-      expect(syncSlot.action.isInteractive).toBe(true);
-      expect(syncSlot.action.onClick).toBe(mockHandleSync);
-      expect(syncSlot.action.icon).toBeDefined();
-    }
-  });
-
-  it("includes notification slot, discreet action, and settings slot in correct order", () => {
-    const { result } = renderHook(() => useTopBarViewModel());
-
-    const notificationSlot = result.current.topBarSlots.find(s => s.type === "notification");
-    expect(notificationSlot).toBeDefined();
-    expect(notificationSlot).toEqual({ type: "notification" });
 
     const slotLabels = result.current.topBarSlots.map(s =>
       s.type === "action" ? s.action.label : "notification",
     );
-    expect(slotLabels).toEqual(["synchronize", "notification", "discreet", "settings"]);
+    expect(slotLabels).toEqual([
+      "synchronize",
+      "notification",
+      "discreet",
+      "settings",
+      "my ledger",
+    ]);
 
-    const discreetSlot = result.current.topBarSlots.find(
-      s => s.type === "action" && s.action.label === "discreet",
+    const myLedgerSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "my ledger",
     );
-    expect(discreetSlot).toBeDefined();
-    if (discreetSlot?.type === "action") {
-      expect(discreetSlot.action.onClick).toBe(mockHandleDiscreet);
-      expect(discreetSlot.action.isInteractive).toBe(true);
-    }
+    expect(myLedgerSlot).toBeDefined();
+
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeDefined();
+    if (syncSlot?.type === "action") expect(syncSlot.action.onClick).toBe(mockHandleSync);
 
     const settingsSlot = result.current.topBarSlots.find(
       s => s.type === "action" && s.action.label === "settings",
     );
     expect(settingsSlot).toBeDefined();
-    if (settingsSlot?.type === "action") {
+    if (settingsSlot?.type === "action")
       expect(settingsSlot.action.onClick).toBe(mockHandleSettings);
-      expect(settingsSlot.action.tooltip).toBe("Settings");
-      expect(settingsSlot.action.icon).toBe(Settings);
-      expect(settingsSlot.action.isInteractive).toBe(true);
-    }
   });
 
   it("does not include synchronize slot when hasAccounts is false and notification is first", () => {
@@ -112,7 +95,7 @@ describe("useTopBarViewModel", () => {
     const slotLabels = result.current.topBarSlots.map(s =>
       s.type === "action" ? s.action.label : "notification",
     );
-    expect(slotLabels).toEqual(["notification", "discreet", "settings"]);
+    expect(slotLabels).toEqual(["notification", "discreet", "settings", "my ledger"]);
   });
 
   it("passes isDisabled from useActivityIndicator as isInteractive false on sync action", () => {

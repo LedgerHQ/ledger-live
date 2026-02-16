@@ -22,7 +22,6 @@ export function NotificationIndicator() {
         isInteractive={isInteractive}
         onClick={handleOpenNotificationCenter}
         icon={icon}
-        data-testid="topbar-action-button-notifications"
       />
     </>
   );
