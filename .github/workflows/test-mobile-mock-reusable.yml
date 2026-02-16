@@ -537,6 +537,7 @@ jobs:
             --listen-port 8080 \
             --mode transparent \
             --showhost \
+            -s tools/scripts/mitmproxy-ignore-websockets.py \
             -w /tmp/mitmproxy_dump.mitm &
           echo $! > /tmp/mitmproxy.pid
           sleep 3
