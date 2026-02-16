@@ -15,7 +15,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
-import { useBridgeRecipientValidation } from "./useBridgeRecipientValidation";
+import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/hooks/useBridgeRecipientValidation";
 import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import type {
@@ -25,7 +25,7 @@ import type {
   MatchedAccount,
   BridgeValidationErrors,
   RecentAddress,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/types";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
   return domain.status === "loading" || domain.status === "queued";

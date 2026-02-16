@@ -18,7 +18,7 @@ import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import type { RecentAddress } from "../types";
+import type { RecentAddress } from "@ledgerhq/live-common/flows/send/types";
 
 type RecentAddressTileProps = Readonly<{
   recentAddress: RecentAddress;

@@ -2,7 +2,7 @@ import React from "react";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { RecentAddressTile } from "./RecentAddressTile";
-import type { RecentAddress } from "../types";
+import type { RecentAddress } from "@ledgerhq/live-common/flows/send/types";
 
 type RecentAddressesSectionProps = Readonly<{
   recentAddresses: RecentAddress[];
