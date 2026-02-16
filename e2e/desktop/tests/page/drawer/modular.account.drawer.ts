@@ -1,5 +1,6 @@
 import { step } from "../../misc/reporters/step";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Drawer } from "../../component/drawer.component";
 
 export class ModularAccountDrawer extends Drawer {
