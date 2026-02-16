@@ -378,9 +378,7 @@ jobs:
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on:
       [
-        "${{ github.event_name == 'schedule' && 'performance-pool' || 'general-pool' }}",
-        macOS,
-        ARM64,
+        project-portugal
       ]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
