@@ -13,7 +13,21 @@ import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbo
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
 import { cn } from "LLD/utils/cn";
-import type { AddressListItemProps } from "../types";
+
+type AddressListItemProps = Readonly<{
+  address: string;
+  name?: string;
+  description?: string;
+  date?: Date;
+  balance?: string;
+  balanceFormatted?: string;
+  onSelect?: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  showSendTo?: boolean;
+  isLedgerAccount?: boolean;
+  disabled?: boolean;
+  hideDescription?: boolean;
+}>;
 
 export function AddressListItem({
   address,

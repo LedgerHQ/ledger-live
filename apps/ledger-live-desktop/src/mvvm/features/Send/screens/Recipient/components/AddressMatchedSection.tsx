@@ -5,7 +5,7 @@ import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { AddressListItem } from "./AddressListItem";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
-import type { AddressSearchResult } from "../types";
+import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/types";
 
 type AddressMatchedSectionProps = Readonly<{
   searchResult: AddressSearchResult;
