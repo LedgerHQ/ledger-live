@@ -3,6 +3,7 @@ import { useWalletV4TourDrawerViewModel } from "../useWalletV4TourDrawerViewMode
 
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
+  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 const tourEnabledOverrides = {
