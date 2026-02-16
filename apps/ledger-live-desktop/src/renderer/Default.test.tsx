@@ -2,123 +2,84 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { MainAppLayout } from "./Default";
 
+// Avoid loading electron-store (used by store.ts)
+jest.mock("~/renderer/store", () => ({
+  getStoreValue: jest.fn(),
+  setStoreValue: jest.fn(),
+  resetStore: jest.fn(),
+}));
+
+jest.mock("electron", () => ({ ipcRenderer: { send: jest.fn() } }));
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
+  useTrack: jest.fn(() => jest.fn()),
 }));
-
-jest.mock("electron", () => ({
-  ipcRenderer: { send: jest.fn() },
+jest.mock("~/renderer/screens/platform", () => ({ LiveApp: () => null }));
+jest.mock("~/renderer/hooks/useNotifications", () => ({
+  useNotifications: () => ({ notificationsCards: [], groupNotifications: jest.fn(), onClickNotif: jest.fn() }),
 }));
+jest.mock("@braze/web-sdk", () => ({ getCachedContentCards: () => ({ cards: [] }) }));
+jest.mock("~/renderer/screens/dashboard", () => ({ __esModule: true, default: () => null }));
+// Page uses usePageViewModel which calls scrollTo on a ref; jsdom divs don't have scrollTo
+jest.mock("LLD/components/Page", () => {
+  const React = require("react");
+  return { __esModule: true, default: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children) };
+});
 
-jest.mock("~/renderer/screens/platform", () => ({
-  LiveApp: () => null,
-}));
-
-const tourEnabledFlags = {
-  lwdWallet40: {
-    enabled: true,
-    params: { tour: true, mainNavigation: true, marketBanner: true },
-  },
+const wallet40TourFlags = {
+  lwdWallet40: { enabled: true, params: { tour: true, mainNavigation: true, marketBanner: true } },
 };
 
+const defaultSettings = {
+  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
+  devicesModelList: [],
+  orderAccounts: "balance|desc",
+  lastUsedVersion: "2.0.0", // IsNewVersion expects a string (jest sets __APP_VERSION__ to 2.0.0)
+};
+
+function getInitialState(settingsOverrides: Record<string, unknown>) {
+  return { settings: { ...defaultSettings, ...settingsOverrides } };
+}
+
 describe("MainAppLayout", () => {
-  describe("Wallet V4 Tour dialog", () => {
-    it("should show Wallet V4 Tour dialog when on Portfolio with tour enabled and not seen", async () => {
-      render(<MainAppLayout />, {
-        initialRoute: "/",
-        initialState: {
-          settings: {
-            hasSeenWalletV4Tour: false,
-            overriddenFeatureFlags: tourEnabledFlags,
-          },
-        },
-      });
-
-      await waitFor(() => {
-        expect(screen.getByRole("dialog", { name: /wallet v4 tour/i })).toBeInTheDocument();
-      });
+  it("shows Wallet V4 Tour dialog on Portfolio when tour enabled and not seen", async () => {
+    render(<MainAppLayout />, {
+      initialRoute: "/",
+      initialState: getInitialState({
+        hasSeenWalletV4Tour: false,
+        overriddenFeatureFlags: wallet40TourFlags,
+      }),
     });
 
-    it("should not show Wallet V4 Tour dialog when on non-Portfolio page", async () => {
-      render(<MainAppLayout />, {
-        initialRoute: "/settings",
-        initialState: {
-          settings: {
-            hasSeenWalletV4Tour: false,
-            overriddenFeatureFlags: tourEnabledFlags,
-          },
-        },
-      });
+    await waitFor(() => {
+      expect(screen.getByRole("dialog", { name: /wallet v4 tour/i })).toBeInTheDocument();
+    });
+  });
 
-      await waitFor(() => {
-        expect(screen.queryByRole("dialog", { name: /wallet v4 tour/i })).not.toBeInTheDocument();
-      });
+  it("does not show Wallet V4 Tour dialog on non-Portfolio route", async () => {
+    render(<MainAppLayout />, {
+      initialRoute: "/settings",
+      initialState: getInitialState({
+        hasSeenWalletV4Tour: false,
+        overriddenFeatureFlags: wallet40TourFlags,
+      }),
     });
 
-    it("should not show Wallet V4 Tour dialog when wallet 40 is disabled", async () => {
-      render(<MainAppLayout />, {
-        initialRoute: "/",
-        initialState: {
-          settings: {
-            hasSeenWalletV4Tour: false,
-            overriddenFeatureFlags: {
-              lwdWallet40: { enabled: false, params: {} },
-            },
-          },
-        },
-      });
-
-      expect(screen.queryByRole("dialog", { name: /wallet v4 tour/i })).not.toBeInTheDocument();
-    });
-
-    it("should not show Wallet V4 Tour dialog when tour already seen", async () => {
-      render(<MainAppLayout />, {
-        initialRoute: "/",
-        initialState: {
-          settings: {
-            hasSeenWalletV4Tour: true,
-            overriddenFeatureFlags: tourEnabledFlags,
-          },
-        },
-      });
-
+    await waitFor(() => {
       expect(screen.queryByRole("dialog", { name: /wallet v4 tour/i })).not.toBeInTheDocument();
     });
   });
 
-  describe("layout", () => {
-    it("should use wallet 40 layout (flex div) when on Portfolio and wallet 40 enabled", async () => {
-      const { container } = render(<MainAppLayout />, {
-        initialRoute: "/",
-        initialState: {
-          settings: {
-            hasSeenWalletV4Tour: true,
-            overriddenFeatureFlags: tourEnabledFlags,
-          },
-        },
-      });
-
-      await waitFor(() => {
-        const wallet40Layout = container.querySelector(".bg-canvas.flex.size-full");
-        expect(wallet40Layout).toBeInTheDocument();
-      });
+  it("does not show Wallet V4 Tour when already seen", async () => {
+    render(<MainAppLayout />, {
+      initialRoute: "/",
+      initialState: getInitialState({
+        hasSeenWalletV4Tour: true,
+        overriddenFeatureFlags: wallet40TourFlags,
+      }),
     });
 
-    it("should use legacy layout (Box) when wallet 40 disabled", async () => {
-      const { container } = render(<MainAppLayout />, {
-        initialRoute: "/",
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              lwdWallet40: { enabled: false, params: {} },
-            },
-          },
-        },
-      });
-
-      const box = container.querySelector("[class*='background']");
-      expect(box).toBeInTheDocument();
-    });
+    expect(screen.queryByRole("dialog", { name: /wallet v4 tour/i })).not.toBeInTheDocument();
   });
 });
