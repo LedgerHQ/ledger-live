@@ -3,7 +3,10 @@ import { expect } from "@playwright/test";
 import { OnboardingPage } from "../../page/onboarding.page";
 
 test.use({
-  settings: { hasSeenAnalyticsOptInPrompt: false },
+  settings: {
+    hasSeenAnalyticsOptInPrompt: false,
+    hasSeenWalletV4Tour: true,
+  },
   featureFlags: {
     welcomeScreenVideoCarousel: { enabled: false },
     noah: { enabled: false },
