@@ -56,6 +56,7 @@ test.describe("Main navigation", () => {
       await app.mainNavigation.openTargetFromMainNavigation("card");
       await app.mainNavigation.openNotificationCenter();
       await app.mainNavigation.clickActivityIndicator();
+      await app.mainNavigation.openMyLedger();
       await app.mainNavigation.openSettings();
     },
   );
