@@ -22,7 +22,7 @@ const baseConfig: PartialInitializationConfiguration = {
   applicationId,
   env: Config.DATADOG_ENV || "",
   site: Config.DATADOG_SITE || "",
-  serviceName: Config.APP_NAME || "",
+  serviceName: Config.DATADOG_SERVICE_NAME || "",
 };
 
 /**
