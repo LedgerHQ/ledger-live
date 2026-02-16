@@ -2639,7 +2639,8 @@
     "nanoX": "Nano X",
     "market": "Market",
     "earn": "Earn",
-    "card": "Card"
+    "card": "Card",
+    "swap": "Swap"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -8450,5 +8451,11 @@
       "continue": "Continue",
       "explore": "Explore my new portfolio"
     }
+  },
+  "mainNavigation": {
+    "home": "Home",
+    "swap": "Swap",
+    "earn": "Earn",
+    "card": "Card"
   }
 }
