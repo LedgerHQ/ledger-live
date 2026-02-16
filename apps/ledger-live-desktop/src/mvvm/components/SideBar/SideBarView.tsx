@@ -63,6 +63,7 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
               icon={Wallet}
               activeIcon={Wallet}
               label={t("sidebar.accounts")}
+              disabled={viewModel.isAccountsDisabled}
             />
             <SideBarItem
               value="swap"
