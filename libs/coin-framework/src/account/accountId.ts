@@ -47,11 +47,18 @@ export function encodeAccountId({
   currencyId,
   xpubOrAddress,
   derivationMode,
+  customData,
 }: AccountIdParams): string {
-  return `${ensureNoColon(type, "type")}:${ensureNoColon(version, "version")}:${ensureNoColon(
+  const base = `${ensureNoColon(type, "type")}:${ensureNoColon(version, "version")}:${ensureNoColon(
     currencyId,
     "currencyId",
   )}:${safeEncodeXpubOrAddress(xpubOrAddress)}:${ensureNoColon(derivationMode, "derivationMode")}`;
+
+  if (customData && customData.length > 0) {
+    return `${base}:${safeEncodeXpubOrAddress(customData)}`;
+  }
+
+  return base;
 }
 export function encodeTokenAccountId(accountId: string, token: TokenCurrency): string {
   return accountId + "+" + safeEncodeTokenId(token.id);
@@ -90,13 +97,16 @@ export async function decodeTokenAccountId(id: string): Promise<{
 export function decodeAccountId(accountId: string): AccountIdParams {
   invariant(typeof accountId === "string", "accountId is not a string");
   const splitted = accountId.split(":");
-  invariant(splitted.length === 5, "invalid size for accountId");
-  const [type, version, currencyId, encodedXpubOrAddress, derivationMode] = splitted;
+  invariant(splitted.length >= 5, "invalid size for accountId");
+  const [type, version, currencyId, encodedXpubOrAddress, derivationMode, customData] = splitted;
   return {
     type,
     version,
     currencyId,
     xpubOrAddress: safeDecodeXpubOrAddress(encodedXpubOrAddress),
     derivationMode: asDerivationMode(derivationMode),
+    ...(customData && {
+      customData: safeDecodeXpubOrAddress(customData),
+    }),
   };
 }
