@@ -27,11 +27,11 @@ async function getDeviceTransactionConfig({
     });
   }
 
-  if (tag) {
+  if (typeof tag === "number") {
     fields.push({
       type: "text",
       label: "Tag",
-      value: tag ? String(tag) : "",
+      value: String(tag),
     });
   }
 
