@@ -5,6 +5,7 @@ import type {
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
   PaginatedTransactionResponse,
+  SuiObjectResponse,
 } from "@mysten/sui/client";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
@@ -2271,5 +2272,98 @@ describe("getCoinsForAmount", () => {
       expect(result[3].balance).toBe("100");
       expect(mockApi.getCoins).toHaveBeenCalledTimes(2);
     });
+  });
+});
+
+describe("withBatchedMultiGetObjects", () => {
+  const createMockClient = () => {
+    const multiGetObjects = jest.fn(
+      async (params: { ids: string[]; options?: Record<string, boolean> }) => {
+        if (params.ids.length > 50) {
+          throw new Error("Input exceeds limit of 50");
+        }
+        return params.ids.map(
+          id =>
+            ({
+              data: {
+                objectId: id,
+                version: "1",
+                digest: `digest-${id}`,
+              },
+            }) as SuiObjectResponse,
+        );
+      },
+    );
+    return { client: { multiGetObjects } as unknown as SuiClient, multiGetObjects };
+  };
+
+  it("should pass through when <= 50 objects", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 30 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids, options: { showBcs: true } });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(1);
+    expect(result).toHaveLength(30);
+  });
+
+  it("should batch when > 50 objects", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 120 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids, options: { showBcs: true } });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(3);
+    expect(multiGetObjects).toHaveBeenNthCalledWith(1, {
+      ids: ids.slice(0, 50),
+      options: { showBcs: true },
+    });
+    expect(multiGetObjects).toHaveBeenNthCalledWith(2, {
+      ids: ids.slice(50, 100),
+      options: { showBcs: true },
+    });
+    expect(multiGetObjects).toHaveBeenNthCalledWith(3, {
+      ids: ids.slice(100, 120),
+      options: { showBcs: true },
+    });
+    expect(result).toHaveLength(120);
+    expect((result[0] as any).data.objectId).toBe("0xobj0");
+    expect((result[119] as any).data.objectId).toBe("0xobj119");
+  });
+
+  it("should handle exactly 50 objects without batching", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 50 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(1);
+    expect(result).toHaveLength(50);
+  });
+
+  it("should handle exactly 51 objects with batching", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 51 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(2);
+    expect(result).toHaveLength(51);
   });
 });

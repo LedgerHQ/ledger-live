@@ -54,6 +54,7 @@ type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
+const MULTI_GET_OBJECTS_LIMIT = 50;
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
@@ -96,6 +97,35 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
 
   const result = await execute(apiMap[url]);
   return result;
+}
+
+/**
+ * Wraps a SuiClient to batch multiGetObjects calls in chunks of 50,
+ * working around the SUI RPC limit.
+ */
+export function withBatchedMultiGetObjects(client: SuiClient): SuiClient {
+  return new Proxy(client, {
+    get(target, prop, receiver) {
+      if (prop === "multiGetObjects") {
+        return async (params: Parameters<SuiClient["multiGetObjects"]>[0]) => {
+          const { ids, options } = params;
+          if (ids.length <= MULTI_GET_OBJECTS_LIMIT) {
+            return target.multiGetObjects(params);
+          }
+          const results = [];
+          for (let i = 0; i < ids.length; i += MULTI_GET_OBJECTS_LIMIT) {
+            const chunk = await target.multiGetObjects({
+              ids: ids.slice(i, i + MULTI_GET_OBJECTS_LIMIT),
+              options,
+            });
+            results.push(...chunk);
+          }
+          return results;
+        };
+      }
+      return Reflect.get(target, prop, receiver);
+    },
+  });
 }
 
 export const getAllBalancesCached = makeLRUCache(
@@ -950,7 +980,7 @@ const createTransactionForDelegate = async (address: string, transaction: Create
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, api);
+    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
   });
@@ -981,7 +1011,7 @@ const createTransactionForUndelegate = async (address: string, transaction: Crea
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, api);
+    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
   });
@@ -1015,7 +1045,7 @@ const createTransactionForOthers = async (address: string, transaction: CreateEx
     }
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, api);
+    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
   });
