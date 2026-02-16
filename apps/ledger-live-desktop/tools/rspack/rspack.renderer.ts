@@ -75,6 +75,9 @@ export function createRendererConfig(
       alias: {
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
+        // E2E hack: slow down all navigations by 1s (patch useNavigate)
+        "react-router-original": require.resolve("react-router", { paths: [lldRoot] }),
+        "react-router": path.resolve(lldRoot, "src", "renderer", "react-router-patched.ts"),
         "styled-components": styledComponentsPath,
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
