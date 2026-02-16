@@ -262,8 +262,8 @@ const MainAppContent = ({
   </>
 );
 
-// Main app layout component that handles the main navigation after onboarding
-const MainAppLayout = () => {
+// Main app layout component that handles the main navigation after onboarding (exported for testing)
+export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const {
