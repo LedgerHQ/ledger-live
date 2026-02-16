@@ -1,6 +1,7 @@
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
+import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
 
 const useTopBarViewModel = () => {
@@ -13,6 +14,7 @@ const useTopBarViewModel = () => {
     tooltip: activityIndicatorTooltip,
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
+  const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
 
   const topBarSlots: TopBarSlot[] = [
     ...(hasAccounts
@@ -48,6 +50,16 @@ const useTopBarViewModel = () => {
         icon: settingsIcon,
         isInteractive: true,
         onClick: handleSettings,
+      },
+    },
+    {
+      type: "action",
+      action: {
+        label: "my ledger",
+        tooltip: myLedgerTooltip,
+        icon: myLedgerIcon,
+        isInteractive: true,
+        onClick: handleMyLedger,
       },
     },
   ];

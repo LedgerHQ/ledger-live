@@ -7953,6 +7953,9 @@
     },
     "notificationIndicator": {
       "tooltip": "Notifications"
+    },
+    "myLedger": {
+      "tooltip": "My Ledger"
     }
   },
   "geoBlocking": {

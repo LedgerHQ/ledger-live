@@ -11,9 +11,8 @@ export function TopBarActionButton({
   isInteractive,
   onClick,
   icon,
-  "data-testid": dataTestId,
 }: TopBarActionButtonProps) {
-  const testId = dataTestId ?? `topbar-action-button-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  const testId = `topbar-action-button-${label.replace(/\s+/g, "-").toLowerCase()}`;
 
   return (
     <div className="flex items-center gap-12">
