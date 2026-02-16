@@ -20,6 +20,7 @@ import { MainTabBar } from "LLM/components/MainTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import CardLandingNavigator from "LLM/features/Card";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { MainNavigatorTopBarHeader } from "./MainNavigatorTopBarHeader";
@@ -203,6 +204,32 @@ export default function MainNavigator() {
               managerLockAwareCallback(() => {
                 navigation.navigate(NavigatorName.Discover, {
                   screen: ScreenName.DiscoverScreen,
+                });
+              });
+            },
+          })}
+        />
+      )}
+      {shouldDisplayWallet40MainNav && (
+        <Tab.Screen
+          name={NavigatorName.CardTab}
+          component={CardLandingNavigator}
+          options={{
+            tabBarIcon: props => (
+              <TabIcon
+                Icon={IconsLegacy.CardMedium}
+                i18nKey="tabs.card"
+                testID="tab-bar-card"
+                {...props}
+              />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              e.preventDefault();
+              managerLockAwareCallback(() => {
+                navigation.navigate(NavigatorName.CardTab, {
+                  screen: ScreenName.Card,
                 });
               });
             },
