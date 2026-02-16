@@ -17,14 +17,22 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("~/renderer/screens/platform", () => ({ LiveApp: () => null }));
 jest.mock("~/renderer/hooks/useNotifications", () => ({
-  useNotifications: () => ({ notificationsCards: [], groupNotifications: jest.fn(), onClickNotif: jest.fn() }),
+  useNotifications: () => ({
+    notificationsCards: [],
+    groupNotifications: jest.fn(),
+    onClickNotif: jest.fn(),
+  }),
 }));
 jest.mock("@braze/web-sdk", () => ({ getCachedContentCards: () => ({ cards: [] }) }));
 jest.mock("~/renderer/screens/dashboard", () => ({ __esModule: true, default: () => null }));
 // Page uses usePageViewModel which calls scrollTo on a ref; jsdom divs don't have scrollTo
 jest.mock("LLD/components/Page", () => {
   const React = require("react");
-  return { __esModule: true, default: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children) };
+  return {
+    __esModule: true,
+    default: ({ children }: { children: React.ReactNode }) =>
+      React.createElement("div", null, children),
+  };
 });
 
 const wallet40TourFlags = {
