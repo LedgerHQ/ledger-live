@@ -279,6 +279,7 @@ const MainAppLayout = () => {
     isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+
   return (
     <>
       <IsNewVersion />
