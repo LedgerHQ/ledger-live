@@ -356,6 +356,21 @@ describe("useAddAccountFlowNavigation", () => {
       );
     });
 
+    it("navigateToViewKeyApprove should navigate to view key approve step", () => {
+      const { result } = renderHook(() =>
+        useAddAccountFlowNavigation({
+          selectedAccounts: [],
+        }),
+      );
+
+      result.current.navigateToViewKeyApprove();
+
+      expect(mockGoToStep).toHaveBeenCalledTimes(1);
+      expect(mockGoToStep).toHaveBeenCalledWith(
+        ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_APPROVE,
+      );
+    });
+
     it("navigateToScanAccounts should navigate to scan accounts step", () => {
       const { result } = renderHook(() =>
         useAddAccountFlowNavigation({
