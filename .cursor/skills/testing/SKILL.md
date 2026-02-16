@@ -34,8 +34,8 @@ pnpm test:jest --coverage    # Coverage report
 ```bash
 # Test a coin module in libs/coin-modules
 # example for libs/coin-modules/coin-sui
-pnpn coin:sui test # Run all unit tests
-pnpm coin:sui test "filename" # Run specifit test
+pnpm coin:sui test # Run all unit tests
+pnpm coin:sui test "filename" # Run specific test
 pnpm coin:sui test-integ # Run all integration tests (slow)
 ---
 
