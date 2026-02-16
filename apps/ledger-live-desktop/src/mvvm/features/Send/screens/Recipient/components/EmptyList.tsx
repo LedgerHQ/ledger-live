@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { AddressValidationError as AddressValidationErrorType } from "../types";
+import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/types";
 import { StatusMessage } from "./StatusMessage";
 
 type EmptyListProps =

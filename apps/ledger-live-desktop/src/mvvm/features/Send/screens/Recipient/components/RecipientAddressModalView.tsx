@@ -12,7 +12,7 @@ import type {
   AddressSearchResult,
   RecentAddress,
   AddressValidationError as AddressValidationErrorType,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/types";
 
 type RecipientAddressModalViewProps = Readonly<{
   searchValue: string;

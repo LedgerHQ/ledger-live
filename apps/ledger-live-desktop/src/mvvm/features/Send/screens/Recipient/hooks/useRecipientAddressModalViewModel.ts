@@ -13,9 +13,9 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import type { RecentAddress } from "../types";
+import type { RecentAddress } from "@ledgerhq/live-common/flows/send/types";
+import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/hooks/useRecipientSearchState";
 import { useAddressValidation } from "./useAddressValidation";
-import { useRecipientSearchState } from "./useRecipientSearchState";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 
