@@ -75,5 +75,3 @@ function OnboardScreenView({
 export default function OnboardScreen(props: OnboardScreenProps) {
   return <OnboardScreenView {...useOnboardScreenViewModel(props)} />;
 }
-
-export { useOnboardScreenViewModel } from "./useOnboardScreenViewModel";
