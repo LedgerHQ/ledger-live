@@ -808,6 +808,7 @@ type Feature_Wallet40_Params = {
   quickActionCtas: boolean;
   mainNavigation: boolean;
   tour: boolean;
+  lazyOnboarding: boolean;
 
   //Specifics
   newReceiveDialog?: boolean;
