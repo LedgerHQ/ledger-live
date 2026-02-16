@@ -1,14 +1,16 @@
-import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo, useState } from "react";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
+import type { WarningReason } from "LLD/features/AddAccountDrawer/domain";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
   ADD_ACCOUNT_PAGE_NAME,
-} from "./analytics/addAccount.types";
-import useAddAccountAnalytics from "./analytics/useAddAccountAnalytics";
-import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, WarningReason } from "./domain";
-import { getAccountToReturn } from "./utils/getAccountToReturn";
+} from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
+import { getAccountToReturn } from "LLD/features/AddAccountDrawer/utils/getAccountToReturn";
+import { ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP } from "./domain";
 import { useNavigation } from "./useNavigation";
 
 interface UseAddAccountFlowNavigationProps {
@@ -36,7 +38,7 @@ export const useAddAccountFlowNavigation = ({
         setWarningReason(reason);
         setEmptyAccount(account);
       }
-      goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING);
+      goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING);
     },
     [goToStep, warningReason, emptyAccount],
   );
@@ -48,10 +50,10 @@ export const useAddAccountFlowNavigation = ({
         const { account: accountToReturn, parent } = getAccountToReturn(account, originalCurrency);
         onAccountSelected(accountToReturn, parent);
       } else {
-        goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT);
+        goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT);
       }
     },
-    [originalCurrency, onAccountSelected, goToStep],
+    [onAccountSelected, originalCurrency, goToStep],
   );
 
   const navigateToEditAccountName = useCallback(
@@ -61,32 +63,40 @@ export const useAddAccountFlowNavigation = ({
         const { account: accountToReturn, parent } = getAccountToReturn(account, originalCurrency);
         onAccountSelected(accountToReturn, parent);
       } else {
-        goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME);
+        goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME);
       }
     },
-    [originalCurrency, onAccountSelected, goToStep],
+    [onAccountSelected, originalCurrency, goToStep],
   );
 
   const navigateToSelectAccount = useCallback(() => {
-    goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT);
+    goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT);
   }, [goToStep]);
 
   const navigateToScanAccounts = useCallback(() => {
-    goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS);
+    goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS);
   }, [goToStep]);
 
   const navigateToAccountsAdded = useCallback(() => {
-    goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED);
+    goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED);
   }, [goToStep]);
 
   const navigateToConnectDevice = useCallback(() => {
-    goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE);
+    goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE);
   }, [goToStep]);
+
+  const navigateToViewKeyWarning = useCallback(() => {
+    goToStep(ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_WARNING);
+  }, [goToStep]);
+
+  const closeDrawer = useCallback(() => {
+    setDrawer();
+  }, []);
 
   const navigateBack = useMemo(
     (track: boolean = true) => {
       switch (currentStep) {
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME: {
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME: {
           return () => {
             if (track) {
               trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -102,7 +112,7 @@ export const useAddAccountFlowNavigation = ({
             }
           };
         }
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT: {
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT: {
           return () => {
             if (track) {
               trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -120,7 +130,7 @@ export const useAddAccountFlowNavigation = ({
             }
           };
         }
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT: {
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT: {
           return () => {
             if (track) {
               trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -132,10 +142,10 @@ export const useAddAccountFlowNavigation = ({
             navigateToAccountsAdded();
           };
         }
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
-        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
+        case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
         default: {
           return undefined;
         }
@@ -156,6 +166,7 @@ export const useAddAccountFlowNavigation = ({
     accountToFund,
     currentStep,
     emptyAccount,
+    closeDrawer,
     goToStep,
     navigateBack,
     navigateToAccountsAdded,
@@ -165,6 +176,7 @@ export const useAddAccountFlowNavigation = ({
     navigateToScanAccounts,
     navigateToSelectAccount,
     navigateToWarningScreen,
+    navigateToViewKeyWarning,
     navigationDirection,
     warningReason,
   };

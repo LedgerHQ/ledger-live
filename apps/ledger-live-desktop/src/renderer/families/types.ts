@@ -25,6 +25,7 @@ import {
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
+import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 
 export type AddressCellProps<O extends Operation> = {
   operation: O;
@@ -389,6 +390,11 @@ export type LLDCoinFamily<
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
   };
+
+  /**
+   * Component allowing to fully customize the add account flow in the drawer
+   */
+  ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
 };
 
 export type FieldComponentProps<

@@ -1,44 +1,36 @@
-import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { Flex, Text } from "@ledgerhq/react-ui/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDrawer.types";
-import AnimatedScreenWrapper from "../ModularDrawer/components/AnimatedScreenWrapper";
-import { BackButtonArrow } from "../ModularDrawer/components/BackButton";
-import { AccountSelection } from "../ModularDrawer/screens/AccountSelection";
-import HeaderGradient from "./components/HeaderGradient";
-import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
-import AccountsAdded from "./screens/AccountsAdded";
-import AccountsWarning from "./screens/AccountsWarning";
-import ConnectYourDevice from "./screens/ConnectYourDevice";
-import EditAccountName from "./screens/EditAccountName";
-import FundAccount from "./screens/FundAccount";
-import ScanAccounts from "./screens/ScanAccounts";
-import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
 import { useDispatch } from "LLD/hooks/redux";
+import styled from "styled-components";
+import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { Flex } from "@ledgerhq/react-ui/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { ModularDrawerAddAccountStep } from "LLD/features/AddAccountDrawer/domain";
+import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import AnimatedScreenWrapper from "LLD/features/ModularDrawer/components/AnimatedScreenWrapper";
+import { BackButtonArrow } from "LLD/features/ModularDrawer/components/BackButton";
+import { AccountSelection } from "LLD/features/ModularDrawer/screens/AccountSelection";
+import HeaderGradient from "LLD/features/AddAccountDrawer/components/HeaderGradient";
+import AccountsAdded from "LLD/features/AddAccountDrawer/screens/AccountsAdded";
+import AccountsWarning from "LLD/features/AddAccountDrawer/screens/AccountsWarning";
+import ConnectYourDevice from "LLD/features/AddAccountDrawer/screens/ConnectYourDevice";
+import ScanAccounts from "LLD/features/AddAccountDrawer/screens/ScanAccounts";
+import EditAccountName from "LLD/features/AddAccountDrawer/screens/EditAccountName";
+import FundAccount from "LLD/features/AddAccountDrawer/screens/FundAccount";
+import { ADD_ACCOUNT_FLOW_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
+import {
+  ANALYTICS_PROPERTY_FLOW,
+  Title,
+  type ModularDrawerAddAccountFlowManagerProps,
+} from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import { setFlowValue } from "~/renderer/reducers/modularDrawer";
-import { getLLDCoinFamily } from "~/renderer/families";
-import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
-
-export const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
-
-export type ModularDrawerAddAccountFlowManagerProps = {
-  currency: CryptoOrTokenCurrency;
-  onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void;
-};
-
-export const Title = styled(Text)`
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--palette-text-shade100);
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-bottom: 16px;
-`;
+import {
+  ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP,
+  type AleoModularDrawerAddAccountStep,
+} from "./AddAccountDrawer/domain";
+import { useAddAccountFlowNavigation } from "./AddAccountDrawer/useAddAccountFlowNavigation";
+import { ViewKeyWarning } from "./AddAccountDrawer/ViewKeyWarning";
 
 const StepContainer = styled(Flex)`
   flex: 1;
@@ -52,6 +44,7 @@ const ModularDrawerAddAccountFlowManager = ({
   onAccountSelected,
 }: ModularDrawerAddAccountFlowManagerProps) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult>();
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
@@ -64,12 +57,11 @@ const ModularDrawerAddAccountFlowManager = ({
     accountToEdit,
     accountToFund,
     navigateBack,
+    navigateToViewKeyWarning,
     navigateToWarningScreen,
     navigateToEditAccountName,
     navigateToFundAccount,
     navigateToSelectAccount,
-    navigateToScanAccounts,
-    navigateToAccountsAdded,
     navigateToConnectDevice,
   } = useAddAccountFlowNavigation({
     selectedAccounts,
@@ -83,28 +75,14 @@ const ModularDrawerAddAccountFlowManager = ({
   const handleConnect = useCallback(
     (result: AppResult) => {
       setConnectAppResult(result);
-      navigateToScanAccounts();
+      navigateToViewKeyWarning();
     },
-    [navigateToScanAccounts],
+    [navigateToViewKeyWarning],
   );
 
-  const dispatch = useDispatch();
-
-  const specific = getLLDCoinFamily(cryptoCurrency.family);
-  const CustomModularDrawerAddAccountFlowManager = specific?.ModularDrawerAddAccountFlowManager;
-
-  if (CustomModularDrawerAddAccountFlowManager) {
-    return (
-      <CustomModularDrawerAddAccountFlowManager
-        currency={currency}
-        onAccountSelected={onAccountSelected}
-      />
-    );
-  }
-
-  const renderStepContent = (step: ModularDrawerAddAccountStep) => {
+  const renderStepContent = (step: AleoModularDrawerAddAccountStep) => {
     switch (step) {
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
         return (
           <StepContainer paddingX="8px" data-test-id="content">
             <ConnectYourDevice
@@ -114,7 +92,13 @@ const ModularDrawerAddAccountFlowManager = ({
             />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.VIEW_KEY_WARNING:
+        return (
+          <StepContainer paddingX="8px" data-test-id="content">
+            <ViewKeyWarning />
+          </StepContainer>
+        );
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
         if (!connectAppResult) {
           throw new Error("Missing 'connectAppResult'");
         }
@@ -126,14 +110,12 @@ const ModularDrawerAddAccountFlowManager = ({
               onRetry={navigateToConnectDevice}
               onComplete={accounts => {
                 setSelectedAccounts(accounts);
-                navigateToAccountsAdded();
               }}
-              analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
               navigateToWarningScreen={navigateToWarningScreen}
             />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
         return (
           <StepContainer paddingX="8px" data-test-id="content">
             <AccountsAdded
@@ -145,7 +127,7 @@ const ModularDrawerAddAccountFlowManager = ({
             />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
         if (!warningReason) {
           throw new Error("Missing 'warningReason'");
         }
@@ -161,7 +143,7 @@ const ModularDrawerAddAccountFlowManager = ({
             />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME:
         if (!accountToEdit) {
           throw new Error("Missing 'accountToEdit'");
         }
@@ -170,7 +152,7 @@ const ModularDrawerAddAccountFlowManager = ({
             <EditAccountName account={accountToEdit} navigateBack={navigateBack} />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:
         if (!accountToFund) {
           throw new Error("Missing 'accountToFund'");
         }
@@ -179,7 +161,7 @@ const ModularDrawerAddAccountFlowManager = ({
             <FundAccount account={accountToFund} currency={cryptoCurrency} />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:
+      case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:
         dispatch(setFlowValue(ADD_ACCOUNT_FLOW_NAME));
         return (
           <StepContainer data-test-id="content">
@@ -209,14 +191,14 @@ const ModularDrawerAddAccountFlowManager = ({
       data-test-id="add-account-animated"
     >
       <HeaderGradient
-        currentStep={currentStep}
+        currentStep={currentStep as ModularDrawerAddAccountStep}
         warningReason={warningReason}
         data-test-id="header-gradient"
       />
       {navigateBack && <BackButtonArrow onBackClick={navigateBack} />}
       <AnimatedScreenWrapper
         key={currentStep}
-        screenKey={currentStep}
+        screenKey={currentStep as ModularDrawerAddAccountStep}
         direction={navigationDirection}
       >
         {renderStepContent(currentStep)}
