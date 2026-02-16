@@ -317,6 +317,31 @@
       "outputs": [
         "artifacts/**"
       ]
+    },
+    "live-mobile#android:apk": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "android/app/build/generated/**",
+        "android/app/build/intermediates/**"
+      ]
+    },
+    "live-mobile#ios:ci:adhoc": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "ios/build/**"
+      ]
+    },
+    "live-mobile#ios:local:ipa": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "ios/build/**"
+      ]
     }
   }
 }
