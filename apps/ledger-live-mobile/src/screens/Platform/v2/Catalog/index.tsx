@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
@@ -14,6 +14,7 @@ import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
 import { LocalLiveApp } from "./LocalLiveApp";
 import { useRoute } from "@react-navigation/native";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function Catalog() {
   const { t } = useTranslation();
@@ -27,8 +28,16 @@ export function Catalog() {
   const { categories, recentlyUsed, search, disclaimer, localLiveApps } =
     useCatalog(deeplinkInitialCategory);
 
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+
+  const edges = shouldDisplayWallet40MainNav
+    ? ["left", "right"]
+    : ["top", "bottom", "left", "right"];
+
+  const ContainerView = shouldDisplayWallet40MainNav ? SafeAreaView : TabBarSafeAreaView;
+
   return (
-    <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
+    <ContainerView edges={edges}>
       {/* TODO: put under the animation header and style  */}
       <TrackScreen category="Platform" name="Catalog" />
       <View>
@@ -70,6 +79,6 @@ export function Catalog() {
           />
         </>
       )}
-    </TabBarSafeAreaView>
+    </ContainerView>
   );
 }

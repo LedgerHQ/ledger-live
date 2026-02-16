@@ -83,9 +83,11 @@ import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import MyLedgerNavigator from "./MyLedgerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
+import HeaderBackButton from "LLM/components/Navigation/HeaderBackButton";
+import HeaderTitle from "LLM/components/Navigation/HeaderTitle";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
@@ -115,6 +117,7 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const { initPushNotificationsData, tryTriggerPushNotificationDrawerAfterInactivity } =
     useNotifications();
@@ -146,20 +149,46 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.MyLedger}
           component={MyLedgerNavigator}
-          options={{ headerShown: false }}
+          options={
+            shouldDisplayWallet40MainNav
+              ? {
+                  headerShown: true,
+                  headerRight: () => null,
+                  headerLeft: () => <HeaderBackButton />,
+                  headerTitle: () => <HeaderTitle titleKey="tabs.manager" />,
+                }
+              : { headerShown: false }
+          }
         />
-
         {web3hub?.enabled ? (
           <Stack.Screen
             name={NavigatorName.Web3HubTab}
             component={Web3HubTabNavigator}
-            options={{ headerShown: false }}
+            options={
+              shouldDisplayWallet40MainNav
+                ? {
+                    headerRight: () => null,
+                    headerShown: true,
+                    headerLeft: () => <HeaderBackButton />,
+                    headerTitle: () => <HeaderTitle titleKey="tabs.discover" />,
+                  }
+                : { headerShown: false }
+            }
           />
         ) : (
           <Stack.Screen
             name={NavigatorName.Discover}
             component={DiscoverNavigator}
-            options={{ headerShown: false }}
+            options={
+              shouldDisplayWallet40MainNav
+                ? {
+                    headerShown: true,
+                    headerRight: () => null,
+                    headerLeft: () => <HeaderBackButton />,
+                    headerTitle: () => null,
+                  }
+                : { headerShown: false }
+            }
           />
         )}
         <Stack.Screen

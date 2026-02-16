@@ -24,6 +24,9 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import SafeAreaView from "~/components/SafeAreaView";
+import { Edge } from "react-native-safe-area-context";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerChooseDevice>
@@ -122,12 +125,20 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     [navigation],
   );
 
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+
+  const ContainerView = shouldDisplayWallet40MainNav ? SafeAreaView : TabBarSafeAreaView;
+
+  const edges: readonly Edge[] = shouldDisplayWallet40MainNav
+    ? ["left", "right"]
+    : ["top", "bottom", "left", "right"];
+
   if (!isFocused) return null;
 
   return (
-    <TabBarSafeAreaView>
+    <ContainerView edges={edges} isFlex>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      {!isHeaderOverridden ? (
+      {!isHeaderOverridden && !shouldDisplayWallet40MainNav ? (
         <Flex px={16} pb={8}>
           <Text pt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
             {t("manager.title")}
@@ -159,7 +170,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         onError={onError}
         location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
       />
-    </TabBarSafeAreaView>
+    </ContainerView>
   );
 };
 

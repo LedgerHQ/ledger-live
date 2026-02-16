@@ -13,6 +13,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -39,6 +40,7 @@ const Badge = () => {
 export default function MyLedgerNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   return (
     <Stack.Navigator
@@ -57,7 +59,7 @@ export default function MyLedgerNavigator() {
       <Stack.Screen
         name={ScreenName.MyLedgerDevice}
         component={MyLedgerDeviceScreen}
-        options={{ title: "" }}
+        options={shouldDisplayWallet40MainNav ? { headerShown: false } : { headerTitle: "" }}
       />
     </Stack.Navigator>
   );
