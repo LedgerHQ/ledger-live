@@ -156,7 +156,7 @@ describe("parseDeepLink", () => {
 
     it("creates swap route with fromPath", () => {
       const parsed = parseDeepLink(
-        "ledgerwallet://swap?fromToken=btc&toToken=eth&fromPath=%2Fmarket%2Fbitcoin",
+        "ledgerwallet://swap?fromToken=btc&toToken=eth&fromPath=%2Fmarket",
       );
       const route = createRoute(parsed);
 
