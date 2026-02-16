@@ -2,15 +2,19 @@
 
 import invariant from "invariant";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { DmkSignerAleo } from "@ledgerhq/live-signer-aleo";
 import { createBridges } from "@ledgerhq/coin-aleo/bridge/index";
+import type { AleoCoinConfig } from "@ledgerhq/coin-aleo/config";
 import makeCliTools from "@ledgerhq/coin-aleo/test/cli";
-import aleoResolver from "@ledgerhq/coin-aleo/signer/index";
+import aleoAddressResolver from "@ledgerhq/coin-aleo/signer/getAddress";
+import aleoViewKeyResolver from "@ledgerhq/coin-aleo/signer/getViewKey";
 import type { AleoSigner, Transaction as AleoTransaction } from "@ledgerhq/coin-aleo/types/index";
 import type Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
-import { type CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
-import type { Resolver } from "../../hw/getAddress/types";
+import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
+import { getCurrencyConfiguration } from "../../config";
+import { createViewKeyResolver } from "./hw/getViewKey/resolver";
 
 type TransportWithDmk = Transport &
   Partial<{
@@ -24,10 +28,19 @@ const createSigner: CreateSigner<AleoSigner> = (transport: TransportWithDmk) => 
   return new DmkSignerAleo(transport.dmk, transport.sessionId);
 };
 
-const bridge: Bridge<AleoTransaction> = createBridges(executeWithSigner(createSigner));
+const getCurrencyConfig = (currency?: CryptoCurrency) => {
+  invariant(currency, "aleo: currency is required in getCurrencyConfig");
+  return getCurrencyConfiguration<AleoCoinConfig>(currency);
+};
 
-const resolver: Resolver = createResolver(createSigner, aleoResolver);
+const bridge: Bridge<AleoTransaction> = createBridges(
+  executeWithSigner(createSigner),
+  getCurrencyConfig,
+);
+
+const resolver = createResolver(createSigner, aleoAddressResolver);
+const viewKeyResolver = createViewKeyResolver(createSigner, aleoViewKeyResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver };
+export { bridge, cliTools, resolver, viewKeyResolver };
