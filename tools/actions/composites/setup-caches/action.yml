@@ -110,6 +110,13 @@ runs:
           rm -rf ~/Library/Caches/CocoaPods
           rm -rf apps/ledger-live-mobile/ios/Pods
 
+    - name: Disable TSO
+      if: runner.os == 'macOS'
+      run: |
+        sudo /usr/sbin/sysctl -w net.inet.tcp.tso=0
+        sudo /usr/sbin/sysctl -w net.inet.tcp.delayed_ack=0
+      shell: bash
+
     - name: TurboRepo local caching server
       id: turborepo-cache-server
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
