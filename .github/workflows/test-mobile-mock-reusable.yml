@@ -221,7 +221,7 @@ jobs:
   detox-tests-ios:
     name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
     needs: [build-ios, determine-builds]
-    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    runs-on: ["project-portugal"]
     timeout-minutes: 120
     strategy:
       fail-fast: false
