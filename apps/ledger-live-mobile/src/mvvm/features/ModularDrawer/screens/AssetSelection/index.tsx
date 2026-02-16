@@ -1,12 +1,12 @@
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
-  ApyIndicator,
   AssetItem,
   AssetType,
   MarketPriceIndicator,
   MarketPercentIndicator,
 } from "@ledgerhq/native-ui/pre-ldls/index";
+import { ApyIndicator } from "../../components/AccountApy";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import SkeletonList from "../../components/Skeleton/SkeletonList";
