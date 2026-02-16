@@ -20,7 +20,7 @@ describe("feeFromPsbt (PSBT v2 via PsbtV2)", () => {
     expect(fee!.toNumber()).toBe(5000);
   });
 
-  it("parses the v2 PSBT (input finalizer stage) and returns the correct fee", () => {
+  it("parses the v2 PSBT (input finalizer stage) and returns the correct fees", () => {
     // input finalizer stage, decode it https://learnmeabitcoin.com/technical/transaction/psbt/
     const psbtB64 =
       "cHNidP8BAgQCAAAAAQMEAAAAAAEEAQEBBQEBAQYBAAH7BAIAAAAAAQEfIE4AAAAAAAAWABRtTfPDGS0+/pTZAN6itD4d+v/DdwEIbAJIMEUCIQCKyNguNXRp8g9Xx8218oMR6nmpYT5DjKR4tFVAUxWEmwIgT1D7gJxboLCae6jHiRilShygUhanylrY4Zy5/zTV5y8BIQKB3M6ZYBlVePq12AbQv1bCn2VPDoa61Ek9vvoauC88vQEOIBpm0EPKluAy05yTYGzOS3gm/qhPQLDCSWqQpVE2pyVMAQ8EAQAAAAABAwiYOgAAAAAAAAEEFgAUgOCAoBDcwBoMygQ0Q5VYjll5FTgA";
