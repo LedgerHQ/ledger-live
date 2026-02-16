@@ -37,6 +37,7 @@ pnpm test:jest --coverage    # Coverage report
 pnpm coin:sui test # Run all unit tests
 pnpm coin:sui test "filename" # Run specific test
 pnpm coin:sui test-integ # Run all integration tests (slow)
+```
 ---
 
 ## Test Template
