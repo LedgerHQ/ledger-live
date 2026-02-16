@@ -30,6 +30,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
+import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
@@ -97,6 +98,65 @@ import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { AppState } from "react-native";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
+
+type OperationDetailsRouteProp = RouteProp<
+  BaseNavigatorStackParamList,
+  ScreenName.OperationDetails
+>;
+
+const renderNullHeader = () => null;
+
+function ScanRecipientHeaderRight() {
+  const { colors } = useTheme();
+
+  return (
+    <NavigationHeaderCloseButtonAdvanced
+      color={colors.constant.white}
+      preferDismiss={false}
+      rounded
+    />
+  );
+}
+
+function FlowHeaderCloseButton() {
+  return <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />;
+}
+
+function OperationDetailsHeaderLeft() {
+  return <NavigationHeaderBackButton />;
+}
+
+function OperationDetailsHeaderTitle() {
+  const { t } = useTranslation();
+  const route = useRoute<OperationDetailsRouteProp>();
+  const operationType = route.params?.operation?.type;
+
+  return (
+    <StepHeader
+      subtitle={t("operationDetails.title")}
+      title={operationType ? t(`operations.types.${operationType}`) : ""}
+      testID="operationDetails-title"
+    />
+  );
+}
+
+function OperationDetailsHeaderRight() {
+  const route = useRoute<OperationDetailsRouteProp>();
+
+  return route.params?.isSubOperation ? <NavigationHeaderCloseButton /> : null;
+}
+
+function FirmwareUpdateHeaderTitle() {
+  return null;
+}
+
+function FirmwareUpdateHeaderLeft() {
+  return null;
+}
+
+function FirmwareUpdateHeaderRight() {
+  return <NavigationHeaderCloseButton />;
+}
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -289,6 +349,13 @@ export default function BaseNavigator() {
           component={SwapNavigator}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name={NavigatorName.SwapSubScreens}
+          component={SwapSubScreensNavigator}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
           name={NavigatorName.Perps}
           component={PerpsNavigator}
@@ -361,24 +428,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.OperationDetails}
           component={OperationDetails}
-          options={({ route }) => {
-            return {
-              headerTitle: () => (
-                <StepHeader
-                  subtitle={t("operationDetails.title")}
-                  title={
-                    route.params?.operation?.type
-                      ? t(`operations.types.${route.params.operation.type}`)
-                      : ""
-                  }
-                  testID="operationDetails-title"
-                />
-              ),
-              headerLeft: () => <NavigationHeaderBackButton />,
-              headerRight: () =>
-                route.params?.isSubOperation ? <NavigationHeaderCloseButton /> : null,
-              animation: "slide_from_bottom",
-            };
+          options={{
+            headerTitle: OperationDetailsHeaderTitle,
+            headerLeft: OperationDetailsHeaderLeft,
+            headerRight: OperationDetailsHeaderRight,
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -451,14 +505,8 @@ export default function BaseNavigator() {
           options={{
             ...TransparentHeaderNavigationOptions,
             title: t("send.scan.title"),
-            headerRight: () => (
-              <NavigationHeaderCloseButtonAdvanced
-                color={colors.constant.white}
-                preferDismiss={false}
-                rounded
-              />
-            ),
-            headerLeft: () => null,
+            headerRight: ScanRecipientHeaderRight,
+            headerLeft: renderNullHeader,
           }}
         />
         <Stack.Screen
@@ -547,8 +595,8 @@ export default function BaseNavigator() {
           component={NoFundsFlowNavigator}
           options={{
             ...TransparentHeaderNavigationOptions,
-            headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
-            headerLeft: () => null,
+            headerRight: FlowHeaderCloseButton,
+            headerLeft: renderNullHeader,
           }}
         />
         <Stack.Screen
@@ -556,8 +604,8 @@ export default function BaseNavigator() {
           component={StakeFlowNavigator}
           options={{
             ...TransparentHeaderNavigationOptions,
-            headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
-            headerLeft: () => null,
+            headerRight: FlowHeaderCloseButton,
+            headerLeft: renderNullHeader,
           }}
         />
         <Stack.Screen
@@ -580,10 +628,10 @@ export default function BaseNavigator() {
           component={FirmwareUpdateScreen}
           options={{
             gestureEnabled: false,
-            headerTitle: () => null,
+            headerTitle: FirmwareUpdateHeaderTitle,
             title: "",
-            headerLeft: () => null,
-            headerRight: () => <NavigationHeaderCloseButton />,
+            headerLeft: FirmwareUpdateHeaderLeft,
+            headerRight: FirmwareUpdateHeaderRight,
           }}
         />
         <Stack.Screen
