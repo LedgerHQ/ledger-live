@@ -40,6 +40,7 @@ const DISABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayWallet40MainNav: false,
   shouldUseLazyOnboarding: false,
   shouldDisplayBalanceRefreshRework: false,
+  shouldDisplayTour: false,
 };
 
 const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
@@ -51,6 +52,7 @@ const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
   shouldDisplayWallet40MainNav: false,
   shouldUseLazyOnboarding: false,
   shouldDisplayBalanceRefreshRework: false,
+  shouldDisplayTour: false,
 };
 
 const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
@@ -62,6 +64,7 @@ const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayWallet40MainNav: true,
   shouldUseLazyOnboarding: true,
   shouldDisplayBalanceRefreshRework: true,
+  shouldDisplayTour: true,
 };
 
 const ALL_PARAMS_ENABLED: Wallet40Params = {
@@ -72,6 +75,7 @@ const ALL_PARAMS_ENABLED: Wallet40Params = {
   mainNavigation: true,
   lazyOnboarding: true,
   balanceRefreshRework: true,
+  tour: true,
 };
 
 describe("useWalletFeaturesConfig hook", () => {
@@ -122,6 +126,7 @@ describe("useWalletFeaturesConfig hook", () => {
           { balanceRefreshRework: true },
           { shouldDisplayBalanceRefreshRework: true },
         ],
+        ["tour", { tour: true }, { shouldDisplayTour: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),
