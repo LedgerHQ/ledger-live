@@ -1,19 +1,34 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
   ListItem,
-  ListItemTrailing,
-  ListItemDescription,
-  ListItemTitle,
   ListItemContent,
+  ListItemDescription,
   ListItemLeading,
   ListItemSpot,
+  ListItemTitle,
+  ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
-import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
-import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
+import { ChevronRight, LedgerLogo, Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { cn } from "LLD/utils/cn";
-import type { AddressListItemProps } from "../types";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
+
+type AddressListItemProps = Readonly<{
+  address: string;
+  name?: string;
+  description?: string;
+  date?: Date;
+  balance?: string;
+  balanceFormatted?: string;
+  onSelect?: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  showSendTo?: boolean;
+  isLedgerAccount?: boolean;
+  disabled?: boolean;
+  hideDescription?: boolean;
+  testId?: string;
+}>;
 
 export function AddressListItem({
   address,

@@ -1,9 +1,15 @@
-import { renderHook, waitFor } from "@testing-library/react";
-import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+/**
+ * @jest-environment jsdom
+ */
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Account } from "@ledgerhq/types-live";
+import { renderHook, waitFor } from "@testing-library/react";
+import { BigNumber } from "bignumber.js";
+import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
 
 jest.mock("@ledgerhq/live-common/bridge/index");
 jest.mock("@ledgerhq/live-common/account/index");
@@ -11,6 +17,17 @@ jest.mock("@ledgerhq/live-common/account/index");
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 
+const createMockAccount = (): Account => {
+  const account = genAccount("mock_account");
+  return {
+    ...account,
+    id: "mock_account_id",
+    freshAddress: "source_address",
+    balance: new BigNumber(100000000),
+    spendableBalance: new BigNumber(100000000),
+    currency: getCryptoCurrencyById("bitcoin"),
+  };
+};
 const mockAccount = createMockAccount();
 
 const mockBridge = {
