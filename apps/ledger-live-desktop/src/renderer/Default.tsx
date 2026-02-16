@@ -126,6 +126,30 @@ const withSuspense = Component => props => (
   </Suspense>
 );
 
+const SuspendedDashboard = withSuspense(Dashboard);
+const SuspendedSettings = withSuspense(Settings);
+const SuspendedAccounts = withSuspense(Accounts);
+const SuspendedCardW40 = withSuspense(CardW40);
+const SuspendedCard = withSuspense(Card);
+const SuspendedManager = withSuspense(Manager);
+const SuspendedPlatformCatalog = withSuspense(PlatformCatalog);
+const SuspendedEarn = withSuspense(Earn);
+const SuspendedExchange = withSuspense(Exchange);
+const SuspendedSwapWeb = withSuspense(SwapWeb);
+const SuspendedAccount = withSuspense(Account);
+const SuspendedAsset = withSuspense(Asset);
+const SuspendedSwap2 = withSuspense(Swap2);
+const SuspendedPerps = withSuspense(Perps);
+const SuspendedMarketCoin = withSuspense(MarketCoin);
+const SuspendedMarket40 = withSuspense(Market40);
+const SuspendedMarket = withSuspense(Market);
+const SuspendedBank = withSuspense(Bank);
+const SuspendedAnalytics = withSuspense(Analytics);
+const SuspendedSyncOnboarding = withSuspense(SyncOnboarding);
+const SuspendedRecoverPlayer = withSuspense(RecoverPlayer);
+const SuspendedRecoverRestore = withSuspense(RecoverRestore);
+const SuspendedWelcomeScreenSettings = withSuspense(WelcomeScreenSettings);
+const SuspendedTriggerAppReady = withSuspense(TriggerAppReady);
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
   throw new Error("CrashTestRendering");
@@ -202,7 +226,7 @@ const NightlyLayer = React.memo(NightlyLayerR);
 const RecoverPlayerWithFeatureToggle = () => {
   return (
     <FeatureToggle featureId="protectServicesDesktop">
-      {withSuspense(RecoverPlayer)({})}
+      <SuspendedRecoverPlayer />
     </FeatureToggle>
   );
 };
@@ -228,30 +252,30 @@ const MainAppContent = ({
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
-        <Route path="/" element={withSuspense(Dashboard)({})} />
-        <Route path="/settings/*" element={withSuspense(Settings)({})} />
-        <Route path="/accounts" element={withSuspense(Accounts)({})} />
-        <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
-        <Route path="/card/:appId?" element={withSuspense(Card)({})} />
+        <Route path="/" element={<SuspendedDashboard />} />
+        <Route path="/settings/*" element={<SuspendedSettings />} />
+        <Route path="/accounts" element={<SuspendedAccounts />} />
+        <Route path="/card-new-wallet" element={<SuspendedCardW40 />} />
+        <Route path="/card/:appId?" element={<SuspendedCard />} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
-        <Route path="/manager/*" element={withSuspense(Manager)({})} />
-        <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
+        <Route path="/manager/*" element={<SuspendedManager />} />
+        <Route path="/platform" element={<SuspendedPlatformCatalog />} />
         <Route path="/platform/:appId" element={<LiveApp />} />
-        <Route path="/earn/*" element={withSuspense(Earn)({})} />
-        <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
-        <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
-        <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
-        <Route path="/account/:id/*" element={withSuspense(Account)({})} />
-        <Route path="/asset/*" element={withSuspense(Asset)({})} />
-        <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/perps/*" element={withSuspense(Perps)({})} />
-        <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+        <Route path="/earn/*" element={<SuspendedEarn />} />
+        <Route path="/exchange/:appId?" element={<SuspendedExchange />} />
+        <Route path="/swap-web" element={<SuspendedSwapWeb />} />
+        <Route path="/account/:parentId/:id/*" element={<SuspendedAccount />} />
+        <Route path="/account/:id/*" element={<SuspendedAccount />} />
+        <Route path="/asset/*" element={<SuspendedAsset />} />
+        <Route path="/swap/*" element={<SuspendedSwap2 />} />
+        <Route path="/perps/*" element={<SuspendedPerps />} />
+        <Route path="/market/:currencyId" element={<SuspendedMarketCoin />} />
         <Route
           path="/market"
-          element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
+          element={shouldDisplayMarketBanner ? <SuspendedMarket40 /> : <SuspendedMarket />}
         />
-        <Route path="/bank/*" element={withSuspense(Bank)({})} />
-        <Route path="/analytics" element={withSuspense(Analytics)({})} />
+        <Route path="/bank/*" element={<SuspendedBank />} />
+        <Route path="/analytics" element={<SuspendedAnalytics />} />
       </Routes>
     </Page>
     <Drawer />
@@ -406,7 +430,6 @@ export default function Default() {
 
   return (
     <>
-      <TriggerAppReady />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />
@@ -443,7 +466,7 @@ export default function Default() {
                         </>
                       }
                     />
-                    <Route path="/sync-onboarding/*" element={withSuspense(SyncOnboarding)({})} />
+                    <Route path="/sync-onboarding/*" element={<SuspendedSyncOnboarding />} />
                     <Route
                       path="/post-onboarding"
                       element={
@@ -455,7 +478,7 @@ export default function Default() {
                         </>
                       }
                     />
-                    <Route path="/recover-restore" element={withSuspense(RecoverRestore)({})} />
+                    <Route path="/recover-restore" element={<SuspendedRecoverRestore />} />
 
                     <Route
                       path="/USBTroubleshooting"
@@ -468,10 +491,7 @@ export default function Default() {
 
                     {!hasCompletedOnboarding ? (
                       <>
-                        <Route
-                          path="/settings/*"
-                          element={withSuspense(WelcomeScreenSettings)({})}
-                        />
+                        <Route path="/settings/*" element={<SuspendedWelcomeScreenSettings />} />
                         <Route
                           path="/recover/:appId"
                           element={<RecoverPlayerWithFeatureToggle />}
@@ -481,6 +501,7 @@ export default function Default() {
                       <Route path="/*" element={<MainAppLayout />} />
                     )}
                   </Routes>
+                  <SuspendedTriggerAppReady />
                 </ContextMenuWrapper>
               </WalletSyncProvider>
             </BridgeSyncProvider>
