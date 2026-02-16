@@ -2,8 +2,6 @@ import React, { memo, useMemo } from "react";
 import { View, ImageBackground } from "react-native";
 import { useTheme, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
-
-
 function EarnBackgroundComponent() {
   const { colorScheme } = useTheme();
   const styles = useStyleSheet(
