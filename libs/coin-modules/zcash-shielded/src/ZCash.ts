@@ -75,13 +75,10 @@ export default class ZCash {
 
         // 3. call decryptTransaction for each tx hash containing orchard actions
         if (tx?.orchard.actions.length) {
-          try {
-            const decryptedTx = await this.decryptTransaction(tx?.hex, viewingKey);
-            if (decryptedTx) {
-              decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
-            }
-          } catch (_e) {
-            log(LOG_TYPE, "warn: could not decrypt transaction");
+          const decryptedTx = await this.decryptTransaction(tx?.hex, viewingKey);
+
+          if (decryptedTx) {
+            decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
           }
         }
       }
