@@ -5,7 +5,7 @@ import type {
   AddressSearchResult,
   AddressValidationError as AddressValidationErrorType,
   RecentAddress,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/recipient/types";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";

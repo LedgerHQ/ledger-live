@@ -1,9 +1,9 @@
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 
 export type RecentAddress = Readonly<{
   address: string;
-  currency: CryptoCurrency | TokenCurrency;
+  currency: CryptoOrTokenCurrency;
   lastUsedAt: Date;
   name?: string;
   ensName?: string;
@@ -55,19 +55,4 @@ export type AddressSearchResult = Readonly<{
   matchedAccounts: MatchedAccount[];
   bridgeErrors: BridgeValidationErrors | undefined;
   bridgeWarnings: BridgeValidationWarnings | undefined;
-}>;
-
-export type AddressListItemProps = Readonly<{
-  address: string;
-  name?: string;
-  description?: string;
-  date?: Date;
-  balance?: string;
-  balanceFormatted?: string;
-  onSelect?: () => void;
-  onContextMenu?: (e: React.MouseEvent) => void;
-  showSendTo?: boolean;
-  isLedgerAccount?: boolean;
-  disabled?: boolean;
-  hideDescription?: boolean;
 }>;
