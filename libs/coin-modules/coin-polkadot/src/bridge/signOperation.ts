@@ -47,8 +47,35 @@ export const buildSignOperation =
             method: true,
           });
         const currency = getCryptoCurrencyById(account.currency.id);
-        const payloadString = Buffer.from(payload).toString("hex");
-        const metadata = await polkadotAPI.shortenMetadata(payloadString, currency);
+        // Decompose the ExtrinsicPayload into its three parts for the sidecar metadata-blob endpoint
+        // payload = callData ++ includedInExtrinsic (extra) ++ includedInSignedData (additional_signed)
+        const callData = unsigned.method;
+        // includedInSignedData: concatenation of all signed extensions' additional_signed() outputs
+        // = specVersion(u32) ++ txVersion(u32) ++ genesisHash(H256) ++ blockHash(H256) ++ Option<metadataHash>
+        const includedInSignedData =
+          "0x" +
+          unsigned.specVersion.slice(2) +
+          unsigned.transactionVersion.slice(2) +
+          unsigned.genesisHash.slice(2) +
+          unsigned.blockHash.slice(2) +
+          Buffer.from(unsigned.metadataHash).toString("hex");
+
+        // includedInExtrinsic: the signed extension extra data (era, nonce, tip, asset_id, mode)
+        // Extracted from the payload by removing the callData prefix and includedInSignedData suffix
+        const callDataBytesLength = (callData.length - 2) / 2;
+        const additionalSignedBytesLength = (includedInSignedData.length - 2) / 2;
+        const extraBytes = payload.slice(
+          callDataBytesLength,
+          payload.length - additionalSignedBytesLength,
+        );
+        const includedInExtrinsic = "0x" + Buffer.from(extraBytes).toString("hex");
+
+        const metadata = await polkadotAPI.shortenMetadata(
+          callData,
+          includedInExtrinsic,
+          includedInSignedData,
+          currency,
+        );
         const r = await signerContext(deviceId, signer =>
           signer.sign(account.freshAddressPath, payload, metadata),
         );

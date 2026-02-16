@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import coinConfig from "../config";
 import * as node from "./node";
-import { getAccount, getBalances, getRegistry } from "./sidecar";
+import { getAccount, getBalances, getRegistry, shortenMetadata } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
 
@@ -328,5 +328,77 @@ describe("getRegistry", () => {
     const { registry, extrinsics } = await getRegistry(currency);
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
+  });
+});
+
+describe("shortenMetadata", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      node: {
+        url: "https://httpbin.org/",
+      },
+      sidecar: {
+        url: SIDECAR_BASE_URL_TEST,
+      },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
+      metadataShortener: {
+        id: "dot",
+        url: "",
+      },
+      metadataHash: {
+        url: "",
+      },
+    }));
+  });
+
+  it("should POST callData, includedInExtrinsic, and includedInSignedData to /transaction/metadata-blob", async () => {
+    const callData = "0x0a0300abcdef";
+    const includedInExtrinsic = "0xf50020000001";
+    const includedInSignedData = "0x" + "aa".repeat(105);
+
+    const result = await shortenMetadata(
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+      currency,
+    );
+
+    expect(result).toBe("0xdeadbeef");
+  });
+
+  it("should send the correct body structure to sidecar metadata blob endpoint", async () => {
+    let capturedBody: Record<string, unknown> = {};
+    mockServer.use(
+      http.post(`${SIDECAR_BASE_URL_TEST}/transaction/metadata-blob`, async ({ request }) => {
+        capturedBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          at: { hash: "0x00", height: "1" },
+          metadataHash: "0x00",
+          metadataBlob: "0xcafe",
+          specVersion: "1",
+          specName: "test",
+          base58Prefix: "0",
+          decimals: "10",
+          tokenSymbol: "DOT",
+        });
+      }),
+    );
+
+    const callData = "0x0a03001234";
+    const includedInExtrinsic = "0xf50004000001";
+    const includedInSignedData = "0x" + "bb".repeat(105);
+
+    await shortenMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
+
+    expect(capturedBody).toEqual({
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+    });
   });
 });

@@ -19,6 +19,7 @@ import {
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
+  shortenMetadata as sidecarShortenMetadata,
   getLastBlock,
 } from "./sidecar";
 
@@ -122,20 +123,13 @@ const metadataHash = async (currency?: CryptoCurrency): Promise<string> => {
   return res.data.metadataHash;
 };
 
-const shortenMetadata = async (transaction: string, currency?: CryptoCurrency): Promise<string> => {
-  const id = coinConfig.getCoinConfig(currency).metadataShortener.id;
-  const res: any = await network({
-    method: "POST",
-    url: coinConfig.getCoinConfig(currency).metadataShortener.url,
-    data: {
-      chain: {
-        id: id,
-      },
-      txBlob: transaction,
-    },
-  });
-
-  return res.data.txMetadata;
+const shortenMetadata = async (
+  callData: string,
+  includedInExtrinsic: string,
+  includedInSignedData: string,
+  currency?: CryptoCurrency,
+): Promise<string> => {
+  return sidecarShortenMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
 };
 
 export default {
