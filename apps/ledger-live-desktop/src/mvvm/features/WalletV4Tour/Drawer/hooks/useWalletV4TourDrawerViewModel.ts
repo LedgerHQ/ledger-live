@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { hasSeenWalletV4TourSelector } from "~/renderer/reducers/settings";
 import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
@@ -23,23 +23,22 @@ export const useWalletV4TourDrawerViewModel = (
   const { isOnPortfolioPage = false } = options;
   const dispatch = useDispatch();
   const hasSeenTour = useSelector(hasSeenWalletV4TourSelector);
-  const lwdWallet40 = useFeature("lwdWallet40");
-  const isTourEnabled = Boolean(lwdWallet40?.enabled && lwdWallet40?.params?.tour);
+  const { shouldDisplayTour } = useWalletFeaturesConfig("desktop");
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Auto-open only when: tour enabled, not seen yet, and user is on Portfolio page
   useEffect(() => {
-    if (isOnPortfolioPage && isTourEnabled && !hasSeenTour) {
+    if (isOnPortfolioPage && shouldDisplayTour && !hasSeenTour) {
       setIsDialogOpen(true);
       track("Wallet V4 Tour Shown", { platform: "LWD", source: "portfolio" });
     }
-  }, [isOnPortfolioPage, isTourEnabled, hasSeenTour]);
+  }, [isOnPortfolioPage, shouldDisplayTour, hasSeenTour]);
 
   const handleOpenDialog = useCallback(() => {
-    if (!isTourEnabled || hasSeenTour) return;
+    if (!shouldDisplayTour || hasSeenTour) return;
     setIsDialogOpen(true);
-  }, [isTourEnabled, hasSeenTour]);
+  }, [shouldDisplayTour, hasSeenTour]);
 
   const handleCloseDialog = useCallback(() => {
     setIsDialogOpen(false);
