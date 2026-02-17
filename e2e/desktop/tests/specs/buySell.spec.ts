@@ -175,7 +175,6 @@ for (const asset of assets) {
           "@NanoGen5",
           `@${crypto.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
