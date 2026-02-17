@@ -12,7 +12,8 @@ export default function Analytics() {
 }
 
 function AnalyticsContent({ viewModel }: { readonly viewModel: AnalyticsViewModel }) {
-  const { counterValue, selectedTimeRange, t, navigateToDashboard } = viewModel;
+  const { counterValue, selectedTimeRange, t, navigateToDashboard, shouldDisplayGraphRework } =
+    viewModel;
   return (
     <div className="flex flex-col gap-32">
       <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
@@ -24,6 +25,7 @@ function AnalyticsContent({ viewModel }: { readonly viewModel: AnalyticsViewMode
           chartColor={colors.wallet}
           range={selectedTimeRange}
           isWallet40
+          shouldDisplayGraphRework={shouldDisplayGraphRework}
         />
       </div>
     </div>

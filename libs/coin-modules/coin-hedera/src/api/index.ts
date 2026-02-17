@@ -23,7 +23,7 @@ import {
   getStakes,
   getRewards,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
+import { mapIntentToSDKOperation, getOperationValue, getBlockHash } from "../logic/utils";
 import { apiClient } from "../network/api";
 import type { HederaMemo } from "../types";
 
@@ -124,6 +124,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             date: liveOp.date,
             block: {
               height: liveOp.blockHeight ?? 10,
+              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? 10),
+              time: liveOp.date,
             },
             failed: liveOp.hasFailed ?? false,
           },

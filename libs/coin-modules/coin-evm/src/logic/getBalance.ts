@@ -1,10 +1,10 @@
 import type { Balance, AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { getNodeApi } from "../network/node";
 import { getExplorerApi } from "../network/explorer";
-import { NodeApi } from "../network/node/types";
 import { ExplorerApi } from "../network/explorer/types";
+import { getNodeApi } from "../network/node";
+import { NodeApi } from "../network/node/types";
 import { getStakes } from "./getStakes";
 
 export const TOKEN_BALANCE_BATCH_SIZE = 8;

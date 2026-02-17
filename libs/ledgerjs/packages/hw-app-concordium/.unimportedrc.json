@@ -2,7 +2,9 @@
   "entry": [
     "src/Concordium.ts"
   ],
-  "ignoreUnimported": [],
+  "ignoreUnimported": [
+    "src/cbor.ts"
+  ],
   "ignoreUnresolved": [],
   "ignoreUnused": []
 }

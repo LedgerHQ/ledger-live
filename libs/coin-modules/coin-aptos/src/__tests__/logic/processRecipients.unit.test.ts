@@ -1,8 +1,8 @@
 import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { processRecipients } from "../../logic/processRecipients";
-import { APTOS_ASSET_ID } from "../../constants";
-import BigNumber from "bignumber.js";
 import { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { APTOS_ASSET_ID } from "../../constants";
+import { processRecipients } from "../../logic/processRecipients";
 
 describe("processRecipients", () => {
   let op: Operation;

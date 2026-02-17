@@ -1,10 +1,15 @@
 import { useCallback, useMemo } from "react";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { hasSeenWalletV4TourSelector } from "~/renderer/reducers/settings";
+import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 import { WALLET_FEATURES_FLAG, WALLET_FEATURES_PARAMS, WalletFeatureParamKey } from "../constants";
 import { WalletFeatureParams, WalletFeaturesViewModel } from "../types";
 
 export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => {
+  const dispatch = useDispatch();
   const { getFeature, overrideFeature } = useFeatureFlags();
+  const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
 
   const featureFlag = getFeature(WALLET_FEATURES_FLAG);
   const isEnabled = featureFlag?.enabled ?? false;
@@ -53,13 +58,19 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     [isEnabled, params],
   );
 
+  const handleToggleHasSeenTour = useCallback(() => {
+    dispatch(setHasSeenWalletV4Tour(!hasSeenWalletV4Tour));
+  }, [dispatch, hasSeenWalletV4Tour]);
+
   return {
     featureFlag,
     isEnabled,
     params,
     allEnabled,
+    hasSeenWalletV4Tour,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
+    handleToggleHasSeenTour,
   };
 };

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
 import BigNumber from "bignumber.js";
-import formatters from "./formatters";
 import { PolkadotAccount } from "../types";
+import formatters from "./formatters";
 
 describe("formatters", () => {
   describe("formatAccountSpecifics", () => {

@@ -1,5 +1,5 @@
-import { log } from "@ledgerhq/logs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { log } from "@ledgerhq/logs";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { getBufferFromString } from "./bridge/utils";
 import { FilecoinSigner } from "./types";

@@ -3,16 +3,11 @@ import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
+import { intFromEnv, MIN_HEIGHT, MIN_WIDTH } from "~/config/windowConstants";
 
-const intFromEnv = (key: string, def: number): number => {
-  const v = process.env[key];
-  if (v && !isNaN(+v)) return parseInt(v, 10);
-  return def;
-};
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
-export const MIN_WIDTH = intFromEnv("LEDGER_MIN_WIDTH", 1024);
-export const MIN_HEIGHT = intFromEnv("LEDGER_MIN_HEIGHT", 700);
+export { MIN_HEIGHT, MIN_WIDTH };
 const { DEV_TOOLS, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } = process.env;
 
 // Used for minirecover (recover local dev env)

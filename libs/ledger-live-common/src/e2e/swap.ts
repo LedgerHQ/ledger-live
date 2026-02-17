@@ -24,7 +24,7 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
         networkFeesCurrency: AccountTo.currency.speculosApp.name.toLowerCase(),
         displayLanguage: "en",
         theme: "light",
-        "providers-whitelist": "changelly,exodus,thorswap,uniswap,cic",
+        "providers-whitelist": "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents",
         tradeType: "INPUT",
         uniswapOrderType: "uniswapxv1",
       },

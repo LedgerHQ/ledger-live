@@ -31,36 +31,243 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [Concordium](#concordium)
+*   [AccountAddress](#accountaddress)
     *   [Parameters](#parameters)
-    *   [getAddress](#getaddress)
+    *   [address](#address)
+    *   [toBase58](#tobase58)
+        *   [Examples](#examples)
+    *   [toBuffer](#tobuffer)
+        *   [Examples](#examples-1)
+    *   [fromBase58](#frombase58)
         *   [Parameters](#parameters-1)
-    *   [verifyAddress](#verifyaddress)
+        *   [Examples](#examples-2)
+    *   [fromBuffer](#frombuffer)
         *   [Parameters](#parameters-2)
+        *   [Examples](#examples-3)
+*   [MAX\_MEMO\_LENGTH](#max_memo_length)
+*   [MAX\_CBOR\_SIZE](#max_cbor_size)
+*   [encodeMemoToCbor](#encodememotocbor)
+    *   [Parameters](#parameters-3)
+*   [decodeMemoFromCbor](#decodememofromcbor)
+    *   [Parameters](#parameters-4)
+*   [Concordium](#concordium)
+    *   [Parameters](#parameters-5)
+    *   [getAddress](#getaddress)
+        *   [Parameters](#parameters-6)
+    *   [verifyAddress](#verifyaddress)
+        *   [Parameters](#parameters-7)
     *   [getPublicKey](#getpublickey)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-8)
     *   [signTransfer](#signtransfer)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-9)
+    *   [signTransferWithMemo](#signtransferwithmemo)
+        *   [Parameters](#parameters-10)
     *   [signCredentialDeployment](#signcredentialdeployment)
-        *   [Parameters](#parameters-5)
-*   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-6)
-*   [serializeTransactionPayloadsWithDerivationPath](#serializetransactionpayloadswithderivationpath)
-    *   [Parameters](#parameters-7)
-*   [serializeTransactionPayloads](#serializetransactionpayloads)
-    *   [Parameters](#parameters-8)
-*   [serializeTransaction](#serializetransaction)
-    *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-11)
+*   [serializeTransfer](#serializetransfer)
+    *   [Parameters](#parameters-12)
+*   [prepareTransferAPDU](#preparetransferapdu)
+    *   [Parameters](#parameters-13)
 *   [serializeTransferWithMemo](#serializetransferwithmemo)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-14)
+*   [prepareTransferWithMemoAPDU](#preparetransferwithmemoapdu)
+    *   [Parameters](#parameters-15)
+*   [serializeTransactionPayloads](#serializetransactionpayloads)
+    *   [Parameters](#parameters-16)
 *   [serializeCredentialDeployment](#serializecredentialdeployment)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-17)
+*   [serializeIdOwnershipProofsPrefix](#serializeidownershipproofsprefix)
+    *   [Parameters](#parameters-18)
+*   [serializeIdOwnershipProofs](#serializeidownershipproofs)
+    *   [Parameters](#parameters-19)
+*   [serializeAccountOwnershipProofs](#serializeaccountownershipproofs)
+    *   [Parameters](#parameters-20)
+*   [insertAccountOwnershipProofs](#insertaccountownershipproofs)
+*   [Why Insertion Order Matters](#why-insertion-order-matters)
+*   [Serialization Order](#serialization-order)
+    *   [Parameters](#parameters-21)
+*   [deserializeTransfer](#deserializetransfer)
+    *   [Parameters](#parameters-22)
+*   [deserializeTransferWithMemo](#deserializetransferwithmemo)
+    *   [Parameters](#parameters-23)
+*   [IdOwnershipProofs](#idownershipproofs)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
-*   [AccountTransaction](#accounttransaction)
-*   [Address](#address)
+*   [Address](#address-1)
 *   [VerifyAddressResponse](#verifyaddressresponse)
-*   [SignCredentialDeploymentMetadata](#signcredentialdeploymentmetadata)
 *   [SchemeId](#schemeid)
+*   [TransactionType](#transactiontype)
+*   [TransferPayload](#transferpayload)
+    *   [toAddress](#toaddress)
+    *   [amount](#amount)
+*   [TransferWithMemoPayload](#transferwithmemopayload)
+    *   [toAddress](#toaddress-1)
+    *   [amount](#amount-1)
+    *   [memo](#memo)
+*   [TransactionPayload](#transactionpayload)
+*   [sender](#sender)
+*   [nonce](#nonce)
+*   [expiry](#expiry)
+*   [energyAmount](#energyamount)
+*   [Transaction](#transaction)
+    *   [type](#type)
+    *   [payload](#payload)
+*   [SigningResult](#signingresult)
+*   [pathToBuffer](#pathtobuffer)
+    *   [Parameters](#parameters-24)
+*   [chunkBuffer](#chunkbuffer)
+    *   [Parameters](#parameters-25)
+
+### AccountAddress
+
+Concordium account address with Base58 ↔ Buffer conversion.
+
+Handles Concordium-specific Base58Check encoding:
+
+*   Version byte: 1 (prepended before Base58 encoding)
+*   Raw address: 32 bytes
+*   Base58 encoded: exactly 50 characters
+
+This class provides a type-safe wrapper for Concordium addresses,
+ensuring correct encoding/decoding and validation.
+
+#### Parameters
+
+*   `` &#x20;
+*   `buffer`  Raw 32-byte address
+
+#### address
+
+Base58-encoded address string (50 characters)
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### toBase58
+
+Convert address to Base58-encoded string.
+
+##### Examples
+
+```javascript
+const base58 = addr.toBase58();
+// "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G"
+```
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Base58-encoded address (50 characters)
+
+#### toBuffer
+
+Get raw 32-byte address buffer.
+
+##### Examples
+
+```javascript
+const raw = addr.toBuffer();
+// Buffer of 32 bytes
+```
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Raw address bytes (32 bytes)
+
+#### fromBase58
+
+Parse a Base58-encoded Concordium address.
+
+##### Parameters
+
+*   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Base58 address string (must be exactly 50 characters)
+
+##### Examples
+
+```javascript
+const addr = AccountAddress.fromBase58("3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G");
+```
+
+*   Throws **any** Error if address is not 50 characters or has invalid version byte
+
+Returns **[AccountAddress](#accountaddress)** AccountAddress instance
+
+#### fromBuffer
+
+Create an AccountAddress from raw 32-byte buffer.
+
+##### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Raw address bytes (must be exactly 32 bytes)
+
+##### Examples
+
+```javascript
+const addr = AccountAddress.fromBuffer(Buffer.from("...", "hex"));
+```
+
+*   Throws **any** Error if buffer is not 32 bytes
+
+Returns **[AccountAddress](#accountaddress)** AccountAddress instance
+
+### MAX\_MEMO\_LENGTH
+
+Maximum memo length in bytes (UTF-8 encoded) before CBOR encoding.
+The device firmware enforces a 256-byte limit on CBOR-encoded data.
+CBOR text string encoding adds 2 bytes overhead for lengths 24-254,
+so the maximum UTF-8 text is 254 bytes.
+
+Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### MAX\_CBOR\_SIZE
+
+Maximum CBOR-encoded memo size (including CBOR overhead).
+This is the device firmware limit.
+
+Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### encodeMemoToCbor
+
+Encodes a memo string to CBOR text string format.
+
+Concordium memos must be CBOR-encoded before transmission to the device.
+The device expects CBOR text strings and will decode them for display.
+
+CBOR text string encoding (major type 3):
+
+*   0x60-0x77: lengths 0-23 (direct encoding, 1 byte overhead)
+*   0x78 + length byte: lengths 24-254 (2 bytes overhead)
+*   0x79 + 2 length bytes: lengths 255-65535 (3 bytes overhead, not supported for memos)
+
+#### Parameters
+
+*   `memo` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The memo string to encode (max 254 bytes UTF-8)
+
+<!---->
+
+*   Throws **any** Error if memo exceeds 254 bytes UTF-8
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Buffer containing CBOR-encoded text string
+
+### decodeMemoFromCbor
+
+Decodes a CBOR-encoded memo string.
+
+The wallet-proxy and device return memos in CBOR-encoded format.
+This function decodes them back to plain UTF-8 strings for display.
+
+Supports CBOR text string decoding:
+
+*   0x60-0x77: lengths 0-23
+*   0x78 + 1 byte: lengths 24-255
+*   0x79 + 2 bytes: lengths 256-65535
+
+Note: While we only encode up to 254 bytes, we support decoding larger memos
+that may come from wallet-proxy or other sources.
+
+If you have a hex or base64 encoded string, convert it to Buffer first:
+
+*   From hex: `Buffer.from(hexString, "hex")`
+*   From base64: `Buffer.from(base64String, "base64")`
+
+#### Parameters
+
+*   `cborEncoded` **[Buffer](https://nodejs.org/api/buffer.html)** CBOR-encoded memo as Buffer
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Decoded UTF-8 string
 
 ### Concordium
 
@@ -114,50 +321,94 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### signTransfer
 
-Sign an account transaction.
+Sign a Transfer transaction.
 
 ##### Parameters
 
-*   `txn` **[AccountTransaction](#accounttransaction)** Account transaction in hw-app format (sender as Buffer, payload pre-serialized)
+*   `tx` **[Transaction](#transaction)** Transfer transaction with type-safe payload
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with signature (hex string)
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SigningResult](#signingresult)>** Promise with signature and serialized transaction
+
+#### signTransferWithMemo
+
+Sign a TransferWithMemo transaction.
+
+##### Parameters
+
+*   `tx` **[Transaction](#transaction)** TransferWithMemo transaction with type-safe payload
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SigningResult](#signingresult)>** Promise with signature and serialized transaction
 
 #### signCredentialDeployment
 
 Sign a credential deployment transaction.
 
+Always creates credentials for new accounts on existing identities.
+The device displays the expiry time for user verification.
+
 ##### Parameters
 
-*   `payload` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** CredentialDeploymentTransaction in hw-app format
+*   `tx` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** CredentialDeploymentTransaction in hw-app format
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
-*   `metadata` **[SignCredentialDeploymentMetadata](#signcredentialdeploymentmetadata)?** Optional metadata for hardware wallet (isNew, address as Buffer)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with signature (hex string)
 
-### pathToBuffer
+### serializeTransfer
 
-Converts a BIP32 path string to serialized Buffer format.
+Serializes a Transfer transaction (simple transfer without memo).
 
-#### Parameters
-
-*   `originalPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path string (e.g., "44'/919'/0'/0/0")
-
-Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized path buffer ready for device transmission
-
-### serializeTransactionPayloadsWithDerivationPath
-
-Chunks transaction data into APDU-sized payloads with derivation path in first chunk.
-
-Splits large transactions into MAX\_CHUNK\_SIZE (255 byte) chunks for APDU transmission.
-The first chunk includes the serialized derivation path, subsequent chunks contain only data.
+Output format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry:8]\[type:1]\[recipient:32]\[amount:8]
 
 #### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 derivation path string
-*   `rawTx` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction data
+*   `tx` **[Transaction](#transaction)** Transfer transaction
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** Array of payload buffers ready for sequential APDU transmission
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction ready for network submission
+
+### prepareTransferAPDU
+
+Prepares Transfer APDU payloads for device signing.
+
+Transfer uses standard APDU sequence with chunking (255 bytes per chunk).
+Path is prepended ONLY to the first chunk.
+
+#### Parameters
+
+*   `serialized` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized Transfer transaction
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** APDU payloads ready for device transmission (chunked)
+
+### serializeTransferWithMemo
+
+Serializes a TransferWithMemo transaction (transfer with memo).
+
+Output format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry:8]\[type:1]\[recipient:32]\[memo\_length:2]\[memo:N]\[amount:8]
+
+#### Parameters
+
+*   `tx` **[Transaction](#transaction)** TransferWithMemo transaction
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized transaction ready for network submission
+
+### prepareTransferWithMemoAPDU
+
+Prepares TransferWithMemo APDU payloads for device signing.
+
+TransferWithMemo requires a special 3-step APDU sequence:
+
+1.  Header + recipient + memo length
+2.  Memo chunks (255 bytes each)
+3.  Amount
+
+#### Parameters
+
+*   `serialized` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized TransferWithMemo transaction
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
+
+Returns **{headerPayload: [Buffer](https://nodejs.org/api/buffer.html), memoPayloads: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>, amountPayload: [Buffer](https://nodejs.org/api/buffer.html)}** Object with headerPayload, memoPayloads array, and amountPayload
 
 ### serializeTransactionPayloads
 
@@ -172,35 +423,6 @@ Splits data into MAX\_CHUNK\_SIZE (255 byte) chunks for APDU transmission.
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** Array of payload buffers ready for sequential APDU transmission
 
-### serializeTransaction
-
-Serializes a transaction for hardware wallet signing.
-
-#### Parameters
-
-*   `txn` **[AccountTransaction](#accounttransaction)** Account transaction with all fields prepared
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 derivation path
-
-Returns **{payloads: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>}** Object with payloads ready for APDU transmission
-
-### serializeTransferWithMemo
-
-Serializes a TransferWithMemo transaction for hardware wallet signing.
-
-Expects hw-app format where payload is pre-serialized Buffer containing:
-
-*   32 bytes: recipient address
-*   2 bytes: memo length (u16 big-endian)
-*   N bytes: memo data
-*   8 bytes: amount (u64 big-endian)
-
-#### Parameters
-
-*   `txn` **[AccountTransaction](#accounttransaction)** Account transaction in hw-app format with pre-serialized payload
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
-
-Returns **{headerPayload: [Buffer](https://nodejs.org/api/buffer.html), memoPayloads: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>, amountPayload: [Buffer](https://nodejs.org/api/buffer.html)}** Object with header, memo chunks, and amount payloads for APDU transmission
-
 ### serializeCredentialDeployment
 
 Serializes a credential deployment transaction for hardware wallet signing.
@@ -208,26 +430,151 @@ Serializes a credential deployment transaction for hardware wallet signing.
 Takes hw-app format transaction and prepares it for transmission to device
 by chunking it into appropriate APDU payloads.
 
+Always creates credentials for new accounts on existing identities (Ledger Live use case).
+The device receives the expiry time to display for user verification.
+
 #### Parameters
 
-*   `payload` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** Credential deployment transaction in hw-app format
+*   `tx` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** Credential deployment transaction in hw-app format
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 derivation path
-*   `metadata` **{isNew: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, address: [Buffer](https://nodejs.org/api/buffer.html)?}?** Optional metadata (isNew flag, existing account address as Buffer)
 
 Returns **any** Structured payload components ready for APDU transmission
+
+### serializeIdOwnershipProofsPrefix
+
+Serializes the common prefix of ID ownership proofs up to and including proofRegId.
+
+This helper extracts the shared serialization logic used by both `serializeIdOwnershipProofs`
+and `insertAccountOwnershipProofs` to ensure they stay in sync.
+
+Serialization order:
+
+1.  sig (IP signature)
+2.  commitments
+3.  challenge
+4.  proofIdCredPub (u32 count + map entries with u32 keys, sorted by index)
+5.  proofIpSig (identity provider signature proof)
+6.  proofRegId (registration ID proof)
+
+#### Parameters
+
+*   `proofs` **[IdOwnershipProofs](#idownershipproofs)** ID ownership proofs from Concordium ID App
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized prefix buffer (everything up to and including proofRegId)
+
+### serializeIdOwnershipProofs
+
+*   **See**: insertAccountOwnershipProofs for combining ID and account proofs
+
+Serializes ID ownership proofs for credential deployment.
+
+This function serializes the identity ownership proofs received from the Concordium ID App
+into the binary format required for credential deployment transactions. It handles the
+ID ownership portion only - account ownership proofs must be inserted separately using
+`insertAccountOwnershipProofs()`.
+
+Used as part of the credential deployment flow:
+
+1.  Get ID ownership proofs from Concordium ID App
+2.  Serialize them with this function
+3.  Sign with device using `signCredentialDeployment()`
+4.  Insert account ownership proofs using `insertAccountOwnershipProofs()`
+5.  Submit complete credential deployment to blockchain
+
+#### Parameters
+
+*   `proofs` **[IdOwnershipProofs](#idownershipproofs)** ID ownership proofs from Concordium ID App
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized ID ownership proofs as Buffer
+
+### serializeAccountOwnershipProofs
+
+Serializes account ownership proofs from Ed25519 signatures.
+
+Structure (matching Concordium node expectations):
+
+*   Number of signatures (1 byte, u8)
+*   For each signature:
+    *   Key index (1 byte, u8)
+    *   Signature (64 bytes for Ed25519)
+
+#### Parameters
+
+*   `signatures` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Array of Ed25519 signatures as hex strings
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized account ownership proofs as Buffer
+
+### insertAccountOwnershipProofs
+
+Inserts account ownership proofs into ID ownership proofs to build complete CredDeploymentProofs.
+
+This function is critical for credential deployment. It takes the ID ownership proofs
+from the Concordium ID App and the account ownership signature from the Ledger device,
+then combines them into the complete proof structure required by the Concordium blockchain.
+
+### Why Insertion Order Matters
+
+The Concordium protocol defines a specific serialization order for CredDeploymentProofs.
+The account ownership proofs MUST be inserted at position 7 (between proofRegId and credCounterLessThanMaxAccounts),
+not appended at the end.
+
+Incorrect ordering will cause the blockchain node to reject the credential with the error:
+"Credential rejected by the node"
+
+### Serialization Order
+
+1.  sig (IP signature)
+2.  commitments
+3.  challenge
+4.  proofIdCredPub (u32 count + map entries with u32 keys, sorted by index)
+5.  proofIpSig (identity provider signature proof)
+6.  proofRegId (registration ID proof)
+7.  **proof\_acc\_sk (AccountOwnershipProof) ← INSERTED HERE**
+8.  credCounterLessThanMaxAccounts
+
+#### Parameters
+
+*   `idProofs` **[IdOwnershipProofs](#idownershipproofs)** ID ownership proofs from the Concordium ID App
+*   `accountSignature` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Account ownership signature from the Ledger device (hex string, 64 bytes)
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Complete CredDeploymentProofs as hex string, ready for submission
+
+### deserializeTransfer
+
+Deserializes a Transfer transaction from serialized buffer.
+
+Parses the binary format and reconstructs the structured Transaction object.
+Expected format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry:8]\[type:1]\[recipient:32]\[amount:8]
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized Transfer transaction
+
+Returns **[Transaction](#transaction)** Structured Transaction with all fields populated
+
+### deserializeTransferWithMemo
+
+Deserializes a TransferWithMemo transaction from serialized buffer.
+
+Parses the binary format and reconstructs the structured Transaction object with memo.
+Expected format: \[sender:32]\[nonce:8]\[energyAmount:8]\[payloadSize:4]\[expiry:8]\[type:1]\[recipient:32]\[memo\_length:2]\[memo:N]\[amount:8]
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** Serialized TransferWithMemo transaction
+
+Returns **[Transaction](#transaction)** Structured Transaction with all fields including memo
+
+### IdOwnershipProofs
+
+ID ownership proofs from ID App.
+Must be serialized when building the message hash for device signing.
 
 ### CredentialDeploymentTransaction
 
 Credential deployment transaction format expected by Ledger device.
 
 This is the hw-app format, not the SDK CredentialDeploymentTransaction type.
-Use coin-concordium/hw-serialization to transform SDK → hw-app format.
-
-### AccountTransaction
-
-Account transaction format expected by Ledger device.
-
-This is the hw-app format, not the SDK AccountTransaction type.
 Use coin-concordium/hw-serialization to transform SDK → hw-app format.
 
 ### Address
@@ -238,13 +585,136 @@ Address response from device
 
 Verify address response from device
 
-### SignCredentialDeploymentMetadata
-
-Metadata for credential deployment signing
-
 ### SchemeId
 
 Cryptographic signature scheme identifier
+
+### TransactionType
+
+Transaction type enum.
+Values match Concordium protocol transaction type discriminators.
+
+### TransferPayload
+
+Transfer transaction payload (simple transfer without memo).
+
+Used for basic CCD transfers between accounts.
+
+#### toAddress
+
+Recipient's Concordium address
+
+Type: AccountAddressType
+
+#### amount
+
+Transfer amount in microCCD (1 CCD = 1,000,000 microCCD)
+
+Type: bigint
+
+### TransferWithMemoPayload
+
+Transfer with memo transaction payload.
+
+Used for CCD transfers that include a message/memo.
+The memo must be CBOR-encoded using encodeMemoToCbor() before inclusion.
+
+#### toAddress
+
+Recipient's Concordium address
+
+Type: AccountAddressType
+
+#### amount
+
+Transfer amount in microCCD (1 CCD = 1,000,000 microCCD)
+
+Type: bigint
+
+#### memo
+
+CBOR-encoded memo (use encodeMemoToCbor to encode UTF-8 string)
+
+Type: [Buffer](https://nodejs.org/api/buffer.html)
+
+### TransactionPayload
+
+Union type of all supported transaction payloads.
+
+Type: ([TransferPayload](#transferpayload) | [TransferWithMemoPayload](#transferwithmemopayload))
+
+### sender
+
+Sender's Concordium address
+
+Type: AccountAddressType
+
+### nonce
+
+Account nonce / sequence number
+
+Type: bigint
+
+### expiry
+
+Transaction expiry time (epoch seconds)
+
+Type: bigint
+
+### energyAmount
+
+Maximum energy (gas) for transaction execution
+
+Type: bigint
+
+### Transaction
+
+Transaction
+
+This is the hw-app format that owns transaction structure definition.
+Used by signTransfer() and signTransferWithMemo() methods.
+
+The type field determines which payload structure is expected:
+
+*   TransactionType.Transfer → TransferPayload
+*   TransactionType.TransferWithMemo → TransferWithMemoPayload
+
+#### type
+
+Transaction type discriminator
+
+Type: [TransactionType](#transactiontype)
+
+#### payload
+
+Type-safe payload (structure depends on type field)
+
+Type: [TransactionPayload](#transactionpayload)
+
+### SigningResult
+
+Signing result with both signature and serialized transaction.
+
+### pathToBuffer
+
+Converts a BIP32 path string to serialized Buffer format.
+
+#### Parameters
+
+*   `originalPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path string (e.g., "44'/919'/0'/0/0")
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized path buffer ready for device transmission
+
+### chunkBuffer
+
+Chunks a buffer into smaller pieces of a maximum size.
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** The buffer to chunk
+*   `maxSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Maximum size of each chunk
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** Array of buffer chunks
 
 ## Usage
 
@@ -317,24 +787,58 @@ const publicKey = await ccd.getPublicKey("m/44'/919'/0'/0/0", true);
 
 ### signTransfer
 
-Sign an account transaction.
+Sign a Transfer transaction (simple transfer without memo).
 
-**Note:** This method expects hw-app format (raw Buffers, not SDK types). If you're using the Concordium SDK, use `@ledgerhq/coin-concordium` which handles the transformation.
+**Note:** This method expects hw-app format with structured Transaction type. If you're using the Concordium SDK, use `@ledgerhq/coin-concordium` which handles the transformation.
 
 ```javascript
-import type { AccountTransaction } from "@ledgerhq/hw-app-concordium/lib/types";
+import { TransactionType, AccountAddress } from "@ledgerhq/hw-app-concordium/lib/types";
 
-// Example hw-app format transaction
-const tx: AccountTransaction = {
-  sender: Buffer.from("..."),  // 32 bytes raw address
-  nonce: 5n,
-  expiry: 1745517351n,
-  energyAmount: 100000n,
-  transactionType: 3,  // Transfer
-  payload: Buffer.from("...")  // Pre-serialized payload
+// Example Transfer transaction
+const tx = {
+  type: TransactionType.Transfer,
+  header: {
+    sender: AccountAddress.fromBase58("3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G"),
+    nonce: 5n,
+    expiry: 1745517351n,
+    energyAmount: 100000n,
+  },
+  payload: {
+    toAddress: AccountAddress.fromBase58("48x2Uo8xCMMxwGuSQnwbqjzKtVqK5MaUud4vG7QEUgDmYkV85e"),
+    amount: 1000000n,  // 1 CCD in microCCD
+  },
 };
 
-const signature = await ccd.signTransfer(tx, "m/44'/919'/0'/0/0");
+const { signature, serialized } = await ccd.signTransfer(tx, "m/44'/919'/0'/0/0");
+// signature: hex string for signing
+// serialized: hex string ready for network submission
+```
+
+### signTransferWithMemo
+
+Sign a TransferWithMemo transaction (transfer with memo).
+
+```javascript
+import { TransactionType, AccountAddress } from "@ledgerhq/hw-app-concordium/lib/types";
+import { encodeMemoToCbor } from "@ledgerhq/hw-app-concordium/lib/cbor";
+
+// Example TransferWithMemo transaction
+const tx = {
+  type: TransactionType.TransferWithMemo,
+  header: {
+    sender: AccountAddress.fromBase58("3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G"),
+    nonce: 5n,
+    expiry: 1745517351n,
+    energyAmount: 150000n,
+  },
+  payload: {
+    toAddress: AccountAddress.fromBase58("48x2Uo8xCMMxwGuSQnwbqjzKtVqK5MaUud4vG7QEUgDmYkV85e"),
+    amount: 1000000n,
+    memo: encodeMemoToCbor("Payment for services"),
+  },
+};
+
+const { signature, serialized } = await ccd.signTransferWithMemo(tx, "m/44'/919'/0'/0/0");
 ```
 
 ### signCredentialDeployment
@@ -383,42 +887,113 @@ const signature = await ccd.signCredentialDeployment(
 This package exports hw-app-specific types:
 
 ```typescript
-import type {
-  AccountTransaction,
-  CredentialDeploymentTransaction,
-  Address,
-  VerifyAddressResponse,
+import {
+  TransactionType,
+  AccountAddress,
+  type Transaction,
+  type TransferPayload,
+  type TransferWithMemoPayload,
+  type CredentialDeploymentTransaction,
+  type IdOwnershipProofs,
+  type Address,
+  type VerifyAddressResponse,
+  type SigningResult,
 } from "@ledgerhq/hw-app-concordium/lib/types";
+```
+
+### Transaction Type Enum
+
+```typescript
+enum TransactionType {
+  Transfer = 3,              // Simple transfer without memo
+  TransferWithMemo = 22,     // Transfer with memo
+}
+```
+
+### Transaction Structure
+
+```typescript
+// Transfer transaction structure
+interface Transaction {
+  type: TransactionType.Transfer;
+  header: {
+    sender: AccountAddress;      // Sender's address
+    nonce: bigint;              // Account nonce / sequence number
+    expiry: bigint;             // Transaction expiry (epoch seconds)
+    energyAmount: bigint;       // Maximum energy for transaction
+  };
+  payload: {
+    toAddress: AccountAddress;   // Recipient's address
+    amount: bigint;             // Amount in microCCD (1 CCD = 1,000,000 microCCD)
+  };
+}
+
+// TransferWithMemo transaction structure
+interface Transaction {
+  type: TransactionType.TransferWithMemo;
+  header: {
+    sender: AccountAddress;
+    nonce: bigint;
+    expiry: bigint;
+    energyAmount: bigint;
+  };
+  payload: {
+    toAddress: AccountAddress;
+    amount: bigint;
+    memo: Buffer;               // CBOR-encoded memo (use encodeMemoToCbor)
+  };
+}
 ```
 
 ### Type Characteristics
 
 **hw-app types use:**
 
-*   Raw `Buffer` for addresses (32 bytes), not Base58 strings
-*   Primitive `bigint` for numeric fields, not SDK branded types
-*   Hex strings for proofs, not `IdOwnershipProofs` objects
-*   Pre-serialized `Buffer` for payloads
+*   `AccountAddress` class for addresses (handles Base58 ↔ Buffer conversion)
+*   Primitive `bigint` for numeric fields (nonce, expiry, energyAmount, amount)
+*   Structured payloads with type safety (`TransferPayload`, `TransferWithMemoPayload`)
+*   CBOR-encoded `Buffer` for memos (use `encodeMemoToCbor` utility)
+*   `IdOwnershipProofs` object for credential proofs (hw-app serializes this)
 
-**For SDK integration**, use `@ledgerhq/coin-concordium` which provides transformation utilities.
+**For SDK integration**, use `@ledgerhq/coin-concordium` which provides transformation between SDK and hw-app formats.
 
 ## Utilities
 
 The package exports serialization utilities from `@ledgerhq/hw-app-concordium/lib/serialization`:
 
-*   `serializeTransaction(txn, path)` - Serialize account transaction for signing
-*   `serializeCredentialDeployment(payload, path, metadata)` - Serialize credential deployment
-*   `pathToBuffer(path)` - Convert BIP32 path string to Buffer
+*   `serializeTransfer(tx)` - Serialize Transfer transaction to Buffer
+*   `serializeTransferWithMemo(tx)` - Serialize TransferWithMemo transaction to Buffer
+*   `deserializeTransfer(buffer)` - Deserialize Transfer transaction from Buffer
+*   `deserializeTransferWithMemo(buffer)` - Deserialize TransferWithMemo transaction from Buffer
+*   `serializeCredentialDeployment(tx, path)` - Serialize credential deployment for device
+*   `serializeAccountOwnershipProofs(signatures)` - Serialize account ownership proofs
+*   `insertAccountOwnershipProofs(idProofs, accountSignature)` - Combine ID and account proofs
+*   `prepareTransferAPDU(serialized, path)` - Prepare Transfer APDU payloads
+*   `prepareTransferWithMemoAPDU(serialized, path)` - Prepare TransferWithMemo APDU payloads
 *   `serializeTransactionPayloads(rawTx)` - Chunk data into APDU payloads
-*   `serializeTransactionPayloadsWithDerivationPath(path, rawTx)` - Chunk with path prefix
+
+CBOR utilities from `@ledgerhq/hw-app-concordium/lib/cbor`:
+
+*   `encodeMemoToCbor(memo)` - Encode UTF-8 string to CBOR text string
+*   `decodeMemoFromCbor(cborEncoded)` - Decode CBOR text string to UTF-8
+*   `MAX_MEMO_LENGTH` - Maximum memo length constant (254 bytes)
+*   `MAX_CBOR_SIZE` - Maximum CBOR encoded size constant (256 bytes)
+
+Address utilities from `@ledgerhq/hw-app-concordium/lib/address`:
+
+*   `AccountAddress.fromBase58(address)` - Parse Base58 address
+*   `AccountAddress.toBase58()` - Convert to Base58 string
+*   `AccountAddress.toBuffer()` - Get raw 32-byte address
 
 Encoding utilities from `@ledgerhq/hw-app-concordium/lib/utils`:
 
 *   `encodeWord8(value)`, `encodeWord16(value)`, `encodeWord32(value)`, `encodeWord64(value)` - Encode integers
+*   `decodeWord16(buffer, offset)`, `decodeWord32(buffer, offset)`, `decodeWord64(buffer, offset)` - Decode integers
 *   `serializeMap(map, encodeSize, encodeKey, encodeValue)` - Serialize map/object
 *   `serializeVerifyKey(key)` - Serialize verification key
 *   `serializeYearMonth(yearMonth)` - Serialize year-month string (YYYYMM)
-*   `serializeIdOwnershipProofs(proofs)` - Serialize ID ownership proofs to hex string
+*   `pathToBuffer(path)` - Convert BIP32 path string to Buffer
+*   `chunkBuffer(buffer, maxSize)` - Chunk buffer into smaller pieces
 
 ## License
 

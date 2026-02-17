@@ -1,10 +1,10 @@
-import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
-import { fromTransactionRaw } from "../bridge/transaction";
-import BigNumber from "bignumber.js";
 import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";
+import { fromTransactionRaw } from "../bridge/transaction";
 import { InvalidMemoICP } from "../errors";
+import type { Transaction } from "../types";
 
 const SEED_IDENTIFIER =
   "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf";

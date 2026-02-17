@@ -42,7 +42,7 @@ type ButtonItem = {
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { quickActionsList } = useQuickActions();
-  const { SEND, RECEIVE, BUY, SELL, PERPS, SWAP, STAKE, RECOVER } = quickActionsList;
+  const { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER } = quickActionsList;
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToastsActions();
@@ -174,31 +174,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: () => onPress(STAKE),
       disabled: STAKE.disabled,
       testID: "transfer-stake-button",
-    },
-    PERPS && {
-      eventProperties: {
-        button: "transfer_perps",
-        page,
-        drawer: "trade",
-      },
-      title: t("transfer.perps.title", { defaultValue: "Perps" }),
-      description: t("transfer.perps.description", { defaultValue: "Trade perpetuals on crypto." }),
-      Icon: PERPS.icon,
-      onPress: () => onPress(PERPS),
-      onDisabledPress: () => {
-        if (isPtxServiceCtaExchangeDrawerDisabled) {
-          onClose?.();
-          dismissToast(PTX_SERVICES_TOAST_ID);
-          pushToast({
-            id: PTX_SERVICES_TOAST_ID,
-            type: "success",
-            title: t("notifications.ptxServices.toast.title"),
-            icon: "info",
-          });
-        }
-      },
-      disabled: PERPS.disabled,
-      testID: "transfer-perps-button",
     },
     SWAP && {
       eventProperties: {

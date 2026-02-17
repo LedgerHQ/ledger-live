@@ -468,7 +468,7 @@
       "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Enable Blind signing or Contract data in Ethereum app"
+      "title" : "เปิดใช้งาน Blind Signing หรือข้อมูลของสัญญาในแอป Ethereum"
     },
     "HardResetFail" : {
       "title" : "ขออภัย ไม่สามารถรีเซ็ตได้",
@@ -2676,6 +2676,10 @@
     "carousel" : {
       "title" : "สำหรับคุณ"
     },
+    "perpsEntry" : {
+      "title" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
+      "description" : "เทรดแบบมีเลเวอเรจ"
+    },
     "recommended" : {
       "title" : "แนะนำ"
     },
@@ -2713,6 +2717,8 @@
       "transfer" : "การโอน",
       "swap" : "สวอป",
       "buy" : "ซื้อ",
+      "connect" : "เชื่อมต่อ",
+      "buyLedger" : "ซื้อ Ledger",
       "transferDrawer" : {
         "title" : "การโอน",
         "receiveCrypto" : "รับคริปโต",
@@ -2988,7 +2994,6 @@
     "yield" : "ผลตอบแทน",
     "sell" : "ขาย",
     "swap" : "สวอป",
-    "perps" : "โทเคน Perps",
     "manage" : "จัดการ",
     "lastTransactions" : "ธุรกรรมล่าสุด",
     "emptyState" : {
@@ -3000,7 +3005,8 @@
         "receiveFunds" : "รับ",
         "buyCrypto" : "ซื้อ"
       },
-      "addAccountCta" : "เพิ่มบัญชี"
+      "addAccountCta" : "เพิ่มบัญชี",
+      "addCryptoAccount" : "เพิ่มบัญชีคริปโต"
     },
     "settings" : {
       "header" : "การตั้งค่าบัญชี",
@@ -3675,10 +3681,6 @@
       "title" : "Stake",
       "description" : "รับ Reward จากคริปโตของคุณ"
     },
-    "perps" : {
-      "title" : "โทเคน Perps",
-      "description" : "เทรดสัญญาซื้อขายล่วงหน้าแบบไม่จำกัดระยะเวลาในคริปโต"
-    },
     "swap" : {
       "title" : "สวอป",
       "description" : "แลกเปลี่ยนคริปโตเป็นคริปโต",
@@ -3875,7 +3877,8 @@
         "title" : "เลือกโควตราคา"
       },
       "twoStepApproval" : {
-        "title" : "ดำเนินการตามขั้นตอน"
+        "title" : "ดำเนินการตามขั้นตอน",
+        "completedTitle" : "สถานะธุรกรรม"
       },
       "loader" : {
         "title" : "กำลังประมวลผลการสวอป (Swap)",
@@ -4573,6 +4576,7 @@
       },
       "acceptTerms" : "การลงชื่อในธุรกรรมนี้จะถือว่าคุณยอมรับเงื่อนไขการใช้งานของ <0><0>{{provider}}</0>",
       "nearIntentsAcceptTerms" : "เมื่อยืนยันธุรกรรมนี้\n ถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งานของ SwapKit</0> ซึ่งเป็นเทคโนโลยีเบื้องหลัง NEAR Intents",
+      "acceptTermsSponsored" : "เพื่อรับสิทธิประโยชน์จากการใช้งานแบบไม่มีค่าธรรมเนียมเครือข่าย คุณยังยินยอมที่จะแบ่งปันรายละเอียดธุรกรรม (รวมถึงที่อยู่วอลเล็ต) ของคุณกับ Blinklabs อีกด้วย",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ<1>นโยบาย AML/KYC</1> ของ Changelly ในบางกรณี Changelly อาจดำเนินการตรวจสอบ AML/KYC ซึ่งอาจกระทบต่อการทำธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าว โปรดติดต่อ <2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "notice" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
@@ -8387,9 +8391,6 @@
       "extremeGreed" : "โลภขั้นสุด"
     },
     "tileTitle" : "อารมณ์"
-  },
-  "perps" : {
-    "title" : "โทเคน Perps"
   },
   "analyticsAllocation" : {
     "header" : {

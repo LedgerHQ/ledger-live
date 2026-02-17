@@ -11,7 +11,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Header from "./Header";
-import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
+import SyncOnboardingCompanion from "LLD/features/Onboarding/screens/SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import ExitChecksDrawer from "./EarlySecurityChecks/ExitChecksDrawer";

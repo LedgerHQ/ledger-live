@@ -1,4 +1,7 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { ApiPromise } from "@polkadot/api";
 import { EraIndex } from "@polkadot/types/interfaces";
+import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
 import {
   SidecarValidators,
   SidecarValidatorsParamAddresses,
@@ -6,9 +9,6 @@ import {
   IValidator,
 } from "../types";
 import getApiPromise from "./apiPromise";
-import { ApiPromise } from "@polkadot/api";
-import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Fetch a list of validators with some info and indentity.

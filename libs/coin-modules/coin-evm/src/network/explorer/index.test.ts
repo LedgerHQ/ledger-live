@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
-import { UnknownExplorer } from "../../errors";
 import { getCoinConfig } from "../../config";
+import { UnknownExplorer } from "../../errors";
 import etherscanLikeApi from "./etherscan";
 import ledgerExplorerApi from "./ledger";
 import { getExplorerApi } from "./index";

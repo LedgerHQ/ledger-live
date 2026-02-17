@@ -1,8 +1,8 @@
 import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Return weather an operation is editable or not.

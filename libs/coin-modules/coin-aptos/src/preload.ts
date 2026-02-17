@@ -1,8 +1,8 @@
+import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getValidators } from "./network/validators";
 import { setAptosPreloadData } from "./preload-data";
 import { AptosPreloadData, AptosValidator } from "./types";
-import { getValidators } from "./network/validators";
-import { getEnv } from "@ledgerhq/live-env";
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 

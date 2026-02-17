@@ -1,6 +1,3 @@
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   BufferTxData,
   FeeEstimation,
@@ -8,7 +5,12 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import ERC20ABI from "../abis/erc20.abi.json";
+import { getNodeApi } from "../network/node";
+import { buildStakingTransactionParams } from "../staking";
 import {
   ApiFeeData,
   ApiGasOptions,
@@ -16,8 +18,6 @@ import {
   TransactionTypes,
   TransactionLikeWithPreparedParams,
 } from "../types";
-import { getNodeApi } from "../network/node";
-import { buildStakingTransactionParams } from "../staking";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;

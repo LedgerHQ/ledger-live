@@ -10,6 +10,7 @@ describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
+  const randomLiveApp = app.discover.getRandomLiveApp();
 
   beforeAll(async () => {
     await app.init({
@@ -69,17 +70,24 @@ describe("DeepLinks Tests", () => {
     await app.customLockscreen.expectCustomLockscreenPage();
   });
 
-  (isSmokeTestRun ? it.skip : it)("should open the Discover page", async () => {
-    await app.discover.openViaDeeplink();
-    await app.discover.expectDiscoverPage();
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    `should open the Discover page and search for ${randomLiveApp}`,
+    async () => {
+      await app.discover.openViaDeeplink();
+      await app.discover.typeInCatalogSearchBar(randomLiveApp);
+      await app.discover.expectCatalogAppCard(randomLiveApp);
+      await app.discover.goBackFromCatalogSearch();
+      await app.discover.expectDiscoverPage();
+    },
+  );
 
-  (isSmokeTestRun ? it.skip : it)(`should open discovery to random live App`, async () => {
-    // Opening only one random liveApp to avoid flakiness
-    const randomLiveApp = app.discover.getRandomLiveApp();
-    await app.discover.openViaDeeplink(randomLiveApp);
-    await app.discover.expectApp(randomLiveApp);
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    `should open discovery to ${randomLiveApp} live App`,
+    async () => {
+      await app.discover.openViaDeeplink(randomLiveApp);
+      await app.discover.expectApp(randomLiveApp);
+    },
+  );
 
   (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
     await app.swap.openViaDeeplink();

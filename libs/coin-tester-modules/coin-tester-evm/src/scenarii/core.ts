@@ -123,8 +123,9 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
     const scenarioAccount = makeAccount(address, core);
 
     const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    setBlock(lastBlockNumber + 1);
+    // Anvil does not produce block if no transactions are sent.
+    // This is indeed the case for Core, since we do not top up tokens at the moment.
+    setBlock(lastBlockNumber);
 
     // Get STCORE
     // TODO: uncomment when explorer is ready

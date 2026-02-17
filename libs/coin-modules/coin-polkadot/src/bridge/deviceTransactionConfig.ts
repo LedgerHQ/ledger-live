@@ -1,9 +1,9 @@
-import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { getMainAccount } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import { isStash } from "./utils";
 const currency = getCryptoCurrencyById("polkadot");
 export type ExtraDeviceTransactionField = {

@@ -1,11 +1,19 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { BigNumber } from "bignumber.js";
-import { take } from "rxjs/operators";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { LedgerSigner } from "@mysten/signers/ledger";
 import { getFullnodeUrl } from "@mysten/sui/client";
-import buildSignOperation from "./signOperation";
+import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";
+import { toSerializedSignature as mockToSerializedSignature } from "@mysten/sui/cryptography";
+import { verifyTransactionSignature as mockVerifyTransactionSignature } from "@mysten/sui/verify";
+import { BigNumber } from "bignumber.js";
+import { take } from "rxjs/operators";
+import coinConfig from "../config";
 import type { SuiAccount, SuiSigner, Transaction, SuiSignedOperation } from "../types";
+import { ensureAddressFormat as mockEnsureAddressFormat } from "../utils";
+import { buildOptimisticOperation as mockBuildOptimisticOperation } from "./buildOptimisticOperation";
+import { buildTransaction as mockBuildTransaction } from "./buildTransaction";
+import buildSignOperation from "./signOperation";
+import { calculateAmount as mockCalculateAmount } from "./utils";
 
 // Mock dependencies
 jest.mock("../config", () => ({
@@ -29,6 +37,10 @@ jest.mock("./utils", () => ({
   ensureAddressFormat: jest.fn(),
 }));
 
+jest.mock("../utils", () => ({
+  ensureAddressFormat: jest.fn(),
+}));
+
 jest.mock("@mysten/sui/cryptography", () => ({
   messageWithIntent: jest.fn(),
   toSerializedSignature: jest.fn(),
@@ -48,22 +60,12 @@ jest.mock("@mysten/signers/ledger", () => ({
   },
 }));
 
-const mockBuildOptimisticOperation = require("./buildOptimisticOperation").buildOptimisticOperation;
-const mockBuildTransaction = require("./buildTransaction").buildTransaction;
-const mockCalculateAmount = require("./utils").calculateAmount;
-const mockEnsureAddressFormat = require("./utils").ensureAddressFormat;
-const mockMessageWithIntent = require("@mysten/sui/cryptography").messageWithIntent;
-const mockToSerializedSignature = require("@mysten/sui/cryptography").toSerializedSignature;
-const mockVerifyTransactionSignature = require("@mysten/sui/verify").verifyTransactionSignature;
-
 // Setup LedgerSigner mock
 const mockLedgerSigner = {
   signTransaction: jest.fn().mockResolvedValue({ signature: new Uint8Array(64).fill(0x42) }),
 };
-const { LedgerSigner } = require("@mysten/signers/ledger");
-LedgerSigner.fromDerivationPath.mockResolvedValue(mockLedgerSigner);
 
-import coinConfig from "../config";
+LedgerSigner.fromDerivationPath.mockResolvedValue(mockLedgerSigner);
 
 beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
@@ -186,10 +188,18 @@ describe("buildSignOperation", () => {
           next: event => {
             events.push(event);
             if (events.length === 3) {
-              expect(events[0].type).toBe("device-signature-requested");
-              expect(events[1].type).toBe("device-signature-granted");
-              expect(events[2].type).toBe("signed");
-              expect(events[2].signedOperation).toBeDefined();
+              expect(events).toEqual([
+                { type: "device-signature-requested" },
+                { type: "device-signature-granted" },
+                {
+                  type: "signed",
+                  signedOperation: {
+                    operation: fakeOptimisticOperation,
+                    signature: new Uint8Array(64).fill(0x42),
+                    rawData: { unsigned: new Uint8Array([1, 2, 3, 4, 5]) },
+                  },
+                },
+              ]);
               done();
             }
           },
@@ -217,7 +227,11 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockLedgerSigner.signTransaction).toHaveBeenCalledWith(fakeUnsignedTx);
+            expect(mockLedgerSigner.signTransaction).toHaveBeenCalledWith(
+              fakeUnsignedTx,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -234,10 +248,16 @@ describe("buildSignOperation", () => {
               account: mockAccount,
               transaction: mockTransaction,
             });
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...mockTransaction,
-              amount: new BigNumber("100000000"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...mockTransaction,
+                amount: new BigNumber("100000000"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -348,10 +368,16 @@ describe("buildSignOperation", () => {
               account: mockAccount,
               transaction: transactionWithUseAllAmount,
             });
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithUseAllAmount,
-              amount: new BigNumber("500000000"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithUseAllAmount,
+                amount: new BigNumber("500000000"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -366,10 +392,16 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithoutUseAllAmount,
-              amount: new BigNumber("100000000"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithoutUseAllAmount,
+                amount: new BigNumber("100000000"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -424,10 +456,16 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithLargeAmount,
-              amount: largeAmount,
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithLargeAmount,
+                amount: largeAmount,
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -443,10 +481,16 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithZeroAmount,
-              amount: new BigNumber("0"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithZeroAmount,
+                amount: new BigNumber("0"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,

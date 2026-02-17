@@ -1,23 +1,23 @@
+import type { CoinConfig } from "@ledgerhq/coin-framework/config";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { createBridges } from "./index";
+import type { SuiCoinConfig } from "../config";
 import suiConfig from "../config";
-import signerGetAddress from "../signer";
-import { buildSignOperation } from "./signOperation";
-import { getAccountShape, sync } from "./synchronisation";
+import { getAddress as signerGetAddress } from "../signer";
+import type { SuiAccount, SuiSigner, Transaction, TransactionStatus } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { fromOperationExtraRaw, toOperationExtraRaw } from "./formatters";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
-import { fromOperationExtraRaw, toOperationExtraRaw } from "./formatters";
-import type { SuiCoinConfig } from "../config";
-import type { SuiAccount, SuiSigner, Transaction, TransactionStatus } from "../types";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { CoinConfig } from "@ledgerhq/coin-framework/config";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShape, sync } from "./synchronisation";
+import { createBridges } from "./index";
 
 // Mock all dependencies
 jest.mock("../config");
@@ -154,13 +154,13 @@ describe("bridge/index", () => {
     it("should return getPreloadStrategy from preload module", () => {
       const strategy = currencyBridge.getPreloadStrategy?.(mockCurrency);
       expect(mockGetPreloadStrategy).toHaveBeenCalled();
-      expect(strategy).toBeDefined();
+      expect(strategy).toEqual({});
     });
 
     it("should return preload from preload module", async () => {
       const result = await currencyBridge.preload(mockCurrency);
       expect(mockPreload).toHaveBeenCalled();
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should return hydrate from preload module", () => {
@@ -210,21 +210,21 @@ describe("bridge/index", () => {
       const transaction = {} as Transaction;
       const result = await accountBridge.estimateMaxSpendable({ account, transaction });
       expect(mockEstimateMaxSpendable).toHaveBeenCalledWith({ account, transaction });
-      expect(result).toBeDefined();
+      expect(result).toBeInstanceOf(BigNumber);
     });
 
     it("should call createTransaction from createTransaction module", () => {
       const account = {} as SuiAccount;
       const result = accountBridge.createTransaction(account);
       expect(mockCreateTransaction).toHaveBeenCalledWith(account);
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should call getTransactionStatus from getTransactionStatus module", () => {
       const transaction = {} as Transaction;
       const result = accountBridge.getTransactionStatus({} as SuiAccount, transaction);
       expect(mockGetTransactionStatus).toHaveBeenCalledWith({} as SuiAccount, transaction);
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should call prepareTransaction from prepareTransaction module", async () => {
@@ -232,14 +232,14 @@ describe("bridge/index", () => {
       const transaction = {} as Transaction;
       const result = await accountBridge.prepareTransaction(account, transaction);
       expect(mockPrepareTransaction).toHaveBeenCalledWith(account, transaction);
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should call sync from synchronisation module", () => {
       const account = {} as SuiAccount;
       const result = accountBridge.sync(account, { paginationConfig: {} });
       expect(mockSync).toHaveBeenCalledWith(account, { paginationConfig: {} });
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should call broadcast from broadcast module", async () => {
@@ -247,7 +247,7 @@ describe("bridge/index", () => {
       const signedOperation = {} as any;
       const result = await accountBridge.broadcast({ account, signedOperation });
       expect(mockBroadcast).toHaveBeenCalledWith({ account, signedOperation });
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should call assignFromAccountRaw from serialization module", () => {
@@ -268,14 +268,14 @@ describe("bridge/index", () => {
       const operationExtraRaw = {} as any;
       const result = accountBridge.fromOperationExtraRaw?.(operationExtraRaw);
       expect(mockFromOperationExtraRaw).toHaveBeenCalledWith(operationExtraRaw);
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should call toOperationExtraRaw from formatters module", () => {
       const operationExtra = {} as any;
       const result = accountBridge.toOperationExtraRaw?.(operationExtra);
       expect(mockToOperationExtraRaw).toHaveBeenCalledWith(operationExtra);
-      expect(result).toBeDefined();
+      expect(result).toEqual({});
     });
 
     it("should have receive function", () => {

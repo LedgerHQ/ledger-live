@@ -70,11 +70,11 @@ function generateHistoryFromOperationsG(
   let { balance } = account;
   const operationsLength = account.operations.length;
   let date = latestDate;
-  const reference = account.balanceHistoryCache[g];
+  const reference = account.balanceHistoryCache?.[g];
 
   for (let i = 0; i < operationsLength; ) {
     if (
-      (partial && reference.latestDate && date < reference.latestDate) ||
+      (partial && reference?.latestDate && date < reference.latestDate) ||
       balances.length > maxDatapoints
     ) {
       break;
@@ -94,7 +94,7 @@ function generateHistoryFromOperationsG(
     date -= increment;
   }
 
-  if (partial) {
+  if (partial && reference?.balances) {
     balances = reference.balances.concat(balances);
   }
 
@@ -116,15 +116,15 @@ export function generateHistoryFromOperations(account: AccountLike): BalanceHist
  * get the current balance history of the account. if possible from the cache.
  */
 export function getAccountHistoryBalances(account: AccountLike, g: GranularityId): number[] {
-  const { balances, latestDate } = account.balanceHistoryCache[g];
+  const cacheData = account.balanceHistoryCache?.[g];
   const { startOf } = granularities[g];
   const now = startOf(new Date()).getTime();
 
-  if (latestDate && latestDate === now) {
-    return balances;
+  if (cacheData?.balances && cacheData.latestDate && cacheData.latestDate === now) {
+    return cacheData.balances;
   }
 
-  // account cache was not up to date. recalculating on the fly
+  // account cache was not up to date or missing. recalculating on the fly
   return generateHistoryFromOperationsG(account, g, true).balances;
 }
 

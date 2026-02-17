@@ -1,7 +1,7 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { createFixtureAccount } from "../types/bridge.fixture";
-import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "../network/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "../network/types";
+import { createFixtureAccount } from "../types/bridge.fixture";
 import { preload } from "./preload";
 
 const account = createFixtureAccount();

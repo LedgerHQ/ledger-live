@@ -34,7 +34,14 @@ export default class PortfolioPage {
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
   tabBarEarnButton = "tab-bar-earn";
-  portfolioOperationHistorySection = "portfolio-operation-history-section";
+  marketBannerList = "market-banner-list";
+  marketBannerTileBase = "market-banner-tile-";
+  marketBannerViewAll = "market-banner-view-all";
+  fearAndGreedCard = "fear-and-greed-card";
+  fearAndGreedTitle = "fear-and-greed-title";
+  bottomSheetCloseButton = "drawer-close-button";
+  accountsList = "portfolio-assets-layout";
+  marketBannerTitle = "market-banner-title";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -249,5 +256,54 @@ export default class PortfolioPage {
       await scrollToId(this.addNewOrExistingAccount, app.portfolio.accountsListView, 400);
     }
     await tapById(this.addNewOrExistingAccount);
+  }
+
+  @Step("Expect market banner to be visible")
+  async expectMarketBannerVisible() {
+    await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, "down");
+    await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
+  }
+
+  @Step("Expect fear and greed card to be visible")
+  async expectFearAndGreedCardVisible() {
+    await detoxExpect(getElementById(this.fearAndGreedCard)).toBeVisible();
+  }
+
+  @Step("Tap on fear and greed card")
+  async tapFearAndGreedCard() {
+    await tapById(this.fearAndGreedCard);
+  }
+
+  @Step("Expect fear and greed title in drawer")
+  async expectFearAndGreedTitleInDrawer() {
+    await waitForElementById(this.fearAndGreedTitle);
+    await detoxExpect(getElementById(this.fearAndGreedTitle)).toBeVisible();
+  }
+
+  @Step("Close bottom sheet")
+  async closeBottomSheet() {
+    await getElementById(this.bottomSheetCloseButton).swipe("down");
+  }
+
+  @Step("Tap on market banner tile")
+  async tapMarketBannerTile(index: number) {
+    await detoxExpect(getElementById(`${this.marketBannerTileBase}${index}`)).toBeVisible();
+    await tapById(`${this.marketBannerTileBase}${index}`);
+  }
+
+  @Step("Tap on market banner view all")
+  async tapMarketBannerViewAll() {
+    await scrollToId(this.marketBannerViewAll, this.marketBannerList);
+    await tapById(this.marketBannerViewAll);
+  }
+
+  @Step("Tap on market banner title")
+  async tapMarketBannerTitle() {
+    await tapById(this.marketBannerTitle);
+  }
+
+  @Step("Swipe market banner to view all")
+  async swipeMarketBannerToViewAll() {
+    await scrollToId(this.marketBannerViewAll, this.marketBannerList, 1000, "right");
   }
 }

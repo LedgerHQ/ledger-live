@@ -8,9 +8,14 @@ import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow");
+jest.mock("~/renderer/linking", () => ({
+  openURL: jest.fn(),
+}));
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
@@ -22,6 +27,7 @@ const mockOpenSendFlow = jest.fn();
 const mockOpenAssetFlow = jest.fn();
 const mockOpenAddAccountFlow = jest.fn();
 
+const mockOpenURL = openURL as jest.MockedFunction<typeof openURL>;
 const mockUseOpenSendFlow = useOpenSendFlow as jest.MockedFunction<typeof useOpenSendFlow>;
 const mockUseOpenAssetFlow = useOpenAssetFlow as jest.MockedFunction<typeof useOpenAssetFlow>;
 const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>;
@@ -71,7 +77,10 @@ describe("useQuickActions", () => {
   describe("actions structure", () => {
     it("should return receive action with ArrowDown icon", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const receiveAction = result.current.actionsList[0];
@@ -82,7 +91,10 @@ describe("useQuickActions", () => {
 
     it("should return buy action with Plus icon", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const buyAction = result.current.actionsList[1];
@@ -93,7 +105,10 @@ describe("useQuickActions", () => {
 
     it("should return sell action with Minus icon", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sellAction = result.current.actionsList[2];
@@ -103,7 +118,10 @@ describe("useQuickActions", () => {
 
     it("should return send action with ArrowUp icon", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sendAction = result.current.actionsList[3];
@@ -116,7 +134,10 @@ describe("useQuickActions", () => {
   describe("sell action disabled state", () => {
     it("should disable sell action when no accounts exist", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [] },
+        initialState: {
+          accounts: [],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sellAction = result.current.actionsList[2];
@@ -125,7 +146,10 @@ describe("useQuickActions", () => {
 
     it("should disable sell action when all accounts are empty", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createEmptyAccount()] },
+        initialState: {
+          accounts: [createEmptyAccount()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sellAction = result.current.actionsList[2];
@@ -134,7 +158,10 @@ describe("useQuickActions", () => {
 
     it("should enable sell action when accounts have funds", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sellAction = result.current.actionsList[2];
@@ -143,7 +170,10 @@ describe("useQuickActions", () => {
 
     it("should enable sell action when at least one account has funds", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createEmptyAccount(), createAccountWithFunds()] },
+        initialState: {
+          accounts: [createEmptyAccount(), createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sellAction = result.current.actionsList[2];
@@ -154,7 +184,10 @@ describe("useQuickActions", () => {
   describe("onReceive action", () => {
     it("should open receive modal when user has accounts", () => {
       const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -168,7 +201,10 @@ describe("useQuickActions", () => {
 
     it("should call openAssetFlow when user has no accounts", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [] },
+        initialState: {
+          accounts: [],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -180,7 +216,10 @@ describe("useQuickActions", () => {
 
     it("should not open receive modal when user has no accounts", () => {
       const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [] },
+        initialState: {
+          accounts: [],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -194,7 +233,10 @@ describe("useQuickActions", () => {
       mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -208,7 +250,10 @@ describe("useQuickActions", () => {
       mockUseLocation.mockReturnValue(createLocation("/manager"));
 
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -222,7 +267,10 @@ describe("useQuickActions", () => {
   describe("onBuy action", () => {
     it("should navigate to exchange with buy mode", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -238,7 +286,10 @@ describe("useQuickActions", () => {
   describe("onSell action", () => {
     it("should navigate to exchange with sell mode", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -254,7 +305,10 @@ describe("useQuickActions", () => {
   describe("onSend action", () => {
     it("should open send flow when triggered", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -268,7 +322,10 @@ describe("useQuickActions", () => {
       mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -283,7 +340,10 @@ describe("useQuickActions", () => {
       mockUseLocation.mockReturnValue(createLocation("/manager"));
 
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createAccountWithFunds()] },
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       act(() => {
@@ -296,20 +356,86 @@ describe("useQuickActions", () => {
 
     it("should disable send action when no accounts exist", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [] },
+        initialState: {
+          accounts: [],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sendAction = result.current.actionsList[3];
       expect(sendAction.disabled).toBe(true);
     });
 
-    it("should enable send action when all accounts are empty", () => {
+    it("should disable send action when user has no funds", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
-        initialState: { accounts: [createEmptyAccount()] },
+        initialState: {
+          accounts: [createEmptyAccount()],
+          settings: { hasCompletedOnboarding: true },
+        },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(true);
+    });
+
+    it("should enable send action when user has at least one account with funds", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: {
+          accounts: [createEmptyAccount(), createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: true },
+        },
       });
 
       const sendAction = result.current.actionsList[3];
       expect(sendAction.disabled).toBe(false);
+    });
+  });
+
+  describe("when onboarding is not completed", () => {
+    it("should return only connect and buy a ledger actions", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: false },
+        },
+      });
+
+      const actionTitles = result.current.actionsList.map(action => action.title);
+      expect(actionTitles).toHaveLength(2);
+      expect(actionTitles).toContain("Connect");
+      expect(actionTitles).toContain("Buy a Ledger");
+    });
+
+    it("should open connect device modal when connect action is triggered", () => {
+      const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: false },
+        },
+      });
+
+      act(() => {
+        result.current.actionsList[0].onAction();
+      });
+
+      expect(store.getState().modals).toMatchObject({
+        MODAL_CONNECT_DEVICE: { isOpened: true },
+      });
+    });
+
+    it("should open ledger shop when buy a ledger action is triggered", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
+        initialState: {
+          accounts: [createAccountWithFunds()],
+          settings: { hasCompletedOnboarding: false },
+        },
+      });
+
+      act(() => {
+        result.current.actionsList[1].onAction();
+      });
+
+      expect(mockOpenURL).toHaveBeenCalledWith(urls.ledgerShop);
     });
   });
 });

@@ -2676,6 +2676,10 @@
     "carousel" : {
       "title" : "Sizin için"
     },
+    "perpsEntry" : {
+      "title" : "Süresiz vadeli sözleşmeler",
+      "description" : "Kaldıraçlı alım satım yapın"
+    },
     "recommended" : {
       "title" : "Önerilen"
     },
@@ -2713,6 +2717,8 @@
       "transfer" : "Transfer",
       "swap" : "Takas et",
       "buy" : "Satın al",
+      "connect" : "Bağlan",
+      "buyLedger" : "Ledger satın alın",
       "transferDrawer" : {
         "title" : "Transfer",
         "receiveCrypto" : "Kripto alın",
@@ -2988,7 +2994,6 @@
     "yield" : "Getiri",
     "sell" : "Sat",
     "swap" : "Takas et",
-    "perps" : "Sürekli vadeli işlemler",
     "manage" : "Yönet",
     "lastTransactions" : "Son işlemler",
     "emptyState" : {
@@ -3000,7 +3005,8 @@
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
       },
-      "addAccountCta" : "Hesap ekle"
+      "addAccountCta" : "Hesap ekle",
+      "addCryptoAccount" : "Kripto hesabı ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -3675,10 +3681,6 @@
       "title" : "Stake et",
       "description" : "Kriptolarınızla ödüller kazanın."
     },
-    "perps" : {
-      "title" : "Sürekli vadeli işlemler",
-      "description" : "Kriptoda sürekli vadeli işlemler yapın."
-    },
     "swap" : {
       "title" : "Takas et",
       "description" : "Bir kriptoyu diğeriyle takas edin.",
@@ -3875,7 +3877,8 @@
         "title" : "Teklif seçin"
       },
       "twoStepApproval" : {
-        "title" : "Adımları tamamlayın"
+        "title" : "Adımları tamamlayın",
+        "completedTitle" : "İşlem Durumu"
       },
       "loader" : {
         "title" : "Takas İşleniyor",
@@ -4573,6 +4576,7 @@
       },
       "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
       "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
+      "acceptTermsSponsored" : "Sıfır ağ ücretinden faydalanmak için işlem ayrıntılarınızı (cüzdan adresiniz de dâhil) Blinklabs ile paylaşmayı da kabul ediyorsunuz.",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
@@ -8387,9 +8391,6 @@
       "extremeGreed" : "Aşırı Açgözlülük"
     },
     "tileTitle" : "Duygu"
-  },
-  "perps" : {
-    "title" : "Sürekli vadeli işlemler"
   },
   "analyticsAllocation" : {
     "header" : {

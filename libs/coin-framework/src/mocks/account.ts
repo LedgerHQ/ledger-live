@@ -361,9 +361,7 @@ export function genAccount(
     }),
   };
 
-  if (
-    ["ethereum", "ethereum_sepolia", "ethereum_holesky", "tron", "algorand"].includes(currency.id)
-  ) {
+  if (["ethereum", "ethereum_sepolia", "tron", "algorand"].includes(currency.id)) {
     const tokenCount =
       typeof opts.subAccountsCount === "number" ? opts.subAccountsCount : rng.nextInt(0, 8);
 

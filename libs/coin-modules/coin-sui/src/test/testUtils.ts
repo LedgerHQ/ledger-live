@@ -1,5 +1,5 @@
-import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+import { Transaction } from "@mysten/sui/transactions";
 
 export async function extractCoinTypeFromUnsignedTx(
   unsignedTxBytes: Uint8Array,

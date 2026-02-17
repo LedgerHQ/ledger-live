@@ -1,11 +1,10 @@
+import network from "@ledgerhq/live-network";
 import MultiversXApi from "./apiCalls";
 
 jest.mock("@ledgerhq/live-network", () => {
   const fn = jest.fn();
   return { __esModule: true, default: fn };
 });
-
-import network from "@ledgerhq/live-network";
 
 describe("MultiversXApi startAt clamping", () => {
   const api = new MultiversXApi("https://api.example.com", "https://deleg.example.com");

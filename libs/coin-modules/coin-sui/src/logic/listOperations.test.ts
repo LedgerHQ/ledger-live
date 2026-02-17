@@ -1,6 +1,6 @@
-import { listOperations } from "./listOperations";
-import { getListOperations, withApi } from "../network/sdk";
 import { type Operation as Op, type Page, Pagination } from "@ledgerhq/coin-framework/api/types";
+import { getListOperations, withApi } from "../network/sdk";
+import { listOperations } from "./listOperations";
 
 jest.mock("../network/sdk");
 

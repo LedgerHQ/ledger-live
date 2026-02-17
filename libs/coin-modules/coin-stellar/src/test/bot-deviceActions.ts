@@ -1,11 +1,11 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
 

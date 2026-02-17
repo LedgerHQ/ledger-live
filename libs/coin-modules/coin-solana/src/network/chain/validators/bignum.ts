@@ -1,5 +1,5 @@
-import { coerce, instance, number, string } from "superstruct";
 import { BigNumber } from "bignumber.js";
+import { coerce, instance, number, string } from "superstruct";
 
 export const BigNumFromString = coerce(instance(BigNumber), string(), value => {
   if (typeof value === "string") return new BigNumber(value, 10);

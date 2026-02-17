@@ -1,3 +1,4 @@
+import { AccountAddress } from "@aptos-labs/ts-sdk";
 import {
   NotEnoughBalance,
   NotEnoughToStake,
@@ -12,10 +13,8 @@ import {
   AmountRequired,
   NotEnoughBalanceFees,
 } from "@ledgerhq/errors";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { AptosAccount, AptosStakingPosition, Transaction, TransactionStatus } from "../types";
-import { getTokenAccount } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
   APTOS_MINIMUM_RESTAKE,
@@ -26,8 +25,9 @@ import {
   MIN_COINS_ON_SHARES_POOL,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { getStakingPosition } from "../logic/staking";
+import type { AptosAccount, AptosStakingPosition, Transaction, TransactionStatus } from "../types";
+import { getTokenAccount } from "./logic";
 
 const checkSendTransaction = (
   t: Transaction,

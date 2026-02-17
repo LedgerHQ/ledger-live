@@ -23,6 +23,15 @@ import { Icons } from "@ledgerhq/react-ui/index";
 import Input from "~/renderer/components/Input";
 import { MobileView } from "~/renderer/hooks/useMobileView";
 
+/** When Back fails (refs not ready), redirect to this path if location.state has the key set. */
+const BACK_FALLBACK_ROUTES: Record<string, string> = {
+  fromCardLanding: "/card-new-wallet",
+};
+
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj !== null && typeof obj === "object";
+}
+
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
@@ -165,23 +174,33 @@ export const TopBar = ({
         },
       });
     } else {
-      const currentHostname = new URL(webviewState.url).hostname;
-      const webview = safeGetRefValue(webviewAPIRef);
-      const safeUrl = safeGetRefValue(lastMatchingURL);
-      const url = new URL(safeUrl);
-      const urlParams = new URLSearchParams(url.searchParams);
-      const flowName = urlParams.get("liveAppFlow");
+      try {
+        const currentHostname = new URL(webviewState.url).hostname;
+        const webview = safeGetRefValue(webviewAPIRef);
+        const safeUrlValue = safeGetRefValue(lastMatchingURL);
+        const url = new URL(safeUrlValue);
+        const urlParams = new URLSearchParams(url.searchParams);
+        const flowName = urlParams.get("liveAppFlow");
 
-      track("button_clicked2", {
-        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
-        provider: currentHostname,
-        flow: flowName,
-      });
+        track("button_clicked2", {
+          button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
+          provider: currentHostname,
+          flow: flowName,
+        });
 
-      await webview.loadURL(safeUrl);
-      webview.clearHistory();
+        await webview.loadURL(safeUrlValue);
+        webview.clearHistory();
+      } catch {
+        // Refs not ready: redirect using BACK_FALLBACK_ROUTES if state matches
+        const state = isRecord(location.state) ? location.state : null;
+        const matchedKey = state ? Object.keys(BACK_FALLBACK_ROUTES).find(key => state[key]) : null;
+        const fallbackPath = matchedKey ? BACK_FALLBACK_ROUTES[matchedKey] : null;
+        if (fallbackPath) {
+          navigate(fallbackPath);
+        }
+      }
     }
-  }, [localStorage, navigate, location.pathname, webviewAPIRef, webviewState.url]);
+  }, [localStorage, navigate, location.pathname, location.state, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";

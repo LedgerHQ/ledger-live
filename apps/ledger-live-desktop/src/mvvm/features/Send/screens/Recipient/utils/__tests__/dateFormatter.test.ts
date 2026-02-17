@@ -103,16 +103,19 @@ describe("dateFormatter utils", () => {
       const twoWeeksAgo = new Date(Date.now() - 2 * WEEK_MS);
       const result = formatRelativeDate(twoWeeksAgo);
 
-      expect(result).toMatch(/^\d{1,2} \w{3}$/);
-      expect(result).toBe("1 Jan");
+      // Intl.DateTimeFormat order varies by locale (e.g. "1 Jan" vs "Jan 1")
+      expect(result).toMatch(/\d{1,2}/);
+      expect(result).toMatch(/Jan/);
+      expect(result).not.toMatch(/\d{2}$/);
     });
 
     it("returns date format with year for dates in previous years", () => {
       const lastYear = new Date("2023-01-01T12:00:00.000Z");
       const result = formatRelativeDate(lastYear);
 
-      expect(result).toMatch(/^\d{1,2} \w{3} \d{2}$/);
-      expect(result).toBe("1 Jan 23");
+      expect(result).toMatch(/1|01/);
+      expect(result).toMatch(/Jan/);
+      expect(result).toMatch(/23/);
     });
 
     it("returns empty string for invalid dates", () => {
@@ -121,11 +124,25 @@ describe("dateFormatter utils", () => {
     });
 
     it("handles dates at year boundaries correctly", () => {
-      // Use a date that will be Dec 31 in all timezones
       const lastDayOfYear = new Date("2023-12-31T12:00:00.000Z");
       const result = formatRelativeDate(lastDayOfYear);
 
-      expect(result).toBe("31 Dec 23");
+      expect(result).toMatch(/31/);
+      expect(result).toMatch(/Dec/);
+      expect(result).toMatch(/23/);
+    });
+
+    it("uses i18n t() when provided", () => {
+      const now = new Date("2024-01-15T12:00:00.000Z");
+      const mockT = (key: string, opts?: { count?: number }) => {
+        if (key === "newSendFlow.relativeDate.justNow") return "À l'instant";
+        if (key === "newSendFlow.relativeDate.minutesAgo") return `${opts?.count ?? 0} min ago`;
+        return key;
+      };
+      expect(formatRelativeDate(now, { t: mockT, locale: "fr" })).toBe("À l'instant");
+
+      const fiveMinAgo = new Date(Date.now() - 5 * MINUTE_MS);
+      expect(formatRelativeDate(fiveMinAgo, { t: mockT, locale: "fr" })).toBe("5 min ago");
     });
   });
 });

@@ -1,9 +1,9 @@
-import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { randomBytes } from "crypto";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import dotenv from "dotenv";
 import TronWeb from "tronweb";
-import { createApi } from ".";
 import { createTronWeb } from "../logic/utils";
+import { createApi } from ".";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
 dotenv.config();
@@ -75,8 +75,9 @@ describe("API", () => {
 /**
  * Use this function to create a new account and seed `.env.integ.test.ts` file with its value.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function generateNewAccount(trongridUrl: string) {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+async function _generateNewAccount(trongridUrl: string) {
   const privateKey = randomBytes(32).toString("hex");
 
   const HttpProvider = TronWeb.providers.HttpProvider;

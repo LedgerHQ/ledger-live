@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getBlockByHeight as externalGetBlockByHeight } from "../network/node/rpc.common";
-import ledgerNode from "../network/node/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
+import ledgerNode from "../network/node/ledger";
+import { getBlockByHeight as externalGetBlockByHeight } from "../network/node/rpc.common";
 import { lastBlock } from "./lastBlock";
 
 jest.mock("../network/node/rpc.common", () => ({

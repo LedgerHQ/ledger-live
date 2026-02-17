@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { PolkadotAccount, Transaction } from "../types";
-import BigNumber from "bignumber.js";
-import estimateMaxSpendable from "./estimateMaxSpendable";
 import type { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { PolkadotAccount, Transaction } from "../types";
+import estimateMaxSpendable from "./estimateMaxSpendable";
 
 // Module-level mocks
 const mockGetMainAccount = jest.fn();

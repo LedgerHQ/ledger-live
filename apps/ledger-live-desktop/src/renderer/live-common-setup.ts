@@ -13,11 +13,13 @@ import { setEnvOnAllThreads } from "./../helpers/env";
 import logger from "./logger";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import IPCTransport from "./IPCTransport";
 
 enum RendererTransportModule {
   DeviceManagementKit,
-  IPC, // For Speculos and HTTP proxy via internal process
+  DeviceManagementKitSpeculos,
+  IPC,
   Vault,
 }
 
@@ -42,9 +44,8 @@ export function registerTransportModules(_store: Store) {
 
   function whichTransportModuleToUse(deviceId: string): RendererTransportModule {
     if (deviceId.startsWith(vaultTransportPrefixID)) return RendererTransportModule.Vault;
-    if (getEnv("SPECULOS_API_PORT") || getEnv("DEVICE_PROXY_URL"))
-      return RendererTransportModule.IPC;
-    // Always use DeviceManagementKit for regular USB devices (WebHID)
+    if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.DeviceManagementKitSpeculos;
+    if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.IPC;
     return RendererTransportModule.DeviceManagementKit;
   }
 
@@ -75,9 +76,44 @@ export function registerTransportModules(_store: Store) {
     disconnect: () => Promise.resolve(),
   });
 
+  registerTransportModule({
+    id: "deviceManagementKitSpeculosTransport",
+    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+      if (whichTransportModuleToUse(id) !== RendererTransportModule.DeviceManagementKitSpeculos)
+        return;
+
+      trace({
+        type: "renderer-setup",
+        message: "Open called on registered module",
+        data: {
+          transport: "DeviceManagementKitTransportSpeculos",
+          timeoutMs,
+        },
+        context: {
+          openContext: context,
+        },
+      });
+
+      const speculosApiPort = getEnv("SPECULOS_API_PORT");
+
+      return retry(
+        () =>
+          DeviceManagementKitTransportSpeculos.open({
+            apiPort: speculosApiPort ? String(speculosApiPort) : undefined,
+            timeout: timeoutMs,
+          }),
+        {
+          interval: 500,
+          maxRetry: 4,
+        },
+      );
+    },
+    disconnect: () => Promise.resolve(),
+  });
+
   /**
    * IPC Transport Module.
-   * Handles Speculos and HTTP proxy via internal process.
+   * Handles HTTP proxy via internal process.
    * Uses IPC to communicate with internal process that manages actual transports.
    */
   registerTransportModule({
@@ -97,13 +133,7 @@ export function registerTransportModules(_store: Store) {
         },
       });
 
-      // Use a descriptive ID that helps the internal process choose the right transport
-      let descriptor = "ipc";
-      if (getEnv("SPECULOS_API_PORT")) {
-        descriptor = "speculos";
-      } else if (getEnv("DEVICE_PROXY_URL")) {
-        descriptor = "proxy";
-      }
+      const descriptor = getEnv("DEVICE_PROXY_URL") ? "proxy" : "ipc";
 
       return retry(() => IPCTransport.open(descriptor, timeoutMs, context), {
         interval: 500,

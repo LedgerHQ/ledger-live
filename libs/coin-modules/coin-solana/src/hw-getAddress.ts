@@ -1,9 +1,8 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { SolanaSigner } from "./signer";
-
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import bs58 from "bs58";
+import { SolanaSigner } from "./signer";
 
 const resolver = (signerContext: SignerContext<SolanaSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

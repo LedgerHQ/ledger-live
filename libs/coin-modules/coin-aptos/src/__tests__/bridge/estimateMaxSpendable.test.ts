@@ -1,6 +1,6 @@
+import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import estimateMaxSpendable from "../../bridge/estimateMaxSpendable";
-import BigNumber from "bignumber.js";
 
 jest.mock("../../bridge/getFeesForTransaction", () => ({
   getEstimatedGas: jest.fn(() => ({

@@ -1,12 +1,12 @@
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import BigNumber from "bignumber.js";
+import { APTOS_EXPLORER_ACCOUNT_URL } from "../constants";
+import { isTestnet } from "../logic/isTestnet";
+import { formatUnlockTime } from "../logic/staking";
 import { AptosAPI } from "../network";
+import { AptosValidator } from "../types";
 import { GetCurrentDelegatorBalancesData } from "./graphql/queries";
 import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "./graphql/types";
-import { AptosValidator } from "../types";
-import { isTestnet } from "../logic/isTestnet";
-import { APTOS_EXPLORER_ACCOUNT_URL } from "../constants";
-import { formatUnlockTime } from "../logic/staking";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);

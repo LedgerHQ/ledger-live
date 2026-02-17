@@ -1,36 +1,67 @@
+import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
+import { log } from "@ledgerhq/logs";
+
 /**
  * ZCash API
  */
 
-export default class ZCash {
-  static readonly AVERAGE_BLOCK_SYNC_TIME_MS = 5;
+export type SyncEstimatedTime = {
+  hours: number;
+  minutes: number;
+};
 
+export default class ZCash {
   /**
-   * Estimates sync time given a start and an end block.
+   * Estimates sync time given a total number of blocks to process.
+   * This is a curried function that returns a function that returns the estimated sync time.
+   * It should be called when processing a block (passing the total number of blocks to process)
+   * and then called again when processing the next block.
+   * The function will return the estimated sync time in hours and minutes.
    *
-   * @param startBlock starting block
-   * @param endBlock end block, usually the latest confirmed block
-   * @return the estimated sync time
+   * @param totalBlocks total blocks to process
+   * @return an object with the estimated sync time in hours and minutes
    */
-  async estimateSyncTime(startBlock: number, endBlock: number) {
-    return (endBlock - startBlock) * ZCash.AVERAGE_BLOCK_SYNC_TIME_MS;
+  async estimatedSyncTime(totalBlocks: number) {
+    const start = Date.now();
+    let end: number | null = null;
+
+    return (): SyncEstimatedTime => {
+      end = Date.now();
+      const totalSeconds = ((end - start) / 1000) * totalBlocks;
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      return {
+        hours,
+        minutes,
+      };
+    };
   }
 
   /**
    * Decrypts a ZCash shielded - i.e., encrypted - transaction.
    *
-   * @param encryptedTransaction string raw string representing an encrypted transaction.
-   * @return a decrypted transaction
+   * @param {string} rawHexTransaction, raw string representing an encrypted transaction.
+   * @param {string} viewingKey the UFVK - unified full viewing key.
+   * @return {Promise<DecryptedOutput>} the decrypted transaction
    */
-  async decryptTransaction(encryptedTransaction: string): Promise<string> {
-    return `decrypted_${encryptedTransaction}`;
+  async decryptTransaction(
+    rawHexTransaction: string,
+    viewingKey: string,
+  ): Promise<DecryptedTransaction | undefined> {
+    try {
+      return decrypt_tx(rawHexTransaction, viewingKey);
+    } catch (error) {
+      log("zcash-shielded", "failed to decrypt transaction", error);
+    }
   }
 
   /**
-   * Finds the lowest block height correspondent to a given timestamp
+   * Finds the lowest block height correspondent to a given timestamp.
    *
-   * @param timestamp
-   * @return a block height
+   * @param {number} timestamp
+   * @return {Promise<number>} a block height
    */
   async findBlockHeight(timestamp: number): Promise<number> {
     return timestamp + 42;

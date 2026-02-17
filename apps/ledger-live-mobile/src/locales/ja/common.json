@@ -2676,6 +2676,10 @@
     "carousel" : {
       "title" : "お客様へ"
     },
+    "perpsEntry" : {
+      "title" : "無期限先物",
+      "description" : "レバレッジ取引"
+    },
     "recommended" : {
       "title" : "おすすめ"
     },
@@ -2713,6 +2717,8 @@
       "transfer" : "送金",
       "swap" : "スワップ",
       "buy" : "購入",
+      "connect" : "接続",
+      "buyLedger" : "Ledgerを購入する",
       "transferDrawer" : {
         "title" : "送金",
         "receiveCrypto" : "暗号資産を受け取る",
@@ -2988,7 +2994,6 @@
     "yield" : "イールド",
     "sell" : "売却",
     "swap" : "スワップ",
-    "perps" : "無期限先物",
     "manage" : "管理",
     "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
@@ -3000,7 +3005,8 @@
         "receiveFunds" : "受け取る",
         "buyCrypto" : "購入"
       },
-      "addAccountCta" : "アカウントを追加"
+      "addAccountCta" : "アカウントを追加",
+      "addCryptoAccount" : "暗号資産アカウントを追加"
     },
     "settings" : {
       "header" : "アカウント設定",
@@ -3675,10 +3681,6 @@
       "title" : "ステーキング",
       "description" : "お持ちの暗号資産で報酬を獲得しましょう。"
     },
-    "perps" : {
-      "title" : "無期限先物",
-      "description" : "暗号資産の無期限先物を取引"
-    },
     "swap" : {
       "title" : "スワップ",
       "description" : "暗号資産を別の暗号資産と交換する。",
@@ -3875,7 +3877,8 @@
         "title" : "見積もりを選択"
       },
       "twoStepApproval" : {
-        "title" : "手順を完了する"
+        "title" : "手順を完了する",
+        "completedTitle" : "トランザクションのステータス"
       },
       "loader" : {
         "title" : "スワップ処理中",
@@ -4573,6 +4576,7 @@
       },
       "acceptTerms" : "このトランザクションに署名すると、<0><0>{{provider}}</0>の利用規約</0>に同意したことになります。",
       "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
+      "acceptTermsSponsored" : "ネットワーク手数料を無料にするには、お客様のトランザクション詳細（ウォレットアドレスを含む）をBlinklabsと共有することに同意していただく必要があります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、その際には、取引の完了に影響する可能性があります。そのような場合は、Changellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
@@ -8387,9 +8391,6 @@
       "extremeGreed" : "極度の貪欲"
     },
     "tileTitle" : "市場ムード"
-  },
-  "perps" : {
-    "title" : "無期限先物"
   },
   "analyticsAllocation" : {
     "header" : {

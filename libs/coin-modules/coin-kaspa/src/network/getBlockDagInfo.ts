@@ -1,5 +1,5 @@
-import { API_BASE } from "./config";
 import { ApiResponseBlockDagInfo } from "../types";
+import { API_BASE } from "./config";
 
 export const getBlockDagInfo = async (): Promise<ApiResponseBlockDagInfo> => {
   try {

@@ -34,7 +34,7 @@ describe("lastBlock", () => {
 
     const result = await lastBlock(mockCurrency);
 
-    expect(result).toEqual({ height: 100 });
+    expect(result.height).toBe(100);
     expect(gatewayGetLedgerEnd).toHaveBeenCalledTimes(1);
     expect(nodeGetLedgerEnd).not.toHaveBeenCalled();
   });
@@ -45,7 +45,7 @@ describe("lastBlock", () => {
 
     const result = await lastBlock(mockCurrency);
 
-    expect(result).toEqual({ height: 200 });
+    expect(result.height).toBe(200);
     expect(nodeGetLedgerEnd).toHaveBeenCalledTimes(1);
     expect(gatewayGetLedgerEnd).not.toHaveBeenCalled();
   });

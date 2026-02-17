@@ -1,13 +1,13 @@
-import { AptosTransaction } from "../types";
+import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
-import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
-import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
+import { AptosTransaction } from "../types";
 import { calculateAmount } from "./calculateAmount";
-import { processRecipients } from "./processRecipients";
+import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { getFunctionAddress } from "./getFunctionAddress";
 import { normalizeAddress } from "./normalizeAddress";
+import { processRecipients } from "./processRecipients";
 
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   payload: EntryFunctionPayloadResponse,
@@ -73,7 +73,11 @@ export function transactionsToOperations(
       },
       tx: {
         hash: tx.hash,
-        block: { height: 0 },
+        block: {
+          height: tx.block.height,
+          hash: tx.block.hash,
+          time: new Date(parseInt(tx.timestamp) / 1000),
+        },
         fees: BigInt(0),
         date: new Date(parseInt(tx.timestamp) / 1000),
         failed: !tx.success,

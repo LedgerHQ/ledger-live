@@ -1,15 +1,10 @@
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import axios, { AxiosRequestConfig } from "axios";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { log } from "@ledgerhq/logs";
-import {
-  EtherscanAPIError,
-  EtherscanLikeExplorerUsedIncorrectly,
-  InvalidExplorerResponse,
-} from "../../errors";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -18,6 +13,11 @@ import {
   etherscanInternalTransactionToOperations,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
+import {
+  EtherscanAPIError,
+  EtherscanLikeExplorerUsedIncorrectly,
+  InvalidExplorerResponse,
+} from "../../errors";
 import {
   EtherscanERC1155Event,
   EtherscanERC20Event,
@@ -297,10 +297,15 @@ export const getLastNftOperations = async (
   );
 };
 
+// blockscout returns tx hash in transactionHash field
+const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransaction => ({
+  ...op,
+  hash: op.hash ?? op.transactionHash,
+});
+
 /**
  * Get all the latest internal transactions
  */
-
 export const getLastInternalOperations = async (
   currency: CryptoCurrency,
   address: string,
@@ -327,7 +332,7 @@ export const getLastInternalOperations = async (
       startBlock: fromBlock,
       endBlock: toBlock,
     },
-  });
+  }).then(ops => ops.map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from

@@ -1,12 +1,12 @@
-import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount, genOperation, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
-import { Operation } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import Prando from "prando";
-import { getStuckAccountAndOperation, isEditableOperation } from "./operation";
-import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
 import lobsterTokenData from "./fixtures/cardano-native-8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552.json";
+import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
+import { getStuckAccountAndOperation, isEditableOperation } from "./operation";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

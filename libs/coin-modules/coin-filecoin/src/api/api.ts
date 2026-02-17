@@ -1,9 +1,10 @@
-import { log } from "@ledgerhq/logs";
-
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { getEnv } from "@ledgerhq/live-env";
+import { LiveNetworkRequest } from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
 
+import { FilecoinFeeEstimationFailed } from "../errors";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -17,8 +18,6 @@ import {
   ERC20Transfer,
   ERC20BalanceResponse,
 } from "../types";
-import { FilecoinFeeEstimationFailed } from "../errors";
-import { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 
 const txsPerPageLimit = 1000;
 const currentVersion = "/v2";

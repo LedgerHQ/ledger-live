@@ -7,5 +7,6 @@ type AnalyticsViewModel = {
   counterValue: Currency;
   selectedTimeRange: PortfolioRange;
   t: TFunction;
+  shouldDisplayGraphRework?: boolean;
 };
 export type { AnalyticsViewModel };

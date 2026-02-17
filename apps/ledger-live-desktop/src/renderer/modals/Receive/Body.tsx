@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -55,6 +55,7 @@ export type OwnProps = {
   verifyAddressError: Error | undefined | null;
   onChangeAddressVerified: (isAddressVerified?: boolean | null, err?: Error | null) => void;
   params: Data;
+  useLegacyReceiveOptions?: boolean;
 };
 export type StateProps = {
   t: TFunction;
@@ -87,43 +88,46 @@ export type StepProps = {
   accountError?: Error;
 };
 export type St = Step<StepId, StepProps>;
-const createSteps = (): Array<St> => [
-  {
+function createSteps(useLegacyReceiveOptions: boolean): Array<St> {
+  const legacyOptionsStep: St = {
     id: "receiveOptions",
     excludeFromBreadcrumb: true,
     component: StepOptions,
-  },
-  {
-    id: "warning",
-    excludeFromBreadcrumb: true,
-    component: StepWarning,
-    footer: StepWarningFooter,
-  },
-  {
-    id: "account",
-    label: <Trans i18nKey="receive.steps.chooseAccount.title" />,
-    component: StepAccount,
-    footer: StepAccountFooter,
-  },
-  {
-    id: "device",
-    label: <Trans i18nKey="receive.steps.connectDevice.title" />,
-    component: StepConnectDevice,
-    footer: StepConnectDeviceFooter,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("account"),
-  },
-  {
-    id: "receive",
-    label: <Trans i18nKey="receive.steps.receiveFunds.title" />,
-    component: StepReceiveFunds,
-  },
-  {
-    id: "stakingFlow",
-    excludeFromBreadcrumb: true,
-    component: StepReceiveStakingFlow,
-    footer: StepReceiveStakingFooter,
-  },
-];
+  };
+  const steps: Array<St> = [
+    {
+      id: "warning",
+      excludeFromBreadcrumb: true,
+      component: StepWarning,
+      footer: StepWarningFooter,
+    },
+    {
+      id: "account",
+      label: <Trans i18nKey="receive.steps.chooseAccount.title" />,
+      component: StepAccount,
+      footer: StepAccountFooter,
+    },
+    {
+      id: "device",
+      label: <Trans i18nKey="receive.steps.connectDevice.title" />,
+      component: StepConnectDevice,
+      footer: StepConnectDeviceFooter,
+      onBack: ({ transitionTo }: StepProps) => transitionTo("account"),
+    },
+    {
+      id: "receive",
+      label: <Trans i18nKey="receive.steps.receiveFunds.title" />,
+      component: StepReceiveFunds,
+    },
+    {
+      id: "stakingFlow",
+      excludeFromBreadcrumb: true,
+      component: StepReceiveStakingFlow,
+      footer: StepReceiveStakingFooter,
+    },
+  ];
+  return useLegacyReceiveOptions ? [legacyOptionsStep, ...steps] : steps;
+}
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
   accounts: accountsSelector,
@@ -142,8 +146,9 @@ const Body = ({
   verifyAddressError,
   onChangeAddressVerified,
   params,
+  useLegacyReceiveOptions = true,
 }: Props) => {
-  const [steps] = useState(createSteps);
+  const steps = useMemo(() => createSteps(!!useLegacyReceiveOptions), [useLegacyReceiveOptions]);
   const [account, setAccount] = useState(() => (params && params.account) || accounts[0]);
   const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
   const [disabledSteps, setDisabledSteps] = useState<number[]>([]);

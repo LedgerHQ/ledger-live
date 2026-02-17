@@ -1,8 +1,10 @@
-import BigNumber from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { CosmosAccount, Transaction } from "./types";
+import BigNumber from "bignumber.js";
+import cosmosCoinConfig, { cosmosConfig } from "./config";
 import { calculateFees, getEstimatedFees } from "./prepareTransaction";
+import { CosmosAccount, Transaction } from "./types";
 
 jest.mock("@ledgerhq/live-network/network");
 
@@ -24,6 +26,13 @@ const transaction = {
 } as unknown as Transaction;
 
 describe("getEstimatedFees", () => {
+  beforeAll(() => {
+    LiveConfig.setConfig(cosmosConfig);
+    cosmosCoinConfig.setCoinConfig(
+      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+    );
+  });
+
   it("should return gas higher than estimate", async () => {
     const gasSimulationMock = 42000;
     // @ts-expect-error method is mocked
@@ -54,6 +63,12 @@ describe("getEstimatedFees", () => {
 });
 
 describe("calculateFees", () => {
+  beforeAll(() => {
+    LiveConfig.setConfig(cosmosConfig);
+    cosmosCoinConfig.setCoinConfig(
+      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+    );
+  });
   // Create fresh copies for each test to avoid cross-test pollution
   const createAccount = () =>
     ({

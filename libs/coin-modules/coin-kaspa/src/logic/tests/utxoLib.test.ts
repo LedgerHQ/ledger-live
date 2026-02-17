@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { KaspaUtxoGenerator } from "./utxoSelection.test";
 import { calcMaxSpendableAmount } from "../utxos/lib";
+import { KaspaUtxoGenerator } from "./utxoSelection.test";
 
 describe("calcMaxSpendableAmount", () => {
   it("should calculate max spendable amount correctly with default fee rate", () => {

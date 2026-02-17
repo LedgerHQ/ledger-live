@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import { detectEvmStakingOperationType, isStakingOperation } from "./detectOperationType";
 import { StakingOperation } from "./../types/staking";
+import { detectEvmStakingOperationType, isStakingOperation } from "./detectOperationType";
 
 describe("isStakingOperation", () => {
   const validOperations: StakingOperation[] = [

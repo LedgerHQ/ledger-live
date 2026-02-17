@@ -1,4 +1,7 @@
 import network from "@ledgerhq/live-network";
+import { LiveNetworkResponse } from "@ledgerhq/live-network/lib/network";
+import { getCoinConfig } from "../../config";
+import { MAX_TRANSACTIONS_PER_PAGE } from "../../consts";
 import {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
@@ -9,10 +12,7 @@ import {
   RosettaSubmitResponse,
   RosettaTransaction,
 } from "./types";
-import { getCoinConfig } from "../../config";
 import { addNetworkIdentifier, buildAccountIdentifier, makeTransferPayload } from "./utils";
-import { MAX_TRANSACTIONS_PER_PAGE } from "../../consts";
-import { LiveNetworkResponse } from "@ledgerhq/live-network/lib/network";
 
 const getRosettaUrl = (route: string): string => {
   const currencyConfig = getCoinConfig();

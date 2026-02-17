@@ -1,6 +1,6 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
 
 const resolver = (signerContext: SignerContext<AptosSigner>): GetAddressFn => {

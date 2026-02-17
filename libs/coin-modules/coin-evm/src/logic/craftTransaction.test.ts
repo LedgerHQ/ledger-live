@@ -1,18 +1,18 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   BufferTxData,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import { EvmCoinConfig, setCoinConfig } from "../config";
+import ledgerNode from "../network/node/ledger";
 import {
   getTransactionCount as externalGetTransactionCount,
   getGasEstimation as externalGetGasEstimation,
   getFeeData as externalGetFeeData,
 } from "../network/node/rpc.common";
-import ledgerNode from "../network/node/ledger";
-import { EvmCoinConfig, setCoinConfig } from "../config";
 import { craftTransaction } from "./craftTransaction";
 
 jest.mock("../network/node/rpc.common", () => ({

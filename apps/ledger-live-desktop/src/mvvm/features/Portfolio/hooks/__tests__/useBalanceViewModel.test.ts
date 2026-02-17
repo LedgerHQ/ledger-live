@@ -48,7 +48,6 @@ describe("useBalanceViewModel", () => {
     expect(result.current.balance).toBe(1500);
     const formatted = result.current.formatter(result.current.balance);
     expect(formatted.integerPart).toContain("15");
-    expect(result.current.isAvailable).toBe(true);
     expect(result.current.valueChange).toEqual(mockPortfolio.countervalueChange);
   });
 

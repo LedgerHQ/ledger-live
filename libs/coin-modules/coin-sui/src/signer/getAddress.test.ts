@@ -1,4 +1,4 @@
-import getAddressResolver from "./";
+import { getAddress as getAddressResolver } from "./";
 
 describe("getAddress resolver", () => {
   const mockDeviceId = "mock-device-id";

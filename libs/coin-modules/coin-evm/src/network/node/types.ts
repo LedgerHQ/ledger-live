@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction as EvmTransaction, FeeData } from "../../types";
+import { Account, BroadcastConfig } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
+import { Transaction as EvmTransaction, FeeData } from "../../types";
 
 /**
  * Asset information for token transfers
@@ -70,7 +70,13 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
     // timestamp is in milliseconds
-  ) => Promise<{ hash: string; height: number; timestamp: number; transactionHashes?: string[] }>;
+  ) => Promise<{
+    hash: string;
+    height: number;
+    timestamp: number;
+    parentHash: string;
+    transactionHashes?: string[];
+  }>;
   getOptimismAdditionalFees: (
     currency: CryptoCurrency,
     transaction: EvmTransaction | string,

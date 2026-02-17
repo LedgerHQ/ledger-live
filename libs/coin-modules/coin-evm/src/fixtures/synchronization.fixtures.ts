@@ -1,9 +1,9 @@
 /* instanbul ignore file: don't test fixtures */
 
-import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import {
   makeAccount,

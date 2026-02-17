@@ -1,6 +1,6 @@
-import getDeviceTransactionConfig from "./deviceTransactionConfig";
-import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import getDeviceTransactionConfig from "./deviceTransactionConfig";
 
 describe("getDeviceTransactionConfig", () => {
   const mockAccount: AccountLike = {

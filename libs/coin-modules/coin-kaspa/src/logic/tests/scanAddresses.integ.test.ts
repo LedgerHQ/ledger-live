@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
+import { AccountAddresses } from "../../types";
 import { parseExtendedPublicKey } from "../kaspaAddresses";
 import { scanAddresses } from "../scanAddresses";
-import { AccountAddresses } from "../../types";
 
 describe("scanAddresses function", () => {
   it("Gets information about addresses being active or not", async () => {

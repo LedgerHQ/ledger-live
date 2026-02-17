@@ -235,18 +235,29 @@ export const isConfirmedOperation = (
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
 
+type AddressPoisoningFilterOptions = {
+  families?: string[] | null;
+};
+
 export const isAddressPoisoningOperation = (
   operation: Operation,
   account: AccountLike,
+  options?: AddressPoisoningFilterOptions,
 ): boolean => {
-  const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES").split(",");
-  const isTokenAccount = account.type === "TokenAccount";
+  if (!operation.value.isZero() || account.type !== "TokenAccount") return false;
 
-  return (
-    isTokenAccount &&
-    impactedFamilies.includes(account.token.parentCurrency.family) &&
-    operation.value.isZero()
-  );
+  const family = account.token.parentCurrency.family;
+
+  if (options?.families) {
+    return options.families.includes(family);
+  }
+
+  // Fallback to environment variable if no families are provided to be retro-compatible
+  const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES")
+    .split(",")
+    .map(s => s.trim());
+
+  return impactedFamilies.includes(family);
 };
 
 /**

@@ -8,8 +8,9 @@ export class Modal extends Component {
   );
   readonly title = this.page.getByTestId("modal-title");
   readonly content = this.page.getByTestId("modal-content");
-  protected backdrop = this.page.getByTestId("modal-backdrop");
   readonly continueButton = this.page.getByRole("button", { name: "continue" });
+
+  protected backdrop = this.page.getByTestId("modal-backdrop");
   protected closeButton = this.page.getByTestId("modal-close-button");
   protected maxAmountCheckbox = this.page.getByTestId("modal-max-checkbox");
 

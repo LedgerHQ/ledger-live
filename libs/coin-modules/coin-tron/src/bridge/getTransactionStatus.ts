@@ -1,4 +1,5 @@
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   AmountRequired,
   InvalidAddress,
@@ -7,7 +8,6 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
 import { ONE_TRX } from "../logic/constants";

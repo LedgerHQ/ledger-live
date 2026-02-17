@@ -3,13 +3,15 @@ import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-liv
 
 export type BlockInfo = {
   height: number;
-  hash?: string;
+  hash: string;
   // can be different from tx date
   // transaction could be created at a particular moment, but depending on network conditions
   // mining time, and block intervals, it might not get included in the blockchain until later
-  time?: Date;
-  parent?: BlockInfo;
+  time: Date;
+  parent?: ParentBlock;
 };
+
+export type ParentBlock = Pick<BlockInfo, "height" | "hash">;
 
 // NOTE: from crypto-asset
 export type Unit = {

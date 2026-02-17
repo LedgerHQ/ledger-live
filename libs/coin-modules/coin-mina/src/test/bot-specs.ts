@@ -1,13 +1,13 @@
-import invariant from "invariant";
+import { genericTestDestination, botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
+import invariant from "invariant";
 
 import type { MinaOperation, Transaction } from "../types/common";
-import { genericTestDestination, botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./bot-deviceActions";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { getRandomTransferID } from "./testUtils";
 
 const maxAccount = 6;

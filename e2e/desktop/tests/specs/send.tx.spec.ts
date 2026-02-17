@@ -229,10 +229,13 @@ const transactionE2E = [
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
     xrayTicket: "B2CQA-4247",
   },
+  {
+    transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
+    xrayTicket: "B2CQA-4299",
+  },
 ];
 
 test.describe("Send flows", () => {
-
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({

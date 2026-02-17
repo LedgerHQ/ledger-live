@@ -11,7 +11,7 @@ const ShareAnalyticsButtonFF = () => {
 
   const toggleShareAnalytics = async (value: boolean) => {
     dispatch(setShareAnalytics(value));
-    await updateIdentify();
+    await updateIdentify({ force: true });
     track(
       "toggle_clicked",
       {

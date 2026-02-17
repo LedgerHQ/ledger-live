@@ -1,7 +1,6 @@
-import BigNumber from "bignumber.js";
-import { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getNonce, isFirstBond } from "./utils";
+import { OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   PalletMethod,
   PolkadotAccount,
@@ -10,6 +9,7 @@ import {
   PolkadotOperationMode,
   Transaction,
 } from "../types";
+import { getNonce, isFirstBond } from "./utils";
 
 const MODE_TO_TYPE: Record<PolkadotOperationMode | "default", OperationType> = {
   send: "OUT",

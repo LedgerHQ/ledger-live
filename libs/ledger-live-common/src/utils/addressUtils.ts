@@ -1,3 +1,36 @@
+export type FormatAddressOptions = {
+  prefixLength?: number;
+  suffixLength?: number;
+  separator?: string;
+  threshold?: number;
+};
+
+/**
+ * Format an address for display by showing a shortened version with ellipsis.
+ *
+ * @param address - The address string to format
+ * @param options - Optional configuration
+ * @param options.prefixLength - Number of characters at the start (default: 4)
+ * @param options.suffixLength - Number of characters at the end (default: 4)
+ * @param options.separator - Ellipsis string (default: "...")
+ * @param options.threshold - Minimum length before truncating (default: prefixLength + separator.length + suffixLength)
+ * @returns Formatted address string (e.g. "0x1234...5678")
+ */
+export function formatAddress(address: string, options: FormatAddressOptions = {}): string {
+  const {
+    prefixLength = 4,
+    suffixLength = 4,
+    separator = "...",
+    threshold = prefixLength + separator.length + suffixLength,
+  } = options;
+
+  if (!address || address.length <= threshold) {
+    return address;
+  }
+
+  return `${address.slice(0, prefixLength)}${separator}${address.slice(-suffixLength)}`;
+}
+
 /**
  * Split an address into start, middle, and end sections
  *

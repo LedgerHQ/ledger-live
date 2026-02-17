@@ -113,6 +113,7 @@ type SwapLocationState = {
   defaultParentAccount?: Account;
   defaultAccountId?: string;
   defaultParentAccountId?: string;
+  defaultCurrency?: string;
   defaultAmountFrom?: string;
   from?: string;
   defaultToken?: TokenParams;
@@ -511,6 +512,11 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             amountFrom: state?.defaultAmountFrom || "",
           }
         : {}),
+      ...(state?.defaultCurrency
+        ? {
+            toCurrencyId: state.defaultCurrency,
+          }
+        : {}),
       ...(state?.affiliate
         ? {
             affiliate: state.affiliate,
@@ -526,6 +532,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     state?.defaultAmountFrom,
     state?.from,
     state?.defaultToken,
+    state?.defaultCurrency,
     state?.affiliate,
     walletState,
   ]);

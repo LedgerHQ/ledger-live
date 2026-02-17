@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import Animation from "~/components/Animation";
 import Splashscreen from "./Splashscreen.json";
 
-const LottieLauncher = ({ onFinish }: { onFinish: () => void }) => {
+export default function LottieLauncher() {
   const { width, height } = Dimensions.get("window");
   const size = Math.min(width, height);
 
@@ -15,11 +15,10 @@ const LottieLauncher = ({ onFinish }: { onFinish: () => void }) => {
         loop={false}
         autoPlay
         speed={2}
-        onAnimationFinish={onFinish}
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -29,5 +28,3 @@ const styles = StyleSheet.create({
     backgroundColor: "#131214",
   },
 });
-
-export default LottieLauncher;

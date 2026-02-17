@@ -100,72 +100,6 @@ export const cancelDeviceAction = (transport: Transport): void => {
   needsCleanup[transportId] = true;
 };
 
-export type QueuedJob = { job: Promise<void>; id: number };
-
-/**
- * Manages queued jobs for each device (id)
- *
- * Careful: a USB-connected device has no unique id, and its `deviceId` will be an empty string.
- *
- * The queue object `queuedJobsByDevice` only stores, for each device, the latest void promise that will resolve
- * when the device is ready to be opened again.
- * They are scheduled to resolve whenever the job associated to the device is finished.
- * When calling withDevice several times, the new promise will be chained to the "then" of the previous promise:
- * open(device) -> execute job -> clean connection -> resolve promise -> next promise can start: open(device) -> etc.
- * So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
- */
-export class DeviceQueuedJobsManager {
-  // For each device, queue of linked Promises that wait after each other, blocking any future job for a given device
-  private queuedJobsByDevice: { [deviceId: string]: QueuedJob };
-
-  private static instance: DeviceQueuedJobsManager | null = null;
-
-  // To be able to differentiate withDevice calls in our logs
-  private static jobIdCounter: number = -1;
-
-  private constructor() {
-    this.queuedJobsByDevice = {};
-  }
-
-  /**
-   * Get the singleton instance
-   */
-  static getInstance(): DeviceQueuedJobsManager {
-    if (!this.instance) {
-      this.instance = new DeviceQueuedJobsManager();
-    }
-
-    return this.instance;
-  }
-
-  /**
-   * Returns the latest queued job for a given device id
-   *
-   * @param deviceId
-   * @returns the latest QueuedJob. If none, return a queued job that can be resolved directly.
-   */
-  getLastQueuedJob(deviceId: string): QueuedJob {
-    return this.queuedJobsByDevice[deviceId] || { job: Promise.resolve(), id: -1 };
-  }
-
-  /**
-   * Sets the latest queue job for a given device id
-   *
-   * Also increments the job id counter and set the newly queued job id to this new incremented value.
-   *
-   * Note: we should be fine on race conditions when updating the jobId in our use cases.
-   *
-   * @param deviceId
-   * @param jobToQueue a Promise that resolve to void, representing an async job
-   * @returns the id of the queued job
-   */
-  setLastQueuedJob(deviceId: string, jobToQueue: Promise<void>): number {
-    const id = ++DeviceQueuedJobsManager.jobIdCounter;
-    this.queuedJobsByDevice[deviceId] = { job: jobToQueue, id };
-    return id;
-  }
-}
-
 /**
  * Provides a Transport instance to a given job
  *
@@ -178,24 +112,11 @@ export const withDevice =
   (deviceId: string, options?: OpenOptions) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable(o => {
-      const queuedJobManager = DeviceQueuedJobsManager.getInstance();
-      const previousQueuedJob = queuedJobManager.getLastQueuedJob(deviceId);
-
-      // When the new job is finished, this will unlock the associated device queue of jobs
-      let resolveQueuedJob;
-
-      const jobId = queuedJobManager.setLastQueuedJob(
-        deviceId,
-        new Promise(resolve => {
-          resolveQueuedJob = resolve;
-        }),
-      );
-
-      const tracer = new LocalTracer(LOG_TYPE, { jobId, deviceId, origin: "hw:withDevice" });
+      const tracer = new LocalTracer(LOG_TYPE, { deviceId, origin: "hw:withDevice" });
       tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       // To call to cleanup the current transport
-      const finalize = async (transport: Transport, cleanups: Array<() => void>) => {
+      const finalize = async (transport: Transport) => {
         tracer.trace("Closing and cleaning transport", { function: "finalize" });
 
         try {
@@ -206,31 +127,20 @@ export const withDevice =
             function: "finalize",
           });
         }
-        cleanups.forEach(c => c());
       };
 
       let unsubscribed;
       let sub;
 
-      tracer.trace("Waiting for the previous job in the queue to complete", {
-        previousJobId: previousQueuedJob.id,
-      });
-      // For any new job, we'll now wait the exec queue to be available
-      previousQueuedJob.job
-        .then(() => {
-          tracer.trace("Previous queued job resolved, now trying to get a Transport instance", {
-            previousJobId: previousQueuedJob.id,
-            currentJobId: jobId,
-          });
-          return open(deviceId, options, tracer.getContext());
-        }) // open the transport
+      // Open the transport
+      open(deviceId, options, tracer.getContext())
         .then(async transport => {
           tracer.trace("Got a Transport instance from open");
 
           if (unsubscribed) {
-            tracer.trace("Unsubscribed (1) while processing job");
+            tracer.trace("Unsubscribed while opening transport");
             // It was unsubscribed prematurely
-            return finalize(transport, [resolveQueuedJob]);
+            return finalize(transport);
           }
 
           if (needsCleanup[identifyTransport(transport)]) {
@@ -243,7 +153,6 @@ export const withDevice =
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
           tracer.trace(`Error while opening Transport: ${e}`, { error: e });
-          resolveQueuedJob();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
@@ -259,8 +168,8 @@ export const withDevice =
 
           // It was unsubscribed prematurely
           if (unsubscribed) {
-            tracer.trace("Unsubscribed (2) while processing job");
-            return finalize(transport, [resolveQueuedJob]);
+            tracer.trace("Unsubscribed before executing job");
+            return finalize(transport);
           }
 
           sub = job(transport)
@@ -269,7 +178,7 @@ export const withDevice =
               catchError(errorRemapping),
               transportFinally(() => {
                 // Closes the transport and cleans up everything
-                return finalize(transport, [resolveQueuedJob]);
+                return finalize(transport);
               }),
             )
             .subscribe({

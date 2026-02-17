@@ -10,31 +10,31 @@
 .github                                                 @ledgerhq/wallet-ci
 .github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
-.github/workflows/test-design-system-reusable.yml       @ledgerhq/wallet-ci  @ledgerhq/live-hub
+.github/workflows/test-design-system-reusable.yml       @ledgerhq/wallet-ci  @ledgerhq/wallet-xp
 tools                                                   @ledgerhq/wallet-ci
 apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
-# Hub team
-## by default, hub manage apps and libs related to it & then we overrides many exceptions
-apps/cli/src/commands/live                               @ledgerhq/live-hub
-apps/ledger-live-desktop/                                @ledgerhq/live-hub
-apps/ledger-live-mobile/                                 @ledgerhq/live-hub
-apps/web-tools/                                          @ledgerhq/live-hub
-libs/**/errors/                                          @ledgerhq/live-hub
-libs/**/logs/                                            @ledgerhq/live-hub
-libs/**/types-live/                                      @ledgerhq/live-hub
-libs/env/                                                @ledgerhq/live-hub
-libs/identities/                                         @ledgerhq/live-hub
-libs/ledger-live-common/src/                             @ledgerhq/live-hub
-libs/live-countervalues-react/                           @ledgerhq/live-hub
-libs/live-countervalues/                                 @ledgerhq/live-hub
-libs/live-currency-format/                               @ledgerhq/live-hub
-libs/live-hooks/                                         @ledgerhq/live-hub
-libs/promise/                                            @ledgerhq/live-hub
-libs/ui/                                                 @ledgerhq/live-hub
-libs/live-wallet/                                        @ledgerhq/live-hub
-libs/ledger-key-ring-protocol/                           @ledgerhq/live-hub
-libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
+# Platform & Wallet XP teams
+## by default, Platform and Wallet XP manage apps and libs related to them, with many overrides for exceptions
+apps/cli/src/commands/live                               @ledgerhq/platform
+apps/ledger-live-desktop/                                @ledgerhq/platform @ledgerhq/wallet-xp
+apps/ledger-live-mobile/                                 @ledgerhq/platform @ledgerhq/wallet-xp
+apps/web-tools/                                          @ledgerhq/platform
+libs/**/errors/                                          @ledgerhq/platform
+libs/**/logs/                                            @ledgerhq/platform
+libs/**/types-live/                                      @ledgerhq/platform @ledgerhq/wallet-xp
+libs/env/                                                @ledgerhq/platform
+libs/identities/                                         @ledgerhq/platform
+libs/ledger-live-common/src/                             @ledgerhq/platform @ledgerhq/wallet-xp
+libs/live-countervalues-react/                           @ledgerhq/wallet-xp
+libs/live-countervalues/                                 @ledgerhq/wallet-xp
+libs/live-currency-format/                               @ledgerhq/wallet-xp
+libs/live-hooks/                                         @ledgerhq/wallet-xp
+libs/promise/                                            @ledgerhq/platform
+libs/ui/                                                 @ledgerhq/wallet-xp
+libs/live-wallet/                                        @ledgerhq/wallet-xp
+libs/ledger-key-ring-protocol/                           @ledgerhq/platform
+libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
 
 # Coin integration team
 .github/**/bot-*.yml                                     @ledgerhq/coin-integration
@@ -57,8 +57,8 @@ libs/ledger-live-common/src/apps/config.ts               @ledgerhq/coin-integrat
 libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
 libs/ledger-services/                                    @ledgerhq/coin-integration
 
-### ... cryptoassets ongoing rework => the lib will eventually belong to live-hub (and we lift up to libs folder) ... ###
-libs/ledgerjs/packages/cryptoassets                      @ledgerhq/live-hub
+### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
+libs/ledgerjs/packages/cryptoassets                      @ledgerhq/wallet-xp
 libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
 
 libs/psbtv2/                                             @ledgerhq/coin-integration
@@ -193,6 +193,8 @@ libs/live-dmk-mobile/                                              @ledgerhq/liv
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
+libs/live-signer-solana/                                           @ledgerhq/live-devices
+libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 
 # Recover team
@@ -208,24 +210,35 @@ apps/ledger-live-mobile/src/screens/Protect/                                    
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                                        @ledgerhq/recover-software
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/recover.handler.ts        @ledgerhq/recover-software
 
-# Activation team
-apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/activation-team
-apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/activation-team
-apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/activation-team
-apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/activation-team
-apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                      @ledgerhq/activation-team
-apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/activation-team
-apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/activation-team
-apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/postOnboarding.handler.ts @ledgerhq/activation-team
-
-# Live hub overrides
-
-apps/web-tools/trustchain/                               @ledgerhq/live-hub
+# Engagement team
+apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                         @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/postOnboarding.handler.ts  @ledgerhq/engagement
+apps/ledger-live-mobile/src/contentCards/                                                      @ledgerhq/engagement
+apps/ledger-live-mobile/src/dynamicContent/                                                    @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
+apps/ledger-live-mobile/src/notifications/                                                     @ledgerhq/engagement
+apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
+apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
+apps/ledger-live-desktop/src/reducers/dynamicContent.ts                                        @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 
 # UI tests
-apps/ledger-live-desktop/tests/                                             @ledgerhq/live-hub
+apps/ledger-live-desktop/tests/                                             @ledgerhq/wallet-xp
 e2e/                                                                        @ledgerhq/qaa
-apps/ledger-live-mobile/e2e/                                                @ledgerhq/live-hub
+apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)

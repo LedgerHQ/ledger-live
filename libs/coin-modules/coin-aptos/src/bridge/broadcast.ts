@@ -1,5 +1,5 @@
-import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { AptosAPI } from "../network";
 
 type broadcastFunc = {

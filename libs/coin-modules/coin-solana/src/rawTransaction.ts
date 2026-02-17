@@ -1,7 +1,7 @@
-import { ChainAPI } from "./network";
-import { Transaction } from "./types";
 import { VersionedTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import { ChainAPI } from "./network";
+import { Transaction } from "./types";
 
 function buildRawTransaction(raw: string, estimatedFees: number | null): Transaction {
   return {

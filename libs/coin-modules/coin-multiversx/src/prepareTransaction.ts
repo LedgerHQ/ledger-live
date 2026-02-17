@@ -1,10 +1,10 @@
+import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types";
 import { getFees } from "./api";
 import { GAS } from "./constants";
 import { MultiversXEncodeTransaction } from "./encode";
 import { isAmountSpentFromBalance } from "./logic";
-import { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "./types";
 
 /**
  * Prepare t before checking status

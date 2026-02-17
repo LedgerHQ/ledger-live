@@ -1,14 +1,7 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
 import { toErrorRaw } from "@ledgerhq/coin-framework/lib/serialization/transaction";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { transactionToEthersTransaction } from "./adapters";
-import { getTransactionCount } from "./network/node/rpc.common";
-
-jest.mock("./network/node/rpc.common", () => ({
-  getTransactionCount: jest.fn(),
-}));
-
-const mockGetTransactionCount = getTransactionCount as jest.Mock;
 import {
   account,
   eip1559Tx,
@@ -25,6 +18,7 @@ import {
   testData,
   tokenTransaction,
 } from "./fixtures/transaction.fixtures";
+import { getTransactionCount } from "./network/node/rpc.common";
 import {
   fromTransactionRaw,
   fromTransactionStatusRaw,
@@ -40,6 +34,11 @@ import {
   EvmTransactionLegacy,
   FeeData,
 } from "./types";
+
+const mockGetTransactionCount = getTransactionCount as jest.Mock;
+jest.mock("./network/node/rpc.common", () => ({
+  getTransactionCount: jest.fn(),
+}));
 
 describe("EVM Family", () => {
   describe("transaction.ts", () => {

@@ -1,16 +1,16 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 
+import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
 import { AptosAPI } from "../network";
-import { getEstimatedGas } from "./getFeesForTransaction";
 import type { AptosAccount, Transaction } from "../types";
-import { getMaxSendBalance } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
   APTOS_MINIMUM_RESTAKE_IN_OCTAS,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "./../constants";
-import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { getEstimatedGas } from "./getFeesForTransaction";
+import { getMaxSendBalance } from "./logic";
 
 const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
   transaction.mode === "send" && transaction.amount.gt(account.spendableBalance);

@@ -15,13 +15,17 @@ export default class OperationDetailsPage {
     LOCK: "Locked",
   };
   operationDetailsConfirmed = "operation-details-text-confirmed";
+  operationDetailsAccount = "operationDetails-account";
+  operationDetailsAmount = "operationDetails-amount";
+  operationDetailsIdentifier = "operationDetails-identifier";
+  operationDetailsDate = "operationDetails-date";
   operationDetailsScrollViewId = "operation-details-scroll-view";
 
   title = () => getElementById(this.titleId);
-  account = () => getElementById("operationDetails-account");
-  amount = () => getElementById("operationDetails-amount");
-  operation = () => getElementById("operationDetails-identifier");
-  date = () => getElementById("operationDetails-date");
+  account = () => getElementById(this.operationDetailsAccount);
+  amount = () => getElementById(this.operationDetailsAmount);
+  operation = () => getElementById(this.operationDetailsIdentifier);
+  date = () => getElementById(this.operationDetailsDate);
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
@@ -88,6 +92,7 @@ export default class OperationDetailsPage {
     await detoxExpect(this.account()).toBeVisible();
     await detoxExpect(this.account()).toHaveText(currencyName + " 1");
     await detoxExpect(this.amount()).toBeVisible();
+    await scrollToId(this.operationDetailsIdentifier, this.operationDetailsScrollViewId);
     await detoxExpect(this.operation()).toBeVisible();
     await detoxExpect(this.date()).toBeVisible();
   }

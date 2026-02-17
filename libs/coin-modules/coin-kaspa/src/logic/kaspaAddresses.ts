@@ -76,7 +76,7 @@ export function scriptPublicKeyToAddress(scriptPublicKey: string, stripPrefix?: 
   // determine version of script public key
   const version = determineVersionFromScriptPublicKey(scriptPublicKey);
   const publicKey = Buffer.from(
-    scriptPublicKey.slice(version == ScriptTypeVersion.P2SH ? 4 : 2, -2),
+    scriptPublicKey.slice(version === ScriptTypeVersion.P2SH ? 4 : 2, -2),
     "hex",
   ); // Remove the prefix and suffix
   return publicKeyToAddress(publicKey, stripPrefix, version);
@@ -243,7 +243,7 @@ function determineVersionFromScriptPublicKey(scriptPublicKey: string): ScriptTyp
   if (
     scriptPublicKey.startsWith("20") &&
     scriptPublicKey.endsWith("ac") &&
-    scriptPublicKey.length == 68
+    scriptPublicKey.length === 68
   ) {
     return ScriptTypeVersion.SCHNORR;
   } else if (

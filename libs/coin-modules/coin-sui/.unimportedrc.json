@@ -14,18 +14,12 @@
     "**/getOperationExtra.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": ["lru-cache", "@jest/expect-utils", "@jest/get-type", "jest-util"],
   "ignoreUnimported": [
     "src/api/index.ts",
     "src/test/testUtils.ts",
     "src/test/bridge.dataset.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/live-env",
-    "@ledgerhq/types-cryptoassets"
-  ]
+  "ignoreUnused": ["@ledgerhq/live-env", "@ledgerhq/types-cryptoassets"]
 }

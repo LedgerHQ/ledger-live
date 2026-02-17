@@ -16,7 +16,7 @@ const ShareAnalyticsButton = () => {
   const toggleShareAnalytics = async (value: boolean) => {
     dispatch(setShareAnalytics(value));
     dispatch(setSharePersonalizedRecommendations(value));
-    await updateIdentify();
+    await updateIdentify({ force: true });
   };
 
   return (

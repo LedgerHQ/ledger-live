@@ -10,6 +10,6 @@ export interface LoadingConfig {
 }
 
 export const DEFAULT_LOADING_CONFIG: LoadingConfig = {
-  lottieMinDuration: 1000,
+  lottieMinDuration: 0,
   lottieMaxDuration: 4500,
 };

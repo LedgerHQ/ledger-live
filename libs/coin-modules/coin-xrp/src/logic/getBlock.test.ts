@@ -47,11 +47,15 @@ describe("getBlock", () => {
     // When
     const resultZero = await getBlock(0);
     const resultNegative = await getBlock(-1);
+    const epoch = new Date(0);
 
     // Then
     expect(mockGetLedgerByIndex).not.toHaveBeenCalled();
-    expect(resultZero).toEqual({ info: { height: 0 }, transactions: [] });
-    expect(resultNegative).toEqual({ info: { height: -1 }, transactions: [] });
+    expect(resultZero).toEqual({ info: { height: 0, hash: "", time: epoch }, transactions: [] });
+    expect(resultNegative).toEqual({
+      info: { height: -1, hash: "", time: epoch },
+      transactions: [],
+    });
   });
 
   it("maps transactions with XRP balance changes correctly (fee excluded from sender)", async () => {

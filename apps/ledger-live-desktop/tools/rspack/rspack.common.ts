@@ -105,7 +105,7 @@ export const commonConfig: RspackOptions = {
         },
       },
       {
-        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        test: /\.(png|jpg|jpeg|gif|svg|webp)$/,
         type: "asset/resource",
         generator: {
           filename: "assets/[name]-[hash][ext]",

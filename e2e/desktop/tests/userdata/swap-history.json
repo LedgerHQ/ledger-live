@@ -47468,7 +47468,6 @@
           "oldestDateRequested": "2024-07-14T22:00:00.000Z"
         },
         "USD bitcoin_testnet": { "timestamp": 1752572604283, "failures": 10 },
-        "USD ethereum_holesky": { "timestamp": 1752572697397, "failures": 10 },
         "USD ethereum_sepolia": { "timestamp": 1752572663695, "failures": 8 },
         "USD stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN": {
           "timestamp": 1752572651168,

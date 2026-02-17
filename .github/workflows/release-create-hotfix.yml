@@ -29,7 +29,7 @@ jobs:
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Checkout composite actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: develop
           sparse-checkout: tools/actions/composites
@@ -41,7 +41,7 @@ jobs:
           tag_version: ${{ github.event.inputs.tag_version }}
           application: ${{ github.event.inputs.application }}
         
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
           token: ${{ steps.generate-token.outputs.token }}

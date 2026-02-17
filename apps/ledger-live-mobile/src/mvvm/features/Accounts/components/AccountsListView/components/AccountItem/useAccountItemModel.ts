@@ -8,7 +8,7 @@ import { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { useMaybeAccountUnit } from "~/hooks";
-import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { getFreshAccountAddress } from "~/utils/address";

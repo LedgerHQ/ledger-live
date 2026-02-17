@@ -2676,6 +2676,10 @@
     "carousel" : {
       "title" : "Para ti"
     },
+    "perpsEntry" : {
+      "title" : "Perpetuos",
+      "description" : "Opera con apalancamiento"
+    },
     "recommended" : {
       "title" : "Recomendado"
     },
@@ -2713,6 +2717,8 @@
       "transfer" : "Transferir",
       "swap" : "Permutar",
       "buy" : "Comprar",
+      "connect" : "Conectar",
+      "buyLedger" : "Compra un Ledger",
       "transferDrawer" : {
         "title" : "Transferir",
         "receiveCrypto" : "Recibir cripto",
@@ -2988,7 +2994,6 @@
     "yield" : "Rendimiento",
     "sell" : "Vender",
     "swap" : "Permutar",
-    "perps" : "Perpetuos",
     "manage" : "Administrar",
     "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
@@ -3000,7 +3005,8 @@
         "receiveFunds" : "Recibir",
         "buyCrypto" : "Comprar"
       },
-      "addAccountCta" : "Agregar cuenta"
+      "addAccountCta" : "Agregar cuenta",
+      "addCryptoAccount" : "Agregar cuenta cripto"
     },
     "settings" : {
       "header" : "Ajustes de cuenta",
@@ -3675,10 +3681,6 @@
       "title" : "Poner en participación",
       "description" : "Obtén recompensas por tus cripto."
     },
-    "perps" : {
-      "title" : "Perpetuos",
-      "description" : "Opera con perpetuos de cripto."
-    },
     "swap" : {
       "title" : "Permutar",
       "description" : "Cambia una criptomoneda por otra.",
@@ -3875,7 +3877,8 @@
         "title" : "Seleccionar cotización"
       },
       "twoStepApproval" : {
-        "title" : "Completar los pasos"
+        "title" : "Completar los pasos",
+        "completedTitle" : "Estado de la transacción"
       },
       "loader" : {
         "title" : "Procesando permuta",
@@ -4573,6 +4576,7 @@
       },
       "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
       "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
+      "acceptTermsSponsored" : "Para poder beneficiarte de las tarifas de red gratuitas, aceptas compartir los detalles de tu transacción (incluida la dirección de tu wallet) con Blinklabs.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
@@ -8387,9 +8391,6 @@
       "extremeGreed" : "Más avaricia"
     },
     "tileTitle" : "Sentimiento"
-  },
-  "perps" : {
-    "title" : "Perpetuos"
   },
   "analyticsAllocation" : {
     "header" : {

@@ -4,7 +4,7 @@ import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { TrackScreen } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
@@ -14,13 +14,35 @@ import { rgba } from "../../../colors";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { SWAP_VERSION } from "../utils";
+import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
-
   const syncAccounts = useSyncAllAccounts();
+
+  const navigateToSwapForm = useCallback(() => {
+    track("button_clicked", {
+      button: "SwapCloseSuccess",
+      page: ScreenName.SwapPendingOperation,
+      swapVersion: SWAP_VERSION,
+    });
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: ScreenName.SwapTab }],
+      }),
+    );
+  }, [navigation]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <NavigationHeaderCloseButton onPress={navigateToSwapForm} />,
+    });
+  }, [navigation, navigateToSwapForm]);
 
   useEffect(() => {
     syncAccounts();
