@@ -223,7 +223,8 @@ describe("onboard (devnet)", () => {
   });
 
   describe("TopologyChangeError", () => {
-    it("should require topology change and complete re-onboarding when accessing account from different node", async () => {
+    // TODO: This test is skipped because the devnet-replicated node is not available
+    it.skip("should require topology change and complete re-onboarding when accessing account from different node", async () => {
       // GIVEN
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
