@@ -168,7 +168,7 @@ export async function listOperations(
     //    parent operation, and 1 operation for each child operation
     // As a result:
     //  * in the case of a simple ERC20 transfer, only 1 operation is emitted (still contains fees information in ETH)
-    //  * in the example case of a smart contact swap operation with ETH as input and an ERC20 as output, 2 separate
+    //  * in the example case of a smart contract swap operation with ETH as input and an ERC20 as output, 2 separate
     //    operations are emitted (with duplicate fees information, as it's the same on-chain transaction)
     //  * in the case of a fees-only operation, only 1 operation is emitted with type FEES
     if (!tokenOrNftHashes.has(coinOperation.hash) || !coinOperation.value.isZero()) {
@@ -203,8 +203,9 @@ export async function listOperations(
 
   const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean => {
     // some explorers return addresses with uppercase letters (eg eip-55 encoded addresses)
+    const addressLower = address.toLowerCase();
     const isIncluded = (list: string[]): boolean =>
-      list.map(item => item.toLowerCase()).includes(address.toLowerCase());
+      list.some(item => item.toLowerCase() === addressLower);
     return isIncluded(op.senders) || isIncluded(op.recipients);
   };
 

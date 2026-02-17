@@ -338,13 +338,16 @@ describe("genericGetAccountShape", () => {
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
       listOperationsMock.mockResolvedValue({ items: [txWithLedgerOpTypes], next: undefined });
-      lastBlockMock.mockResolvedValue({ height: 100 });
       buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 100 });
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId: any, op: any) => ({
         hash: op.hash,
         type: op.type,
         blockHeight: 20,
-        extra: op.details || {},
+        extra: {
+          assetReference: op.details?.assetReference,
+          assetOwner: op.details?.assetOwner,
+        },
       }));
       cleanedOperationMock.mockImplementation((op: any) => op);
       mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
