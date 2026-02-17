@@ -18,6 +18,7 @@ test("Updater", async ({ page }) => {
   const appUpdater = new AppUpdater(page);
 
   await test.step("[idle] state should not be visible", async () => {
+    await page.getByTestId("portfolio-container").waitFor({ state: "visible" });
     await expect(layout.appUpdateBanner).toBeHidden();
     await expect.soft(page).toHaveScreenshot("app-updater-idle.png", {
       mask: [page.locator("canvas")],

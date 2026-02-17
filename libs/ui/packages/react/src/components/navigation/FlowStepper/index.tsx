@@ -1,8 +1,8 @@
 import React from "react";
-import { isElement } from "react-is";
 import { Props as StepperProps } from "../progress/Stepper";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";
 import { Stepper } from "..";
+import { isValidReactElement } from "../../../helpers";
 
 export type StepProps = {
   /**
@@ -127,11 +127,12 @@ function FlowStepper<ExtraProps>({
     stepFooter: React.ReactNode | null;
   }>(
     (acc, child, idx) => {
-      const index = (isElement(child) && child.props.index) ?? idx;
-      const label = isElement(child) && child.props.label;
-      const hidden = isElement(child) && child.props.hidden;
-      const stepHeader = isElement(child) && child.props.header;
-      const stepFooter = isElement(child) && child.props.footer;
+      const stepChild = isValidReactElement(child) ? (child as StepChild) : null;
+      const index = stepChild?.props.index ?? idx;
+      const label = stepChild?.props.label;
+      const hidden = stepChild?.props.hidden;
+      const stepHeader = stepChild?.props.header;
+      const stepFooter = stepChild?.props.footer;
 
       if (label && !hidden) {
         acc.steps[index] = label;
@@ -166,6 +167,7 @@ function FlowStepper<ExtraProps>({
       : renderFunc && renderFunc(renderArgs);
   }
 
+  console.log("FlowStepper", { activeIndex, steps, innerContents, stepHeader, stepFooter });
   return (
     <Flex flex={1} flexDirection="column" {...extraContainerProps}>
       {getSectionContents(header, stepHeader, renderStepHeader)}
@@ -224,8 +226,8 @@ export type IndexedProps<ExtraProps> = Omit<Props<ExtraProps>, "activeIndex" | "
 function FlowStepperIndexed<ExtraProps>(props: IndexedProps<ExtraProps>) {
   const { activeKey, children, ...otherProps } = props;
   const activeIndex = React.Children.toArray(children).findIndex(child => {
-    const res = isElement(child) && child.props.itemKey === activeKey;
-    return res;
+    const stepChild = isValidReactElement(child) ? (child as IndexedStepperChild) : null;
+    return stepChild?.props.itemKey === activeKey;
   });
   return (
     <FlowStepper {...otherProps} activeIndex={activeIndex}>

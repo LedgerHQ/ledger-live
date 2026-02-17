@@ -28,7 +28,7 @@ export const Number = ({
   min,
   max,
   ...otherArgs
-}: InputProps<number | undefined> & { max: number; min: number }): JSX.Element => {
+}: InputProps<number | undefined> & { max: number; min: number }): React.JSX.Element => {
   const [value, setValue] = React.useState(24.42);
 
   const onChange = (value?: number) => {

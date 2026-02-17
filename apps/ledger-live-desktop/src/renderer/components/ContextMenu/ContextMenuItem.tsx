@@ -56,7 +56,15 @@ class ContextMenuItem extends PureComponent<Props, State> {
   ref: HTMLDivElement | null = null;
   render() {
     const { children } = this.props;
-    return <div ref={c => (this.ref = c)}>{children}</div>;
+    return (
+      <div
+        ref={c => {
+          this.ref = c;
+        }}
+      >
+        {children}
+      </div>
+    );
   }
 }
 

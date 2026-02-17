@@ -176,7 +176,7 @@ const Element = ({
   outlined,
   variant = "default",
   ...props
-}: RadioElementProps): JSX.Element => {
+}: RadioElementProps): React.JSX.Element => {
   const context = useContext(RadioContext);
   if (context === undefined) throw new Error("RadioElement must be used within a RadioProvider");
 

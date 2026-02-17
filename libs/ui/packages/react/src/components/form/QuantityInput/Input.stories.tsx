@@ -28,7 +28,7 @@ export const Quantity = ({
   min,
   max,
   ...otherArgs
-}: InputProps & { max: number; min: number }): JSX.Element => {
+}: InputProps & { max: number; min: number }): React.JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (val: string) => {

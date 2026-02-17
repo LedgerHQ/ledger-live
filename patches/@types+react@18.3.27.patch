@@ -1,0 +1,12 @@
+diff --git a/index.d.ts b/index.d.ts
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -486,7 +486,8 @@
+     type ReactNode =
+         | ReactElement
+         | string
+         | number
++        | bigint
+         | Iterable<ReactNode>
+         | ReactPortal
+         | boolean

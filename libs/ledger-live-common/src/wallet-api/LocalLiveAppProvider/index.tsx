@@ -26,7 +26,13 @@ export function LocalLiveAppProvider({ children, db }: LiveAppProviderProps): Re
     [state, addLocalManifest, removeLocalManifestById, getLocalLiveAppManifestById],
   );
 
-  return <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>;
+  // Type assertion: mixed @types/react (18 vs 19) in deps make Provider's children type incompatible with our ReactNode.
+  return (
+    <liveAppContext.Provider value={value}>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {children as any}
+    </liveAppContext.Provider>
+  );
 }
 
 export function useLocalLiveAppManifest(appId?: string): LiveAppManifest | undefined {

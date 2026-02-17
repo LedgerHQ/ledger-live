@@ -42,9 +42,9 @@ export type Props = {
   /* If true a notification bubble will be displayed in the top right corner of the badge. */
   active?: boolean;
   /* JSX filling up the space inside the badge, usually an <Icon />. */
-  icon: JSX.Element;
+  icon: React.JSX.Element;
 } & React.ComponentProps<typeof Wrapper>;
-export default function Badge({ active, icon, ...props }: Props): JSX.Element {
+export default function Badge({ active, icon, ...props }: Props): React.JSX.Element {
   return (
     <Wrapper {...props}>
       {icon}

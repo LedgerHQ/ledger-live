@@ -6,7 +6,7 @@ function LedgerLiveAltRegular({
   width = 38,
   height = 32,
   color = "currentColor",
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   return (
     <svg
       width={width}

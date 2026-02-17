@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -63,7 +63,7 @@ export type SyncOnboardingCompanionProps = {
   /**
    * The ref of parent container so we can scroll components into view
    */
-  parentRef: React.MutableRefObject<HTMLDivElement | null>;
+  parentRef: RefObject<HTMLDivElement | null>;
 
   /**
    * Set state to control header
@@ -89,7 +89,7 @@ const useSyncOnboardingCompanionViewModel = ({
 
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
-  const lastCompanionStepKey = useRef<StepKey>();
+  const lastCompanionStepKey = useRef<StepKey>(undefined);
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
   const [isNewSeed, setIsNewSeed] = useState<boolean>(false);
 
@@ -117,16 +117,16 @@ const useSyncOnboardingCompanionViewModel = ({
    * Value is undefined until the onboarding state polling returns a first
    * result.
    * */
-  const deviceInitiallyOnboarded = useRef<boolean>();
+  const deviceInitiallyOnboarded = useRef<boolean>(undefined);
   /**
    * Variable holding the seed phrase type (number of words) until we are
    * ready to track the event (when the seeding step finishes).
    * Should only be maintained if the device is not onboarded/not seeded as the
    * onboarding flags can only be trusted for a non-onboarded device.
    */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+  const analyticsSeedPhraseType = useRef<SeedPhraseType>(undefined);
 
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
+  const analyticsSeedConfiguration = useRef<SeedOriginType>(undefined);
 
   const {
     onboardingState: deviceOnboardingState,
