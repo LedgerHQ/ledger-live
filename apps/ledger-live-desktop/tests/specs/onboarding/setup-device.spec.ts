@@ -33,7 +33,10 @@ test.describe.parallel("Onboarding", () => {
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
         await onboardingPage.hoverDevice(Nano.nanoS);
-        await expect(page).toHaveScreenshot("v3-device-selection.png", { animations: "disabled" });
+        await expect(page).toHaveScreenshot("v3-device-selection.png", {
+          mask: [page.locator("video")],
+          animations: "disabled",
+        });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
@@ -41,6 +44,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}]" Set up new"`, async () => {
+        await page.getByTestId("v3-onboarding-new-device").waitFor({ state: "visible" });
         await expect(page).toHaveScreenshot(`v3-device-setup-${nano}.png`);
         await onboardingPage.newDevice();
       });
@@ -86,6 +90,7 @@ test.describe.parallel("Onboarding", () => {
           .soft(page)
           .toHaveScreenshot(["v3-setup-new-device", `get-started-2-${nano}.png`], {
             mask: [onboardingPage.roleAnimation],
+            timeout: 10000,
           });
         await onboardingPage.continueTutorial();
 
@@ -99,6 +104,7 @@ test.describe.parallel("Onboarding", () => {
           .soft(page)
           .toHaveScreenshot(["v3-setup-new-device", `pin-code-${nano}-3.png`], {
             mask: [onboardingPage.roleAnimation],
+            timeout: 10000,
           });
         await onboardingPage.continueTutorial();
 
@@ -118,6 +124,7 @@ test.describe.parallel("Onboarding", () => {
           ["v3-setup-new-device", `recovery-phrase-4-${nano}.png`],
           {
             mask: [page.locator("[role=animation]")],
+            timeout: 10000,
           },
         );
         await onboardingPage.continueTutorial();
@@ -126,6 +133,7 @@ test.describe.parallel("Onboarding", () => {
           ["v3-setup-new-device", `recovery-phrase-5-${nano}.png`],
           {
             mask: [page.locator("[role=animation]")],
+            timeout: 10000,
           },
         );
         await onboardingPage.continueRecoverySeedDrawer();

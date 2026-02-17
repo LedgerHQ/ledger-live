@@ -44,6 +44,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}] Restore device`, async () => {
+        await page.getByTestId("v3-onboarding-restore-device").waitFor({ state: "visible" });
         await expect(page).toHaveScreenshot(`v3-restore-device-${nano}.png`);
         await onboardingPage.restoreDevice();
 

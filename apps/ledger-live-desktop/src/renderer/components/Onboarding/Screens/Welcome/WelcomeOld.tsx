@@ -117,7 +117,7 @@ export function WelcomeOld() {
   const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
     useState<boolean>(false);
 
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const skipOnboarding = useCallback(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));

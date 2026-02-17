@@ -12,7 +12,7 @@ type AlertType = "info" | "secondary" | "success" | "warning" | "error";
 
 type RenderProps = (props: {
   textProps: { variant?: TextVariants; fontWeight?: string };
-}) => JSX.Element;
+}) => React.JSX.Element;
 
 export interface AlertProps {
   /**
@@ -111,7 +111,7 @@ function Alert({
   renderContent,
   renderRight,
   containerProps,
-}: AlertProps): JSX.Element {
+}: AlertProps): React.JSX.Element {
   const theme = useTheme();
   const { iconColor, background } = getColors({ theme, type });
   const textProps: { variant?: TextVariants; fontWeight?: string } = {

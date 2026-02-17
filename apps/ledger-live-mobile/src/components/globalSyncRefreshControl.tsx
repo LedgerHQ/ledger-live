@@ -79,7 +79,6 @@ export default <P,>(
   }
 
   return React.forwardRef<unknown, P & Props>((props, ref) => (
-    // @ts-expect-error REACT19FIXME: Generic forwardRef type inference issue with spread props
-    <Inner {...props} forwardedRef={ref} />
+    <Inner {...({ ...props, forwardedRef: ref } as P & Props)} />
   ));
 };

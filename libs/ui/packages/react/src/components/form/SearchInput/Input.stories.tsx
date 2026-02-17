@@ -16,7 +16,7 @@ export default {
   },
 };
 
-export const Search = (args: InputProps): JSX.Element => {
+export const Search = (args: InputProps): React.JSX.Element => {
   const [value, setValue] = React.useState("");
 
   return <SearchInput {...args} value={value} onChange={setValue} placeholder={"Placeholder"} />;

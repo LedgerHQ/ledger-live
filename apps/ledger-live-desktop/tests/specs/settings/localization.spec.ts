@@ -31,6 +31,8 @@ test("Settings", async ({ page }) => {
     });
     await layout.goToManager();
     await deviceAction.accessManagerWithL10n();
+    // Wait for DeviceDashboard to fully process device info (useEffect dispatches to Redux)
+    await page.getByTestId("device-storage-card").waitFor({ state: "visible" });
     await layout.goToSettings();
 
     await settingsPage.waitForDeviceLanguagesLoaded();

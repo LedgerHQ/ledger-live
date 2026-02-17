@@ -19,7 +19,7 @@ export default {
   },
 };
 
-export const Legend = (args: LegendInputProps): JSX.Element => {
+export const Legend = (args: LegendInputProps): React.JSX.Element => {
   const [value, setValue] = React.useState("");
 
   return <LegendInput {...args} value={value} onChange={setValue} placeholder={"Placeholder"} />;

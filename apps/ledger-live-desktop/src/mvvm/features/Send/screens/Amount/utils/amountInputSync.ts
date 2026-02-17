@@ -1,4 +1,4 @@
-import type { Dispatch, MutableRefObject, SetStateAction } from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { BigNumber } from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatAmountForInput, formatFiatForInput, shouldSyncInput } from "./amountInput";
@@ -13,10 +13,10 @@ export function syncAmountInputs(params: {
   locale: string;
   accountUnit: Unit;
   fiatUnit: Unit;
-  lastTransactionAmountRef: MutableRefObject<BigNumber>;
-  lastFiatAmountRef: MutableRefObject<BigNumber>;
-  lastUseAllAmountRef: MutableRefObject<boolean>;
-  lastUserInputTimeRef: MutableRefObject<number>;
+  lastTransactionAmountRef: RefObject<BigNumber>;
+  lastFiatAmountRef: RefObject<BigNumber>;
+  lastUseAllAmountRef: RefObject<boolean>;
+  lastUserInputTimeRef: RefObject<number>;
   setCryptoInputValue: Dispatch<SetStateAction<string>>;
   setFiatInputValue: Dispatch<SetStateAction<string>>;
 }): void {

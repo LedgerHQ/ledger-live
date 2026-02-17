@@ -111,7 +111,6 @@ if (Config.DISABLE_YELLOW_BOX) {
 
 checkLibs({
   NotEnoughBalance,
-  // @ts-expect-error REACT19FIXME: React.createFactory removed but still expected by React 18 types
   React,
   log,
   Transport,

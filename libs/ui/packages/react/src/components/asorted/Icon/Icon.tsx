@@ -21,7 +21,7 @@ const Icon = ({
   size = 16,
   color = "currentColor",
   weight = "Medium",
-}: Props): JSX.Element | null => {
+}: Props): React.JSX.Element | null => {
   const maybeIconName = `${name}${weight}`;
   if (maybeIconName in icons) {
     // @ts-expect-error FIXME I don't know how to make you happy ts

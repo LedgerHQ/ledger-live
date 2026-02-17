@@ -44,7 +44,6 @@ export default function LogContentCardWrapper({
       isContainerVisibleRef.current = isNowVisible;
     },
     [isLocal, logImpressionCard, id, displayedPosition, location],
-    // @ts-expect-error REACT19FIXME: RefObject<View | null> not assignable to RefObject<View>
     ref,
   );
 

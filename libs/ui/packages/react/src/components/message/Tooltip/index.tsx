@@ -41,7 +41,9 @@ const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRe
       const isDomElement = isValidElement && typeof child.type === "string";
 
       if (isForwardingRef || isDomElement) {
-        return React.cloneElement(child, { ref });
+        return React.cloneElement(child, { ref } as React.Attributes & {
+          ref?: React.Ref<HTMLElement>;
+        });
       } else {
         return <span ref={ref}>{props.children}</span>;
       }
@@ -51,7 +53,7 @@ const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRe
   },
 );
 
-export default function Tooltip(props: Props): JSX.Element | null {
+export default function Tooltip(props: Props): React.JSX.Element | null {
   const { content, placement = "auto", children, ...rest } = props;
   return (
     <Tippy
