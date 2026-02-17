@@ -42,17 +42,20 @@ export function ViewKeyApprove({ currency, selectedAccounts, onResult, onCancel 
   const payload = action.mapResult(hookState);
   useKeepScreenAwake(true);
 
-  const confirmedAccountIds = new Set(
-    Object.entries(hookState.shareProgress.viewKeys)
-      .filter(([_, viewKey]) => viewKey !== null)
-      .map(([accountId]) => accountId),
-  );
+  const status = useMemo(() => {
+    const confirmed = new Set<string>();
+    const rejected = new Set<string>();
 
-  const rejectedAccountIds = new Set(
-    Object.entries(hookState.shareProgress.viewKeys)
-      .filter(([_, viewKey]) => viewKey === null)
-      .map(([accountId]) => accountId),
-  );
+    Object.entries(hookState.shareProgress.viewKeys).forEach(([accountId, viewKey]) => {
+      const destination = viewKey === null ? rejected : confirmed;
+      destination.add(accountId);
+    });
+
+    return {
+      confirmedAccountIds: confirmed,
+      rejectedAccountIds: rejected,
+    };
+  }, [hookState.shareProgress.viewKeys]);
 
   return (
     <>
@@ -73,8 +76,8 @@ export function ViewKeyApprove({ currency, selectedAccounts, onResult, onCancel 
           device={device}
           shared={hookState.shareProgress.completed}
           selectedAccounts={selectedAccounts}
-          confirmedAccountIds={confirmedAccountIds}
-          rejectedAccountIds={rejectedAccountIds}
+          confirmedAccountIds={status.confirmedAccountIds}
+          rejectedAccountIds={status.rejectedAccountIds}
           onCancel={onCancel}
         />
       )}
