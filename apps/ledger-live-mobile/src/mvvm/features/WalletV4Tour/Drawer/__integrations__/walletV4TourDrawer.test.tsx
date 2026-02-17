@@ -3,6 +3,23 @@ import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { useWalletV4TourDrawer, WalletV4TourDrawer } from "../index";
 
+// Force "last slide" so "Explore my new portfolio" is clickable
+jest.mock("@ledgerhq/native-ui", () => {
+  const actual = jest.requireActual("@ledgerhq/native-ui");
+  return {
+    ...actual,
+    useSlidesContext: () => ({
+      currentIndex: 2,
+      totalSlides: 3,
+      goToNext: () => {},
+      goToPrevious: () => {},
+      goToSlide: () => {},
+      flatListRef: { current: null },
+      scrollProgressSharedValue: { value: 2 },
+    }),
+  };
+});
+
 const TestComponent = () => {
   const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer } = useWalletV4TourDrawer();
   return (
@@ -79,14 +96,7 @@ describe("WalletV4TourDrawer integration", () => {
 
     resizeScreenWidth();
 
-    const continueButtons = screen.getAllByRole("button", { name: "Continue" });
-
-    for (const continueButton of continueButtons) {
-      await user.press(continueButton);
-    }
-
-    const exploreButton = screen.getByRole("button", { name: "Explore my new portfolio" });
-    await user.press(exploreButton);
+    await user.press(screen.getByText("Explore my new portfolio"));
 
     // should never show again
     await user.press(screen.getByText("Open Drawer"));
