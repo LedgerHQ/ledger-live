@@ -3,20 +3,17 @@ import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import etherscanExplorer from "../network/explorer/etherscan";
 import ledgerExplorer from "../network/explorer/ledger";
+import { ExplorerApi } from "../network/explorer/types";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
-  it.each([
-    ["an etherscan explorer", { type: "etherscan" }, etherscanExplorer.explorerApi],
-    [
-      "a no cache etherscan explorer",
-      { type: "etherscan", noCache: true },
-      etherscanExplorer.explorerApiNoCache,
-    ],
-    ["a ledger explorer", { type: "ledger" }, ledgerExplorer],
-  ])("lists latest operations using %s", async (_, config, explorer) => {
-    setCoinConfig(() => ({ info: { explorer: config } }) as unknown as EvmCoinConfig);
-    const getOperationsSpy = jest.spyOn(explorer, "getOperations").mockResolvedValue({
+  const currency = {} as CryptoCurrency;
+  const address = "address";
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+  const buildOperationsSpy = (explorer: ExplorerApi) =>
+    jest.spyOn(explorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-1",
@@ -182,7 +179,7 @@ describe("listOperations", () => {
           extra: {},
         },
         // Internal operation WITH matching parent coin operation (coin-op-6).
-        // Should be enriched with parent's fee (0) and blockHash ("coin-op-6-block-hash").
+        // Should be enriched with parent's fee (15) and blockHash ("coin-op-6-block-hash").
         {
           id: "internal-op-2",
           accountId: "",
@@ -220,10 +217,20 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const currency = {} as CryptoCurrency;
-    const address = "address";
+  it.each([
+    ["an etherscan explorer", { type: "etherscan" }, etherscanExplorer.explorerApi],
+    [
+      "a no cache etherscan explorer",
+      { type: "etherscan", noCache: true },
+      etherscanExplorer.explorerApiNoCache,
+    ],
+    ["a ledger explorer", { type: "ledger" }, ledgerExplorer],
+  ])("lists latest operations using %s", async (_, config, explorer) => {
+    setCoinConfig(() => ({ info: { explorer: config } }) as unknown as EvmCoinConfig);
+    const getOperationsSpy = buildOperationsSpy(explorer);
     const minHeight = 5;
 
+    // here order is "asc" but that's just the sort order, not how the explorer is queried
     const result = await listOperations(currency, address, { minHeight, order: "asc" });
 
     const undefinedPagingToken = undefined;
@@ -456,7 +463,7 @@ describe("listOperations", () => {
         ],
         "",
       ],
-      // check that the order passed to exploer is "desc" when no limit is set
+      // check that the order passed to explorer is "desc" when no limit is set
       calls: [
         [
           currency,
@@ -529,6 +536,7 @@ describe("listOperations", () => {
           extra: {},
         },
       ],
+      nextPagingToken: "",
     });
 
     expect(
@@ -559,7 +567,7 @@ describe("listOperations", () => {
           details: { sequence: BigNumber(1) },
         },
       ],
-      undefined,
+      "",
     ]);
   });
 
@@ -811,4 +819,51 @@ describe("listOperations", () => {
       undefined,
     ]);
   });
+
+  // here is the table of behavior:
+  const behaviors = [
+    // legacy behavior
+    {
+      limit: undefined,
+      order: undefined,
+      expectedExplorerOrder: "desc",
+      expectedResultOrder: "desc",
+    },
+    { limit: undefined, order: "asc", expectedExplorerOrder: "desc", expectedResultOrder: "asc" },
+    { limit: undefined, order: "desc", expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
+    // new behavior (limit is set)
+    { limit: 10, order: "asc", expectedExplorerOrder: "asc", expectedResultOrder: "asc" },
+    { limit: 10, order: "desc", expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
+    { limit: 10, order: undefined, expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
+  ];
+
+  it.each(behaviors)(
+    "etherscan explorer sort parameter is respected %s",
+    async ({ limit, order, expectedExplorerOrder, expectedResultOrder }) => {
+      setCoinConfig(
+        () =>
+          ({
+            info: { explorer: { type: "etherscan" } },
+          }) as unknown as EvmCoinConfig,
+      );
+      const getOperationsSpy = buildOperationsSpy(etherscanExplorer.explorerApi);
+      const [result] = await listOperations(currency, address, { minHeight: 0, limit, order });
+      expect(result.length).toBeGreaterThan(1);
+
+      // check how the explorer is called
+      const actualExplorerLimit = getOperationsSpy.mock.calls[0][6];
+      expect(actualExplorerLimit).toBe(limit);
+      const actualExplorerOrder = getOperationsSpy.mock.calls[0][7];
+      expect(actualExplorerOrder).toBe(expectedExplorerOrder);
+
+      // check the result order
+      const firstOperation = result[0];
+      const lastOperation = result[result.length - 1];
+      if (expectedResultOrder === "asc") {
+        expect(firstOperation.tx.date.getTime()).toBeLessThan(lastOperation.tx.date.getTime());
+      } else {
+        expect(firstOperation.tx.date.getTime()).toBeGreaterThan(lastOperation.tx.date.getTime());
+      }
+    },
+  );
 });

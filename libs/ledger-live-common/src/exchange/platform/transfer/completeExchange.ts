@@ -21,7 +21,7 @@ import type {
   CompleteExchangeInputSell,
   CompleteExchangeRequestEvent,
 } from "../types";
-import { CompleteExchangeStep, convertTransportError } from "../../error";
+import { CompleteExchangeError, CompleteExchangeStep, convertTransportError } from "../../error";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -52,7 +52,12 @@ const completeExchange = (
       await withDevicePromise(deviceId, async transport => {
         const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
 
-        if (!providerNameAndSignature) throw new Error("Could not get provider infos");
+        if (!providerNameAndSignature)
+          throw new CompleteExchangeError(
+            "INIT",
+            "ProviderConfigError",
+            "Could not get provider infos",
+          );
 
         const exchange = createExchange(
           transport,
@@ -67,7 +72,11 @@ const completeExchange = (
         const payoutCurrency = getAccountCurrency(fromAccount);
 
         if (mainPayoutCurrency.type !== "CryptoCurrency")
-          throw new Error(`This should be a cryptocurrency, got ${mainPayoutCurrency.type}`);
+          throw new CompleteExchangeError(
+            "INIT",
+            "InvalidCurrencyType",
+            `This should be a cryptocurrency, got ${mainPayoutCurrency.type}`,
+          );
 
         transaction = await accountBridge.prepareTransaction(mainAccount, transaction);
         if (unsubscribed) return;
@@ -79,7 +88,17 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
-        if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
+        if (errorsKeys.length > 0) {
+          const firstKey = errorsKeys[0];
+          const validationError = errors[firstKey];
+          throw new CompleteExchangeError(
+            currentStep,
+            firstKey,
+            validationError.message ||
+              validationError.name ||
+              `Transaction validation failed: ${firstKey}`,
+          );
+        }
 
         currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
@@ -106,7 +125,11 @@ const completeExchange = (
         const payoutAddressParameters = accountBridge.getSerializedAddressParameters(mainAccount);
         if (unsubscribed) return;
         if (!payoutAddressParameters) {
-          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+          throw new CompleteExchangeError(
+            currentStep,
+            "UnsupportedFamily",
+            `Family not supported: ${mainPayoutCurrency.family}`,
+          );
         }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
@@ -142,7 +165,15 @@ const completeExchange = (
           throw new TransactionRefusedOnDevice();
         }
 
-        throw convertTransportError(currentStep, e);
+        // Preserve known error types checked by instanceof downstream
+        if (e instanceof CompleteExchangeError) throw e;
+        if (e instanceof WrongDeviceForAccount || e instanceof TransactionRefusedOnDevice) throw e;
+        // Wrap any remaining unknown errors with the current step context
+        throw new CompleteExchangeError(
+          currentStep,
+          e?.name,
+          e?.message || "Unknown exchange error",
+        );
       });
       await delay(3000);
       o.next({

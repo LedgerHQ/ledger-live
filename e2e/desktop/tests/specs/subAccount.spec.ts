@@ -97,8 +97,8 @@ for (const token of subAccounts) {
           await app.portfolio.navigateToAsset(token.account.currency.name);
         }
         await app.account.navigateToToken(token.account);
-        await app.account.expectLastOperationsVisibility();
         await app.account.expectTokenAccount(token.account);
+        await app.account.expectLastOperationsVisibility();
       },
     );
   });

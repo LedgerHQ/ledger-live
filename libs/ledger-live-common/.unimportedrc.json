@@ -396,6 +396,7 @@
     "src/e2e/enum/TransactionStatus.ts",
     "src/e2e/models/BuySell.ts",
     "src/exchange/swap/const/blockchain.ts",
+    "src/families/aleo/hw/getViewKey/index.ts",
     "src/families/aleo/types.ts",
     "src/families/algorand/descriptor.ts",
     "src/families/aptos/config.ts",

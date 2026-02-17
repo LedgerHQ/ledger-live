@@ -71,6 +71,31 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
+// Global mocks for Lottie and env config (used by LaunchScreen and other components)
+jest.mock("lottie-react-native", () => {
+  const React = require("react");
+  const { View, Text } = require("react-native");
+  const MockLottie = ({ source }) =>
+    React.createElement(
+      View,
+      { testID: "lottie-mock" },
+      React.createElement(Text, { testID: "lottie-source" }, JSON.stringify(source)),
+    );
+  return MockLottie;
+});
+
+// Mirror runtime: react-native-config exposes env as strings (e.g. "1"/"true" for DETOX).
+// Use undefined so (1) DETOX_ENABLED stays false and (2) truthiness checks (Config.DETOX) are falsy in unit tests.
+jest.mock("react-native-config", () => {
+  const config = { DETOX: undefined };
+  return {
+    __esModule: true,
+    get default() {
+      return config;
+    },
+  };
+});
+
 export const mockSimulateBarcodeScanned = jest.fn();
 export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
 
@@ -195,9 +220,22 @@ jest.mock("@braze/react-native-sdk", () => ({}));
 
 jest.mock("react-native-webview", () => jest.fn());
 
+jest.mock("react-native-linear-gradient", () => {
+  const { View } = require("react-native");
+  return { __esModule: true, default: View };
+});
+
 jest.mock("react-native-device-info", () => ({
   getDeviceNameSync: jest.fn(() => "Mocked Device"),
 }));
+
+jest.mock("react-native-linear-gradient", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    default: jest.fn(({ children, ...props }) => React.createElement("View", props, children)),
+  };
+});
 
 const originalError = console.error;
 const originalWarn = console.warn;

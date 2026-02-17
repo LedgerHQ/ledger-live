@@ -49,7 +49,7 @@ export type FetchOperationsParams = {
   limit?: number;
   // asc means lower blocks come first, results are sorted chronologically
   // desc means higher blocks come first, results are sorted reverse chronologically
-  sort?: "asc" | "desc";
+  sort: "asc" | "desc";
   // page number. Used by the endpoint to paginate the results.
   page?: number;
 };
@@ -232,7 +232,7 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
       tag: "latest",
       page: params.page ?? 1,
       ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort ?? "desc",
+      sort: params.sort,
       startBlock: params.fromBlock,
       endBlock: params.toBlock,
     },
@@ -273,7 +273,7 @@ export const getTokenOperations = async (
       tag: "latest",
       page: params.page ?? 1,
       ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort ?? "desc",
+      sort: params.sort,
       startBlock: params.fromBlock,
       endBlock: params.toBlock,
     },
@@ -329,7 +329,7 @@ export const getERC721Operations = async (
       tag: "latest",
       page: params.page ?? 1,
       ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort ?? "desc",
+      sort: params.sort,
       startBlock: params.fromBlock,
       endBlock: params.toBlock,
     },
@@ -385,7 +385,7 @@ export const getERC1155Operations = async (
       tag: "latest",
       page: params.page ?? 1,
       ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort ?? "desc",
+      sort: params.sort,
       startBlock: params.fromBlock,
       endBlock: params.toBlock,
     },
@@ -429,7 +429,7 @@ export const getNftOperations = async (params: FetchOperationsParams): Promise<E
   const erc721Result = await getERC721Operations(params);
   const erc1155Result = await getERC1155Operations(params);
 
-  const sort = params.sort ?? "desc";
+  const sort = params.sort;
   const operations = [...erc721Result.operations, ...erc1155Result.operations].sort(
     // sorting by date based on sort parameter
     (a, b) =>
@@ -475,7 +475,7 @@ export const getInternalOperations = async (
       tag: "latest",
       page: params.page ?? 1,
       ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort ?? "desc",
+      sort: params.sort,
       startBlock: params.fromBlock,
       endBlock: params.toBlock,
     },

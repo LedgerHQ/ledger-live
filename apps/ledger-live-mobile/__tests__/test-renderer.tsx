@@ -36,6 +36,7 @@ import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notific
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
 import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
+import { INITIAL_STATE as REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE } from "~/reducers/rebornBuyDeviceDrawer";
 import { INITIAL_STATE as TRANSFER_DRAWER_INITIAL_STATE } from "~/reducers/transferDrawer";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
@@ -62,6 +63,7 @@ const INITIAL_STATE: State = {
   market: MARKET_INITIAL_STATE,
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
   receiveOptionsDrawer: RECEIVE_OPTIONS_DRAWER_INITIAL_STATE,
+  rebornBuyDeviceDrawer: REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE,
   transferDrawer: TRANSFER_DRAWER_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,

@@ -19,14 +19,14 @@ catalogs:
       specifier: 1.4.0
       version: 1.4.0
     '@ledgerhq/device-management-kit':
-      specifier: 1.0.1
-      version: 1.0.1
+      specifier: 1.1.0
+      version: 1.1.0
     '@ledgerhq/device-signer-kit-ethereum':
-      specifier: 1.10.0
-      version: 1.10.0
+      specifier: 1.11.0
+      version: 1.11.0
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.6.1
-      version: 1.6.1
+      specifier: 1.6.2
+      version: 1.6.2
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.3.2
       version: 1.3.2
@@ -40,8 +40,8 @@ catalogs:
       specifier: 1.2.3
       version: 1.2.3
     '@ledgerhq/lumen-design-core':
-      specifier: 0.0.51
-      version: 0.0.51
+      specifier: 0.0.52
+      version: 0.0.52
     '@ledgerhq/lumen-ui-react':
       specifier: 0.0.81
       version: 0.0.81
@@ -377,7 +377,7 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
   '@ledgerhq/hw-transport': workspace:*
-  '@ledgerhq/context-module': 1.13.0
+  '@ledgerhq/context-module': 1.14.0
   tslib: 2.6.2
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
@@ -415,6 +415,9 @@ patchedDependencies:
   buffer@6.0.3:
     hash: 42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d
     path: patches/buffer@6.0.3.patch
+  detox-allure2-adapter@1.0.0-alpha.42:
+    hash: de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81
+    path: patches/detox-allure2-adapter@1.0.0-alpha.42.patch
   detox@20.46.0:
     hash: b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14
     path: patches/detox@20.46.0.patch
@@ -470,7 +473,7 @@ importers:
         version: link:tools/create-release-hash
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/pnpm-utils':
         specifier: workspace:*
         version: link:tools/pnpm-utils
@@ -538,8 +541,8 @@ importers:
         specifier: 1.30.0
         version: 1.30.0(eslint@8.57.0)
       zx:
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: 8.8.5
+        version: 8.8.5
 
   apps/cli:
     dependencies:
@@ -838,7 +841,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.0.81(e17c1f4f71171860e7268885e247ad1a)
@@ -854,6 +857,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@lottiefiles/dotlottie-react':
+        specifier: 0.17.13
+        version: 0.17.13(react@18.3.1)
       '@noble/curves':
         specifier: 1.9.7
         version: 1.9.7
@@ -1388,10 +1394,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
+        version: 1.0.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -1445,10 +1451,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.0.70(52be5316d7f48c8ee686f80d08cc9cb5)
+        version: 0.0.70(0219d1e5fee2cbd4f1082ac29f010fa5)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -1932,7 +1938,7 @@ importers:
         version: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
-        version: 1.0.0-alpha.42(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
+        version: 1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
       eslint-import-resolver-typescript:
         specifier: 3.6.1
         version: 3.6.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0)
@@ -2022,7 +2028,7 @@ importers:
         version: 6.0.2
       '@codemirror/view':
         specifier: ^6.39.5
-        version: 6.39.5
+        version: 6.39.13
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -2088,7 +2094,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/types-live
       '@uiw/react-codemirror':
         specifier: ^4.25.4
-        version: 4.25.4(@codemirror/view@6.39.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.25.4(@codemirror/view@6.39.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -2373,7 +2379,7 @@ importers:
         version: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
-        version: 1.0.0-alpha.42(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
+        version: 1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -2437,13 +2443,13 @@ importers:
         version: 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.0.81(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.0.70(74e8355adee6ebed8271768aabebb232)
+        version: 0.0.70(494f1bd080b136356438784e3ee6eb3e)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.8
@@ -2732,6 +2738,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -6126,7 +6135,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -6255,7 +6264,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+        version: 0.2.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -7304,7 +7313,7 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1
+        version: 1.1.0
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -9082,10 +9091,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.2.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -9149,10 +9158,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 'catalog:'
-        version: 1.3.2(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)
+        version: 1.3.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -9177,7 +9186,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)
+        version: 1.0.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.8
@@ -9253,7 +9262,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.8
@@ -9298,10 +9307,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.1.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.1.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -9313,7 +9322,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+        version: 0.2.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -9431,11 +9440,11 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-aleo
       '@ledgerhq/context-module':
-        specifier: 1.13.0
-        version: 1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+        specifier: 1.14.0
+        version: 1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -9529,14 +9538,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 1.13.0
-        version: 1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+        specifier: 1.14.0
+        version: 1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.10.0(@ledgerhq/context-module@1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+        version: 1.11.0(@ledgerhq/context-module@1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -9582,10 +9591,10 @@ importers:
         version: link:../coin-modules/coin-solana
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.0.1(rxjs@7.8.2)
+        version: 1.1.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.6.1(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(typescript@5.4.3)
+        version: 1.6.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -11002,7 +11011,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -12787,38 +12796,32 @@ packages:
   '@changesets/write@0.3.1':
     resolution: {integrity: sha512-SyGtMXzH3qFqlHKcvFY2eX+6b0NGiFcNav8AFsYwy5l8hejOeoeTDemu5Yjmke2V5jpzY+pBvM0vCCQ3gdZpfw==}
 
-  '@codemirror/autocomplete@6.16.3':
-    resolution: {integrity: sha512-Vl/tIeRVVUCRDuOG48lttBasNQu8usGgXQawBXI7WJAiUDSFOfzflmEsZFZo48mAvAaa4FZ/4/yLLxFtdJaKYA==}
-    peerDependencies:
-      '@codemirror/state': ^6.0.0
-      '@codemirror/view': ^6.0.0
+  '@codemirror/autocomplete@6.20.0':
+    resolution: {integrity: sha512-bOwvTOIJcG5FVo5gUUupiwYh8MioPLQ4UcqbcRf7UQ98X90tCa9E1kZ3Z7tqwpZxYyOvh1YTYbmZE9RTfTp5hg==}
 
-  '@codemirror/commands@6.6.0':
-    resolution: {integrity: sha512-qnY+b7j1UNcTS31Eenuc/5YJB6gQOzkUoNmJQc0rznwqSRpeaWWpjkWy2C/MPTcePpsKJEM26hXrOXl1+nceXg==}
+  '@codemirror/commands@6.10.2':
+    resolution: {integrity: sha512-vvX1fsih9HledO1c9zdotZYUZnE4xV0m6i3m25s5DIfXofuprk6cRcLUZvSk3CASUbwjQX21tOGbkY2BH8TpnQ==}
 
   '@codemirror/lang-json@6.0.2':
     resolution: {integrity: sha512-x2OtO+AvwEHrEwR0FyyPtfDUiloG3rnVTSZV1W8UteaLL8/MajQd8DpvUb2YVzC+/T18aSDv0H9mu+xw0EStoQ==}
 
-  '@codemirror/language@6.10.2':
-    resolution: {integrity: sha512-kgbTYTo0Au6dCSc/TFy7fK3fpJmgHDv1sG1KNQKJXVi+xBTEeBPY/M30YXiU6mMXeH+YIDLsbrT4ZwNRdtF+SA==}
+  '@codemirror/language@6.12.1':
+    resolution: {integrity: sha512-Fa6xkSiuGKc8XC8Cn96T+TQHYj4ZZ7RdFmXA3i9xe/3hLHfwPZdM+dqfX0Cp0zQklBKhVD8Yzc8LS45rkqcwpQ==}
 
-  '@codemirror/lint@6.8.1':
-    resolution: {integrity: sha512-IZ0Y7S4/bpaunwggW2jYqwLuHj0QtESf5xcROewY6+lDNwZ/NzvR4t+vpYgg9m7V8UXLPYqG+lu3DF470E5Oxg==}
+  '@codemirror/lint@6.9.4':
+    resolution: {integrity: sha512-ABc9vJ8DEmvOWuH26P3i8FpMWPQkduD9Rvba5iwb6O3hxASgclm3T3krGo8NASXkHCidz6b++LWlzWIUfEPSWw==}
 
-  '@codemirror/search@6.5.6':
-    resolution: {integrity: sha512-rpMgcsh7o0GuCDUXKPvww+muLA1pDJaFrpq/CCHtpQJYz8xopu4D1hPcKRoDD0YlF8gZaqTNIRa4VRBWyhyy7Q==}
+  '@codemirror/search@6.6.0':
+    resolution: {integrity: sha512-koFuNXcDvyyotWcgOnZGmY7LZqEOXZaaxD/j6n18TCLx2/9HieZJ5H6hs1g8FiRxBD0DNfs0nXn17g872RmYdw==}
 
-  '@codemirror/state@6.4.1':
-    resolution: {integrity: sha512-QkEyUiLhsJoZkbumGZlswmAhA7CBU02Wrz7zvH4SrcifbsqwlXShVXg65f3v/ts57W3dqyamEriMhij1Z3Zz4A==}
+  '@codemirror/state@6.5.4':
+    resolution: {integrity: sha512-8y7xqG/hpB53l25CIoit9/ngxdfoG+fx+V3SHBrinnhOtLvKHRyAJJuHzkWrR4YXXLX8eXBsejgAAxHUOdW1yw==}
 
-  '@codemirror/state@6.5.2':
-    resolution: {integrity: sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==}
+  '@codemirror/theme-one-dark@6.1.3':
+    resolution: {integrity: sha512-NzBdIvEJmx6fjeremiGp3t/okrLPYT0d9orIc7AFun8oZcRk58aejkqhv6spnz4MLAevrKNPMQYXEWMg4s+sKA==}
 
-  '@codemirror/theme-one-dark@6.1.2':
-    resolution: {integrity: sha512-F+sH0X16j/qFLMAfbciKTxVOwkdAS336b7AXTKOZhy8BR3eH/RelsnLgLFINrpST63mmN2OuwUt0W2ndUgYwUA==}
-
-  '@codemirror/view@6.39.5':
-    resolution: {integrity: sha512-A2MwwJB5vC0UeOKHTsB0ZX19DH3/0KMaPgz45r0wd+SRwjk8x3KvYVQ/lYHRdZXxE59H0eUea1ANPqIPxX7QTw==}
+  '@codemirror/view@6.39.13':
+    resolution: {integrity: sha512-QBO8ZsgJLCbI28KdY0/oDy5NQLqOQVZCozBknxc2/7L98V+TVYFHnfaCsnGh1U+alpd2LOkStVwYY7nW2R1xbw==}
 
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
@@ -14834,10 +14837,10 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/context-module@1.13.0':
-    resolution: {integrity: sha512-QwBh6cqxRdDQJDIMJuvEvuuLvvB55rskdEzFaMmuyVyGYT31yFl74rWVXJCg1clVQCMKADwbrLWOyJ/yRwM92g==}
+  '@ledgerhq/context-module@1.14.0':
+    resolution: {integrity: sha512-q4N6YxYS9YE4FlMlD2aZZZKxFkUX1pMLMUsT8R8+LSPPPNlZfVUzFoJ1qid8XO3N1Q2we8hB4WKhUjKxvfcwtw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.1
+      '@ledgerhq/device-management-kit': ^1.1.0
 
   '@ledgerhq/crypto-icons@1.4.0':
     resolution: {integrity: sha512-ol1WC43B0bOt6bF2pw/JB2c4EYju3aDmju9ErehpnYOY6qtGXlo4gHL6DSsyMn4N8KrvUcJbbBZ4kbq76yUHEg==}
@@ -14857,21 +14860,21 @@ packages:
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
 
-  '@ledgerhq/device-management-kit@1.0.1':
-    resolution: {integrity: sha512-IiQ2HQTqpH2+oXvjO6j8X8rel3hlEFN5+UPwyXh/bx4AELIhl9eY283tIQRtW8BxdycjN7jXu+bNFxiOPv3KzA==}
+  '@ledgerhq/device-management-kit@1.1.0':
+    resolution: {integrity: sha512-vpFLOwLnvagGwTXAeuiTFAk8Mq6HlY0bhYgK5OKH8gILIYPgzp+OouNGILz4byRZr0dSOAMHTzSU5bwokBzykA==}
     peerDependencies:
       rxjs: 7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.10.0':
-    resolution: {integrity: sha512-5vDioYyG7Y+r5nbYMvMZGWjmKRhkI1TG8sLhfsRyEEeSlVnWC9nahZANic7zv/Exd4AoctW4vf0+B+oN2zDToA==}
+  '@ledgerhq/device-signer-kit-ethereum@1.11.0':
+    resolution: {integrity: sha512-4QqPuq394ALkrW2l8NrWtBN08b2b676EHTj8ccyYRNFluhiXev3Tn7axR341XRglaRU4/09ItWYJZtPAuZbM1g==}
     peerDependencies:
-      '@ledgerhq/context-module': 1.13.0
-      '@ledgerhq/device-management-kit': ^1.0.1
+      '@ledgerhq/context-module': 1.14.0
+      '@ledgerhq/device-management-kit': ^1.1.0
 
-  '@ledgerhq/device-signer-kit-solana@1.6.1':
-    resolution: {integrity: sha512-rN4bJqM8cVc1D8wXwvq9hc0cpCmyP5K/kRb+g5WJbouJHR1vPwik8wMIzcY93JJfbrLsbD8G+6Ua8J2DqB32/g==}
+  '@ledgerhq/device-signer-kit-solana@1.6.2':
+    resolution: {integrity: sha512-CpbEjH5jatw5BvSAn6z/BM/l75k+sYbKTVKO2lKQ1Eev/SN7Ei11ySVMk1sQBDiHYeLy/EpK6f4PHzq3Fy99zQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.1
+      '@ledgerhq/device-management-kit': ^1.1.0
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.2':
     resolution: {integrity: sha512-NX/Ml23AR/8iQ5pUPQqum3qjQpValxNhZSbp+Zm/lSl8W0HETLMFK03w/4lj2nfPjiwBy3U+uPhzYNDzdROYQg==}
@@ -14973,8 +14976,8 @@ packages:
   '@ledgerhq/logs@6.14.0':
     resolution: {integrity: sha512-kJFu1+asWQmU9XlfR1RM3lYR76wuEoPyZvkI/CNjpft78BQr3+MMf3Nu77ABzcKFnhIcmAkOLlDQ6B8L6hDXHA==}
 
-  '@ledgerhq/lumen-design-core@0.0.51':
-    resolution: {integrity: sha512-jXzIEtD60osxJStRItRIeIQF9cZ0lYYJl/PFbYUXE4eOc1KL0Go178BWVFijsHM91y5/X9XvdphKw3k000432Q==}
+  '@ledgerhq/lumen-design-core@0.0.52':
+    resolution: {integrity: sha512-Nga5AiT/fA7hsyNqrH+/3tklVyimI5kj3/x+075zfpHxSDLAtihjWh9a9F8ewfRg4OgHtpP84UsSHe7P3JOK0A==}
 
   '@ledgerhq/lumen-ui-react@0.0.81':
     resolution: {integrity: sha512-pDIaDyHjwKTGyts4B+vRToDB8hCI6A3SjuoMKnja3UQU9L15Y9AwsWNeD1fqYNcsOlaxZI+E1wz31/wxz/4dhQ==}
@@ -15061,6 +15064,9 @@ packages:
   '@lezer/common@1.2.1':
     resolution: {integrity: sha512-yemX0ZD2xS/73llMZIK6KplkjIjf2EvAHcinDi/TfJ9hS25G0388+ClHt6/3but0oOxinTcQHJLDXh6w1crzFQ==}
 
+  '@lezer/common@1.5.1':
+    resolution: {integrity: sha512-6YRVG9vBkaY7p1IVxL4s44n5nUnaNnGM2/AckNgYOnxTG2kWh1vR8BMxPseWPjRNpb5VtXnMpeYAEAADoRV1Iw==}
+
   '@lezer/highlight@1.2.0':
     resolution: {integrity: sha512-WrS5Mw51sGrpqjlh3d4/fOwpEV2Hd3YOkp9DBt4k8XZQcoTHZFB7sx030A6OcahF4J1nDQAa3jXlTVVYH50IFA==}
 
@@ -15069,6 +15075,14 @@ packages:
 
   '@lezer/lr@1.4.1':
     resolution: {integrity: sha512-CHsKq8DMKBf9b3yXPDIU4DbH+ZJd/sJdYOW2llbW/HudP5u0VS6Bfq1hLYfgU7uAYGFIyGGQIsSOXGPEErZiJw==}
+
+  '@lottiefiles/dotlottie-react@0.17.13':
+    resolution: {integrity: sha512-Ui8bqFlxqxLqB3G4bE9nsSw05lUn7eiZ24dSi/NVHFjTMAlb/JxdS8xWt1cdF2W1yJPNCeQuze6kkqNC5OMbJg==}
+    peerDependencies:
+      react: ^17 || ^18 || ^19
+
+  '@lottiefiles/dotlottie-web@0.61.0':
+    resolution: {integrity: sha512-1QwcDchh/TXTvP9zXUHA5oJOdhEdUrn6U7gAiQ1AXEUrcK6PTU6v5D3byP76BK56fQjoY2WQ2A4pYDCCvoVRqw==}
 
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
@@ -18510,7 +18524,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -20728,7 +20742,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -21994,8 +22008,8 @@ packages:
   codemirror@5.65.20:
     resolution: {integrity: sha512-i5dLDDxwkFCbhjvL2pNjShsojoL3XHyDwsGv1jqETUoW+lzpBKKqNTUWgQwVAOa0tUm4BwekT455ujafi8payA==}
 
-  codemirror@6.0.1:
-    resolution: {integrity: sha512-J8j+nZ+CdWmIeFIGXEFbFPtpiYacFMDR8GlHK3IyHQJMCaVRfGx9NT+Hxivv1ckLWPvNdZqndbr/7lVhrf/Svg==}
+  codemirror@6.0.2:
+    resolution: {integrity: sha512-VhydHotNW5w1UGK0Qj96BwSk/Zqbp9WbnyK2W/eVMv4QyF41INRGpjUhFJY7/uDNuudSc33a/PKr4iDqRduvHw==}
 
   coininfo@5.2.1:
     resolution: {integrity: sha512-mqSQIhAMgeiySzS0Ei33qno0oN/JQt9X3I6J1zx4eIYUnObGPuoLOrpssoqU84ZQoIpJGt3mQdEd2dL3sZJADw==}
@@ -34009,8 +34023,8 @@ packages:
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
-  zx@8.4.1:
-    resolution: {integrity: sha512-1Cb+Tfwt/daKV6wckBeDbB6h3IMauqj9KWp+EcbYzi9doeJeIHCktxp/yWspXOXRdoUzBCQSKoUgm3g8r9fz5A==}
+  zx@8.8.5:
+    resolution: {integrity: sha512-SNgDF5L0gfN7FwVOdEFguY3orU5AkfFZm9B5YSHog/UDHv+lvmd82ZAsOenOkQixigwH2+yyH198AwNdKhj+RA==}
     engines: {node: '>= 12.17.0'}
     hasBin: true
 
@@ -37706,62 +37720,60 @@ snapshots:
       human-id: 1.0.2
       prettier: 2.8.8
 
-  '@codemirror/autocomplete@6.16.3(@codemirror/state@6.4.1)(@codemirror/view@6.39.5)':
+  '@codemirror/autocomplete@6.20.0':
     dependencies:
-      '@codemirror/language': 6.10.2
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/language': 6.12.1
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
       '@lezer/common': 1.2.1
 
-  '@codemirror/commands@6.6.0':
+  '@codemirror/commands@6.10.2':
     dependencies:
-      '@codemirror/language': 6.10.2
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/language': 6.12.1
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
       '@lezer/common': 1.2.1
 
   '@codemirror/lang-json@6.0.2':
     dependencies:
-      '@codemirror/language': 6.10.2
+      '@codemirror/language': 6.12.1
       '@lezer/json': 1.0.2
 
-  '@codemirror/language@6.10.2':
+  '@codemirror/language@6.12.1':
     dependencies:
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
-      '@lezer/common': 1.2.1
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
+      '@lezer/common': 1.5.1
       '@lezer/highlight': 1.2.0
       '@lezer/lr': 1.4.1
       style-mod: 4.1.2
 
-  '@codemirror/lint@6.8.1':
+  '@codemirror/lint@6.9.4':
     dependencies:
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
       crelt: 1.0.6
 
-  '@codemirror/search@6.5.6':
+  '@codemirror/search@6.6.0':
     dependencies:
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
       crelt: 1.0.6
 
-  '@codemirror/state@6.4.1': {}
-
-  '@codemirror/state@6.5.2':
+  '@codemirror/state@6.5.4':
     dependencies:
       '@marijn/find-cluster-break': 1.0.2
 
-  '@codemirror/theme-one-dark@6.1.2':
+  '@codemirror/theme-one-dark@6.1.3':
     dependencies:
-      '@codemirror/language': 6.10.2
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/language': 6.12.1
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
       '@lezer/highlight': 1.2.0
 
-  '@codemirror/view@6.39.5':
+  '@codemirror/view@6.39.13':
     dependencies:
-      '@codemirror/state': 6.5.2
+      '@codemirror/state': 6.5.4
       crelt: 1.0.6
       style-mod: 4.1.2
       w3c-keyname: 2.2.8
@@ -41384,9 +41396,9 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))':
+  '@ledgerhq/context-module@1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       axios: 1.13.2
       crypto-js: 4.2.0
       ethers: 6.15.0
@@ -41435,7 +41447,7 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
 
-  '@ledgerhq/device-management-kit@1.0.1':
+  '@ledgerhq/device-management-kit@1.1.0':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -41453,7 +41465,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2)':
+  '@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -41472,11 +41484,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.10.0(@ledgerhq/context-module@1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@1.11.0(@ledgerhq/context-module@1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.2(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.1.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -41487,11 +41499,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@1.6.1(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(typescript@5.4.3)':
+  '@ledgerhq/device-signer-kit-solana@1.6.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(typescript@5.4.3)':
     dependencies:
-      '@ledgerhq/context-module': 1.13.0(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.2(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 1.14.0(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.1.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bs58: 6.0.0
@@ -41508,9 +41520,9 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.8
       purify-ts: 2.1.0
@@ -41519,35 +41531,35 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@1.1.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-speculos@1.1.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       axios: 1.13.2
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-web-hid@1.2.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -41661,7 +41673,7 @@ snapshots:
 
   '@ledgerhq/logs@6.14.0': {}
 
-  '@ledgerhq/lumen-design-core@0.0.51':
+  '@ledgerhq/lumen-design-core@0.0.52':
     dependencies:
       tailwindcss: 4.1.18
       tslib: 2.6.2
@@ -41698,10 +41710,10 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-rnative@0.0.70(52be5316d7f48c8ee686f80d08cc9cb5)':
+  '@ledgerhq/lumen-ui-rnative@0.0.70(0219d1e5fee2cbd4f1082ac29f010fa5)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(ce3c2bb9a6a8aaadbbab096d15e66218)
-      '@ledgerhq/lumen-design-core': 0.0.51
+      '@ledgerhq/lumen-design-core': 0.0.52
       '@ledgerhq/lumen-utils-shared': 0.0.18(react@19.0.0)
       '@react-native-community/blur': 4.4.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@types/react': 19.0.14
@@ -41715,10 +41727,10 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
-  '@ledgerhq/lumen-ui-rnative@0.0.70(74e8355adee6ebed8271768aabebb232)':
+  '@ledgerhq/lumen-ui-rnative@0.0.70(494f1bd080b136356438784e3ee6eb3e)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      '@ledgerhq/lumen-design-core': 0.0.51
+      '@ledgerhq/lumen-design-core': 0.0.52
       '@ledgerhq/lumen-utils-shared': 0.0.18(react@18.3.1)
       '@types/react': 18.2.73
       i18next: 23.10.1
@@ -41743,13 +41755,13 @@ snapshots:
       react: 19.0.0
       tailwind-merge: 2.6.0
 
-  '@ledgerhq/signer-utils@1.1.2(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.1.2(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
 
-  '@ledgerhq/speculos-device-controller@0.2.3(@ledgerhq/device-management-kit@1.0.1(rxjs@7.8.2))':
+  '@ledgerhq/speculos-device-controller@0.2.3(@ledgerhq/device-management-kit@1.1.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.0.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.1.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       axios: 1.13.2
 
@@ -41828,9 +41840,11 @@ snapshots:
 
   '@lezer/common@1.2.1': {}
 
+  '@lezer/common@1.5.1': {}
+
   '@lezer/highlight@1.2.0':
     dependencies:
-      '@lezer/common': 1.2.1
+      '@lezer/common': 1.5.1
 
   '@lezer/json@1.0.2':
     dependencies:
@@ -41840,7 +41854,14 @@ snapshots:
 
   '@lezer/lr@1.4.1':
     dependencies:
-      '@lezer/common': 1.2.1
+      '@lezer/common': 1.5.1
+
+  '@lottiefiles/dotlottie-react@0.17.13(react@18.3.1)':
+    dependencies:
+      '@lottiefiles/dotlottie-web': 0.61.0
+      react: 18.3.1
+
+  '@lottiefiles/dotlottie-web@0.61.0': {}
 
   '@lukeed/csprng@1.1.0': {}
 
@@ -49285,25 +49306,25 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@uiw/codemirror-extensions-basic-setup@4.25.4(@codemirror/view@6.39.5)':
+  '@uiw/codemirror-extensions-basic-setup@4.25.4(@codemirror/view@6.39.13)':
     dependencies:
-      '@codemirror/autocomplete': 6.16.3(@codemirror/state@6.4.1)(@codemirror/view@6.39.5)
-      '@codemirror/commands': 6.6.0
-      '@codemirror/language': 6.10.2
-      '@codemirror/lint': 6.8.1
-      '@codemirror/search': 6.5.6
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/autocomplete': 6.20.0
+      '@codemirror/commands': 6.10.2
+      '@codemirror/language': 6.12.1
+      '@codemirror/lint': 6.9.4
+      '@codemirror/search': 6.6.0
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
 
-  '@uiw/react-codemirror@4.25.4(@codemirror/view@6.39.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@uiw/react-codemirror@4.25.4(@codemirror/view@6.39.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.28.4
-      '@codemirror/commands': 6.6.0
-      '@codemirror/state': 6.4.1
-      '@codemirror/theme-one-dark': 6.1.2
-      '@codemirror/view': 6.39.5
-      '@uiw/codemirror-extensions-basic-setup': 4.25.4(@codemirror/view@6.39.5)
-      codemirror: 6.0.1
+      '@codemirror/commands': 6.10.2
+      '@codemirror/state': 6.5.4
+      '@codemirror/theme-one-dark': 6.1.3
+      '@codemirror/view': 6.39.13
+      '@uiw/codemirror-extensions-basic-setup': 4.25.4(@codemirror/view@6.39.13)
+      codemirror: 6.0.2
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
@@ -52145,15 +52166,15 @@ snapshots:
 
   codemirror@5.65.20: {}
 
-  codemirror@6.0.1:
+  codemirror@6.0.2:
     dependencies:
-      '@codemirror/autocomplete': 6.16.3(@codemirror/state@6.4.1)(@codemirror/view@6.39.5)
-      '@codemirror/commands': 6.6.0
-      '@codemirror/language': 6.10.2
-      '@codemirror/lint': 6.8.1
-      '@codemirror/search': 6.5.6
-      '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.39.5
+      '@codemirror/autocomplete': 6.20.0
+      '@codemirror/commands': 6.10.2
+      '@codemirror/language': 6.12.1
+      '@codemirror/lint': 6.9.4
+      '@codemirror/search': 6.6.0
+      '@codemirror/state': 6.5.4
+      '@codemirror/view': 6.39.13
 
   coininfo@5.2.1:
     dependencies:
@@ -53321,7 +53342,7 @@ snapshots:
 
   detect-node@2.1.0: {}
 
-  detox-allure2-adapter@1.0.0-alpha.42(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
       detox: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(@jest/types@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
@@ -53331,7 +53352,7 @@ snapshots:
       tslib: 2.6.2
       videokitten: 1.0.1
 
-  detox-allure2-adapter@1.0.0-alpha.42(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
       detox: 20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(ts-node@10.9.2(@swc/core@1.15.8)(typescript@5.4.3)))
@@ -69013,4 +69034,4 @@ snapshots:
 
   zwitch@2.0.4: {}
 
-  zx@8.4.1: {}
+  zx@8.8.5: {}

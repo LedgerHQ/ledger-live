@@ -53,8 +53,11 @@ export default function WalletTabNavigator() {
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
-  const { shouldDisplayMarketBanner: shouldHideTabs, isEnabled: isNewPortfolioEnabled } =
-    useWalletFeaturesConfig("mobile");
+  const {
+    shouldDisplayMarketBanner: shouldHideTabs,
+    isEnabled: isNewPortfolioEnabled,
+    shouldDisplayWallet40MainNav: shouldDisplayWallet40TopBar,
+  } = useWalletFeaturesConfig("mobile");
   const { backgroundColor } = useWallet40Theme("mobile");
 
   const PortfolioComponent = useMemo(() => {
@@ -115,7 +118,7 @@ export default function WalletTabNavigator() {
             />
           )}
         </WalletTab.Navigator>
-        <WalletTabHeader hidePortfolio={false} />
+        <WalletTabHeader hidePortfolio={false} useWallet40TopBar={shouldDisplayWallet40TopBar} />
       </Box>
     </WalletTabNavigatorScrollManager>
   );

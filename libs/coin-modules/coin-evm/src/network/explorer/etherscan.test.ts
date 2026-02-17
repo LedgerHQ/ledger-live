@@ -5,6 +5,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import BigNumber from "bignumber.js";
+
 import {
   deserializePagingToken,
   etherscanERC1155EventToOperations,
@@ -215,6 +216,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -234,6 +236,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 0,
+          endBlock: undefined,
         },
       });
     });
@@ -250,6 +253,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -269,6 +273,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 50,
+          endBlock: undefined,
         },
       });
     });
@@ -286,6 +291,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -442,6 +448,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -463,6 +470,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 0,
+          endBlock: undefined,
         },
       });
     });
@@ -479,6 +487,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -500,6 +509,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 50,
+          endBlock: undefined,
         },
       });
     });
@@ -517,6 +527,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -675,6 +686,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -712,6 +724,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -750,6 +763,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -908,6 +922,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -945,6 +960,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -983,6 +999,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(4);
@@ -1099,6 +1116,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       // Verify operations are sorted by date descending
@@ -1273,6 +1291,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(3);
@@ -1294,6 +1313,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 0,
+          endBlock: undefined,
         },
       });
     });
@@ -1310,6 +1330,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 50,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(3);
@@ -1331,6 +1352,7 @@ describe("EVM Family", () => {
           page: 1,
           sort: "desc",
           startBlock: 50,
+          endBlock: undefined,
         },
       });
     });
@@ -1348,6 +1370,7 @@ describe("EVM Family", () => {
         accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
+        sort: "desc",
       });
 
       expect(response.operations.length).toBe(3);
@@ -1372,6 +1395,36 @@ describe("EVM Family", () => {
           endBlock: 100,
         },
       });
+    });
+
+    it("should use transactionHash when hash is missing for internal transactions (blockscout specific)", async () => {
+      const blockscoutInternalOps = etherscanInternalOperations.map(op => ({
+        ...op,
+        hash: undefined,
+        transactionHash: op.hash, // <-- this is what is returned by blockscout
+      }));
+
+      jest.spyOn(axios, "request").mockImplementation(async () => ({
+        data: {
+          result: blockscoutInternalOps,
+        },
+      }));
+
+      const response = await ETHERSCAN_API.getInternalOperations({
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        sort: "desc",
+      });
+
+      expect(response.operations).toEqual(
+        [
+          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
+          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
+          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+        ].flat(),
+      );
     });
 
     describe("isPageFull and isDone", () => {

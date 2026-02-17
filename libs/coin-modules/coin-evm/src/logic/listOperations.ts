@@ -121,6 +121,12 @@ type ListOperationsParams = ListOperationsOptions & {
   pagingToken?: Cursor;
 };
 
+// the sort parameter has a double meaning:
+// - legacy (for the bridge): it's used to sort the operations in the result list. Explorer always queried in "desc" order.
+// - new: it's used to sort AND query the explorer with the correct order.
+
+// the limit parameter is a newly introduced parameter for pagination. It's used to switch between "legacy" and "new" behavior.
+// see tests for a full description of the behavior.
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
@@ -133,6 +139,7 @@ export async function listOperations(
   }: ListOperationsParams,
 ): Promise<[Operation<MemoNotSupported>[], Cursor | undefined]> {
   const explorerApi = getExplorerApi(currency);
+  const explorerOrder = limit === undefined ? "desc" : order;
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -147,7 +154,7 @@ export async function listOperations(
     undefined,
     cursor ?? legacyPagingToken,
     limit,
-    limit === undefined ? "desc" : order,
+    explorerOrder,
   );
 
   const tokenOrNftHashes = new Set(
@@ -185,15 +192,12 @@ export async function listOperations(
     Operation<MemoNotSupported>
   >(op => toOperation(currency.id, address, { type: "token", owner: address, parents }, op));
   const internalOperations = lastInternalOperations.map<Operation<MemoNotSupported>>(op => {
+    // Explorers don't provide block hash and fees for internal operations.
+    // When a matching parent transaction exists, we take these values from it.
+    // Otherwise, we use the internal operation's defaults.
     const parent = parents[op.hash];
-    return toOperation(
-      currency.id,
-      address,
-      { type: "native", internal: true },
-      // Explorers don't provide block hash and fees for internal operations.
-      // When a parent exists, we take these values from the parent; otherwise keep the internal op values.
-      parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
-    );
+    const enrichedOp = parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op;
+    return toOperation(currency.id, address, { type: "native", internal: true }, enrichedOp);
   });
 
   const hasValidType = (operation: Operation): boolean =>

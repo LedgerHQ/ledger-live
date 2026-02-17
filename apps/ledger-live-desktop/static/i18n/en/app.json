@@ -778,6 +778,7 @@
     }
   },
   "exchange": {
+    "pageHeader": "Buy or sell",
     "chooseProvider": "Choose from {{providerCount}} provider",
     "chooseProviders": "Choose from {{providerCount}} providers",
     "title": "Buy and sell crypto",
@@ -7940,8 +7941,21 @@
   },
   "topBar": {
     "activityIndicator": {
-      "refreshToolTip": "Tap to refresh",
-      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry"
+      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "upToDate": "You're up to date",
+      "minutesAgo_one": "Last sync: {{count}} min ago. Tap to refresh",
+      "minutesAgo_other": "Last sync: {{count}} mins ago. Tap to refresh",
+      "hoursAgo_one": "Last sync: {{count}} hour ago. Tap to refresh",
+      "hoursAgo_other": "Last sync: {{count}} hours ago. Tap to refresh",
+      "daysAgo_one": "Last sync: {{count}} day ago. Tap to refresh",
+      "daysAgo_other": "Last sync: {{count}} days ago. Tap to refresh"
+    },
+    "notificationIndicator": {
+      "tooltip": "Notifications"
+    },
+    "myLedger": {
+      "tooltip": "My Ledger"
     }
   },
   "geoBlocking": {
@@ -8015,6 +8029,38 @@
       "datepicker": {
         "label": "Birthday height",
         "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      }
+    }
+  },
+  "aleo": {
+    "addAccount": {
+      "stepViewKeyWarning": {
+        "title": "Set up Aleo private balance",
+        "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
+        "bullets": [
+          "Read-only access to decrypt your private balance",
+          "Ledger cannot send or spend your funds",
+          "Only you can sign and spend your funds",
+          "Proof generation is handled by third-party prover services to ensure fast processing",
+          "Provers cannot access or spend your funds"
+        ],
+        "cta": {
+          "allow": "Allow",
+          "cancel": "Cancel"
+        }
+      },
+      "stepViewKeyApprove": {
+        "title": "Approve on your Ledger",
+        "description": "Confirm sharing the view key on your device",
+        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
+        "cancelAllBtn_one": "Cancel",
+        "cancelAllBtn_other": "Cancel all"
+      },
+      "stepScanAccounts": {
+        "cta": {
+          "shareKey_one": "Share view key",
+          "shareKey_other": "Share view keys"
+        }
       }
     }
   }

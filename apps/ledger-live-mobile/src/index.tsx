@@ -3,6 +3,7 @@ require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
+import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
@@ -217,8 +218,11 @@ function App() {
       });
     };
     initializeDatadogProvider(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      datadogFF?.params as PartialInitializationConfiguration,
+      {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        ...(datadogFF?.params as PartialInitializationConfiguration),
+        ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
+      },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     )
       .then(setUserEquipmentId)

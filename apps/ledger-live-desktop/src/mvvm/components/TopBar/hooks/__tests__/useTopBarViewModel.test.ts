@@ -1,25 +1,30 @@
-import { Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import { Eye, Refresh, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook } from "tests/testSetup";
 import useTopBarViewModel from "../useTopBarViewModel";
 import * as useActivityIndicatorModule from "../useActivityIndicator";
 import * as useDiscreetModeModule from "../useDiscreetMode";
+import * as useSettingsModule from "../useSettings";
 
 jest.mock("../useActivityIndicator");
 jest.mock("../useDiscreetMode");
+jest.mock("../useSettings");
 
 const mockUseActivityIndicator = jest.mocked(useActivityIndicatorModule.useActivityIndicator);
 const mockUseDiscreetMode = jest.mocked(useDiscreetModeModule.useDiscreetMode);
+const mockUseSettings = jest.mocked(useSettingsModule.useSettings);
 
 describe("useTopBarViewModel", () => {
   const mockHandleSync = jest.fn();
   const mockHandleDiscreet = jest.fn();
-  const mockDiscreetIcon = {} as ReturnType<typeof mockUseDiscreetMode>["discreetIcon"];
+  const mockHandleSettings = jest.fn();
+  const mockDiscreetIcon = Eye;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseDiscreetMode.mockReturnValue({
       handleDiscreet: mockHandleDiscreet,
       discreetIcon: mockDiscreetIcon,
+      tooltip: "Discreet tooltip",
     });
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
@@ -30,21 +35,47 @@ describe("useTopBarViewModel", () => {
       tooltip: "Refresh",
       icon: Refresh,
     });
+    mockUseSettings.mockReturnValue({
+      handleSettings: mockHandleSettings,
+      settingsIcon: Settings,
+      tooltip: "Settings",
+    });
   });
 
-  it("returns topBarActionsList with synchronize action when hasAccounts is true", () => {
+  it("returns topBarSlots in order: synchronize (when hasAccounts), notification, discreet, settings, my ledger", () => {
     const { result } = renderHook(() => useTopBarViewModel());
 
-    expect(result.current.topBarActionsList).toBeDefined();
-    const syncAction = result.current.topBarActionsList.find(a => a.label === "synchronize");
-    expect(syncAction).toBeDefined();
-    expect(syncAction?.tooltip).toBe("Refresh");
-    expect(syncAction?.isInteractive).toBe(true);
-    expect(syncAction?.onClick).toBe(mockHandleSync);
-    expect(syncAction?.icon).toBeDefined();
+    const slotLabels = result.current.topBarSlots.map(s =>
+      s.type === "action" ? s.action.label : "notification",
+    );
+    expect(slotLabels).toEqual([
+      "synchronize",
+      "notification",
+      "discreet",
+      "settings",
+      "my ledger",
+    ]);
+
+    const myLedgerSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "my ledger",
+    );
+    expect(myLedgerSlot).toBeDefined();
+
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeDefined();
+    if (syncSlot?.type === "action") expect(syncSlot.action.onClick).toBe(mockHandleSync);
+
+    const settingsSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "settings",
+    );
+    expect(settingsSlot).toBeDefined();
+    if (settingsSlot?.type === "action")
+      expect(settingsSlot.action.onClick).toBe(mockHandleSettings);
   });
 
-  it("does not include synchronize action when hasAccounts is false", () => {
+  it("does not include synchronize slot when hasAccounts is false and notification is first", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: false,
       handleSync: mockHandleSync,
@@ -57,17 +88,14 @@ describe("useTopBarViewModel", () => {
 
     const { result } = renderHook(() => useTopBarViewModel());
 
-    const syncAction = result.current.topBarActionsList.find(a => a.label === "synchronize");
-    expect(syncAction).toBeUndefined();
-  });
-
-  it("always includes discreet action with handleDiscreet and tooltip from translation", () => {
-    const { result } = renderHook(() => useTopBarViewModel());
-
-    const discreetAction = result.current.topBarActionsList.find(a => a.label === "discreet");
-    expect(discreetAction).toBeDefined();
-    expect(discreetAction?.onClick).toBe(mockHandleDiscreet);
-    expect(discreetAction?.isInteractive).toBe(true);
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeUndefined();
+    const slotLabels = result.current.topBarSlots.map(s =>
+      s.type === "action" ? s.action.label : "notification",
+    );
+    expect(slotLabels).toEqual(["notification", "discreet", "settings", "my ledger"]);
   });
 
   it("passes isDisabled from useActivityIndicator as isInteractive false on sync action", () => {
@@ -83,9 +111,13 @@ describe("useTopBarViewModel", () => {
 
     const { result } = renderHook(() => useTopBarViewModel());
 
-    const syncAction = result.current.topBarActionsList.find(a => a.label === "synchronize");
-    expect(syncAction).toBeDefined();
-    expect(syncAction?.isInteractive).toBe(false);
-    expect(syncAction?.tooltip).toBe("Error");
+    const syncSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "synchronize",
+    );
+    expect(syncSlot).toBeDefined();
+    if (syncSlot?.type === "action") {
+      expect(syncSlot.action.isInteractive).toBe(false);
+      expect(syncSlot.action.tooltip).toBe("Error");
+    }
   });
 });

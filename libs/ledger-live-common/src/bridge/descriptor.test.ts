@@ -230,6 +230,55 @@ describe("sendFeatures", () => {
     expect(sendFeatures.hasCoinControl(bitcoin)).toBe(true);
   });
 
+  it("should return true for canSendMax when not explicitly disabled (bitcoin, ethereum)", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const ethereum = getCryptoCurrencyById("ethereum");
+    expect(sendFeatures.canSendMax(bitcoin)).toBe(true);
+    expect(sendFeatures.canSendMax(ethereum)).toBe(true);
+  });
+
+  it("should return false for canSendMax when descriptor sets canSendMax to false (xrp)", () => {
+    const xrp = getCryptoCurrencyById("ripple");
+    expect(sendFeatures.canSendMax(xrp)).toBe(false);
+  });
+
+  it("should return true for canSendMax when currency is undefined (default)", () => {
+    expect(sendFeatures.canSendMax(undefined)).toBe(true);
+  });
+
+  it("should return null for getCustomFeeConfig when currency has no custom fees (solana)", () => {
+    const solana = getCryptoCurrencyById("solana");
+    expect(sendFeatures.getCustomFeeConfig(solana)).toBeNull();
+  });
+
+  it("should return null for getCustomFeeConfig when currency is undefined", () => {
+    expect(sendFeatures.getCustomFeeConfig(undefined)).toBeNull();
+  });
+
+  it("should return custom fee config for bitcoin with inputs and builders", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const config = sendFeatures.getCustomFeeConfig(bitcoin);
+    expect(config).not.toBeNull();
+    expect(config?.inputs).toHaveLength(1);
+    expect(config?.inputs[0]).toMatchObject({
+      key: "feePerByte",
+      type: "number",
+      unitLabel: "sat/vbyte",
+    });
+    expect(typeof config?.getInitialValues).toBe("function");
+    expect(typeof config?.buildTransactionPatch).toBe("function");
+  });
+
+  it("should return custom fee config for ethereum with EIP-1559 inputs", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const config = sendFeatures.getCustomFeeConfig(ethereum);
+    expect(config).not.toBeNull();
+    expect(config?.inputs.length).toBeGreaterThanOrEqual(2);
+    expect(config?.inputs.map(i => i.key)).toContain("maxFeePerGas");
+    expect(typeof config?.getInitialValues).toBe("function");
+    expect(typeof config?.buildTransactionPatch).toBe("function");
+  });
+
   it("should return empty fee preset options when not implemented", () => {
     const solana = getCryptoCurrencyById("solana");
     expect(sendFeatures.getFeePresetOptions(solana, {})).toEqual([]);

@@ -28,6 +28,9 @@ const handlers = [
 
     return HttpResponse.json(paginatedData);
   }),
+  http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () => {
+    return HttpResponse.json(["usd", "eur", "gbp"]);
+  }),
   http.get("https://proxycg.api.live.ledger.com/api/v3/coins/:coin/market_chart", ({ params }) => {
     return HttpResponse.json(marketsMock.find(({ id }) => id === params.coin));
   }),

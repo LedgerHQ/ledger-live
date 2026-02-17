@@ -14,7 +14,13 @@ import {
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
 } from "../derivation";
-import { isAccountEmpty, clearAccount, emptyHistoryCache, encodeAccountId } from "../account";
+import {
+  isAccountEmpty,
+  clearAccount,
+  emptyHistoryCache,
+  encodeAccountId,
+  decodeAccountId,
+} from "../account";
 import {
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
@@ -175,6 +181,14 @@ export const mergeNfts = (oldNfts: ProtoNFT[], newNfts: ProtoNFT[]): ProtoNFT[] 
   return Object.values(newNftsPerId).concat(nfts);
 };
 
+const getCustomDataFromAccountId = (accountId: string): string | undefined => {
+  try {
+    return decodeAccountId(accountId).customData;
+  } catch {
+    return undefined;
+  }
+};
+
 export const makeSync =
   <
     T extends TransactionCommon = TransactionCommon,
@@ -194,12 +208,14 @@ export const makeSync =
   (initial, syncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<(acc: A) => A>) => {
       async function main() {
+        const customData = getCustomDataFromAccountId(initial.id);
         const accountId = encodeAccountId({
           type: "js",
           version: "2",
           currencyId: initial.currency.id,
           xpubOrAddress: initial.xpub || initial.freshAddress,
           derivationMode: initial.derivationMode,
+          ...(customData && { customData }),
         });
         const needClear = initial.id !== accountId;
 
