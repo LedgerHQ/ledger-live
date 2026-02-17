@@ -8,9 +8,8 @@ import {
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
 
-const baseURL = getEnv("MARKET_API_URL");
+const baseURL = getEnv("COINGECKO_API_URL");
 
-// Fetches list of supported counterCurrencies
 export async function supportedCounterCurrencies(): Promise<string[]> {
   const url = `${baseURL}/simple/supported_vs_currencies`;
 

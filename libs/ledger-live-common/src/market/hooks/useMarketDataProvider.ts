@@ -1,14 +1,9 @@
 import { UseQueryResult, useQueries } from "@tanstack/react-query";
 import { fetchList } from "../api";
-import {
-  useGetSupportedCoinsListQuery,
-  useGetSupportedCounterCurrenciesQuery,
-  useGetCurrencyChartDataQuery,
-  useGetCurrencyDataQuery,
-} from "../state-manager/api";
+import { useGetCurrencyDataQuery } from "../state-manager/api";
 import { currencyFormatter } from "../utils/currencyFormatter";
 import { QUERY_KEY } from "../utils/queryKeys";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
+import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import {
   MarketCurrencyRequestParams,
   MarketListRequestParams,
@@ -18,34 +13,6 @@ import {
   MarketListRequestResult,
   Order,
 } from "../utils/types";
-
-export function useMarketDataProvider() {
-  const { data: supportedCounterCurrencies } = useSupportedCounterCurrencies();
-  const { data: supportedCurrencies } = useSupportedCurrencies();
-
-  return {
-    supportedCounterCurrencies,
-    supportedCurrencies,
-  };
-}
-
-export const useCurrencyChartData = ({ id, counterCurrency, range }: MarketCurrencyRequestParams) =>
-  useGetCurrencyChartDataQuery(
-    { id, counterCurrency, range },
-    {
-      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    },
-  );
-
-export const useSupportedCounterCurrencies = () =>
-  useGetSupportedCounterCurrenciesQuery(undefined, {
-    pollingInterval: ONE_DAY,
-  });
-
-export const useSupportedCurrencies = () =>
-  useGetSupportedCoinsListQuery(undefined, {
-    pollingInterval: ONE_DAY,
-  });
 
 export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestParams) =>
   useGetCurrencyDataQuery(

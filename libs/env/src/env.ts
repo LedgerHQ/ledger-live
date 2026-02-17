@@ -908,10 +908,10 @@ const envDefinitions = {
     parser: boolParser,
     desc: "true when launched for E2E testing",
   },
-  MARKET_API_URL: {
+  COINGECKO_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
-    desc: "Market data api",
+    desc: "Coingecko API",
   },
   USE_LEARN_STAGING_URL: {
     def: false,
