@@ -13,6 +13,8 @@ export type SyncEstimatedTime = {
   minutes: number;
 };
 
+type ShieldedBalance = number;
+
 export default class ZCash {
   jsonRpcClient: JsonRpcClient;
 
@@ -156,5 +158,11 @@ export default class ZCash {
     }
 
     return candidate;
+  }
+
+  async syncShielded(): Promise<{
+    balance: ShieldedBalance;
+  }> {
+    return { balance: 2 };
   }
 }

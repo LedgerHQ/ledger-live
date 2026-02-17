@@ -268,3 +268,11 @@ describe("findShieldedTxsInBlock", () => {
     expect(transactions).toEqual([]);
   });
 });
+
+describe("syncShielded", () => {
+  test("returns the shielded balance", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const { balance } = await zcash.syncShielded();
+    expect(balance).toEqual(2);
+  });
+});
