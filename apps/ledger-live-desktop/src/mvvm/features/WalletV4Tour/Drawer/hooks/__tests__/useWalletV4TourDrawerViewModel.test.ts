@@ -1,11 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
 import { useWalletV4TourDrawerViewModel } from "../useWalletV4TourDrawerViewModel";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 const tourEnabledOverrides = {
   lwdWallet40: {
     enabled: true,
