@@ -300,6 +300,7 @@
     "earn" : "Gagner",
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
+    "perps" : "Perpétuels",
     "refer" : "Parrainage",
     "lend" : "Prêter",
     "catalog" : "Discover",
@@ -777,6 +778,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Acheter ou vendre",
     "chooseProvider" : "Choisissez parmi {{providerCount}} prestataire",
     "chooseProviders" : "Choisissez parmi {{providerCount}} prestataires",
     "title" : "Acheter et vendre des cryptos",
@@ -809,7 +811,15 @@
     }
   },
   "card" : {
-    "backToCard" : "toutes les cartes"
+    "backToCard" : "toutes les cartes",
+    "title" : "Carte",
+    "imageAlt" : "Image Carte",
+    "spendYourCrypto" : "Utilisez vos cryptos",
+    "payDescription" : "Effectuez vos achats en ligne et en magasin avec une carte crypto.",
+    "exploreCards" : "Découvrir les cartes",
+    "iAlreadyHaveACard" : "J’ai déjà une carte",
+    "unlockLiquidity" : "Utilisez vos cryptos au quotidien",
+    "exploreCryptoCardsDescription" : "Découvrez nos cartes crypto et trouvez celle qui est faite pour vous."
   },
   "lend" : {
     "title" : "Prêter",
@@ -1481,6 +1491,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
+    "continue" : "Continuer"
+  },
   "currentAddress" : {
     "title" : "Adresse actuelle",
     "for" : "Adresse pour <1><0>{{name}}</0></1>",
@@ -1783,6 +1812,7 @@
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
       "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
+      "acceptTermsSponsored" : "Pour bénéficier de la gratuité des frais de réseau, vous acceptez également de partager les détails de votre transaction (y compris votre adresse de wallet) avec Blink Labs.",
       "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
       "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et\nsa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant,\nvous devez contacter l’<2>assistance clientèle</2> de Changelly.",
@@ -2205,6 +2235,19 @@
       "description" : "Pour recevoir cet actif d’une plateforme d’échange, un <0>tag/mémo</0> peut être requis. Vous pouvez utiliser n’importe quelle combinaison de chiffres, comme 1234."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Virement bancaire",
+          "description" : "Recevez des stablecoins par virement bancaire."
+        },
+        "fromCrypto" : {
+          "title" : "Recevoir des cryptos"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "Envoyer",
     "totalSpent" : "Total débité",
@@ -2331,6 +2374,15 @@
     "addressNotFound" : "Adresse introuvable",
     "alreadyUsed" : "Déjà utilisée · {{date}}",
     "recentSendWillAppear" : "Vos dernières transactions émises apparaîtront ici.",
+    "relativeDate" : {
+      "justNow" : "À l’instant",
+      "minutesAgo_one" : "Il y a 1 min.",
+      "minutesAgo_other" : "Il y a {{count}} min.",
+      "hoursAgo_one" : "Il y a 1 heure",
+      "hoursAgo_other" : "Il y a {{count}} heures",
+      "daysAgo_one" : "Il y a 1 jour",
+      "daysAgo_other" : "Il y a {{count}} jours"
+    },
     "remove" : "Supprimer",
     "enterTag" : "Entrer {{tag}}",
     "firstInteraction" : {
@@ -4506,6 +4558,10 @@
           "title" : "Génération rapide",
           "desc" : "Générez 10 comptes aléatoires avec des monnaies aléatoires"
         },
+        "emptyGenerate" : {
+          "title" : "Génération de compte vide",
+          "desc" : "Générez un compte vide."
+        },
         "currencySelector" : {
           "placeholder" : "Choisir des monnaies...",
           "searchPlaceholder" : "Rechercher",
@@ -4521,7 +4577,8 @@
         "buttons" : {
           "generateAccounts" : "Générer {{count}} compte",
           "generateAccounts_other" : "Générer {{count}} comptes",
-          "generateAccountsQuick" : "Générer {{count}} comptes"
+          "generateAccountsQuick" : "Générer {{count}} comptes",
+          "generateEmptyAccount" : "Générer compte vide"
         },
         "alerts" : {
           "selectCurrency" : "Veuillez sélectionner au moins une monnaie",
@@ -4567,9 +4624,13 @@
       "walletFeaturesDevTool" : {
         "title" : "Outil développeurs pour les fonctionnalités de Wallet",
         "description" : "Activez/désactivez les fonctionnalités de Wallet 4.0 sur ordinateur (Feature Flag lwdWallet40).",
+        "mainFeatureToggle" : "Commutateur fonctionnalités principales",
         "enableAll" : "Tout activer",
         "disableAll" : "Tout désactiver",
         "featureParameters" : "Paramètres des fonctionnalités",
+        "tourState" : "Statut du tutoriel",
+        "drawerPreview" : "Aperçu du volet",
+        "openDrawer" : "Ouvrir le Drawer",
         "showJson" : "Afficher le JSON",
         "hideJson" : "Masquer le JSON"
       },
@@ -6336,7 +6397,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Erreur de traitement",
-      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
+      "description" : "Ce prestataire du service Swap ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "Prestataire non disponible",
@@ -6634,7 +6695,7 @@
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Activez la signature aveugle dans l’app Ethereum (\"Settings\" > \"Blind signing\"/\"Contract Data\")."
+      "title" : "Activez la signature aveugle (\"Blind Signing\" ou \"Contract Data\") dans l’app Ethereum"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Activez les données du contrat dans l’app Celo (\"Settings\" > \"Contract Data\")"
@@ -7824,7 +7885,15 @@
   },
   "portfolio" : {
     "title" : "Accueil",
-    "today" : "Aujourd’hui"
+    "today" : "Aujourd’hui",
+    "addAccountCta" : "Ajouter un compte crypto",
+    "noBalanceTitle" : "Sécurisez vos cryptos",
+    "perpsEntry" : {
+      "title" : "Perpétuels",
+      "description" : "Tradez avec effet de levier",
+      "cta" : "Découvrir"
+    },
+    "noDeviceTitle" : "Le wallet le plus sécurisé"
   },
   "marketBanner" : {
     "title" : "Explorer le marché",
@@ -7848,11 +7917,38 @@
       "cta" : "Compris"
     }
   },
+  "quickActions" : {
+    "send" : "Envoyer",
+    "receive" : "Recevoir",
+    "buy" : "Acheter",
+    "sell" : "Vendre",
+    "connect" : "Connecter",
+    "buyALedger" : "Acheter un Ledger"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "errorToolTip" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité. Liste des comptes touchés : {{accounts}}. Cliquez pour réessayer",
+      "emptyErrorToolTip" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité. Cliquez pour réessayer",
+      "upToDate" : "Vous êtes à jour",
+      "minutesAgo_one" : "Dernière synchro il y a {{count}} min. Cliquez pour actualiser",
+      "minutesAgo_other" : "Dernière synchro il y a {{count}} min. Cliquez pour actualiser",
+      "hoursAgo_one" : "Dernière synchro il y a {{count}} h. Cliquez pour actualiser",
+      "hoursAgo_other" : "Dernière synchro il y a {{count}} h. Cliquez pour actualiser",
+      "daysAgo_one" : "Dernière synchro il y a {{count}} j. Cliquez pour actualiser",
+      "daysAgo_other" : "Dernière synchro il y a {{count}} j. Cliquez pour actualiser"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Notifications"
+    },
+    "myLedger" : {
+      "tooltip" : "My Ledger"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7973,82 @@
       "transparentBalanceTooltip" : "Le solde qui est visible publiquement.",
       "privateBalance" : "Solde privé",
       "privateBalanceTooltip" : "Le solde qui est demeure masqué."
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "Afficher le solde",
+        "pausedAt" : "Arrêté à ",
+        "lastSync" : "Dernière synchro : {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Activer le solde privé Zcash",
+          "breadcrumbs" : {
+            "0" : "Création",
+            "1" : "UFVK",
+            "2" : "Appareil",
+            "3" : "Confirmation"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "La création (Birthday Height) correspond au bloc à partir duquel votre wallet commence à analyser la blockchain pour détecter vos actifs.",
+              "cta" : "En savoir plus",
+              "label" : "Bloc de création",
+              "tooltip" : "Par défaut : date du jour. Modifier uniquement pour les comptes existants présentant une activité privée (shielded) antérieure.",
+              "syncFromZero" : "Ce compte a déjà reçu des ZEC protégés (shielded), mais il est impossible de retrouver le bloc de création. Recherchez à partir du bloc 0 (cette opération peut prendre un certain temps).",
+              "error" : "Date invalide"
+            },
+            "ufvk" : {
+              "text" : "Pour commencer, vous devez exporter votre clé UFVK (Unified Full Viewing Key). Cette action nécessite une confirmation sur votre appareil Ledger."
+            },
+            "device" : {
+              "text" : "Valider l’exportation de la clé UFVK sur votre appareil Ledger"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "Clé UFVK bien importée",
+                "text" : "Vous pourrez recevoir des ZEC protégés (shielded) et signer des transactions privées.",
+                "info" : {
+                  "text" : "Votre clé UFVK est stockée au niveau local, sur votre ordinateur. Elle n’est jamais transmise ni exposée à des systèmes externes.",
+                  "cta" : "En savoir plus"
+                },
+                "warning" : "La synchronisation des comptes dont le bloc de création est plus ancien peut prendre davantage de temps (jusqu’à 2 heures). Gardez l’application ouverte jusqu’à la fin de la synchronisation."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "Synchroniser",
+      "datepicker" : {
+        "label" : "Bloc de création",
+        "tooltip" : "La création (Birthday Height) correspond au bloc à partir duquel votre wallet commence à analyser la blockchain pour détecter vos actifs."
+      }
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Configurer le solde privé Aleo",
+        "description" : "Ledger Wallet enregistre votre clé permettant d’afficher votre solde privé et utilise des services tiers pour traiter les transactions privées. <0>En savoir plus</0>.",
+        "bullets" : ["Accès en lecture seule pour déchiffrer votre solde privé", "Ledger ne peut ni envoyer ni dépenser vos actifs.", "Vous seul(e) pouvez signer des transactions et dépenser vos actifs.", "Pour un traitement plus rapide, la génération des preuves prise en charge par des services tiers spécialisés.", "Ces prouveurs ne peuvent ni accéder à vos actifs ni les dépenser."],
+        "cta" : {
+          "allow" : "Autoriser",
+          "cancel" : "Annuler"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Approuvez sur votre appareil Ledger",
+        "description" : "Confirmez le partage de la clé de consultation sur votre appareil Ledger.",
+        "cancelAlert" : "Vous pouvez rejeter des comptes sur votre appareil Ledger. En annulant tout, le processus d’ajout de comptes à votre portefeuille prend fin.",
+        "cancelAllBtn_one" : "Annuler",
+        "cancelAllBtn_other" : "Annuler tout"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Partager la clé de consultation",
+          "shareKey_other" : "Partager les clés de consultation"
+        }
+      }
     }
   }
 }
