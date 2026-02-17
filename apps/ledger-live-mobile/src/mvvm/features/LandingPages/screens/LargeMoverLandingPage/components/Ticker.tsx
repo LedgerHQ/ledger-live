@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { BlurView } from "@react-native-community/blur";
+import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { useTheme } from "styled-components/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -44,10 +44,10 @@ export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundColor: theme.colors.opacityDefault.c10,
           }}
+          overlayColor={theme.colors.opacityDefault.c10}
           blurType={theme.theme}
-          blurAmount={7}
+          blurAmount={70}
         />
         <Flex>
           <CircleCurrencyIcon currency={currency} size={24} sizeRatio={0.9} />
