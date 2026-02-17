@@ -60,7 +60,10 @@ describe("List Operations", () => {
   });
 
   it("should return operations and next cursor", async () => {
-    const { items: operations, next } = await listOperations(mockAddress, { order: mockOrder });
+    const { items: operations, next } = await listOperations(mockAddress, {
+      order: mockOrder,
+      minHeight: 0,
+    });
 
     expect(operations).toEqual(mockOperations.items);
     expect(next).toBe(mockOperations.next);
@@ -70,7 +73,10 @@ describe("List Operations", () => {
   it("should return empty array and undefined when no operations", async () => {
     mockGetListOperations.mockResolvedValueOnce({ items: [], next: "" });
 
-    const { items: operations, next } = await listOperations(mockAddress, { order: mockOrder });
+    const { items: operations, next } = await listOperations(mockAddress, {
+      order: mockOrder,
+      minHeight: 0,
+    });
 
     expect(operations).toEqual([]);
     expect(next).toBeUndefined();
@@ -81,6 +87,7 @@ describe("List Operations", () => {
     const { items: operations } = await listOperations(mockAddress, {
       order: mockOrder,
       cursor: mockCursor,
+      minHeight: 0,
     });
 
     expect(operations).toEqual(mockOperations.items);
@@ -88,7 +95,10 @@ describe("List Operations", () => {
   });
 
   it("should return operations sorted by date in ascending order", async () => {
-    const { items: operations } = await listOperations(mockAddress, { order: mockOrder });
+    const { items: operations } = await listOperations(mockAddress, {
+      order: mockOrder,
+      minHeight: 0,
+    });
 
     expect(operations[1].tx.date.getTime()).toBeGreaterThan(operations[0].tx.date.getTime());
   });

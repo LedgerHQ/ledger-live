@@ -1,4 +1,10 @@
-import { AssetInfo, Cursor, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/index";
+import {
+  AssetInfo,
+  ListOperationsOptions,
+  MemoNotSupported,
+  Operation,
+  Page,
+} from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
@@ -7,13 +13,6 @@ import { getExplorerApi } from "../network/explorer";
 type AssetConfig =
   | { type: "native"; internal?: boolean }
   | { type: "token"; owner: string; parents: Record<string, LiveOperation> };
-
-type ListOperationsOptions = {
-  minHeight: number;
-  cursor?: Cursor;
-  limit?: number;
-  order?: "asc" | "desc";
-};
 
 function extractStandard(op: LiveOperation): string {
   if (!op.standard) return "erc20";
@@ -116,11 +115,6 @@ function toOperation(
   };
 }
 
-type ListOperationsParams = ListOperationsOptions & {
-  // TODO: remove after all callers use `cursor`.
-  pagingToken?: Cursor;
-};
-
 // the sort parameter has a double meaning:
 // - legacy (for the bridge): it's used to sort the operations in the result list. Explorer always queried in "desc" order.
 // - new: it's used to sort AND query the explorer with the correct order.
@@ -130,16 +124,10 @@ type ListOperationsParams = ListOperationsOptions & {
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  {
-    minHeight,
-    order = "desc",
-    limit,
-    cursor,
-    pagingToken: legacyPagingToken,
-  }: ListOperationsParams,
-): Promise<[Operation<MemoNotSupported>[], Cursor | undefined]> {
+  options: ListOperationsOptions,
+): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
-  const explorerOrder = limit === undefined ? "desc" : order;
+  const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -150,10 +138,10 @@ export async function listOperations(
     currency,
     address,
     `js:2:${currency.id}:${address}:`,
-    minHeight,
+    options.minHeight,
     undefined,
-    cursor ?? legacyPagingToken,
-    limit,
+    options.cursor,
+    options.limit,
     explorerOrder,
   );
 
@@ -226,10 +214,10 @@ export async function listOperations(
     .filter(hasValidType)
     .filter(isAddressInvolved)
     .sort((a, b) =>
-      order === "asc"
+      options.order === "asc"
         ? a.tx.date.getTime() - b.tx.date.getTime()
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );
 
-  return [operations, nextPagingToken];
+  return { items: operations, next: nextPagingToken || undefined };
 }

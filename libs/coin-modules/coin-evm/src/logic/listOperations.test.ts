@@ -239,8 +239,8 @@ describe("listOperations", () => {
     const seed = `js:2:${currency.id}:${address}:`;
 
     expect({ result, calls: getOperationsSpy.mock.calls }).toEqual({
-      result: [
-        [
+      result: {
+        items: [
           {
             id: "coin-op-1",
             type: "IN",
@@ -461,8 +461,8 @@ describe("listOperations", () => {
             },
           },
         ],
-        "",
-      ],
+        next: undefined,
+      },
       // check that the order passed to explorer is "desc" when no limit is set
       calls: [
         [
@@ -544,8 +544,8 @@ describe("listOperations", () => {
         minHeight: 1,
         order: "asc",
       }),
-    ).toEqual([
-      [
+    ).toEqual({
+      items: [
         {
           id: "coin-op-for-address",
           type: "OUT",
@@ -567,8 +567,8 @@ describe("listOperations", () => {
           details: { sequence: BigNumber(1) },
         },
       ],
-      "",
-    ]);
+      next: undefined,
+    });
   });
 
   it("should use token transfer value for ERC20 operations, not parent native value", async () => {
@@ -620,8 +620,8 @@ describe("listOperations", () => {
 
     expect(
       await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
-    ).toEqual([
-      [
+    ).toEqual({
+      items: [
         {
           id: "token-op-erc20",
           type: "OUT",
@@ -651,8 +651,8 @@ describe("listOperations", () => {
           },
         },
       ],
-      undefined,
-    ]);
+      next: undefined,
+    });
   });
 
   it("should emit both native and token operations when tx has native value > 0 and token transfers", async () => {
@@ -704,8 +704,8 @@ describe("listOperations", () => {
 
     expect(
       await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
-    ).toEqual([
-      [
+    ).toEqual({
+      items: [
         {
           id: "coin-op-mixed-tx",
           type: "OUT",
@@ -759,8 +759,8 @@ describe("listOperations", () => {
           },
         },
       ],
-      undefined,
-    ]);
+      next: undefined,
+    });
   });
 
   it("should emit native operation with type=FEES when value=0 and no token children", async () => {
@@ -793,8 +793,8 @@ describe("listOperations", () => {
 
     expect(
       await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
-    ).toEqual([
-      [
+    ).toEqual({
+      items: [
         {
           id: "coin-op-fees-only",
           type: "FEES",
@@ -816,8 +816,8 @@ describe("listOperations", () => {
           details: { sequence: BigNumber(1) },
         },
       ],
-      undefined,
-    ]);
+      next: undefined,
+    });
   });
 
   // here is the table of behavior:
@@ -847,7 +847,11 @@ describe("listOperations", () => {
           }) as unknown as EvmCoinConfig,
       );
       const getOperationsSpy = buildOperationsSpy(etherscanExplorer.explorerApi);
-      const [result] = await listOperations(currency, address, { minHeight: 0, limit, order });
+      const { items: result } = await listOperations(currency, address, {
+        minHeight: 0,
+        limit,
+        order,
+      });
       expect(result.length).toBeGreaterThan(1);
 
       // check how the explorer is called
