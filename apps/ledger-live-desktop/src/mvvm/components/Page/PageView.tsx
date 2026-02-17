@@ -3,7 +3,7 @@ import ClassicTopBar from "~/renderer/components/TopBar";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { PageViewModelResult } from "./usePageViewModel";
-import { ClassicLayout, Wallet40Layout, ScrollUpButton } from "./components";
+import { ClassicLayout, Wallet40Layout, LegacyScrollUpButton, ScrollUpButton } from "./components";
 import RightPanel from "LLD/components/RightPanel";
 import Wallet40TopBar from "LLD/components/TopBar";
 
@@ -42,7 +42,11 @@ export const PageView = memo(function PageView({
           {children}
         </ClassicLayout>
       )}
-      <ScrollUpButton isVisible={isScrollUpButtonVisible} onClick={onClickScrollUp} />
+      {shouldDisplayWallet40MainNav ? (
+        <ScrollUpButton isVisible={isScrollUpButtonVisible} onClick={onClickScrollUp} />
+      ) : (
+        <LegacyScrollUpButton isVisible={isScrollUpButtonVisible} onClick={onClickScrollUp} />
+      )}
       {/* Only on dashboard page */}
       {pathname === "/" && <ActionContentCards variant={ABTestingVariants.variantB} />}
     </div>

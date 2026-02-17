@@ -24,7 +24,7 @@ jest.mock("LLD/components/RightPanel", () => ({
   default: () => null,
 }));
 
-describe("PageView - TopBar", () => {
+describe("PageView", () => {
   const defaultProps = {
     pageScrollerRef: jest.fn(),
     isScrollUpButtonVisible: false,
@@ -35,39 +35,88 @@ describe("PageView - TopBar", () => {
     shouldRenderRightPanel: false,
   };
 
-  it("renders ClassicTopBar when shouldDisplayWallet40MainNav is false", () => {
-    render(
-      <PageView {...defaultProps} shouldDisplayWallet40MainNav={false}>
-        <div>Test Content</div>
-      </PageView>,
-      {
-        initialState: {
-          application: { hasPassword: false },
-          accounts: [],
-          settings: { discreetMode: false },
+  describe("TopBar", () => {
+    it("renders ClassicTopBar when shouldDisplayWallet40MainNav is false", () => {
+      render(
+        <PageView {...defaultProps} shouldDisplayWallet40MainNav={false}>
+          <div>Test Content</div>
+        </PageView>,
+        {
+          initialState: {
+            application: { hasPassword: false },
+            accounts: [],
+            settings: { discreetMode: false },
+          },
         },
-      },
-    );
+      );
 
-    expect(screen.getByTestId("classic-topbar")).toBeVisible();
-    expect(screen.queryByTestId("wallet40-topbar")).toBeNull();
+      expect(screen.getByTestId("classic-topbar")).toBeVisible();
+      expect(screen.queryByTestId("wallet40-topbar")).toBeNull();
+    });
+
+    it("renders Wallet40TopBar when shouldDisplayWallet40MainNav is true", () => {
+      render(
+        <PageView {...defaultProps} isWallet40Enabled={true} shouldDisplayWallet40MainNav={true}>
+          <div>Test Content</div>
+        </PageView>,
+        {
+          initialState: {
+            application: { hasPassword: false },
+            accounts: [],
+            settings: { discreetMode: false },
+          },
+        },
+      );
+
+      expect(screen.getByTestId("wallet40-topbar")).toBeVisible();
+      expect(screen.queryByTestId("classic-topbar")).toBeNull();
+    });
   });
 
-  it("renders Wallet40TopBar when shouldDisplayWallet40MainNav is true", () => {
-    render(
-      <PageView {...defaultProps} isWallet40Enabled={true} shouldDisplayWallet40MainNav={true}>
-        <div>Test Content</div>
-      </PageView>,
-      {
-        initialState: {
-          application: { hasPassword: false },
-          accounts: [],
-          settings: { discreetMode: false },
-        },
-      },
-    );
+  describe("Scroll to top", () => {
+    const initialReduxState = {
+      application: { hasPassword: false },
+      accounts: [],
+      settings: { discreetMode: false },
+    };
 
-    expect(screen.getByTestId("wallet40-topbar")).toBeVisible();
-    expect(screen.queryByTestId("classic-topbar")).toBeNull();
+    it("calls onClickScrollUp when scroll-up button is clicked (Wallet40 nav)", async () => {
+      const onClickScrollUp = jest.fn();
+      const { user } = render(
+        <PageView
+          {...defaultProps}
+          isWallet40Enabled={true}
+          shouldDisplayWallet40MainNav={true}
+          isScrollUpButtonVisible={true}
+          onClickScrollUp={onClickScrollUp}
+        >
+          <div>Test Content</div>
+        </PageView>,
+        { initialState: initialReduxState },
+      );
+
+      // Scroll-up is the only button when Wallet40 nav is shown (TopBar is mocked as div)
+      const scrollUpButton = screen.getByTestId("scroll-up-button");
+      await user.click(scrollUpButton);
+
+      expect(onClickScrollUp).toHaveBeenCalledTimes(1);
+    });
+
+    it("legacy scroll-up button is visible when isScrollUpButtonVisible is true (Classic nav)", () => {
+      render(
+        <PageView
+          {...defaultProps}
+          isWallet40Enabled={false}
+          shouldDisplayWallet40MainNav={false}
+          isScrollUpButtonVisible={true}
+        >
+          <div>Test Content</div>
+        </PageView>,
+        { initialState: initialReduxState },
+      );
+
+      const scrollUpButton = screen.getByTestId("legacy-scroll-up-button");
+      expect(scrollUpButton).toBeVisible();
+    });
   });
 });
