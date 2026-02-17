@@ -2676,6 +2676,10 @@
     "carousel" : {
       "title" : "为您而设"
     },
+    "perpsEntry" : {
+      "title" : "永续合约",
+      "description" : "杠杆交易"
+    },
     "recommended" : {
       "title" : "推荐"
     },
@@ -2713,6 +2717,8 @@
       "transfer" : "转移",
       "swap" : "互换",
       "buy" : "买入",
+      "connect" : "连接",
+      "buyLedger" : "购买 Ledger 设备",
       "transferDrawer" : {
         "title" : "转移",
         "receiveCrypto" : "接收加密货币",
@@ -2988,7 +2994,6 @@
     "yield" : "收益率",
     "sell" : "卖出",
     "swap" : "互换",
-    "perps" : "永续合约",
     "manage" : "管理",
     "lastTransactions" : "最近交易",
     "emptyState" : {
@@ -3000,7 +3005,8 @@
         "receiveFunds" : "接收",
         "buyCrypto" : "买入"
       },
-      "addAccountCta" : "添加账户"
+      "addAccountCta" : "添加账户",
+      "addCryptoAccount" : "添加加密货币账户"
     },
     "settings" : {
       "header" : "账户设置",
@@ -3675,10 +3681,6 @@
       "title" : "权益质押",
       "description" : "获得加密货币权益质押奖励。"
     },
-    "perps" : {
-      "title" : "永续合约",
-      "description" : "交易加密货币永续合约。"
-    },
     "swap" : {
       "title" : "互换",
       "description" : "将加密货币兑换成加密货币。",
@@ -3875,7 +3877,8 @@
         "title" : "选择报价"
       },
       "twoStepApproval" : {
-        "title" : "完成步骤"
+        "title" : "完成步骤",
+        "completedTitle" : "交易状态"
       },
       "loader" : {
         "title" : "正在处理互换",
@@ -4573,6 +4576,7 @@
       },
       "acceptTerms" : "签署此交易，即表示您接受 <0><0>{{provider}}</0> 的使用条款</0>",
       "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
+      "acceptTermsSponsored" : "为享受免网络费用，您也同意与 Blinklabs 共享您的交易详情（包括钱包地址）。",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
@@ -8387,9 +8391,6 @@
       "extremeGreed" : "贪婪+"
     },
     "tileTitle" : "情绪"
-  },
-  "perps" : {
-    "title" : "永续合约"
   },
   "analyticsAllocation" : {
     "header" : {
