@@ -1,9 +1,26 @@
+import invariant from "invariant";
 import { CLI } from "tests/utils/cliUtils";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
+};
+
+export const getAccountAddress = async (account: Account | TokenAccount): Promise<string> => {
+  if (account.currency.id === Currency.HBAR.id) {
+    invariant(account.address, "hedera: account address must be pre-set");
+    return account.address;
+  }
+
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  return address;
 };
 
 export const liveDataCommand =
@@ -23,11 +40,7 @@ export const liveDataWithAddressCommand =
   async (appjsonPath: string) => {
     await liveDataCommand(account, options)(appjsonPath);
 
-    const { address } = await CLI.getAddress({
-      currency: account.currency.speculosApp.name,
-      path: account.accountPath,
-      derivationMode: account.derivationMode,
-    });
+    const address = await getAccountAddress(account);
 
     account.address = address;
     if ("parentAccount" in account && account.parentAccount) {
@@ -51,10 +64,7 @@ export const liveDataWithParentAddressCommand =
       throw new Error("Parent account is required");
     }
 
-    const { address } = await CLI.getAddress({
-      currency: accountToAssign.parentAccount.currency.id,
-      path: accountToAssign.parentAccount.accountPath,
-    });
+    const address = await getAccountAddress(accountToAssign.parentAccount);
 
     accountToAssign.address = address;
     return address;
@@ -75,11 +85,7 @@ export const liveDataWithRecipientAddressCommand = (
       appjson: appjsonPath,
     });
 
-    const { address } = await CLI.getAddress({
-      currency: tx.accountToCredit.currency.speculosApp.name,
-      path: tx.accountToCredit.accountPath,
-      derivationMode: tx.accountToCredit.derivationMode,
-    });
+    const address = await getAccountAddress(tx.accountToCredit);
 
     tx.accountToCredit.address = address;
     tx.recipientAddress = address;
