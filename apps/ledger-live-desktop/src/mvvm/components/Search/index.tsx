@@ -21,7 +21,6 @@ export const Search = ({
   onDebouncedChange,
   "data-testid": dataTestId,
 }: SearchProps) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const prevValueRef = useRef(value);
 
   const debouncedValue = useDebounce(value, debounceTime);
@@ -33,18 +32,9 @@ export const Search = ({
     }
   }, [debouncedValue, onDebouncedChange]);
 
-  useEffect(() => {
-    if (autoFocus) {
-      const frameId = requestAnimationFrame(() => {
-        inputRef.current?.focus({ preventScroll: true });
-      });
-      return () => cancelAnimationFrame(frameId);
-    }
-  }, [autoFocus]);
-
   return (
     <LumenSearch
-      ref={inputRef}
+      autoFocus={autoFocus}
       value={value}
       placeholder={placeholder}
       onChange={onChange}
