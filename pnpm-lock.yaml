@@ -40,8 +40,8 @@ catalogs:
       specifier: 1.2.3
       version: 1.2.3
     '@ledgerhq/lumen-design-core':
-      specifier: 0.0.51
-      version: 0.0.51
+      specifier: 0.0.52
+      version: 0.0.52
     '@ledgerhq/lumen-ui-react':
       specifier: 0.0.81
       version: 0.0.81
@@ -473,7 +473,7 @@ importers:
         version: link:tools/create-release-hash
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/pnpm-utils':
         specifier: workspace:*
         version: link:tools/pnpm-utils
@@ -841,7 +841,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.0.81(e17c1f4f71171860e7268885e247ad1a)
@@ -1451,10 +1451,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.0.70(52be5316d7f48c8ee686f80d08cc9cb5)
+        version: 0.0.70(0219d1e5fee2cbd4f1082ac29f010fa5)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -2443,13 +2443,13 @@ importers:
         version: 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.51
+        version: 0.0.52
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.0.81(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.0.70(74e8355adee6ebed8271768aabebb232)
+        version: 0.0.70(494f1bd080b136356438784e3ee6eb3e)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.8
@@ -11011,7 +11011,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -14976,8 +14976,8 @@ packages:
   '@ledgerhq/logs@6.14.0':
     resolution: {integrity: sha512-kJFu1+asWQmU9XlfR1RM3lYR76wuEoPyZvkI/CNjpft78BQr3+MMf3Nu77ABzcKFnhIcmAkOLlDQ6B8L6hDXHA==}
 
-  '@ledgerhq/lumen-design-core@0.0.51':
-    resolution: {integrity: sha512-jXzIEtD60osxJStRItRIeIQF9cZ0lYYJl/PFbYUXE4eOc1KL0Go178BWVFijsHM91y5/X9XvdphKw3k000432Q==}
+  '@ledgerhq/lumen-design-core@0.0.52':
+    resolution: {integrity: sha512-Nga5AiT/fA7hsyNqrH+/3tklVyimI5kj3/x+075zfpHxSDLAtihjWh9a9F8ewfRg4OgHtpP84UsSHe7P3JOK0A==}
 
   '@ledgerhq/lumen-ui-react@0.0.81':
     resolution: {integrity: sha512-pDIaDyHjwKTGyts4B+vRToDB8hCI6A3SjuoMKnja3UQU9L15Y9AwsWNeD1fqYNcsOlaxZI+E1wz31/wxz/4dhQ==}
@@ -15063,6 +15063,9 @@ packages:
 
   '@lezer/common@1.2.1':
     resolution: {integrity: sha512-yemX0ZD2xS/73llMZIK6KplkjIjf2EvAHcinDi/TfJ9hS25G0388+ClHt6/3but0oOxinTcQHJLDXh6w1crzFQ==}
+
+  '@lezer/common@1.5.1':
+    resolution: {integrity: sha512-6YRVG9vBkaY7p1IVxL4s44n5nUnaNnGM2/AckNgYOnxTG2kWh1vR8BMxPseWPjRNpb5VtXnMpeYAEAADoRV1Iw==}
 
   '@lezer/highlight@1.2.0':
     resolution: {integrity: sha512-WrS5Mw51sGrpqjlh3d4/fOwpEV2Hd3YOkp9DBt4k8XZQcoTHZFB7sx030A6OcahF4J1nDQAa3jXlTVVYH50IFA==}
@@ -18521,7 +18524,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -30179,7 +30182,7 @@ packages:
   react-lottie@1.2.10:
     resolution: {integrity: sha512-x0eWX3Z6zSx1XM5QSjnLupc6D22LlMCB0PH06O/N/epR2hsLaj1Vxd9RtMnbbEHjJ/qlsgHJ6bpN3vnZI92hjw==}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -37740,7 +37743,7 @@ snapshots:
     dependencies:
       '@codemirror/state': 6.5.4
       '@codemirror/view': 6.39.13
-      '@lezer/common': 1.2.1
+      '@lezer/common': 1.5.1
       '@lezer/highlight': 1.2.0
       '@lezer/lr': 1.4.1
       style-mod: 4.1.2
@@ -41670,7 +41673,7 @@ snapshots:
 
   '@ledgerhq/logs@6.14.0': {}
 
-  '@ledgerhq/lumen-design-core@0.0.51':
+  '@ledgerhq/lumen-design-core@0.0.52':
     dependencies:
       tailwindcss: 4.1.18
       tslib: 2.6.2
@@ -41707,10 +41710,10 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-rnative@0.0.70(52be5316d7f48c8ee686f80d08cc9cb5)':
+  '@ledgerhq/lumen-ui-rnative@0.0.70(0219d1e5fee2cbd4f1082ac29f010fa5)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(ce3c2bb9a6a8aaadbbab096d15e66218)
-      '@ledgerhq/lumen-design-core': 0.0.51
+      '@ledgerhq/lumen-design-core': 0.0.52
       '@ledgerhq/lumen-utils-shared': 0.0.18(react@19.0.0)
       '@react-native-community/blur': 4.4.1(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@types/react': 19.0.14
@@ -41724,10 +41727,10 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
-  '@ledgerhq/lumen-ui-rnative@0.0.70(74e8355adee6ebed8271768aabebb232)':
+  '@ledgerhq/lumen-ui-rnative@0.0.70(494f1bd080b136356438784e3ee6eb3e)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(@types/react@18.2.73)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      '@ledgerhq/lumen-design-core': 0.0.51
+      '@ledgerhq/lumen-design-core': 0.0.52
       '@ledgerhq/lumen-utils-shared': 0.0.18(react@18.3.1)
       '@types/react': 18.2.73
       i18next: 23.10.1
@@ -41837,9 +41840,11 @@ snapshots:
 
   '@lezer/common@1.2.1': {}
 
+  '@lezer/common@1.5.1': {}
+
   '@lezer/highlight@1.2.0':
     dependencies:
-      '@lezer/common': 1.2.1
+      '@lezer/common': 1.5.1
 
   '@lezer/json@1.0.2':
     dependencies:
@@ -41849,7 +41854,7 @@ snapshots:
 
   '@lezer/lr@1.4.1':
     dependencies:
-      '@lezer/common': 1.2.1
+      '@lezer/common': 1.5.1
 
   '@lottiefiles/dotlottie-react@0.17.13(react@18.3.1)':
     dependencies:
