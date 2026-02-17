@@ -3,19 +3,28 @@ import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { useWalletV4TourDrawer, WalletV4TourDrawer } from "../index";
 
-// Force "last slide" so "Explore my new portfolio" is clickable
+/**
+ * In Jest there is no real scroll: the carousel (FlatList) never fires onMomentumScrollEnd,
+ * so useSlidesContext's currentIndex/scrollProgress never advance when the user taps Continue.
+ * We mock the context with a configurable currentIndex so we can:
+ * - Test first slide + Continue button (currentIndex 0)
+ * - Test last slide + Explore button and Redux outcome (currentIndex 2)
+ * Full slide-by-slide navigation (Continue → slide 2 → Continue → slide 3) is better covered by E2E.
+ */
+let mockSlidesCurrentIndex = 2;
+
 jest.mock("@ledgerhq/native-ui", () => {
   const actual = jest.requireActual("@ledgerhq/native-ui");
   return {
     ...actual,
     useSlidesContext: () => ({
-      currentIndex: 2,
+      currentIndex: mockSlidesCurrentIndex,
       totalSlides: 3,
       goToNext: () => {},
       goToPrevious: () => {},
       goToSlide: () => {},
       flatListRef: { current: null },
-      scrollProgressSharedValue: { value: 2 },
+      scrollProgressSharedValue: { value: mockSlidesCurrentIndex },
     }),
   };
 });
@@ -75,6 +84,21 @@ describe("WalletV4TourDrawer integration", () => {
     },
   ];
 
+  it("should show first slide and Continue button when on first slide", async () => {
+    mockSlidesCurrentIndex = 0;
+    const { user, resizeScreenWidth } = renderTestComponent();
+
+    await user.press(screen.getByText("Open Drawer"));
+    resizeScreenWidth();
+
+    await waitFor(() => expect(screen.getByText(SLIDES[0].title)).toBeOnTheScreen());
+    expect(screen.getByText(SLIDES[0].description)).toBeOnTheScreen();
+    const continueButton = screen.getByRole("button", { name: /continue/i });
+    expect(continueButton).toBeOnTheScreen();
+    await user.press(continueButton);
+    // In Jest, goToNext is a no-op (no real scroll); we only assert the button is present and pressable
+  });
+
   it("should be able to open the drawer and see all the slides", async () => {
     const { user, resizeScreenWidth } = renderTestComponent();
 
@@ -90,6 +114,7 @@ describe("WalletV4TourDrawer integration", () => {
   });
 
   it('should close the drawer and never show again when user presses the "Explore my new portfolio" button on the last slide', async () => {
+    mockSlidesCurrentIndex = 2;
     const { user, resizeScreenWidth } = renderTestComponent();
 
     await user.press(screen.getByText("Open Drawer"));
