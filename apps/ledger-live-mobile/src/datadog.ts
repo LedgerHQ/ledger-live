@@ -17,12 +17,16 @@ const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicatio
 
 export const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
 
+// Use package.json version so RUM reports full version (e.g. 3.105.0-sha.abc1234) and matches source map uploads, especially on iOS where CFBundleShortVersionString is only x.y.z
+const appVersion = require("../package.json").version as string;
+
 const baseConfig: PartialInitializationConfiguration = {
   clientToken,
   applicationId,
   env: Config.DATADOG_ENV || "",
   site: Config.DATADOG_SITE || "",
   serviceName: Config.DATADOG_SERVICE_NAME || "",
+  version: appVersion,
 };
 
 /**
