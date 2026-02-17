@@ -13,6 +13,7 @@ import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
 import receiveOptionsDrawer from "./receiveOptionsDrawer";
+import rebornBuyDeviceDrawer from "./rebornBuyDeviceDrawer";
 import transferDrawer from "./transferDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
@@ -44,6 +45,7 @@ const appReducer = combineReducers({
   market,
   modularDrawer,
   receiveOptionsDrawer,
+  rebornBuyDeviceDrawer,
   transferDrawer,
   notifications,
   postOnboarding,
