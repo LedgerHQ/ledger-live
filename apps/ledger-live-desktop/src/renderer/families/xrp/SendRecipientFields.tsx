@@ -34,7 +34,7 @@ const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
   );
   return (
     <MemoTagField
-      value={String(transaction.tag || "")}
+      value={String(transaction.tag ?? "")}
       onChange={onChangeTag}
       autoFocus={autoFocus}
     />

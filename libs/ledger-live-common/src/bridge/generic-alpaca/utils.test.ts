@@ -1,5 +1,6 @@
 import {
   adaptCoreOperationToLiveOperation,
+  applyMemoToIntent,
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
   cleanedOperation,
@@ -9,11 +10,47 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
+import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("applyMemoToIntent", () => {
+    it("does not apply any memo", () => {
+      const intent = applyMemoToIntent(
+        {} as unknown as TransactionIntent,
+        {} as GenericTransaction,
+      );
+
+      expect(intent).toEqual({});
+    });
+
+    it.each([
+      [0, "0"],
+      [1, "1"],
+    ])("applies '%s' as the destination tag", (tag, expectedTag) => {
+      const intent = applyMemoToIntent(
+        {} as unknown as TransactionIntent,
+        { tag } as GenericTransaction,
+      );
+
+      expect(intent).toEqual({
+        memo: { type: "map", memos: new Map([["destinationTag", expectedTag]]) },
+      });
+    });
+
+    it("applies a custom memo type", () => {
+      const intent = applyMemoToIntent(
+        {} as unknown as TransactionIntent,
+        { memoType: "memo-type", memoValue: "memo-value" } as GenericTransaction,
+      );
+
+      expect(intent).toEqual({
+        memo: { type: "memo-type", value: "memo-value" },
+      });
+    });
+  });
+
   describe("bigNumberToBigIntDeep", () => {
     it.each([
       [undefined, undefined],
