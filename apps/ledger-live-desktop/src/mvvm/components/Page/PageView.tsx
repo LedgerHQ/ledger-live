@@ -42,7 +42,9 @@ export const PageView = memo(function PageView({
           {children}
         </ClassicLayout>
       )}
-      <ScrollUpButton isVisible={isScrollUpButtonVisible} onClick={onClickScrollUp} />
+      {!shouldDisplayWallet40MainNav && (
+        <ScrollUpButton isVisible={isScrollUpButtonVisible} onClick={onClickScrollUp} />
+      )}
       {/* Only on dashboard page */}
       {pathname === "/" && <ActionContentCards variant={ABTestingVariants.variantB} />}
     </div>
