@@ -23,9 +23,7 @@ function extractStandard(op: LiveOperation): string {
 
 function extractType(asset: AssetConfig, op: LiveOperation): OperationType {
   if (asset.type === "native") return op.type;
-  if (op.hash in asset.parents) return asset.parents[op.hash].type;
-
-  return "NONE";
+  return asset.parent?.type || "NONE";
 }
 
 function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
@@ -33,8 +31,8 @@ function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
     return BigInt(op.value.toFixed(0)) - BigInt(op.fee.toFixed(0));
   }
 
-  if (asset.type === "token" && op.hash in asset.parents) {
-    return BigInt(asset.parents[op.hash].value.toFixed(0));
+  if (asset.type === "token" && asset.parent) {
+    return BigInt(asset.parent.value.toFixed(0));
   }
 
   return BigInt(op.value.toFixed(0));
@@ -196,7 +194,7 @@ export async function listOperations(
     return toOperation(
       currency.id,
       address,
-      { type: "native", internal: true },
+      { type: "native", internal: true, parent },
       // Explorers don't provide block hash and fees for internal operations.
       // When a parent exists, we take these values from the parent; otherwise keep the internal op values.
       parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
