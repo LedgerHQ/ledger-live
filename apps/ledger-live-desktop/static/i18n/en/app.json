@@ -8049,6 +8049,13 @@
           "cancel": "Cancel"
         }
       },
+      "stepViewKeyApprove": {
+        "title": "Approve on your Ledger",
+        "description": "Confirm sharing the view key on your device",
+        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
+        "cancelAllBtn_one": "Cancel",
+        "cancelAllBtn_other": "Cancel all"
+      },
       "stepScanAccounts": {
         "cta": {
           "shareKey_one": "Share view key",
