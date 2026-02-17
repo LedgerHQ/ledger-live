@@ -1,0 +1,71 @@
+import { renderHook } from "@tests/test-renderer";
+import { useNavigationBarHeights } from "../useNavigationBarHeights";
+import { State } from "~/reducers/types";
+import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
+import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
+
+const mockInsets = { top: 44, bottom: 34, left: 0, right: 0 };
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => mockInsets,
+}));
+
+const withFeatureFlag = (enabled: boolean) => (state: State) => ({
+  ...state,
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
+    overriddenFeatureFlags: {
+      lwmWallet40: {
+        enabled,
+        params: { mainNavigation: true },
+      },
+    },
+  },
+});
+
+const withTabBarVisibility = (isVisible: boolean) => (state: State) => ({
+  ...withFeatureFlag(true)(state),
+  appstate: {
+    ...state.appstate,
+    isMainNavigatorVisible: isVisible,
+  },
+});
+
+describe("useNavigationBarHeights", () => {
+  describe("when lwmWallet40 feature flag is disabled", () => {
+    it("should throw error", () => {
+      expect(() => {
+        renderHook(() => useNavigationBarHeights(), {
+          overrideInitialState: withFeatureFlag(false),
+        });
+      }).toThrow(
+        "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled",
+      );
+    });
+  });
+
+  describe("when lwmWallet40 feature flag is enabled", () => {
+    it("should calculate top height as insets.top + 60", () => {
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withTabBarVisibility(true),
+      });
+
+      expect(result.current.top).toBe(104); // 44 + 60
+    });
+
+    it("should return TAB_BAR_HEIGHT when tab bar is visible", () => {
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withTabBarVisibility(true),
+      });
+
+      expect(result.current.bottom).toBe(TAB_BAR_HEIGHT);
+    });
+
+    it("should return 0 when tab bar is hidden", () => {
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withTabBarVisibility(false),
+      });
+
+      expect(result.current.bottom).toBe(0);
+    });
+  });
+});
