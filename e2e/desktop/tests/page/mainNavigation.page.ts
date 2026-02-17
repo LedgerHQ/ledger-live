@@ -101,6 +101,12 @@ export class MainNavigationPage extends AppPage {
     await this.layout.topbarSynchronizeButton.click();
   }
 
+  @step("Open My Ledger from top navigation")
+  async openMyLedger() {
+    await this.layout.topbarMyLedgerButton.click();
+    await this.expectPath(/^\/manager(?:\/|$|\?)/);
+  }
+
   @step("Open Settings from top navigation")
   async openSettings() {
     await this.layout.topbarSettingsButton.click();

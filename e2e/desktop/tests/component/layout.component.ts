@@ -30,6 +30,7 @@ export class Layout extends Component {
   readonly topbarDiscreetButton = this.topbarActionButton("discreet").or(
     this.page.getByTestId("topbar-discreet-button"),
   );
+  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
   @step("Go to Portfolio")
   async goToPortfolio() {
