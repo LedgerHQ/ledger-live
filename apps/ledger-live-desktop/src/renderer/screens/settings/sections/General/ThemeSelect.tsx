@@ -26,7 +26,9 @@ const ThemeSelect = () => {
 
   const handleChangeTheme = useCallback(
     (theme: ThemeSelectOption) => {
-      setMode(theme.value as ThemeMode);
+      const lumenMode: ThemeMode =
+        theme.value === "dark" || theme.value === "light" ? theme.value : "system";
+      setMode(lumenMode);
       dispatch(setTheme(theme.value));
     },
     [dispatch, setMode],
