@@ -151,8 +151,8 @@ catalog:
   "@tanstack/react-virtual": 3.13.16
   "@playwright/test": 1.58.2
   playwright: 1.58.2
-  allure-playwright: 3.2.1
-  allure-js-commons: 3.2.1
+  allure-playwright: 3.4.5
+  allure-js-commons: 3.4.5
 
 overrides:
   node-abi: ^4.9.0
