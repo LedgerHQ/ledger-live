@@ -50,6 +50,20 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
       },
     },
+    base: {
+      accounts: {
+        big: { address: "0xb027ea0534152c16462bc61842d03deaee64a851" },
+        average: { address: "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1" },
+        pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
+      },
+    },
+    optimism: {
+      accounts: {
+        big: { address: "0xdb8e81841920b2c7f5074dae1b1652b37be3c260" },
+        average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
+        pristine: { address: "0x90D5b3f3FaA3cd61fBd78bF1CE3DdB2100F4BFb2" },
+      },
+    },
     solana: {
       accounts: {
         big: { address: "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S" },
@@ -134,6 +148,12 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         pristine: { address: "cosmos1uh39jx0dva8upvqqqh690rht2vn68zt9wmmhq4" },
         average: { address: "cosmos1gs72s636mzfnc0re2qrvupz0daytv4057y30g6" },
         big: { address: "cosmos18ejqp3d6yejcq3rxj4z6fsne63uj23cykw92pp" },
+      },
+    },
+    babylon: {
+      accounts: {
+        pristine: { address: "bbn14tg4vsd0q745fxhzn329pkx0krqtszcxnuw9f9" },
+        average: { address: "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx" },
       },
     },
     vechain: {
