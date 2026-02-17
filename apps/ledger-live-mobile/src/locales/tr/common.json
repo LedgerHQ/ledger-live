@@ -1583,6 +1583,25 @@
     "bannerCta" : "Kurulumu başlatın",
     "continue" : "Devam"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Cihaz Satın Alın",
     "debugDrawers" : {
@@ -2638,7 +2657,9 @@
     "discover" : "Keşfet",
     "nanoX" : "Nano X",
     "market" : "Piyasa",
-    "earn" : "Kazan"
+    "earn" : "Kazan",
+    "card" : "Card",
+    "swap" : "Swap"
   },
   "portfolio" : {
     "totalBalance" : "Toplam bakiye",
@@ -2675,6 +2696,10 @@
     },
     "carousel" : {
       "title" : "Sizin için"
+    },
+    "perpsEntry" : {
+      "title" : "Süresiz vadeli sözleşmeler",
+      "description" : "Kaldıraçlı alım satım yapın"
     },
     "recommended" : {
       "title" : "Önerilen"
@@ -2713,6 +2738,8 @@
       "transfer" : "Transfer",
       "swap" : "Takas et",
       "buy" : "Satın al",
+      "connect" : "Bağlan",
+      "buyLedger" : "Ledger satın alın",
       "transferDrawer" : {
         "title" : "Transfer",
         "receiveCrypto" : "Kripto alın",
@@ -2988,7 +3015,6 @@
     "yield" : "Getiri",
     "sell" : "Sat",
     "swap" : "Takas et",
-    "perps" : "Sürekli vadeli işlemler",
     "manage" : "Yönet",
     "lastTransactions" : "Son işlemler",
     "emptyState" : {
@@ -3000,7 +3026,8 @@
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
       },
-      "addAccountCta" : "Hesap ekle"
+      "addAccountCta" : "Hesap ekle",
+      "addCryptoAccount" : "Kripto hesabı ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -3491,6 +3518,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Donanım yazılımı güncellemesi için hata ayıklama"
         }
+      },
+      "contentCards" : {
+        "title" : "İçerik Kartları",
+        "titleDesc" : "Test için Braze olmadan yerel içerik kartları oluşturun.",
+        "description" : "Yerel kartlar, Braze olmadan Portföyde (ve başka konumlarda) görüntülenir. Bu kartlar siz onları atana veya buradan silene kadar kalır.",
+        "addSampleBanner" : "Örnek banner ekle",
+        "addSampleBannerDesc" : "Portföye örnek bir hero banner’ı ekleyin.",
+        "addSampleActionCarousel" : "Örnek eylem galerisi ekle",
+        "addSampleActionCarouselDesc" : "Portföye eylem kartları (Satın Al, Takas Et, Stake Et) galerisi ekleyin.",
+        "dismissAll" : "Tüm yerel kartları kaldır",
+        "dismissAllDesc" : "Yerel olarak oluşturulan tüm içerik kartlarını kaldırın."
       }
     }
   },
@@ -3674,10 +3712,6 @@
     "stake" : {
       "title" : "Stake et",
       "description" : "Kriptolarınızla ödüller kazanın."
-    },
-    "perps" : {
-      "title" : "Sürekli vadeli işlemler",
-      "description" : "Kriptoda sürekli vadeli işlemler yapın."
     },
     "swap" : {
       "title" : "Takas et",
@@ -3875,7 +3909,8 @@
         "title" : "Teklif seçin"
       },
       "twoStepApproval" : {
-        "title" : "Adımları tamamlayın"
+        "title" : "Adımları tamamlayın",
+        "completedTitle" : "İşlem Durumu"
       },
       "loader" : {
         "title" : "Takas İşleniyor",
@@ -4140,6 +4175,81 @@
     "loading" : "Cihazlar aranıyor..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "{{currency}} gönder",
+      "available" : "Mevcut: {{amount}}",
+      "placeholder" : "Adres ya da ENS adı girin",
+      "placeholderNoENS" : "Adresi girin",
+      "editRecipientAccessibilityLabel" : "Edit recipient",
+      "recent" : "Son kullanılanlar",
+      "myAccounts" : "Hesaplarım",
+      "sendTo" : "{{address}} adresine gönder",
+      "addressMatched" : "Adres eşleşti",
+      "addressNotFound" : "Adres bulunamadı",
+      "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
+      "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+      "relativeDate" : {
+        "justNow" : "Just now",
+        "minutesAgo_one" : "1 min ago",
+        "minutesAgo_other" : "{{count}} min ago",
+        "hoursAgo_one" : "1 hour ago",
+        "hoursAgo_other" : "{{count}} hours ago",
+        "daysAgo_one" : "1 day ago",
+        "daysAgo_other" : "{{count}} days ago"
+      },
+      "remove" : "Kaldır",
+      "enterTag" : "{{tag}} gir",
+      "firstInteraction" : {
+        "title" : "You’re sending to a new address",
+        "description" : "Adresin doğru olduğunu doğrulayın. Emin değilseniz önce küçük bir tutar gönderin."
+      },
+      "sanctioned" : {
+        "title" : "İşaretlenmiş adres",
+        "description" : "This address has been flagged and Ledger doesn’t allow sending to it",
+        "helpCenter" : "Yardım merkezi"
+      },
+      "errors" : {
+        "incorrectFormat" : "Yanlış adres formatı",
+        "incompatibleAsset" : "Address isn’t compatible with the asset selected",
+        "walletNotExist" : "Wallet doesn’t exist"
+      },
+      "skipMemo" : {
+        "title" : "{{tag}} ekleme atlansın mı?",
+        "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir."
+      },
+      "tagHelp" : {
+        "title" : "What’s a {{tag}}?",
+        "description" : "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      },
+      "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+      "feesAmount" : "Ücret tutarı ({{unit}})",
+      "gasLimit" : "Gas limiti ({{unit}})",
+      "feesPaid" : "İşleminizi başlatabilmek için ağa ödenen ücretler",
+      "insufficientBalanceFees" : "Ağ ücretlerini karşılayacak kadar bakiye mevcut değil.",
+      "amountToSend" : "({{currency}}) olarak gönderilecek tutar",
+      "coinToSend" : "Gönderilecek coin",
+      "coinControlCustom" : "Özel coin seçimi",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "Max"
+      },
+      "reviewCta" : "Review",
+      "getCta" : "Get {{currency}}",
+      "switchInputMode" : "Switch amount input mode",
+      "aboveMaximum" : "Maksimum bakiyenin üzerinde",
+      "transactionSigned" : "İşlem imzalandı",
+      "processingTransaction" : "İşleminiz gerçekleştiriliyor",
+      "sign" : {
+        "title" : "Continue on your Ledger {{wording}}",
+        "description" : "Follow the instructions displayed on your Secure Touchscreen."
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "Unable to refresh network fees",
+        "warningDescription" : "Fee presets may be outdated."
+      }
+    },
     "pendingTxWarning" : "Beklemede olan gelen işlemleriniz var. Bekleyen işlemlerin geri alınabileceğini lütfen unutmayın.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "Devam",
@@ -4573,6 +4683,7 @@
       },
       "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
       "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
+      "acceptTermsSponsored" : "Sıfır ağ ücretinden faydalanmak için işlem ayrıntılarınızı (cüzdan adresiniz de dâhil) Blinklabs ile paylaşmayı da kabul ediyorsunuz.",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
@@ -8388,9 +8499,6 @@
     },
     "tileTitle" : "Duygu"
   },
-  "perps" : {
-    "title" : "Sürekli vadeli işlemler"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "Analiz"
@@ -8401,5 +8509,40 @@
     "actions" : {
       "swap" : "Takas et"
     }
+  },
+  "cardLanding" : {
+    "title" : "Spend your\ncrypto",
+    "subtitle" : "Pay online or in store with a crypto card",
+    "ctas" : {
+      "exploreCards" : "Explore cards",
+      "iHaveACard" : "I have a card"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Yeni portföyünüzü keşfedin",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Portföy sayfanız yeniden tasarlandı",
+        "description" : "Ana ekranınızı daha sade bir hâle getirdik. Grafiğinizi bulamadınız mı? Bakiyenizin altındaki kısma dokunun."
+      },
+      "navigation" : {
+        "title" : "Her şey olması gereken yerde",
+        "description" : "My Ledger ve Keşfet sekmeleri artık en üstte. Takas ve Kart, daha hızlı erişim için alt kısma taşındı."
+      },
+      "actions" : {
+        "title" : "Piyasa hızında eylemler",
+        "description" : "Yeni banner ile piyasa trendlerini görün ve anında alım satım yapın."
+      }
+    },
+    "cta" : {
+      "continue" : "Devam",
+      "explore" : "Yeni portföyünüzü keşfedin"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "Home",
+    "swap" : "Swap",
+    "earn" : "Earn",
+    "card" : "Card"
   }
 }
