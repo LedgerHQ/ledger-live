@@ -119,11 +119,12 @@ jobs:
       status_2: ${{ steps.set-output.outputs.status_2 }}
       status_3: ${{ steps.set-output.outputs.status_3 }}
       status_4: ${{ steps.set-output.outputs.status_4 }}
+      status_5: ${{ steps.set-output.outputs.status_5 }}
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
     steps:
       - name: generate token
         id: generate-token
@@ -233,6 +234,8 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          REMOTE_SPECULOS: "true"
+          GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
@@ -295,11 +298,12 @@ jobs:
         id: aggregate
         uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
-          total_shards: 4
+          total_shards: 5
           status_1: ${{ needs.e2e-tests-linux.outputs.status_1 }}
           status_2: ${{ needs.e2e-tests-linux.outputs.status_2 }}
           status_3: ${{ needs.e2e-tests-linux.outputs.status_3 }}
           status_4: ${{ needs.e2e-tests-linux.outputs.status_4 }}
+          status_5: ${{ needs.e2e-tests-linux.outputs.status_5 }}
 
   upload-to-xray:
     name: "Upload to Xray"
