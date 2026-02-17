@@ -44,6 +44,43 @@ describe("sync.ts", () => {
   });
 
   describe("getAccountShape", () => {
+    it("should preserve viewKey from initial account", async () => {
+      const result = await getAccountShape(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        mockSyncConfig,
+      );
+
+      expect(result).toMatchObject({ id: mockInitialAccount.id });
+    });
+
+    it("should throw error if initial account has no viewKey", async () => {
+      const mockInvalidInitialAccount = {
+        ...mockInitialAccount,
+        id: "js:2:aleo:aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f:",
+      };
+
+      await expect(
+        getAccountShape(
+          {
+            index: mockAccount.index,
+            derivationPath: mockAccount.freshAddressPath,
+            address: mockAccount.freshAddress,
+            currency: mockCurrency,
+            derivationMode: mockDerivationMode,
+            initialAccount: mockInvalidInitialAccount,
+          },
+          mockSyncConfig,
+        ),
+      ).rejects.toThrow();
+    });
+
     it("should create account shape with native balance", async () => {
       const result = await getAccountShape(
         {

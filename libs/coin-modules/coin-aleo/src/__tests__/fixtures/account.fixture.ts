@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { AleoAccount, AleoResources, AleoResourcesRaw } from "../../types";
+import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../../types";
 import { getMockedCurrency } from "./currency.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
@@ -42,6 +42,35 @@ export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount 
     swapHistory: [],
     subAccounts: [],
     aleoResources: mockAleoResources,
+    ...overrides,
+  };
+};
+
+export const getMockedAccountRaw = (overrides?: Partial<AleoAccountRaw>): AleoAccountRaw => {
+  return {
+    id: defaultMockAccountId,
+    seedIdentifier: "",
+    derivationMode: "",
+    index: 0,
+    freshAddress: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f",
+    freshAddressPath: "44'/683'/0'/0/0",
+    used: false,
+    balance: defaultBalance.toString(),
+    spendableBalance: defaultBalance.toString(),
+    creationDate: new Date().toISOString(),
+    blockHeight: 1234,
+    currencyId: defaultMockedCurrency.id,
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    lastSyncDate: new Date().toISOString(),
+    balanceHistoryCache: {
+      HOUR: { latestDate: null, balances: [] },
+      DAY: { latestDate: null, balances: [] },
+      WEEK: { latestDate: null, balances: [] },
+    },
+    swapHistory: [],
+    subAccounts: [],
     ...overrides,
   };
 };
