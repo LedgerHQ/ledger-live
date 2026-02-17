@@ -1583,6 +1583,25 @@
     "bannerCta" : "Iniciar configuração",
     "continue" : "Continuar"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
+    "continue" : "Continuar"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Comprar Dispositivo",
     "debugDrawers" : {
@@ -2638,7 +2657,9 @@
     "discover" : "Explorar",
     "nanoX" : "Nano X",
     "market" : "Mercado",
-    "earn" : "Ganhar"
+    "earn" : "Ganhar",
+    "card" : "Card",
+    "swap" : "Swap"
   },
   "portfolio" : {
     "totalBalance" : "Saldo Total",
@@ -2675,6 +2696,10 @@
     },
     "carousel" : {
       "title" : "Para você"
+    },
+    "perpsEntry" : {
+      "title" : "Perpétuos",
+      "description" : "Negocie com alavancagem"
     },
     "recommended" : {
       "title" : "Recomendado"
@@ -2713,6 +2738,8 @@
       "transfer" : "Transferir",
       "swap" : "Trocar",
       "buy" : "Comprar",
+      "connect" : "Conectar",
+      "buyLedger" : "Comprar uma Ledger",
       "transferDrawer" : {
         "title" : "Transferir",
         "receiveCrypto" : "Receber cripto",
@@ -2988,7 +3015,6 @@
     "yield" : "Rendimento",
     "sell" : "Vender",
     "swap" : "Trocar",
-    "perps" : "Perpétuos",
     "manage" : "Gerenciar",
     "lastTransactions" : "Últimas Transações",
     "emptyState" : {
@@ -3000,7 +3026,8 @@
         "receiveFunds" : "Receber",
         "buyCrypto" : "Comprar"
       },
-      "addAccountCta" : "Adicionar Conta"
+      "addAccountCta" : "Adicionar Conta",
+      "addCryptoAccount" : "Adicionar conta de criptomoedas"
     },
     "settings" : {
       "header" : "Configurações de conta",
@@ -3491,6 +3518,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Debug da atualização de firmware"
         }
+      },
+      "contentCards" : {
+        "title" : "Cartões de Conteúdo",
+        "titleDesc" : "Gere cartões de conteúdo local sem o Braze para testes.",
+        "description" : "Os cartões locais aparecem no Portfólio (e em outros locais) sem o Braze. Eles persistem até que você os descarte ou limpe aqui.",
+        "addSampleBanner" : "Adicionar banner de amostra",
+        "addSampleBannerDesc" : "Adicione um banner de exemplo ao Portfólio.",
+        "addSampleActionCarousel" : "Adicionar carrossel de ações de amostra",
+        "addSampleActionCarouselDesc" : "Adicione um carrossel de cards de ação (Comprar, Trocar, Fazer staking) no Portfólio.",
+        "dismissAll" : "Descartar todos os cartões locais",
+        "dismissAllDesc" : "Remover todos os cartões de conteúdo gerados localmente."
       }
     }
   },
@@ -3674,10 +3712,6 @@
     "stake" : {
       "title" : "Aplicar",
       "description" : "Receba recompensas com sua cripto."
-    },
-    "perps" : {
-      "title" : "Perpétuos",
-      "description" : "Negocie perpétuos em criptomoedas."
     },
     "swap" : {
       "title" : "Trocar",
@@ -3875,7 +3909,8 @@
         "title" : "Selecionar cotação"
       },
       "twoStepApproval" : {
-        "title" : "Complete as etapas"
+        "title" : "Complete as etapas",
+        "completedTitle" : "Status da Transação"
       },
       "loader" : {
         "title" : "Processando troca",
@@ -4140,6 +4175,81 @@
     "loading" : "Buscando dispositivos..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "Enviar {{currency}}",
+      "available" : "Disponível {{amount}}",
+      "placeholder" : "Digite o endereço ou ENS",
+      "placeholderNoENS" : "Digite o endereço",
+      "editRecipientAccessibilityLabel" : "Edit recipient",
+      "recent" : "Recentes",
+      "myAccounts" : "Minhas contas",
+      "sendTo" : "Enviar para {{address}}",
+      "addressMatched" : "O endereço correspondeu",
+      "addressNotFound" : "Endereço não encontrado",
+      "alreadyUsed" : "Já usado · {{date}}",
+      "recentSendWillAppear" : "Seus envios recentes aparecerão aqui",
+      "relativeDate" : {
+        "justNow" : "Just now",
+        "minutesAgo_one" : "1 min ago",
+        "minutesAgo_other" : "{{count}} min ago",
+        "hoursAgo_one" : "1 hour ago",
+        "hoursAgo_other" : "{{count}} hours ago",
+        "daysAgo_one" : "1 day ago",
+        "daysAgo_other" : "{{count}} days ago"
+      },
+      "remove" : "Remover",
+      "enterTag" : "Inserir {{tag}}",
+      "firstInteraction" : {
+        "title" : "You’re sending to a new address",
+        "description" : "Verifique se o endereço está correto. Em caso de dúvida, envie uma pequena quantia primeiro."
+      },
+      "sanctioned" : {
+        "title" : "Endereço suspeito",
+        "description" : "This address has been flagged and Ledger doesn’t allow sending to it",
+        "helpCenter" : "Central de ajuda"
+      },
+      "errors" : {
+        "incorrectFormat" : "Formato de endereço incorreto",
+        "incompatibleAsset" : "Address isn’t compatible with the asset selected",
+        "walletNotExist" : "Wallet doesn’t exist"
+      },
+      "skipMemo" : {
+        "title" : "Pular a adição de {{tag}}?",
+        "warning" : "O seu ativo pode ser perdido se a {{tag}} for um requisito do seu recipiente"
+      },
+      "tagHelp" : {
+        "title" : "What’s a {{tag}}?",
+        "description" : "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      },
+      "networkFeesInFiat" : "Taxas de rede em {{currency}}",
+      "feesAmount" : "Quantia da taxa ({{unit}})",
+      "gasLimit" : "Limite de gás ({{unit}})",
+      "feesPaid" : "Taxas pagas à rede para processar sua transação",
+      "insufficientBalanceFees" : "Saldo insuficiente para cobrir as taxas de rede",
+      "amountToSend" : "Quantia a enviar em ({{currency}})",
+      "coinToSend" : "Moeda a enviar",
+      "coinControlCustom" : "Seleção de moeda personalizada",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "Max"
+      },
+      "reviewCta" : "Review",
+      "getCta" : "Get {{currency}}",
+      "switchInputMode" : "Switch amount input mode",
+      "aboveMaximum" : "Saldo acima do máximo",
+      "transactionSigned" : "Transação assinada",
+      "processingTransaction" : "A sua transação está sendo processada",
+      "sign" : {
+        "title" : "Continue on your Ledger {{wording}}",
+        "description" : "Follow the instructions displayed on your Secure Touchscreen."
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "Unable to refresh network fees",
+        "warningDescription" : "Fee presets may be outdated."
+      }
+    },
     "pendingTxWarning" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "Continuar",
@@ -4573,6 +4683,7 @@
       },
       "acceptTerms" : "Ao assinar esta transação, você aceita os <0>termos de uso</0> da <0>{{provider}}</0>",
       "nearIntentsAcceptTerms" : "Ao validar esta transação,\neu aceito os <0>Termos de uso do SwapKit</0>, a tecnologia que impulsiona o NEAR Intents",
+      "acceptTermsSponsored" : "Para aproveitar as taxas de rede gratuitas, você concorda em compartilhar com a Blinklabs os dados da sua transação, incluindo o endereço da sua carteira.",
       "changellySimplifiedAcceptTerms" : "Ao validar esta transação, você aceita os <0>Termos de uso</0> e a <1>Política de AML/KYC</1> da Changelly. A Changelly pode aplicar procedimentos de AML/KYC que podem, em alguns casos, afetar a conclusão da sua transação. Caso isso aconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly.",
       "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
     },
@@ -8388,9 +8499,6 @@
     },
     "tileTitle" : "Sentimento"
   },
-  "perps" : {
-    "title" : "Perpétuos"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "Métricas"
@@ -8401,5 +8509,40 @@
     "actions" : {
       "swap" : "Trocar"
     }
+  },
+  "cardLanding" : {
+    "title" : "Spend your\ncrypto",
+    "subtitle" : "Pay online or in store with a crypto card",
+    "ctas" : {
+      "exploreCards" : "Explore cards",
+      "iHaveACard" : "I have a card"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Descubra o seu novo portfólio",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Seu portfólio, reinventado",
+        "description" : "Organizamos sua tela inicial. Sentindo falta do seu gráfico? Basta tocar abaixo do seu saldo."
+      },
+      "navigation" : {
+        "title" : "Tudo em seu devido lugar",
+        "description" : "Minha Ledger e Explorar agora estão em cima. Trocar e Cartão foram para a parte inferior, para um acesso mais rápido."
+      },
+      "actions" : {
+        "title" : "Ações na velocidade do mercado",
+        "description" : "Identifique tendências do mercado à vista com o novo banner e negocie na hora."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuar",
+      "explore" : "Explorar meu novo portfólio"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "Home",
+    "swap" : "Swap",
+    "earn" : "Earn",
+    "card" : "Card"
   }
 }
