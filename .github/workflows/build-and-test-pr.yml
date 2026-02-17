@@ -129,8 +129,9 @@ jobs:
       - test-desktop
       - test-mobile
       - test-libraries
+      - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success')}}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
