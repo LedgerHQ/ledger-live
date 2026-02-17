@@ -138,7 +138,7 @@ jobs:
             const {repo: {owner, repo}, run_id} = context
             const issue_number = ${{ inputs.number }}
             const body = `\
-            @${{ inputs.login }}: triggered \`/regen-pods\`
+            @${{ inputs.login }}: triggered \`/regen-doc\`
 
             [Regenerating Documentation: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `;

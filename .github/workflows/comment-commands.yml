@@ -1,0 +1,148 @@
+name: "[CI] - Slash commands (comment)"
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number (for testing before merge – only used when run manually)"
+        required: true
+        type: number
+      command:
+        description: "Slash command to run (same as commenting on the PR)"
+        required: true
+        type: choice
+        options:
+          - regen-pods
+          - regen-doc
+          - generate-screenshots
+          - full-lld-tests
+        default: regen-pods
+      login:
+        description: "GitHub login (defaults to the user running the workflow)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+  actions: write
+
+jobs:
+  parse-and-dispatch:
+    name: Parse command and dispatch workflow
+    if: |
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && !endsWith(github.actor, '[bot]'))
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Parse comment and dispatch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const isManual = context.eventName === 'workflow_dispatch';
+            const { owner, repo } = context.repo();
+
+            let command, commentId, login, issueNumber;
+            if (isManual) {
+              const inputs = context.payload.inputs || {};
+              command = inputs.command;
+              issueNumber = Number(inputs.pr_number);
+              login = inputs.login || context.actor;
+              commentId = null;
+            } else {
+              const matcher = /^\/([\w-]+)\b *(.*)?$/m;
+              const body = context.payload.comment?.body || '';
+              const match = body.match(matcher);
+              command = match?.[1];
+              commentId = context.payload.comment?.id;
+              login = context.payload.sender?.login;
+              issueNumber = context.payload.issue?.number;
+            }
+
+            const COMMANDS = {
+              'regen-pods': { workflow: 'regen-pods.yml', inputs: (r, n, l, c) => ({ ref: r, number: n, login: l, commentId: c }) },
+              'regen-doc': { workflow: 'regen-doc.yml', inputs: (r, n, l, c) => ({ ref: r, number: n, login: l, commentId: c }) },
+              'generate-screenshots': { workflow: 'generate-screenshots.yml', inputs: (r, n, l, c) => ({ ref: r, number: n, login: l, commentId: c }) },
+              'full-lld-tests': { workflow: 'test-desktop-reusable.yml', inputs: (r, n, l) => ({ ref: r, login: l }) },
+            };
+
+            if (!command || !COMMANDS[command]) {
+              if (isManual) core.setFailed('Unsupported command: ' + (command || '(none)'));
+              return;
+            }
+
+            // Require LedgerHQ org membership
+            try {
+              const res = await github.rest.orgs.checkMembershipForUser({ org: 'LedgerHQ', username: login });
+              if (res.status >= 300) {
+                if (commentId) {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number: issueNumber,
+                    body: `@${login} you are not part of the organization, please contact a maintainer if you need to run this command.`,
+                  });
+                  await github.rest.reactions.createForIssueComment({
+                    owner, repo, comment_id: commentId, content: '-1',
+                  });
+                }
+                if (isManual) core.setFailed(`User @${login} is not part of the LedgerHQ organization.`);
+                return;
+              }
+            } catch (err) {
+              if (commentId) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: issueNumber,
+                  body: `@${login} you are not part of the organization, please contact a maintainer if you need to run this command.`,
+                });
+                await github.rest.reactions.createForIssueComment({
+                  owner, repo, comment_id: commentId, content: '-1',
+                });
+              }
+              if (isManual) core.setFailed(`User @${login} is not part of the LedgerHQ organization.`);
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner, repo, pull_number: issueNumber,
+            });
+
+            // Only run on same-repo PRs (skip fork PRs, consistent with build-and-test-pr etc.)
+            if (pr.head.repo?.fork) {
+              return;
+            }
+
+            const ref = pr.head.ref;
+
+            if (commentId) {
+              await github.rest.reactions.createForIssueComment({
+                owner, repo, comment_id: commentId, content: 'rocket',
+              });
+            }
+
+            const config = COMMANDS[command];
+            const inputBuilder = config.inputs;
+            const inputs = inputBuilder(ref, String(issueNumber), login, commentId ? String(commentId) : '');
+            const cleanInputs = {};
+            for (const [k, v] of Object.entries(inputs)) {
+              if (v !== undefined && v !== null && v !== '') cleanInputs[k] = String(v);
+            }
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner, repo,
+              workflow_id: config.workflow,
+              ref,
+              inputs: cleanInputs,
+            });
+            core.info(`Dispatched ${config.workflow} for /${command}`);
+
+            return config.workflow;
