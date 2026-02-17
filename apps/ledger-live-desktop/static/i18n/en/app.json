@@ -7846,6 +7846,11 @@
           "description": "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Wallet once it's created.",
           "cta": "How to create a {{currency}} account?",
           "close": "Close"
+        },
+        "noAccountsAddedWarning": {
+          "title": "No {{currency}} accounts were added",
+          "description": "You haven't completed the required setup for one or more selected accounts.",
+          "close": "Close"
         }
       },
       "status": {
@@ -8060,6 +8065,11 @@
         "cta": {
           "shareKey_one": "Share view key",
           "shareKey_other": "Share view keys"
+        }
+      },
+      "warnings": {
+        "noAccountsAddedWarning": {
+          "description": "You haven't shared view keys for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
         }
       }
     },

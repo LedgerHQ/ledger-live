@@ -340,4 +340,28 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
   });
+
+  it("should error when all view keys are rejected", async () => {
+    setup();
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, ALEO_ACCOUNT_2]);
+
+    expect(screen.queryByText(/we found 2 accounts/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Share view keys" }));
+
+    expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
+    expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(2);
+
+    await mockViewKeyProgressSubscription([
+      { accountId: ALEO_ACCOUNT_1.id, viewKey: null },
+      { accountId: ALEO_ACCOUNT_2.id, viewKey: null },
+    ]);
+
+    expectTrackPage(5, "cant add new account", { reason: "NO_ACCOUNTS_ADDED" });
+    expect(screen.getByText("No Aleo accounts were added")).toBeInTheDocument();
+  });
 });

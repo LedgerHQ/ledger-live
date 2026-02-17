@@ -111,8 +111,7 @@ const ModularDrawerAddAccountFlowManager = ({
       setSelectedAccounts(accountsWithViewKeys);
 
       if (accountsWithViewKeys.length === 0) {
-        // TODO: dedicated NO_ACCOUNTS_ADDED reason & screen
-        navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
+        navigateToWarningScreen(WARNING_REASON.NO_ACCOUNTS_ADDED);
       } else {
         dispatch(
           addAccountsAction({
