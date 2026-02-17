@@ -194,6 +194,13 @@ export default withRozeniteUrlFix(
               resolve: { fullySpecified: false },
             },
             ...Repack.getAssetTransformRules(),
+            {
+              test: /\.lottie$/,
+              use: {
+                loader: "@callstack/repack/assets-loader",
+                options: {},
+              },
+            },
           ],
         },
         plugins: [
