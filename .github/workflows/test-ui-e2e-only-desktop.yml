@@ -1,11 +1,15 @@
-name: "[Desktop] - E2E Test - Scheduled"
-run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+name: "[Desktop] - E2E Only - Scheduled/Manual"
+run-name: >
+  @Desktop E2E • Test App triggered by ${{ github.actor }} on ref ${{ inputs.ref || github.ref_name }}
 
 on:
   schedule:
     - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
+      ref:
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
+        required: false
       test_filter:
         description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
@@ -62,7 +66,7 @@ on:
   workflow_call:
     inputs:
       ref:
-        description: "The branch which triggered this workflow"
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
         type: string
       test_filter:
@@ -210,7 +214,7 @@ jobs:
             echo "## Workflow Context"
             echo ""
             echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
-            echo "- **Triggered branch:** ${{ github.ref_name }}"
+            echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
             echo "- **Filtered pattern:** $FILTER_PATTERN"
@@ -377,7 +381,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
+                  "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                   "emoji": true
                 }
               },
