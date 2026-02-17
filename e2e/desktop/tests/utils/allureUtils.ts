@@ -5,6 +5,7 @@ import { readFile } from "fs";
 import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
+import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 
 const readFileAsync = promisify(readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -39,6 +40,7 @@ export async function captureArtifacts(
   page: Page,
   testInfo: TestInfo,
   electronApp: ElectronApplication,
+  webviewCollector?: WebviewLogCollector,
 ) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
@@ -69,6 +71,18 @@ export async function captureArtifacts(
       testInfo.outputPath("network.log"),
       "text/plain",
     );
+  }
+
+  if (webviewCollector) {
+    await testInfo.attach("Webview Console Logs", {
+      body: Buffer.from(webviewCollector.getFormattedConsoleLogs()),
+      contentType: "text/plain",
+    });
+
+    await testInfo.attach("Webview Network Logs", {
+      body: Buffer.from(webviewCollector.getFormattedNetworkLogs()),
+      contentType: "application/json",
+    });
   }
 
   const video = page.video();
