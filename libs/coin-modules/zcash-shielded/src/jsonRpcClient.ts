@@ -142,10 +142,10 @@ export class JsonRpcClient {
     return data.result;
   }
 
-  getBlock(blockHash: string) {
+  getBlock(blockHashOrHeight: string) {
     return this.jsonRpcRequest<Block>({
       method: "getblock",
-      params: [blockHash, 1],
+      params: [blockHashOrHeight, 1],
     });
   }
 

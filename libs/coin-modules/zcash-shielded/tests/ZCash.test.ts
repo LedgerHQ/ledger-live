@@ -270,9 +270,65 @@ describe("findShieldedTxsInBlock", () => {
 });
 
 describe("syncShielded", () => {
+  test("returns undefined and logs an error if startBlockHash is invalid", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncedShielded = await zcash.syncShielded({
+      startBlockHeight: 123,
+      endBlockHeight: blockWithMyTx.height + 1,
+      viewingKey: "abc456",
+    });
+
+    expect(await syncedShielded.next()).toEqual({
+      done: true,
+      value: {
+        balance: 0,
+      },
+    });
+  });
+
+  test("returns an empty balance when the viewingKey doesn't match any shielded transactions", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncedShielded = await zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      endBlockHeight: blockWithMyTx.height + 1,
+      viewingKey: "abc456",
+    });
+
+    expect(await syncedShielded.next()).toEqual({
+      done: false,
+      value: {
+        balance: 0,
+      },
+    });
+
+    expect(await syncedShielded.next()).toEqual({
+      done: true,
+      value: {
+        balance: 0,
+      },
+    });
+  });
+
   test("returns the shielded balance", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const { balance } = await zcash.syncShielded();
-    expect(balance).toEqual(2);
+    const syncedShielded = zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      endBlockHeight: blockWithMyTx.height + 1,
+      viewingKey: testAccount1.viewingKey,
+    });
+
+    expect(await syncedShielded.next()).toEqual({
+      done: false,
+      value: {
+        balance: 0.3,
+      },
+    });
+
+    expect(await syncedShielded.next()).toEqual({
+      done: true,
+      value: {
+        balance: 0.3,
+      },
+    });
   });
 });

@@ -11,7 +11,7 @@ export const handlers = [
     switch (body.method) {
       case "getblock": {
         for (const block of blocks) {
-          if (body.params[0] === block.hash) {
+          if (body.params[0] === block.hash || body.params[0] === block.height.toString()) {
             return HttpResponse.json({
               result: {
                 ...block,

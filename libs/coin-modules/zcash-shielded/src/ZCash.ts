@@ -160,9 +160,60 @@ export default class ZCash {
     return candidate;
   }
 
-  async syncShielded(): Promise<{
-    balance: ShieldedBalance;
-  }> {
-    return { balance: 2 };
+  async *syncShielded(args: {
+    startBlockHeight: number;
+    endBlockHeight: number;
+    viewingKey: string;
+  }): AsyncGenerator<
+    | {
+        balance: ShieldedBalance;
+      }
+    | undefined
+  > {
+    const { startBlockHeight, endBlockHeight, viewingKey } = args;
+    let balance = 0;
+
+    for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
+      // 1. get start block
+      const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
+      if (!block) {
+        log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
+        console.debug(`error: invalid block height ${blockHeight}`);
+        return { balance };
+      }
+
+      // 2. find shielded tx in block
+      const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
+
+      // 3. update balance
+      balance += calculateShieldedBalance(shieldedTxs);
+
+      yield { balance };
+    }
   }
 }
+
+const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]) => {
+  let balance = 0;
+
+  for (const shieldedTx of shieldedTxs) {
+    console.debug(shieldedTx.decryptedData?.orchard_outputs);
+
+    const orchard_outputs = shieldedTx.decryptedData?.orchard_outputs || [];
+    const sapling_outputs = shieldedTx.decryptedData?.sapling_outputs || [];
+
+    if (orchard_outputs) {
+      for (const output of [...orchard_outputs, ...sapling_outputs]) {
+        if (output.transfer_type === "incoming") {
+          balance += output.amount;
+        } else if (output.transfer_type === "outgoing") {
+          balance -= output.amount;
+        } else if (output.transfer_type === "internal") {
+          // ignore internal tx
+        }
+      }
+    }
+  }
+
+  return balance;
+};
