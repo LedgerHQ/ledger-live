@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { PiggyBank } from "@ledgerhq/lumen-ui-react/symbols";
+import { Infinite } from "@ledgerhq/lumen-ui-react/symbols";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import {
   ListItem,
@@ -40,7 +40,7 @@ export const PerpsEntryPoint = () => {
         </Subheader>
         <ListItem onClick={handleClick} className="rounded-md bg-surface">
           <ListItemLeading>
-            <ListItemSpot appearance="icon" icon={PiggyBank} />
+            <ListItemSpot appearance="icon" icon={Infinite} />
             <ListItemContent>
               <ListItemTitle>{t("portfolio.perpsEntry.description")}</ListItemTitle>
             </ListItemContent>

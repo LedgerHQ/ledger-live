@@ -221,6 +221,7 @@ const MainAppContent = ({
   <>
     <Routes>
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
+      <Route path="/perps/*" element={withSuspense(Perps)({})} />
     </Routes>
     {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
 
@@ -247,7 +248,6 @@ const MainAppContent = ({
         <Route path="/account/:id/*" element={withSuspense(Account)({})} />
         <Route path="/asset/*" element={withSuspense(Asset)({})} />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/perps/*" element={withSuspense(Perps)({})} />
         <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
         <Route
           path="/market"

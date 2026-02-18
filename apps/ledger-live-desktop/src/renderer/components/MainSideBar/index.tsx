@@ -6,6 +6,7 @@ import { Transition, type TransitionStatus } from "react-transition-group";
 import styled from "styled-components";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
+import { Infinite } from "@ledgerhq/lumen-ui-react/symbols";
 import {
   featureFlagsButtonVisibleSelector,
   overriddenFeatureFlagsSelector,
@@ -118,6 +119,10 @@ const sideBarTransitionStyles: Record<TransitionStatus, React.CSSProperties> = {
   exited: { flexBasis: collapsedWidth },
   unmounted: { flexBasis: collapsedWidth },
 };
+
+// React 18 vs 19 compatibility
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any
+const InfiniteIcon: React.FC<{ size?: number }> = Infinite as any;
 const enableTransitions = () =>
   document.body &&
   setTimeout(
@@ -327,7 +332,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"perps"}
                     label={t("sidebar.perps")}
-                    icon={Icons.GraphAsc}
+                    icon={() => <InfiniteIcon size={20} />}
                     iconActiveColor="wallet"
                     onClick={handleClickPerps}
                     isActive={locationPathname.startsWith("/perps")}
