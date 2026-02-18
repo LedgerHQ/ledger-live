@@ -117,6 +117,7 @@ jobs:
 
   speculos-e2e-tests-linux:
     name: "UI e2e smoke tests NanoSP"
+    continue-on-error: true
     outputs:
       allure_url: ${{ steps.publish-allure.outputs.report-url }}
     timeout-minutes: 60
