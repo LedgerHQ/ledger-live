@@ -336,8 +336,15 @@ jobs:
 
 
           # Configure host to use mitmproxy
-          export NETWORK_SERVICE="Wi-Fi"
-          export SIMULATOR_NAME="iOS Simulator"
+          /usr/sbin/networksetup -listallnetworkservices
+          export NETWORK_SERVICE=$(/usr/sbin/networksetup -listallnetworkservices | grep -iE "wi-fi|airport" | head -1)
+
+          if [ -z "$NETWORK_SERVICE" ]; then
+            echo "Failed to detect network service"
+            exit 1
+          fi
+
+          echo "Using network service: $NETWORK_SERVICE"
 
           sudo /usr/sbin/networksetup -setwebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
           sudo /usr/sbin/networksetup -setsecurewebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
