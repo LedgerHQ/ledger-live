@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingVertical: 16,
-    paddingBottom: 16,
   },
   footer: {
     paddingHorizontal: 16,

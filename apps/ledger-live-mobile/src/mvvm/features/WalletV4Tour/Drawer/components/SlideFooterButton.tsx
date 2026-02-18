@@ -44,7 +44,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
   );
 
   return (
-    <Animated.View style={styles.container} onStartShouldSetResponder={() => true}>
+    <Animated.View style={styles.container}>
       <Animated.View
         style={[styles.button, continueStyle]}
         pointerEvents={continueIsTouchable ? "box-none" : "none"}
