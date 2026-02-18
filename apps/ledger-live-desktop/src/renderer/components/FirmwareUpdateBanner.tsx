@@ -1,17 +1,14 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "LLD/hooks/redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { Button as NewButton } from "@ledgerhq/lumen-ui-react";
 import { latestFirmwareSelector } from "~/renderer/reducers/settings";
 import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { VISIBLE_STATUS } from "./Updater/Banner";
 import StyleProvider from "~/renderer/styles/StyleProvider";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Apex, Flex, Nano, Stax } from "@ledgerhq/lumen-ui-react/symbols";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { track } from "~/renderer/analytics/segment";
-import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import TopBanner from "./TopBanner";
 import Box from "./Box";
@@ -20,78 +17,75 @@ import { useTheme } from "styled-components";
 import { getEnv } from "@ledgerhq/live-env";
 import { radii } from "~/renderer/styles/theme";
 import { Button, Text } from "@ledgerhq/react-ui";
-import { osUpdateRequested } from "../reducers/manager";
+import { getDeviceIcon } from "LLD/utils/getDeviceIcon";
 
-function getDeviceIcon(modelId: DeviceModelId | undefined) {
-  switch (modelId) {
-    case DeviceModelId.stax:
-      return Stax;
-    case DeviceModelId.europa:
-      return Flex;
-    case DeviceModelId.apex:
-      return Apex;
-    default:
-      return Nano;
-  }
-}
+type BannerContentProps = {
+  old?: boolean;
+  right?: React.ReactNode;
+  visibleFirmwareVersion: string;
+  onClick: () => void;
+};
 
-const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
+const FirmwareUpdateBannerNew = ({
+  old,
+  right,
+  visibleFirmwareVersion,
+  onClick,
+}: BannerContentProps) => {
   const { t } = useTranslation();
-  const latestFirmware = useSelector(latestFirmwareSelector);
-  const currentDevice = useSelector(getCurrentDevice);
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
   const { colors } = useTheme();
-
-  const onClick = (latestFirmware: FirmwareUpdateContext) => {
-    if (isWallet40Enabled) {
-      track("Manager Firmware Update Click", {
-        firmwareName: latestFirmware.final.name,
-      });
-      dispatch(osUpdateRequested(true));
-      navigate("/manager");
-    } else {
-      const urlParams = new URLSearchParams({
-        firmwareUpdate: "true",
-      });
-      const search = urlParams.toString();
-      navigate(`/manager?${search}`);
-    }
-  };
-
-  const DeviceIcon = useMemo(() => getDeviceIcon(currentDevice?.modelId), [currentDevice]);
-
-  if (isWallet40Enabled) {
-    return latestFirmware ? (
-      <NewButton
-        appearance="transparent"
-        size="sm"
-        icon={DeviceIcon}
-        onClick={() => onClick(latestFirmware)}
-        data-testid="topbar-os-update-button"
-      >
-        {t("manager.firmware.banner.warning")}
-      </NewButton>
-    ) : null;
-  }
-
-  const visibleFirmwareVersion =
-    process.env.DEBUG_FW_VERSION ??
-    (latestFirmware ? getCleanVersion(latestFirmware.final.name) : "");
-
-  // The 2.1.0-rc2 release caused issues with localization e2e tests because it
-  // displayed a banner for updating the FW, which would continue to show with
-  // future releases. To fix this, the banner is currently being manually removed.
-  // A more stable solution would be to mock all API calls.
-  const hideBannerForMocks = getEnv("MOCK") && visibleFirmwareVersion.startsWith("2.1");
-  const inManager = location.pathname === "/manager";
-  if (!visibleFirmwareVersion || (!right && inManager) || hideBannerForMocks) return null;
 
   return (
     <TopBanner
       id={"fw-update-banner"}
+      testId="fw-update-banner"
+      containerStyle={{
+        background: `${colors.primary}`,
+        borderRadius: radii[2],
+        padding: "12px 16px",
+      }}
+      content={{
+        message: (
+          <Box>
+            <Text fontFamily="Inter|Bold" fontSize={5} color="neutral.c00">
+              {t(
+                old
+                  ? "manager.firmware.banner.old.warning"
+                  : "manager.firmware.banner.wallet40.warning.manager",
+              )}
+            </Text>
+            {old ? null : (
+              <Text color="neutral.c00">
+                {t("manager.firmware.banner.version", {
+                  latestFirmware: visibleFirmwareVersion,
+                })}
+              </Text>
+            )}
+          </Box>
+        ),
+        right: right ?? (
+          <NewButton size="sm" appearance="gray" onClick={onClick}>
+            {t("manager.firmware.banner.cta")}
+          </NewButton>
+        ),
+      }}
+    />
+  );
+};
+
+const FirmwareUpdateBannerLegacy = ({
+  old,
+  right,
+  visibleFirmwareVersion,
+  onClick,
+}: BannerContentProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+
+  return (
+    <TopBanner
+      id={"fw-update-banner"}
+      testId="fw-update-banner"
       containerStyle={{
         background: `linear-gradient(to left, ${colors.primary.c70}, ${colors.primary.c60})`,
         borderRadius: radii[2],
@@ -112,13 +106,94 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
             )}
           </Box>
         ),
-        right: right || (
-          <Button variant="main" onClick={() => onClick(latestFirmware!)}>
+        right: right ?? (
+          <Button variant="main" onClick={onClick}>
             {t("manager.firmware.banner.cta")}
           </Button>
         ),
       }}
     />
+  );
+};
+
+const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
+  const latestFirmware = useSelector(latestFirmwareSelector);
+  const currentDevice = useSelector(getCurrentDevice);
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
+  const hasTrackedImpressionRef = useRef(false);
+  const isOnDashboard = location.pathname === "/";
+  const inManager = location.pathname === "/manager";
+
+  useEffect(() => {
+    if (
+      !hasTrackedImpressionRef.current &&
+      shouldDisplayWallet40MainNav &&
+      (isOnDashboard || inManager)
+    ) {
+      hasTrackedImpressionRef.current = true;
+      track("banner_impression", {
+        banner: "OS update",
+        page: inManager ? "my ledger" : "portfolio",
+      });
+    }
+  }, [shouldDisplayWallet40MainNav, isOnDashboard, inManager]);
+
+  const onClick = () => {
+    if (shouldDisplayWallet40MainNav) {
+      track("button_clicked", {
+        page: "portfolio",
+        banner: "OS update",
+        button: "click(update)",
+      });
+    }
+    const urlParams = new URLSearchParams({
+      firmwareUpdate: "true",
+    });
+    const search = urlParams.toString();
+    navigate(`/manager?${search}`);
+  };
+
+  const DeviceIcon = useMemo(() => getDeviceIcon(currentDevice?.modelId), [currentDevice]);
+
+  if (shouldDisplayWallet40MainNav && !inManager) {
+    return latestFirmware ? (
+      <NewButton
+        appearance="transparent"
+        size="sm"
+        icon={DeviceIcon}
+        onClick={onClick}
+        data-testid="topbar-os-update-button"
+      >
+        {t("manager.firmware.banner.wallet40.warning.default")}
+      </NewButton>
+    ) : null;
+  }
+
+  const visibleFirmwareVersion =
+    process.env.DEBUG_FW_VERSION ??
+    (latestFirmware ? getCleanVersion(latestFirmware.final.name) : "");
+
+  // The 2.1.0-rc2 release caused issues with localization e2e tests because it
+  // displayed a banner for updating the FW, which would continue to show with
+  // future releases. To fix this, the banner is currently being manually removed.
+  // A more stable solution would be to mock all API calls.
+  const hideBannerForMocks = getEnv("MOCK") && visibleFirmwareVersion.startsWith("2.1");
+  if (!visibleFirmwareVersion || (!right && inManager) || hideBannerForMocks) return null;
+
+  const bannerProps = {
+    old,
+    right,
+    visibleFirmwareVersion,
+    onClick,
+  };
+
+  return shouldDisplayWallet40MainNav ? (
+    <FirmwareUpdateBannerNew {...bannerProps} />
+  ) : (
+    <FirmwareUpdateBannerLegacy {...bannerProps} />
   );
 };
 

@@ -15,13 +15,13 @@ import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { Button } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Text from "~/renderer/components/Text";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
-import { osUpdateRequested } from "~/renderer/reducers/manager";
+import { Button as NewButton } from "@ledgerhq/lumen-ui-react";
+import { Button } from "@ledgerhq/react-ui";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -66,7 +66,7 @@ const FirmwareUpdate = (props: Props) => {
     error,
     onReset,
   } = props;
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const dispatch = useDispatch();
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
@@ -90,7 +90,6 @@ const FirmwareUpdate = (props: Props) => {
   }, []);
 
   const onRequestClose = useCallback(() => {
-    dispatch(osUpdateRequested(false));
     openedFromOsUpdateRequestedRef.current = false;
     setPreventResetOnDeviceChange(false);
     setDrawer();
@@ -98,7 +97,7 @@ const FirmwareUpdate = (props: Props) => {
     if (firmwareUpdateCompletedRef.current) {
       onReset([]);
     }
-  }, [dispatch, onReset, setDrawer, setPreventResetOnDeviceChange]);
+  }, [onReset, setDrawer, setPreventResetOnDeviceChange]);
 
   const onOpenDrawer = useCallback(() => {
     tracer.trace("Opening drawer", { hasFirmware: !!firmware, function: "onOpenDrawer" });
@@ -173,6 +172,7 @@ const FirmwareUpdate = (props: Props) => {
   useEffect(() => {
     // Open drawer when OS update was requested from banner (disclaimer flow)
     if (
+      shouldDisplayWallet40MainNav &&
       props.openFirmwareUpdate &&
       firmware &&
       !deviceInfo.isOSU &&
@@ -181,9 +181,13 @@ const FirmwareUpdate = (props: Props) => {
       openedFromOsUpdateRequestedRef.current = true;
       onOpenDrawer();
     }
-  }, [props.openFirmwareUpdate, firmware, deviceInfo.isOSU, onOpenDrawer]);
-
-  if (isWallet40Enabled) return null;
+  }, [
+    shouldDisplayWallet40MainNav,
+    props.openFirmwareUpdate,
+    firmware,
+    deviceInfo.isOSU,
+    onOpenDrawer,
+  ]);
 
   if (!firmware) {
     if (!isDeprecated) return null;
@@ -191,9 +195,15 @@ const FirmwareUpdate = (props: Props) => {
       <FirmwareUpdateBanner
         old
         right={
-          <Button variant="main" onClick={() => openURL(contactSupportUrl)}>
-            <Trans i18nKey="manager.firmware.banner.old.cta" />
-          </Button>
+          shouldDisplayWallet40MainNav ? (
+            <NewButton appearance="gray" onClick={() => openURL(contactSupportUrl)}>
+              <Trans i18nKey="manager.firmware.banner.old.cta" />
+            </NewButton>
+          ) : (
+            <Button variant="main" onClick={() => openURL(contactSupportUrl)}>
+              <Trans i18nKey="manager.firmware.banner.old.cta" />
+            </Button>
+          )
         }
       />
     );
@@ -217,19 +227,38 @@ const FirmwareUpdate = (props: Props) => {
               </Text>
             </Box>
           )}
-          <Button
-            variant="main"
-            data-testid="manager-update-firmware-button"
-            disabled={!!disableFirmwareUpdate}
-            onClick={() => {
-              track("Manager Firmware Update Click", {
-                firmwareName: firmware.final.name,
-              });
-              onOpenDrawer();
-            }}
-          >
-            <Trans i18nKey="manager.firmware.banner.cta2" />
-          </Button>
+          {shouldDisplayWallet40MainNav ? (
+            <NewButton
+              appearance="gray"
+              size="sm"
+              data-testid="manager-update-firmware-button"
+              disabled={!!disableFirmwareUpdate}
+              onClick={() => {
+                track("button_clicked", {
+                  page: "my ledger",
+                  banner: "OS update",
+                  button: "click(update)",
+                });
+                onOpenDrawer();
+              }}
+            >
+              <Trans i18nKey="manager.firmware.banner.wallet40.cta" />
+            </NewButton>
+          ) : (
+            <Button
+              variant="main"
+              data-testid="manager-update-firmware-button"
+              disabled={!!disableFirmwareUpdate}
+              onClick={() => {
+                track("Manager Firmware Update Click", {
+                  firmwareName: firmware.final.name,
+                });
+                onOpenDrawer();
+              }}
+            >
+              <Trans i18nKey="manager.firmware.banner.cta2" />
+            </Button>
+          )}
         </Box>
       }
     />
