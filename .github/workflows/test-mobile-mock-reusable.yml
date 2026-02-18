@@ -321,7 +321,7 @@ jobs:
           pnpm build:dummy-apps
         shell: bash
 
-      - uses: Install mitmproxy
+      - name: Install mitmproxy
         run: brew install mitmproxy
         shell: bash
 
