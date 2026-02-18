@@ -326,6 +326,15 @@ export class TokenAccount extends Account {
     Account.ETH_2,
   );
 
+  static readonly ETH_USDT_3 = new TokenAccount(
+    Currency.ETH_USDT,
+    "Tether USD 3",
+    2,
+    Account.ETH_3.accountPath,
+    TokenType.ERC20,
+    Account.ETH_3,
+  );
+
   static readonly SOL_GIGA_1 = new TokenAccount(
     Currency.SOL_GIGA,
     "GIGACHAD 1",
