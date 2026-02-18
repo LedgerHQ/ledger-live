@@ -7,7 +7,6 @@ jest.mock("electron", () => {
     "../../../tests/mocks/electron",
   );
   return {
-    ...base.default,
     ipcRenderer: {
       ...base.ipcRenderer,
       removeListener: jest.fn(),
@@ -15,39 +14,15 @@ jest.mock("electron", () => {
   };
 });
 
-jest.mock("~/renderer/store", () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    set: jest.fn(),
-    delete: jest.fn(),
-    clear: jest.fn(),
-  },
-}));
+jest.mock("~/renderer/store", () => ({}));
 
 jest.mock("../components/FirmwareUpdateBanner", () => ({
   __esModule: true,
   default: () => <div data-testid="firmware-update-banner-entry">FirmwareUpdateBannerEntry</div>,
 }));
 
-jest.mock("~/renderer/screens/dashboard", () => {
-  const React = require("react");
-  return {
-    __esModule: true,
-    default: () => React.createElement("div", { "data-testid": "dashboard-screen" }, "Dashboard"),
-  };
-});
-
 jest.mock("@braze/web-sdk", () => ({
   getCachedContentCards: () => ({ cards: [] }),
-  initialize: () => true,
-  changeUser: () => {},
-  requestContentCardsRefresh: () => {},
-  subscribeToContentCardsUpdates: () => () => {},
-  automaticallyShowInAppMessages: () => {},
-  openSession: () => {},
-  logCardDismissal: () => {},
-  logContentCardClick: () => {},
 }));
 
 jest.mock("LLD/features/AppBlockers/components/AppVersionBlocker", () => {
@@ -58,7 +33,6 @@ jest.mock("LLD/features/AppBlockers/components/AppVersionBlocker", () => {
 jest.mock("~/renderer/components/IsNewVersion", () => () => null);
 
 jest.mock("~/renderer/analytics/segment", () => ({
-  updateIdentify: jest.fn(),
   track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
   useTrack: () => jest.fn(),
