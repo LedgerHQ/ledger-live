@@ -337,7 +337,7 @@ jobs:
 
           # Configure host to use mitmproxy
           /usr/sbin/networksetup -listallnetworkservices
-          export NETWORK_SERVICE=$(/usr/sbin/networksetup -listallnetworkservices | grep -iE "wi-fi|airport" | head -1)
+          export NETWORK_SERVICE=$(/usr/sbin/networksetup -listallnetworkservices | grep -iE "wi-fi|ethernet|airport" | head -1)
 
           if [ -z "$NETWORK_SERVICE" ]; then
             echo "Failed to detect network service"
