@@ -3,6 +3,7 @@ import DeviceInfo from "react-native-device-info";
 import { MMKV } from "react-native-mmkv";
 
 const STORAGE_KEY = "__dev_server_connected";
+const MAX_POLL_RETRIES = 30;
 
 /** Only for iOS physical devices on debug builds, to ensure dev-server pairing on first load */
 const shouldActivate = __DEV__ && Platform.OS === "ios" && !DeviceInfo.isEmulatorSync();
@@ -59,18 +60,20 @@ function initDevServerAutoReload(): void {
     const ip = await getDevServerIP();
     const port = 8081;
 
-    const check = () => {
+    const check = (retryCount: number) => {
       fetch(`http://${ip}:${port}/status`, { method: "HEAD" })
         .then(() => {
           storage?.set(STORAGE_KEY, true);
           DevSettings.reload();
         })
         .catch(() => {
-          setTimeout(check, 2000);
+          if (retryCount < MAX_POLL_RETRIES) {
+            setTimeout(() => check(retryCount + 1), 2000);
+          }
         });
     };
 
-    setTimeout(check, 3000);
+    setTimeout(() => check(0), 3000);
   };
 
   poll();
