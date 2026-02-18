@@ -26,11 +26,13 @@ export const useWalletV4TourDrawerViewModel = (
   const { shouldDisplayTour } = useWalletFeaturesConfig("desktop");
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [openSource, setOpenSource] = useState<"portfolio" | "debug">("portfolio");
 
   // Auto-open only when: tour enabled, not seen yet, and user is on Portfolio page
   useEffect(() => {
     if (isOnPortfolioPage && shouldDisplayTour && !hasSeenTour) {
       setIsDialogOpen(true);
+      setOpenSource("portfolio");
       track("Wallet V4 Tour Shown", { platform: "LWD", source: "portfolio" });
     }
   }, [isOnPortfolioPage, shouldDisplayTour, hasSeenTour]);
@@ -38,14 +40,15 @@ export const useWalletV4TourDrawerViewModel = (
   const handleOpenDialog = useCallback(() => {
     if (!shouldDisplayTour || hasSeenTour) return;
     setIsDialogOpen(true);
+    setOpenSource("debug");
     track("Wallet V4 Tour Shown", { platform: "LWD", source: "debug" });
   }, [shouldDisplayTour, hasSeenTour]);
 
   const handleCloseDialog = useCallback(() => {
     setIsDialogOpen(false);
     dispatch(setHasSeenWalletV4Tour(true));
-    track("Wallet V4 Tour Dismissed", { platform: "LWD", source: "portfolio" });
-  }, [dispatch]);
+    track("Wallet V4 Tour Dismissed", { platform: "LWD", source: openSource });
+  }, [dispatch, openSource]);
 
   return {
     isDialogOpen,
