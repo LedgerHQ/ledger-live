@@ -369,7 +369,7 @@ describe("sendFeatures", () => {
 
   it("should get memo default option", () => {
     const stellar = getCryptoCurrencyById("stellar");
-    expect(sendFeatures.getMemoDefaultOption(stellar)).toBe("MEMO_ID");
+    expect(sendFeatures.getMemoDefaultOption(stellar)).toBe("MEMO_TEXT");
   });
 
   it("should return undefined when memo has no default option", () => {
