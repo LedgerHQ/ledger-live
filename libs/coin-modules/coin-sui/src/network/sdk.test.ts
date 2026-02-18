@@ -2335,8 +2335,8 @@ describe("withBatchedMultiGetObjects", () => {
       options: { showBcs: true },
     });
     expect(result).toHaveLength(120);
-    expect((result[0] as any).data.objectId).toBe("0xobj0");
-    expect((result[119] as any).data.objectId).toBe("0xobj119");
+    expect(result[0].data?.objectId).toBe("0xobj0");
+    expect(result[119].data?.objectId).toBe("0xobj119");
   });
 
   it("should handle exactly 50 objects without batching", async () => {
