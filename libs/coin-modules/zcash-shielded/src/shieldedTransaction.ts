@@ -7,7 +7,7 @@ export type ShieldedTransaction = {
   height: number;
   blockHash: string;
   time: number;
-  fee: number; // BigNumber as string
+  fee: number;
   decryptedData?: DecryptedTransaction; // Decrypted transaction data
 };
 

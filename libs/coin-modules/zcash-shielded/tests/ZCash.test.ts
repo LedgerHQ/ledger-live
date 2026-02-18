@@ -131,4 +131,13 @@ describe("findShieldedTxsInBlock", () => {
     });
     expect(transactions).toEqual([]);
   });
+
+  test("edge case: retrieves an empty list when the block has emtpy tx", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: { ...blockWithoutAnyTx, tx: ["", ""] },
+      viewingKey: testAccount1.viewingKey,
+    });
+    expect(transactions).toEqual([]);
+  });
 });

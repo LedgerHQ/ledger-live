@@ -1,8 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
-import type { ShieldedTransaction } from "./shieldedTransaction";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
-import { toShieldedTransaction } from "./shieldedTransaction";
+import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
 import { LOG_TYPE } from "./constants";
 
 /**
@@ -71,6 +70,10 @@ export default class ZCash {
     // 2. retrieve each tx hash
     if (transactions) {
       for (const txId of transactions) {
+        if (!txId) {
+          continue;
+        }
+
         const tx = await this.jsonRpcClient.getRawTransaction(txId);
 
         // 3. call decryptTransaction for each tx hash containing orchard actions
