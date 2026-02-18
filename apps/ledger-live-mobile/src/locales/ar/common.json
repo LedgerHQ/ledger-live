@@ -1583,6 +1583,25 @@
     "bannerCta" : "ابدأ الإعداد",
     "continue" : "متابعة"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
+    "continue" : "متابعة"
+  },
   "purchaseDevice" : {
     "pageTitle" : "شراء جهاز",
     "debugDrawers" : {
@@ -2638,7 +2657,9 @@
     "discover" : "اكتشف",
     "nanoX" : "Nano X",
     "market" : "السوق",
-    "earn" : "اكسب"
+    "earn" : "اكسب",
+    "card" : "البطاقة",
+    "swap" : "مبادلة"
   },
   "portfolio" : {
     "totalBalance" : "إجمالي الرصيد",
@@ -2675,6 +2696,10 @@
     },
     "carousel" : {
       "title" : "من أجلك"
+    },
+    "perpsEntry" : {
+      "title" : "العقود الدائمة",
+      "description" : "تداول باستخدام رافعة مالية"
     },
     "recommended" : {
       "title" : "موصى به"
@@ -2713,6 +2738,8 @@
       "transfer" : "تحويل",
       "swap" : "مبادلة",
       "buy" : "شراء",
+      "connect" : "اتصال",
+      "buyLedger" : "شراء Ledger",
       "transferDrawer" : {
         "title" : "تحويل",
         "receiveCrypto" : "تلقي الأصول المشفرة",
@@ -2988,7 +3015,6 @@
     "yield" : "العائد",
     "sell" : "بيع",
     "swap" : "مبادلة",
-    "perps" : "عقود دائمة",
     "manage" : "إدارة",
     "lastTransactions" : "المعاملات الأخيرة",
     "emptyState" : {
@@ -3000,7 +3026,8 @@
         "receiveFunds" : "تلقي",
         "buyCrypto" : "شراء"
       },
-      "addAccountCta" : "إضافة حساب"
+      "addAccountCta" : "إضافة حساب",
+      "addCryptoAccount" : "إضافة حساب أصل مشفر"
     },
     "settings" : {
       "header" : "إعدادات الحساب",
@@ -3491,6 +3518,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "تصحيح أخطاء تحديث البرنامج الثابت"
         }
+      },
+      "contentCards" : {
+        "title" : "بطاقات المحتوى",
+        "titleDesc" : "قم بإنشاء بطاقات محتوى محلية بدون Braze للاختبار.",
+        "description" : "البطاقات المحلية تظهر في المحفظة الاستثمارية (وأماكن الأخرى) بدون Braze. إنها تستمر حتى تتجاهلها أو تحذفها هنا.",
+        "addSampleBanner" : "إضافة شريط عينة",
+        "addSampleBannerDesc" : "إضافة شريط رئيسي عينة إلى المحفظة الاستثمارية.",
+        "addSampleActionCarousel" : "إضافة شريط إجراء دوار عينة",
+        "addSampleActionCarouselDesc" : "إضافة شريط دوار من بطاقات الإجراءات (شراء، بيع، تكديس) إلى المحفظة الاستثمارية.",
+        "dismissAll" : "تجاهل كل البطاقات المحلية",
+        "dismissAllDesc" : "حذف كل بطاقات المحتوى التي تم إنشاؤها محلياً."
       }
     }
   },
@@ -3674,10 +3712,6 @@
     "stake" : {
       "title" : "تكديس",
       "description" : "احصل على مكافآت على أصولك المشفرة."
-    },
-    "perps" : {
-      "title" : "عقود دائمة",
-      "description" : "تداول العقود الدائمة بالأصول المشفرة."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -3875,7 +3909,8 @@
         "title" : "اختر عرض سعر"
       },
       "twoStepApproval" : {
-        "title" : "أكمل الخطوات"
+        "title" : "أكمل الخطوات",
+        "completedTitle" : "حالة المعاملة"
       },
       "loader" : {
         "title" : "المبادلة قيد المعالجة",
@@ -4140,6 +4175,81 @@
     "loading" : "جاري بحث الأجهزة..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "إرسال {{currency}}",
+      "available" : "متاح {{amount}}",
+      "placeholder" : "أدخِل عنواناً أو ENS",
+      "placeholderNoENS" : "أدخل العنوان",
+      "editRecipientAccessibilityLabel" : "Edit recipient",
+      "recent" : "حديث",
+      "myAccounts" : "حساباتي",
+      "sendTo" : "إرسال إلى {{address}}",
+      "addressMatched" : "العنوان متطابق",
+      "addressNotFound" : "لم يتم العثور على العنوان",
+      "alreadyUsed" : "تم استخدامه بالفعل · {{date}}",
+      "recentSendWillAppear" : "سيظهر ما أرسلته مؤخراً هنا",
+      "relativeDate" : {
+        "justNow" : "الآن",
+        "minutesAgo_one" : "منذ 1 دقيقة",
+        "minutesAgo_other" : "منذ {{count}} دقيقة",
+        "hoursAgo_one" : "منذ 1 ساعة",
+        "hoursAgo_other" : "منذ {{count}} ساعة",
+        "daysAgo_one" : "منذ 1 يوم",
+        "daysAgo_other" : "منذ {{count}} يوم"
+      },
+      "remove" : "حذف",
+      "enterTag" : "أدخل {{tag}}",
+      "firstInteraction" : {
+        "title" : "أنت ترسل إلى عنوان جديد",
+        "description" : "تحقق من صحة العنوان. في حالة الشك أرسل مبلغاً صغيراً أولاً."
+      },
+      "sanctioned" : {
+        "title" : "عنوان مُعلّم",
+        "description" : "لقد تم وضع علامة على هذا العنوان و Ledger لا تسمح بالإرسال إليه",
+        "helpCenter" : "مركز الدعم"
+      },
+      "errors" : {
+        "incorrectFormat" : "تنسيق العنوان غير صحيح",
+        "incompatibleAsset" : "العنوان غير متوافق مع الأصل المحدد",
+        "walletNotExist" : "المحفظة غير موجودة"
+      },
+      "skipMemo" : {
+        "title" : "تخطي إضافة {{tag}}؟",
+        "warning" : "قد يتم فقدان أصلك إذا كان {{tag}} مطلوب من قِبل المستلم الذي تقوم بالإرسال إليه"
+      },
+      "tagHelp" : {
+        "title" : "ما هو {{tag}}؟",
+        "description" : "{{tag}} مطلوب عند إرسال {{currency}} إلى منصة تداول أصول مشفرة. هي ميزة تستخدم لتحديد مستلم المعاملة. عدم تضمين ملاحظة (تسمية الوجهة) {{tag}} قد ينتج عنه فقدان دائم للأموال."
+      },
+      "networkFeesInFiat" : "رسوم الشبكة بعملة {{currency}}",
+      "feesAmount" : "مبلغ الرسوم ({{unit}})",
+      "gasLimit" : "حد الغاز ({{unit}})",
+      "feesPaid" : "الرسوم المدفوعة للشبكة لمتابعة معاملتك",
+      "insufficientBalanceFees" : "رصيد غير كافٍ لتغطية رسوم الشبكة.",
+      "amountToSend" : "المبلغ المراد إرساله بعملة ({{currency}})",
+      "coinToSend" : "العملة المراد إرسالها",
+      "coinControlCustom" : "اختيار عملات مخصص",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "الحد الأقصى"
+      },
+      "reviewCta" : "مراجعة",
+      "getCta" : "احصل على {{currency}}",
+      "switchInputMode" : "تبديل وضع إدخال المبلغ",
+      "aboveMaximum" : "أعلى من الحد الأقصى للرصيد",
+      "transactionSigned" : "تم توقيع المعاملة",
+      "processingTransaction" : "معاملتك قيد المعالجة.",
+      "sign" : {
+        "title" : "تابع على جهازك Ledger {{wording}}",
+        "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "تعذر تحديث رسوم الشبكة",
+        "warningDescription" : "الإعدادات المسبقة للرسوم قد تكون غير حديثة."
+      }
+    },
     "pendingTxWarning" : "لديك معاملات واردة مُعلقة. يُرجى الانتباه، المعاملات المُعلقة يمكن عكسها.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "متابعة",
@@ -4573,6 +4683,7 @@
       },
       "acceptTerms" : "بتوقيع هذه المعاملة، أنت تقبل </0>شروط استخدام</0> {{provider}}<0><0>",
       "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
+      "acceptTermsSponsored" : "للاستفادة من رسوم الشبكة المجانية، أنت توافق أيضاً على مشاركة تفاصيل معاملتك (بما في ذلك عنوان محفظتك) مع Blinklabs.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -8307,22 +8418,36 @@
       "authorize" : "تصريح",
       "preapprove" : "تمت إضافة الحساب بنجاح",
       "validator" : "مُدقِّق Ledger",
-      "title" : "اقبل تلقائياً الأموال الواردة",
+      "title" : "التهيئة",
+      "success" : "تمت تهيئة الحساب بنجاح",
+      "status" : {
+        "prepare" : "جارٍ إعداد معاملة تهيئة الحساب.\nقد يستغرق هذا ما يصل إلى 1 دقيقة...",
+        "submit" : "جارٍ تهيئة الحساب...",
+        "default" : "جارٍ المعالجة..."
+      },
       "processing" : {
         "title" : "جارٍ معالجة المعاملة",
-        "description" : "هذه العملية قد تستغرق ما يصل إلى 1 دقيقة",
+        "description" : "يُرجى الانتظار",
         "keepDeviceNearby" : "لا تُغادر تطبيق Ledger Wallet واحتفظ بجهازك Ledger بالقرب منك."
       },
       "reonboard" : {
         "title" : "مطلوب تحديث الحساب",
         "account" : "الحساب",
         "authorize" : "إعادة تصريح المدقق",
+        "success" : "تم تحديث الحساب بنجاح",
         "warning" : {
           "title" : "تم اكتشاف تغير في الطوبولوجيا",
           "description" : "تم اكتشاف تغير في طوبولوجيا شبكة Canton. يُرجى إعادة تهيئة حسابك لمتابعة استخدامه."
         }
       },
       "error429" : "شبكة Canton تدعم حالياً عدداً محدوداً من عمليات إنشاء الحساب في اليوم. يُرجى إعادة المحاولة لاحقاً."
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "جارٍ إعداد التصريح...",
+        "submit" : "جارٍ تصريح المدقق...",
+        "default" : "جارٍ المعالجة..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "مطلوب إجراء: مخرجات معاملات غير منفقة (UTXO) كثيرة للغاية",
@@ -8388,9 +8513,6 @@
     },
     "tileTitle" : "الحالة المزاجية"
   },
-  "perps" : {
-    "title" : "عقود دائمة"
-  },
   "analyticsAllocation" : {
     "header" : {
       "main" : "التحليلات"
@@ -8401,5 +8523,40 @@
     "actions" : {
       "swap" : "مبادلة"
     }
+  },
+  "cardLanding" : {
+    "title" : "أنفِق\nأصولك المشفرة",
+    "subtitle" : "ادفع عبر الإنترنت أو في المتاجر الفعلية باستخدام بطاقة أصول مشفرة",
+    "ctas" : {
+      "exploreCards" : "استكشف البطاقات",
+      "iHaveACard" : "I have a card"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "اكتشف محفظتك الاستثمارية الجديدة",
+    "slides" : {
+      "portfolio" : {
+        "title" : "محفظتك الاستثمارية، برؤية جديدة",
+        "description" : "لقد قمنا بترتيب شاشتك الرئيسية. تفتقد رسمك البياني؟ ببساطة انقر تحت رصيدك."
+      },
+      "navigation" : {
+        "title" : "كل شيء في مكانه الصحيح",
+        "description" : "My Ledger (جهازي Ledger) و Discover (اكتشف) الآن في الجزء العلوي. Swap (مبادلة) و Card (البطاقة) نُقلا إلى الجزء السفلي لوصول أسرع."
+      },
+      "actions" : {
+        "title" : "إجراءات بسرعة السوق",
+        "description" : "حدد اتجاهات السوق بواسطة الشريط الجديد وتداول على الفور."
+      }
+    },
+    "cta" : {
+      "continue" : "متابعة",
+      "explore" : "استكشاف محفظتي الاستثمارية الجديدة"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "الصفحة الرئيسية",
+    "swap" : "مبادلة",
+    "earn" : "اكسب",
+    "card" : "البطاقة"
   }
 }
