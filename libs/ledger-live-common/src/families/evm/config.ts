@@ -385,11 +385,11 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://arb1.arbitrum.io/rpc",
+        uri: "https://arbitrum.coin.ledger.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://arbitrum.blockscout.com/api",
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42161",
       },
       showNfts: false,
     },
@@ -792,7 +792,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://base-rpc.publicnode.com",
+        uri: "https://base.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
