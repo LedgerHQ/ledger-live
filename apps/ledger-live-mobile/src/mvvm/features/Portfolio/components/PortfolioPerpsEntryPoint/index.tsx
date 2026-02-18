@@ -19,7 +19,7 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight, PiggyBank } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ChevronRight, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { track } from "~/analytics";
 
 export const PortfolioPerpsEntryPoint = () => {
@@ -46,7 +46,7 @@ export const PortfolioPerpsEntryPoint = () => {
       <Flex mb={6}>
         <ListItem onPress={handlePress} testID="portfolio-perps-entry-point">
           <ListItemLeading>
-            <ListItemSpot appearance="icon" icon={PiggyBank} />
+            <ListItemSpot appearance="icon" icon={Infinite} />
             <ListItemContent>
               <ListItemTitle>{t("portfolio.perpsEntry.description")}</ListItemTitle>
             </ListItemContent>

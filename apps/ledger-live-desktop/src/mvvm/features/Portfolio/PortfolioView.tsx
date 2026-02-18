@@ -54,11 +54,11 @@ export const PortfolioView = memo(function PortfolioView({
             )}
             {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" className="mb-8" />}
           </div>
-          <PerpsEntryPoint />
 
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
           {shouldDisplayAddAccountCta && <AddAccount />}
+          <PerpsEntryPoint />
 
           <AssetDistribution />
           {totalOperations > 0 && (
