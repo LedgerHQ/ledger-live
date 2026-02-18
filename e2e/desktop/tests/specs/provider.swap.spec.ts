@@ -11,134 +11,97 @@ import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-test.describe("Swap - Provider redirection", () => {
-  const fromAccount = Account.ETH_1;
-  const toAccount = TokenAccount.ETH_USDC_1;
-  const provider = Provider.VELORA;
-  setupEnv(true);
+const providerFlowTests = [
+  {
+    fromAccount: Account.ETH_1,
+    toAccount: TokenAccount.ETH_USDC_1,
+    provider: Provider.VELORA,
+    xrayTicket: "B2CQA-3119",
+    bugTicket: "QAA-854",
+  },
+  {
+    fromAccount: Account.ETH_1,
+    toAccount: TokenAccount.ETH_USDT_1,
+    provider: Provider.ONE_INCH,
+    xrayTicket: "B2CQA-3120",
+    bugTicket: "QAA-854",
+  },
+];
 
-  const accPair: string[] = [fromAccount, toAccount].map(acc =>
-    acc.currency.speculosApp.name.replace(/ /g, "_"),
-  );
+for (const { fromAccount, toAccount, provider, xrayTicket, bugTicket } of providerFlowTests) {
+  test.describe(`Swap - ${provider.uiName} flow`, () => {
+    setupEnv(true);
 
-  test.beforeEach(async () => {
-    setExchangeDependencies(
-      accPair.map(appName => ({
-        name: appName,
-      })),
+    const accPair: string[] = [fromAccount, toAccount].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
-  });
 
-  test.use({
-    userdata: "skip-onboarding",
-    speculosApp: app,
+    test.beforeEach(async () => {
+      setExchangeDependencies(
+        accPair.map(appName => ({
+          name: appName,
+        })),
+      );
+    });
 
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(fromAccount),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(toAccount),
-        },
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: app,
+
+      cliCommandsOnApp: [
+        [
+          {
+            app: fromAccount.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(fromAccount),
+          },
+          {
+            app: toAccount.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(toAccount),
+          },
+        ],
+        { scope: "test" },
       ],
-      { scope: "test" },
-    ],
-  });
+    });
 
-  test(
-    `Swap test provider redirection (${provider.uiName})`,
-    {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-3119",
+    test(
+      `Swap - ${provider.uiName} flow`,
+      {
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          "@ethereum",
+          "@family-evm",
+        ],
+        annotation: [
+          {
+            type: "TMS",
+            description: xrayTicket,
+          },
+          { type: "BUG", description: bugTicket },
+        ],
       },
-    },
-    async ({ app, electronApp }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
 
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
+        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+        const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
-      await app.swap.selectSpecificProvider(provider, electronApp);
-      await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
-      await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
-      await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
-    },
-  );
-});
-
-test.describe("Swap - 1inch flow", () => {
-  const fromAccount = Account.ETH_1;
-  const toAccount = TokenAccount.ETH_USDT_1;
-  const provider = Provider.ONE_INCH;
-  setupEnv(true);
-
-  const accPair: string[] = [fromAccount, toAccount].map(acc =>
-    acc.currency.speculosApp.name.replace(/ /g, "_"),
-  );
-
-  test.beforeEach(async () => {
-    setExchangeDependencies(
-      accPair.map(appName => ({
-        name: appName,
-      })),
+        await app.swap.selectSpecificProvider(provider, electronApp);
+        await app.swap.clickExchangeButton(electronApp);
+        await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
+        await app.swap.clickExecuteSwapButton(electronApp);
+        await app.swap.clickContinueButton();
+      },
     );
   });
-
-  test.use({
-    userdata: "skip-onboarding",
-    speculosApp: app,
-
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(fromAccount),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(toAccount),
-        },
-      ],
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `Swap test 1inch flow (${provider.uiName})`,
-    {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-      annotation: [
-        {
-          type: "TMS",
-          description: "B2CQA-3120",
-        },
-        { type: "BUG", description: "QAA-854" },
-      ],
-    },
-    async ({ app, electronApp }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
-
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
-
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-
-      await app.swap.selectSpecificProvider(provider, electronApp);
-      await app.swap.clickExchangeButton(electronApp);
-      await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-      await app.swap.clickExecuteSwapButton(electronApp);
-      await app.swap.clickContinueButton();
-    },
-  );
-});
+}
 
 test.describe("Swap - Check Best Offer", () => {
   const fromAccount = Account.ETH_1;
