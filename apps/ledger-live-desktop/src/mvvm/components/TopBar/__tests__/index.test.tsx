@@ -20,6 +20,10 @@ jest.mock("@braze/web-sdk", () => ({
   logContentCardClick: () => {},
 }));
 
+jest.mock("electron-store", () => {
+  return jest.fn().mockImplementation(() => ({}));
+});
+
 describe("TopBar", () => {
   const getDefaultInitialState = (overrides = {}) => ({
     application: { hasPassword: false },
