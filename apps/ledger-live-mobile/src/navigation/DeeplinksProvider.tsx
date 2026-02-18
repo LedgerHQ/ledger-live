@@ -44,6 +44,7 @@ import {
   validateLargeMoverCurrencyIds,
   validateMarketCurrencyId,
 } from "./deeplinks/validation";
+import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -359,7 +360,8 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
-  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav } =
+    useWalletFeaturesConfig("mobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -785,6 +787,11 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
+          if (shouldDisplayWallet40MainNav) {
+            const w40State = handleWallet40Deeplink(hostname, platform, query);
+            if (w40State) return w40State;
+          }
+
           return getStateFromPath(path, config);
         },
       } as LinkingOptions<ReactNavigation.RootParamList>
@@ -798,6 +805,7 @@ export const DeeplinksProvider = ({
     buySellUiManifestId,
     dispatch,
     shouldDisplayMarketBanner,
+    shouldDisplayWallet40MainNav,
     liveAppProviderInitialized,
     manifests,
   ]);
