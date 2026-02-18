@@ -444,8 +444,8 @@ export class TokenAccount extends Account {
     Account.ALGO_2,
   );
 
-  static readonly XLM_USCD = new TokenAccount(
-    Currency.XLM_USCD,
+  static readonly XLM_USDC = new TokenAccount(
+    Currency.XLM_USDC,
     "USDC 1",
     0,
     Account.XLM_1.accountPath,
