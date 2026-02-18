@@ -335,6 +335,7 @@ jobs:
 
             [tools]
             python = "{{ get_env(name='PYTHON_VERSION', default='3.11') }}"
+            pipx = "latest"
             mitmproxy = "{{ get_env(name='MIMTPROXY_VERSION', default='12.2.1') }}"
           github_token: ${{ secrets.GITHUB_TOKEN }} # [default: ${{ github.token }}] GitHub token for API authentication
 
