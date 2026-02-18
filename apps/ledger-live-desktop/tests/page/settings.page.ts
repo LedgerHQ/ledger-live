@@ -27,6 +27,9 @@ export class SettingsPage extends AppPage {
   readonly openLocalManifestFormButton = this.page.getByTestId("settings-open-local-manifest-form");
   readonly exportLocalManifestButton = this.page.getByTestId("settings-export-local-manifest");
   readonly createLocalManifestButton = this.page.getByTestId("create-local-manifest");
+  readonly filterTokenOperationsZeroAmountToggle = this.page.getByTestId(
+    "switch-filter-token-operations-zero-amount",
+  );
 
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
@@ -55,6 +58,14 @@ export class SettingsPage extends AppPage {
 
   async enableDevMode() {
     await this.experimentalDevModeToggle.click();
+  }
+
+  async filterTokenOperationsZeroAmountToggleClick() {
+    return this.filterTokenOperationsZeroAmountToggle.click();
+  }
+
+  async isFilterTokenOperationsZeroAmountToggleChecked() {
+    return await this.filterTokenOperationsZeroAmountToggle.locator("input").isChecked();
   }
 
   @step("Change counter value to $0")

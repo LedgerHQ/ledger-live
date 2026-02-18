@@ -1,7 +1,7 @@
-import { BigNumber } from "bignumber.js";
-import Prando from "prando";
 import { genAddress, genHex } from "@ledgerhq/coin-framework/mocks/helpers";
 import type { Account, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import Prando from "prando";
 import preloadedData from "./preloadedData.mock";
 import {
   isCosmosAccount,
@@ -115,7 +115,7 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
       (validator, index, arr) =>
         arr.findIndex(v => v.validatorAddress === validator.validatorAddress) === index,
     )
-    .map(({ validatorAddress }, i, arr) => ({
+    .map(({ validatorAddress }, _i, arr) => ({
       address: validatorAddress,
       amount: new BigNumber(Math.round(value.toNumber() * rng.next(0.1, 1 / arr.length))),
     }));

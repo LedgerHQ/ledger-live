@@ -19,6 +19,7 @@ import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAva
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import MainSideBar from "~/renderer/components/MainSideBar";
+import SideBar from "LLD/components/SideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
@@ -97,6 +98,7 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
+const CardW40 = lazy(() => import("LLD/features/Card"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -206,12 +208,19 @@ const RecoverPlayerWithFeatureToggle = () => {
 };
 
 // Shared content for the main app layout
-const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBanner: boolean }) => (
+const MainAppContent = ({
+  shouldDisplayMarketBanner,
+  shouldDisplayWallet40MainNav,
+}: {
+  shouldDisplayMarketBanner: boolean;
+  shouldDisplayWallet40MainNav: boolean;
+}) => (
   <>
     <Routes>
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
     </Routes>
-    <MainSideBar />
+    {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
+
     <Page>
       <TopBannerContainer>
         <UpdateBanner />
@@ -222,6 +231,7 @@ const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBann
         <Route path="/" element={withSuspense(Dashboard)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
+        <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
         <Route path="/card/:appId?" element={withSuspense(Card)({})} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
         <Route path="/manager/*" element={withSuspense(Manager)({})} />
@@ -252,8 +262,11 @@ const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBann
 // Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
   const { pathname } = useLocation();
-  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
-    useWalletFeaturesConfig("desktop");
+  const {
+    shouldDisplayMarketBanner,
+    isEnabled: isWallet40Enabled,
+    shouldDisplayWallet40MainNav,
+  } = useWalletFeaturesConfig("desktop");
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
   return (
@@ -265,7 +278,10 @@ const MainAppLayout = () => {
 
       {useWallet40Layout ? (
         <div className="flex size-full grow flex-row bg-canvas">
-          <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
+          <MainAppContent
+            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+          />
         </div>
       ) : (
         <Box
@@ -278,7 +294,10 @@ const MainAppLayout = () => {
             height: "100%",
           }}
         >
-          <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
+          <MainAppContent
+            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+          />
         </Box>
       )}
 

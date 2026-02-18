@@ -65,7 +65,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   elrond: "erd1sqhjrtmsn5yjk6w85099p8v0ly0g8z9pxeqe5dvu5rlf2n7vq3vqytny9g",
   ethereum_classic: EVM_DEAD_ADDRESS,
   ethereum_sepolia: EVM_DEAD_ADDRESS,
-  ethereum_holesky: EVM_DEAD_ADDRESS,
   ethereum_hoodi: EVM_DEAD_ADDRESS,
   hedera: "0.0.163372",
   cardano_testnet:
@@ -113,7 +112,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   umee: "umee19rl4cm2hmr8afy4kldpxz3fka4jguq0awkszm8",
   coreum: "core19rl4cm2hmr8afy4kldpxz3fka4jguq0a0w4xcw",
   injective: "inj1npvwllfr9dqr8erajqqr6s0vxnk2ak55re90dz",
-  sei_network: "sei19rl4cm2hmr8afy4kldpxz3fka4jguq0a3vute5",
   casper: "02030d18d5bed9f5015824D89367EF448041E912F358655184412E48557491aAdB85",
   neon_evm: EVM_DEAD_ADDRESS,
   dydx: "dydx19rl4cm2hmr8afy4kldpxz3fka4jguq0a4erelz",

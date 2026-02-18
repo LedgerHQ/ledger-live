@@ -1,15 +1,15 @@
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { estimateFees } from "./estimateFees";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../config";
+import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,
   fixtureTransactionParams,
 } from "../network/sidecar.fixture";
-import { createRegistryAndExtrinsics } from "../network/common";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { craftEstimationTransaction } from "./craftTransaction";
-import coinConfig from "../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { estimateFees } from "./estimateFees";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 jest.mock("./polkadot-crypto");
 

@@ -53,16 +53,21 @@ export default class SpeculosHttpTransport extends Transport {
   private eventStream: ReadableStream<Uint8Array> | null = null;
   private buttonClient: ButtonsController | undefined;
 
+  readonly dmk: DeviceManagementKit;
+  sessionId: string;
+
   // emits events coming from Speculos automation SSE stream.
   automationEvents: Subject<Record<string, unknown>> = new Subject();
 
-  constructor(options: SpeculosHttpTransportOpts) {
+  constructor(options: SpeculosHttpTransportOpts, dmk: DeviceManagementKit, sessionId: string) {
     super();
     this.options = options;
-    this.baseUrl = this.resolveBaseFromEnv(options);
+    this.baseUrl = SpeculosHttpTransport.resolveBaseFromEnv(options);
+    this.dmk = dmk;
+    this.sessionId = sessionId;
   }
 
-  private resolveBaseFromEnv(options: SpeculosHttpTransportOpts): string {
+  private static resolveBaseFromEnv(options: SpeculosHttpTransportOpts): string {
     const configuredHostOrDefault =
       options.baseURL ?? process?.env?.SPECULOS_ADDRESS ?? "http://127.0.0.1";
 
@@ -144,13 +149,17 @@ export default class SpeculosHttpTransport extends Transport {
   static listen = (_observer: any) => ({ unsubscribe: () => {} });
 
   static async open(options: SpeculosHttpTransportOpts = {}): Promise<SpeculosHttpTransport> {
-    const transportInstance = new SpeculosHttpTransport(options);
-    const baseUrl = transportInstance.baseUrl;
+    const baseUrl = this.resolveBaseFromEnv(options);
     const connectTimeoutMs = options.timeout ?? 10_000;
+    const entry = this.ensureEntry(baseUrl, connectTimeoutMs);
 
-    this.ensureEntry(baseUrl, connectTimeoutMs);
+    await this.ensureSession(entry);
 
-    return transportInstance;
+    if (!entry.sessionId) {
+      throw new Error("Failed to establish DMK session with Speculos");
+    }
+
+    return new SpeculosHttpTransport(options, entry.dmk, entry.sessionId);
   }
 
   private getButtonClient() {
@@ -173,26 +182,27 @@ export default class SpeculosHttpTransport extends Transport {
   }
 
   async exchange(apduCommand: Buffer): Promise<Buffer> {
-    const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
-      this.baseUrl,
-      this.options.timeout ?? 10_000,
-    );
-
-    await SpeculosHttpTransport.ensureSession(deviceManagementEntry);
-
     try {
-      const { data, statusCode } = await deviceManagementEntry.dmk.sendApdu({
-        sessionId: deviceManagementEntry.sessionId!,
+      const { data, statusCode } = await this.dmk.sendApdu({
+        sessionId: this.sessionId,
         apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
       });
       const responseBuffer = Buffer.from([...data, ...statusCode]);
       return responseBuffer;
     } catch {
-      // reset session and retry once
+      const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
+        this.baseUrl,
+        this.options.timeout ?? 10_000,
+      );
       deviceManagementEntry.sessionId = undefined;
       await SpeculosHttpTransport.ensureSession(deviceManagementEntry);
-      const { data, statusCode } = await deviceManagementEntry.dmk.sendApdu({
-        sessionId: deviceManagementEntry.sessionId!,
+      if (!deviceManagementEntry.sessionId) {
+        throw new Error("Failed to re-establish DMK session with Speculos");
+      }
+      this.sessionId = deviceManagementEntry.sessionId;
+
+      const { data, statusCode } = await this.dmk.sendApdu({
+        sessionId: this.sessionId,
         apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
       });
       const responseBuffer = Buffer.from([...data, ...statusCode]);

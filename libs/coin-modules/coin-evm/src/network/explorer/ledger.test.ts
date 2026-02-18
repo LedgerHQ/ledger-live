@@ -1,22 +1,22 @@
 import { AssertionError, fail } from "assert";
-import eip55 from "eip55";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { delay } from "@ledgerhq/live-promise";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { delay } from "@ledgerhq/live-promise";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import eip55 from "eip55";
+import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
+import tokenData from "../../fixtures/ethereum-erc20-usd__coin.json";
 import {
   coinOperation1,
   coinOperation2,
   coinOperation3,
   coinOperation4,
 } from "../../fixtures/ledger.fixtures";
-import { getCoinConfig } from "../../config";
-import tokenData from "../../fixtures/ethereum-erc20-usd__coin.json";
 import * as LEDGER_API from "./ledger";
 
 setupMockCryptoAssetsStore({

@@ -467,6 +467,9 @@
       "title" : "Cihaz denetimi başarısız",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Ethereum uygulamasında Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
+    },
     "HardResetFail" : {
       "title" : "Üzgünüz, sıfırlanamadı",
       "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
@@ -2681,6 +2684,10 @@
       "seeMarket" : "Tümünü gör"
     },
     "walletBalance" : "Cüzdan bakiyesi",
+    "balance" : {
+      "noSigner" : "En güvenli\ncüzdan",
+      "noFund" : "Kriptolarınızı\ngüvende tutun"
+    },
     "seeAllAssets" : "Tüm varlıkları gör",
     "seeAllAccounts" : "Tüm hesapları gör",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "Gönder",
       "deposit" : "Al",
       "stake" : "Stake et"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "Transfer",
+      "swap" : "Takas et",
+      "buy" : "Satın al",
+      "transferDrawer" : {
+        "title" : "Transfer",
+        "receiveCrypto" : "Kripto alın",
+        "sendCrypto" : "Kripto gönder",
+        "bankTransfer" : "Banka transferi",
+        "bankTransferDescription" : "Nakit para göndererek stabil coin alın"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "Getiri",
     "sell" : "Sat",
     "swap" : "Takas et",
+    "perps" : "Sürekli vadeli işlemler",
     "manage" : "Yönet",
     "lastTransactions" : "Son işlemler",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Bildirimleri aç",
-      "titleVariantB" : "Ledger Wallet’tan en iyi şekilde faydalanın",
+      "titleVariantB" : "Önemli bilgileri kaçırmayın",
       "desc" : "Ledger Wallet, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
-      "descVariantB" : "Size kişiselleştirilmiş ipuçları, kurulum rehberleri ve önemli piyasa haberlerini göndereceğiz.",
+      "descVariantB" : "Yeni token’lar, kazanç fırsatları ve piyasa değişimleri hakkında gerçek zamanlı uyarılar alın. İstediğiniz zaman devre dışı bırakabilirsiniz.",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "Stake et",
       "description" : "Kriptolarınızla ödüller kazanın."
+    },
+    "perps" : {
+      "title" : "Sürekli vadeli işlemler",
+      "description" : "Kriptoda sürekli vadeli işlemler yapın."
     },
     "swap" : {
       "title" : "Takas et",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Sağlayıcı kullanılamıyor",
-      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB-{{randomCode}}"
+      "description" : "Takas sağlayıcısı bu işlemi işleyemiyor. Hata kodu 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "Sağlayıcı kullanılamıyor",
@@ -8284,6 +8308,11 @@
       "preapprove" : "Hesap başarıyla eklendi",
       "validator" : "Ledger Doğrulayıcı",
       "title" : "Gelen fonları otomatik olarak kabul edin",
+      "processing" : {
+        "title" : "İşlem sürüyor",
+        "description" : "Bu işlem 1 dakika kadar sürebilir",
+        "keepDeviceNearby" : "Ledger Wallet uygulamasında kalın ve Ledger'ınızı yakınınızda tutun."
+      },
       "reonboard" : {
         "title" : "Hesap Güncellemesi Gerekiyor",
         "account" : "Hesap",
@@ -8356,7 +8385,11 @@
       "neutral" : "Nötr",
       "greed" : "Açgözlülük",
       "extremeGreed" : "Aşırı Açgözlülük"
-    }
+    },
+    "tileTitle" : "Duygu"
+  },
+  "perps" : {
+    "title" : "Sürekli vadeli işlemler"
   },
   "analyticsAllocation" : {
     "header" : {

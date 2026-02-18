@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { makeGetAccountShape } from "../../synchronisation";
 
-import { createFixtureAccount, mockSignerContext } from "../fixtures/common.fixtures";
+import { createFixtureAccount, mockSignerContext } from "../../fixtures/common.fixtures";
 
 jest.setTimeout(10000);
 

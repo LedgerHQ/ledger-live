@@ -69,6 +69,36 @@ describe("Operation.ts", () => {
 
       expect(isAddressPoisoningOperation(operation, account)).toBe(false);
     });
+
+    it("shouldn't filter operation if it's a Account at 0 value", () => {
+      const account = genAccount("myAccount", { currency: ethereum });
+      const tokenAccount = genTokenAccount(0, account, lobster);
+      const operation = {
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+        value: new BigNumber(0),
+      };
+
+      expect(isAddressPoisoningOperation(operation, account)).toBe(false);
+    });
+
+    it("should use options.families array when provided (feature-flag path)", () => {
+      const account = genAccount("myAccount", { currency: ethereum });
+      const tokenAccount = genTokenAccount(0, account, usdc);
+      const operation = {
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+        value: new BigNumber(0),
+      };
+      const families = ["evm"];
+
+      expect(isAddressPoisoningOperation(operation, tokenAccount, { families: families })).toBe(
+        true,
+      );
+      expect(
+        isAddressPoisoningOperation(operation, tokenAccount, {
+          families: ["algorand"],
+        }),
+      ).toBe(false);
+    });
   });
 
   describe("isOldestPendingOperation", () => {

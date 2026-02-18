@@ -1,6 +1,6 @@
 ---
 description: Zod schema validation patterns for API types
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Zod Schema Validation

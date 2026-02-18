@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { signMessage } from "./hw-signMessage";
 import { BitcoinSigner } from "./signer";
-import { createFixtureAccount } from "./__tests__/fixtures/common.fixtures";
+import { createFixtureAccount } from "./fixtures/common.fixtures";
 
 describe("signMessage", () => {
   it("returns a base64 format string", async () => {

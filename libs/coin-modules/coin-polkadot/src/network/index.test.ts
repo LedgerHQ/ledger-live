@@ -1,8 +1,8 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as sidecar from "./sidecar";
 import network from ".";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./sidecar");
 const mockedSidecar = jest.mocked(sidecar);

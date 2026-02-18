@@ -1,19 +1,18 @@
 import { AssertionError, fail } from "assert";
-import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { Operation, TokenAccount } from "@ledgerhq/types-live";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { setCryptoAssetsStore, getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getEnv } from "@ledgerhq/live-env";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
-import * as etherscanAPI from "../network/explorer/etherscan";
+import BigNumber from "bignumber.js";
+import { getCoinConfig } from "../config";
 import { UnknownExplorer, UnknownNode } from "../errors";
-import * as noneExplorer from "../network/explorer/none";
-import * as nodeApi from "../network/node/rpc.common";
-import { createSwapHistoryMap } from "../logic";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import usdcTokenData from "../fixtures/ethereum-erc20-usd__coin.json";
+import usdtTokenData from "../fixtures/ethereum-erc20-usd_tether__erc20_.json";
 import {
   account,
   coinOperations,
@@ -28,10 +27,11 @@ import {
   internalOperations,
   swapHistory,
 } from "../fixtures/synchronization.fixtures";
-import { getCoinConfig } from "../config";
+import { createSwapHistoryMap } from "../logic";
 import * as logic from "../logic";
-import usdtTokenData from "../fixtures/ethereum-erc20-usd_tether__erc20_.json";
-import usdcTokenData from "../fixtures/ethereum-erc20-usd__coin.json";
+import * as etherscanAPI from "../network/explorer/etherscan";
+import * as noneExplorer from "../network/explorer/none";
+import * as nodeApi from "../network/node/rpc.common";
 import * as synchronization from "./synchronization";
 
 jest.mock("../network/node/rpc.common");

@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   ProtoNFT,
   ProtoNFTRaw,
@@ -7,6 +6,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 export type EvmTransactionMode = "send" | "erc721" | "erc1155";
 

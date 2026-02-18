@@ -1,11 +1,11 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
-import { PolkadotAccount } from "../types";
-import polkadotAPI from "../network";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
+import polkadotAPI from "../network";
+import { PolkadotAccount } from "../types";
 
 export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   await loadPolkadotCrypto();

@@ -2676,6 +2676,10 @@
     "carousel": {
       "title": "For you"
     },
+    "perpsEntry": {
+      "title": "Perpetuals",
+      "description": "Trade with leverage"
+    },
     "recommended": {
       "title": "Recommended"
     },
@@ -2713,6 +2717,8 @@
       "transfer": "Transfer",
       "swap": "Swap",
       "buy": "Buy",
+      "connect": "Connect",
+      "buyLedger": "Buy a Ledger",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive crypto",
@@ -2988,7 +2994,6 @@
     "yield": "Yield",
     "sell": "Sell",
     "swap": "Swap",
-    "perps": "Perps",
     "manage": "Manage",
     "lastTransactions": "Last transactions",
     "emptyState": {
@@ -3000,7 +3005,8 @@
         "receiveFunds": "Receive",
         "buyCrypto": "Buy"
       },
-      "addAccountCta": "Add Account"
+      "addAccountCta": "Add Account",
+      "addCryptoAccount": "Add crypto account"
     },
     "settings": {
       "header": "Account settings",
@@ -3676,10 +3682,6 @@
       "title": "Stake",
       "description": "Get rewards on your crypto."
     },
-    "perps": {
-      "title": "Perps",
-      "description": "Trade perpetuals on crypto."
-    },
     "swap": {
       "title": "Swap",
       "description": "Exchange crypto to crypto.",
@@ -3876,7 +3878,8 @@
         "title": "Select quote"
       },
       "twoStepApproval": {
-        "title": "Complete steps"
+        "title": "Complete steps",
+        "completedTitle": "Transaction Status"
       },
       "loader": {
         "title": "Processing Swap",
@@ -4572,6 +4575,7 @@
       },
       "acceptTerms": "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
       "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
+      "acceptTermsSponsored": "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and its <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact Changelly’s <2>customer support.</2>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },
@@ -8394,9 +8398,6 @@
       "extremeGreed": "Greed+"
     },
     "tileTitle": "Mood"
-  },
-  "perps": {
-    "title": "Perps"
   },
   "analyticsAllocation": {
     "header": {

@@ -1,3 +1,7 @@
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   AmountRequired,
   InvalidAddress,
@@ -6,20 +10,8 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { UserInputType } from "./signer";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
-import { ChainAPI } from "./network";
-import {
-  getMaybeMintAccount,
-  getMaybeTokenAccount,
-  getMaybeTokenMint,
-  getMaybeTokenMintProgram,
-  getMaybeVoteAccount,
-  getStakeAccountAddressWithSeed,
-  getStakeAccountMinimumBalanceForRentExemption,
-  ParsedOnChainMintWithInfo,
-} from "./network/chain/web3";
+import BigNumber from "bignumber.js";
 import {
   SolanaAccountNotFunded,
   SolanaTokenAccountFrozen,
@@ -45,11 +37,29 @@ import {
   SolanaTokenNonTransferable,
   SolanaRecipientMemoIsRequired,
 } from "./errors";
+import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
+import { calculateToken2022TransferFees } from "./helpers/token";
 import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
   isValidBase58Address,
 } from "./logic";
+import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
+import { ChainAPI } from "./network";
+import { TokenAccountInfo } from "./network/chain/account/token";
+import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
+import {
+  getMaybeMintAccount,
+  getMaybeTokenAccount,
+  getMaybeTokenMint,
+  getMaybeTokenMintProgram,
+  getMaybeVoteAccount,
+  getStakeAccountAddressWithSeed,
+  getStakeAccountMinimumBalanceForRentExemption,
+  ParsedOnChainMintWithInfo,
+} from "./network/chain/web3";
+import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
+import { UserInputType } from "./signer";
 import type {
   CommandDescriptor,
   SolanaAccount,
@@ -73,16 +83,6 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
-import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
-import { calculateToken2022TransferFees } from "./helpers/token";
-import { TokenAccountInfo } from "./network/chain/account/token";
-import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
-import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,

@@ -5,7 +5,7 @@ import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/b
 import { useSelector } from "~/context/hooks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
@@ -16,11 +16,13 @@ import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/
 import MyLedgerNavigator, { ManagerTabIcon } from "./MyLedgerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
+import { MainTabBar } from "LLM/components/MainTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { useTransferDrawerController } from "LLM/features/QuickActions";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -36,20 +38,26 @@ export default function MainNavigator() {
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const managerNavLockCallback = useManagerNavLockCallback();
   const web3hub = useFeature("web3hub");
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const earnYiedlLabel = getStakeLabelLocaleBased();
   const { navigateToRebornFlow } = useRebornFlow();
+  const { openDrawer: openTransferDrawer } = useTransferDrawerController();
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
       ({ ...props }: BottomTabBarProps): React.JSX.Element =>
-        customTabBar({
-          ...props,
-          colors,
-          insets,
-          hideTabBar: !isMainNavigatorVisible,
-        }),
-    [colors, insets, isMainNavigatorVisible],
+        shouldDisplayWallet40MainNav ? (
+          <MainTabBar {...props} hideTabBar={!isMainNavigatorVisible} />
+        ) : (
+          customTabBar({
+            ...props,
+            colors,
+            insets,
+            hideTabBar: !isMainNavigatorVisible,
+          })
+        ),
+    [colors, insets, isMainNavigatorVisible, shouldDisplayWallet40MainNav],
   );
 
   const managerLockAwareCallback = useCallback(
@@ -144,6 +152,12 @@ export default function MainNavigator() {
           headerShown: false,
           tabBarIcon: () => <TransferTabIcon />,
         }}
+        listeners={() => ({
+          tabPress: e => {
+            e.preventDefault();
+            openTransferDrawer({ sourceScreenName: "MainTabBar" });
+          },
+        })}
       />
       {web3hub?.enabled ? (
         <Tab.Screen

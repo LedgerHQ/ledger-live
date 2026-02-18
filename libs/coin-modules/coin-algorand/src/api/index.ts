@@ -1,6 +1,5 @@
-import { AlgoAccount, AlgoTransactionParams } from "./algodv2.types";
-
 import { broadcastTransaction, getAccount, getTransactionParams } from "./algodv2";
+import { AlgoAccount, AlgoTransactionParams } from "./algodv2.types";
 
 import { getAccountTransactions } from "./indexer";
 import { AlgoTransaction } from "./indexer.types";

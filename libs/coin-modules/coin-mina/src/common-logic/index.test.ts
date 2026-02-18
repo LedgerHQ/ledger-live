@@ -1,3 +1,6 @@
+import { Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { MinaAccount, Transaction } from "../types/common";
 import {
   getAccountNumFromPath,
   isValidAddress,
@@ -5,9 +8,6 @@ import {
   getTotalSpent,
   reEncodeRawSignature,
 } from ".";
-import { BigNumber } from "bignumber.js";
-import type { MinaAccount, Transaction } from "../types/common";
-import { Operation } from "@ledgerhq/types-live";
 
 // Create a minimal mock implementation for the tests
 type MockMinaAccount = Pick<MinaAccount, "spendableBalance" | "pendingOperations">;

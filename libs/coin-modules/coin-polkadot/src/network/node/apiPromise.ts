@@ -1,6 +1,6 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 let coinConfig: PolkadotCoinConfig | undefined;
 let api: ApiPromise | undefined;

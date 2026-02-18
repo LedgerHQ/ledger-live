@@ -5,10 +5,10 @@ import {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { Transaction, TransactionLike } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TransactionTypes } from "../types";
+import { Transaction, TransactionLike } from "ethers";
 import { getNodeApi } from "../network/node";
+import { TransactionTypes } from "../types";
 import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 

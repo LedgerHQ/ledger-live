@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Platform, Linking, View, StyleSheet } from "react-native";
-import SplashScreen from "react-native-splash-screen";
 import {
   getStateFromPath,
   LinkingOptions,
@@ -45,7 +44,8 @@ import {
   validateLargeMoverCurrencyIds,
   validateMarketCurrencyId,
 } from "./deeplinks/validation";
-import { AppLoadingManager, AppLoadingManagerProps } from "LLM/features/LaunchScreen";
+import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
 const themes: {
@@ -784,6 +784,7 @@ export const DeeplinksProvider = ({
     manifests,
   ]);
   const [isReady, setIsReady] = React.useState(false);
+  const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
 
   useEffect(() => {
     if (userAcceptedTerms === null) return;
@@ -799,29 +800,28 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  useEffect(() => SplashScreen.hide(), []);
-
   const animSplash = useFeature("llmAnimatedSplashScreen");
   const showAnimatedSplashScreen = useRef(
     (animSplash?.enabled && animSplash.params?.[Platform.OS]) ?? true,
   );
   const SplashScreenComponent = useRef(
-    showAnimatedSplashScreen.current
-      ? AppLoadingManager
-      : ({ children }: AppLoadingManagerProps) => <>{children}</>,
+    showAnimatedSplashScreen.current ? AppLoadingManager : SplashScreenHandle,
   );
 
   return (
     <View style={styles.appBackground}>
-      <SplashScreenComponent.current isNavigationReady={isReady} onAppReady={handleStartComplete}>
+      <SplashScreenComponent.current
+        isNavigationReady={isReady && isNavigationContainerReady}
+        onAppReady={handleStartComplete}
+      >
         {isReady ? (
           <NavigationContainer
             theme={theme}
             linking={linking}
             ref={navigationRef}
             onReady={() => {
+              setIsNavigationContainerReady(true);
               isReadyRef.current = true;
-              if (!showAnimatedSplashScreen.current) handleStartComplete();
             }}
           >
             {children}

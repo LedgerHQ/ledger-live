@@ -1,8 +1,8 @@
-import { erc20TxnToOperation } from "./tokenAccounts";
-import { createMockERC20Transfer, TEST_ADDRESSES } from "../test/fixtures";
-import BigNumber from "bignumber.js";
-import { TxStatus } from "../types";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import BigNumber from "bignumber.js";
+import { createMockERC20Transfer, TEST_ADDRESSES } from "../test/fixtures";
+import { TxStatus } from "../types";
+import { erc20TxnToOperation } from "./tokenAccounts";
 
 setupMockCryptoAssetsStore();
 

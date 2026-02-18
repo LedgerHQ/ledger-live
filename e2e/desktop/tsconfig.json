@@ -2,18 +2,9 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ESNext",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types"],
     "paths": {
       "~/*": ["../../apps/ledger-live-desktop/src/*"],
-      "tests/*": ["tests/*"]
-    },
-    "types": ["node"]
+    }
   },
   "include": ["./**/*.ts", "../../apps/ledger-live-desktop/index-types.d.ts"],
   "exclude": ["**/node_modules/*"]

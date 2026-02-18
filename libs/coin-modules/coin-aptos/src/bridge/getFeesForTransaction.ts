@@ -1,10 +1,8 @@
 import { Ed25519PublicKey } from "@aptos-labs/ts-sdk";
+import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
-import { AptosAPI } from "../network";
-import { getTokenAccount } from "./logic";
 import {
   DEFAULT_GAS,
   DEFAULT_GAS_PRICE,
@@ -12,8 +10,10 @@ import {
   ESTIMATE_GAS_MUL_FOR_STAKING,
   STAKING_TX_MODES,
 } from "../constants";
-import type { Transaction, TransactionErrors } from "../types";
 import buildTransaction from "../logic/buildTransaction";
+import { AptosAPI } from "../network";
+import type { Transaction, TransactionErrors } from "../types";
+import { getTokenAccount } from "./logic";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;

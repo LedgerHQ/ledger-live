@@ -1510,7 +1510,9 @@ exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 2`]
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 274636,
-      "extra": {},
+      "extra": {
+        "deposit": "2 tADA",
+      },
       "fee": "174301",
       "hash": "cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6-DELEGATE",

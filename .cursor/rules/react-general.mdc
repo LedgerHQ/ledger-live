@@ -1,7 +1,7 @@
 ---
-alwaysApply: true
 description: General React and React Native engineering rules for Ledger Live
 globs: ["**/*.{ts,tsx}"]
+alwaysApply: false
 ---
 
 # General React & React Native Patterns

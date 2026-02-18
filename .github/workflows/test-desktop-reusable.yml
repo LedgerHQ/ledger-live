@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -66,7 +66,7 @@ jobs:
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
@@ -87,7 +87,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -110,7 +110,7 @@ jobs:
       - name: Upload unit test coverage
         id: generate_coverage
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-desktop
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
@@ -127,11 +127,11 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
       SPECULOS_DEVICE: nanoSP
     runs-on: [ledger-live-4xlarge]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup caches
@@ -181,7 +181,7 @@ jobs:
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results-speculos-smoke
           path: "e2e/desktop/allure-results"
@@ -212,7 +212,7 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup caches
@@ -246,12 +246,12 @@ jobs:
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -269,16 +269,16 @@ jobs:
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: "download linter results"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         continue-on-error: true
         with:
           name: lint-desktop
       - name: download images artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         continue-on-error: true
         with:
           name: images
@@ -517,7 +517,7 @@ jobs:
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: upload summary
         with:
           name: summary-test-desktop.json

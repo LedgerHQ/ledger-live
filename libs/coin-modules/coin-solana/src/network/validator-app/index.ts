@@ -1,7 +1,7 @@
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { Cluster } from "@solana/web3.js";
 import { compact } from "lodash/fp";
-import { getEnv } from "@ledgerhq/live-env";
 
 const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 

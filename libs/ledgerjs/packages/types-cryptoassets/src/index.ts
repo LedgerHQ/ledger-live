@@ -23,7 +23,6 @@ export type LedgerExplorerId =
   | "avax"
   | "eth"
   | "eth_sepolia"
-  | "eth_holesky"
   | "eth_hoodi"
   | "etc"
   | "matic"

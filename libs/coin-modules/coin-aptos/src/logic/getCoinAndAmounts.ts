@@ -1,3 +1,4 @@
+import { MoveResource, WriteSetChangeWriteResource, Event } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 import {
   ADD_STAKE_EVENTS,
@@ -16,7 +17,6 @@ import {
   AptosMoveResource,
   AptosTransaction,
 } from "../types";
-import { MoveResource, WriteSetChangeWriteResource, Event } from "@aptos-labs/ts-sdk";
 import { getResourceAddress } from "./getResourceAddress";
 import { isWriteSetChangeWriteResource } from "./isWriteSetChangeWriteResource";
 
@@ -101,6 +101,30 @@ export function getEventFAAddress(
   return mr.data.metadata.inner;
 }
 
+const checkPayloadType = (
+  tx: AptosTransaction,
+  address: string,
+  shouldFindAddress: boolean = false,
+): boolean => {
+  let txPayload = null;
+  if (tx.payload && "function" in tx.payload) {
+    txPayload = tx.payload;
+  } else {
+    return false;
+  }
+
+  const isTransfer =
+    txPayload?.function === "0x1::aptos_account::transfer" ||
+    txPayload?.function === "0x1::aptos_account::transfer_coins" ||
+    txPayload?.function === "0x1::primary_fungible_store::transfer";
+  const isRecipient: boolean = txPayload?.arguments.some(arg => {
+    if (typeof arg !== "string") return false;
+    return compareAddress(arg, address);
+  });
+
+  return isTransfer && (shouldFindAddress ? !isRecipient : isRecipient);
+};
+
 export function getCoinAndAmounts(
   tx: AptosTransaction,
   address: string,
@@ -171,13 +195,13 @@ export function getCoinAndAmounts(
         amount_in = amount_in.plus(event.data.amount);
       } else if (
         event.type === "0x1::fungible_asset::Withdraw" &&
-        checkFAOwner(tx, event, address)
+        (checkFAOwner(tx, event, address) || checkPayloadType(tx, address, true))
       ) {
         coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
         amount_out = amount_out.plus(event.data.amount);
       } else if (
         event.type === "0x1::fungible_asset::Deposit" &&
-        checkFAOwner(tx, event, address)
+        (checkFAOwner(tx, event, address) || checkPayloadType(tx, address))
       ) {
         coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
         amount_in = amount_in.plus(event.data.amount);

@@ -1,4 +1,11 @@
 import {
+  TransactionValidation,
+  TransactionIntent,
+  FeeEstimation,
+  Balance,
+} from "@ledgerhq/coin-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
   AmountRequired,
   FeeNotLoaded,
   FeeTooHigh,
@@ -9,19 +16,12 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { isValidClassicAddress } from "ripple-address-codec";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  TransactionValidation,
-  TransactionIntent,
-  FeeEstimation,
-  Balance,
-} from "@ledgerhq/coin-framework/api/types";
 import { getServerInfos } from "../network";
 import { XrpMapMemo } from "../types";
-import { cachedRecipientIsNew } from "./utils";
 import { parseAPIValue } from "./common";
-import { validateMemo } from "./validateMemo";
 import { XrpInvalidMemoError } from "./errors";
+import { cachedRecipientIsNew } from "./utils";
+import { validateMemo } from "./validateMemo";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<XrpMapMemo>,

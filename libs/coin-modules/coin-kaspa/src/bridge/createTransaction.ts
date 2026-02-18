@@ -1,5 +1,5 @@
-import { Transaction } from "../types";
 import { BigNumber } from "bignumber.js";
+import { Transaction } from "../types";
 
 export const createTransaction = (): Transaction => ({
   amount: BigNumber(0),

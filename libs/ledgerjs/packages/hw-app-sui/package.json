@@ -26,7 +26,7 @@
   "types": "lib/Sui.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@mysten/ledgerjs-hw-app-sui": "0.6.0"
+    "@mysten/ledgerjs-hw-app-sui": "0.7.0"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",

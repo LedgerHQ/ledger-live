@@ -3,6 +3,12 @@ const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 const WEEK_MS = 7 * DAY_MS;
 
+/** i18n context for relative date formatting (avoids coupling utils to react-i18next). */
+export type FormatRelativeDateI18n = {
+  t: (key: string, options?: { count?: number }) => string;
+  locale: string;
+};
+
 /**
  * Converts a timestamp to milliseconds, handling both seconds and milliseconds formats.
  * Legacy data might be stored in seconds, so we detect and convert if needed.
@@ -21,9 +27,10 @@ export function normalizeLastUsedTimestamp(lastUsed: number | undefined): number
 }
 
 /**
- * Formats a date
+ * Formats a date as a relative time (e.g. "2 hours ago") or short date when older.
+ * When `i18n` is provided, uses translation keys and locale for month names; otherwise falls back to English (e.g. for tests).
  */
-export function formatRelativeDate(date: Date): string {
+export function formatRelativeDate(date: Date, i18n?: FormatRelativeDateI18n): string {
   const now = new Date();
   const dateTime = date.getTime();
 
@@ -35,32 +42,36 @@ export function formatRelativeDate(date: Date): string {
   const currentYear = now.getFullYear();
   const dateYear = date.getFullYear();
 
+  const t = i18n?.t;
+  const locale = i18n?.locale ?? "en";
+
   if (diff <= 0) {
-    return "just now";
+    return t ? t("newSendFlow.relativeDate.justNow") : "just now";
   }
 
   if (diff < HOUR_MS) {
     const minutes = Math.max(1, Math.floor(diff / MINUTE_MS));
-    return `${minutes} min ago`;
+    return t ? t("newSendFlow.relativeDate.minutesAgo", { count: minutes }) : `${minutes} min ago`;
   }
 
   if (diff < DAY_MS) {
     const hours = Math.floor(diff / HOUR_MS);
-    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    return t
+      ? t("newSendFlow.relativeDate.hoursAgo", { count: hours })
+      : `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
   }
 
   if (diff < WEEK_MS) {
     const days = Math.floor(diff / DAY_MS);
-    return `${days} ${days === 1 ? "day" : "days"} ago`;
+    return t
+      ? t("newSendFlow.relativeDate.daysAgo", { count: days })
+      : `${days} ${days === 1 ? "day" : "days"} ago`;
   }
 
-  const day = date.getDate();
-  const month = date.toLocaleString("en", { month: "short" });
-
-  if (dateYear === currentYear) {
-    return `${day} ${month}`;
-  }
-
-  const yearShort = String(dateYear).slice(-2);
-  return `${day} ${month} ${yearShort}`;
+  const shortDateFormatter = new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+    ...(dateYear !== currentYear ? { year: "2-digit" } : {}),
+  });
+  return shortDateFormatter.format(date);
 }

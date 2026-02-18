@@ -1,4 +1,13 @@
-import type { Command, Transaction } from "./types";
+import { trace } from "@ledgerhq/logs";
+import {
+  PublicKey,
+  VersionedTransaction as OnChainTransaction,
+  TransactionInstruction,
+  TransactionMessage,
+  BlockhashWithExpiryBlockHeight,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import { ChainAPI } from "./network";
 import {
   buildTransferInstructions,
   buildTokenTransferInstructions,
@@ -11,17 +20,8 @@ import {
   buildStakeWithdrawInstructions,
   buildStakeSplitInstructions,
 } from "./network/chain/web3";
+import type { Command, Transaction } from "./types";
 import { assertUnreachable, DUMMY_SIGNATURE } from "./utils";
-import {
-  PublicKey,
-  VersionedTransaction as OnChainTransaction,
-  TransactionInstruction,
-  TransactionMessage,
-  BlockhashWithExpiryBlockHeight,
-  VersionedTransaction,
-} from "@solana/web3.js";
-import { ChainAPI } from "./network";
-import { trace } from "@ledgerhq/logs";
 
 export const buildTransactionWithAPI = async (
   address: string,

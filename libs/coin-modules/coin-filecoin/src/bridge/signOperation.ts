@@ -1,13 +1,13 @@
-import { Observable } from "rxjs";
-import { log } from "@ledgerhq/logs";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { toCBOR } from "./serializer";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { getAddress, getSubAccount } from "../common-logic/utils";
-import { AccountType } from "./utils";
 import { Transaction, FilecoinSigner } from "../types";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { toCBOR } from "./serializer";
+import { AccountType } from "./utils";
 
 export const buildSignOperation =
   (

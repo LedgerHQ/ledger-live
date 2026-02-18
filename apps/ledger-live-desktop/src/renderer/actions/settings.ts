@@ -34,7 +34,7 @@ export type SaveSettings = (a: Partial<Settings>) => {
   payload: Partial<Settings>;
 };
 export const saveSettings: SaveSettings = payload => ({
-  type: "DB:SAVE_SETTINGS",
+  type: "SAVE_SETTINGS",
   payload,
 });
 export const setCountervalueFirst = (countervalueFirst: boolean) =>
@@ -387,3 +387,8 @@ export const updateAnonymousUserNotifications = (payload: {
     payload,
   };
 };
+
+export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
+  type: "SET_HAS_SEEN_WALLET_V4_TOUR",
+  payload: hasSeenWalletV4Tour,
+});

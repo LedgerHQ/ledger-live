@@ -1,4 +1,58 @@
-import { addressSplit } from "../addressUtils";
+import { addressSplit, formatAddress } from "../addressUtils";
+
+describe("formatAddress", () => {
+  it("should format long addresses with ellipsis (default 4+4)", () => {
+    expect(formatAddress("0x1234567890abcdef")).toBe("0x12...cdef");
+  });
+
+  it("should return short addresses as-is when below threshold", () => {
+    expect(formatAddress("0x123")).toBe("0x123");
+  });
+
+  it("should support custom prefix/suffix length", () => {
+    expect(formatAddress("0x1234567890abcdef", { prefixLength: 5, suffixLength: 5 })).toBe(
+      "0x123...bcdef",
+    );
+  });
+
+  it("should support different prefix and suffix lengths", () => {
+    expect(formatAddress("0x1234567890abcdef", { prefixLength: 5, suffixLength: 4 })).toBe(
+      "0x123...cdef",
+    );
+  });
+
+  it("should handle empty string", () => {
+    expect(formatAddress("")).toBe("");
+  });
+
+  it("should support custom separator", () => {
+    expect(formatAddress("0x1234567890abcdef", { separator: "…" })).toBe("0x12…cdef");
+  });
+
+  it("should respect threshold option", () => {
+    expect(formatAddress("123456789", { threshold: 10 })).toBe("123456789");
+  });
+
+  it("should support prefixLength 0", () => {
+    expect(
+      formatAddress("1234567890abcdef", {
+        prefixLength: 0,
+        suffixLength: 10,
+        separator: "---",
+      }),
+    ).toBe("---7890abcdef");
+  });
+
+  it("should support empty separator", () => {
+    expect(
+      formatAddress("1234567890abcdef1234567890abcdef", {
+        prefixLength: 5,
+        suffixLength: 5,
+        separator: "",
+      }),
+    ).toBe("12345bcdef");
+  });
+});
 
 describe("addressSplit", () => {
   describe("Basic functionality", () => {

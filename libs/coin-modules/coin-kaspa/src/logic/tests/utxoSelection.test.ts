@@ -1,6 +1,7 @@
-import { selectUtxos } from "../utxos/selection";
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
+import * as lib from "../utxos/lib";
+import { selectUtxos } from "../utxos/selection";
 
 jest.mock("../utxos/lib", () => {
   const actual = jest.requireActual("../utxos/lib");
@@ -10,7 +11,6 @@ jest.mock("../utxos/lib", () => {
   };
 });
 
-import * as lib from "../utxos/lib";
 const mockCalcMaxSpendableAmount = lib.calcMaxSpendableAmount as jest.Mock;
 
 const TX_MASS_PER_INPUT = 1118;
@@ -128,7 +128,11 @@ describe("2 outputs - no discard", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
     const feerate = 8203;
 
-    expect(selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate - 1)).toBeDefined();
+    expect(selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate - 1)).toEqual({
+      utxos,
+      changeAmount: new BigNumber(0),
+      fee: new BigNumber(50000000),
+    });
     expect(() => selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate)).toThrow(
       "UTXO total amount is not sufficient for sending amount 450000000",
     );

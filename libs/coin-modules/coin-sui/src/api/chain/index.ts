@@ -1,5 +1,5 @@
-import type { Transaction } from "@mysten/sui/transactions";
 import type { TransactionStatusCommon } from "@ledgerhq/types-live";
+import type { Transaction } from "@mysten/sui/transactions";
 import type { AccountInfoResponse } from "../../types";
 
 export type Config = {

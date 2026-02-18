@@ -96,7 +96,6 @@ export type CurrencyFeatures = {
   currencyAptosTestnet: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
-  currencySeiNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyDydx: DefaultFeature;
   currencyUmee: DefaultFeature;
@@ -301,6 +300,7 @@ export type Features = CurrencyFeatures & {
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
+  addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
 };
 
 /**
@@ -723,6 +723,10 @@ export type Feature_NewSendFlow = Feature<{
   families?: string[];
 }>;
 
+export type Feature_AddressPoisoningOperationsFilter = Feature<{
+  families: string[];
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -803,17 +807,13 @@ type Feature_Wallet40_Params = {
   graphRework: boolean;
   quickActionCtas: boolean;
   mainNavigation: boolean;
+  tour: boolean;
 
   //Specifics
-  tour?: boolean;
   newReceiveDialog?: boolean;
 };
 
-export type Feature_LwmWallet40 = Feature<
-  {
-    tour: boolean;
-  } & Feature_Wallet40_Params
->;
+export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;

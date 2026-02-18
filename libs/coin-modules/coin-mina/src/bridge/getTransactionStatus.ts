@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -7,12 +7,12 @@ import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "../types/common";
-import { isValidAddress, getMaxAmount, getTotalSpent } from "../common-logic";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { BigNumber } from "bignumber.js";
+import { isValidAddress, getMaxAmount, getTotalSpent } from "../common-logic";
 import { validateMemo } from "../logic/validateMemo";
+import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "../types/common";
+import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
 
 const getTransactionStatus: AccountBridge<
   Transaction,

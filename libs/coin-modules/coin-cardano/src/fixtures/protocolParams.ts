@@ -1,6 +1,6 @@
 import { ProtocolParams } from "../types";
 
-export const getProtocolParams = (): ProtocolParams => ({
+export const getProtocolParamsFixture = (): ProtocolParams => ({
   minFeeA: "44",
   minFeeB: "155381",
   stakeKeyDeposit: "2000000",

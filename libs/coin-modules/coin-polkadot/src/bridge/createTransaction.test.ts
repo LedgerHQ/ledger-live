@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
+import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import createTransaction from "./createTransaction";
-import { AccountLike } from "@ledgerhq/types-live";
 
 describe("createTransaction", () => {
   it("should return a default transaction", () => {

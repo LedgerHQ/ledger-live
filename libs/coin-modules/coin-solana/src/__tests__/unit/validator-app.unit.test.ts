@@ -1,6 +1,6 @@
-import { getValidators } from "../../network/validator-app";
-import * as network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
+import * as network from "@ledgerhq/live-network";
+import { getValidators } from "../../network/validator-app";
 
 jest.spyOn({ getEnv }, "getEnv").mockImplementation((key: string) => {
   const testUrls: Record<string, string> = {

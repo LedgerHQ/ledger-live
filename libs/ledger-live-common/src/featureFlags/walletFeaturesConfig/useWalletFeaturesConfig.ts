@@ -36,6 +36,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
       shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
+      shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
     };
   }, [walletFeatureFlag]);
 };

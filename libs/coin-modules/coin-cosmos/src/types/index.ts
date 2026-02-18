@@ -1,4 +1,3 @@
-import type { BigNumber } from "bignumber.js";
 import {
   Account,
   AccountRaw,
@@ -11,6 +10,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export type CosmosDelegationStatus =
   | "bonded" //  in the active set that generates rewards

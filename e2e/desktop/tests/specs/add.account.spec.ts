@@ -26,6 +26,7 @@ const currencies = [
   { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
+  { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
 ];
 
 for (const currency of currencies) {
@@ -56,7 +57,7 @@ for (const currency of currencies) {
           description: currency.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app, userdataFile }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
@@ -78,6 +79,8 @@ for (const currency of currencies) {
 
         await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
+        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);

@@ -1,4 +1,8 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  BufferTxData,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -14,17 +18,13 @@ import {
   PriorityFeeTooLow,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import {
-  BufferTxData,
-  MemoNotSupported,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
-import BigNumber from "bignumber.js";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
-import ledgerNode from "../network/node/ledger";
 import ledgerExplorer from "../network/explorer/ledger";
 import ledgerGasTracker from "../network/gasTracker/ledger";
+import ledgerNode from "../network/node/ledger";
 import { validateIntent } from "./validateIntent";
 
 function legacyIntent(

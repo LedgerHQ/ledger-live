@@ -1,11 +1,11 @@
-import type { DeviceAction, DeviceActionArg } from "@ledgerhq/coin-framework/bot/types";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
-import type { Transaction, Vote } from "../types";
+import type { DeviceAction, DeviceActionArg } from "@ledgerhq/coin-framework/bot/types";
 import { Account } from "@ledgerhq/types-live";
+import type { Transaction, Vote } from "../types";
 
 function subAccount(subAccountId: string, account: Account) {
   const sub = (account.subAccounts || []).find(a => a.id === subAccountId);

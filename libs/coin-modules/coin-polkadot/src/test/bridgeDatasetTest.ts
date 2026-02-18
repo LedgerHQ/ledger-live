@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -8,6 +7,8 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { fromTransactionRaw } from "../bridge/transaction";
 import {
   PolkadotUnauthorizedOperation,
   PolkadotNotValidator,
@@ -16,7 +17,6 @@ import {
   PolkadotAllFundsWarning,
 } from "../types";
 
-import { fromTransactionRaw } from "../bridge/transaction";
 import type { PolkadotAccount, Transaction } from "../types";
 const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
 const ACCOUNT_STASH = "13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN";

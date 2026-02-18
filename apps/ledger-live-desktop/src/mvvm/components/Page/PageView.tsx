@@ -1,10 +1,11 @@
 import React, { memo } from "react";
-import TopBar from "~/renderer/components/TopBar";
+import ClassicTopBar from "~/renderer/components/TopBar";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { PageViewModelResult } from "./usePageViewModel";
 import { ClassicLayout, Wallet40Layout, ScrollUpButton } from "./components";
 import RightPanel from "LLD/components/RightPanel";
+import Wallet40TopBar from "LLD/components/TopBar";
 
 type PageViewProps = PageViewModelResult & {
   readonly children: React.ReactNode;
@@ -21,13 +22,14 @@ export const PageView = memo(function PageView({
   isScrollUpButtonVisible,
   isScrollAtUpperBound,
   isWallet40Enabled,
+  shouldDisplayWallet40MainNav,
   pathname,
   onClickScrollUp,
   shouldRenderRightPanel,
 }: PageViewProps) {
   return (
     <div className="relative flex flex-1 flex-col">
-      <TopBar />
+      {shouldDisplayWallet40MainNav ? <Wallet40TopBar /> : <ClassicTopBar />}
       {isWallet40Enabled ? (
         <Wallet40Layout
           scrollerRef={pageScrollerRef}

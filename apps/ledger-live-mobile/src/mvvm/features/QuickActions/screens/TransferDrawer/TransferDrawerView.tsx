@@ -23,11 +23,9 @@ export const TransferDrawerView = ({ actions, title }: TransferDrawerViewProps) 
         >
           {title}
         </Text>
-        <Box lx={{ gap: "s8" }}>
-          {actions.map(action => (
-            <TransferListItem key={action.id} action={action} />
-          ))}
-        </Box>
+        {actions.map(action => (
+          <TransferListItem key={action.id} action={action} />
+        ))}
       </Box>
     </BottomSheetView>
   );

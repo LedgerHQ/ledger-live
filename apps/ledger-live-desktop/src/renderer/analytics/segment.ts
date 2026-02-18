@@ -399,8 +399,17 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   };
 };
 
-export const updateIdentify = async () => {
-  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
+export interface UpdateIdentifyOptions {
+  /** When true, send identify even when both analytics opt-ins are false (e.g. after analytics prompt "Refuse all"). */
+  force?: boolean;
+}
+
+export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force: false }) => {
+  if (!storeInstance) return;
+
+  const canTrack = force || trackingEnabledSelector(storeInstance.getState());
+  if (!canTrack) return;
+
   const analytics = getAnalytics();
   if (!analytics) return;
   const { id } = await user();

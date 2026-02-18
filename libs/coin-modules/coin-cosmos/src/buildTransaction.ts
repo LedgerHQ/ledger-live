@@ -5,18 +5,18 @@ import {
   AminoMsgUndelegate,
   AminoMsgWithdrawDelegatorReward,
 } from "@cosmjs/stargate";
+import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
+import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
+import type { Account } from "@ledgerhq/types-live";
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
   MsgBeginRedelegate,
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
-import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
-import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 
 type ProtoMsg = {

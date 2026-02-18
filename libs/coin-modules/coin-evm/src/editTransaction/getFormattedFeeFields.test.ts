@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { Account } from "@ledgerhq/types-live";
-import type { Transaction as EvmTransaction } from "../types/index";
+import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
+import type { Transaction as EvmTransaction } from "../types/index";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";
 
 jest.mock("../config");

@@ -339,7 +339,11 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
-  async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT, throwOnTimeout = true): Promise<WebElement | undefined> {
+  async waitWebElementByTestId(
+    id: string,
+    timeout = DEFAULT_TIMEOUT,
+    throwOnTimeout = true,
+  ): Promise<WebElement | undefined> {
     const start = Date.now();
     let lastErr: Error | undefined;
     while (Date.now() - start < timeout) {

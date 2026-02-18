@@ -1,4 +1,5 @@
-import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -8,8 +9,12 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
 } from "@ledgerhq/errors";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { BigNumber } from "bignumber.js";
+import { isValidAddress } from "../common";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
+import polkadotAPI from "../network";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import {
   PolkadotUnauthorizedOperation,
@@ -23,6 +28,7 @@ import {
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
 } from "../types";
+import { getCurrentPolkadotPreloadData } from "./state";
 import {
   EXISTENTIAL_DEPOSIT,
   FEES_SAFETY_BUFFER,
@@ -34,12 +40,6 @@ import {
   calculateAmount,
   getMinimumAmountToBond,
 } from "./utils";
-import { isValidAddress } from "../common";
-import { getCurrentPolkadotPreloadData } from "./state";
-import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
-import polkadotAPI from "../network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Should try to refacto
 const getSendTransactionStatus: AccountBridge<

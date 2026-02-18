@@ -1,8 +1,8 @@
+import { faker } from "@faker-js/faker";
 import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
-import { faker } from "@faker-js/faker";
-import coinConfig from "../config";
 
 const mockCraftTransaction = jest.fn();
 const mockEstimateFees = jest.fn();

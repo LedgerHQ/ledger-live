@@ -6,7 +6,7 @@ import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
-import { useTrackingPairs } from "~/actions/general";
+import { useTrackingPairs, useUserSettings } from "~/actions/general";
 import {
   saveAccounts,
   saveBle,
@@ -164,8 +164,12 @@ const extractIdentitiesForPersistence = (state: State) =>
 
 export const ConfigureDBSaveEffects = () => {
   const trackingPairs = useTrackingPairs();
+  const userSettings = useUserSettings();
   const state = useCountervaluesState();
-  const rawState = useMemo(() => exportCountervalues(state, trackingPairs), [state, trackingPairs]);
+  const rawState = useMemo(
+    () => exportCountervalues(state, trackingPairs, userSettings.selectedTimeRange),
+    [state, trackingPairs, userSettings.selectedTimeRange],
+  );
   const lastRawState = useRef(rawState);
   const countervaluesChangesStats = useCallback(() => {
     const changed = lastRawState.current !== rawState;

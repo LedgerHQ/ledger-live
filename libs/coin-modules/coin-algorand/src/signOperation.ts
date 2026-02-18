@@ -1,11 +1,11 @@
-import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
+import { Observable } from "rxjs";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import type { AlgorandAccount, AlgorandTransaction } from "./types";
+import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
 import type { AlgorandSigner } from "./signer";
+import type { AlgorandAccount, AlgorandTransaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware

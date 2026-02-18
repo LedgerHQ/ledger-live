@@ -1,5 +1,246 @@
 # @ledgerhq/live-common
 
+## 34.60.0
+
+### Minor Changes
+
+- [#14044](https://github.com/LedgerHQ/ledger-live/pull/14044) [`ed6d076`](https://github.com/LedgerHQ/ledger-live/commit/ed6d07693d9cdd16c954127520da6fcb16273d93) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - conf(llc): update Telos default RPC endpoint
+
+- [#14166](https://github.com/LedgerHQ/ledger-live/pull/14166) [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new receive Dialog param into W4.0 FF
+
+- [#14054](https://github.com/LedgerHQ/ledger-live/pull/14054) [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: perps ff and entry points
+
+- [#14146](https://github.com/LedgerHQ/ledger-live/pull/14146) [`196ac42`](https://github.com/LedgerHQ/ledger-live/commit/196ac4225b08b40fd04d137ee17cf9e75a502443) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MSW setup for network mocking in Jest tests
+
+- [#13995](https://github.com/LedgerHQ/ledger-live/pull/13995) [`6dc7fa6`](https://github.com/LedgerHQ/ledger-live/commit/6dc7fa6de3ef8f2357a40c8243d6af004796c4d4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix market banner exports
+
+- [#14130](https://github.com/LedgerHQ/ledger-live/pull/14130) [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add mainNavigation FF for Wallet4.0
+
+- [#14039](https://github.com/LedgerHQ/ledger-live/pull/14039) [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: ContentDrawer - add tour parameter to lwmWallet40 ff, new hasSeenWalletV4Tour flag, add debug row
+
+- [#14122](https://github.com/LedgerHQ/ledger-live/pull/14122) [`463df0d`](https://github.com/LedgerHQ/ledger-live/commit/463df0d85df9a223bde62ddb45d783920348c92f) Thanks [@henri-ly](https://github.com/henri-ly)! - add min version for tron app
+
+- [#14040](https://github.com/LedgerHQ/ledger-live/pull/14040) [`59b4d7e`](https://github.com/LedgerHQ/ledger-live/commit/59b4d7e4052bf873644dfb817ee910ab1f046332) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - feat(recover): pass hasConnectedNanoS and countryCode params to Recover webapp
+
+  - Add new `getCountryCodeFromLocale` utility in `@ledgerhq/live-common/locale`
+  - Pass `hasConnectedNanoS` boolean to indicate if user has ever connected a Nano S
+  - Pass `countryCode` (ISO 3166-1 alpha-2, lowercase) extracted from user's locale setting
+
+- [#14134](https://github.com/LedgerHQ/ledger-live/pull/14134) [`64a32d2`](https://github.com/LedgerHQ/ledger-live/commit/64a32d23aa176c904974bb6e3acd717d9c75729a) Thanks [@Justkant](https://github.com/Justkant)! - fix(mobile): resolve webview state interference and staking drawer double-open
+
+  - Replace single currentAccountAtom with atomFamily (currentAccountAtomFamily) to provide manifest-scoped account state isolation between webviews
+  - Remove ScopeProvider wrappers from webview components (no longer needed)
+  - Use refs for staking drawer callbacks in EarnLiveAppNavigator to prevent useEffect re-runs when callbacks change
+  - Update jotai from 2.12.4 to 2.17.0, remove jotai-scope, add jotai-family
+
+  This fixes two related issues:
+
+  1. Account state bleeding between EarnWebview and WebPlatformPlayer when both are mounted simultaneously
+  2. Staking drawer opening multiple times due to unstable callback dependencies in the useEffect
+
+- [#13859](https://github.com/LedgerHQ/ledger-live/pull/13859) [`c36a6b1`](https://github.com/LedgerHQ/ledger-live/commit/c36a6b1112bb87e53ae106f676069327726b90c7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove legacy React Native BLE transport code
+
+  Since the `ldmkTransport` feature flag is now enabled by default in all environments, the Device Management Kit (DMK) transport is always used. This removes all dead code related to the legacy BLE transport:
+
+  - Removed `@ledgerhq/react-native-hw-transport-ble` dependency from LLM
+  - Removed `PairDevices` screen and related components
+  - Removed `DebugBLE` and `DebugBLEBenchmark` debug screens
+  - Removed legacy BLE hooks (`useBleDevicePairing`, `useBleDevicesScanning`) from live-common
+  - Removed legacy BLE types from live-common
+
+  Note: The `@ledgerhq/react-native-hw-transport-ble` package itself (in `libs/ledgerjs/`) is not removed — it will be deprecated in a separate PR.
+
+- [#14126](https://github.com/LedgerHQ/ledger-live/pull/14126) [`c9f56c4`](https://github.com/LedgerHQ/ledger-live/commit/c9f56c4af8a2825f52696c2ef241564e62c55111) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Split market API into market and countervalues RTK Query APIs
+
+- [#14149](https://github.com/LedgerHQ/ledger-live/pull/14149) [`c502474`](https://github.com/LedgerHQ/ledger-live/commit/c502474fb1cd531511eaa0188affe2f315ef0cdf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate Currency detail fetch from TanStack to RTKQuery
+
+- [#14086](https://github.com/LedgerHQ/ledger-live/pull/14086) [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop persisting Account#lastSyncDate to optimize need to resave accounts
+
+- [#13960](https://github.com/LedgerHQ/ledger-live/pull/13960) [`f9c121a`](https://github.com/LedgerHQ/ledger-live/commit/f9c121aaee36b33be60af7111f841dde038a95f2) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Common Wizard for LWDM
+
+- [#13876](https://github.com/LedgerHQ/ledger-live/pull/13876) [`9b10692`](https://github.com/LedgerHQ/ledger-live/commit/9b1069261b21b4875ea1966212e4d8bd5327ac88) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Close apps before onboarding
+
+- [#14065](https://github.com/LedgerHQ/ledger-live/pull/14065) [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset legacy announcements (CDN json) system from desktop app to gain app.json performance
+
+- [#14097](https://github.com/LedgerHQ/ledger-live/pull/14097) [`d5b273b`](https://github.com/LedgerHQ/ledger-live/commit/d5b273b41e768c3a656306070c16bc42b7790f79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Reduce polling state to 3 minutes
+
+### Patch Changes
+
+- Updated dependencies [[`6bb478f`](https://github.com/LedgerHQ/ledger-live/commit/6bb478fcabc6b2097873082c3b2babea076f5dcd), [`d12dbba`](https://github.com/LedgerHQ/ledger-live/commit/d12dbbaf026e29cfe069778ac6f4760c9a659665), [`a155cdf`](https://github.com/LedgerHQ/ledger-live/commit/a155cdf12a17b61f7b2effc25d30dafb1554b23c), [`62f9834`](https://github.com/LedgerHQ/ledger-live/commit/62f9834ae78b21ac387270c7f64f9068c43352da), [`4c9b9a5`](https://github.com/LedgerHQ/ledger-live/commit/4c9b9a56c007a56f75e298fba1df3c684e52667d), [`7dbe08b`](https://github.com/LedgerHQ/ledger-live/commit/7dbe08b72ebae5ee707cc06826715341d2678404), [`1617726`](https://github.com/LedgerHQ/ledger-live/commit/16177269ef833dbba0a5baa91e664da26d500a15), [`982a7e9`](https://github.com/LedgerHQ/ledger-live/commit/982a7e9c73867b7c7b90ccae6df575d59c06806c), [`65f0757`](https://github.com/LedgerHQ/ledger-live/commit/65f0757b1ea33a5971132d338e270ecf3242ba10), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014), [`a774b49`](https://github.com/LedgerHQ/ledger-live/commit/a774b49cca0696426d20a51782e3f18640c47613), [`c0f7f57`](https://github.com/LedgerHQ/ledger-live/commit/c0f7f572bf4551f90f6f1466aea26e9d5e457303)]:
+  - @ledgerhq/coin-solana@0.44.0
+  - @ledgerhq/live-signer-solana@0.11.0
+  - @ledgerhq/live-signer-evm@0.13.0
+  - @ledgerhq/coin-hedera@1.21.0
+  - @ledgerhq/coin-canton@0.16.0
+  - @ledgerhq/live-wallet@0.21.0
+  - @ledgerhq/coin-sui@0.23.0
+  - @ledgerhq/coin-cosmos@0.24.0
+  - @ledgerhq/coin-xrp@7.14.0
+  - @ledgerhq/coin-stellar@6.13.0
+  - @ledgerhq/coin-tezos@6.15.0
+  - @ledgerhq/coin-evm@2.42.0
+  - @ledgerhq/coin-framework@6.15.0
+  - @ledgerhq/live-env@2.27.0
+  - @ledgerhq/live-signer-canton@0.7.3
+  - @ledgerhq/coin-aleo@1.1.3
+  - @ledgerhq/coin-algorand@0.17.2
+  - @ledgerhq/coin-aptos@3.11.2
+  - @ledgerhq/coin-bitcoin@0.30.2
+  - @ledgerhq/coin-cardano@0.18.2
+  - @ledgerhq/coin-casper@2.8.2
+  - @ledgerhq/coin-celo@1.9.3
+  - @ledgerhq/coin-filecoin@1.18.3
+  - @ledgerhq/coin-icon@0.17.3
+  - @ledgerhq/coin-internet_computer@1.15.2
+  - @ledgerhq/coin-kaspa@1.7.3
+  - @ledgerhq/coin-mina@1.8.2
+  - @ledgerhq/coin-multiversx@0.10.3
+  - @ledgerhq/coin-near@0.19.3
+  - @ledgerhq/coin-polkadot@6.16.3
+  - @ledgerhq/coin-stacks@0.15.2
+  - @ledgerhq/coin-ton@0.22.1
+  - @ledgerhq/coin-tron@5.12.1
+  - @ledgerhq/coin-vechain@2.16.3
+  - @ledgerhq/device-core@0.8.3
+  - @ledgerhq/cryptoassets@13.38.1
+  - @ledgerhq/hw-app-eth@7.3.3
+  - @ledgerhq/live-countervalues@0.12.1
+  - @ledgerhq/live-countervalues-react@0.9.2
+  - @ledgerhq/live-signer-aleo@0.11.3
+  - @ledgerhq/client-ids@0.5.1
+  - @ledgerhq/ledger-cal-service@1.11.2
+  - @ledgerhq/ledger-trust-service@0.6.2
+  - @ledgerhq/live-currency-format@0.2.1
+  - @ledgerhq/live-network@2.2.2
+  - @ledgerhq/speculos-transport@0.5.2
+  - @ledgerhq/hw-app-vet@0.9.3
+  - @ledgerhq/hw-app-celo@6.37.3
+  - @ledgerhq/hw-app-exchange@0.19.0
+
+## 34.60.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`62f9834`](https://github.com/LedgerHQ/ledger-live/commit/62f9834ae78b21ac387270c7f64f9068c43352da)]:
+  - @ledgerhq/live-wallet@0.21.0-next.1
+
+## 34.60.0-next.0
+
+### Minor Changes
+
+- [#14044](https://github.com/LedgerHQ/ledger-live/pull/14044) [`ed6d076`](https://github.com/LedgerHQ/ledger-live/commit/ed6d07693d9cdd16c954127520da6fcb16273d93) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - conf(llc): update Telos default RPC endpoint
+
+- [#14166](https://github.com/LedgerHQ/ledger-live/pull/14166) [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new receive Dialog param into W4.0 FF
+
+- [#14054](https://github.com/LedgerHQ/ledger-live/pull/14054) [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: perps ff and entry points
+
+- [#14146](https://github.com/LedgerHQ/ledger-live/pull/14146) [`196ac42`](https://github.com/LedgerHQ/ledger-live/commit/196ac4225b08b40fd04d137ee17cf9e75a502443) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MSW setup for network mocking in Jest tests
+
+- [#13995](https://github.com/LedgerHQ/ledger-live/pull/13995) [`6dc7fa6`](https://github.com/LedgerHQ/ledger-live/commit/6dc7fa6de3ef8f2357a40c8243d6af004796c4d4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix market banner exports
+
+- [#14130](https://github.com/LedgerHQ/ledger-live/pull/14130) [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add mainNavigation FF for Wallet4.0
+
+- [#14039](https://github.com/LedgerHQ/ledger-live/pull/14039) [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: ContentDrawer - add tour parameter to lwmWallet40 ff, new hasSeenWalletV4Tour flag, add debug row
+
+- [#14122](https://github.com/LedgerHQ/ledger-live/pull/14122) [`463df0d`](https://github.com/LedgerHQ/ledger-live/commit/463df0d85df9a223bde62ddb45d783920348c92f) Thanks [@henri-ly](https://github.com/henri-ly)! - add min version for tron app
+
+- [#14040](https://github.com/LedgerHQ/ledger-live/pull/14040) [`59b4d7e`](https://github.com/LedgerHQ/ledger-live/commit/59b4d7e4052bf873644dfb817ee910ab1f046332) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - feat(recover): pass hasConnectedNanoS and countryCode params to Recover webapp
+
+  - Add new `getCountryCodeFromLocale` utility in `@ledgerhq/live-common/locale`
+  - Pass `hasConnectedNanoS` boolean to indicate if user has ever connected a Nano S
+  - Pass `countryCode` (ISO 3166-1 alpha-2, lowercase) extracted from user's locale setting
+
+- [#14134](https://github.com/LedgerHQ/ledger-live/pull/14134) [`64a32d2`](https://github.com/LedgerHQ/ledger-live/commit/64a32d23aa176c904974bb6e3acd717d9c75729a) Thanks [@Justkant](https://github.com/Justkant)! - fix(mobile): resolve webview state interference and staking drawer double-open
+
+  - Replace single currentAccountAtom with atomFamily (currentAccountAtomFamily) to provide manifest-scoped account state isolation between webviews
+  - Remove ScopeProvider wrappers from webview components (no longer needed)
+  - Use refs for staking drawer callbacks in EarnLiveAppNavigator to prevent useEffect re-runs when callbacks change
+  - Update jotai from 2.12.4 to 2.17.0, remove jotai-scope, add jotai-family
+
+  This fixes two related issues:
+
+  1. Account state bleeding between EarnWebview and WebPlatformPlayer when both are mounted simultaneously
+  2. Staking drawer opening multiple times due to unstable callback dependencies in the useEffect
+
+- [#13859](https://github.com/LedgerHQ/ledger-live/pull/13859) [`c36a6b1`](https://github.com/LedgerHQ/ledger-live/commit/c36a6b1112bb87e53ae106f676069327726b90c7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove legacy React Native BLE transport code
+
+  Since the `ldmkTransport` feature flag is now enabled by default in all environments, the Device Management Kit (DMK) transport is always used. This removes all dead code related to the legacy BLE transport:
+
+  - Removed `@ledgerhq/react-native-hw-transport-ble` dependency from LLM
+  - Removed `PairDevices` screen and related components
+  - Removed `DebugBLE` and `DebugBLEBenchmark` debug screens
+  - Removed legacy BLE hooks (`useBleDevicePairing`, `useBleDevicesScanning`) from live-common
+  - Removed legacy BLE types from live-common
+
+  Note: The `@ledgerhq/react-native-hw-transport-ble` package itself (in `libs/ledgerjs/`) is not removed — it will be deprecated in a separate PR.
+
+- [#14126](https://github.com/LedgerHQ/ledger-live/pull/14126) [`c9f56c4`](https://github.com/LedgerHQ/ledger-live/commit/c9f56c4af8a2825f52696c2ef241564e62c55111) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Split market API into market and countervalues RTK Query APIs
+
+- [#14149](https://github.com/LedgerHQ/ledger-live/pull/14149) [`c502474`](https://github.com/LedgerHQ/ledger-live/commit/c502474fb1cd531511eaa0188affe2f315ef0cdf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate Currency detail fetch from TanStack to RTKQuery
+
+- [#14086](https://github.com/LedgerHQ/ledger-live/pull/14086) [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop persisting Account#lastSyncDate to optimize need to resave accounts
+
+- [#13960](https://github.com/LedgerHQ/ledger-live/pull/13960) [`f9c121a`](https://github.com/LedgerHQ/ledger-live/commit/f9c121aaee36b33be60af7111f841dde038a95f2) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Common Wizard for LWDM
+
+- [#13876](https://github.com/LedgerHQ/ledger-live/pull/13876) [`9b10692`](https://github.com/LedgerHQ/ledger-live/commit/9b1069261b21b4875ea1966212e4d8bd5327ac88) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Close apps before onboarding
+
+- [#14065](https://github.com/LedgerHQ/ledger-live/pull/14065) [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset legacy announcements (CDN json) system from desktop app to gain app.json performance
+
+- [#14097](https://github.com/LedgerHQ/ledger-live/pull/14097) [`d5b273b`](https://github.com/LedgerHQ/ledger-live/commit/d5b273b41e768c3a656306070c16bc42b7790f79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Reduce polling state to 3 minutes
+
+### Patch Changes
+
+- Updated dependencies [[`6bb478f`](https://github.com/LedgerHQ/ledger-live/commit/6bb478fcabc6b2097873082c3b2babea076f5dcd), [`d12dbba`](https://github.com/LedgerHQ/ledger-live/commit/d12dbbaf026e29cfe069778ac6f4760c9a659665), [`a155cdf`](https://github.com/LedgerHQ/ledger-live/commit/a155cdf12a17b61f7b2effc25d30dafb1554b23c), [`4c9b9a5`](https://github.com/LedgerHQ/ledger-live/commit/4c9b9a56c007a56f75e298fba1df3c684e52667d), [`7dbe08b`](https://github.com/LedgerHQ/ledger-live/commit/7dbe08b72ebae5ee707cc06826715341d2678404), [`1617726`](https://github.com/LedgerHQ/ledger-live/commit/16177269ef833dbba0a5baa91e664da26d500a15), [`982a7e9`](https://github.com/LedgerHQ/ledger-live/commit/982a7e9c73867b7c7b90ccae6df575d59c06806c), [`65f0757`](https://github.com/LedgerHQ/ledger-live/commit/65f0757b1ea33a5971132d338e270ecf3242ba10), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014), [`a774b49`](https://github.com/LedgerHQ/ledger-live/commit/a774b49cca0696426d20a51782e3f18640c47613), [`c0f7f57`](https://github.com/LedgerHQ/ledger-live/commit/c0f7f572bf4551f90f6f1466aea26e9d5e457303)]:
+  - @ledgerhq/coin-solana@0.44.0-next.0
+  - @ledgerhq/live-signer-solana@0.11.0-next.0
+  - @ledgerhq/live-signer-evm@0.13.0-next.0
+  - @ledgerhq/coin-hedera@1.21.0-next.0
+  - @ledgerhq/coin-canton@0.16.0-next.0
+  - @ledgerhq/coin-sui@0.23.0-next.0
+  - @ledgerhq/coin-cosmos@0.24.0-next.0
+  - @ledgerhq/coin-xrp@7.14.0-next.0
+  - @ledgerhq/coin-stellar@6.13.0-next.0
+  - @ledgerhq/coin-tezos@6.15.0-next.0
+  - @ledgerhq/coin-evm@2.42.0-next.0
+  - @ledgerhq/coin-framework@6.15.0-next.0
+  - @ledgerhq/live-env@2.27.0-next.0
+  - @ledgerhq/live-signer-canton@0.7.3-next.0
+  - @ledgerhq/coin-aleo@1.1.3-next.0
+  - @ledgerhq/coin-algorand@0.17.2-next.0
+  - @ledgerhq/coin-aptos@3.11.2-next.0
+  - @ledgerhq/coin-bitcoin@0.30.2-next.0
+  - @ledgerhq/coin-cardano@0.18.2-next.0
+  - @ledgerhq/coin-casper@2.8.2-next.0
+  - @ledgerhq/coin-celo@1.9.3-next.0
+  - @ledgerhq/coin-filecoin@1.18.3-next.0
+  - @ledgerhq/coin-icon@0.17.3-next.0
+  - @ledgerhq/coin-internet_computer@1.15.2-next.0
+  - @ledgerhq/coin-kaspa@1.7.3-next.0
+  - @ledgerhq/coin-mina@1.8.2-next.0
+  - @ledgerhq/coin-multiversx@0.10.3-next.0
+  - @ledgerhq/coin-near@0.19.3-next.0
+  - @ledgerhq/coin-polkadot@6.16.3-next.0
+  - @ledgerhq/coin-stacks@0.15.2-next.0
+  - @ledgerhq/coin-ton@0.22.1-next.0
+  - @ledgerhq/coin-tron@5.12.1-next.0
+  - @ledgerhq/coin-vechain@2.16.3-next.0
+  - @ledgerhq/device-core@0.8.3-next.0
+  - @ledgerhq/cryptoassets@13.38.1-next.0
+  - @ledgerhq/hw-app-eth@7.3.3-next.0
+  - @ledgerhq/live-countervalues@0.12.1-next.0
+  - @ledgerhq/live-countervalues-react@0.9.2-next.0
+  - @ledgerhq/live-signer-aleo@0.11.3-next.0
+  - @ledgerhq/live-wallet@0.20.2-next.0
+  - @ledgerhq/client-ids@0.5.1-next.0
+  - @ledgerhq/ledger-cal-service@1.11.2-next.0
+  - @ledgerhq/ledger-trust-service@0.6.2-next.0
+  - @ledgerhq/live-currency-format@0.2.1-next.0
+  - @ledgerhq/live-network@2.2.2-next.0
+  - @ledgerhq/speculos-transport@0.5.2-next.0
+  - @ledgerhq/hw-app-vet@0.9.3-next.0
+  - @ledgerhq/hw-app-celo@6.37.3-next.0
+  - @ledgerhq/hw-app-exchange@0.19.0
+
 ## 34.59.0
 
 ### Minor Changes

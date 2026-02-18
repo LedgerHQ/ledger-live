@@ -1,10 +1,10 @@
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { Transaction } from "../types";
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { toCBORResponse } from "../bridge/serializer";
 import { calculateEstimatedFees } from "../bridge/utils";
-import { convertAddressEthToFil } from "../network";
 import { getSubAccount } from "../common-logic/utils";
+import { convertAddressEthToFil } from "../network";
+import { Transaction } from "../types";
 
 export const buildOptimisticOperation = async (
   account: Account,

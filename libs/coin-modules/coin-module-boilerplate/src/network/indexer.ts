@@ -1,5 +1,5 @@
-import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network/network";
 import { AccountTxResponse } from "./types";
 
 export const getTransactions = async (

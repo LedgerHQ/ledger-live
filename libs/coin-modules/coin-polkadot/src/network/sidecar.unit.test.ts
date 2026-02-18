@@ -1,11 +1,11 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import coinConfig from "../config";
+import * as node from "./node";
 import { getAccount, getBalances, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
-import * as node from "./node";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./node", () => ({
   fetchConstants: jest.fn(),

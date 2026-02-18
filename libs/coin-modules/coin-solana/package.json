@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -53,8 +53,8 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@solana/spl-token": "0.4.9",
-    "@solana/web3.js": "1.95.4",
+    "@solana/spl-token": "catalog:",
+    "@solana/web3.js": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58": "catalog:",
     "expect": "catalog:",

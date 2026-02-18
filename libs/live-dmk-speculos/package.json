@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-speculos",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",

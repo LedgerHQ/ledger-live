@@ -6,7 +6,6 @@ export enum Network {
   BITCOIN_TESTNET = "Bitcoin Testnet",
   DOGECOIN = "Dogecoin",
   ETHEREUM = "Ethereum",
-  ETHEREUM_HOLESKY = "Ethereum Holesky",
   ETHEREUM_HOODI = "Ethereum Hoodi",
   ETHEREUM_SEPOLIA = "Ethereum Sepolia",
   ETHEREUM_CLASSIC = "Ethereum Classic",
@@ -35,4 +34,5 @@ export enum Network {
   KASPA = "Kaspa",
   HEDERA = "Hedera",
   SUI = "Sui",
+  ZCASH = "Zcash",
 }

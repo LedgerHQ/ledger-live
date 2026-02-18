@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import BigNumber from "bignumber.js";
 import {
   PalletMethod,
   PolkadotAccount,

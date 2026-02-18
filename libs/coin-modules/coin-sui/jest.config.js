@@ -1,6 +1,6 @@
 module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
-  coveragePathIgnorePatterns: ["test/cli.ts", ".*\\.integration\\.test\\.[tj]s"],
+  coveragePathIgnorePatterns: ["test/cli.ts", ".*\\.integ\\.test\\.[tj]s"],
   coverageDirectory: "coverage",
   testEnvironment: "node",
   transform: {
@@ -13,6 +13,6 @@ module.exports = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

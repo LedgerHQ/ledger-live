@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { Observable } from "rxjs";
 import { makeSignDoc, serializeSignDoc } from "@cosmjs/amino";
 import { Secp256k1Signature } from "@cosmjs/crypto";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
@@ -7,9 +5,11 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { ExpertModeRequired, UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
-import { CosmosAPI } from "./network/Cosmos";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
 import { buildTransaction, txToMessages } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
+import { CosmosAPI } from "./network/Cosmos";
 import { CosmosAccount, RETURN_CODES, Transaction } from "./types";
 import { CosmosSignatureSdk, CosmosSigner } from "./types/signer";
 

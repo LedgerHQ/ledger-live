@@ -1,15 +1,26 @@
-import BIPPath from "bip32-path";
-import type { AccountTransaction, CredentialDeploymentTransaction } from "./types";
 import {
+  TransactionType,
+  type Transaction,
+  type CredentialDeploymentTransaction,
+  type IdOwnershipProofs,
+} from "./types";
+import {
+  chunkBuffer,
+  decodeWord16,
+  decodeWord32,
+  decodeWord64,
   encodeWord16,
   encodeWord32,
   encodeWord64,
   encodeWord8,
   encodeWord8FromString,
+  pathToBuffer,
   serializeMap,
   serializeVerifyKey,
   serializeYearMonth,
 } from "./utils";
+import { AccountAddress } from "./address";
+import { MAX_CBOR_SIZE } from "./cbor";
 
 const MAX_CHUNK_SIZE = 255;
 const INDEX_LENGTH = 1;
@@ -24,107 +35,257 @@ const ATTRIBUTES_LENGTH = 2;
 const TAG_LENGTH = 1;
 const VALUE_LENGTH = 1;
 const CREDENTIAL_ID_LENGTH = 48;
-const ACCOUNT_ADDRESS_LENGTH = 32;
-const MEMO_LENGTH_SIZE = 2;
-const AMOUNT_SIZE = 8;
-/**
- * Serializes an account transaction for hardware wallet signing.
- *
- * Expects hw-app format where:
- * - sender is already a raw Buffer (32 bytes)
- * - payload is already serialized
- * - all numeric fields are bigint
- *
- * @private
- * @param accountTransaction The account transaction in hw-app format
- * @returns The serialized account transaction ready for device transmission
- */
-export const serializeAccountTransaction = (accountTransaction: AccountTransaction): Buffer => {
-  // In hw-app format, sender is raw bytes (transformed from Base58 by coin-concordium)
-  const serializedSender = accountTransaction.sender;
-  const serializedNonce = encodeWord64(accountTransaction.nonce);
-  const serializedEnergyAmount = encodeWord64(accountTransaction.energyAmount);
-  const serializedPayloadSize = encodeWord32(accountTransaction.payload.length + 1);
-  const serializedExpiry = encodeWord64(accountTransaction.expiry);
-  const serializedType = Buffer.from([accountTransaction.transactionType]);
 
-  const serializedHeader = Buffer.concat([
+/**
+ * Serializes transaction header common to all account transaction types.
+ *
+ * Format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8]
+ * @private
+ */
+function serializeTransactionHeader(tx: Transaction, payload: Buffer): Buffer {
+  const serializedSender = tx.header.sender.toBuffer();
+  const serializedNonce = encodeWord64(tx.header.nonce);
+  const serializedEnergyAmount = encodeWord64(tx.header.energyAmount);
+  const serializedPayloadSize = encodeWord32(payload.length + 1);
+  const serializedExpiry = encodeWord64(tx.header.expiry);
+
+  return Buffer.concat([
     serializedSender,
     serializedNonce,
     serializedEnergyAmount,
     serializedPayloadSize,
     serializedExpiry,
   ]);
-
-  return Buffer.concat([serializedHeader, serializedType, accountTransaction.payload]);
-};
+}
 
 /**
- * Serializes a BIP32 path array into device-compatible format.
- * Format: [1 byte: path length] [4 bytes per element: path components]
- * @private
+ * Serializes a Transfer transaction (simple transfer without memo).
+ *
+ * Output format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8][type:1][recipient:32][amount:8]
+ *
+ * @param tx Transfer transaction
+ * @returns Serialized transaction ready for network submission
  */
-const serializePath = (path: number[]): Buffer => {
-  const buf = Buffer.alloc(1 + path.length * 4);
-  buf.writeUInt8(path.length, 0);
-  for (const [i, num] of path.entries()) {
-    buf.writeUInt32BE(num, 1 + i * 4);
+export const serializeTransfer = (tx: Transaction): Buffer => {
+  if (tx.type !== TransactionType.Transfer) {
+    throw new Error("Transaction must be Transfer type");
   }
-  return buf;
+
+  // Transfer payload: [32 bytes recipient][8 bytes amount]
+  const serializedPayload = Buffer.concat([
+    tx.payload.toAddress.toBuffer(),
+    encodeWord64(tx.payload.amount),
+  ]);
+
+  const serializedHeader = serializeTransactionHeader(tx, serializedPayload);
+  const serializedType = Buffer.from([tx.type]);
+
+  return Buffer.concat([serializedHeader, serializedType, serializedPayload]);
 };
 
 /**
- * Converts a BIP32 path string to serialized Buffer format.
+ * Prepares Transfer APDU payloads for device signing.
  *
- * @param originalPath - BIP32 path string (e.g., "44'/919'/0'/0/0")
- * @returns Serialized path buffer ready for device transmission
+ * Transfer uses standard APDU sequence with chunking (255 bytes per chunk).
+ * Path is prepended ONLY to the first chunk.
+ *
+ * @param serialized Serialized Transfer transaction
+ * @param path BIP32 path for signing key
+ * @returns APDU payloads ready for device transmission (chunked)
  */
-export const pathToBuffer = (originalPath: string): Buffer => {
-  const pathNums: number[] = BIPPath.fromString(originalPath).toPathArray();
-  return serializePath(pathNums);
-};
+export const prepareTransferAPDU = (serialized: Buffer, path: string): Buffer[] => {
+  const pathBuffer = pathToBuffer(path);
 
-/**
- * Chunks transaction data into APDU-sized payloads with derivation path in first chunk.
- *
- * Splits large transactions into MAX_CHUNK_SIZE (255 byte) chunks for APDU transmission.
- * The first chunk includes the serialized derivation path, subsequent chunks contain only data.
- *
- * @param path - BIP32 derivation path string
- * @param rawTx - Serialized transaction data
- * @returns Array of payload buffers ready for sequential APDU transmission
- */
-export const serializeTransactionPayloadsWithDerivationPath = (
-  path: string,
-  rawTx: Buffer,
-): Buffer[] => {
-  const paths = BIPPath.fromString(path).toPathArray();
+  // Validate path buffer fits within APDU limit
+  if (pathBuffer.length >= MAX_CHUNK_SIZE) {
+    throw new Error(
+      `BIP32 path too long: ${pathBuffer.length} bytes exceeds maximum ${MAX_CHUNK_SIZE - 1}`,
+    );
+  }
+
   let offset = 0;
   const payloads: Buffer[] = [];
-  const pathBuffer = Buffer.alloc(1 + paths.length * 4);
-  pathBuffer[0] = paths.length;
-  paths.forEach((element: number, index: number) => {
-    pathBuffer.writeUInt32BE(element, 1 + 4 * index);
-  });
 
-  while (offset !== rawTx.length) {
+  while (offset !== serialized.length) {
     const first = offset === 0;
-    const chunkSize =
-      offset + MAX_CHUNK_SIZE > rawTx.length ? rawTx.length - offset : MAX_CHUNK_SIZE;
+    // For first chunk, leave room for path buffer to stay within APDU limit
+    const maxChunk = first ? MAX_CHUNK_SIZE - pathBuffer.length : MAX_CHUNK_SIZE;
+    const chunkSize = offset + maxChunk > serialized.length ? serialized.length - offset : maxChunk;
 
     const buffer = Buffer.alloc(first ? pathBuffer.length + chunkSize : chunkSize);
 
     if (first) {
       pathBuffer.copy(buffer, 0);
-      rawTx.copy(buffer, pathBuffer.length, offset, offset + chunkSize);
+      serialized.copy(buffer, pathBuffer.length, offset, offset + chunkSize);
     } else {
-      rawTx.copy(buffer, 0, offset, offset + chunkSize);
+      serialized.copy(buffer, 0, offset, offset + chunkSize);
     }
 
     payloads.push(buffer);
     offset += chunkSize;
   }
+
   return payloads;
+};
+
+/**
+ * Serializes a TransferWithMemo transaction (transfer with memo).
+ *
+ * Output format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8][type:1][recipient:32][memo_length:2][memo:N][amount:8]
+ *
+ * @param tx TransferWithMemo transaction
+ * @returns Serialized transaction ready for network submission
+ */
+export const serializeTransferWithMemo = (tx: Transaction): Buffer => {
+  if (tx.type !== TransactionType.TransferWithMemo) {
+    throw new Error("Transaction must be TransferWithMemo type");
+  }
+
+  if (!("memo" in tx.payload)) {
+    throw new Error("TransferWithMemo payload must contain memo");
+  }
+
+  // Validate memo respects device/protocol limit
+  // Memo must be CBOR-encoded and ≤ 256 bytes (device firmware limit)
+  if (tx.payload.memo.length > MAX_CBOR_SIZE) {
+    throw new Error(
+      `Memo size ${tx.payload.memo.length} bytes exceeds device limit of ${MAX_CBOR_SIZE} bytes (must be CBOR-encoded)`,
+    );
+  }
+
+  // TransferWithMemo payload: [32 bytes recipient][2 bytes memo_length][N bytes memo][8 bytes amount]
+  const serializedPayload = Buffer.concat([
+    tx.payload.toAddress.toBuffer(),
+    encodeWord16(tx.payload.memo.length),
+    tx.payload.memo,
+    encodeWord64(tx.payload.amount),
+  ]);
+
+  const serializedHeader = serializeTransactionHeader(tx, serializedPayload);
+  const serializedType = Buffer.from([tx.type]);
+
+  return Buffer.concat([serializedHeader, serializedType, serializedPayload]);
+};
+
+/**
+ * Prepares TransferWithMemo APDU payloads for device signing.
+ *
+ * TransferWithMemo requires a special 3-step APDU sequence:
+ * 1. Header + recipient + memo length
+ * 2. Memo chunks (255 bytes each)
+ * 3. Amount
+ *
+ * @param serialized Serialized TransferWithMemo transaction
+ * @param path BIP32 path for signing key
+ * @returns Object with headerPayload, memoPayloads array, and amountPayload
+ */
+export const prepareTransferWithMemoAPDU = (
+  serialized: Buffer,
+  path: string,
+): {
+  headerPayload: Buffer;
+  memoPayloads: Buffer[];
+  amountPayload: Buffer;
+} => {
+  // Parse serialized transaction:
+  // [sender:32][nonce:8][energy:8][payload_size:4][expiry:8][type:1]
+  // [recipient:32][memo_length:2][memo:N][amount:8]
+
+  // Validate minimum length for header + recipient + memo_length
+  const minLength = 32 + 8 + 8 + 4 + 8 + 1 + 32 + 2;
+  if (serialized.length < minLength) {
+    throw new Error(
+      `Invalid TransferWithMemo buffer: expected at least ${minLength} bytes, got ${serialized.length}`,
+    );
+  }
+
+  let offset = 0;
+  const sender = serialized.subarray(offset, offset + 32);
+  offset += 32;
+  const nonce = serialized.subarray(offset, offset + 8);
+  offset += 8;
+  const energy = serialized.subarray(offset, offset + 8);
+  offset += 8;
+  const payloadSize = serialized.subarray(offset, offset + 4);
+  offset += 4;
+  const expiry = serialized.subarray(offset, offset + 8);
+  offset += 8;
+  const type = serialized.subarray(offset, offset + 1);
+  offset += 1;
+
+  // Validate transaction type is TransferWithMemo
+  if (type[0] !== TransactionType.TransferWithMemo) {
+    throw new Error(
+      `Invalid transaction type: expected TransferWithMemo (${TransactionType.TransferWithMemo}), got ${type[0]}`,
+    );
+  }
+
+  const recipient = serialized.subarray(offset, offset + 32);
+  offset += 32;
+
+  // Validate buffer has space for memo_length field
+  if (offset + 2 > serialized.length) {
+    throw new Error(
+      `Invalid TransferWithMemo buffer: insufficient data for memo_length at offset ${offset}`,
+    );
+  }
+  const memoLength = serialized.readUInt16BE(offset);
+  const memoLengthBytes = serialized.subarray(offset, offset + 2);
+  offset += 2;
+
+  // Validate payload size is consistent with memo length
+  // Payload: [type:1][recipient:32][memo_length:2][memo:N][amount:8]
+  const expectedPayloadSize = 1 + 32 + 2 + memoLength + 8;
+  const actualPayloadSize = payloadSize.readUInt32BE(0);
+  if (actualPayloadSize !== expectedPayloadSize) {
+    throw new Error(
+      `Invalid payload size: expected ${expectedPayloadSize} bytes (type:1 + recipient:32 + memo_length:2 + memo:${memoLength} + amount:8), got ${actualPayloadSize}`,
+    );
+  }
+
+  // Validate buffer has space for memo + amount
+  if (offset + memoLength + 8 > serialized.length) {
+    throw new Error(
+      `Invalid TransferWithMemo buffer: expected ${offset + memoLength + 8} bytes for memo (${memoLength}) + amount (8), got ${serialized.length}`,
+    );
+  }
+  const memo = serialized.subarray(offset, offset + memoLength);
+  offset += memoLength;
+  const amount = serialized.subarray(offset, offset + 8);
+
+  const pathBuffer = pathToBuffer(path);
+
+  // Validate header payload will fit within APDU limit
+  // Fixed header size: sender(32) + nonce(8) + energy(8) + payloadSize(4) + expiry(8) + type(1) + recipient(32) + memoLength(2) = 95 bytes
+  const FIXED_HEADER_SIZE = 95;
+  const headerSize = pathBuffer.length + FIXED_HEADER_SIZE;
+  if (headerSize > MAX_CHUNK_SIZE) {
+    throw new Error(
+      `Header payload exceeds APDU limit: ${headerSize} bytes (path: ${pathBuffer.length} + fixed: ${FIXED_HEADER_SIZE}) > ${MAX_CHUNK_SIZE}`,
+    );
+  }
+
+  // Build header payload: path + sender + nonce + energy + payload_size + expiry + type + recipient + memo_length
+  const headerPayload = Buffer.concat([
+    pathBuffer,
+    sender,
+    nonce,
+    energy,
+    payloadSize,
+    expiry,
+    type,
+    recipient,
+    memoLengthBytes,
+  ]);
+
+  // Chunk memo into MAX_CHUNK_SIZE byte pieces
+  const memoPayloads = chunkBuffer(memo, MAX_CHUNK_SIZE);
+
+  return {
+    headerPayload,
+    memoPayloads,
+    amountPayload: amount,
+  };
 };
 
 /**
@@ -154,135 +315,32 @@ export const serializeTransactionPayloads = (rawTx: Buffer): Buffer[] => {
 };
 
 /**
- * Serializes a transaction for hardware wallet signing.
- * @param txn - Account transaction with all fields prepared
- * @param path - BIP32 derivation path
- * @returns Object with payloads ready for APDU transmission
- */
-export const serializeTransaction = (
-  txn: AccountTransaction,
-  path: string,
-): { payloads: Buffer[] } => {
-  const txSerialized = serializeAccountTransaction(txn);
-  const payloads = serializeTransactionPayloadsWithDerivationPath(path, txSerialized);
-  return { payloads };
-};
-
-function extractMemoFromPayload(serializedPayload: Buffer): Buffer {
-  const memoLengthOffset = ACCOUNT_ADDRESS_LENGTH;
-  const memoLengthBytes = serializedPayload.subarray(
-    memoLengthOffset,
-    memoLengthOffset + MEMO_LENGTH_SIZE,
-  );
-  const memoLength = memoLengthBytes.readUInt16BE(0);
-  return serializedPayload.subarray(
-    memoLengthOffset + MEMO_LENGTH_SIZE,
-    memoLengthOffset + MEMO_LENGTH_SIZE + memoLength,
-  );
-}
-
-function chunkBuffer(buffer: Buffer, maxSize: number): Buffer[] {
-  const chunks: Buffer[] = [];
-  let offset = 0;
-  while (offset < buffer.length) {
-    const chunkSize = Math.min(maxSize, buffer.length - offset);
-    chunks.push(Buffer.from(buffer.subarray(offset, offset + chunkSize)));
-    offset += chunkSize;
-  }
-  return chunks;
-}
-
-/**
- * Serializes a TransferWithMemo transaction for hardware wallet signing.
- *
- * Expects hw-app format where payload is pre-serialized Buffer containing:
- * - 32 bytes: recipient address
- * - 2 bytes: memo length (u16 big-endian)
- * - N bytes: memo data
- * - 8 bytes: amount (u64 big-endian)
- *
- * @param txn - Account transaction in hw-app format with pre-serialized payload
- * @param path - BIP32 path for signing key
- * @returns Object with header, memo chunks, and amount payloads for APDU transmission
- */
-export const serializeTransferWithMemo = (
-  txn: AccountTransaction,
-  path: string,
-): {
-  headerPayload: Buffer;
-  memoPayloads: Buffer[];
-  amountPayload: Buffer;
-} => {
-  // TransferWithMemo = 22
-  if (txn.transactionType !== 22) {
-    throw new Error("Transaction must be TransferWithMemo type (22)");
-  }
-
-  // Extract components from pre-serialized payload
-  // Payload structure: [recipient:32][memoLength:2][memo:N][amount:8]
-  const serializedRecipient = txn.payload.subarray(0, ACCOUNT_ADDRESS_LENGTH);
-  const memoBuffer = extractMemoFromPayload(txn.payload);
-  const memoLengthEncoded = encodeWord16(memoBuffer.length);
-
-  // Amount is the last 8 bytes of the payload
-  const serializedAmount = txn.payload.subarray(txn.payload.length - AMOUNT_SIZE);
-
-  const pathBuffer = pathToBuffer(path);
-  const serializedSender = txn.sender;
-  const serializedNonce = encodeWord64(txn.nonce);
-  const serializedEnergyAmount = encodeWord64(txn.energyAmount);
-  const serializedExpiry = encodeWord64(txn.expiry);
-  const serializedType = Buffer.from(Uint8Array.of(txn.transactionType));
-  const payloadSize = 1 + txn.payload.length;
-
-  const headerPayload = Buffer.concat([
-    pathBuffer,
-    serializedSender,
-    serializedNonce,
-    serializedEnergyAmount,
-    encodeWord32(payloadSize),
-    serializedExpiry,
-    serializedType,
-    serializedRecipient,
-    memoLengthEncoded,
-  ]);
-
-  const memoPayloads = chunkBuffer(memoBuffer, MAX_CHUNK_SIZE);
-  const amountPayload = serializedAmount;
-
-  return {
-    headerPayload,
-    memoPayloads,
-    amountPayload,
-  };
-};
-
-/**
  * Serializes credential deployment values from CredentialDeploymentTransaction.
  *
  * Extracts and serializes the core credential data from hw-app format where:
- * - proofs are already serialized as hex string
  * - all hex fields (credId, verifyKey, etc.) are strings
  * - numeric fields are primitive types (number/bigint)
+ *
+ * Note: This function does NOT serialize proofs. Proofs are serialized separately
+ * in serializeCredentialDeployment() via serializeIdOwnershipProofs().
  *
  * @private
  * @param payload The credential deployment transaction in hw-app format
  * @returns Serialized credential data ready for chunking
  */
-function serializeCredentialDeploymentValues(payload: CredentialDeploymentTransaction): Buffer {
+export function serializeCredentialDeploymentValues(
+  payload: CredentialDeploymentTransaction,
+): Buffer {
   const buffers: Buffer[] = [];
 
   // Serialize credential public keys
-  buffers.push(
-    serializeMap(
-      payload.credentialPublicKeys.keys,
-      encodeWord8,
-      encodeWord8FromString,
-      serializeVerifyKey,
-    ),
+  const keysBuffer = serializeMap(
+    payload.credentialPublicKeys.keys,
+    encodeWord8,
+    encodeWord8FromString,
+    serializeVerifyKey,
   );
-
-  // Serialize threshold
+  buffers.push(keysBuffer);
   buffers.push(encodeWord8(payload.credentialPublicKeys.threshold));
 
   // Serialize credential ID
@@ -295,16 +353,13 @@ function serializeCredentialDeploymentValues(payload: CredentialDeploymentTransa
   buffers.push(encodeWord8(payload.revocationThreshold));
 
   // Serialize anonymity revokers data
-  buffers.push(
-    serializeMap(
-      payload.arData,
-      encodeWord16,
-      key => encodeWord32(parseInt(key, 10)),
-      arData => Buffer.from(arData.encIdCredPubShare, "hex"),
-    ),
+  const arDataBuffer = serializeMap(
+    payload.arData,
+    encodeWord16,
+    key => encodeWord32(Number.parseInt(key, 10)),
+    arData => Buffer.from(arData.encIdCredPubShare, "hex"),
   );
-
-  // Serialize policy dates
+  buffers.push(arDataBuffer);
   buffers.push(serializeYearMonth(payload.policy.validTo));
   buffers.push(serializeYearMonth(payload.policy.createdAt));
 
@@ -313,19 +368,18 @@ function serializeCredentialDeploymentValues(payload: CredentialDeploymentTransa
   buffers.push(encodeWord16(revealedAttributes.length));
 
   // Sort attributes by tag and serialize
-  revealedAttributes
-    .map(([tagName, value]) => ({
-      tag: parseInt(tagName, 10), // Attribute tags are numeric indices
-      value,
-    }))
-    .sort((a, b) => a.tag - b.tag)
-    .forEach(({ tag, value }) => {
-      const serializedAttributeValue = Buffer.from(value, "utf-8");
-      const serializedTag = encodeWord8(tag);
-      const serializedAttributeValueLength = encodeWord8(serializedAttributeValue.length);
-      buffers.push(Buffer.concat([serializedTag, serializedAttributeValueLength]));
-      buffers.push(serializedAttributeValue);
-    });
+  const attributes = revealedAttributes.map(([tagName, value]) => ({
+    tag: Number.parseInt(tagName, 10), // Attribute tags are numeric indices
+    value,
+  }));
+  attributes.sort((a, b) => a.tag - b.tag);
+  attributes.forEach(({ tag, value }) => {
+    const serializedAttributeValue = Buffer.from(value, "utf-8");
+    const serializedTag = encodeWord8(tag);
+    const serializedAttributeValueLength = encodeWord8(serializedAttributeValue.length);
+    buffers.push(Buffer.concat([serializedTag, serializedAttributeValueLength]));
+    buffers.push(serializedAttributeValue);
+  });
 
   return Buffer.concat(buffers);
 }
@@ -336,18 +390,19 @@ function serializeCredentialDeploymentValues(payload: CredentialDeploymentTransa
  * Takes hw-app format transaction and prepares it for transmission to device
  * by chunking it into appropriate APDU payloads.
  *
- * @param payload - Credential deployment transaction in hw-app format
+ * Always creates credentials for new accounts on existing identities (Ledger Live use case).
+ * The device receives the expiry time to display for user verification.
+ *
+ * @param tx - Credential deployment transaction in hw-app format
  * @param path - BIP32 derivation path
- * @param metadata - Optional metadata (isNew flag, existing account address as Buffer)
  * @returns Structured payload components ready for APDU transmission
  */
 export const serializeCredentialDeployment = (
-  payload: CredentialDeploymentTransaction,
+  tx: CredentialDeploymentTransaction,
   path: string,
-  metadata?: { isNew?: boolean; address?: Buffer },
 ) => {
   let offset = 0;
-  const txSerialized = serializeCredentialDeploymentValues(payload);
+  const txSerialized = serializeCredentialDeploymentValues(tx);
   const payloadDerivationPath = pathToBuffer(path);
 
   const tag: Buffer[] = [];
@@ -418,21 +473,15 @@ export const serializeCredentialDeployment = (
     offset += valueLen;
   }
 
-  // In hw-app format, proofs come pre-serialized as hex string
-  // (transformed from SDK IdOwnershipProofs object by coin-concordium layer)
-  const serializedProofs = Buffer.from(payload.proofs, "hex");
+  // Serialize ID ownership proofs - device needs to include these in signature hash
+  const serializedProofs = serializeIdOwnershipProofs(tx.proofs);
   const proofLength = encodeWord32(serializedProofs.length);
   const proofs = serializedProofs;
 
-  let newOrExistingPayload: Buffer | undefined;
-  if (metadata?.isNew !== undefined) {
-    if (metadata.isNew) {
-      const expiryBuf = encodeWord64(payload.expiry);
-      newOrExistingPayload = Buffer.concat([Buffer.from([0x00]), expiryBuf]);
-    } else if (metadata.address) {
-      newOrExistingPayload = Buffer.concat([Buffer.from([0x01]), metadata.address]);
-    }
-  }
+  // Always send expiry for new account (Ledger Live only creates new accounts)
+  // Format: [0x00] (new account indicator) + expiry (8 bytes)
+  const expiryBuf = encodeWord64(tx.expiry);
+  const newOrExistingPayload = Buffer.concat([Buffer.from([0x00]), expiryBuf]);
 
   return {
     payloadDerivationPath,
@@ -448,5 +497,280 @@ export const serializeCredentialDeployment = (
     proofLength,
     proofs,
     newOrExistingPayload,
+  };
+};
+
+/**
+ * Serializes the common prefix of ID ownership proofs up to and including proofRegId.
+ *
+ * This helper extracts the shared serialization logic used by both `serializeIdOwnershipProofs`
+ * and `insertAccountOwnershipProofs` to ensure they stay in sync.
+ *
+ * Serialization order:
+ * 1. sig (IP signature)
+ * 2. commitments
+ * 3. challenge
+ * 4. proofIdCredPub (u32 count + map entries with u32 keys, sorted by index)
+ * 5. proofIpSig (identity provider signature proof)
+ * 6. proofRegId (registration ID proof)
+ *
+ * @param proofs - ID ownership proofs from Concordium ID App
+ * @returns Serialized prefix buffer (everything up to and including proofRegId)
+ */
+function serializeIdOwnershipProofsPrefix(proofs: IdOwnershipProofs): Buffer {
+  const proofIdCredPubEntries = Object.entries(proofs.proofIdCredPub);
+  proofIdCredPubEntries.sort(
+    ([indexA], [indexB]) => Number.parseInt(indexA, 10) - Number.parseInt(indexB, 10),
+  );
+  const proofIdCredPubLength = encodeWord32(proofIdCredPubEntries.length);
+  const idCredPubProofs = Buffer.concat(
+    proofIdCredPubEntries.map(([index, value]) => {
+      const serializedIndex = encodeWord32(Number.parseInt(index, 10));
+      const serializedValue = Buffer.from(value, "hex");
+      return Buffer.concat([serializedIndex, serializedValue]);
+    }),
+  );
+
+  return Buffer.concat([
+    Buffer.from(proofs.sig, "hex"),
+    Buffer.from(proofs.commitments, "hex"),
+    Buffer.from(proofs.challenge, "hex"),
+    proofIdCredPubLength,
+    idCredPubProofs,
+    Buffer.from(proofs.proofIpSig, "hex"),
+    Buffer.from(proofs.proofRegId, "hex"),
+  ]);
+}
+
+/**
+ * Serializes ID ownership proofs for credential deployment.
+ *
+ * This function serializes the identity ownership proofs received from the Concordium ID App
+ * into the binary format required for credential deployment transactions. It handles the
+ * ID ownership portion only - account ownership proofs must be inserted separately using
+ * `insertAccountOwnershipProofs()`.
+ *
+ * Used as part of the credential deployment flow:
+ * 1. Get ID ownership proofs from Concordium ID App
+ * 2. Serialize them with this function
+ * 3. Sign with device using `signCredentialDeployment()`
+ * 4. Insert account ownership proofs using `insertAccountOwnershipProofs()`
+ * 5. Submit complete credential deployment to blockchain
+ *
+ * @param proofs - ID ownership proofs from Concordium ID App
+ * @returns Serialized ID ownership proofs as Buffer
+ *
+ * @see insertAccountOwnershipProofs for combining ID and account proofs
+ */
+export function serializeIdOwnershipProofs(proofs: IdOwnershipProofs): Buffer {
+  const prefix = serializeIdOwnershipProofsPrefix(proofs);
+
+  // NOTE: Account ownership proofs are NOT included here.
+  // They must be inserted between proofRegId and credCounterLessThanMaxAccounts.
+  return Buffer.concat([prefix, Buffer.from(proofs.credCounterLessThanMaxAccounts, "hex")]);
+}
+
+/**
+ * Serializes account ownership proofs from Ed25519 signatures.
+ *
+ * Structure (matching Concordium node expectations):
+ * - Number of signatures (1 byte, u8)
+ * - For each signature:
+ *   - Key index (1 byte, u8)
+ *   - Signature (64 bytes for Ed25519)
+ *
+ * @param signatures - Array of Ed25519 signatures as hex strings
+ * @returns Serialized account ownership proofs as Buffer
+ */
+export function serializeAccountOwnershipProofs(signatures: string[]): Buffer {
+  const numSignatures = encodeWord8(signatures.length);
+
+  const serializedSignatures = signatures.map((sig, i) => {
+    const keyIndex = encodeWord8(i);
+    const signature = Buffer.from(sig, "hex");
+
+    if (signature.length !== 64) {
+      throw new Error(
+        `Invalid signature length at index ${i}: expected 64 bytes, got ${signature.length}`,
+      );
+    }
+
+    return Buffer.concat([keyIndex, signature]);
+  });
+
+  return Buffer.concat([numSignatures, ...serializedSignatures]);
+}
+
+/**
+ * Inserts account ownership proofs into ID ownership proofs to build complete CredDeploymentProofs.
+ *
+ * This function is critical for credential deployment. It takes the ID ownership proofs
+ * from the Concordium ID App and the account ownership signature from the Ledger device,
+ * then combines them into the complete proof structure required by the Concordium blockchain.
+ *
+ * ## Why Insertion Order Matters
+ * The Concordium protocol defines a specific serialization order for CredDeploymentProofs.
+ * The account ownership proofs MUST be inserted at position 7 (between proofRegId and credCounterLessThanMaxAccounts),
+ * not appended at the end.
+ *
+ * Incorrect ordering will cause the blockchain node to reject the credential with the error:
+ * "Credential rejected by the node"
+ *
+ * ## Serialization Order
+ * 1. sig (IP signature)
+ * 2. commitments
+ * 3. challenge
+ * 4. proofIdCredPub (u32 count + map entries with u32 keys, sorted by index)
+ * 5. proofIpSig (identity provider signature proof)
+ * 6. proofRegId (registration ID proof)
+ * 7. **proof_acc_sk (AccountOwnershipProof) ← INSERTED HERE**
+ * 8. credCounterLessThanMaxAccounts
+ *
+ * @param idProofs - ID ownership proofs from the Concordium ID App
+ * @param accountSignature - Account ownership signature from the Ledger device (hex string, 64 bytes)
+ * @returns Complete CredDeploymentProofs as hex string, ready for submission
+ */
+export function insertAccountOwnershipProofs(
+  idProofs: IdOwnershipProofs,
+  accountSignature: string,
+): string {
+  const prefix = serializeIdOwnershipProofsPrefix(idProofs);
+  const accountProofBuffer = serializeAccountOwnershipProofs([accountSignature]);
+
+  const combined = Buffer.concat([
+    prefix,
+    accountProofBuffer,
+    Buffer.from(idProofs.credCounterLessThanMaxAccounts, "hex"),
+  ]);
+
+  return combined.toString("hex");
+}
+
+/**
+ * Deserializes a Transfer transaction from serialized buffer.
+ *
+ * Parses the binary format and reconstructs the structured Transaction object.
+ * Expected format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8][type:1][recipient:32][amount:8]
+ *
+ * @param buffer Serialized Transfer transaction
+ * @returns Structured Transaction with all fields populated
+ */
+export const deserializeTransfer = (buffer: Buffer): Transaction => {
+  let offset = 0;
+
+  const sender = AccountAddress.fromBuffer(buffer.subarray(offset, offset + 32));
+  offset += 32;
+
+  const nonce = decodeWord64(buffer, offset);
+  offset += 8;
+
+  const energyAmount = decodeWord64(buffer, offset);
+  offset += 8;
+
+  const payloadSize = decodeWord32(buffer, offset);
+  offset += 4;
+
+  const expiry = decodeWord64(buffer, offset);
+  offset += 8;
+
+  const type = buffer[offset];
+  offset += 1;
+
+  if (type !== TransactionType.Transfer) {
+    throw new Error(`Expected Transfer type (3), got ${type}`);
+  }
+
+  const toAddress = AccountAddress.fromBuffer(buffer.subarray(offset, offset + 32));
+  offset += 32;
+
+  const amount = decodeWord64(buffer, offset);
+
+  const expectedPayloadSize = 32 + 8;
+  if (payloadSize !== expectedPayloadSize + 1) {
+    throw new Error(
+      `Invalid payload size for Transfer: expected ${expectedPayloadSize + 1}, got ${payloadSize}`,
+    );
+  }
+
+  return {
+    header: {
+      sender,
+      nonce,
+      expiry,
+      energyAmount,
+    },
+    type: TransactionType.Transfer,
+    payload: {
+      toAddress,
+      amount,
+    },
+  };
+};
+
+/**
+ * Deserializes a TransferWithMemo transaction from serialized buffer.
+ *
+ * Parses the binary format and reconstructs the structured Transaction object with memo.
+ * Expected format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8][type:1][recipient:32][memo_length:2][memo:N][amount:8]
+ *
+ * @param buffer Serialized TransferWithMemo transaction
+ * @returns Structured Transaction with all fields including memo
+ */
+export const deserializeTransferWithMemo = (buffer: Buffer): Transaction => {
+  let offset = 0;
+
+  const sender = AccountAddress.fromBuffer(buffer.subarray(offset, offset + 32));
+  offset += 32;
+
+  const nonce = decodeWord64(buffer, offset);
+  offset += 8;
+
+  const energyAmount = decodeWord64(buffer, offset);
+  offset += 8;
+
+  const payloadSize = decodeWord32(buffer, offset);
+  offset += 4;
+
+  const expiry = decodeWord64(buffer, offset);
+  offset += 8;
+
+  const type = buffer[offset];
+  offset += 1;
+
+  if (type !== TransactionType.TransferWithMemo) {
+    throw new Error(`Expected TransferWithMemo type (22), got ${type}`);
+  }
+
+  const toAddress = AccountAddress.fromBuffer(buffer.subarray(offset, offset + 32));
+  offset += 32;
+
+  const memoLength = decodeWord16(buffer, offset);
+  offset += 2;
+
+  const memo = Buffer.from(buffer.subarray(offset, offset + memoLength));
+  offset += memoLength;
+
+  const amount = decodeWord64(buffer, offset);
+
+  const expectedPayloadSize = 32 + 2 + memoLength + 8;
+  if (payloadSize !== expectedPayloadSize + 1) {
+    throw new Error(
+      `Invalid payload size for TransferWithMemo: expected ${expectedPayloadSize + 1}, got ${payloadSize}`,
+    );
+  }
+
+  return {
+    header: {
+      sender,
+      nonce,
+      expiry,
+      energyAmount,
+    },
+    type: TransactionType.TransferWithMemo,
+    payload: {
+      toAddress,
+      amount,
+      memo,
+    },
   };
 };

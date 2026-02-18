@@ -76,20 +76,38 @@ export class PageScroller {
     direction: Direction,
     pixels: number,
   ): Promise<void> {
+    const isHorizontal = direction === "left" || direction === "right";
+    const useSwipeForAndroidHorizontal = isAndroid() && isHorizontal;
+
+    if (useSwipeForAndroidHorizontal) {
+      const swipeDirection = direction === "right" ? "left" : "right";
+      return await scrollContainer.swipe(swipeDirection, "fast", 0.85);
+    }
+
     try {
       switch (direction) {
         case "down":
           return await scrollContainer.scroll(pixels, "down", NaN, 0.8);
         case "up":
           return await scrollContainer.scroll(pixels, "up", NaN, 0.8);
+        case "right":
+          return await scrollContainer.scroll(pixels, "right", NaN, 0.5);
+        case "left":
+          return await scrollContainer.scroll(pixels, "left", NaN, 0.5);
         case "bottom":
           return await scrollContainer.swipe("up", "fast");
         default:
           throw new Error(`Unsupported scroll direction: ${direction}`);
       }
     } catch {
-      // If scroll fails, try alternative approaches for ModularDrawer
-      return await scrollContainer.swipe(direction === "down" ? "up" : "down", "slow");
+      const fallbackDirection = isHorizontal
+        ? direction === "right"
+          ? "left"
+          : "right"
+        : direction === "down"
+          ? "up"
+          : "down";
+      return await scrollContainer.swipe(fallbackDirection, "slow");
     }
   }
 
@@ -115,6 +133,12 @@ export class PageScroller {
         topReached = true;
       } else if (currentDirection === "bottom") {
         flipped = "up";
+      } else if (currentDirection === "right") {
+        flipped = "left";
+        bottomReached = true;
+      } else if (currentDirection === "left") {
+        flipped = "right";
+        topReached = true;
       } else {
         flipped = "down";
       }

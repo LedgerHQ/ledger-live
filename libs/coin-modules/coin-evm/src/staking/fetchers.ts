@@ -1,5 +1,5 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Stake } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { withApi } from "../network/node/rpc.common";
 import type {
   StakeCreate,

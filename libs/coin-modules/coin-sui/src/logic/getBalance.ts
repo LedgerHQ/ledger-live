@@ -1,5 +1,5 @@
-import { getStakes, getAllBalancesCached } from "../network";
 import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { getStakes, getAllBalancesCached } from "../network";
 import { toSuiAsset } from "../network/sdk";
 
 export async function getBalance(address: string): Promise<Balance[]> {

@@ -467,6 +467,9 @@
       "title" : "Échec de la vérification de l’authenticité",
       "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "Activez la signature aveugle (\"Blind Signing\" ou \"Contract Data\") dans l’app Ethereum"
+    },
     "HardResetFail" : {
       "title" : "Échec de la réinitialisation",
       "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
@@ -2681,6 +2684,10 @@
       "seeMarket" : "Afficher tout"
     },
     "walletBalance" : "Solde total",
+    "balance" : {
+      "noSigner" : "Le wallet le plus\nsécurisé",
+      "noFund" : "Sécurisez\nvos cryptos"
+    },
     "seeAllAssets" : "Voir tous les actifs",
     "seeAllAccounts" : "Voir tous les comptes",
     "marketPriceSection" : {
@@ -2701,6 +2708,18 @@
       "send" : "Envoyer",
       "deposit" : "Recevoir",
       "stake" : "Staker"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "Transférer",
+      "swap" : "Échanger",
+      "buy" : "Acheter",
+      "transferDrawer" : {
+        "title" : "Transférer",
+        "receiveCrypto" : "Recevoir des cryptos",
+        "sendCrypto" : "Envoyer des cryptos",
+        "bankTransfer" : "Virement bancaire",
+        "bankTransferDescription" : "Recevez des stablecoins par virement bancaire."
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2969,6 +2988,7 @@
     "yield" : "Rendement",
     "sell" : "Vendre",
     "swap" : "Échanger",
+    "perps" : "Perpétuels",
     "manage" : "Gérer",
     "lastTransactions" : "Dernières transactions",
     "emptyState" : {
@@ -3477,9 +3497,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activez les notifications",
-      "titleVariantB" : "Exploitez tout le potentiel de Ledger Wallet",
+      "titleVariantB" : "Ne passez pas à côté de l’essentiel",
       "desc" : "Ne manquez plus rien sur Ledger Wallet, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
-      "descVariantB" : "Nous vous enverrons des conseils personnalisés, des guides de configuration et les actualités du marché les plus utiles.",
+      "descVariantB" : "Recevez des alertes en temps réel sur les nouvelles cryptos, les opportunités de rendement et les mouvements du marché. Vous pouvez les désactiver à tout moment.",
       "allow" : "Autoriser les notifications",
       "later" : "Plus tard"
     },
@@ -3654,6 +3674,10 @@
     "stake" : {
       "title" : "Staker",
       "description" : "Obtenez des récompenses sur vos cryptos"
+    },
+    "perps" : {
+      "title" : "Perpétuels",
+      "description" : "Tradez des contrats perpétuels sur crypto-actifs."
     },
     "swap" : {
       "title" : "Swap",
@@ -8247,7 +8271,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Prestataire non disponible",
-      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
+      "description" : "Ce prestataire du service Swap ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity" : {
       "title" : "Prestataire non disponible",
@@ -8284,6 +8308,11 @@
       "preapprove" : "Compte ajouté",
       "validator" : "Validateur Ledger",
       "title" : "Accepter automatiquement les actifs versés",
+      "processing" : {
+        "title" : "Traitement de la transaction en cours",
+        "description" : "Le processus peut prendre jusqu’à 1 minute.",
+        "keepDeviceNearby" : "Restez dans l’application Ledger Wallet et gardez votre appareil Ledger à portée de main."
+      },
       "reonboard" : {
         "title" : "Mise à jour du compte requise",
         "account" : "Compte",
@@ -8356,7 +8385,11 @@
       "neutral" : "Neutre",
       "greed" : "Cupidité",
       "extremeGreed" : "Cupidité+"
-    }
+    },
+    "tileTitle" : "Psychologie"
+  },
+  "perps" : {
+    "title" : "Perpétuels"
   },
   "analyticsAllocation" : {
     "header" : {

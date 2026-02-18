@@ -21,8 +21,8 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
-import { MultiversXSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
+import { MultiversXSigner } from "../signer";
 import { getAccountShape, sync } from "../synchronisation";
 import type {
   MultiversXAccount,

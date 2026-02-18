@@ -1,11 +1,11 @@
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import type { AccountTronAPI } from "../network/types";
 import type { Transaction } from "../types";
 import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
-import { estimateFees, getAccount } from "../logic";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth

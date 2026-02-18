@@ -35,6 +35,7 @@ export async function listOperations(
           date: new Date(tx.transaction_timestamp),
           block: {
             height: tx.block.height,
+            hash: tx.block.hash,
             time: new Date(tx.block.time),
           },
           failed: false,

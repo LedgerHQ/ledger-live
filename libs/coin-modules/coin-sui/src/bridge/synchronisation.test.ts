@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
-import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import { DEFAULT_COIN_TYPE } from "../network/sdk";
-import { getAccountShape } from "./synchronisation";
-import coinConfig from "../config";
-import { getFullnodeUrl } from "@mysten/sui/client";
-import * as networkModule from "../network";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { getFullnodeUrl } from "@mysten/sui/client";
+import BigNumber from "bignumber.js";
+import coinConfig from "../config";
+import * as networkModule from "../network";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
+import { getAccountShape } from "./synchronisation";
 
 jest.mock("../network", () => {
   const mockGetAccountBalances = jest.fn();
@@ -194,8 +194,7 @@ describe("getAccountShape", () => {
 
     // THEN
     expect(shape.balance).toEqual(mainBalance.balance);
-    expect(shape.subAccounts).toBeDefined();
-    expect(Array.isArray(shape.subAccounts)).toBe(true);
+    expect(shape.subAccounts).toBeInstanceOf(Array);
   });
 
   it("should build subAccounts from SUI tokens", async () => {
@@ -350,8 +349,9 @@ describe("getAccountShape", () => {
       );
 
       // THEN
-      expect(shape.suiResources).toBeDefined();
-      expect(shape.suiResources?.stakes).toEqual([]);
+      expect(shape.suiResources).toEqual({
+        stakes: [],
+      });
     });
 
     it("includes stakes in suiResources when stakes are returned", async () => {
@@ -401,8 +401,9 @@ describe("getAccountShape", () => {
       );
 
       // THEN
-      expect(shape.suiResources).toBeDefined();
-      expect(shape.suiResources?.stakes).toEqual(mockStakes);
+      expect(shape.suiResources).toEqual({
+        stakes: mockStakes,
+      });
     });
 
     it("handles multiple stakes per validator", async () => {
@@ -651,8 +652,7 @@ describe("getAccountShape", () => {
       );
 
       // THEN
-      expect(shape.suiResources).toBeDefined();
-      expect(shape.suiResources?.stakes).toBeNull();
+      expect(shape.suiResources).toEqual({ stakes: null });
     });
   });
 });

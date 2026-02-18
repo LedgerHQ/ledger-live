@@ -198,8 +198,11 @@ export const test = base.extend<TestFixtures>({
 
       await use(electronApp);
 
-      // close app
-      await electronApp.close();
+      try {
+        await electronApp.close();
+      } catch {
+        // App may already be closed when capturing failure video
+      }
     } finally {
       if (speculos) {
         await killSpeculos(speculos.id);
@@ -242,7 +245,7 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      await captureArtifacts(page, testInfo);
+      await captureArtifacts(page, testInfo, electronApp);
     }
 
     //Remove video if test passed

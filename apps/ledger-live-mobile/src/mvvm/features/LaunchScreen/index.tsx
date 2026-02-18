@@ -21,14 +21,15 @@ export const AppLoadingManager: React.FC<AppLoadingManagerProps> = ({
 }) => {
   logStartupEvent("Splash screen render");
 
-  const { loadingState, appIsReady, handleLottieFinish, appOpacity, lottieOpacity } =
+  const { loadingState, appIsReady, appOpacity, lottieOpacity, lottieStarted } =
     useAppLoadingManager({ isNavigationReady, config, onAppReady });
 
   if (Config.DETOX) {
     return children;
   }
 
-  const showLottie = loadingState === LoadingState.LOTTIE_LOADING || appIsReady;
+  // Only show Lottie if it was actually started (not skipped when nav was ready early)
+  const showLottie = lottieStarted && (loadingState === LoadingState.LOTTIE_LOADING || appIsReady);
 
   return (
     <View style={styles.container}>
@@ -51,7 +52,7 @@ export const AppLoadingManager: React.FC<AppLoadingManagerProps> = ({
             { opacity: lottieOpacity, zIndex: loadingState === LoadingState.APP_READY ? -1 : 1 },
           ]}
         >
-          <LottieLauncher onFinish={handleLottieFinish} />
+          <LottieLauncher />
         </Animated.View>
       )}
     </View>

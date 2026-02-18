@@ -15,7 +15,7 @@ import {
 import { AccountLike } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
-import { formatAddress } from "../../Accounts/utils/formatAddress";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { ExtendedRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 

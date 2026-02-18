@@ -1,19 +1,19 @@
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
-import flatMap from "lodash/flatMap";
-import { Account, OperationType } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import { ICP_FEES } from "../../consts";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { normalizeEpochTimestamp } from "../../common-logic/utils";
-import { InternetComputerOperation } from "../../types";
-import invariant from "invariant";
+import { Account, OperationType } from "@ledgerhq/types-live";
 import {
   deriveAddressFromPubkey,
   hashTransaction,
   TransactionWithId,
 } from "@zondax/ledger-live-icp";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import flatMap from "lodash/flatMap";
+import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
+import { normalizeEpochTimestamp } from "../../common-logic/utils";
+import { ICP_FEES } from "../../consts";
+import { InternetComputerOperation } from "../../types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",

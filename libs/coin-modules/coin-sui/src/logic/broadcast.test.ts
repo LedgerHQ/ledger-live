@@ -1,5 +1,5 @@
-import { broadcast } from "./broadcast";
 import suiAPI from "../network";
+import { broadcast } from "./broadcast";
 
 // Mock the suiAPI
 jest.mock("../network", () => ({

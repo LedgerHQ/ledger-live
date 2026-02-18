@@ -1,5 +1,28 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.15.3
+
+### Patch Changes
+
+- Updated dependencies [[`ed6d076`](https://github.com/LedgerHQ/ledger-live/commit/ed6d07693d9cdd16c954127520da6fcb16273d93), [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`196ac42`](https://github.com/LedgerHQ/ledger-live/commit/196ac4225b08b40fd04d137ee17cf9e75a502443), [`6dc7fa6`](https://github.com/LedgerHQ/ledger-live/commit/6dc7fa6de3ef8f2357a40c8243d6af004796c4d4), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`463df0d`](https://github.com/LedgerHQ/ledger-live/commit/463df0d85df9a223bde62ddb45d783920348c92f), [`59b4d7e`](https://github.com/LedgerHQ/ledger-live/commit/59b4d7e4052bf873644dfb817ee910ab1f046332), [`64a32d2`](https://github.com/LedgerHQ/ledger-live/commit/64a32d23aa176c904974bb6e3acd717d9c75729a), [`c36a6b1`](https://github.com/LedgerHQ/ledger-live/commit/c36a6b1112bb87e53ae106f676069327726b90c7), [`c9f56c4`](https://github.com/LedgerHQ/ledger-live/commit/c9f56c4af8a2825f52696c2ef241564e62c55111), [`c502474`](https://github.com/LedgerHQ/ledger-live/commit/c502474fb1cd531511eaa0188affe2f315ef0cdf), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`f9c121a`](https://github.com/LedgerHQ/ledger-live/commit/f9c121aaee36b33be60af7111f841dde038a95f2), [`9b10692`](https://github.com/LedgerHQ/ledger-live/commit/9b1069261b21b4875ea1966212e4d8bd5327ac88), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014), [`d5b273b`](https://github.com/LedgerHQ/ledger-live/commit/d5b273b41e768c3a656306070c16bc42b7790f79)]:
+  - @ledgerhq/live-common@34.60.0
+  - @ledgerhq/live-env@2.27.0
+
+## 0.15.3-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.60.0-next.1
+
+## 0.15.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ed6d076`](https://github.com/LedgerHQ/ledger-live/commit/ed6d07693d9cdd16c954127520da6fcb16273d93), [`d7b6d27`](https://github.com/LedgerHQ/ledger-live/commit/d7b6d27d86cade7fcae8013ae66df72532aec3df), [`da660cc`](https://github.com/LedgerHQ/ledger-live/commit/da660ccccf87d97bfdff2b2a066c8b3b422b2d93), [`196ac42`](https://github.com/LedgerHQ/ledger-live/commit/196ac4225b08b40fd04d137ee17cf9e75a502443), [`6dc7fa6`](https://github.com/LedgerHQ/ledger-live/commit/6dc7fa6de3ef8f2357a40c8243d6af004796c4d4), [`2d750da`](https://github.com/LedgerHQ/ledger-live/commit/2d750da3bcda547e8c4639e655c5129580baeaad), [`96acd67`](https://github.com/LedgerHQ/ledger-live/commit/96acd679f345729cddcdf73191d4b2a0f948ad5a), [`463df0d`](https://github.com/LedgerHQ/ledger-live/commit/463df0d85df9a223bde62ddb45d783920348c92f), [`59b4d7e`](https://github.com/LedgerHQ/ledger-live/commit/59b4d7e4052bf873644dfb817ee910ab1f046332), [`64a32d2`](https://github.com/LedgerHQ/ledger-live/commit/64a32d23aa176c904974bb6e3acd717d9c75729a), [`c36a6b1`](https://github.com/LedgerHQ/ledger-live/commit/c36a6b1112bb87e53ae106f676069327726b90c7), [`c9f56c4`](https://github.com/LedgerHQ/ledger-live/commit/c9f56c4af8a2825f52696c2ef241564e62c55111), [`c502474`](https://github.com/LedgerHQ/ledger-live/commit/c502474fb1cd531511eaa0188affe2f315ef0cdf), [`bf34cf5`](https://github.com/LedgerHQ/ledger-live/commit/bf34cf516a26081ddd493bb01042b1a0e462b029), [`f9c121a`](https://github.com/LedgerHQ/ledger-live/commit/f9c121aaee36b33be60af7111f841dde038a95f2), [`9b10692`](https://github.com/LedgerHQ/ledger-live/commit/9b1069261b21b4875ea1966212e4d8bd5327ac88), [`7a75642`](https://github.com/LedgerHQ/ledger-live/commit/7a75642c2f56e27c778106d60a44049917d04014), [`d5b273b`](https://github.com/LedgerHQ/ledger-live/commit/d5b273b41e768c3a656306070c16bc42b7790f79)]:
+  - @ledgerhq/live-common@34.60.0-next.0
+  - @ledgerhq/live-env@2.27.0-next.0
+
 ## 0.15.2
 
 ### Patch Changes

@@ -3,7 +3,7 @@
 exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
 [
   {
-    "balance": "124350",
+    "balance": "124351",
     "currencyId": "osmo",
     "derivationMode": "",
     "freshAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
@@ -12,7 +12,7 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
-    "spendableBalance": "124350",
+    "spendableBalance": "124351",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

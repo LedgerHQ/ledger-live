@@ -47,6 +47,8 @@ runs:
     - name: Setup proto
       if: inputs.install-proto == 'true'
       uses: moonrepo/setup-toolchain@v0
+      with:
+        proto-version: "0.55.2"
 
     - name: Update proto
       if: inputs.upgrade-proto == 'true'

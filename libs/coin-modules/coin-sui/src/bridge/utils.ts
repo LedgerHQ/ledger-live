@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
-import { AccountLike } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import type { SuiAccount, Transaction } from "../types";
+import { AccountLike } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { ONE_SUI } from "../constants";
+import type { SuiAccount, Transaction } from "../types";
 
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision, no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;

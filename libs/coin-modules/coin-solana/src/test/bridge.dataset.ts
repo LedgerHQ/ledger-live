@@ -1,6 +1,5 @@
-import BigNumber from "bignumber.js";
-import { SolanaTokenAccountRaw, Transaction, TransactionModel } from "../types";
-import scanAccounts1 from "../datasets/solana.scanAccounts.1";
+import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   InvalidAddress,
@@ -8,9 +7,13 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import BigNumber from "bignumber.js";
+import { compact } from "lodash/fp";
+import createTransaction from "../createTransaction";
+import scanAccounts1 from "../datasets/solana.scanAccounts.1";
 import {
   SolanaAccountNotFunded,
   SolanaAddressOffEd25519,
@@ -23,13 +26,10 @@ import {
   SolanaValidatorRequired,
 } from "../errors";
 import { encodeAccountIdWithTokenAccountAddress } from "../logic";
-import createTransaction from "../createTransaction";
-import { compact } from "lodash/fp";
-import { assertUnreachable } from "../utils";
-import { getEnv } from "@ledgerhq/live-env";
-import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
-import { testOnChainData } from "../tests/test-onchain-data.fixture";
 import { MAX_MEMO_LENGTH } from "../logic/validateMemo";
+import { testOnChainData } from "../tests/test-onchain-data.fixture";
+import { SolanaTokenAccountRaw, Transaction, TransactionModel } from "../types";
+import { assertUnreachable } from "../utils";
 
 const mainAccId = encodeAccountId({
   type: "js",
