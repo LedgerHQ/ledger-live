@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { hasAccountsSelector, isUpToDateSelector } from "~/renderer/reducers/accounts";
 import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
@@ -7,6 +7,7 @@ import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
 
+import { usePortfolioSyncStatus } from "LLD/hooks/usePortfolioSyncStatus";
 import { useAccountsSyncStatus } from "./useAccountsSyncStatus";
 import { useActivityIndicatorTooltip } from "./useActivityIndicatorTooltip";
 import { getActivityIndicatorIcon } from "../utils/getActivityIndicatorIcon";
@@ -21,10 +22,11 @@ export const useActivityIndicator = () => {
   const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
   const wsUserState = useWalletSyncUserState();
   const cvPolling = useCountervaluesPolling();
+  const { isColdStart } = usePortfolioSyncStatus();
   const bridgeSync = useBridgeSync();
   const globalSyncState = useGlobalSyncState();
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [, setTick] = useState(0);
+  const [, forceTooltipUpdate] = useReducer((tick: number) => tick + 1, 0);
 
   const { allAccounts, listOfErrorAccountNames, areAllAccountsUpToDate } =
     useAccountsSyncStatus(accountsWithUpToDateCheck);
@@ -34,7 +36,7 @@ export const useActivityIndicator = () => {
   const needsTooltipUpdates = hasAccounts && lastSyncMs > 0;
   useEffect(() => {
     if (!needsTooltipUpdates) return;
-    const id = setInterval(() => setTick(t => t + 1), TOOLTIP_UPDATE_INTERVAL_MS);
+    const id = setInterval(forceTooltipUpdate, TOOLTIP_UPDATE_INTERVAL_MS);
     return () => clearInterval(id);
   }, [needsTooltipUpdates]);
 
@@ -47,8 +49,7 @@ export const useActivityIndicator = () => {
     ? PLAYWRIGHT_CLICK_SPIN_DURATION_MS
     : USER_CLICK_SPIN_DURATION_MS;
   const isUserClick = Date.now() - lastClickTime < userClickSpinMs;
-  const isRotating = isPending && isUserClick;
-  const isDisabled = isRotating;
+  const isRotating = isColdStart || (isUserClick && isPending);
 
   const icon = getActivityIndicatorIcon(isError, isRotating);
   const tooltip = useActivityIndicatorTooltip({
@@ -75,7 +76,6 @@ export const useActivityIndicator = () => {
     handleSync,
     isError,
     isRotating,
-    isDisabled,
     tooltip,
     icon,
   };

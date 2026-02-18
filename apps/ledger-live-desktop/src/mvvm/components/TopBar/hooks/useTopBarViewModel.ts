@@ -9,7 +9,7 @@ const useTopBarViewModel = () => {
   const {
     hasAccounts,
     handleSync,
-    isDisabled,
+    isRotating,
     icon: activityIndicatorIcon,
     tooltip: activityIndicatorTooltip,
   } = useActivityIndicator();
@@ -25,7 +25,7 @@ const useTopBarViewModel = () => {
               label: "synchronize",
               tooltip: activityIndicatorTooltip,
               icon: activityIndicatorIcon,
-              isInteractive: !isDisabled,
+              isInteractive: !isRotating,
               onClick: handleSync,
             },
           },
