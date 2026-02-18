@@ -336,6 +336,7 @@ jobs:
 
 
           # Configure host to use mitmproxy
+          echo "Configure host to use mitmproxy" 
           /usr/sbin/networksetup -listallnetworkservices
           export NETWORK_SERVICE=$(/usr/sbin/networksetup -listallnetworkservices | grep -iE "wi-fi|ethernet|airport" | head -1)
 
@@ -349,9 +350,13 @@ jobs:
           sudo /usr/sbin/networksetup -setwebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
           sudo /usr/sbin/networksetup -setsecurewebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
 
-          echo $PATH;
 
+          echo "Use simctl to set emulator"
           # Get the UDID of the simulator Detox is using
+          xcrun simctl list devices  
+          xcrun simctl list devices | grep "Booted" 
+          xcrun simctl list devices | grep "Booted" | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})"
+
           SIM_UDID=$(xcrun simctl list devices | grep "Booted" | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})")
 
           # 1. Boot the simulator if it isn't already
