@@ -357,7 +357,7 @@ jobs:
 
           SIM_UDID=$(xcrun simctl list devices | grep "iOS Simulator" | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})")
 
-          echo "$SIM_UDID"
+          echo "Relevant UDID: $SIM_UDID"
 
           # 1. Boot the simulator if it isn't already
           xcrun simctl boot "$SIM_UDID" || true
