@@ -392,6 +392,34 @@ export const handlers = ({
       const bridge = getAccountBridge(signerAccount, parentAccount);
       const broadcastAccount = getMainAccount(signerAccount, parentAccount);
 
+      const networkId =
+        signerAccount.type === "TokenAccount"
+          ? signerAccount.token.parentCurrency.id
+          : signerAccount.currency.id;
+
+      let targetCurrency: string | undefined;
+      try {
+        const recipient = signedOperation.operation.recipients[0];
+        if (recipient) {
+          const targetToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+            recipient,
+            networkId,
+          );
+          targetCurrency = targetToken ? targetToken.name : undefined;
+        }
+      } catch {
+        // Ignore errors — tracking data should not break the broadcast flow
+      }
+
+      const broadcastTrackingData = {
+        sourceCurrency:
+          signerAccount.type === "TokenAccount"
+            ? signerAccount.token.name
+            : signerAccount.currency.name,
+        targetCurrency,
+        network: networkId,
+      };
+
       let optimisticOperation: Operation = signedOperation.operation;
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         try {
@@ -399,9 +427,9 @@ export const handlers = ({
             account: broadcastAccount,
             signedOperation,
           });
-          tracking.broadcastSuccess(manifest);
+          tracking.broadcastSuccess(manifest, broadcastTrackingData);
         } catch (error) {
-          tracking.broadcastFail(manifest);
+          tracking.broadcastFail(manifest, broadcastTrackingData);
           throw error;
         }
       }

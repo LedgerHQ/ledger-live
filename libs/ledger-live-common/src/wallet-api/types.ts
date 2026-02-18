@@ -84,6 +84,14 @@ export type DAppTrackingData = {
   network: CryptoCurrency["id"];
 };
 
+export type BroadcastTrackingData = {
+  isEmbeddedSwap?: boolean;
+  partner?: string;
+  sourceCurrency?: string;
+  targetCurrency?: string;
+  network?: string;
+};
+
 export type AccountIdFormat = "uuid" | "encoded";
 
 /** @developer note uuid = wallet API id format, encoded = ledger wallet default format */

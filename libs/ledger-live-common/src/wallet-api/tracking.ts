@@ -1,4 +1,4 @@
-import type { AppManifest, DAppTrackingData } from "./types";
+import type { AppManifest, BroadcastTrackingData, DAppTrackingData } from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -135,21 +135,31 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Failed to broadcast a signed transaction
-    broadcastFail: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+    broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties = {
         ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
+        ...(data?.isEmbeddedSwap !== undefined && {
+          isEmbeddedSwap: String(data.isEmbeddedSwap),
+        }),
+        ...(data?.partner !== undefined && { partner: data.partner }),
+        ...(data?.sourceCurrency !== undefined && { sourceCurrency: data.sourceCurrency }),
+        ...(data?.targetCurrency !== undefined && { targetCurrency: data.targetCurrency }),
+        ...(data?.network !== undefined && { network: data.network }),
       };
       track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
-    broadcastSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+    broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties = {
         ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
+        ...(data?.isEmbeddedSwap !== undefined && {
+          isEmbeddedSwap: String(data.isEmbeddedSwap),
+        }),
+        ...(data?.partner !== undefined && { partner: data.partner }),
+        ...(data?.sourceCurrency !== undefined && { sourceCurrency: data.sourceCurrency }),
+        ...(data?.targetCurrency !== undefined && { targetCurrency: data.targetCurrency }),
+        ...(data?.network !== undefined && { network: data.network }),
       };
       track("WalletAPI Broadcast Success", properties);
     },
