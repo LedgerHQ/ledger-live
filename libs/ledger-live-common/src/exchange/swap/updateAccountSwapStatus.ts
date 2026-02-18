@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
 import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";
@@ -83,9 +84,24 @@ const maybeGetUpdatedSwapHistory = async (
       consolidatedSwapHistory = swapHistory.map<SwapOperation>((swap: SwapOperation) => {
         const newStatus = newStatusList.find(s => s.swapId === swap.swapId);
 
-        if (newStatus && newStatus.status !== swap.status) {
-          accountNeedsUpdating = true;
-          return { ...swap, status: newStatus.status };
+        if (newStatus) {
+          const statusChanged = newStatus.status !== swap.status;
+          const hasValidFinalAmount =
+            newStatus.finalAmount != null && newStatus.finalAmount !== "";
+          const finalAmountChanged =
+            hasValidFinalAmount &&
+            newStatus.finalAmount !== swap.finalAmount?.toString();
+
+          if (statusChanged || finalAmountChanged) {
+            accountNeedsUpdating = true;
+            return {
+              ...swap,
+              status: newStatus.status,
+              ...(hasValidFinalAmount && {
+                finalAmount: new BigNumber(newStatus.finalAmount!),
+              }),
+            };
+          }
         }
 
         return swap;

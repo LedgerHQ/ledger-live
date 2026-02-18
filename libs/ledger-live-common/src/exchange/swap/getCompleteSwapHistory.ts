@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
@@ -13,6 +14,7 @@ const getSwapOperationMap =
       operationId,
       fromAmount,
       toAmount,
+      finalAmount,
       status,
       tokenId,
     } = swapOperation;
@@ -53,6 +55,13 @@ const getSwapOperationMap =
           fromParentAccount = accounts.find(a => a.id === account.parentId);
         }
 
+        const toCurrency = getAccountCurrency(toAccount);
+        const toMagnitude = toCurrency.units[0].magnitude;
+        const magnitudeAwareFinalAmount =
+          finalAmount && finalAmount.isGreaterThan(0)
+            ? finalAmount.times(new BigNumber(10).pow(toMagnitude))
+            : undefined;
+
         return {
           provider,
           swapId,
@@ -64,6 +73,7 @@ const getSwapOperationMap =
           operation: op,
           fromAmount,
           toAmount,
+          finalAmount: magnitudeAwareFinalAmount,
           toExists,
         };
       }
