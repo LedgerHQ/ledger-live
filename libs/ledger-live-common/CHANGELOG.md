@@ -1,5 +1,96 @@
 # @ledgerhq/live-common
 
+## 34.62.0-next.0
+
+### Minor Changes
+
+- [#14388](https://github.com/LedgerHQ/ledger-live/pull/14388) [`71c413a`](https://github.com/LedgerHQ/ledger-live/commit/71c413abb359a47c493e26d5e4e2d71d262f9835) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo view key resolver
+
+- [#14422](https://github.com/LedgerHQ/ledger-live/pull/14422) [`e7879f0`](https://github.com/LedgerHQ/ledger-live/commit/e7879f010edbff6df939662218ac4f007b2911ab) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): add bitcoin.getAddresses handler for PSBT sign flow
+
+  - Add bitcoinFamilyAccountGetAddressesLogic to return payment addresses for a Bitcoin account: first external, unused receive/change indices, and addresses with UTXOs; support optional intentions filter (e.g. "payment" only).
+  - Register bitcoin.getAddresses handler in Wallet API server and add tracking (requested / fail / success).
+  - Refactor useWalletAPIServer: keep a single WalletAPIServer instance via useRef and update config, permissions, and custom handlers in useEffect to avoid re-creation on re-renders.
+  - Bump @ledgerhq/wallet-api-client (^1.13.0), @ledgerhq/wallet-api-core (^1.28.0), @ledgerhq/wallet-api-server (^3.1.0) and related packages across deeplink-, exchange-, feature-flag-, acre-module and dummy-wallet-app.
+  - Add unit tests for bitcoinFamilyAccountGetAddressesLogic (intentions, error cases, address list shape, receive/change counts, UTXO addresses).
+
+- [#14296](https://github.com/LedgerHQ/ledger-live/pull/14296) [`bd39baa`](https://github.com/LedgerHQ/ledger-live/commit/bd39baa199c5e63a889c8120e7650445a8c63521) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(live-24405): enrich swap error logging with step context and cause details in postSwapCancelled
+
+- [#14386](https://github.com/LedgerHQ/ledger-live/pull/14386) [`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0) Thanks [@cfloume](https://github.com/cfloume)! - feat: skip device onboarding from analytics opt in
+
+- [#14407](https://github.com/LedgerHQ/ledger-live/pull/14407) [`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - lastBlock method implementation and network api client for Aleo
+
+- [#13829](https://github.com/LedgerHQ/ledger-live/pull/13829) [`ff67587`](https://github.com/LedgerHQ/ledger-live/commit/ff67587241e5c521b4e1be2074985450fb6f9edc) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - test: e2e send hbar
+
+- [#14483](https://github.com/LedgerHQ/ledger-live/pull/14483) [`171a22c`](https://github.com/LedgerHQ/ledger-live/commit/171a22c1a01784111cd0e07526ad9114a445c4e6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-xrp): allow 0 as destination tag
+
+- [#14435](https://github.com/LedgerHQ/ledger-live/pull/14435) [`2aa87ef`](https://github.com/LedgerHQ/ledger-live/commit/2aa87ef53048a0a4abbe5a1365db0fa1f6d1d428) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - refetch on network reconnect for the market banner
+
+- [#14469](https://github.com/LedgerHQ/ledger-live/pull/14469) [`dd5e9c6`](https://github.com/LedgerHQ/ledger-live/commit/dd5e9c6680aef53b82e5e0fcdd21f39d83916b2f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update base and arbitrum coin-evm's config
+
+- [#14510](https://github.com/LedgerHQ/ledger-live/pull/14510) [`1b1fe80`](https://github.com/LedgerHQ/ledger-live/commit/1b1fe80e8be9934b94d2374543b593b2a30d1197) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: store aleo view key in account.id
+
+- [#14568](https://github.com/LedgerHQ/ledger-live/pull/14568) [`e03aa47`](https://github.com/LedgerHQ/ledger-live/commit/e03aa476da9d83fdf535a787e52b74f630911718) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update USDT e2e test account to use ETH_USDT_3
+
+- [#13505](https://github.com/LedgerHQ/ledger-live/pull/13505) [`ac7f317`](https://github.com/LedgerHQ/ledger-live/commit/ac7f3179daa08d562618d334ca39847162300df8) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Feature/live 20724 [LLD][UI] Memo screen
+
+- [#14566](https://github.com/LedgerHQ/ledger-live/pull/14566) [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078) Thanks [@claudiiafg](https://github.com/claudiiafg)! - feat: setup ff for balanceRefreshRework
+
+### Patch Changes
+
+- Updated dependencies [[`af05fae`](https://github.com/LedgerHQ/ledger-live/commit/af05fae9a9cdb92eed069536619b5de393963695), [`71c413a`](https://github.com/LedgerHQ/ledger-live/commit/71c413abb359a47c493e26d5e4e2d71d262f9835), [`e7879f0`](https://github.com/LedgerHQ/ledger-live/commit/e7879f010edbff6df939662218ac4f007b2911ab), [`438989f`](https://github.com/LedgerHQ/ledger-live/commit/438989f96a31dfbd494284dadd05723f9eb864f5), [`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0), [`b2c6cce`](https://github.com/LedgerHQ/ledger-live/commit/b2c6cce06e2f8cacb16270c11f34522d7fcb4dae), [`83474a0`](https://github.com/LedgerHQ/ledger-live/commit/83474a0756acd876883407fcc72c74ce7d69ad38), [`171a22c`](https://github.com/LedgerHQ/ledger-live/commit/171a22c1a01784111cd0e07526ad9114a445c4e6), [`5c9240a`](https://github.com/LedgerHQ/ledger-live/commit/5c9240aed148dd302cc6c29796fd1260411f0f9e), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`1b1fe80`](https://github.com/LedgerHQ/ledger-live/commit/1b1fe80e8be9934b94d2374543b593b2a30d1197), [`d1d3272`](https://github.com/LedgerHQ/ledger-live/commit/d1d327216985cff383de408f17928bf9b0452a68)]:
+  - @ledgerhq/live-countervalues-react@0.10.0-next.0
+  - @ledgerhq/live-countervalues@0.13.0-next.0
+  - @ledgerhq/coin-aleo@1.3.0-next.0
+  - @ledgerhq/wallet-api-acre-module@0.13.0-next.0
+  - @ledgerhq/wallet-api-exchange-module@0.22.0-next.0
+  - @ledgerhq/coin-evm@2.44.0-next.0
+  - @ledgerhq/live-env@2.28.0-next.0
+  - @ledgerhq/coin-xrp@7.16.0-next.0
+  - @ledgerhq/coin-framework@6.17.0-next.0
+  - @ledgerhq/coin-celo@1.11.0-next.0
+  - @ledgerhq/coin-hedera@1.22.1-next.0
+  - @ledgerhq/live-signer-aleo@0.12.1-next.0
+  - @ledgerhq/live-signer-evm@0.13.2-next.0
+  - @ledgerhq/coin-algorand@0.18.1-next.0
+  - @ledgerhq/coin-aptos@3.12.1-next.0
+  - @ledgerhq/coin-bitcoin@0.31.1-next.0
+  - @ledgerhq/coin-canton@0.17.1-next.0
+  - @ledgerhq/coin-cardano@0.19.1-next.0
+  - @ledgerhq/coin-casper@2.8.4-next.0
+  - @ledgerhq/coin-cosmos@0.25.1-next.0
+  - @ledgerhq/coin-filecoin@1.19.1-next.0
+  - @ledgerhq/coin-icon@0.17.5-next.0
+  - @ledgerhq/coin-internet_computer@1.16.1-next.0
+  - @ledgerhq/coin-kaspa@1.8.1-next.0
+  - @ledgerhq/coin-mina@1.9.1-next.0
+  - @ledgerhq/coin-multiversx@0.11.1-next.0
+  - @ledgerhq/coin-near@0.19.5-next.0
+  - @ledgerhq/coin-polkadot@6.17.1-next.0
+  - @ledgerhq/coin-solana@0.45.1-next.0
+  - @ledgerhq/coin-stacks@0.15.4-next.0
+  - @ledgerhq/coin-stellar@6.14.1-next.0
+  - @ledgerhq/coin-sui@0.24.1-next.0
+  - @ledgerhq/coin-tezos@6.16.1-next.0
+  - @ledgerhq/coin-ton@0.23.1-next.0
+  - @ledgerhq/coin-tron@5.13.1-next.0
+  - @ledgerhq/coin-vechain@2.16.5-next.0
+  - @ledgerhq/device-core@0.8.5-next.0
+  - @ledgerhq/cryptoassets@13.39.1-next.0
+  - @ledgerhq/hw-app-eth@7.4.1-next.0
+  - @ledgerhq/live-signer-canton@0.7.5-next.0
+  - @ledgerhq/live-signer-solana@0.11.2-next.0
+  - @ledgerhq/live-wallet@0.21.2-next.0
+  - @ledgerhq/client-ids@0.5.2-next.0
+  - @ledgerhq/ledger-cal-service@1.11.3-next.0
+  - @ledgerhq/ledger-trust-service@0.6.3-next.0
+  - @ledgerhq/live-currency-format@0.3.1-next.0
+  - @ledgerhq/live-network@2.2.3-next.0
+  - @ledgerhq/speculos-transport@0.5.4-next.0
+  - @ledgerhq/hw-app-vet@0.9.5-next.0
+  - @ledgerhq/hw-app-celo@6.37.5-next.0
+  - @ledgerhq/hw-app-exchange@0.19.0
+
 ## 34.61.0
 
 ### Minor Changes

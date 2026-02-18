@@ -1,5 +1,19 @@
 # @ledgerhq/coin-xrp
 
+## 7.16.0-next.0
+
+### Minor Changes
+
+- [#14483](https://github.com/LedgerHQ/ledger-live/pull/14483) [`171a22c`](https://github.com/LedgerHQ/ledger-live/commit/171a22c1a01784111cd0e07526ad9114a445c4e6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-xrp): allow 0 as destination tag
+
+### Patch Changes
+
+- Updated dependencies [[`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078)]:
+  - @ledgerhq/types-live@6.98.0-next.0
+  - @ledgerhq/coin-framework@6.17.0-next.0
+  - @ledgerhq/cryptoassets@13.39.1-next.0
+  - @ledgerhq/live-network@2.2.3-next.0
+
 ## 7.15.0
 
 ### Minor Changes

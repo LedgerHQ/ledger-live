@@ -1,5 +1,23 @@
 # @ledgerhq/live-cli
 
+## 24.33.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`af05fae`](https://github.com/LedgerHQ/ledger-live/commit/af05fae9a9cdb92eed069536619b5de393963695), [`71c413a`](https://github.com/LedgerHQ/ledger-live/commit/71c413abb359a47c493e26d5e4e2d71d262f9835), [`e7879f0`](https://github.com/LedgerHQ/ledger-live/commit/e7879f010edbff6df939662218ac4f007b2911ab), [`bd39baa`](https://github.com/LedgerHQ/ledger-live/commit/bd39baa199c5e63a889c8120e7650445a8c63521), [`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0), [`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0), [`ff67587`](https://github.com/LedgerHQ/ledger-live/commit/ff67587241e5c521b4e1be2074985450fb6f9edc), [`171a22c`](https://github.com/LedgerHQ/ledger-live/commit/171a22c1a01784111cd0e07526ad9114a445c4e6), [`2aa87ef`](https://github.com/LedgerHQ/ledger-live/commit/2aa87ef53048a0a4abbe5a1365db0fa1f6d1d428), [`dd5e9c6`](https://github.com/LedgerHQ/ledger-live/commit/dd5e9c6680aef53b82e5e0fcdd21f39d83916b2f), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`1b1fe80`](https://github.com/LedgerHQ/ledger-live/commit/1b1fe80e8be9934b94d2374543b593b2a30d1197), [`e03aa47`](https://github.com/LedgerHQ/ledger-live/commit/e03aa476da9d83fdf535a787e52b74f630911718), [`ac7f317`](https://github.com/LedgerHQ/ledger-live/commit/ac7f3179daa08d562618d334ca39847162300df8), [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078)]:
+  - @ledgerhq/live-countervalues@0.13.0-next.0
+  - @ledgerhq/live-common@34.62.0-next.0
+  - @ledgerhq/live-env@2.28.0-next.0
+  - @ledgerhq/coin-framework@6.17.0-next.0
+  - @ledgerhq/coin-bitcoin@0.31.1-next.0
+  - @ledgerhq/device-core@0.8.5-next.0
+  - @ledgerhq/cryptoassets@13.39.1-next.0
+  - @ledgerhq/live-wallet@0.21.2-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.3-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.11.4-next.0
+  - @ledgerhq/live-dmk-speculos@0.6.1-next.0
+  - @ledgerhq/live-network@2.2.3-next.0
+
 ## 24.33.0
 
 ### Minor Changes

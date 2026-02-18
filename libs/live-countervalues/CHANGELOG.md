@@ -1,5 +1,20 @@
 # @ledgerhq/live-countervalues
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#14106](https://github.com/LedgerHQ/ledger-live/pull/14106) [`af05fae`](https://github.com/LedgerHQ/ledger-live/commit/af05fae9a9cdb92eed069536619b5de393963695) Thanks [@gre-ledger](https://github.com/gre-ledger)! - optimize countervalues logic to only persist historical rates and refresh "holes" only once.
+
+### Patch Changes
+
+- Updated dependencies [[`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0), [`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078)]:
+  - @ledgerhq/types-live@6.98.0-next.0
+  - @ledgerhq/live-env@2.28.0-next.0
+  - @ledgerhq/coin-framework@6.17.0-next.0
+  - @ledgerhq/cryptoassets@13.39.1-next.0
+  - @ledgerhq/live-network@2.2.3-next.0
+
 ## 0.12.2
 
 ### Patch Changes

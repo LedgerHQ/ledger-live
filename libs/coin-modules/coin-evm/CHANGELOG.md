@@ -1,5 +1,23 @@
 # @ledgerhq/coin-evm
 
+## 2.44.0-next.0
+
+### Minor Changes
+
+- [#13987](https://github.com/LedgerHQ/ledger-live/pull/13987) [`438989f`](https://github.com/LedgerHQ/ledger-live/commit/438989f96a31dfbd494284dadd05723f9eb864f5) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10233): fix coin-evm dropping internal transactions from smart contracts
+
+- [#13977](https://github.com/LedgerHQ/ledger-live/pull/13977) [`5c9240a`](https://github.com/LedgerHQ/ledger-live/commit/5c9240aed148dd302cc6c29796fd1260411f0f9e) Thanks [@jprudent](https://github.com/jprudent)! - implement pagination for etherscan based explorers in coin-evm
+
+### Patch Changes
+
+- Updated dependencies [[`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43)]:
+  - @ledgerhq/live-env@2.28.0-next.0
+  - @ledgerhq/coin-framework@6.17.0-next.0
+  - @ledgerhq/domain-service@1.6.5-next.0
+  - @ledgerhq/evm-tools@1.11.1-next.0
+  - @ledgerhq/cryptoassets@13.39.1-next.0
+  - @ledgerhq/live-network@2.2.3-next.0
+
 ## 2.43.0
 
 ### Minor Changes
