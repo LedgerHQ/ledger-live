@@ -1,4 +1,7 @@
-import { AmountScreenMessage } from "../types";
+export type AmountScreenMessage = Readonly<{
+  type: "error" | "warning" | "info";
+  text: string;
+}>;
 
 export function getAmountScreenMessage(params: {
   amountErrorTitle?: string;

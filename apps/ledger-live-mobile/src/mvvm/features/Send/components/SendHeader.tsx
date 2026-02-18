@@ -29,10 +29,13 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
       addressInputContainer: {
         marginTop: theme.spacings.s8,
         paddingHorizontal: theme.spacings.s16,
-        position: "relative" as const,
+        position: "relative",
+      },
+      addressValue: {
+        color: theme.colors.text.base,
       },
       absoluteOverlay: {
-        position: "absolute" as const,
+        position: "absolute",
         top: 0,
         left: 0,
         right: 0,
@@ -90,6 +93,7 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
                 editable={false}
                 hideClearButton
                 placeholder={viewModel.recipientPlaceholder}
+                inputStyle={styles.addressValue}
               />
               <Pressable
                 style={styles.absoluteOverlay}

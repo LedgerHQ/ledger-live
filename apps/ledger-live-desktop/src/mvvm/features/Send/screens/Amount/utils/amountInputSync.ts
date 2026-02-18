@@ -1,7 +1,11 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { BigNumber } from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { formatAmountForInput, formatFiatForInput, shouldSyncInput } from "./amountInput";
+import {
+  formatAmountForInput,
+  formatFiatForInput,
+  shouldSyncInput,
+} from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
 
 export function syncAmountInputs(params: {
   cryptoAmount: BigNumber;
