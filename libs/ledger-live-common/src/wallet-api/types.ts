@@ -89,7 +89,7 @@ export type BroadcastTrackingData = {
   partner?: string;
   sourceCurrency?: string;
   targetCurrency?: string;
-  network?: string;
+  network?: CryptoCurrency["id"];
 };
 
 export type AccountIdFormat = "uuid" | "encoded";

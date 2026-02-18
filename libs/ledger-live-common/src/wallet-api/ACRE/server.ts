@@ -399,7 +399,7 @@ export const handlers = ({
 
       let targetCurrency: string | undefined;
       try {
-        const recipient = signedOperation.operation.recipients[0];
+        const recipient = signedOperation.operation.recipients?.[0];
         if (recipient) {
           const targetToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
             recipient,

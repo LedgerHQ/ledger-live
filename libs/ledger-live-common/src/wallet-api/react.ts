@@ -780,7 +780,7 @@ export function useWalletAPIServer({
               sourceCurrency:
                 account.type === "TokenAccount" ? account.token.name : account.currency.name,
               targetCurrency: await resolveTargetCurrency(
-                signedOperation.operation.recipients[0],
+                signedOperation.operation.recipients?.[0],
                 networkId,
               ),
               network: networkId,
@@ -915,7 +915,7 @@ export function useWalletAPIServer({
                 sourceCurrency:
                   account.type === "TokenAccount" ? account.token.name : account.currency.name,
                 targetCurrency: await resolveTargetCurrency(
-                  signedOperation.operation.recipients[0],
+                  signedOperation.operation.recipients?.[0],
                   networkId,
                 ),
                 network: networkId,
