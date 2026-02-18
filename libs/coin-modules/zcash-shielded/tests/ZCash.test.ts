@@ -270,50 +270,37 @@ describe("findShieldedTxsInBlock", () => {
 });
 
 describe("syncShielded", () => {
-  test("returns undefined and logs an error if startBlockHash is invalid", async () => {
+  test("returns an empty shielded balance when the viewingKey doesn't match any shielded transactions", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShielded = await zcash.syncShielded({
-      startBlockHeight: 123,
-      endBlockHeight: blockWithMyTx.height + 1,
-      viewingKey: "abc456",
-    });
-
-    expect(await syncedShielded.next()).toEqual({
-      done: true,
-      value: {
-        balance: 0,
-      },
-    });
-  });
-
-  test("returns an empty balance when the viewingKey doesn't match any shielded transactions", async () => {
-    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShielded = await zcash.syncShielded({
+    const syncedShieldedIterator = await zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
-      endBlockHeight: blockWithMyTx.height + 1,
+      endBlockHeight: blockWithMyTx.height + 4,
       viewingKey: "abc456",
     });
+    let syncedShielded;
 
-    expect(await syncedShielded.next()).toEqual({
-      done: false,
-      value: {
-        balance: 0,
-      },
-    });
+    for await (syncedShielded of syncedShieldedIterator) {
+      expect(syncedShielded).toMatchObject({
+        balance: expect.any(Number),
+        processedBlocks: expect.any(Number),
+        remainingBlocks: expect.any(Number),
+        lastProcessed: expect.any(Number),
+      });
+    }
 
-    expect(await syncedShielded.next()).toEqual({
-      done: true,
-      value: {
-        balance: 0,
-      },
+    expect(syncedShielded).toEqual({
+      balance: 0,
+      processedBlocks: 5,
+      remainingBlocks: 0,
+      lastProcessed: blockWithMyTx.height + 4,
     });
   });
 
-  test("returns the shielded balance", async () => {
+  test("stops the iterator after the next iteration and returns the current context", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const syncedShielded = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
-      endBlockHeight: blockWithMyTx.height + 1,
+      endBlockHeight: blockWithMyTx.height + 100,
       viewingKey: testAccount1.viewingKey,
     });
 
@@ -321,14 +308,46 @@ describe("syncShielded", () => {
       done: false,
       value: {
         balance: 0.3,
+        processedBlocks: 1,
+        remainingBlocks: 100,
+        lastProcessed: blockWithMyTx.height,
       },
     });
 
-    expect(await syncedShielded.next()).toEqual({
+    expect(await syncedShielded.next(true)).toEqual({
       done: true,
       value: {
         balance: 0.3,
+        processedBlocks: 1,
+        remainingBlocks: 100,
+        lastProcessed: blockWithMyTx.height,
       },
+    });
+  });
+
+  test("returns the shielded balance", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncedShieldedIterator = zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      endBlockHeight: blockWithMyTx.height + 5,
+      viewingKey: testAccount1.viewingKey,
+    });
+    let syncedShielded;
+
+    for await (syncedShielded of syncedShieldedIterator) {
+      expect(syncedShielded).toMatchObject({
+        balance: expect.any(Number),
+        processedBlocks: expect.any(Number),
+        remainingBlocks: expect.any(Number),
+        lastProcessed: expect.any(Number),
+      });
+    }
+
+    expect(syncedShielded).toEqual({
+      balance: 0.3,
+      lastProcessed: blockWithMyTx.height + 5,
+      processedBlocks: 6,
+      remainingBlocks: 0,
     });
   });
 });

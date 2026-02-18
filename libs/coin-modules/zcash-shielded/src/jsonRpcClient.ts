@@ -135,10 +135,12 @@ export class JsonRpcClient {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
       return undefined;
     }
+
     if (data.result === undefined || data.result === null) {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
       return undefined;
     }
+
     return data.result;
   }
 
@@ -156,16 +158,11 @@ export class JsonRpcClient {
     });
   }
 
-  async getBlockCount(): Promise<number | undefined> {
-    const result = await this.jsonRpcRequest<number>({
+  getBlockCount() {
+    return this.jsonRpcRequest<number>({
       method: "getblockcount",
       params: [],
     });
-    if (typeof result !== "number") {
-      log(LOG_TYPE, `error: Zcash RPC getblockcount returned unexpected type: ${typeof result}`);
-      return undefined;
-    }
-    return result;
   }
 
   getRawTransaction(txId: string) {

@@ -14,6 +14,12 @@ export type SyncEstimatedTime = {
 };
 
 type ShieldedBalance = number;
+type SyncedShielded = {
+  balance: ShieldedBalance;
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessed: number | undefined;
+};
 
 export default class ZCash {
   jsonRpcClient: JsonRpcClient;
@@ -115,7 +121,7 @@ export default class ZCash {
    * Finds the lowest block height correspondent to a given timestamp.
    *
    * @param {number} timestamp
-   * @return {Promise<number>} a block height
+   * @returns {Promise<number>} a block height
    */
   async findBlockHeight(timestamp: number): Promise<number | undefined> {
     if (timestamp < 0 || !Number.isFinite(timestamp)) {
@@ -160,26 +166,48 @@ export default class ZCash {
     return candidate;
   }
 
+  /**
+   * Parses the blocks in the provided range and, after each iteration,
+   * it returns a synced shielded context including aggregate information
+   * like the computed balance and processing progress.
+   * 
+   * ### Stop the iterator
+   * The sync operation can be gracefully stopped by calling with the stop
+   * argument set to true.
+   * e.g.,
+   * ```typescript
+   * const syncedShielded = zcash.syncShielded(
+   *   startBlockHeight: 3697074,
+   *   endBlockHeight: 3697079,
+   *   viewingKey: testAccount1.viewingKey,
+   * );
+   * await syncedShielded.next(true)
+   * ```
+   *
+   * @param {{
+   *    startBlockHeigh: number
+   *    endBlockHeigh: number
+   *    viewingKey: string
+   * }} args, Block and the UFVK - unified full viewing key.
+   * @returns {AsyncGenerator<SyncedShielded>} the current synced shielded context.
+   */
   async *syncShielded(args: {
     startBlockHeight: number;
     endBlockHeight: number;
     viewingKey: string;
-  }): AsyncGenerator<
-    | {
-        balance: ShieldedBalance;
-      }
-    | undefined
-  > {
+  }): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
     const { startBlockHeight, endBlockHeight, viewingKey } = args;
     let balance = 0;
+    let processedBlocks = 0;
+    let remainingBlocks = endBlockHeight - startBlockHeight + 1;
+    let lastProcessed;
 
     for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
       // 1. get start block
       const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
       if (!block) {
         log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
-        console.debug(`error: invalid block height ${blockHeight}`);
-        return { balance };
+        return { balance, processedBlocks, remainingBlocks, lastProcessed };
       }
 
       // 2. find shielded tx in block
@@ -187,9 +215,23 @@ export default class ZCash {
 
       // 3. update balance
       balance += calculateShieldedBalance(shieldedTxs);
+      processedBlocks++;
+      remainingBlocks--;
+      lastProcessed = block.height;
 
-      yield { balance };
+      const stop = yield {
+        balance,
+        processedBlocks,
+        remainingBlocks,
+        lastProcessed,
+      };
+
+      if (stop) {
+        return { balance, processedBlocks, remainingBlocks, lastProcessed };
+      }
     }
+
+    return { balance, processedBlocks, remainingBlocks, lastProcessed };
   }
 }
 
@@ -197,8 +239,6 @@ const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]) => {
   let balance = 0;
 
   for (const shieldedTx of shieldedTxs) {
-    console.debug(shieldedTx.decryptedData?.orchard_outputs);
-
     const orchard_outputs = shieldedTx.decryptedData?.orchard_outputs || [];
     const sapling_outputs = shieldedTx.decryptedData?.sapling_outputs || [];
 
@@ -209,7 +249,7 @@ const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]) => {
         } else if (output.transfer_type === "outgoing") {
           balance -= output.amount;
         } else if (output.transfer_type === "internal") {
-          // ignore internal tx
+          // NOTE: ignore internal tx
         }
       }
     }

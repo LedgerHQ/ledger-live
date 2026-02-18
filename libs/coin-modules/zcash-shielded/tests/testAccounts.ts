@@ -36,7 +36,37 @@ export const blocks = [
   // edge case: block without tx
   {
     hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
-    height: 3697074,
+    height: 3000000,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697075,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697076,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697077,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697078,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697079,
     time: 1764164743,
   },
 ];
