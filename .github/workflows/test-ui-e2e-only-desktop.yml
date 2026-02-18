@@ -1,6 +1,6 @@
 name: "[Desktop] - E2E Only - Scheduled/Manual"
 run-name: >
-  @Desktop E2E • Test App triggered by ${{ github.actor }} on ref ${{ inputs.ref || github.ref_name }}
+  @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
 on:
   schedule:
