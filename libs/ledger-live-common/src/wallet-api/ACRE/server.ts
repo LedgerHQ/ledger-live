@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/wallet-api-acre-module";
 import { Transaction } from "../../generated/types";
 import { AppManifest } from "../types";
+import { resolveTargetCurrency } from "../react";
 import { TrackingAPI } from "./tracking";
 import {
   getAccountIdFromWalletAccountId,
@@ -397,19 +398,10 @@ export const handlers = ({
           ? signerAccount.token.parentCurrency.id
           : signerAccount.currency.id;
 
-      let targetCurrency: string | undefined;
-      try {
-        const recipient = signedOperation.operation.recipients?.[0];
-        if (recipient) {
-          const targetToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-            recipient,
-            networkId,
-          );
-          targetCurrency = targetToken ? targetToken.name : undefined;
-        }
-      } catch {
-        // Ignore errors — tracking data should not break the broadcast flow
-      }
+      const targetCurrency = await resolveTargetCurrency(
+        signedOperation.operation.recipients?.[0],
+        networkId,
+      );
 
       const broadcastTrackingData = {
         sourceCurrency:

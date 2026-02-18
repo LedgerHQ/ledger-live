@@ -67,7 +67,7 @@ export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   return ref.current;
 }
 
-async function resolveTargetCurrency(
+export async function resolveTargetCurrency(
   recipient: string | undefined,
   networkId: string,
 ): Promise<string | undefined> {
