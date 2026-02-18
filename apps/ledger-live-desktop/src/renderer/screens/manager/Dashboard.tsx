@@ -13,7 +13,6 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { osUpdateRequestedSelector } from "~/renderer/reducers/manager";
 import { getEnv } from "@ledgerhq/live-env";
 import { context as drawerContext } from "~/renderer/drawers/Provider";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -40,18 +39,14 @@ const Dashboard = ({
   const appsBackupEnabled = useFeature("enableAppsBackup");
   const { search } = useLocation();
   const storage = useAppDataStorageProvider();
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
   const { state: drawerState } = useContext(drawerContext);
   const currentDevice = useSelector(getCurrentDevice);
   const [preventResetOnDeviceChange, setPreventResetOnDeviceChange] = useState(false);
   const deviceChangedWhenResetPrevented = useRef(false);
   const [firmware, setFirmware] = useState<FirmwareUpdateContext | null>(null);
   const [firmwareError, setFirmwareError] = useState(null);
-  const osUpdateRequested = useSelector(osUpdateRequestedSelector);
   const params = new URLSearchParams(search || "");
-  const openFirmwareUpdate = isWallet40Enabled
-    ? osUpdateRequested
-    : params.get("firmwareUpdate") === "true";
+  const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
 
   useEffect(() => {
     getLatestFirmwareForDeviceUseCase(deviceInfo).then(setFirmware, setFirmwareError);
