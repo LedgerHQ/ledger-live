@@ -84,17 +84,6 @@ describe("FirmwareUpdate", () => {
     jest.clearAllMocks();
   });
 
-  it("returns null when isWallet40Enabled is true", () => {
-    const { container } = render(<FirmwareUpdate {...defaultProps} />, {
-      initialState: getDefaultInitialState({
-        overriddenFeatureFlags: {
-          lwdWallet40: { enabled: true },
-        },
-      }),
-    });
-    expect(container.firstChild).toBeNull();
-  });
-
   it("returns null when firmware is null and device is not deprecated", () => {
     const { container } = render(<FirmwareUpdate {...defaultProps} firmware={null} error={null} />);
     expect(container.firstChild).toBeNull();

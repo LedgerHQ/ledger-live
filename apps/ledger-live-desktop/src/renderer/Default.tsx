@@ -69,7 +69,6 @@ import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import backgroundImg from "~/renderer/images/background.png";
-import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
 import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
