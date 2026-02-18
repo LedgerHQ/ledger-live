@@ -8,9 +8,13 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import getBLETransport from "~/transport/bleTransport";
 import { DeviceManagementKitHIDTransport } from "@ledgerhq/live-dmk-mobile";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import { retry } from "@ledgerhq/live-common/promise";
+
+const SPECULOS_PREFIX = "speculos|";
 
 /**
- * Registers transport modules for different connection types (BLE, HID, HTTP Debug).
+ * Registers transport modules for different connection types (BLE, HID, HTTP Debug, Speculos).
  *
  */
 export const registerTransports = () => {
@@ -29,6 +33,18 @@ export const registerTransports = () => {
     },
     disconnect: () => Promise.resolve(),
   });
+
+  if (Config.DETOX) {
+    registerTransportModule({
+      id: "speculos",
+      open: id => {
+        if (!id.startsWith(SPECULOS_PREFIX)) return null;
+        const baseURL = id.slice(SPECULOS_PREFIX.length);
+        return retry(() => DeviceManagementKitTransportSpeculos.open({ baseURL }));
+      },
+      disconnect: id => (id.startsWith(SPECULOS_PREFIX) ? Promise.resolve() : null),
+    });
+  }
 
   // Add dev mode support of an http proxy
   let DebugHttpProxy: ReturnType<typeof withStaticURLs>;

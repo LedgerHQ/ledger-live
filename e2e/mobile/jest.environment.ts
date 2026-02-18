@@ -31,7 +31,6 @@ export default class TestEnvironment extends DetoxEnvironment {
     setupEnvironment();
 
     const speculosDevicesMap = new Map<string, number>();
-    const proxySubscriptionsMap = new Map<number, { port: number; subscription: any }>();
     const webSocketObj = {
       wss: undefined,
       ws: undefined,
@@ -44,14 +43,12 @@ export default class TestEnvironment extends DetoxEnvironment {
     this.global.app = appInstance;
     this.global.IS_FAILED = false;
     this.global.speculosDevices = speculosDevicesMap;
-    this.global.proxySubscriptions = proxySubscriptionsMap;
     this.global.webSocket = webSocketObj;
     this.global.pendingCallbacks = pendingCallbacksMap;
 
     globalThis.app = appInstance;
     globalThis.IS_FAILED = false;
     globalThis.speculosDevices = speculosDevicesMap;
-    globalThis.proxySubscriptions = proxySubscriptionsMap;
     globalThis.webSocket = webSocketObj;
     globalThis.pendingCallbacks = pendingCallbacksMap;
 
@@ -158,28 +155,11 @@ export default class TestEnvironment extends DetoxEnvironment {
         this.global.webSocket.e2eBridgeServer.complete();
       }
 
-      if (this.global.proxySubscriptions) {
-        for (const [_, { subscription }] of this.global.proxySubscriptions) {
-          if (subscription?.unsubscribe && !subscription.closed) {
-            subscription.unsubscribe();
-          }
-        }
-        this.global.proxySubscriptions.clear();
-      }
-
-      // Clean up DeviceManagementKit transport connections to prevent TLS socket errors
-      // The static byBase Map can hold stale connections that cause "Cannot read properties of null"
-      // Using dynamic import to avoid module loading side effects during environment initialization
       try {
         const { DeviceManagementKitTransportSpeculos } = await import(
           "@ledgerhq/live-dmk-speculos"
         );
-        for (const [_baseUrl, entry] of DeviceManagementKitTransportSpeculos.byBase) {
-          if (entry.sessionId && entry.dmk?.disconnect) {
-            await entry.dmk.disconnect({ sessionId: entry.sessionId }).catch(() => {});
-          }
-        }
-        DeviceManagementKitTransportSpeculos.byBase.clear();
+        await DeviceManagementKitTransportSpeculos.disconnectAll();
       } catch {
         // Ignore cleanup errors
       }
