@@ -8,7 +8,7 @@ import { TopBarActionsList } from "./components/ActionsList";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Updater from "LLD/features/Updater";
 
-const TopBarView = ({ slots }: TopBarViewProps) => {
+const TopBarView = ({ slots, shouldShowFirmwareUpdateBanner }: TopBarViewProps) => {
   return (
     <NavBar className="items-center px-32 pt-32 pb-24">
       <NavBarTitle className="h-48">
@@ -17,7 +17,7 @@ const TopBarView = ({ slots }: TopBarViewProps) => {
       <NavBarTrailing className="h-48 gap-12">
         <LiveAppDrawer />
 
-        <FirmwareUpdateBanner />
+        {shouldShowFirmwareUpdateBanner && <FirmwareUpdateBanner />}
         <Updater />
         <TopBarActionsList slots={slots} />
       </NavBarTrailing>
