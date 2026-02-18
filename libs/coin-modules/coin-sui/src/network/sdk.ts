@@ -105,25 +105,29 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
  */
 export function withBatchedMultiGetObjects(client: SuiClient): SuiClient {
   return new Proxy(client, {
-    get(target, prop, receiver) {
+    get(target, prop, _receiver) {
       if (prop === "multiGetObjects") {
         return async (params: Parameters<SuiClient["multiGetObjects"]>[0]) => {
-          const { ids, options } = params;
+          const { ids } = params;
           if (ids.length <= MULTI_GET_OBJECTS_LIMIT) {
             return target.multiGetObjects(params);
           }
           const results = [];
           for (let i = 0; i < ids.length; i += MULTI_GET_OBJECTS_LIMIT) {
             const chunk = await target.multiGetObjects({
+              ...params,
               ids: ids.slice(i, i + MULTI_GET_OBJECTS_LIMIT),
-              options,
             });
             results.push(...chunk);
           }
           return results;
         };
       }
-      return Reflect.get(target, prop, receiver);
+      const value = Reflect.get(target, prop, target);
+      if (typeof value === "function") {
+        return value.bind(target);
+      }
+      return value;
     },
   });
 }
