@@ -73,7 +73,6 @@ import {
   BACKGROUND_SIZE,
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
-import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
 import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
