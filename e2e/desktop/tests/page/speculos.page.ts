@@ -13,6 +13,7 @@ import {
   removeMemberLedgerSync,
   providePublicKey,
   exportUfvk,
+  shareViewKey,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -82,5 +83,10 @@ export class SpeculosPage extends AppPage {
   @step("Export UFVK")
   async exportUfvk(account: Account) {
     await exportUfvk(account);
+  }
+
+  @step("Share view key")
+  async shareViewKey() {
+    await shareViewKey();
   }
 }
