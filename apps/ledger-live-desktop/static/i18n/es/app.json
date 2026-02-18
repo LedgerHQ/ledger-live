@@ -152,7 +152,8 @@
     "quote" : "Cotización",
     "memoTag" : {
       "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
-    }
+    },
+    "memo" : "Memo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "Earn",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
+    "perps" : "Perpetuos",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
     "catalog" : "Discover",
@@ -777,6 +779,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Comprar o vender",
     "chooseProvider" : "Elegir de {{providerCount}} proveedor",
     "chooseProviders" : "Elegir de {{providerCount}} proveedores",
     "title" : "Comprar y vender cripto",
@@ -809,7 +812,15 @@
     }
   },
   "card" : {
-    "backToCard" : "todas las tarjetas"
+    "backToCard" : "todas las tarjetas",
+    "title" : "Tarjeta",
+    "imageAlt" : "Imagen de la tarjeta",
+    "spendYourCrypto" : "Gasta tus cripto",
+    "payDescription" : "Paga en tiendas online o físicas con una tarjeta cripto",
+    "exploreCards" : "Explorar tarjetas",
+    "iAlreadyHaveACard" : "Ya tengo una tarjeta",
+    "unlockLiquidity" : "Desbloquear liquidez",
+    "exploreCryptoCardsDescription" : "Explora nuestras tarjetas cripto y elige la que mejor se ajuste a tus necesidades."
   },
   "lend" : {
     "title" : "Prestar cripto",
@@ -1481,6 +1492,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ no puede usar la Firma Visible con esta transacción.",
+      "subtitle" : "Usa cualquier otro dispositivo Ledger para verificar los detalles de esta transacción antes de firmarla. Sin la Firma Visible, corres el riesgo de perder todos tus activos.",
+      "continue" : "Continúa por tu cuenta y riesgo."
+    },
+    "info" : {
+      "title" : "El {{date}} finalizará la compatibilidad de {{coinName}} con el {{device}}™ mediante Ledger Live™.",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a todos los proveedores de servicios de Ledger Live y recibir una atención al cliente de la máxima calidad.",
+      "reminder" : "No volver a recordármelo"
+    },
+    "error" : {
+      "title" : "{{device}}™ no es compatible con esta función",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Live."
+    },
+    "update" : "Descubre tu programa de renovación",
+    "learnMore" : "Más información",
+    "continue" : "Continuar"
+  },
   "currentAddress" : {
     "title" : "Dirección actual",
     "for" : "Dirección de <1><0>{{name}}</0></1>",
@@ -1783,6 +1813,7 @@
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
       "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
+      "acceptTermsSponsored" : "Para poder beneficiarte de las tarifas de red gratuitas, aceptas compartir los detalles de tu transacción (incluida la dirección de tu wallet) con Blinklabs.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -2205,6 +2236,19 @@
       "description" : "Puede que necesites una <0>etiqueta o memo</0> para recibir este activo de un exchange. Puedes usar cualquier combinación de números, como 1234."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Transferencia bancaria",
+          "description" : "Envía dinero fiduciario y recibe monedas estables"
+        },
+        "fromCrypto" : {
+          "title" : "Recibir cripto"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "Enviar",
     "totalSpent" : "Total a debitar",
@@ -2331,6 +2375,15 @@
     "addressNotFound" : "Dirección no encontrada",
     "alreadyUsed" : "Ya utilizado · {{date}}",
     "recentSendWillAppear" : "Tus envíos anteriores aparecerán aquí",
+    "relativeDate" : {
+      "justNow" : "Ahora",
+      "minutesAgo_one" : "Hace 1 min",
+      "minutesAgo_other" : "Hace {{count}} min",
+      "hoursAgo_one" : "Hace 1 hora",
+      "hoursAgo_other" : "hace {{count}} horas",
+      "daysAgo_one" : "Hace 1 día",
+      "daysAgo_other" : "hace {{count}} días"
+    },
     "remove" : "Eliminar",
     "enterTag" : "Ingresar {{tag}}",
     "firstInteraction" : {
@@ -2348,12 +2401,15 @@
       "walletNotExist" : "La wallet no existe"
     },
     "skipMemo" : {
-      "title" : "¿Omitir agregar {{tag}}?",
-      "warning" : "Es posible que pierdas tus activos si el receptor solicita una {{tag}}"
+      "title" : "¿Omitir agregar {{memoLabel}}?",
+      "description" : "Es posible que pierdas tus activos si el receptor solicita una {{memoLabel}}",
+      "notRequired" : "¿El destinatario no requiere {{memoLabel}}?",
+      "confirm" : "Sí, omitir",
+      "neverAskAgain" : "No volver a mostrar esta advertencia"
     },
     "tagHelp" : {
-      "title" : "¿Qué es una {{tag}}?",
-      "description" : "Cuando envías {{currency}} a un exchange cripto, es necesaria una {{tag}}. Es una función utilizada para identificar al receptor de la transacción. Si no incluyes la {{tag}} memo, es posible que se pierdan los fondos."
+      "inputLabel" : "Ingresar {{memoLabel}}",
+      "description" : "Cuando envías {{currency}} a un exchange cripto, es necesaria una {{memoLabel}}. Es una función utilizada para identificar al receptor de la transacción. Si no incluyes la {{memoLabel}} memo, es posible que se pierdan los fondos."
     },
     "networkFeesInFiat" : "Tarifas de red en {{currency}}",
     "feesAmount" : "Monto de la tarifa ({{unit}})",
@@ -4506,6 +4562,10 @@
           "title" : "Generación rápida",
           "desc" : "Genera 10 cuentas aleatorias con divisas al azar."
         },
+        "emptyGenerate" : {
+          "title" : "Generación vacía",
+          "desc" : "Generar una cuenta vacía"
+        },
         "currencySelector" : {
           "placeholder" : "Elegir divisas...",
           "searchPlaceholder" : "Buscar",
@@ -4521,7 +4581,8 @@
         "buttons" : {
           "generateAccounts" : "Generar {{count}} cuenta",
           "generateAccounts_other" : "Generar {{count}} cuentas",
-          "generateAccountsQuick" : "Generar {{count}} cuentas"
+          "generateAccountsQuick" : "Generar {{count}} cuentas",
+          "generateEmptyAccount" : "Generar cuenta vacía"
         },
         "alerts" : {
           "selectCurrency" : "Selecciona al menos una divisa",
@@ -4567,9 +4628,13 @@
       "walletFeaturesDevTool" : {
         "title" : "Herramienta de desarrollo de funciones de wallet",
         "description" : "Activar/desactivar las funciones de wallet 4.0 para escritorio (marca de función lwdWallet40).",
+        "mainFeatureToggle" : "Alternar característica principal",
         "enableAll" : "Activar todo",
         "disableAll" : "Desactivar todo",
         "featureParameters" : "Parámetros de la función",
+        "tourState" : "Estado del tour",
+        "drawerPreview" : "Vista previa del drawer",
+        "openDrawer" : "Abrir drawer",
         "showJson" : "Mostrar JSON",
         "hideJson" : "Ocultar JSON"
       },
@@ -4856,6 +4921,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "Ocultar transacciones con tokens cuando el valor es 0",
         "desc" : "Ocultar transacciones con tokens sin valor puede evitar posibles ataques de contaminación de direcciones sobre Ethereum, Polygon, BSC, Tron..."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "No volver a preguntar al omitir el memo al enviar",
+        "desc" : "Desactivar la advertencia sobre la omisión del memo al enviar fondos"
       }
     }
   },
@@ -5767,11 +5836,13 @@
     "casper" : {
       "transferIdPlaceholder" : "Opcional",
       "transferId" : "ID de transferencia (Memo)",
-      "transferIdWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+      "transferIdWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor",
+      "memo" : "ID de transferencia (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "Opcional",
-      "comment" : "Comentario"
+      "comment" : "Comentario",
+      "memo" : "Comentario"
     },
     "canton" : {
       "commentPlaceholder" : "Opcional",
@@ -5929,6 +6000,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "Memo opcional"
+    },
+    "xrp" : {
+      "memo" : "Etiqueta"
     }
   },
   "errors" : {
@@ -6336,7 +6410,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Error de procesamiento",
-      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+      "description" : "El proveedor de permuta no puede procesar esta transacción. Código de error 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "Proveedor no disponible",
@@ -6634,7 +6708,7 @@
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Habilita la firma a ciegas o los datos de contrato en los ajustes de la aplicación Ethereum"
+      "title" : "Activar la Firma a ciegas o Datos de contrato en la app de Ethereum"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Habilita los datos de contrato en los ajustes de la aplicación Celo"
@@ -7776,6 +7850,11 @@
           "description" : "El ecosistema {{currency}} sólo permite la creación de cuentas nuevas a través de un número limitado de servicios. Aunque Ledger no ofrece actualmente este servicio de incorporación, tienes disponibles varias alternativas. Podrás agregar tu cuenta en {{currency}} a Ledger Wallet tras crearla.",
           "cta" : "¿Cómo crear una cuenta en {{currency}}?",
           "close" : "Cerrar"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "No se han agregado cuentas de {{currency}}",
+          "description" : "No has completado la configuración necesaria para una o más cuentas seleccionadas.",
+          "close" : "Cerrar"
         }
       },
       "status" : {
@@ -7824,7 +7903,15 @@
   },
   "portfolio" : {
     "title" : "Inicio",
-    "today" : "Hoy"
+    "today" : "Hoy",
+    "addAccountCta" : "Agregar cuenta cripto",
+    "noBalanceTitle" : "Protege tus cripto",
+    "perpsEntry" : {
+      "title" : "Perpetuos",
+      "description" : "Opera con apalancamiento",
+      "cta" : "Discover"
+    },
+    "noDeviceTitle" : "La wallet más segura"
   },
   "marketBanner" : {
     "title" : "Explorar mercado",
@@ -7848,11 +7935,38 @@
       "cta" : "Entendido"
     }
   },
+  "quickActions" : {
+    "send" : "Enviar",
+    "receive" : "Recibir",
+    "buy" : "Comprar",
+    "sell" : "Vender",
+    "connect" : "Conectar",
+    "buyALedger" : "Compra un Ledger"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "errorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Lista de cuentas afectadas: {{accounts}}. Pulsa para reintentar",
+      "emptyErrorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Pulsa para reintentar",
+      "upToDate" : "Estás al día",
+      "minutesAgo_one" : "Última sincronización: Hace {{count}} minuto. Pulsa para actualizar",
+      "minutesAgo_other" : "Última sincronización: Hace {{count}} minutos. Pulsa para actualizar",
+      "hoursAgo_one" : "Última sincronización: Hace {{count}} hora. Pulsa para actualizar",
+      "hoursAgo_other" : "Última sincronización: Hace {{count}} horas. Pulsa para actualizar",
+      "daysAgo_one" : "Última sincronización: Hace {{count}} día. Pulsa para actualizar",
+      "daysAgo_other" : "Última sincronización: Hace {{count}} días. Pulsa para actualizar"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Notificaciones"
+    },
+    "myLedger" : {
+      "tooltip" : "Mi Ledger"
     }
   },
   "geoBlocking" : {
@@ -7873,6 +7987,95 @@
     "account" : {
       "availableBalance" : "Saldo disponible",
       "availableBalanceTooltip" : "Saldo que puede transferirse",
+      "transparentBalance" : "Saldo transparente",
+      "transparentBalanceTooltip" : "Saldo visible para el público",
+      "privateBalance" : "Saldo privado",
+      "privateBalanceTooltip" : "Saldo que está oculto al público"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "Mostrar saldo",
+        "pausedAt" : "Se pausó a las: ",
+        "lastSync" : "Última sincronización: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Activar saldo privado de Zcash",
+          "breadcrumbs" : {
+            "0" : "Altura de nacimiento",
+            "1" : "UFVK",
+            "2" : "Dispositivo",
+            "3" : "Confirmación"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos.",
+              "cta" : "Más información",
+              "label" : "Altura de nacimiento",
+              "tooltip" : "Valor predeterminado: La fecha de hoy. Cámbialo solo para las cuentas ya existentes con actividad privada (protegida) anterior.",
+              "syncFromZero" : "Esta cuenta recibió ZEC blindado en el pasado, pero no puedo recuperar la altura de nacimiento. Escanea a partir del bloque 0 (este proceso puede llevar mucho tiempo).",
+              "error" : "Fecha no válida"
+            },
+            "ufvk" : {
+              "text" : "Para comenzar, debes exportar tu Clave de Visualización Completa Unificada (UFVK). Debes confirmar esta acción con tu dispositivo Ledger."
+            },
+            "device" : {
+              "text" : "Confirma la exportación de tu UFVK en tu dispositivo Ledger"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK importada correctamente",
+                "text" : "Podrás recibir Shielded ZEC y firmar transacciones privadas.",
+                "info" : {
+                  "text" : "Tu Clave de Visualización Completa Unificada se mantiene almacenada localmente en tu PC y nunca se transmite ni expone a sistemas externos.",
+                  "cta" : "Más información"
+                },
+                "warning" : "Las cuentas que tengan una altura de nacimiento más antigua pueden requerir una sincronización más prolongada (de hasta 2 horas). Mantén la app abierta hasta que finalice la sincronización."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "Iniciar sincronización",
+      "datepicker" : {
+        "label" : "Altura de nacimiento",
+        "tooltip" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos."
+      }
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Configurar saldo privado de Aleo",
+        "description" : "Ledger Wallet guarda tu clave de visualización para mostrar tu saldo privado y usa servicios de terceros para procesar las transacciones privadas. <0>Más información</0>",
+        "bullets" : ["Acceso de solo lectura para descifrar tu saldo privado", "Ledger no puede enviar ni gastar tus fondos", "Solo tú puedes firmar y gastar tus fondos", "Para garantizar un procesamiento rápido, un servicio demostrador externo se encarga de generar la prueba", "Los demostradores no pueden acceder a tus fondos ni gastarlos"],
+        "cta" : {
+          "allow" : "Permitir",
+          "cancel" : "Cancelar"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Aprueba en tu Ledger",
+        "description" : "Confirma en tu Ledger que quieres compartir la clave de visualización",
+        "cancelAlert" : "Puedes rechazar cuentas concretas en tu dispositivo. Si lo cancelas todo, se dejarán de agregar cuentas a tu portfolio.",
+        "cancelAllBtn_one" : "Cancelar",
+        "cancelAllBtn_other" : "Cancelar todo"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Compartir clave de visualización",
+          "shareKey_other" : "Compartir claves de visualización"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "No has compartido la clave de visualización de ninguna de las cuentas seleccionadas. Las claves de visualización son necesarias para mostrar tu saldo privado en Ledger Wallet."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "Saldo disponible",
+      "availableBalanceTooltip" : "Balance that can be transferred",
       "transparentBalance" : "Saldo transparente",
       "transparentBalanceTooltip" : "Saldo visible para el público",
       "privateBalance" : "Saldo privado",
