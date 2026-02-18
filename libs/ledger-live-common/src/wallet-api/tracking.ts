@@ -136,31 +136,25 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
 
     // Failed to broadcast a signed transaction
     broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(data?.isEmbeddedSwap !== undefined && {
-          isEmbeddedSwap: String(data.isEmbeddedSwap),
-        }),
-        ...(data?.partner !== undefined && { partner: data.partner }),
-        ...(data?.sourceCurrency !== undefined && { sourceCurrency: data.sourceCurrency }),
-        ...(data?.targetCurrency !== undefined && { targetCurrency: data.targetCurrency }),
-        ...(data?.network !== undefined && { network: data.network }),
-      };
+      const properties: Record<string, unknown> = getEventData(manifest);
+      if (data?.isEmbeddedSwap !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.partner !== undefined) properties.partner = data.partner;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
     broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(data?.isEmbeddedSwap !== undefined && {
-          isEmbeddedSwap: String(data.isEmbeddedSwap),
-        }),
-        ...(data?.partner !== undefined && { partner: data.partner }),
-        ...(data?.sourceCurrency !== undefined && { sourceCurrency: data.sourceCurrency }),
-        ...(data?.targetCurrency !== undefined && { targetCurrency: data.targetCurrency }),
-        ...(data?.network !== undefined && { network: data.network }),
-      };
+      const properties: Record<string, unknown> = getEventData(manifest);
+      if (data?.isEmbeddedSwap !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.partner !== undefined) properties.partner = data.partner;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Success", properties);
     },
 

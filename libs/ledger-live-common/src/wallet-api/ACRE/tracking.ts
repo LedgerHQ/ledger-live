@@ -80,23 +80,19 @@ export default function trackingWrapper(trackCall: TrackExchange) {
 
     // Failed to broadcast a signed transaction
     broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(data?.sourceCurrency !== undefined && { sourceCurrency: data.sourceCurrency }),
-        ...(data?.targetCurrency !== undefined && { targetCurrency: data.targetCurrency }),
-        ...(data?.network !== undefined && { network: data.network }),
-      };
+      const properties: Record<string, unknown> = getEventData(manifest);
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI ACRE Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
     broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(data?.sourceCurrency !== undefined && { sourceCurrency: data.sourceCurrency }),
-        ...(data?.targetCurrency !== undefined && { targetCurrency: data.targetCurrency }),
-        ...(data?.network !== undefined && { network: data.network }),
-      };
+      const properties: Record<string, unknown> = getEventData(manifest);
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI ACRE Broadcast Success", properties);
     },
 
