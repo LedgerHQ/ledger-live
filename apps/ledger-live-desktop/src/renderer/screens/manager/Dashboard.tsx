@@ -40,7 +40,7 @@ const Dashboard = ({
   const appsBackupEnabled = useFeature("enableAppsBackup");
   const { search } = useLocation();
   const storage = useAppDataStorageProvider();
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const { state: drawerState } = useContext(drawerContext);
   const currentDevice = useSelector(getCurrentDevice);
   const [preventResetOnDeviceChange, setPreventResetOnDeviceChange] = useState(false);
@@ -49,7 +49,7 @@ const Dashboard = ({
   const [firmwareError, setFirmwareError] = useState(null);
   const osUpdateRequested = useSelector(osUpdateRequestedSelector);
   const params = new URLSearchParams(search || "");
-  const openFirmwareUpdate = isWallet40Enabled
+  const openFirmwareUpdate = shouldDisplayWallet40MainNav
     ? osUpdateRequested
     : params.get("firmwareUpdate") === "true";
 

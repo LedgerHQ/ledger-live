@@ -9,7 +9,7 @@ export type ManagerState = {
 
 const initialState: ManagerState = {
   osUpdateRequested: false,
-} satisfies ManagerState as ManagerState;
+};
 
 export const managerSlice = createSlice({
   name: "manager",
