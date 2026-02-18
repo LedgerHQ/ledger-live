@@ -1,7 +1,9 @@
 import aleoConfig from "../config";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getNetworkConfig, parseMicrocredits } from "./utils";
+import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { getNetworkConfig, parseMicrocredits, patchAccountWithViewKey } from "./utils";
 
 jest.mock("../config");
 
@@ -85,5 +87,89 @@ describe("parseMicrocredits", () => {
   it("should throw error for invalid format", () => {
     const value = "1000000u32";
     expect(() => parseMicrocredits(value)).toThrow();
+  });
+});
+
+describe("patchAccountWithViewKey", () => {
+  it("should encode viewKey in account id", () => {
+    const mockViewKey = "AViewKey1mockviewkey";
+    const mockAccount = getMockedAccount({
+      id: "js:2:aleo:aleo1test:",
+      operations: [],
+    });
+
+    const result = patchAccountWithViewKey(mockAccount, mockViewKey);
+
+    expect(result.id).not.toBe(mockAccount.id);
+    expect(result.id).toBe(`js:2:aleo:aleo1test::${mockViewKey}`);
+  });
+
+  it("should update operation ids with new account id", () => {
+    const mockViewKey = "AViewKey1mockviewkey";
+    const mockOp1 = getMockedOperation({
+      id: "js:2:aleo:aleo1test:-op1-OUT",
+      accountId: "js:2:aleo:aleo1test:",
+      hash: "op1",
+      type: "OUT",
+    });
+
+    const mockOp2 = getMockedOperation({
+      id: "js:2:aleo:aleo1test:-op2-IN",
+      accountId: "js:2:aleo:aleo1test:",
+      hash: "op2",
+      type: "IN",
+    });
+
+    const mockPendingOp1 = getMockedOperation({
+      id: "js:2:aleo:aleo1test:-pending1-OUT",
+      accountId: "js:2:aleo:aleo1test:",
+      hash: "pending1",
+      type: "OUT",
+    });
+
+    const mockPendingOp2 = getMockedOperation({
+      id: "js:2:aleo:aleo1test:-pending2-IN",
+      accountId: "js:2:aleo:aleo1test:",
+      hash: "pending2",
+      type: "IN",
+    });
+
+    const mockAccount = getMockedAccount({
+      id: "js:2:aleo:aleo1test:",
+      operations: [mockOp1, mockOp2],
+      pendingOperations: [mockPendingOp1, mockPendingOp2],
+    });
+
+    const result = patchAccountWithViewKey(mockAccount, mockViewKey);
+
+    expect(result.operations).toEqual([
+      expect.objectContaining({
+        id: `js:2:aleo:aleo1test::${mockViewKey}-op1-OUT`,
+        accountId: `js:2:aleo:aleo1test::${mockViewKey}`,
+      }),
+      expect.objectContaining({
+        id: `js:2:aleo:aleo1test::${mockViewKey}-op2-IN`,
+        accountId: `js:2:aleo:aleo1test::${mockViewKey}`,
+      }),
+    ]);
+    expect(result.pendingOperations).toEqual([
+      expect.objectContaining({
+        id: `js:2:aleo:aleo1test::${mockViewKey}-pending1-OUT`,
+        accountId: `js:2:aleo:aleo1test::${mockViewKey}`,
+      }),
+      expect.objectContaining({
+        id: `js:2:aleo:aleo1test::${mockViewKey}-pending2-IN`,
+        accountId: `js:2:aleo:aleo1test::${mockViewKey}`,
+      }),
+    ]);
+  });
+
+  it("should throw if viewKey is missing", () => {
+    const mockAccount = getMockedAccount({
+      id: "js:2:aleo:aleo1test:",
+      operations: [],
+    });
+
+    expect(() => patchAccountWithViewKey(mockAccount, "")).toThrow();
   });
 });

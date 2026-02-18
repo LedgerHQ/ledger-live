@@ -1,13 +1,18 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
+import { patchAccountWithViewKey } from "@ledgerhq/live-common/families/aleo/utils";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { ModularDrawerAddAccountStep } from "LLD/features/AddAccountDrawer/domain";
+import {
+  WARNING_REASON,
+  type ModularDrawerAddAccountStep,
+} from "LLD/features/AddAccountDrawer/domain";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 import AnimatedScreenWrapper from "LLD/features/ModularDrawer/components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "LLD/features/ModularDrawer/components/BackButton";
@@ -25,6 +30,7 @@ import {
   Title,
   type ModularDrawerAddAccountFlowManagerProps,
 } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setFlowValue } from "~/renderer/reducers/modularDrawer";
 import {
   ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP,
@@ -48,6 +54,7 @@ const ModularDrawerAddAccountFlowManager = ({
 }: ModularDrawerAddAccountFlowManagerProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const existingAccounts = useSelector(accountsSelector);
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult>();
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
@@ -69,6 +76,7 @@ const ModularDrawerAddAccountFlowManager = ({
     navigateToSelectAccount,
     navigateToScanAccounts,
     navigateToConnectDevice,
+    navigateToAccountsAdded,
   } = useAddAccountFlowNavigation({
     selectedAccounts,
     onAccountSelected,
@@ -86,7 +94,46 @@ const ModularDrawerAddAccountFlowManager = ({
     [navigateToViewKeyWarning],
   );
 
-  const handleViewKeyApproval = useCallback((_result: ViewKeysByAccountId) => {}, []);
+  const handleViewKeyApproval = useCallback(
+    (result: ViewKeysByAccountId) => {
+      if (!result) {
+        return;
+      }
+
+      const accountsWithViewKeys = selectedAccounts.reduce<Account[]>((acc, account) => {
+        const viewKey = result[account.id];
+        if (viewKey) {
+          acc.push(patchAccountWithViewKey(account, viewKey));
+        }
+        return acc;
+      }, []);
+
+      setSelectedAccounts(accountsWithViewKeys);
+
+      if (accountsWithViewKeys.length === 0) {
+        // TODO: dedicated NO_ACCOUNTS_ADDED reason & screen
+        navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
+      } else {
+        dispatch(
+          addAccountsAction({
+            existingAccounts,
+            scannedAccounts: accountsWithViewKeys,
+            selectedIds: accountsWithViewKeys.map(a => a.id),
+            renamings: {},
+          }),
+        );
+
+        navigateToAccountsAdded();
+      }
+    },
+    [
+      existingAccounts,
+      selectedAccounts,
+      dispatch,
+      navigateToAccountsAdded,
+      navigateToWarningScreen,
+    ],
+  );
 
   const renderStepContent = (step: AleoModularDrawerAddAccountStep) => {
     switch (step) {
