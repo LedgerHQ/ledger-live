@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { Text, Button } from "@ledgerhq/lumen-ui-rnative";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasSeenWalletV4Tour } from "~/actions/settings";

@@ -79,10 +79,10 @@ describe("WalletV4TourDrawer integration", () => {
 
     resizeScreenWidth();
 
-    const continueButtons = screen.getAllByRole("button", { name: "Continue" });
+    for (let i = 0; i < 2; i++) {
+      const continueButtons = screen.getByRole("button", { name: "Continue" });
 
-    for (const continueButton of continueButtons) {
-      await user.press(continueButton);
+      await user.press(continueButtons);
     }
 
     const exploreButton = screen.getByRole("button", { name: "Explore my new portfolio" });
