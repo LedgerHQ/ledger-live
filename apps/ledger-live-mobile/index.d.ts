@@ -7,9 +7,3 @@ declare module "*.png";
 declare module "*.jpg";
 declare module "*.jpeg";
 declare module "*.webp";
-
-// For Lottie/DotLottie asset (Metro resolves to asset id number)
-declare module "*.lottie" {
-  const value: number;
-  export default value;
-}
