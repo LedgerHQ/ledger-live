@@ -127,6 +127,7 @@ export type SettingsState = {
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
+  onboardingHasDevice: boolean;
   doNotAskAgainSkipMemo: boolean;
 };
 
@@ -227,6 +228,7 @@ export const INITIAL_STATE: SettingsState = {
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
+  onboardingHasDevice: false,
   doNotAskAgainSkipMemo: false,
 };
 
@@ -286,6 +288,7 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
+  SET_ONBOARDING_HAS_DEVICE: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -505,6 +508,10 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
+  }),
+  SET_ONBOARDING_HAS_DEVICE: (state: SettingsState, { payload }) => ({
+    ...state,
+    onboardingHasDevice: payload,
   }),
 };
 
@@ -800,3 +807,4 @@ export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.al
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;

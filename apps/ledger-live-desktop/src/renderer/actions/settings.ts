@@ -392,3 +392,8 @@ export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
 });
+
+export const setOnboardingHasDevice = (onboardingHasDevice: boolean) => ({
+  type: "SET_ONBOARDING_HAS_DEVICE",
+  payload: onboardingHasDevice,
+});
