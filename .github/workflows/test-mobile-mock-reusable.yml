@@ -348,6 +348,13 @@ jobs:
           wait $MITMPROXY_PID 2>/dev/null || true
 
 
+          # Configure host to use mitmproxy
+          export NETWORK_SERVICE="Wi-Fi"
+          export SIMULATOR_NAME="iOS Simulator"
+
+          sudo networksetup -setwebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
+          sudo networksetup -setsecurewebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
+
           # Get the UDID of the simulator Detox is using
           SIM_UDID=$(xcrun simctl list devices | grep "Booted" | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})")
 
