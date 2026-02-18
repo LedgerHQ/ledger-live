@@ -38,8 +38,7 @@ describe("swap.handler", () => {
       swapHandler({ type: "swap", fromToken: "bitcoin", toToken: "bitcoin" }, context);
 
       expect(context.navigate).toHaveBeenCalledWith("/swap", {
-        fromToken: "bitcoin",
-        toToken: "bitcoin",
+        defaultToken: { fromTokenId: "bitcoin", toTokenId: "bitcoin" },
       });
     });
 
