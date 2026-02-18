@@ -33,7 +33,7 @@ export function AmountScreenView({
   onGetFunds,
 }: AmountScreenViewProps) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col" data-testid="send-amount-step">
       <div className="flex flex-1 flex-col gap-24">
         <AmountInputSection
           amountValue={amountValue}

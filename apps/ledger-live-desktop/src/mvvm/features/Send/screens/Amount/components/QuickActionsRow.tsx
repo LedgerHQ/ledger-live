@@ -8,7 +8,7 @@ type QuickActionsRowProps = Readonly<{
 
 export function QuickActionsRow({ actions }: QuickActionsRowProps) {
   return (
-    <div className="-mt-12 flex w-full gap-12">
+    <div className="-mt-12 flex w-full gap-12" data-testid="send-quick-actions-row">
       {actions.map(action => (
         <Button
           key={action.id}
@@ -16,6 +16,7 @@ export function QuickActionsRow({ actions }: QuickActionsRowProps) {
           size="sm"
           disabled={action.disabled}
           onClick={action.onClick}
+          data-testid={`send-quick-actions-${action.id}`}
           className="min-w-0 flex-1"
         >
           {action.label}

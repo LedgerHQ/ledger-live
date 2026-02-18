@@ -11,6 +11,7 @@ type AccountRowWithBalanceProps = Readonly<{
   showSendTo?: boolean;
   disabled?: boolean;
   customName?: string;
+  testId?: string;
 }>;
 
 export function AccountRowWithBalance({
@@ -19,6 +20,7 @@ export function AccountRowWithBalance({
   showSendTo = false,
   disabled = false,
   customName,
+  testId,
 }: AccountRowWithBalanceProps) {
   const accountName = useMaybeAccountName(account);
   const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(account);
@@ -36,6 +38,7 @@ export function AccountRowWithBalance({
       showSendTo={showSendTo}
       isLedgerAccount
       disabled={disabled}
+      testId={testId}
     />
   );
 }

@@ -22,7 +22,7 @@ export function RecentAddressesSection({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8" data-testid="send-recent-addresses-section">
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{t("newSendFlow.recent")}</SubheaderTitle>
