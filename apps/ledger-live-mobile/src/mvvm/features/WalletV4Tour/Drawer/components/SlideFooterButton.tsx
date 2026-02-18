@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
@@ -10,12 +10,11 @@ interface SlideFooterButtonProps {
 }
 
 export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
-  const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
+  const { totalSlides, goToNext, scrollProgressSharedValue } = useSlidesContext();
   const { t } = useTranslation();
 
   const lastIndex = totalSlides - 1;
   const fadeStart = lastIndex - 0.5;
-  const isLastSlide = currentIndex >= lastIndex;
 
   const continueStyle = useAnimatedStyle(
     () => ({
@@ -42,25 +41,19 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
   );
 
   return (
-    <Animated.View style={styles.container}>
-      <Animated.View
-        style={[styles.button, continueStyle]}
-        pointerEvents={isLastSlide ? "none" : "box-none"}
-      >
+    <View style={styles.container} onStartShouldSetResponder={() => true}>
+      <Animated.View style={[styles.button, continueStyle]}>
         <Button appearance="base" size="md" onPress={goToNext}>
           {t("walletV4Tour.cta.continue")}
         </Button>
       </Animated.View>
 
-      <Animated.View
-        style={[styles.button, exploreStyle]}
-        pointerEvents={isLastSlide ? "box-none" : "none"}
-      >
+      <Animated.View style={[styles.button, exploreStyle]}>
         <Button appearance="base" size="md" onPress={onClose}>
           {t("walletV4Tour.cta.explore")}
         </Button>
       </Animated.View>
-    </Animated.View>
+    </View>
   );
 };
 
