@@ -43,6 +43,7 @@ interface UsePortfolioViewModelResult {
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
   goToAnalyticsAllocations: () => void;
+  shouldDisplayWallet40MainNav: boolean;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -53,7 +54,7 @@ const usePortfolioViewModel = (navigation: {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
-  const { shouldDisplayGraphRework, shouldDisplayQuickActionCtas } =
+  const { shouldDisplayGraphRework, shouldDisplayQuickActionCtas, shouldDisplayWallet40MainNav } =
     useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
@@ -148,6 +149,7 @@ const usePortfolioViewModel = (navigation: {
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
+    shouldDisplayWallet40MainNav,
   };
 };
 
