@@ -300,7 +300,7 @@ describe("PortfolioView", () => {
       expect(balanceElement).not.toHaveTextContent("••••"); // Ensure no placeholders
     });
 
-    it("should not show loading when countervalues are polling but balance is already available", () => {
+    it("should display loading state when countervalues are being polled", () => {
       mockUseCountervaluesPolling.mockReturnValue({
         ...defaultPollingMock,
         pending: true,
@@ -358,6 +358,7 @@ describe("PortfolioView", () => {
 
   describe("Trend", () => {
     it("should render Trend with positive percentage and display separator with Today label", () => {
+      mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: 0.0542, value: 5000 }));
       mockUsePortfolioThrottled.mockReturnValue(
         createPortfolioMock({ percentage: 0.0542, value: 5000 }),
       );
@@ -379,6 +380,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render Trend with negative percentage", () => {
+      mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: -0.0315, value: -3000 }));
       mockUsePortfolioThrottled.mockReturnValue(
         createPortfolioMock({ percentage: -0.0315, value: -3000 }),
       );

@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useBalanceViewModel } from "../useBalanceViewModel";
-import * as portfolioModule from "@ledgerhq/live-countervalues-react/portfolio";
+import * as usePortfolioBalanceSyncModule from "LLD/hooks/usePortfolioBalanceSync";
 import { Portfolio } from "@ledgerhq/types-live";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -39,6 +39,18 @@ const wallet40WithBalanceRefreshRework = {
   },
 };
 
+const defaultBalanceSyncReturn = {
+  portfolio: mockPortfolio,
+  counterValue: mockCounterValue,
+  balanceAvailable: true,
+  isColdStart: false,
+  isBalanceLoading: false,
+  stableSyncPending: false,
+  hasCvOrBridgeError: false,
+  hasWalletSyncError: false,
+  triggerRefresh: jest.fn(),
+};
+
 const initialState = {
   settings: {
     ...INITIAL_STATE,
@@ -48,6 +60,9 @@ const initialState = {
     overriddenFeatureFlags: wallet40WithBalanceRefreshRework,
   },
 };
+
+const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
+const minimalAccount = genAccount("mock-account-1", { currency: bitcoinCurrency });
 
 describe("useBalanceViewModel", () => {
   beforeEach(() => {
@@ -77,7 +92,7 @@ describe("useBalanceViewModel", () => {
     expect(result.current.formatter(result.current.balance).integerPart).toContain("0");
   });
 
-  it("uses day range by default", () => {
+  it("uses day range by default (legacyRange false)", () => {
     renderHook(() => useBalanceViewModel(), { initialState });
 
     expect(portfolioModule.usePortfolioThrottled).toHaveBeenCalledWith(
@@ -97,7 +112,18 @@ describe("useBalanceViewModel", () => {
     );
   });
 
-  it("returns isColdStart true on cold start when portfolio balance is not yet available", () => {
+  it("returns isLoading true when isBalanceLoading is true (e.g. countervalues polling)", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useBalanceViewModel(), { initialState });
+
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  it("returns isLoading true on cold start when portfolio balance is not yet available", () => {
     mockUsePortfolioThrottled.mockReturnValue({ ...mockPortfolio, balanceAvailable: false });
 
     const { result } = renderHook(() => useBalanceViewModel(), {

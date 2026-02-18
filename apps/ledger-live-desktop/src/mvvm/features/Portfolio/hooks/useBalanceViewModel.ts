@@ -6,13 +6,14 @@ import {
   discreetModeSelector,
 } from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { usePortfolioSyncStatus } from "LLD/hooks/usePortfolioSyncStatus";
+import { usePortfolioBalanceSync } from "LLD/hooks/usePortfolioBalanceSync";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
+import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -31,7 +32,7 @@ export const useBalanceViewModel = (
   const discreet = useSelector(discreetModeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
-  const { portfolio, counterValue, isColdStart } = usePortfolioSyncStatus({
+  const { portfolio, counterValue, isBalanceLoading } = usePortfolioBalanceSync({
     legacyRange,
   });
 
@@ -80,5 +81,6 @@ export const useBalanceViewModel = (
     hasOnboardedDevice,
     isColdStart,
     shouldDisplayBalanceRefreshRework,
+    isLoading: isBalanceLoading,
   };
 };
