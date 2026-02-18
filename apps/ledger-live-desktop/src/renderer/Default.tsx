@@ -60,6 +60,7 @@ import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/po
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
+import { useSyncOnboardingHasDevice } from "./hooks/useSyncOnboardingHasDevice";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
@@ -359,6 +360,7 @@ export default function Default() {
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
   useEnforceSupportedLanguage();
+  useSyncOnboardingHasDevice();
 
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
