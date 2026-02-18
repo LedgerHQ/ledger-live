@@ -152,7 +152,8 @@
     "quote" : "호가",
     "memoTag" : {
       "learnMore" : "태그/메모에 대해 더 알아보기"
-    }
+    },
+    "memo" : "메모"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
+    "perps" : "무기한 계약",
     "refer" : "친구 추천",
     "lend" : "대출",
     "catalog" : "탐색",
@@ -777,6 +779,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "매수 또는 매도",
     "chooseProvider" : "{{providerCount}} 제공자에서 선택",
     "chooseProviders" : "{{providerCount}} 제공자에서 선택",
     "title" : "암호화폐 매수 및 매도",
@@ -809,7 +812,15 @@
     }
   },
   "card" : {
-    "backToCard" : "모든 카드"
+    "backToCard" : "모든 카드",
+    "title" : "카드",
+    "imageAlt" : "카드 이미지",
+    "spendYourCrypto" : "암호화폐로 결제하세요",
+    "payDescription" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요",
+    "exploreCards" : "카드 살펴보기",
+    "iAlreadyHaveACard" : "이미 카드가 있습니다",
+    "unlockLiquidity" : "유동성 활용하기",
+    "exploreCryptoCardsDescription" : "다양한 암호화폐 카드를 살펴보고 나에게 가장 적합한 카드를 찾아보세요."
   },
   "lend" : {
     "title" : "암호화폐를 대출",
@@ -1481,6 +1492,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
+    "continue" : "계속"
+  },
   "currentAddress" : {
     "title" : "현재 주소",
     "for" : "<1><0>{{name}}</0></1> 주소",
@@ -1783,6 +1813,7 @@
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
       "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
+      "acceptTermsSponsored" : "네트워크 수수료 면제 혜택을 받으려면, 트랜잭션 상세 정보(지갑 주소 포함)를 Blinklabs와 공유하는 것에 동의해야 합니다.",
       "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
       "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 승인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 \n간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, \n이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 직접 문의해야 합니다.",
@@ -2205,6 +2236,19 @@
       "description" : "거래소에서 이 자산을 수령하려면 <0>태그/메모</0>가 필요할 수 있습니다. 1234와 같은 숫자 조합을 사용할 수 있습니다."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "은행 이체",
+          "description" : "현금 이체로 스테이블 코인 받기"
+        },
+        "fromCrypto" : {
+          "title" : "암호화폐 받기"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "전송",
     "totalSpent" : "입금할 총액",
@@ -2331,6 +2375,15 @@
     "addressNotFound" : "주소를 찾을 수 없음",
     "alreadyUsed" : "이미 사용됨 · {{date}}",
     "recentSendWillAppear" : "최근 전송 내역이 여기에 표시됩니다",
+    "relativeDate" : {
+      "justNow" : "방금 전",
+      "minutesAgo_one" : "1분 전",
+      "minutesAgo_other" : "{{count}}분 전",
+      "hoursAgo_one" : "1시간 전",
+      "hoursAgo_other" : "{{count}}시간 전",
+      "daysAgo_one" : "1일 전",
+      "daysAgo_other" : "{{count}}일 전"
+    },
     "remove" : "제거",
     "enterTag" : "{{tag}} 입력",
     "firstInteraction" : {
@@ -2348,12 +2401,15 @@
       "walletNotExist" : "지갑이 존재하지 않습니다"
     },
     "skipMemo" : {
-      "title" : "{{tag}} 입력을 건너뛰시겠습니까?",
-      "warning" : "수령인이 {{tag}}를 요구하는 경우, 자산을 분실할 수 있습니다."
+      "title" : "{{memoLabel}} 입력을 건너뛰시겠습니까?",
+      "description" : "수령인이 {{memoLabel}} 입력을 요구하는 경우, 자산을 분실할 수 있습니다.",
+      "notRequired" : "수령인이 {{memoLabel}}를 요청하지 않나요?",
+      "confirm" : "네, 건너뛸게요",
+      "neverAskAgain" : "이 경고 메시지를 다시 표시하지 않기"
     },
     "tagHelp" : {
-      "title" : "{{tag}}란 무엇인가요?",
-      "description" : "거래소로 {{currency}} 전송 시 {{tag}} 입력이 필요합니다. 이는 트랜잭션 수신자를 식별하는 기능으로, {{tag}} 메모를 입력하지 않으면 자산을 분실할 수 있습니다."
+      "inputLabel" : "{{memoLabel}} 입력",
+      "description" : "거래소로 {{currency}} 전송 시 {{memoLabel}} 입력이 필요합니다. 이는 트랜잭션 수신자를 식별하는 기능으로, {{memoLabel}} 메모를 입력하지 않으면 자산을 분실할 수 있습니다."
     },
     "networkFeesInFiat" : "네트워크 수수료 {{currency}}",
     "feesAmount" : "수수료({{unit}})",
@@ -4506,6 +4562,10 @@
           "title" : "빠른 생성",
           "desc" : "무작위 통화로 구성된 계좌 10개를 자동 생성합니다."
         },
+        "emptyGenerate" : {
+          "title" : "비어 있는 계정 생성",
+          "desc" : "빈 계정 생성하기"
+        },
         "currencySelector" : {
           "placeholder" : "통화 선택",
           "searchPlaceholder" : "검색",
@@ -4521,7 +4581,8 @@
         "buttons" : {
           "generateAccounts" : "계좌 {{count}}개 생성",
           "generateAccounts_other" : "계좌 {{count}}개 생성",
-          "generateAccountsQuick" : "계좌 {{count}}개 생성"
+          "generateAccountsQuick" : "계좌 {{count}}개 생성",
+          "generateEmptyAccount" : "빈 계정 생성하기"
         },
         "alerts" : {
           "selectCurrency" : "통화를 1개 이상 선택하세요.",
@@ -4567,9 +4628,13 @@
       "walletFeaturesDevTool" : {
         "title" : "지갑 기능 개발 툴",
         "description" : "데스크탑용 지갑 4.0 기능 토글(lwdWallet40 기능 플래그).",
+        "mainFeatureToggle" : "메인 기능 토글",
         "enableAll" : "모두 활성화",
         "disableAll" : "모두 비활성화",
         "featureParameters" : "기능 파라미터",
+        "tourState" : "투어 상태",
+        "drawerPreview" : "Drawer 미리보기",
+        "openDrawer" : "Drawer 열기",
         "showJson" : "JSON 표시",
         "hideJson" : "JSON 감추기"
       },
@@ -4856,6 +4921,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "값이 0 인 경우 토큰 트랜잭션을 숨깁니다",
         "desc" : "값이 없는 토큰 트랜잭션을 숨기는 것은 ETH, 폴리곤, BSC, 트론에 대한 잠재적인 주소 포이즌 공격을 방지 할 수 있습니다..."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "전송 시 메모 건너뛰기와 관련해 다시 묻지 않기",
+        "desc" : "전송 시 메모 건너뛰기에 대한 경고를 비활성화합니다"
       }
     }
   },
@@ -5767,11 +5836,13 @@
     "casper" : {
       "transferIdPlaceholder" : "선택 사항",
       "transferId" : "전송 ID(메모)",
-      "transferIdWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
+      "transferIdWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요",
+      "memo" : "전송 ID(메모)"
     },
     "ton" : {
       "commentPlaceholder" : "선택 사항",
-      "comment" : "코멘트"
+      "comment" : "코멘트",
+      "memo" : "코멘트"
     },
     "canton" : {
       "commentPlaceholder" : "선택 사항",
@@ -5929,6 +6000,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "메모(선택)"
+    },
+    "xrp" : {
+      "memo" : "태그"
     }
   },
   "errors" : {
@@ -6336,7 +6410,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "처리 오류",
-      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB-{{randomCode}}"
+      "description" : "스왑 서비스 제공업체에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "서비스 제공 업체 이용 불가",
@@ -6634,7 +6708,7 @@
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "이더리움 앱 설정에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
+      "title" : "이더리움 앱에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celo 앱 설정에서 컨트랙트 데이터를 활성화하세요"
@@ -7548,7 +7622,7 @@
     "close" : "닫기",
     "banner" : {
       "title" : "지갑이 동기화되지 않았습니다",
-      "description" : "새 휴대폰이나 컴퓨터에서도 포트폴리오를 항상 최신 상태로 관리하세요",
+      "description" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "cta" : "지갑 동기화"
     },
     "activate" : {
@@ -7558,7 +7632,7 @@
       "alreadySync" : "장치를 이미 켰습니다",
       "learnMore" : "Ledger 동기화는 어떤 원리인가요?",
       "titleModal" : "지갑 동기화",
-      "descriptionModal" : "휴대폰과 컴퓨터를 번갈아 사용하더라도 항상 Ledger 장치의 확실한 보안은 물론, 최신 상태로 업데이트된 포트폴리오를 확인할 수 있습니다.",
+      "descriptionModal" : "휴대폰 사용 시, 또는 컴퓨터 교체 시에도 안전한 Ledger 장치를 통해 포트폴리오를 항상 최신 상태로 관리하세요.",
       "ctaModal" : "계속"
     },
     "entryPoints" : {
@@ -7776,6 +7850,11 @@
           "description" : "{{currency}} 생태계에서는 일부 지정된 서비스만 새 계정을 만들 수 있습니다. Ledger에서는 아직 이 계정을 직접 만들 수는 없지만, 다른 서비스를 통해 생성이 가능합니다. 계정 생성 후에는 Ledger Live에 {{currency}} 계정을 추가할 수 있어요.",
           "cta" : "{{currency}} 계정은 어떻게 만들 수 있나요?",
           "close" : "닫기"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "추가된 {{currency}} 계정이 없습니다",
+          "description" : "선택한 하나 이상의 계정에 대해 필요한 설정이 완료되지 않았습니다.",
+          "close" : "닫기"
         }
       },
       "status" : {
@@ -7824,7 +7903,15 @@
   },
   "portfolio" : {
     "title" : "홈",
-    "today" : "오늘"
+    "today" : "오늘",
+    "addAccountCta" : "암호화폐 계정 추가",
+    "noBalanceTitle" : "소중한 암호화폐를 안전하게",
+    "perpsEntry" : {
+      "title" : "무기한 계약",
+      "description" : "레버리지로 거래하기",
+      "cta" : "탐색"
+    },
+    "noDeviceTitle" : "가장 안전한 지갑"
   },
   "marketBanner" : {
     "title" : "시장 탐색하기",
@@ -7848,11 +7935,38 @@
       "cta" : "확인"
     }
   },
+  "quickActions" : {
+    "send" : "전송",
+    "receive" : "수령",
+    "buy" : "매수",
+    "sell" : "매도",
+    "connect" : "연결",
+    "buyALedger" : "Ledger 구매하기"
+  },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "errorToolTip" : "일시적인 네트워크 문제가 발생했습니다. 귀하의 자산은 안전하니 안심하세요. 영향을 받은 계정 목록: {{accounts}}. 탭하여 다시 시도하세요",
+      "emptyErrorToolTip" : "일시적인 네트워크 문제가 발생했습니다. 자산은 안전하니 안심하세요. 탭하여 다시 시도하세요",
+      "upToDate" : "최신 상태입니다",
+      "minutesAgo_one" : "마지막 동기화: {{count}}분 전. 탭하여 새로고침하세요",
+      "minutesAgo_other" : "마지막 동기화: {{count}}분 전. 탭하여 새로고침하세요",
+      "hoursAgo_one" : "마지막 동기화: {{count}}시간 전. 탭하여 새로고침하세요",
+      "hoursAgo_other" : "마지막 동기화: {{count}}시간 전. 탭하여 새로고침하세요",
+      "daysAgo_one" : "마지막 동기화: {{count}}일 전. 탭하여 새로고침하세요",
+      "daysAgo_other" : "마지막 동기화: {{count}}일 전. 탭하여 새로고침하세요"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "알림"
+    },
+    "myLedger" : {
+      "tooltip" : "내 Ledger"
     }
   },
   "geoBlocking" : {
@@ -7873,6 +7987,95 @@
     "account" : {
       "availableBalance" : "이용 가능 수량",
       "availableBalanceTooltip" : "전송 가능한 수량",
+      "transparentBalance" : "공개 수량",
+      "transparentBalanceTooltip" : "누구나 볼 수 있는 수량",
+      "privateBalance" : "비공개 수량",
+      "privateBalanceTooltip" : "타인에게 공개되지 않은 수량"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "잔액 보기",
+        "pausedAt" : "일시 중지, 진행률: ",
+        "lastSync" : "마지막 동기화: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Zcash 비공개 잔액 수량 활성화",
+          "breadcrumbs" : {
+            "0" : "시작 높이",
+            "1" : "UFVK",
+            "2" : "장치",
+            "3" : "확인"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "시작 높이(Birth height)는 지갑이 자산을 찾기 위해 블록체인 스캔을 시작하는 지점입니다.",
+              "cta" : "자세히 알아보기",
+              "label" : "시작 높이",
+              "tooltip" : "기본값: 오늘 날짜. 과거의 프라이빗(비공개) 활동 내역이 있는 기존 계정에 대해서만 변경하세요.",
+              "syncFromZero" : "이 계정은 과거에 쉴디드 ZEC를 수령한 기록이 있으나, 시작 높이를 불러올 수 없습니다. 0번 블록부터 스캔합니다. 이 작업은 시간이 오래 소요될 수 있습니다.",
+              "error" : "유효하지 않은 날짜"
+            },
+            "ufvk" : {
+              "text" : "먼저, 통합 전체 조회 키(UFVK) 내보내기를 해야 합니다. 이 작업은 Ledger 장치를 통한 승인이 필요합니다."
+            },
+            "device" : {
+              "text" : "Ledger 장치에서 UFVK 내보내기를 승인합니다"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK를 성공적으로 가져왔습니다",
+                "text" : "이제 쉴디드 ZEC를 수령하고 프라이빗 트랜잭션에 서명할 수 있습니다.",
+                "info" : {
+                  "text" : "사용자의 통합 전체 보기 키(UFVK)는 컴퓨터 내부에 안전하게 저장되며, 외부 시스템으로 전송되거나 노출되지 않습니다.",
+                  "cta" : "자세히 알아보기"
+                },
+                "warning" : "시작 높이가 오래된 계정은 동기화에 더 많은 시간(최대 2시간)이 소요될 수 있습니다. 동기화가 완료될 때까지 앱을 종료하지 마세요."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "동기화 시작",
+      "datepicker" : {
+        "label" : "시작 높이",
+        "tooltip" : "시작 높이는 지갑이 자산을 찾기 위해 블록체인 스캔을 시작하는 지점입니다."
+      }
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo 비공개 잔액 설정하기",
+        "description" : "Ledger Wallet은 조회 키(view Key)를 통해 비공개 잔액을 표시하고 타사 서비스를 통해 비공개 트랜잭션을 처리합니다. <0>자세히 알아보기</0>",
+        "bullets" : ["읽기 전용 권한을 통한 비공개 잔액 표시", "Ledger는 사용자의 자금을 전송하거나 사용할 수 없으며,", "자금 사용이나 서명은 사용자 본인만 가능합니다.", "빠른 처리를 위해 증명 생성은 제3자 증명 서비스를 통해 처리되지만,", "이들 서비스는 사용자의 자금에 액세스하거나 사용할 권한은 없습니다."],
+        "cta" : {
+          "allow" : "허용",
+          "cancel" : "취소"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Ledger 장치에서 승인하기",
+        "description" : "장치에서 뷰 키 공유 확인하기",
+        "cancelAlert" : "장치에서 개별 계정을 거부할 수 있습니다. 전체 취소 시 포트폴리오에 계정이 추가되지 않습니다.",
+        "cancelAllBtn_one" : "취소",
+        "cancelAllBtn_other" : "전체 취소하기"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "뷰 키 공유하기",
+          "shareKey_other" : "뷰 키 공유하기"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "선택한 계정 중 뷰 키가 공유된 계정이 없습니다. Ledger Wallet에서 비공개 잔액을 확인하려면 뷰 키가 필요합니다."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "이용 가능 수량",
+      "availableBalanceTooltip" : "Balance that can be transferred",
       "transparentBalance" : "공개 수량",
       "transparentBalanceTooltip" : "누구나 볼 수 있는 수량",
       "privateBalance" : "비공개 수량",
