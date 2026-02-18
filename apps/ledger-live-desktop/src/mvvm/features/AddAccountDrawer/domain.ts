@@ -14,6 +14,7 @@ export type ModularDrawerAddAccountStep =
 export const WARNING_REASON = {
   ALREADY_EMPTY_ACCOUNT: "ALREADY_EMPTY_ACCOUNT",
   NO_ASSOCIATED_ACCOUNTS: "NO_ASSOCIATED_ACCOUNTS",
+  NO_ACCOUNTS_ADDED: "NO_ACCOUNTS_ADDED",
 } as const;
 
 export type WarningReason = (typeof WARNING_REASON)[keyof typeof WARNING_REASON];

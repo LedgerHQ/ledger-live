@@ -2,7 +2,7 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
-import { WARNING_REASON } from "../../domain";
+import { WARNING_REASON, type WarningReason } from "../../domain";
 import { ActionButtons, IconContainer } from "./components";
 import { AccountsWarningProps } from "./types";
 import { useWarningConfig } from "./useWarningConfig";
@@ -18,18 +18,22 @@ const AccountsWarning = ({
   isAccountSelectionFlow,
 }: AccountsWarningProps) => {
   const source = useSelector(modularDrawerSourceSelector);
-  const { emptyAccountWarning, noAssociatedAccountsWarning } = useWarningConfig(
-    currency,
-    navigateToEditAccountName,
-    navigateToFundAccount,
-    isAccountSelectionFlow,
-    emptyAccount,
-  );
+  const { emptyAccountWarning, noAssociatedAccountsWarning, noAccountsAddedWarning } =
+    useWarningConfig(
+      currency,
+      navigateToEditAccountName,
+      navigateToFundAccount,
+      isAccountSelectionFlow,
+      emptyAccount,
+    );
 
-  const warning =
-    warningReason === WARNING_REASON.NO_ASSOCIATED_ACCOUNTS
-      ? noAssociatedAccountsWarning
-      : emptyAccountWarning;
+  const mapReasonToContent = {
+    [WARNING_REASON.NO_ASSOCIATED_ACCOUNTS]: noAssociatedAccountsWarning,
+    [WARNING_REASON.ALREADY_EMPTY_ACCOUNT]: emptyAccountWarning,
+    [WARNING_REASON.NO_ACCOUNTS_ADDED]: noAccountsAddedWarning,
+  } satisfies Record<WarningReason, unknown>;
+
+  const warning = mapReasonToContent[warningReason];
 
   return (
     <Flex flexDirection="column" height="100%" alignItems="center">
