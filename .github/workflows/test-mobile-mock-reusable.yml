@@ -321,23 +321,9 @@ jobs:
           pnpm build:dummy-apps
         shell: bash
 
-      - uses: jdx/mise-action@v3
-        with:
-          install: true # [default: true] run `mise install`
-          cache: false # [default: true] cache mise using GitHub's cache
-          experimental: true # [default: false] enable experimental features
-          mise_toml: |
-            [env]
-            _.python.venv = { path = ".venv", create = true }
-
-            [settings]
-            python.uv_venv_auto = true
-
-            [tools]
-            python = "{{ get_env(name='PYTHON_VERSION', default='3.11') }}"
-            pipx = "latest"
-            mitmproxy = "{{ get_env(name='MIMTPROXY_VERSION', default='12.2.1') }}"
-          github_token: ${{ secrets.GITHUB_TOKEN }} # [default: ${{ github.token }}] GitHub token for API authentication
+      - uses: Install mitmproxy
+        run: brew install mitmproxy
+        shell: bash
 
       - name: Install mitmproxy certificate and setup proxy
         run: |
