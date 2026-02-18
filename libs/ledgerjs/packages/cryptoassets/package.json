@@ -49,7 +49,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "@types/react": "^18.0.0",
+    "@types/react": "18.2.73",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "^18.0.0",

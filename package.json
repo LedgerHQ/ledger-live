@@ -248,9 +248,9 @@
   },
   "pnpm": {
     "overrides": {
-      "live-mobile>@types/react": "19.0.14",
-      "live-mobile>react": "19.0.0",
-      "live-mobile>react-test-renderer": "19.0.0",
+      "live-mobile>@types/react": "19.2.14",
+      "live-mobile>react": "19.2.4",
+      "live-mobile>react-test-renderer": "19.2.4",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",

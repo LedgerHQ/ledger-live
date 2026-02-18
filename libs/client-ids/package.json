@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "@types/react": "^18.0.0",
+    "@types/react": "18.2.73",
     "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "react-redux": "catalog:",

@@ -297,7 +297,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.179",
     "@types/node": "^22.10.10",
-    "@types/react": "^18.2.21",
+    "@types/react": "18.2.73",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "buffer": "6.0.3",
