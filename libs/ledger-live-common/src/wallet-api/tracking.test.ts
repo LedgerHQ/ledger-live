@@ -161,38 +161,35 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
   test.each([
     { method: "broadcastFail", message: "WalletAPI Broadcast Fail" },
     { method: "broadcastSuccess", message: "WalletAPI Broadcast Success" },
-  ])(
-    "$method includes all properties when provided",
-    ({ method, message }) => {
-      // Given
-      const appManifest = appManifestFixture();
-      const mockedTrack = jest.fn();
+  ])("$method includes all properties when provided", ({ method, message }) => {
+    // Given
+    const appManifest = appManifestFixture();
+    const mockedTrack = jest.fn();
 
-      // When
-      trackingWrapper(mockedTrack)[method](appManifest, {
-        isEmbeddedSwap: true,
+    // When
+    trackingWrapper(mockedTrack)[method](appManifest, {
+      isEmbeddedSwap: true,
+      partner: "uniswap",
+      sourceCurrency: "Bitcoin",
+      targetCurrency: "LBTC",
+      network: "bitcoin",
+    });
+
+    // Then
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledWith(
+      message,
+      {
+        walletAPI: appManifest.name,
+        isEmbeddedSwap: "true",
         partner: "uniswap",
         sourceCurrency: "Bitcoin",
         targetCurrency: "LBTC",
         network: "bitcoin",
-      });
-
-      // Then
-      expect(mockedTrack).toHaveBeenCalledTimes(1);
-      expect(mockedTrack).toHaveBeenCalledWith(
-        message,
-        {
-          walletAPI: appManifest.name,
-          isEmbeddedSwap: "true",
-          partner: "uniswap",
-          sourceCurrency: "Bitcoin",
-          targetCurrency: "LBTC",
-          network: "bitcoin",
-        },
-        null,
-      );
-    },
-  );
+      },
+      null,
+    );
+  });
 
   test.each([
     { method: "broadcastFail", message: "WalletAPI Broadcast Fail" },
@@ -227,27 +224,24 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
   test.each([
     { method: "broadcastFail", message: "WalletAPI Broadcast Fail" },
     { method: "broadcastSuccess", message: "WalletAPI Broadcast Success" },
-  ])(
-    "$method works with no data (backward compatible)",
-    ({ method, message }) => {
-      // Given
-      const appManifest = appManifestFixture();
-      const mockedTrack = jest.fn();
+  ])("$method works with no data (backward compatible)", ({ method, message }) => {
+    // Given
+    const appManifest = appManifestFixture();
+    const mockedTrack = jest.fn();
 
-      // When
-      trackingWrapper(mockedTrack)[method](appManifest);
+    // When
+    trackingWrapper(mockedTrack)[method](appManifest);
 
-      // Then
-      expect(mockedTrack).toHaveBeenCalledTimes(1);
-      expect(mockedTrack).toHaveBeenCalledWith(
-        message,
-        {
-          walletAPI: appManifest.name,
-        },
-        null,
-      );
-    },
-  );
+    // Then
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledWith(
+      message,
+      {
+        walletAPI: appManifest.name,
+      },
+      null,
+    );
+  });
 });
 
 function appManifestFixture(name = "live-app"): AppManifest {
