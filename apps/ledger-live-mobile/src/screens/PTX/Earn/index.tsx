@@ -149,7 +149,7 @@ function Earn({ route }: Props) {
       lastKnownManifest = undefined;
     }
     return (
-      <View style={{ flex: 1, overflow: "visible" }} >
+      <View style={{ flex: 1, overflow: "visible" }}>
         {isPtxUiV2 && !hideMainNavigator && <EarnBackground />}
         <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
           {displayManifest ? (
