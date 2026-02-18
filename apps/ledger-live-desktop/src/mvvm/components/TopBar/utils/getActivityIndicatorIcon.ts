@@ -7,7 +7,7 @@ export function getActivityIndicatorIcon(
   isError: boolean,
   isRotating: boolean,
 ): ActivityIndicatorIcon {
-  let icon = Refresh;
+  let icon: ActivityIndicatorIcon = Refresh;
   if (isError) {
     icon = Warning;
   }
