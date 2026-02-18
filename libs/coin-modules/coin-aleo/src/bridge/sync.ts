@@ -1,9 +1,12 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { type GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  type GetAccountShape,
+  makeSync,
+  mergeOps,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import type { Operation } from "@ledgerhq/types-live";
-import { getBalance, lastBlock } from "../logic";
+import { getBalance, lastBlock, listOperations } from "../logic";
 import type { AleoAccount } from "../types";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
@@ -15,7 +18,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     invariant(viewKey, `aleo: viewKey is missing in ${address} initialAccount`);
   }
 
-  const accountId = encodeAccountId({
+  const ledgerAccountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
@@ -29,15 +32,39 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     getBalance(currency, address),
   ]);
 
-  const operations: Operation[] = [];
   const blockHeight = latestBlock.height;
 
   const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
+  const shouldSyncFromScratch = !initialAccount;
+  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const latestOperation = oldOperations[0];
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+
+  const latestAccountPublicOperations = await listOperations({
+    currency,
+    address,
+    ledgerAccountId,
+    fetchAllPages: true,
+    pagination: {
+      minHeight: 0,
+      order: "asc",
+      ...(lastBlockHeight > 0 && { lastPagingToken: lastBlockHeight.toString() }),
+    },
+  });
+
+  // sort by date desc
+  latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // merge old and new operations
+  const operations = shouldSyncFromScratch
+    ? latestAccountPublicOperations.operations
+    : mergeOps(oldOperations, latestAccountPublicOperations.operations);
+
   return {
     type: "Account",
-    id: accountId,
+    id: ledgerAccountId,
     balance: transparentBalance,
     spendableBalance: transparentBalance,
     blockHeight,
@@ -52,4 +79,5 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
 
 export const sync = makeSync({
   getAccountShape,
+  shouldMergeOps: false,
 });
