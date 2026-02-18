@@ -7,6 +7,7 @@ export type Wallet40Params = {
   readonly newReceiveDialog?: boolean;
   readonly mainNavigation?: boolean;
   readonly lazyOnboarding?: boolean;
+  readonly balanceRefreshRework?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -30,4 +31,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayWallet40MainNav: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
+  /** Whether to show the balance refresh rework */
+  readonly shouldDisplayBalanceRefreshRework: boolean;
 }

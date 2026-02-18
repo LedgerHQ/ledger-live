@@ -24,5 +24,6 @@ export const getWallet40Attributes = (
     mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
     newReceiveDialog: wallet40FeatureFlag?.params?.newReceiveDialog ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
+    balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
   };
 };
