@@ -3,6 +3,7 @@ import { render, screen } from "tests/testSetup";
 import Dashboard from "../Dashboard";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 jest.mock("../DeviceDashboard", () => ({
   __esModule: true,

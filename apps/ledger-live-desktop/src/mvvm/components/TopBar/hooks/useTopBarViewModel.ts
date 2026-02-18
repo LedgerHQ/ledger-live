@@ -1,3 +1,4 @@
+import { useLocation } from "react-router";
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
@@ -15,6 +16,8 @@ const useTopBarViewModel = () => {
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
   const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
+  const location = useLocation();
+  const inManager = location.pathname === "/manager";
 
   const topBarSlots: TopBarSlot[] = [
     ...(hasAccounts
@@ -66,6 +69,7 @@ const useTopBarViewModel = () => {
 
   return {
     topBarSlots,
+    inManager,
   };
 };
 
