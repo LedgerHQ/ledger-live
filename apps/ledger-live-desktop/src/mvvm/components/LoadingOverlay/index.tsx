@@ -1,8 +1,9 @@
 import React from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { Box } from "@ledgerhq/react-ui";
-import Lottie from "react-lottie";
-import animation from "~/renderer/animations/common/loader.json";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+
+import loaderLottie from "~/renderer/animations/common/loader.lottie";
 
 export const LoadingOverlay = ({ theme }: { theme: "light" | "dark" }) => {
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
@@ -13,22 +14,19 @@ export const LoadingOverlay = ({ theme }: { theme: "light" | "dark" }) => {
       <Box
         position="absolute"
         zIndex={1}
-        height={"100%"}
+        height="100%"
         width="100%"
         style={{
           backgroundImage: `linear-gradient(180deg, ${backgroundColor}, 80%, rgba(0,0,0,0))`,
         }}
       />
 
-      <Lottie
-        isClickToPauseDisabled
-        ariaRole="animation"
-        options={{
-          loop: true,
-          autoplay: !isPlaywright,
-          animationData: animation,
-          rendererSettings: { preserveAspectRatio: "xMaxYMax slice" },
-        }}
+      <DotLottieReact
+        src={loaderLottie}
+        loop
+        autoplay={!isPlaywright}
+        layout={{ fit: "cover", align: [1, 1] }}
+        style={{ width: "100%", height: "100%" }}
       />
     </Box>
   );

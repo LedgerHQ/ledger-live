@@ -220,6 +220,9 @@ export const urls = {
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
+  aleo: {
+    viewKeyLearnMore: "", // TODO: waiting for https://ledgerhq.atlassian.net/browse/LIVE-26269
+  },
 };
 
 export const vaultSigner = {

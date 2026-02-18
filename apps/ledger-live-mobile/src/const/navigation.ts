@@ -45,6 +45,7 @@ export enum ScreenName {
   DebugFetchCustomImage = "DebugFetchCustomImage",
   DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
+  DebugContentCards = "DebugContentCards",
   DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
   DebugPerformance = "DebugPerformance",
@@ -662,6 +663,7 @@ export enum NavigatorName {
 
   // Tab
   Main = "Main",
+  CardTab = "CardTab",
   WalletTab = "WalletTabNavigator",
   // Root
   RootNavigator = "RootNavigator",

@@ -429,16 +429,18 @@ const MainSideBar = () => {
                     NotifComponent={<RecoverStatusDot collapsed={collapsed} />}
                   />
                 </FeatureToggle>
-                <SideBarListItem
-                  id={"manager"}
-                  label={t("sidebar.manager")}
-                  icon={Icons.LedgerDevices}
-                  iconActiveColor="wallet"
-                  onClick={handleClickManager}
-                  isActive={locationPathname === "/manager"}
-                  NotifComponent={displayBlueDot ? <Dot collapsed={collapsed} /> : null}
-                  collapsed={secondAnim}
-                />
+                {!isWallet40MainNavEnabled && (
+                  <SideBarListItem
+                    id={"manager"}
+                    label={t("sidebar.manager")}
+                    icon={Icons.LedgerDevices}
+                    iconActiveColor="wallet"
+                    onClick={handleClickManager}
+                    isActive={locationPathname === "/manager"}
+                    NotifComponent={displayBlueDot ? <Dot collapsed={collapsed} /> : null}
+                    collapsed={secondAnim}
+                  />
+                )}
               </SideBarList>
 
               <Space grow of={30} />

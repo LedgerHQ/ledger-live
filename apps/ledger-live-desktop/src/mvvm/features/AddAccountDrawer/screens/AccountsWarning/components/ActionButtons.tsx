@@ -17,9 +17,11 @@ export const ActionButtons = ({ primaryAction, secondaryAction }: ActionButtonsP
         <Button onClick={primaryAction.onClick} size="large" variant="main" mb="3">
           {primaryAction.text}
         </Button>
-        <Button onClick={secondaryAction.onClick} size="large" variant="main" outline>
-          {secondaryAction.text}
-        </Button>
+        {secondaryAction && (
+          <Button onClick={secondaryAction.onClick} size="large" variant="main" outline>
+            {secondaryAction.text}
+          </Button>
+        )}
       </Flex>
     </Flex>
   );

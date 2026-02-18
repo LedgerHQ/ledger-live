@@ -19,7 +19,7 @@ export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
     case "klaytnfinder":
     case "corescan":
       return config.explorer.noCache
-        ? etherscanLikeApi.explorerApiNoChache
+        ? etherscanLikeApi.explorerApiNoCache
         : etherscanLikeApi.explorerApi;
     case "ledger":
       return ledgerExplorerApi;

@@ -1,5 +1,7 @@
 import Config from "react-native-config";
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import NetInfo from "@react-native-community/netinfo";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
@@ -43,5 +45,15 @@ export const store = configureStore({
 export type StoreType = typeof store;
 export type AppDispatch = typeof store.dispatch;
 
+setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
+  const unsubscribe = NetInfo.addEventListener(state => {
+    if (state.isConnected) {
+      dispatch(onOnline());
+    } else {
+      dispatch(onOffline());
+    }
+  });
+  return unsubscribe;
+});
 setupRecentAddressesStore(store);
 setupCryptoAssetsStore(store);

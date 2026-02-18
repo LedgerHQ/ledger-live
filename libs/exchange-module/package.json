@@ -34,8 +34,8 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-client": "^1.12.6",
-    "@ledgerhq/wallet-api-core": "^1.27.0",
+    "@ledgerhq/wallet-api-client": "^1.13.0",
+    "@ledgerhq/wallet-api-core": "^1.28.0",
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {

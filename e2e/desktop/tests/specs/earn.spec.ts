@@ -63,7 +63,6 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           "@NanoGen5",
           `@${account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(provider === Provider.LIDO ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -199,7 +198,6 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
           "@NanoGen5",
           `@${account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(account === Account.NEAR_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",

@@ -52,7 +52,7 @@ async function getTokenBalances(
   // Execute staking and token operations in parallel for better performance
   const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
     getStakes(currency, address),
-    explorerApi.getLastOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
+    explorerApi.getOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
   ]);
 
   // Add staking positions to balances (with error handling)

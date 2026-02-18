@@ -1,6 +1,6 @@
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback, useRef } from "react";
-import { Dimensions, Animated, StatusBar, FlatList, FlatListProps } from "react-native";
+import { Dimensions, Animated, StatusBar, FlatList, FlatListProps, View } from "react-native";
 import SafeAreaView from "../SafeAreaView";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import AnimatedProps = Animated.AnimatedProps;
@@ -9,11 +9,17 @@ import AnimatedProps = Animated.AnimatedProps;
 const DEFAULT_HEADER_HEIGHT = 0;
 const DEFAULT_TAB_BAR_HEIGHT = 0;
 
+type CollapsibleHeaderFlatListProps<T> = AnimatedProps<FlatListProps<T>> & {
+  /** When false, skip SafeAreaView (e.g. when parent nav already handles safe area). Default true. */
+  useSafeArea?: boolean;
+};
+
 function CollapsibleHeaderFlatList<T>({
   children,
   contentContainerStyle,
+  useSafeArea = true,
   ...otherProps
-}: AnimatedProps<FlatListProps<T>>) {
+}: CollapsibleHeaderFlatListProps<T>) {
   const context = useContext(WalletTabNavigatorScrollContext);
 
   // Fallback scrollY for when context is not available (direct navigation outside WalletTabNavigator)
@@ -46,36 +52,40 @@ function CollapsibleHeaderFlatList<T>({
     [onGetRef, route.name],
   );
 
-  return (
-    <SafeAreaView isFlex>
-      <Animated.FlatList<T>
-        {...otherProps}
-        scrollToOverflowEnabled={true}
-        ref={handleRef}
-        scrollEventThrottle={16}
-        onScroll={
-          isFocused && hasContext
-            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-                useNativeDriver: true,
-              })
-            : undefined
-        }
-        onScrollEndDrag={onMomentumScrollEnd}
-        onMomentumScrollEnd={onMomentumScrollEnd}
-        contentContainerStyle={[
-          {
-            paddingTop: headerHeight,
-            minHeight: windowHeight + (StatusBar.currentHeight || 0),
-            paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0),
-          },
-          contentContainerStyle,
-        ]}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-      >
-        {children}
-      </Animated.FlatList>
-    </SafeAreaView>
+  const list = (
+    <Animated.FlatList<T>
+      {...otherProps}
+      scrollToOverflowEnabled={true}
+      ref={handleRef}
+      scrollEventThrottle={16}
+      onScroll={
+        isFocused && hasContext
+          ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+              useNativeDriver: true,
+            })
+          : undefined
+      }
+      onScrollEndDrag={onMomentumScrollEnd}
+      onMomentumScrollEnd={onMomentumScrollEnd}
+      contentContainerStyle={[
+        {
+          paddingTop: headerHeight,
+          minHeight: windowHeight + (StatusBar.currentHeight || 0),
+          paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0),
+        },
+        contentContainerStyle,
+      ]}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
+      {children}
+    </Animated.FlatList>
+  );
+
+  return useSafeArea ? (
+    <SafeAreaView isFlex>{list}</SafeAreaView>
+  ) : (
+    <View style={{ flex: 1 }}>{list}</View>
   );
 }
 

@@ -5,9 +5,13 @@ import {
   exportCountervalues,
   importCountervalues,
 } from "./logic";
-import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import {
+  getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
+  findCryptoCurrencyByTicker,
+  getCryptoCurrencyById,
+} from "@ledgerhq/cryptoassets";
 import { getBTCValues } from "./mock";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
@@ -294,9 +298,13 @@ test("export and import it back", async () => {
     disableAutoRecoverErrors: true,
   };
   const state = await loadCountervalues(initialState, settings);
-  const exported = exportCountervalues(state);
+  const exported = exportCountervalues(state, settings.trackingPairs);
   const imported = importCountervalues(exported, settings);
-  expect(imported).toEqual(state);
+  expect(imported.status).toEqual(state.status);
+  expect(imported.data).toBeDefined();
+  expect(imported.checkHolesOnNextLoad).toBe(true);
+  const exportedDataKeys = Object.keys(exported).filter(k => k !== "status");
+  expect(Object.keys(imported.data).sort()).toEqual(exportedDataKeys.sort());
 });
 
 describe("API specific unit tests", () => {

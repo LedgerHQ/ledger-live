@@ -9,6 +9,7 @@ export const WALLET_FEATURES_PARAMS = [
   { key: "mainNavigation", label: "Main Navigation" },
   { key: "tour", label: "Tour" },
   { key: "newReceiveDialog", label: "New Receive Dialog" },
+  { key: "background", label: "Background" },
 ] as const;
 
 export type WalletFeatureParamKey = (typeof WALLET_FEATURES_PARAMS)[number]["key"];

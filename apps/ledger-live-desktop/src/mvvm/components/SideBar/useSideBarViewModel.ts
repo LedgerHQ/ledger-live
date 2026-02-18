@@ -281,6 +281,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     displayBlueDot,
     earnLabel,
     isCardDisabled,
+    isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
     isMarketBannerEnabled,
     isQuickActionCtasEnabled,

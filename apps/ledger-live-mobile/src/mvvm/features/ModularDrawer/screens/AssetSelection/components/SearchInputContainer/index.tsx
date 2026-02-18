@@ -8,6 +8,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 type Props = SearchProps & {
   onFocus: () => void;
   onBlur: () => void;
+  withHorizontalPadding?: boolean;
 };
 
 const SearchInputContainer = ({
@@ -18,6 +19,7 @@ const SearchInputContainer = ({
   onPressIn,
   onFocus,
   onBlur,
+  withHorizontalPadding = false,
 }: Props) => {
   const { t } = useTranslation();
   const modularDrawer = useFeature("llmModularDrawer");
@@ -30,7 +32,7 @@ const SearchInputContainer = ({
   });
 
   return (
-    <Flex mb={4}>
+    <Flex mb={4} {...(withHorizontalPadding ? { px: 4 } : {})}>
       <Search
         onFocus={onFocus}
         onBlur={onBlur}

@@ -63,10 +63,10 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   const latestSyncedHeight = shouldSyncFromScratch ? 0 : initialAccount.blockHeight;
 
   const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
-    await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
+    await (async (): ReturnType<ExplorerApi["getOperations"]> => {
       try {
-        const { getLastOperations } = getExplorerApi(currency);
-        return await getLastOperations(
+        const { getOperations } = getExplorerApi(currency);
+        return await getOperations(
           currency,
           address,
           accountId,

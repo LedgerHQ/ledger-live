@@ -6,6 +6,7 @@
 | --------- | -------------------- | -------------------------------------------------------------------- |
 | `modular` | ModularDrawerWrapper | Multi-purpose drawer for account selection, add account, stake, etc. |
 | `receive` | ReceiveDrawerWrapper | Drawer for receiving funds options                                   |
+| `reborn`  | RebornDrawerWrapper  | Drawer for reborn experience to connect and buy device options       |
 
 ## File Structure
 

@@ -26,6 +26,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
     source,
     goToAssets,
     onBackFromUpdate,
+    shouldDisplayWallet40MainNav,
   } = useReadOnlyPortfolioViewModel(navigation);
 
   const data = useMemo(
@@ -63,6 +64,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         testID="PortfolioReadOnlyItems"
+        useSafeArea={!shouldDisplayWallet40MainNav}
       />
     </>
   );

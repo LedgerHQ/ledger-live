@@ -67,7 +67,7 @@ describe("useSideBarViewModel", () => {
 
     expect(result.current).toMatchObject({
       collapsed: false,
-      noAccounts: true,
+      noAccounts: false,
       totalStarredAccounts: 0,
       active: "home",
     });

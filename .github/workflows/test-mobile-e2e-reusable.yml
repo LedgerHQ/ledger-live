@@ -427,6 +427,10 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
+      - name: Install scrcpy
+        run: |
+          brew install scrcpy
+
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
@@ -472,7 +476,8 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
 
       - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+        run: node node_modules/detox/scripts/postinstall.js
+        working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -621,6 +626,22 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Install scrcpy 3.x and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
+          
+          # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
+          # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
+          SCRCPY_VERSION="3.3.4"
+          curl -L "https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz" -o /tmp/scrcpy.tar.gz
+          tar -xzf /tmp/scrcpy.tar.gz -C /tmp
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/bin/
+          
+          scrcpy --version
+          ls -la /usr/local/bin/scrcpy*
+
       - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
@@ -678,7 +699,8 @@ jobs:
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+        run: node node_modules/detox/scripts/postinstall.js
+        working-directory: apps/ledger-live-mobile
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -780,6 +802,7 @@ jobs:
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+          ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy 
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

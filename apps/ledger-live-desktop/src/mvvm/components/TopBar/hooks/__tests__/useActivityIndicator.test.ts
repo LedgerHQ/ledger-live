@@ -25,14 +25,6 @@ jest.mock("LLD/features/WalletSync/components/WalletSyncContext", () => ({
     onUserRefresh: jest.fn(),
   }),
 }));
-jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: (key: string) => {
-    if (key === "PLAYWRIGHT_RUN") return false;
-    if (key === "API_CELO_NODE") return "https://forno.celo.org";
-    return "";
-  },
-  changes: { subscribe: jest.fn() },
-}));
 
 const mockUseAccountsSyncStatus = jest.requireMock(
   "../useAccountsSyncStatus",

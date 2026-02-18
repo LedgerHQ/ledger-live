@@ -4,13 +4,15 @@ import {
   Home,
   HomeFill,
   Chart5,
+  Chart5Fill,
   Exchange,
   ExchangeFill,
-  Compass,
-  LedgerDevices,
+  CreditCard,
+  CreditCardFill,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
+import { useTranslation } from "~/context/Locale";
 
 type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
 
@@ -23,20 +25,16 @@ type TabIconConfig = { icon: TabItemConfig["icon"]; activeIcon?: TabItemConfig["
 
 const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Portfolio]: { icon: Home, activeIcon: HomeFill },
-  [NavigatorName.Earn]: { icon: Chart5 },
-  [ScreenName.Transfer]: { icon: Exchange, activeIcon: ExchangeFill },
-  [NavigatorName.Discover]: { icon: Compass },
-  [NavigatorName.Web3HubTab]: { icon: Compass },
-  [NavigatorName.MyLedger]: { icon: LedgerDevices },
+  [NavigatorName.Swap]: { icon: Exchange, activeIcon: ExchangeFill },
+  [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
+  [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
 };
 
-const LABEL_MAP: Partial<Record<string, string>> = {
-  [NavigatorName.Portfolio]: "Home",
-  [NavigatorName.Earn]: "Earn",
-  [ScreenName.Transfer]: "Transfer",
-  [NavigatorName.Discover]: "Discover",
-  [NavigatorName.Web3HubTab]: "Discover",
-  [NavigatorName.MyLedger]: "Ledger",
+const LABELKEY_MAP: Partial<Record<string, string>> = {
+  [NavigatorName.Portfolio]: "mainNavigation.home",
+  [NavigatorName.Swap]: "mainNavigation.swap",
+  [NavigatorName.Earn]: "mainNavigation.earn",
+  [NavigatorName.CardTab]: "mainNavigation.card",
 };
 
 export const useMainTabBarViewModel = ({
@@ -44,15 +42,16 @@ export const useMainTabBarViewModel = ({
   navigation,
 }: UseMainTabBarViewModelParams): UseMainTabBarViewModelReturn => {
   const activeRouteName = state.routes[state.index].name;
+  const { t } = useTranslation();
 
   const tabItems: readonly TabItemConfig[] = useMemo(
     () =>
       state.routes.map(route => ({
         value: route.name,
-        label: LABEL_MAP[route.name] ?? route.name,
+        label: t(LABELKEY_MAP[route.name] ?? route.name),
         ...TAB_ICONS[route.name],
       })),
-    [state.routes],
+    [state.routes, t],
   );
 
   const onTabPress = useCallback(

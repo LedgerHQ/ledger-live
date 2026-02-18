@@ -84,11 +84,11 @@ jobs:
             cat ./coverage-libs/lcov.info >> ./lcov.info
             cat ./coverage-libs/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
+          if [ ! -f ./sonar-executionTests-report.xml ]; then
+            echo "No report found, creating empty report to avoid sonar scan failing!"
+            echo '<testExecutions version="1"></testExecutions>' > ./sonar-executionTests-report.xml
+          fi
 
       - uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            "-Dsonar.sources=apps,libs"
-            "-Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml"
