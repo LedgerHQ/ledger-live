@@ -38,6 +38,7 @@ export const useWalletV4TourDrawerViewModel = (
   const handleOpenDialog = useCallback(() => {
     if (!shouldDisplayTour || hasSeenTour) return;
     setIsDialogOpen(true);
+    track("Wallet V4 Tour Shown", { platform: "LWD", source: "debug" });
   }, [shouldDisplayTour, hasSeenTour]);
 
   const handleCloseDialog = useCallback(() => {
