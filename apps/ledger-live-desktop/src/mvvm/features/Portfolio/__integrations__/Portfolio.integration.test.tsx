@@ -4,7 +4,7 @@ import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import { TFunction } from "i18next";
 import { Portfolio as PortfolioType } from "@ledgerhq/types-live";
-import Portfolio from "../index";
+import PortfolioPage from "../index";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
@@ -467,7 +467,7 @@ describe("Portfolio (Wallet V4 Tour)", () => {
   });
 
   it("shows Wallet V4 Tour dialog when tour enabled and not seen", async () => {
-    render(<Portfolio />, {
+    render(<PortfolioPage />, {
       initialState: {
         settings: {
           ...INITIAL_STATE,
@@ -487,7 +487,7 @@ describe("Portfolio (Wallet V4 Tour)", () => {
   });
 
   it("does not show Wallet V4 Tour when already seen", () => {
-    render(<Portfolio />, {
+    render(<PortfolioPage />, {
       initialState: {
         settings: {
           ...INITIAL_STATE,
