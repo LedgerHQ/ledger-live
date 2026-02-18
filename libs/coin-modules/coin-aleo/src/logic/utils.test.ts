@@ -181,93 +181,28 @@ describe("patchAccountWithViewKey", () => {
 });
 
 describe("determineTransactionType", () => {
-  it("should return 'private' for transfer_private function", () => {
-    const result = determineTransactionType(EXPLORER_TRANSFER_TYPES.PRIVATE, "OUT");
+  it.each([
+    [EXPLORER_TRANSFER_TYPES.PRIVATE, "OUT", "private"],
+    [EXPLORER_TRANSFER_TYPES.PUBLIC, "OUT", "public"],
+    [EXPLORER_TRANSFER_TYPES.PRIVATE, "IN", "private"],
+    [EXPLORER_TRANSFER_TYPES.PUBLIC, "IN", "public"],
+    ["transfer_public_to_private", "IN", "private"],
+    ["transfer_private_to_public", "IN", "public"],
+    ["some_other_function", "IN", "public"],
+    ["transfer_private_to_public", "OUT", "private"],
+    ["transfer_public_to_private", "OUT", "public"],
+    ["transfer_private_custom", "OUT", "private"],
+    ["some_other_function", "OUT", "public"],
+    ["unknown_function", "FEES", "public"],
+    ["unknown_function", "NONE", "public"],
+    ["", "IN", "public"],
+    ["", "OUT", "public"],
+  ] as const)(
+    "should return '%s' for functionId '%s' and operationType '%s'",
+    (functionId, operationType, expected) => {
+      const result = determineTransactionType(functionId, operationType);
 
-    expect(result).toBe("private");
-  });
-
-  it("should return 'public' for transfer_public function", () => {
-    const result = determineTransactionType(EXPLORER_TRANSFER_TYPES.PUBLIC, "OUT");
-
-    expect(result).toBe("public");
-  });
-
-  it("should return 'private' for transfer_private regardless of operationType", () => {
-    const result = determineTransactionType(EXPLORER_TRANSFER_TYPES.PRIVATE, "IN");
-
-    expect(result).toBe("private");
-  });
-
-  it("should return 'public' for transfer_public regardless of operationType", () => {
-    const result = determineTransactionType(EXPLORER_TRANSFER_TYPES.PUBLIC, "IN");
-
-    expect(result).toBe("public");
-  });
-
-  it("should return 'private' when functionId ends with to_private", () => {
-    const result = determineTransactionType("transfer_public_to_private", "IN");
-
-    expect(result).toBe("private");
-  });
-
-  it("should return 'public' when functionId ends with to_public", () => {
-    const result = determineTransactionType("transfer_private_to_public", "IN");
-
-    expect(result).toBe("public");
-  });
-
-  it("should return 'public' when functionId does not end with to_private or to_public", () => {
-    const result = determineTransactionType("some_other_function", "IN");
-
-    expect(result).toBe("public");
-  });
-
-  it("should return 'private' when functionId starts with transfer_private", () => {
-    const result = determineTransactionType("transfer_private_to_public", "OUT");
-
-    expect(result).toBe("private");
-  });
-
-  it("should return 'public' when functionId starts with transfer_public", () => {
-    const result = determineTransactionType("transfer_public_to_private", "OUT");
-
-    expect(result).toBe("public");
-  });
-
-  it("should return 'private' when functionId starts with transfer_private (without to_)", () => {
-    const result = determineTransactionType("transfer_private_custom", "OUT");
-
-    expect(result).toBe("private");
-  });
-
-  it("should return 'public' when functionId does not start with transfer_private or transfer_public", () => {
-    const result = determineTransactionType("some_other_function", "OUT");
-
-    expect(result).toBe("public");
-  });
-
-  it("should default to 'public' for unknown function with FEES operationType", () => {
-    const result = determineTransactionType("unknown_function", "FEES");
-
-    expect(result).toBe("public");
-  });
-
-  it("should default to 'public' for unknown function with NONE operationType", () => {
-    const result = determineTransactionType("unknown_function", "NONE");
-
-    expect(result).toBe("public");
-  });
-
-  it("should handle empty functionId with IN operationType", () => {
-    const result = determineTransactionType("", "IN");
-
-    expect(result).toBe("public");
-  });
-
-  it("should handle empty functionId with OUT operationType", () => {
-    const result = determineTransactionType("", "OUT");
-
-    expect(result).toBe("public");
-  });
+      expect(result).toBe(expected);
+    },
+  );
 });

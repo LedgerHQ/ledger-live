@@ -1,3 +1,5 @@
+export type AleoTransactionType = "public" | "private";
+
 interface AleoTransition {
   id: string;
   scm: string;
@@ -5,7 +7,7 @@ interface AleoTransition {
   tpk: string;
   inputs: Array<{
     id: string;
-    type: "public" | "private";
+    type: AleoTransactionType;
     value: string;
   }>;
   outputs: Array<{

@@ -52,8 +52,7 @@ describe("apiClient", () => {
     });
 
     it("should throw an error when network request fails", async () => {
-      const mockError = new Error("Network error");
-      jest.mocked(network).mockRejectedValue(mockError);
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
 
       await expect(apiClient.getLatestBlock(mockCurrency)).rejects.toThrow("Network error");
     });
@@ -109,8 +108,7 @@ describe("apiClient", () => {
     });
 
     it("should throw an error when transaction is not found", async () => {
-      const mockError = new Error("Transaction not found");
-      jest.mocked(network).mockRejectedValue(mockError);
+      jest.mocked(network).mockRejectedValue(new Error("Transaction not found"));
 
       await expect(apiClient.getTransactionById(mockCurrency, "at1nonexistent")).rejects.toThrow(
         "Transaction not found",
@@ -305,8 +303,7 @@ describe("apiClient", () => {
     });
 
     it("should throw an error when network request fails", async () => {
-      const mockError = new Error("Network error");
-      jest.mocked(network).mockRejectedValue(mockError);
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
 
       await expect(
         apiClient.getAccountPublicTransactions({
