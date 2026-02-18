@@ -1,9 +1,15 @@
 import aleoConfig from "../config";
+import { EXPLORER_TRANSFER_TYPES } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { getNetworkConfig, parseMicrocredits, patchAccountWithViewKey } from "./utils";
+import {
+  getNetworkConfig,
+  parseMicrocredits,
+  determineTransactionType,
+  patchAccountWithViewKey,
+} from "./utils";
 
 jest.mock("../config");
 
@@ -172,4 +178,31 @@ describe("patchAccountWithViewKey", () => {
 
     expect(() => patchAccountWithViewKey(mockAccount, "")).toThrow();
   });
+});
+
+describe("determineTransactionType", () => {
+  it.each([
+    [EXPLORER_TRANSFER_TYPES.PRIVATE, "OUT", "private"],
+    [EXPLORER_TRANSFER_TYPES.PUBLIC, "OUT", "public"],
+    [EXPLORER_TRANSFER_TYPES.PRIVATE, "IN", "private"],
+    [EXPLORER_TRANSFER_TYPES.PUBLIC, "IN", "public"],
+    ["transfer_public_to_private", "IN", "private"],
+    ["transfer_private_to_public", "IN", "public"],
+    ["some_other_function", "IN", "public"],
+    ["transfer_private_to_public", "OUT", "private"],
+    ["transfer_public_to_private", "OUT", "public"],
+    ["transfer_private_custom", "OUT", "private"],
+    ["some_other_function", "OUT", "public"],
+    ["unknown_function", "FEES", "public"],
+    ["unknown_function", "NONE", "public"],
+    ["", "IN", "public"],
+    ["", "OUT", "public"],
+  ] as const)(
+    "should return '%s' for functionId '%s' and operationType '%s'",
+    (functionId, operationType, expected) => {
+      const result = determineTransactionType(functionId, operationType);
+
+      expect(result).toBe(expected);
+    },
+  );
 });

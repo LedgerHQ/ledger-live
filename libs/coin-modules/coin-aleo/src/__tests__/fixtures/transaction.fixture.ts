@@ -1,0 +1,142 @@
+import type {
+  AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
+  AleoPublicTransactionsResponse,
+} from "../../types/api";
+
+export const getMockedTransactionDetails = (
+  transactionId?: string,
+  overrides?: Partial<AleoPublicTransactionDetailsResponse>,
+): AleoPublicTransactionDetailsResponse => ({
+  type: "execute",
+  id: transactionId || "at1abc123def456",
+  execution: {
+    transitions: [
+      {
+        id: "au1xyz789",
+        scm: "cm1abc",
+        tcm: "cm1def",
+        tpk: "tpk1ghi",
+        inputs: [
+          {
+            id: "input1",
+            type: "public",
+            value: "100000000u64",
+          },
+        ],
+        outputs: [
+          {
+            id: "output1",
+            type: "future",
+            value: "future_value",
+          },
+        ],
+        program: "credits.aleo",
+        function: "transfer_public",
+      },
+    ],
+  },
+  global_state_root: "sr1global123",
+  proof: "proof1xyz",
+  fee: {
+    transition: {
+      id: "au1fee789",
+      scm: "cm1fee",
+      tcm: "cm1fee2",
+      tpk: "tpk1fee",
+      inputs: [],
+      outputs: [],
+      program: "credits.aleo",
+      function: "fee_public",
+    },
+  },
+  fee_value: 5000000,
+  block_height: 123456,
+  block_hash: "ab1block123",
+  block_timestamp: "2024-01-01T12:00:00Z",
+  status: "accepted",
+  ...overrides,
+});
+
+export const getMockedSimpleTransactionDetails = (
+  transactionId: string,
+  overrides?: Partial<AleoPublicTransactionDetailsResponse>,
+): AleoPublicTransactionDetailsResponse => ({
+  type: "execute",
+  id: transactionId,
+  execution: { transitions: [] },
+  global_state_root: "sr1",
+  proof: "proof1",
+  fee: {
+    transition: {
+      id: "au1fee",
+      scm: "cm1",
+      tcm: "cm2",
+      tpk: "tpk1",
+      inputs: [],
+      outputs: [],
+      program: "credits.aleo",
+      function: "fee_public",
+    },
+  },
+  fee_value: 1000000,
+  block_height: 789,
+  block_hash: "ab1",
+  block_timestamp: "2024-02-01T12:00:00Z",
+  status: "accepted",
+  ...overrides,
+});
+
+export const getMockedPublicTransaction = (
+  overrides?: Partial<AleoPublicTransaction>,
+): AleoPublicTransaction => ({
+  transaction_id: "at1tx1",
+  transition_id: "au1trans1",
+  transaction_status: "accepted",
+  block_number: 123456,
+  block_timestamp: "2024-01-01T12:00:00Z",
+  function_id: "transfer_public",
+  amount: 100000000,
+  sender_address: "aleo1test123address456",
+  recipient_address: "aleo1recipient123",
+  program_id: "credits.aleo",
+  ...overrides,
+});
+
+export const getMockedAccountPublicTransactions = (
+  address: string,
+  overrides?: Partial<AleoPublicTransactionsResponse>,
+): AleoPublicTransactionsResponse => ({
+  address,
+  transactions: [
+    {
+      transaction_id: "at1tx1",
+      transition_id: "au1trans1",
+      transaction_status: "accepted",
+      block_number: 123456,
+      block_timestamp: "2024-01-01T12:00:00Z",
+      function_id: "transfer_public",
+      amount: 100000000,
+      sender_address: address,
+      recipient_address: "aleo1recipient123",
+      program_id: "credits.aleo",
+    },
+    {
+      transaction_id: "at1tx2",
+      transition_id: "au1trans2",
+      transaction_status: "accepted",
+      block_number: 123457,
+      block_timestamp: "2024-01-01T13:00:00Z",
+      function_id: "transfer_public",
+      amount: 50000000,
+      sender_address: "aleo1sender456",
+      recipient_address: address,
+      program_id: "credits.aleo",
+    },
+  ],
+  next_cursor: {
+    block_number: 123457,
+    transition_id: "au1trans2",
+  },
+  ...overrides,
+});
