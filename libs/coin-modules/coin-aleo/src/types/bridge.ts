@@ -1,6 +1,7 @@
 import type {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -35,3 +36,12 @@ export type AleoAccount = Account & {
 export type AleoAccountRaw = AccountRaw & {
   aleoResources?: AleoResourcesRaw;
 };
+
+export type AleoTransactionType = "public" | "private";
+
+export type AleoOperationExtra = {
+  functionId: string;
+  transactionType: AleoTransactionType;
+};
+
+export type AleoOperation = Operation<AleoOperationExtra>;
