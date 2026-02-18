@@ -45,6 +45,7 @@ const transformIncludePatterns = [
   "@ledgerhq/lumen-.*",
   "immer",
   "@features/.*",
+  "@sbaiahmed1/react-native-blur",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */

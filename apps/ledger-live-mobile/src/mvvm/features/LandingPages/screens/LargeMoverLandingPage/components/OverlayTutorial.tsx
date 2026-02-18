@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/index";
-import { BlurView } from "@react-native-community/blur";
+import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { StyleSheet } from "react-native";
 import { useDispatch } from "~/context/hooks";
 import { track, TrackScreen } from "~/analytics";
@@ -31,7 +31,7 @@ export const OverlayTutorial = () => {
       testID="overlay-tutorial"
     >
       <TrackScreen name="Large_Mover_Tutorial" />
-      <BlurView style={StyleSheet.absoluteFill} blurAmount={2} blurType="dark" />
+      <BlurView style={StyleSheet.absoluteFill} blurAmount={20} blurType="dark" />
 
       <Flex flex={1} justifyContent="space-between" alignItems="center" padding={6}>
         <Flex flex={1} justifyContent="center" alignItems="center">
