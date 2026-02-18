@@ -152,7 +152,8 @@
     "quote" : "Teklif",
     "memoTag" : {
       "learnMore" : "Etiket/Memo hakkında daha fazla bilgi edinin"
-    }
+    },
+    "memo" : "Memo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -300,6 +301,7 @@
     "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
+    "perps" : "Süresiz vadeli sözleşmeler",
     "refer" : "Arkadaşına Öner",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
@@ -777,6 +779,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Satın al / Sat",
     "chooseProvider" : "{{providerCount}} sağlayıcı arasından birini seçin",
     "chooseProviders" : "{{providerCount}} sağlayıcı arasından birini seçin",
     "title" : "Kripto satın al ve sat",
@@ -809,7 +812,15 @@
     }
   },
   "card" : {
-    "backToCard" : "tüm kartlar"
+    "backToCard" : "tüm kartlar",
+    "title" : "Kart",
+    "imageAlt" : "Kart Resmi",
+    "spendYourCrypto" : "Kriptonuzla alışveriş yapın",
+    "payDescription" : "Bir kripto kartıyla internette veya mağazada alışveriş yapın",
+    "exploreCards" : "Kartları Keşfedin",
+    "iAlreadyHaveACard" : "Zaten bir kartım var",
+    "unlockLiquidity" : "Likidite elinizin altında",
+    "exploreCryptoCardsDescription" : "Kripto kartlarımızı inceleyin ve size en uygun kartı bulun"
   },
   "lend" : {
     "title" : "Kripto borç verin",
@@ -1481,6 +1492,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
+  },
   "currentAddress" : {
     "title" : "Geçerli adres",
     "for" : "<1><0>{{name}}</0></1> için adres",
@@ -1783,6 +1813,7 @@
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
       "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
+      "acceptTermsSponsored" : "Sıfır ağ ücretinden faydalanmak için işlem ayrıntılarınızı (cüzdan adresiniz de dâhil) Blinklabs ile paylaşmayı da kabul ediyorsunuz.",
       "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
       "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
@@ -2205,6 +2236,19 @@
       "description" : "Bu varlığı bir kripto para borsasından almak için bir <0>Etikete/Memo</0>'ya ihtiyacınız olabilir. 1234 gibi herhangi bir sayı kombinasyonunu kullanabilirsiniz."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Banka transferi",
+          "description" : "Nakit para göndererek stabil coin alın"
+        },
+        "fromCrypto" : {
+          "title" : "Kripto alın"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "Gönder",
     "totalSpent" : "Düşülecek tutar",
@@ -2331,6 +2375,15 @@
     "addressNotFound" : "Adres bulunamadı",
     "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
     "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+    "relativeDate" : {
+      "justNow" : "Yalnızca şimdilik",
+      "minutesAgo_one" : "1 dk. önce",
+      "minutesAgo_other" : "{{count}} dk. önce",
+      "hoursAgo_one" : "1 saat önce",
+      "hoursAgo_other" : "{{count}} saat önce",
+      "daysAgo_one" : "1 gün önce",
+      "daysAgo_other" : "{{count}} gün önce"
+    },
     "remove" : "Kaldır",
     "enterTag" : "{{tag}} gir",
     "firstInteraction" : {
@@ -2348,12 +2401,15 @@
       "walletNotExist" : "Böyle bir cüzdan yok"
     },
     "skipMemo" : {
-      "title" : "{{tag}} ekleme atlansın mı?",
-      "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir."
+      "title" : "{{memoLabel}} ekleme atlansın mı?",
+      "description" : "Alıcı bir {{memoLabel}} gerektiriyorsa varlığınız kaybolabilir.",
+      "notRequired" : "Alıcı tarafından {{memoLabel}} gerekli kılınmamış mı?",
+      "confirm" : "Evet, atla",
+      "neverAskAgain" : "Bu uyarıyı tekrar gösterme"
     },
     "tagHelp" : {
-      "title" : "{{tag}} nedir?",
-      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{tag}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{tag}} memosunun eklenmediği durumlarda fonlar kaybolabilir."
+      "inputLabel" : "{{memoLabel}} gir",
+      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{memoLabel}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{memoLabel}} memosunun eklenmediği durumlarda fonlar kaybolabilir."
     },
     "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
     "feesAmount" : "Ücret tutarı ({{unit}})",
@@ -4506,6 +4562,10 @@
           "title" : "Hızlı oluşturma",
           "desc" : "Rastgele para birimlerinin yer aldığı rastgele 10 hesap oluşturun"
         },
+        "emptyGenerate" : {
+          "title" : "Test hesabı oluşturma",
+          "desc" : "Boş bir test hesabı oluşturun"
+        },
         "currencySelector" : {
           "placeholder" : "Para birimleri seçin...",
           "searchPlaceholder" : "Ara",
@@ -4521,7 +4581,8 @@
         "buttons" : {
           "generateAccounts" : "{{count}} Hesap Oluştur",
           "generateAccounts_other" : "{{count}} Hesap Oluştur",
-          "generateAccountsQuick" : "{{count}} Hesap Oluştur"
+          "generateAccountsQuick" : "{{count}} Hesap Oluştur",
+          "generateEmptyAccount" : "Test hesabı oluştur"
         },
         "alerts" : {
           "selectCurrency" : "Lütfen en az bir para birimi seçin",
@@ -4567,9 +4628,13 @@
       "walletFeaturesDevTool" : {
         "title" : "Wallet Özellikleri Geliştirme Aracı",
         "description" : "Masaüstü sürümü için Wallet 4.0 özelliklerini açın/kapatın (lwdWallet40 özellik bayrağı).",
+        "mainFeatureToggle" : "Ana Özelliği Açma/Kapatma",
         "enableAll" : "Tümünü Etkinleştir",
         "disableAll" : "Tümünü Devre Dışı Bırak",
         "featureParameters" : "Özellik Parametreleri",
+        "tourState" : "Tur Durumu",
+        "drawerPreview" : "Çekmece Ön İzlemesi",
+        "openDrawer" : "Çekmeceyi Aç",
         "showJson" : "JSON’u göster",
         "hideJson" : "JSON’u gizle"
       },
@@ -4856,6 +4921,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "Değeri 0 olan token işlemlerini gizle",
         "desc" : "Değer içermeyen token işlemlerini gizleyerek Ethereum, Polygon, BSC ve Tron ağlarındaki bazı potansiyel adres zehirleme saldırılarını önleyebilirsiniz."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "Tekrar sorma ve gönderim sırasında memo’yu atla",
+        "desc" : "Fon gönderirken memo’yu atlamayla ilgili uyarıyı devre dışı bırak"
       }
     }
   },
@@ -5767,11 +5836,13 @@
     "casper" : {
       "transferIdPlaceholder" : "Tercihe bağlı",
       "transferId" : "Transfer Kimliği (Memo)",
-      "transferIdWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
+      "transferIdWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin",
+      "memo" : "Transfer Kimliği (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "Tercihe bağlı",
-      "comment" : "Yorum"
+      "comment" : "Yorum",
+      "memo" : "Yorum"
     },
     "canton" : {
       "commentPlaceholder" : "Tercihe bağlı",
@@ -5929,6 +6000,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "İsteğe Bağlı Memo"
+    },
+    "xrp" : {
+      "memo" : "Etiket"
     }
   },
   "errors" : {
@@ -6336,7 +6410,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "İşleme Hatası",
-      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB-{{randomCode}}"
+      "description" : "Takas sağlayıcısı bu işlemi işleyemiyor. Hata kodu 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "Sağlayıcı kullanılamıyor",
@@ -6634,7 +6708,7 @@
       "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Lütfen Ethereum uygulamasının Ayarlar bölümünden Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
+      "title" : "Ethereum uygulamasında Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celo uygulaması ayarlarında Sözleşme Verilerini lütfen etkinleştirin"
@@ -7776,6 +7850,11 @@
           "description" : "{{currency}} ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. {{currency}} hesabınız oluşturulduktan sonra o hesabı Ledger Wallet'a ekleyebilirsiniz.",
           "cta" : "Bir {{currency}} hesabı nasıl oluşturulur?",
           "close" : "Kapat"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "Hiçbir {{currency}} hesabı eklenmedi",
+          "description" : "Seçili hesaplardan biri veya daha fazlası için gerekli kurulumu tamamlamadınız.",
+          "close" : "Kapat"
         }
       },
       "status" : {
@@ -7824,7 +7903,15 @@
   },
   "portfolio" : {
     "title" : "Ana Sayfa",
-    "today" : "Bugün"
+    "today" : "Bugün",
+    "addAccountCta" : "Kripto hesabı ekle",
+    "noBalanceTitle" : "Kriptolarınızı güvende tutun",
+    "perpsEntry" : {
+      "title" : "Süresiz vadeli sözleşmeler",
+      "description" : "Kaldıraçlı alım satım yapın",
+      "cta" : "Keşfet"
+    },
+    "noDeviceTitle" : "En güvenli\ncüzdan"
   },
   "marketBanner" : {
     "title" : "Piyasayı keşfedin",
@@ -7848,11 +7935,38 @@
       "cta" : "Anladım"
     }
   },
+  "quickActions" : {
+    "send" : "Gönder",
+    "receive" : "Al",
+    "buy" : "Satın al",
+    "sell" : "Sat",
+    "connect" : "Bağlan",
+    "buyALedger" : "Ledger satın alın"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "errorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Etkilenen hesapların listesi: {{accounts}}. Tekrar denemek için dokunun.",
+      "emptyErrorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Tekrar denemek için dokunun.",
+      "upToDate" : "Güncelsiniz",
+      "minutesAgo_one" : "Son senkronizasyon: {{count}} dk. önce. Yenilemek için dokunun",
+      "minutesAgo_other" : "Son senkronizasyon: {{count}} dk. önce. Yenilemek için dokunun",
+      "hoursAgo_one" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
+      "hoursAgo_other" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
+      "daysAgo_one" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun",
+      "daysAgo_other" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Bildirimler"
+    },
+    "myLedger" : {
+      "tooltip" : "My Ledger"
     }
   },
   "geoBlocking" : {
@@ -7877,6 +7991,95 @@
       "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
       "privateBalance" : "Gizli bakiye",
       "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "Bakiyeyi göster",
+        "pausedAt" : "Duraklatıldı: ",
+        "lastSync" : "Son senkronizasyon: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Zcash gizli bakiyesini etkinleştirin",
+          "breadcrumbs" : {
+            "0" : "Doğum günü",
+            "1" : "UFVK",
+            "2" : "Cihaz",
+            "3" : "Onaylayın"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır.",
+              "cta" : "Daha fazla bilgi",
+              "label" : "Doğum günü yüksekliği",
+              "tooltip" : "Varsayılan: bugünün tarihi. Sadece geçmişte gizli (korumalı) etkinliği olan mevcut hesaplar için değiştirin.",
+              "syncFromZero" : "Bu hesap geçmişte korumalı ZEC almış, ancak doğum yüksekliğine erişemiyorum. 0. bloktan itibaren tara (bu işlem uzun sürebilir).",
+              "error" : "Geçersiz tarih"
+            },
+            "ufvk" : {
+              "text" : "Başlamak için \"Unified Full Viewing Key\" (UFVK, Birleşik Tam İzleme Anahtarı) bilginizi dışa aktarmalısınız. Bu eylem, Ledger cihazınız üzerinden onayınızı gerektirir."
+            },
+            "device" : {
+              "text" : "Ledger cihazınızda UFVK dışa aktarma işlemini onaylayın"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK başarıyla içe aktarıldı",
+                "text" : "Korumalı ZEC alabilecek ve gizli işlemleri imzalayabileceksiniz.",
+                "info" : {
+                  "text" : "Birleşik Tam İzleme Anahtarınız bilgisayarınızda yerel olarak saklanmaya devam eder ve haricî sistemlere asla iletilmez ve gösterilmez.",
+                  "cta" : "Daha fazla bilgi"
+                },
+                "warning" : "Daha eski doğum günü olan hesapların senkronizasyonu daha uzun sürebilir (2 saat kadar). Senkronizasyon tamamlanana kadar uygulamayı lütfen açık tutun."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "Senkronizasyonu başlat",
+      "datepicker" : {
+        "label" : "Doğum günü yüksekliği",
+        "tooltip" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır."
+      }
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo gizli bakiyesini belirleyin",
+        "description" : "Ledger Wallet, gizli bakiyenizi görüntülemek için görüntüleme anahtarınızı saklar ve gizli işlemleri işlemek için üçüncü taraf hizmetleri kullanır. <0>Daha fazla bilgi edinin</0>",
+        "bullets" : ["Gizli bakiyenizin şifresini çözmek için salt okunur erişim", "Ledger, fonlarınızı gönderemez ve harcayamaz", "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz", "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir", "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"],
+        "cta" : {
+          "allow" : "İzin ver",
+          "cancel" : "İptal et"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Ledger cihazınızda onaylayın",
+        "description" : "Görüntüleme anahtarının paylaşılmasını cihazınızda onaylayın",
+        "cancelAlert" : "Cihazınızdaki hesapların her birini ayrı olarak reddedebilirsiniz. Tümünü iptal etmeniz durumunda portföyünüze artık hiçbir hesap eklenmez.",
+        "cancelAllBtn_one" : "İptal et",
+        "cancelAllBtn_other" : "Tümünü iptal et"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Görüntüleme anahtarını paylaşın",
+          "shareKey_other" : "Görüntüleme anahtarlarını paylaşın"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "Seçili hesaplardan hiçbiri için görüntüleme anahtarını paylaşmadınız. Görüntüleme anahtarları, Ledger Wallet’taki gizli bakiyenizi görüntülemek için gereklidir."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "Available balance",
+      "availableBalanceTooltip" : "Balance that can be transferred",
+      "transparentBalance" : "Transparent balance",
+      "transparentBalanceTooltip" : "Balance that is visible to the public",
+      "privateBalance" : "Private balance",
+      "privateBalanceTooltip" : "Balance that is hidden from the public"
     }
   }
 }
