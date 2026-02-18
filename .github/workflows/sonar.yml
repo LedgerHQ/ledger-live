@@ -21,8 +21,12 @@ jobs:
     runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: caches
@@ -33,6 +37,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
       - name: Install dependencies
         env:
           LANG: en_US.UTF-8
@@ -54,7 +59,6 @@ jobs:
 
       - name: Generate Unit test coverage for libs
         run: |
-
           mkdir -p libs/coverage
           touch libs/coverage/lcov.info
           touch libs/coverage/sonar-executionTests-report.xml
