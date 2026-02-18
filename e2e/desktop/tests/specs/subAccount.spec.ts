@@ -517,7 +517,7 @@ for (const transaction of tokenTransactionInvalid) {
 test.describe("Send token (subAccount) - valid address & amount input", () => {
   const tokenTransactionValid = new Transaction(
     TokenAccount.ETH_USDT_1,
-    TokenAccount.ETH_USDT_2,
+    TokenAccount.ETH_USDT_3,
     "1",
     Fee.MEDIUM,
   );
