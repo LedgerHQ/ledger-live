@@ -87,12 +87,12 @@ describe("parseMicrocredits", () => {
 
   it("should throw error when u64 suffix is missing", () => {
     const value = "1000000";
-    expect(() => parseMicrocredits(value)).toThrow();
+    expect(() => parseMicrocredits(value)).toThrow(`aleo: invalid microcredits format (${value})`);
   });
 
   it("should throw error for invalid format", () => {
     const value = "1000000u32";
-    expect(() => parseMicrocredits(value)).toThrow();
+    expect(() => parseMicrocredits(value)).toThrow(`aleo: invalid microcredits format (${value})`);
   });
 });
 
@@ -176,7 +176,9 @@ describe("patchAccountWithViewKey", () => {
       operations: [],
     });
 
-    expect(() => patchAccountWithViewKey(mockAccount, "")).toThrow();
+    expect(() => patchAccountWithViewKey(mockAccount, "")).toThrow(
+      `aleo: viewKey is missing in patchAccountWithViewKey ${mockAccount.freshAddress}`,
+    );
   });
 });
 
