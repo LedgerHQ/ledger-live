@@ -92,6 +92,7 @@ const OperationRow = ({
     toAccount,
     fromAmount,
     toAmount,
+    finalAmount,
     provider,
     swapId,
     operation,
@@ -182,7 +183,7 @@ const OperationRow = ({
       </Box>
       <Box alignItems={"flex-end"} ml={20}>
         <Text data-testid={`swap-history-to-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={4}>
-          <FormattedVal alwaysShowSign val={toAmount} unit={unitTo} showCode />
+          <FormattedVal alwaysShowSign val={finalAmount ?? toAmount} unit={unitTo} showCode />
         </Text>
         <Text data-testid={`swap-history-from-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={3}>
           <FormattedVal

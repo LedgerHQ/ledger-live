@@ -114,8 +114,17 @@ const SwapOperationDetails = ({
   onClose?: () => void;
 }) => {
   const [providerData, setproviderData] = useState<AdditionalProviderConfig | undefined>(undefined);
-  const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
-    mappedSwapOperation;
+  const {
+    fromAccount,
+    toAccount,
+    operation,
+    provider,
+    swapId,
+    status,
+    fromAmount,
+    toAmount,
+    finalAmount,
+  } = mappedSwapOperation;
   const fromAccountName = useAccountName(fromAccount);
   const toAccountName = useAccountName(toAccount);
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
@@ -254,7 +263,7 @@ const SwapOperationDetails = ({
             unit={toUnit}
             alwaysShowSign
             showCode
-            val={toAmount}
+            val={finalAmount ?? toAmount}
             fontSize={6}
             disableRounding
             color={statusColor}
@@ -413,7 +422,7 @@ const SwapOperationDetails = ({
             <FormattedVal
               unit={toUnit}
               showCode
-              val={toAmount}
+              val={finalAmount ?? toAmount}
               fontSize={6}
               disableRounding
               color={"neutral.c70"}
