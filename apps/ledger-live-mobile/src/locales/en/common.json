@@ -7735,6 +7735,12 @@
         "description": "Display your favorite digital art or photo as your device’s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
+      "recover": {
+        "title": "Finish securing your backup",
+        "titleCompleted": "Backup secured",
+        "description": "Complete activating Ledger Recover",
+        "popupLabel": "Successfully subscribed to Ledger Recover"
+      },
       "syncAccounts": {
         "title": "Sync your crypto accounts",
         "titleCompleted": "Your accounts are synchronized",
