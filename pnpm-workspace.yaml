@@ -15,6 +15,7 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
+<<<<<<< HEAD
   "@ledgerhq/context-module": 1.14.0
   "@ledgerhq/crypto-icons": "1.4.0"
   "@ledgerhq/device-management-kit": 1.1.0
@@ -28,6 +29,21 @@ catalog:
   "@ledgerhq/lumen-design-core": 0.1.1
   "@ledgerhq/lumen-ui-react": 0.1.1
   "@ledgerhq/lumen-ui-rnative": 0.1.2
+=======
+  "@ledgerhq/context-module": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/crypto-icons": "1.4.0"
+  "@ledgerhq/device-management-kit": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/device-signer-kit-ethereum": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/device-signer-kit-solana": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/device-transport-kit-react-native-ble": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/device-transport-kit-react-native-hid": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/device-transport-kit-speculos": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/device-transport-kit-web-hid": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/speculos-device-controller": 0.0.0-new-swap-template-response-20260219115428
+  "@ledgerhq/lumen-design-core": 0.0.47
+  "@ledgerhq/lumen-ui-react": 0.0.77
+  "@ledgerhq/lumen-ui-rnative": 0.0.65
+>>>>>>> ececf29d0e (chore: updated DMK libs)
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
