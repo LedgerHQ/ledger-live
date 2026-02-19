@@ -5,6 +5,11 @@ import {
 } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
+import { getStoreValue } from "~/store";
+import {
+  LedgerRecoverSubscriptionStateEnum,
+  LedgerRecoverSubscriptionStateInProgressEnum,
+} from "~/types/recoverSubscriptionState";
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -78,4 +83,40 @@ export const syncAccountsAction: PostOnboardingAction = {
   startAction: ({ openActivationDrawer }: StartActionArgs) => {
     openActivationDrawer?.();
   },
+};
+
+export const recoverAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.recover,
+  Icon: Icons.ShieldCheck,
+  title: "postOnboarding.actions.recover.title",
+  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
+  description: "postOnboarding.actions.recover.description",
+  buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
+  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
+  shouldShow: async ({ protectId }) => {
+    const recoverSubscriptionState: LedgerRecoverSubscriptionStateEnum | undefined =
+      await getStoreValue("SUBSCRIPTION_STATE", protectId);
+
+    return (
+      recoverSubscriptionState !== undefined &&
+      (recoverSubscriptionState in LedgerRecoverSubscriptionStateInProgressEnum ||
+        recoverSubscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)
+    );
+  },
+  getIsAlreadyCompleted: async ({ protectId }) => {
+    const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
+
+    return recoverSubscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE;
+  },
+  getNavigationParams: ({ protectId }) => [
+    NavigatorName.Base,
+    {
+      screen: ScreenName.Recover,
+      params: {
+        platform: protectId,
+        redirectTo: "upsell",
+        source: "llm-postonboarding-banner",
+      },
+    },
+  ],
 };
