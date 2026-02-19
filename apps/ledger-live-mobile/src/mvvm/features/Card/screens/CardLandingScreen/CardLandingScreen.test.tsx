@@ -63,6 +63,7 @@ describe("CardLandingScreen", () => {
     });
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.PlatformApp, {
       platform: CARD_APP_ID,
+      path: "/providers-list",
       name: "Card Program",
     });
   });
