@@ -6,10 +6,9 @@ const REACT_TRANSITIONAL_ELEMENT_TYPE = Symbol.for("react.transitional.element")
 /**
  * Checks whether a value is a React element.
  *
- * Handles both the classic `react.element` symbol used up to React 18 and the
- * `react.transitional.element` symbol introduced in React 19, making it safe
- * to use across major versions without relying on the legacy
- * `React.isValidElement` API.
+ * Handles the React 19 `react.transitional.element` symbol (and the classic
+ * `react.element` symbol for compatibility), making it safe to use without
+ * relying on the legacy `React.isValidElement` API.
  */
 export const isValidReactElement = (value: unknown): value is React.ReactElement =>
   !!value &&
