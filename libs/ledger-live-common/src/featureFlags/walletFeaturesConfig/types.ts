@@ -9,6 +9,7 @@ export type Wallet40Params = {
   readonly lazyOnboarding?: boolean;
   readonly balanceRefreshRework?: boolean;
   readonly tour?: boolean;
+  readonly onboardingWidget?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -36,4 +37,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayBalanceRefreshRework: boolean;
   /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */
   readonly shouldDisplayTour: boolean;
+  /** Whether to show the post-onboarding widget on portfolio */
+  readonly shouldDisplayOnboardingWidget: boolean;
 }

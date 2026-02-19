@@ -7699,6 +7699,10 @@
       "description": "Secure your assets and go further.",
       "buttonLabel": "See what's next"
     },
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "actions": {
       "deviceOnboarded": {
         "titleCompleted": "Setup your Ledger device"
