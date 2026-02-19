@@ -23,6 +23,7 @@ import { useSwapNavigationHelper } from "./navigationHandlers/useSwapNavigationH
 import { useNavigation } from "@react-navigation/native";
 import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
 import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavigation";
+import TrackScreen from "~/analytics/TrackScreen";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -127,6 +128,7 @@ export function SwapLiveApp({
 
   return (
     <Flex flex={1} testID="swap-form-tab">
+      <TrackScreen name="Swap" />
       {manifest && (
         <WebView
           ref={webviewRef}
