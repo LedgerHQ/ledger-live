@@ -1,16 +1,17 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest } from "./earn";
+// FIXME: Solana is delegated but we need to wait for BE to be updated
+// import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+// import { runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest } from "./earn";
 
-const testConfig = {
-  account: Account.SOL_2,
-  staking: true,
-  tmsLinks: ["B2CQA-3684"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@solana`, `@family-solana`],
-};
+// const testConfig = {
+//   account: Account.SOL_2,
+//   staking: true,
+//   tmsLinks: ["B2CQA-3684"],
+//   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@solana`, `@family-solana`],
+// };
 
-runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(
-  testConfig.account,
-  testConfig.staking,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+// runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(
+//   testConfig.account,
+//   testConfig.staking,
+//   testConfig.tmsLinks,
+//   testConfig.tags,
+// );
