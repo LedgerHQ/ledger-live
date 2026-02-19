@@ -130,7 +130,8 @@ jobs:
       - test-mobile
       - test-libraries
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    # Use workflow from PR branch so we can test scan-sonar-reusable.yml changes (e.g. continue-on-error)
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref || github.ref_name }}
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
