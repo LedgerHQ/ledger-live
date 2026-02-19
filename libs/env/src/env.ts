@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  JS_THREAD_MONITOR: {
+    def: false,
+    parser: boolParser,
+    desc: "Show JS thread stall monitor overlay",
+  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,

@@ -51,6 +51,7 @@ import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags"
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
+import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -253,6 +254,7 @@ function App() {
       <AnalyticsConsole />
 
       <DebugTheme />
+      <JsThreadMonitor />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">
         <StoragePerformanceOverlay />
