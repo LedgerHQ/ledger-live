@@ -6,6 +6,9 @@ export class MarketCoinPage extends AppPage {
 
   async openBuyPage() {
     await this.buyButton.click();
+    // The onBuy handler is async (fetches asset data before navigating),
+    // so wait for the actual navigation to the exchange/buy page.
+    await this.page.waitForURL(/.*\/exchange.*/);
   }
 
   async startStakeFlow() {

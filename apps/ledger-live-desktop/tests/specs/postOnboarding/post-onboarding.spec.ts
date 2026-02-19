@@ -60,6 +60,7 @@ test("PostOnboarding state logic", async ({ page }) => {
 
   await test.step("skip post onboarding", async () => {
     await postOnboarding.skipPostOnboardingHub();
+    await page.getByTestId("portfolio-container").waitFor({ state: "visible" });
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-banner-in-dashboard.png`,
       {

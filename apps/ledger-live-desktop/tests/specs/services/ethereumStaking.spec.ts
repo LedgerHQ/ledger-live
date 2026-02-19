@@ -117,6 +117,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   };
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
+    await page.getByTestId("portfolio-container").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");
   });
 
@@ -166,6 +167,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("start stake flow via Asset page", async () => {
     await layout.goToPortfolio();
     await portfolioPage.navigateToAsset("ethereum");
+    await page.getByTestId("asset-page-stake-button").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png");
   });
 
@@ -179,6 +181,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("start stake flow via Account page", async () => {
     await layout.goToAccounts();
     await accountsPage.navigateToAccountByName("Ethereum 2");
+    await page.getByTestId("stake-button").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("account-page-with-stake-button-and-banner.png");
   });
 

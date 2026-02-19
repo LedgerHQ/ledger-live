@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
   delegate = new delegateModal(page);
 });
 
-test("Delegate flow using max amount", async () => {
+test("Delegate flow using max amount", async ({ page }) => {
   await test.step("start the cosmos delegate flow", async () => {
     await expect.soft(modalPage.container).toHaveScreenshot(`earn-reward-pre-flow-page.png`);
   });
@@ -31,7 +31,8 @@ test("Delegate flow using max amount", async () => {
     await delegate.continue();
     // Continue from the delegate validator selection modal
     await delegate.continue();
-
+    await page.waitForSelector("[data-testid='modal-max-checkbox']");
+    await page.focus("[data-testid='modal-amount-field']");
     await delegate.toggleMaxAmount();
     const availableMaxAmount = await delegate.getSpendableBannerValue();
     await delegate.waitForCryptoAmountToBePopulated();

@@ -30,6 +30,7 @@ export default async function globalTeardown() {
     // wait for app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
+    await new Promise(s => setTimeout(s, 5000));
 
     await new OnboardingPage(page).waitForLaunch();
 

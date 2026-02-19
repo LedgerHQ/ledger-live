@@ -1,5 +1,6 @@
 import {
-  RefObject,
+  type RefObject,
+  type ForwardedRef,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -50,15 +51,15 @@ type UseWebviewStateReturn = {
   webviewProps: {
     src: string;
   };
-  webviewRef: RefObject<WebviewTag>;
+  webviewRef: RefObject<WebviewTag | null>;
   webviewPartition: WebviewPartition;
   handleRefresh: () => void;
 };
 
 export function useWebviewState(
   params: UseWebviewStateParams,
-  webviewAPIRef: React.ForwardedRef<WebviewAPI>,
-  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
+  webviewAPIRef: ForwardedRef<WebviewAPI>,
+  serverRef?: RefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;

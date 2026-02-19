@@ -1,14 +1,13 @@
 import React from "react";
 import { render } from "tests/testSetup";
-import { SquaredCryptoIcon } from "./index";
+import { CryptoIconSize, SquaredCryptoIcon } from "./index";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 jest.mock("@ledgerhq/crypto-icons", () => ({
   CryptoIcon: jest.fn(props => (
     <div data-testid="crypto-icon" data-props={JSON.stringify(props)} />
   )),
 }));
-
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 const mockedCryptoIcon = jest.mocked(CryptoIcon);
 
@@ -36,12 +35,7 @@ describe("SquaredCryptoIcon", () => {
     Object.entries(sizeToRadiusMap).forEach(([size, expectedRadius]) => {
       mockedCryptoIcon.mockClear();
 
-      render(
-        <SquaredCryptoIcon
-          {...defaultProps}
-          size={size as "16px" | "20px" | "24px" | "32px" | "40px" | "48px" | "56px"}
-        />,
-      );
+      render(<SquaredCryptoIcon {...defaultProps} size={size as CryptoIconSize} />);
 
       expect(mockedCryptoIcon).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -50,7 +44,7 @@ describe("SquaredCryptoIcon", () => {
           ledgerId: "ethereum",
           ticker: "ETH",
         }),
-        expect.anything(),
+        undefined,
       );
     });
   });
@@ -63,7 +57,7 @@ describe("SquaredCryptoIcon", () => {
         size: "48px",
         overridesRadius: "12px",
       }),
-      expect.anything(),
+      undefined,
     );
   });
 
@@ -78,7 +72,7 @@ describe("SquaredCryptoIcon", () => {
         network: "polygon",
         overridesRadius: "8px",
       }),
-      expect.anything(),
+      undefined,
     );
   });
 });
