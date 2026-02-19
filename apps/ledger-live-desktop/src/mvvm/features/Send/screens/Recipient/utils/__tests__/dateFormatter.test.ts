@@ -50,12 +50,12 @@ describe("dateFormatter utils", () => {
     const DAY_MS = 24 * HOUR_MS;
     const WEEK_MS = 7 * DAY_MS;
 
-    beforeAll(() => {
+    beforeEach(() => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
     });
 
-    afterAll(() => {
+    afterEach(() => {
       jest.useRealTimers();
     });
 
