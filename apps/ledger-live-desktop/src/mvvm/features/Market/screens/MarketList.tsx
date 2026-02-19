@@ -47,7 +47,7 @@ function MarketList({
   toggleStar,
   virtualization,
   t,
-}: MarketListProps) {
+}: Readonly<MarketListProps>) {
   const { order, search, starred, range, counterCurrency } = marketParams;
   const { parentRef, rowVirtualizer } = virtualization;
 

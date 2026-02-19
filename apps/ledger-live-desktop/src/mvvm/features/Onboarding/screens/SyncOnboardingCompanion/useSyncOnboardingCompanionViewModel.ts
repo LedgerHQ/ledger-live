@@ -452,7 +452,8 @@ const useSyncOnboardingCompanionViewModel = ({
     if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
       const [pathname, search] = recoverRestoreStaxPath.split("?");
 
-      navigate(`${pathname}${search ? `?${search}` : ""}`, {
+      const fullPath = search ? `${pathname}?${search}` : pathname;
+      navigate(fullPath, {
         state: { fromOnboarding: true },
       });
     }

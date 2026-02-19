@@ -53,7 +53,7 @@ const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRe
   },
 );
 
-export default function Tooltip(props: Props): React.JSX.Element | null {
+export default function Tooltip(props: Readonly<Props>): React.JSX.Element | null {
   const { content, placement = "auto", children, ...rest } = props;
   return (
     <Tippy
