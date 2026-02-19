@@ -15,6 +15,7 @@
   ],
   "ignoreUnused": [],
   "ignoreUnimported": [
-    "src/ZCash.ts"
+    "src/ZCash.ts",
+    "src/types.ts"
   ]
 }
