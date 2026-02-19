@@ -223,6 +223,11 @@ export const urls = {
   aleo: {
     viewKeyLearnMore: "", // TODO: waiting for https://ledgerhq.atlassian.net/browse/LIVE-26269
   },
+  concordium: {
+    learnMore: "https://support.ledger.com/article/Concordium-CCD",
+    appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
+    playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
+  },
 };
 
 export const vaultSigner = {
