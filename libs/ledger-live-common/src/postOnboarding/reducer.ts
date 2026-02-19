@@ -20,6 +20,9 @@ type InitPayload = {
   deviceModelId: DeviceModelId;
   actionsIds: PostOnboardingActionId[];
 };
+type AddPayload = {
+  actionId: PostOnboardingActionId;
+};
 type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
@@ -29,6 +32,7 @@ export type Payload =
   | PartialNewStatePayload
   | InitPayload
   | SetActionCompletedPayload
+  | AddPayload
   | boolean;
 
 const handlers: ReducerMap<PostOnboardingState, Payload> = {
@@ -47,6 +51,24 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
       postOnboardingInProgress: true,
+    };
+  },
+  POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {
+    const { actionId } = payload as AddPayload;
+    const hasAction = state.actionsToComplete.includes(actionId);
+    const actionsToComplete = hasAction
+      ? state.actionsToComplete
+      : [...state.actionsToComplete, actionId];
+    const actionsCompleted = hasAction
+      ? state.actionsCompleted
+      : {
+          ...state.actionsCompleted,
+          [actionId]: state.actionsCompleted[actionId] ?? false,
+        };
+    return {
+      ...state,
+      actionsToComplete,
+      actionsCompleted,
     };
   },
   POST_ONBOARDING_SET_ACTION_COMPLETED: (state, { payload }) => {
