@@ -1,6 +1,6 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "../../../../renderer/screens/stake/constants";
@@ -17,6 +17,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { useSwapNavigation } from "./useSwapNavigation";
+import { useBuyNavigation } from "./useBuyNavigation";
 
 export enum Page {
   Market = "Page Market",
@@ -29,7 +30,6 @@ type MarketActionsProps = {
 };
 
 export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { data: currenciesAll } = useFetchCurrencyAll();
   const startStakeFlow = useStakeFlow();
@@ -38,6 +38,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const { isCurrencyAvailable } = useRampCatalog();
   const { navigateToSwap } = useSwapNavigation();
+  const { navigateToBuy } = useBuyNavigation();
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
@@ -61,20 +62,9 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
       const ledgerCurrency = await getLedgerCurrency();
 
-      navigate("/exchange", {
-        state: ledgerCurrency
-          ? {
-              currency: ledgerCurrency?.id,
-              mode: "buy", // buy or sell
-            }
-          : {
-              mode: "onRamp",
-              defaultTicker:
-                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-            },
-      });
+      navigateToBuy(ledgerCurrency, currency?.ticker);
     },
-    [currency, navigate, getLedgerCurrency, page],
+    [currency?.ticker, getLedgerCurrency, page, navigateToBuy],
   );
 
   const onSwap = useCallback(
