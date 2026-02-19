@@ -9,7 +9,10 @@ export type LottieSource = { uri: string } | number | null;
 export function resolveLottieSource(module: number): LottieSource {
   const resolved = Image.resolveAssetSource(module);
   const uri = resolved?.uri;
-  if (uri && (uri.startsWith("file://") || uri.startsWith("http://") || uri.startsWith("https://"))) {
+  if (
+    uri &&
+    (uri.startsWith("file://") || uri.startsWith("http://") || uri.startsWith("https://"))
+  ) {
     return { uri };
   }
   return module;
