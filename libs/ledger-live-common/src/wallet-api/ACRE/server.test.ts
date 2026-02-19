@@ -30,6 +30,7 @@ jest.mock("../../bridge", () => ({
 
 jest.mock("@ledgerhq/live-env", () => ({
   getEnv: jest.fn(),
+  changes: { subscribe: jest.fn() },
 }));
 
 // Mock types
