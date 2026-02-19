@@ -393,7 +393,7 @@ jobs:
       - name: Start mitmproxy to capture requests
         run: |
           # Start mitmproxy in REGULAR mode (not transparent)
-          mitmproxy --set confdir=~/.mitmproxy \
+          mitmdump --set confdir=~/.mitmproxy \
             --listen-host 0.0.0.0 \
             --listen-port 8080 \
             --mode regular \
