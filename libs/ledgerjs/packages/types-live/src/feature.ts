@@ -813,6 +813,7 @@ type Feature_Wallet40_Params = {
 
   // Specifics
   newReceiveDialog?: boolean;
+  onboardingWidget?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;

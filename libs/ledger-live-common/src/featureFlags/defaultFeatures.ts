@@ -787,6 +787,7 @@ export const DEFAULT_FEATURES: Features = {
       mainNavigation: true,
       lazyOnboarding: true,
       balanceRefreshRework: true,
+      onboardingWidget: true,
     },
   },
   lwdWallet40: {

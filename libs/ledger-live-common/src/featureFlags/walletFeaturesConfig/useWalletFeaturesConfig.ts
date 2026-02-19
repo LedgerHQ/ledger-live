@@ -39,6 +39,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
+      shouldDisplayOnboardingWidget: isEnabled && Boolean(params?.onboardingWidget),
     };
   }, [walletFeatureFlag]);
 };
