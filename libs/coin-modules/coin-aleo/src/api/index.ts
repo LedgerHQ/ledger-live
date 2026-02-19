@@ -15,7 +15,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig, { type AleoConfig } from "../config";
-import { getBalance, lastBlock } from "../logic";
+import { getBalance, lastBlock, listOperations } from "../logic";
 
 export function createApi(config: AleoConfig, currencyId: string): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -51,8 +51,15 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
     lastBlock: async (): Promise<BlockInfo> => {
       return lastBlock(currency);
     },
-    listOperations: async (_address, _pagination) => {
-      throw new Error("listOperations is not supported");
+    listOperations: async (address, pagination) => {
+      const { operations, nextCursor } = await listOperations({
+        currency,
+        address,
+        pagination,
+        mode: "alpaca",
+      });
+
+      return [operations, nextCursor ?? ""];
     },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
