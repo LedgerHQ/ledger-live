@@ -83,3 +83,22 @@ export const syncAccountsMock: PostOnboardingAction = {
     openActivationDrawer?.();
   },
 };
+
+export const recoverMock: PostOnboardingAction = {
+  id: PostOnboardingActionId.recoverMock,
+  Icon: Icons.ShieldCheck,
+  title: "postOnboarding.actions.recover.title",
+  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
+  description: "postOnboarding.actions.recover.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
+  getNavigationParams: () => [
+    NavigatorName.PostOnboarding,
+    {
+      screen: ScreenName.PostOnboardingMockActionScreen,
+      params: {
+        id: PostOnboardingActionId.recoverMock,
+        title: PostOnboardingActionId.recoverMock,
+      },
+    },
+  ],
+};
