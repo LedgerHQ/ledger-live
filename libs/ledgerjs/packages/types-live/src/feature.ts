@@ -827,6 +827,7 @@ type Feature_Wallet40_Params = {
   // Specifics
   newReceiveDialog?: boolean;
   background?: boolean;
+  onboardingWidget?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;

@@ -10,6 +10,7 @@ export type Wallet40Params = {
   readonly balanceRefreshRework?: boolean;
   readonly tour?: boolean;
   readonly assetSection?: boolean;
+  readonly onboardingWidget?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -39,4 +40,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayTour: boolean;
   /** Whether to show the asset section */
   readonly shouldDisplayAssetSection: boolean;
+  /** Whether to show the post-onboarding widget on portfolio */
+  readonly shouldDisplayOnboardingWidget: boolean;
 }
