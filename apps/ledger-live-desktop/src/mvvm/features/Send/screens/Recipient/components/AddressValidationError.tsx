@@ -20,5 +20,5 @@ export function AddressValidationError({ error }: AddressValidationErrorProps) {
 
   const text = errorMessages[error];
 
-  return <StatusMessage text={text} />;
+  return <StatusMessage text={text} dataTestId="address-validation-status" />;
 }

@@ -70,4 +70,5 @@ export type AddressListItemProps = Readonly<{
   isLedgerAccount?: boolean;
   disabled?: boolean;
   hideDescription?: boolean;
+  testId?: string;
 }>;

@@ -28,6 +28,7 @@ export function AddressListItem({
   isLedgerAccount = false,
   disabled = false,
   hideDescription = false,
+  testId,
 }: AddressListItemProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
@@ -54,6 +55,7 @@ export function AddressListItem({
     <ListItem
       onClick={disabled ? undefined : onSelect}
       onContextMenu={onContextMenu}
+      data-testid={testId}
       className={cn("mb-6", {
         "cursor-not-allowed opacity-50": disabled,
       })}
