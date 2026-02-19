@@ -125,6 +125,7 @@ export type BaseNavigatorStackParamList = {
     sessionTopic?: string;
     chainId?: string;
     yieldId?: string;
+    path?: string;
   };
   [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
   [ScreenName.Recover]: {
