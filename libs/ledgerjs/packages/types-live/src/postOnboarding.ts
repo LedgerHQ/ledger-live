@@ -127,6 +127,11 @@ export type PostOnboardingAction = {
   }) => boolean;
 
   /**
+   * Async function that returns true if the action should be shown in list
+   */
+  shouldShow?: (args: { protectId: string }) => Promise<boolean>;
+
+  /**
    * Used to set the action as complete when clicking on it.
    * Especially useful when the action opens a live app and we can't know
    * when the action as been successfully finished

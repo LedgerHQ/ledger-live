@@ -40,9 +40,11 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     openActivationDrawer,
     isLedgerSyncActive,
     accounts,
+    shouldShow,
   } = props;
   const { t } = useTranslation();
   const recoverServices = useFeature("protectServicesMobile");
+  const [canShow, setCanShow] = useState<boolean>(!shouldShow);
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
 
   const navigation =
@@ -60,6 +62,18 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   useEffect(() => {
     initIsActionCompleted();
   }, [initIsActionCompleted]);
+
+  const checkCanShow = useCallback(async () => {
+    if (shouldShow) {
+      const canShowAction = await shouldShow({ protectId });
+
+      setCanShow(canShowAction);
+    }
+  }, [shouldShow, protectId]);
+
+  useEffect(() => {
+    checkCanShow();
+  }, [checkCanShow]);
 
   const customActionHandlers = usePostOnboardingActionHandlers();
 
@@ -95,6 +109,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     trackAction();
     shouldCompleteOnStart && completeAction(id);
   };
+
+  if (!canShow) return null;
 
   return (
     <Touchable
