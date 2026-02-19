@@ -22,7 +22,21 @@ beforeAll(() =>
     onUnhandledRequest: "bypass",
   }),
 );
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  // Reset shared mocks to prevent state leaking between tests (mock cannibalization)
+  mockRNCNetInfo.useNetInfo.mockReturnValue({
+    type: "cellular",
+    isConnected: true,
+    isInternetReachable: true,
+    details: { isConnectionExpensive: true, cellularGeneration: "3g" },
+  });
+  mockUseCameraPermission.mockReturnValue({
+    hasPermission: true,
+    requestPermission: jest.fn(() => Promise.resolve(true)),
+  });
+  mockGetCameraPermissionStatus.mockReturnValue("granted");
+});
 afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
@@ -73,6 +87,10 @@ jest.mock("react-native-share", () => ({
 
 export const mockSimulateBarcodeScanned = jest.fn();
 export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
+const mockUseCameraPermission = jest.fn(() => ({
+  hasPermission: true,
+  requestPermission: jest.fn(() => Promise.resolve(true)),
+}));
 
 jest.mock("react-native-vision-camera", () => {
   const CameraMock = jest.fn(({ codeScanner }) => {
@@ -87,10 +105,7 @@ jest.mock("react-native-vision-camera", () => {
 
   return {
     Camera: CameraMock,
-    useCameraPermission: jest.fn(() => ({
-      hasPermission: true,
-      requestPermission: jest.fn(() => Promise.resolve(true)),
-    })),
+    useCameraPermission: mockUseCameraPermission,
     useCameraDevice: jest.fn(() => ({
       id: "mock-camera-device",
       position: "back",

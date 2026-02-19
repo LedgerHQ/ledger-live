@@ -72,8 +72,11 @@ const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewU
 describe("useUpdateBannerViewModel", () => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
+  });
+  afterEach(() => {
+    PlatformSpy?.mockRestore();
   });
 
   it("should return bannerVisible: true if conditions are fulfilled", () => {
