@@ -1,12 +1,16 @@
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { createTransaction } from "./createTransaction";
 
 describe("createTransaction", () => {
   it("should create a 0 amount transaction", () => {
-    expect(createTransaction({} as AccountLike<Account>).amount.toNumber()).toEqual(0);
+    expect(createTransaction().amount.toNumber()).toEqual(0);
   });
 
   it("should create a transaction with concordium family", () => {
-    expect(createTransaction({} as AccountLike<Account>).family).toEqual("concordium");
+    expect(createTransaction().family).toEqual("concordium");
+  });
+
+  it("should create a transaction with memo field initialized as undefined", () => {
+    const transaction = createTransaction();
+    expect(transaction.memo).toBeUndefined();
   });
 });
