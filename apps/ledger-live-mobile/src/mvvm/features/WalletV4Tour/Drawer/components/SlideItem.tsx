@@ -58,7 +58,6 @@ export function SlideItem({ title, description, index }: SlideItemProps) {
         lx={{
           textAlign: "center",
           marginBottom: "s4",
-          color: "base",
         }}
         numberOfLines={1}
       >
@@ -70,7 +69,6 @@ export function SlideItem({ title, description, index }: SlideItemProps) {
         lx={{
           marginTop: "s8",
           textAlign: "center",
-          color: "base",
         }}
         numberOfLines={2}
       >
