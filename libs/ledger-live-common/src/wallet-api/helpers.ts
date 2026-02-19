@@ -10,7 +10,6 @@ import type {
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
 import { isSameDomain } from "./manifestDomainUtils";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export function isWalletAPISupportedCurrency(
   currency: Currency,
@@ -146,19 +145,6 @@ export const safeUrl = (url: string) => {
     return null;
   }
 };
-
-export async function resolveTargetCurrency(
-  recipient: string | undefined,
-  networkId: string,
-): Promise<string | undefined> {
-  if (!recipient) return undefined;
-  try {
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(recipient, networkId);
-    return token ? token.name : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 // Copied from https://www.npmjs.com/package/ethereumjs-util
 export const isHexPrefixed = (str: string): boolean => {

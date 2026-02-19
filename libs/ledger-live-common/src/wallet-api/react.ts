@@ -24,7 +24,7 @@ import {
   currencyToWalletAPICurrency,
   setWalletApiIdForAccountId,
 } from "./converters";
-import { isWalletAPISupportedCurrency, resolveTargetCurrency } from "./helpers";
+import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
@@ -766,10 +766,6 @@ export function useWalletAPIServer({
             const broadcastTrackingData = {
               sourceCurrency:
                 account.type === "TokenAccount" ? account.token.name : account.currency.name,
-              targetCurrency: await resolveTargetCurrency(
-                signedOperation.operation.recipients?.[0],
-                networkId,
-              ),
               network: networkId,
             };
 
@@ -901,10 +897,6 @@ export function useWalletAPIServer({
               const broadcastTrackingData = {
                 sourceCurrency:
                   account.type === "TokenAccount" ? account.token.name : account.currency.name,
-                targetCurrency: await resolveTargetCurrency(
-                  signedOperation.operation.recipients?.[0],
-                  networkId,
-                ),
                 network: networkId,
               };
 
@@ -1003,7 +995,6 @@ export function useWalletAPIServer({
               partner,
               sourceCurrency:
                 account.type === "TokenAccount" ? account.token.name : account.currency.name,
-              targetCurrency: await resolveTargetCurrency(transaction.recipient, networkId),
               network: networkId,
             };
 

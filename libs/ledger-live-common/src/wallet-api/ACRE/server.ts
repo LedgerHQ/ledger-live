@@ -24,7 +24,6 @@ import {
 } from "@ledgerhq/wallet-api-acre-module";
 import { Transaction } from "../../generated/types";
 import { AppManifest } from "../types";
-import { resolveTargetCurrency } from "../helpers";
 import { TrackingAPI } from "./tracking";
 import {
   getAccountIdFromWalletAccountId,
@@ -398,17 +397,11 @@ export const handlers = ({
           ? signerAccount.token.parentCurrency.id
           : signerAccount.currency.id;
 
-      const targetCurrency = await resolveTargetCurrency(
-        signedOperation.operation.recipients?.[0],
-        networkId,
-      );
-
       const broadcastTrackingData = {
         sourceCurrency:
           signerAccount.type === "TokenAccount"
             ? signerAccount.token.name
             : signerAccount.currency.name,
-        targetCurrency,
         network: networkId,
       };
 
