@@ -8093,6 +8093,12 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private"
+      }
     }
   }
 }
