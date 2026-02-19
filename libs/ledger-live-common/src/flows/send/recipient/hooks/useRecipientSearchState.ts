@@ -1,6 +1,6 @@
+import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import type { AddressSearchResult } from "../types";
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 
 type UseRecipientSearchStateProps = {
   searchValue: string;
