@@ -227,7 +227,7 @@ function ModalInner<Name extends keyof ModalData>(props: Props<Name>) {
         const bodyStyleComputed: CSSProperties = {
           ...transitionsOpacity[state],
           ...transitionsScale[state],
-          ...(bodyStyle ?? {}),
+          ...bodyStyle,
         };
         return (
           <Container

@@ -46,7 +46,7 @@ function Notification({
   onLinkClick,
   hasBackground = false,
   ...containerProps
-}: Props): React.JSX.Element {
+}: Readonly<Props>): React.JSX.Element {
   return (
     <Container hasBackground={hasBackground} {...containerProps}>
       {badge}

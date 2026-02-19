@@ -13,7 +13,12 @@ export type SlidesProps = {
   className?: string;
 };
 
-export function Slides({ children, onSlideChange, initialSlideIndex = 0, className }: SlidesProps) {
+export function Slides({
+  children,
+  onSlideChange,
+  initialSlideIndex = 0,
+  className,
+}: Readonly<SlidesProps>) {
   const { scrollContainerRef, handleScroll, contextValue } = useSlidesViewModel({
     children,
     onSlideChange,

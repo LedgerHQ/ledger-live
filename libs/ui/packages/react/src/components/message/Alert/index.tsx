@@ -111,7 +111,7 @@ function Alert({
   renderContent,
   renderRight,
   containerProps,
-}: AlertProps): React.JSX.Element {
+}: Readonly<AlertProps>): React.JSX.Element {
   const theme = useTheme();
   const { iconColor, background } = getColors({ theme, type });
   const textProps: { variant?: TextVariants; fontWeight?: string } = {

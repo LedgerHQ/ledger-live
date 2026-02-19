@@ -18,7 +18,6 @@ export type PerpsWebProps = {
   webviewState: WebviewState;
   onStateChange: WebviewProps["onStateChange"];
   enablePlatformDevTools: boolean;
-  isEmbedded?: boolean;
   Loader?: WebviewLoader;
 };
 

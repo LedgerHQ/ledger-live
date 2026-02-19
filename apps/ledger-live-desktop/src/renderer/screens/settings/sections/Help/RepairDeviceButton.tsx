@@ -13,7 +13,7 @@ type Props = {
   onRepair?: (a: boolean) => void;
 };
 
-function RepairDeviceButton({ buttonProps, onRepair }: Props) {
+function RepairDeviceButton({ buttonProps, onRepair }: Readonly<Props>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [opened, setOpened] = useState(false);

@@ -1,12 +1,16 @@
 import * as React from "react";
 
-type Props = { width?: number | string; height?: number | string; color?: string };
+interface Props {
+  width?: number | string;
+  height?: number | string;
+  color?: string;
+}
 
 function LedgerLiveAltRegular({
   width = 38,
   height = 32,
   color = "currentColor",
-}: Props): React.JSX.Element {
+}: Readonly<Props>): React.JSX.Element {
   return (
     <svg
       width={width}
