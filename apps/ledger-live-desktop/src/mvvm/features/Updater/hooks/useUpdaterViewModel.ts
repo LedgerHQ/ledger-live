@@ -1,13 +1,7 @@
-import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  UpdaterContext,
-  MaybeUpdateContextType,
-  UpdateStatus,
-} from "~/renderer/components/Updater/UpdaterContext";
+import { UpdateStatus } from "~/renderer/components/Updater/UpdaterContext";
+import { useUpdaterStatus } from "./useUpdaterStatus";
 import type { UpdaterButtonProps } from "../types";
-
-const noop = () => {};
 
 type StatusConfig = {
   labelKey: string;
@@ -39,12 +33,12 @@ const STATUS_MAP: Partial<Record<UpdateStatus, StatusConfig>> = {
 };
 
 const useUpdaterViewModel = (): UpdaterButtonProps | null => {
-  const context = useContext<MaybeUpdateContextType>(UpdaterContext);
+  const { context, isTopBarVisible, getActionHandler } = useUpdaterStatus();
   const { t } = useTranslation();
 
-  if (!context) return null;
+  if (!context || !isTopBarVisible) return null;
 
-  const { status, downloadProgress, quitAndInstall } = context;
+  const { status, downloadProgress } = context;
   const config = STATUS_MAP[status];
 
   if (!config) return null;
@@ -54,7 +48,7 @@ const useUpdaterViewModel = (): UpdaterButtonProps | null => {
   return {
     ...rest,
     label: t(labelKey, { progress: downloadProgress }),
-    onClick: status === "check-success" ? quitAndInstall : noop,
+    onClick: getActionHandler(status),
   };
 };
 

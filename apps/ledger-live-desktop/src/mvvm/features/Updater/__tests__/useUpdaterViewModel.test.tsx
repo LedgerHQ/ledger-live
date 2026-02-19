@@ -1,7 +1,17 @@
 import { renderHook } from "tests/testSetup";
 import { UpdateStatus } from "~/renderer/components/Updater/UpdaterContext";
+import { openURL } from "~/renderer/linking";
 import useUpdaterViewModel from "../hooks/useUpdaterViewModel";
 import { createContextWrapper } from "./helpers";
+import { urls } from "~/config/urls";
+
+jest.mock("~/renderer/linking", () => ({
+  openURL: jest.fn(),
+}));
+
+jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => url,
+}));
 
 describe("useUpdaterViewModel", () => {
   beforeEach(() => {
@@ -84,7 +94,16 @@ describe("useUpdaterViewModel", () => {
       wrapper: createContextWrapper({ status: "check-success", quitAndInstall }),
     });
 
-    result.current?.onClick();
+    result.current?.onClick?.();
     expect(quitAndInstall).toHaveBeenCalledTimes(1);
+  });
+
+  it("should wire re-download action as onClick when status is error", () => {
+    const { result } = renderHook(() => useUpdaterViewModel(), {
+      wrapper: createContextWrapper({ status: "error" }),
+    });
+
+    result.current?.onClick?.();
+    expect(openURL).toHaveBeenCalledWith(urls.liveHome);
   });
 });
