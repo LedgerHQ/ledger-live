@@ -33,6 +33,7 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     navigation.navigate(ScreenName.PlatformApp, {
       platform: CARD_APP_ID,
       name: "Card Program",
+      path: "/providers-list",
     });
   }, [navigation]);
 
