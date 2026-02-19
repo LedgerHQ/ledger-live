@@ -38,6 +38,11 @@ export const hidePostOnboardingWalletEntryPoint: ActionCreatorPlain = () => ({
   payload: undefined,
 });
 
+export const setPostOnboardingWalletEntryPointEligibility: ActionCreator<boolean> = eligible => ({
+  type: `${actionTypePrefix}SET_WALLET_ENTRY_POINT_ELIGIBILITY`,
+  payload: eligible,
+});
+
 export const postOnboardingSetFinished: ActionCreatorPlain = () => ({
   type: `${actionTypePrefix}SET_FINISHED`,
   payload: undefined,
