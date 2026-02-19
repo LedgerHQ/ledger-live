@@ -200,6 +200,11 @@ app.on("ready", async () => {
   >[0];
   await applyWindowParams(windowParams, settings);
 
+  function testTemporary() {
+    // FIXME sonarqube trigger
+  }
+  testTemporary();
+
   // Setup window event handlers
   window.on(
     "resize",
