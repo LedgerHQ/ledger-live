@@ -24,7 +24,7 @@ import {
 } from "@ledgerhq/wallet-api-acre-module";
 import { Transaction } from "../../generated/types";
 import { AppManifest } from "../types";
-import { resolveTargetCurrency } from "../react";
+import { resolveTargetCurrency } from "../helpers";
 import { TrackingAPI } from "./tracking";
 import {
   getAccountIdFromWalletAccountId,

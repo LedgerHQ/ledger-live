@@ -24,7 +24,7 @@ import {
   currencyToWalletAPICurrency,
   setWalletApiIdForAccountId,
 } from "./converters";
-import { isWalletAPISupportedCurrency } from "./helpers";
+import { isWalletAPISupportedCurrency, resolveTargetCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
@@ -65,19 +65,6 @@ export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
     throw new Error("Ref objects doesn't have a current value");
   }
   return ref.current;
-}
-
-export async function resolveTargetCurrency(
-  recipient: string | undefined,
-  networkId: string,
-): Promise<string | undefined> {
-  if (!recipient) return undefined;
-  try {
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(recipient, networkId);
-    return token ? token.name : undefined;
-  } catch {
-    return undefined;
-  }
 }
 
 export function useSetWalletAPIAccounts(accounts: AccountLike[]): void {
