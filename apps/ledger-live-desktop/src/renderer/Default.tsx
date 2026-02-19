@@ -262,8 +262,8 @@ const MainAppContent = ({
   </>
 );
 
-// Main app layout component that handles the main navigation after onboarding
-const MainAppLayout = () => {
+// Main app layout component that handles the main navigation after onboarding (exported for testing)
+export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const {
@@ -279,6 +279,7 @@ const MainAppLayout = () => {
     isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+
   return (
     <>
       <IsNewVersion />
