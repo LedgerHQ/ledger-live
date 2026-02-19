@@ -742,6 +742,24 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
+
+          if (hostname === "swap") {
+            const swapParams = new URLSearchParams();
+            const fromPath = searchParams.get("fromPath");
+            const fromToken = searchParams.get("fromToken");
+            const toToken = searchParams.get("toToken");
+            const amountFrom = searchParams.get("amountFrom");
+            const affiliate = searchParams.get("affiliate");
+            if (fromPath) swapParams.set("fromPath", fromPath);
+            if (fromToken) swapParams.set("fromTokenId", fromToken);
+            if (toToken) swapParams.set("toTokenId", toToken);
+            if (amountFrom) swapParams.set("amountFrom", amountFrom);
+            if (affiliate) swapParams.set("affiliate", affiliate);
+            const swapSearch = swapParams.toString();
+            const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
+            return getStateFromPath(pathWithParams, config);
+          }
+
           if ((hostname === "discover" || hostname === "recover") && platform) {
             if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
