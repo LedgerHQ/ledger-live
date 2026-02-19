@@ -15,6 +15,8 @@ import {
   clearPostOnboardingLastActionCompleted,
   hidePostOnboardingWalletEntryPoint,
   setPostOnboardingWalletEntryPointEligibility,
+  addPostOnboardingAction,
+  removePostOnboardingActionCompleted,
 } from "./actions";
 
 const initializationParamsA: Parameters<typeof initPostOnboarding> = [
@@ -128,6 +130,48 @@ const stateA4: PostOnboardingState = {
   postOnboardingInProgress: true,
 };
 
+// stateA0 -> addPostOnboardingAction(recoverMock)
+const stateA5: PostOnboardingState = {
+  deviceModelId: DeviceModelId.nanoX,
+  walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
+  actionsToComplete: [
+    PostOnboardingActionId.claimMock,
+    PostOnboardingActionId.migrateAssetsMock,
+    PostOnboardingActionId.personalizeMock,
+    PostOnboardingActionId.recoverMock,
+  ],
+  actionsCompleted: {
+    [PostOnboardingActionId.claimMock]: false,
+    [PostOnboardingActionId.migrateAssetsMock]: false,
+    [PostOnboardingActionId.personalizeMock]: false,
+    [PostOnboardingActionId.recoverMock]: false,
+  },
+  lastActionCompleted: null,
+  postOnboardingInProgress: true,
+};
+
+// stateA1 -> removePostOnboardingActionCompleted(claimMock)
+const stateA6: PostOnboardingState = {
+  deviceModelId: DeviceModelId.nanoX,
+  walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
+  actionsToComplete: [
+    PostOnboardingActionId.claimMock,
+    PostOnboardingActionId.migrateAssetsMock,
+    PostOnboardingActionId.personalizeMock,
+  ],
+  actionsCompleted: {
+    [PostOnboardingActionId.claimMock]: false, // stateA1 -> removePostOnboardingActionCompleted(claimMock)
+    [PostOnboardingActionId.migrateAssetsMock]: false,
+    [PostOnboardingActionId.personalizeMock]: false,
+  },
+  lastActionCompleted: null, // stateA1 -> removePostOnboardingActionCompleted(claimMock)
+  postOnboardingInProgress: true,
+};
+
 const initializationParamsB: Parameters<typeof initPostOnboarding> = [
   {
     deviceModelId: DeviceModelId.nanoS,
@@ -210,6 +254,17 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toEqual(stateA0);
   });
 
+  it("should handle addPostOnboardingAction", () => {
+    state = stateA0;
+    state = reducer(
+      state,
+      addPostOnboardingAction({
+        actionId: PostOnboardingActionId.recoverMock,
+      }),
+    );
+    expect(state).toEqual(stateA5);
+  });
+
   it("should handle setPostOnboardingActionCompleted", () => {
     state = stateA0;
     state = reducer(
@@ -225,6 +280,17 @@ describe("postOnboarding reducer (& action creators)", () => {
     state = stateA1;
     state = reducer(state, clearPostOnboardingLastActionCompleted());
     expect(state).toEqual({ ...stateA2 });
+  });
+
+  it("should handle removePostOnboardingActionCompleted", () => {
+    state = stateA1;
+    state = reducer(
+      state,
+      removePostOnboardingActionCompleted({
+        actionId: PostOnboardingActionId.claimMock,
+      }),
+    );
+    expect(state).toEqual({ ...stateA6 });
   });
 
   it("should handle hidePostOnboardingWalletEntryPoint", () => {
