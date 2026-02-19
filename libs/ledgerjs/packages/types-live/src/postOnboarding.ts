@@ -174,6 +174,12 @@ export type PostOnboardingState = {
   entryPointFirstDisplayedDate: Date | null;
 
   /**
+   * Whether the portfolio entry point was eligible (no funds) when it first appeared.
+   * Null means not evaluated yet.
+   */
+  walletEntryPointEligibleForPortfolio: boolean | null;
+
+  /**
    * List of all actions that have to be completed in this post onboarding
    * (whether they are completed or).
    * This is used to populate the list of actions in the post onboarding hub UI.
