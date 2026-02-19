@@ -43,11 +43,11 @@ describe("createApi", () => {
       const operation = page.find(op => op.tx.hash === testTxId);
 
       expect(operation).toMatchObject({
-        value: BigInt(20n),
+        value: 20n,
         asset: { type: "native" },
         tx: {
           hash: testTxId,
-          fees: BigInt(51060n),
+          fees: 51060n,
           failed: false,
           block: {
             hash: testBlockHashOfTx,
@@ -84,8 +84,8 @@ describe("createApi", () => {
         // NOTE: this won't be equal to limit, because single transaction can generate multiple operations
         expect(page1.length).toBeGreaterThanOrEqual(limit);
         expect(page2.length).toBeGreaterThanOrEqual(limit);
-        expect(cursor1).not.toBeNull();
-        expect(cursor2).not.toBeNull();
+        expect(cursor1).not.toBe("");
+        expect(cursor2).not.toBe("");
         expect(hasOverlap).toBe(false);
         expect(firstPage1Timestamp).toBeInstanceOf(Date);
         expect(firstPage2Timestamp).toBeInstanceOf(Date);

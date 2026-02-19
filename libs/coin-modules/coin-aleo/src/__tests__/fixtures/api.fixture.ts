@@ -1,4 +1,5 @@
 import { PROGRAM_ID } from "../../constants";
+import { EnrichedTransaction } from "../../types";
 import type { AleoPublicTransaction, AleoPublicTransactionDetailsResponse } from "../../types/api";
 
 export const getMockedTransaction = (
@@ -52,3 +53,13 @@ export const getMockedTransactionDetails = (
   status: "accepted",
   ...overrides,
 });
+
+export function getMockedEnrichedTransaction(
+  overrides?: Partial<EnrichedTransaction>,
+): EnrichedTransaction {
+  return {
+    rawTx: getMockedTransaction(),
+    details: getMockedTransactionDetails(),
+    ...overrides,
+  };
+}

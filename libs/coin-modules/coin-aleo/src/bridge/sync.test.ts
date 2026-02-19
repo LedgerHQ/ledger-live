@@ -190,7 +190,7 @@ describe("sync.ts", () => {
         currency: mockCurrency,
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
-        fetchAllPages: true,
+        mode: "bridge",
         pagination: {
           minHeight: 0,
           order: "asc",
@@ -226,7 +226,7 @@ describe("sync.ts", () => {
         currency: mockCurrency,
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
-        fetchAllPages: true,
+        mode: "bridge",
         pagination: {
           minHeight: 0,
           order: "asc",

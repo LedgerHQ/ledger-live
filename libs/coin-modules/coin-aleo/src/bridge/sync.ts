@@ -46,7 +46,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     currency,
     address,
     ledgerAccountId,
-    fetchAllPages: true,
+    mode: "bridge",
     pagination: {
       minHeight: 0,
       order: "asc",

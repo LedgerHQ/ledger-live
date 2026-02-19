@@ -1,26 +1,38 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type { AleoOperation } from "../types/bridge";
-import { fetchAccountTransactionsFromHeight, parseOperation } from "../network/utils";
+import { enrichTransaction, fetchAccountTransactionsFromHeight } from "../network/utils";
+import { toAlpacaOperation, toBridgeOperation } from "./utils";
 
-export async function listOperations({
-  currency,
-  address,
-  ledgerAccountId,
-  pagination,
-  fetchAllPages,
-}: {
+interface Params {
   currency: CryptoCurrency;
   address: string;
-  ledgerAccountId: string;
   pagination: Pagination;
-  fetchAllPages: boolean;
-}): Promise<{
-  operations: AleoOperation[];
-  nextCursor: string | null;
-}> {
-  const operations: AleoOperation[] = [];
+}
+
+interface BridgeParams extends Params {
+  mode: "bridge";
+  ledgerAccountId: string;
+}
+
+interface AlpacaParams extends Params {
+  mode: "alpaca";
+}
+
+type Result<T> = {
+  readonly operations: T[];
+  readonly nextCursor: string | null;
+};
+
+export async function listOperations(params: BridgeParams): Promise<Result<AleoOperation>>;
+export async function listOperations(params: AlpacaParams): Promise<Result<Operation>>;
+export async function listOperations(
+  params: BridgeParams | AlpacaParams,
+): Promise<Result<AleoOperation | Operation>> {
+  const { mode, currency, address, pagination } = params;
+  const operations: Array<AleoOperation | Operation> = [];
+  const fetchAllPages = mode === "bridge";
 
   const result = await fetchAccountTransactionsFromHeight({
     currency,
@@ -33,14 +45,13 @@ export async function listOperations({
   });
 
   await promiseAllBatched(2, result.transactions, async rawTx => {
-    const parsedOperation = await parseOperation({
-      currency,
-      rawTx,
-      address,
-      ledgerAccountId,
-    });
+    const enrichedTx = await enrichTransaction({ currency, rawTx });
 
-    operations.push(parsedOperation);
+    if (mode === "alpaca") {
+      operations.push(toAlpacaOperation(enrichedTx, address));
+    } else {
+      operations.push(toBridgeOperation(params.ledgerAccountId, enrichedTx, address));
+    }
   });
 
   return {

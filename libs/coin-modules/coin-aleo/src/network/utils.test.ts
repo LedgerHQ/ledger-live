@@ -1,22 +1,17 @@
-import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { PROGRAM_ID } from "../constants";
-import { determineTransactionType } from "../logic/utils";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
   getMockedPublicTransaction,
   getMockedTransactionDetails,
 } from "../__tests__/fixtures/transaction.fixture";
 import { apiClient } from "./api";
-import { fetchAccountTransactionsFromHeight, parseOperation } from "./utils";
+import { fetchAccountTransactionsFromHeight, enrichTransaction } from "./utils";
 
 jest.mock("./api");
-jest.mock("../logic/utils");
 
 describe("network/utils", () => {
   const mockCurrency = getMockedCurrency();
   const mockAddress = "aleo1test123address456";
-  const mockAccountId = "js:2:aleo:aleo1test123address456:";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -95,6 +90,13 @@ describe("network/utils", () => {
           minBlockHeight,
         });
 
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
+          currency: mockCurrency,
+          address: mockAddress,
+          limit: 50,
+          order: "asc",
+        });
         expect(result.transactions).toHaveLength(2);
         expect(result.transactions[0].block_number).toBe(150);
         expect(result.transactions[1].block_number).toBe(140);
@@ -124,6 +126,12 @@ describe("network/utils", () => {
         });
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
+          currency: mockCurrency,
+          address: mockAddress,
+          limit: 50,
+          order: "desc",
+        });
         expect(result.transactions).toHaveLength(2);
         expect(result.nextCursor).toBeNull();
       });
@@ -153,6 +161,13 @@ describe("network/utils", () => {
           limit,
         });
 
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
+          currency: mockCurrency,
+          address: mockAddress,
+          limit,
+          order: "asc",
+        });
         expect(result.transactions).toHaveLength(2);
         expect(result.nextCursor).toBe("140");
       });
@@ -179,6 +194,13 @@ describe("network/utils", () => {
           limit,
         });
 
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
+          currency: mockCurrency,
+          address: mockAddress,
+          limit,
+          order: "asc",
+        });
         expect(result.transactions).toHaveLength(2);
         expect(result.nextCursor).toBeNull();
       });
@@ -291,185 +313,30 @@ describe("network/utils", () => {
     });
   });
 
-  describe("parseOperation", () => {
-    const mockRawTx = getMockedPublicTransaction({
-      transaction_id: "at1test123",
-      block_number: 123456,
-      block_timestamp: "1709079312",
-      transaction_status: "Accepted",
-      amount: 100000000,
-      sender_address: "aleo1sender123",
-      recipient_address: mockAddress,
-      function_id: "transfer_public",
-      program_id: PROGRAM_ID.CREDITS,
-    });
-
-    beforeEach(() => {
-      jest.mocked(determineTransactionType).mockReturnValue("TRANSFER_PUBLIC");
-    });
-
-    it("should parse incoming transaction correctly", async () => {
-      const mockTxDetails = getMockedTransactionDetails("at1test123", {
-        fee_value: 5000000,
-        block_hash: "ab1block123",
+  describe("enrichTransaction", () => {
+    it("should fetch details and return rawTx + details when program is CREDITS", async () => {
+      const rawTx = getMockedPublicTransaction({
+        transaction_id: "at1test123",
+        program_id: PROGRAM_ID.CREDITS,
       });
+      const mockDetails = getMockedTransactionDetails("at1test123");
 
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
+      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockDetails);
 
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: mockRawTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
+      const result = await enrichTransaction({ currency: mockCurrency, rawTx });
 
       expect(apiClient.getTransactionById).toHaveBeenCalledTimes(1);
       expect(apiClient.getTransactionById).toHaveBeenCalledWith(mockCurrency, "at1test123");
-      expect(result.type).toBe("IN");
-      expect(result.value).toEqual(new BigNumber(100000000));
-      expect(result.fee).toEqual(new BigNumber(5000000));
-      expect(result.blockHash).toBe("ab1block123");
-      expect(result.hasFailed).toBe(false);
-      expect(result.recipients).toEqual([mockAddress]);
-      expect(result.senders).toEqual(["aleo1sender123"]);
-      expect(result.hash).toBe("at1test123");
-      expect(result.blockHeight).toBe(123456);
-      expect(result.accountId).toBe(mockAccountId);
-      expect(result.extra.functionId).toBe("transfer_public");
-      expect(result.extra.transactionType).toBe("TRANSFER_PUBLIC");
+      expect(result).toEqual({ rawTx, details: mockDetails });
     });
 
-    it("should parse outgoing transaction correctly", async () => {
-      const outgoingTx = getMockedPublicTransaction({
-        ...mockRawTx,
-        sender_address: mockAddress,
-        recipient_address: "aleo1recipient456",
-      });
+    it("should return null details without fetching when program is not CREDITS", async () => {
+      const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-      const mockTxDetails = getMockedTransactionDetails("at1test123", {
-        fee_value: 3000000,
-        block_hash: "ab1block456",
-      });
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
-
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: outgoingTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
-
-      expect(result.type).toBe("OUT");
-      expect(result.recipients).toEqual(["aleo1recipient456"]);
-      expect(result.senders).toEqual([mockAddress]);
-    });
-
-    it("should handle failed transaction", async () => {
-      const failedTx = getMockedPublicTransaction({
-        ...mockRawTx,
-        transaction_status: "Rejected",
-      });
-
-      const mockTxDetails = getMockedTransactionDetails("at1test123");
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
-
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: failedTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
-
-      expect(result.hasFailed).toBe(true);
-    });
-
-    it("should handle non-credits program transaction", async () => {
-      const nonCreditsTx = getMockedPublicTransaction({
-        ...mockRawTx,
-        program_id: "custom.aleo",
-      });
-
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: nonCreditsTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
+      const result = await enrichTransaction({ currency: mockCurrency, rawTx });
 
       expect(apiClient.getTransactionById).not.toHaveBeenCalled();
-      expect(result.type).toBe("NONE");
-      expect(result.fee).toEqual(new BigNumber(0));
-      expect(result.blockHash).toBeNull();
-    });
-
-    it("should generate correct operation id", async () => {
-      const mockTxDetails = getMockedTransactionDetails("at1test123");
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
-
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: mockRawTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
-
-      const expectedId = encodeOperationId(mockAccountId, "at1test123", "IN");
-      expect(result.id).toBe(expectedId);
-    });
-
-    it("should parse timestamp correctly", async () => {
-      const mockTxDetails = getMockedTransactionDetails("at1test123");
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
-
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: mockRawTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
-
-      const expectedDate = new Date(Number("1709079312") * 1000);
-      expect(result.date).toEqual(expectedDate);
-    });
-
-    it("should call determineTransactionType with correct parameters", async () => {
-      const mockTxDetails = getMockedTransactionDetails("at1test123");
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
-
-      await parseOperation({
-        currency: mockCurrency,
-        rawTx: mockRawTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
-
-      expect(determineTransactionType).toHaveBeenCalledTimes(1);
-      expect(determineTransactionType).toHaveBeenCalledWith("transfer_public", "IN");
-    });
-
-    it("should handle zero amount transaction", async () => {
-      const zeroAmountTx = getMockedPublicTransaction({
-        ...mockRawTx,
-        amount: 0,
-      });
-
-      const mockTxDetails = getMockedTransactionDetails("at1test123");
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockTxDetails);
-
-      const result = await parseOperation({
-        currency: mockCurrency,
-        rawTx: zeroAmountTx,
-        address: mockAddress,
-        ledgerAccountId: mockAccountId,
-      });
-
-      expect(result.value).toEqual(new BigNumber(0));
+      expect(result).toEqual({ rawTx, details: null });
     });
   });
 });

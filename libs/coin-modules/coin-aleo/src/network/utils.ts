@@ -1,10 +1,10 @@
-import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { PROGRAM_ID } from "../constants";
-import { determineTransactionType } from "../logic/utils";
-import type { AleoOperation, AleoPublicTransaction } from "../types";
+import type {
+  AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
+  EnrichedTransaction,
+} from "../types";
 import { apiClient } from "./api";
 
 function limitTransactions(
@@ -102,49 +102,22 @@ export async function fetchAccountTransactionsFromHeight({
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
 }
 
-export async function parseOperation({
+// transactions list doesn't include all the details we need to build the operation, so we need to fetch them separately
+export async function enrichTransaction({
   currency,
   rawTx,
-  address,
-  ledgerAccountId,
 }: {
   currency: CryptoCurrency;
   rawTx: AleoPublicTransaction;
-  address: string;
-  ledgerAccountId: string;
-}): Promise<AleoOperation> {
-  const timestamp = new Date(Number(rawTx.block_timestamp) * 1000);
-  const hasFailed = rawTx.transaction_status !== "Accepted";
-  let type: OperationType = "NONE";
-  let fee: number = 0;
-  let blockHash: string | null = null;
+}): Promise<EnrichedTransaction> {
+  let details: AleoPublicTransactionDetailsResponse | null = null;
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    const result = await apiClient.getTransactionById(currency, rawTx.transaction_id);
-
-    type = rawTx.recipient_address === address ? "IN" : "OUT";
-    fee = result.fee_value;
-    blockHash = result.block_hash;
+    details = await apiClient.getTransactionById(currency, rawTx.transaction_id);
   }
 
-  const transactionType = determineTransactionType(rawTx.function_id, type);
-
   return {
-    id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
-    recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
-    value: new BigNumber(rawTx.amount),
-    type,
-    hasFailed,
-    hash: rawTx.transaction_id,
-    fee: new BigNumber(fee),
-    blockHeight: rawTx.block_number,
-    blockHash,
-    accountId: ledgerAccountId,
-    date: timestamp,
-    extra: {
-      functionId: rawTx.function_id,
-      transactionType,
-    },
+    rawTx,
+    details,
   };
 }
