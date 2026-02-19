@@ -35,6 +35,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     finalAmount,
     operation,
   } = swapOperation;
+  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = useMemo(
     () => accounts.find(a => a.id === fromAccountId),
@@ -108,7 +109,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
         </View>
         <LText style={styles.toAmount} color={statusColorKey}>
           {toAccount && unitTo ? (
-            <CurrencyUnitValue alwaysShowSign showCode unit={unitTo} value={finalAmount ?? toAmount} />
+            <CurrencyUnitValue alwaysShowSign showCode unit={unitTo} value={displayToAmount} />
           ) : null}
         </LText>
         <View style={styles.statusTextWrapper}>

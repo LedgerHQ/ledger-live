@@ -125,6 +125,7 @@ const SwapOperationDetails = ({
     toAmount,
     finalAmount,
   } = mappedSwapOperation;
+  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const fromAccountName = useAccountName(fromAccount);
   const toAccountName = useAccountName(toAccount);
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
@@ -263,7 +264,7 @@ const SwapOperationDetails = ({
             unit={toUnit}
             alwaysShowSign
             showCode
-            val={finalAmount ?? toAmount}
+            val={displayToAmount}
             fontSize={6}
             disableRounding
             color={statusColor}
@@ -422,7 +423,7 @@ const SwapOperationDetails = ({
             <FormattedVal
               unit={toUnit}
               showCode
-              val={finalAmount ?? toAmount}
+              val={displayToAmount}
               fontSize={6}
               disableRounding
               color={"neutral.c70"}
