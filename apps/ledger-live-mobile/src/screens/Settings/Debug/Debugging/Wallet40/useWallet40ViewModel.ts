@@ -12,6 +12,7 @@ export const WALLET_40_PARAMS = [
   { key: "lazyOnboarding", label: "Lazy Onboarding" },
   { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
+  { key: "onboardingWidget", label: "Post-onboarding Widget" },
 ] as const;
 
 type WalletFeatureParamKey = (typeof WALLET_40_PARAMS)[number]["key"];
