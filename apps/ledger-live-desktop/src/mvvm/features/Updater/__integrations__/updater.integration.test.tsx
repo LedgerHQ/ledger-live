@@ -1,8 +1,18 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { UpdaterContext, UpdaterContextType } from "~/renderer/components/Updater/UpdaterContext";
+import { openURL } from "~/renderer/linking";
 import Updater from "../index";
 import { defaultContext } from "../__tests__/helpers";
+import { urls } from "~/config/urls";
+
+jest.mock("~/renderer/linking", () => ({
+  openURL: jest.fn(),
+}));
+
+jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => url,
+}));
 
 const renderWithContext = (overrides: Partial<UpdaterContextType> = {}) =>
   render(
@@ -56,5 +66,13 @@ describe("Updater", () => {
     const button = screen.getByRole("button", { name: /install update and relaunch/i });
     await user.click(button);
     expect(quitAndInstall).toHaveBeenCalledTimes(1);
+  });
+
+  it("should open re-download url when clicking error button", async () => {
+    const { user } = renderWithContext({ status: "error" });
+
+    const button = screen.getByRole("button", { name: /error during update, try again/i });
+    await user.click(button);
+    expect(openURL).toHaveBeenCalledWith(urls.liveHome);
   });
 });
