@@ -1,20 +1,20 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icon, ProgressLoader, Text, Icons } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "~/context/Locale";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTheme } from "styled-components/native";
-import { RecoverBannerType } from "./types";
+import { useDispatch } from "react-redux";
 import { GestureResponderEvent, Linking } from "react-native";
+import { RecoverBannerType } from "./types";
+import { useTranslation } from "~/context/Locale";
 import { getStoreValue, setStoreValue } from "~/store";
-
-enum LedgerRecoverSubscriptionStateEnum {
-  BACKUP_DEVICE_CONNECTION = "BACKUP_DEVICE_CONNECTION",
-  BACKUP_DONE = "BACKUP_DONE",
-  BACKUP_VERIFY_IDENTITY = "BACKUP_VERIFY_IDENTITY",
-  NO_SUBSCRIPTION = "NO_SUBSCRIPTION",
-  STARGATE_SUBSCRIBE = "STARGATE_SUBSCRIBE",
-}
+import {
+  LedgerRecoverSubscriptionStateEnum,
+  LedgerRecoverSubscriptionStateInProgressEnum,
+} from "~/types/recoverSubscriptionState";
+import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 
@@ -33,9 +33,14 @@ function RecoverBanner({ mb, px }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const recoverServices = useFeature("protectServicesMobile");
-
+  const dispatch = useDispatch();
   const bannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
   const protectID = recoverServices?.params?.protectId ?? "protect-prod";
+
+  const { actionsState } = usePostOnboardingHubState();
+  const actionStateRecover = actionsState.find(
+    action => action.id === PostOnboardingActionId.recover,
+  );
 
   const recoverResumeActivatePath = useCustomURI(
     recoverServices,
@@ -45,11 +50,22 @@ function RecoverBanner({ mb, px }: Props) {
   );
 
   const getStorageSubscriptionState = useCallback(async () => {
-    const storage = await getStoreValue("SUBSCRIPTION_STATE", protectID);
+    const storageState = (await getStoreValue(
+      "SUBSCRIPTION_STATE",
+      protectID,
+    )) as LedgerRecoverSubscriptionStateEnum;
     const displayBanner = await getStoreValue("DISPLAY_BANNER", protectID);
-    setStorageData(storage as LedgerRecoverSubscriptionStateEnum);
+    setStorageData(storageState);
     setDisplayBannerData(displayBanner === "true");
-  }, [protectID]);
+    if (
+      storageState !== undefined &&
+      (storageState in LedgerRecoverSubscriptionStateInProgressEnum ||
+        storageState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE) &&
+      actionStateRecover === undefined
+    ) {
+      dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
+    }
+  }, [protectID, dispatch, actionStateRecover]);
 
   const recoverBannerSelected: RecoverBannerType | undefined = useMemo(() => {
     switch (storageData) {
