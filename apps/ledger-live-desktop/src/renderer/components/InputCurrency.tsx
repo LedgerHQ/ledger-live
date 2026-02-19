@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useLayoutEffect, useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { uncontrollable } from "uncontrollable";
 import styled from "styled-components";
@@ -104,10 +104,14 @@ function InputCurrency(props: Props) {
     ...rest
   } = props;
 
-  const [state, setState] = useState<InputState>({
-    isFocused: false,
-    displayValue: "",
-    rawValue: "",
+  const [state, setState] = useState<InputState>(() => {
+    const isFocused = !!autoFocus;
+    const initialValue = value ?? null;
+    const displayValue =
+      !initialValue || (initialValue.isZero() && !allowZero)
+        ? ""
+        : format(unit, initialValue, { locale, isFocused, showAllDigits, subMagnitude });
+    return { isFocused, displayValue, rawValue: "" };
   });
 
   const syncInput = useCallback(
@@ -131,25 +135,9 @@ function InputCurrency(props: Props) {
     [unit, locale, showAllDigits, subMagnitude, allowZero, value],
   );
 
-  // Mount: sync with initial focus state
-  useEffect(() => {
-    const isFocused = !!autoFocus;
-    const valueFromRaw = value ?? null;
-    const displayValue =
-      !valueFromRaw || (valueFromRaw.isZero() && !allowZero)
-        ? ""
-        : format(unit, valueFromRaw, {
-            locale,
-            isFocused,
-            showAllDigits,
-            subMagnitude,
-          });
-    setState(prev => ({ ...prev, isFocused, displayValue }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // When value/unit/showAllDigits change and not focused, reformat display
-  useEffect(() => {
+  // Synchronously reformat display when value/unit change while not focused
+  // (useLayoutEffect matches the old UNSAFE_componentWillReceiveProps timing)
+  useLayoutEffect(() => {
     setState(prev => {
       if (prev.isFocused) return prev;
       const displayValue =
