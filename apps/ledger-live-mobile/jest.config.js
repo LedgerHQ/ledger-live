@@ -52,6 +52,7 @@ const transformIncludePatterns = [
 module.exports = {
   verbose: true,
   preset: "react-native",
+  workerIdleMemoryLimit: "1GB",
   modulePaths: [compilerOptions.baseUrl],
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
