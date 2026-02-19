@@ -1,8 +1,5 @@
 {
   "data": {
-    "PLAYWRIGHT_RUN": {
-      "localStorage": { "acceptedTermsVersion": "2042-01-01" }
-    },
     "settings": {
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
