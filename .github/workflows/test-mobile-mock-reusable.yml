@@ -393,7 +393,7 @@ jobs:
       - name: Start mitmproxy to capture requests
         run: |
           # Start mitmproxy in REGULAR mode (not transparent)
-          mitmdump --set confdir=~/.mitmproxy \
+          mitmproxy --set confdir=~/.mitmproxy \
             --listen-host 0.0.0.0 \
             --listen-port 8080 \
             --mode regular \
@@ -412,6 +412,20 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Stop mitmproxy and save dump
+        if: always() && steps.detox.outcome != 'skipped'
+        run: |
+          if [ -f /tmp/mitmproxy.pid ]; then
+            kill $(cat /tmp/mitmproxy.pid) 2>/dev/null || true
+            sleep 2
+          fi
+
+          # Convert binary dump to readable format
+          if [ -f /tmp/mitmproxy_dump.mitm ]; then
+            mitmdump -nr /tmp/mitmproxy_dump.mitm -w /tmp/mitmproxy_dump.txt 2>/dev/null || echo "Failed to convert dump"
+          fi
+        shell: bash
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
