@@ -44,12 +44,12 @@ describe("useNavigationBarHeights", () => {
   });
 
   describe("when lwmWallet40 feature flag is enabled", () => {
-    it("should calculate top height as insets.top + 60", () => {
+    it("should calculate top height including the insets top", () => {
       const { result } = renderHook(() => useNavigationBarHeights(), {
         overrideInitialState: withTabBarVisibility(true),
       });
 
-      expect(result.current.top).toBe(104); // 44 + 60
+      expect(result.current.top).toBe(124);
     });
 
     it("should return TAB_BAR_HEIGHT when tab bar is visible", () => {

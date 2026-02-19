@@ -1,11 +1,20 @@
 import { useMemo } from "react";
+import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
 
-const TOP_BAR_HEIGHT = 60;
+export const TOP_BAR_CONTENT_HEIGHT = 48;
+export const TOP_BAR_WRAPPER_PADDING_TOP = 8;
+const TOP_BAR_BAR_BOTTOM_PADDING = 8;
+const TOP_BAR_BAR_HEIGHT =
+  TOP_BAR_WRAPPER_PADDING_TOP + TOP_BAR_CONTENT_HEIGHT + TOP_BAR_BAR_BOTTOM_PADDING;
+const IOS_BLUR_EXTRA_HEIGHT = 16;
+const ANDROID_GRADIENT_EXTRA_HEIGHT = 4;
+const MAIN_NAV_TOP_BAR_HEIGHT_IOS = TOP_BAR_BAR_HEIGHT + IOS_BLUR_EXTRA_HEIGHT;
+const MAIN_NAV_TOP_BAR_HEIGHT_ANDROID = TOP_BAR_BAR_HEIGHT + ANDROID_GRADIENT_EXTRA_HEIGHT;
 
 export interface NavigationBarHeights {
   readonly top: number;
@@ -29,19 +38,22 @@ export interface NavigationBarHeights {
  * };
  * ```
  *
- * @returns `{ top: number, bottom: number }` - Top includes safe area + 60px, bottom is 56px or 0
+ * @returns `{ top: number, bottom: number }` - Top is safe area + 80px (iOS) or 68px (Android), bottom is 56px or 0
  */
 export function useNavigationBarHeights(): NavigationBarHeights {
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
   const insets = useSafeAreaInsets();
   const isTabBarVisible = useSelector(isMainNavigatorVisibleSelector);
 
+  const topBarHeight =
+    Platform.OS === "ios" ? MAIN_NAV_TOP_BAR_HEIGHT_IOS : MAIN_NAV_TOP_BAR_HEIGHT_ANDROID;
+
   const result = useMemo(
     () => ({
-      top: insets.top + TOP_BAR_HEIGHT,
+      top: insets.top + topBarHeight,
       bottom: isTabBarVisible ? TAB_BAR_HEIGHT : 0,
     }),
-    [insets.top, isTabBarVisible],
+    [insets.top, topBarHeight, isTabBarVisible],
   );
 
   if (!isWallet40Enabled) {
