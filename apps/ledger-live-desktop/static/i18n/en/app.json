@@ -8100,5 +8100,11 @@
         "private": "Private"
       }
     }
+  },
+  "updater": {
+    "newUpdateAvailable": "New update available",
+    "downloadProgress": "{{progress}}%",
+    "errorTryAgain": "Error during update, try again",
+    "installAndRelaunch": "Install update and relaunch"
   }
 }

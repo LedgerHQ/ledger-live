@@ -227,7 +227,7 @@ const MainAppContent = ({
 
     <Page>
       <TopBannerContainer>
-        <UpdateBanner />
+        {!shouldDisplayWallet40MainNav && <UpdateBanner />}
         <FirmwareUpdateBanner />
         <VaultSignerBanner />
       </TopBannerContainer>
