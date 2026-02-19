@@ -86,11 +86,9 @@ const maybeGetUpdatedSwapHistory = async (
 
         if (newStatus) {
           const statusChanged = newStatus.status !== swap.status;
-          const hasValidFinalAmount =
-            newStatus.finalAmount != null && newStatus.finalAmount !== "";
+          const hasValidFinalAmount = newStatus.finalAmount != null && newStatus.finalAmount !== "";
           const finalAmountChanged =
-            hasValidFinalAmount &&
-            newStatus.finalAmount !== swap.finalAmount?.toString();
+            hasValidFinalAmount && newStatus.finalAmount !== swap.finalAmount?.toString();
 
           if (statusChanged || finalAmountChanged) {
             accountNeedsUpdating = true;
