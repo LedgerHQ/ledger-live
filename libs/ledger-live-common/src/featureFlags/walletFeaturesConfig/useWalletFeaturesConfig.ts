@@ -41,6 +41,9 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
+      shouldDisplayOnboardingWidget:
+        isEnabled &&
+        Boolean(params && "onboardingWidget" in params && params.onboardingWidget),
     };
   }, [walletFeatureFlag]);
 };
