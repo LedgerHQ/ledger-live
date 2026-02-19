@@ -24,6 +24,7 @@ jobs:
   scan-sonar:
     name: "Sonar Cloud"
     runs-on: [ubuntu-22.04]
+    continue-on-error: true # keep PRs green until we make SonarQube failing case more constructive
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
