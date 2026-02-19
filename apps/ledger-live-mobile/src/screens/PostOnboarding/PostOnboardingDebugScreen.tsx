@@ -1,6 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices/index";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
+import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingEntryPointCard from "~/components/PostOnboarding/PostOnboardingEntryPointCard";
@@ -8,11 +9,24 @@ import SettingsRow from "~/components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { NavigatorName } from "~/const";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
-import { ScrollView } from "react-native";
+import { usePostOnboardingHubCompletionContext } from "~/logic/postOnboarding/usePostOnboardingHubCompletionContext";
+import { setStoreValue } from "~/store";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { removePostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { useDispatch } from "~/context/hooks";
 
 export default () => {
   const navigation = useNavigation();
   const startPostOnboarding = useStartPostOnboardingCallback();
+  const dispatch = useDispatch();
+
+  const { protectId } = usePostOnboardingHubCompletionContext();
+  const setRecoverState = async (input: LedgerRecoverSubscriptionStateEnum) => {
+    await setStoreValue("SUBSCRIPTION_STATE", String(input), protectId);
+
+    dispatch(removePostOnboardingActionCompleted({ actionId: PostOnboardingActionId.recover }));
+  };
 
   const handleInitPostOnboardingHub = useCallback(
     (deviceId: DeviceModelId, mock: boolean) =>
@@ -58,6 +72,22 @@ export default () => {
           onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoX, true)}
         />
         <SettingsRow title="Open post onboarding hub" onPress={navigateToPostOnboardingHub} />
+
+        <SettingsRow
+          title="Recover - No Subscription"
+          desc="Set recover local state to no subscription"
+          onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION)}
+        />
+        <SettingsRow
+          title="Recover - In Progress"
+          desc="Set recover local state to being in progress"
+          onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY)}
+        />
+        <SettingsRow
+          title="Recover - Complete"
+          desc="Set recover local state to being complete"
+          onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)}
+        />
         <Flex m={6}>
           <PostOnboardingEntryPointCard />
         </Flex>
