@@ -406,8 +406,8 @@ describe("useQuickActions", () => {
       expect(actionTitles).toContain("Buy a Ledger");
     });
 
-    it("should open connect device modal when connect action is triggered", () => {
-      const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
+    it("should navigate to device selection when connect action is triggered", () => {
+      const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
           settings: { hasCompletedOnboarding: false },
@@ -418,8 +418,8 @@ describe("useQuickActions", () => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(store.getState().modals).toMatchObject({
-        MODAL_CONNECT_DEVICE: { isOpened: true },
+      expect(mockNavigate).toHaveBeenCalledWith("/onboarding/select-device", {
+        state: { fromQuickAction: true },
       });
     });
 

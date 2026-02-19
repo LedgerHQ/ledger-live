@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-stabilize mad test on desktop
+Connect quick action now navigates to device selection screen instead of opening connect device modal

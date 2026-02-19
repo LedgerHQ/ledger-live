@@ -110,8 +110,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       page: trackingPageName,
     });
 
-    dispatch(openModal("MODAL_CONNECT_DEVICE", { onResult: () => {} }));
-  }, [dispatch, trackingPageName]);
+    navigate("/onboarding/select-device", { state: { fromQuickAction: true } });
+  }, [navigate, trackingPageName]);
 
   const onBuyALedger = useCallback(() => {
     track("button_clicked", {
