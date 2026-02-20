@@ -51,7 +51,7 @@ describe("MyTest", () => {
 
 **Instead:** Use `jest.clearAllMocks()` to clear call history only, or `mock.mockReset()` for specific mocks. Restore only spies you created: `mySpy.mockRestore()` in `afterEach`.
 
-### 4. Call `jest.clearAllMocks()` after setting mock return values
+### 4. Call `jest.clearAllMocks()` after setting mock return values (in same `beforeEach`)
 
 **Avoid:**
 
@@ -62,18 +62,32 @@ beforeEach(() => {
 });
 ```
 
-**Instead:** Clear first, then configure:
+**Instead:** Either clear first then configure, or clean up in `afterEach`:
 
 ```ts
+// Option A: clear first, then configure
 beforeEach(() => {
   jest.clearAllMocks();
   jest.mocked(useNavigation).mockReturnValue(mockNav); // ✅
+});
+
+// Option B: configure before, clean up after
+beforeEach(() => {
+  jest.mocked(useNavigation).mockReturnValue(mockNav);
+});
+afterEach(() => {
+  jest.clearAllMocks(); // ✅
+});
+
+// Option C: mockReturnValueOnce when possible (no cleanup needed)
+beforeEach(() => {
+  jest.mocked(useNavigation).mockReturnValueOnce(mockNav); // ✅
 });
 ```
 
 ## Do
 
-- Use `jest.clearAllMocks()` in `beforeEach` when you need a clean slate.
-- Use `jest.mocked(x).mockReturnValue(...)` in `beforeEach` for per-test customization.
+- **Configure before, clean up after:** Use `beforeEach` to set mock return values, `afterEach` with `jest.clearAllMocks()` to reset.
+- **Prefer `mockReturnValueOnce` when possible** — no cleanup needed.
 - Restore only spies you created in `afterEach`: `platformSpy?.mockRestore()`.
 - Add `beforeEach(() => jest.clearAllMocks())` to integration tests that may be affected by shared state.
