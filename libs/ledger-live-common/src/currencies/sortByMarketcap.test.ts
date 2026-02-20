@@ -16,7 +16,6 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "osmo",
     "axelar",
     "persistence",
-    "onomy",
     "mantra",
     "crypto_org",
     "xion",
