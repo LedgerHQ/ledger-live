@@ -224,15 +224,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "onomy",
-    ticker: "NOM",
-    name: "Onomy",
-    family: "cosmos",
-    color: "#8c94d3",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "quicksilver",
     ticker: "QCK",
     name: "Quicksilver",
