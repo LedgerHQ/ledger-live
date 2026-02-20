@@ -14,6 +14,7 @@ import {
   patchAccountWithViewKey,
   toAlpacaOperation,
   toBridgeOperation,
+  generateUniqueUsername,
 } from "./utils";
 
 jest.mock("../config");
@@ -349,5 +350,29 @@ describe("toBridgeOperation", () => {
     expect(result.id).toBe(
       encodeOperationId(ledgerAccountId, enriched.rawTx.transaction_id, "OUT"),
     );
+  });
+
+  describe("generateUniqueUsername", () => {
+    it("should generate a SHA-256 hash from timestamp and address", () => {
+      const mockAddress = "aleo1test123";
+      const result = generateUniqueUsername(mockAddress);
+
+      expect(result).toHaveLength(64);
+      expect(result).toMatch(/^[a-f0-9]{64}$/);
+    });
+
+    it("should generate unique hashes for different addresses", () => {
+      const address1 = "aleo1address1";
+      const address2 = "aleo1address2";
+
+      const result1 = generateUniqueUsername(address1);
+      const result2 = generateUniqueUsername(address2);
+
+      expect(result1).toHaveLength(64);
+      expect(result2).toHaveLength(64);
+      expect(result1).toMatch(/^[a-f0-9]{64}$/);
+      expect(result2).toMatch(/^[a-f0-9]{64}$/);
+      expect(result1).not.toBe(result2);
+    });
   });
 });

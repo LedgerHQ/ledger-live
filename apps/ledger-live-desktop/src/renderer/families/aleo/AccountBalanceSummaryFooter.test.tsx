@@ -22,6 +22,7 @@ describe("AccountBalanceSummaryFooter", () => {
     spendableBalance: mockSpendableBalance,
     aleoResources: {
       transparentBalance: mockTransparentBalance,
+      provableApi: null,
     },
   };
 
