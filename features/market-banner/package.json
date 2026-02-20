@@ -6,8 +6,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint --max-warnings=99999  src",
+    "lint:fix": "oxlint --fix --max-warnings=99999  .",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"

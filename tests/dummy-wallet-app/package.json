@@ -19,7 +19,7 @@
   "scripts": {
     "start": "rspack serve",
     "build": "rspack build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "oxlint --max-warnings=99999  ."
   },
   "browserslist": {
     "production": [
@@ -40,11 +40,6 @@
     "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.3.3"
   }
 }

@@ -64,8 +64,7 @@ coverage/
 **/fastlane/Appfile
 **/fastlane/Matchfile
 **/fastlane/certs
-**/fastlane/**,
-**/fastlane/**}
+**/fastlane/**
 **/fastlane/test_output
 
 

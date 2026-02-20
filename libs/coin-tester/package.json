@@ -9,8 +9,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint .",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint --max-warnings=99999  .",
+    "lint:fix": "oxlint --fix --max-warnings=99999  ."
   },
   "dependencies": {
     "axios": "catalog:",

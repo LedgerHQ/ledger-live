@@ -67,7 +67,7 @@ jobs:
       - name: typecheck
         run: pnpm desktop typecheck
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        name: upload eslint json output
+        name: upload lint json output
         if: ${{ !cancelled() }}
         with:
           name: lint-desktop
@@ -399,35 +399,54 @@ jobs:
             ${{ steps.comment.outputs.body }}
             `
 
-            // Store eslint results as annotations
+            // Store lint results as annotations (supports Oxlint JSON format)
             let annotations = []
             try {
-              const lintResult = require("./lint-desktop.json");
-              const LEVELS = {
-                0: "notice",
-                1: "warning",
-                2: "failure"
-              };
-              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
-              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
-                messages.map((m) => {
-                  const sameLine = m.line === m.endLine;
+              const lintPath = fs.existsSync("./apps/ledger-live-desktop/lint-desktop.json")
+                ? "./apps/ledger-live-desktop/lint-desktop.json"
+                : "./lint-desktop.json";
+              const lintResult = require(path.resolve(lintPath));
+              const LEVEL = { "error": "failure", "warn": "warning", "warning": "warning" };
+              if (lintResult.diagnostics) {
+                // Oxlint format: { diagnostics: [ { filename, message, code, severity, labels: [{ span: { line, column } }] } ] }
+                annotations = lintResult.diagnostics.map((d) => {
+                  const span = d.labels?.[0]?.span ?? {};
+                  const line = span.line ?? 1;
+                  const column = span.column ?? 1;
+                  const filePath = d.filename?.startsWith("src/") ? path.join(process.env.GITHUB_WORKSPACE, "apps/ledger-live-desktop", d.filename) : d.filename;
                   return {
                     path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
-                    start_line: m.line,
-                    end_line: m.endLine,
-                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
-                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
-                    start_column: sameLine ? m.column : undefined,
-                    end_column: sameLine ? m.endColumn : undefined,
-                    annotation_level: LEVELS[m.severity],
-                    message: m.message,
-                    title: m.ruleId,
-                  }
-                })
-              );
+                    start_line: line,
+                    end_line: line,
+                    start_column: column,
+                    end_column: column,
+                    annotation_level: LEVEL[d.severity] || "notice",
+                    message: d.message,
+                    title: d.code || "lint",
+                  };
+                });
+              } else {
+                // Legacy ESLint format
+                const LEVELS = { 0: "notice", 1: "warning", 2: "failure" };
+                const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+                annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
+                  messages.map((m) => {
+                    const sameLine = m.line === m.endLine;
+                    return {
+                      path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
+                      start_line: m.line,
+                      end_line: m.endLine,
+                      start_column: sameLine ? m.column : undefined,
+                      end_column: sameLine ? m.endColumn : undefined,
+                      annotation_level: LEVELS[m.severity],
+                      message: m.message,
+                      title: m.ruleId,
+                    };
+                  })
+                );
+              }
             } catch(error) {
-              console.error("Failed processing eslint annotations", error)
+              console.error("Failed processing lint annotations", error)
             }
 
             const output = {

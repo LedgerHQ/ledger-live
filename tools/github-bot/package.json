@@ -15,8 +15,8 @@
     "watch": "tsc --watch",
     "dev": "nodemon",
     "start": "probot run ./lib/index.js",
-    "lint": "eslint src --ext .json,.ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint --max-warnings=99999  src",
+    "lint:fix": "oxlint --fix --max-warnings=99999  src",
     "_test": "jest"
   },
   "dependencies": {
