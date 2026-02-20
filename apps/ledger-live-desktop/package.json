@@ -48,7 +48,7 @@
     "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
     "test:playwright:clean": "git clean -fdX tests/artifacts",
-    "typecheck": "node scripts/typecheck.js",
+    "typecheck": "tsgo --noEmit",
     "check": "pnpm lint; pnpm typecheck",
     "assets:replace": "zx ./scripts/replace-assets.mjs",
     "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-desktop",

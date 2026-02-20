@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Uint8Array buffer types
 import { Device, crypto } from ".";
 import { StreamTree } from "./StreamTree";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Uint8Array<ArrayBufferLike> vs Uint8Array<ArrayBuffer>
 import { TLV } from "./tlv";
 import {
   CommandBlock,

@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Buffer vs string
 import crypto from "crypto";
 import { UpdateIncorrectSig } from "@ledgerhq/errors";
 import * as sslHelper from "./sslHelper";

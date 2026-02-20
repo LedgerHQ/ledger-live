@@ -10,12 +10,12 @@
     ],
     "skipLibCheck": true,
     "noEmit": true,
-    "baseUrl": ".",
     "typeRoots": [
       "./types",
       "./node_modules/@types"
     ],
     "paths": {
+      "*": ["./*"],
       "LLM/*": [
         "../../apps/ledger-live-mobile/src/mvvm/*"
       ],

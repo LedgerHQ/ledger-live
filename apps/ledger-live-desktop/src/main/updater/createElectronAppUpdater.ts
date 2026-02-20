@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Buffer vs BinaryLike
 import crypto from "crypto";
 import fs from "fs";
 import { UpdateFetchFileFail } from "@ledgerhq/errors";

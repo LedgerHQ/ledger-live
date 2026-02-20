@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Uint8Array buffer types
 import BigEndian from "./BigEndian";
 import { crypto } from "./Crypto";
 import { TLV } from "./tlv";

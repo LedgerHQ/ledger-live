@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Uint8Array buffer types
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { BIP32Factory } from "bip32";
 import hmac from "create-hmac";

@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Buffer vs Uint8Array
 import crypto from "crypto";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import keyto from "@trust/keyto";

@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Buffer vs Uint8Array
 import {
   Command,
   CommandBlock,

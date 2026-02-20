@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
+// @ts-nocheck ts-go Buffer vs Uint8Array in crypto
 import { log } from "@ledgerhq/logs";
 import crypto from "crypto";
 

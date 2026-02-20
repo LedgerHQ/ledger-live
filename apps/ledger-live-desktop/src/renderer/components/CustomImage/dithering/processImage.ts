@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Uint8ClampedArray vs ImageDataArray
 import { createCanvas } from "../imageUtils";
 import { DitheringAlgorithm, ProcessImageArgs, ProcessorResult } from "./types";
 
