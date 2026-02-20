@@ -8,7 +8,7 @@ const memoize = <T extends (arg: string) => ReturnType<T>>(fn: T): T => {
   }) as T;
 };
 
-const options = {
+const options: Intl.NumberFormatOptions = {
   style: "currency",
   currency: "USD",
 };

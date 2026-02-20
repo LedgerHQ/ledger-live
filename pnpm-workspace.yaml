@@ -15,6 +15,7 @@ packages:
   - "docs"
 
 catalog:
+  "@typescript/native-preview": "latest"
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 1.14.0
   "@ledgerhq/crypto-icons": "1.4.0"

@@ -73,6 +73,7 @@
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bchaddrjs": "^0.4.3",
     "@types/bs58": "catalog:",

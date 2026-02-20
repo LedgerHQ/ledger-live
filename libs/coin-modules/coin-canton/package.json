@@ -112,6 +112,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
@@ -136,7 +137,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "unimported"
   }
 }

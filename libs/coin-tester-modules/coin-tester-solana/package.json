@@ -51,7 +51,7 @@
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --runInBand",
     "unimported": "unimported"
   },
@@ -72,6 +72,7 @@
     "msw": "catalog:"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "rimraf": "^5",

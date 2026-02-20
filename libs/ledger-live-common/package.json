@@ -324,6 +324,7 @@
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",
     "ts-node": "^10.4.0",
+    "@typescript/native-preview": "catalog:",
     "typescript": "5.4.3",
     "undici": "catalog:",
     "uuid": "^8.3.2",

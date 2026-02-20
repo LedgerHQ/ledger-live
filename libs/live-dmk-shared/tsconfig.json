@@ -9,7 +9,9 @@
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib-es",
-    "baseUrl": ".",
+    "paths": {
+      "*": ["./*"]
+    },
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "module": "esnext",

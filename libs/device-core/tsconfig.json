@@ -6,9 +6,19 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
-    "baseUrl": "."
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    }
   },
-  "include": ["src/**/*", "src/index.ts"]
+  "include": [
+    "src/**/*",
+    "src/index.ts"
+  ]
 }

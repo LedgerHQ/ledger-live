@@ -4,7 +4,6 @@
     "declaration": true,
     "declarationMap": true,
     "jsx": "react",
-    "baseUrl": ".",
     "rootDir": "./src",
     "outDir": ".",
     "noEmit": true,
@@ -13,10 +12,23 @@
     "target": "esnext",
     "skipLibCheck": true,
     "paths": {
-      "react": ["../../../../node_modules/@types/react"],
-      "@types/react": ["../../../../node_modules/@types/react"]
+      "*": [
+        "./*"
+      ],
+      "react": [
+        "../../../../node_modules/@types/react"
+      ],
+      "@types/react": [
+        "../../../../node_modules/@types/react"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "react", "native"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "react",
+    "native"
+  ]
 }

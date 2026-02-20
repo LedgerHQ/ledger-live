@@ -200,6 +200,10 @@ pnpm run test --continue --filter="!./apps/*" --filter="...[HEAD~1]"
 pnpm typecheck --filter="live-mobile"
 ```
 
+### Type checking
+
+Most packages use [TypeScript-Go](https://github.com/microsoft/typescript-go) (`tsgo`) for type checking via the `@typescript/native-preview` package. A few packages still use the Node `tsc` compiler (e.g. `ledger-live-desktop` and `ledger-live-mobile-e2e-tests` use custom scripts that rely on the TypeScript API; some coin/hw packages use `tsc` due to Buffer/typing differences with ts-go). For intentional differences between ts-go and TypeScript 6.0, see [CHANGES.md](https://github.com/microsoft/typescript-go/blob/main/CHANGES.md).
+
 ## Documentation
 
 Each project folder has a `README.md` file which contains basic documentation.

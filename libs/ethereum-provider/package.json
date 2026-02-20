@@ -23,6 +23,7 @@
     "events": "^3.3.0"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@types/events": "^3.0.3",
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:"
@@ -32,7 +33,7 @@
     "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc --emitDeclarationOnly && node scripts/build-umd-json.mjs",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "unimported"
   }
 }

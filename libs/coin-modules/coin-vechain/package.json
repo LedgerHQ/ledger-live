@@ -87,7 +87,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "test": "jest --passWithNoTests",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "unimported": "unimported"
@@ -108,6 +108,7 @@
     "@vechain/sdk-network": "2.0.0"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@faker-js/faker": "^9.6.0",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

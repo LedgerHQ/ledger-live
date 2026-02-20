@@ -21,7 +21,7 @@
     "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "zx ./scripts/build.mjs",
     "watch": "rslib build --watch",
-    "typecheck": "tsc --project src/tsconfig.json --noEmit",
+    "typecheck": "tsgo --project src/tsconfig.json --noEmit",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "zx ./scripts/test.mjs"
@@ -76,6 +76,7 @@
     "@zondax/ledger-live-icp": "1.4.1"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@pnpm/exportable-manifest": "1000.0.7",

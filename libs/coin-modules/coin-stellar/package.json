@@ -31,7 +31,7 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "unimported"
   },
   "publishConfig": {
@@ -136,6 +136,7 @@
     "@exodus/patch-broken-hermes-typed-arrays": "1.0.0-alpha.1"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@faker-js/faker": "^8.4.1",
     "@types/invariant": "^2.2.2",

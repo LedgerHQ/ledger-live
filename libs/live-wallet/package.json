@@ -39,6 +39,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "catalog:",
     "@types/lodash": "4",
@@ -59,7 +60,7 @@
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-wallet",
     "test": "jest",
     "coverage": "jest --coverage"

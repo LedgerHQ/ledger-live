@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "typecheck": "tsc --project ./tsconfig.json --noEmit",
+    "typecheck": "tsgo --project ./tsconfig.json --noEmit",
     "start": "node lib/src/cli.js",
     "start:debug": "node --inspect-brk lib/src/cli.js"
   },
@@ -23,6 +23,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "typecheck": "tsgo --noEmit --project tsconfig.json",
     "test:playwright": "playwright test --config=playwright.config.ts",
     "test:playwright:setup": "playwright install chromium",
     "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
@@ -32,6 +32,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.16",
     "electron": "catalog:",

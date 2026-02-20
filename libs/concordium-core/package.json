@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
@@ -23,6 +23,7 @@
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

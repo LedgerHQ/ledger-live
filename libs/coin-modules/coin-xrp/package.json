@@ -112,6 +112,7 @@
     "ripple-binary-codec": "^1.3.0"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -140,7 +141,7 @@
     "test-watch": "jest --watch",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "test-integ:debug": "DOTENV_CONFIG_PATH=.env.integ.test node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "unimported"
   }
 }

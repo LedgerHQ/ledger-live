@@ -7,13 +7,24 @@
     "noImplicitThis": true,
     "downlevelIteration": true,
     "jsx": "react",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
-    "baseUrl": ".",
     "paths": {
-      "react": ["../../node_modules/@types/react"],
-      "@types/react": ["../../node_modules/@types/react"]
+      "*": [
+        "./*"
+      ],
+      "react": [
+        "../../node_modules/@types/react"
+      ],
+      "@types/react": [
+        "../../node_modules/@types/react"
+      ]
     }
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

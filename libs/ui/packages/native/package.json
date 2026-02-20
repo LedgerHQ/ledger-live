@@ -50,7 +50,7 @@
     "release": "yarn publish ./lib --access public",
     "expo-start": "expo start",
     "storybook": "NODE_PATH=./node_modules storybook dev  -c .storybook-web -p 6006",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
     "test": "exit 0",
     "web": "expo start --web",
     "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/native",
@@ -75,6 +75,7 @@
     "styled-components": ">=6.0.0"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@babel/core": "7.28.5",
     "@babel/generator": "7.28.5",
     "@babel/plugin-transform-arrow-functions": "7.27.1",

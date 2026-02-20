@@ -129,7 +129,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -150,6 +150,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",

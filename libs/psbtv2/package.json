@@ -55,6 +55,7 @@
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "@swc/core": "catalog:",
@@ -73,6 +74,6 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   }
 }

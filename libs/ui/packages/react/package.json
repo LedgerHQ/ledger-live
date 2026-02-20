@@ -69,7 +69,7 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
-    "typecheck": "tsc --p . --noEmit",
+    "typecheck": "tsgo --p . --noEmit",
     "test": "pnpm -w -F ui build-and-test",
     "test:jest": "jest --maxWorkers=50%",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",
@@ -98,6 +98,7 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@babel/core": "7.28.5",
     "@babel/preset-env": "7.28.5",
     "@babel/preset-react": "7.28.5",

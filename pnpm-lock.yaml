@@ -198,6 +198,9 @@ catalogs:
     '@typescript-eslint/parser':
       specifier: 8.48.1
       version: 8.48.1
+    '@typescript/native-preview':
+      specifier: latest
+      version: 7.0.0-dev.20260218.1
     allure-js-commons:
       specifier: 3.2.1
       version: 3.2.1
@@ -514,6 +517,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: 'catalog:'
         version: 8.48.1(eslint@8.57.0)(typescript@5.4.3)
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       '@vitest/mocker':
         specifier: 4.0.17
         version: 4.0.17
@@ -721,7 +727,7 @@ importers:
         version: 1000.0.6
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       '@types/asciichart':
         specifier: 1.5.8
         version: 1.5.8
@@ -755,6 +761,9 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
@@ -1967,6 +1976,9 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       babel-jest:
         specifier: 'catalog:'
         version: 30.2.0(@babel/core@7.28.5)
@@ -2253,6 +2265,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
 
   e2e/desktop:
     dependencies:
@@ -2314,6 +2329,9 @@ importers:
       '@types/lodash':
         specifier: 4.17.16
         version: 4.17.16
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       electron:
         specifier: 'catalog:'
         version: 39.2.7
@@ -2593,6 +2611,9 @@ importers:
       '@types/uuid':
         specifier: ^9.0.0
         version: 9.0.8
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -2763,6 +2784,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -2830,6 +2854,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.21
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       eslint-plugin-jest:
         specifier: ^27.4.2
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
@@ -3136,6 +3163,9 @@ importers:
       '@types/sha.js':
         specifier: ^2.4.4
         version: 2.4.4
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       axios:
         specifier: 'catalog:'
         version: 1.13.2
@@ -3212,6 +3242,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -3367,6 +3400,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       axios:
         specifier: 'catalog:'
         version: 1.13.2
@@ -3467,6 +3503,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.179
         version: 4.17.14
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3549,6 +3588,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -3758,6 +3800,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3931,6 +3976,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       eslint-plugin-jest:
         specifier: ^27.4.2
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
@@ -4247,6 +4295,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.14
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -4302,6 +4353,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -4554,6 +4608,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -4666,6 +4723,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       axios:
         specifier: 'catalog:'
         version: 1.13.2
@@ -4766,6 +4826,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -4851,6 +4914,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -4933,6 +4999,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -5258,6 +5327,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -5325,6 +5397,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -5343,12 +5418,12 @@ importers:
 
   libs/coin-modules/zcash-shielded:
     dependencies:
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../live-network
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../coin-bitcoin
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
@@ -5368,6 +5443,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -5478,6 +5556,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -5548,6 +5629,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.11)(typescript@5.6.3))
@@ -5618,6 +5702,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.11)(typescript@5.6.3))
@@ -5682,6 +5769,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16
         version: 16.4.7
@@ -5719,6 +5809,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.19.3
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.19.3)
@@ -5790,6 +5883,9 @@ importers:
       '@types/sha.js':
         specifier: ^2.4.4
         version: 2.4.4
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -5821,6 +5917,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -5943,6 +6042,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -5962,6 +6064,9 @@ importers:
       '@types/events':
         specifier: ^3.0.3
         version: 3.0.3
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
 
   libs/evm-tools:
     dependencies:
@@ -6068,6 +6173,9 @@ importers:
       '@types/secp256k1':
         specifier: ^4.0.6
         version: 4.0.6
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -6123,6 +6231,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       bip39:
         specifier: ^3.0.4
         version: 3.1.0
@@ -6619,6 +6730,9 @@ importers:
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       benchmark:
         specifier: ^2.1.4
         version: 2.1.4
@@ -6728,6 +6842,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -6765,6 +6882,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -9104,6 +9224,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -9153,6 +9276,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -9190,6 +9316,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -9242,6 +9371,9 @@ importers:
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -9315,6 +9447,9 @@ importers:
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -9391,6 +9526,9 @@ importers:
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -9452,6 +9590,9 @@ importers:
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -9488,6 +9629,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -9839,6 +9983,9 @@ importers:
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -9892,6 +10039,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
@@ -9926,6 +10076,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -10226,6 +10379,9 @@ importers:
       '@types/styled-system':
         specifier: ^5.1.13
         version: 5.1.22
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -10524,6 +10680,9 @@ importers:
       '@types/styled-system':
         specifier: ^5.1.12
         version: 5.1.22
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260218.1
       '@vitest/expect':
         specifier: 3.1.1
         version: 3.1.1
@@ -10742,7 +10901,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       '@types/stream-json':
         specifier: 1.7.7
         version: 1.7.7
@@ -10769,7 +10928,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
 
   tools/actions/desktop-report-build:
     devDependencies:
@@ -10781,7 +10940,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
@@ -10796,7 +10955,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
@@ -10826,7 +10985,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       semver:
         specifier: 'catalog:'
         version: 7.7.3
@@ -10841,7 +11000,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       semver:
         specifier: 'catalog:'
         version: 7.7.3
@@ -10856,7 +11015,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
 
   tools/actions/mobile-performance-test:
     dependencies:
@@ -10881,7 +11040,7 @@ importers:
     devDependencies:
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.8.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.8.3)
       '@types/adm-zip':
         specifier: 0.5.7
         version: 0.5.7
@@ -10899,7 +11058,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
 
   tools/actions/submit-bot-report:
     devDependencies:
@@ -10911,7 +11070,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
@@ -10926,7 +11085,7 @@ importers:
         version: 6.0.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
 
   tools/actions/turborepo-s3-cache:
     devDependencies:
@@ -10947,7 +11106,7 @@ importers:
         version: 3.651.1(@aws-sdk/client-s3@3.651.1)
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
       '@types/express':
         specifier: 4.17.21
         version: 4.17.21
@@ -10974,7 +11133,7 @@ importers:
         version: 3.540.0
       '@rslib/core':
         specifier: 'catalog:'
-        version: 0.19.3(typescript@5.4.3)
+        version: 0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
 
   tools/create-release-hash: {}
 
@@ -20264,6 +20423,45 @@ packages:
   '@typescript-eslint/visitor-keys@8.48.1':
     resolution: {integrity: sha512-BmxxndzEWhE4TIEEMBs8lP3MBWN3jFPs/p6gPm/wkv02o41hI6cq9AuSmGAaTTHPtA1FTi2jBre4A9rm5ZmX+Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-ybxez4ClJU12TUvX/IxGPIQfS26+Zia7kbB1L4RH+G8yzYg90RPt4njfJkU2WxP70Hp59zS2copPkaBz5gUJkQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-n9Ki8WTW82w6PlBTlrAQAjEUQB2V7C2oXrkN5U7ElwUH4FOostSFzZHuAdnPMbdzMx76P0pEw9FteYrLDA4m9g==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-Osus82LSlwi1l3LoxLWKDuxh5E8JyWwkseBjr2n+TMaTuDPcRSzT8Jr4ywIp3NJpCUUV/LzR84i64jA6g8iVIw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-WRPMvTztPatQ91UzYWSp82NT45JmjMgo/pVgZjXYEWdF2rwS4ejzR6DnHq30jXhEPnMah1bTeOzSWFF2kvXUmg==}
+    cpu: [arm]
+    os: [linux]
+
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-jcDhKCvhWQyMbra4MiqSgyUoSdM9mAiSkIdc80qScpk03aZOU+BZEmHz51S+fEn+8KRWuMuIHXM3sG3oX/EJZA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-VmWvJ+TEuTPmZrhWe+buvvUvHbMyiD4ZLgxYPdYcJ3kRQlk2mD5lOq63ZISx1pDB8kYz5/R5xYKy/8gSIU5MgQ==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-9zfUrKV3xBog2tpIR9NZOags+QJZSj7v9Ek7KdSkVu978IJqF9RX7oa2xftX+eiHySfV5ZQ8r2fdhdbYBk+kMw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@typescript/native-preview@7.0.0-dev.20260218.1':
+    resolution: {integrity: sha512-hbGRXBk7abFvOQJk/7mc8K9q1kPkiyziyUsS8r8Hc1sLxrDFUbGgsW9p8qg67Xe1K6NUv/9UU2cdeIitUDexIQ==}
+    hasBin: true
 
   '@typespec/ts-http-runtime@0.2.3':
     resolution: {integrity: sha512-oRhjSzcVjX8ExyaF8hC0zzTqxlVuRlgMHL/Bh4w3xB9+wjbm0FpXylVU/lBrn+kgphwYTrOk3tp+AVShGmlYCg==}
@@ -45667,19 +45865,19 @@ snapshots:
       - '@rspack/core'
       - typescript
 
-  '@rslib/core@0.19.3(typescript@5.4.3)':
+  '@rslib/core@0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)':
     dependencies:
       '@rsbuild/core': 1.7.2
-      rsbuild-plugin-dts: 0.19.3(@rsbuild/core@1.7.2)(typescript@5.4.3)
+      rsbuild-plugin-dts: 0.19.3(@rsbuild/core@1.7.2)(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3)
     optionalDependencies:
       typescript: 5.4.3
     transitivePeerDependencies:
       - '@typescript/native-preview'
 
-  '@rslib/core@0.19.3(typescript@5.8.3)':
+  '@rslib/core@0.19.3(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.8.3)':
     dependencies:
       '@rsbuild/core': 1.7.2
-      rsbuild-plugin-dts: 0.19.3(@rsbuild/core@1.7.2)(typescript@5.8.3)
+      rsbuild-plugin-dts: 0.19.3(@rsbuild/core@1.7.2)(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.8.3)
     optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -50143,6 +50341,37 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.48.1
       eslint-visitor-keys: 4.2.1
+
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20260218.1':
+    optional: true
+
+  '@typescript/native-preview@7.0.0-dev.20260218.1':
+    optionalDependencies:
+      '@typescript/native-preview-darwin-arm64': 7.0.0-dev.20260218.1
+      '@typescript/native-preview-darwin-x64': 7.0.0-dev.20260218.1
+      '@typescript/native-preview-linux-arm': 7.0.0-dev.20260218.1
+      '@typescript/native-preview-linux-arm64': 7.0.0-dev.20260218.1
+      '@typescript/native-preview-linux-x64': 7.0.0-dev.20260218.1
+      '@typescript/native-preview-win32-arm64': 7.0.0-dev.20260218.1
+      '@typescript/native-preview-win32-x64': 7.0.0-dev.20260218.1
 
   '@typespec/ts-http-runtime@0.2.3':
     dependencies:
@@ -66528,18 +66757,20 @@ snapshots:
 
   rrweb-cssom@0.8.0: {}
 
-  rsbuild-plugin-dts@0.19.3(@rsbuild/core@1.7.2)(typescript@5.4.3):
+  rsbuild-plugin-dts@0.19.3(@rsbuild/core@1.7.2)(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.4.3):
     dependencies:
       '@ast-grep/napi': 0.37.0
       '@rsbuild/core': 1.7.2
     optionalDependencies:
+      '@typescript/native-preview': 7.0.0-dev.20260218.1
       typescript: 5.4.3
 
-  rsbuild-plugin-dts@0.19.3(@rsbuild/core@1.7.2)(typescript@5.8.3):
+  rsbuild-plugin-dts@0.19.3(@rsbuild/core@1.7.2)(@typescript/native-preview@7.0.0-dev.20260218.1)(typescript@5.8.3):
     dependencies:
       '@ast-grep/napi': 0.37.0
       '@rsbuild/core': 1.7.2
     optionalDependencies:
+      '@typescript/native-preview': 7.0.0-dev.20260218.1
       typescript: 5.8.3
 
   rsbuild-plugin-html-minifier-terser@1.1.3(@rsbuild/core@1.7.2):

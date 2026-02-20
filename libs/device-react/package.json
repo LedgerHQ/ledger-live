@@ -24,6 +24,7 @@
     "@ledgerhq/device-core": "workspace:^"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
@@ -43,7 +44,7 @@
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "unimported",
     "test": "jest",
     "coverage": "jest --coverage"

@@ -4,16 +4,28 @@
     "composite": true,
     "declarationMap": true,
     "jsx": "react",
-    "lib": ["es2019", "dom"],
-    "types": ["jest"],
-    "baseUrl": ".",
+    "lib": [
+      "es2019",
+      "dom"
+    ],
+    "types": [
+      "jest"
+    ],
     "rootDir": "./src",
     "outDir": "./lib",
     "preserveSymlinks": true,
     "moduleResolution": "bundler",
-    "module": "ESNext"
+    "module": "ESNext",
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    }
   },
-  "include": ["src/**/*", "types.d.ts"],
+  "include": [
+    "src/**/*",
+    "types.d.ts"
+  ],
   "exclude": [
     "node_modules",
     "babel.config.js",

@@ -11,7 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "strict": true,
-    "baseUrl": ".",
+    "paths": {
+      "*": ["./*"]
+    },
     "preserveSymlinks": true,
   },
   "include": ["src/**/*", "storybook/**/*"],

@@ -34,6 +34,7 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@types/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -52,7 +53,7 @@
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-countervalues-react",
     "test": "jest",
     "coverage": "jest --coverage"
