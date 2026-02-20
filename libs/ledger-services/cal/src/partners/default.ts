@@ -19,7 +19,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     useInExchangeApp: true,
     displayName: "Exodus",
     termsOfUseUrl: "https://www.exodus.com/terms/",
-    supportUrl: "mailto:support@xopay.com",
+    supportUrl: "mailto:support@xoswap.com",
     mainUrl: "https://www.exodus.com/",
     needsKYC: false,
     version: 2,
