@@ -538,14 +538,13 @@ export async function fetchTronAccountTxs(
         tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
       // and also a duplicated malformed tx that we have to ignore
       const isDuplicated = tx.tx_id;
-      const type = tx.raw_data.contract[0].type;
 
       if (hasInternalTxs) {
         // log once
         log("tron-error", `unsupported transaction ${tx.txID}`);
       }
 
-      return !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract";
+      return !isDuplicated && !hasInternalTxs;
     })
     .map(tx => formatTrongridTxResponse(tx));
 
@@ -621,11 +620,21 @@ export async function fetchTronAccountTxs(
     }
   }
 
-  const trc20Txs = (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse);
-
-  const txInfos: TrongridTxInfo[] = compact(nativeTxs.concat(trc20Txs)).sort(
-    (a, b) => b.date.getTime() - a.date.getTime(),
+  const trc20Txs = compact(
+    (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse),
   );
+  const trc20TxIds = new Set(trc20Txs.map(t => t.txID));
+  const isSuccessfulTriggerSmartContract = (tx: TrongridTxInfo) =>
+    tx.type === "TriggerSmartContract" && !tx.hasFailed;
+  const nativeDeduped = compact(nativeTxs)
+    // remove any trc20 transaction from native
+    .filter(tx => !trc20TxIds.has(tx.txID))
+    // remove any successful TriggerSmartContract from native; successful ones must come from TRC20
+    .filter(tx => !isSuccessfulTriggerSmartContract(tx));
+
+  const txInfos: TrongridTxInfo[] = nativeDeduped
+    .concat(trc20Txs)
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
   return txInfos;
 }
 
