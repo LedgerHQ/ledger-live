@@ -25,9 +25,7 @@ function EarnBackgroundComponent() {
     return colorScheme === "dark";
   }, [colorScheme]);
 
-  const source = useMemo(() => {
-    return require("~/images/liveApps/earn/background-dark.webp");
-  }, []);
+  const source = require("~/images/liveApps/earn/background-dark.webp");
 
   return (
     <View style={styles.container} pointerEvents="none">

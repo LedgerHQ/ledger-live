@@ -33,10 +33,12 @@ export interface NavigationBarHeights {
  *
  * @example
  * ```tsx
- * const { top, bottom } = useNavigationBarHeights();
+ * const { top, bottom, topBarHeight, bottomBarHeight } = useNavigationBarHeights();
  * const webviewInputs = {
  *   paddingTop: top.toString(),
  *   paddingBottom: bottom.toString(),
+ *   topBarHeight: topBarHeight.toString(),
+ *   bottomBarHeight: bottomBarHeight.toString(),
  * };
  * ```
  *

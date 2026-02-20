@@ -48,7 +48,13 @@ function Earn({ route }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
   const insets = useSafeAreaInsets();
-  const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
+  let topBarHeight = 0;
+  let bottomBarHeight = 0;
+  try {
+    ({ topBarHeight, bottomBarHeight } = useNavigationBarHeights());
+  } catch (error) {
+    console.error(error);
+  }
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();

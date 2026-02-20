@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-change control of safeArea on earn mobile - remove background gradient on light mode
+Update safe area handling for Earn (mobile) and remove the light-mode background gradient.
