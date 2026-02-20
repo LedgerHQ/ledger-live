@@ -65,7 +65,7 @@ export const buildSignOperation =
         // Extracted from the payload by removing the callData prefix and includedInSignedData suffix
         const callDataBytesLength = (callData.length - 2) / 2;
         const additionalSignedBytesLength = (includedInSignedData.length - 2) / 2;
-        const extraBytes = payload.slice(
+        const extraBytes = payload.subarray(
           callDataBytesLength,
           payload.length - additionalSignedBytesLength,
         );
