@@ -519,6 +519,11 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             fromCurrencyId: state?.defaultCurrency.fromCurrencyId,
           }
         : {}),
+      ...(state?.defaultAmountFrom
+        ? {
+            amountFrom: state.defaultAmountFrom,
+          }
+        : {}),
       ...(state?.affiliate
         ? {
             affiliate: state.affiliate,
