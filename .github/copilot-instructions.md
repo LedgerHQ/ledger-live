@@ -41,3 +41,7 @@ Only add or edit translation files for the **English** language:
 
 - Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
 - Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`
+
+## Jest Test Mocks
+
+For test file changes, apply the rules in `.github/instructions/jest-mocks.instructions.md`.
