@@ -16,6 +16,7 @@ type SwapLiveUrlParams = {
   amountFrom?: string;
   affiliate?: string;
   toCurrencyId?: string;
+  fromCurrencyId?: string;
   fromPath?: string;
 };
 
@@ -43,6 +44,8 @@ export const useTranslateToSwapAccount = (
     if (params.fromTokenId) newParams.fromTokenId = params.fromTokenId;
     if (params.toTokenId) newParams.toTokenId = params.toTokenId;
     if (params.amountFrom) newParams.amountFrom = params.amountFrom;
+    if (params.toCurrencyId) newParams.toCurrencyId = params.toCurrencyId;
+    if (params.fromCurrencyId) newParams.fromCurrencyId = params.fromCurrencyId;
 
     if (defaultAccount) {
       newParams.toAccountId = walletApi.accountToWalletAPIAccount(
