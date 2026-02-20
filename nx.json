@@ -2,8 +2,12 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
     "sharedGlobals": [
+      "{workspaceRoot}/nx.json",
       "{workspaceRoot}/turbo.json",
       "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/pnpm-lock.yaml",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/pnpm-workspace.yaml",
       {
         "env": "ANDROID_HOME"
       },
@@ -294,15 +298,17 @@
       }
     ],
     "default": [
+      "sharedGlobals",
       "{projectRoot}/**/*",
-      "sharedGlobals"
+      "!{projectRoot}/dist/**",
+      "!{projectRoot}/build/**",
+      "!{projectRoot}/lib/**",
+      "!{projectRoot}/lib-es/**"
     ]
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": [
         "{projectRoot}/dist/**",
         "{projectRoot}/lib/**",
@@ -312,33 +318,43 @@
       "cache": true
     },
     "lint": {
-      "cache": true
+      "cache": true,
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
     },
     "lint:fix": {
-      "cache": true
+      "cache": false
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ],
-      "cache": true
+      "dependsOn": ["^build"],
+      "cache": true,
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
     },
     "test": {
-      "dependsOn": [
-        "build"
-      ],
-      "cache": true
+      "dependsOn": ["build"],
+      "cache": true,
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
     },
     "start": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "start:msw": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "unimported": {
@@ -348,64 +364,43 @@
       "cache": false
     },
     "android:apk:local": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "android:apk": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "ios:local:ipa": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "ios:ci:adhoc": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "nightly": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "pre-build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "release": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "watch": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "watch:es": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "coverage": {
-      "dependsOn": [
-        "^build",
-        "build"
-      ],
+      "dependsOn": ["^build", "build"],
       "outputs": [
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"
@@ -419,5 +414,7 @@
       "cache": false
     }
   },
-  "defaultBase": "develop"
+  "defaultBase": "develop",
+  "useDaemonProcess": false
 }
+

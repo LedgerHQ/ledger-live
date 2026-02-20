@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "build": {
+      "outputs": ["{projectRoot}/lib/**", "{projectRoot}/lib-es/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["build"],
+      "inputs": ["default", {"env": "CI_OS"}]
+    }
+  }
+}
