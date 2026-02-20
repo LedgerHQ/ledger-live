@@ -45,6 +45,7 @@ import {
   validateMarketCurrencyId,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
+import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -635,16 +636,7 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
             if (shouldDisplayMarketBanner) {
-              return {
-                routes: [
-                  {
-                    name: NavigatorName.Base,
-                    state: {
-                      routes: [{ name: ScreenName.MarketList }],
-                    },
-                  },
-                ],
-              };
+              return handleMarketBannerDeeplink();
             }
             return getStateFromPath("market", config);
           }
