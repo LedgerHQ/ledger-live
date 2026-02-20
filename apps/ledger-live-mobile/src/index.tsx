@@ -86,11 +86,11 @@ import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
   DatadogProvider,
-  AutoInstrumentationConfiguration,
   DdSdkReactNative,
   PropagatorType,
+  type AutoInstrumentationConfiguration,
+  type PartialInitializationConfiguration,
 } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 import {
   customActionEventMapper,
   customErrorEventMapper,
@@ -142,18 +142,22 @@ function App() {
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
-      trackErrors: datadogFF?.params?.trackErrors ?? false,
-      trackInteractions: datadogFF?.params?.trackInteractions ?? false,
-      trackResources: datadogFF?.params?.trackResources ?? false,
-      errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
-      actionEventMapper: customActionEventMapper,
-      logEventMapper: customLogEventMapper,
-      firstPartyHosts: [
-        {
-          match: FIRST_PARTY_MAIN_HOST_DOMAIN,
-          propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
-        },
-      ],
+      rumConfiguration: {
+        trackErrors: datadogFF?.params?.trackErrors ?? false,
+        trackInteractions: datadogFF?.params?.trackInteractions ?? false,
+        trackResources: datadogFF?.params?.trackResources ?? false,
+        errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+        actionEventMapper: customActionEventMapper,
+        firstPartyHosts: [
+          {
+            match: FIRST_PARTY_MAIN_HOST_DOMAIN,
+            propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
+          },
+        ],
+      },
+      logsConfiguration: {
+        logEventMapper: customLogEventMapper,
+      },
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
@@ -217,8 +221,10 @@ function App() {
     initializeDatadogProvider(
       {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        ...(datadogFF?.params as PartialInitializationConfiguration),
-        ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
+        ...(datadogFF?.params as Partial<PartialInitializationConfiguration>),
+        ...(Config.FORCE_DATADOG_SAMPLE_RATE_100
+          ? { rumConfiguration: { sessionSampleRate: 100 } }
+          : {}),
       },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     )

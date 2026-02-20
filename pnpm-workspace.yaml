@@ -178,3 +178,6 @@ minimumReleaseAgeExclude:
   - "@ledgerhq/*"
   # Renovate security update: zx@8.8.5
   - zx@8.8.5
+  # Datadog mobile SDK v3
+  - "@datadog/mobile-react-native"
+  - "@datadog/mobile-react-navigation"

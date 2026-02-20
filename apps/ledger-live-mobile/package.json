@@ -79,8 +79,8 @@
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "1.0.2",
     "@braze/react-native-sdk": "18.0.0",
-    "@datadog/mobile-react-native": "2.8.2",
-    "@datadog/mobile-react-navigation": "2.8.2",
+    "@datadog/mobile-react-native": "3.1.2",
+    "@datadog/mobile-react-navigation": "3.1.2",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",
     "@formatjs/intl-relativetimeformat": "11.2.12",

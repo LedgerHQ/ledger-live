@@ -34,7 +34,9 @@ export async function logLastStartupEvents(eventName: LastStartupEvent): Promise
   const isStartupLastCall = lastEventCalls.filter(e => e === eventName).length === 1;
   if (isStartupDone && isStartupLastCall) {
     try {
-      DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
+      DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, {
+        viewNamePredicate,
+      });
       const [events, storageState] = await Promise.all([
         resolveStartupEvents(),
         summarizeStorageData(),

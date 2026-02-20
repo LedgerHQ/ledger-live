@@ -33,7 +33,7 @@ describe("logLastStartupEvents", () => {
     expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledTimes(1);
     expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledWith(
       navigationRef.current,
-      viewNamePredicate,
+      { viewNamePredicate },
     );
 
     expect(track).toHaveBeenCalledTimes(1);

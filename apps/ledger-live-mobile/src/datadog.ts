@@ -1,13 +1,24 @@
 import Config from "react-native-config";
-import { TrackingConsent, DatadogProvider } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import {
+  TrackingConsent,
+  DatadogProvider,
+  type AutoInstrumentationConfiguration,
+  type PartialInitializationConfiguration,
+} from "@datadog/mobile-react-native";
 import { ScreenName } from "./const";
 import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
-import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
-import { ActionEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/actionEventMapper";
-import { LogEventMapper } from "@datadog/mobile-react-native/lib/typescript/logs/types";
+
+type ErrorEventMapper = NonNullable<
+  AutoInstrumentationConfiguration["rumConfiguration"]["errorEventMapper"]
+>;
+type ActionEventMapper = NonNullable<
+  AutoInstrumentationConfiguration["rumConfiguration"]["actionEventMapper"]
+>;
+type LogEventMapper = NonNullable<
+  AutoInstrumentationConfiguration["logsConfiguration"]["logEventMapper"]
+>;
 
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
@@ -17,13 +28,15 @@ const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicatio
 
 export const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
 
-const baseConfig: PartialInitializationConfiguration = {
+const baseConfig = {
   clientToken,
-  applicationId,
   env: Config.DATADOG_ENV || "",
   site: Config.DATADOG_SITE || "",
-  serviceName: Config.APP_NAME || "",
-};
+  service: Config.APP_NAME || "",
+  rumConfiguration: {
+    applicationId,
+  },
+} satisfies PartialInitializationConfiguration;
 
 /**
  * Initializes the Datadog provider with the specified configuration and tracking consent.
@@ -36,16 +49,28 @@ const baseConfig: PartialInitializationConfiguration = {
  * @param trackingConsent - The user's tracking consent status, used to configure Datadog tracking behavior.
  * @returns A promise that resolves when the Datadog provider has been initialized, or immediately if Datadog is not enabled.
  */
+type RemoteConfigOverrides = Omit<
+  Partial<PartialInitializationConfiguration>,
+  "rumConfiguration"
+> & {
+  rumConfiguration?: Partial<NonNullable<PartialInitializationConfiguration["rumConfiguration"]>>;
+};
+
 export const initializeDatadogProvider = async (
-  remoteConfig: Partial<PartialInitializationConfiguration>,
+  remoteConfig: RemoteConfigOverrides,
   trackingConsent: TrackingConsent,
 ) => {
   if (!isDatadogEnabled) {
     return;
   }
+  const { rumConfiguration: remoteRumConfig, ...remoteRest } = remoteConfig;
   await DatadogProvider.initialize({
     ...baseConfig,
-    ...remoteConfig,
+    ...remoteRest,
+    rumConfiguration: {
+      ...baseConfig.rumConfiguration,
+      ...remoteRumConfig,
+    },
     trackingConsent,
   });
 };

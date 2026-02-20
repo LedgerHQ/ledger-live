@@ -61,23 +61,27 @@ PODS:
     - SwiftyRSA (~> 1.7)
     - Yoga
   - CocoaAsyncSocket (7.6.5)
-  - DatadogCore (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogCrashReporting (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - PLCrashReporter (~> 1.12.0)
-  - DatadogInternal (2.27.0)
-  - DatadogLogs (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogRUM (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogSDKReactNative (2.8.2):
-    - DatadogCore (~> 2.27.0)
-    - DatadogCrashReporting (~> 2.27.0)
-    - DatadogLogs (~> 2.27.0)
-    - DatadogRUM (~> 2.27.0)
-    - DatadogTrace (~> 2.27.0)
-    - DatadogWebViewTracking (~> 2.27.0)
+  - DatadogCore (3.5.0):
+    - DatadogInternal (= 3.5.0)
+  - DatadogCrashReporting (3.5.0):
+    - DatadogInternal (= 3.5.0)
+    - KSCrash/Filters (= 2.5.0)
+    - KSCrash/Recording (= 2.5.0)
+  - DatadogFlags (3.5.0):
+    - DatadogInternal (= 3.5.0)
+  - DatadogInternal (3.5.0)
+  - DatadogLogs (3.5.0):
+    - DatadogInternal (= 3.5.0)
+  - DatadogRUM (3.5.0):
+    - DatadogInternal (= 3.5.0)
+  - DatadogSDKReactNative (3.1.2):
+    - DatadogCore (= 3.5.0)
+    - DatadogCrashReporting (= 3.5.0)
+    - DatadogFlags (= 3.5.0)
+    - DatadogLogs (= 3.5.0)
+    - DatadogRUM (= 3.5.0)
+    - DatadogTrace (= 3.5.0)
+    - DatadogWebViewTracking (= 3.5.0)
     - DoubleConversion
     - glog
     - hermes-engine
@@ -101,11 +105,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - DatadogTrace (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - OpenTelemetrySwiftApi (= 1.13.1)
-  - DatadogWebViewTracking (2.27.0):
-    - DatadogInternal (= 2.27.0)
+  - DatadogTrace (3.5.0):
+    - DatadogInternal (= 3.5.0)
+    - OpenTelemetry-Swift-Api (~> 2.3.0)
+  - DatadogWebViewTracking (3.5.0):
+    - DatadogInternal (= 3.5.0)
   - DoubleConversion (1.1.6)
   - EXConstants (17.1.8):
     - ExpoModulesCore
@@ -255,6 +259,17 @@ PODS:
     - hermes-engine/Pre-built (= 0.79.7)
   - hermes-engine/Pre-built (0.79.7)
   - JWTDecode (3.0.1)
+  - KSCrash/Core (2.5.0)
+  - KSCrash/Filters (2.5.0):
+    - KSCrash/Recording
+    - KSCrash/RecordingCore
+    - KSCrash/ReportingCore
+  - KSCrash/Recording (2.5.0):
+    - KSCrash/RecordingCore
+  - KSCrash/RecordingCore (2.5.0):
+    - KSCrash/Core
+  - KSCrash/ReportingCore (2.5.0):
+    - KSCrash/Core
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -299,8 +314,7 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - OpenTelemetrySwiftApi (1.13.1)
-  - PLCrashReporter (1.12.0)
+  - OpenTelemetry-Swift-Api (2.3.0)
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -2937,6 +2951,7 @@ SPEC REPOS:
     - CocoaAsyncSocket
     - DatadogCore
     - DatadogCrashReporting
+    - DatadogFlags
     - DatadogInternal
     - DatadogLogs
     - DatadogRUM
@@ -2955,12 +2970,12 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - JWTDecode
+    - KSCrash
     - libwebp
     - lottie-ios
     - MultiplatformBleAdapter
     - nanopb
-    - OpenTelemetrySwiftApi
-    - PLCrashReporter
+    - OpenTelemetry-Swift-Api
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
@@ -3242,14 +3257,15 @@ SPEC CHECKSUMS:
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   callstack-repack: 884dcac7228f72428bc1aadca034ef410e5eae6a
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
-  DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
-  DatadogInternal: 3c5cae6772295fd175a9de11e4747a9322aaa4e7
-  DatadogLogs: 09d6358dc7682f9d3eaea85dd418f82d2db3560c
-  DatadogRUM: 0f267df8c9c8579a291870c2bce4549587391a07
-  DatadogSDKReactNative: d0f497967719f9e21223ab3a3cdf4758050857a5
-  DatadogTrace: f46c8220c73463d09741013f385a6e27cd39185b
-  DatadogWebViewTracking: dc8376420c8686efd09d00752bc1034b639d180b
+  DatadogCore: 4cbe2646591d2f96fb3188400863ec93ac411235
+  DatadogCrashReporting: e48da3f880a59d2aa2d04e5034e56507177e9d64
+  DatadogFlags: f8cf88371460d6c672abfd97fdc9af5be208f33b
+  DatadogInternal: 63308b529cd87fb2f99c5961d9ff13afb300a3aa
+  DatadogLogs: be538def1d5204e011f7952915ad0261014a0dd5
+  DatadogRUM: cffc65659ce29546fcc2639a74003135259548fc
+  DatadogSDKReactNative: 7b10a196a40e45de3567d2325102bd8c3435acb1
+  DatadogTrace: 085e35f9e4889f82f8a747922c58ea4b19728720
+  DatadogWebViewTracking: 61b8344da898cbaccffc75bc1a17c86175e8573a
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: d3d551cb154718f5161c4247304e96aa59f6cca7
   EXImageLoader: e5da974e25b13585c196b658a440720c075482d5
@@ -3279,13 +3295,13 @@ SPEC CHECKSUMS:
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   hermes-engine: 13c84524b3b6e884b2cf3b3b1e002ffd147d88a3
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
+  KSCrash: 80e1e24eaefbe5134934ae11ca8d7746586bc2ed
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 825856a41d05a933539ea4fdf384d67c10590547
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
-  PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
+  OpenTelemetry-Swift-Api: 3d77582ab6837a63b65bf7d2eacc57d8f2595edd
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: b9b1716eec53aaeaa859aa45e27de7b615cff732
