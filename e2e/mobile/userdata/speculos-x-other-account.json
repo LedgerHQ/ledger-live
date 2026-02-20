@@ -1,10 +1,15 @@
 {
   "data": {
+    "SPECTRON_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2019-12-04"
+      }
+    },
     "settings": {
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
-      "theme": null,
+      "theme": "light",
       "region": null,
       "locale": "en-US",
       "orderAccounts": "balance|desc",
@@ -18,7 +23,13 @@
       "loaded": true,
       "shareAnalytics": false,
       "sharePersonalizedRecommandations": false,
+      "hasSeenAnalyticsOptInPrompt": true,
+      "analyticsEnabled": false,
+      "personalizedRecommendationsEnabled": false,
+      "trackingEnabled": false,
       "sentryLogs": true,
+      "readOnlyModeEnabled": false,
+      "hasOrderedNano": true,
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
       "accountsViewMode": "list",
@@ -26,10 +37,10 @@
       "hideEmptyTokenAccounts": false,
       "sidebarCollapsed": false,
       "discreetMode": false,
-      "preferredDeviceModel": "nanoSP",
+      "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "hasAcceptedSwapKYC": false,
-      "lastSeenDevice": null,
+      "dismissedDynamicCards": [],
+      "seenDevices": [],
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],
       "deepLinkUrl": null,
