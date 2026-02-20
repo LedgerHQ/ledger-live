@@ -17,7 +17,14 @@ const Content = styled.div`
   flex-direction: row;
 `;
 
-const Wrapper = styled(animated.div)<{
+const Wrapper = styled(
+  animated.div as React.ComponentType<
+    React.PropsWithChildren<{
+      style?: object;
+      onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+    }>
+  >,
+)<{
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }>`
   cursor: ${p => (p.onClick ? "pointer" : "auto")};

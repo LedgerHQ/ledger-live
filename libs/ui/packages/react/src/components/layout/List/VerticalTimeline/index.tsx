@@ -23,7 +23,19 @@ export type Props = BaseStyledProps & {
   isNeutral?: boolean;
 };
 
-export default function VerticalTimeline({ steps, onClickIndex, isNeutral, ...props }: Props) {
+type TextComponentProps = React.PropsWithChildren<TextProps>;
+
+export interface VerticalTimelineType extends React.FC<Props> {
+  BodyText: React.FC<TextComponentProps>;
+  SubtitleText: React.FC<TextComponentProps>;
+}
+
+const VerticalTimelineImpl: VerticalTimelineType = function VerticalTimeline({
+  steps,
+  onClickIndex,
+  isNeutral,
+  ...props
+}: Props) {
   return (
     <Flex {...props} flexDirection="column" flex={1}>
       {steps?.map((step, index) => (
@@ -38,15 +50,17 @@ export default function VerticalTimeline({ steps, onClickIndex, isNeutral, ...pr
       ))}
     </Flex>
   );
-}
+};
 
-const SubtitleText: React.FC<TextProps> = props => (
+const SubtitleText: React.FC<TextComponentProps> = props => (
   <Text variant="body" fontWeight="semiBold" color="neutral.c100" mb={3} {...props} />
 );
 
-const BodyText: React.FC<TextProps> = props => (
+const BodyText: React.FC<TextComponentProps> = props => (
   <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c80" {...props} />
 );
 
-VerticalTimeline.BodyText = BodyText;
-VerticalTimeline.SubtitleText = SubtitleText;
+VerticalTimelineImpl.BodyText = BodyText;
+VerticalTimelineImpl.SubtitleText = SubtitleText;
+
+export default VerticalTimelineImpl;

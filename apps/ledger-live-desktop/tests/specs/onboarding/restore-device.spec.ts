@@ -36,6 +36,7 @@ test.describe.parallel("Onboarding", () => {
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
         await onboardingPage.hoverDevice(Nano.nanoS);
+        await onboardingPage.waitForDeviceToBeVisible(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
           animations: "disabled",

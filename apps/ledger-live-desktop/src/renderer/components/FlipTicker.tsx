@@ -76,6 +76,10 @@ class FlipTicker extends PureComponent<Props, State> {
     );
   }
 }
+const AnimatedDiv = animated.div as React.ComponentType<
+  React.PropsWithChildren<{ style: React.CSSProperties }>
+>;
+
 function Tick(props: { height: number; value: string }) {
   const { height, value } = props;
   const index = RANGE_NUMBER.indexOf(value);
@@ -90,7 +94,7 @@ function Tick(props: { height: number; value: string }) {
       }}
     >
       {m => (
-        <animated.div
+        <AnimatedDiv
           style={{
             // @ts-expect-error react-spring types are broken
             transform: m.offset.interpolate(v => `translate3d(0, -${v}px, 0)`),
@@ -99,7 +103,7 @@ function Tick(props: { height: number; value: string }) {
           }}
         >
           {Content}
-        </animated.div>
+        </AnimatedDiv>
       )}
     </Spring>
   );
