@@ -30,7 +30,7 @@ import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
-import { useNavigationBarHeights } from "~/mvvm/hooks/useNavigationBarHeights";
+import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -48,13 +48,7 @@ function Earn({ route }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
   const insets = useSafeAreaInsets();
-  let topBarHeight = 0;
-  let bottomBarHeight = 0;
-  try {
-    ({ topBarHeight, bottomBarHeight } = useNavigationBarHeights());
-  } catch (error) {
-    console.error(error);
-  }
+  const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();

@@ -28,8 +28,7 @@ export interface NavigationBarHeights {
  *
  * Returns top and bottom offsets to account for navigation bars (TopBar + TabBar).
  * Used primarily for PTX WebView screens that need proper content padding.
- *
- * @throws {Error} If the `lwmWallet40` feature flag is not enabled
+ * Returns zero values when the `lwmWallet40` feature flag is disabled.
  *
  * @example
  * ```tsx
@@ -63,11 +62,18 @@ export function useNavigationBarHeights(): NavigationBarHeights {
   );
 
   if (!isWallet40Enabled) {
-    throw new Error(
+    console.error(
       "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled. " +
         "Ensure that any component using this hook is only rendered within Wallet 4.0-gated navigation trees " +
         "where useWalletFeaturesConfig('mobile').isEnabled is true, or handle this error via an error boundary.",
     );
+
+    return {
+      bottom: 0,
+      bottomBarHeight: 0,
+      top: 0,
+      topBarHeight: 0,
+    };
   }
 
   return result;
