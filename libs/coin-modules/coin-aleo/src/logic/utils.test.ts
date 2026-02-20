@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
-import { EXPLORER_TRANSFER_TYPES } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
@@ -15,22 +17,25 @@ import {
   toAlpacaOperation,
   toBridgeOperation,
   generateUniqueUsername,
+  resolveConfig,
+  getTransactionType,
 } from "./utils";
 
+jest.mock("@ledgerhq/cryptoassets/currencies");
 jest.mock("../config");
 
 const mockedAleoConfig = jest.mocked(aleoConfig);
+const mockedGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
+
+const mockCurrency = getMockedCurrency();
+const mockConfig = getMockedConfig("mainnet");
 
 describe("getNetworkConfig", () => {
-  const mockCurrency = getMockedCurrency();
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should return network config with correct structure", () => {
-    const mockConfig = getMockedConfig("mainnet");
-
     mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
 
     const result = getNetworkConfig(mockCurrency);
@@ -43,8 +48,6 @@ describe("getNetworkConfig", () => {
   });
 
   it("should call getCoinConfig with correct currency", () => {
-    const mockConfig = getMockedConfig("testnet");
-
     mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
 
     getNetworkConfig(mockCurrency);
@@ -371,5 +374,71 @@ describe("toBridgeOperation", () => {
       expect(result2).toMatch(/^[a-f0-9]{64}$/);
       expect(result1).not.toBe(result2);
     });
+  });
+});
+
+describe("resolveConfig", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return the config object directly when passed an AleoCoinConfig", () => {
+    const result = resolveConfig(mockConfig);
+
+    expect(result).toBe(mockConfig);
+    expect(mockedGetCryptoCurrencyById).not.toHaveBeenCalled();
+    expect(mockedAleoConfig.getCoinConfig).not.toHaveBeenCalled();
+  });
+
+  it("should resolve config by currency id string using getCryptoCurrencyById and getCoinConfig", () => {
+    mockedGetCryptoCurrencyById.mockReturnValue(mockCurrency);
+    mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
+
+    const result = resolveConfig("aleo");
+
+    expect(mockedGetCryptoCurrencyById).toHaveBeenCalledWith("aleo");
+    expect(mockedAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency);
+    expect(result).toBe(mockConfig);
+  });
+
+  it("should propagate error when getCryptoCurrencyById throws for unknown currency id", () => {
+    mockedGetCryptoCurrencyById.mockImplementation(() => {
+      throw new Error("Currency not found: unknown_currency");
+    });
+
+    expect(() => resolveConfig("unknown_currency")).toThrow("Currency not found: unknown_currency");
+    expect(mockedAleoConfig.getCoinConfig).not.toHaveBeenCalled();
+  });
+
+  it("should propagate error when getCoinConfig throws for currency without config", () => {
+    mockedGetCryptoCurrencyById.mockReturnValue(mockCurrency);
+    mockedAleoConfig.getCoinConfig.mockImplementation(() => {
+      throw new Error("No config for currency: aleo");
+    });
+
+    expect(() => resolveConfig("aleo")).toThrow("No config for currency: aleo");
+  });
+});
+
+describe("getTransactionType", () => {
+  it("should return valid transaction type from intent", () => {
+    // @ts-expect-error - only intent type is required for this test
+    const mockTx: TransactionIntent = { type: TRANSACTION_TYPE.TRANSFER_PUBLIC };
+
+    expect(getTransactionType(mockTx)).toBe(TRANSACTION_TYPE.TRANSFER_PUBLIC);
+  });
+
+  it("should throw invariant error for an unknown transaction type", () => {
+    // @ts-expect-error - testing invalid intent type
+    const mockTx: TransactionIntent = { type: "UNKNOWN" };
+
+    expect(() => getTransactionType(mockTx)).toThrow();
+  });
+
+  it("should throw invariant error for a missing transaction type", () => {
+    // @ts-expect-error - testing invalid intent type
+    const mockTx: TransactionIntent = {};
+
+    expect(() => getTransactionType(mockTx)).toThrow();
   });
 });

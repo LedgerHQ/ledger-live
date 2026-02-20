@@ -1,14 +1,23 @@
 import { createHash } from "crypto";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
-import type { Operation as AlpacaOperation } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Operation as AlpacaOperation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import BigNumber from "bignumber.js";
-import aleoConfig from "../config";
-import { EXPLORER_TRANSFER_TYPES } from "../constants";
-import type { AleoOperation, AleoTransactionType, EnrichedTransaction } from "../types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import aleoConfig, { type AleoCoinConfig } from "../config";
+import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
+import type {
+  AleoOperation,
+  AleoTransactionType,
+  EnrichedTransaction,
+  TransactionType,
+} from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
   const value = microcreditsU64.split(".")[0];
@@ -165,3 +174,21 @@ export const generateUniqueUsername = (address: string): string => {
   const hash = createHash("sha256").update(combined).digest("hex");
   return hash;
 };
+
+export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
+  if (typeof configOrCurrencyId === "string") {
+    const currency = getCryptoCurrencyById(configOrCurrencyId);
+    const config = aleoConfig.getCoinConfig(currency);
+    return config;
+  }
+
+  return configOrCurrencyId;
+}
+
+export function getTransactionType(intent: TransactionIntent): TransactionType {
+  const allowedTransactionTypes = Object.values(TRANSACTION_TYPE);
+  const transactionType = allowedTransactionTypes.find(v => intent.type === v);
+  invariant(transactionType, `aleo: unsupported transaction intent type: ${intent.type}`);
+
+  return transactionType;
+}
