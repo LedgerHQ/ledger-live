@@ -410,6 +410,9 @@ jobs:
             -w /tmp/mitmproxy_dump.mitm &
           echo $! > /tmp/mitmproxy.pid
           sleep 3
+
+          echo "Fetching google webpage"
+          curl https://www.google.com/
         shell: bash
 
       - name: Test iOS app
