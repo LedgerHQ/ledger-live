@@ -5,28 +5,28 @@ import { MockDrawerComponent } from "./shared";
 
 describe("Reborn Buy Device Drawer", () => {
   it("Should render reborn drawer", async () => {
-    const { user, getByTestId } = render(<MockDrawerComponent />);
+    const { user, getByRole, getByTestId } = render(<MockDrawerComponent />);
     const drawerButton = await getByTestId("reborn-test-button");
 
     await user.press(drawerButton);
 
-    expect(getByTestId("reborn-buy-device-cta")).toBeVisible();
-    expect(getByTestId("reborn-buy-device-buyCta")).toBeVisible();
+    expect(getByRole("button", { name: /Connect/i })).toBeVisible();
+    expect(getByRole("button", { name: /Buy your ledger device/i })).toBeVisible();
   });
 
   it("Should call tracking correctly", async () => {
-    const { user, getByTestId } = render(<MockDrawerComponent />);
+    const { user, getByTestId, getByRole } = render(<MockDrawerComponent />);
     const drawerButton = await getByTestId("reborn-test-button");
 
     await user.press(drawerButton);
 
-    await user.press(getByTestId("reborn-buy-device-cta"));
+    await user.press(getByRole("button", { name: /Connect/i }));
     expect(track).toHaveBeenCalledWith("message_clicked", {
       message: "I already have a device, set it up now",
       page: "Upsell Flex",
     });
 
-    await user.press(getByTestId("reborn-buy-device-buyCta"));
+    await user.press(getByRole("button", { name: /Buy your ledger device/i }));
     expect(track).toHaveBeenCalledWith("message_clicked", {
       message: "I already have a device, set it up now",
       page: "Upsell Flex",
