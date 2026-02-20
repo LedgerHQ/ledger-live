@@ -1,4 +1,4 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import {
   getAccountTransactions,
   AlgoTransaction,
@@ -107,8 +107,6 @@ function getOperationType(tx: AlgoTransaction, address: string): string {
     if (details.assetCloseToAddress && tx.senderAddress === address) {
       return "OPT_OUT";
     }
-
-    return tx.senderAddress === address ? "OUT" : "IN";
   }
 
   return tx.senderAddress === address ? "OUT" : "IN";
@@ -171,4 +169,25 @@ function getOperationAsset(tx: AlgoTransaction): { type: string; assetReference?
   }
 
   return { type: "native" };
+}
+
+export async function listApiOperations(
+  address: string,
+  pagination: Pagination,
+): Promise<[Operation[], string]> {
+  const options: ListOperationsOptions = {
+    minHeight: pagination.minHeight,
+    order: pagination.order ?? "asc",
+  };
+
+  if (pagination.limit) {
+    options.limit = pagination.limit;
+  }
+
+  if (pagination.lastPagingToken) {
+    options.token = pagination.lastPagingToken;
+  }
+
+  const [ops, token] = await listOperations(address, options);
+  return [ops as unknown as Operation[], token];
 }

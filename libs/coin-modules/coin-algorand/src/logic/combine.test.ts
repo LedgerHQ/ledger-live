@@ -1,7 +1,8 @@
+import { decode } from "algo-msgpack-with-bigint";
 import { combine } from "./combine";
 
 describe("combine", () => {
-  it("should combine unsigned transaction with signature", () => {
+  it("should produce a valid hex-encoded signed transaction", () => {
     const txPayload = {
       amt: 1000000,
       fee: 1000,
@@ -19,44 +20,39 @@ describe("combine", () => {
 
     const result = combine(unsignedTx, signature);
 
-    // Result should be a hex string
-    expect(typeof result).toBe("string");
     expect(result).toMatch(/^[a-f0-9]+$/i);
 
-    // Decode and verify structure
-    const decoded = Buffer.from(result, "hex");
-    expect(decoded.length).toBeGreaterThan(0);
+    const decoded = decode(Buffer.from(result, "hex")) as { sig: Uint8Array; txn: typeof txPayload };
+
+    expect(decoded.txn.amt).toBe(txPayload.amt);
+    expect(decoded.txn.fee).toBe(txPayload.fee);
+    expect(decoded.txn.fv).toBe(txPayload.fv);
+    expect(decoded.txn.lv).toBe(txPayload.lv);
+    expect(decoded.txn.type).toBe("pay");
+    expect(Buffer.from(decoded.sig).toString("hex")).toBe(signature);
   });
 
-  it("should include signature in the signed transaction", () => {
-    const txPayload = { type: "pay", amt: 100 };
+  it("should preserve asset transfer fields in the signed transaction", () => {
+    const txPayload = {
+      type: "axfer",
+      amt: 500,
+      fee: 1000,
+      xaid: 12345,
+      snd: Buffer.from("sender"),
+      arcv: Buffer.from("recipient"),
+    };
+
     const unsignedTx = Buffer.from(JSON.stringify(txPayload)).toString("hex");
     const signature = "abcd1234";
 
     const result = combine(unsignedTx, signature);
 
-    // Result should contain the signature bytes
-    expect(result.length).toBeGreaterThan(unsignedTx.length);
-  });
+    const decoded = decode(Buffer.from(result, "hex")) as { sig: Uint8Array; txn: typeof txPayload };
 
-  it("should create valid msgpack encoded output", () => {
-    const txPayload = { amt: 500000, fee: 1000, type: "pay" };
-    const unsignedTx = Buffer.from(JSON.stringify(txPayload)).toString("hex");
-    const signature = "deadbeef";
-
-    const result = combine(unsignedTx, signature);
-
-    // Should be valid hex
-    expect(() => Buffer.from(result, "hex")).not.toThrow();
-  });
-
-  it("should handle empty signature", () => {
-    const txPayload = { type: "pay" };
-    const unsignedTx = Buffer.from(JSON.stringify(txPayload)).toString("hex");
-    const signature = "";
-
-    const result = combine(unsignedTx, signature);
-
-    expect(typeof result).toBe("string");
+    expect(decoded.txn.type).toBe("axfer");
+    expect(decoded.txn.amt).toBe(txPayload.amt);
+    expect(decoded.txn.fee).toBe(txPayload.fee);
+    expect(decoded.txn.xaid).toBe(txPayload.xaid);
+    expect(Buffer.from(decoded.sig).toString("hex")).toBe(signature);
   });
 });

@@ -29,7 +29,7 @@ describe("algod", () => {
             { "asset-id": 67890, amount: 200 },
           ],
         },
-      } as never);
+      });
 
       const result = await getAccount("ALGO_ADDRESS");
 

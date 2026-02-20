@@ -1,14 +1,13 @@
 // Core logic functions
 export { broadcast } from "./broadcast";
 export { combine } from "./combine";
-export { craftTransaction, craftOptInTransaction } from "./craftTransaction";
+export { craftTransaction, craftOptInTransaction, craftApiTransaction } from "./craftTransaction";
 export type { CraftedAlgorandTransaction } from "./craftTransaction";
-export { estimateFees, getMinFee } from "./estimateFees";
+export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { getBlockInfo } from "./getBlockInfo";
 export { lastBlock } from "./lastBlock";
-export { listOperations } from "./listOperations";
-export { validateAddress } from "./validateAddress";
+export { listOperations, listApiOperations } from "./listOperations";
 export { validateIntent } from "./validateIntent";
 export { validateMemo, ALGORAND_MAX_MEMO_SIZE } from "./validateMemo";
 

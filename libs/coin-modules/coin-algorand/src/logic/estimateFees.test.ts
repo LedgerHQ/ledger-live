@@ -1,5 +1,5 @@
 import * as network from "../network";
-import { estimateFees, getMinFee } from "./estimateFees";
+import { estimateFees } from "./estimateFees";
 
 jest.mock("../network");
 
@@ -81,44 +81,3 @@ describe("estimateFees", () => {
   });
 });
 
-describe("getMinFee", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("should return the minimum fee from network params", async () => {
-    mockGetTransactionParams.mockResolvedValue({
-      fee: 0,
-      minFee: 1000,
-      firstRound: 1000,
-      lastRound: 2000,
-      genesisHash: "hash",
-      genesisID: "mainnet-v1.0",
-    });
-
-    const result = await getMinFee();
-
-    expect(result).toBe(1000n);
-  });
-
-  it("should handle different minimum fee values", async () => {
-    mockGetTransactionParams.mockResolvedValue({
-      fee: 0,
-      minFee: 2500,
-      firstRound: 1000,
-      lastRound: 2000,
-      genesisHash: "hash",
-      genesisID: "mainnet-v1.0",
-    });
-
-    const result = await getMinFee();
-
-    expect(result).toBe(2500n);
-  });
-
-  it("should propagate network errors", async () => {
-    mockGetTransactionParams.mockRejectedValue(new Error("Network error"));
-
-    await expect(getMinFee()).rejects.toThrow("Network error");
-  });
-});

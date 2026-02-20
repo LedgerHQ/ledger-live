@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import { AlgoTransactionType } from "../network";
-import { listOperations } from "./listOperations";
+import { listOperations, listApiOperations } from "./listOperations";
 
 jest.mock("../network");
 
@@ -81,6 +81,9 @@ describe("listOperations", () => {
 
     expect(operations[0].type).toBe("IN");
     expect(operations[0].value).toBe(500000n);
+    expect(operations[0].senders).toEqual(["SENDER_ADDRESS"]);
+    expect(operations[0].recipients).toEqual([address]);
+    expect(operations[0].asset).toEqual({ type: "native" });
   });
 
   it("should convert asset transfer to operation with asa type", async () => {
@@ -425,5 +428,126 @@ describe("listOperations", () => {
     mockGetAccountTransactions.mockRejectedValue(new Error("Network error"));
 
     await expect(listOperations(address, { order: "desc" })).rejects.toThrow("Network error");
+  });
+});
+
+describe("listApiOperations", () => {
+  const address = "ALGO_ADDRESS_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should map pagination params and delegate to listOperations", async () => {
+    const tx = {
+      id: "TX_123",
+      type: AlgoTransactionType.PAYMENT,
+      senderAddress: address,
+      fee: new BigNumber("1000"),
+      round: 1000000,
+      timestamp: "1700000000",
+      note: undefined,
+      senderRewards: new BigNumber("0"),
+      recipientRewards: new BigNumber("0"),
+      details: {
+        amount: new BigNumber("1000000"),
+        recipientAddress: "RECIPIENT_ADDRESS",
+        closeToAddress: undefined,
+        closeAmount: undefined,
+      },
+    };
+
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: "next-token" });
+
+    const [ops, token] = await listApiOperations(address, {
+      minHeight: 100,
+      order: "asc",
+    });
+
+    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
+      minRound: 100,
+      limit: undefined,
+      nextToken: undefined,
+    });
+    expect(ops).toHaveLength(1);
+    expect(token).toBe("next-token");
+  });
+
+  it("should pass limit when provided", async () => {
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
+
+    await listApiOperations(address, {
+      minHeight: 0,
+      order: "desc",
+      limit: 50,
+    });
+
+    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
+      minRound: 0,
+      limit: 50,
+      nextToken: undefined,
+    });
+  });
+
+  it("should pass lastPagingToken when provided", async () => {
+    mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
+
+    await listApiOperations(address, {
+      minHeight: 0,
+      order: "asc",
+      lastPagingToken: "page-token-123",
+    });
+
+    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
+      minRound: 0,
+      limit: undefined,
+      nextToken: "page-token-123",
+    });
+  });
+
+  it("should default order to asc when not specified", async () => {
+    const txs = [
+      {
+        id: "TX_HIGH",
+        type: AlgoTransactionType.PAYMENT,
+        senderAddress: address,
+        fee: new BigNumber("1000"),
+        round: 3000,
+        timestamp: "1700002000",
+        note: undefined,
+        senderRewards: new BigNumber("0"),
+        recipientRewards: new BigNumber("0"),
+        details: {
+          amount: new BigNumber("100"),
+          recipientAddress: "R1",
+          closeToAddress: undefined,
+          closeAmount: undefined,
+        },
+      },
+      {
+        id: "TX_LOW",
+        type: AlgoTransactionType.PAYMENT,
+        senderAddress: address,
+        fee: new BigNumber("1000"),
+        round: 1000,
+        timestamp: "1700000000",
+        note: undefined,
+        senderRewards: new BigNumber("0"),
+        recipientRewards: new BigNumber("0"),
+        details: {
+          amount: new BigNumber("200"),
+          recipientAddress: "R2",
+          closeToAddress: undefined,
+          closeAmount: undefined,
+        },
+      },
+    ];
+
+    mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: undefined });
+
+    const [ops] = await listApiOperations(address, { minHeight: 0 });
+
+    expect(ops[0].tx.block.height).toBe(1000);
+    expect(ops[1].tx.block.height).toBe(3000);
   });
 });

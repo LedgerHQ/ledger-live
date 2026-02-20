@@ -17,8 +17,8 @@ import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from ".
 import { getAccount } from "../network";
 import type { AlgorandMemo } from "../types";
 import { ALGORAND_MIN_ACCOUNT_BALANCE } from "./common";
-import { validateAddress } from "./validateAddress";
 import { validateMemo } from "./validateMemo";
+import { isValidAddress } from "algosdk";
 
 /**
  * Validate a transaction intent for Algorand
@@ -41,7 +41,7 @@ export async function validateIntent(
   // Validate recipient
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!validateAddress(intent.recipient)) {
+  } else if (!isValidAddress(intent.recipient)) {
     errors.recipient = new InvalidAddress();
   } else if (intent.sender === intent.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();

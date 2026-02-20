@@ -20,12 +20,11 @@ describe("getBalance", () => {
 
     const result = await getBalance("ALGO_ADDRESS");
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
+    expect(result).toEqual([{
       value: 1000000n,
       asset: { type: "native" },
       locked: 100000n, // min balance for 0 assets
-    });
+    }]);
   });
 
   it("should include ASA token balances", async () => {
@@ -40,24 +39,21 @@ describe("getBalance", () => {
 
     const result = await getBalance("ALGO_ADDRESS");
 
-    expect(result).toHaveLength(3);
-
     // Native balance with locked amount accounting for 2 assets
-    expect(result[0]).toEqual({
+    expect(result).toEqual([{
       value: 2000000n,
       asset: { type: "native" },
       locked: 300000n, // 0.1 ALGO base + 0.2 ALGO for 2 assets
-    });
-
-    // ASA balances
-    expect(result[1]).toEqual({
+    },
+    {
       value: 500n,
       asset: { type: "asa", assetReference: "123" },
-    });
-    expect(result[2]).toEqual({
+    },
+    {
       value: 1000n,
       asset: { type: "asa", assetReference: "456" },
-    });
+    },
+  ]);
   });
 
   it("should calculate correct locked amount based on number of assets", async () => {
@@ -76,7 +72,7 @@ describe("getBalance", () => {
     const result = await getBalance("ALGO_ADDRESS");
 
     // 0.1 ALGO base + 0.5 ALGO for 5 assets = 600000 microAlgos
-    expect(result[0].locked).toBe(600000n);
+    expect(result[0].locked).toEqual(600000n);
   });
 
   it("should handle zero balance account", async () => {
@@ -88,8 +84,8 @@ describe("getBalance", () => {
 
     const result = await getBalance("ALGO_ADDRESS");
 
-    expect(result[0].value).toBe(0n);
-    expect(result[0].locked).toBe(100000n);
+    expect(result[0].value).toEqual(0n);
+    expect(result[0].locked).toEqual(100000n);
   });
 
   it("should handle large balances", async () => {
@@ -101,7 +97,7 @@ describe("getBalance", () => {
 
     const result = await getBalance("ALGO_ADDRESS");
 
-    expect(result[0].value).toBe(1000000000000n);
+    expect(result[0].value).toEqual(1000000000000n);
   });
 
   it("should propagate network errors", async () => {

@@ -16,7 +16,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
 
   const balances: Balance[] = [
     {
-      value: BigInt(account.balance.toString()),
+      value: BigInt(account.balance.toFixed()),
       asset: { type: "native" },
       locked: minimumBalance,
     },
@@ -25,7 +25,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
   // Add ASA token balances
   for (const asset of account.assets) {
     balances.push({
-      value: BigInt(asset.balance.toString()),
+      value: BigInt(asset.balance.toFixed()),
       asset: {
         type: "asa",
         assetReference: asset.assetId,

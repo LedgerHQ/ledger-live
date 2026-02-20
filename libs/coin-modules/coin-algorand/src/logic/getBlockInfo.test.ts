@@ -52,7 +52,6 @@ describe("getBlockInfo", () => {
 
     // Then
     expect(result.time).toEqual(new Date(unixTimestamp * 1000));
-    expect(result.time.getTime()).toBe(unixTimestamp * 1000);
   });
 
   it("should handle errors from network layer", async () => {

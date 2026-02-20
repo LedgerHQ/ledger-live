@@ -2,16 +2,15 @@ import type { AlgorandCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";
 
-// Mock the logic module
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
-  craftTransaction: jest.fn(),
+  craftApiTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
   getBlockInfo: jest.fn(),
   lastBlock: jest.fn(),
-  listOperations: jest.fn(),
+  listApiOperations: jest.fn(),
   validateIntent: jest.fn(),
 }));
 
@@ -31,26 +30,28 @@ describe("Algorand API", () => {
 
   describe("createApi", () => {
     it("should create an API instance with all required methods", () => {
-      expect(api).not.toBeUndefined();
-      expect(typeof api.broadcast).toBe("function");
-      expect(typeof api.combine).toBe("function");
-      expect(typeof api.craftTransaction).toBe("function");
-      expect(typeof api.estimateFees).toBe("function");
-      expect(typeof api.getBalance).toBe("function");
-      expect(typeof api.lastBlock).toBe("function");
-      expect(typeof api.listOperations).toBe("function");
-      expect(typeof api.validateIntent).toBe("function");
-      expect(typeof api.getBlock).toBe("function");
-      expect(typeof api.getBlockInfo).toBe("function");
-      expect(typeof api.getSequence).toBe("function");
-      expect(typeof api.getStakes).toBe("function");
-      expect(typeof api.getRewards).toBe("function");
-      expect(typeof api.getValidators).toBe("function");
+      expect(api).toEqual({
+        broadcast: expect.any(Function),
+        combine: expect.any(Function),
+        craftTransaction: expect.any(Function),
+        craftRawTransaction: expect.any(Function),
+        estimateFees: expect.any(Function),
+        getBalance: logic.getBalance,
+        getBlock: expect.any(Function),
+        getBlockInfo: expect.any(Function),
+        getRewards: expect.any(Function),
+        getSequence: expect.any(Function),
+        getStakes: expect.any(Function),
+        getValidators: expect.any(Function),
+        lastBlock: logic.lastBlock,
+        listOperations: expect.any(Function),
+        validateIntent: expect.any(Function),
+      });
     });
   });
 
   describe("broadcast", () => {
-    it("should broadcast a signed transaction", async () => {
+    it("should delegate to logic.broadcast", async () => {
       const mockTxId = "TXID123456";
       (logic.broadcast as jest.Mock).mockResolvedValue(mockTxId);
 
@@ -62,7 +63,7 @@ describe("Algorand API", () => {
   });
 
   describe("combine", () => {
-    it("should combine unsigned tx with signature", () => {
+    it("should delegate to logic.combine", () => {
       const mockSignedTx = "signedTxHex";
       (logic.combine as jest.Mock).mockReturnValue(mockSignedTx);
 
@@ -74,7 +75,7 @@ describe("Algorand API", () => {
   });
 
   describe("getBalance", () => {
-    it("should return account balances", async () => {
+    it("should delegate to logic.getBalance", async () => {
       const mockBalances = [
         { value: 1000000n, asset: { type: "native" }, locked: 100000n },
         { value: 500n, asset: { type: "asa", assetReference: "123" } },
@@ -89,7 +90,7 @@ describe("Algorand API", () => {
   });
 
   describe("lastBlock", () => {
-    it("should return the last block info", async () => {
+    it("should delegate to logic.lastBlock", async () => {
       const mockBlockInfo = { height: 12345678, hash: "abc123", time: new Date() };
       (logic.lastBlock as jest.Mock).mockResolvedValue(mockBlockInfo);
 
@@ -101,7 +102,7 @@ describe("Algorand API", () => {
   });
 
   describe("getBlockInfo", () => {
-    it("should return block info for a specific height", async () => {
+    it("should delegate to logic.getBlockInfo", async () => {
       const mockBlockInfo = { height: 100, hash: "blockhash123", time: new Date() };
       (logic.getBlockInfo as jest.Mock).mockResolvedValue(mockBlockInfo);
 
@@ -113,18 +114,20 @@ describe("Algorand API", () => {
   });
 
   describe("estimateFees", () => {
-    it("should estimate transaction fees", async () => {
+    it("should delegate to logic.estimateFees", async () => {
       const mockFees = { value: 1000n };
       (logic.estimateFees as jest.Mock).mockResolvedValue(mockFees);
 
-      const result = await api.estimateFees({
-        intentType: "transaction",
-        type: "send",
+      const intent = {
+        intentType: "transaction" as const,
+        type: "send" as const,
         sender: "SENDER",
         recipient: "RECIPIENT",
         amount: 1000000n,
-        asset: { type: "native" },
-      });
+        asset: { type: "native" as const },
+        memo: { type: "string" as const, kind: "note" as const, value: "" },
+      };
+      const result = await api.estimateFees(intent);
 
       expect(logic.estimateFees).toHaveBeenCalled();
       expect(result).toEqual(mockFees);
@@ -132,65 +135,28 @@ describe("Algorand API", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should craft a native ALGO transaction", async () => {
-      const mockCrafted = {
-        serializedTransaction: "txHex",
-        txPayload: {},
-      };
-      (logic.craftTransaction as jest.Mock).mockResolvedValue(mockCrafted);
-      (logic.estimateFees as jest.Mock).mockResolvedValue({ value: 1000n });
+    it("should delegate to logic.craftApiTransaction", async () => {
+      const mockCrafted = { transaction: "txHex", details: { txPayload: {} } };
+      (logic.craftApiTransaction as jest.Mock).mockResolvedValue(mockCrafted);
 
-      const result = await api.craftTransaction({
-        intentType: "transaction",
-        type: "send",
+      const intent = {
+        intentType: "transaction" as const,
+        type: "send" as const,
         sender: "SENDER",
         recipient: "RECIPIENT",
         amount: 1000000n,
-        asset: { type: "native" },
-      });
-
-      expect(logic.craftTransaction).toHaveBeenCalledWith({
-        sender: "SENDER",
-        recipient: "RECIPIENT",
-        amount: 1000000n,
-        memo: undefined,
-        assetId: undefined,
-        fees: 1000n,
-      });
-      expect(result.transaction).toBe("txHex");
-    });
-
-    it("should craft an ASA token transaction", async () => {
-      const mockCrafted = {
-        serializedTransaction: "asaTxHex",
-        txPayload: {},
+        asset: { type: "native" as const },
+        memo: { type: "string" as const, kind: "note" as const, value: "" },
       };
-      (logic.craftTransaction as jest.Mock).mockResolvedValue(mockCrafted);
-      (logic.estimateFees as jest.Mock).mockResolvedValue({ value: 1000n });
+      const result = await api.craftTransaction(intent);
 
-      const result = await api.craftTransaction({
-        intentType: "transaction",
-        type: "send",
-        sender: "SENDER",
-        recipient: "RECIPIENT",
-        amount: 500n,
-        asset: { type: "asa", assetReference: "123456" },
-      });
-
-      expect(logic.craftTransaction).toHaveBeenCalledWith({
-        sender: "SENDER",
-        recipient: "RECIPIENT",
-        amount: 500n,
-        memo: undefined,
-        assetId: "123456",
-        fees: 1000n,
-      });
-      expect(result.transaction).toBe("asaTxHex");
+      expect(logic.craftApiTransaction).toHaveBeenCalledWith(intent);
+      expect(result).toEqual(mockCrafted);
     });
   });
 
   describe("listOperations", () => {
-    it("should list account operations", async () => {
+    it("should delegate to logic.listApiOperations", async () => {
       const mockOperations = [
         {
           id: "op1",
@@ -208,17 +174,12 @@ describe("Algorand API", () => {
           },
         },
       ];
-      (logic.listOperations as jest.Mock).mockResolvedValue([mockOperations, ""]);
+      (logic.listApiOperations as jest.Mock).mockResolvedValue([mockOperations, ""]);
 
-      const [operations, nextToken] = await api.listOperations("TESTADDRESS", {
-        minHeight: 0,
-        order: "asc",
-      });
+      const pagination = { minHeight: 0, order: "asc" as const };
+      const [operations, nextToken] = await api.listOperations("TESTADDRESS", pagination);
 
-      expect(logic.listOperations).toHaveBeenCalledWith("TESTADDRESS", {
-        minHeight: 0,
-        order: "asc",
-      });
+      expect(logic.listApiOperations).toHaveBeenCalledWith("TESTADDRESS", pagination);
       expect(operations).toEqual(mockOperations);
       expect(nextToken).toBe("");
     });
@@ -247,8 +208,8 @@ describe("Algorand API", () => {
       expect(() => api.getValidators()).toThrow("getValidators is not supported for Algorand");
     });
 
-    it("craftRawTransaction should throw not supported error", async () => {
-      await expect(api.craftRawTransaction("tx", "sender", "pubkey", 0n)).rejects.toThrow(
+    it("craftRawTransaction should throw not supported error", () => {
+      expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 0n)).toThrow(
         "craftRawTransaction is not supported for Algorand",
       );
     });

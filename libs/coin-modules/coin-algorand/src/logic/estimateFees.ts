@@ -1,5 +1,6 @@
-import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { getTransactionParams } from "../network";
+import type { AlgorandMemo } from "../types";
 
 // Single signature size in bytes
 const SINGLE_SIGNATURE_SIZE = 71;
@@ -22,13 +23,4 @@ export async function estimateFees(txSize?: number): Promise<FeeEstimation> {
   return {
     value: BigInt(fees),
   };
-}
-
-/**
- * Get minimum fee for Algorand network
- * @returns Minimum fee in microAlgos
- */
-export async function getMinFee(): Promise<bigint> {
-  const params = await getTransactionParams();
-  return BigInt(params.minFee);
 }

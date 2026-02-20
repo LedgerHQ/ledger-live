@@ -5,8 +5,8 @@ import type { AlgorandMemo } from "../types";
 import { validateIntent } from "./validateIntent";
 
 jest.mock("../network");
-jest.mock("./validateAddress", () => ({
-  validateAddress: jest.fn().mockReturnValue(true),
+jest.mock("algosdk", () => ({
+  isValidAddress: jest.fn().mockReturnValue(true),
 }));
 
 const mockGetAccount = network.getAccount as jest.MockedFunction<typeof network.getAccount>;

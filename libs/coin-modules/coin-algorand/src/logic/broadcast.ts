@@ -7,6 +7,5 @@ import { broadcastTransaction as networkBroadcast } from "../network";
  */
 export async function broadcast(signedTx: string): Promise<string> {
   const payload = Buffer.from(signedTx, "hex");
-  const txId = await networkBroadcast(payload);
-  return txId;
+  return networkBroadcast(payload);
 }

@@ -1,3 +1,9 @@
+import type {
+  TransactionIntent,
+  CraftedTransaction,
+  FeeEstimation,
+} from "@ledgerhq/coin-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { encode as msgpackEncode } from "algo-msgpack-with-bigint";
 import type { EncodedTransaction as AlgoTransactionPayload, Transaction as AlgoTx } from "algosdk";
 import {
@@ -5,6 +11,8 @@ import {
   makePaymentTxnWithSuggestedParams,
 } from "algosdk";
 import { getTransactionParams } from "../network";
+import type { AlgorandMemo } from "../types";
+import { estimateFees } from "./estimateFees";
 
 export type CraftedAlgorandTransaction = {
   serializedTransaction: string;
@@ -29,44 +37,35 @@ export async function craftTransaction(input: {
   const note = memo ? new TextEncoder().encode(memo) : undefined;
   const params = await getTransactionParams();
 
-  // Override fee if provided
-  if (fees !== undefined) {
+  if (typeof fees === "bigint") {
     params.fee = 0; // Set to 0 to use flatFee
     params.minFee = Number(fees);
   }
 
-  let algoTxn: AlgoTx;
-
-  if (assetId) {
-    // ASA transfer
-    algoTxn = makeAssetTransferTxnWithSuggestedParams(
-      sender,
-      recipient,
-      undefined, // closeRemainderTo
-      undefined, // revocationTarget
-      Number(amount),
-      note,
-      Number(assetId),
-      params,
-      undefined, // rekeyTo
-    );
-  } else {
-    // Native ALGO payment
-    algoTxn = makePaymentTxnWithSuggestedParams(
-      sender,
-      recipient,
-      Number(amount),
-      undefined, // closeRemainderTo
-      note,
-      params,
-    );
-  }
+  const algoTxn: AlgoTx = assetId ? makeAssetTransferTxnWithSuggestedParams(
+    sender,
+    recipient,
+    undefined, // closeRemainderTo
+    undefined, // revocationTarget
+    Number(amount),
+    note,
+    Number(assetId),
+    params,
+    undefined, // rekeyTo
+  ) : makePaymentTxnWithSuggestedParams(
+    sender,
+    recipient,
+    Number(amount),
+    undefined, // closeRemainderTo
+    note,
+    params,
+  );
 
   // Set transaction validity window (next 1000 blocks)
   algoTxn.firstRound = params.lastRound;
   algoTxn.lastRound = params.lastRound + 1000;
 
-  // Sort payload for msgpack encoding (required by Algorand SDK)
+  // SDK flaw: payload is not sorted but needs to be for msgpack encoding
   const sorted = Object.fromEntries(
     Object.entries(algoTxn.get_obj_for_encoding()).sort(),
   ) as AlgoTransactionPayload;
@@ -100,4 +99,36 @@ export async function craftOptInTransaction(
     assetId,
     fees,
   });
+}
+
+export async function craftApiTransaction(
+  transactionIntent: TransactionIntent<AlgorandMemo>,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  if (!isSendTransactionIntent(transactionIntent)) {
+    throw new Error("Only send transaction intent is supported");
+  }
+
+  const fees = customFees?.value ?? (await estimateFees()).value;
+
+  const memo = transactionIntent.memo?.type === "string" ? transactionIntent.memo.value : undefined;
+
+  const assetId =
+    transactionIntent.asset.type === "asa" ? transactionIntent.asset.assetReference : undefined;
+
+  const result = await craftTransaction({
+    sender: transactionIntent.sender,
+    recipient: transactionIntent.recipient,
+    amount: transactionIntent.amount,
+    memo,
+    assetId,
+    fees,
+  });
+
+  return {
+    transaction: result.serializedTransaction,
+    details: {
+      txPayload: result.txPayload,
+    },
+  };
 }

@@ -1,42 +1,54 @@
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { decode } from "algo-msgpack-with-bigint";
+import type { AlgorandMemo } from "../types";
 import * as network from "../network";
-import { craftTransaction, craftOptInTransaction } from "./craftTransaction";
+import { craftTransaction, craftOptInTransaction, craftApiTransaction } from "./craftTransaction";
 
 jest.mock("../network");
 
-// Mock algosdk transaction creation functions
 jest.mock("algosdk", () => ({
-  makePaymentTxnWithSuggestedParams: jest.fn().mockReturnValue({
-    firstRound: 1000,
-    lastRound: 2000,
-    get_obj_for_encoding: () => ({
-      amt: 1000000,
-      fee: 1000,
-      fv: 1000,
-      lv: 2000,
-      snd: Buffer.from("sender"),
-      rcv: Buffer.from("recipient"),
-      type: "pay",
+  makePaymentTxnWithSuggestedParams: jest.fn(
+    (sender: string, recipient: string, amount: number, _close: unknown, note: Uint8Array | undefined, _params: unknown) => ({
+      firstRound: 1000,
+      lastRound: 2000,
+      get_obj_for_encoding: () => ({
+        amt: amount,
+        fee: 1000,
+        fv: 1000,
+        lv: 2000,
+        snd: Buffer.from(sender),
+        rcv: Buffer.from(recipient),
+        type: "pay",
+        ...(note ? { note: Buffer.from(note) } : {}),
+      }),
     }),
-  }),
-  makeAssetTransferTxnWithSuggestedParams: jest.fn().mockReturnValue({
-    firstRound: 1000,
-    lastRound: 2000,
-    get_obj_for_encoding: () => ({
-      amt: 100,
-      fee: 1000,
-      fv: 1000,
-      lv: 2000,
-      snd: Buffer.from("sender"),
-      rcv: Buffer.from("recipient"),
-      xaid: 12345,
-      type: "axfer",
+  ),
+  makeAssetTransferTxnWithSuggestedParams: jest.fn(
+    (sender: string, recipient: string, _close: unknown, _revoke: unknown, amount: number, note: Uint8Array | undefined, assetId: number, _params: unknown) => ({
+      firstRound: 1000,
+      lastRound: 2000,
+      get_obj_for_encoding: () => ({
+        amt: amount,
+        fee: 1000,
+        fv: 1000,
+        lv: 2000,
+        snd: Buffer.from(sender),
+        arcv: Buffer.from(recipient),
+        xaid: assetId,
+        type: "axfer",
+        ...(note ? { note: Buffer.from(note) } : {}),
+      }),
     }),
-  }),
+  ),
 }));
 
 const mockGetTransactionParams = network.getTransactionParams as jest.MockedFunction<
   typeof network.getTransactionParams
 >;
+
+function decodeTxPayload(serializedTransaction: string) {
+  return decode(Buffer.from(serializedTransaction, "hex")) as Record<string, unknown>;
+}
 
 describe("craftTransaction", () => {
   const defaultParams = {
@@ -53,72 +65,82 @@ describe("craftTransaction", () => {
     mockGetTransactionParams.mockResolvedValue(defaultParams);
   });
 
-  it("should craft a native ALGO payment transaction", async () => {
+  it("should craft a native ALGO payment with correct amount, fee and type", async () => {
     const input = {
-      sender: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
-      recipient: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBQ",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
       amount: 1000000n,
     };
 
     const result = await craftTransaction(input);
 
-    expect(result).toHaveProperty("serializedTransaction");
-    expect(result).toHaveProperty("txPayload");
-    expect(typeof result.serializedTransaction).toBe("string");
     expect(result.serializedTransaction).toMatch(/^[a-f0-9]+$/i);
+
+    const decoded = decodeTxPayload(result.serializedTransaction);
+    expect(decoded.type).toBe("pay");
+    expect(decoded.amt).toBe(1000000);
+    expect(decoded.fee).toBe(1000);
+    expect(Buffer.from(decoded.snd as Uint8Array).toString()).toBe("SENDER_ADDR");
+    expect(Buffer.from(decoded.rcv as Uint8Array).toString()).toBe("RECIPIENT_ADDR");
   });
 
-  it("should craft an ASA transfer transaction when assetId is provided", async () => {
+  it("should craft an ASA transfer with correct assetId and amount", async () => {
     const input = {
-      sender: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
-      recipient: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBQ",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
       amount: 100n,
       assetId: "12345",
     };
 
     const result = await craftTransaction(input);
 
-    expect(result).toHaveProperty("serializedTransaction");
-    expect(result.txPayload).not.toBeUndefined();
+    const decoded = decodeTxPayload(result.serializedTransaction);
+    expect(decoded.type).toBe("axfer");
+    expect(decoded.amt).toBe(100);
+    expect(decoded.xaid).toBe(12345);
+    expect(Buffer.from(decoded.snd as Uint8Array).toString()).toBe("SENDER_ADDR");
+    expect(Buffer.from(decoded.arcv as Uint8Array).toString()).toBe("RECIPIENT_ADDR");
   });
 
-  it("should include memo as note when provided", async () => {
+  it("should include memo as note in the payload", async () => {
     const input = {
-      sender: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
-      recipient: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBQ",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
       amount: 1000000n,
       memo: "Test payment",
     };
 
     const result = await craftTransaction(input);
 
-    expect(result.txPayload).not.toBeUndefined();
+    const decoded = decodeTxPayload(result.serializedTransaction);
+    expect(Buffer.from(decoded.note as Uint8Array).toString()).toBe("Test payment");
   });
 
-  it("should use custom fees when provided", async () => {
+  it("should omit note when no memo is provided", async () => {
     const input = {
-      sender: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
-      recipient: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBQ",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
       amount: 1000000n,
-      fees: 2000n,
     };
 
     const result = await craftTransaction(input);
 
-    expect(result).toHaveProperty("serializedTransaction");
-    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+    const decoded = decodeTxPayload(result.serializedTransaction);
+    expect(decoded.note).toBeUndefined();
   });
 
-  it("should fetch transaction params from network", async () => {
+  it("should also expose txPayload with matching attributes", async () => {
     const input = {
-      sender: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
-      recipient: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBQ",
-      amount: 1000000n,
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
+      amount: 500000n,
     };
 
-    await craftTransaction(input);
+    const result = await craftTransaction(input);
 
-    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+    expect(result.txPayload.amt).toBe(500000);
+    expect(result.txPayload.type).toBe("pay");
+    expect(result.txPayload.fee).toBe(1000);
   });
 });
 
@@ -137,32 +159,120 @@ describe("craftOptInTransaction", () => {
     mockGetTransactionParams.mockResolvedValue(defaultParams);
   });
 
-  it("should craft an opt-in transaction with sender as recipient", async () => {
-    const sender = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
+  it("should craft an opt-in with 0 amount and assetId", async () => {
+    const sender = "SENDER_ADDR";
     const assetId = "12345";
 
     const result = await craftOptInTransaction(sender, assetId);
 
-    expect(result).toHaveProperty("serializedTransaction");
-    expect(result).toHaveProperty("txPayload");
+    const decoded = decodeTxPayload(result.serializedTransaction);
+    expect(decoded.type).toBe("axfer");
+    expect(decoded.amt).toBe(0);
+    expect(decoded.xaid).toBe(12345);
+    expect(Buffer.from(decoded.snd as Uint8Array).toString()).toBe(sender);
+    expect(Buffer.from(decoded.arcv as Uint8Array).toString()).toBe(sender);
+  });
+});
+
+describe("craftApiTransaction", () => {
+  const defaultParams = {
+    fee: 0,
+    minFee: 1000,
+    firstRound: 1000,
+    lastRound: 2000,
+    genesisHash: "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+    genesisID: "mainnet-v1.0",
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetTransactionParams.mockResolvedValue(defaultParams);
   });
 
-  it("should craft opt-in with 0 amount", async () => {
-    const sender = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
-    const assetId = "67890";
+  it("should craft a native ALGO transaction matching the intent", async () => {
+    const intent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "send",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
+      amount: 1000000n,
+      asset: { type: "native" },
+    };
 
-    const result = await craftOptInTransaction(sender, assetId);
+    const result = await craftApiTransaction(intent);
 
-    expect(result.serializedTransaction).not.toBeUndefined();
+    expect(result.transaction).toMatch(/^[a-f0-9]+$/i);
+
+    const decoded = decodeTxPayload(result.transaction);
+    expect(decoded.type).toBe("pay");
+    expect(decoded.amt).toBe(1000000);
+    expect(Buffer.from(decoded.snd as Uint8Array).toString()).toBe(intent.sender);
+    expect(Buffer.from(decoded.rcv as Uint8Array).toString()).toBe(intent.recipient);
   });
 
-  it("should use custom fees for opt-in when provided", async () => {
-    const sender = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
-    const assetId = "12345";
-    const fees = 2000n;
+  it("should craft an ASA transaction matching the intent", async () => {
+    const intent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "send",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
+      amount: 500n,
+      asset: { type: "asa", assetReference: "12345" },
+    };
 
-    const result = await craftOptInTransaction(sender, assetId, fees);
+    const result = await craftApiTransaction(intent);
 
-    expect(result).toHaveProperty("serializedTransaction");
+    const decoded = decodeTxPayload(result.transaction);
+    expect(decoded.type).toBe("axfer");
+    expect(decoded.amt).toBe(500);
+    expect(decoded.xaid).toBe(12345);
+    expect(Buffer.from(decoded.snd as Uint8Array).toString()).toBe(intent.sender);
+    expect(Buffer.from(decoded.arcv as Uint8Array).toString()).toBe(intent.recipient);
+  });
+
+  it("should include memo from intent in the payload", async () => {
+    const intent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "send",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
+      amount: 1000000n,
+      asset: { type: "native" },
+      memo: { type: "string", kind: "note", value: "hello" },
+    };
+
+    const result = await craftApiTransaction(intent);
+
+    const decoded = decodeTxPayload(result.transaction);
+    expect(Buffer.from(decoded.note as Uint8Array).toString()).toBe("hello");
+  });
+
+  it("should expose txPayload in details", async () => {
+    const intent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "send",
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
+      amount: 1000000n,
+      asset: { type: "native" },
+    };
+
+    const result = await craftApiTransaction(intent);
+
+    expect(result.details).toHaveProperty("txPayload");
+    expect((result.details as { txPayload: { type: string } }).txPayload.type).toBe("pay");
+  });
+
+  it("should throw for non-send transaction intents", async () => {
+    const intent = {
+      intentType: "other",
+      type: "stake",
+      sender: "SENDER",
+      amount: 1000000n,
+    } as unknown as TransactionIntent<AlgorandMemo>;
+
+    await expect(craftApiTransaction(intent)).rejects.toThrow(
+      "Only send transaction intent is supported",
+    );
   });
 });
