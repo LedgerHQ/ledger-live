@@ -146,6 +146,8 @@ libs/ledgerjs/packages/types-live/src/swap.ts                        					@ledge
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/buy.handler.ts      @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/earn.handler.ts     @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler.ts     @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Card/                                         @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
