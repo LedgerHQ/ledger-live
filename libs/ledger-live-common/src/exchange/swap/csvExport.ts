@@ -34,8 +34,8 @@ const fields: Field[] = [
   },
   {
     title: "To Value",
-    cell: ({ toAccount, toAmount }) =>
-      formatCurrencyUnit(getAccountCurrency(toAccount).units[0], toAmount, {
+    cell: ({ toAccount, toAmount, finalAmount }) =>
+      formatCurrencyUnit(getAccountCurrency(toAccount).units[0], finalAmount ?? toAmount, {
         disableRounding: true,
         useGrouping: false,
       }),
