@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +13,8 @@ import { useTabBar } from "./useTabBar";
 import { useScreenOptions } from "./useScreenOptions";
 import { Wallet40TabNavigator } from "./Wallet40TabNavigator";
 import { LegacyTabNavigator } from "./LegacyTabNavigator";
+import { isReadOnly } from "~/experimental";
+import { NavigatorName } from "~/const";
 
 export default function MainNavigator() {
   const { colors } = useTheme();
@@ -50,8 +52,24 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
+  const rebornFlowListener = useMemo(() => {
+    if (!readOnlyModeEnabled) {
+      return () => {};
+    }
+    return e => {
+      e.preventDefault();
+      managerLockAwareCallback(navigateToRebornFlow);
+    };
+  }, [readOnlyModeEnabled, navigateToRebornFlow, managerLockAwareCallback]);
+
   if (shouldDisplayWallet40MainNav) {
-    return <Wallet40TabNavigator tabBar={tabBar} screenOptions={screenOptions} />;
+    return (
+      <Wallet40TabNavigator
+        tabBar={tabBar}
+        screenOptions={screenOptions}
+        rebornFlowListener={rebornFlowListener}
+      />
+    );
   }
 
   return (
