@@ -210,7 +210,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           </LText>
           <LText style={styles.value} testID="swap-operation-details-toAmount">
             {toAccount && unitTo ? (
-              <CurrencyUnitValue showCode unit={unitTo} value={finalAmount ?? toAmount} />
+              <CurrencyUnitValue showCode unit={unitTo} value={displayToAmount} />
             ) : null}
           </LText>
         </View>
