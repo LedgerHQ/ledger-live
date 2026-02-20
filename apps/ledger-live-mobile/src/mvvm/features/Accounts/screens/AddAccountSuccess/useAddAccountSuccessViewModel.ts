@@ -3,6 +3,10 @@ import { useCallback } from "react";
 import { useTheme } from "styled-components/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
+import {
+  getAddAccountCallbacks,
+  unregisterAddAccountCallbacks,
+} from "~/navigation/callbackRegistry";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
@@ -13,10 +17,23 @@ export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
 >;
 export default function useAddAccountSuccessViewModel({ route }: Props) {
-  const { currency, accountsToAdd, context, onCloseNavigation } = route.params || {};
+  const {
+    currency,
+    accountsToAdd,
+    context,
+    onCloseNavigation: onCloseParam,
+    callbackId,
+  } = route.params || {};
+  const registryCallbacks = callbackId ? getAddAccountCallbacks(callbackId) : undefined;
+  const onCloseNavigationParam = registryCallbacks?.onCloseNavigation ?? onCloseParam;
   const { colors, space } = useTheme();
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context);
+
+  const onCloseNavigation = useCallback(() => {
+    if (callbackId) unregisterAddAccountCallbacks(callbackId);
+    onCloseNavigationParam?.();
+  }, [callbackId, onCloseNavigationParam]);
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 

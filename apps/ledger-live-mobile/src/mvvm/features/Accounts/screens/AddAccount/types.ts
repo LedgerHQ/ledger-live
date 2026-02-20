@@ -10,6 +10,8 @@ export type AddAccountContextType = `${AddAccountContexts}`;
 
 type CommonParams = {
   context?: AddAccountContextType;
+  /** Use callbackId instead of onSuccess/onCloseNavigation to keep params serializable. */
+  callbackId?: string;
   onCloseNavigation?: () => void;
   // Number of navigators to pop when closing the flow (calculated at entry point)
   navigationDepth?: number;
@@ -25,12 +27,13 @@ export type NetworkBasedAddAccountNavigator = {
   };
   [ScreenName.AddAccountsSuccess]: CommonParams & {
     accountsToAdd: Account[];
+    callbackId?: string;
   };
   [ScreenName.AddAccountsWarning]: CommonParams & {
     emptyAccount?: Account;
     emptyAccountName?: string;
   };
-  [ScreenName.NoAssociatedAccounts]: Pick<CommonParams, "onCloseNavigation"> & {
+  [ScreenName.NoAssociatedAccounts]: Pick<CommonParams, "onCloseNavigation" | "callbackId"> & {
     CustomNoAssociatedAccounts: ({
       style,
     }: {

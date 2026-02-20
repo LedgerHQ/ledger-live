@@ -1,5 +1,9 @@
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
+import {
+  getAddAccountCallbacks,
+  unregisterAddAccountCallbacks,
+} from "~/navigation/callbackRegistry";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/core";
@@ -13,8 +17,16 @@ export type Props = BaseComposite<
 >;
 
 export default function useAddAccountWarningViewModel({ route }: Props) {
-  const { emptyAccount, emptyAccountName, currency, context, onCloseNavigation } =
-    route.params || {};
+  const {
+    emptyAccount,
+    emptyAccountName,
+    currency,
+    context,
+    onCloseNavigation: onCloseParam,
+    callbackId,
+  } = route.params || {};
+  const registryCallbacks = callbackId ? getAddAccountCallbacks(callbackId) : undefined;
+  const onCloseNavigation = registryCallbacks?.onCloseNavigation ?? onCloseParam;
   const { colors, space } = useTheme();
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context);
@@ -44,12 +56,13 @@ export default function useAddAccountWarningViewModel({ route }: Props) {
   );
 
   const handleOnCloseWarningScreen = useCallback(() => {
+    if (callbackId) unregisterAddAccountCallbacks(callbackId);
     if (typeof onCloseNavigation === "function") {
       onCloseNavigation();
       return;
     }
     navigation.goBack();
-  }, [navigation, onCloseNavigation]);
+  }, [navigation, onCloseNavigation, callbackId]);
 
   return {
     space,

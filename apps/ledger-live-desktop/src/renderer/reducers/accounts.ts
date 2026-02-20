@@ -51,7 +51,7 @@ const handlers: AccountsHandlers = {
       return updater(existingAccount);
     }),
   REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
-  CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),
+  CLEAN_ACCOUNTS_CACHE: state => state.map(account => clearAccount(account)),
   REPLACE_ACCOUNTS: (state, { payload }) => payload,
 };
 

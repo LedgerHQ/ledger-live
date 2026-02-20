@@ -49,13 +49,15 @@ const useBuyDeviceViewModel = () => {
   const { closeDrawer } = useRebornBuyDeviceDrawerController();
 
   const setupDevice = useCallback(() => {
-    if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
-    navigation.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.Onboarding,
-      params: {
-        screen: ScreenName.OnboardingDeviceSelection,
-      },
-    });
+    if (isInOnboarding) {
+      dispatch(setOnboardingHasDevice(true));
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingDeviceSelection,
+        },
+      });
+    }
 
     if (readOnlyModeEnabled) {
       track("message_clicked", {

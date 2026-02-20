@@ -37,7 +37,17 @@ afterEach(() => {
   });
   mockGetCameraPermissionStatus.mockReturnValue("granted");
 });
-afterAll(() => server.close());
+afterAll(() => {
+  // Avoid jest.runAllTimers() here: some tests leave recurring timers that cause
+  // "Aborting after running 100000 timers, assuming an infinite loop". Rely on
+  // forceExit in jest.config for clean shutdown; flush only pending timers once.
+  try {
+    jest.runOnlyPendingTimers();
+  } catch {
+    // ignore
+  }
+  server.close();
+});
 
 NativeModules.RNAnalytics = {};
 
@@ -175,6 +185,17 @@ jest.mock("~/analytics", () => ({
   updateIdentify: jest.fn(),
 }));
 
+// Mock @ledgerhq/logs so swap provider and other code never see "log is not a function" (e.g. after Jest teardown).
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+  LocalTracer: jest.fn().mockImplementation(function LocalTracer() {
+    return {
+      trace: jest.fn(),
+      type: jest.fn(),
+    };
+  }),
+}));
+
 jest.mock("@react-native-firebase/messaging", () => ({
   getMessaging: jest.fn(() => ({
     hasPermission: jest.fn(() => Promise.resolve(true)),
@@ -232,7 +253,12 @@ const originalWarn = console.warn;
 // eslint-disable-next-line no-console
 const originalLog = console.log;
 
-const EXCLUDED_ERRORS = ["act(...)"];
+const EXCLUDED_ERRORS = [
+  "act(...)",
+  "[GC API]",
+  "Failed to fetch Firebase remote config",
+  "useInsertionEffect must not schedule updates",
+];
 
 const EXCLUDED_WARNINGS = [
   "[Reanimated] Writing",
@@ -240,9 +266,22 @@ const EXCLUDED_WARNINGS = [
   'getHost: "Invalid non-string URL" for scriptURL',
   "@polkadot",
   "Node of type rule not supported as an inline style",
+  "No component found in stepRegistry for step:",
+  "[baseline-browser-mapping]",
+  "Invalid ENV value for",
+  "Non-serializable values were found in the navigation state",
+  "An input selector returned a different result",
+  "The result function returned its own inputs",
+  "_checkFakeTimers",
 ];
 
-const EXCLUDED_LOG_MESSAGES = ["Shims Injected", "Missing FileReader", "nextTick"];
+const EXCLUDED_LOG_MESSAGES = [
+  "Shims Injected",
+  "Missing FileReader",
+  "nextTick",
+  "Error: Device locked",
+  "Failed to fetch Firebase remote config",
+];
 
 console.error = (...args) => {
   const error = args.join();

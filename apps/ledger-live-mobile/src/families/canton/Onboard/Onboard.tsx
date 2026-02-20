@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
-import { CantonOnboardAccountParamList } from "./types";
+import { CantonOnboardAccountParamList, CantonOnboardStackParamList } from "./types";
 import OnboardScreen from "./OnboardScreen";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
@@ -24,7 +24,7 @@ function Onboard({ route }: OnboardProps) {
       }}
     >
       <Stack.Screen
-        name={ScreenName.CantonOnboardAccount}
+        name={ScreenName.CantonOnboardMain}
         component={OnboardScreen}
         initialParams={route.params}
         options={{ headerTitle: "" }}
@@ -37,4 +37,4 @@ const options = {
   headerShown: false,
 };
 export { Onboard as component, options };
-const Stack = createNativeStackNavigator<CantonOnboardAccountParamList>();
+const Stack = createNativeStackNavigator<CantonOnboardStackParamList>();

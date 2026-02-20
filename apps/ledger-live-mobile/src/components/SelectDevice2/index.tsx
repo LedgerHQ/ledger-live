@@ -216,7 +216,7 @@ export default function SelectDevice({
 
   const handleDeviceUnlocked = useCallback(() => {
     setDeviceToCheckLockedStatus(null);
-    deviceToCheckLockedStatus && notifyDeviceSelected(deviceToCheckLockedStatus);
+    if (deviceToCheckLockedStatus) notifyDeviceSelected(deviceToCheckLockedStatus);
   }, [notifyDeviceSelected, deviceToCheckLockedStatus]);
 
   const handleDeviceLockedCheckClosed = useCallback(() => {
@@ -295,6 +295,7 @@ export default function SelectDevice({
     const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
     const setDeviceFromId = (id: string) => (id.startsWith("usb") ? setUSBDevice : setProxyDevice);
     const sub = discoverDevices(filter).subscribe(e => {
+      if (e.id == null || typeof e.id !== "string") return;
       const setDevice = setDeviceFromId(e.id);
       if (e.type === "remove") setDevice(undefined);
       if (e.type === "add") {

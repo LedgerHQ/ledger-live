@@ -10,6 +10,8 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type CommonParams = {
   context?: AddAccountContextType;
+  /** Use callbackId instead of onSuccess/onCloseNavigation to keep params serializable. */
+  callbackId?: string;
   onSuccess?: (res?: { scannedAccounts: Account[]; selected: Account[] }) => void;
   onCloseNavigation?: () => void;
   navigationDepth?: number;

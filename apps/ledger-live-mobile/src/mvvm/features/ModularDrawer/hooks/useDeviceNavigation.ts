@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
+import { registerAddAccountCallbacks } from "~/navigation/callbackRegistry";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type {
   CryptoCurrency,
@@ -72,6 +73,12 @@ export function useDeviceNavigation({
       // SelectDevice (1) + AddAccounts flow (1) = 2 screens to pop
       const navigationDepth = isInline ? 2 : undefined;
 
+      // Use callback registry so we don't pass functions in params (non-serializable).
+      const callbackId = registerAddAccountCallbacks({
+        onSuccess,
+        onCloseNavigation: onClose ?? undefined,
+      });
+
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
@@ -79,9 +86,8 @@ export function useDeviceNavigation({
           createTokenAccount,
           context: AddAccountContexts.AddAccounts,
           inline: isInline,
-          onCloseNavigation: onClose,
+          callbackId,
           navigationDepth,
-          onSuccess,
         },
       });
     },

@@ -1,10 +1,10 @@
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { ScreenName } from "~/const";
-import type { CantonOnboardAccountParamList } from "../types";
+import type { CantonOnboardStackParamList } from "../types";
 
 export type OnboardScreenProps = StackNavigatorProps<
-  CantonOnboardAccountParamList,
-  ScreenName.CantonOnboardAccount
+  CantonOnboardStackParamList,
+  ScreenName.CantonOnboardMain
 >;
 
 export type OnboardScreenViewModelParams = {

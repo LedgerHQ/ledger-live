@@ -137,9 +137,11 @@ export function useStake() {
       const manifest = !platformId ? null : getManifest(platformId);
 
       if (!platformId || !manifest) {
-        console.warn(
-          `useStake(): No platformId (${platformId}) or manifest ${manifest?.id} found for currency ${depositCurrencyId}. Use useStakeDrawer or StakeFlow.`,
-        );
+        if (process.env.NODE_ENV !== "test") {
+          console.warn(
+            `useStake(): No platformId (${platformId}) or manifest ${manifest?.id} found for currency ${depositCurrencyId}. Use useStakeDrawer or StakeFlow.`,
+          );
+        }
         return null;
       }
 

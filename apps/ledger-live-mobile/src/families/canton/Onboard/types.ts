@@ -12,3 +12,13 @@ export type CantonOnboardAccountParamList = {
     restoreState?: NavigationSnapshot;
   };
 };
+/** Param list for the CantonOnboard stack (inner screen name unique to avoid duplicate screen name warning). */
+export type CantonOnboardStackParamList = {
+  [ScreenName.CantonOnboardMain]: {
+    accountsToAdd: Account[];
+    currency: CryptoOrTokenCurrency;
+    isReonboarding?: boolean;
+    accountToReonboard?: Account;
+    restoreState?: NavigationSnapshot;
+  };
+};

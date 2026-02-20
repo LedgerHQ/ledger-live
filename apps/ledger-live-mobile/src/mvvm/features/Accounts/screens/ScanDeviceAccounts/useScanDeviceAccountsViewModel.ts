@@ -22,6 +22,10 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
+import {
+  getAddAccountCallbacks,
+  unregisterAddAccountCallbacks,
+} from "~/navigation/callbackRegistry";
 
 const isNoAssociatedAccountsFamily = (
   family: string,
@@ -58,10 +62,15 @@ export default function useScanDeviceAccountsViewModel({
     device: { deviceId },
     inline,
     returnToSwap,
-    onCloseNavigation,
+    onCloseNavigation: onCloseNavigationParam,
     navigationDepth,
     context,
+    callbackId,
   } = route.params || {};
+
+  // Resolve callbacks from registry when callbackId is set (serializable params).
+  const registryCallbacks = callbackId ? getAddAccountCallbacks(callbackId) : undefined;
+  const onCloseNavigation = registryCallbacks?.onCloseNavigation ?? onCloseNavigationParam;
 
   const newAccountSchemes = useMemo(() => {
     // Find accounts that are (scanned && !existing && !used)
@@ -190,9 +199,10 @@ export default function useScanDeviceAccountsViewModel({
     if (onCloseNavigation) {
       onCloseNavigation();
     }
+    if (callbackId) unregisterAddAccountCallbacks(callbackId);
     const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
     parent?.pop(navigationDepth ?? 2);
-  }, [navigation, onCloseNavigation, navigationDepth]);
+  }, [navigation, onCloseNavigation, navigationDepth, callbackId]);
 
   const importAccounts = useCallback(() => {
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
@@ -224,7 +234,7 @@ export default function useScanDeviceAccountsViewModel({
         renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
       }),
     );
-    const { onSuccess } = route.params;
+    const onSuccess = registryCallbacks?.onSuccess ?? route.params.onSuccess;
 
     if (inline) {
       closeInlineFlow();
@@ -235,6 +245,7 @@ export default function useScanDeviceAccountsViewModel({
           selected: accountsToAdd,
         });
       }
+      if (callbackId) unregisterAddAccountCallbacks(callbackId);
     } else
       navigation.replace(ScreenName.AddAccountsSuccess, {
         ...route.params,
@@ -265,6 +276,8 @@ export default function useScanDeviceAccountsViewModel({
     selectedIds,
     dispatch,
     closeInlineFlow,
+    callbackId,
+    registryCallbacks?.onSuccess,
     analyticsMetadata?.AccountsFound?.onContinue,
     analyticsMetadata?.AccountsFound?.onAccountsAdded,
   ]);
@@ -359,11 +372,12 @@ export default function useScanDeviceAccountsViewModel({
           emptyAccountName: alreadyEmptyAccountName,
           currency,
           context,
-          onCloseNavigation,
+          ...(callbackId ? { callbackId } : { onCloseNavigation }),
         });
       } else if (!hasScannedAccounts && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
+          ...(callbackId ? { callbackId } : {}),
         });
       }
     }
@@ -378,6 +392,7 @@ export default function useScanDeviceAccountsViewModel({
     CustomNoAssociatedAccounts,
     context,
     onCloseNavigation,
+    callbackId,
     scannedAccounts.length,
     latestScannedAccount,
   ]);

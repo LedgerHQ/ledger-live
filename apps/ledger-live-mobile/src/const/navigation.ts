@@ -337,8 +337,9 @@ export enum ScreenName {
   StellarAddAssetValidation = "StellarAddAssetValidation",
   StellarAddAssetValidationError = "StellarAddAssetValidationError",
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
-  // Canton
+  // Canton (CantonOnboardAccount kept for external navigate(); inner screen uses CantonOnboardMain to avoid duplicate name warning)
   CantonOnboardAccount = "CantonOnboardAccount",
+  CantonOnboardMain = "CantonOnboard.Main",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",

@@ -53,8 +53,11 @@ module.exports = {
   verbose: true,
   preset: "react-native",
   workerIdleMemoryLimit: "1GB",
+  // Allow Jest to exit when async work (swap, cal, live-network) leaves open handles; avoids "import after teardown".
+  forceExit: true,
   modulePaths: [compilerOptions.baseUrl],
   setupFilesAfterEnv: [
+    "./__tests__/jest-env-defaults.js",
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
   ],

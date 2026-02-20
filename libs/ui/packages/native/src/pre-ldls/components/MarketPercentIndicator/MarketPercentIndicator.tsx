@@ -44,7 +44,7 @@ export const MarketPercentIndicator = ({ percent }: { percent: number }) => {
       data-testid="market-percent-indicator"
       flexDirection="column"
       alignItems="flex-end"
-      width="fit-content"
+      alignSelf="flex-start"
       p="4px"
       borderRadius="4px"
       backgroundColor={percentageDisplay.backgroundColor}
