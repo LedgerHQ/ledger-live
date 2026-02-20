@@ -58,9 +58,7 @@ async function ensureMarketcapFresh() {
 
 function subscribeMarketcap(listener: () => void) {
   marketcapStore.listeners.add(listener);
-  if (marketcapStore.listeners.size === 1) {
-    void ensureMarketcapFresh();
-  } else if (marketcapStore.lastUpdated === 0) {
+  if (marketcapStore.listeners.size === 1 || marketcapStore.lastUpdated === 0) {
     void ensureMarketcapFresh();
   }
 
