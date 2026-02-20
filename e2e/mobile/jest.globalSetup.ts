@@ -18,6 +18,7 @@ import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
+import { startMitmproxy, installMitmproxyCertOnSimulator } from "./utils/mitmproxyUtils";
 
 export default async function setup(): Promise<void> {
   const envFileName = process.env.ENV_FILE || ".env.mock";
@@ -31,6 +32,9 @@ export default async function setup(): Promise<void> {
 
   setupSpeculosCleanupHandlers();
   await cleanupPreviousNanoAppJsonFile();
+
+  await startMitmproxy();
+  await installMitmproxyCertOnSimulator();
 
   await globalSetup();
 

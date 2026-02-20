@@ -3,6 +3,11 @@ import { close as closeBridge } from "./bridge/server";
 import { isWallet40, launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { allure } from "jest-allure2-reporter/api";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
+const MITMPROXY_HAR_PATH = path.resolve(__dirname, "artifacts/mitmproxy-requests.har");
+const NETWORK_VIEWER_URL = "https://opensource.saucelabs.com/network-viewer/";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
@@ -27,4 +32,10 @@ afterAll(async () => {
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
   await app.common.removeSpeculos();
+
+  if (existsSync(MITMPROXY_HAR_PATH)) {
+    const harData = readFileSync(MITMPROXY_HAR_PATH);
+    await allure.attachment("Network Traffic (HAR)", harData, "application/har+json");
+    allure.link(NETWORK_VIEWER_URL, "🌐 Open in Network Viewer");
+  }
 });
