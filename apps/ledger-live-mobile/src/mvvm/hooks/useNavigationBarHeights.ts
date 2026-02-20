@@ -19,6 +19,8 @@ const MAIN_NAV_TOP_BAR_HEIGHT_ANDROID = TOP_BAR_BAR_HEIGHT + ANDROID_GRADIENT_EX
 export interface NavigationBarHeights {
   readonly top: number;
   readonly bottom: number;
+  readonly bottomBarHeight: number;
+  readonly topBarHeight: number;
 }
 
 /**
@@ -50,8 +52,10 @@ export function useNavigationBarHeights(): NavigationBarHeights {
 
   const result = useMemo(
     () => ({
-      top: insets.top + topBarHeight,
       bottom: isTabBarVisible ? TAB_BAR_HEIGHT : 0,
+      bottomBarHeight: TAB_BAR_HEIGHT,
+      top: insets.top + topBarHeight,
+      topBarHeight,
     }),
     [insets.top, topBarHeight, isTabBarVisible],
   );

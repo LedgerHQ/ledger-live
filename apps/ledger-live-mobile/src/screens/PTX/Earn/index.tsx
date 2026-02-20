@@ -30,7 +30,7 @@ import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
-import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
+import { useNavigationBarHeights } from "~/mvvm/hooks/useNavigationBarHeights";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -48,6 +48,7 @@ function Earn({ route }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
   const insets = useSafeAreaInsets();
+  const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
@@ -116,7 +117,8 @@ function Earn({ route }: Props) {
       safeAreaBottom: insets.bottom.toString(),
       safeAreaLeft: insets.left.toString(),
       safeAreaRight: insets.right.toString(),
-      navigationHeightOffset: TAB_BAR_HEIGHT.toString(),
+      topNavigationHeightOffset: topBarHeight.toString(),
+      bottomNavigationHeightOffset: bottomBarHeight.toString(),
       lw40enabled: isLwm40Enabled ? "true" : "false",
       ...params,
       ...Object.fromEntries(searchParams.entries()),
@@ -139,6 +141,8 @@ function Earn({ route }: Props) {
       insets.left,
       insets.right,
       isLwm40Enabled,
+      topBarHeight,
+      bottomBarHeight,
     ],
   );
 
