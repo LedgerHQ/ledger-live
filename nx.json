@@ -1,0 +1,423 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "sharedGlobals": [
+      "{workspaceRoot}/turbo.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      {
+        "env": "ANDROID_HOME"
+      },
+      {
+        "env": "ANDROID_KEYSTORE_FILE"
+      },
+      {
+        "env": "ANDROID_KEYSTORE_PASS"
+      },
+      {
+        "env": "ANDROID_KEY_ALIAS"
+      },
+      {
+        "env": "ANDROID_KEY_PASS"
+      },
+      {
+        "env": "ANDROID_SDK_ROOT"
+      },
+      {
+        "env": "ANALYTICS_TOKEN"
+      },
+      {
+        "env": "APPLECONNECT_API_KEY_CONTENT"
+      },
+      {
+        "env": "APPLECONNECT_API_KEY_ID"
+      },
+      {
+        "env": "APPLECONNECT_API_ISSUER_ID"
+      },
+      {
+        "env": "APPLEID"
+      },
+      {
+        "env": "APPLEID_PASSWORD"
+      },
+      {
+        "env": "APP_IDENTIFIER"
+      },
+      {
+        "env": "APP_NAME"
+      },
+      {
+        "env": "AZURE_APP_ID"
+      },
+      {
+        "env": "AZURE_TENANT_ID"
+      },
+      {
+        "env": "AZURE_SECRET"
+      },
+      {
+        "env": "AZURE_KEY_NAME"
+      },
+      {
+        "env": "BRAZE_ANDROID_API_KEY"
+      },
+      {
+        "env": "BRAZE_API_KEY"
+      },
+      {
+        "env": "BRAZE_CUSTOM_ENDPOINT"
+      },
+      {
+        "env": "BRAZE_IOS_API_KEY"
+      },
+      {
+        "env": "BYPASS_CORS"
+      },
+      {
+        "env": "CI_KEYCHAIN_NAME"
+      },
+      {
+        "env": "CI_KEYCHAIN_PASSWORD"
+      },
+      {
+        "env": "DEV_TOOLS"
+      },
+      {
+        "env": "DEVELOPER_TEAM_ID"
+      },
+      {
+        "env": "DISABLE_TRANSACTION_BROADCAST"
+      },
+      {
+        "env": "ELECTRON_ARGS"
+      },
+      {
+        "env": "ENVFILE"
+      },
+      {
+        "env": "FASTLANE_PASSWORD"
+      },
+      {
+        "env": "FIREBASE_API_KEY"
+      },
+      {
+        "env": "FIREBASE_APP_ID"
+      },
+      {
+        "env": "FIREBASE_AUTH_DOMAIN"
+      },
+      {
+        "env": "FIREBASE_MESSAGING_SENDER_ID"
+      },
+      {
+        "env": "FIREBASE_PROJECT_ID"
+      },
+      {
+        "env": "FIREBASE_STORAGE_BUCKET"
+      },
+      {
+        "env": "GENERATE_METAFILES"
+      },
+      {
+        "env": "GH_TOKEN"
+      },
+      {
+        "env": "GIT_REPO_URL"
+      },
+      {
+        "env": "GIT_REPO_USER"
+      },
+      {
+        "env": "LEDGER_INTERNAL_ARGS"
+      },
+      {
+        "env": "MATCH_PASSWORD"
+      },
+      {
+        "env": "MY_APP_BUNDLE_ID"
+      },
+      {
+        "env": "NO_DEBUG_DEVICE"
+      },
+      {
+        "env": "SENTRY_AUTH_TOKEN"
+      },
+      {
+        "env": "SENTRY_ENVIRONMENT"
+      },
+      {
+        "env": "SENTRY_PROJECT"
+      },
+      {
+        "env": "SENTRY_DISABLE_AUTO_UPLOAD"
+      },
+      {
+        "env": "SENTRY_ALLOW_FAILURE"
+      },
+      {
+        "env": "SENTRY_DSN"
+      },
+      {
+        "env": "SHORT_BUNDLE_ID"
+      },
+      {
+        "env": "SPECULOS_API_PORT"
+      },
+      {
+        "env": "SPECULOS_DEVICE"
+      },
+      {
+        "env": "SWAP_API_BASE"
+      },
+      {
+        "env": "SWAP_DISABLE_APPS_INSTALL"
+      },
+      {
+        "env": "SWAP_USER_IP"
+      },
+      {
+        "env": "SUPPLY_UPLOAD_MAX_RETRIES"
+      },
+      {
+        "env": "VERBOSE"
+      },
+      {
+        "env": "DATADOG_CLIENT_TOKEN"
+      },
+      {
+        "env": "DATADOG_ENV"
+      },
+      {
+        "env": "DATADOG_APPLICATION_ID"
+      },
+      {
+        "env": "DATADOG_SITE"
+      },
+      {
+        "env": "DATADOG_CLIENT_TOKEN_VAR"
+      },
+      {
+        "env": "DATADOG_APPLICATION_ID_VAR"
+      },
+      {
+        "env": "DATADOG_STG_APPLICATION_ID"
+      },
+      {
+        "env": "DATADOG_STG_CLIENT_TOKEN"
+      },
+      {
+        "env": "DATADOG_PROD_CLIENT_TOKEN"
+      },
+      {
+        "env": "DATADOG_PROD_APPLICATION_ID"
+      },
+      {
+        "env": "MOCK"
+      },
+      {
+        "env": "MOCK_COUNTERVALUES"
+      },
+      {
+        "env": "MOCK_REMOTE_LIVE_MANIFEST"
+      },
+      {
+        "env": "ENABLE_MSW"
+      },
+      {
+        "env": "DEBUG_UPDATE"
+      },
+      {
+        "env": "DEBUG_SKELETONS"
+      },
+      {
+        "env": "DEBUG_FIRMWARE_UPDATE"
+      },
+      {
+        "env": "DEBUG_THEME"
+      },
+      {
+        "env": "DEBUG_LOTTIE"
+      },
+      {
+        "env": "DEBUG_POSTONBOARDINGHUB"
+      },
+      {
+        "env": "DEBUG_FW_VERSION"
+      },
+      {
+        "env": "HIDE_DEBUG_MOCK"
+      },
+      {
+        "env": "DISABLE_MOCK_POINTER_EVENTS"
+      },
+      {
+        "env": "DISABLE_CONTEXT_MENU"
+      },
+      {
+        "env": "SHOW_ETHEREUM_BRIDGE"
+      },
+      {
+        "env": "OVERRIDE_MODELID"
+      },
+      {
+        "env": "OVERRIDE_MODEL_ID"
+      },
+      {
+        "env": "DEFAULT_EARN_MANIFEST_ID"
+      },
+      {
+        "env": "DEFAULT_SWAP_MANIFEST_ID"
+      },
+      {
+        "env": "USBTROUBLESHOOTING_PLATFORM"
+      },
+      {
+        "env": "NO_DEBUG_DB"
+      },
+      {
+        "env": "NO_DEBUG_ACTION"
+      },
+      {
+        "env": "NO_DEBUG_TAB_KEY"
+      },
+      {
+        "env": "NO_DEBUG_WS"
+      },
+      {
+        "env": "NO_DEBUG_NETWORK"
+      },
+      {
+        "env": "NO_DEBUG_ANALYTICS"
+      },
+      {
+        "env": "NO_DEBUG_COUNTERVALUES"
+      }
+    ],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/**",
+        "{projectRoot}/lib/**",
+        "{projectRoot}/lib-es/**",
+        "{projectRoot}/build/**"
+      ],
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "lint:fix": {
+      "cache": true
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": true
+    },
+    "start": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "start:msw": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "unimported": {
+      "cache": false
+    },
+    "knip-check": {
+      "cache": false
+    },
+    "android:apk:local": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    },
+    "android:apk": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    },
+    "ios:local:ipa": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    },
+    "ios:ci:adhoc": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    },
+    "nightly": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "pre-build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "release": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "watch": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "watch:es": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "coverage": {
+      "dependsOn": [
+        "^build",
+        "build"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/lcov.info",
+        "{projectRoot}/coverage/sonar-executionTests-report.xml"
+      ],
+      "cache": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "doc": {
+      "cache": false
+    }
+  },
+  "defaultBase": "develop"
+}
