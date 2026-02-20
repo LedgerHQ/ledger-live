@@ -32,14 +32,26 @@ const withTabBarVisibility = (isVisible: boolean) => (state: State) => ({
 
 describe("useNavigationBarHeights", () => {
   describe("when lwmWallet40 feature flag is disabled", () => {
-    it("should throw error", () => {
-      expect(() => {
-        renderHook(() => useNavigationBarHeights(), {
-          overrideInitialState: withFeatureFlag(false),
-        });
-      }).toThrow(
-        "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled",
+    it("should log an error and return zero values", () => {
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withFeatureFlag(false),
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled",
+        ),
       );
+      expect(result.current).toEqual({
+        top: 0,
+        bottom: 0,
+        topBarHeight: 0,
+        bottomBarHeight: 0,
+      });
+
+      consoleSpy.mockRestore();
     });
   });
 
