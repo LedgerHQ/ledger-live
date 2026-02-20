@@ -9,8 +9,8 @@
     "build": "rslib build",
     "test": "tsx src/metafile.test.ts",
     "cli": "tsx src/cli.ts",
-    "lint": "eslint ./ --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint --max-warnings=99999  .",
+    "lint:fix": "oxlint --fix --max-warnings=99999  .",
     "dev": "pnpm dlx ts-node src/test.ts"
   },
   "devDependencies": {

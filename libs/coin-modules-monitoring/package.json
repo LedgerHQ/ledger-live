@@ -6,8 +6,8 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint .",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint --max-warnings=99999  .",
+    "lint:fix": "oxlint --fix --max-warnings=99999  .",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
     "start": "node lib/src/cli.js",

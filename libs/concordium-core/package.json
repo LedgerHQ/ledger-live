@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
+    "lint": "oxlint --max-warnings=99999  ./src",
     "unimported": "unimported"
   },
   "dependencies": {

@@ -1,0 +1,170 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "react", "jsx-a11y"],
+  "categories": { "correctness": "off" },
+  "env": { "node": true, "browser": true, "es6": true },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.turbo/**",
+    "**/lib/**",
+    "**/lib-es/**",
+    "**/coverage/**",
+    "**/*.min.js"
+  ],
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "no-restricted-imports": ["error", { "paths": ["lodash"] }],
+    "@typescript-eslint/consistent-type-assertions": ["warn", { "assertionStyle": "never" }],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-require-imports": "warn",
+    "@typescript-eslint/no-empty-object-type": "warn",
+    "@typescript-eslint/no-unsafe-function-type": "warn",
+    "no-unused-expressions": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["apps/ledger-live-desktop/**"],
+      "env": { "browser": true, "es6": true, "node": true },
+      "globals": {
+        "__DEV__": "readonly",
+        "INDEX_URL": "readonly",
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly",
+        "__SENTRY_URL__": "readonly",
+        "__APP_VERSION__": "readonly",
+        "__GIT_REVISION__": "readonly",
+        "__PRERELEASE__": "readonly",
+        "__CHANNEL__": "readonly",
+        "__static": "readonly",
+        "$": "readonly"
+      },
+      "plugins": ["eslint", "typescript", "react", "jest"],
+      "rules": {
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error",
+        "@typescript-eslint/no-explicit-any": "error",
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+                "message": "Please remove the /lib import from live-common import."
+              },
+              {
+                "group": ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+                "message": "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports."
+              },
+              {
+                "group": ["**/families/*/**"],
+                "message": "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead."
+              }
+            ],
+            "paths": [
+              "lodash",
+              {
+                "name": "react-redux",
+                "importNames": ["useSelector", "useDispatch", "useStore"],
+                "message": "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing."
+              }
+            ]
+          }
+        ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.object.name='shell'][callee.property.name='openExternal']",
+            "message": "Do not use shell.openExternal() directly. In renderer code, use openURL() from '~/renderer/linking' instead to prevent RCE vulnerabilities."
+          },
+          {
+            "selector": "MemberExpression[object.name='shell'][property.name='openExternal']",
+            "message": "Do not use shell.openExternal directly. In renderer code, use openURL() from '~/renderer/linking'."
+          }
+        ]
+      },
+      "jsPlugins": ["eslint-plugin-better-tailwindcss"]
+    },
+    {
+      "files": ["apps/ledger-live-desktop/tests/**"],
+      "env": { "jest/globals": true },
+      "plugins": ["eslint", "typescript", "react", "jest"]
+    },
+    {
+      "files": ["apps/ledger-live-mobile/**"],
+      "env": { "node": true, "browser": true, "es6": true },
+      "globals": { "__DEV__": "readonly", "__REDUX_DEVTOOLS_EXTENSION__": "readonly" },
+      "plugins": ["eslint", "typescript", "react", "jsx-a11y"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "error",
+        "no-console": ["error", { "allow": ["warn", "error"] }],
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+                "message": "Please remove the /lib import from live-common import."
+              },
+              {
+                "group": ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+                "message": "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports."
+              }
+            ],
+            "paths": [
+              "lodash",
+              {
+                "name": "react-redux",
+                "importNames": ["useSelector", "useDispatch", "useStore"],
+                "message": "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing."
+              },
+              {
+                "name": "reselect",
+                "importNames": ["createStructuredSelector", "createSelector"],
+                "message": "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing."
+              },
+              {
+                "name": "react-i18next",
+                "importNames": ["useTranslation", "Trans"],
+                "message": "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance."
+              }
+            ]
+          }
+        ],
+        "react/jsx-key": "warn",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": [
+          "error",
+          {
+            "additionalHooks": "(useInViewContext|useAnimatedStyle|useDerivedValue|useAnimatedProps)"
+          }
+        ],
+        "jsx-a11y/anchor-is-valid": ["error", { "components": [] }],
+        "no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "destructuredArrayIgnorePattern": "^_",
+            "vars": "all",
+            "varsIgnorePattern": "^_",
+            "args": "after-used",
+            "ignoreRestSiblings": true
+          }
+        ]
+      }
+    }
+  ]
+}
