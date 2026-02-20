@@ -2268,35 +2268,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  onomy: {
-    type: "CryptoCurrency",
-    id: "onomy",
-    coinType: CoinType.ATOM,
-    name: "Onomy",
-    managerAppName: "Cosmos",
-    ticker: "NOM",
-    scheme: "onomy",
-    color: "#8c94d3",
-    family: "cosmos",
-    units: [
-      {
-        name: "Onomy",
-        code: "NOM",
-        magnitude: 18,
-      },
-      {
-        name: "Micro-Onomy",
-        code: "anom",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/onomy-protocol/txs/$hash",
-        address: "https://www.mintscan.io/onomy-protocl/validators/$address",
-      },
-    ],
-  },
   ontology: {
     type: "CryptoCurrency",
     id: "ontology",
