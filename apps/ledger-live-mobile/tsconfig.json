@@ -7,20 +7,16 @@
     "checkJs": false,
     "jsx": "react-native",
     "lib": ["es2017", "DOM"],
-    "types": [
-      "react",
-      "jest",
-      "jest-allure2-reporter/globals"
-    ],
+    "types": ["react", "jest", "jest-allure2-reporter/globals"],
     "noEmit": true,
     "target": "esnext",
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "LLM/*": ["src/mvvm/*"],
-      "@tests/*": ["__tests__/*"],
-      "@mocks/*": ["__mocks__/*"]
+      "*": ["./*"],
+      "~/*": ["./src/*"],
+      "LLM/*": ["./src/mvvm/*"],
+      "@tests/*": ["./__tests__/*"],
+      "@mocks/*": ["./__mocks__/*"]
     }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],

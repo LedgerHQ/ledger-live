@@ -118,6 +118,7 @@ export const buildSignOperation =
         const { signature } = await signerContext(deviceId, signer =>
           signer.signTransaction(
             account.freshAddressPath,
+            // @ts-ignore ts-go signTransaction second param Buffer vs string
             Buffer.from(tx.message.serialize()),
             getResolution(transaction, deviceModelId, certificateSignatureKind),
           ),

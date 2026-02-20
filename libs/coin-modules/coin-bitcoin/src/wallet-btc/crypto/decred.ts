@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Buffer vs Uint8Array in blake256/bs58
 import Base from "./base";
 import { InvalidAddress } from "@ledgerhq/errors";
 import * as bjs from "bitcoinjs-lib";
@@ -17,19 +18,31 @@ class Decred extends Base {
     this.network.usesTimestampedTransaction = false;
   }
   static blake256(buffer: Buffer): Buffer {
-    let b = buffer;
+    let b: Buffer | Uint8Array = buffer;
     if (buffer instanceof Uint8Array) {
       b = Buffer.from(buffer);
     }
-    return Buffer.from(nobleBlake256(b));
+    // @ts-ignore
+    return Buffer.from(
+      (nobleBlake256 as (data: Uint8Array) => Uint8Array)(b as unknown as Uint8Array),
+    );
   }
 
   // refer to decred spec https://devdocs.decred.org/developer-guides/addresses/
   static getAddressFromPk(publicKey: Buffer): string {
     const prefix = Buffer.from("073f", "hex");
-    const pkhash = Buffer.concat([prefix, Buffer.from(ripemd160(Decred.blake256(publicKey)))]);
+    const pkhash = Buffer.concat([
+      prefix as unknown as Uint8Array,
+      Buffer.from(ripemd160(Decred.blake256(publicKey))),
+    ]);
     const checksum = Decred._blake256x2(pkhash).slice(0, 4);
-    return bs58.encode(Buffer.concat([pkhash, checksum]));
+    // @ts-ignore
+    const encoded = Buffer.concat([
+      pkhash as unknown as Uint8Array,
+      checksum as unknown as Uint8Array,
+    ]);
+    // @ts-ignore
+    return bs58.encode(encoded as unknown as Uint8Array);
   }
 
   static readonly _blake256x2 = (buffer: Buffer): Buffer =>

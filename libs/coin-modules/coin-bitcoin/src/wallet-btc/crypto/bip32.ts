@@ -27,12 +27,26 @@ class BIP32 {
   }
   async derive(index: number): Promise<BIP32> {
     const data = Buffer.allocUnsafe(37);
+    // @ts-ignore ts-go copy target Buffer vs Uint8Array
     this.publicKey.copy(data, 0);
     data.writeUInt32BE(index, 33);
-    const I = createHmac("sha512", this.chainCode).update(data).digest();
+    // @ts-ignore ts-go createHmac key Buffer vs Uint8Array
+    const I = (
+      createHmac as unknown as (
+        alg: string,
+        key: Uint8Array,
+      ) => { update(d: Uint8Array): { digest(): Buffer }; digest(): Buffer }
+    )("sha512", this.chainCode as unknown as Uint8Array)
+      .update(data as unknown as Uint8Array)
+      .digest();
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
-    const Ki = Buffer.from(await getSecp256k1Instance().publicKeyTweakAdd(this.publicKey, IL));
+    const Ki = Buffer.from(
+      await getSecp256k1Instance().publicKeyTweakAdd(
+        this.publicKey as unknown as Uint8Array,
+        IL as unknown as Uint8Array,
+      ),
+    );
     return new BIP32(Ki, IR, this.network, this.depth + 1, index);
   }
 }

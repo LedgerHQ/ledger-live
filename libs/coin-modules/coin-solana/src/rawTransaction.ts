@@ -30,7 +30,7 @@ export async function toLiveTransaction(
   serializedTransaction: string,
 ): Promise<Transaction> {
   const solanaTransaction = VersionedTransaction.deserialize(
-    Buffer.from(serializedTransaction, "base64"),
+    Buffer.from(serializedTransaction, "base64") as unknown as Uint8Array,
   );
 
   const estimatedFees = await api.getFeeForMessage(solanaTransaction.message);

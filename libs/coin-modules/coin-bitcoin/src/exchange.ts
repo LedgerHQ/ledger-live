@@ -24,6 +24,9 @@ export const getSerializedAddressParameters = (
       : (getAddressFormatDerivationMode(derivationMode) as FormatType);
   invariant(Object.keys(addressFormatMap).includes(format), "unsupported format %s", format);
   const buffer = bip32asBuffer(path);
-  const addressParameters = Buffer.concat([Buffer.from([addressFormatMap[format]]), buffer]);
+  const addressParameters = Buffer.concat([
+    Buffer.from([addressFormatMap[format]]) as unknown as Uint8Array,
+    buffer as unknown as Uint8Array,
+  ]);
   return addressParameters;
 };

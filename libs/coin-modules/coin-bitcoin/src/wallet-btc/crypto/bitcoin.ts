@@ -1,4 +1,5 @@
 // from https://github.com/LedgerHQ/xpub-scan/blob/master/src/actions/deriveAddresses.ts
+// @ts-nocheck ts-go toBech32 return type
 
 import * as bech32 from "bech32";
 import { bech32m } from "../../bech32m";
@@ -160,7 +161,13 @@ class Bitcoin extends Base {
     // hash_tag(x) = SHA256(SHA256(tag) || SHA256(tag) || x), see BIP340
     // See https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification
     const h = bjs.crypto.sha256(Buffer.from("TapTweak", "utf-8"));
-    return bjs.crypto.sha256(Buffer.concat([h, h, x]));
+    return bjs.crypto.sha256(
+      Buffer.concat([
+        h as unknown as Uint8Array,
+        h as unknown as Uint8Array,
+        x as unknown as Uint8Array,
+      ]),
+    );
   }
 
   private async getTaprootAddress(xpub: string, account: number, index: number): Promise<string> {
@@ -171,17 +178,24 @@ class Bitcoin extends Base {
     // https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#public-key-conversion
     const schnorrInternalPubkey = ecdsaPubkey.slice(1);
 
-    const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), schnorrInternalPubkey]);
+    const evenEcdsaPubkey = Buffer.concat([
+      Buffer.from([0x02]) as unknown as Uint8Array,
+      schnorrInternalPubkey as unknown as Uint8Array,
+    ]);
     const tweak = this.hashTapTweak(schnorrInternalPubkey);
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
     const outputEcdsaKey = Buffer.from(
-      await getSecp256k1Instance().publicKeyTweakAdd(evenEcdsaPubkey, tweak),
+      await getSecp256k1Instance().publicKeyTweakAdd(
+        evenEcdsaPubkey as unknown as Uint8Array,
+        tweak as unknown as Uint8Array,
+      ),
     );
     // Convert to schnorr.
     const outputSchnorrKey = outputEcdsaKey.slice(1);
     // Create address
-    return toBech32(outputSchnorrKey, 1, this.network.bech32);
+    // @ts-ignore
+    return toBech32(outputSchnorrKey as unknown as Uint8Array, 1, this.network.bech32);
   }
 
   isTaprootAddress(address: string): boolean {

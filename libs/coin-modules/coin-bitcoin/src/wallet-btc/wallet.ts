@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go writeVarInt return type
 import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
@@ -246,8 +247,13 @@ class BitcoinLikeWallet {
         bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
         bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
       }
-      bufferOffset = utils.writeVarInt(buffer, txOut.script.length, bufferOffset);
-      bufferOffset += txOut.script.copy(buffer, bufferOffset);
+      // @ts-ignore ts-go writeVarInt return type
+      bufferOffset = utils.writeVarInt(
+        buffer as unknown as Uint8Array,
+        txOut.script.length,
+        bufferOffset,
+      );
+      bufferOffset += txOut.script.copy(buffer as unknown as Uint8Array, bufferOffset);
     });
     const outputScriptHex = buffer.toString("hex");
     const associatedKeysets = txInfo.associatedDerivations.map(

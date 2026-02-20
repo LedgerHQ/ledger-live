@@ -38,11 +38,17 @@ export const buildTransactionWithAPI = async (
 
   let web3SolanaTransaction: VersionedTransaction;
   if (transaction.raw) {
-    web3SolanaTransaction = OnChainTransaction.deserialize(Buffer.from(transaction.raw, "base64"));
+    web3SolanaTransaction = OnChainTransaction.deserialize(
+      Buffer.from(transaction.raw, "base64") as unknown as Uint8Array,
+    );
     // Update the recent blockhash if no real signatures are present
     // This ensures the transaction uses a fresh blockhash for submission
     // NOTE: we could also make use of the isBlockHashValid rpc method to check the validity
-    if (web3SolanaTransaction.signatures.every(sig => Buffer.from(sig).equals(DUMMY_SIGNATURE))) {
+    if (
+      web3SolanaTransaction.signatures.every(sig =>
+        Buffer.from(sig as unknown as Uint8Array).equals(DUMMY_SIGNATURE as unknown as Uint8Array),
+      )
+    ) {
       web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
     }
   } else {
@@ -60,7 +66,10 @@ export const buildTransactionWithAPI = async (
     web3SolanaTransaction,
     recentBlockhash,
     (signature: Buffer) => {
-      web3SolanaTransaction.addSignature(new PublicKey(address), signature);
+      web3SolanaTransaction.addSignature(
+        new PublicKey(address),
+        signature as unknown as Uint8Array,
+      );
       return web3SolanaTransaction;
     },
   ];

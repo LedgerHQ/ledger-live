@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go hash160/p2pkh/p2sh Buffer vs Uint8Array
 import bs58check from "bs58check";
 import { InvalidAddress } from "@ledgerhq/errors";
 import Base from "./base";
@@ -34,11 +35,15 @@ class Zen extends Base {
   }
 
   async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
-    const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
+    const hashResult = bjs.crypto.hash160(
+      (await this.getPubkeyAt(xpub, account, index)) as unknown as Uint8Array,
+    );
+    // @ts-ignore
+    const pk: Buffer = Buffer.from(hashResult);
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
-    pk.copy(payload, 2);
-    return bs58check.encode(payload);
+    pk.copy(payload as unknown as Uint8Array, 2);
+    return bs58check.encode(payload as unknown as Uint8Array);
   }
 
   async customGetAddress(
@@ -58,14 +63,18 @@ class Zen extends Base {
     const version = Number("0x" + bs58check.decode(address).slice(0, 2).toString("hex"));
     if (version === this.network.pubKeyHash) {
       //Pay-to-PubkeyHash
-      outputScript = bjs.payments.p2pkh({
-        hash: bs58check.decode(address).slice(2),
-      }).output as Buffer;
+      const out = bjs.payments.p2pkh({
+        hash: bs58check.decode(address).slice(2) as unknown as Uint8Array,
+      }).output;
+      // @ts-ignore
+      outputScript = Buffer.from((out ?? new Uint8Array(0)) as Uint8Array);
     } else if (version === this.network.scriptHash) {
       //Pay-to-Script-Hash
-      outputScript = bjs.payments.p2sh({
-        hash: bs58check.decode(address).slice(2),
-      }).output as Buffer;
+      const out = bjs.payments.p2sh({
+        hash: bs58check.decode(address).slice(2) as unknown as Uint8Array,
+      }).output;
+      // @ts-ignore
+      outputScript = Buffer.from((out ?? new Uint8Array(0)) as Uint8Array);
     } else {
       throw new InvalidAddress();
     }
@@ -74,7 +83,10 @@ class Zen extends Base {
       "209ec9845acb02fab24e1c0368b3b517c1a4488fba97f0e3459ac053ea0100000003c01f02b4",
       "hex",
     );
-    return Buffer.concat([outputScript, bip115Script]);
+    return Buffer.concat([
+      outputScript as unknown as Uint8Array,
+      bip115Script as unknown as Uint8Array,
+    ]);
   }
 
   validateAddress(address: string): boolean {

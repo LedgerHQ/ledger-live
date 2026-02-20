@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Uint8ClampedArray vs ImageDataArray
 declare global {
   interface Window {
     ReactNativeWebView: {

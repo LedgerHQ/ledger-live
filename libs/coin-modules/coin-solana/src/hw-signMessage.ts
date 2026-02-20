@@ -39,7 +39,11 @@ export const signMessage =
     const signatureCount = Buffer.from([1]);
 
     // https://docs.anza.xyz/proposals/off-chain-message-signing#envelope
-    const envelope = Buffer.concat([signatureCount, result.signature, signedMessage]);
+    const envelope = Buffer.concat([
+      signatureCount as unknown as Uint8Array,
+      result.signature as unknown as Uint8Array,
+      signedMessage as unknown as Uint8Array,
+    ]);
 
     return { signature: bs58.encode(envelope) };
   };

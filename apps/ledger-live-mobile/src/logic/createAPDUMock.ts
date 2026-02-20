@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go Buffer vs Uint8Array
 import { Buffer } from "buffer";
 import { delay } from "@ledgerhq/live-common/promise";
 

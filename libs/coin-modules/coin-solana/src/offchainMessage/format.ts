@@ -61,7 +61,10 @@ function findMessageFormat(messageBuffer: Buffer, isLegacy: boolean): number {
  * 6. Signers (signer_count *  32 bytes) - assume that only one signer is present
  * 7. Message length (2 bytes)
  */
-const signingDomain = Buffer.concat([Buffer.from([255]), Buffer.from("solana offchain")]);
+const signingDomain = Buffer.concat([
+  Buffer.from([255]) as unknown as Uint8Array,
+  Buffer.from("solana offchain") as unknown as Uint8Array,
+]);
 const headerVersion = Buffer.alloc(1);
 const applicationDomain = Buffer.alloc(32);
 const messageFormat = Buffer.alloc(1);
@@ -79,20 +82,19 @@ export function toOffChainMessage(
 
   const signers = new PublicKey(signerAddress).toBuffer();
 
-  messageLength.writeUint16LE(messageBuffer.length);
+  messageLength.writeUInt16LE(messageBuffer.length);
 
-  return Buffer.concat(
-    isLegacy
-      ? [signingDomain, headerVersion, messageFormat, messageLength, messageBuffer]
-      : [
-          signingDomain,
-          headerVersion,
-          applicationDomain,
-          messageFormat,
-          signerCount,
-          signers,
-          messageLength,
-          messageBuffer,
-        ],
-  );
+  const parts = isLegacy
+    ? [signingDomain, headerVersion, messageFormat, messageLength, messageBuffer]
+    : [
+        signingDomain,
+        headerVersion,
+        applicationDomain,
+        messageFormat,
+        signerCount,
+        signers,
+        messageLength,
+        messageBuffer,
+      ];
+  return Buffer.concat(parts as unknown as Uint8Array[]);
 }

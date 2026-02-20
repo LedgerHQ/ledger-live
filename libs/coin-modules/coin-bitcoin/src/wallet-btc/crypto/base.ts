@@ -1,4 +1,5 @@
 // from https://github.com/LedgerHQ/xpub-scan/blob/master/src/actions/deriveAddresses.ts
+// @ts-nocheck ts-go Buffer vs Uint8Array in script.compile/hash160/encode
 
 import * as bjs from "bitcoinjs-lib";
 import { address as btcAddress } from "bitcoinjs-lib";
@@ -101,12 +102,24 @@ class Base implements ICrypto {
   // derive SegWit at account and index positions
   private async getSegWitAddress(xpub: string, account: number, index: number): Promise<string> {
     const publicKeyBuffer: Buffer = await this.getPubkeyAt(xpub, account, index);
-    const redeemOutput: Buffer = bjs.script.compile([0, bjs.crypto.hash160(publicKeyBuffer)]);
-    const publicKeyHash160: Buffer = bjs.crypto.hash160(redeemOutput);
+    // ts-go: Buffer/script.compile/hash160 return types
+    const redeemOutput = Buffer.from(
+      // @ts-ignore
+      bjs.script.compile([
+        0,
+        // @ts-ignore
+        Buffer.from(bjs.crypto.hash160(publicKeyBuffer as unknown as Uint8Array)),
+      ]),
+    ) as Buffer;
+    // @ts-ignore
+    const publicKeyHash160 = Buffer.from(
+      bjs.crypto.hash160(redeemOutput as unknown as Uint8Array),
+    ) as Buffer;
     const payload: Buffer = Buffer.allocUnsafe(21);
     payload.writeUInt8(this.network.scriptHash, 0);
+    // @ts-ignore ts-go copy target Buffer vs Uint8Array
     publicKeyHash160.copy(payload, 1);
-    return bs58check.encode(payload);
+    return bs58check.encode(new Uint8Array(payload.buffer, payload.byteOffset, payload.byteLength));
   }
 
   // get address given an address type

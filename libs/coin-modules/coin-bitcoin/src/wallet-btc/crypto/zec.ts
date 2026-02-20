@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go hash160 Buffer vs Uint8Array
 import bs58check from "bs58check";
 import * as bjs from "bitcoinjs-lib";
 import { InvalidAddress } from "@ledgerhq/errors";
@@ -17,11 +18,15 @@ class ZCash extends Base {
   }
 
   async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
-    const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
+    const hashResult = bjs.crypto.hash160(
+      (await this.getPubkeyAt(xpub, account, index)) as unknown as Uint8Array,
+    );
+    // @ts-ignore
+    const pk: Buffer = Buffer.from(hashResult);
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
-    pk.copy(payload, 2);
-    return bs58check.encode(payload);
+    pk.copy(payload as unknown as Uint8Array, 2);
+    return bs58check.encode(payload as unknown as Uint8Array);
   }
 
   async customGetAddress(

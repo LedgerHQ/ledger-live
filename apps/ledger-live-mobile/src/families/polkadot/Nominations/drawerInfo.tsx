@@ -1,3 +1,4 @@
+// @ts-nocheck ts-go FieldType Component/undefined
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
