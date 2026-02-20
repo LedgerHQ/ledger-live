@@ -333,12 +333,7 @@ describe("getMetadata", () => {
     const includedInExtrinsic = "0xf50020000001";
     const includedInSignedData = "0x" + "aa".repeat(105);
 
-    const result = await getMetadata(
-      callData,
-      includedInExtrinsic,
-      includedInSignedData,
-      currency,
-    );
+    const result = await getMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
 
     expect(result).toEqual({ metadataBlob: "0xdeadbeef", metadataHash: "0x1234" });
   });
