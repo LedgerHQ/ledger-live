@@ -369,7 +369,7 @@ jobs:
           sudo security add-trusted-cert -d -p ssl -p basic -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
 
           echo "Setting webproxy on host OS"
-          export NETWORK_SERVICE=$(/usr/sbin/networksetup -listallnetworkservices | grep -iE "2|wi-fi|ethernet|airport" | head -1)
+          export NETWORK_SERVICE=$(/usr/sbin/networksetup -listallnetworkservices | grep -iE "wi-fi|ethernet|airport" | head -1)
           /usr/sbin/networksetup -setwebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
           /usr/sbin/networksetup -setwebproxystate "$NETWORK_SERVICE" on
           /usr/sbin/networksetup -setsecurewebproxy "$NETWORK_SERVICE" 127.0.0.1 8080
@@ -430,13 +430,16 @@ jobs:
         run: |
           echo "Stopping mitmproxy"
           if [ -f /tmp/mitmproxy.pid ]; then
-            kill $(cat /tmp/mitmproxy.pid) 2>/dev/null || true
+            echo "Found the PID, killing mitmproxy"
+            kill -INT $(cat /tmp/mitmproxy.pid) 2>/dev/null || true
+            wait $(cat /tmp/mitmproxy.pid)
             sleep 2
           fi
 
           # Convert binary dump to readable format
           echo "Converting file to plain text"
           if [ -f /tmp/mitmproxy_dump.mitm ]; then
+            echo "Found the dump file. Converting"
             mitmdump -nr /tmp/mitmproxy_dump.mitm -w /tmp/mitmproxy_dump.txt 2>/dev/null || echo "Failed to convert dump"
           fi
         shell: bash
@@ -455,7 +458,9 @@ jobs:
         id: "mitmproxy-artifacts"
         with:
           name: "ios-mitmproxy-artifacts-${{ matrix.shard }}"
-          path: /tmp/mitmproxy_dump.mitm
+          path: |
+            /tmp/mitmproxy_dump.mitm
+            /tmp/mitmproxy_dump.txt
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
