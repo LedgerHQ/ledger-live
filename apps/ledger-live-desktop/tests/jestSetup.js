@@ -35,7 +35,10 @@ beforeAll(() =>
     onUnhandledRequest: "bypass",
   }),
 );
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  jest.clearAllTimers();
+});
 afterAll(() => server.close());
 
 jest.mock("src/sentry/install", () => ({
