@@ -357,7 +357,6 @@ describe("toBridgeOperation", () => {
       const mockAddress = "aleo1test123";
       const result = generateUniqueUsername(mockAddress);
 
-      expect(result).toHaveLength(64);
       expect(result).toMatch(/^[a-f0-9]{64}$/);
     });
 
@@ -368,8 +367,6 @@ describe("toBridgeOperation", () => {
       const result1 = generateUniqueUsername(address1);
       const result2 = generateUniqueUsername(address2);
 
-      expect(result1).toHaveLength(64);
-      expect(result2).toHaveLength(64);
       expect(result1).toMatch(/^[a-f0-9]{64}$/);
       expect(result2).toMatch(/^[a-f0-9]{64}$/);
       expect(result1).not.toBe(result2);
