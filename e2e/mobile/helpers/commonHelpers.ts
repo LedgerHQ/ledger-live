@@ -71,6 +71,7 @@ export async function launchApp() {
   const port = await findFreePort();
   closeBridge();
   initBridge(port);
+
   await device.launchApp({
     launchArgs: {
       wsPort: port,

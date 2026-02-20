@@ -301,6 +301,13 @@ jobs:
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
+      - name: Install mitmproxy
+        run: |
+          brew install mitmproxy
+          echo "mitmproxy version: $(mitmdump --version | head -1)"
+        env:
+          ENABLE_MITMPROXY: "true"
+
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
@@ -350,6 +357,8 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
+        env:
+          ENABLE_MITMPROXY: "true"
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

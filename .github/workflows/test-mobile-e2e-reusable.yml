@@ -431,6 +431,13 @@ jobs:
         run: |
           brew install scrcpy
 
+      - name: Install mitmproxy
+        run: |
+          brew install mitmproxy
+          echo "mitmproxy version: $(mitmdump --version | head -1)"
+        env:
+          ENABLE_MITMPROXY: "true"
+
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
@@ -554,6 +561,7 @@ jobs:
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+          ENABLE_MITMPROXY: "true"
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')

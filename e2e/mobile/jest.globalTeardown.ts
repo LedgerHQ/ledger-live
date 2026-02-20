@@ -19,6 +19,7 @@ import { log } from "detox";
 import { Subject } from "rxjs";
 import { NativeElementHelpers } from "./helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { stopMitmproxy } from "./utils/mitmproxyUtils";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
@@ -90,8 +91,8 @@ export default async () => {
   // default Detox teardown with timeout protection to prevent CI hangs from proper-lockfile issues
   await withTimeout(globalTeardown(), 60_000, "globalTeardown");
 
-  // parallel file cleanups and force close any lingering connections
-  await Promise.all([cleanupUserdata(), forceGarbageCollection()]);
+  // parallel file cleanups, stop mitmproxy, and force close any lingering connections
+  await Promise.all([cleanupUserdata(), stopMitmproxy(), forceGarbageCollection()]);
 };
 
 async function forceGarbageCollection() {
