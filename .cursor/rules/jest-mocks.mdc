@@ -29,7 +29,7 @@ If the module appears in `jest.mock("...")` there, do not duplicate it in the te
 
 ```ts
 describe("MyTest", () => {
-  const { t } = renderHook(useTranslation).result.current; // ❌ Runs when describe loads
+  const { t } = renderHook(useSomething).result.current; // ❌ Runs when describe loads
   // ...
 });
 ```
@@ -38,9 +38,9 @@ describe("MyTest", () => {
 
 ```ts
 describe("MyTest", () => {
-  let t: ReturnType<typeof useTranslation>["t"];
+  let t: ReturnType<typeof useSomething>["t"];
   beforeEach(() => {
-    t = renderHook(useTranslation).result.current.t; // ✅ Runs before each test
+    t = renderHook(useSomething).result.current.t; // ✅ Runs before each test
   });
 });
 ```
