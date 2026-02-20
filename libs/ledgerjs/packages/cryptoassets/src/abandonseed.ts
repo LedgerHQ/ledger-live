@@ -94,7 +94,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   syscoin: EVM_DEAD_ADDRESS,
   near: "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d",
   axelar: "axelar19rl4cm2hmr8afy4kldpxz3fka4jguq0acwm455",
-  onomy: "onomy19rl4cm2hmr8afy4kldpxz3fka4jguq0axpetws",
   quicksilver: "quick19rl4cm2hmr8afy4kldpxz3fka4jguq0ahya0x8",
   persistence: "persistence19rl4cm2hmr8afy4kldpxz3fka4jguq0ajvtw33",
   internet_computer: "454109defbdd79d7283cdde63b8dab4d48f590b8b2923574cca0356ab6958b2b",
