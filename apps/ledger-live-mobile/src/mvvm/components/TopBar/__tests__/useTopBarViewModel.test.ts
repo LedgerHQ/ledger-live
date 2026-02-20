@@ -1,4 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
+import { NavigatorName, ScreenName } from "~/const";
+import { State } from "~/reducers/types";
 import { expectedNavigationParams } from "../const";
 import { useTopBarViewModel } from "../useTopBarViewModel";
 
@@ -10,6 +12,16 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 const mockNavigation = { navigate: mockNavigate };
+
+const withWeb3Hub = (enabled: boolean) => (state: State) => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    overriddenFeatureFlags: {
+      web3hub: { enabled },
+    },
+  },
+});
 
 describe("useTopBarViewModel", () => {
   beforeEach(() => {
@@ -30,18 +42,35 @@ describe("useTopBarViewModel", () => {
     );
   });
 
-  it("should call navigate with expected params when onDiscoverPress is invoked", () => {
-    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+  describe("onDiscoverPress", () => {
+    it("should navigate to Discover when web3hub feature flag is absent", () => {
+      const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
 
-    act(() => {
-      result.current.onDiscoverPress();
+      act(() => {
+        result.current.onDiscoverPress();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expectedNavigationParams.discover.name,
+        expectedNavigationParams.discover.params,
+      );
     });
 
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expectedNavigationParams.discover.name,
-      expectedNavigationParams.discover.params,
-    );
+    it("should navigate to Web3HubTab when web3hub feature flag is enabled", () => {
+      const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never), {
+        overrideInitialState: withWeb3Hub(true),
+      });
+
+      act(() => {
+        result.current.onDiscoverPress();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Web3HubTab, {
+        screen: ScreenName.Web3HubMain,
+      });
+    });
   });
 
   it("should call navigate with expected params when onNotificationsPress is invoked", () => {
