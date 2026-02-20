@@ -7,6 +7,7 @@
 "@ledgerhq/live-common": minor
 "@ledgerhq/web-tools": minor
 "@ledgerhq/live-cli": minor
+"@ledgerhq/live-currency-format": minor
 ---
 
 Remove Onomy
