@@ -90,7 +90,7 @@ const commonConfig = {
   },
   globalSetup: "<rootDir>/tests/setup.ts",
   moduleDirectories: ["node_modules", "./tests"],
-  modulePaths: [compilerOptions.baseUrl],
+  modulePaths: [compilerOptions.baseUrl ?? "."],
   resolver: "<rootDir>/scripts/resolver.js",
   testEnvironmentOptions: {
     customExportConditions: [""],
