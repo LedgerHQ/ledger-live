@@ -67,5 +67,21 @@ describe("useNavigationBarHeights", () => {
 
       expect(result.current.bottom).toBe(0);
     });
+
+    it("should return the platform-specific top bar height", () => {
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withTabBarVisibility(true),
+      });
+
+      expect(result.current.topBarHeight).toBe(80);
+    });
+
+    it("should always return TAB_BAR_HEIGHT as bottomBarHeight", () => {
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withTabBarVisibility(false),
+      });
+
+      expect(result.current.bottomBarHeight).toBe(TAB_BAR_HEIGHT);
+    });
   });
 });
