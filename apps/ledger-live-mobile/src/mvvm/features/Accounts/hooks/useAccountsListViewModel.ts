@@ -20,7 +20,7 @@ import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
 import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
-import { TrackingEvent } from "../../enums";
+import { TrackingEvent } from "../enums";
 
 export interface Props {
   sourceScreenName?: ScreenName;
