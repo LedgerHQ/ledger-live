@@ -18,8 +18,7 @@ import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import MarketBanner from "LLM/features/MarketBanner";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import useListsAnimation, { type TabListType } from "./useListsAnimation";
-import TabSection, { TAB_OPTIONS } from "./TabSection";
+import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
@@ -85,14 +84,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         .slice(0, maxItemsToDisplay),
     [distribution, blacklistedTokenIdsSet],
   );
-
-  const {
-    handleButtonLayout,
-    handleAccountsContentSizeChange,
-    handleAssetsContentSizeChange,
-    assetsFullHeight,
-    accountsFullHeight,
-  } = useListsAnimation(selectedTab);
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
 
@@ -167,16 +158,11 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}
-          handleButtonLayout={handleButtonLayout}
-          handleAssetsContentSizeChange={handleAssetsContentSizeChange}
-          handleAccountsContentSizeChange={handleAccountsContentSizeChange}
           onPressButton={onPressButton}
           initialTab={initialSelectedTab}
           showAssets={showAssets}
           assetsLength={assetsToDisplay.length}
           accountsLength={allAccounts.length}
-          assetsFullHeight={assetsFullHeight}
-          accountsFullHeight={accountsFullHeight}
           maxItemsToDisplay={maxItemsToDisplay}
         />
       ) : (
