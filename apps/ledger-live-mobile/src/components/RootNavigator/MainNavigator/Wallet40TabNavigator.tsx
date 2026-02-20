@@ -12,7 +12,9 @@ export function Wallet40TabNavigator({
   screenOptions,
   rebornFlowListener,
 }: Readonly<
-  Wallet40TabNavigatorProps & { rebornFlowListener: (e?: { preventDefault: () => void }) => void }
+  Wallet40TabNavigatorProps & {
+    rebornFlowListener: (e: { preventDefault: () => void }) => void;
+  }
 >): React.JSX.Element {
   return (
     <Tab.Navigator tabBar={tabBar} screenOptions={screenOptions}>

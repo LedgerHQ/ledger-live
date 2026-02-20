@@ -52,9 +52,9 @@ export default function MainNavigator() {
 
   const rebornFlowListener = useMemo(() => {
     if (!readOnlyModeEnabled) {
-      return () => {};
+      return (_: { preventDefault: () => void }) => {};
     }
-    return e => {
+    return (e: { preventDefault: () => void }) => {
       e.preventDefault();
       managerLockAwareCallback(navigateToRebornFlow);
     };
