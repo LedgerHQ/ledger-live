@@ -71,3 +71,49 @@ export interface AleoPublicTransactionsResponse {
     transition_id: string;
   };
 }
+
+export interface AleoPublicTransactionDetailsResponse {
+  type: string;
+  id: string;
+  execution: {
+    transitions: AleoTransition[];
+  };
+  global_state_root: string;
+  proof: string;
+  fee: { transition: AleoTransition };
+  fee_value: number;
+  block_height: number;
+  block_hash: string;
+  block_timestamp: string;
+  status: string;
+}
+
+export interface AleoRegisterAccountResponse {
+  consumer: { id: string };
+  created_at: number;
+  id: string;
+  key: string;
+}
+
+export interface AleoAccountJWTResponse {
+  exp: number;
+}
+
+export interface AleoJWT {
+  token: string;
+  exp: number;
+}
+
+export interface AleoRegisterForRecordsResponse {
+  uuid: string;
+}
+
+export interface AleoGetPublicKeyResponse {
+  key_id: string;
+  public_key: string;
+}
+
+export interface AleoRecordScannerStatusResponse {
+  synced: boolean;
+  percentage: number;
+}

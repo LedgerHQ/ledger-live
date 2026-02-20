@@ -9,6 +9,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { AleoTransactionType } from "./api";
+import type { ProvableApi } from "./logic";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
@@ -24,10 +25,12 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export interface AleoResources {
   transparentBalance: BigNumber;
+  provableApi: ProvableApi | null;
 }
 
 export interface AleoResourcesRaw {
   transparentBalance: string;
+  provableApi: string | null;
 }
 
 export type AleoAccount = Account & {
