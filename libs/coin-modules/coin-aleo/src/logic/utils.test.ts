@@ -9,6 +9,7 @@ import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedEnrichedTransaction } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -19,6 +20,7 @@ import {
   generateUniqueUsername,
   resolveConfig,
   getTransactionType,
+  calculateAmount,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -440,5 +442,67 @@ describe("getTransactionType", () => {
     const mockTx: TransactionIntent = {};
 
     expect(() => getTransactionType(mockTx)).toThrow();
+  });
+});
+
+describe("calculateAmount", () => {
+  it("should return transaction amount when useAllAmount is false", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(500000),
+      useAllAmount: false,
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: mockTransaction.amount,
+      totalSpent: mockTransaction.amount.plus(estimatedFees),
+    });
+  });
+
+  it("should calculate max amount when useAllAmount is true", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: mockAccount.balance.minus(estimatedFees),
+      totalSpent: mockAccount.balance,
+    });
+  });
+
+  it("should return zero amount when balance is less than fees with useAllAmount", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockAccount = getMockedAccount({ balance: new BigNumber(3000) });
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(0),
+      totalSpent: estimatedFees,
+    });
   });
 });
