@@ -78,13 +78,6 @@ const coinConfig: PolkadotCoinConfig = {
   sidecar: {
     url: SIDECAR_BASE_URL,
   },
-  metadataShortener: {
-    url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
-    id: "dot",
-  },
-  metadataHash: {
-    url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-  },
 };
 
 export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
