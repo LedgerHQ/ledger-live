@@ -28,53 +28,104 @@ Branches must use a clear prefix based on their purpose:
 
 ---
 
-## Commit Message Format
+## Commit Format
 
-Follow the **Conventional Commits** standard.
-
-### Format
+Every commit message MUST follow this format:
 
 ```
-
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-
+:gitmoji: type(scope?): description
 ```
 
-### Rules
+- The gitmoji MUST use the **shortcode format** (`:sparkles:`, not the unicode emoji ✨)
+- Description: **imperative mood**, **lowercase**, **no period** at the end
+- Max **72 characters** for the full message line
+- Be specific about **what** changed, not just **where**
 
-- Description must be **imperative, clear, lowercase**
-- Scope is optional but recommended (`desktop`, `mobile`, `coin`, `common`, etc.)
-- Add body for complex or user-facing changes
-- If needed, include footers:
-  - `BREAKING CHANGE: ...`
-  - Jira ticket (`LL-1234`)
+### Good examples
+
+- `:sparkles: feat(desktop): add portfolio analytics dashboard`
+- `:bug: fix(common): resolve transaction signing race condition`
+- `:recycle: refactor(mobile): extract account sync into dedicated hook`
 
 ---
 
-## Commit Types
+## Scope Detection
 
-- **feat** — New feature
-- **fix** — Bug fix
-- **docs** — Docs only
-- **style** — Formatting, no code change
-- **refactor** — Restructure without behavior change
-- **test** — Add/update tests
-- **chore** — Maintenance, tooling, configs
-- **perf** — Performance improvements
-- **ci** — CI/CD changes
+Determine scope from the file paths that changed:
 
-### Examples
+| Path prefix                           | Scope                                          |
+| ------------------------------------- | ---------------------------------------------- |
+| `apps/ledger-live-desktop/`           | `desktop`                                      |
+| `apps/ledger-live-mobile/`            | `mobile`                                       |
+| `libs/ledger-live-common/`            | `common`                                       |
+| `libs/coin-modules/` or `libs/coin-*` | `coin`                                         |
+| `libs/ledgerjs/`                      | `ledgerjs`                                     |
+| `libs/ui/`                            | `ui`                                           |
+| `tools/` or `.github/`                | `tooling`                                      |
+| Multiple scopes                       | pick dominant, or combine as `desktop, mobile` |
 
-```
-feat(desktop): add dark mode toggle
-fix(mobile): resolve transaction signing issue
-docs(common): update API documentation
-refactor(account): simplify account syncing logic
-test(coin): add bitcoin integration tests
+---
+
+## Gitmoji Selection
+
+Analyze the **actual diff content** (never guess from file names alone) and select the gitmoji using these priority rules. Check in order — first match wins:
+
+| Priority | Condition                              | Gitmoji                                                                 | Type       |
+| -------- | -------------------------------------- | ----------------------------------------------------------------------- | ---------- |
+| 1        | Breaking public API / behavior change  | `:boom:`                                                                | `feat`     |
+| 2        | Security / auth / privacy fix          | `:lock:`                                                                | `fix`      |
+| 3        | Critical hotfix                        | `:ambulance:`                                                           | `fix`      |
+| 4        | New feature (>60% of diff is new code) | `:sparkles:`                                                            | `feat`     |
+| 5        | Bug fix                                | `:bug:`                                                                 | `fix`      |
+| 6        | Tests >60% of diff                     | `:white_check_mark:`                                                    | `test`     |
+| 7        | Performance optimization               | `:zap:`                                                                 | `perf`     |
+| 8        | Documentation only                     | `:memo:`                                                                | `docs`     |
+| 9        | Refactor (no behavior change)          | `:recycle:`                                                             | `refactor` |
+| 10       | Everything else                        | Best match from [gitmoji list](https://github.com/carloscuesta/gitmoji) | `chore`    |
+
+### Mapping gitmoji semver to conventional type
+
+- `semver: "major"` → `feat` (breaking)
+- `semver: "minor"` → `feat`
+- `semver: "patch"` → `fix` or `chore` depending on description
+- `semver: null` → `chore`, `refactor`, `style`, `docs`, `test`, or `ci` depending on description
+
+### Ambiguous diffs
+
+- If the diff is roughly equal between feature + tests, prefer the **feature** gitmoji and mention tests in the description
+- If changes span multiple scopes equally, use the most specific scopes (one or two) or omit scope altogether
+
+---
+
+## Diff Analysis
+
+When committing, always analyze **staged changes** (`git diff --cached`, not `git diff`) to determine:
+
+1. **Categories of files changed** (count each):
+
+   - Source code (features, logic, components)
+   - Test files (`*.test.*`, `*.spec.*`, `__tests__/`)
+   - Documentation (`*.md`, `docs/`, comments-only changes)
+   - Configuration (`.config.*`, `.*rc`, `package.json` scripts/deps, CI workflows)
+   - Styles / UI (`*.css`, `*.scss`, style files, UI component styling)
+   - Type definitions (`*.d.ts`, types-only changes, interfaces)
+   - Dependencies (`package.json` deps, `pnpm-lock.yaml`)
+
+2. **Nature of the change** (from actual diff content):
+   - New code added (new functions, components, modules, exports)
+   - Code deleted/removed
+   - Code modified/restructured without behavior change
+   - Bug fix patterns (error handling, null checks, condition fixes)
+   - Performance patterns (memoization, caching, lazy loading)
+
+---
+
+## Commit Validation
+
+After committing, always validate with:
+
+```bash
+pnpm commitlint --from HEAD~1
 ```
 
 ---
