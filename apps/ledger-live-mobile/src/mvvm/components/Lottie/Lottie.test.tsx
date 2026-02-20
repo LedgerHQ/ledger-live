@@ -11,18 +11,18 @@ describe("Lottie", () => {
   it("renders LottieView when source has uri", () => {
     render(<Lottie source={{ uri: "file:///test.lottie" }} />);
     expect(screen.getByTestId("lottie-source")).toBeOnTheScreen();
-    expect(screen.getByTestId("lottie-mock")).toBeOnTheScreen();
+    expect(screen.getByTestId("lottie")).toBeOnTheScreen();
     expect(screen.getByTestId("lottie-source").props.children).toContain("file:///test.lottie");
   });
 
   it("renders empty view when source is null", () => {
     render(<Lottie source={null} />);
-    expect(screen.queryByTestId("lottie-mock")).toBeNull();
+    expect(screen.queryByTestId("lottie")).toBeNull();
   });
 
   it("renders empty view when source has no uri", () => {
     render(<Lottie source={{ width: 1, height: 1 } as unknown as { uri: string }} />);
-    expect(screen.queryByTestId("lottie-mock")).toBeNull();
+    expect(screen.queryByTestId("lottie")).toBeNull();
   });
 
   it("renders LottieView when source is numeric asset id", () => {
@@ -37,7 +37,7 @@ describe("Lottie", () => {
     Config.DETOX = "1";
     render(<Lottie source={{ uri: "file:///test.lottie" }} />);
     expect(screen.getByTestId("lottie-detox")).toBeOnTheScreen();
-    expect(screen.queryByTestId("lottie-mock")).toBeNull();
+    expect(screen.queryByTestId("lottie")).toBeNull();
     Config.DETOX = undefined;
   });
 
@@ -46,7 +46,7 @@ describe("Lottie", () => {
     Config.DETOX = "1";
     render(<Lottie source={{ uri: "file:///test.lottie" }} testID="splash-lottie" />);
     expect(screen.getByTestId("splash-lottie-detox")).toBeOnTheScreen();
-    expect(screen.queryByTestId("lottie-mock")).toBeNull();
+    expect(screen.queryByTestId("lottie")).toBeNull();
     Config.DETOX = undefined;
   });
 });
