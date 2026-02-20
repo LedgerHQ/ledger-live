@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.62.0-next.1
+
+### Minor Changes
+
+- [#14652](https://github.com/LedgerHQ/ledger-live/pull/14652) [`9c7f26f`](https://github.com/LedgerHQ/ledger-live/commit/9c7f26f62427bffe4af23cccf253e8b2dd3cf616) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix XLM_USCD typo to XLM_USDC in e2e enums and update speculos test data
+
 ## 34.62.0-next.0
 
 ### Minor Changes
