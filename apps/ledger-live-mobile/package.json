@@ -279,7 +279,7 @@
     "@types/semver": "catalog:",
     "@types/styled-system": "5.1.22",
     "@types/uuid": "8.3.4",
-    "@types/ws": "8.5.10",
+    "@types/ws": "8.18.1",
     "babel-jest": "catalog:",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
     "detox": "20.46.0",

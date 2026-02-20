@@ -144,7 +144,7 @@ catalog:
   rxjs: 7.8.2
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
-  ws: 8.18.3
+  ws: 8.19.0
   semver: 7.7.3
   "@types/semver": 7.7.1
   undici: 7.18.2

@@ -90,7 +90,7 @@
     "@types/node": "22.10.10",
     "@types/pako": "2.0.3",
     "@types/qrcode-terminal": "0.12.2",
-    "@types/ws": "8.5.10",
+    "@types/ws": "8.18.1",
     "ts-node": "10.9.2",
     "@rslib/core": "catalog:",
     "yaml": "2.8.1"
