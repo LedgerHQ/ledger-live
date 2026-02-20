@@ -23,7 +23,7 @@ const subAccounts = [
     xrayTicket1: "B2CQA-2577, B2CQA-1079",
     xrayTicket2: "B2CQA-2583",
   },
-  { account: TokenAccount.XLM_USCD, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
+  { account: TokenAccount.XLM_USDC, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
   { account: TokenAccount.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
   { account: TokenAccount.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
   { account: TokenAccount.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
@@ -66,7 +66,7 @@ for (const token of subAccounts) {
           "@NanoGen5",
           `@${token.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.XLM_USCD ? ["@smoke"] : []),
+          ...(token.account === TokenAccount.XLM_USDC ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
