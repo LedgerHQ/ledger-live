@@ -11,7 +11,7 @@ type TrackExchange = (
   mandatory: boolean | null,
 ) => void;
 
-interface TrackEventPayload {
+export interface TrackEventPayload {
   exchangeType: "SELL" | "FUND" | "SWAP";
   provider: string;
   isEmbeddedSwap?: boolean;

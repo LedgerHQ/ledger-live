@@ -22,14 +22,14 @@ function pushTLV(a: Uint8Array, t: number, l: number, v: Uint8Array): Uint8Array
   c.set(a);
   c.set(new Uint8Array([t, l]), a.length);
   c.set(v, a.length + 2);
-  return c;
+  return c as Uint8Array;
 }
 
 function push(a: Uint8Array, b: Uint8Array): Uint8Array {
   const c = new Uint8Array(a.length + b.length);
   c.set(a);
   c.set(b, a.length);
-  return c;
+  return c as Uint8Array;
 }
 
 // Generic part of the TLV encoding/decoding
@@ -39,7 +39,7 @@ export const TLV = {
     offset += 1;
     const length = buffer[offset];
     offset += 1;
-    const value = buffer.slice(offset, offset + length);
+    const value = buffer.slice(offset, offset + length) as Uint8Array;
     offset += length;
     return { tlv: { type, value }, offset };
   },

@@ -12,7 +12,8 @@ export function isValidAddress(address: string) {
     if (!address.toLowerCase().startsWith("b62")) {
       return false;
     }
-    const decodedAddress = Buffer.from(bs58check.decode(address)).toString("hex");
+    const decoded = bs58check.decode(address);
+    const decodedAddress = Buffer.from(decoded as unknown as Uint8Array).toString("hex");
     return !!decodedAddress && decodedAddress.length === MINA_DECODED_ADDRESS_LENGTH;
   } catch {
     return false;

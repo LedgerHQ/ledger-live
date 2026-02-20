@@ -92,7 +92,7 @@
     "lint:fix": "pnpm lint --fix",
     "jest": "jest",
     "jest:debug": "cross-env TZ=America/New_York node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "typecheck": "tsc --noEmit -p src/tsconfig.json",
+    "typecheck": "tsgo --noEmit -p src/tsconfig.json",
     "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",

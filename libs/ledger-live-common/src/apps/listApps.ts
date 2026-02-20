@@ -243,9 +243,11 @@ export const listApps = ({
        */
 
       const installedList: App[] = [];
+      const listAppsItems = listApps as { name: string; hash: string }[];
+      const matchesList = matches as (App | null)[];
 
-      listApps.forEach(({ name: localName, hash: localHash }, index) => {
-        const matchFromHash = matches[index];
+      listAppsItems.forEach(({ name: localName, hash: localHash }, index) => {
+        const matchFromHash = matchesList[index];
         if (matchFromHash && matchFromHash.hash === localHash) {
           installedList.push(matchFromHash);
           return;
