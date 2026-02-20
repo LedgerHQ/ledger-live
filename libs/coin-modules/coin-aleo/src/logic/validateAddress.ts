@@ -26,11 +26,11 @@ export async function validateAddress(
   address: string,
   _parameters: Partial<AddressValidationCurrencyParameters>,
 ): Promise<boolean> {
-  if (typeof address !== "string" || address.length !== ALEO_ADDRESS_LENGTH) {
-    return false;
-  }
-
-  if (!address.startsWith(ALEO_HRP + "1")) {
+  if (
+    typeof address !== "string" ||
+    address.length !== ALEO_ADDRESS_LENGTH ||
+    !address.startsWith(ALEO_HRP + "1")
+  ) {
     return false;
   }
 
