@@ -13,8 +13,6 @@ import { useTabBar } from "./useTabBar";
 import { useScreenOptions } from "./useScreenOptions";
 import { Wallet40TabNavigator } from "./Wallet40TabNavigator";
 import { LegacyTabNavigator } from "./LegacyTabNavigator";
-import { isReadOnly } from "~/experimental";
-import { NavigatorName } from "~/const";
 
 export default function MainNavigator() {
   const { colors } = useTheme();
