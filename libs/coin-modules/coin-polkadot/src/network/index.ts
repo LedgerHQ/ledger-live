@@ -17,7 +17,7 @@ import {
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
-  shortenMetadata as sidecarShortenMetadata,
+  getMetadata as sidecarGetMetadata,
   getLastBlock,
 } from "./sidecar";
 
@@ -109,13 +109,13 @@ const isNewAccount = makeLRUCache(
   minutes(1),
 );
 
-const shortenMetadata = async (
+const getMetadata = async (
   callData: string,
   includedInExtrinsic: string,
   includedInSignedData: string,
   currency?: CryptoCurrency,
 ): Promise<{ metadataBlob: string; metadataHash: string }> => {
-  return sidecarShortenMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
+  return sidecarGetMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
 };
 
 export default {
@@ -142,7 +142,7 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
-  shortenMetadata,
+  getMetadata,
   submitExtrinsic: async (extrinsic: string, currency?: CryptoCurrency) =>
     sidecarSubmitExtrinsic(extrinsic, currency),
   verifyValidatorAddresses: async (

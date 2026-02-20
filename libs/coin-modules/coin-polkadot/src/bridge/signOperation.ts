@@ -71,14 +71,23 @@ export const buildSignOperation =
         );
         const includedInExtrinsic = "0x" + Buffer.from(extraBytes).toString("hex");
 
-        const { metadataBlob, metadataHash } = await polkadotAPI.shortenMetadata(
+        // First sidecar call: get the real metadataHash (placeholder is in includedInSignedData)
+        const { metadataHash } = await polkadotAPI.getMetadata(
           callData,
           includedInExtrinsic,
           includedInSignedData,
           currency,
         );
 
+        // Rebuild unsigned and payload with the real metadataHash
         unsigned.metadataHash = hexToU8a("0x01" + metadataHash.replace("0x", ""));
+        const finalIncludedInSignedData =
+          "0x" +
+          unsigned.specVersion.slice(2) +
+          unsigned.transactionVersion.slice(2) +
+          unsigned.genesisHash.slice(2) +
+          unsigned.blockHash.slice(2) +
+          Buffer.from(unsigned.metadataHash).toString("hex");
         const finalPayload = registry
           .createType("ExtrinsicPayload", unsigned, {
             version: unsigned.version,
@@ -86,6 +95,14 @@ export const buildSignOperation =
           .toU8a({
             method: true,
           });
+
+        // Second sidecar call: get the correct metadataBlob with the real metadataHash
+        const { metadataBlob } = await polkadotAPI.getMetadata(
+          callData,
+          includedInExtrinsic,
+          finalIncludedInSignedData,
+          currency,
+        );
 
         const r = await signerContext(deviceId, signer =>
           signer.sign(account.freshAddressPath, finalPayload, metadataBlob),

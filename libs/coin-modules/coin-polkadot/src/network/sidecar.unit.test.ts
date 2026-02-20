@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import coinConfig from "../config";
 import * as node from "./node";
-import { getAccount, getBalances, getRegistry, shortenMetadata } from "./sidecar";
+import { getAccount, getBalances, getRegistry, getMetadata } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
 
@@ -310,7 +310,7 @@ describe("getRegistry", () => {
   });
 });
 
-describe("shortenMetadata", () => {
+describe("getMetadata", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: {
@@ -333,7 +333,7 @@ describe("shortenMetadata", () => {
     const includedInExtrinsic = "0xf50020000001";
     const includedInSignedData = "0x" + "aa".repeat(105);
 
-    const result = await shortenMetadata(
+    const result = await getMetadata(
       callData,
       includedInExtrinsic,
       includedInSignedData,
@@ -365,7 +365,7 @@ describe("shortenMetadata", () => {
     const includedInExtrinsic = "0xf50004000001";
     const includedInSignedData = "0x" + "bb".repeat(105);
 
-    await shortenMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
+    await getMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
 
     expect(capturedBody).toEqual({
       callData,

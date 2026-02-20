@@ -629,7 +629,7 @@ export const getRegistry = async (
   return createRegistryAndExtrinsics(material, spec);
 };
 
-export const shortenMetadata = async (
+export const getMetadata = async (
   callData: string,
   includedInExtrinsic: string,
   includedInSignedData: string,

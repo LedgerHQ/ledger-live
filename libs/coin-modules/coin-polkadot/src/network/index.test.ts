@@ -9,13 +9,13 @@ const mockedSidecar = jest.mocked(sidecar);
 
 const currency: CryptoCurrency = getCryptoCurrencyById("polkadot");
 
-describe("shortenMetadata", () => {
+describe("getMetadata", () => {
   afterEach(() => {
-    mockedSidecar.shortenMetadata.mockClear();
+    mockedSidecar.getMetadata.mockClear();
   });
 
   it("should pass callData, includedInExtrinsic, includedInSignedData and currency to sidecar", async () => {
-    mockedSidecar.shortenMetadata.mockResolvedValueOnce({
+    mockedSidecar.getMetadata.mockResolvedValueOnce({
       metadataBlob: "0xmetadatablob",
       metadataHash: "0xmetadatahash",
     });
@@ -24,7 +24,7 @@ describe("shortenMetadata", () => {
     const includedInExtrinsic = "0xf50020000001";
     const includedInSignedData = "0x" + "aa".repeat(105);
 
-    const result = await network.shortenMetadata(
+    const result = await network.getMetadata(
       callData,
       includedInExtrinsic,
       includedInSignedData,
@@ -32,8 +32,8 @@ describe("shortenMetadata", () => {
     );
 
     expect(result).toEqual({ metadataBlob: "0xmetadatablob", metadataHash: "0xmetadatahash" });
-    expect(mockedSidecar.shortenMetadata).toHaveBeenCalledTimes(1);
-    expect(mockedSidecar.shortenMetadata).toHaveBeenCalledWith(
+    expect(mockedSidecar.getMetadata).toHaveBeenCalledTimes(1);
+    expect(mockedSidecar.getMetadata).toHaveBeenCalledWith(
       callData,
       includedInExtrinsic,
       includedInSignedData,
