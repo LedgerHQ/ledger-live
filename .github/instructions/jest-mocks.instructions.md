@@ -3,6 +3,7 @@ applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
 
 <!-- Source: .cursor/rules/jest-mocks.mdc -->
+<!-- Last synced: 2026-02-20 -->
 
 # Jest Mock Review
 
