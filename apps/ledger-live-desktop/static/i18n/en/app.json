@@ -2422,8 +2422,9 @@
     }
   },
   "releaseNotes": {
-    "title": "Release notes",
-    "version": "Ledger Wallet {{versionNb}}"
+    "title": "Release note",
+    "version": "Ledger Wallet {{versionNb}}",
+    "gotIt": "Got it"
   },
   "troubleshootNetwork": {
     "title": "Troubleshoot networking",

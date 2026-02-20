@@ -66,8 +66,7 @@ import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersio
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
-import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
-import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
+import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import backgroundImg from "~/renderer/images/background.png";
 import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
@@ -447,8 +446,9 @@ export default function Default() {
                       value={process.env.DISABLE_TRANSACTION_BROADCAST}
                     />
                   ) : null}
-                  <ModularDialogRoot />
-                  <SendFlowRoot />
+
+                  <GlobalDialogs />
+
                   <Routes>
                     <Route
                       path="/onboarding/*"
