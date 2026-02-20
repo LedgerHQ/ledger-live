@@ -29,7 +29,6 @@ const mockPaymentInfo = jest.fn().mockResolvedValue({
 const shortenMetadataMock = jest.fn();
 jest.mock("../network", () => ({
   ...jest.requireActual("../network").default,
-  metadataHash: jest.fn().mockResolvedValue("00".repeat(32)),
   shortenMetadata: (
     callData: string,
     includedInExtrinsic: string,
@@ -37,6 +36,8 @@ jest.mock("../network", () => ({
     currency?: CryptoCurrency,
   ) => shortenMetadataMock(callData, includedInExtrinsic, includedInSignedData, currency),
 }));
+
+type ShortenMetadataResult = { metadataBlob: string; metadataHash: string };
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
   paymentInfo: (args: any) => mockPaymentInfo(args),
@@ -72,18 +73,15 @@ describe("signOperation", () => {
         staking: {
           electionStatusThreshold: 25,
         },
-        metadataShortener: {
-          url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        },
-        metadataHash: {
-          url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        },
       };
     });
   });
 
   beforeEach(() => {
-    shortenMetadataMock.mockResolvedValue("");
+    shortenMetadataMock.mockResolvedValue({
+      metadataBlob: "",
+      metadataHash: "00".repeat(32),
+    } satisfies ShortenMetadataResult);
   });
 
   afterEach(() => {

@@ -36,13 +36,6 @@ describe("getAccount", () => {
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
       },
-      metadataShortener: {
-        id: "dot-hub",
-        url: "",
-      },
-      metadataHash: {
-        url: "",
-      },
       hasBeenMigrated: true,
     }));
 
@@ -255,13 +248,6 @@ describe("getBalances", () => {
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
-      metadataShortener: {
-        id: "dot",
-        url: "",
-      },
-      metadataHash: {
-        url: "",
-      },
       indexer: {
         url: "",
       },
@@ -312,13 +298,6 @@ describe("getRegistry", () => {
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
-      metadataShortener: {
-        id: "dot",
-        url: "",
-      },
-      metadataHash: {
-        url: "",
-      },
     }));
 
     mockServer.listen({ onUnhandledRequest: "error" });
@@ -346,13 +325,6 @@ describe("shortenMetadata", () => {
       indexer: {
         url: "https://polkadot.coin.ledger.com",
       },
-      metadataShortener: {
-        id: "dot",
-        url: "",
-      },
-      metadataHash: {
-        url: "",
-      },
     }));
   });
 
@@ -368,7 +340,7 @@ describe("shortenMetadata", () => {
       currency,
     );
 
-    expect(result).toBe("0xdeadbeef");
+    expect(result).toEqual({ metadataBlob: "0xdeadbeef", metadataHash: "0x1234" });
   });
 
   it("should send the correct body structure to sidecar metadata blob endpoint", async () => {

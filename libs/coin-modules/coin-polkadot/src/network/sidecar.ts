@@ -634,8 +634,8 @@ export const shortenMetadata = async (
   includedInExtrinsic: string,
   includedInSignedData: string,
   currency?: CryptoCurrency,
-): Promise<string> => {
-  const { data } = await callSidecar<{ metadataBlob: string }>(
+): Promise<{ metadataBlob: string; metadataHash: string }> => {
+  const { data } = await callSidecar<{ metadataBlob: string; metadataHash: string }>(
     "/transaction/metadata-blob",
     currency,
     "POST",
@@ -646,7 +646,7 @@ export const shortenMetadata = async (
     },
   );
 
-  return data.metadataBlob;
+  return { metadataBlob: data.metadataBlob, metadataHash: data.metadataHash };
 };
 
 /**

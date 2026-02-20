@@ -3,6 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { hexToU8a } from "@polkadot/util";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { signExtrinsic } from "../logic";
@@ -70,14 +71,24 @@ export const buildSignOperation =
         );
         const includedInExtrinsic = "0x" + Buffer.from(extraBytes).toString("hex");
 
-        const metadata = await polkadotAPI.shortenMetadata(
+        const { metadataBlob, metadataHash } = await polkadotAPI.shortenMetadata(
           callData,
           includedInExtrinsic,
           includedInSignedData,
           currency,
         );
+
+        unsigned.metadataHash = hexToU8a("0x01" + metadataHash.replace("0x", ""));
+        const finalPayload = registry
+          .createType("ExtrinsicPayload", unsigned, {
+            version: unsigned.version,
+          })
+          .toU8a({
+            method: true,
+          });
+
         const r = await signerContext(deviceId, signer =>
-          signer.sign(account.freshAddressPath, payload, metadata),
+          signer.sign(account.freshAddressPath, finalPayload, metadataBlob),
         );
 
         const signed = await signExtrinsic(unsigned, r.signature, registry);

@@ -15,7 +15,10 @@ describe("shortenMetadata", () => {
   });
 
   it("should pass callData, includedInExtrinsic, includedInSignedData and currency to sidecar", async () => {
-    mockedSidecar.shortenMetadata.mockResolvedValueOnce("0xmetadatablob");
+    mockedSidecar.shortenMetadata.mockResolvedValueOnce({
+      metadataBlob: "0xmetadatablob",
+      metadataHash: "0xmetadatahash",
+    });
 
     const callData = "0x0a0300abcdef";
     const includedInExtrinsic = "0xf50020000001";
@@ -28,7 +31,7 @@ describe("shortenMetadata", () => {
       currency,
     );
 
-    expect(result).toBe("0xmetadatablob");
+    expect(result).toEqual({ metadataBlob: "0xmetadatablob", metadataHash: "0xmetadatahash" });
     expect(mockedSidecar.shortenMetadata).toHaveBeenCalledTimes(1);
     expect(mockedSidecar.shortenMetadata).toHaveBeenCalledWith(
       callData,

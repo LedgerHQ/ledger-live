@@ -1,8 +1,6 @@
 import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
@@ -111,24 +109,12 @@ const isNewAccount = makeLRUCache(
   minutes(1),
 );
 
-const metadataHash = async (currency?: CryptoCurrency): Promise<string> => {
-  const id = coinConfig.getCoinConfig(currency).metadataShortener.id;
-  const res: any = await network({
-    method: "POST",
-    url: coinConfig.getCoinConfig(currency).metadataHash.url,
-    data: {
-      id: id,
-    },
-  });
-  return res.data.metadataHash;
-};
-
 const shortenMetadata = async (
   callData: string,
   includedInExtrinsic: string,
   includedInSignedData: string,
   currency?: CryptoCurrency,
-): Promise<string> => {
+): Promise<{ metadataBlob: string; metadataHash: string }> => {
   return sidecarShortenMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
 };
 
@@ -156,7 +142,6 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
-  metadataHash,
   shortenMetadata,
   submitExtrinsic: async (extrinsic: string, currency?: CryptoCurrency) =>
     sidecarSubmitExtrinsic(extrinsic, currency),
