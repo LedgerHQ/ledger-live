@@ -75,10 +75,10 @@ jest.mock("react-native-share", () => ({
 jest.mock("lottie-react-native", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
-  const MockLottie = ({ source }) =>
+  const MockLottie = ({ source, testID }) =>
     React.createElement(
       View,
-      { testID: "lottie-mock" },
+      { testID: testID ?? "lottie-mock" },
       React.createElement(Text, { testID: "lottie-source" }, JSON.stringify(source)),
     );
   return MockLottie;

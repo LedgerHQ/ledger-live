@@ -25,6 +25,13 @@ describe("Lottie", () => {
     expect(screen.queryByTestId("lottie-mock")).toBeNull();
   });
 
+  it("renders LottieView when source is numeric asset id", () => {
+    render(<Lottie source={123} />);
+    expect(screen.getByTestId("lottie")).toBeOnTheScreen();
+    expect(screen.getByTestId("lottie-source")).toBeOnTheScreen();
+    expect(screen.getByTestId("lottie-source").props.children).toContain("123");
+  });
+
   it("uses default testID for detox view", () => {
     const Config = require("react-native-config").default;
     Config.DETOX = "1";
