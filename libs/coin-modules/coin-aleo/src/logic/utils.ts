@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import invariant from "invariant";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
@@ -156,4 +157,11 @@ export const toBridgeOperation = (
       transactionType,
     },
   };
+};
+
+export const generateUniqueUsername = (address: string): string => {
+  const timestamp = Date.now().toString();
+  const combined = `${timestamp}_${address}`;
+  const hash = createHash("sha256").update(combined).digest("hex");
+  return hash;
 };
