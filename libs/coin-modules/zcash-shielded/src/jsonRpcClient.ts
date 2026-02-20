@@ -120,41 +120,41 @@ export class JsonRpcClient {
   private async jsonRpcRequest<ResponseResult>(
     args: JsonRpcRequestArgs,
   ): Promise<ResponseResult | undefined> {
-    const { data } = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
-      url: this.serverUrl,
-      method: "POST",
-      data: {
-        jsonrpc: "2.0",
-        ...args,
-        id: 1,
-      },
-    });
+    let response;
 
-    if (data.error) {
-      const message = data.error.message ?? "unknown error";
+    try {
+      response = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
+        url: this.serverUrl,
+        method: "POST",
+        data: {
+          jsonrpc: "2.0",
+          ...args,
+          id: 1,
+        },
+      });
+    } catch (err) {
+      log(LOG_TYPE, "error: Network error");
+      throw err;
+    }
+
+    if (response.data.error) {
+      const message = response.data.error.message ?? "unknown error";
       log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
-      return undefined;
+      return;
     }
 
-    if (data.result === undefined || data.result === null) {
+    if (response.data.result === undefined || response.data.result === null) {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
-      return undefined;
+      return;
     }
 
-    return data.result;
+    return response.data.result;
   }
 
   getBlock(blockHashOrHeight: string) {
     return this.jsonRpcRequest<Block>({
       method: "getblock",
       params: [blockHashOrHeight, 1],
-    });
-  }
-
-  getBlockByHeight(blockHeight: number) {
-    return this.jsonRpcRequest<Block>({
-      method: "getblock",
-      params: [blockHeight.toString()],
     });
   }
 

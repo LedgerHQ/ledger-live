@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
@@ -13,9 +14,8 @@ export type SyncEstimatedTime = {
   minutes: number;
 };
 
-type ShieldedBalance = number;
-type SyncedShielded = {
-  balance: ShieldedBalance;
+export type SyncedShielded = {
+  balance: BigNumber;
   processedBlocks: number;
   remainingBlocks: number;
   lastProcessed: number | undefined;
@@ -170,7 +170,7 @@ export default class ZCash {
    * Parses the blocks in the provided range and, after each iteration,
    * it returns a synced shielded context including aggregate information
    * like the computed balance and processing progress.
-   * 
+   *
    * ### Stop the iterator
    * The sync operation can be gracefully stopped by calling with the stop
    * argument set to true.
@@ -193,30 +193,45 @@ export default class ZCash {
    */
   async *syncShielded(args: {
     startBlockHeight: number;
-    endBlockHeight: number;
     viewingKey: string;
   }): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
-    const { startBlockHeight, endBlockHeight, viewingKey } = args;
-    let balance = 0;
+    const { startBlockHeight, viewingKey } = args;
+    let balance = new BigNumber(0);
     let processedBlocks = 0;
-    let remainingBlocks = endBlockHeight - startBlockHeight + 1;
+    let remainingBlocks = 0;
     let lastProcessed;
 
+    // 1. get end block height
+    let endBlockHeight = await this.jsonRpcClient.getBlockCount();
+    if (!endBlockHeight) {
+      log(LOG_TYPE, "error: could not retrieve the last block");
+      return { balance, processedBlocks, remainingBlocks, lastProcessed };
+    }
+
     for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
-      // 1. get start block
+      // 2. on last iteration, update end block height
+      if (blockHeight === endBlockHeight) {
+        endBlockHeight = await this.jsonRpcClient.getBlockCount();
+        if (!endBlockHeight) {
+          log(LOG_TYPE, "error: could not retrieve the last block");
+          return { balance, processedBlocks, remainingBlocks, lastProcessed };
+        }
+      }
+
+      // 3. get start block
       const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
       if (!block) {
         log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
         return { balance, processedBlocks, remainingBlocks, lastProcessed };
       }
 
-      // 2. find shielded tx in block
+      // 4. find shielded tx in block
       const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
 
-      // 3. update balance
-      balance += calculateShieldedBalance(shieldedTxs);
+      // 5. update balance and counters
+      balance = balance.plus(calculateShieldedBalance(shieldedTxs));
       processedBlocks++;
-      remainingBlocks--;
+      remainingBlocks = endBlockHeight - blockHeight;
       lastProcessed = block.height;
 
       const stop = yield {

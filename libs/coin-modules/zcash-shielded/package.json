@@ -61,8 +61,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "bignumber.js": "^9.1.2",
     "jest": "catalog:",
-    "msw": "catalog:"
+    "msw": "catalog:",
+    "rxjs": "catalog:"
   },
   "dependencies": {
     "@ledgerhq/live-network": "workspace:^",

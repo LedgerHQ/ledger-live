@@ -1,4 +1,5 @@
-import ZCash from "../src/ZCash";
+import * as rxjs from "rxjs";
+import ZCash, { SyncedShielded } from "../src/ZCash";
 import {
   testAccount1,
   blockWithMyTx,
@@ -12,15 +13,15 @@ import {
   txShieldedSapling,
 } from "./testAccounts";
 import { server } from "./mocks/node";
+import { resetLastBlockCount, setLastBlockCount } from "./mocks/handlers";
 import { JSON_RPC_SERVER } from "../src/constants";
-import { JsonRpcClient } from "../src/jsonRpcClient";
 import {
   createFindBlockHeightHandlers,
   largeChainScenario,
   smallChainScenario,
   emptyChainScenario,
 } from "./mocks/findBlockHeightData";
-import { http, HttpResponse } from "msw";
+import BigNumber from "bignumber.js";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -95,80 +96,6 @@ describe("findBlockHeight", () => {
     // Block 10 has time 1100; timestamp 2000 is in the future
     const height = await zcash.findBlockHeight(2000);
     expect(height).toEqual(10);
-  });
-});
-
-describe("getBlockCount", () => {
-  test("returns block count when network returns numeric result", async () => {
-    server.use(
-      http.post(JSON_RPC_SERVER, async ({ request }) => {
-        const body = await request.clone().json();
-        if (
-          body &&
-          typeof body === "object" &&
-          "method" in body &&
-          body.method === "getblockcount"
-        ) {
-          return HttpResponse.json({ result: 42 });
-        }
-      }),
-    );
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBe(42);
-  });
-
-  test("calls network with POST, nodeUrl, getblockcount method and empty params", async () => {
-    let capturedBody: unknown;
-    server.use(
-      http.post(JSON_RPC_SERVER, async ({ request }) => {
-        const body = await request.clone().json();
-        capturedBody = body;
-        return HttpResponse.json({ result: 100 });
-      }),
-    );
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    await client.getBlockCount();
-    expect(capturedBody).toEqual({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "getblockcount",
-      params: [],
-    });
-  });
-
-  test("returns undefined when RPC returns error", async () => {
-    server.use(
-      http.post(JSON_RPC_SERVER, () =>
-        HttpResponse.json({
-          error: { code: -1, message: "node error" },
-        }),
-      ),
-    );
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
-
-  test("returns undefined when response has no result", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({})));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
-
-  test("returns undefined when result is not a number (string)", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: "100" })));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
-
-  test("returns undefined when result is not a number (object)", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: {} })));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
   });
 });
 
@@ -270,18 +197,19 @@ describe("findShieldedTxsInBlock", () => {
 });
 
 describe("syncShielded", () => {
+  beforeEach(resetLastBlockCount);
+
   test("returns an empty shielded balance when the viewingKey doesn't match any shielded transactions", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const syncedShieldedIterator = await zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
-      endBlockHeight: blockWithMyTx.height + 4,
       viewingKey: "abc456",
     });
     let syncedShielded;
 
     for await (syncedShielded of syncedShieldedIterator) {
       expect(syncedShielded).toMatchObject({
-        balance: expect.any(Number),
+        balance: expect.any(BigNumber),
         processedBlocks: expect.any(Number),
         remainingBlocks: expect.any(Number),
         lastProcessed: expect.any(Number),
@@ -289,25 +217,26 @@ describe("syncShielded", () => {
     }
 
     expect(syncedShielded).toEqual({
-      balance: 0,
-      processedBlocks: 5,
+      balance: new BigNumber(0),
+      processedBlocks: 6,
       remainingBlocks: 0,
-      lastProcessed: blockWithMyTx.height + 4,
+      lastProcessed: blockWithMyTx.height + 5,
     });
   });
 
   test("stops the iterator after the next iteration and returns the current context", async () => {
+    setLastBlockCount(blockWithMyTx.height + 100);
+
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const syncedShielded = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
-      endBlockHeight: blockWithMyTx.height + 100,
       viewingKey: testAccount1.viewingKey,
     });
 
     expect(await syncedShielded.next()).toEqual({
       done: false,
       value: {
-        balance: 0.3,
+        balance: new BigNumber(0.3),
         processedBlocks: 1,
         remainingBlocks: 100,
         lastProcessed: blockWithMyTx.height,
@@ -317,7 +246,7 @@ describe("syncShielded", () => {
     expect(await syncedShielded.next(true)).toEqual({
       done: true,
       value: {
-        balance: 0.3,
+        balance: new BigNumber(0.3),
         processedBlocks: 1,
         remainingBlocks: 100,
         lastProcessed: blockWithMyTx.height,
@@ -329,14 +258,13 @@ describe("syncShielded", () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const syncedShieldedIterator = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
-      endBlockHeight: blockWithMyTx.height + 5,
       viewingKey: testAccount1.viewingKey,
     });
     let syncedShielded;
 
     for await (syncedShielded of syncedShieldedIterator) {
       expect(syncedShielded).toMatchObject({
-        balance: expect.any(Number),
+        balance: expect.any(BigNumber),
         processedBlocks: expect.any(Number),
         remainingBlocks: expect.any(Number),
         lastProcessed: expect.any(Number),
@@ -344,10 +272,85 @@ describe("syncShielded", () => {
     }
 
     expect(syncedShielded).toEqual({
-      balance: 0.3,
+      balance: new BigNumber(0.3),
       lastProcessed: blockWithMyTx.height + 5,
       processedBlocks: 6,
       remainingBlocks: 0,
+    });
+  });
+
+  test("as observable: returns the shielded balance", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncShieldedGenerator = zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      viewingKey: testAccount1.viewingKey,
+    });
+
+    const syncShieldedObs = rxjs.from(syncShieldedGenerator);
+    expect(syncShieldedObs).toBeInstanceOf(rxjs.Observable);
+
+    const steps: SyncedShielded[] = [];
+
+    await syncShieldedObs.forEach(value => {
+      steps.push(value);
+
+      //setLastBlockCount(blockWithMyTx.height + 6);
+    });
+
+    expect(steps).toEqual(
+      expect.arrayOf(
+        expect.objectContaining({
+          balance: expect.any(BigNumber),
+          processedBlocks: expect.any(Number),
+          remainingBlocks: expect.any(Number),
+          lastProcessed: expect.any(Number),
+        }),
+      ),
+    );
+
+    expect(steps[steps.length - 1]).toMatchObject({
+      balance: new BigNumber(0.3),
+      processedBlocks: 6,
+      remainingBlocks: 0,
+      lastProcessed: blockWithMyTx.height + 5,
+    });
+  });
+
+  test("as observable: retrieves and process also latest block if it changed while processing", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncShieldedGenerator = zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      viewingKey: testAccount1.viewingKey,
+    });
+
+    const syncShieldedObs = rxjs.from(syncShieldedGenerator);
+    expect(syncShieldedObs).toBeInstanceOf(rxjs.Observable);
+
+    const steps: SyncedShielded[] = [];
+
+    await syncShieldedObs.forEach(value => {
+      steps.push(value);
+
+      // Note: Last block count increased while processing syncShielded!
+      setLastBlockCount(blockWithMyTx.height + 6);
+    });
+
+    expect(steps).toEqual(
+      expect.arrayOf(
+        expect.objectContaining({
+          balance: expect.any(BigNumber),
+          processedBlocks: expect.any(Number),
+          remainingBlocks: expect.any(Number),
+          lastProcessed: expect.any(Number),
+        }),
+      ),
+    );
+
+    expect(steps[steps.length - 1]).toMatchObject({
+      balance: new BigNumber(0.3),
+      processedBlocks: 7,
+      remainingBlocks: 0,
+      lastProcessed: blockWithMyTx.height + 6,
     });
   });
 });
