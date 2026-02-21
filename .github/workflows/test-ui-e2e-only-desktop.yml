@@ -1,10 +1,13 @@
-name: "[Desktop] - E2E Only - Scheduled/Manual"
+name: "[Desktop] - E2E Only - Collect Workflow Telemetry"
 run-name: >
   @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
 on:
-  schedule:
-    - cron: "0 4 * * 1-5"
+  push:
+    branches:
+      - INFRAPRJ-11493
+  # schedule:
+  #   - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
       ref:
@@ -103,8 +106,11 @@ on:
         default: false
 
 permissions:
-  id-token: write
   contents: read
+  id-token: write
+  attestations: write
+  pull-requests: write
+  actions: read
 
 jobs:
   e2e-tests-linux:
@@ -130,6 +136,9 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5]
         shardTotal: [5]
     steps:
+      - name: Collect Workflow Telemetry
+        uses: catchpoint/workflow-telemetry-action@v2
+
       - name: generate token
         id: generate-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
