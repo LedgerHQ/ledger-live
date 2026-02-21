@@ -11,19 +11,36 @@ inputs:
     description: "Invert the test filter"
     required: false
   shard_index:
-    description: "Shard index for test distribution"
-    required: true
+    description: "Shard index for test distribution (omit to run all tests)"
+    required: false
   shard_total:
-    description: "Total number of shards"
-    required: true
+    description: "Total number of shards (omit to run all tests)"
+    required: false
+outputs:
+  passed:
+    description: "Number of passed tests"
+    value: ${{ steps.run-tests.outputs.passed }}
+  failed:
+    description: "Number of failed tests"
+    value: ${{ steps.run-tests.outputs.failed }}
+  skipped:
+    description: "Number of skipped tests"
+    value: ${{ steps.run-tests.outputs.skipped }}
+  total:
+    description: "Total number of tests"
+    value: ${{ steps.run-tests.outputs.total }}
+  exit_code:
+    description: "Playwright exit code"
+    value: ${{ steps.run-tests.outputs.exit_code }}
 
 runs:
   using: "composite"
   steps:
-    - name: Set up environment variables
+    - name: Run E2E tests
+      id: run-tests
       run: |
         export SPECULOS_IMAGE_TAG="${{ env.SPECULOS_IMAGE_TAG }}"
-        export COINAPPS="$PWD/coin-apps"
+        export COINAPPS="${COINAPPS:-$PWD/coin-apps}"
         export MOCK=0
 
         case "${{ inputs.speculos_device }}" in
@@ -37,7 +54,6 @@ runs:
         esac
 
         if [ -n "${{ inputs.test_filter }}" ]; then
-          # If test_filter contains a space but not a pipe, treat as OR by replacing spaces with pipes
           if [[ "${{ inputs.test_filter }}" == *' '* && "${{ inputs.test_filter }}" != *'|'* ]]; then
             or_filter=$(echo "${{ inputs.test_filter }}" | sed 's/ /|/g')
             grep_filter="$device_tag.*($or_filter)|($or_filter).*$device_tag"
@@ -56,9 +72,88 @@ runs:
 
         echo "Running tests with filter: $grep_option $grep_filter"
 
+        SHARD_ARG=""
+        if [ -n "${{ inputs.shard_index }}" ] && [ -n "${{ inputs.shard_total }}" ]; then
+          SHARD_ARG="--shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}"
+        fi
+
+        set +e
         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
           -- pnpm e2e:desktop test:playwright \
           --max-failures 50 \
           $grep_option "$grep_filter" \
-          --shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}
+          $SHARD_ARG 2>&1 | tee /tmp/playwright-output.log
+        TEST_EXIT_CODE=${PIPESTATUS[0]}
+        set -e
+
+        PASSED=$(grep -oP '\d+ passed' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
+        FAILED=$(grep -oP '\d+ failed' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
+        SKIPPED=$(grep -oP '\d+ skipped' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
+        FLAKY=$(grep -oP '\d+ flaky' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
+        TOTAL=$((PASSED + FAILED + SKIPPED))
+
+        echo "passed=${PASSED}" >> $GITHUB_OUTPUT
+        echo "failed=${FAILED}" >> $GITHUB_OUTPUT
+        echo "skipped=${SKIPPED}" >> $GITHUB_OUTPUT
+        echo "total=${TOTAL}" >> $GITHUB_OUTPUT
+        echo "exit_code=${TEST_EXIT_CODE}" >> $GITHUB_OUTPUT
+
+        PASS_RATE=0
+        if [ "${TOTAL}" -gt 0 ]; then
+          PASS_RATE=$(( PASSED * 100 / TOTAL ))
+        fi
+
+        echo ""
+        echo "========================================"
+        echo "  PLAYWRIGHT TEST SUMMARY"
+        echo "========================================"
+        echo "  Total:   ${TOTAL}"
+        echo "  Passed:  ${PASSED}"
+        echo "  Failed:  ${FAILED}"
+        echo "  Flaky:   ${FLAKY}"
+        echo "  Skipped: ${SKIPPED}"
+        echo "  Pass rate: ${PASS_RATE}%"
+        echo "========================================"
+        if [ "${TEST_EXIT_CODE}" -eq 0 ]; then
+          echo "  Result:  ALL PASSED"
+        elif [ "${TOTAL}" -gt 0 ]; then
+          echo "  Result:  ${FAILED} FAILED -- see Allure report"
+        else
+          echo "  Result:  NO TESTS RAN (infrastructure error?)"
+          echo "========================================"
+          exit 1
+        fi
+        echo "========================================"
+        echo ""
+
+        STATUS_ICON="✅"
+        STATUS_TEXT="All tests passed"
+        if [ "${FAILED}" -gt 0 ]; then
+          STATUS_ICON="⚠️"
+          STATUS_TEXT="${FAILED} tests failed -- see Allure report for details"
+        fi
+        if [ "${TOTAL}" -eq 0 ]; then
+          STATUS_ICON="❌"
+          STATUS_TEXT="No tests executed -- possible infrastructure issue"
+        fi
+
+        {
+          echo "## ${STATUS_ICON} Playwright Test Results"
+          echo ""
+          echo "| Metric | Count |"
+          echo "|--------|-------|"
+          echo "| Total | ${TOTAL} |"
+          echo "| Passed | ${PASSED} |"
+          echo "| Failed | ${FAILED} |"
+          echo "| Flaky | ${FLAKY} |"
+          echo "| Skipped | ${SKIPPED} |"
+          echo "| **Pass rate** | **${PASS_RATE}%** |"
+          echo ""
+          echo "> ${STATUS_TEXT}"
+        } >> $GITHUB_STEP_SUMMARY
+
+        if [ "${TOTAL}" -eq 0 ]; then
+          exit 1
+        fi
+        exit 0
       shell: bash
