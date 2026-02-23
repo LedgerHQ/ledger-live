@@ -1,15 +1,15 @@
-import useFeature from "@ledgerhq/live-common/lib-es/featureFlags/useFeature";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib-es/platform/providers/RemoteLiveAppProvider/index";
-import { LiveAppManifest } from "@ledgerhq/live-common/lib-es/platform/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
+import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { EarnBackground } from "../EarnBackground";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigationBarHeights } from "~/mvvm/hooks/useNavigationBarHeights";
 
 type Props = {
   manifest?: LiveAppManifest;

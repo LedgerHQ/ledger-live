@@ -1,4 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
+import { Platform } from "react-native";
 import { useNavigationBarHeights } from "../useNavigationBarHeights";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
@@ -68,12 +69,12 @@ describe("useNavigationBarHeights", () => {
       expect(result.current.bottom).toBe(0);
     });
 
-    it("should return the platform-specific top bar height", () => {
+    it("should return TOP_BAR_BAR_HEIGHT as topBarHeight", () => {
       const { result } = renderHook(() => useNavigationBarHeights(), {
         overrideInitialState: withTabBarVisibility(true),
       });
 
-      expect(result.current.topBarHeight).toBe(80);
+      expect(result.current.topBarHeight).toBe(64);
     });
 
     it("should always return TAB_BAR_HEIGHT as bottomBarHeight", () => {
@@ -82,6 +83,26 @@ describe("useNavigationBarHeights", () => {
       });
 
       expect(result.current.bottomBarHeight).toBe(TAB_BAR_HEIGHT);
+    });
+  });
+
+  describe("when running on Android", () => {
+    const originalOS = Platform.OS;
+
+    beforeEach(() => {
+      Platform.OS = "android";
+    });
+
+    afterEach(() => {
+      Platform.OS = originalOS;
+    });
+
+    it("should use Android-specific top bar height with gradient", () => {
+      const { result } = renderHook(() => useNavigationBarHeights(), {
+        overrideInitialState: withTabBarVisibility(true),
+      });
+
+      expect(result.current.top).toBe(112);
     });
   });
 });

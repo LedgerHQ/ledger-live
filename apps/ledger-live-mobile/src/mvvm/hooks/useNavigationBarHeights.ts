@@ -48,17 +48,17 @@ export function useNavigationBarHeights(): NavigationBarHeights {
   const insets = useSafeAreaInsets();
   const isTabBarVisible = useSelector(isMainNavigatorVisibleSelector);
 
-  const topBarHeight =
+  const topBarHeightWithBlur =
     Platform.OS === "ios" ? MAIN_NAV_TOP_BAR_HEIGHT_IOS : MAIN_NAV_TOP_BAR_HEIGHT_ANDROID;
 
   const result = useMemo(
     () => ({
       bottom: isTabBarVisible ? TAB_BAR_HEIGHT : 0,
       bottomBarHeight: TAB_BAR_HEIGHT,
-      top: insets.top + topBarHeight,
-      topBarHeight,
+      top: insets.top + topBarHeightWithBlur,
+      topBarHeight: TOP_BAR_BAR_HEIGHT,
     }),
-    [insets.top, topBarHeight, isTabBarVisible],
+    [insets.top, topBarHeightWithBlur, isTabBarVisible],
   );
 
   if (!isWallet40Enabled) {

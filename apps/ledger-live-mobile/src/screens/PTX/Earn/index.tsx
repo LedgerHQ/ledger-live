@@ -87,7 +87,6 @@ function Earn({ route }: Props) {
   if (!remoteLiveAppState.isLoading && !manifest) {
     console.error(appManifestNotFoundError);
   }
-
   const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
 
   const webviewInputs = useMemo(
