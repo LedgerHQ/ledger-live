@@ -9,14 +9,18 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { AleoTransactionType } from "./api";
-import type { ProvableApi } from "./logic";
+import type { ProvableApi, TransactionType } from "./logic";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
+  type: TransactionType;
+  fees: BigNumber;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "aleo";
+  type: TransactionType;
+  fees: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

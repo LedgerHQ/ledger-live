@@ -16,6 +16,7 @@ import type {
   AleoOperation,
   AleoTransactionType,
   EnrichedTransaction,
+  Transaction,
   TransactionType,
 } from "../types";
 
@@ -191,4 +192,27 @@ export function getTransactionType(intent: TransactionIntent): TransactionType {
   invariant(transactionType, `aleo: unsupported transaction intent type: ${intent.type}`);
 
   return transactionType;
+}
+
+export function calculateAmount({
+  account,
+  transaction,
+  estimatedFees,
+}: {
+  account: Account;
+  transaction: Transaction;
+  estimatedFees: BigNumber;
+}) {
+  let amount = transaction.amount;
+
+  if (transaction.useAllAmount) {
+    amount = BigNumber.max(0, account.balance.minus(estimatedFees));
+  }
+
+  const totalSpent = amount.plus(estimatedFees);
+
+  return {
+    amount,
+    totalSpent,
+  };
 }
