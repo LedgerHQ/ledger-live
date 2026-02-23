@@ -6,7 +6,10 @@ export const SuccessContent = () => {
   const { t } = useTranslation();
 
   return (
-    <div data-testid="send-confirmation-success-content">
+    <div
+      className="flex flex-col items-center pt-16 gap-24"
+      data-testid="send-confirmation-success-content"
+    >
       <Spot appearance="check" size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
         <h3 className="heading-3-semi-bold text-base" data-testid="send-confirmation-success-title">
