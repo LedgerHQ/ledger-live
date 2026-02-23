@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
@@ -9,6 +9,7 @@ import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { StyleSheet } from "react-native";
 import { ProgressIndicator } from "./components/ProgressIndicator";
+import { TrackScreen, useTrack } from "~/analytics";
 
 export const useWalletV4TourDrawer = () => {
   return useWalletV4TourDrawerViewModel();
@@ -26,7 +27,30 @@ export const WalletV4TourDrawer = ({
   handleCloseDrawer,
   slides,
 }: WalletV4TourDrawerProps) => {
+  const currentIndex = useRef(0);
+
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const track = useTrack();
+
+  const closeDrawer = useCallback(() => {
+    handleCloseDrawer();
+    track("button_clicked", {
+      button: "Close",
+      page: "Product Tour WV4",
+      card: currentIndex.current + 1,
+    });
+  }, [handleCloseDrawer, track]);
+
+  const onSlideChange = useCallback(
+    (index: number) => {
+      currentIndex.current = index;
+      track("product_tour_card", {
+        page: "Product Tour WV4",
+        card: index + 1,
+      });
+    },
+    [track],
+  );
 
   if (!isDrawerOpen) {
     return null;
@@ -35,17 +59,19 @@ export const WalletV4TourDrawer = ({
   return (
     <QueuedDrawerGorhom
       isRequestingToBeOpened={isDrawerOpen}
-      onClose={handleCloseDrawer}
+      onClose={closeDrawer}
       snapPoints={["92%"]}
       noCloseButton={false}
       animateOnMount={false}
     >
+      <TrackScreen page="Product Tour WV4" source="Portfolio" />
       <Slides
         bounces={false}
         as={AnimatedGestureHandlerFlatList}
         testID="walletv4-tour-slides-container"
         scrollEnabled={false}
         initialNumToRender={1}
+        onSlideChange={onSlideChange}
       >
         <Slides.Content>
           {slides.map((slide, index) => (

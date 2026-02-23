@@ -21,8 +21,9 @@ export const useWalletV4TourDrawerViewModel = (): WalletV4TourDrawerViewModel =>
   const handleOpenDrawer = useCallback(() => {
     if (!hasCompletedOnboarding) {
       dispatch(setHasSeenWalletV4Tour(true));
-    } else if (!hasSeenTour) setIsDrawerOpen(true);
-    return;
+    } else if (!hasSeenTour) {
+      setIsDrawerOpen(true);
+    }
   }, [hasCompletedOnboarding, hasSeenTour, dispatch]);
 
   const handleCloseDrawer = useCallback(() => {
