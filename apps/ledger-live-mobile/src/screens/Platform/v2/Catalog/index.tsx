@@ -9,6 +9,7 @@ import { NavigationProps } from "../types";
 import ArrowLeft from "~/icons/ArrowLeft";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Layout } from "./Layout";
 import { useCatalog } from "../hooks";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -19,15 +20,20 @@ import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
 import { LocalLiveApp } from "./LocalLiveApp";
 
-export function Catalog() {
+const SAFE_AREA_EDGES_WALLET40 = ["top", "left", "right"] as const;
+const SAFE_AREA_EDGES_LEGACY = ["top", "bottom", "left", "right"] as const;
+
+function CatalogContent({
+  shouldDisplayWallet40MainNav,
+}: {
+  readonly shouldDisplayWallet40MainNav: boolean;
+}) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const title = t("browseWeb3.catalog.title");
 
   const { params } = useRoute();
-
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const deeplinkInitialCategory =
     params && "category" in params && typeof params.category === "string" ? params.category : null;
@@ -36,8 +42,7 @@ export function Catalog() {
     useCatalog(deeplinkInitialCategory);
 
   return (
-    <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
-      {/* TODO: put under the animation header and style  */}
+    <>
       <TrackScreen category="Platform" name="Catalog" />
       <View>
         <DAppDisclaimer disclaimer={disclaimer} />
@@ -109,6 +114,24 @@ export function Catalog() {
           />
         </Animated.View>
       )}
+    </>
+  );
+}
+
+export function Catalog() {
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+
+  if (shouldDisplayWallet40MainNav) {
+    return (
+      <SafeAreaView isFlex edges={SAFE_AREA_EDGES_WALLET40}>
+        <CatalogContent shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <TabBarSafeAreaView edges={SAFE_AREA_EDGES_LEGACY}>
+      <CatalogContent shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
     </TabBarSafeAreaView>
   );
 }

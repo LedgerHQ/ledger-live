@@ -15,8 +15,6 @@ import { AnalyticPill } from "./AnalyticPill";
 const containerStyle: LumenViewStyle = {
   alignItems: "center",
   justifyContent: "center",
-  paddingTop: "s56",
-  paddingBottom: "s64",
 };
 
 export const PortfolioBalanceSectionView = ({
