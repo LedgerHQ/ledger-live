@@ -22,8 +22,7 @@ export const NotificationsPromptDrawer = () => {
 
   const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 
-  const canShowVariant =
-    drawerSource === "onboarding" && featureNewWordingNotificationsDrawer?.enabled;
+  const canShowVariant = featureNewWordingNotificationsDrawer?.enabled;
 
   return (
     <QueuedDrawer
@@ -42,7 +41,7 @@ export const NotificationsPromptDrawer = () => {
       <Flex mb={4}>
         <Flex alignItems={"center"}>
           <NotificationsDrawerIllustration type={drawerSource} />
-          <NotificationsPromptContent drawerSource={drawerSource} />
+          <NotificationsPromptContent />
         </Flex>
         <Button
           type={"main"}

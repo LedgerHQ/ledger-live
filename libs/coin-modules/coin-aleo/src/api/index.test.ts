@@ -1,11 +1,14 @@
 import coinConfig from "../config";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { createApi } from "./index";
 
 describe("createApi", () => {
+  const mockConfig = getMockedConfig("testnet");
+
   it("should set the coin config value", () => {
     const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
 
-    createApi({ nodeUrl: "" }, "aleo");
+    createApi(mockConfig, "aleo");
     const config = coinConfig.getCoinConfig();
 
     expect(mockSetCoinConfig).toHaveBeenCalled();
@@ -13,7 +16,7 @@ describe("createApi", () => {
   });
 
   it("should return an API object with alpaca api methods", () => {
-    const api = createApi({ nodeUrl: "" }, "aleo");
+    const api = createApi(mockConfig, "aleo");
 
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);

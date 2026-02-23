@@ -32,8 +32,11 @@ const AnimatedWrapper = ({ children, isCollapsed, hasSubtitle }: AnimatedWrapper
     config: { duration: 300 },
   });
 
+  const AnimatedDiv = animated.div as React.ComponentType<
+    React.PropsWithChildren<{ style: React.CSSProperties }>
+  >;
   return (
-    <animated.div
+    <AnimatedDiv
       style={{
         ...springStyles,
         position: "relative",
@@ -54,7 +57,7 @@ const AnimatedWrapper = ({ children, isCollapsed, hasSubtitle }: AnimatedWrapper
       >
         {children}
       </Flex>
-    </animated.div>
+    </AnimatedDiv>
   );
 };
 

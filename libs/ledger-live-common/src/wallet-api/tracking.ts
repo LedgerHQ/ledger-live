@@ -1,4 +1,4 @@
-import type { AppManifest, DAppTrackingData } from "./types";
+import type { AppManifest, BroadcastTrackingData, DAppTrackingData } from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -135,22 +135,26 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Failed to broadcast a signed transaction
-    broadcastFail: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-      };
+    broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
+      const properties: Record<string, unknown> = getEventData(manifest);
+      if (data?.isEmbeddedSwap !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.partner !== undefined) properties.partner = data.partner;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
-    broadcastSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-      };
+    broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
+      const properties: Record<string, unknown> = getEventData(manifest);
+      if (data?.isEmbeddedSwap !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.partner !== undefined) properties.partner = data.partner;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Success", properties);
     },
 
@@ -268,6 +272,15 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
     bitcoinFamilyAccountXpubSuccess: (manifest: AppManifest) => {
       track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressesRequested: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account addresses requested", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressesFail: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account addresses fail", getEventData(manifest));
+    },
+    bitcoinFamilyAccountAddressesSuccess: (manifest: AppManifest) => {
+      track("WalletAPI bitcoin family account addresses success", getEventData(manifest));
     },
 
     // currency.list handler tracking

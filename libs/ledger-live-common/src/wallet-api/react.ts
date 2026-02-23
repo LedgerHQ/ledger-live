@@ -3,12 +3,7 @@ import { useDispatch } from "react-redux";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import {
-  WalletHandlers,
-  ServerConfig,
-  WalletAPIServer,
-  useWalletAPIServer as useWalletAPIServerRaw,
-} from "@ledgerhq/wallet-api-server";
+import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
@@ -46,6 +41,7 @@ import {
   signMessageLogic,
   signTransactionLogic,
   bitcoinFamilyAccountGetAddressLogic,
+  bitcoinFamilyAccountGetAddressesLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
 } from "./logic";
@@ -328,13 +324,34 @@ export function useWalletAPIServer({
     };
   }, [manifest, customHandlers, getFeature]);
 
-  const { server, onMessage } = useWalletAPIServerRaw({
-    transport,
-    config,
-    permission,
-    customHandlers: mergedCustomHandlers,
-  });
+  const serverRef = useRef<WalletAPIServer | undefined>(undefined);
+  // Lazily initialize WalletAPIServer once to avoid re-creation on re-renders
+  // https://react.dev/reference/react/useRef#avoiding-recreating-the-ref-contents
+  if (serverRef.current === undefined) {
+    serverRef.current = new WalletAPIServer(transport, config, undefined, mergedCustomHandlers);
+  }
+  const server = serverRef.current;
 
+  useEffect(() => {
+    if (mergedCustomHandlers) {
+      server.setCustomHandlers(mergedCustomHandlers);
+    }
+  }, [mergedCustomHandlers, server]);
+
+  useEffect(() => {
+    server.setConfig(config);
+  }, [config, server]);
+
+  useEffect(() => {
+    server.setPermissions(permission);
+  }, [permission, server]);
+
+  const onMessage = useCallback(
+    (event: string) => {
+      transport.onMessage?.(event);
+    },
+    [transport],
+  );
   useEffect(() => {
     tracking.load(manifest);
   }, [tracking, manifest]);
@@ -741,15 +758,26 @@ export function useWalletAPIServer({
 
             let optimisticOperation: Operation = signedOperation.operation;
 
+            const networkId =
+              account.type === "TokenAccount"
+                ? account.token.parentCurrency.id
+                : account.currency.id;
+
+            const broadcastTrackingData = {
+              sourceCurrency:
+                account.type === "TokenAccount" ? account.token.name : account.currency.name,
+              network: networkId,
+            };
+
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
               try {
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation,
                 });
-                tracking.broadcastSuccess(manifest);
+                tracking.broadcastSuccess(manifest, broadcastTrackingData);
               } catch (error) {
-                tracking.broadcastFail(manifest);
+                tracking.broadcastFail(manifest, broadcastTrackingData);
                 throw error;
               }
             }
@@ -861,6 +889,17 @@ export function useWalletAPIServer({
               const bridge = getAccountBridge(account, parentAccount);
               const mainAccount = getMainAccount(account, parentAccount);
 
+              const networkId =
+                account.type === "TokenAccount"
+                  ? account.token.parentCurrency.id
+                  : account.currency.id;
+
+              const broadcastTrackingData = {
+                sourceCurrency:
+                  account.type === "TokenAccount" ? account.token.name : account.currency.name,
+                network: networkId,
+              };
+
               let optimisticOperation: Operation = signedOperation.operation;
 
               if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -873,9 +912,9 @@ export function useWalletAPIServer({
                       source: { type: "live-app", name: manifest.id },
                     },
                   });
-                  tracking.broadcastSuccess(manifest);
+                  tracking.broadcastSuccess(manifest, broadcastTrackingData);
                 } catch (error) {
-                  tracking.broadcastFail(manifest);
+                  tracking.broadcastFail(manifest, broadcastTrackingData);
                   throw error;
                 }
               }
@@ -946,6 +985,19 @@ export function useWalletAPIServer({
             const bridge = getAccountBridge(account, parentAccount);
             const mainAccount = getMainAccount(account, parentAccount);
 
+            const networkId =
+              account.type === "TokenAccount"
+                ? account.token.parentCurrency.id
+                : account.currency.id;
+
+            const broadcastTrackingData = {
+              isEmbeddedSwap,
+              partner,
+              sourceCurrency:
+                account.type === "TokenAccount" ? account.token.name : account.currency.name,
+              network: networkId,
+            };
+
             let optimisticOperation: Operation = signedOperation.operation;
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -959,9 +1011,9 @@ export function useWalletAPIServer({
                     source: { type: "live-app", name: manifest.id },
                   },
                 });
-                tracking.broadcastSuccess(manifest, isEmbeddedSwap, partner);
+                tracking.broadcastSuccess(manifest, broadcastTrackingData);
               } catch (error) {
-                tracking.broadcastFail(manifest, isEmbeddedSwap, partner);
+                tracking.broadcastFail(manifest, broadcastTrackingData);
                 throw error;
               }
             }
@@ -1144,6 +1196,16 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         accountId,
         derivationPath,
+      );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    server.setHandler("bitcoin.getAddresses", ({ accountId, intentions }) => {
+      return bitcoinFamilyAccountGetAddressesLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        intentions,
       );
     });
   }, [accounts, manifest, server, tracking]);

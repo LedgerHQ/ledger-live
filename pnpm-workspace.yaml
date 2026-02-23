@@ -16,19 +16,19 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 1.13.0
+  "@ledgerhq/context-module": 1.14.0
   "@ledgerhq/crypto-icons": "1.4.0"
-  "@ledgerhq/device-management-kit": 1.0.1
-  "@ledgerhq/device-signer-kit-ethereum": 1.10.0
-  "@ledgerhq/device-signer-kit-solana": 1.6.1
+  "@ledgerhq/device-management-kit": 1.1.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.11.0
+  "@ledgerhq/device-signer-kit-solana": 1.6.2
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
   "@ledgerhq/device-transport-kit-speculos": 1.1.3
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.0.51
-  "@ledgerhq/lumen-ui-react": 0.0.81
-  "@ledgerhq/lumen-ui-rnative": 0.0.70
+  "@ledgerhq/lumen-design-core": 0.0.53
+  "@ledgerhq/lumen-ui-react": 0.0.85
+  "@ledgerhq/lumen-ui-rnative": 0.0.76
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
@@ -92,7 +92,8 @@ catalog:
   "@storybook/theming": 8.6.14
   storybook-dark-mode: 4.0.2
   storybook-react-rsbuild: 3.2.2
-  "@swc/core": 1.15.8
+  "@swc/core": 1.15.11
+  "@swc/helpers": 0.5.17
   "@swc/jest": 0.2.39
   "@testing-library/dom": 10.4.1
   "@testing-library/jest-dom": 6.9.1
@@ -126,8 +127,8 @@ catalog:
   jest-environment-node: 30.2.0
   jest-file-snapshot: 0.7.0
   jest-util: 30.2.0
-  react: 18.3.1
-  react-dom: 18.3.1
+  react: 19.0.0
+  react-dom: 19.0.0
   react-i18next: 16.5.0
   react-native-config: 1.5.3
   react-native-reanimated: 4.1.6
@@ -136,7 +137,9 @@ catalog:
   react-native-svg: 15.15.1
   react-redux: ^9.2.0
   redux: ^5.0.1
-  react-test-renderer: 18.3.1
+  react-test-renderer: 19.0.0
+  "@types/react": 19.0.14
+  "@types/react-dom": 19.0.0
   reselect: 5.1.1
   rxjs: 7.8.2
   tailwindcss: ^4.1.0
@@ -160,3 +163,5 @@ overrides:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: zx@8.8.5
+  - zx@8.8.5

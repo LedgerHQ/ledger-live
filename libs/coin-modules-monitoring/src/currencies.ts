@@ -24,11 +24,44 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         },
       },
     },
+    bitcoin_cash: {
+      accounts: {
+        big: {
+          address: "",
+          xpub: "xpub6CbdHiHA7R6VATXLiGDgidcx2VAmrMZnHq7c6eqGVgaDQe5aS2jyW2F7c2vTbiyG6XeS547DGZc7u3wA4jHUamMas4WVtENyxLWv1eSezWA",
+          derivationMode: "cashaddr",
+        },
+        average: {
+          address: "",
+          xpub: "xpub6CbdHiHA7R6VPqDUqKL2VmWnHfSBFPC9fAmjcXZwt3QCeqfZZE2k5jr6kQthRG38qZhLhwFcehhyQ37kYKMSPMcAAYTwhQ4kYerciacgbQA",
+          derivationMode: "cashaddr",
+        },
+        pristine: {
+          address: "",
+          xpub: "xpub6CbdHiHA7R6VQs1qMpgQyZVK6fvz3rDqM1nhgm9gVKSyvN2XCiMkSy3CA4EXtWFJfJfPgRp32Wg6HdkUxT5NarVz1BsueByEBQ1RSVERpJn",
+          derivationMode: "cashaddr",
+        },
+      },
+    },
     ethereum: {
       accounts: {
         big: { address: "0x835678a611B28684005a5e2233695fB6cbbB0007" },
         average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
+      },
+    },
+    base: {
+      accounts: {
+        big: { address: "0xb027ea0534152c16462bc61842d03deaee64a851" },
+        average: { address: "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1" },
+        pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
+      },
+    },
+    optimism: {
+      accounts: {
+        big: { address: "0xdb8e81841920b2c7f5074dae1b1652b37be3c260" },
+        average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
+        pristine: { address: "0x90D5b3f3FaA3cd61fBd78bF1CE3DdB2100F4BFb2" },
       },
     },
     solana: {
@@ -70,7 +103,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     mina: {
       accounts: {
         pristine: { address: "B62qoBXNhc6YqTa86zzniBjNTyshkM7NjGf1Z1uBJJXjSTdYK1qyKr6" },
-        average: { address: "B62qja3UzWbWrJU6gHbdASQyVdMtxcGwPhxaWDiSrT6892ovCqsR6f6" },
+        average: { address: "B62qmPDHpwUumEyYbEt7UGc5uDQGdaV9MSkq7b93tbMwmXstjcWeXnx" },
         big: { address: "B62qoErNk7pK8BPtbx1eKoa4GURxvyB65hJNXmeRyk56TeB26zqosvw" },
       },
     },
@@ -112,9 +145,15 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     cosmos: {
       accounts: {
-        pristine: { address: "cosmos1cc3h49u9thwtvz4rlx9pf4kwycczx36q46rp59" },
+        pristine: { address: "cosmos1uh39jx0dva8upvqqqh690rht2vn68zt9wmmhq4" },
         average: { address: "cosmos1gs72s636mzfnc0re2qrvupz0daytv4057y30g6" },
         big: { address: "cosmos18ejqp3d6yejcq3rxj4z6fsne63uj23cykw92pp" },
+      },
+    },
+    babylon: {
+      accounts: {
+        pristine: { address: "bbn14tg4vsd0q745fxhzn329pkx0krqtszcxnuw9f9" },
+        average: { address: "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx" },
       },
     },
     vechain: {
@@ -162,9 +201,9 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     casper: {
       accounts: {
         pristine: {
-          address: "020319d3ace178361daf4a2438faa00ccacad7bd531c93173c1fc30ecc8173ef0f76",
+          address: "020250318590a560c26e8f544b07d53b1f114a19daeb8b0ba037963e9c5e2ba24268",
         },
-        average: { address: "01a0d23e084a95cdee9c2fb226d54033d645873a7c7c9739de2158725c7dfe672f" },
+        average: { address: "010f1c34a508bff912ddf9999c7f6717de35ae694fd77e94a0c8c5bb122c1275d4" },
         big: {
           address: "01a0d23e084a95cdee9c2fb226d54033d645873a7c7c9739de2158725c7dfe672f",
         },
@@ -175,7 +214,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         pristine: {
           address: "24724ab008898cceeb03832dc21121ffe382a4492ae78ddb826b29304f8fd78f",
         },
-        average: { address: "06f46e2e891dee6a1e49b842139ecc494dd5dd22a466425c46016d535fcb0c2e" },
+        average: { address: "4e661791f5b52b82cda898ab7987d075df8602a894e3816c62ff00c479f76b86" },
         big: { address: "609d3e1e45103a82adc97d4f88c51f78dedb25701e8e51e8c4fec53448aadc29" },
       },
     },
@@ -201,7 +240,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         average: {
           address:
             "addr1q9dkdemkwprf8qscpjpecpvqfw2aemempn0gzplr4rh2s2fwlqyt4mswmh4hl0nnq53r4rp798vj4c7p7f2wdgqnc8uqvvxkmk",
-          xpub: "483a1aa2538cf616ab6f772a12df1792075feebb55e0444a93b38220",
+          xpub: "267142aa329e612dda8228a00045aae6db820d75b3c2cab11ce860af32044b5e409b2010c5d524b0cb041600233287e958fbe893034d1aa73f0e1e018fb8961b",
         },
       },
     },
@@ -226,10 +265,6 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         average: {
           address: "SP3YNA01GHV76JARX6MXFDWJHWB9ESW7FEXBNPH6K",
           xpub: "039e5aec6908db9413a065c4761405b7c385a13245d4a249db479f505c7fc1c91a",
-        },
-        big: {
-          address: "SP1C3B9QFCQ3K792SC8TYV47VXQ8VM72DC4RBSFQ8",
-          xpub: "0205451d135e898813ab8b5b066af8724edcf8459c0c7755c7a58ec9e5c6e1f61c",
         },
       },
     },

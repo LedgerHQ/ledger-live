@@ -32,6 +32,7 @@ interface UsePortfolioViewModelResult {
   hideEmptyTokenAccount: boolean;
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
+  shouldDisplayQuickActionCtas: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -42,6 +43,7 @@ interface UsePortfolioViewModelResult {
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
   goToAnalyticsAllocations: () => void;
+  shouldDisplayWallet40MainNav: boolean;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -52,7 +54,8 @@ const usePortfolioViewModel = (navigation: {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
-  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayGraphRework, shouldDisplayQuickActionCtas, shouldDisplayWallet40MainNav } =
+    useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
@@ -135,6 +138,7 @@ const usePortfolioViewModel = (navigation: {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
+    shouldDisplayQuickActionCtas,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -145,6 +149,7 @@ const usePortfolioViewModel = (navigation: {
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
+    shouldDisplayWallet40MainNav,
   };
 };
 

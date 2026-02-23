@@ -210,5 +210,4 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   );
 };
 
-// @ts-expect-error REACT19FIXME: FC return type Promise<ReactNode> not compatible with React 19
 export default withRemountableWrapper(CustomImageDeviceAction) as React.FC<Props>;

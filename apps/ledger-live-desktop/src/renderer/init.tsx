@@ -1,3 +1,4 @@
+import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
@@ -8,10 +9,6 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
-// We can't use new createRoot for now. We have issues we react-redux 7.x and lazy load of components
-// https://github.com/reduxjs/react-redux/issues/1977
-// eslint-disable-next-line react/no-deprecated
-import { render } from "react-dom";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
@@ -33,6 +30,7 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
+import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
@@ -124,6 +122,7 @@ async function init() {
   });
   const dispatch: AppDispatch = store.dispatch;
 
+  setupListeners(store.dispatch);
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
 
@@ -307,10 +306,9 @@ async function init() {
     },
   };
 }
+const root = rootNode ? createRoot(rootNode) : null;
 function r(Comp: React.JSX.Element) {
-  if (rootNode) {
-    render(Comp, rootNode);
-  }
+  root?.render(Comp);
 }
 
 init()

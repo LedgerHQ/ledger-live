@@ -14,7 +14,6 @@ import {
   TransportWebUSBGestureRequired,
 } from "@ledgerhq/errors";
 import { open, close } from "../../hw/index";
-import { DeviceQueuedJobsManager } from "../../hw/deviceAccess";
 
 export { Transport };
 
@@ -69,35 +68,17 @@ export const withTransport = (
 ) => {
   return <T>(job: ({ transportRef }: JobArgs) => Observable<T>): Observable<T> =>
     new Observable(subscriber => {
-      const queuedJobManager = DeviceQueuedJobsManager.getInstance();
-      const previousQueuedJob = queuedJobManager.getLastQueuedJob(deviceId);
-
-      // When the new job is finished, this will unlock the associated device queue of jobs
-      let resolveQueuedJob;
-
-      const jobId = queuedJobManager.setLastQueuedJob(
-        deviceId,
-        new Promise(resolve => {
-          resolveQueuedJob = resolve;
-        }),
-      );
-
       const tracer = new LocalTracer(LOG_TYPE, {
-        jobId,
         deviceId,
         origin: "deviceSdk:withTransport",
       });
       tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       // To call to cleanup the current transport
-      const finalize = (transport, cleanups) => {
+      const finalize = (transport: Transport) => {
         tracer.trace("Closing and cleaning transport");
 
-        return close(transport, deviceId)
-          .catch(() => {})
-          .then(() => {
-            cleanups.forEach(c => c());
-          });
+        return close(transport, deviceId).catch(() => {});
       };
 
       let unsubscribed;
@@ -108,9 +89,9 @@ export const withTransport = (
         tracer.trace("Setting up the transport instance");
 
         if (unsubscribed) {
-          tracer.trace("Unsubscribed (1) while processing job");
+          tracer.trace("Unsubscribed while setting up transport");
           // It was unsubscribed prematurely
-          return finalize(transport, [resolveQueuedJob]);
+          return finalize(transport);
         }
 
         if (needsCleanup[identifyTransport(transport)]) {
@@ -124,7 +105,6 @@ export const withTransport = (
       // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
       const onErrorDuringTransportSetup = (error: unknown) => {
         tracer.trace("Error while setting up a transport: ", { error });
-        resolveQueuedJob();
         if (error instanceof BluetoothRequired) throw error;
         if (error instanceof TransportWebUSBGestureRequired) throw error;
         if (error instanceof TransportInterfaceNotAvailable) throw error;
@@ -168,19 +148,8 @@ export const withTransport = (
         return transportRef;
       };
 
-      tracer.trace("Waiting for the previous job in the queue to complete", {
-        previousJobId: previousQueuedJob.id,
-      });
-      // For any new job, we'll now wait the exec queue to be available
-      previousQueuedJob.job
-        .then(() => {
-          tracer.trace("Previous queued job resolved, now trying to get a Transport instance", {
-            previousJobId: previousQueuedJob.id,
-            currentJobId: jobId,
-          });
-
-          return open(deviceId, options, tracer.getContext());
-        })
+      // Open the transport
+      open(deviceId, options, tracer.getContext())
         .then(transport => {
           return buildRefreshableTransport(transport);
         })
@@ -193,12 +162,12 @@ export const withTransport = (
         // Executes the job
         .then(transportRef => {
           tracer.trace("Executing job", { hasTransport: !!transportRef, unsubscribed });
-          if (!transportRef.current) return;
+          if (!transportRef?.current) return;
 
           if (unsubscribed) {
-            tracer.trace("Unsubscribed (2) while processing job");
+            tracer.trace("Unsubscribed before executing job");
             // It was unsubscribed prematurely
-            return finalize(transportRef.current, [resolveQueuedJob]);
+            return finalize(transportRef.current);
           }
 
           sub = job({ transportRef })
@@ -206,7 +175,7 @@ export const withTransport = (
               catchError(error => initialErrorRemapping(error, tracer.getContext())),
               catchError(errorRemapping), // close the transport and clean up everything
               transportFinally(() => {
-                return finalize(transportRef.current, [resolveQueuedJob]);
+                return finalize(transportRef.current);
               }),
             )
             .subscribe(subscriber);

@@ -23,7 +23,8 @@ import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/Custom
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import SafeAreaView from "~/components/SafeAreaView";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -63,6 +64,9 @@ export const WebView = forwardRef<WebviewAPI, Props>(
 
     const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
+    const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("mobile");
+    const insets = useSafeAreaInsets();
+
     // Capture the initial source to prevent webview refreshes.
     // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
     const initialSource = useMemo(() => currentRouteNameRef.current || "", []);
@@ -90,6 +94,11 @@ export const WebView = forwardRef<WebviewAPI, Props>(
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             isModularDrawer: isLlmModularDrawer ? "true" : "false",
+            lwm40enabled: isLwm40Enabled ? "true" : "false",
+            safeAreaTop: insets.top.toString(),
+            safeAreaBottom: insets.bottom.toString(),
+            safeAreaLeft: insets.left.toString(),
+            safeAreaRight: insets.right.toString(),
             ...swapParams,
           }}
         />

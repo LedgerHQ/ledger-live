@@ -25,14 +25,6 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       staking: {
         electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
-      metadataShortener: {
-        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        id: "dot",
-      },
-      metadataHash: {
-        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        id: "dot",
-      },
     },
   },
   config_currency_assethub_polkadot: {
@@ -57,14 +49,6 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
       },
-      metadataShortener: {
-        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        id: "dot-hub",
-      },
-      metadataHash: {
-        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        id: "dot-hub",
-      },
       hasBeenMigrated: true,
     },
   },
@@ -87,14 +71,6 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_westend",
       },
-      metadataShortener: {
-        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        id: "dot-hub",
-      },
-      metadataHash: {
-        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        id: "dot-hub",
-      },
     },
   },
   config_currency_assethub_westend: {
@@ -115,14 +91,6 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       },
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend",
-      },
-      metadataShortener: {
-        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        id: "dot-hub",
-      },
-      metadataHash: {
-        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        id: "dot-hub",
       },
     },
   },

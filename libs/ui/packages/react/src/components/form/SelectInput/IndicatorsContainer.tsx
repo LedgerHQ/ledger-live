@@ -7,7 +7,7 @@ export function IndicatorsContainer<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: IndicatorsContainerProps<O, M, G>): JSX.Element {
+>(props: IndicatorsContainerProps<O, M, G>): React.JSX.Element {
   const { renderRight } = props.selectProps as SelectProps<O, M, G>;
 
   return (

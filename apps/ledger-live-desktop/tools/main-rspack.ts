@@ -140,6 +140,15 @@ const build = async (argv: { port?: number }) => {
           }
 
           if (stats?.hasErrors()) {
+            // Log to stdout first so CI always shows a readable summary (stderr may be dropped or truncated)
+            const json = stats?.toJson({ all: false, errors: true });
+            const errors = json?.errors || [];
+            console.log(`\n❌ ${name} build failed with ${errors.length} error(s):`);
+            errors.forEach((e: { message?: string; moduleName?: string }, i: number) => {
+              const msg = typeof e.message === "string" ? e.message : String(e.message ?? e);
+              const truncated = msg.length > 500 ? msg.slice(0, 500) + "\n... [truncated]" : msg;
+              console.log(`  ${i + 1}. ${e.moduleName || "?"}: ${truncated.split("\n").join(" ")}`);
+            });
             console.error(`❌ ${name} build failed with errors:`);
             console.error(stats.toString({ colors: true, errors: true }));
             reject(new Error(`${name} build failed`));

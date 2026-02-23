@@ -70,10 +70,7 @@ const mockLiveAppContext: LiveAppContextType = {
 };
 
 const CustomWrapper = ({ children }: { children: ReactNode }) => (
-  <liveAppContext.Provider value={mockLiveAppContext}>
-    {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
-    {children}
-  </liveAppContext.Provider>
+  <liveAppContext.Provider value={mockLiveAppContext}>{children}</liveAppContext.Provider>
 );
 
 export default CustomWrapper;

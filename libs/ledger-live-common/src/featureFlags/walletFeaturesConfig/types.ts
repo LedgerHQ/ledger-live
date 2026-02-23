@@ -6,6 +6,9 @@ export type Wallet40Params = {
   readonly quickActionCtas?: boolean;
   readonly newReceiveDialog?: boolean;
   readonly mainNavigation?: boolean;
+  readonly lazyOnboarding?: boolean;
+  readonly balanceRefreshRework?: boolean;
+  readonly tour?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -27,4 +30,10 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayNewReceiveDialog: boolean;
   /** Whether to show the wallet 4.0 main navigation */
   readonly shouldDisplayWallet40MainNav: boolean;
+  /** Whether onboarding should skip device setup and open portfolio in read-only mode */
+  readonly shouldUseLazyOnboarding: boolean;
+  /** Whether to show the balance refresh rework */
+  readonly shouldDisplayBalanceRefreshRework: boolean;
+  /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */
+  readonly shouldDisplayTour: boolean;
 }

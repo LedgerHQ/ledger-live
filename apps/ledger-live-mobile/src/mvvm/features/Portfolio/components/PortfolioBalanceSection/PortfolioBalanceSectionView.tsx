@@ -41,14 +41,14 @@ export const PortfolioBalanceSectionView = ({
   );
 
   const getTestId = (): string => {
-    if (state === "noSigner" || state === "noFund") {
+    if (state === "noSigner" || state === "noAccounts") {
       return `portfolio-balance-${state}`;
     }
     return isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading";
   };
 
   const renderContent = () => {
-    if (state === "noSigner" || state === "noFund") {
+    if (state === "noSigner" || state === "noAccounts") {
       return (
         <Text
           typography="heading1SemiBold"

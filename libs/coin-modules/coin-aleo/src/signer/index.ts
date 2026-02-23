@@ -1,1 +1,2 @@
-export { default } from "./getAddress";
+export * from "./getAddress";
+export * from "./getViewKey";

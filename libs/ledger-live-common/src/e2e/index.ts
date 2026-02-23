@@ -47,9 +47,12 @@ export const formatFlagsData = (data: Partial<{ [key in FeatureId]: Feature }>) 
   return allureData;
 };
 
+const SENSITIVE_ENV_KEYS: Set<string> = new Set(["SEED"]);
+
 export const formatEnvData = (data: { [key in EnvName]: unknown }) => {
   let allureData = "";
   for (const [key, value] of Object.entries(data)) {
+    if (SENSITIVE_ENV_KEYS.has(key)) continue;
     allureData += `ENV.${key} = ${value}\n`;
   }
   return allureData;

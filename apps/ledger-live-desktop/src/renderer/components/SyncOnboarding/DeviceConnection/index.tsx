@@ -20,7 +20,7 @@ const POLLING_PERIOD_MS = 1000;
 const SyncOnboardingDeviceConnection = ({
   deviceModelId: strDeviceModelId,
 }: SyncOnboardingDeviceConnectionProps) => {
-  const navTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const navTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const navigate = useNavigate();
   const currentDevice = useSelector(getCurrentDevice);
   const [stopPolling, setStopPolling] = useState(false);

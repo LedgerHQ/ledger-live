@@ -4,7 +4,7 @@ import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommand } from "./runCli";
+import { runCliCommandWithRetry } from "./runCli";
 import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
@@ -212,12 +212,13 @@ export const CLI = {
       cliOpts.push("--add");
     }
 
-    return runCliCommand(cliOpts.join("+"));
+    return runCliCommandWithRetry(cliOpts.join("+"));
   },
-  registerSpeculosTransport: function (apiPort: string) {
+  registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,
+      baseURL: speculosAddress,
     };
 
     registerTransportModule({
@@ -249,7 +250,7 @@ export const CLI = {
       cliOpts.push("--verify");
     }
 
-    const output = await runCliCommand(cliOpts.join("+"));
+    const output = await runCliCommandWithRetry(cliOpts.join("+"));
     const lines = output
       .split("\n")
       .map(line => line.trim())

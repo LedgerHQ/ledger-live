@@ -741,7 +741,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
-  llmHomescreen: DEFAULT_FEATURE,
+  llmHomescreen: {
+    enabled: true,
+  },
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
@@ -785,6 +787,8 @@ export const DEFAULT_FEATURES: Features = {
       quickActionCtas: true,
       tour: true,
       mainNavigation: true,
+      lazyOnboarding: true,
+      balanceRefreshRework: true,
     },
   },
   lwdWallet40: {
@@ -795,7 +799,9 @@ export const DEFAULT_FEATURES: Features = {
       quickActionCtas: true,
       mainNavigation: true,
       tour: true,
+      lazyOnboarding: true,
       newReceiveDialog: true,
+      balanceRefreshRework: true,
     },
   },
   addressPoisoningOperationsFilter: {

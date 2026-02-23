@@ -102,6 +102,10 @@ const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
 });
 
 describe("useOperationsV1 integration", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should filter out token operations with 0 value (address poisoning) when filter is enabled", () => {
     const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
 

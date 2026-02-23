@@ -1,7 +1,7 @@
 import React, { useMemo, memo, useCallback, useRef } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
 import { SwitchTransition, Transition } from "react-transition-group";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import styled from "styled-components";

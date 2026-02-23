@@ -50,6 +50,8 @@ export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams
   affiliate?: string;
   fromPath?: string;
   toTokenId?: string;
+  fromTokenId?: string;
+  amountFrom?: string;
 }
 
 export type SwapLiveAppNavigationParams = {

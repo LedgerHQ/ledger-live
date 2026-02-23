@@ -51,13 +51,6 @@ describe("estimatedFees", () => {
       staking: {
         electionStatusThreshold: 25,
       },
-      metadataShortener: {
-        id: "dot",
-        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
-      },
-      metadataHash: {
-        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-      },
     }));
   });
 

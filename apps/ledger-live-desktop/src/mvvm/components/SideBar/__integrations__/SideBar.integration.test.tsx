@@ -85,6 +85,18 @@ describe("SideBar", () => {
       const cardButton = screen.getByText("Card").closest("button");
       expect(cardButton).toBeDisabled();
     });
+    it("should disable Accounts item when no accounts are present", () => {
+      renderSideBarWithRoute("/", {
+        accounts: [],
+        settings: {
+          ...defaultInitialState.settings,
+          hasCompletedOnboarding: true,
+        },
+      });
+
+      const accountsButton = screen.getByText("Accounts").closest("button");
+      expect(accountsButton).toBeDisabled();
+    });
   });
 
   describe("Navigation", () => {

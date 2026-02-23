@@ -503,7 +503,7 @@ export function applyMemoToIntent(
   transaction: GenericTransaction,
 ): TransactionIntent<any> {
   // Handle destination tag memo (for XRP-like chains)
-  if (transaction.tag) {
+  if (typeof transaction.tag === "number") {
     const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
     const txMemo = String(transaction.tag);
 

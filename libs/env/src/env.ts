@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  JS_THREAD_MONITOR: {
+    def: false,
+    parser: boolParser,
+    desc: "Show JS thread stall monitor overlay",
+  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
@@ -278,14 +283,24 @@ const envDefinitions = {
     desc: "Thorest API for VeChain",
   },
   ALEO_MAINNET_NODE_ENDPOINT: {
-    def: "https://api.explorer.provable.com/v2/mainnet",
+    def: "https://api.provable.com",
     parser: stringParser,
     desc: "Aleo mainnet node URL",
   },
+  ALEO_MAINNET_SDK_ENDPOINT: {
+    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
+    parser: stringParser,
+    desc: "Aleo mainnet SDK URL",
+  },
   ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://api.explorer.provable.com/v2/testnet",
+    def: "https://api.provable.com",
     parser: stringParser,
     desc: "Aleo testnet node URL",
+  },
+  ALEO_TESTNET_SDK_ENDPOINT: {
+    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
+    parser: stringParser,
+    desc: "Aleo testnet SDK URL",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
@@ -893,15 +908,20 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  WALLETCONNECT_PROJECT_ID: {
+    def: "053f3301d5f72cf59dbab8ebeab71f23",
+    parser: stringParser,
+    desc: "WalletConnect Project ID",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
     desc: "true when launched for E2E testing",
   },
-  MARKET_API_URL: {
+  COINGECKO_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
-    desc: "Market data api",
+    desc: "Coingecko API",
   },
   USE_LEARN_STAGING_URL: {
     def: false,

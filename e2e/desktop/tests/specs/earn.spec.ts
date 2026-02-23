@@ -63,7 +63,6 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           "@NanoGen5",
           `@${account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(provider === Provider.LIDO ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -155,11 +154,12 @@ const earnDashboardCurrencies = [
     xrayTicket: "B2CQA-3683",
     staking: true,
   },
-  {
-    account: Account.SOL_2,
-    xrayTicket: "B2CQA-3684",
-    staking: true,
-  },
+  // FIXME: Solana is delegated but we need to wait for BE to be updated
+  // {
+  //   account: Account.SOL_2,
+  //   xrayTicket: "B2CQA-3684",
+  //   staking: true,
+  // },
   {
     account: Account.ATOM_1,
     xrayTicket: "B2CQA-3685",
@@ -199,7 +199,6 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
           "@NanoGen5",
           `@${account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(account === Account.NEAR_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",

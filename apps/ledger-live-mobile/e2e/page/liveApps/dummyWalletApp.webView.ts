@@ -40,11 +40,13 @@ export default class DummyWalletApp {
   }
 
   async sendRequest() {
+    await waitWebElementByTestId("currency-ids-input");
     await this.typeAndVerifyInput("currency-ids-input", "ethereum,bitcoin");
     await tapWebElementByTestId("account-request");
   }
 
   async sendAccountReceive() {
+    await waitWebElementByTestId("account-id-input");
     await this.typeAndVerifyInput("account-id-input", "2d23ca2a-069e-579f-b13d-05bc706c7583");
     await tapWebElementByTestId("account-receive");
   }
@@ -55,6 +57,7 @@ export default class DummyWalletApp {
     amount: string,
     recipientAddress: string,
   ) {
+    await waitWebElementByTestId("account-id-input");
     await this.typeAndVerifyInput("account-id-input", accountId);
     await this.typeAndVerifyInput("currency-ids-input", currencyIds.join(","));
     await this.typeAndVerifyInput("amount-input", amount);
@@ -75,22 +78,27 @@ export default class DummyWalletApp {
   }
 
   async setAccountId(accountId: string) {
+    await waitWebElementByTestId("account-id-input");
     await this.typeAndVerifyInput("account-id-input", accountId);
   }
 
   async setRecipient(recipient: string) {
+    await waitWebElementByTestId("recipient-input");
     await this.typeAndVerifyInput("recipient-input", recipient);
   }
 
   async setAmount(amount: string) {
+    await waitWebElementByTestId("amount-input");
     await this.typeAndVerifyInput("amount-input", amount);
   }
 
   async setData(data: string) {
+    await waitWebElementByTestId("data-input");
     await this.typeAndVerifyInput("data-input", data);
   }
 
   async setMessage(message: string) {
+    await waitWebElementByTestId("message-input");
     await this.typeAndVerifyInput("message-input", message);
   }
 

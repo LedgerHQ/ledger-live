@@ -200,13 +200,15 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
+    trackEntry("send");
     openSendFlow();
-  }, [maybeRedirectToAccounts, openSendFlow]);
+  }, [maybeRedirectToAccounts, openSendFlow, trackEntry]);
 
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
+    trackEntry("receive");
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts]);
+  }, [dispatch, maybeRedirectToAccounts, trackEntry]);
 
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
@@ -218,9 +220,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
-    track("button_clicked2", {
-      button: "Protect",
-    });
+    trackEntry("recover");
   }, [
     recoverFeature?.enabled,
     recoverFeature?.params?.openRecoverFromSidebar,
@@ -228,6 +228,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     recoverHomePath,
     navigate,
     dispatch,
+    trackEntry,
   ]);
 
   const liveAppPaths = [referralProgramConfig?.params?.path].filter(
@@ -281,6 +282,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     displayBlueDot,
     earnLabel,
     isCardDisabled,
+    isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
     isMarketBannerEnabled,
     isQuickActionCtasEnabled,
