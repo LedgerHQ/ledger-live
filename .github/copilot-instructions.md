@@ -45,3 +45,11 @@ Only add or edit translation files for the **English** language:
 ## Jest Test Mocks
 
 For test file changes, apply the rules in `.github/instructions/jest-mocks.instructions.md`.
+
+## Barrel Files
+
+Never add new `index.ts` barrel files that only re-export from other modules — import directly from the source file instead.
+
+## Logging
+
+Use `@ledgerhq/logs` instead of `console.log` for all logging to ensure logs can be exported for QA and user issue reports.

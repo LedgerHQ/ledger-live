@@ -94,3 +94,15 @@ applyTo: "**/*.ts,**/*.tsx"
 - Use `z.enum()` for fixed string values; `.optional()` for nullable fields.
 - Use schemas in RTK Query `transformResponse` for runtime validation.
 - Export both schemas and inferred types from `state-manager/types.ts`.
+
+## Naming Conventions
+
+Never prefix non-hook variables or function parameters with `use` to avoid confusion with React hooks naming conventions.
+
+## Type Safety
+
+Avoid `as any` and `as never` type assertions — refactor code to use proper TypeScript types instead.
+
+## Default Props
+
+Never use mutable objects (arrays, objects) as default parameter values — create new instances inside the function body or use `undefined` with nullish coalescing.
