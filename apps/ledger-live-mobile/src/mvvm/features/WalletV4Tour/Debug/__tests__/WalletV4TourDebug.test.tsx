@@ -7,6 +7,9 @@ jest.mock("../../Drawer", () => ({
     isDrawerOpen: false,
     handleOpenDrawer: jest.fn(),
     handleCloseDrawer: jest.fn(),
+    closeDrawer: jest.fn(),
+    onSlideChange: jest.fn(),
+    slides: [],
   }),
   WalletV4TourDrawer: () => null,
 }));

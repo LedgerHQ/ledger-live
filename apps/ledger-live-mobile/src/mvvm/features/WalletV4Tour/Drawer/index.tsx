@@ -9,6 +9,7 @@ import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { StyleSheet } from "react-native";
 import { ProgressIndicator } from "./components/ProgressIndicator";
+import { TrackScreen } from "~/analytics";
 
 export const useWalletV4TourDrawer = () => {
   return useWalletV4TourDrawerViewModel();
@@ -24,6 +25,8 @@ type WalletV4TourDrawerProps = Omit<
 export const WalletV4TourDrawer = ({
   isDrawerOpen,
   handleCloseDrawer,
+  closeDrawer,
+  onSlideChange,
   slides,
 }: WalletV4TourDrawerProps) => {
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -35,17 +38,19 @@ export const WalletV4TourDrawer = ({
   return (
     <QueuedDrawerGorhom
       isRequestingToBeOpened={isDrawerOpen}
-      onClose={handleCloseDrawer}
+      onClose={closeDrawer}
       snapPoints={["92%"]}
       noCloseButton={false}
       animateOnMount={false}
     >
+      <TrackScreen page="Product Tour WV4" source="Portfolio" />
       <Slides
+        scrollEnabled={false}
         bounces={false}
         as={AnimatedGestureHandlerFlatList}
         testID="walletv4-tour-slides-container"
-        scrollEnabled={false}
         initialNumToRender={1}
+        onSlideChange={onSlideChange}
       >
         <Slides.Content>
           {slides.map((slide, index) => (

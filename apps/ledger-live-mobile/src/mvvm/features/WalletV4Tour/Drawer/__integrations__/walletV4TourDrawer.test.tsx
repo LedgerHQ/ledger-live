@@ -27,7 +27,8 @@ const SLIDES = [
 ];
 
 const TestComponent = () => {
-  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer } = useWalletV4TourDrawer();
+  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
+    useWalletV4TourDrawer();
 
   return (
     <>
@@ -35,6 +36,8 @@ const TestComponent = () => {
       <WalletV4TourDrawer
         isDrawerOpen={isDrawerOpen}
         handleCloseDrawer={handleCloseDrawer}
+        closeDrawer={closeDrawer}
+        onSlideChange={onSlideChange}
         slides={SLIDES}
       />
     </>
