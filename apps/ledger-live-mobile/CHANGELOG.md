@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.107.0-next.1
+
+### Minor Changes
+
+- [#14712](https://github.com/LedgerHQ/ledger-live/pull/14712) [`b2352ad`](https://github.com/LedgerHQ/ledger-live/commit/b2352adba1d0f9c770f0cd313e55eb017061855c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove invalid // comments from styled-components template literals (CSS parse risk with v6)
+
 ## 3.107.0-next.0
 
 ### Minor Changes
