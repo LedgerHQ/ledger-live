@@ -541,7 +541,7 @@ jobs:
             kill -INT $MITMPROXY_PID 2>/dev/null || true
             wait $MITMPROXY_PID 2>/dev/null || true 
 
-            ls -la $CERT_FILEPATH
+            ls -la ~/.mitmproxy
           fi
 
           echo "Converting certificate"
