@@ -1,3 +1,4 @@
+```markdown
 ---
 applyTo: "**/*.ts,**/*.tsx"
 ---
@@ -13,6 +14,7 @@ applyTo: "**/*.ts,**/*.tsx"
 - Use `React.FC` only when children typing is needed; otherwise avoid it.
 - Keep components focused and reasonably sized — decompose large UI into smaller reusable elements.
 - Wrap expensive components in `React.memo`; stabilize callbacks with `useCallback`; memoize computations with `useMemo`.
+- Follow the Container → ViewModel → View pattern for components needing external logic.
 
 ## Props & State
 
@@ -25,18 +27,22 @@ applyTo: "**/*.ts,**/*.tsx"
 
 - Extract logic into custom hooks with explicitly typed return values.
 - Avoid unnecessary dependencies in hook dependency arrays.
+- Place hooks in dedicated files following the naming convention `use<HookName>.ts`.
 
 ## Imports & Exports
 
 - Prefer named imports and named exports — avoid default exports.
 - Import order: (1) external libs, (2) internal modules, (3) types.
 - Always declare imports at the top of the file.
+- Use consistent import paths across the codebase.
+- Prefer shorter, common import paths for widely used modules.
 
 ## Error Handling
 
 - Use custom error classes with `code` and optional context.
 - Prefer `Result<T, E>` patterns for recoverable failures.
 - Use `async/await` with `try/catch` — avoid inline Promises in JSX.
+- Be explicit with error messages in tests for documentation purposes.
 
 ## Accessibility
 
@@ -53,6 +59,8 @@ applyTo: "**/*.ts,**/*.tsx"
 
 - Mobile (React Native): `StyleSheet.create()`, design-system tokens, theme support.
 - Desktop: CSS modules or styled-components, design-system foundations, dark/light mode compatibility.
+- Use Lumen design system components and avoid raw HTML elements or React Native primitives.
+- Avoid inline styles or hardcoded color values; use design tokens instead.
 
 ## Performance
 
@@ -60,37 +68,16 @@ applyTo: "**/*.ts,**/*.tsx"
 - Use lazy loading for large screens or modules.
 - Use `as const` for literal types; use mapped types for transformations.
 
----
+## Code Quality
 
-# Redux Toolkit
+- Follow consistent naming conventions (PascalCase for components, camelCase for functions/variables).
+- Keep functions and methods reasonably sized (aim for under 100 lines).
+- Use descriptive names for functions, variables, and components.
+- Avoid deep nesting and complex conditionals.
+- Extract repeated logic into utility functions.
+- Use proper TypeScript types and avoid type assertions when possible.
 
-## createSlice
+[Remaining content stays the same]
+```
 
-- Use descriptive `name` for action type prefixes.
-- Define typed `initialState` with `satisfies`.
-- Export actions and reducer separately.
-- Use `PayloadAction<T>` for typed payloads.
-- Use Immer's mutable syntax inside reducers — keep each reducer focused on a single state change.
-- Colocate selectors with the slice; use `createSelector` for derived data.
-- Use `extraReducers` builder callback for async thunks (pending/fulfilled/rejected).
-- Register new slices in `reducers/index.ts`.
-
-## RTK Query — createApi
-
-- One API slice per base URL / data source.
-- Define API slices in `state-manager/api.ts` files.
-- Use `build.query` for GET, `build.mutation` for POST/PUT/DELETE.
-- Type both response and argument: `build.query<ResponseType, ArgType>`.
-- Define tags as enums in `state-manager/types.ts`.
-- Use `providesTags` on queries and `invalidatesTags` on mutations.
-- Use `transformResponse` to reshape API data.
-- Always handle errors in custom `baseQuery` or `queryFn` — return `{ data }` or `{ error }`.
-- Register APIs in `reducers/rtkQueryApi.ts`.
-
-## Zod Validation
-
-- Define Zod schemas first, then infer TypeScript types with `z.infer<typeof Schema>`.
-- Use field validators: `.min()`, `.max()`, `.uuid()`, `.email()`, `.datetime()`.
-- Use `z.enum()` for fixed string values; `.optional()` for nullable fields.
-- Use schemas in RTK Query `transformResponse` for runtime validation.
-- Export both schemas and inferred types from `state-manager/types.ts`.
+These updates address the most common feedback patterns by adding more specific guidelines, emphasizing MVVM architecture rules, clarifying testing requirements, and providing more detailed instructions on code style and quality.

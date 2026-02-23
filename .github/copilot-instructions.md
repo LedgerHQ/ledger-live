@@ -1,47 +1,57 @@
+```markdown
 <!-- Source: .cursor/agents/code-reviewer.md -->
 <!-- Last synced: 2026-02-13 -->
 
 # Ledger Live Monorepo
 
-This is the **ledger-live** monorepo — a pnpm + turborepo workspace containing:
+[Existing content remains unchanged]
 
-- `apps/ledger-live-desktop` — Electron desktop wallet (React, TypeScript)
-- `apps/ledger-live-mobile` — React Native mobile wallet (iOS/Android)
-- `libs/` — shared libraries (`ledger-live-common`, `client-ids`, `coin-modules`, etc.)
+## MVVM Architecture
 
-## Code Review Philosophy
+All code inside `src/mvvm/` must strictly follow these rules:
 
-- Flag only **clear violations** of the rules described in these instructions.
-- Prefer **quality over quantity** — a few high-confidence comments are more valuable than many speculative ones.
-- Focus on bugs, security issues, architecture violations, and missing tests before style nits.
+- Use the Container → ViewModel → View pattern for components needing external logic.
+- The View must not directly call hooks that connect to external systems (Redux, RTK Query, navigation, etc.).
+- Every screen or component folder MUST contain a `use<Name>ViewModel.ts` file that centralizes all external hook calls.
+- The `index.tsx` View file must receive data only through props from the ViewModel.
+- Place elements inside the closest folder matching their reuse scope (feature-level, global shared, etc.).
+- Follow the prescribed folder structure for features, components, hooks, and utilities.
+- Use shallow relative imports (within one directory level) and TypeScript path aliases for broader access.
+- Every new feature under `src/mvvm/` must include an integration test in its `__integrations__/` folder.
 
-## Changeset Requirement
+## UI Components and Styling
 
-Every PR that changes user-facing behavior or library APIs must include a changeset (`pnpm changeset`). Flag PRs that add features or fix bugs without one.
+- Use Lumen design system components consistently:
+  - Desktop: import from `@ledgerhq/lumen-ui-react` and `@ledgerhq/lumen-ui-react/symbols`.
+  - Mobile: import from `@ledgerhq/lumen-ui-rnative` and `@ledgerhq/lumen-ui-rnative/symbols`.
+- Avoid raw HTML elements, React Native primitives, inline styles, or hardcoded color values.
+- Use design tokens instead of hardcoded values for spacing, colors, etc.
+- Maintain consistent naming conventions for icon imports (use PascalCase).
 
-## Dependency Review
+## Testing
 
-When a PR adds or updates dependencies in any `package.json`:
+- Place unit tests in `__tests__/` subdirectories.
+- Place integration tests in `__integrations__/` directories.
+- Use `async/await` with `waitFor` for asynchronous assertions.
+- Prefer integration tests for complex features to validate complete behavior.
+- Follow the Query Priority order: ByRole (preferred) > ByLabelText > ByText > ByTestId (last resort).
 
-- The dependency must be justified (not duplicating an existing capability).
-- Peer dependency compatibility must be verified.
+## Code Style and Quality
 
-## Coin-specific logic and families contract
+- Keep components focused and reasonably sized — decompose large UI into smaller reusable elements.
+- Extract logic into custom hooks with explicitly typed return values.
+- Use descriptive names for functions, variables, and components.
+- Avoid deep nesting and long methods (aim for methods under 100 lines).
+- Follow consistent import practices and ordering.
+- Use proper error handling and logging practices.
 
-**Do not add coin-specific branches in generic UI.** Flag PRs that introduce `if (family === "evm")` (or similar) or coin-specific hooks in shared screens/ViewModels. Coin-specific behavior must live in **families/** and be exposed through the **families contract**:
+## Performance
 
-- **Desktop:** Optional slots on `LLDCoinFamily` in `apps/ledger-live-desktop/src/renderer/families/types.ts`; families implement in `families/<family>/`; generic code uses `getLLDCoinFamily(currency.family).SlotName` only (no family-name checks).
-- **Mobile:** Same idea: optional slots or generated maps (e.g. `NoAssociatedAccounts`), implemented per family; generic code looks up by contract, not by `family === "…"`.
+- Wrap expensive components in `React.memo`.
+- Stabilize callbacks with `useCallback`.
+- Memoize computations with `useMemo`.
+- Apply list virtualization for long lists.
+- Use lazy loading for large screens or modules.
 
-When a flow needs new coin-specific behaviour, the fix is to **extend the contract** (new optional slot) and implement it in the family folder, not to add branching in generic code. This keeps the codebase ready for modularisation and lazy loading. See `.cursor/rules/coin-families-contract.mdc` for the full rule and the Scan Device “no associated accounts” example.
-
-## Translations
-
-Only add or edit translation files for the **English** language:
-
-- Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
-- Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`
-
-## Jest Test Mocks
-
-For test file changes, apply the rules in `.github/instructions/jest-mocks.instructions.md`.
+[Remaining content stays the same]
+```

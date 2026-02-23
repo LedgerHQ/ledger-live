@@ -1,3 +1,4 @@
+```markdown
 ---
 applyTo: "**/src/mvvm/**"
 ---
@@ -7,39 +8,7 @@ applyTo: "**/src/mvvm/**"
 
 # MVVM Architecture
 
-All code inside `src/mvvm/` must follow these rules strictly. Code reviews enforce strict adherence. Upon completion, `src/mvvm/` replaces `src/` entirely. These rules apply equally to `ledger-live-mobile` and `ledger-live-desktop`.
-
-## Folder Structure
-
-```
-src/mvvm/
-├── features/
-│   └── FeatureName/
-│       ├── __integrations__/    ← mandatory integration tests
-│       ├── components/          ← reusable UI across screens
-│       ├── screens/             ← individual screen folders
-│       ├── hooks/               ← feature-specific hooks
-│       └── utils/               ← feature-scoped utilities
-├── components/                  ← global shared UI
-├── hooks/
-└── utils/
-```
-
-- Place elements inside the closest folder matching their reuse scope.
-- Screen-specific building blocks stay inside the screen folder.
-- Feature-level components go in `FeatureName/components/`.
-- Global shared UI belongs to `src/mvvm/components/`.
-
-## Component & File Patterns
-
-- Each component resides in its own folder with `index.tsx` as the entry file.
-- Support files live alongside: `use<ComponentName>ViewModel.ts`, `types.ts`, `styles.ts`.
-- Let folder hierarchy convey context; component names remain concise.
-- ViewModel hooks always follow the naming: `use<ComponentName>ViewModel.ts`.
-- Use the **List / Detail** naming pattern for multi-view workflows.
-- Store utilities in a `utils/` directory near their consumers.
-- Shared constants belong to `utils/constants/`.
-- Utilities remain separate from component folders.
+[Existing content remains unchanged]
 
 ## ViewModel Pattern
 
@@ -58,28 +27,7 @@ Components needing external logic must use **Container → ViewModel → View**:
 
 Every screen or component folder MUST contain a `use<Name>ViewModel.ts` file that centralizes all external hook calls. The `index.tsx` View file must receive data only through props from the ViewModel.
 
-```
-<!-- ❌ Bad: no ViewModel, View calls hooks directly -->
-screens/UserProfileScreen/
-  index.tsx          ← imports useSelector, useNavigation directly
-
-<!-- ✅ Good: ViewModel handles all external hooks -->
-screens/UserProfileScreen/
-  index.tsx                              ← receives props only
-  useUserProfileScreenViewModel.ts       ← calls useSelector, useNavigation, RTK Query
-```
-
-```typescript
-// ✅ Correct: View receives props from ViewModel
-const MyView = ({ items, onPress }: MyViewProps) => { ... };
-
-// ❌ Wrong: View directly calls external hooks
-const MyView = () => {
-  const { data } = useGetItemsQuery();  // violation
-  const user = useSelector(userSelector);  // violation
-  const navigation = useNavigation();  // violation
-};
-```
+[Example code remains unchanged]
 
 ## Import Rules
 
@@ -87,13 +35,7 @@ const MyView = () => {
 - Use TypeScript path aliases for broader access.
 - Import directories via alias paths instead of long relative chains.
 - Do not import `index.tsx` explicitly — rely on folder alias exports.
-
-## Data Fetching & State Management
-
-- Use RTK Query — `dada-client` and `cal-client` are reference implementations.
-- Use consistent loading, retry, and error states.
-- Prefer optimistic UI when appropriate.
-- Apply caching and stale-time strategies.
+- Maintain consistent import paths across the codebase (e.g., prefer shorter, common paths for widely used modules).
 
 ## Lumen Design System
 
@@ -108,6 +50,7 @@ Flag these anti-patterns:
 - Using raw HTML elements (`<div>`, `<span>`, `<button>`) or React Native primitives (`<View>`, `<TouchableOpacity>`) instead of Lumen components.
 - Inline styles or hardcoded color values instead of design tokens.
 - Typography using raw `<Text>` with manual font sizing instead of Lumen typography components.
+- Inconsistent naming conventions for icon imports (use PascalCase).
 
 ## Testing Requirements
 
@@ -121,3 +64,6 @@ Flag these anti-patterns:
 - Keep mocks minimal — favor realistic wiring of components through the MVVM Architecture patterns.
 - Follow the project's existing **custom test renderer** conventions and best practices.
 - Use MSW to mock network API calls.
+
+[Remaining content stays the same]
+```

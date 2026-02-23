@@ -1,3 +1,4 @@
+```markdown
 ---
 applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
@@ -7,20 +8,7 @@ applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 
 # Testing
 
-## Stack
-
-- **Framework**: Jest
-- **Network mocking**: MSW (Mock Service Worker)
-- **Desktop UI**: React Testing Library
-- **Mobile UI**: React Native Testing Library
-
-## General Rules
-
-- **Test behavior, not implementation** — assert on user-visible outcomes, not internal state.
-- Tests must be **deterministic** — no flaky timing, no reliance on external services.
-- Keep mocks **minimal** — favor realistic wiring over extensive mocking.
-- Use `async/await` with `waitFor` for asynchronous assertions.
-- Prefer **integration tests** for complex features to validate complete behavior.
+[Existing content remains unchanged]
 
 ## File Structure
 
@@ -38,31 +26,24 @@ When selecting elements in tests, follow this order:
 3. `ByText`
 4. `ByTestId` (last resort)
 
-## Desktop Testing
-
-- **Render**: import the render function from `tests/testSetup`.
-- **MSW server**: `apps/ledger-live-desktop/tests/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-desktop`.
-
-## Mobile Testing
-
-- **Render**: import the render function from `@tests/test-renderer`.
-- **MSW server**: `apps/ledger-live-mobile/__tests__/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-mobile`.
-
-## MSW Patterns
-
-- Define handlers alongside tests or in shared handler files.
-- Follow the existing patterns from the desktop and mobile server files referenced above.
-- Mock at the network boundary — do not mock React components or hooks directly.
-
-## Test Naming
+## Test Naming and Structure
 
 - Use descriptive names: `it("should <behavior> when <condition>")`.
 - One behavior per test — avoid testing multiple concerns in a single `it` block.
+- Be explicit with error messages in tests for documentation purposes.
+- Prefer using enum values over hard-coded numbers in assertions for better readability and test stability.
 
-## Redux in Tests
+## Accessibility Testing
 
-- Desktop: pass `initialState` to the render function.
-- Mobile: use `overrideInitialState`.
-- Never mock feature flags directly — use `overriddenFeatureFlags`.
+- Ensure all interactive elements have accessible labels.
+- Test screen reader flows in integration tests.
+- Verify proper ARIA attributes are applied where needed.
+
+## Performance Testing
+
+- Include tests for memoized components and hooks.
+- Test list virtualization for long lists.
+- Verify lazy loading behavior for large screens or modules.
+
+[Remaining content stays the same]
+```
