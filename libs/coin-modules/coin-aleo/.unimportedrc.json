@@ -5,7 +5,6 @@
     "src/logic/utils.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
-    "src/bridge/serialization.ts",
     "src/signer/index.ts",
     "src/test/index.ts",
     "src/index.ts"

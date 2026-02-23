@@ -23,6 +23,7 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getAccountShape, sync } from "./sync";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
@@ -63,6 +64,8 @@ export function buildAccountBridge(
       throw new Error("broadcast is not supported");
     },
     estimateMaxSpendable,
+    assignFromAccountRaw,
+    assignToAccountRaw,
     getSerializedAddressParameters,
     validateAddress,
   };

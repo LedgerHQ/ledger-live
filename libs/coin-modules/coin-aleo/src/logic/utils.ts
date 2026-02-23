@@ -220,6 +220,6 @@ export function calculateAmount({
 
 export const isProvableApiConfigured = (
   provableApi: ProvableApi | null,
-): provableApi is Required<ProvableApi> => {
+): provableApi is Required<Pick<ProvableApi, "jwt" | "uuid" | "apiKey">> => {
   return !!provableApi?.uuid && !!provableApi?.apiKey && !!provableApi?.jwt?.token;
 };
