@@ -538,22 +538,23 @@ jobs:
 
           mkdir -p "${MITMPROXY_FOLDER}"
 
-          # Start mitmdump in background and wait for certificate generation
-          mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
-          MITMPROXY_PID=$!
 
           # Wait for certificate to be generated (with timeout)
           MAX_ATTEMPTS=10
           ATTEMPT=0
           while [ ! -f "${CERT_FILEPATH}" ] && [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             echo "Waiting for certificate... attempt $((ATTEMPT + 1))/$MAX_ATTEMPTS"
-            sleep 2
+            # Start mitmdump in background and wait for certificate generation
+            mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
+            MITMPROXY_PID=$!
+            #
+            # Kill mitmdump after certificate is generated
+            kill $MITMPROXY_PID 2>/dev/null || true
+            sleep $((2 * $ATTEMPT))
+            wait $MITMPROXY_PID 2>/dev/null || true 
             ATTEMPT=$((ATTEMPT + 1))
           done
 
-          # Kill mitmdump after certificate is generated
-          kill $MITMPROXY_PID 2>/dev/null || true
-          wait $MITMPROXY_PID 2>/dev/null || true 
 
           # Verify certificate was actually created
           if [ ! -f "${CERT_FILEPATH}" ]; then
