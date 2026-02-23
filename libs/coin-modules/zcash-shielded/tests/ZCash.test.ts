@@ -293,8 +293,6 @@ describe("syncShielded", () => {
 
     await syncShieldedObs.forEach(value => {
       steps.push(value);
-
-      //setLastBlockCount(blockWithMyTx.height + 6);
     });
 
     expect(steps).toEqual(

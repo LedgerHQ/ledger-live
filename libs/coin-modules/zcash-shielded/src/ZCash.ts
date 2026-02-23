@@ -178,15 +178,13 @@ export default class ZCash {
    * ```typescript
    * const syncedShielded = zcash.syncShielded(
    *   startBlockHeight: 3697074,
-   *   endBlockHeight: 3697079,
    *   viewingKey: testAccount1.viewingKey,
    * );
    * await syncedShielded.next(true)
    * ```
    *
    * @param {{
-   *    startBlockHeigh: number
-   *    endBlockHeigh: number
+   *    startBlockHeight: number
    *    viewingKey: string
    * }} args, Block and the UFVK - unified full viewing key.
    * @returns {AsyncGenerator<SyncedShielded>} the current synced shielded context.
@@ -218,7 +216,7 @@ export default class ZCash {
         }
       }
 
-      // 3. get start block
+      // 3. get current block
       const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
       if (!block) {
         log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
@@ -251,24 +249,21 @@ export default class ZCash {
 }
 
 const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]) => {
-  let balance = 0;
+  let shieldedBalance = new BigNumber(0);
 
   for (const shieldedTx of shieldedTxs) {
     const orchard_outputs = shieldedTx.decryptedData?.orchard_outputs || [];
-    const sapling_outputs = shieldedTx.decryptedData?.sapling_outputs || [];
 
-    if (orchard_outputs) {
-      for (const output of [...orchard_outputs, ...sapling_outputs]) {
-        if (output.transfer_type === "incoming") {
-          balance += output.amount;
-        } else if (output.transfer_type === "outgoing") {
-          balance -= output.amount;
-        } else if (output.transfer_type === "internal") {
-          // NOTE: ignore internal tx
-        }
+    for (const output of orchard_outputs) {
+      if (output.transfer_type === "incoming") {
+        shieldedBalance = shieldedBalance.plus(output.amount);
+      } else if (output.transfer_type === "outgoing") {
+        shieldedBalance = shieldedBalance.minus(output.amount);
+      } else if (output.transfer_type === "internal") {
+        // NOTE: ignore internal tx
       }
     }
   }
 
-  return balance;
+  return shieldedBalance;
 };
