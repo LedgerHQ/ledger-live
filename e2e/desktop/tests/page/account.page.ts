@@ -34,7 +34,6 @@ export class AccountPage extends AppPage {
   private viewDetailsButton = this.page.getByText("View details");
   private editName = this.page.locator("#input-edit-name");
   private applyButton = this.page.getByTestId("account-settings-apply-button");
-  private accountHeaderName = this.page.locator("#account-header-name");
   private accountChart = this.page.getByTestId("chart-container");
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
@@ -179,11 +178,18 @@ export class AccountPage extends AppPage {
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
     await this.tokenRow(tokenAccount.currency.ticker).click();
+    await this.waitForAccountHeaderName(tokenAccount.currency.name, tokenAccount.currency.ticker);
+  }
+
+  @step("Wait for account header name $0 to be visible")
+  async waitForAccountHeaderName(headerName: string, fallbackName?: string) {
+    const expectedNames = fallbackName ? [headerName, fallbackName] : [headerName];
+    await expect(this.accountName).toHaveValue(new RegExp(`^(${expectedNames.join("|")})$`));
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountHeaderName).toHaveValue(headerName);
+    await expect(this.accountName).toHaveValue(headerName);
   }
 
   @step("Check account chart is visible")
