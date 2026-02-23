@@ -536,6 +536,7 @@ jobs:
           # If no certificate exists, create one.
           if [ ! -f "${CERT_FILEPATH}" ]; then
             echo "Certificate doesnt exist, lets create it"
+            mkdir -p "${MITMPROXY_FOLDER}"
             mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
             MITMPROXY_PID=$!
             sleep 5
