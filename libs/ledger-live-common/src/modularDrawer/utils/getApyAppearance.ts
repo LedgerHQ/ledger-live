@@ -5,6 +5,6 @@
  * @param region - The user's region code (e.g., "GB", "US", "FR")
  * @returns The appearance value for the APY Tag component
  */
-export const getApyAppearance = (region: string | undefined): "gray" | "success" => {
+export const getApyAppearance = (region: string | null | undefined): "gray" | "success" => {
   return region === "GB" ? "gray" : "success";
 };

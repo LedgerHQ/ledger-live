@@ -6,10 +6,7 @@ import {
   MarketPriceIndicator,
   MarketPercentIndicator,
 } from "@ledgerhq/native-ui/pre-ldls/index";
-import { Tag } from "@ledgerhq/lumen-ui-rnative";
-import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
-import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
-import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
+import { ApyIndicator } from "../../components/AccountApy";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import SkeletonList from "../../components/Skeleton/SkeletonList";
@@ -39,13 +36,6 @@ import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import Config from "react-native-config";
-
-// Local ApyIndicator with UK-aware appearance
-const ApyIndicator = ({ value, type }: { value: number; type: ApyType }) => {
-  const region = getCountryLocale();
-  const appearance = getApyAppearance(region);
-  return <Tag size="sm" appearance={appearance} label={`~ ${value}% ${type}`} />;
-};
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;

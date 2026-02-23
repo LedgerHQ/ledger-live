@@ -4,11 +4,13 @@ import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
 import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 
-export const accountsApy = ({ value, type }: { value?: number; type?: ApyType }) => {
-  if (!value || !type) return undefined;
-
+export const ApyIndicator = ({ value, type }: { value: number; type: ApyType }) => {
   const region = getCountryLocale();
   const appearance = getApyAppearance(region);
-
   return <Tag size="sm" appearance={appearance} label={`~ ${value}% ${type}`} />;
+};
+
+export const accountsApy = ({ value, type }: { value?: number; type?: ApyType }) => {
+  if (!value || !type) return undefined;
+  return <ApyIndicator value={value} type={type} />;
 };
