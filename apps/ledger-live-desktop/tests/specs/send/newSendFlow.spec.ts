@@ -28,7 +28,10 @@ const TEST_ADDRESSES = {
   xrp: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // abandonSeed address
   // Additional test addresses
   sanctioned: Addresses.SANCTIONED_ETHEREUM,
-  newAddress: "0x2222222222222222222222222222222222222222", // Not in recent addresses,
+  newAddress: "0x2222222222222222222222222222222222222222",
+  // Self-addresses (freshAddress from userdata fixtures)
+  selfEthereum: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+  selfTezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
 };
 
 const INVALID_ADDRESSES = {
@@ -122,32 +125,18 @@ test.describe("New Send Flow", () => {
   }
 
   // Helper function to navigate to account and open send flow
-  async function openSendFlowForAccount(
-    app: Application,
-    page: Page,
-    accountName: string,
-    shouldSkipIfMissing = true,
-  ) {
+  async function openSendFlowForAccount(app: Application, page: Page, accountName: string) {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
 
     await layout.goToAccounts();
-    await page.waitForTimeout(500);
-
-    // Check if account exists
-    const accountExists = await page
-      .getByTestId(`account-component-${accountName}`)
-      .isVisible()
-      .catch(() => false);
-    if (!accountExists && shouldSkipIfMissing) {
-      test.skip();
-      return;
-    }
+    await expect(page.getByTestId(`account-component-${accountName}`)).toBeVisible({
+      timeout: 20000,
+    });
 
     await accountsPage.navigateToAccountByName(accountName);
     await accountPage.settingsButton.waitFor({ state: "visible", timeout: 20000 });
-    await page.waitForTimeout(300);
 
     // IMPORTANT: recent addresses are read from a store-backed singleton and memoized;
     // we must seed redux BEFORE the send flow mounts, otherwise Recipient won't recompute them.
@@ -155,17 +144,6 @@ test.describe("New Send Flow", () => {
 
     await accountPage.clickSend();
     await app.newSendFlow.waitForDialog();
-  }
-
-  async function getAccountFreshAddress(page: Page, accountName: string): Promise<string | null> {
-    return page.evaluate((name: string) => {
-      const w = window as any;
-      const store = w.__STORE__ ?? w.ledger?.store;
-      const state = store?.getState?.();
-      const accounts = state?.accounts ?? [];
-      const account = accounts.find((acc: any) => acc?.name === name);
-      return account?.freshAddress ?? null;
-    }, accountName);
   }
 
   async function reachSignatureStep(
@@ -335,14 +313,9 @@ test.describe("New Send Flow", () => {
 
     test("should allow self-transfer when policy is free (EVM)", async ({ app, page }) => {
       await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-      const selfAddress = await getAccountFreshAddress(page, ACCOUNT_NAMES.ethereum);
-      if (!selfAddress) {
-        test.skip();
-        return;
-      }
 
       await test.step("Type self address and validate", async () => {
-        await app.newSendFlow.typeAddress(selfAddress);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.selfEthereum);
         await app.newSendFlow.waitForRecipientValidation();
       });
 
@@ -355,14 +328,9 @@ test.describe("New Send Flow", () => {
 
     test("should block self-transfer when policy is impossible (Tezos)", async ({ app, page }) => {
       await openSendFlowForAccount(app, page, ACCOUNT_NAMES.tezos);
-      const selfAddress = await getAccountFreshAddress(page, ACCOUNT_NAMES.tezos);
-      if (!selfAddress) {
-        test.skip();
-        return;
-      }
 
       await test.step("Type self address and validate", async () => {
-        await app.newSendFlow.typeAddress(selfAddress);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.selfTezos);
         await app.newSendFlow.waitForRecipientValidation();
       });
 
@@ -852,7 +820,7 @@ test.describe("New Send Flow", () => {
         await test.step("Complete Amount step", async () => {
           await expect(app.newSendFlow.amountInput).toBeVisible();
           await app.newSendFlow.fillCryptoAmount(family.amount);
-          await app.newSendFlow.clickReview2();
+          await app.newSendFlow.clickReview();
         });
 
         await test.step("Wait for signature screen", async () => {
@@ -1000,18 +968,28 @@ test.describe("New Send Flow", () => {
           const hasMyAccounts = await app.newSendFlow.myAccountsSection
             .isVisible()
             .catch(() => false);
-          // My Accounts section might not be visible if no other accounts with same currency
-          expect(typeof hasMyAccounts).toBe("boolean");
+          const hasRecentAddresses =
+            (await app.newSendFlow.recentTileMoreActionsButtons.count()) > 0;
+          // Initial recipient state should expose at least one suggested destination source.
+          expect(hasMyAccounts || hasRecentAddresses).toBe(true);
         });
       });
 
-      test("should show loading state during validation", async ({ app, page }) => {
+      test("should transition from invalid to valid address", async ({ app, page }) => {
         await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
-        await test.step("Type address and check loading", async () => {
-          await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum.substring(0, 10));
-          // Loading spinner might appear briefly
-          await page.waitForTimeout(200);
+        await test.step("Type invalid address and verify error feedback", async () => {
+          await app.newSendFlow.typeAddress(INVALID_ADDRESSES.ethereum);
+          await app.newSendFlow.validationStatusMessage.waitFor({ state: "visible" });
+          await expect(app.newSendFlow.validationStatusMessage).toContainText(
+            /incorrect address format/i,
+          );
+        });
+
+        await test.step("Type valid address and verify matched", async () => {
+          await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
+          await app.newSendFlow.waitForRecipientValidation();
+          await app.newSendFlow.expectAddressMatched();
         });
       });
     });
@@ -1061,7 +1039,7 @@ test.describe("New Send Flow", () => {
             await layout.goToAccounts();
             await accountsPage.navigateToAccountByName(ACCOUNT_NAMES.ethereum);
             await accountPage.clickSend();
-            await page.waitForTimeout(1000);
+            await expect(page.getByTestId("modal-container")).toBeVisible({ timeout: 10000 });
           });
 
           await test.step("Verify old flow modal is used", async () => {
