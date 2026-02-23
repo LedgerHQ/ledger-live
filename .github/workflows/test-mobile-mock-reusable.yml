@@ -531,25 +531,42 @@ jobs:
       - name: Install mitmproxy certificate
         shell: bash
         run: |
-
           MITMPROXY_FOLDER="~/.mitmproxy"
           CERT_FILEPATH="${MITMPROXY_FOLDER}/mitmproxy-ca-cert.pem"
 
           echo "Generate certificate"
 
           mkdir -p "${MITMPROXY_FOLDER}"
+
+          # Start mitmdump in background and wait for certificate generation
           mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
           MITMPROXY_PID=$!
-          sleep 5
+
+          # Wait for certificate to be generated (with timeout)
+          MAX_ATTEMPTS=10
+          ATTEMPT=0
+          while [ ! -f "${CERT_FILEPATH}" ] && [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            echo "Waiting for certificate... attempt $((ATTEMPT + 1))/$MAX_ATTEMPTS"
+            sleep 2
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          # Kill mitmdump after certificate is generated
           kill $MITMPROXY_PID 2>/dev/null || true
           wait $MITMPROXY_PID 2>/dev/null || true 
 
-          echo "Check contents for certificates"
+          # Verify certificate was actually created
+          if [ ! -f "${CERT_FILEPATH}" ]; then
+            echo "ERROR: Certificate was not generated!"
+            ls -la "${MITMPROXY_FOLDER}"
+            exit 1
+          fi
+
+          echo "Certificate found, converting..."
           ls -la "${MITMPROXY_FOLDER}"
 
-          echo "Converting certificate"
           openssl x509 -in "${CERT_FILEPATH}" -inform PEM -out "${MITMPROXY_FOLDER}/mitmproxy-ca-cert.crt"
-          # sudo mkdir /usr/local/share/ca-certificates/extra
+
           echo "Copying certificate"
           sudo cp "${MITMPROXY_FOLDER}/mitmproxy-ca-cert.crt" /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
 
