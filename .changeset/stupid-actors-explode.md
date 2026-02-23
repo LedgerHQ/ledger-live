@@ -3,4 +3,4 @@
 "live-mobile": minor
 ---
 
-Implement buy navigation and update swap params
+Add buy navigation hook, fix swap deep link cold-start handling, and sanitize swap webview params
