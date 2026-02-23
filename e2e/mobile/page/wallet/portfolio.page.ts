@@ -41,7 +41,7 @@ export default class PortfolioPage {
   marketBannerViewAll = "market-banner-view-all";
   fearAndGreedCard = "fear-and-greed-card";
   fearAndGreedTitle = "fear-and-greed-title";
-  bottomSheetCloseButton = "drawer-close-button";
+  bottomSheetCloseButton = "bottom-sheet-header-close-button";
   accountsList = "portfolio-assets-layout";
   marketBannerTitle = "market-banner-title";
   quickActionTransferButtonV4 = "quick-action-transfer";

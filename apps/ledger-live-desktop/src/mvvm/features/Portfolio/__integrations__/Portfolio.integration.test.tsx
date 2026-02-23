@@ -266,7 +266,9 @@ describe("PortfolioView", () => {
       });
 
       const balanceElement = screen.getByTestId("portfolio-total-balance");
-      expect(balanceElement).toHaveTextContent("$1,000.00"); // Check for actual balance
+      // TODO: Update once lumen releases a fix for the DisplayAmount animation
+      // See LIVE-26796
+      expect(balanceElement).toHaveAttribute("aria-label", "$ 1,000.00");
       expect(balanceElement).not.toHaveTextContent("••••"); // Ensure no placeholders
     });
   });
