@@ -54,7 +54,16 @@ export const useHidDevicesDiscovery = (enabled: boolean = true): HIDDiscoverySta
             const mappedDevice = mapDiscoveredDeviceToHIDDiscoveredDevice(device);
             newDeviceByIds[mappedDevice.deviceId] = mappedDevice;
           });
-          setHidDevices(Object.values(newDeviceByIds));
+          setHidDevices(prev => {
+            const newDevices = Object.values(newDeviceByIds);
+            if (
+              prev.length === newDevices.length &&
+              prev.every((d, i) => d.deviceId === newDevices[i].deviceId)
+            ) {
+              return prev; // same reference → no re-render
+            }
+            return newDevices;
+          });
         },
         error: err => {
           setError(err);
