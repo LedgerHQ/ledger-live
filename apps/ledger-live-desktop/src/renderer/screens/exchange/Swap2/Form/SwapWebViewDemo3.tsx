@@ -504,20 +504,14 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             fromPath: simplifyFromPath(state?.from),
           }
         : {}),
-      ...(state?.defaultToken
-        ? {
-            fromTokenId: state.defaultToken.fromTokenId,
-            toTokenId: state.defaultToken.toTokenId,
-            fromToken: state.defaultToken.fromTokenId,
-            toToken: state.defaultToken.toTokenId,
-            amountFrom: state?.defaultAmountFrom || "",
-          }
+      ...(state?.defaultToken?.fromTokenId ? { fromTokenId: state.defaultToken.fromTokenId } : {}),
+      ...(state?.defaultToken?.toTokenId ? { toTokenId: state.defaultToken.toTokenId } : {}),
+      ...(state?.defaultToken ? { amountFrom: state?.defaultAmountFrom || "" } : {}),
+      ...(state?.defaultCurrency?.toCurrencyId
+        ? { toCurrencyId: state.defaultCurrency.toCurrencyId }
         : {}),
-      ...(state?.defaultCurrency
-        ? {
-            toCurrencyId: state?.defaultCurrency.toCurrencyId,
-            fromCurrencyId: state?.defaultCurrency.fromCurrencyId,
-          }
+      ...(state?.defaultCurrency?.fromCurrencyId
+        ? { fromCurrencyId: state.defaultCurrency.fromCurrencyId }
         : {}),
       ...(state?.defaultAmountFrom
         ? {
