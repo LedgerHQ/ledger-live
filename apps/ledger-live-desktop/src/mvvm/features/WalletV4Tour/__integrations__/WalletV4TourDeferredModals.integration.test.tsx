@@ -3,8 +3,8 @@
  * when the Wallet V4 tour is active. MainAppLayout only mounts them when
  * useShouldShowDeferredModals is true (tour disabled or already seen at mount).
  *
- * Mocks are scoped to this file so WalletV4TourDrawer.integration.test.tsx
- * keeps using the real useWalletFeaturesConfig.
+ * Uses settings.overriddenFeatureFlags (via testSetup) to drive the real
+ * useWalletFeaturesConfig, same as WalletV4TourDrawer.integration.test.tsx.
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
@@ -16,10 +16,6 @@ jest.mock("electron-store", () => ({
 }));
 jest.mock("@braze/web-sdk", () => ({}));
 
-const mockUseWalletFeaturesConfig = jest.fn();
-jest.mock("@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig", () => ({
-  useWalletFeaturesConfig: (...args: unknown[]) => mockUseWalletFeaturesConfig(...args),
-}));
 jest.mock("~/renderer/bridge/SyncNewAccounts", () => ({
   SyncNewAccounts: () => <div data-testid="sync-new-accounts" />,
 }));
@@ -39,12 +35,12 @@ jest.mock("~/renderer/components/Box/Box", () => ({
   __esModule: true,
   default: () => <div data-testid="main-layout-fallback" />,
 }));
-
-const baseWalletConfig = {
-  shouldDisplayMarketBanner: false,
-  isEnabled: false,
-  shouldDisplayWallet40MainNav: false,
-};
+// Force the Box branch so we don't render the full wallet40 layout (which has more store deps).
+// The real useWalletFeaturesConfig is still used for shouldDisplayTour.
+jest.mock("LLD/components/Page/utils", () => ({
+  ...jest.requireActual("LLD/components/Page/utils"),
+  isWallet40Page: () => false,
+}));
 
 const tourEnabledState = {
   settings: {
@@ -64,10 +60,6 @@ const tourDisabledState = {
 
 describe("Wallet V4 Tour – deferred modals (Release Notes / Terms of Use)", () => {
   it("renders Release Notes and Terms of Use when tour is disabled", () => {
-    mockUseWalletFeaturesConfig.mockReturnValue({
-      ...baseWalletConfig,
-      shouldDisplayTour: false,
-    });
     render(<MainAppLayout />, {
       initialRoute: "/",
       initialState: tourDisabledState,
@@ -80,10 +72,6 @@ describe("Wallet V4 Tour – deferred modals (Release Notes / Terms of Use)", ()
   });
 
   it("does not render Release Notes nor Terms of Use when tour is enabled and not yet seen", () => {
-    mockUseWalletFeaturesConfig.mockReturnValue({
-      ...baseWalletConfig,
-      shouldDisplayTour: true,
-    });
     render(<MainAppLayout />, {
       initialRoute: "/",
       initialState: tourEnabledState,
