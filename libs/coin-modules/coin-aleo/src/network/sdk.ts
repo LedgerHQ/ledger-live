@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNetworkConfig } from "../logic/utils";
-import { AleoEncryptedRegistrationResponse } from "../types/sdk";
+import type { AleoEncryptedRegistrationResponse } from "../types/sdk";
 
 async function encryptRegistrationPayload({
   currency,
@@ -12,13 +12,13 @@ async function encryptRegistrationPayload({
   currency: CryptoCurrency;
   publicKey: string;
   viewKey: string;
-  start?: number;
+  start: number;
 }): Promise<AleoEncryptedRegistrationResponse> {
-  const { sdkUrl, networkType } = getNetworkConfig(currency);
+  const { sdkUrl } = getNetworkConfig(currency);
 
   const res = await network<AleoEncryptedRegistrationResponse>({
     method: "POST",
-    url: `${sdkUrl}/network/${networkType}/encrypt_registration`,
+    url: `${sdkUrl}/encrypt_registration`,
     data: {
       public_key: publicKey,
       view_key: viewKey,
