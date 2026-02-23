@@ -250,8 +250,8 @@ catalogs:
       specifier: 2.1.1
       version: 2.1.1
     electron:
-      specifier: 40.0.0
-      version: 40.0.0
+      specifier: 40.6.0
+      version: 40.6.0
     eslint-plugin-better-tailwindcss:
       specifier: 4.0.0-beta.3
       version: 4.0.0-beta.3
@@ -1292,7 +1292,7 @@ importers:
         version: 26.0.1(lodash@4.17.21)
       electron:
         specifier: 'catalog:'
-        version: 40.0.0
+        version: 40.6.0
       electron-builder:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
@@ -2339,7 +2339,7 @@ importers:
         version: 4.17.16
       electron:
         specifier: 'catalog:'
-        version: 40.0.0
+        version: 40.6.0
       playwright:
         specifier: 'catalog:'
         version: 1.51.1
@@ -24011,8 +24011,8 @@ packages:
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
-  electron@40.0.0:
-    resolution: {integrity: sha512-UyBy5yJ0/wm4gNugCtNPjvddjAknMTuXR2aCHioXicH7aKRKGDBPp4xqTEi/doVcB3R+MN3wfU9o8d/9pwgK2A==}
+  electron@40.6.0:
+    resolution: {integrity: sha512-ett8W+yOFGDuM0vhJMamYSkrbV3LoaffzJd9GfjI96zRAxyrNqUSKqBpf/WGbQCweDxX2pkUCUfrv4wwKpsFZA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -55147,7 +55147,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@40.0.0:
+  electron@40.6.0:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 24.10.13

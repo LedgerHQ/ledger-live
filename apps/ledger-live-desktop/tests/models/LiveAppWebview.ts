@@ -124,16 +124,20 @@ export class LiveAppWebview {
       await devtools.waitForEvent("close", { timeout: this.defaultWebViewTimeout });
     }
 
-    await this.page.waitForTimeout(500);
-
-    const newAll = this.electronApp.windows();
-    const newTitles = await Promise.all(newAll.map(w => w.title().catch(() => "")));
-
-    expect(newTitles).not.toContain("DevTools");
+    await expect
+      .poll(
+        async () => {
+          const windows = this.electronApp.windows();
+          return Promise.all(windows.map(w => w.title().catch(() => "")));
+        },
+        { timeout: this.defaultWebViewTimeout },
+      )
+      .not.toContain("DevTools");
 
     // Electron 40+ may retain one persistent auxiliary window alongside the main
     // window (e.g. a utility/offscreen process window). Allow for that extra window
     // so the assertion stays green on all supported Electron versions.
+    const newAll = this.electronApp.windows();
     expect(newAll.length).toBeLessThanOrEqual(2);
   }
 
