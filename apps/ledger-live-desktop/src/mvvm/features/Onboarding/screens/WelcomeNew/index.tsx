@@ -22,6 +22,7 @@ import {
   TermsAndConditionsText,
   StyledLink,
 } from "./components/WelcomeNewStyles";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function WelcomeNew() {
   const {
@@ -52,6 +53,8 @@ export function WelcomeNew() {
   } = useVideoCarousel();
 
   const { colors } = useTheme();
+
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("desktop");
 
   return (
     <WelcomeContainer ref={containerRef}>
@@ -110,25 +113,29 @@ export function WelcomeNew() {
               {t("onboarding.screens.welcome.nextButton")}
             </Button>
 
-            <Button
-              data-testid="onboarding-device-button"
-              iconPosition="right"
-              variant="neutral"
-              onClick={handleBuyNew}
-              outline={true}
-              flexDirection="column"
-              whiteSpace="normal"
-              minWidth="250px"
-            >
-              {t("onboarding.screens.welcome.buyLink")}
-            </Button>
+            {!shouldUseLazyOnboarding && (
+              <Button
+                data-testid="onboarding-device-button"
+                iconPosition="right"
+                variant="neutral"
+                onClick={handleBuyNew}
+                outline={true}
+                flexDirection="column"
+                whiteSpace="normal"
+                minWidth="250px"
+              >
+                {t("onboarding.screens.welcome.buyLink")}
+              </Button>
+            )}
           </Flex>
 
-          <LedgerSyncEntryPoint
-            entryPoint={LSEntryPoint.onboarding}
-            needEligibleDevice={false}
-            onPress={handleSetupLedgerSync}
-          />
+          {!shouldUseLazyOnboarding && (
+            <LedgerSyncEntryPoint
+              entryPoint={LSEntryPoint.onboarding}
+              needEligibleDevice={false}
+              onPress={handleSetupLedgerSync}
+            />
+          )}
 
           {__DEV__ ? (
             <Button

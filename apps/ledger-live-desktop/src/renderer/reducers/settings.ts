@@ -770,6 +770,7 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
     return null;
   return lastSeenDevice;
 };
+export const hasOnboardedDeviceSelector = (state: State) => lastSeenDeviceSelector(state) !== null;
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
