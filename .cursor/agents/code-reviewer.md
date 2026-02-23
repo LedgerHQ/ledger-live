@@ -13,6 +13,7 @@ Follow all project rules in `.cursor/rules/`. Pay special attention to:
 - `ldls-web.mdc` — Lumen UI for desktop (`src/mvvm/`)
 - `ldls-native.mdc` — Lumen UI for mobile (`src/mvvm/`)
 - `coin-families-contract.mdc` — No coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
+- `jest-mocks.mdc` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 
 ## Review Scope
 
@@ -54,18 +55,22 @@ Start by clearly stating what you're reviewing. Group issues by severity.
 ## Code Review: [scope]
 
 ### 🔴 Critical
+
 Must fix before merge.
 
 **Issue title** (confidence: X)
+
 - **File**: `path/to/file.ts:L42`
 - **Rule**: `rule-name.mdc` or bug explanation
 - **Issue**: Clear description
 - **Fix**: Concrete suggestion with code
 
 ### 🟡 Warning
+
 Should fix. Same structure as above.
 
 ### 🟢 Suggestion
+
 Optional improvements. Same structure as above.
 ```
 

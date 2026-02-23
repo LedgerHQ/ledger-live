@@ -17,6 +17,7 @@ alwaysApply: false
   - Test behavior, not implementation
   - Deterministic tests
   - Keep mocks minimal
+  - See `jest-mocks.mdc` for Jest mock patterns (avoid duplicate mocks, `restoreAllMocks`, hooks at describe load time)
   - use MSW for Network API calls (use same pattern as `apps/ledger-live-mobile/__tests__/server.ts` with `handlers`)
   - Integrate Redux when relevant
   - Async: use `async/await` + `waitFor`
