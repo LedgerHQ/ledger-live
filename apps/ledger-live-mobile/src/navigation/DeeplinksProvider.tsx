@@ -42,6 +42,7 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
+  validateLargeMoverLedgerIds,
   validateMarketCurrencyId,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
@@ -612,14 +613,19 @@ export const DeeplinksProvider = ({
           const platform = pathname.split("/")[1];
 
           if (hostname === "landing-page-large-mover") {
-            const currencyIds = searchParams.get("currencyIds");
-
-            const validatedCurrencyIds = validateLargeMoverCurrencyIds(currencyIds);
-            if (!validatedCurrencyIds) {
-              // Redirect to market list when currencyIds is missing or invalid
-              return;
+            const validatedLedgerIds = validateLargeMoverLedgerIds(searchParams.get("ledgerIds"));
+            const validatedCurrencyIds = validateLargeMoverCurrencyIds(
+              searchParams.get("currencyIds"),
+            );
+            if (validatedLedgerIds) {
+              url.searchParams.set("currencyIds", "");
+              url.searchParams.set("ledgerIds", validatedLedgerIds);
+            } else if (validatedCurrencyIds) {
+              url.searchParams.delete("ledgerIds");
+              url.searchParams.set("currencyIds", validatedCurrencyIds);
+            } else {
+              return getStateFromPath("market", config);
             }
-            url.searchParams.set("currencyIds", validatedCurrencyIds);
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
