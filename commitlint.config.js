@@ -1,6 +1,1 @@
-module.exports = {
-  extends: ["gitmoji"],
-  rules: {
-    "subject-case": [2, "always", ["lower-case"]],
-  },
-};
+module.exports = { extends: ["@commitlint/config-conventional"] };
