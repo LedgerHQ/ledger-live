@@ -94,3 +94,9 @@ applyTo: "**/*.ts,**/*.tsx"
 - Use `z.enum()` for fixed string values; `.optional()` for nullable fields.
 - Use schemas in RTK Query `transformResponse` for runtime validation.
 - Export both schemas and inferred types from `state-manager/types.ts`.
+
+Prefer `useMemo` over `useEffect` when deriving state from props or other state — update during render instead of triggering additional render cycles.
+
+Always memoize selector results in `useSelector` calls to prevent unnecessary re-renders on unrelated Redux updates.
+
+Extract reusable components into separate files when a file exceeds 300 lines to improve readability and maintainability.

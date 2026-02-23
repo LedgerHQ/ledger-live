@@ -45,3 +45,7 @@ Only add or edit translation files for the **English** language:
 ## Jest Test Mocks
 
 For test file changes, apply the rules in `.github/instructions/jest-mocks.instructions.md`.
+
+Prefer `Map` over plain objects for dynamic key-value lookups where keys are added at runtime.
+
+Use named time constants (e.g., `THIRTY_MINUTES_MS`) instead of raw numeric literals for durations in polling intervals, timeouts, and cache configurations.
