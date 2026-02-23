@@ -531,24 +531,26 @@ jobs:
       - name: Install mitmproxy certificate
         shell: bash
         run: |
-          CERT_FILEPATH="~/.mitmproxy/mitmproxy-ca-cert.pem"
+          MITMPROXY_FOLDER="~/.mitmproxy"
+          CERT_FILEPATH="${MITMPROXY_FOLDER}/mitmproxy-ca-cert.pem"
           # If no certificate exists, create one.
-          if [ ! -f ${CERT_FILEPATH} ]; then
+          if [ ! -f "${CERT_FILEPATH}" ]; then
             echo "Certificate doesnt exist, lets create it"
-            mitmdump --set confdir=~/.mitmproxy --listen-port 8080 --showhost &
+            mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
             MITMPROXY_PID=$!
             sleep 5
             kill -INT $MITMPROXY_PID 2>/dev/null || true
             wait $MITMPROXY_PID 2>/dev/null || true 
 
-            ls -la ~/.mitmproxy
+            echo "Check contents for certificates"
+            ls -la "${MITMPROXY_FOLDER}"
           fi
 
           echo "Converting certificate"
-          openssl x509 -in ${CERT_FILEPATH} -inform PEM -out mitmproxy-ca-cert.crt
+          openssl x509 -in "${CERT_FILEPATH}" -inform PEM -out "${MITMPROXY_FOLDER}/mitmproxy-ca-cert.crt"
           # sudo mkdir /usr/local/share/ca-certificates/extra
           echo "Copying certificate"
-          sudo cp mitmproxy-ca-cert.crt /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
+          sudo cp "${MITMPROXY_FOLDER}/mitmproxy-ca-cert.crt" /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
 
           echo "Installing certificate"
           sudo update-ca-certificates
