@@ -56,10 +56,10 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     address,
     ledgerAccountId,
     mode: "bridge",
-    pagination: {
+    options: {
       minHeight: 0,
       order: "asc",
-      ...(lastBlockHeight > 0 && { lastPagingToken: lastBlockHeight.toString() }),
+      ...(lastBlockHeight > 0 && { cursor: lastBlockHeight.toString() }),
     },
   });
 

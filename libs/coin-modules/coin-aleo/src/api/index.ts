@@ -12,11 +12,10 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-  ListOperationsOptions,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
-import { estimateFees, getBalance, lastBlock, listOperations } from "../logic";
+import { estimateFees, getBalance, lastBlock } from "../logic";
 import { getTransactionType } from "../logic/utils";
 
 export function createApi(config: AleoConfig, currencyId: string): Api {

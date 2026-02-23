@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-framework/api/types";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type { AleoOperation } from "../types/bridge";
 import { enrichTransaction, fetchAccountTransactionsFromHeight } from "../network/utils";
@@ -8,7 +8,7 @@ import { toAlpacaOperation, toBridgeOperation } from "./utils";
 interface Params {
   currency: CryptoCurrency;
   address: string;
-  pagination: Pagination;
+  options: ListOperationsOptions;
 }
 
 interface BridgeParams extends Params {
@@ -30,7 +30,7 @@ export async function listOperations(params: AlpacaParams): Promise<Result<Opera
 export async function listOperations(
   params: BridgeParams | AlpacaParams,
 ): Promise<Result<AleoOperation | Operation>> {
-  const { mode, currency, address, pagination } = params;
+  const { mode, currency, address, options } = params;
   const operations: Array<AleoOperation | Operation> = [];
   const fetchAllPages = mode === "bridge";
 
@@ -38,10 +38,10 @@ export async function listOperations(
     currency,
     address,
     fetchAllPages,
-    minBlockHeight: pagination.minHeight,
-    ...(pagination.lastPagingToken && { cursor: pagination.lastPagingToken }),
-    ...(pagination.limit && { limit: pagination.limit }),
-    ...(pagination.order && { order: pagination.order }),
+    minBlockHeight: options.minHeight,
+    ...(options.cursor && { cursor: options.cursor }),
+    ...(options.limit && { limit: options.limit }),
+    ...(options.order && { order: options.order }),
   });
 
   await promiseAllBatched(2, result.transactions, async rawTx => {

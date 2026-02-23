@@ -47,7 +47,7 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
-      const [operations] = await api.listOperations(emptyAccountAddress, {
+      const { items: operations } = await api.listOperations(emptyAccountAddress, {
         minHeight: 0,
         order: "desc",
       });
@@ -58,7 +58,7 @@ describe("createApi", () => {
     it("returns operations with correct metadata", async () => {
       const testTxId = "at1qe8ml060qvvqp5caxejnc2r4sj3yjx83nfe9mykyx0zyhv5h5yzsfa85j0";
       const testBlockHashOfTx = "ab1ae88smgn0cr80yzzd84kvupawre67j69xcpthcegmcutqew8wgrs6hrxh8";
-      const [page] = await api.listOperations(testAccountAddress, {
+      const { items: page } = await api.listOperations(testAccountAddress, {
         minHeight: 0,
         limit: 10,
         order: "asc",
@@ -84,17 +84,17 @@ describe("createApi", () => {
       "returns paginated operations for account with high activity (%s)",
       async order => {
         const limit = 10;
-        const [page1, cursor1] = await api.listOperations(testAccountAddress, {
+        const { items: page1, next: cursor1 } = await api.listOperations(testAccountAddress, {
           minHeight: 0,
           limit,
           order,
         });
 
-        const [page2, cursor2] = await api.listOperations(testAccountAddress, {
+        const { items: page2, next: cursor2 } = await api.listOperations(testAccountAddress, {
           minHeight: 0,
           limit,
           order,
-          lastPagingToken: cursor1,
+          cursor: cursor1,
         });
 
         const firstPage1Timestamp = page1[0]?.tx?.date;
@@ -105,7 +105,6 @@ describe("createApi", () => {
         const page2Hashes = new Set(page2.map(op => op.tx.hash));
         const hasOverlap = [...page2Hashes].some(hash => page1Hashes.has(hash));
 
-        // NOTE: this won't be equal to limit, because single transaction can generate multiple operations
         expect(page1.length).toBeGreaterThanOrEqual(limit);
         expect(page2.length).toBeGreaterThanOrEqual(limit);
         expect(cursor1).not.toBe("");
@@ -128,14 +127,14 @@ describe("createApi", () => {
       "returns operations with min height filter (%s)",
       async order => {
         const minHeight = order === "asc" ? 200_000 : 13_940_000;
-        const [page] = await api.listOperations(testAccountAddress, {
+        const { items } = await api.listOperations(testAccountAddress, {
           minHeight,
           limit: 10,
           order,
         });
 
-        expect(page.length).toBeGreaterThan(0);
-        expect(page.every(op => op.tx.block.height >= minHeight)).toBe(true);
+        expect(items.length).toBeGreaterThan(0);
+        expect(items.every(op => op.tx.block.height >= minHeight)).toBe(true);
       },
     );
   });
