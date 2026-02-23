@@ -17,7 +17,10 @@ export const ErrorContent = ({ error }: ErrorContentProps) => {
   }
 
   return (
-    <div data-testid="send-confirmation-error-content">
+    <div
+      className="flex flex-col items-center pt-16 gap-24"
+      data-testid="send-confirmation-error-content"
+    >
       <Spot appearance="error" size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
         <h3 className="heading-3-semi-bold text-base" data-testid="send-confirmation-error-title">
