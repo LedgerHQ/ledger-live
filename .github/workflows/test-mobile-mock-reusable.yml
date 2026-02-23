@@ -522,7 +522,7 @@ jobs:
         uses: jdx/mise-action@v3
         with:
           install: true
-          cache: true
+          cache: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
           mise_toml: |
             [tools]
