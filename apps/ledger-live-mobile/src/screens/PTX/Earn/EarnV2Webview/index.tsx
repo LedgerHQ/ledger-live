@@ -42,7 +42,7 @@ export const EarnV2Webview = ({
     topNavigationHeightOffset: topBarHeight.toString(),
     bottomNavigationHeightOffset: bottomBarHeight.toString(),
     uiVersion: earnUiVersion,
-    lw40enabled: "true",
+    lw40enabled: isLwm40Enabled ? "true" : "false",
   };
 
   return (
