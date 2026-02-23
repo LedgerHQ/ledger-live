@@ -13,12 +13,12 @@ import {
   NotEnoughBalanceInParentAccount,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
+import { isValidAddress } from "algosdk";
 import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "../errors";
 import { getAccount } from "../network";
 import type { AlgorandMemo } from "../types";
 import { ALGORAND_MIN_ACCOUNT_BALANCE } from "./common";
 import { validateMemo } from "./validateMemo";
-import { isValidAddress } from "algosdk";
 
 /**
  * Validate a transaction intent for Algorand

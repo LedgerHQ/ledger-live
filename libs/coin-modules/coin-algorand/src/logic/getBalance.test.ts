@@ -20,11 +20,13 @@ describe("getBalance", () => {
 
     const result = await getBalance("ALGO_ADDRESS");
 
-    expect(result).toEqual([{
-      value: 1000000n,
-      asset: { type: "native" },
-      locked: 100000n, // min balance for 0 assets
-    }]);
+    expect(result).toEqual([
+      {
+        value: 1000000n,
+        asset: { type: "native" },
+        locked: 100000n, // min balance for 0 assets
+      },
+    ]);
   });
 
   it("should include ASA token balances", async () => {
@@ -40,20 +42,21 @@ describe("getBalance", () => {
     const result = await getBalance("ALGO_ADDRESS");
 
     // Native balance with locked amount accounting for 2 assets
-    expect(result).toEqual([{
-      value: 2000000n,
-      asset: { type: "native" },
-      locked: 300000n, // 0.1 ALGO base + 0.2 ALGO for 2 assets
-    },
-    {
-      value: 500n,
-      asset: { type: "asa", assetReference: "123" },
-    },
-    {
-      value: 1000n,
-      asset: { type: "asa", assetReference: "456" },
-    },
-  ]);
+    expect(result).toEqual([
+      {
+        value: 2000000n,
+        asset: { type: "native" },
+        locked: 300000n, // 0.1 ALGO base + 0.2 ALGO for 2 assets
+      },
+      {
+        value: 500n,
+        asset: { type: "asa", assetReference: "123" },
+      },
+      {
+        value: 1000n,
+        asset: { type: "asa", assetReference: "456" },
+      },
+    ]);
   });
 
   it("should calculate correct locked amount based on number of assets", async () => {

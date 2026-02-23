@@ -80,4 +80,3 @@ describe("estimateFees", () => {
     await expect(estimateFees()).rejects.toThrow("Network error");
   });
 });
-

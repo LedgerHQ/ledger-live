@@ -1,6 +1,5 @@
-import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { getTransactionParams } from "../network";
-import type { AlgorandMemo } from "../types";
 
 // Single signature size in bytes
 const SINGLE_SIGNATURE_SIZE = 71;

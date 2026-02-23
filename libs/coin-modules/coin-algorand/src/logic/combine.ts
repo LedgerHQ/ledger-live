@@ -1,5 +1,6 @@
-import { encode as msgpackEncode } from "algo-msgpack-with-bigint";
-import type { EncodedSignedTransaction, EncodedTransaction } from "algosdk";
+import { decodeUnsignedTransaction, encodeMsgpack, SignedTransaction } from "algosdk";
+
+const ED25519_SIGNATURE_LENGTH = 64;
 
 /**
  * Combine an unsigned transaction with a signature
@@ -8,14 +9,11 @@ import type { EncodedSignedTransaction, EncodedTransaction } from "algosdk";
  * @returns The signed transaction as a hex string
  */
 export function combine(unsignedTx: string, signature: string): string {
-  const txPayload = JSON.parse(
-    Buffer.from(unsignedTx, "hex").toString("utf8"),
-  ) as EncodedTransaction;
+  const txBytes = Buffer.from(unsignedTx, "hex");
+  const txn = decodeUnsignedTransaction(txBytes);
+  const sig = Buffer.from(signature, "hex").subarray(0, ED25519_SIGNATURE_LENGTH);
 
-  const signedPayload: EncodedSignedTransaction = {
-    sig: Buffer.from(signature, "hex"),
-    txn: txPayload,
-  };
-  const msgPackEncoded = msgpackEncode(signedPayload);
+  const signedPayload = new SignedTransaction({ sig, txn });
+  const msgPackEncoded = encodeMsgpack(signedPayload);
   return Buffer.from(msgPackEncoded).toString("hex");
 }

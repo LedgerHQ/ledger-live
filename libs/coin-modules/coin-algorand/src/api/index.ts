@@ -30,7 +30,7 @@ export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
     broadcast,
     combine,
     craftTransaction: craftApiTransaction,
-    estimateFees: (transactionIntent: TransactionIntent<AlgorandMemo>) => estimateFees(),
+    estimateFees: (_transactionIntent: TransactionIntent<AlgorandMemo>) => estimateFees(),
     getBalance,
     getBlockInfo,
     lastBlock,

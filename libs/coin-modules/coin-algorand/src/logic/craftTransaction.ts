@@ -4,11 +4,12 @@ import type {
   FeeEstimation,
 } from "@ledgerhq/coin-framework/api/index";
 import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
-import { encode as msgpackEncode } from "algo-msgpack-with-bigint";
-import type { EncodedTransaction as AlgoTransactionPayload, Transaction as AlgoTx } from "algosdk";
+import type { Transaction as AlgoTx } from "algosdk";
 import {
-  makeAssetTransferTxnWithSuggestedParams,
-  makePaymentTxnWithSuggestedParams,
+  base64ToBytes,
+  encodeMsgpack,
+  makeAssetTransferTxnWithSuggestedParamsFromObject,
+  makePaymentTxnWithSuggestedParamsFromObject,
 } from "algosdk";
 import { getTransactionParams } from "../network";
 import type { AlgorandMemo } from "../types";
@@ -16,7 +17,7 @@ import { estimateFees } from "./estimateFees";
 
 export type CraftedAlgorandTransaction = {
   serializedTransaction: string;
-  txPayload: AlgoTransactionPayload;
+  txPayload: Record<string, unknown>;
 };
 
 /**
@@ -38,45 +39,40 @@ export async function craftTransaction(input: {
   const params = await getTransactionParams();
 
   if (typeof fees === "bigint") {
-    params.fee = 0; // Set to 0 to use flatFee
+    params.fee = 0;
     params.minFee = Number(fees);
   }
 
-  const algoTxn: AlgoTx = assetId ? makeAssetTransferTxnWithSuggestedParams(
-    sender,
-    recipient,
-    undefined, // closeRemainderTo
-    undefined, // revocationTarget
-    Number(amount),
-    note,
-    Number(assetId),
-    params,
-    undefined, // rekeyTo
-  ) : makePaymentTxnWithSuggestedParams(
-    sender,
-    recipient,
-    Number(amount),
-    undefined, // closeRemainderTo
-    note,
-    params,
-  );
+  const suggestedParams = {
+    ...params,
+    firstValid: params.lastRound,
+    lastValid: params.lastRound + 1000,
+    genesisHash: base64ToBytes(params.genesisHash),
+  };
 
-  // Set transaction validity window (next 1000 blocks)
-  algoTxn.firstRound = params.lastRound;
-  algoTxn.lastRound = params.lastRound + 1000;
+  const algoTxn: AlgoTx = assetId
+    ? makeAssetTransferTxnWithSuggestedParamsFromObject({
+        sender,
+        receiver: recipient,
+        amount: Number(amount),
+        assetIndex: Number(assetId),
+        suggestedParams,
+        ...(note ? { note } : {}),
+      })
+    : makePaymentTxnWithSuggestedParamsFromObject({
+        sender,
+        receiver: recipient,
+        amount: Number(amount),
+        suggestedParams,
+        ...(note ? { note } : {}),
+      });
 
-  // SDK flaw: payload is not sorted but needs to be for msgpack encoding
-  const sorted = Object.fromEntries(
-    Object.entries(algoTxn.get_obj_for_encoding()).sort(),
-  ) as AlgoTransactionPayload;
-
-  // Serialize for signing
-  const msgPackEncoded = msgpackEncode(sorted);
+  const msgPackEncoded = encodeMsgpack(algoTxn);
   const serializedTransaction = Buffer.from(msgPackEncoded).toString("hex");
 
   return {
     serializedTransaction,
-    txPayload: sorted,
+    txPayload: algoTxn as unknown as Record<string, unknown>,
   };
 }
 

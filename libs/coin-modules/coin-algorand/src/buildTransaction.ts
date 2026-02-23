@@ -4,6 +4,7 @@ import {
   base64ToBytes,
   makeAssetTransferTxnWithSuggestedParamsFromObject,
   makePaymentTxnWithSuggestedParamsFromObject,
+  SignedTransaction,
 } from "algosdk";
 
 import { getTransactionParams } from "./network";

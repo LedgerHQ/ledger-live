@@ -1,43 +1,61 @@
+import * as v8 from "v8";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { decode } from "algo-msgpack-with-bigint";
-import type { AlgorandMemo } from "../types";
 import * as network from "../network";
+import type { AlgorandMemo } from "../types";
 import { craftTransaction, craftOptInTransaction, craftApiTransaction } from "./craftTransaction";
 
 jest.mock("../network");
 
 jest.mock("algosdk", () => ({
-  makePaymentTxnWithSuggestedParams: jest.fn(
-    (sender: string, recipient: string, amount: number, _close: unknown, note: Uint8Array | undefined, _params: unknown) => ({
-      firstRound: 1000,
-      lastRound: 2000,
-      get_obj_for_encoding: () => ({
-        amt: amount,
-        fee: 1000,
-        fv: 1000,
-        lv: 2000,
-        snd: Buffer.from(sender),
-        rcv: Buffer.from(recipient),
-        type: "pay",
-        ...(note ? { note: Buffer.from(note) } : {}),
-      }),
+  base64ToBytes: jest.fn((s: string) => Buffer.from(s, "base64")),
+  encodeMsgpack: jest.fn((obj: unknown) => v8.serialize(obj)),
+  makePaymentTxnWithSuggestedParamsFromObject: jest.fn(
+    ({
+      sender,
+      receiver,
+      amount,
+      note,
+    }: {
+      sender: string;
+      receiver: string;
+      amount: number;
+      note?: Uint8Array;
+      suggestedParams: unknown;
+    }) => ({
+      amt: amount,
+      fee: 1000,
+      fv: 1000,
+      lv: 2000,
+      snd: Buffer.from(sender),
+      rcv: Buffer.from(receiver),
+      type: "pay",
+      ...(note ? { note: Buffer.from(note) } : {}),
     }),
   ),
-  makeAssetTransferTxnWithSuggestedParams: jest.fn(
-    (sender: string, recipient: string, _close: unknown, _revoke: unknown, amount: number, note: Uint8Array | undefined, assetId: number, _params: unknown) => ({
-      firstRound: 1000,
-      lastRound: 2000,
-      get_obj_for_encoding: () => ({
-        amt: amount,
-        fee: 1000,
-        fv: 1000,
-        lv: 2000,
-        snd: Buffer.from(sender),
-        arcv: Buffer.from(recipient),
-        xaid: assetId,
-        type: "axfer",
-        ...(note ? { note: Buffer.from(note) } : {}),
-      }),
+  makeAssetTransferTxnWithSuggestedParamsFromObject: jest.fn(
+    ({
+      sender,
+      receiver,
+      amount,
+      assetIndex,
+      note,
+    }: {
+      sender: string;
+      receiver: string;
+      amount: number;
+      assetIndex: number;
+      note?: Uint8Array;
+      suggestedParams: unknown;
+    }) => ({
+      amt: amount,
+      fee: 1000,
+      fv: 1000,
+      lv: 2000,
+      snd: Buffer.from(sender),
+      arcv: Buffer.from(receiver),
+      xaid: assetIndex,
+      type: "axfer",
+      ...(note ? { note: Buffer.from(note) } : {}),
     }),
   ),
 }));
@@ -47,7 +65,7 @@ const mockGetTransactionParams = network.getTransactionParams as jest.MockedFunc
 >;
 
 function decodeTxPayload(serializedTransaction: string) {
-  return decode(Buffer.from(serializedTransaction, "hex")) as Record<string, unknown>;
+  return v8.deserialize(Buffer.from(serializedTransaction, "hex")) as Record<string, unknown>;
 }
 
 describe("craftTransaction", () => {
@@ -141,6 +159,16 @@ describe("craftTransaction", () => {
     expect(result.txPayload.amt).toBe(500000);
     expect(result.txPayload.type).toBe("pay");
     expect(result.txPayload.fee).toBe(1000);
+  });
+
+  it("should fetch transaction params from network", async () => {
+    await craftTransaction({
+      sender: "SENDER_ADDR",
+      recipient: "RECIPIENT_ADDR",
+      amount: 1000000n,
+    });
+
+    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
   });
 });
 

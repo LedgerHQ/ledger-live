@@ -1,4 +1,4 @@
-import type { EncodedTransaction } from "algosdk";
+import * as v8 from "v8";
 import { BigNumber } from "bignumber.js";
 import { buildTransactionPayload, encodeToSign, encodeToBroadcast } from "./buildTransaction";
 import * as network from "./network";
@@ -6,40 +6,61 @@ import type { AlgorandAccount, Transaction } from "./types";
 
 jest.mock("./network");
 
-// Mock algosdk functions
-jest.mock("algosdk", () => ({
-  makePaymentTxnWithSuggestedParams: jest.fn().mockReturnValue({
-    firstRound: 1000,
-    lastRound: 2000,
-    get_obj_for_encoding: () => ({
-      amt: 1000000,
-      fee: 1000,
-      fv: 1000,
-      lv: 2000,
-      snd: Buffer.from("sender"),
-      rcv: Buffer.from("recipient"),
-      type: "pay",
-    }),
-  }),
-  makeAssetTransferTxnWithSuggestedParams: jest.fn().mockReturnValue({
-    firstRound: 1000,
-    lastRound: 2000,
-    get_obj_for_encoding: () => ({
-      amt: 100,
-      fee: 1000,
-      fv: 1000,
-      lv: 2000,
-      snd: Buffer.from("sender"),
-      arcv: Buffer.from("recipient"),
-      xaid: 12345,
-      type: "axfer",
-    }),
-  }),
-}));
+jest.mock("algosdk", () => {
+  class SignedTransaction {
+    sig: Uint8Array;
+    txn: unknown;
+    constructor({ sig, txn }: { sig: Uint8Array; txn: unknown }) {
+      this.sig = sig;
+      this.txn = txn;
+    }
+  }
+  return {
+    base64ToBytes: jest.fn((b64: string) => Buffer.from(b64, "base64")),
+    encodeMsgpack: jest.fn((obj: unknown) => v8.serialize(obj)),
+    SignedTransaction,
+    makePaymentTxnWithSuggestedParamsFromObject: jest.fn(
+      (params: {
+        sender: string;
+        receiver: string;
+        amount: number;
+        suggestedParams: unknown;
+        note?: Uint8Array;
+      }) => ({
+        sender: params.sender,
+        receiver: params.receiver,
+        amount: params.amount,
+        type: "pay",
+        suggestedParams: params.suggestedParams,
+        ...(params.note ? { note: params.note } : {}),
+      }),
+    ),
+    makeAssetTransferTxnWithSuggestedParamsFromObject: jest.fn(
+      (params: {
+        sender: string;
+        receiver: string;
+        amount: number;
+        assetIndex: number;
+        suggestedParams: unknown;
+        note?: Uint8Array;
+      }) => ({
+        sender: params.sender,
+        receiver: params.receiver,
+        amount: params.amount,
+        assetIndex: params.assetIndex,
+        type: "axfer",
+        suggestedParams: params.suggestedParams,
+        ...(params.note ? { note: params.note } : {}),
+      }),
+    ),
+  };
+});
 
 const mockGetTransactionParams = network.getTransactionParams as jest.MockedFunction<
   typeof network.getTransactionParams
 >;
+
+const algosdk = jest.requireMock("algosdk");
 
 describe("buildTransaction", () => {
   const mockAccount = {
@@ -76,7 +97,12 @@ describe("buildTransaction", () => {
       const result = await buildTransactionPayload(mockAccount, transaction);
 
       expect(result).not.toBeUndefined();
+      expect(result.type).toBe("pay");
+      expect(result.amount).toBe(1000000);
+      expect(result.sender).toBe(mockAccount.freshAddress);
+      expect(result.receiver).toBe("RECIPIENT_ADDRESS");
       expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+      expect(algosdk.makePaymentTxnWithSuggestedParamsFromObject).toHaveBeenCalled();
     });
 
     it("should build a transaction with memo", async () => {
@@ -93,6 +119,7 @@ describe("buildTransaction", () => {
       const result = await buildTransactionPayload(mockAccount, transaction);
 
       expect(result).not.toBeUndefined();
+      expect(result.note).toEqual(new TextEncoder().encode("Test payment"));
     });
 
     it("should build an asset transfer transaction for optIn", async () => {
@@ -109,10 +136,12 @@ describe("buildTransaction", () => {
       const result = await buildTransactionPayload(mockAccount, transaction);
 
       expect(result).not.toBeUndefined();
+      expect(result.type).toBe("axfer");
+      expect(result.assetIndex).toBe(12345);
+      expect(algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject).toHaveBeenCalled();
     });
 
     it("should build payment transaction when no assetId and no subAccount", async () => {
-      // When no assetId and no subAccountId, it builds a payment transaction
       const transaction: Transaction = {
         family: "algorand",
         mode: "send",
@@ -126,6 +155,8 @@ describe("buildTransaction", () => {
       const result = await buildTransactionPayload(mockAccount, transaction);
 
       expect(result).not.toBeUndefined();
+      expect(result.type).toBe("pay");
+      expect(algosdk.makePaymentTxnWithSuggestedParamsFromObject).toHaveBeenCalled();
     });
 
     it("should use subAccount token for asset transfer", async () => {
@@ -153,6 +184,24 @@ describe("buildTransaction", () => {
       const result = await buildTransactionPayload(accountWithSubAccount, transaction);
 
       expect(result).not.toBeUndefined();
+      expect(result.type).toBe("axfer");
+      expect(result.assetIndex).toBe(67890);
+    });
+
+    it("should pass genesisHash as bytes in suggestedParams", async () => {
+      const transaction: Transaction = {
+        family: "algorand",
+        mode: "send",
+        amount: new BigNumber("1000000"),
+        recipient: "RECIPIENT_ADDRESS",
+        fees: null,
+        memo: undefined,
+        assetId: undefined,
+      };
+
+      await buildTransactionPayload(mockAccount, transaction);
+
+      expect(algosdk.base64ToBytes).toHaveBeenCalledWith(defaultParams.genesisHash);
     });
   });
 
@@ -162,22 +211,23 @@ describe("buildTransaction", () => {
         amt: 1000000,
         fee: 1000,
         type: "pay",
-      } as unknown as EncodedTransaction;
+      };
 
-      const result = encodeToSign(payload);
+      const result = encodeToSign(payload as any);
 
       expect(typeof result).toBe("string");
       expect(result).toMatch(/^[a-f0-9]+$/i);
+      expect(algosdk.encodeMsgpack).toHaveBeenCalledWith(payload);
     });
 
     it("should produce consistent encoding", () => {
       const payload = {
         amt: 500000,
         type: "pay",
-      } as unknown as EncodedTransaction;
+      };
 
-      const result1 = encodeToSign(payload);
-      const result2 = encodeToSign(payload);
+      const result1 = encodeToSign(payload as any);
+      const result2 = encodeToSign(payload as any);
 
       expect(result1).toBe(result2);
     });
@@ -189,24 +239,24 @@ describe("buildTransaction", () => {
         amt: 1000000,
         fee: 1000,
         type: "pay",
-      } as unknown as EncodedTransaction;
-      const signature = Buffer.from("signature_bytes");
+      };
+      const signature = Buffer.alloc(66, 0xab);
 
-      const result = encodeToBroadcast(payload, signature);
+      const result = encodeToBroadcast(payload as any, signature);
 
       expect(Buffer.isBuffer(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
     });
 
-    it("should include signature in encoded result", () => {
-      const payload = { amt: 100, type: "pay" } as unknown as EncodedTransaction;
-      const signature = Buffer.from("test_signature");
+    it("should truncate signature to 64 bytes", () => {
+      const payload = { amt: 100, type: "pay" };
+      const signature = Buffer.alloc(66, 0xcd);
 
-      const result = encodeToBroadcast(payload, signature);
+      encodeToBroadcast(payload as any, signature);
 
-      // Result should be larger than just the payload
-      const payloadOnly = encodeToSign(payload);
-      expect(result.length).toBeGreaterThan(payloadOnly.length / 2);
+      const signedArg = (algosdk.encodeMsgpack as jest.Mock).mock.calls.at(-1)?.[0];
+      expect(signedArg).toBeInstanceOf(algosdk.SignedTransaction);
+      expect(signedArg.sig.length).toBe(64);
     });
   });
 });
