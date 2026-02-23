@@ -14,7 +14,7 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig, { AleoCoinConfig, type AleoConfig } from "../config";
+import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
 import { estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
 
@@ -46,11 +46,7 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
     },
     estimateFees: async (intent): Promise<FeeEstimation> => {
       const transactionType = getTransactionType(intent);
-      const fee = estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
-
-      return {
-        value: BigInt(fee.toString()),
-      };
+      return estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
     },
     getBalance: (address: string): Promise<Balance[]> => {
       return getBalance(currency, address);

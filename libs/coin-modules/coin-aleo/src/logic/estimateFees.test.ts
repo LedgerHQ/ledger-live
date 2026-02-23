@@ -23,8 +23,7 @@ describe("estimateFees", () => {
 
     const expected = mockFeeByTransactionType[transactionType] * mockFeeSafetyMultiplier;
 
-    expect(result).toBeInstanceOf(BigNumber);
-    expect(result.toNumber()).toEqual(expected);
+    expect(result.value).toEqual(BigInt(expected));
   });
 
   it("should apply feeSafetyMultiplier correctly and ceil the result", () => {
@@ -43,7 +42,7 @@ describe("estimateFees", () => {
       .multipliedBy(configWithMultiplier.feeSafetyMultiplier)
       .integerValue(BigNumber.ROUND_CEIL);
 
-    expect(result).toEqual(expected);
+    expect(result.value).toEqual(BigInt(expected.toString()));
   });
 
   it("should throw error for unknown transaction type", () => {
