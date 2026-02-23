@@ -1,23 +1,56 @@
 {
   "targets": {
     "lint": {
-      "outputs": ["{projectRoot}/lint.json"],
-      "inputs": ["default", {"env": "CI_OS"}]
+      "outputs": [
+        "{projectRoot}/lint.json"
+      ],
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
     },
     "e2e:ci": {
-      "outputs": ["{projectRoot}/artifacts/**"]
+      "outputs": [
+        "{projectRoot}/artifacts/**"
+      ],
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "android:apk": {
       "outputs": [
         "{projectRoot}/android/app/build/generated/**",
         "{projectRoot}/android/app/build/intermediates/**"
+      ],
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
       ]
     },
     "ios:ci:adhoc": {
-      "outputs": ["{projectRoot}/ios/build/**"]
+      "outputs": [
+        "{projectRoot}/ios/build/**"
+      ],
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "ios:local:ipa": {
-      "outputs": ["{projectRoot}/ios/build/**"]
+      "outputs": [
+        "{projectRoot}/ios/build/**"
+      ],
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     }
   }
 }
