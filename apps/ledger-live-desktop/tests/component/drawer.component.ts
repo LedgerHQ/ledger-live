@@ -36,7 +36,11 @@ export class Drawer extends Component {
 
   // CURRENCY/ASSET ACTIONS
   async selectCurrency(currency: string) {
-    await this.currencyButton(currency).click();
+    const currencyButton = this.currencyButton(currency);
+    // Wait for currency row to render before clicking (React 19 deferred rendering)
+
+    await currencyButton.waitFor({ state: "visible" });
+    await currencyButton.click();
   }
 
   public getAccountButton = (accountName: string, index: number) =>
