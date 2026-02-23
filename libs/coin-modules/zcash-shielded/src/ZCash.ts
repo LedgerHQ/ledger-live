@@ -1,8 +1,10 @@
 import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
+import { BitcoinOutput } from "@ledgerhq/coin-bitcoin";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
 import { LOG_TYPE } from "./constants";
+import BigNumber from "bignumber.js";
 
 /**
  * ZCash API
@@ -119,3 +121,30 @@ export default class ZCash {
     return timestamp + 42;
   }
 }
+
+const retrieveShieldedUtxos = (shieldedTxs: ShieldedTransaction[]): BitcoinOutput[] => {
+  let utxos = [];
+
+  for (const shieldedTx of shieldedTxs) {
+    const outputs = [
+      ...(shieldedTx.decryptedData?.orchard_outputs || []),
+      ...(shieldedTx.decryptedData?.sapling_outputs || []),
+    ];
+
+    for (const output of outputs) {
+      if (output.transfer_type === "incoming") {
+        utxos.push({
+          hash: shieldedTx.blockHash,
+          outputIndex: shieldedTx.height,
+          blockHeight: shieldedTx.height,
+          address: "",
+          value: new BigNumber(output.amount),
+          rbf: false,
+          isChange: false,
+        });
+      }
+    }
+  }
+
+  return utxos;
+};
