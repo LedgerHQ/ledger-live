@@ -2777,6 +2777,9 @@ importers:
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets

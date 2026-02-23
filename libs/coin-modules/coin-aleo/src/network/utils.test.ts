@@ -379,7 +379,7 @@ describe("network/utils", () => {
       jest.clearAllMocks();
       mockGenerateUniqueUsername.mockReturnValue(mockUsername);
       mockGetPublicKey.mockResolvedValue({ public_key: mockPublicKey, key_id: mockKeyId });
-      mockEncryptRegistrationPayload.mockResolvedValue({ encrypted_data: mockEncryptedData });
+      mockEncryptRegistrationPayload.mockResolvedValue({ encrypted: mockEncryptedData });
     });
 
     describe("Initial registration flow", () => {
@@ -668,6 +668,7 @@ describe("network/utils", () => {
           currency: mockCurrency,
           publicKey: mockPublicKey,
           viewKey: mockViewKey,
+          start: 0,
         });
         expect(mockRegisterForScanningAccountRecords).toHaveBeenCalledTimes(1);
         expect(mockRegisterForScanningAccountRecords).toHaveBeenCalledWith({

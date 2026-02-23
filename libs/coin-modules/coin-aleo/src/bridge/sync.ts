@@ -6,9 +6,10 @@ import {
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { log } from "@ledgerhq/logs";
 import { getBalance, lastBlock, listOperations } from "../logic";
-import type { AleoAccount, ProvableApi } from "../types";
 import { accessProvableApi } from "../network/utils";
+import type { AleoAccount, ProvableApi } from "../types";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
@@ -24,6 +25,11 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       viewKey,
       address,
       provableApi: initialAccount.aleoResources?.provableApi ?? null,
+    }).catch(err => {
+      // private sync logic will be probably handled separately with https://ledgerhq.atlassian.net/browse/LIVE-26440
+      // for now, if provable API access configuration fails, we still want to sync public data
+      log("aleo/sync", "Error while configuring record scanner API access", { err, address });
+      return initialAccount.aleoResources?.provableApi ?? null;
     });
   }
 

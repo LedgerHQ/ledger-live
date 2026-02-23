@@ -10,6 +10,7 @@ export type EnrichedTransaction = {
   rawTx: AleoPublicTransaction;
   details: AleoPublicTransactionDetailsResponse | null;
 };
+
 export interface ProvableApi {
   apiKey?: string;
   consumerId?: string;

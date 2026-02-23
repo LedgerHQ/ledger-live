@@ -199,10 +199,11 @@ export async function accessProvableApi({
   if (!uuid) {
     const { public_key, key_id } = await apiClient.getPublicKey(currency, jwt.token);
 
-    const { encrypted_data: encryptedData } = await sdkClient.encryptRegistrationPayload({
+    const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
       currency,
       publicKey: public_key,
       viewKey,
+      start: 0,
     });
 
     const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecordsEncrypted({
