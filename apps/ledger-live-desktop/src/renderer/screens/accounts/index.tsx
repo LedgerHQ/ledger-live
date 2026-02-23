@@ -45,7 +45,7 @@ export default function AccountsPage() {
     return <Navigate to="/" replace />;
   }
   return (
-    <Box>
+    <>
       <TrackPage
         category="Accounts"
         accountsLength={accounts.length}
@@ -58,7 +58,7 @@ export default function AccountsPage() {
       )}
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
       <LNSUpsellBanner location="accounts" mb={30} />
-    </Box>
+    </>
   );
 }
 export const GenericBox = styled(Box)`
