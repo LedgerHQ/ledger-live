@@ -223,3 +223,13 @@ export const isProvableApiConfigured = (
 ): provableApi is Required<Pick<ProvableApi, "jwt" | "uuid" | "apiKey">> => {
   return !!provableApi?.uuid && !!provableApi?.apiKey && !!provableApi?.jwt?.token;
 };
+
+export function getOperationTransactionType(transactionType: TransactionType): AleoTransactionType {
+  switch (transactionType) {
+    case TRANSACTION_TYPE.TRANSFER_PRIVATE:
+    case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
+      return "private";
+    default:
+      return "public";
+  }
+}
