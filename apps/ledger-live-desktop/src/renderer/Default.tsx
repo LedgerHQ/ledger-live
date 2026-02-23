@@ -70,8 +70,6 @@ import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import backgroundImg from "~/renderer/images/background.png";
-import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
-
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -275,7 +273,7 @@ export const MainAppLayout = () => {
 
   //TODO: Remove this once testing is done
   const walletFeatureFlag = useFeature("lwdWallet40");
-  const walletParams = walletFeatureFlag?.params as WalletFeatureParams | undefined;
+  const walletParams = walletFeatureFlag?.params;
   const shouldDisplayBackground =
     isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
 
@@ -490,7 +488,9 @@ export default function Default() {
                       }
                     />
 
-                    {!hasCompletedOnboarding ? (
+                    {hasCompletedOnboarding ? (
+                      <Route path="/*" element={<MainAppLayout />} />
+                    ) : (
                       <>
                         <Route
                           path="/settings/*"
@@ -501,8 +501,6 @@ export default function Default() {
                           element={<RecoverPlayerWithFeatureToggle />}
                         />
                       </>
-                    ) : (
-                      <Route path="/*" element={<MainAppLayout />} />
                     )}
                   </Routes>
                 </ContextMenuWrapper>
