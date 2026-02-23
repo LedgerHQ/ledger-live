@@ -40,6 +40,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
+      shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
     };
   }, [walletFeatureFlag]);
 };

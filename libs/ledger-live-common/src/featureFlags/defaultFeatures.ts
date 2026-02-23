@@ -789,6 +789,7 @@ export const DEFAULT_FEATURES: Features = {
       mainNavigation: true,
       lazyOnboarding: true,
       balanceRefreshRework: true,
+      assetSection: true,
     },
   },
   lwdWallet40: {
@@ -802,6 +803,7 @@ export const DEFAULT_FEATURES: Features = {
       lazyOnboarding: true,
       newReceiveDialog: true,
       balanceRefreshRework: true,
+      assetSection: true,
     },
   },
   addressPoisoningOperationsFilter: {
