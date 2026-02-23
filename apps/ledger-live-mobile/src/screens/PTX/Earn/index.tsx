@@ -125,9 +125,13 @@ function Earn({ route }: Props) {
 
   /** V2: single shell (background + content). Use lastKnownManifest whenever manifest is missing so remount (e.g. dev Strict Mode) keeps showing webview instead of loader. */
   if (isLwm40Enabled) {
+    const displayManifest = manifest ?? lastKnownManifest;
+    if (!displayManifest && !remoteLiveAppState.isLoading && remoteLiveAppState.error) {
+      lastKnownManifest = undefined;
+    }
     return (
       <EarnV2Webview
-        manifest={lastKnownManifest ?? manifest}
+        manifest={displayManifest}
         inputs={webviewInputs}
         isLwm40Enabled={isLwm40Enabled}
         hideMainNavigator={hideMainNavigator}
