@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ViewStyle, Image } from "react-native";
+import { View, ViewStyle, StyleProp, Image } from "react-native";
 import LottieView from "lottie-react-native";
 import Config from "react-native-config";
 
@@ -20,7 +20,7 @@ export function resolveLottieSource(module: number): LottieSource {
 
 type LottieProps = {
   source: LottieSource;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   loop?: boolean;
   autoPlay?: boolean;
   speed?: number;

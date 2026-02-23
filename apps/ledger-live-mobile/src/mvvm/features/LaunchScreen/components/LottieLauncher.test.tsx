@@ -1,6 +1,6 @@
 import React from "react";
 import { Image } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen } from "@testing-library/react-native";
 import LottieLauncher from "./LottieLauncher";
 
 // lottie-react-native, react-native-config and .lottie files are mocked globally in __tests__/jest-setup.js and jest.config.js
@@ -43,7 +43,8 @@ describe("LottieLauncher", () => {
       null as unknown as ReturnType<typeof Image.resolveAssetSource>,
     );
     render(<LottieLauncher />);
-    expect(screen.queryByTestId("lottie-mock")).toBeNull();
+    expect(screen.queryByTestId("lottie-source")).toBeNull();
+    expect(screen.queryByTestId("lottie-launcher")).toBeNull();
   });
 
   it("renders an empty container when Image.resolveAssetSource returns object without uri", () => {
@@ -53,7 +54,8 @@ describe("LottieLauncher", () => {
       scale: 1,
     } as unknown as ReturnType<typeof Image.resolveAssetSource>);
     render(<LottieLauncher />);
-    expect(screen.queryByTestId("lottie-mock")).toBeNull();
+    expect(screen.queryByTestId("lottie-source")).toBeNull();
+    expect(screen.queryByTestId("lottie-launcher")).toBeNull();
   });
 
   describe("when Config.DETOX is true", () => {
@@ -70,7 +72,7 @@ describe("LottieLauncher", () => {
     it("renders empty container and does not render LottieView", () => {
       render(<LottieLauncher />);
       expect(screen.getByTestId("lottie-launcher-detox")).toBeOnTheScreen();
-      expect(screen.queryByTestId("lottie-mock")).toBeNull();
+      expect(screen.queryByTestId("lottie-source")).toBeNull();
     });
   });
 });

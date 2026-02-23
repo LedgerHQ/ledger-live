@@ -1,6 +1,7 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
-import { Lottie } from "./index";
+import { Image } from "react-native";
+import { render, screen } from "@testing-library/react-native";
+import { Lottie, resolveLottieSource } from "./index";
 
 describe("Lottie", () => {
   beforeEach(() => {
@@ -30,6 +31,38 @@ describe("Lottie", () => {
     expect(screen.getByTestId("lottie")).toBeOnTheScreen();
     expect(screen.getByTestId("lottie-source")).toBeOnTheScreen();
     expect(screen.getByTestId("lottie-source").props.children).toContain("123");
+  });
+
+  describe("resolveLottieSource", () => {
+    it("returns numeric module id when Repack returns relative path (not file:// or http(s)://)", () => {
+      const moduleId = 123;
+      const spy = jest.spyOn(Image, "resolveAssetSource").mockReturnValue({
+        uri: "assets/splash.lottie",
+        width: 1,
+        height: 1,
+        scale: 1,
+      } as ReturnType<typeof Image.resolveAssetSource>);
+
+      const result = resolveLottieSource(moduleId);
+
+      expect(result).toBe(moduleId);
+      spy.mockRestore();
+    });
+
+    it("returns uri object when Image.resolveAssetSource returns file:// URI", () => {
+      const moduleId = 456;
+      const spy = jest.spyOn(Image, "resolveAssetSource").mockReturnValue({
+        uri: "file:///path/to/splash.lottie",
+        width: 1,
+        height: 1,
+        scale: 1,
+      } as ReturnType<typeof Image.resolveAssetSource>);
+
+      const result = resolveLottieSource(moduleId);
+
+      expect(result).toEqual({ uri: "file:///path/to/splash.lottie" });
+      spy.mockRestore();
+    });
   });
 
   it("uses default testID for detox view", () => {
