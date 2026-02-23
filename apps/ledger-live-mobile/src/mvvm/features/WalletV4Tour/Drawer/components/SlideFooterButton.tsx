@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
+import { useTrack } from "~/analytics";
 
 interface SlideFooterButtonProps {
   readonly onClose: () => void;
@@ -42,13 +43,34 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
     [fadeStart, lastIndex, scrollProgressSharedValue],
   );
 
+  const track = useTrack();
+
+  const goNext = useCallback(() => {
+    goToNext();
+
+    track("button_clicked", {
+      button: "Next",
+      page: "Product Tour WV4",
+      card: currentIndex + 1,
+    });
+  }, [currentIndex, goToNext, track]);
+
+  const close = useCallback(() => {
+    onClose();
+
+    track("button_clicked", {
+      button: "Discover Ledger Wallet",
+      page: "Product Tour WV4",
+    });
+  }, [onClose, track]);
+
   return (
     <Animated.View style={styles.container}>
       <Animated.View
         style={[styles.button, continueStyle]}
         pointerEvents={isLastSlide ? "none" : "box-none"}
       >
-        <Button appearance="base" size="lg" onPress={goToNext}>
+        <Button appearance="base" size="lg" onPress={goNext}>
           {t("walletV4Tour.cta.continue")}
         </Button>
       </Animated.View>
@@ -57,7 +79,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
         style={[styles.button, exploreStyle]}
         pointerEvents={isLastSlide || isInTest ? "box-none" : "none"}
       >
-        <Button appearance="base" size="lg" onPress={onClose}>
+        <Button appearance="base" size="lg" onPress={close}>
           {t("walletV4Tour.cta.explore")}
         </Button>
       </Animated.View>
