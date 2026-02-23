@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from "react";
+import React, { useEffect, lazy, Suspense, useRef } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
@@ -53,6 +53,7 @@ import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreO
 import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  hasSeenWalletV4TourSelector,
   areSettingsLoaded,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
@@ -269,7 +270,13 @@ export const MainAppLayout = () => {
     shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
+    shouldDisplayTour,
   } = useWalletFeaturesConfig("desktop");
+  const hasSeenTour = useSelector(hasSeenWalletV4TourSelector);
+  // Freeze "has seen tour" at mount so closing the tour in this session doesn't mount Release Notes/Terms
+  const hasSeenTourAtMountRef = useRef(hasSeenTour);
+  const shouldShowDeferredModals =
+    !shouldDisplayTour || hasSeenTourAtMountRef.current;
 
   //TODO: Remove this once testing is done
   const walletFeatureFlag = useFeature("lwdWallet40");
@@ -281,9 +288,13 @@ export const MainAppLayout = () => {
 
   return (
     <>
-      <IsNewVersion />
-      <IsSystemLanguageAvailable />
-      <IsTermOfUseUpdated />
+      {shouldShowDeferredModals && (
+        <>
+          <IsNewVersion />
+          <IsSystemLanguageAvailable />
+          <IsTermOfUseUpdated />
+        </>
+      )}
       <SyncNewAccounts priority={2} />
 
       {useWallet40Layout ? (
