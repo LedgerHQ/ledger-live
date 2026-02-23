@@ -28,7 +28,8 @@ export interface NavigationBarHeights {
  *
  * Returns top and bottom offsets to account for navigation bars (TopBar + TabBar).
  * Used primarily for PTX WebView screens that need proper content padding.
- * Returns zero values when the `lwmWallet40` feature flag is disabled.
+ *
+ * @throws {Error} If the `lwmWallet40` feature flag is not enabled
  *
  * @example
  * ```tsx
