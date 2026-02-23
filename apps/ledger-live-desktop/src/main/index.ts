@@ -87,8 +87,15 @@ app.on("will-finish-launching", () => {
       .then(w => {
         if (w) {
           show(w);
-          if ("send" in w.webContents) {
-            w.webContents.send("deep-linking", url);
+          const sendDeepLink = () => {
+            if ("send" in w.webContents) {
+              w.webContents.send("deep-linking", url);
+            }
+          };
+          if (w.webContents.isLoading()) {
+            w.webContents.once("did-finish-load", sendDeepLink);
+          } else {
+            sendDeepLink();
           }
         }
       })
