@@ -531,21 +531,21 @@ jobs:
       - name: Install mitmproxy certificate
         shell: bash
         run: |
+
           MITMPROXY_FOLDER="~/.mitmproxy"
           CERT_FILEPATH="${MITMPROXY_FOLDER}/mitmproxy-ca-cert.pem"
-          # If no certificate exists, create one.
-          if [ ! -f "${CERT_FILEPATH}" ]; then
-            echo "Certificate doesnt exist, lets create it"
-            mkdir -p "${MITMPROXY_FOLDER}"
-            mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
-            MITMPROXY_PID=$!
-            sleep 5
-            kill -INT $MITMPROXY_PID 2>/dev/null || true
-            wait $MITMPROXY_PID 2>/dev/null || true 
 
-            echo "Check contents for certificates"
-            ls -la "${MITMPROXY_FOLDER}"
-          fi
+          echo "Generate certificate"
+
+          mkdir -p "${MITMPROXY_FOLDER}"
+          mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
+          MITMPROXY_PID=$!
+          sleep 5
+          kill $MITMPROXY_PID 2>/dev/null || true
+          wait $MITMPROXY_PID 2>/dev/null || true 
+
+          echo "Check contents for certificates"
+          ls -la "${MITMPROXY_FOLDER}"
 
           echo "Converting certificate"
           openssl x509 -in "${CERT_FILEPATH}" -inform PEM -out "${MITMPROXY_FOLDER}/mitmproxy-ca-cert.crt"
