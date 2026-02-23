@@ -117,7 +117,7 @@ export class JsonRpcClient {
     this.serverUrl = serverUrl;
   }
 
-  private async jsonRpcRequest<ResponseResult extends object>(
+  private async jsonRpcRequest<ResponseResult>(
     args: JsonRpcRequestArgs,
   ): Promise<ResponseResult | undefined> {
     const { data } = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
@@ -130,11 +130,16 @@ export class JsonRpcClient {
       },
     });
 
-    if (data.error || !data.result) {
-      log(LOG_TYPE, `error: Empty dataonse result from server - ${data?.error?.message}`);
-    } else {
-      return data.result;
+    if (data.error) {
+      const message = data.error.message ?? "unknown error";
+      log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
+      return undefined;
     }
+    if (data.result === undefined || data.result === null) {
+      log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
+      return undefined;
+    }
+    return data.result;
   }
 
   getBlock(blockHash: string) {
@@ -142,6 +147,25 @@ export class JsonRpcClient {
       method: "getblock",
       params: [blockHash, 1],
     });
+  }
+
+  getBlockByHeight(blockHeight: number) {
+    return this.jsonRpcRequest<Block>({
+      method: "getblock",
+      params: [blockHeight.toString()],
+    });
+  }
+
+  async getBlockCount(): Promise<number | undefined> {
+    const result = await this.jsonRpcRequest<number>({
+      method: "getblockcount",
+      params: [],
+    });
+    if (typeof result !== "number") {
+      log(LOG_TYPE, `error: Zcash RPC getblockcount returned unexpected type: ${typeof result}`);
+      return undefined;
+    }
+    return result;
   }
 
   getRawTransaction(txId: string) {
