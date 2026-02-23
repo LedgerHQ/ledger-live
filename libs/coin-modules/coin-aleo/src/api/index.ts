@@ -14,11 +14,13 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig, { type AleoConfig } from "../config";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
+import { estimateFees, getBalance, lastBlock, listOperations } from "../logic";
+import { getTransactionType } from "../logic/utils";
 
 export function createApi(config: AleoConfig, currencyId: string): Api {
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
+  coinConfig.setCoinConfig(() => aleoCoinConfig);
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
@@ -42,8 +44,9 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async (): Promise<FeeEstimation> => {
-      throw new Error("estimateFees is not supported");
+    estimateFees: async (intent): Promise<FeeEstimation> => {
+      const transactionType = getTransactionType(intent);
+      return estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
     },
     getBalance: (address: string): Promise<Balance[]> => {
       return getBalance(currency, address);

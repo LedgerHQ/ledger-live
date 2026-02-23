@@ -1,3 +1,4 @@
+import type { TRANSACTION_TYPE } from "../constants";
 import type {
   AleoJWT,
   AleoRecordScannerStatusResponse,
@@ -16,3 +17,5 @@ export interface ProvableApi {
   uuid?: string;
   scannerStatus?: AleoRecordScannerStatusResponse;
 }
+
+export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];

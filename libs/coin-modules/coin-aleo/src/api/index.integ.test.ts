@@ -2,10 +2,12 @@ import invariant from "invariant";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
+import { TRANSACTION_TYPE } from "../constants";
 
 describe("createApi", () => {
   const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
   const testAccountAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
+
   const api = createApi(
     {
       networkType: "testnet",
@@ -13,12 +15,34 @@ describe("createApi", () => {
         node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
+      feeByTransactionType: {
+        [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
+        [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2308,
+        [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 17972,
+        [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
+      },
+      feeSafetyMultiplier: 1,
     },
     "aleo",
   );
 
   beforeAll(() => {
     setupCalClientStore();
+  });
+
+  describe("estimateFees", () => {
+    it("returns fee for coin transfer transaction", async () => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        amount: 100n,
+        sender: testAccountAddress,
+        recipient: emptyAccountAddress,
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
   });
 
   describe("listOperations", () => {
