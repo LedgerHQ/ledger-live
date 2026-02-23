@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
+import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
@@ -242,7 +243,7 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
 
     await cryptoWaitReady();
     await wsProvider.connect();
-    api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
+    api = await ApiPromise.create({ provider: wsProvider as ProviderInterface, noInitWarn: true });
 
     const keyring = new Keyring({ type: "sr25519" });
     keyring.setSS58Format(0);
