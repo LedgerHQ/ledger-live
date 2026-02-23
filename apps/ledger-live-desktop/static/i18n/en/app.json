@@ -209,7 +209,11 @@
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
-      "UPDATE_ACCOUNT": "Updated account"
+      "UPDATE_ACCOUNT": "Updated account",
+      "SHIELDED_TX_SAPLING_IN": "Received",
+      "SHIELDED_TX_SAPLING_OUT": "Sent",
+      "SHIELDED_TX_ORCHARD_IN": "Received",
+      "SHIELDED_TX_ORCHARD_OUT": "Sent"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -8050,6 +8054,12 @@
           }
         }
       }
+    },
+    "operationDetails": {
+      "txType": "Transaction type",
+      "transparentTx": "Transparent",
+      "shieldedSaplingTx": "🛡 Private (Sapling)",
+      "shieldedOrchardTx": "🛡 Private (Orchard)"
     }
   },
   "aleo": {
