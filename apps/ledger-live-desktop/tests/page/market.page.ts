@@ -62,7 +62,9 @@ export class MarketPage extends AppPage {
   @step("Open buy page for $0 with account selection")
   async openBuyPageWithAccountSelection(ticker: string, accountName: string) {
     await this.buyButton(ticker).click();
-    const accountRow = this.page.getByTestId(`account-row-${accountName}`);
+    const accountRow = this.page
+      .getByRole("button", { name: new RegExp(accountName, "i") })
+      .first();
     await accountRow.waitFor({ state: "visible", timeout: 60_000 });
     await accountRow.click();
     await this.page.waitForURL(/.*\/exchange.*/);
