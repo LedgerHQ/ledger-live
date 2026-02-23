@@ -1,0 +1,8 @@
+{
+  "targets": {
+    "typecheck": {
+      "dependsOn": ["build"],
+      "inputs": ["default", {"env": "CI_OS"}]
+    }
+  }
+}

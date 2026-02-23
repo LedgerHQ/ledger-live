@@ -1,0 +1,19 @@
+{
+  "targets": {
+    "build": {
+      "cache": false
+    },
+    "build:testing": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "lint": {
+      "outputs": ["{projectRoot}/lint.json", "{projectRoot}/lint-desktop.json", "{projectRoot}/lint-desktop-external.json"],
+      "inputs": ["default", {"env": "CI_OS"}]
+    },
+    "test": {
+      "dependsOn": ["build:testing"],
+      "inputs": ["default", {"env": "CI_OS"}]
+    }
+  }
+}

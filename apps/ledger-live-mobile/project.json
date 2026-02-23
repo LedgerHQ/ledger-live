@@ -1,0 +1,23 @@
+{
+  "targets": {
+    "lint": {
+      "outputs": ["{projectRoot}/lint.json"],
+      "inputs": ["default", {"env": "CI_OS"}]
+    },
+    "e2e:ci": {
+      "outputs": ["{projectRoot}/artifacts/**"]
+    },
+    "android:apk": {
+      "outputs": [
+        "{projectRoot}/android/app/build/generated/**",
+        "{projectRoot}/android/app/build/intermediates/**"
+      ]
+    },
+    "ios:ci:adhoc": {
+      "outputs": ["{projectRoot}/ios/build/**"]
+    },
+    "ios:local:ipa": {
+      "outputs": ["{projectRoot}/ios/build/**"]
+    }
+  }
+}
