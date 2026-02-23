@@ -37,7 +37,6 @@ import {
   useBleDevicesScanning,
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
-import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
@@ -122,9 +121,6 @@ export default function SelectDevice({
 }: Props) {
   const { t } = useTranslation();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
-  const [USBDevice, setUSBDevice] = useState<
-    (Device & { discoveredDevice: DiscoveredDevice }) | undefined
-  >();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
@@ -156,6 +152,8 @@ export default function SelectDevice({
   const mockHidState = useMockHidDevicesDiscovery(isMockMode);
   const realHidState = useHidDevicesDiscovery(!isMockMode);
   const { hidDevices } = isMockMode ? mockHidState : realHidState;
+
+  const USBDevice = hidDevices.length > 0 ? hidDevices[0] : undefined;
 
   const scanningEnabled =
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
@@ -302,21 +300,6 @@ export default function SelectDevice({
     availableDeviceMatchingSelectedBleDevice,
     showSelectedBleDeviceNotAvailableDrawer,
   ]);
-
-  useEffect(() => {
-    if (hidDevices.length > 0) {
-      const device = hidDevices[0];
-      setUSBDevice({
-        deviceId: device.deviceId,
-        deviceName: device.deviceName,
-        modelId: device.modelId,
-        wired: device.wired,
-        discoveredDevice: device.discoveredDevice,
-      });
-    } else {
-      setUSBDevice(undefined);
-    }
-  }, [hidDevices]);
 
   /**
    * Discover proxy devices (NB: currently needed for Speculos testing)
