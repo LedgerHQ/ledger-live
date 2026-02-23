@@ -72,17 +72,18 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const assetsToDisplay = useMemo(
+  const filteredAssets = useMemo(
     () =>
-      distribution.list
-        .filter(asset => {
-          return (
-            asset.currency.type !== "TokenCurrency" ||
-            !blacklistedTokenIdsSet.has(asset.currency.id)
-          );
-        })
-        .slice(0, maxItemsToDisplay),
+      distribution.list.filter(
+        ({ currency }) =>
+          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
+      ),
     [distribution, blacklistedTokenIdsSet],
+  );
+
+  const assetsToDisplay = useMemo(
+    () => filteredAssets.slice(0, maxItemsToDisplay),
+    [filteredAssets],
   );
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
@@ -161,7 +162,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           onPressButton={onPressButton}
           initialTab={initialSelectedTab}
           showAssets={showAssets}
-          assetsLength={assetsToDisplay.length}
+          assetsLength={filteredAssets.length}
           accountsLength={allAccounts.length}
           maxItemsToDisplay={maxItemsToDisplay}
         />
