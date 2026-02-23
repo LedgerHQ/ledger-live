@@ -42,7 +42,9 @@ export interface NavigationBarHeights {
  * };
  * ```
  *
- * @returns `{ top: number, bottom: number }` - Top is safe area + 80px (iOS) or 68px (Android), bottom is 56px or 0
+ * @returns `{ top: number, bottom: number, topBarHeight: number, bottomBarHeight: number }` - Top is safe area + 80px (iOS) or 68px (Android), bottom is 56px or 0
+ * @returns `topBarHeight` - The height of the top bar excluding blur
+ * @returns `bottomBarHeight` - The height of the bottom bar
  */
 export function useNavigationBarHeights(): NavigationBarHeights {
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
