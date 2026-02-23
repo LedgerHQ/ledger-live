@@ -191,7 +191,12 @@ const AssetSelection = ({
       )}
       {useLumenBottomSheet ? (
         <>
-          <BottomSheetHeader spacing title={t("modularDrawer.selectAsset")} appearance="expanded" />
+          <BottomSheetHeader
+            spacing
+            title={t("modularDrawer.selectAsset")}
+            testID="modular-drawer-Asset-title"
+            appearance="expanded"
+          />
           <SearchInputContainer
             source={source}
             flow={flow}
