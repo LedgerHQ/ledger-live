@@ -122,7 +122,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
         }
         await app.swap.verifySwapAmountErrorMessageIsCorrect(electronApp, swap.errorMessage);
         if (swap.ctaBanner) {
-          await app.swap.checkCtaBanner(electronApp);
+          await app.swap.checkInsufficientFundsBannerVisible(electronApp);
         }
       },
     );

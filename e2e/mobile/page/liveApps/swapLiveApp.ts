@@ -337,4 +337,10 @@ export default class SwapLiveAppPage {
       await tapByElement(summaryContinueButton);
     }
   }
+
+  @Step("Verify live app title contains $0")
+  async verifyLiveAppTitle(expectedText: string) {
+    const liveAppTitle = await getTextOfElement("live-app-title");
+    jestExpect(liveAppTitle.toLowerCase()).toContain(expectedText.toLowerCase());
+  }
 }

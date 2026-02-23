@@ -1,8 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { normalizeText } from "../../helpers/commonHelpers";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
@@ -22,8 +21,11 @@ export default class SwapPage {
     baseToAmount: "swap-history-toAmount-",
   };
   historyButton = "navigation-header-swap-history";
+  topBarSwapHistoryButton = "topbar-swap-history";
   swapStatus = "swap-status";
   exportOperationsButton = "export-swap-operations-link";
+  swapHistoryFeedbackLink = "swap-history-feedback-link";
+  swapFormTabId = "swap-form-tab";
 
   operationDetails = {
     fromAccount: "swap-operation-details-fromAccount",
@@ -37,7 +39,7 @@ export default class SwapPage {
     viewInExplorerButton: "operation-detail-view-in-explorer-button",
   };
 
-  swapFormTab = () => getElementById("swap-form-tab");
+  swapFormTab = () => getElementById(this.swapFormTabId);
   operationRows = () => getElementById(this.operationRow.rowRegexp);
   getSpecificOperation = (swapId: string) =>
     getElementById(`${this.operationRow.rowBaseId}${swapId}`);
@@ -57,13 +59,21 @@ export default class SwapPage {
 
   @Step("Expect swap page")
   async expectSwapPage() {
-    const tab = this.swapFormTab();
-    await detoxExpect(tab).toBeVisible();
+    if (await IsIdVisible(this.swapFormTabId, 5000)) {
+      await detoxExpect(this.swapFormTab()).toBeVisible();
+    } else {
+      // Wallet 4.0 swap screen does not expose `swap-form-tab`; rely on shared webview readiness.
+      await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
+    }
   }
 
   @Step("Go to swap history")
   async goToSwapHistory() {
-    await tapById(this.historyButton);
+    if (await IsIdVisible(this.topBarSwapHistoryButton, 5000)) {
+      await tapById(this.topBarSwapHistoryButton);
+    } else {
+      await tapById(this.historyButton);
+    }
   }
 
   @Step("Check swap operation row details")
@@ -127,6 +137,19 @@ export default class SwapPage {
     const filePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileExists = await FileUtils.waitForFileToExist(filePath, 5000);
     jestExpect(fileExists).toBeTruthy();
+  }
+
+  @Step("Check swap history feedback form URL")
+  async checkSwapHistoryFeedbackFormUrl(expectedUrl: string) {
+    await scrollToId(this.swapHistoryFeedbackLink);
+    await detoxExpect(getElementById(this.swapHistoryFeedbackLink)).toBeVisible();
+    const { value, label } = await getAttributesOfElement(this.swapHistoryFeedbackLink);
+    // iOS: accessibilityValue: value; Android: accessibilityLabel: label
+    if (isIos()) {
+      jestExpect(value).toContain(expectedUrl);
+    } else {
+      jestExpect(label).toContain(expectedUrl);
+    }
   }
 
   @Step("Check contents of exported operations file")

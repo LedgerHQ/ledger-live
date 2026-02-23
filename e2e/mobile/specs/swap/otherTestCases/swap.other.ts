@@ -324,6 +324,26 @@ export function runExportSwapHistoryOperationsTest(
   });
 }
 
+export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
+  const swapHistoryFeedbackFormUrl =
+    "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile";
+  describe("Swap history", () => {
+    beforeAll(async () => {
+      await beforeAllFunctionSwap({
+        userdata: "swap-history",
+        speculosApp: AppInfos.EXCHANGE,
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it("Check feedback form URL from swap history", async () => {
+      await app.swap.goToSwapHistory();
+      await app.swap.checkSwapHistoryFeedbackFormUrl(swapHistoryFeedbackFormUrl);
+    });
+  });
+}
+
 export function runSwapWithSendMaxTest(
   fromAccount: Account,
   toAccount: Account,
