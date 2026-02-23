@@ -15,7 +15,7 @@ import type {
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
 import aleoCoinConfig, { type AleoCoinConfig } from "../config";
-import type { Transaction as AleoTransaction } from "../types/index";
+import type { AleoAccount, Transaction as AleoTransaction } from "../types/index";
 import type { AleoSigner } from "../types/signer";
 import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";
@@ -42,7 +42,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
 
 export function buildAccountBridge(
   signerContext: SignerContext<AleoSigner>,
-): AccountBridge<AleoTransaction> {
+): AccountBridge<AleoTransaction, AleoAccount> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
@@ -71,7 +71,7 @@ export function buildAccountBridge(
 export function createBridges(
   signerContext: SignerContext<AleoSigner>,
   coinConfig: CoinConfig<AleoCoinConfig>,
-): Bridge<AleoTransaction> {
+): Bridge<AleoTransaction, AleoAccount> {
   aleoCoinConfig.setCoinConfig(coinConfig);
 
   return {

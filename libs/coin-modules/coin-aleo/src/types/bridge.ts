@@ -9,7 +9,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { AleoTransactionType } from "./api";
-import type { ProvableApi, TransactionType } from "./logic";
+import type { ProvableApi, AleoUnspentRecord, TransactionType } from "./logic";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
@@ -30,11 +30,17 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export interface AleoResources {
   transparentBalance: BigNumber;
   provableApi: ProvableApi | null;
+  privateBalance: BigNumber | null;
+  unspentPrivateRecords: AleoUnspentRecord[] | null;
+  lastPrivateSyncDate: Date | null;
 }
 
 export interface AleoResourcesRaw {
   transparentBalance: string;
   provableApi: string | null;
+  privateBalance: string | null;
+  unspentPrivateRecords: string | null;
+  lastPrivateSyncDate: string | null;
 }
 
 export type AleoAccount = Account & {

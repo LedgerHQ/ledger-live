@@ -112,4 +112,49 @@ describe("sdkClient", () => {
       ).rejects.toThrow("Network error");
     });
   });
+
+  describe("decryptRecord", () => {
+    const mockCiphertext = "record1mock_ciphertext_data";
+    const mockViewKey = "AViewKey1mock_view_key_data";
+    const mockDecryptedData = {
+      owner: "aleo1...",
+      data: { microcredits: "1000" },
+      nonce: "",
+      version: 1,
+    };
+
+    it("should successfully decrypt a record", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData });
+
+      const result = await sdkClient.decryptRecord({
+        currency: mockCurrency,
+        ciphertext: mockCiphertext,
+        viewKey: mockViewKey,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/decrypt`,
+        data: {
+          ciphertext: mockCiphertext,
+          view_key: mockViewKey,
+        },
+      });
+      expect(result).toEqual(mockDecryptedData);
+    });
+
+    it("should handle network errors", async () => {
+      const mockError = new Error("Network error");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        sdkClient.decryptRecord({
+          currency: mockCurrency,
+          ciphertext: mockCiphertext,
+          viewKey: mockViewKey,
+        }),
+      ).rejects.toThrow("Network error");
+    });
+  });
 });

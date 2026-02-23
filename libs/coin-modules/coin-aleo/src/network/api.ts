@@ -11,6 +11,7 @@ import type {
   AleoRegisterAccountResponse,
   AleoRegisterForRecordsResponse,
   AleoGetPublicKeyResponse,
+  AleoPrivateRecord,
 } from "../types/api";
 import { getNetworkConfig } from "../logic/utils";
 import { PROGRAM_ID } from "../constants";
@@ -157,7 +158,10 @@ async function registerForScanningAccountRecordsEncrypted({
     headers: {
       Authorization: jwt,
     },
-    data: { key_id: keyId, ciphertext: encryptedData },
+    data: {
+      key_id: keyId,
+      ciphertext: encryptedData,
+    },
   });
 
   return res.data;
@@ -183,6 +187,40 @@ export const getRecordScannerStatus = async (
   return res.data;
 };
 
+async function getAccountOwnedRecords({
+  currency,
+  jwtToken,
+  apiKey,
+  uuid,
+  unspent,
+  start,
+}: {
+  currency: CryptoCurrency;
+  jwtToken: string;
+  apiKey: string;
+  uuid: string;
+  unspent?: boolean;
+  start?: number;
+}): Promise<AleoPrivateRecord[]> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<AleoPrivateRecord[]>({
+    method: "POST",
+    url: `${nodeUrl}/scanner/${networkType}/records/owned`,
+    headers: {
+      Authorization: jwtToken,
+      "X-Provable-API-Key": apiKey,
+    },
+    data: {
+      ...(unspent !== undefined && { unspent }),
+      ...(start !== undefined && { filter: { start } }),
+      uuid,
+    },
+  });
+
+  return res.data;
+}
+
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
@@ -192,5 +230,6 @@ export const apiClient = {
   registerNewAccount,
   getRecordScannerStatus,
   getPublicKey,
+  getAccountOwnedRecords,
   registerForScanningAccountRecordsEncrypted,
 };

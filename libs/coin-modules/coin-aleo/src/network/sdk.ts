@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNetworkConfig } from "../logic/utils";
-import type { AleoEncryptedRegistrationResponse } from "../types/sdk";
+import type { AleoDecryptedRecordResponse, AleoEncryptedRegistrationResponse } from "../types/sdk";
 
 async function encryptRegistrationPayload({
   currency,
@@ -29,6 +29,30 @@ async function encryptRegistrationPayload({
   return res.data;
 }
 
+async function decryptRecord({
+  currency,
+  ciphertext,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  ciphertext: string;
+  viewKey: string;
+}): Promise<AleoDecryptedRecordResponse> {
+  const { sdkUrl } = getNetworkConfig(currency);
+
+  const res = await network<AleoDecryptedRecordResponse>({
+    method: "POST",
+    url: `${sdkUrl}/decrypt`,
+    data: {
+      ciphertext,
+      view_key: viewKey,
+    },
+  });
+
+  return res.data;
+}
+
 export const sdkClient = {
   encryptRegistrationPayload,
+  decryptRecord,
 };

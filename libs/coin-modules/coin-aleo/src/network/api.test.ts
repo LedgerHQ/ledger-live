@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
+import { testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
   getMockedTransactionDetails,
@@ -682,6 +683,196 @@ describe("apiClient", () => {
       await expect(
         apiClient.getRecordScannerStatus(mockCurrency, mockAccessToken, mockUuid),
       ).rejects.toThrow("Status fetch failed");
+    });
+  });
+
+  describe("getAccountOwnedRecords", () => {
+    const mockJwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.test";
+    const mockApiKey = "test-api-key-123";
+    const mockUuid = "scan-uuid-abc-789";
+
+    it("should fetch owned records successfully", async () => {
+      const mockResponse = [testnetPrivateRecord];
+      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+
+      const result = await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+      });
+
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: "https://api.aleo.network/scanner/mainnet/records/owned",
+        headers: {
+          Authorization: mockJwtToken,
+          "X-Provable-API-Key": mockApiKey,
+        },
+        data: { uuid: mockUuid },
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should include `unspent: true` in the request body when unspent is true", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+        unspent: true,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { unspent: true, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should include `unspent: false` in the request body when unspent is false", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+        unspent: false,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { unspent: false, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should omit `unspent` from the request body when not provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+      });
+
+      const callData = jest.mocked(network).mock.calls[0][0].data as Record<string, unknown>;
+      expect(callData).not.toHaveProperty("unspent");
+    });
+
+    it("should include `filter.start` in the request body when start is provided", async () => {
+      const mockStart = 14192648;
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+        start: mockStart,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { start: mockStart }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should omit `filter` from the request body when start is not provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+      });
+
+      const callData = jest.mocked(network).mock.calls[0][0].data as Record<string, unknown>;
+      expect(callData).not.toHaveProperty("filter");
+    });
+
+    it("should include both `unspent` and `filter.start` when both are provided", async () => {
+      const mockStart = 14192648;
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+        unspent: true,
+        start: mockStart,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { unspent: true, filter: { start: mockStart }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should return an empty array when no records are found", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [] });
+
+      const result = await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+      });
+
+      expect(result).toEqual([]);
+    });
+
+    it("should throw an error when network request fails", async () => {
+      const mockError = new Error("Unauthorized");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        apiClient.getAccountOwnedRecords({
+          currency: mockCurrency,
+          jwtToken: mockJwtToken,
+          apiKey: mockApiKey,
+          uuid: mockUuid,
+        }),
+      ).rejects.toThrow("Unauthorized");
+    });
+
+    it("should use the correct network type in the URL for testnet", async () => {
+      const testnetConfig = {
+        nodeUrl: "https://api.testnet.aleo.network",
+        networkType: "testnet",
+      };
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: [] });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        jwtToken: mockJwtToken,
+        apiKey: mockApiKey,
+        uuid: mockUuid,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "POST",
+          url: "https://api.testnet.aleo.network/scanner/testnet/records/owned",
+        }),
+      );
     });
   });
 });

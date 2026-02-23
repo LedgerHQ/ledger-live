@@ -18,6 +18,7 @@ import type {
   EnrichedTransaction,
   Transaction,
   TransactionType,
+  ProvableApi,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -216,3 +217,9 @@ export function calculateAmount({
     totalSpent,
   };
 }
+
+export const isProvableApiConfigured = (
+  provableApi: ProvableApi | null,
+): provableApi is Required<ProvableApi> => {
+  return !!provableApi?.uuid && !!provableApi?.apiKey && !!provableApi?.jwt?.token;
+};

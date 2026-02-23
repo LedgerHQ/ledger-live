@@ -23,6 +23,9 @@ describe("AccountBalanceSummaryFooter", () => {
     aleoResources: {
       transparentBalance: mockTransparentBalance,
       provableApi: null,
+      privateBalance: null,
+      unspentPrivateRecords: [],
+      lastPrivateSyncDate: new Date(),
     },
   };
 
