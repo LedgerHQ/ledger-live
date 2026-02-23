@@ -391,6 +391,70 @@ test.describe("e2e delegation - Celo", () => {
   );
 });
 
+test.describe("e2e delegation - Mina", () => {
+  const account = new Delegate(Account.MINA_1, "N/A", "Minascan Pool | Staketab");
+  setupEnv(true);
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.account.currency.id,
+          index: account.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  const family = getFamilyByCurrencyId(account.account.currency.id);
+
+  test(
+    "Mina Delegation",
+    {
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${account.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-MINA-001",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.account.startStakingFlowFromMainStakeButton();
+
+      // Mina staking: user selects a validator (no amount step)
+      await app.delegate.openSearchProviderModal();
+      await app.delegate.inputProvider(account.provider);
+      await app.delegate.selectProviderByName(account.provider);
+      await app.delegate.continue();
+
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Delegated");
+      await app.delegateDrawer.providerIsVisible(account);
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
+
 for (const validator of validators) {
   test.describe("Select a validator", () => {
     test.use({

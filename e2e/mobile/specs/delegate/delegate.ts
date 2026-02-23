@@ -58,7 +58,9 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
-      if (delegation.account.currency.name !== Currency.ADA.name) {
+      if (delegation.account.currency.name === Currency.MINA.name) {
+        await app.stake.selectValidator(currencyId, delegation.provider);
+      } else if (delegation.account.currency.name !== Currency.ADA.name) {
         await app.stake.setAmount(currencyId, delegation.amount);
         await app.stake.validateAmount(currencyId);
       } else {
