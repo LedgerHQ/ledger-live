@@ -18,6 +18,7 @@ export async function verifyAppValidationStakeInfo(
     Currency.XTZ,
     Currency.INJ,
     Currency.OSMO,
+    Currency.MINA,
   ];
 
   const currency = delegation.account.currency;
@@ -60,6 +61,7 @@ export async function verifyStakeOperationDetailsInfo(
     Currency.OSMO,
     Currency.ADA,
     Currency.MULTIVERS_X,
+    Currency.MINA,
   ];
   const currenciesForStakeType = [Currency.NEAR];
   const currenciesForLockType = [Currency.CELO];
