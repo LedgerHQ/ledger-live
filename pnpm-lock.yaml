@@ -462,6 +462,9 @@ importers:
       '@commitlint/cli':
         specifier: 17.8.1
         version: 17.8.1
+      '@commitlint/config-conventional':
+        specifier: 17.8.1
+        version: 17.8.1
       '@commitlint/prompt-cli':
         specifier: 17.8.1
         version: 17.8.1
@@ -504,9 +507,6 @@ importers:
       chalk:
         specifier: 4.1.2
         version: 4.1.2
-      commitlint-config-gitmoji:
-        specifier: 2.3.1
-        version: 2.3.1
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -12971,6 +12971,10 @@ packages:
     engines: {node: '>=v14'}
     hasBin: true
 
+  '@commitlint/config-conventional@17.8.1':
+    resolution: {integrity: sha512-NxCOHx1kgneig3VLauWJcDWS40DVjg7nKOpBEEK9E5fjJpQqLCilcnKkIIjdBH98kEO1q3NpE5NSrZ2kl/QGJg==}
+    engines: {node: '>=v14'}
+
   '@commitlint/config-validator@17.8.1':
     resolution: {integrity: sha512-UUgUC+sNiiMwkyiuIFR7JG2cfd9t/7MV8VB4TZ+q02ZFkHoduUS4tJGsCBWvBOGD9Btev6IecPMvlWUfJorkEA==}
     engines: {node: '>=v14'}
@@ -14522,15 +14526,6 @@ packages:
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
-
-  '@gitmoji/commit-types@1.1.5':
-    resolution: {integrity: sha512-8D3FZMRY+gtYpTcHG1SOGmm9CFqxNh6rI9xDoCydxHxnWgqInbdF3nk9gibW5gXA58Hf2cVcJaLEcGOKLRAtmw==}
-
-  '@gitmoji/gitmoji-regex@1.0.0':
-    resolution: {integrity: sha512-+BFXxcWCxn0UIYuG1v5n9SfaCCS8tw95j1x3QsTJRdGGiihRyVLTHiu1wrHlzH3z4nYXKjCKiZFTdWwMjRI+gQ==}
-
-  '@gitmoji/parser-opts@1.4.0':
-    resolution: {integrity: sha512-zzmx/vtpdB/ijjUm7u9OzHNCXWKpSbzVEgVzOzhilMgoTBlUDyInZFUtiCTV+Wf4oCP9nxGa/kQGQFfN+XLH1g==}
 
   '@google-cloud/common@5.0.2':
     resolution: {integrity: sha512-V7bmBKYQyu0eVG2BFejuUjlBt+zrya6vtsKdY+JxMM/dNntPF41vZ9+LhOshEUH01zOHEqBSvI7Dad7ZS6aUeA==}
@@ -18733,7 +18728,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -22446,12 +22441,6 @@ packages:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
 
-  commitlint-config-gitmoji@2.3.1:
-    resolution: {integrity: sha512-T15ssbsyNc6szHlnGWo0/xvIA1mObqM70E9TwKNVTpksxhm+OdFht8hvDdKJAVi4nlZX5tcfTeILOi7SHBGH3w==}
-
-  commitlint-plugin-gitmoji@2.2.6:
-    resolution: {integrity: sha512-oKHPHeNXby0Ix0ZbHVSK5ZyPx1V4fyBjLOy93cYwXhOEPXe36nkDc/HDPFfQpzx1vz39277TaP9LScbqTbscfQ==}
-
   common-log-format@1.0.0:
     resolution: {integrity: sha512-fFn/WPNbsTCGTTwdCpZfVZSa5mgqMEkA0gMTRApFSlEsYN+9B2FPfiqch5FT+jsv5IV1RHV3GeZvCa7Qg+jssw==}
     engines: {node: '>=8'}
@@ -22724,6 +22713,10 @@ packages:
 
   conventional-changelog-angular@6.0.0:
     resolution: {integrity: sha512-6qLgrBF4gueoC7AFVHu51nHL9pF9FRjXrH+ceVf7WmAfH3gs+gEYOkvxhjMPjZu57I4AGUGoNTY8V7Hrgf1uqg==}
+    engines: {node: '>=14'}
+
+  conventional-changelog-conventionalcommits@6.1.0:
+    resolution: {integrity: sha512-3cS3GEtR78zTfMzk0AizXKKIdN4OvSh7ibNz6/DPbhWWQu7LqE/8+/GqSodV+sywUR2gpJAdP/1JFf4XtN7Zpw==}
     engines: {node: '>=14'}
 
   conventional-commits-parser@4.0.0:
@@ -25351,9 +25344,6 @@ packages:
 
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
-
-  gitmojis@3.15.0:
-    resolution: {integrity: sha512-28sothO0+6UuXx0fnJXi4kqy2/dKeFN3xL2Ss5k5K5ECBJMi5T2kZLY92xys3/+YD+AgKHgeiw7YQpYKnkCLMg==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -38418,6 +38408,10 @@ snapshots:
       - '@swc/wasm'
       - source-map-support
 
+  '@commitlint/config-conventional@17.8.1':
+    dependencies:
+      conventional-changelog-conventionalcommits: 6.1.0
+
   '@commitlint/config-validator@17.8.1':
     dependencies:
       '@commitlint/types': 17.8.1
@@ -40911,17 +40905,6 @@ snapshots:
       tslib: 2.6.2
 
   '@gar/promisify@1.1.3': {}
-
-  '@gitmoji/commit-types@1.1.5': {}
-
-  '@gitmoji/gitmoji-regex@1.0.0':
-    dependencies:
-      emoji-regex: 10.4.0
-      gitmojis: 3.15.0
-
-  '@gitmoji/parser-opts@1.4.0':
-    dependencies:
-      '@gitmoji/gitmoji-regex': 1.0.0
 
   '@google-cloud/common@5.0.2':
     dependencies:
@@ -53300,19 +53283,6 @@ snapshots:
 
   commander@9.5.0: {}
 
-  commitlint-config-gitmoji@2.3.1:
-    dependencies:
-      '@commitlint/types': 17.8.1
-      '@gitmoji/commit-types': 1.1.5
-      '@gitmoji/parser-opts': 1.4.0
-      commitlint-plugin-gitmoji: 2.2.6
-
-  commitlint-plugin-gitmoji@2.2.6:
-    dependencies:
-      '@commitlint/types': 17.8.1
-      '@gitmoji/gitmoji-regex': 1.0.0
-      gitmojis: 3.15.0
-
   common-log-format@1.0.0: {}
 
   common-path-prefix@3.0.0: {}
@@ -53464,6 +53434,10 @@ snapshots:
   content-type@1.0.5: {}
 
   conventional-changelog-angular@6.0.0:
+    dependencies:
+      compare-func: 2.0.0
+
+  conventional-changelog-conventionalcommits@6.1.0:
     dependencies:
       compare-func: 2.0.0
 
@@ -56936,8 +56910,6 @@ snapshots:
   github-slugger@1.4.0: {}
 
   github-slugger@2.0.0: {}
-
-  gitmojis@3.15.0: {}
 
   glob-parent@5.1.2:
     dependencies:
