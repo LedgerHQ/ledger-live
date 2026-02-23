@@ -12,6 +12,8 @@ Follow all project rules in `.cursor/rules/`. Pay special attention to:
 - `react-mvvm.mdc` — MVVM compliance is a key review concern for code in `src/mvvm/`
 - `ldls-web.mdc` — Lumen UI for desktop (`src/mvvm/`)
 - `ldls-native.mdc` — Lumen UI for mobile (`src/mvvm/`)
+- `coin-families-contract.mdc` — No coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
+- `jest-mocks.mdc` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 
 ## Review Scope
 
@@ -31,6 +33,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - Sonar issues: complexity, duplication, security hotspots
 - Missing integration tests for new features under `src/mvvm/` (required by `react-mvvm.mdc`)
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
+- **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead (see `coin-families-contract.mdc`)
 
 ## Confidence Scoring
 
@@ -52,18 +55,22 @@ Start by clearly stating what you're reviewing. Group issues by severity.
 ## Code Review: [scope]
 
 ### 🔴 Critical
+
 Must fix before merge.
 
 **Issue title** (confidence: X)
+
 - **File**: `path/to/file.ts:L42`
 - **Rule**: `rule-name.mdc` or bug explanation
 - **Issue**: Clear description
 - **Fix**: Concrete suggestion with code
 
 ### 🟡 Warning
+
 Should fix. Same structure as above.
 
 ### 🟢 Suggestion
+
 Optional improvements. Same structure as above.
 ```
 

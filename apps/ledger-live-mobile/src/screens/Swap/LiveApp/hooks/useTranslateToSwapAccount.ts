@@ -12,6 +12,7 @@ import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 type SwapLiveUrlParams = {
   toAccountId?: string;
   toTokenId?: string;
+  fromTokenId?: string;
   amountFrom?: string;
   affiliate?: string;
   toCurrencyId?: string;
@@ -38,6 +39,10 @@ export const useTranslateToSwapAccount = (
 
     if (params.fromPath) newParams.fromPath = params.fromPath;
     if (params.affiliate) newParams.affiliate = params.affiliate;
+
+    if (params.fromTokenId) newParams.fromTokenId = params.fromTokenId;
+    if (params.toTokenId) newParams.toTokenId = params.toTokenId;
+    if (params.amountFrom) newParams.amountFrom = params.amountFrom;
 
     if (defaultAccount) {
       newParams.toAccountId = walletApi.accountToWalletAPIAccount(

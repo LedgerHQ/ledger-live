@@ -6,6 +6,7 @@ import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { mkdir, readFile, rename } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
@@ -146,17 +147,36 @@ export class SwapPage extends AppPage {
   }
 
   @step("Select available provider without KYC")
-  async selectExchangeWithoutKyc(electronApp: ElectronApplication) {
+  async selectExchangeWithoutKyc(electronApp: ElectronApplication, swap?: Swap) {
     const [, webview] = electronApp.windows();
 
     const providersList = await this.getProviderList(electronApp);
 
+    // Check if the swap is ETH <-> SOL pair (exclude LiFi for these pairs)
+    const isEthSolPair =
+      swap &&
+      ((swap.accountToDebit.currency.id === Currency.ETH.id &&
+        swap.accountToCredit.currency.id === Currency.SOL.id) ||
+        (swap.accountToDebit.currency.id === Currency.SOL.id &&
+          swap.accountToCredit.currency.id === Currency.ETH.id));
+
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
-        return provider && !provider.kyc && provider.availableOnLns;
+      if (!provider || provider.kyc) {
+        return false;
       }
-      return provider && !provider.kyc;
+
+      // Exclude LiFi for ETH <-> SOL pairs on all devices
+      if (isEthSolPair && provider.name === Provider.LIFI.name) {
+        return false;
+      }
+
+      // Additional filter for LNS devices
+      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
+        return provider.availableOnLns;
+      }
+
+      return true;
     });
 
     for (const providerName of providersWithoutKYC) {

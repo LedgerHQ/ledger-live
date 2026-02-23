@@ -47,7 +47,12 @@ export function useSendFlowTransaction({
       if (recipient.memo !== undefined) {
         Object.assign(
           updates,
-          applyMemoToTransaction(transaction.family, recipient.memo, transaction),
+          applyMemoToTransaction(
+            transaction.family,
+            recipient.memo.value,
+            recipient.memo.type,
+            transaction,
+          ),
         );
       }
 

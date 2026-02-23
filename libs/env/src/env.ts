@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  JS_THREAD_MONITOR: {
+    def: false,
+    parser: boolParser,
+    desc: "Show JS thread stall monitor overlay",
+  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
@@ -903,15 +908,20 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  WALLETCONNECT_PROJECT_ID: {
+    def: "053f3301d5f72cf59dbab8ebeab71f23",
+    parser: stringParser,
+    desc: "WalletConnect Project ID",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
     desc: "true when launched for E2E testing",
   },
-  MARKET_API_URL: {
+  COINGECKO_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
-    desc: "Market data api",
+    desc: "Coingecko API",
   },
   USE_LEARN_STAGING_URL: {
     def: false,

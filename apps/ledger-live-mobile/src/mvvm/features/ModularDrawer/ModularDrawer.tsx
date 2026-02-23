@@ -3,7 +3,9 @@ import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
@@ -48,8 +50,6 @@ export type ModularDrawerProps = {
 /**
  * ModularDrawer is a generic drawer component for asset/network selection flows.
  * Handles navigation steps, asset/network selection, and drawer state.
- *
- * @param {ModularDrawerProps} props - The props for the ModularDrawer component.
  */
 export function ModularDrawer({
   isOpen,
@@ -61,6 +61,8 @@ export function ModularDrawer({
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
+  const { isEnabled } = useWalletFeaturesConfig("mobile");
+
   const {
     assetsConfiguration: assetsConfigurationSanitized,
     networkConfiguration: networkConfigurationSanitized,
@@ -99,6 +101,46 @@ export function ModularDrawer({
     onAccountSelected,
   });
 
+  const flowManagerProps = {
+    assetsViewModel: {
+      availableAssets: sortedCryptoCurrencies,
+      onAssetSelected: handleAsset,
+      assetsConfiguration: assetsConfigurationSanitized,
+      isOpen,
+      isLoading,
+      hasError: isError,
+      refetch,
+      loadNext,
+      assetsSorted,
+    },
+    networksViewModel: {
+      onNetworkSelected: handleNetwork,
+      availableNetworks,
+      networksConfiguration: networkConfigurationSanitized,
+    },
+    accountsViewModel: {
+      onAddNewAccount,
+      asset: accountCurrency,
+      onAccountSelected,
+    },
+  };
+
+  if (isEnabled) {
+    return (
+      <QueuedDrawerBottomSheet
+        isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
+        onClose={handleCloseButton}
+        enableBlurKeyboardOnGesture={true}
+        snapPoints={SNAP_POINTS}
+        hasBackButton={shouldShowBackButton}
+        onBack={handleBackButton}
+        enablePanDownToClose
+      >
+        <ModularDrawerFlowManager {...flowManagerProps} />
+      </QueuedDrawerBottomSheet>
+    );
+  }
+
   return (
     <QueuedDrawerGorhom
       isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
@@ -110,29 +152,7 @@ export function ModularDrawer({
       enablePanDownToClose
       keyboardBehavior="extend"
     >
-      <ModularDrawerFlowManager
-        assetsViewModel={{
-          availableAssets: sortedCryptoCurrencies,
-          onAssetSelected: handleAsset,
-          assetsConfiguration: assetsConfigurationSanitized,
-          isOpen,
-          isLoading,
-          hasError: isError,
-          refetch,
-          loadNext,
-          assetsSorted,
-        }}
-        networksViewModel={{
-          onNetworkSelected: handleNetwork,
-          availableNetworks,
-          networksConfiguration: networkConfigurationSanitized,
-        }}
-        accountsViewModel={{
-          onAddNewAccount,
-          asset: accountCurrency,
-          onAccountSelected,
-        }}
-      />
+      <ModularDrawerFlowManager {...flowManagerProps} />
     </QueuedDrawerGorhom>
   );
 }

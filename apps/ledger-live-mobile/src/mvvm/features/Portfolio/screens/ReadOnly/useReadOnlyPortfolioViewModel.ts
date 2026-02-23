@@ -19,13 +19,15 @@ interface UseReadOnlyPortfolioViewModelResult {
   source: string | undefined;
   goToAssets: () => void;
   onBackFromUpdate: () => void;
+  shouldDisplayWallet40MainNav: boolean;
 }
 
 const useReadOnlyPortfolioViewModel = (navigation: {
   goBack: () => void;
   navigate: (name: string, params?: object) => void;
 }): UseReadOnlyPortfolioViewModelResult => {
-  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayGraphRework, shouldDisplayWallet40MainNav } =
+    useWalletFeaturesConfig("mobile");
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
   const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: MAX_ASSETS_TO_DISPLAY });
@@ -71,6 +73,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
     source,
     goToAssets,
     onBackFromUpdate,
+    shouldDisplayWallet40MainNav,
   };
 };
 

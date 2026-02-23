@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorName } from "~/const";
 import { MainTabBar } from "../index";
 import type { MainTabBarProps } from "../types";
 
@@ -17,10 +17,9 @@ function StubScreen({ label }: { readonly label: string }) {
 }
 
 const PortfolioScreen = () => <StubScreen label="Portfolio Content" />;
+const SwapScreen = () => <StubScreen label="Swap Content" />;
 const EarnScreen = () => <StubScreen label="Earn Content" />;
-const TransferScreen = () => <StubScreen label="Transfer Content" />;
-const DiscoverScreen = () => <StubScreen label="Discover Content" />;
-const MyLedgerScreen = () => <StubScreen label="My Ledger Content" />;
+const CardScreen = () => <StubScreen label="Card Content" />;
 
 function TestNavigator() {
   return (
@@ -30,9 +29,8 @@ function TestNavigator() {
     >
       <Tab.Screen name={NavigatorName.Portfolio} component={PortfolioScreen} />
       <Tab.Screen name={NavigatorName.Earn} component={EarnScreen} />
-      <Tab.Screen name={ScreenName.Transfer} component={TransferScreen} />
-      <Tab.Screen name={NavigatorName.Discover} component={DiscoverScreen} />
-      <Tab.Screen name={NavigatorName.MyLedger} component={MyLedgerScreen} />
+      <Tab.Screen name={NavigatorName.Swap} component={SwapScreen} />
+      <Tab.Screen name={NavigatorName.CardTab} component={CardScreen} />
     </Tab.Navigator>
   );
 }
@@ -41,7 +39,7 @@ describe("MainTabBar Integration", () => {
   it("should render all tab labels", () => {
     render(<TestNavigator />);
 
-    ["Home", "Earn", "Transfer", "Discover", "Ledger"].forEach(name =>
+    ["Home", "Earn", "Swap", "Card"].forEach(name =>
       expect(screen.getByRole("tab", { name })).toBeVisible(),
     );
   });
@@ -57,9 +55,8 @@ describe("MainTabBar Integration", () => {
 
     const cases = [
       { tab: "Earn", content: "Earn Content" },
-      { tab: "Transfer", content: "Transfer Content" },
-      { tab: "Discover", content: "Discover Content" },
-      { tab: "Ledger", content: "My Ledger Content" },
+      { tab: "Swap", content: "Swap Content" },
+      { tab: "Card", content: "Card Content" },
     ];
 
     for (const { tab, content } of cases) {

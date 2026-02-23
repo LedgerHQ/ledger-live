@@ -1,6 +1,17 @@
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AleoLatestBlockResponse } from "../types/api";
+import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import type {
+  AleoLatestBlockResponse,
+  AleoPublicTransactionDetailsResponse,
+  AleoPublicTransactionsResponse,
+  AleoAccountJWTResponse,
+  AleoJWT,
+  AleoRecordScannerStatusResponse,
+  AleoRegisterAccountResponse,
+  AleoRegisterForRecordsResponse,
+  AleoGetPublicKeyResponse,
+} from "../types/api";
 import { getNetworkConfig } from "../logic/utils";
 import { PROGRAM_ID } from "../constants";
 
@@ -29,7 +40,157 @@ async function getAccountBalance(
   return res.data;
 }
 
+async function getTransactionById(
+  currency: CryptoCurrency,
+  transactionId: string,
+): Promise<AleoPublicTransactionDetailsResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<AleoPublicTransactionDetailsResponse>({
+    method: "GET",
+    url: `${nodeUrl}/v2/${networkType}/transactions/${transactionId}`,
+  });
+
+  return res.data;
+}
+
+async function getAccountPublicTransactions({
+  currency,
+  address,
+  cursor,
+  limit = 50,
+  order = "asc",
+  direction = "next",
+}: {
+  currency: CryptoCurrency;
+  address: string;
+  cursor?: string;
+  limit?: number;
+  order?: "asc" | "desc";
+  direction?: "prev" | "next";
+}): Promise<AleoPublicTransactionsResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const params = new URLSearchParams({
+    limit: limit.toString(),
+    sort: order,
+    direction,
+    ...(cursor && { cursor_block_number: cursor }),
+  });
+
+  const res: LiveNetworkResponse<AleoPublicTransactionsResponse> = await network({
+    method: "GET",
+    url: `${nodeUrl}/v2/${networkType}/transactions/address/${address}?${params.toString()}`,
+  });
+
+  return res.data;
+}
+
+async function registerNewAccount(
+  currency: CryptoCurrency,
+  username: string,
+): Promise<AleoRegisterAccountResponse> {
+  const { nodeUrl } = getNetworkConfig(currency);
+
+  const res = await network<AleoRegisterAccountResponse>({
+    method: "POST",
+    url: `${nodeUrl}/consumers`,
+    data: { username },
+  });
+
+  return res.data;
+}
+
+async function getAccountJWT(
+  currency: CryptoCurrency,
+  apiKey: string,
+  consumerId: string,
+): Promise<AleoJWT> {
+  const res = await network<AleoAccountJWTResponse>({
+    method: "POST",
+    url: `https://api.provable.com/jwts/${consumerId}`,
+    headers: {
+      "X-Provable-API-Key": apiKey,
+    },
+  });
+
+  const data = {
+    token: res.headers?.["authorization"] ?? "",
+    exp: res.data.exp,
+  };
+
+  return data;
+}
+
+async function getPublicKey(
+  currency: CryptoCurrency,
+  jwt: string,
+): Promise<AleoGetPublicKeyResponse> {
+  const { networkType } = getNetworkConfig(currency);
+
+  const res = await network<AleoGetPublicKeyResponse>({
+    method: "GET",
+    url: `https://api.provable.com/scanner/${networkType}/pubkey`,
+    headers: {
+      Authorization: jwt,
+    },
+  });
+
+  return res.data;
+}
+
+async function registerForScanningAccountRecordsEncrypted({
+  currency,
+  jwt,
+  encryptedData,
+  keyId,
+}: {
+  currency: CryptoCurrency;
+  jwt: string;
+  encryptedData: string;
+  keyId: string;
+}): Promise<AleoRegisterForRecordsResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<AleoRegisterForRecordsResponse>({
+    method: "POST",
+    url: `${nodeUrl}/scanner/${networkType}/register/encrypted`,
+    headers: {
+      Authorization: jwt,
+    },
+    data: { key_id: keyId, ciphertext: encryptedData },
+  });
+
+  return res.data;
+}
+
+export const getRecordScannerStatus = async (
+  currency: CryptoCurrency,
+  accessToken: string,
+  uuid: string,
+): Promise<AleoRecordScannerStatusResponse> => {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<AleoRecordScannerStatusResponse>({
+    method: "POST",
+    url: `${nodeUrl}/scanner/${networkType}/status`,
+    headers: {
+      Authorization: accessToken,
+      "Content-Type": "application/json",
+    },
+    data: `"${uuid.toString()}"`,
+  });
+
+  return res.data;
+};
+
 export const apiClient = {
-  getAccountBalance,
   getLatestBlock,
+  getAccountBalance,
+  getTransactionById,
+  getAccountPublicTransactions,
+  getAccountJWT,
+  registerNewAccount,
+  getRecordScannerStatus,
+  getPublicKey,
+  registerForScanningAccountRecordsEncrypted,
 };

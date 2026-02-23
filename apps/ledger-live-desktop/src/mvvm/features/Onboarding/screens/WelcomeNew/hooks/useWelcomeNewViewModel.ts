@@ -35,18 +35,19 @@ export function useWelcomeNewViewModel() {
   // Redux selectors
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const trustchain = useSelector(trustchainSelector);
+  const shouldInitiallySelectDevice = useRef(hasCompletedOnboarding && !trustchain);
 
   // Navigation effect
   useEffect(() => {
-    if (hasCompletedOnboarding && !trustchain) {
+    if (shouldInitiallySelectDevice.current) {
       navigate("/onboarding/select-device");
     }
-  }, [hasCompletedOnboarding, navigate, trustchain]);
+  }, [navigate]);
 
   // Feature flags easter egg state
   const countRef1 = useRef(0);
   const countRef2 = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
     useState<boolean>(false);
 

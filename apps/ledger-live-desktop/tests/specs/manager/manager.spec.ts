@@ -20,6 +20,7 @@ test("Manager @smoke", async ({ page }) => {
 
   await test.step("can install an app", async () => {
     await managerPage.installApp("Tron");
+    await page.getByTestId("manager-installed-apps-tab").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("manager-install-tron.png");
   });
 

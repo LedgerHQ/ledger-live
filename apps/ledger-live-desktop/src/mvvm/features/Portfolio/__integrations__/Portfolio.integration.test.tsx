@@ -3,7 +3,8 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import { TFunction } from "i18next";
-import { Portfolio } from "@ledgerhq/types-live";
+import { Portfolio as PortfolioType } from "@ledgerhq/types-live";
+import PortfolioPage from "../index";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
@@ -66,7 +67,7 @@ const mockUsePortfolio = jest.spyOn(portfolioReact, "usePortfolio");
 const createPortfolioMock = (countervalueChange: {
   percentage: number | null;
   value: number;
-}): Portfolio => ({
+}): PortfolioType => ({
   balanceHistory: [{ date: new Date(), value: 100000 }],
   balanceAvailable: true,
   availableAccounts: [],
@@ -446,5 +447,56 @@ describe("PortfolioView", () => {
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
+  });
+});
+
+const walletV4TourFlags = {
+  lwdWallet40: {
+    enabled: true,
+    params: { tour: true, mainNavigation: true, marketBanner: true },
+  },
+};
+
+describe("Portfolio (Wallet V4 Tour)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    server.resetHandlers();
+  });
+
+  it("shows Wallet V4 Tour dialog when tour enabled and not seen", async () => {
+    render(<PortfolioPage />, {
+      initialState: {
+        settings: {
+          ...INITIAL_STATE,
+          hasSeenWalletV4Tour: false,
+          overriddenFeatureFlags: walletV4TourFlags,
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog", { name: /wallet v4 tour/i })).toBeInTheDocument();
+    });
+    expect(track).toHaveBeenCalledWith("Wallet V4 Tour Shown", {
+      platform: "LWD",
+      source: "portfolio",
+    });
+  });
+
+  it("does not show Wallet V4 Tour when already seen", () => {
+    render(<PortfolioPage />, {
+      initialState: {
+        settings: {
+          ...INITIAL_STATE,
+          hasSeenWalletV4Tour: true,
+          overriddenFeatureFlags: walletV4TourFlags,
+        },
+      },
+    });
+
+    expect(screen.queryByRole("dialog", { name: /wallet v4 tour/i })).not.toBeInTheDocument();
   });
 });

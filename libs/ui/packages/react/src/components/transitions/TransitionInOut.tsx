@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import styled from "styled-components";
@@ -23,7 +23,7 @@ const ChildrenWrapper = styled.div<{ timeout: number }>`
   }
 `;
 type TransitionInOutProps = Partial<
-  CSSTransitionProps & {
+  CSSTransitionProps<HTMLDivElement> & {
     children: React.ReactNode;
     in: boolean;
     timeout?: number;
@@ -38,10 +38,21 @@ const TransitionInOut = ({
   in: inProp,
   timeout = duration,
   ...TransitionProps
-}: TransitionInOutProps): JSX.Element => (
-  <CSSTransition {...TransitionProps} in={inProp} timeout={timeout} classNames="transition-inout">
-    <ChildrenWrapper timeout={timeout}>{children}</ChildrenWrapper>
-  </CSSTransition>
-);
+}: TransitionInOutProps): React.JSX.Element => {
+  const nodeRef = useRef<HTMLDivElement>(null);
+  return (
+    <CSSTransition
+      {...TransitionProps}
+      nodeRef={nodeRef}
+      in={inProp}
+      timeout={timeout}
+      classNames="transition-inout"
+    >
+      <ChildrenWrapper ref={nodeRef} timeout={timeout}>
+        {children}
+      </ChildrenWrapper>
+    </CSSTransition>
+  );
+};
 
 export default TransitionInOut;

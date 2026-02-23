@@ -14,7 +14,7 @@ $TICKET_DESCRIPTION
 
 $CHANGE_TYPE
 
-> Select the type of change: feat | fix | refactor | test | docs | chore
+> Select the type of change: feat | fix | refactor | test | docs | chore | perf | ci
 
 $CHANGE_SCOPE
 
@@ -34,11 +34,14 @@ $HAS_UI_CHANGES
 
 ## Instructions
 
+**IMPORTANT**: Before any git commit, read and follow the `.cursor/rules/git-workflow.mdc` rule. All commit messages MUST use the gitmoji shortcode format defined there (`:gitmoji: type(scope): description`). Analyze the staged diff to pick the correct gitmoji and scope.
+
 ### Step 1: Analyze the changes
 
-1. Run `git status` and `git diff` to understand current changes
-2. Run `git log develop..HEAD --oneline` to see commits on this branch
-3. Identify all modified packages for the changeset
+1. Read `.cursor/rules/git-workflow.mdc` to load commit conventions
+2. Run `git status` and `git diff` to understand current changes
+3. Run `git log develop..HEAD --oneline` to see commits on this branch
+4. Identify all modified packages for the changeset
 
 ### Step 2: Create the changeset
 
@@ -149,10 +152,24 @@ After creating the PR, use the URL from the `gh pr create` output to generate a 
 
 ## Template Fill Rules
 
-1. **PR Title**: `{{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
+1. **PR Title**: `:gitmoji: {{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
 
-   - Example: `feat(mobile): add dark mode toggle`
-   - Example: `fix(desktop): resolve transaction signing issue`
+   Map `$CHANGE_TYPE` to gitmoji:
+
+   - `feat` → `:sparkles:` (or `:boom:` if breaking change)
+   - `fix` → `:bug:` (or `:lock:` for security fixes, `:ambulance:` for critical hotfixes)
+   - `refactor` → `:recycle:`
+   - `test` → `:white_check_mark:`
+   - `docs` → `:memo:`
+   - `chore` → `:wrench:`
+   - `perf` → `:zap:`
+   - `ci` → `:construction_worker:`
+
+   - Example: `:sparkles: feat(mobile): add dark mode toggle`
+   - Example: `:bug: fix(desktop): resolve transaction signing issue`
+   - Example: `:zap: perf(common): memoize account balance computation`
+   - Example: `:construction_worker: ci(tooling): add parallel test execution to CI pipeline`
+   - Example: `:boom: feat(common)!: migrate to new transaction signing API`
 
 2. **TEST_CHECKBOX**:
 
@@ -217,7 +234,7 @@ For a feature adding portfolio analytics:
 Add portfolio analytics dashboard with performance metrics
 ```
 
-**PR Title**: `feat(portfolio): add analytics dashboard`
+**PR Title**: `:sparkles: feat(portfolio): add analytics dashboard`
 
 **PR Body**:
 

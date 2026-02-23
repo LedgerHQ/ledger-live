@@ -1,4 +1,4 @@
-name: "[Mobile] E2E Only - Scheduled/Manual"
+name: "[Mobile] - E2E Only - Scheduled/Manual"
 run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: "The branch which triggered this workflow"
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
         description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
@@ -67,7 +67,7 @@ on:
   workflow_call:
     inputs:
       ref:
-        description: "The branch which triggered this workflow"
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
         type: string
       test_filter:
@@ -630,7 +630,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
-          
+
           # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
           # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
           SCRCPY_VERSION="3.3.4"
@@ -638,7 +638,7 @@ jobs:
           tar -xzf /tmp/scrcpy.tar.gz -C /tmp
           sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
           sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/bin/
-          
+
           scrcpy --version
           ls -la /usr/local/bin/scrcpy*
 
@@ -729,7 +729,7 @@ jobs:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
           avd_api: ${{ env.AVD_API }}
-          
+
       - name: Cleanup any running Android emulators (pre-boot)
         run: tools/scripts/cleanup-android-emulators.sh || true
 
@@ -802,7 +802,7 @@ jobs:
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
-          ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy 
+          ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

@@ -2639,7 +2639,8 @@
     "nanoX": "Nano X",
     "market": "Market",
     "earn": "Earn",
-    "card": "Card"
+    "card": "Card",
+    "swap": "Swap"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -2691,7 +2692,7 @@
     "walletBalance": "Wallet balance",
     "balance": {
       "noSigner": "The most secure\nwallet",
-      "noFund": "Secure your\ncrypto"
+      "noAccounts": "Secure your\ncrypto"
     },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
@@ -4163,7 +4164,9 @@
       "placeholderNoENS": "Enter address",
       "editRecipientAccessibilityLabel": "Edit recipient",
       "recent": "Recent",
+      "recentDetail": "Recent detail",
       "myAccounts": "My accounts",
+      "account": "Account",
       "sendTo": "Send to {{address}}",
       "addressMatched": "Address matched",
       "addressNotFound": "Address not found",
@@ -8405,22 +8408,36 @@
       "authorize": "Authorize",
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
-      "title": "Automatically accept incoming funds",
+      "title": "Onboarding",
+      "success": "Account onboarded successfully",
+      "status": {
+        "prepare": "Preparing account onboarding transaction.\nThis may take up to 1 minute...",
+        "submit": "Onboarding account...",
+        "default": "Processing..."
+      },
       "processing": {
         "title": "Processing transaction",
-        "description": "This process may take up to 1 minute",
+        "description": "Please wait",
         "keepDeviceNearby": "Stay in the Ledger Wallet app and keep your Ledger nearby."
       },
       "reonboard": {
         "title": "Account Update Required",
         "account": "Account",
         "authorize": "Re-authorize Validator",
+        "success": "Account updated successfully",
         "warning": {
           "title": "Topology Change Detected",
           "description": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it."
         }
       },
       "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
+    },
+    "authorize": {
+      "status": {
+        "prepare": "Preparing authorization...",
+        "submit": "Authorizing validator...",
+        "default": "Processing..."
+      }
     },
     "tooManyUtxos": {
       "title": "Action Needed: Too Many UTXOs",
@@ -8525,5 +8542,11 @@
       "continue": "Continue",
       "explore": "Explore my new portfolio"
     }
+  },
+  "mainNavigation": {
+    "home": "Home",
+    "swap": "Swap",
+    "earn": "Earn",
+    "card": "Card"
   }
 }

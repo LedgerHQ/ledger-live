@@ -2,15 +2,20 @@ import React from "react";
 import { Observable, Subject } from "rxjs";
 import { setEnv } from "@ledgerhq/live-env";
 import type { Account } from "@ledgerhq/types-live";
-import { act } from "react-dom/test-utils";
-import { render, screen, userEvent } from "tests/testSetup";
+import { act, render, screen, userEvent } from "tests/testSetup";
 import { urls } from "~/config/urls";
+import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import type { State } from "~/renderer/reducers";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
-import { ALEO_ACCOUNT_1, ALEO_ACCOUNT_2, ALEO_ACCOUNT_3 } from "../__mocks__/account.mock";
+import {
+  ALEO_ACCOUNT_1,
+  ALEO_ACCOUNT_2,
+  ALEO_ACCOUNT_3,
+  NEW_ALEO_ACCOUNT,
+} from "../__mocks__/account.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
 
 beforeEach(async () => {
@@ -99,6 +104,11 @@ jest.mock("react-router", () => ({
   __esModule: true,
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
+}));
+
+jest.mock("~/renderer/actions/modals", () => ({
+  ...jest.requireActual("~/renderer/actions/modals"),
+  openModal: jest.fn().mockReturnValue({ type: "" }),
 }));
 
 jest.mock("~/renderer/linking", () => ({
@@ -215,5 +225,142 @@ describe("ModularDrawerAddAccountFlowManager", () => {
       { accountId: ALEO_ACCOUNT_2.id, viewKey: null }, // rejected
       { accountId: ALEO_ACCOUNT_3.id, viewKey: "vk_3" },
     ]);
+
+    expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
+    expectTrackPage(5, "add account success");
+  });
+
+  it("should create an account", async () => {
+    setup();
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([NEW_ALEO_ACCOUNT]);
+
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
+    expect(screen.queryByText(/we found 1 account/i)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Share view key" }));
+
+    expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
+    expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(1);
+
+    await mockViewKeyProgressSubscription([{ accountId: NEW_ALEO_ACCOUNT.id, viewKey: "vk_new" }]);
+
+    expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
+  });
+
+  it("should navigate to fund an account", async () => {
+    setup();
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1]);
+    await userEvent.click(screen.getByRole("button", { name: "Share view key" }));
+
+    expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
+    expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(1);
+
+    await mockViewKeyProgressSubscription([{ accountId: ALEO_ACCOUNT_1.id, viewKey: "vk_1" }]);
+
+    await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
+    expect(track).toHaveBeenNthCalledWith(3, "button_clicked", {
+      button: "Fund my account",
+      flow: "Add account",
+      page: "add account success",
+    });
+
+    const receive = screen.getByText(/receive crypto from another wallet/i);
+    await userEvent.click(receive);
+    expect(openModal).toHaveBeenCalledWith("MODAL_RECEIVE", expect.objectContaining({}));
+  });
+
+  it("should hide previously added accounts and show new account", async () => {
+    setup({ accounts: [ALEO_ACCOUNT_1] });
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT]);
+
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
+    expect(screen.queryByText(/we found 1 account/i)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Share view key" }));
+
+    expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
+    expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(1);
+
+    await mockViewKeyProgressSubscription([{ accountId: NEW_ALEO_ACCOUNT.id, viewKey: "vk_new" }]);
+
+    expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
+  });
+
+  it("should error on already imported empty account", async () => {
+    setup({ accounts: [ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT] });
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT]);
+
+    expectTrackPage(4, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
+    expect(
+      screen.getByText(
+        "A new account cannot be added before you receive assets on your Aleo 4 account",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("should allow name edit on already imported empty account", async () => {
+    setup({ accounts: [ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT] });
+    const OLD_NAME = "Aleo 4";
+    const NEW_NAME = "My Edited Account";
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT]);
+
+    await userEvent.click(screen.getByRole("button", { name: /Edit account item/i }));
+    expect(screen.getByText(/Edit account name/i)).toBeInTheDocument();
+
+    const input = screen.getByRole("textbox", { name: "account name" });
+    expect(input).toHaveValue(OLD_NAME);
+    await userEvent.clear(input);
+    await userEvent.type(input, NEW_NAME);
+
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
+  });
+
+  it("should error when all view keys are rejected", async () => {
+    setup();
+
+    expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Allow" }));
+
+    expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
+    await mockScanAccountsSubscription([ALEO_ACCOUNT_1, ALEO_ACCOUNT_2]);
+
+    expect(screen.queryByText(/we found 2 accounts/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Share view keys" }));
+
+    expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
+    expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(2);
+
+    await mockViewKeyProgressSubscription([
+      { accountId: ALEO_ACCOUNT_1.id, viewKey: null },
+      { accountId: ALEO_ACCOUNT_2.id, viewKey: null },
+    ]);
+
+    expectTrackPage(5, "cant add new account", { reason: "NO_ACCOUNTS_ADDED" });
+    expect(screen.getByText("No Aleo accounts were added")).toBeInTheDocument();
   });
 });

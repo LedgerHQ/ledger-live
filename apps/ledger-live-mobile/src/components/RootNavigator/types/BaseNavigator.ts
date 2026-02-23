@@ -17,7 +17,9 @@ import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types"
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
+import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
+import type { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
+import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AlgorandOptInFlowParamList } from "../../../families/algorand/OptInFlow/types";
@@ -98,6 +100,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]?: NavigatorScreenParams<MainNavigatorParamList> & {
     hideTabNavigation?: boolean;
   };
+  [NavigatorName.MyLedger]?: NavigatorScreenParams<MyLedgerNavigatorStackParamList>;
+  [NavigatorName.Discover]?: NavigatorScreenParams<DiscoverNavigatorStackParamList>;
+  [NavigatorName.Web3HubTab]?: NavigatorScreenParams<Web3HubTabStackParamList>;
   [NavigatorName.BuyDevice]?: NavigatorScreenParams<BuyDeviceNavigatorParamList>;
   [ScreenName.NoDeviceWallScreen]: undefined;
   [ScreenName.PostBuyDeviceSetupNanoWallScreen]: undefined;
@@ -120,6 +125,7 @@ export type BaseNavigatorStackParamList = {
     sessionTopic?: string;
     chainId?: string;
     yieldId?: string;
+    path?: string;
   };
   [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
   [ScreenName.Recover]: {

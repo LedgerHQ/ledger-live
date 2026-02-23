@@ -167,7 +167,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10216539",
+    "0.0.10285205",
   );
   static readonly HEDERA_2 = new Account(
     Currency.HBAR,
@@ -178,7 +178,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10219428",
+    "0.0.10285245",
   );
 
   static readonly INJ_1 = new Account(Currency.INJ, "Injective 1", 0, "44'/60'/0'/0/0");
@@ -326,6 +326,15 @@ export class TokenAccount extends Account {
     Account.ETH_2,
   );
 
+  static readonly ETH_USDT_3 = new TokenAccount(
+    Currency.ETH_USDT,
+    "Tether USD 3",
+    2,
+    Account.ETH_3.accountPath,
+    TokenType.ERC20,
+    Account.ETH_3,
+  );
+
   static readonly SOL_GIGA_1 = new TokenAccount(
     Currency.SOL_GIGA,
     "GIGACHAD 1",
@@ -435,8 +444,8 @@ export class TokenAccount extends Account {
     Account.ALGO_2,
   );
 
-  static readonly XLM_USCD = new TokenAccount(
-    Currency.XLM_USCD,
+  static readonly XLM_USDC = new TokenAccount(
+    Currency.XLM_USDC,
     "USDC 1",
     0,
     Account.XLM_1.accountPath,

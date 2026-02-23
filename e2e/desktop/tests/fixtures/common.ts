@@ -16,6 +16,7 @@ import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import { attachNetworkLogging } from "../utils/networkLogging";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -44,6 +45,8 @@ type TestFixtures = {
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+const getSpeculosAddress = () => process.env.SPECULOS_ADDRESS || "http://localhost";
+
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
 
@@ -148,7 +151,7 @@ export const test = base.extend<TestFixtures>({
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
             speculos = await launchSpeculos(app.name);
-            CLI.registerSpeculosTransport(speculos.port.toString());
+            CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
             await executeCliCommand(cmd, userdataDestinationPath);
             await killSpeculos(speculos.id);
           }
@@ -157,7 +160,7 @@ export const test = base.extend<TestFixtures>({
         speculos = await launchSpeculos(speculosApp.name, testInfo.title);
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculos.port.toString());
+          CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
           for (const cmd of cliCommands) {
             await executeCliCommand(cmd, userdataDestinationPath);
           }
@@ -181,6 +184,7 @@ export const test = base.extend<TestFixtures>({
           FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          SPECULOS_ADDRESS: IS_NOT_MOCK ? getSpeculosAddress() : undefined,
         },
         env,
       );
@@ -216,6 +220,8 @@ export const test = base.extend<TestFixtures>({
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
+
+    attachNetworkLogging(page, testInfo);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);

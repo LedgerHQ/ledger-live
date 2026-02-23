@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.60.0",
+  "version": "34.61.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -218,10 +218,10 @@
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.13.0",
-    "@ledgerhq/wallet-api-core": "^1.28.0",
+    "@ledgerhq/wallet-api-client": "^1.13.1",
+    "@ledgerhq/wallet-api-core": "^1.29.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
-    "@ledgerhq/wallet-api-server": "^3.1.0",
+    "@ledgerhq/wallet-api-server": "^3.2.0",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",
@@ -297,7 +297,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.179",
     "@types/node": "^22.10.10",
-    "@types/react": "^18.2.21",
+    "@types/react": "catalog:",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "buffer": "6.0.3",

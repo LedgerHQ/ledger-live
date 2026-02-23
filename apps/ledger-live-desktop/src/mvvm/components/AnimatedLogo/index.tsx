@@ -1,8 +1,7 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import Lottie from "react-lottie";
-import collapseAnimation from "./collapse.json";
-import expandAnimation from "./expand.json";
+import { useAnimationData } from "./useAnimationData";
 
 interface AnimatedLogoProps {
   readonly collapsed: boolean;
@@ -12,6 +11,7 @@ export function AnimatedLogo({ collapsed }: AnimatedLogoProps) {
   const prevCollapsed = useRef(collapsed);
   const [playing, setPlaying] = useState(false);
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
+  const { collapse, expand, themeKey } = useAnimationData();
 
   useLayoutEffect(() => {
     if (prevCollapsed.current !== collapsed) {
@@ -24,7 +24,7 @@ export function AnimatedLogo({ collapsed }: AnimatedLogoProps) {
 
   // When idle, show the opposite animation's first frame (matches the resting state).
   // When playing, show the actual transition animation.
-  const animationData = collapsed === playing ? collapseAnimation : expandAnimation;
+  const animationData = collapsed === playing ? collapse : expand;
 
   const eventListeners = useMemo(
     () => [{ eventName: "complete" as const, callback: () => setPlaying(false) }],
@@ -33,6 +33,7 @@ export function AnimatedLogo({ collapsed }: AnimatedLogoProps) {
 
   return (
     <Lottie
+      key={themeKey}
       isClickToPauseDisabled
       ariaRole="presentation"
       isPaused={isPlaywright || !playing}

@@ -1,12 +1,15 @@
+import BigNumber from "bignumber.js";
 import type {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import type { AleoTransactionType } from "./api";
+import type { ProvableApi } from "./logic";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
@@ -22,10 +25,12 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export interface AleoResources {
   transparentBalance: BigNumber;
+  provableApi: ProvableApi | null;
 }
 
 export interface AleoResourcesRaw {
   transparentBalance: string;
+  provableApi: string | null;
 }
 
 export type AleoAccount = Account & {
@@ -35,3 +40,10 @@ export type AleoAccount = Account & {
 export type AleoAccountRaw = AccountRaw & {
   aleoResources?: AleoResourcesRaw;
 };
+
+export type AleoOperationExtra = {
+  functionId: string;
+  transactionType: AleoTransactionType;
+};
+
+export type AleoOperation = Operation<AleoOperationExtra>;

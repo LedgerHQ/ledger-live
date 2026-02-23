@@ -22,7 +22,21 @@ beforeAll(() =>
     onUnhandledRequest: "bypass",
   }),
 );
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  // Reset shared mocks to prevent state leaking between tests (mock cannibalization)
+  mockRNCNetInfo.useNetInfo.mockReturnValue({
+    type: "cellular",
+    isConnected: true,
+    isInternetReachable: true,
+    details: { isConnectionExpensive: true, cellularGeneration: "3g" },
+  });
+  mockUseCameraPermission.mockReturnValue({
+    hasPermission: true,
+    requestPermission: jest.fn(() => Promise.resolve(true)),
+  });
+  mockGetCameraPermissionStatus.mockReturnValue("granted");
+});
 afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
@@ -71,33 +85,12 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-// Global mocks for Lottie and env config (used by LaunchScreen and other components)
-jest.mock("lottie-react-native", () => {
-  const React = require("react");
-  const { View, Text } = require("react-native");
-  const MockLottie = ({ source }) =>
-    React.createElement(
-      View,
-      { testID: "lottie-mock" },
-      React.createElement(Text, { testID: "lottie-source" }, JSON.stringify(source)),
-    );
-  return MockLottie;
-});
-
-// Mirror runtime: react-native-config exposes env as strings (e.g. "1"/"true" for DETOX).
-// Use undefined so (1) DETOX_ENABLED stays false and (2) truthiness checks (Config.DETOX) are falsy in unit tests.
-jest.mock("react-native-config", () => {
-  const config = { DETOX: undefined };
-  return {
-    __esModule: true,
-    get default() {
-      return config;
-    },
-  };
-});
-
 export const mockSimulateBarcodeScanned = jest.fn();
 export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
+const mockUseCameraPermission = jest.fn(() => ({
+  hasPermission: true,
+  requestPermission: jest.fn(() => Promise.resolve(true)),
+}));
 
 jest.mock("react-native-vision-camera", () => {
   const CameraMock = jest.fn(({ codeScanner }) => {
@@ -112,10 +105,7 @@ jest.mock("react-native-vision-camera", () => {
 
   return {
     Camera: CameraMock,
-    useCameraPermission: jest.fn(() => ({
-      hasPermission: true,
-      requestPermission: jest.fn(() => Promise.resolve(true)),
-    })),
+    useCameraPermission: mockUseCameraPermission,
     useCameraDevice: jest.fn(() => ({
       id: "mock-camera-device",
       position: "back",

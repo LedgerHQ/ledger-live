@@ -77,8 +77,8 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
         <View style={styles.addressInputContainer}>
           {viewModel.isRecipientStep ? (
             <AddressInput
-              value={viewModel.recipientSearchValue}
-              onChangeText={viewModel.setRecipientSearchValue}
+              value={viewModel.recipientSearch.value}
+              onChangeText={viewModel.recipientSearch.setValue}
               onClear={viewModel.clearRecipientSearch}
               onQrCodeClick={viewModel.handleQrCodeClick}
               placeholder={viewModel.recipientPlaceholder}

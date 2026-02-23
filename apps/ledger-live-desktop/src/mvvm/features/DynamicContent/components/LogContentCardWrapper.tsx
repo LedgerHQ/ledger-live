@@ -35,6 +35,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   const dispatch = useDispatch();
   const isContentCardVisibleRef = useRef(false);
   const isContainerVisibleRef = useRef(false);
+  const notificationTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const currentCard = useMemo(() => {
     const cards = braze.getCachedContentCards()?.cards ?? [];
@@ -60,7 +61,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
             anonymousUserNotifications[currentCard.id as string] !==
             currentCard?.expiresAt?.getTime()
           ) {
-            setTimeout(() => {
+            notificationTimerRef.current = setTimeout(() => {
               dispatch(
                 updateAnonymousUserNotifications({
                   notifications: {
@@ -90,6 +91,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
     }
 
     return () => {
+      clearTimeout(notificationTimerRef.current);
       if (currentRef) {
         intersectionObserver.unobserve(currentRef);
       }

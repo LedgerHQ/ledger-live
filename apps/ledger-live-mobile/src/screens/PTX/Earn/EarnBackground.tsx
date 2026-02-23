@@ -12,10 +12,10 @@ function EarnBackgroundComponent() {
         left: theme.sizes.s0,
         right: theme.sizes.s0,
         bottom: theme.sizes.s0,
+        backgroundColor: theme.colors.bg.base,
       },
       imageContainer: {
-        width: theme.sizes.full,
-        height: theme.sizes.full,
+        aspectRatio: 25 / 32,
       },
     }),
     [],

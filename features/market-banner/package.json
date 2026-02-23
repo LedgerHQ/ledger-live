@@ -28,7 +28,7 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "@types/react": "18.2.73",
+    "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
@@ -44,7 +44,7 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
+    "react": ">=19.0.0",
     "react-native": ">=0.70.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

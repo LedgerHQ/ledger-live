@@ -21,7 +21,11 @@ export type SendHeaderViewModel = {
   isRecipientStep: boolean;
   isAmountStep: boolean;
   showRecipientInput: boolean;
-  recipientSearchValue: string;
+  recipientSearch: {
+    value: string;
+    setValue: (value: string) => void;
+    clear: () => void;
+  };
   formattedAddress: string;
   recipientPlaceholder: string;
   handleBackPress: () => void;
@@ -36,7 +40,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const navigation = useNavigation();
   const route = useRoute();
   const { t } = useTranslation();
-  const { uiConfig, recipientSearchValue, state } = useSendFlowData();
+  const { uiConfig, recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
 
@@ -75,9 +79,9 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
-      return recipientSearchValue.length > 11
-        ? `${recipientSearchValue.slice(0, 4)}...${recipientSearchValue.slice(-4)}`
-        : recipientSearchValue;
+      return recipientSearch.value.length > 11
+        ? `${recipientSearch.value.slice(0, 4)}...${recipientSearch.value.slice(-4)}`
+        : recipientSearch.value;
     }
     if (isAmountStep) {
       return getRecipientDisplayValue(recipientFromTransaction, {
@@ -86,7 +90,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       });
     }
     return "";
-  }, [isRecipientStep, isAmountStep, recipientSearchValue, recipientFromTransaction]);
+  }, [isRecipientStep, isAmountStep, recipientSearch.value, recipientFromTransaction]);
 
   const handleBackPress = useCallback(() => {
     if (canGoBack) {
@@ -136,7 +140,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     isRecipientStep,
     isAmountStep,
     showRecipientInput,
-    recipientSearchValue,
+    recipientSearch,
     formattedAddress,
     recipientPlaceholder,
     handleBackPress,

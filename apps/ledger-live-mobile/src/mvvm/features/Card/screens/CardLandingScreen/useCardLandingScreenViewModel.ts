@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
 import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
 
 const HEADER_HEIGHT = 48;
@@ -30,9 +30,13 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
       button: "explore cards",
       page: PAGE_NAME,
     });
-    navigation.navigate(ScreenName.PlatformApp, {
-      platform: CARD_APP_ID,
-      name: "Card Program",
+    navigation.navigate(NavigatorName.Card, {
+      screen: ScreenName.Card,
+      params: {
+        platform: CARD_APP_ID,
+        name: "Card Program",
+        path: "/providers-list",
+      },
     });
   }, [navigation]);
 
@@ -41,9 +45,12 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
       button: "I have a card",
       page: PAGE_NAME,
     });
-    navigation.navigate(ScreenName.PlatformApp, {
-      platform: CL_CARD_APP_ID,
-      name: "CL Card Powered by Ledger",
+    navigation.navigate(NavigatorName.Card, {
+      screen: ScreenName.Card,
+      params: {
+        platform: CL_CARD_APP_ID,
+        name: "CL Card Powered by Ledger",
+      },
     });
   }, [navigation]);
 

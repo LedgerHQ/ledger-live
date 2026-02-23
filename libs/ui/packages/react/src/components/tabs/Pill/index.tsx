@@ -59,7 +59,7 @@ export default function PillTabs({
   children,
   onTabChange,
   initialActiveIndex,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   return (
     <Pill>

@@ -9,7 +9,7 @@ import { RANGES } from "LLM/features/Market/utils";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 
 const { width } = getWindowDimensions();
 

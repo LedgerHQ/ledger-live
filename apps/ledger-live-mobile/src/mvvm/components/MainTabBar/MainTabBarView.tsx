@@ -42,7 +42,7 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
         pointerEvents="none"
       />
 
-      <TabBar active={activeRouteName} onTabPress={onTabPress} lx={{ marginHorizontal: "s16" }}>
+      <TabBar active={activeRouteName} onTabPress={onTabPress} lx={{ marginHorizontal: "s24" }}>
         {tabItems.map(item => (
           <TabBarItem
             key={item.value}

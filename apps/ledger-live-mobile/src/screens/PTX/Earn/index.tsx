@@ -150,7 +150,7 @@ function Earn({ route }: Props) {
     }
     return (
       <View style={{ flex: 1, overflow: "visible" }}>
-        {isPtxUiV2 && <EarnBackground />}
+        {isPtxUiV2 && !hideMainNavigator && <EarnBackground />}
         <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
           {displayManifest ? (
             <Fragment>

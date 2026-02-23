@@ -31,8 +31,6 @@ const forcedDependencies = [
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 
-const defaultConfig = getDefaultConfig(__dirname);
-
 const buildTsAlias = (conf = {}) =>
   Object.keys(conf).reduce(
     (acc, moduleName) => ({
@@ -117,9 +115,6 @@ const metroConfig = {
     unstable_conditionNames: ["require", "react-native", "browser"],
     nodeModulesPaths,
     resolverMainFields: ["react-native", "browser", "main"],
-    assetExts: [
-      ...new Set([...(defaultConfig.resolver?.assetExts ?? []), "lottie"]),
-    ],
     extraNodeModules: {
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
@@ -146,7 +141,7 @@ const metroConfig = {
   },
 };
 
-module.exports = withRozenite(mergeConfig(defaultConfig, metroConfig), {
+module.exports = withRozenite(mergeConfig(getDefaultConfig(__dirname), metroConfig), {
   enabled: process.env.WITH_ROZENITE === "true",
   include: [
     "@rozenite/network-activity-plugin",

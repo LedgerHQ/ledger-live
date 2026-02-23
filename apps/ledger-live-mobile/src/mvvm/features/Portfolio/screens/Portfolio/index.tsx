@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
-
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -12,6 +11,11 @@ import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import {
+  PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
+  PROGRESS_VIEW_OFFSET_LEGACY_IOS,
+} from "../../constants";
+import { getProgressViewOffset } from "../../utils/getProgressViewOffset";
 import usePortfolioViewModel from "./usePortfolioViewModel";
 
 import { Box } from "@ledgerhq/native-ui";
@@ -32,7 +36,10 @@ type NavigationProps = BaseComposite<
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
-  progressViewOffset: Platform.OS === "android" ? 64 : 0,
+  progressViewOffset:
+    Platform.OS === "android"
+      ? PROGRESS_VIEW_OFFSET_LEGACY_ANDROID
+      : PROGRESS_VIEW_OFFSET_LEGACY_IOS,
 });
 
 export const PortfolioScreen = ({ navigation }: NavigationProps) => {
@@ -51,7 +58,10 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
+    shouldDisplayWallet40MainNav,
   } = usePortfolioViewModel(navigation);
+
+  const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
 
   const { isDrawerOpen, handleCloseDrawer } = useWalletV4TourDrawer();
 
@@ -145,6 +155,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
+          useSafeArea={!shouldDisplayWallet40MainNav}
+          overrideRefreshControlProps={{ progressViewOffset }}
         />
         <AddAccountDrawer
           isOpened={isAddModalOpened}

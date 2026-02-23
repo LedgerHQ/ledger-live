@@ -5,17 +5,19 @@ import type {
   CredentialDeploymentTransaction,
   VerifyAddressResponse,
   SigningResult,
-} from "./types";
+} from "@ledgerhq/concordium-core";
+import {
+  TransactionType,
+  pathToBuffer,
+  serializeTransfer,
+  serializeTransferWithMemo,
+} from "@ledgerhq/concordium-core";
 import {
   serializeCredentialDeployment,
   serializeTransactionPayloads,
-  serializeTransfer,
-  serializeTransferWithMemo,
   prepareTransferAPDU,
   prepareTransferWithMemoAPDU,
 } from "./serialization";
-import { TransactionType } from "./types";
-import { pathToBuffer } from "./utils";
 
 const PUBLIC_KEY_LENGTH = 32;
 
@@ -84,8 +86,7 @@ export default class Concordium {
         "getAddress",
         "verifyAddress",
         "getPublicKey",
-        "signTransfer",
-        "signTransferWithMemo",
+        "signTransaction",
         "signCredentialDeployment",
       ],
       scrambleKey,
@@ -104,7 +105,7 @@ export default class Concordium {
    * Get Concordium address for a given path.
    *
    * @param originalPath - BIP32 path
-   * @param display - Whether to display/verify address on device (default: true)
+   * @param display - Whether to display/verify address on device (default: false)
    * @param id - Identity number
    * @param cred - Credential number
    * @param idp - Identity provider number
@@ -112,7 +113,7 @@ export default class Concordium {
    */
   async getAddress(
     originalPath: string,
-    display: boolean = true,
+    display: boolean = false,
     id: number,
     cred: number,
     idp: number,
@@ -221,15 +222,30 @@ export default class Concordium {
   }
 
   /**
-   * Sign a Transfer transaction.
+   * Sign a transaction (Transfer or TransferWithMemo).
+   * Routes to the appropriate signing method based on transaction type.
+   *
+   * @param tx - Transaction to sign
+   * @param path - BIP32 path for signing key
+   * @returns Promise with signature and serialized transaction
+   */
+  async signTransaction(tx: Transaction, path: string): Promise<SigningResult> {
+    if (tx.type === TransactionType.TransferWithMemo) {
+      return this.signTransferWithMemo(tx, path);
+    }
+    return this.signTransfer(tx, path);
+  }
+
+  /**
+   * Sign a Transfer transaction (internal method).
    *
    * @param tx - Transfer transaction with type-safe payload
    * @param path - BIP32 path for signing key
    * @returns Promise with signature and serialized transaction
    */
-  async signTransfer(tx: Transaction, path: string): Promise<SigningResult> {
-    if (tx.type === TransactionType.TransferWithMemo) {
-      throw new Error("Use signTransferWithMemo for TransferWithMemo transactions");
+  private async signTransfer(tx: Transaction, path: string): Promise<SigningResult> {
+    if (tx.type !== TransactionType.Transfer) {
+      throw new Error("Transaction type must be Transfer");
     }
 
     const serialized = serializeTransfer(tx);
@@ -237,7 +253,7 @@ export default class Concordium {
     // Prepare APDU payloads for device (chunked)
     const payloads = prepareTransferAPDU(serialized, path);
 
-    // Send APDU commands
+    // Send all chunks; only the last response carries the signature
     let response: Buffer = Buffer.alloc(0);
     for (let i = 0; i < payloads.length; i++) {
       const p2 = i === payloads.length - 1 ? P2.LAST : P2.MORE;
@@ -252,17 +268,13 @@ export default class Concordium {
   }
 
   /**
-   * Sign a TransferWithMemo transaction.
+   * Sign a TransferWithMemo transaction (internal method).
    *
    * @param tx - TransferWithMemo transaction with type-safe payload
    * @param path - BIP32 path for signing key
    * @returns Promise with signature and serialized transaction
    */
-  async signTransferWithMemo(tx: Transaction, path: string): Promise<SigningResult> {
-    if (tx.type !== TransactionType.TransferWithMemo) {
-      throw new Error("Transaction type must be TransferWithMemo");
-    }
-
+  private async signTransferWithMemo(tx: Transaction, path: string): Promise<SigningResult> {
     const serialized = serializeTransferWithMemo(tx);
 
     // Prepare APDU payloads for device (parses serialized transaction)

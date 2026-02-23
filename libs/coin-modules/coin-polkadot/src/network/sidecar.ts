@@ -629,6 +629,26 @@ export const getRegistry = async (
   return createRegistryAndExtrinsics(material, spec);
 };
 
+export const getMetadata = async (
+  callData: string,
+  includedInExtrinsic: string,
+  includedInSignedData: string,
+  currency?: CryptoCurrency,
+): Promise<{ metadataBlob: string; metadataHash: string }> => {
+  const { data } = await callSidecar<{ metadataBlob: string; metadataHash: string }>(
+    "/transaction/metadata-blob",
+    currency,
+    "POST",
+    {
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+    },
+  );
+
+  return { metadataBlob: data.metadataBlob, metadataHash: data.metadataHash };
+};
+
 /**
  * Get lastest block info
  */

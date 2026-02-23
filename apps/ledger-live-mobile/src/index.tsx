@@ -51,6 +51,7 @@ import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags"
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
+import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -103,7 +104,6 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
-
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
@@ -112,7 +112,6 @@ if (Config.DISABLE_YELLOW_BOX) {
 
 checkLibs({
   NotEnoughBalance,
-  // @ts-expect-error REACT19FIXME: React.createFactory removed but still expected by React 18 types
   React,
   log,
   Transport,
@@ -254,6 +253,7 @@ function App() {
       <AnalyticsConsole />
 
       <DebugTheme />
+      <JsThreadMonitor />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">
         <StoragePerformanceOverlay />

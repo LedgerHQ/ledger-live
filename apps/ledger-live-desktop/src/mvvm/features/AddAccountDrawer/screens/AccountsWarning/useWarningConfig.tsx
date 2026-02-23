@@ -94,7 +94,21 @@ export const useWarningConfig = (
     },
   };
 
-  return { emptyAccountWarning, noAssociatedAccountsWarning };
+  const noAccountsAddedWarning = {
+    icon: <Icons.WarningFill size="L" color="warning.c70" />,
+    title: t("modularAssetDrawer.scanAccounts.warning.noAccountsAddedWarning.title", {
+      currency: currency.name,
+    }),
+    description: t(getNoAccountsWarningDescriptionKey(currency)),
+    accountRow: null,
+    primaryAction: {
+      text: t("modularAssetDrawer.scanAccounts.warning.noAccountsAddedWarning.close"),
+      onClick: handleClose,
+    },
+    secondaryAction: null,
+  };
+
+  return { noAccountsAddedWarning, emptyAccountWarning, noAssociatedAccountsWarning };
 };
 
 const getUrl = (currency: CryptoCurrency) => {
@@ -104,5 +118,15 @@ const getUrl = (currency: CryptoCurrency) => {
       return urls.hedera.supportArticleLink;
     default:
       return "";
+  }
+};
+
+const getNoAccountsWarningDescriptionKey = (currency: CryptoCurrency): string => {
+  const lowerCaseCurrencyId = currency.id.toLowerCase();
+  switch (lowerCaseCurrencyId) {
+    case "aleo":
+      return "aleo.addAccount.warnings.noAccountsAddedWarning.description";
+    default:
+      return "modularAssetDrawer.scanAccounts.warning.noAccountsAddedWarning.description";
   }
 };
