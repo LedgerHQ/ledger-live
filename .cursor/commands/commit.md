@@ -25,8 +25,9 @@ git status --short
 ```
 
 If nothing is staged (`git diff --cached` is empty), tell the user:
+
 > "No staged changes detected. Run `git add` first, then re-run this command."
-and stop.
+> and stop.
 
 ### Step 3: Analyze and select gitmoji
 
@@ -57,7 +58,8 @@ Present the analysis to the user:
 ```
 
 Then ask the user using a structured prompt with these options:
-- **Commit** — run the commit as suggested
+
+- **Commit** — run the commit with gitmoji as suggested
 - **Adjust message** — let me change the description
 - **Change gitmoji** — pick a different emoji
 - **Cancel** — abort

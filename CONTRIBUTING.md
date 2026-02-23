@@ -46,13 +46,14 @@ We use [**changesets**](https://github.com/changesets/changesets) to handle the 
 
 #### Commit message
 
-We use the [**Conventional Commits**](https://www.conventionalcommits.org/) specification combined with Gitmoji and enforce it using [**commitlint**](https://commitlint.js.org/).
+We use the [**Conventional Commits**](https://www.conventionalcommits.org/) specification and enforce it using [**commitlint**](https://commitlint.js.org/). A [Gitmoji](https://gitmoji.dev/) prefix is optional.
 You can use `.cursor/rules/git-workflow.mdc` to follow our conventions.
 
 Every commit message must follow the format:
 
 ```
-:gitmoji: type(scope?): description
+type(scope?): description
+:gitmoji: type(scope?): description   # gitmoji prefix is optional
 ```
 
 You can use the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch is valid.

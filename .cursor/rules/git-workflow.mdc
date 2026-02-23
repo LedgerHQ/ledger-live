@@ -41,6 +41,8 @@ Every commit message MUST follow this format:
 - Max **72 characters** for the full message line
 - Be specific about **what** changed, not just **where**
 
+> **Note**: commitlint in CI also accepts commits without gitmoji (e.g. from Renovate or automated tools), but commits created by Cursor MUST always include a gitmoji prefix.
+
 ### Good examples
 
 - `:sparkles: feat(desktop): add portfolio analytics dashboard`
