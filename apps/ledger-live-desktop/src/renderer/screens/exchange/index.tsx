@@ -3,7 +3,6 @@ import semver from "semver";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import Card from "~/renderer/components/Box/Card";
 import {
   counterValueCurrencySelector,
   developerModeSelector,
@@ -35,6 +34,7 @@ import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/Network
 import { ProviderInterstitial } from "LLD/components/ProviderInterstitial";
 import PageHeader from "LLD/components/PageHeader";
 import { getWallet40HeaderKey } from "./helpers";
+import Box from "~/renderer/components/Box/Box";
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -108,12 +108,13 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   }
 
   const headerKey = getWallet40HeaderKey(manifest.id);
+
   return (
     <>
       {shouldDisplayWallet40MainNav && headerKey ? (
         <PageHeader title={t(headerKey)} onBack={() => navigate(-1)} />
       ) : null}
-      <Card
+      <Box
         grow
         style={{
           overflow: "hidden",
@@ -141,7 +142,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
           }}
           Loader={providerInterstitialEnabled ? ProviderInterstitial : undefined}
         />
-      </Card>
+      </Box>
     </>
   );
 };
