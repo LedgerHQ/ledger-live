@@ -263,7 +263,7 @@ export default class ZCash {
       remainingBlocks = endBlockHeight - blockHeight;
       lastProcessed = block.height;
 
-      if (!(blockHeight % maxBatchSize) || blockHeight === endBlockHeight) {
+      if (!(processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
         const stop = yield {
           balance,
           processedBlocks,
