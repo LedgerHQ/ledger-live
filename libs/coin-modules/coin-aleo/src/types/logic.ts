@@ -4,7 +4,14 @@ import type {
   AleoRecordScannerStatusResponse,
   AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
+  AleoPrivateRecord,
 } from "./api";
+import type { AleoDecryptedRecordResponse } from "./sdk";
+
+export interface AleoUnspentRecord extends AleoPrivateRecord {
+  microcredits: string;
+  decryptedData: AleoDecryptedRecordResponse;
+}
 
 export type EnrichedTransaction = {
   rawTx: AleoPublicTransaction;

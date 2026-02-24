@@ -117,3 +117,22 @@ export interface AleoRecordScannerStatusResponse {
   synced: boolean;
   percentage: number;
 }
+
+export interface AleoPrivateRecord {
+  block_height: number;
+  block_timestamp: number;
+  commitment: string;
+  function_name: string;
+  output_index: number;
+  owner: string;
+  program_name: string;
+  record_ciphertext: string;
+  record_name: string;
+  sender: string;
+  spent: boolean;
+  tag: string;
+  transaction_id: string;
+  transition_id: string;
+  transaction_index: number;
+  transition_index: number;
+}

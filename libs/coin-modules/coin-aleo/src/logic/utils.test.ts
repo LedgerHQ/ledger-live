@@ -10,6 +10,7 @@ import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedEnrichedTransaction } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
+import type { ProvableApi } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -21,6 +22,7 @@ import {
   resolveConfig,
   getTransactionType,
   calculateAmount,
+  isProvableApiConfigured,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -504,5 +506,53 @@ describe("calculateAmount", () => {
       amount: new BigNumber(0),
       totalSpent: estimatedFees,
     });
+  });
+});
+
+describe("isProvableApiConfigured", () => {
+  const validProvableApi: Required<ProvableApi> = {
+    apiKey: "test-api-key",
+    consumerId: "test-consumer-id",
+    uuid: "test-uuid",
+    jwt: {
+      token: "test-token",
+      exp: 123456789,
+    },
+    scannerStatus: {
+      synced: true,
+      percentage: 100,
+    },
+  };
+
+  it("returns true when all required fields are present", () => {
+    expect(isProvableApiConfigured(validProvableApi)).toBe(true);
+  });
+
+  it("returns false when provableApi is null", () => {
+    expect(isProvableApiConfigured(null)).toBe(false);
+  });
+
+  it("returns false when uuid is missing", () => {
+    const { uuid: _, ...rest } = validProvableApi;
+
+    expect(isProvableApiConfigured(rest)).toBe(false);
+  });
+
+  it("returns false when apiKey is missing", () => {
+    const { apiKey: _, ...rest } = validProvableApi;
+
+    expect(isProvableApiConfigured(rest)).toBe(false);
+  });
+
+  it("returns false when jwt is missing", () => {
+    const { jwt: _, ...rest } = validProvableApi;
+
+    expect(isProvableApiConfigured(rest)).toBe(false);
+  });
+
+  it("returns false when jwt.token is missing", () => {
+    const api: ProvableApi = { ...validProvableApi, jwt: { token: "", exp: 123456789 } };
+
+    expect(isProvableApiConfigured(api)).toBe(false);
   });
 });

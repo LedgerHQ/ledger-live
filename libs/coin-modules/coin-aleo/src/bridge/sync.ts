@@ -9,7 +9,10 @@ import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/accou
 import { log } from "@ledgerhq/logs";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { accessProvableApi } from "../network/utils";
-import type { AleoAccount, ProvableApi } from "../types";
+import type { AleoAccount, ProvableApi, AleoUnspentRecord } from "../types";
+import { getPrivateBalance } from "../logic/getPrivateBalance";
+import { isProvableApiConfigured } from "../logic/utils";
+import { apiClient } from "../network/api";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
@@ -69,6 +72,32 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     },
   });
 
+  let privateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
+  let unspentPrivateRecords: AleoUnspentRecord[] | null = null;
+  let lastPrivateSyncDate = initialAccount?.aleoResources?.lastPrivateSyncDate ?? null;
+
+  if (viewKey && isProvableApiConfigured(provableApi)) {
+    const rawUnspentPrivateRecords = await apiClient.getAccountOwnedRecords({
+      currency,
+      jwtToken: provableApi.jwt.token,
+      uuid: provableApi.uuid,
+      apiKey: provableApi.apiKey,
+      unspent: true,
+    });
+
+    const privateBalanceResult = await getPrivateBalance({
+      currency,
+      viewKey,
+      privateRecords: rawUnspentPrivateRecords,
+    });
+
+    privateBalance = privateBalanceResult.balance;
+    unspentPrivateRecords = privateBalanceResult.unspentRecords;
+    lastPrivateSyncDate = new Date();
+  }
+
+  const totalBalance = transparentBalance.plus(privateBalance ?? 0);
+
   // sort by date desc
   latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
@@ -80,8 +109,8 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   return {
     type: "Account",
     id: ledgerAccountId,
-    balance: transparentBalance,
-    spendableBalance: transparentBalance,
+    balance: totalBalance,
+    spendableBalance: totalBalance,
     blockHeight,
     operations,
     operationsCount: operations.length,
@@ -89,6 +118,9 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     aleoResources: {
       transparentBalance,
       provableApi,
+      privateBalance,
+      unspentPrivateRecords,
+      lastPrivateSyncDate,
     },
   };
 };
