@@ -19,8 +19,8 @@ interface NetworkLog {
 }
 
 export class WebviewLogCollector {
-  readonly consoleLogs: ConsoleLog[] = [];
-  readonly requestsMap: Map<Request, NetworkLog> = new Map();
+  private readonly consoleLogs: ConsoleLog[] = [];
+  private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
   private webviewPage: Page | null = null;
 
