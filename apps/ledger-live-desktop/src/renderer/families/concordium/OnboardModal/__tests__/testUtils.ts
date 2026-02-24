@@ -22,53 +22,6 @@ export const createMockImportableAccount = (overrides: Partial<Account> = {}): A
   });
 };
 
-export const createMockOnboardingResult = (
-  overrides: Partial<{ completedAccount: Account }> = {},
-) => {
-  return {
-    completedAccount: createMockAccount(),
-    ...overrides,
-  };
-};
-
-export const createMockConcordiumBridge = () => ({
-  pairWalletConnect: jest.fn(),
-  onboardAccount: jest.fn(),
-});
-
-type ObservableValue = { error?: Error } | { status: string; account?: Account };
-
-export const createMockObservable = (values: ObservableValue[], delay: number = 0) => ({
-  subscribe: jest.fn(
-    ({
-      next,
-      complete,
-      error,
-    }: {
-      next: (value: ObservableValue) => void;
-      complete: () => void;
-      error: (error: Error) => void;
-    }) => {
-      const timeoutId = setTimeout(() => {
-        values.forEach(value => {
-          if ("error" in value && value.error) {
-            error(value.error);
-          } else {
-            next(value);
-          }
-        });
-        if (values.length > 0 && !("error" in values[values.length - 1])) {
-          complete();
-        }
-      }, delay);
-
-      return {
-        unsubscribe: jest.fn(() => clearTimeout(timeoutId)),
-      };
-    },
-  ),
-});
-
 export const createMockStepProps = (overrides: Record<string, unknown> = {}) => {
   const currency = createMockConcordiumCurrency();
   const device = createMockDevice();
@@ -101,40 +54,4 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     transitionTo: jest.fn(),
     ...overrides,
   };
-};
-
-export const createMockUserProps = (overrides: Record<string, unknown> = {}) => {
-  const currency = createMockConcordiumCurrency();
-  const device = createMockDevice();
-  const creatableAccount = createMockAccount({ used: false });
-  const importableAccount = createMockImportableAccount();
-
-  return {
-    currency,
-    device,
-    editedNames: {},
-    selectedAccounts: [creatableAccount, importableAccount],
-    existingAccounts: [],
-    closeModal: jest.fn(),
-    addAccountsAction: jest.fn(),
-    t: jest.fn((key: string) => key),
-    ...overrides,
-  };
-};
-
-export const mockPairingProgress = {
-  PREPARE: { status: "PREPARE", walletConnectUri: "wc:test-uri" },
-  SUCCESS: { status: "SUCCESS", sessionTopic: "test-session-topic" },
-  ERROR: { error: new Error("Pairing failed") },
-};
-
-export const mockOnboardingProgress = {
-  PREPARE: { status: AccountOnboardStatus.PREPARE },
-  SIGN: { status: AccountOnboardStatus.SIGN },
-  SUBMIT: { status: AccountOnboardStatus.SUBMIT },
-  SUCCESS: {
-    status: AccountOnboardStatus.SUCCESS,
-    account: createMockAccount(),
-  },
-  ERROR: { error: new Error("Onboarding failed") },
 };
