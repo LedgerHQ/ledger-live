@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
-import { HEDERA_OPERATION_TYPES } from "../constants";
+import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
@@ -128,8 +128,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             fees: BigInt(liveOp.fee.toFixed(0)),
             date: liveOp.date,
             block: {
-              height: liveOp.blockHeight ?? 10,
-              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? 10),
+              height: liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT,
+              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT),
               time: liveOp.date,
             },
             failed: liveOp.hasFailed ?? false,

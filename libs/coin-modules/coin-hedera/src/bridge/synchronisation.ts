@@ -9,6 +9,7 @@ import type {
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account";
 import type { Account, Operation } from "@ledgerhq/types-live";
+import { HARDCODED_BLOCK_HEIGHT } from "../constants";
 import { toEVMAddress } from "../logic/utils";
 import { listOperations } from "../logic";
 import { apiClient } from "../network/api";
@@ -159,7 +160,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     operationsCount: updatedOperations.length,
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
-    blockHeight: 10,
+    blockHeight: HARDCODED_BLOCK_HEIGHT,
     subAccounts,
     hederaResources: {
       maxAutomaticTokenAssociations: mirrorAccount.max_automatic_token_associations,
