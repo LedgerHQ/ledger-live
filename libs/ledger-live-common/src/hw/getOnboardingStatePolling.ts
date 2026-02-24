@@ -1,9 +1,10 @@
 import { defer, from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
-import { map, catchError, first, timeout, repeat, switchMap, tap } from "rxjs/operators";
+import { map, catchError, first, timeout, repeat, switchMap } from "rxjs/operators";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { withDevice } from "./deviceAccess";
 import {
   TransportStatusError,
+  StatusCodes,
   DeviceOnboardingStatePollingError,
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
@@ -70,16 +71,19 @@ export const getOnboardingStatePolling = ({
         from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs })),
       );
 
-      // only run quitApp the first time
-      if (hasQuitAppAlreadyRun) {
-        return getVersionObs;
-      }
+      return getVersionObs.pipe(
+        catchError((error: unknown) => {
+          const isInsNotSupported =
+            error instanceof TransportStatusError &&
+            error.statusCode === StatusCodes.INS_NOT_SUPPORTED;
 
-      return quitApp(t).pipe(
-        tap(() => {
-          hasQuitAppAlreadyRun = true;
+          if (isInsNotSupported && !hasQuitAppAlreadyRun) {
+            hasQuitAppAlreadyRun = true;
+            return quitApp(t).pipe(switchMap(() => getVersionObs));
+          }
+
+          return throwError(() => error);
         }),
-        switchMap(() => getVersionObs),
       );
     }).pipe(
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
