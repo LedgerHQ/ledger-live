@@ -300,6 +300,7 @@ const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]): BigNumber
         shieldedBalance = shieldedBalance.minus(output.amount);
       } else if (output.transfer_type === "internal") {
         // NOTE: ignore internal tx
+        log(LOG_TYPE, `warn: skipped internal orchard output`);
       }
     }
   }
