@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, type RefObject } from "react";
-import { Transition, TransitionGroup } from "react-transition-group";
+import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel } from "@ledgerhq/devices";
 import ByteSize from "~/renderer/components/ByteSize";
 import { Text } from "@ledgerhq/react-ui";
 import styled, { css, keyframes } from "styled-components";
-import { TransitionStatus } from "react-transition-group";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";

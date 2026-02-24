@@ -1,6 +1,8 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
-import { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
+import {
+  getSwapProvider,
+  AdditionalProviderConfig,
+} from "@ledgerhq/live-common/exchange/providers/swap";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";

@@ -77,7 +77,7 @@ module.exports = {
     node: true,
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks", "better-tailwindcss"],
+  plugins: ["react", "react-hooks", "import", "better-tailwindcss"],
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
@@ -114,6 +114,7 @@ module.exports = {
     "space-before-function-paren": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+    "import/no-duplicates": "error",
     "better-tailwindcss/enforce-consistent-line-wrapping": "off",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
