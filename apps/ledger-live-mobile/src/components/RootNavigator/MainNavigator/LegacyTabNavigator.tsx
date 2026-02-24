@@ -12,6 +12,14 @@ import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
 import { Tab } from "./tabNavigator";
 import type { LegacyTabNavigatorProps } from "./types";
 
+const LEGACY_TAB_TEST_IDS: Partial<Record<string, string>> = {
+  [NavigatorName.Portfolio]: "tab-bar-portfolio",
+  [NavigatorName.Earn]: "tab-bar-earn",
+  [NavigatorName.Web3HubTab]: "tab-bar-discover",
+  [NavigatorName.Discover]: "tab-bar-discover",
+  [NavigatorName.MyLedger]: "TabBarManager",
+};
+
 export function LegacyTabNavigator({
   tabBar,
   screenOptions,
@@ -31,7 +39,7 @@ export function LegacyTabNavigator({
         options={{
           headerShown: false,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
-          tabBarButtonTestID: "tab-bar-portfolio",
+          tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Portfolio],
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -54,10 +62,11 @@ export function LegacyTabNavigator({
             <TabIcon
               Icon={IconsLegacy.LendMedium}
               i18nKey={earnYieldLabel}
-              testID="tab-bar-earn"
+              testID={LEGACY_TAB_TEST_IDS[NavigatorName.Earn]}
               {...props}
             />
           ),
+          tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Earn],
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -102,7 +111,7 @@ export function LegacyTabNavigator({
             tabBarIcon: props => (
               <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
-            tabBarButtonTestID: "tab-bar-discover",
+            tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Web3HubTab],
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
@@ -122,7 +131,7 @@ export function LegacyTabNavigator({
             tabBarIcon: props => (
               <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
-            tabBarButtonTestID: "tab-bar-discover",
+            tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Discover],
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
@@ -142,7 +151,7 @@ export function LegacyTabNavigator({
         options={{
           headerShown: false,
           tabBarIcon: props => <ManagerTabIcon {...props} />,
-          tabBarButtonTestID: "TabBarManager",
+          tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.MyLedger],
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
