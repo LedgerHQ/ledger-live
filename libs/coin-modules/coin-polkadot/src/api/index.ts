@@ -87,6 +87,7 @@ async function operations(
   address: string,
   { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
+  // FIXME Options are ignored here
   const [items, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return { items, next: nextHeight !== null ? JSON.stringify(nextHeight) : undefined };
 }

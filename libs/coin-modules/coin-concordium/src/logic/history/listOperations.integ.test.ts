@@ -31,7 +31,7 @@ describe("listOperations", () => {
 
       expect(Array.isArray(operations)).toBe(true);
       expect(operations.length).toBe(0);
-      expect(cursor).toBe("");
+      expect(cursor).toBeUndefined();
     });
   });
 
@@ -116,7 +116,7 @@ describe("listOperations", () => {
     });
 
     it("should return empty cursor for proxy-based operations", async () => {
-      expect(cursor).toBe("");
+      expect(cursor).toBeUndefined();
     });
   });
 

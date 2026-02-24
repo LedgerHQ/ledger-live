@@ -643,8 +643,10 @@ export async function getOperations(
     const { height: currentHeight } = await getLastBlock(currency);
 
     if (options.minHeight > currentHeight) {
-      return { items: [] };
+      return { items: [], next: undefined };
     }
+
+    // FIXME Options are ignored here
 
     const startHeight = options.minHeight;
     const endHeight = Math.min(currentHeight, options.minHeight + MAX_BLOCKS_TO_SCAN);
@@ -673,7 +675,7 @@ export async function getOperations(
     operations.sort((a, b) => b.tx.date.getTime() - a.tx.date.getTime());
 
     const hasMore = endHeight < currentHeight;
-    const nextCursor = hasMore ? JSON.stringify(endHeight + 1) : "";
+    const nextCursor = hasMore ? JSON.stringify(endHeight + 1) : undefined;
 
     return { items: operations, next: nextCursor };
   } catch (error) {
