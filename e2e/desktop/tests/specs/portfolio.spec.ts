@@ -33,7 +33,7 @@ test.describe("Portfolio", () => {
 test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   const currency = Currency.BTC;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     // to-do remove when wallet 4.0 is default
     featureFlags: {
@@ -43,6 +43,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
           marketBanner: true,
           graphRework: true,
           quickActionCtas: true,
+          mainNavigation: true,
         },
       },
     },
@@ -79,7 +80,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
 test.describe("Portfolio Wallet 4.0 - With Account", () => {
   const currency = Currency.BTC;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
@@ -99,6 +100,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
           marketBanner: true,
           graphRework: true,
           quickActionCtas: true,
+          mainNavigation: true,
         },
       },
     },
@@ -126,6 +128,36 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.analytics.expectAnalyticsScreenToBeVisible();
       await app.analytics.clickBackButton();
       await app.portfolio.expectPortfolioScreenToBeVisible();
+    },
+  );
+});
+
+test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
+  test.use({
+    userdata: "skip-onboarding",
+    // to-do remove when wallet 4.0 is default
+    featureFlags: {
+      lwdWallet40: {
+        enabled: true,
+        params: {
+          marketBanner: true,
+          graphRework: true,
+          quickActionCtas: true,
+          mainNavigation: true,
+        },
+      },
+    },
+  });
+
+  test(
+    "Portfolio no seen device: verify reborn quick actions are displayed",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+    },
+    async ({ app }) => {
+      await app.portfolio.checkNoDeviceTitleVisibility();
+      await app.portfolio.checkConnectButtonVisibility();
+      await app.portfolio.checkBuyALedgerButtonVisibility();
     },
   );
 });
