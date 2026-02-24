@@ -171,10 +171,24 @@ export default class ZCash {
    * it returns a synced shielded context including aggregate information
    * like the computed balance and processing progress.
    *
+   * ### As observable
+   * The iterator can be converted to an observable.
+   *
+   * Example:
+   * ```typescript
+   * const syncShieldedGenerator = zcash.syncShielded({
+   *   startBlockHeight: blockWithMyTx.height,
+   *   viewingKey: testAccount1.viewingKey,
+   *   maxBatchSize: 3,
+   * });
+   * const syncShieldedObs = rxjs.from(syncShieldedGenerator);
+   * ```
+   *
    * ### Stop the iterator
    * The sync operation can be gracefully stopped by calling with the stop
    * argument set to true.
-   * e.g.,
+   *
+   * Example:
    * ```typescript
    * const syncedShielded = zcash.syncShielded(
    *   startBlockHeight: 3697074,
