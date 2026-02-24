@@ -597,8 +597,23 @@ jobs:
           cores: ${{ env.AVD_CORES }}
           ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
+          emulator-options: ${{ env.AVD_OPTIONS }} -writable-system
           script: ./tools/scripts/wait_emulator_idle.sh
+
+      - name: Install mitmproxy certificate in android emulator
+        shell: bash
+        run: |
+          echo "Convert the certificate for android";
+          HASHED_NAME=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.crt | head -1)
+          cp mitmproxy-ca-cert.cer $HASHED_NAME.0
+
+          echo "Pushing the certifacte to the emulator"
+          adb root
+          adb remount
+          adb push $HASHED_NAME.0 /system/etc/security/cacerts/
+          adb shell chmod 644 /system/etc/security/cacerts/$HASHED_NAME.0
+          adb reboot
+          echo "Certificate pushed"
 
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
