@@ -547,10 +547,11 @@ jobs:
             # Start mitmdump in background and wait for certificate generation
             mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
             MITMPROXY_PID=$!
-            #
+            
+            sleep $((2 * $ATTEMPT))
+
             # Kill mitmdump after certificate is generated
             kill $MITMPROXY_PID 2>/dev/null || true
-            sleep $((2 * $ATTEMPT))
             wait $MITMPROXY_PID 2>/dev/null || true 
             ATTEMPT=$((ATTEMPT + 1))
           done
