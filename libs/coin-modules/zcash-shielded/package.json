@@ -33,11 +33,11 @@
     }
   },
   "exports": {
-    "./lib/*": "./lib/ZCash.js",
+    "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
-      "require": "./lib/ZCash.js",
-      "default": "./lib-es/ZCash.js"
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
