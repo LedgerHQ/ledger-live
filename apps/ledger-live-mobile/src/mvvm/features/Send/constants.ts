@@ -6,6 +6,8 @@ import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNa
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.RECIPIENT,
   SEND_FLOW_STEP.AMOUNT,
+  SEND_FLOW_STEP.CUSTOM_FEES,
+  SEND_FLOW_STEP.COIN_CONTROL,
   SEND_FLOW_STEP.SIGNATURE,
   SEND_FLOW_STEP.CONFIRMATION,
 ];
@@ -27,6 +29,26 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: true,
     addressInput: true,
     screenName: ScreenName.SendFlowAmount,
+    showHeaderRight: false,
+    screenOptions: {
+      ...TransparentHeaderNavigationOptions,
+      title: "",
+    },
+  },
+  [SEND_FLOW_STEP.CUSTOM_FEES]: {
+    id: SEND_FLOW_STEP.CUSTOM_FEES,
+    canGoBack: true,
+    screenName: ScreenName.SendFlowCustomFees,
+    showHeaderRight: false,
+    screenOptions: {
+      ...TransparentHeaderNavigationOptions,
+      title: "",
+    },
+  },
+  [SEND_FLOW_STEP.COIN_CONTROL]: {
+    id: SEND_FLOW_STEP.COIN_CONTROL,
+    canGoBack: true,
+    screenName: ScreenName.SendFlowCoinControl,
     showHeaderRight: false,
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
