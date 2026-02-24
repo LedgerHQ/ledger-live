@@ -1,8 +1,7 @@
 import React from "react";
 import { render, LONG_TIMEOUT, waitForElementToBeRemoved } from "@tests/test-renderer";
 import { TestPages } from "./shared";
-import { TestIdPrefix } from "../TestScreens";
-import { testIds } from "../TestScreens";
+import { TestIdPrefix, testIds } from "../TestScreens";
 
 describe("QueuedDrawer", () => {
   // this test is really slow to cold start, so we need to increase the timeout

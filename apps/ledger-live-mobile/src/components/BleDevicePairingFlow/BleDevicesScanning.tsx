@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking, FlatList } from "react-native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { IconsLegacy } from "@ledgerhq/native-ui";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import Link from "~/components/wrappedUi/Link";

@@ -1,6 +1,5 @@
 import btc from "./platformAdapter";
-import { BitcoinTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
-import { FAMILIES } from "@ledgerhq/live-app-sdk";
+import { BitcoinTransaction as PlatformTransaction, FAMILIES } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
 import { Transaction } from "@ledgerhq/coin-bitcoin/types";
 

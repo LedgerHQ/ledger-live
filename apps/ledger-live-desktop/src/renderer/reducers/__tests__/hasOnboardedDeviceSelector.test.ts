@@ -1,7 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
-import { hasOnboardedDeviceSelector } from "../settings";
-import { INITIAL_STATE } from "../settings";
+import { hasOnboardedDeviceSelector, INITIAL_STATE } from "../settings";
 import type { State } from "../index";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

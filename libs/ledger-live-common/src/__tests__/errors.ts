@@ -1,5 +1,9 @@
-import { DeviceHalted, DeviceInOSUExpected } from "@ledgerhq/errors";
-import { deserializeError, serializeError } from "@ledgerhq/errors";
+import {
+  DeviceHalted,
+  DeviceInOSUExpected,
+  deserializeError,
+  serializeError,
+} from "@ledgerhq/errors";
 test("DeviceHalted", () => {
   const error = new DeviceHalted();
   expect(error).toBeInstanceOf(DeviceHalted);

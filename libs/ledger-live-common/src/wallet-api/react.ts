@@ -25,7 +25,13 @@ import {
   setWalletApiIdForAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
+import {
+  WalletAPICurrency,
+  AppManifest,
+  WalletAPIAccount,
+  WalletAPICustomHandlers,
+  DiscoverDB,
+} from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -55,7 +61,6 @@ import {
   INITIAL_PLATFORM_STATE,
   MAX_RECENTLY_USED_LENGTH,
 } from "./constants";
-import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";

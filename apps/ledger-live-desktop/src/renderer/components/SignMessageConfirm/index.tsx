@@ -5,13 +5,16 @@ import { Account, AccountLike, AnyMessage, MessageProperties } from "@ledgerhq/t
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
+import {
+  renderVerifyUnwrapped,
+  SubTitle,
+  Title,
+} from "~/renderer/components/DeviceAction/rendering";
 import SignMessageConfirmField from "./SignMessageConfirmField";
 import Spinner from "~/renderer/components/BigSpinner";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Flex } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
-import { SubTitle, Title } from "~/renderer/components/DeviceAction/rendering";
 import Box from "~/renderer/components/Box";
 import { getLLDCoinFamily } from "~/renderer/families";
 import FormattedVal from "~/renderer/components/FormattedVal";

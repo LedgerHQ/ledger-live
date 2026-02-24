@@ -1,12 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useNavigate } from "react-router";
+import { useNavigate, Navigate } from "react-router";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { Navigate } from "react-router";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";

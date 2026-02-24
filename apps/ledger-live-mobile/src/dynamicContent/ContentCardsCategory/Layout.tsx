@@ -6,6 +6,7 @@ import {
   BrazeContentCard,
   CategoryContentCard,
   ContentCardsLayout,
+  ContentCardsType,
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata } from "~/contentCards/cards/types";
@@ -21,7 +22,6 @@ import {
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "../useDynamicContent";
-import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
 import HeroCard from "~/contentCards/cards/hero";

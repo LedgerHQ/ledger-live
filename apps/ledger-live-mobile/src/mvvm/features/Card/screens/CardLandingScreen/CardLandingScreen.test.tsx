@@ -3,8 +3,7 @@ import { render, screen } from "@tests/test-renderer";
 import { CardLandingScreen } from "./index";
 import { track } from "~/analytics";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
-import { PAGE_NAME } from "../../constants";
-import { CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
+import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
 import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();
