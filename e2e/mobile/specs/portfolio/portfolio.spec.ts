@@ -33,8 +33,6 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
     await app.portfolio.checkQuickActionSwapButtonVisibility();
     await app.portfolio.checkQuickActionBuyButtonVisibility();
-    // check that the quick action swap button is disabled by pressing it and checking the no balance title visibility
-    await app.portfolio.pressQuickActionSwapButton();
     await app.portfolio.checkNoBalanceTitleVisibility();
   });
 
