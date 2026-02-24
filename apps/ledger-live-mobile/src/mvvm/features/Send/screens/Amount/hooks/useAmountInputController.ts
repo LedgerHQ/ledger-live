@@ -1,15 +1,16 @@
-import { useCallback, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "LLD/hooks/redux";
+import { useSelector } from "~/context/hooks";
 import {
   useSendAmount,
   useCalculateCountervalueCallback,
 } from "@ledgerhq/live-countervalues-react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useLocale } from "~/context/Locale";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import {
   formatAmountForInput,
@@ -18,9 +19,8 @@ import {
   processFiatInput,
   calculateFiatEquivalent,
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
-import { syncAmountInputs } from "../utils/amountInputSync";
 
-type UseAmountInputParams = Readonly<{
+type UseAmountInputControllerParams = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
   transaction: Transaction;
@@ -28,15 +28,18 @@ type UseAmountInputParams = Readonly<{
   onUpdateTransaction: (patch: Partial<Transaction>) => void;
 }>;
 
-export function useAmountInput({
+/**
+ * Mobile-specific amount input controller
+ */
+export function useAmountInputController({
   account,
   parentAccount,
   transaction,
   status,
   onUpdateTransaction,
-}: UseAmountInputParams) {
+}: UseAmountInputControllerParams) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useLocale();
 
   const mainAccount = useMemo(
     () => getMainAccount(account, parentAccount ?? undefined),
@@ -48,10 +51,8 @@ export function useAmountInput({
   const fiatUnit = counterValueCurrency.units[0];
 
   // When useAllAmount is true, the bridge calculates the actual amount (balance - fees)
-  // This calculated amount is available in status.amount
   const cryptoAmount = useMemo(() => {
     if (transaction.useAllAmount) {
-      // Use status.amount which already accounts for fees when useAllAmount is true
       return status.amount ?? new BigNumber(0);
     }
     return transaction.amount ?? new BigNumber(0);
@@ -62,6 +63,7 @@ export function useAmountInput({
     fiatCurrency: counterValueCurrency,
     cryptoAmount,
   });
+
   const calculateFiatFromCrypto = useCalculateCountervalueCallback({
     to: counterValueCurrency,
   });
@@ -69,30 +71,26 @@ export function useAmountInput({
   const [inputMode, setInputMode] = useState<"fiat" | "crypto">("fiat");
   const [fiatInputValue, setFiatInputValue] = useState<string>("");
   const [cryptoInputValue, setCryptoInputValue] = useState<string>("");
+  const [isTyping, setIsTyping] = useState<boolean>(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTransactionAmountRef = useRef<BigNumber>(cryptoAmount);
   const lastFiatAmountRef = useRef<BigNumber>(fiatAmount);
-  const lastUseAllAmountRef = useRef<boolean>(transaction.useAllAmount ?? false);
   const lastUserInputTimeRef = useRef<number>(0);
 
-  // Sync input values when transaction amount changes externally (e.g., from quick actions)
-  syncAmountInputs({
-    cryptoAmount,
-    fiatAmount,
-    transactionUseAllAmount: Boolean(transaction.useAllAmount),
-    inputMode,
-    cryptoInputValue,
-    fiatInputValue,
-    locale,
-    accountUnit,
-    fiatUnit,
-    lastTransactionAmountRef,
-    lastFiatAmountRef,
-    lastUseAllAmountRef,
-    lastUserInputTimeRef,
-    setCryptoInputValue,
-    setFiatInputValue,
-  });
+  if (transaction.useAllAmount) {
+    if (inputMode === "fiat") {
+      const formatted = formatFiatForInput(fiatUnit, fiatAmount, locale);
+      if (formatted !== fiatInputValue) {
+        setFiatInputValue(formatted);
+      }
+    } else {
+      const formatted = formatAmountForInput(accountUnit, cryptoAmount, locale);
+      if (formatted !== cryptoInputValue) {
+        setCryptoInputValue(formatted);
+      }
+    }
+  }
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
@@ -104,7 +102,7 @@ export function useAmountInput({
       const cryptoSource =
         cryptoInputValue && cryptoInputValue.length > 0
           ? lastTransactionAmountRef.current
-          : lastTransactionAmountRef.current ?? cryptoAmount;
+          : cryptoAmount;
       return formatCurrencyUnit(accountUnit, cryptoSource ?? new BigNumber(0), {
         showCode: true,
         disableRounding: true,
@@ -112,9 +110,7 @@ export function useAmountInput({
       });
     }
     const fiatSource =
-      fiatInputValue && fiatInputValue.length > 0
-        ? lastFiatAmountRef.current
-        : lastFiatAmountRef.current ?? fiatAmount;
+      fiatInputValue && fiatInputValue.length > 0 ? lastFiatAmountRef.current : fiatAmount;
     return formatCurrencyUnit(fiatUnit, fiatSource ?? new BigNumber(0), {
       showCode: true,
       disableRounding: true,
@@ -130,6 +126,11 @@ export function useAmountInput({
     inputMode,
     locale,
   ]);
+
+  // Keep tracking refs in sync with bridge-computed amounts.
+  // Updated after secondaryValue so it reads the previous cycle's values (intentional).
+  lastTransactionAmountRef.current = cryptoAmount;
+  lastFiatAmountRef.current = fiatAmount;
 
   const cancelPendingUpdates = useCallback(() => {
     if (debounceTimeoutRef.current) {
@@ -152,8 +153,10 @@ export function useAmountInput({
   const handleFiatInput = useCallback(
     (rawValue: string) => {
       const processed = processFiatInput(rawValue, fiatUnit, locale);
-      setFiatInputValue(processed.clampedDisplay);
 
+      setFiatInputValue(processed.display);
+
+      // Don't update transaction if user is typing more than 2 decimals
       if (processed.isOverLimit) {
         return;
       }
@@ -187,14 +190,23 @@ export function useAmountInput({
   );
 
   const handleAmountChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
+    (text: string) => {
       lastUserInputTimeRef.current = Date.now();
-      const raw = event.target.value;
+
+      setIsTyping(true);
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+        typingTimeoutRef.current = null;
+      }, 2000);
 
       if (inputMode === "fiat") {
-        handleFiatInput(raw);
+        handleFiatInput(text);
       } else {
-        handleCryptoInput(raw);
+        handleCryptoInput(text);
       }
     },
     [handleCryptoInput, handleFiatInput, inputMode],
@@ -221,15 +233,11 @@ export function useAmountInput({
 
   const updateBothInputs = useCallback(
     (amount: BigNumber) => {
-      // Quick action: update inputs immediately for instant feedback,
-      // then let bridge sync take over once it responds.
       lastUserInputTimeRef.current = 0;
 
-      // Update crypto input
       const cryptoFormatted = formatAmountForInput(accountUnit, amount, locale);
       setCryptoInputValue(cryptoFormatted);
 
-      // Calculate and update fiat input
       const fiatEquivalent = calculateFiatEquivalent({
         amount,
         lastTransactionAmount: lastTransactionAmountRef.current,
@@ -249,17 +257,32 @@ export function useAmountInput({
 
   const amountInputMaxDecimalLength = inputMode === "fiat" ? 2 : Math.max(0, accountUnit.magnitude);
 
-  return {
-    amountValue,
-    currencyText,
-    currencyPosition,
-    secondaryValue,
-    inputMode,
-    amountInputMaxDecimalLength,
-    onAmountChange: handleAmountChange,
-    onToggleInputMode: handleToggleMode,
-    updateBothInputs,
-    cancelPendingUpdates,
-    debounceTimeoutRef,
-  };
+  return useMemo(
+    () => ({
+      value: amountValue,
+      currencyText,
+      currencyPosition,
+      secondaryValue,
+      inputMode,
+      maxDecimalLength: amountInputMaxDecimalLength,
+      isTyping,
+      onChangeText: handleAmountChange,
+      onToggleMode: handleToggleMode,
+      updateBothInputs,
+      cancelPendingUpdates,
+    }),
+    [
+      amountValue,
+      currencyText,
+      currencyPosition,
+      secondaryValue,
+      inputMode,
+      amountInputMaxDecimalLength,
+      isTyping,
+      handleAmountChange,
+      handleToggleMode,
+      updateBothInputs,
+      cancelPendingUpdates,
+    ],
+  );
 }

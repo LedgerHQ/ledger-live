@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { areAmountsEqual } from "@ledgerhq/live-common/flows/send/amount/utils/amount";
 import type { AmountScreenQuickAction } from "../types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
@@ -24,8 +24,6 @@ const QUICK_ACTIONS_CONFIG = [
   { id: "threeQuarters", ratio: 0.75 },
 ];
 
-// Cap tolerance calculation at 8 decimals to prevent floating-point precision errors
-// and handle edge cases with very high magnitude currencies
 const TOLERANCE_MAGNITUDE_CAP = 8;
 
 export function useQuickActions({
@@ -53,8 +51,6 @@ export function useQuickActions({
   }, [accountUnit.magnitude]);
 
   const quickActions = useMemo(() => {
-    // Don't disable quick actions just because maxAvailable changed due to fee updates
-    // Only disable if account balance is actually 0 (use main account)
     const disabled = mainAccount.balance.lte(0);
     const currentAmount = transaction.amount ?? new BigNumber(0);
 
@@ -63,11 +59,6 @@ export function useQuickActions({
         .multipliedBy(config.ratio)
         .integerValue(BigNumber.ROUND_DOWN);
 
-      // A button is active only if:
-      // 1. We're not in "useAllAmount" mode (Max is selected)
-      // 2. The current amount matches the target amount
-      // 3. AND either we explicitly selected this button OR the amount is not zero
-      //    (to avoid all buttons being active when amount is 0)
       const matchesTarget = areAmountsEqual(currentAmount, targetAmount, tolerance);
       const explicitlySelected =
         lastSelection?.id === config.id &&
@@ -78,8 +69,8 @@ export function useQuickActions({
 
       return {
         id: config.id,
-        label: t(`newSendFlow.quickActions.${config.id}`),
-        onClick: () => {
+        label: t(`send.newSendFlow.quickActions.${config.id}`),
+        onPress: () => {
           if (isActive) return;
           setLastSelection({ id: config.id, amount: targetAmount });
           onSetAmountFromRatio(targetAmount);
@@ -93,8 +84,8 @@ export function useQuickActions({
     const isMaxActive = transaction.useAllAmount ?? false;
     actions.push({
       id: "max",
-      label: t("newSendFlow.quickActions.max"),
-      onClick: () => {
+      label: t("send.newSendFlow.quickActions.max"),
+      onPress: () => {
         if (isMaxActive) return;
         setLastSelection(null);
         onSelectMax();

@@ -4304,7 +4304,8 @@
       "useMax": "Use max",
       "loadingNetwork": "Loading network fees...",
       "noRateProvider": "Not available",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "Quantity available",
+      "toggleCurrency": "Toggle currency"
     },
     "summary": {
       "solanaRawTransaction": {
@@ -4364,6 +4365,12 @@
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
       "higherFaster": "Higher gas price means a faster confirmation.",
+      "medium": "Medium",
+      "fast": "Fast",
+      "slow": "Slow",
+      "custom": "Custom",
+      "customFees": "Custom fees",
+      "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"
       },
