@@ -7,28 +7,17 @@
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/pnpm-workspace.yaml",
-      {
-        "env": "ANDROID_HOME"
-      },
-      {
-        "env": "ANDROID_KEYSTORE_FILE"
-      },
-      {
-        "env": "ANDROID_KEYSTORE_PASS"
-      },
-      {
-        "env": "ANDROID_KEY_ALIAS"
-      },
-      {
-        "env": "ANDROID_KEY_PASS"
-      },
-      {
-        "env": "ANDROID_SDK_ROOT"
-      },
-      {
-        "env": "ANALYTICS_TOKEN"
-      },
+      "{workspaceRoot}/pnpm-workspace.yaml"
+    ],
+    "default": [
+      "sharedGlobals",
+      "{projectRoot}/**/*",
+      "!{projectRoot}/dist/**",
+      "!{projectRoot}/build/**",
+      "!{projectRoot}/lib/**",
+      "!{projectRoot}/lib-es/**"
+    ],
+    "desktopEnv": [
       {
         "env": "APPLECONNECT_API_KEY_CONTENT"
       },
@@ -45,12 +34,6 @@
         "env": "APPLEID_PASSWORD"
       },
       {
-        "env": "APP_IDENTIFIER"
-      },
-      {
-        "env": "APP_NAME"
-      },
-      {
         "env": "AZURE_APP_ID"
       },
       {
@@ -63,16 +46,10 @@
         "env": "AZURE_KEY_NAME"
       },
       {
-        "env": "BRAZE_ANDROID_API_KEY"
-      },
-      {
         "env": "BRAZE_API_KEY"
       },
       {
         "env": "BRAZE_CUSTOM_ENDPOINT"
-      },
-      {
-        "env": "BRAZE_IOS_API_KEY"
       },
       {
         "env": "BYPASS_CORS"
@@ -90,13 +67,7 @@
         "env": "DEVELOPER_TEAM_ID"
       },
       {
-        "env": "DISABLE_TRANSACTION_BROADCAST"
-      },
-      {
         "env": "ELECTRON_ARGS"
-      },
-      {
-        "env": "ENVFILE"
       },
       {
         "env": "FASTLANE_PASSWORD"
@@ -123,25 +94,7 @@
         "env": "GENERATE_METAFILES"
       },
       {
-        "env": "GH_TOKEN"
-      },
-      {
-        "env": "GIT_REPO_URL"
-      },
-      {
-        "env": "GIT_REPO_USER"
-      },
-      {
-        "env": "LEDGER_INTERNAL_ARGS"
-      },
-      {
         "env": "MATCH_PASSWORD"
-      },
-      {
-        "env": "MY_APP_BUNDLE_ID"
-      },
-      {
-        "env": "NO_DEBUG_DEVICE"
       },
       {
         "env": "SENTRY_AUTH_TOKEN"
@@ -160,30 +113,53 @@
       },
       {
         "env": "SENTRY_DSN"
+      }
+    ],
+    "mobileEnv": [
+      {
+        "env": "ANDROID_HOME"
+      },
+      {
+        "env": "ANDROID_KEYSTORE_FILE"
+      },
+      {
+        "env": "ANDROID_KEYSTORE_PASS"
+      },
+      {
+        "env": "ANDROID_KEY_ALIAS"
+      },
+      {
+        "env": "ANDROID_KEY_PASS"
+      },
+      {
+        "env": "ANDROID_SDK_ROOT"
+      },
+      {
+        "env": "APP_IDENTIFIER"
+      },
+      {
+        "env": "APP_NAME"
+      },
+      {
+        "env": "BRAZE_ANDROID_API_KEY"
+      },
+      {
+        "env": "BRAZE_IOS_API_KEY"
+      },
+      {
+        "env": "ENVFILE"
+      },
+      {
+        "env": "MY_APP_BUNDLE_ID"
+      },
+      {
+        "env": "NO_DEBUG_DEVICE"
       },
       {
         "env": "SHORT_BUNDLE_ID"
       },
       {
-        "env": "SPECULOS_API_PORT"
-      },
-      {
-        "env": "SPECULOS_DEVICE"
-      },
-      {
-        "env": "SWAP_API_BASE"
-      },
-      {
-        "env": "SWAP_DISABLE_APPS_INSTALL"
-      },
-      {
-        "env": "SWAP_USER_IP"
-      },
-      {
         "env": "SUPPLY_UPLOAD_MAX_RETRIES"
-      },
-      {
-        "env": "VERBOSE"
       },
       {
         "env": "DATADOG_CLIENT_TOKEN"
@@ -214,6 +190,44 @@
       },
       {
         "env": "DATADOG_PROD_APPLICATION_ID"
+      }
+    ],
+    "sharedEnv": [
+      {
+        "env": "ANALYTICS_TOKEN"
+      },
+      {
+        "env": "DISABLE_TRANSACTION_BROADCAST"
+      },
+      {
+        "env": "GH_TOKEN"
+      },
+      {
+        "env": "GIT_REPO_URL"
+      },
+      {
+        "env": "GIT_REPO_USER"
+      },
+      {
+        "env": "LEDGER_INTERNAL_ARGS"
+      },
+      {
+        "env": "SPECULOS_API_PORT"
+      },
+      {
+        "env": "SPECULOS_DEVICE"
+      },
+      {
+        "env": "SWAP_API_BASE"
+      },
+      {
+        "env": "SWAP_DISABLE_APPS_INSTALL"
+      },
+      {
+        "env": "SWAP_USER_IP"
+      },
+      {
+        "env": "VERBOSE"
       },
       {
         "env": "MOCK"
@@ -296,19 +310,13 @@
       {
         "env": "NO_DEBUG_COUNTERVALUES"
       }
-    ],
-    "default": [
-      "sharedGlobals",
-      "{projectRoot}/**/*",
-      "!{projectRoot}/dist/**",
-      "!{projectRoot}/build/**",
-      "!{projectRoot}/lib/**",
-      "!{projectRoot}/lib-es/**"
     ]
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "{projectRoot}/dist/**",
         "{projectRoot}/lib/**",
@@ -330,7 +338,9 @@
       "cache": false
     },
     "typecheck": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true,
       "inputs": [
         "default",
@@ -340,7 +350,9 @@
       ]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": true,
       "inputs": [
         "default",
@@ -350,11 +362,15 @@
       ]
     },
     "start": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "start:msw": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "unimported": {
@@ -364,43 +380,99 @@
       "cache": false
     },
     "android:apk:local": {
-      "dependsOn": ["^build"],
-      "cache": true
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true,
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "android:apk": {
-      "dependsOn": ["^build"],
-      "cache": true
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true,
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "ios:local:ipa": {
-      "dependsOn": ["^build"],
-      "cache": true
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true,
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "ios:ci:adhoc": {
-      "dependsOn": ["^build"],
-      "cache": true
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true,
+      "inputs": [
+        "default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "nightly": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "inputs": [
+        "default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "pre-build": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "inputs": [
+        "default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "release": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "inputs": [
+        "default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "watch": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "watch:es": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "coverage": {
-      "dependsOn": ["^build", "build"],
+      "dependsOn": [
+        "^build",
+        "build"
+      ],
       "outputs": [
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"
@@ -417,4 +489,3 @@
   "defaultBase": "develop",
   "useDaemonProcess": false
 }
-
