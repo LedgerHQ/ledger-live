@@ -152,7 +152,8 @@
     "quote" : "Teklif",
     "memoTag" : {
       "learnMore" : "Etiket/Memo hakkında daha fazla bilgi edinin"
-    }
+    },
+    "memo" : "Memo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -778,6 +779,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Satın al / Sat",
     "chooseProvider" : "{{providerCount}} sağlayıcı arasından birini seçin",
     "chooseProviders" : "{{providerCount}} sağlayıcı arasından birini seçin",
     "title" : "Kripto satın al ve sat",
@@ -2223,7 +2225,7 @@
           "description" : "Nakit para göndererek stabil coin alın"
         },
         "fromCrypto" : {
-          "title" : "Kripto alın"
+          "title" : "Kripto al"
         }
       }
     }
@@ -2380,12 +2382,15 @@
       "walletNotExist" : "Böyle bir cüzdan yok"
     },
     "skipMemo" : {
-      "title" : "{{tag}} ekleme atlansın mı?",
-      "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir."
+      "title" : "{{memoLabel}} ekleme atlansın mı?",
+      "description" : "Alıcı bir {{memoLabel}} gerektiriyorsa varlığınız kaybolabilir.",
+      "notRequired" : "Alıcı tarafından {{memoLabel}} gerekli kılınmamış mı?",
+      "confirm" : "Evet, atla",
+      "neverAskAgain" : "Bu uyarıyı tekrar gösterme"
     },
     "tagHelp" : {
-      "title" : "{{tag}} nedir?",
-      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{tag}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{tag}} memosunun eklenmediği durumlarda fonlar kaybolabilir."
+      "inputLabel" : "{{memoLabel}} gir",
+      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{memoLabel}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{memoLabel}} memosunun eklenmediği durumlarda fonlar kaybolabilir."
     },
     "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
     "feesAmount" : "Ücret tutarı ({{unit}})",
@@ -3191,7 +3196,7 @@
             "title" : "Ödüller",
             "compound" : "Birleştir",
             "claim" : "Hesaba al",
-            "compoundOrClaim" : "Birleştir veya hesaba al",
+            "compoundOrClaim" : "Bileştir veya hesaba al",
             "compoundDescription" : "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
             "claimDescription" : "Ödüller mevcut bakiyeye eklenecek",
             "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
@@ -4681,14 +4686,14 @@
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsOverride" : "Geçersiz bırak",
+      "featureFlagsOverride" : "Uygula",
       "featureFlagsRestoreAll" : "Tüm bayrak değerlerini geri yükle",
       "flagHint" : "Bir özellik bayrağı, Hedeflenen Firebase ortamında tanımlanmış\nolmasına rağmen aşağıdaki listede yoksa arama girişinde\nbunun **tam** adını girebilirsiniz ve listede görünecektir. Bayrak adını\n\"feature\" (özellik) ön eki olmadan, ilk harf küçük ve sonraki sözcüklerin ilk harfi büyük olacak şekilde (camelCase ile) yazın.",
       "showButtonDesc" : "Özellik Bayrakları düğmelerini Yan Menüde her zaman göster",
-      "buttonTitle" : "Bayraklar yerel olarak geçersiz bırakıldı",
+      "buttonTitle" : "Bayraklar yerel olarak uygulandı",
       "overridden" : {
-        "byEnv" : "ortam tarafından geçersiz bırakıldı",
-        "overriddenLocally" : "yerel olarak geçersiz bırakıldı",
+        "byEnv" : "ortam tarafından uygulandı",
+        "overriddenLocally" : "yerel olarak uygulandı",
         "disableForLanguage" : "mevcut dil için devre dışı bırakıldı",
         "disableForVersion" : "mevcut sürüm için devre dışı bırakıldı"
       },
@@ -4897,6 +4902,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "Değeri 0 olan token işlemlerini gizle",
         "desc" : "Değer içermeyen token işlemlerini gizleyerek Ethereum, Polygon, BSC ve Tron ağlarındaki bazı potansiyel adres zehirleme saldırılarını önleyebilirsiniz."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "Tekrar sorma ve gönderim sırasında memo’yu atla",
+        "desc" : "Fon gönderirken memo’yu atlamayla ilgili uyarıyı devre dışı bırak"
       }
     }
   },
@@ -5808,11 +5817,13 @@
     "casper" : {
       "transferIdPlaceholder" : "Tercihe bağlı",
       "transferId" : "Transfer Kimliği (Memo)",
-      "transferIdWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
+      "transferIdWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin",
+      "memo" : "Transfer Kimliği (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "Tercihe bağlı",
-      "comment" : "Yorum"
+      "comment" : "Yorum",
+      "memo" : "Yorum"
     },
     "canton" : {
       "commentPlaceholder" : "Tercihe bağlı",
@@ -5970,6 +5981,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "İsteğe Bağlı Memo"
+    },
+    "xrp" : {
+      "memo" : "Etiket"
     }
   },
   "errors" : {
@@ -7817,6 +7831,11 @@
           "description" : "{{currency}} ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. {{currency}} hesabınız oluşturulduktan sonra o hesabı Ledger Wallet'a ekleyebilirsiniz.",
           "cta" : "Bir {{currency}} hesabı nasıl oluşturulur?",
           "close" : "Kapat"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "Hiçbir {{currency}} hesabı eklenmedi",
+          "description" : "Seçili hesaplardan biri veya daha fazlası için gerekli kurulumu tamamlamadınız.",
+          "close" : "Kapat"
         }
       },
       "status" : {
@@ -7888,12 +7907,12 @@
       "extremeFear" : "Aşırı Korku",
       "fear" : "Korku",
       "neutral" : "Nötr",
-      "greed" : "Açgözlülük",
-      "extremeGreed" : "Aşırı Açgözlülük"
+      "greed" : "Coşku",
+      "extremeGreed" : "Aşırı Coşku"
     },
     "dialog" : {
       "title" : "Duygu endeksi",
-      "content" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı açgözlülük anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
+      "content" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı coşku anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
       "cta" : "Anladım"
     }
   },
@@ -7923,6 +7942,12 @@
       "hoursAgo_other" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
       "daysAgo_one" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun",
       "daysAgo_other" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Bildirimler"
+    },
+    "myLedger" : {
+      "tooltip" : "My Ledger"
     }
   },
   "geoBlocking" : {
@@ -7997,6 +8022,45 @@
         "label" : "Doğum günü yüksekliği",
         "tooltip" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır."
       }
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo gizli bakiyesini belirleyin",
+        "description" : "Ledger Wallet, gizli bakiyenizi görüntülemek için görüntüleme anahtarınızı saklar ve gizli işlemleri işlemek için üçüncü taraf hizmetleri kullanır. <0>Daha fazla bilgi edinin</0>",
+        "bullets" : ["Gizli bakiyenizin şifresini çözmek için salt okunur erişim", "Ledger, fonlarınızı gönderemez ve harcayamaz", "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz", "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir", "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"],
+        "cta" : {
+          "allow" : "İzin ver",
+          "cancel" : "İptal et"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Ledger cihazınızda onaylayın",
+        "description" : "Görüntüleme anahtarının paylaşılmasını cihazınızda onaylayın",
+        "cancelAlert" : "Cihazınızdaki hesapların her birini ayrı olarak reddedebilirsiniz. Tümünü iptal etmeniz durumunda portföyünüze artık hiçbir hesap eklenmez.",
+        "cancelAllBtn_one" : "İptal et",
+        "cancelAllBtn_other" : "Tümünü iptal et"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Görüntüleme anahtarını paylaşın",
+          "shareKey_other" : "Görüntüleme anahtarlarını paylaşın"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "Seçili hesaplardan hiçbiri için görüntüleme anahtarını paylaşmadınız. Görüntüleme anahtarları, Ledger Wallet’taki gizli bakiyenizi görüntülemek için gereklidir."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "Mevcut bakiye",
+      "availableBalanceTooltip" : "Transfer edilebilir bakiye",
+      "transparentBalance" : "Şeffaf bakiye",
+      "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
+      "privateBalance" : "Gizli bakiye",
+      "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
     }
   }
 }
