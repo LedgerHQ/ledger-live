@@ -59,4 +59,21 @@ export class AccountPage extends AppPage {
   async clickReceive() {
     await this.receiveButton.click();
   }
+
+  @step("Navigate to token account")
+  async navigateToToken(tokenTestId: string) {
+    const tokenRow = this.page.getByTestId(tokenTestId);
+    // Wait for the token row to be attached to the DOM before navigating to it.
+    // React 19's concurrent rendering may temporarily detach elements during re-renders
+    await tokenRow.waitFor({ state: "attached" });
+    await tokenRow.click();
+  }
+
+  async operationRowByTestId(operationTestId: string) {
+    const operationRow = this.page.getByTestId(operationTestId);
+    // Wait for the operation row to be attached to the DOM before returning it.
+    // React 19's concurrent rendering may temporarily detach elements during re-renders
+    await operationRow.waitFor({ state: "attached" });
+    return operationRow;
+  }
 }
