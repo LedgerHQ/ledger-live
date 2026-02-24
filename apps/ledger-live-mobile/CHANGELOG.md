@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.107.0-next.3
+
+### Minor Changes
+
+- [#14751](https://github.com/LedgerHQ/ledger-live/pull/14751) [`89b001a`](https://github.com/LedgerHQ/ledger-live/commit/89b001ab5a41854e38b34f612067c26d38fd9c29) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix: show drawer optimise opt in notifs after onboarding
+
 ## 3.107.0-next.2
 
 ### Minor Changes
