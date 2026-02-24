@@ -3,7 +3,10 @@ import { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type {
+  AccountShapeInfo,
+  GetAccountShapeStream,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
@@ -15,10 +18,11 @@ import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import { DerivationMode } from "@ledgerhq/types-live";
+import { DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
+import { defer, from } from "rxjs";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -160,96 +164,105 @@ const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOpe
   return out;
 };
 
-export function makeGetAccountShape(signerContext: SignerContext): GetAccountShape<BitcoinAccount> {
-  return async info => {
-    const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
-    // In case we get a full derivation path, extract the seed identification part
-    // 44'/0'/0'/0/0 --> 44'/0'
-    // FIXME Only the CLI provides a full derivationPath: why?
-    const rootPath = derivationPath.split("/", 2).join("/");
-    const accountPath = `${rootPath}/${index}'`;
+async function getAccountShapeAsync(
+  info: AccountShapeInfo<BitcoinAccount>,
+  _config: SyncConfig,
+  signerContext: SignerContext,
+): Promise<Partial<BitcoinAccount>> {
+  const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
+  // In case we get a full derivation path, extract the seed identification part
+  // 44'/0'/0'/0/0 --> 44'/0'
+  // FIXME Only the CLI provides a full derivationPath: why?
+  const rootPath = derivationPath.split("/", 2).join("/");
+  const accountPath = `${rootPath}/${index}'`;
 
-    const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
+  const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
 
-    const xpub = await generateXpubIfNeeded(paramXpub, {
-      deviceId,
-      currency,
-      signerContext,
-      accountPath,
-    });
+  const xpub = await generateXpubIfNeeded(paramXpub, {
+    deviceId,
+    currency,
+    signerContext,
+    accountPath,
+  });
 
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      xpubOrAddress: xpub,
-      derivationMode,
-    });
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: xpub,
+    derivationMode,
+  });
 
-    const walletNetwork = toWalletNetwork(currency.id);
-    const walletDerivationMode = toWalletDerivationMode(derivationMode);
+  const walletNetwork = toWalletNetwork(currency.id);
+  const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-    const walletAccount =
-      initialAccount?.bitcoinResources?.walletAccount ||
-      (await wallet.generateAccount(
-        {
-          xpub,
-          path: rootPath,
-          index,
-          currency: <Currency>currency.id,
-          network: walletNetwork,
-          derivationMode: walletDerivationMode,
-        },
-        currency,
-      ));
-
-    const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
-    const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
-
-    const blockHeight = currentBlock?.height || 0;
-    await wallet.syncAccount(walletAccount, blockHeight);
-
-    const balance = await wallet.getAccountBalance(walletAccount);
-    const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
-
-    const accountAddresses: Set<string> = new Set<string>();
-    const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
-    accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
-
-    const changeAddresses: Set<string> = new Set<string>();
-    const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
-      account: 1,
-    });
-    changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
-
-    const newOperations = transactions
-      ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
-      .flat();
-
-    const newUniqueOperations = deduplicateOperations(newOperations);
-
-    const _operations = mergeOps(oldOperations, newUniqueOperations);
-    const operations = removeReplaced(_operations as BtcOperation[]);
-
-    const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-    const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-
-    return {
-      id: accountId,
-      xpub,
-      balance,
-      spendableBalance: balance,
-      operations,
-      operationsCount: operations.length,
-      freshAddress: walletAccount.xpub.freshAddress,
-      freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
-      blockHeight,
-      bitcoinResources: {
-        utxos,
-        walletAccount,
+  const walletAccount =
+    initialAccount?.bitcoinResources?.walletAccount ||
+    (await wallet.generateAccount(
+      {
+        xpub,
+        path: rootPath,
+        index,
+        currency: <Currency>currency.id,
+        network: walletNetwork,
+        derivationMode: walletDerivationMode,
       },
-    };
+      currency,
+    ));
+
+  const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
+  const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
+
+  const blockHeight = currentBlock?.height || 0;
+  await wallet.syncAccount(walletAccount, blockHeight);
+
+  const balance = await wallet.getAccountBalance(walletAccount);
+  const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
+
+  const accountAddresses: Set<string> = new Set<string>();
+  const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
+  accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
+
+  const changeAddresses: Set<string> = new Set<string>();
+  const changeAddressesWithInfo = walletAccount.xpub.storage.getUniquesAddresses({
+    account: 1,
+  });
+  changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
+
+  const newOperations = transactions
+    ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
+    .flat();
+
+  const newUniqueOperations = deduplicateOperations(newOperations);
+
+  const _operations = mergeOps(oldOperations, newUniqueOperations);
+  const operations = removeReplaced(_operations as BtcOperation[]);
+
+  const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
+  const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+
+  return {
+    id: accountId,
+    xpub,
+    balance,
+    spendableBalance: balance,
+    operations,
+    operationsCount: operations.length,
+    freshAddress: walletAccount.xpub.freshAddress,
+    freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
+    blockHeight,
+    bitcoinResources: {
+      utxos,
+      walletAccount,
+    },
   };
+}
+
+export function makeGetAccountShape(
+  signerContext: SignerContext,
+): GetAccountShapeStream<BitcoinAccount> {
+  return (info: AccountShapeInfo<BitcoinAccount>, config: SyncConfig) =>
+    defer(() => from(getAccountShapeAsync(info, config, signerContext)));
 }
 
 type XpubGenerateParameter = {
