@@ -215,16 +215,32 @@ export default class ZCash {
     let remainingBlocks = 0;
     let lastProcessed;
 
+    if (startBlockHeight <= 0 || maxBatchSize <= 0) {
+      log(LOG_TYPE, "error: invalid negative args startBlockHeight or maxBatchSize ");
+      return {
+        balance,
+        processedBlocks,
+        remainingBlocks,
+        lastProcessed,
+      };
+    }
+
     // 1. get end block height
-    let endBlockHeight = (await this.jsonRpcClient.getBlockCount()) || 0;
+    let endBlockHeight = await this.jsonRpcClient.getBlockCount();
     if (!endBlockHeight) {
       log(LOG_TYPE, "error: could not retrieve the last block");
+      return {
+        balance,
+        processedBlocks,
+        remainingBlocks,
+        lastProcessed,
+      };
     }
 
     for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
       // 2. on last iteration, update end block height
       if (blockHeight === endBlockHeight) {
-        endBlockHeight = (await this.jsonRpcClient.getBlockCount()) || 0;
+        endBlockHeight = await this.jsonRpcClient.getBlockCount();
         if (!endBlockHeight) {
           log(LOG_TYPE, "error: could not retrieve the last block");
           break;

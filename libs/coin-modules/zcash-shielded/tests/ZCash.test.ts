@@ -198,9 +198,33 @@ describe("findShieldedTxsInBlock", () => {
 describe("syncShielded", () => {
   beforeEach(resetLastBlockCount);
 
+  test.each([
+    { maxBatchSize: 0, startBlockHeight: 5 },
+    { maxBatchSize: 1, startBlockHeight: -1 },
+  ])(
+    "returns early if maxBatchSize or startBlockHeight are invalice (negative or 0)",
+    async (args: { maxBatchSize: number; startBlockHeight: number }) => {
+      const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+      const syncedShieldedIterator = zcash.syncShielded({
+        viewingKey: "abc456",
+        ...args,
+      });
+
+      expect(await syncedShieldedIterator.next()).toEqual({
+        done: true,
+        value: {
+          balance: new BigNumber(0),
+          processedBlocks: 0,
+          remainingBlocks: 0,
+          lastProcessed: undefined,
+        },
+      });
+    },
+  );
+
   test("returns an empty shielded balance when the viewingKey doesn't match any shielded transactions", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShieldedIterator = await zcash.syncShielded({
+    const syncedShieldedIterator = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: "abc456",
       maxBatchSize: 1,
@@ -281,7 +305,7 @@ describe("syncShielded", () => {
     });
   });
 
-  test.only("returns the shielded balance in batches of max size 3", async () => {
+  test("returns the shielded balance in batches of max size 3", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const syncedShieldedIterator = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
