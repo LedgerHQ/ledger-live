@@ -2,8 +2,9 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { Fragment } from "react";
-import { View } from "react-native";
+import React, { ComponentProps, Fragment, useRef, useCallback } from "react";
+import { Animated, View } from "react-native";
+import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
@@ -33,6 +34,14 @@ export const EarnV2Webview = ({
   const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
   const isPtxUiV2 = earnUiVersion === "v2" || earnUiVersion === "2";
 
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const handleScroll = useCallback<NonNullable<ComponentProps<typeof WebView>["onScroll"]>>(
+    event => {
+      scrollY.setValue(event.nativeEvent.contentOffset.y);
+    },
+    [scrollY],
+  );
+
   const webviewInputs = {
     ...inputs,
     safeAreaTop: insets.top.toString(),
@@ -47,7 +56,7 @@ export const EarnV2Webview = ({
 
   return (
     <View style={{ flex: 1, overflow: "visible" }}>
-      {isPtxUiV2 && !hideMainNavigator && <EarnBackground />}
+      {isPtxUiV2 && !hideMainNavigator && <EarnBackground scrollY={scrollY} />}
       <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
         {manifest ? (
           <Fragment>
@@ -56,6 +65,7 @@ export const EarnV2Webview = ({
               manifest={manifest}
               inputs={webviewInputs}
               isLwm40Enabled={isLwm40Enabled}
+              onScroll={isPtxUiV2 && !hideMainNavigator ? handleScroll : undefined}
             />
           </Fragment>
         ) : (
