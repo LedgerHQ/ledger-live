@@ -286,7 +286,7 @@ export default class ZCash {
   }
 }
 
-const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]) => {
+const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]): BigNumber => {
   let shieldedBalance = new BigNumber(0);
 
   for (const shieldedTx of shieldedTxs) {
