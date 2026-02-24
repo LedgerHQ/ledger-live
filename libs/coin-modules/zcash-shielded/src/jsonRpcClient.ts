@@ -140,15 +140,11 @@ export class JsonRpcClient {
     if (response.data.error) {
       const message = response.data.error.message ?? "unknown error";
       log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
-      return;
-    }
-
-    if (response.data.result === undefined || response.data.result === null) {
+    } else if (response.data.result === undefined || response.data.result === null) {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
-      return;
+    } else {
+      return response.data.result;
     }
-
-    return response.data.result;
   }
 
   getBlock(blockHashOrHeight: string) {
