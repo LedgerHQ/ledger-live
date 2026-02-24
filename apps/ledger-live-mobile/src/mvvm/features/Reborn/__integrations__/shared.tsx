@@ -18,7 +18,7 @@ const Setup = () => {
   const { openDrawer } = useRebornBuyDeviceDrawerController();
   return (
     <Flex>
-      <Button onPress={() => openDrawer()} />
+      <Button onPress={() => openDrawer()} testID="reborn-test-button" />
       <RebornBuyDeviceDrawer />
     </Flex>
   );

@@ -1,0 +1,49 @@
+---
+description: Coin-specific logic must live in families/; generic UI uses the families contract only (no if (family === "evm") in shared code)
+globs: ["**/families/**", "**/mvvm/**", "**/renderer/**", "**/screens/**"]
+alwaysApply: false
+---
+
+# Coin families contract (Desktop & Mobile UI)
+
+**Principle:** Coin-specific UI and behavior must live in **families/**. Generic screens, hooks, and components must **not** branch on `family === "evm"` (or any family name). They must use the **families contract**: optional slots defined in the family type, implemented per family, and consumed via a single lookup (e.g. `getLLDCoinFamily(currency.family).SlotName`). This keeps generic code family-agnostic and supports **modularisation and lazy loading**.
+
+## Do not do (anti-patterns)
+
+- **Generic code** (outside `families/<family>/`):
+  - `if (currency.family === "evm")` / `if (transaction.family === "solana")` to render or behave differently.
+  - Coin-specific hooks or logic in shared ViewModels / screens (e.g. Canton onboarding branch inside a generic Scan Device VM).
+  - Importing a specific coin module (e.g. `@ledgerhq/coin-canton`) in generic UI to branch on that coin.
+- **Exception:** Type-narrowing inside a **family folder** (e.g. `invariant(transaction.family === "bitcoin", "...")` in `families/bitcoin/`) is acceptable; the rule applies to **generic** (shared) code only.
+
+## Do (correct pattern)
+
+1. **Define a slot on the contract**  
+   - **Desktop:** Add an optional property to `LLDCoinFamily` in `apps/ledger-live-desktop/src/renderer/families/types.ts` (e.g. `NoAssociatedAccounts?: React.ComponentType<...>`).
+   - **Mobile:** Use the same idea: a typed contract (or generated map like `noAssociatedAccountsByFamily`) that families can optionally fill.
+
+2. **Implement only in the family**  
+   - Put the component or logic in `families/<family>/` (e.g. `families/hedera/NoAssociatedAccounts.tsx`) and export it from the family index (Desktop: in the object passed to `generated`; Mobile: in the generated aggregation if applicable).
+
+3. **Use the contract in generic code**  
+   - Generic code looks up by family and uses the slot if present, with **no** `if (family === "hedera")`:
+   - **Desktop:** `getLLDCoinFamily(currency.family).NoAssociatedAccounts` → use it when defined.
+   - **Mobile:** e.g. `getCustomNoAssociatedAccounts(currency)` returning a component from a family map, then pass it to the screen (e.g. as `CustomNoAssociatedAccounts` in route params).
+
+## Reference example: Scan Device “no associated accounts”
+
+- **Contract (Desktop):**  
+  `apps/ledger-live-desktop/src/renderer/families/types.ts` — `NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>` on `LLDCoinFamily`.
+- **Family implementation:**  
+  `apps/ledger-live-desktop/src/renderer/families/hedera/NoAssociatedAccounts.tsx` and `hedera/index.ts` exporting it in the family object.
+- **Generic usage (Desktop):**  
+  `StepImport.tsx` / `useScanAccounts.ts`: `getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts` — no Hedera-specific branch.
+- **Generic usage (Mobile):**  
+  `useScanDeviceAccountsViewModel.ts`: `getCustomNoAssociatedAccounts(currency)` from `~/generated/NoAssociatedAccounts`; result passed as `CustomNoAssociatedAccounts` to the NoAssociatedAccounts screen. No `if (family === "hedera")` in the VM.
+
+When you need **new** coin-specific behavior in a generic flow (e.g. post-add-account navigation, custom empty state): **extend the contract** (add a new optional slot and document it), implement it in the relevant family folder, and have the generic code only read from the contract. Do not add new `if (family === "…")` branches in shared UI.
+
+## Paths
+
+- **Desktop:** `apps/ledger-live-desktop/src/renderer/families/` — contract in `types.ts`, implementations per family, aggregation in `generated.ts`; generic code under `renderer/`, `mvvm/`.
+- **Mobile:** `apps/ledger-live-mobile/src/families/` — family-specific UI and flows; generic code under `mvvm/`, `screens/`. Use generated maps or a small helper (e.g. `getCustomNoAssociatedAccounts`) so generic code never branches on family name.

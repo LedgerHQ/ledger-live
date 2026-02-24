@@ -28,6 +28,7 @@ export class AccountPage extends AppPage {
 
   @step("Click Stake button on banner")
   async clickBannerCTA() {
+    await this.stakeBannerButton.waitFor({ state: "attached" });
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
   }
@@ -35,6 +36,10 @@ export class AccountPage extends AppPage {
   @step("Scroll to operations")
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
+    // Wait for the operation list to be attached to the DOM before scrolling.
+    // React 19's concurrent rendering may temporarily detach elements during re-renders
+    // (e.g. after navigating to a token sub-account).
+    await operationList.waitFor({ state: "attached" });
     await operationList.scrollIntoViewIfNeeded();
   }
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, VerticalTimeline, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
+import { Flex, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
+import { SubtitleText } from "LLD/features/Onboarding/components/VerticalTimeline";
 import StepText from "LLD/features/Onboarding/components/StepText";
 import SeedStepWrapper from "./SeedStepWrapper";
 
@@ -16,17 +17,14 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
   return (
     <SeedStepWrapper testId="choice-restore-recover-step">
       <Flex flexDirection="column">
-        {/* @ts-expect-error weird props issue with React 18 */}
         <StepText mb={6}>{t("syncOnboarding.manual.seedContent.restoreDescription")}</StepText>
 
         <Flex mb={8}>
           <Icons.Note size="M" color="white" />
           <Flex ml={5} flexDirection="column" flex={1}>
-            {/* @ts-expect-error weird props issue with React 18 */}
-            <VerticalTimeline.SubtitleText mb={2}>
+            <SubtitleText mb={2}>
               {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
-            </VerticalTimeline.SubtitleText>
-            {/* @ts-expect-error weird props issue with React 18 */}
+            </SubtitleText>
             <StepText>
               {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
             </StepText>
@@ -37,11 +35,9 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
             <Icons.RecoveryKey size="M" color="white" />
 
             <Flex ml={5} flexDirection="column" flex={1}>
-              {/* @ts-expect-error weird props issue with React 18 */}
-              <VerticalTimeline.SubtitleText mb={2}>
+              <SubtitleText mb={2}>
                 {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
-              </VerticalTimeline.SubtitleText>
-              {/* @ts-expect-error weird props issue with React 18 */}
+              </SubtitleText>
               <StepText>
                 {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
               </StepText>
@@ -53,11 +49,9 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
           <Icons.ShieldCheck size="M" color="white" />
 
           <Flex ml={5} flexDirection="column" flex={1}>
-            {/* @ts-expect-error weird props issue with React 18 */}
-            <VerticalTimeline.SubtitleText mb={2}>
+            <SubtitleText mb={2}>
               {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
-            </VerticalTimeline.SubtitleText>
-            {/* @ts-expect-error weird props issue with React 18 */}
+            </SubtitleText>
             <StepText>
               {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
             </StepText>

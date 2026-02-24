@@ -6,3 +6,4 @@ export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { validateIntent } from "./validateIntent";
+export { validateAddress } from "./validateAddress";

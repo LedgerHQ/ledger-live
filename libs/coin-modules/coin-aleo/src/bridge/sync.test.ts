@@ -1,16 +1,21 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { SyncConfig } from "@ledgerhq/types-live";
-import { getBalance, lastBlock } from "../logic";
+import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { AleoAccount } from "../types";
+import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { accessProvableApi } from "../network/utils";
 import { getAccountShape } from "./sync";
 
 jest.mock("../logic");
+jest.mock("../network/utils");
 
 const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
+const mockListOperations = jest.mocked(listOperations);
+const mockAccessProvableApi = jest.mocked(accessProvableApi);
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
@@ -23,6 +28,7 @@ describe("sync.ts", () => {
     ...getMockedAccount(),
     aleoResources: {
       transparentBalance: new BigNumber(500000),
+      provableApi: null,
     },
   };
 
@@ -41,6 +47,12 @@ describe("sync.ts", () => {
       hash: "mock-block-hash",
       time: new Date("2024-01-01"),
     });
+
+    mockListOperations.mockResolvedValue({
+      operations: [],
+      nextCursor: null,
+    });
+    mockAccessProvableApi.mockResolvedValue(null);
   });
 
   describe("getAccountShape", () => {
@@ -113,6 +125,7 @@ describe("sync.ts", () => {
         lastSyncDate: expect.any(Date),
         aleoResources: {
           transparentBalance: mockAccount.balance,
+          provableApi: null,
         },
       });
     });
@@ -163,6 +176,128 @@ describe("sync.ts", () => {
           transparentBalance: new BigNumber(mockUpdatedBalance),
         },
       });
+    });
+
+    it("should pass correct pagination parameters when syncing from scratch", async () => {
+      await getAccountShape(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: undefined,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockListOperations).toHaveBeenCalledTimes(1);
+      expect(mockListOperations).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        address: mockAccount.freshAddress,
+        ledgerAccountId: expect.any(String),
+        mode: "bridge",
+        pagination: {
+          minHeight: 0,
+          order: "asc",
+        },
+      });
+    });
+
+    it("should pass lastPagingToken from latest operation block height when resuming sync", async () => {
+      const mockOperation = getMockedOperation({
+        blockHeight: 12345,
+        accountId: mockInitialAccount.id,
+      });
+
+      const accountWithOperations = {
+        ...mockInitialAccount,
+        operations: [mockOperation],
+      };
+
+      await getAccountShape(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithOperations,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockListOperations).toHaveBeenCalledTimes(1);
+      expect(mockListOperations).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        address: mockAccount.freshAddress,
+        ledgerAccountId: mockInitialAccount.id,
+        mode: "bridge",
+        pagination: {
+          minHeight: 0,
+          order: "asc",
+          lastPagingToken: mockOperation.blockHeight?.toString(),
+        },
+      });
+    });
+
+    it("should correctly merge new operations with existing operations", async () => {
+      const oldOperation = getMockedOperation({
+        id: "op1",
+        hash: "hash1",
+        type: "OUT",
+        blockHeight: 100,
+        accountId: mockInitialAccount.id,
+        senders: [mockAccount.freshAddress],
+        date: new Date("2023-01-02"),
+      });
+
+      const newOperation = getMockedOperation({
+        id: "op2",
+        hash: "hash2",
+        type: "IN",
+        value: new BigNumber(200),
+        blockHeight: 200,
+        accountId: mockInitialAccount.id,
+        senders: ["aleo1sender"],
+        recipients: [mockAccount.freshAddress],
+        date: new Date("2024-01-02"),
+      });
+
+      const accountWithOperations = {
+        ...mockInitialAccount,
+        operations: [oldOperation],
+      };
+
+      mockGetBalance.mockResolvedValue([
+        {
+          asset: { type: "native" as const },
+          value: BigInt(1000),
+        },
+      ]);
+
+      mockListOperations.mockResolvedValue({
+        operations: [newOperation],
+        nextCursor: null,
+      });
+
+      const result = await getAccountShape(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithOperations,
+        },
+        mockSyncConfig,
+      );
+
+      expect(result.operationsCount).toBe(2);
+      expect(result.operations).toEqual([
+        expect.objectContaining({ id: "op2", blockHeight: 200 }),
+        expect.objectContaining({ id: "op1", blockHeight: 100 }),
+      ]);
     });
 
     it("should propagate errors", async () => {

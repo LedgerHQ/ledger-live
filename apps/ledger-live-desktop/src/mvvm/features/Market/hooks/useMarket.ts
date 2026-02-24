@@ -1,10 +1,8 @@
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import {
-  useMarketDataProvider,
-  useMarketData as useMarketDataHook,
-} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
+import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
+import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

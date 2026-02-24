@@ -18,7 +18,8 @@ export function SendFlowLayoutView({ headerRight, headerContent, children }: Sen
         paddingHorizontal: theme.spacings.s16,
       },
       bodyContent: {
-        padding: theme.spacings.s16,
+        paddingVertical: theme.spacings.s24,
+        paddingHorizontal: theme.spacings.s16,
         flexGrow: 1,
       },
     }),

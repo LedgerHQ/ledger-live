@@ -78,12 +78,12 @@ export const ItemLabel = styled(Text)`
 
 export type ItemType = {
   label: string;
-  children: JSX.Element;
+  children: React.JSX.Element;
   onClick: () => void;
   isActive?: boolean;
   isDisabled?: boolean;
   displayNotificationBadge?: boolean;
-  customNotificationBadge?: JSX.Element;
+  customNotificationBadge?: React.JSX.Element;
 };
 
 const Item = ({
@@ -94,7 +94,7 @@ const Item = ({
   isDisabled,
   displayNotificationBadge,
   customNotificationBadge,
-}: ItemType): JSX.Element => {
+}: ItemType): React.JSX.Element => {
   const { isExpanded } = useContext(SideBarContext);
 
   const handleClick = () => {

@@ -1,9 +1,15 @@
 import React from "react";
-import { View } from "react-native";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import { TouchableOpacity, View } from "react-native";
+import Animated, { FadeIn, FadeInUp, FadeOut } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { NavigationProps } from "../types";
+import ArrowLeft from "~/icons/ArrowLeft";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Layout } from "./Layout";
 import { useCatalog } from "../hooks";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -13,10 +19,18 @@ import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
 import { LocalLiveApp } from "./LocalLiveApp";
-import { useRoute } from "@react-navigation/native";
 
-export function Catalog() {
+const SAFE_AREA_EDGES_WALLET40 = ["top", "left", "right"] as const;
+const SAFE_AREA_EDGES_LEGACY = ["top", "bottom", "left", "right"] as const;
+
+function CatalogContent({
+  shouldDisplayWallet40MainNav,
+}: {
+  readonly shouldDisplayWallet40MainNav: boolean;
+}) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const title = t("browseWeb3.catalog.title");
 
   const { params } = useRoute();
@@ -28,19 +42,49 @@ export function Catalog() {
     useCatalog(deeplinkInitialCategory);
 
   return (
-    <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
-      {/* TODO: put under the animation header and style  */}
+    <>
       <TrackScreen category="Platform" name="Catalog" />
       <View>
         <DAppDisclaimer disclaimer={disclaimer} />
       </View>
 
       {search.isActive ? (
-        <Search title={title} disclaimer={disclaimer} search={search} />
+        <Animated.View
+          key="search-mode"
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(200)}
+          style={{ flex: 1 }}
+        >
+          <Search
+            title={shouldDisplayWallet40MainNav ? undefined : title}
+            disclaimer={disclaimer}
+            search={search}
+            isLegacySearch={!shouldDisplayWallet40MainNav}
+          />
+        </Animated.View>
       ) : (
-        <>
+        <Animated.View
+          key="normal-mode"
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(200)}
+          style={{ flex: 1 }}
+        >
           <Layout
             listStickyElement={[2]}
+            topHeaderContent={
+              shouldDisplayWallet40MainNav ? (
+                <TouchableOpacity
+                  hitSlop={{ bottom: 10, left: 24, right: 24, top: 10 }}
+                  style={{ paddingVertical: 16 }}
+                  onPress={() => navigation.goBack()}
+                  accessibilityLabel={t("common.back")}
+                  accessibilityRole="button"
+                >
+                  <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-back-arrow" />
+                </TouchableOpacity>
+              ) : undefined
+            }
+            title={shouldDisplayWallet40MainNav ? title : undefined}
             middleHeaderContent={
               <>
                 <Flex marginBottom={16}>
@@ -68,8 +112,26 @@ export function Catalog() {
               </Animated.View>
             }
           />
-        </>
+        </Animated.View>
       )}
+    </>
+  );
+}
+
+export function Catalog() {
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+
+  if (shouldDisplayWallet40MainNav) {
+    return (
+      <SafeAreaView isFlex edges={SAFE_AREA_EDGES_WALLET40}>
+        <CatalogContent shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <TabBarSafeAreaView edges={SAFE_AREA_EDGES_LEGACY}>
+      <CatalogContent shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
     </TabBarSafeAreaView>
   );
 }

@@ -44,7 +44,7 @@ function NumberInput(
     onPercentClick: (percent: number) => void;
   },
   ref?: React.ForwardedRef<HTMLInputElement>,
-): JSX.Element {
+): React.JSX.Element {
   return (
     <Input
       ref={ref}

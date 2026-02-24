@@ -83,6 +83,13 @@ const defaultConfig = {
   moduleNameMapper: {
     "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",
     "^@tests$": "<rootDir>/src/__tests__/server",
+    // TODO: Remove this once we upgrade all projects React 19
+    "^react-dom/client$": require.resolve("react-dom/client"),
+    "^react/jsx-runtime$": require.resolve("react/jsx-runtime"),
+    "^react/jsx-dev-runtime$": require.resolve("react/jsx-dev-runtime"),
+    "^react-dom$": require.resolve("react-dom"),
+    "^react$": require.resolve("react"),
+    "react-test-renderer": require.resolve("react-test-renderer"),
   },
   /**
    * Added because of this error happening when using toMatchInlineSnapshot:

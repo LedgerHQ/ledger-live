@@ -1,8 +1,8 @@
-import React from "react";
+import type { RecentAddress } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { RecentAddressTile } from "./RecentAddressTile";
-import type { RecentAddress } from "../types";
 
 type RecentAddressesSectionProps = Readonly<{
   recentAddresses: RecentAddress[];

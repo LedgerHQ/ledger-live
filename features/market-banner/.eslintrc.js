@@ -16,7 +16,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ["@typescript-eslint", "react", "react-hooks", "better-tailwindcss"],
+  plugins: ["@typescript-eslint", "react", "react-hooks", "import", "better-tailwindcss"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",

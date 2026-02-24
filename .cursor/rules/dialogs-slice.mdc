@@ -1,0 +1,109 @@
+---
+description: Global dialogs Redux slice pattern for MVVM dialog state management
+alwaysApply: false
+---
+
+# Global Dialogs Slice Pattern
+
+Centralized Redux state for **global** dialog open/close, avoiding one slice per dialog.
+
+## When to use
+
+Use this pattern for dialogs that are:
+
+- **Mounted at the app root** (e.g. in `Default.tsx`)
+- **Triggered from distant parts** of the component tree (e.g. a settings button opening a dialog rendered at root level)
+
+Do NOT use this for dialogs that are local to a single component or screen -- prefer a simple `useState` instead.
+
+## Architecture
+
+- **One shared slice**: `renderer/reducers/dialogs.ts` manages all global dialog states via a `Record<DialogId, boolean>`
+- **Single source of truth**: `DIALOG_IDS` runtime array defines all IDs; `DialogId` type is derived from it via `(typeof DIALOG_IDS)[number]`
+- **Feature wrappers**: Each feature creates a thin `*Dialog.ts` file that re-exports typed helpers bound to its ID
+- **Single mount point**: `mvvm/features/GlobalDialogs/index.tsx` renders all global dialog components at the app root
+
+## Adding a new global dialog
+
+### Step 1: Register the dialog ID
+
+Add the new ID to the `DIALOG_IDS` array in `renderer/reducers/dialogs.ts`. The `DialogId` type updates automatically:
+
+```typescript
+export const DIALOG_IDS = ["RELEASE_NOTES", "MY_NEW_DIALOG"] as const;
+// DialogId is now "RELEASE_NOTES" | "MY_NEW_DIALOG"
+```
+
+### Step 2: Create the feature dialog file
+
+Create `myFeature/myNewDialog.ts` in the feature folder:
+
+```typescript
+import {
+  openDialog,
+  closeDialog,
+  selectIsDialogOpen,
+  type DialogId,
+} from "~/renderer/reducers/dialogs";
+import type { State } from "~/renderer/reducers";
+
+const DIALOG_ID: DialogId = "MY_NEW_DIALOG";
+
+export const openMyNewDialog = () => openDialog(DIALOG_ID);
+export const closeMyNewDialog = () => closeDialog(DIALOG_ID);
+export const selectIsMyNewDialogOpen = (state: State) => selectIsDialogOpen(state, DIALOG_ID);
+```
+
+### Step 3: Use in the view model
+
+```typescript
+import { selectIsMyNewDialogOpen, closeMyNewDialog } from "../myNewDialog";
+
+const useMyNewDialogViewModel = () => {
+  const isOpen = useSelector(selectIsMyNewDialogOpen);
+  const dispatch = useDispatch();
+  const onClose = useCallback(() => dispatch(closeMyNewDialog()), [dispatch]);
+  return { isOpen, onClose };
+};
+```
+
+### Step 4: Mount in GlobalDialogs
+
+Add the dialog component to `mvvm/features/GlobalDialogs/index.tsx`:
+
+```typescript
+import MyNewDialog from "LLD/features/MyFeature";
+
+const GlobalDialogs = () => (
+  <>
+    <ModularDialogRoot />
+    <SendFlowRoot />
+    <ReleaseNotes />
+    <MyNewDialog />
+  </>
+);
+```
+
+### Step 5: Trigger from anywhere
+
+```typescript
+import { openMyNewDialog } from "LLD/features/MyFeature/myNewDialog";
+
+dispatch(openMyNewDialog());
+```
+
+## Rules
+
+- NEVER create a dedicated Redux slice just for dialog open/close state
+- NEVER use this pattern for dialogs local to a single component -- use `useState` instead
+- ALWAYS add new dialog IDs to the `DIALOG_IDS` array (the type is derived automatically)
+- ALWAYS use SCREAMING_SNAKE_CASE for dialog IDs
+- ALWAYS mount new global dialogs in `GlobalDialogs/index.tsx`, not directly in `Default.tsx`
+- Feature dialog files should only contain the ID constant and re-exported typed helpers
+- No modification to `reducers/index.ts` or `Default.tsx` is needed when adding new dialogs
+
+## Reference
+
+- Slice: `apps/ledger-live-desktop/src/renderer/reducers/dialogs.ts`
+- Mount point: `apps/ledger-live-desktop/src/mvvm/features/GlobalDialogs/index.tsx`
+- Example: `apps/ledger-live-desktop/src/mvvm/features/ReleaseNotes/releaseNotesDialog.ts`

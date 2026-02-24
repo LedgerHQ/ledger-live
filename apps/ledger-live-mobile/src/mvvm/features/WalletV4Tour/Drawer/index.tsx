@@ -1,9 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
-import { useTranslation } from "~/context/Locale";
 import { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 import { SlideItem } from "./components/SlideItem";
@@ -17,35 +16,21 @@ export const useWalletV4TourDrawer = () => {
 
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
-interface WalletV4TourDrawerProps {
-  readonly isDrawerOpen: boolean;
-  readonly handleCloseDrawer: () => void;
-}
+type WalletV4TourDrawerProps = Omit<
+  ReturnType<typeof useWalletV4TourDrawerViewModel>,
+  "handleOpenDrawer"
+>;
 
 export const WalletV4TourDrawer = ({
   isDrawerOpen,
   handleCloseDrawer,
+  slides,
 }: WalletV4TourDrawerProps) => {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
-  const { t } = useTranslation();
-  const SLIDES = useMemo(
-    () => [
-      {
-        title: t("walletV4Tour.slides.portfolio.title"),
-        description: t("walletV4Tour.slides.portfolio.description"),
-      },
-      {
-        title: t("walletV4Tour.slides.navigation.title"),
-        description: t("walletV4Tour.slides.navigation.description"),
-      },
-      {
-        title: t("walletV4Tour.slides.actions.title"),
-        description: t("walletV4Tour.slides.actions.description"),
-      },
-    ],
-    [t],
-  );
+  if (!isDrawerOpen) {
+    return null;
+  }
 
   return (
     <QueuedDrawerGorhom
@@ -53,12 +38,25 @@ export const WalletV4TourDrawer = ({
       onClose={handleCloseDrawer}
       snapPoints={["92%"]}
       noCloseButton={false}
+      animateOnMount={false}
     >
-      <Slides as={AnimatedGestureHandlerFlatList} testID="walletv4-tour-slides-container">
+      <Slides
+        bounces={false}
+        as={AnimatedGestureHandlerFlatList}
+        testID="walletv4-tour-slides-container"
+        scrollEnabled={false}
+        initialNumToRender={1}
+      >
         <Slides.Content>
-          {SLIDES.map((slide, index) => (
+          {slides.map((slide, index) => (
             <Slides.Content.Item key={slide.title + slide.description}>
-              <SlideItem title={slide.title} description={slide.description} index={index} />
+              <SlideItem
+                title={slide.title}
+                description={slide.description}
+                index={index}
+                lottieSrc={slide.lottieSrc}
+                speed={slide.speed}
+              />
             </Slides.Content.Item>
           ))}
         </Slides.Content>

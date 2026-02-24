@@ -3,9 +3,8 @@ import {
   isCheckSanctionedAddressEnabled,
 } from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import { decodeAccountId, getMainAccount } from "../account";
+import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
-import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

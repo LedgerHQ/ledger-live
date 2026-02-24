@@ -3,9 +3,8 @@ import { render, screen } from "@tests/test-renderer";
 import { CardLandingScreen } from "./index";
 import { track } from "~/analytics";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
-import { PAGE_NAME } from "../../constants";
-import { CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
-import { ScreenName } from "~/const";
+import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
+import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();
 
@@ -61,9 +60,13 @@ describe("CardLandingScreen", () => {
       button: "explore cards",
       page: PAGE_NAME,
     });
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.PlatformApp, {
-      platform: CARD_APP_ID,
-      name: "Card Program",
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Card, {
+      screen: ScreenName.Card,
+      params: {
+        platform: CARD_APP_ID,
+        name: "Card Program",
+        path: "/providers-list",
+      },
     });
   });
 
@@ -76,9 +79,12 @@ describe("CardLandingScreen", () => {
       button: "I have a card",
       page: PAGE_NAME,
     });
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.PlatformApp, {
-      platform: CL_CARD_APP_ID,
-      name: "CL Card Powered by Ledger",
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Card, {
+      screen: ScreenName.Card,
+      params: {
+        platform: CL_CARD_APP_ID,
+        name: "CL Card Powered by Ledger",
+      },
     });
   });
 });

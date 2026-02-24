@@ -97,7 +97,7 @@ const RightContainer = styled(Box).attrs(() => ({
 export type Props = {
   icon?: boolean;
   manifest: LiveAppManifest;
-  webviewAPIRef: RefObject<WebviewAPI>;
+  webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
   onClose: () => void;
 };

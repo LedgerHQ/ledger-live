@@ -4,8 +4,10 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
-import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
+import {
+  denominate,
+  hasMinimumDelegableBalance,
+} from "@ledgerhq/live-common/families/multiversx/helpers";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";

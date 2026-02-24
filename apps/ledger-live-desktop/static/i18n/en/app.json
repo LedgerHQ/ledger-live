@@ -209,7 +209,11 @@
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
-      "UPDATE_ACCOUNT": "Updated account"
+      "UPDATE_ACCOUNT": "Updated account",
+      "SHIELDED_TX_SAPLING_IN": "Received",
+      "SHIELDED_TX_SAPLING_OUT": "Sent",
+      "SHIELDED_TX_ORCHARD_IN": "Received",
+      "SHIELDED_TX_ORCHARD_OUT": "Sent"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -2422,8 +2426,9 @@
     }
   },
   "releaseNotes": {
-    "title": "Release notes",
-    "version": "Ledger Wallet {{versionNb}}"
+    "title": "Release note",
+    "version": "Ledger Wallet {{versionNb}}",
+    "gotIt": "Got it"
   },
   "troubleshootNetwork": {
     "title": "Troubleshoot networking",
@@ -8002,8 +8007,14 @@
     "shielded": {
       "state": {
         "showBalance": "Show balance",
-        "pausedAt": "Paused at ",
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
         "lastSync": "Last sync: {{date}}"
+      },
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       },
       "flows": {
         "export": {
@@ -8042,12 +8053,13 @@
             }
           }
         }
-      },
-      "startSync": "Start sync",
-      "datepicker": {
-        "label": "Birthday height",
-        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       }
+    },
+    "operationDetails": {
+      "txType": "Transaction type",
+      "transparentTx": "Transparent",
+      "shieldedSaplingTx": "🛡 Private (Sapling)",
+      "shieldedOrchardTx": "🛡 Private (Orchard)"
     }
   },
   "aleo": {
@@ -8100,5 +8112,11 @@
         "private": "Private"
       }
     }
+  },
+  "updater": {
+    "newUpdateAvailable": "New update available",
+    "downloadProgress": "{{progress}}%",
+    "errorTryAgain": "Error during update, try again",
+    "installAndRelaunch": "Install update and relaunch"
   }
 }

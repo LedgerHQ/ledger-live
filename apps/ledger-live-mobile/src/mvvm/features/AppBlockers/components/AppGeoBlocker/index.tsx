@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Icons, Text } from "@ledgerhq/native-ui";
+import { Icons, Text, Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
@@ -7,7 +7,6 @@ import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppBlocker from "../AppBlocker";
-import { Button } from "@ledgerhq/native-ui";
 
 export default function AppGeoBlocker({ children }: { children: React.ReactNode }) {
   const { blocked } = useContext(InitialQueriesContext).ofacResult;

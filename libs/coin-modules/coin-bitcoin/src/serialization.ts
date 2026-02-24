@@ -8,6 +8,11 @@ import type {
   BitcoinOutput,
   BitcoinAccountRaw,
   BitcoinAccount,
+  ZcashAccount,
+  ZcashAccountRaw,
+  ZcashPrivateInfo,
+  ZcashPrivateInfoRaw,
+  ZcashSyncState,
 } from "./types";
 import wallet from "./wallet-btc";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
@@ -78,6 +83,30 @@ export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResource
   };
 }
 
+function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoRaw {
+  return {
+    saplingBalance: info.saplingBalance.toString(),
+    orchardBalance: info.orchardBalance.toString(),
+    lastSyncTimestamp: info.lastSyncTimestamp,
+    ufvk: info.ufvk,
+    syncState: info.syncState,
+    lastBlockProcessed: info.lastBlockProcessed,
+    transactions: info.transactions,
+  };
+}
+
+function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
+  return {
+    saplingBalance: new BigNumber(info.saplingBalance),
+    orchardBalance: new BigNumber(info.orchardBalance),
+    lastSyncTimestamp: info.lastSyncTimestamp,
+    ufvk: info.ufvk,
+    syncState: info.syncState as ZcashSyncState,
+    lastBlockProcessed: info.lastBlockProcessed,
+    transactions: info.transactions,
+  };
+}
+
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   const bitcoinAccount = account as BitcoinAccount;
   if (bitcoinAccount.bitcoinResources) {
@@ -85,10 +114,20 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
       bitcoinAccount.bitcoinResources,
     );
   }
+
+  const zcashAccount = account as ZcashAccount;
+  if (zcashAccount.privateInfo) {
+    (accountRaw as ZcashAccountRaw).privateInfo = toZcashPrivateInfoRaw(zcashAccount.privateInfo);
+  }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
   if (bitcoinResourcesRaw)
     (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
+
+  const zcashPrivateInfoRaw = (accountRaw as ZcashAccountRaw).privateInfo;
+  if (zcashPrivateInfoRaw) {
+    (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashPrivateInfoRaw);
+  }
 }

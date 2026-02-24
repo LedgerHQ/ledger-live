@@ -208,6 +208,10 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   aleo: {
     overridesDerivation: "44'/683'/<account>",
   },
+  concordium: {
+    overridesDerivation: "44'/919'/404'/404'/<account>'",
+    tag: "concordium",
+  },
 });
 
 // WIP
@@ -254,6 +258,8 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   celo: ["celo", "celoMM", "celoEvm"],
   aleo: ["aleo"],
   aleo_testnet: ["aleo"],
+  concordium: ["concordium"],
+  concordium_testnet: ["concordium"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -400,6 +406,8 @@ const disableBIP44: Record<string, boolean> = {
   celo: true,
   aleo: true,
   aleo_testnet: true,
+  concordium: true,
+  concordium_testnet: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -434,6 +442,9 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
     case "aleo":
     case "aleo_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0`;
+    case "concordium":
+    case "concordium_testnet":
+      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     default:
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`;
   }

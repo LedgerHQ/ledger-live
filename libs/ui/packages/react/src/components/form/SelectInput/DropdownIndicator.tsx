@@ -19,7 +19,7 @@ export function DropdownIndicator<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: DropdownIndicatorProps<O, M, G>): JSX.Element {
+>(props: DropdownIndicatorProps<O, M, G>): React.JSX.Element {
   const theme = useTheme();
   const { isDisabled } = props.selectProps;
 

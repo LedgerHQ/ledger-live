@@ -2,11 +2,10 @@
 
 import { createBridges, makeCliTools } from "@ledgerhq/coin-mina/bridge";
 import minaResolver from "@ledgerhq/coin-mina/signer";
-import { Transaction } from "@ledgerhq/coin-mina/types";
+import { Transaction, MinaSigner } from "@ledgerhq/coin-mina/types";
 import { MinaApp } from "@zondax/ledger-mina-js";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
-import { MinaSigner } from "@ledgerhq/coin-mina/types";
 import { MinaCoinConfig } from "@ledgerhq/coin-mina/lib/config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";

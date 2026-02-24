@@ -1,20 +1,37 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
 interface SlideFooterButtonProps {
   readonly onClose: () => void;
 }
 
 export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
-  const { totalSlides, goToNext, scrollProgressSharedValue } = useSlidesContext();
+  const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
+
+  const styles = useStyleSheet(
+    () => ({
+      container: {
+        position: "relative",
+      },
+      button: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+      },
+    }),
+    [],
+  );
   const { t } = useTranslation();
 
   const lastIndex = totalSlides - 1;
   const fadeStart = lastIndex - 0.5;
+  const isLastSlide = currentIndex >= lastIndex;
+  const isInTest = process.env.NODE_ENV === "test";
 
   const continueStyle = useAnimatedStyle(
     () => ({
@@ -42,29 +59,23 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
 
   return (
     <Animated.View style={styles.container}>
-      <Animated.View style={[styles.button, continueStyle]} pointerEvents="box-none">
-        <Button appearance="base" size="md" onPress={goToNext}>
+      <Animated.View
+        style={[styles.button, continueStyle]}
+        pointerEvents={isLastSlide ? "none" : "box-none"}
+      >
+        <Button appearance="base" size="lg" onPress={goToNext}>
           {t("walletV4Tour.cta.continue")}
         </Button>
       </Animated.View>
 
-      <Animated.View style={[styles.button, exploreStyle]} pointerEvents="box-none">
-        <Button appearance="base" size="md" onPress={onClose}>
+      <Animated.View
+        style={[styles.button, exploreStyle]}
+        pointerEvents={isLastSlide || isInTest ? "box-none" : "none"}
+      >
+        <Button appearance="base" size="lg" onPress={onClose}>
           {t("walletV4Tour.cta.explore")}
         </Button>
       </Animated.View>
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    position: "relative",
-  },
-  button: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-});

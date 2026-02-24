@@ -1,11 +1,11 @@
+import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { Banner, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Banner, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
-import { AddressListItem } from "./AddressListItem";
-import { AccountRowWithBalance } from "./AccountRowWithBalance";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
-import type { AddressSearchResult } from "../types";
+import { AccountRowWithBalance } from "./AccountRowWithBalance";
+import { AddressListItem } from "./AddressListItem";
 
 type AddressMatchedSectionProps = Readonly<{
   searchResult: AddressSearchResult;

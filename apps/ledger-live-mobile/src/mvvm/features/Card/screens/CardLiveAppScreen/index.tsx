@@ -10,7 +10,7 @@ type CardLiveAppScreenProps = StackNavigatorProps<PtxNavigatorParamList, ScreenN
 
 export function CardLiveAppScreen(props: CardLiveAppScreenProps) {
   const { t } = useTranslation();
-  const { goToURL, lastScreen, platform, referrer } = props.route.params || {};
+  const { goToURL, lastScreen, platform, path, referrer } = props.route.params || {};
   return (
     <PtxScreen
       {...props}
@@ -25,6 +25,7 @@ export function CardLiveAppScreen(props: CardLiveAppScreenProps) {
           goToURL,
           lastScreen,
           platform: platform || CARD_APP_ID,
+          path,
           referrer,
         },
       }}

@@ -1,20 +1,8 @@
 import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
-export type MarketCoin = {
-  id: string;
-  name: string;
-  symbol: string;
-};
-
 export type ChartDataPoint = [number, number];
 export type MarketCoinDataChart = Record<string, Array<ChartDataPoint>>;
-
-export type MarketChartApiResponse = {
-  prices: ChartDataPoint[];
-  market_caps: ChartDataPoint[];
-  total_volumes: ChartDataPoint[];
-};
 
 export enum Order {
   MarketCapDesc = "desc",
@@ -22,8 +10,6 @@ export enum Order {
   topLosers = "topLosers",
   topGainers = "topGainers",
 }
-
-export type SupportedCoins = MarketCoin[];
 
 export type MarketListRequestParams = {
   counterCurrency?: string;
@@ -56,13 +42,6 @@ export type HashMapBody = {
       Error
     >
   >;
-};
-
-export type MarketCurrencyChartDataRequestParams = {
-  id?: string;
-  counterCurrency?: string;
-  range?: string;
-  lastRequestTime?: Date;
 };
 
 export type MarketCurrencyRequestParams = {
@@ -108,26 +87,6 @@ export type MarketCurrencyData = {
   atlDate: Date;
   sparklineIn7d?: SparklineSvgData;
   chartData: MarketCoinDataChart;
-};
-
-export type SingleCoinState = {
-  selectedCurrency?: string;
-  chartRequestParams: MarketCurrencyChartDataRequestParams;
-  loading: boolean;
-  loadingChart: boolean;
-  error?: Error;
-  supportedCounterCurrencies: string[];
-  selectedCoinData?: MarketCurrencyData;
-  counterCurrency?: string;
-};
-
-export type State = SingleCoinState & {
-  ready: boolean;
-  marketData?: MarketCurrencyData[];
-  requestParams: MarketListRequestParams;
-  page: number;
-  endOfList: boolean;
-  totalCoinsAvailable: number;
 };
 
 export type MarketPerformersParams = {
@@ -187,13 +146,4 @@ export type MarketItemPerformer = {
   image: string;
   price: number;
   ledgerIds: string[];
-};
-
-export type MarketDataApi = {
-  setSupportedCoinsList: () => Promise<SupportedCoins>;
-  listPaginated: (params: MarketListRequestParams) => Promise<MarketCurrencyData[]>;
-  supportedCounterCurrencies: () => Promise<string[]>;
-  currencyChartData: (
-    params: MarketCurrencyChartDataRequestParams,
-  ) => Promise<{ [range: string]: number[][] }>;
 };

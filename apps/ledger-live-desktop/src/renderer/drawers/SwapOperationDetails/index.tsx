@@ -1,6 +1,8 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
-import { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
+import {
+  getSwapProvider,
+  AdditionalProviderConfig,
+} from "@ledgerhq/live-common/exchange/providers/swap";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -114,8 +116,18 @@ const SwapOperationDetails = ({
   onClose?: () => void;
 }) => {
   const [providerData, setproviderData] = useState<AdditionalProviderConfig | undefined>(undefined);
-  const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
-    mappedSwapOperation;
+  const {
+    fromAccount,
+    toAccount,
+    operation,
+    provider,
+    swapId,
+    status,
+    fromAmount,
+    toAmount,
+    finalAmount,
+  } = mappedSwapOperation;
+  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const fromAccountName = useAccountName(fromAccount);
   const toAccountName = useAccountName(toAccount);
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
@@ -254,7 +266,7 @@ const SwapOperationDetails = ({
             unit={toUnit}
             alwaysShowSign
             showCode
-            val={toAmount}
+            val={displayToAmount}
             fontSize={6}
             disableRounding
             color={statusColor}
@@ -413,7 +425,7 @@ const SwapOperationDetails = ({
             <FormattedVal
               unit={toUnit}
               showCode
-              val={toAmount}
+              val={displayToAmount}
               fontSize={6}
               disableRounding
               color={"neutral.c70"}

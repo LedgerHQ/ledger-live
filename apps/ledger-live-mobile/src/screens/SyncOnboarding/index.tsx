@@ -7,8 +7,10 @@ import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/h
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
-import { NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS } from "./SyncOnboardingCompanion";
-import { SyncOnboardingCompanion } from "./SyncOnboardingCompanion";
+import {
+  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
+  SyncOnboardingCompanion,
+} from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
@@ -210,6 +212,9 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
     } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
+      // Stops polling before the genuine check to prevent concurrent withDevice calls
+      // (polling + genuine check) from corrupting the BLE transport.
+      setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
       setToggleOnboardingEarlyCheckType(null);

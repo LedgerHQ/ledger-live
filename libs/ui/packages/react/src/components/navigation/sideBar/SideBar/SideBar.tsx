@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 import SideBarContext from "../../../navigation/sideBar";
@@ -44,19 +44,21 @@ const TransparentMouseZone = styled.div`
 `;
 
 export type SideBarProps = {
-  children: Array<JSX.Element>;
+  children: Array<React.JSX.Element>;
   onToggle: () => void;
   isExpanded?: boolean;
 };
 
-const SideBar = ({ children, onToggle, isExpanded = true }: SideBarProps): JSX.Element => {
+const SideBar = ({ children, onToggle, isExpanded = true }: SideBarProps): React.JSX.Element => {
   const [isToggleDisplayed, setToggleDisplayed] = useState(false);
   const providerValue = useMemo(() => ({ isExpanded, onToggle }), [isExpanded, onToggle]);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   return (
     <SideBarContext.Provider value={providerValue}>
-      <CSSTransition in={isExpanded} timeout={200} classNames="nav">
+      <CSSTransition nodeRef={nodeRef} in={isExpanded} timeout={200} classNames="nav">
         <Nav
+          ref={nodeRef}
           flexDirection="column"
           justifyContent="flex-start"
           alignContent="stretch"
