@@ -73,11 +73,13 @@ export const getOnboardingStatePolling = ({
 
       return getVersionObs.pipe(
         catchError((error: unknown) => {
-          const isInsNotSupported =
+          const isApduNotSupported =
             error instanceof TransportStatusError &&
-            error.statusCode === StatusCodes.INS_NOT_SUPPORTED;
+            [StatusCodes.CLA_NOT_SUPPORTED, StatusCodes.INS_NOT_SUPPORTED].includes(
+              (error as TransportStatusError).statusCode,
+            );
 
-          if (isInsNotSupported && !hasQuitAppAlreadyRun) {
+          if (isApduNotSupported && !hasQuitAppAlreadyRun) {
             hasQuitAppAlreadyRun = true;
             return quitApp(t).pipe(switchMap(() => getVersionObs));
           }

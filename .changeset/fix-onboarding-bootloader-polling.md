@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Fix onboarding polling showing CLA_NOT_SUPPORTED error instead of firmware recovery UI when device is in bootloader mode
+Fix onboarding polling error when device is in bootloader mode: call getVersion first and handle both CLA_NOT_SUPPORTED and INS_NOT_SUPPORTED errors to trigger quitApp only when an app is intercepting
