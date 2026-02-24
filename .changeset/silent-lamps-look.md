@@ -12,6 +12,7 @@
 "@ledgerhq/coin-evm": minor
 "@ledgerhq/coin-sui": minor
 "@ledgerhq/coin-xrp": minor
+"@ledgerhq/coin-celo": minor
 "@ledgerhq/live-common": minor
 "@ledgerhq/coin-framework": minor
 ---
