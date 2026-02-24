@@ -9,6 +9,7 @@ import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { useEditTransactionConfiguration } from "~/renderer/hooks/editTransactionConfiguration/useEditTransactionConfiguration";
 
 type Props = {
   operation: Operation;
@@ -19,65 +20,11 @@ type Props = {
 const EditOperationPanel = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
-  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
-  const { enabled: isEditBitcoinTxEnabled, params: bitcoinParams } =
-    useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyFamily = mainAccount.currency.family;
 
   // Determine if transaction editing is supported and which modal to use
-  const editConfig = useMemo(() => {
-    // Check for Bitcoin RBF support
-    if (currencyFamily === "bitcoin") {
-      // RBF only works for unconfirmed (pending) transactions
-      const isPending = !operation.blockHeight;
-
-      if (!isPending) {
-        return null;
-      }
-
-      if (
-        isEditBitcoinTxEnabled &&
-        bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
-      ) {
-        return {
-          modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
-          isSupported: true,
-        };
-      }
-      return null;
-    }
-
-    // For EVM, transactionRaw is required
-    if (!operation.transactionRaw) {
-      return null;
-    }
-
-    // Check for EVM support
-    if (currencyFamily === "evm") {
-      const isCurrencySupported =
-        params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
-
-      if (isEditEvmTxEnabled && isCurrencySupported) {
-        return {
-          modalName: "MODAL_EVM_EDIT_TRANSACTION" as const,
-          isSupported: true,
-        };
-      }
-      return null;
-    }
-
-    return null;
-  }, [
-    operation.transactionRaw,
-    operation.blockHeight,
-    currencyFamily,
-    isEditEvmTxEnabled,
-    params,
-    mainAccount.currency.id,
-    isEditBitcoinTxEnabled,
-    bitcoinParams,
-  ]);
+  const editConfig = useEditTransactionConfiguration(currencyFamily, mainAccount, operation);
 
   const handleOpenEditModal = useCallback(() => {
     if (!editConfig) {
