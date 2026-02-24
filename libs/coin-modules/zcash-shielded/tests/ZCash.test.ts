@@ -19,7 +19,6 @@ import {
   createFindBlockHeightHandlers,
   largeChainScenario,
   smallChainScenario,
-  emptyChainScenario,
 } from "./mocks/findBlockHeightData";
 import BigNumber from "bignumber.js";
 
