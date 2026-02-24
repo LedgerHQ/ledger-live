@@ -292,6 +292,7 @@ const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]) => {
   for (const shieldedTx of shieldedTxs) {
     const orchard_outputs = shieldedTx.decryptedData?.orchard_outputs || [];
 
+    // NOTE: sapling_outputs are purposely excluded because we are not implementing sapling yet
     for (const output of orchard_outputs) {
       if (output.transfer_type === "incoming") {
         shieldedBalance = shieldedBalance.plus(output.amount);
