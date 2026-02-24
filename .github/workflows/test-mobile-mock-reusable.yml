@@ -605,7 +605,7 @@ jobs:
         run: |
           echo "Convert the certificate for android";
           HASHED_NAME=$(openssl x509 -inform PEM -subject_hash_old -in ~/.mitmproxy/mitmproxy-ca-cert.crt | head -1)
-          cp mitmproxy-ca-cert.cer $HASHED_NAME.0
+          cp ~/.mitmproxy/mitmproxy-ca-cert.crt $HASHED_NAME.0
 
           echo "Pushing the certifacte to the emulator"
           adb root
