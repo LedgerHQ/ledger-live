@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
+import BuyDevice from "../BuyDevice";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 
@@ -12,6 +13,7 @@ const GlobalDialogs = () => (
     <Suspense fallback={null}>
       <ReleaseNotes />
     </Suspense>
+    <BuyDevice />
   </>
 );
 
