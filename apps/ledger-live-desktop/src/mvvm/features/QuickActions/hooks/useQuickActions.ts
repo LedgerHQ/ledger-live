@@ -18,9 +18,7 @@ import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../ModularDrawer";
 import { track } from "~/renderer/analytics/segment";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
-import { urls } from "~/config/urls";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { openURL } from "~/renderer/linking";
+import useLazyOnboardingActions from "LLD/hooks/useLazyOnboardingActions";
 
 export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
@@ -30,8 +28,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
   const { t } = useTranslation();
   const { hasAccount, hasFunds } = useAccountStatus();
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
-  const urlLedgerShop = useLocalizedUrl(urls.ledgerShop);
-  const openLedgerShop = useCallback(() => openURL(urlLedgerShop), [urlLedgerShop]);
+  const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -110,8 +107,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       page: trackingPageName,
     });
 
-    navigate("/onboarding/select-device", { state: { fromQuickAction: true } });
-  }, [navigate, trackingPageName]);
+    handleConnect();
+  }, [handleConnect, trackingPageName]);
 
   const onBuyALedger = useCallback(() => {
     track("button_clicked", {
@@ -119,8 +116,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       flow: "buy_ledger",
       page: trackingPageName,
     });
-    openLedgerShop();
-  }, [trackingPageName, openLedgerShop]);
+    handleBuyDevice();
+  }, [trackingPageName, handleBuyDevice]);
 
   const actionsList = useMemo((): QuickAction[] => {
     if (!hasOnboardedDevice) {
