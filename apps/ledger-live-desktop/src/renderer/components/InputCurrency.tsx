@@ -99,6 +99,7 @@ function InputCurrency(props: Props) {
     placeholder,
     loading = false,
     autoFocus = false,
+    disabled,
     decimals,
     renderRight = null,
     ...rest
@@ -136,10 +137,9 @@ function InputCurrency(props: Props) {
   );
 
   // Synchronously reformat display when value/unit change while not focused
-  // (useLayoutEffect matches the old UNSAFE_componentWillReceiveProps timing)
   useLayoutEffect(() => {
     setState(prev => {
-      if (prev.isFocused) return prev;
+      if (prev.isFocused && !disabled) return prev;
       const displayValue =
         !value || value.isNaN() || value.isZero()
           ? ""
@@ -149,9 +149,9 @@ function InputCurrency(props: Props) {
               showAllDigits,
               subMagnitude,
             });
-      return { ...prev, rawValue: "", displayValue };
+      return { ...prev, isFocused: false, rawValue: "", displayValue };
     });
-  }, [value, unit, showAllDigits, subMagnitude, locale]);
+  }, [value, unit, showAllDigits, subMagnitude, locale, disabled]);
 
   const handleChange = useCallback(
     (val: string) => {
@@ -201,6 +201,7 @@ function InputCurrency(props: Props) {
   return (
     <Input
       {...rest}
+      disabled={disabled}
       ff="Inter"
       ref={forwardedRef}
       value={state.displayValue}
