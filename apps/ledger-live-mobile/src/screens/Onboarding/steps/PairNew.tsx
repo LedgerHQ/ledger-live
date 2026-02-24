@@ -101,6 +101,8 @@ export default memo(function () {
   }, [isProtectFlow, fromAccessExistingWallet, isRestoreSeed]);
 
   const onFinish = useCallback(() => {
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+
     if (isProtectFlow && deviceModelId) {
       // only used for protect for now
       navigation.navigate(ScreenName.OnboardingProtectFlow, {
@@ -139,8 +141,6 @@ export default memo(function () {
     if (!fromAccessExistingWallet) {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
-
-    tryTriggerPushNotificationDrawerAfterAction("onboarding");
   }, [
     isProtectFlow,
     deviceModelId,
