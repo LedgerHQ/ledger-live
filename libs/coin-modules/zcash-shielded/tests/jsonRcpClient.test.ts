@@ -12,7 +12,7 @@ beforeAll(() =>
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe("rpcClient", () => {
+describe("jsonRpcClient", () => {
   describe("getBlock", () => {
     test("successfully fetches a block from the blockchain", async () => {
       const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
@@ -130,6 +130,20 @@ describe("getBlockCount", () => {
 
   test("returns undefined when response has no result", async () => {
     server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({})));
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBeUndefined();
+  });
+
+  test("returns undefined when result is not a number (string)", async () => {
+    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: "100" })));
+    const client = new JsonRpcClient(JSON_RPC_SERVER);
+    const count = await client.getBlockCount();
+    expect(count).toBeUndefined();
+  });
+
+  test("returns undefined when result is not a number (object)", async () => {
+    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: {} })));
     const client = new JsonRpcClient(JSON_RPC_SERVER);
     const count = await client.getBlockCount();
     expect(count).toBeUndefined();
