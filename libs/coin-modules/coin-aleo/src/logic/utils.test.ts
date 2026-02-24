@@ -23,6 +23,7 @@ import {
   getTransactionType,
   calculateAmount,
   isProvableApiConfigured,
+  getOperationTransactionType,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -554,5 +555,17 @@ describe("isProvableApiConfigured", () => {
     const api: ProvableApi = { ...validProvableApi, jwt: { token: "", exp: 123456789 } };
 
     expect(isProvableApiConfigured(api)).toBe(false);
+  });
+});
+
+describe("getOperationTransactionType", () => {
+  it.each([
+    ["private", TRANSACTION_TYPE.TRANSFER_PRIVATE],
+    ["private", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    ["public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
+    ["public", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    ["public", "unknown_type"],
+  ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
+    expect(getOperationTransactionType(transactionType)).toBe(expected);
   });
 });
