@@ -10,6 +10,7 @@ import NetworkTroubleshoot from "./pages/networkTroubleshoot";
 import Repl from "./pages/repl";
 import Sync from "./pages/sync";
 import Trustchain from "./pages/trustchain";
+import V4AccountModelPlayground from "./pages/v4-account-model-playground";
 
 const NotFound = () => <main>Not found</main>;
 
@@ -26,6 +27,7 @@ export const AppRoutes = () => (
     <Route path="/repl" element={<Repl />} />
     <Route path="/trustchain" element={<Trustchain />} />
     <Route path="/crypto-icons" element={<CryptoIcons />} />
+    <Route path="/v4-account-model-playground" element={<V4AccountModelPlayground />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

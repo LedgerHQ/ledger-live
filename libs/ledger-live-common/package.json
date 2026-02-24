@@ -73,6 +73,24 @@
       "require": "./lib/bridge/descriptor.js",
       "default": "./lib-es/bridge/descriptor.js"
     },
+    "./bridge/generic-alpaca/alpaca": {
+      "types": "./lib/bridge/generic-alpaca/alpaca.d.ts",
+      "import": "./lib-es/bridge/generic-alpaca/alpaca.js",
+      "require": "./lib/bridge/generic-alpaca/alpaca.js",
+      "default": "./lib-es/bridge/generic-alpaca/alpaca.js"
+    },
+    "./bridge/generic-alpaca/utils": {
+      "types": "./lib/bridge/generic-alpaca/utils.d.ts",
+      "import": "./lib-es/bridge/generic-alpaca/utils.js",
+      "require": "./lib/bridge/generic-alpaca/utils.js",
+      "default": "./lib-es/bridge/generic-alpaca/utils.js"
+    },
+    "./bridge/generic-alpaca/buildSubAccounts": {
+      "types": "./lib/bridge/generic-alpaca/buildSubAccounts.d.ts",
+      "import": "./lib-es/bridge/generic-alpaca/buildSubAccounts.js",
+      "require": "./lib/bridge/generic-alpaca/buildSubAccounts.js",
+      "default": "./lib-es/bridge/generic-alpaca/buildSubAccounts.js"
+    },
     "./test-helpers/cryptoAssetsStore": {
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
       "require": "./lib/test-helpers/cryptoAssetsStore.js",

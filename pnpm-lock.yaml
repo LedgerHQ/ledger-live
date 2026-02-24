@@ -2206,6 +2206,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)
       '@uiw/react-codemirror':
         specifier: ^4.25.4
         version: 4.25.4(@codemirror/view@6.39.13)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2245,6 +2248,9 @@ importers:
       react-inspector:
         specifier: ^4.0.1
         version: 4.0.1(react@19.0.0)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1)
       react-router-dom:
         specifier: ^6.30.3
         version: 6.30.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2257,6 +2263,9 @@ importers:
       react-tooltip:
         specifier: ^5.30.0
         version: 5.30.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      redux:
+        specifier: 'catalog:'
+        version: 5.0.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -2275,6 +2284,9 @@ importers:
       utf-8-validate:
         specifier: ^6.0.6
         version: 6.0.6
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
     devDependencies:
       '@rsbuild/core':
         specifier: 'catalog:'
@@ -58200,7 +58212,7 @@ snapshots:
       bignumber.js: 9.1.2
       iso-base: 4.0.0
       iso-web: 1.0.6
-      zod: 3.23.8
+      zod: 3.25.76
 
   iso-kv@3.0.3:
     dependencies:

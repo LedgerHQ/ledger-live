@@ -18,6 +18,9 @@
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
     "@ledgerhq/coin-framework": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
+    "react-redux": "catalog:",
+    "redux": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/domain-service": "workspace:^",
@@ -61,7 +64,8 @@
     "styled-components": "catalog:",
     "stylis": "catalog:",
     "typescript": "catalog:",
-    "utf-8-validate": "^6.0.6"
+    "utf-8-validate": "^6.0.6",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:",

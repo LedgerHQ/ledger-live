@@ -34,6 +34,9 @@ export default function Home() {
         <li>
           <Link to="/crypto-icons">Crypto Icons</Link>
         </li>
+        <li>
+          <Link to="/v4-account-model-playground">V4 Account Model Playground</Link>
+        </li>
       </ul>
     </main>
   );
