@@ -531,7 +531,7 @@ jobs:
       - name: Install mitmproxy certificate
         shell: bash
         run: |
-          MITMPROXY_FOLDER="~/.mitmproxy"
+          MITMPROXY_FOLDER=~/.mitmproxy
           CERT_FILEPATH="${MITMPROXY_FOLDER}/mitmproxy-ca-cert.pem"
 
           echo "Generate certificate"
@@ -541,13 +541,14 @@ jobs:
 
           # Wait for certificate to be generated (with timeout)
           MAX_ATTEMPTS=10
-          ATTEMPT=0
+          ATTEMPT=1
           while [ ! -f "${CERT_FILEPATH}" ] && [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             echo "Waiting for certificate... attempt $((ATTEMPT + 1))/$MAX_ATTEMPTS"
             # Start mitmdump in background and wait for certificate generation
             mitmdump --set confdir="${MITMPROXY_FOLDER}" --listen-port 8080 --showhost &
             MITMPROXY_PID=$!
             
+            echo "Sleeping for: $((2 * $ATTEMPT)) seconds"
             sleep $((2 * $ATTEMPT))
 
             # Kill mitmdump after certificate is generated
