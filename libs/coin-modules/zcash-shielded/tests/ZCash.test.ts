@@ -202,7 +202,7 @@ describe("syncShielded", () => {
     { maxBatchSize: 0, startBlockHeight: 5 },
     { maxBatchSize: 1, startBlockHeight: -1 },
   ])(
-    "returns early if maxBatchSize or startBlockHeight are invalice (negative or 0)",
+    "returns early if maxBatchSize or startBlockHeight are invalid (negative or 0)",
     async (args: { maxBatchSize: number; startBlockHeight: number }) => {
       const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
       const syncedShieldedIterator = zcash.syncShielded({
