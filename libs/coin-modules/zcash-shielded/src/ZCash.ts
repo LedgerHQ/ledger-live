@@ -216,7 +216,7 @@ export default class ZCash {
     let lastProcessed;
 
     if (startBlockHeight <= 0 || maxBatchSize <= 0) {
-      log(LOG_TYPE, "error: invalid negative args startBlockHeight or maxBatchSize ");
+      log(LOG_TYPE, "error: invalid negative args startBlockHeight or maxBatchSize");
       return {
         balance,
         processedBlocks,
