@@ -19,6 +19,7 @@
   "devDependencies": {
     "tailwindcss": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-import": "2.32.0",
     "@gorhom/bottom-sheet": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
