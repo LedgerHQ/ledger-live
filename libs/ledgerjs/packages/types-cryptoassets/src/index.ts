@@ -26,6 +26,7 @@ export type LedgerExplorerId =
   | "eth_hoodi"
   | "etc"
   | "matic"
+  | "matic_amoy"
   | "bnb";
 
 /**
