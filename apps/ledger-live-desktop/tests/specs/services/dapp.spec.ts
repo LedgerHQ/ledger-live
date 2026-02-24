@@ -29,7 +29,13 @@ test.describe("Metamask Test Dapp", () => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
 
-    const [, webview] = electronApp.windows();
+    // Wait for webview window - React 19's concurrent rendering may delay its creation
+    const windows = electronApp.windows();
+    const webview =
+      windows.length > 1
+        ? windows[1]
+        : await electronApp.waitForEvent("window", { timeout: 30000 });
+    await webview.waitForLoadState("domcontentloaded", { timeout: 30000 });
 
     // Checks that we support EIP 6963
     await webview.click("#provider > button");
@@ -85,7 +91,12 @@ test.describe.skip("1inch dapp", () => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
 
-    const [, webview] = electronApp.windows();
+    const windows = electronApp.windows();
+    const webview =
+      windows.length > 1
+        ? windows[1]
+        : await electronApp.waitForEvent("window", { timeout: 30000 });
+    await webview.waitForLoadState("domcontentloaded", { timeout: 30000 });
     const restricted_app = await webview.getByText("Restricted").isVisible();
     test.skip(restricted_app, "1inch dapp is restricted");
 

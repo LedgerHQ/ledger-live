@@ -88,10 +88,12 @@ export class OnboardingPage extends AppPage {
   }
 
   async continueRecoverySeedDrawer() {
-    await this.recoverySeedDrawer.click();
+    await this.recoverySeedDrawer.waitFor({ state: "visible" });
+    await this.recoverySeedDrawer.click({ position: { x: 20, y: 20 } });
   }
 
   async continueHideSeedDrawer() {
+    await this.hideSeedDrawer.waitFor({ state: "visible" });
     await this.hideSeedDrawer.click();
   }
 

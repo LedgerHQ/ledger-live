@@ -113,7 +113,9 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   };
 
   const maskPartOfItemsInMarket = {
-    mask: [page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") })],
+    mask: [
+      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
+    ],
   };
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
@@ -195,6 +197,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
+    await page.getByTestId("market-eth-stake-button").waitFor({ state: "visible", timeout: 15000 });
     await expect
       .soft(page)
       .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
@@ -216,7 +219,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await marketCoinPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
-    await drawer.selectAccount("Ethereum", 0);
+    await drawer.selectAccount("Ethereum", 1);
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked2",
       properties: {
