@@ -4,6 +4,7 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { testnetViewKey, testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
+import { TRANSACTION_TYPE } from "../constants";
 import { getPrivateBalance } from "./getPrivateBalance";
 
 setupCalClientStore();
@@ -19,6 +20,13 @@ describe("getPrivateBalance", () => {
         node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
+      feeByTransactionType: {
+        [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
+        [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2308,
+        [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 17972,
+        [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
+      },
+      feeSafetyMultiplier: 1,
     }));
   });
 
@@ -85,6 +93,10 @@ describe("getPrivateBalance", () => {
       privateRecords: mixedRecords,
     });
 
-    expect(unspentRecords).toHaveLength(1);
+    expect(unspentRecords).toEqual([
+      expect.objectContaining({
+        program_name: "credits.aleo",
+      }),
+    ]);
   });
 });

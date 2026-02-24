@@ -18,28 +18,35 @@ export async function getPrivateBalance({
   balance: BigNumber;
   unspentRecords: AleoUnspentRecord[];
 }> {
-  let balance = new BigNumber(0);
-  const unspentRecords: AleoUnspentRecord[] = [];
   const unspentCreditsRecords = privateRecords.filter(
     record => record.program_name === PROGRAM_ID.CREDITS && !record.spent,
   );
 
-  await promiseAllBatched(2, unspentCreditsRecords, async record => {
+  const decryptedResults = await promiseAllBatched(2, unspentCreditsRecords, async record => {
     const decryptedRecord = await sdkClient.decryptRecord({
       currency,
       viewKey,
       ciphertext: record.record_ciphertext,
     });
-
     const microcredits = parseMicrocredits(decryptedRecord.data.microcredits);
-    balance = balance.plus(microcredits);
 
-    unspentRecords.push({
-      ...record,
+    return {
       microcredits,
-      decryptedData: decryptedRecord,
-    });
+      unspentRecord: {
+        ...record,
+        microcredits,
+        decryptedData: decryptedRecord,
+      },
+    };
   });
+
+  const balance = decryptedResults.reduce((acc, { microcredits }) => {
+    return acc.plus(microcredits);
+  }, new BigNumber(0));
+
+  const unspentRecords: AleoUnspentRecord[] = decryptedResults.map(
+    ({ unspentRecord }) => unspentRecord,
+  );
 
   return {
     balance,

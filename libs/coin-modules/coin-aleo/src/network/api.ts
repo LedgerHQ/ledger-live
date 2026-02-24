@@ -212,8 +212,8 @@ async function getAccountOwnedRecords({
       "X-Provable-API-Key": apiKey,
     },
     data: {
-      ...(unspent !== undefined && { unspent }),
-      ...(start !== undefined && { filter: { start } }),
+      ...(typeof unspent === "boolean" && { unspent }),
+      ...(typeof start === "number" && { filter: { start } }),
       uuid,
     },
   });
