@@ -11,11 +11,11 @@ describe("EVM Arbitrum Network", () => {
     const config = {
       node: {
         type: "external",
-        uri: "https://arb1.arbitrum.io/rpc",
+        uri: "https://arbitrum.coin.ledger.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://arbitrum.blockscout.com/api",
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42161",
       },
     };
     module = createApi(config as EvmConfig, "arbitrum");
