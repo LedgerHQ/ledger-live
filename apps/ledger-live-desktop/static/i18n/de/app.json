@@ -152,7 +152,8 @@
     "quote" : "Preis",
     "memoTag" : {
       "learnMore" : "Weitere Informationen zu Tags/Memos"
-    }
+    },
+    "memo" : "Memo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -778,6 +779,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Kaufen oder verkaufen",
     "chooseProvider" : "Wähle aus {{providerCount}} Anbieter",
     "chooseProviders" : "Wähle aus {{providerCount}} Anbietern",
     "title" : "Kryptowährungen kaufen und verkaufen",
@@ -1489,6 +1491,25 @@
         "secondaryCta" : "Vielleicht später"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Das Clear Signing dieser Transaktion ist mit der {{device}}™ nicht möglich",
+      "subtitle" : "Verwende ein anderes Ledger-Gerät, um die Details dieser Transaktion vor dem Signieren zu bestätigen. Ohne Clear Signing riskierst du, alle deine Assets zu verlieren.",
+      "continue" : "Handeln erfolgt auf eigenes Risiko"
+    },
+    "info" : {
+      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "reminder" : "Nicht erneut erinnern"
+    },
+    "error" : {
+      "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+    },
+    "update" : "Upgrade-Programm entdecken",
+    "learnMore" : "Weitere Informationen",
+    "continue" : "Weiter"
   },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
@@ -2380,12 +2401,15 @@
       "walletNotExist" : "Wallet existiert nicht"
     },
     "skipMemo" : {
-      "title" : "{{tag}} hinzufügen überspringen?",
-      "warning" : "Deine Assets können verloren gehen, falls der Empfänger ein {{tag}} voraussetzt"
+      "title" : "{{memoLabel}} hinzufügen überspringen?",
+      "description" : "Deine Assets können verloren gehen, falls der Empfänger ein {{memoLabel}} voraussetzt",
+      "notRequired" : "{{memoLabel}} für die Empfängeradresse nicht erforderlich?",
+      "confirm" : "Ja, überspringen",
+      "neverAskAgain" : "Diese Warnung nicht mehr anzeigen"
     },
     "tagHelp" : {
-      "title" : "Was ist ein {{tag}}?",
-      "description" : "Ein {{tag}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Das Fehlen eines {{tag}}-Memo kann zum Verlust von Guthaben führen."
+      "inputLabel" : "{{memoLabel}} eingeben",
+      "description" : "Ein {{memoLabel}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Das Fehlen eines {{memoLabel}}-Memo kann zum Verlust von Guthaben führen."
     },
     "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
     "feesAmount" : "Gebührenbetrag ({{unit}})",
@@ -2417,8 +2441,9 @@
     }
   },
   "releaseNotes" : {
-    "title" : "Informationen zur Version",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Release note",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Got it"
   },
   "troubleshootNetwork" : {
     "title" : "Fehlersuche im Netzwerk",
@@ -4897,6 +4922,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "Token-Transaktionen ausblenden, wenn der Wert 0 ist",
         "desc" : "Das Ausblenden von Token-Transaktionen ohne Wert kann einige potenzielle Adresspoisoning-Angriffe auf Eth, Polygon, BSC, Tron... verhindern."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "Nicht noch einmal fragen, sondern Memo beim Senden überspringen",
+        "desc" : "Warnung zum Überspringen des Memos beim Senden von Assets deaktivieren"
       }
     }
   },
@@ -5808,11 +5837,13 @@
     "casper" : {
       "transferIdPlaceholder" : "Optional",
       "transferId" : "Transfer-ID (Memo)",
-      "transferIdWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren"
+      "transferIdWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren",
+      "memo" : "Transfer-ID (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
+      "comment" : "Kommentar",
+      "memo" : "Kommentar"
     },
     "canton" : {
       "commentPlaceholder" : "Optional",
@@ -5970,6 +6001,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "Optionales Memo"
+    },
+    "xrp" : {
+      "memo" : "Tag"
     }
   },
   "errors" : {
@@ -7817,6 +7851,11 @@
           "description" : "Im {{currency}}-Ökosystem können nur ausgewählte Services neue Konten erstellen. Ledger bietet diesen Onboarding-Service derzeit zwar nicht an, aber es gibt Alternativen. Du kannst dein {{currency}}-Konto in Ledger Wallet hinzufügen, nachdem es erstellt wurde.",
           "cta" : "Wie erstellt man ein {{currency}}-Konto?",
           "close" : "Schließen"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "Es wurden keine {{currency}}-Konten hinzugefügt",
+          "description" : "Du hast für mindestens ein ausgewähltes Konto die erforderliche Einrichtung nicht abgeschlossen.",
+          "close" : "Schließen"
         }
       },
       "status" : {
@@ -7923,6 +7962,12 @@
       "hoursAgo_other" : "Letzte Synchronisierung vor {{count}} Std. Zum Neuladen tippen",
       "daysAgo_one" : "Letzte Synchronisierung vor {{count}} Tag. Zum Neuladen tippen",
       "daysAgo_other" : "Letzte Synchronisierung vor {{count}} Tagen. Zum Neuladen tippen"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Benachrichtigungen"
+    },
+    "myLedger" : {
+      "tooltip" : "My Ledger"
     }
   },
   "geoBlocking" : {
@@ -7951,8 +7996,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Saldo zeigen",
-        "pausedAt" : "Pausiert bei ",
+        "startSync" : "Synchronisierung starten",
+        "stopSync" : "Synchronisierung anhalten",
+        "lastProcessedBlock" : "Zuletzt verarbeiteter Block: {{block}}. {{missing}} Blöcke fehlen.",
         "lastSync" : "Letzte Synchronisierung: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Wiederherstellungshöhe",
+        "tooltip" : "Die Wiederherstellungshöhe ist der Punkt auf der Blockchain, an dem deine Wallet mit der Suche nach deinem Guthaben beginnt."
       },
       "flows" : {
         "export" : {
@@ -7991,12 +8042,58 @@
             }
           }
         }
-      },
-      "startSync" : "Synchronisierung starten",
-      "datepicker" : {
-        "label" : "Wiederherstellungshöhe",
-        "tooltip" : "Die Wiederherstellungshöhe ist der Punkt auf der Blockchain, an dem deine Wallet mit der Suche nach deinem Guthaben beginnt."
       }
     }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo-Privatguthaben einrichten",
+        "description" : "Ledger Wallet speichert deinen Viewkey, um dein privates Guthaben anzuzeigen, und nutzt Drittanbieterservices zur Verarbeitung privater Transaktionen. <0>Weitere Informationen</0>",
+        "bullets" : ["Schreibgeschützter Zugriff zum Entschlüsseln deines privaten Guthabens", "Ledger kann deine Assets weder senden noch ausgeben", "Nur du kannst deine Assets signieren und ausgeben", "Die Nachweiserstellung wird von externen Prüfdiensten abgewickelt, um eine schnelle Verarbeitung zu gewährleisten", "Die Prüfer können nicht auf deine Assets zugreifen oder sie ausgeben"],
+        "cta" : {
+          "allow" : "Erlauben",
+          "cancel" : "Abbrechen"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Auf deinem Ledger-Gerät genehmigen",
+        "description" : "Bestätige die Offenlegung des Viewkeys auf deinem Gerät",
+        "cancelAlert" : "Du kannst einzelne Konten auf deinem Gerät ablehnen. Wenn du alle Konten stornierst, werden keine weiteren Konten zu deinem Portfolio hinzugefügt.",
+        "cancelAllBtn_one" : "Abbrechen",
+        "cancelAllBtn_other" : "Alle stornieren"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Viewkey offenlegen",
+          "shareKey_other" : "Viewkeys offenlegen"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "Du hast für keines der ausgewählten Konten Viewkeys offengelegt. Viewkeys sind zum Anzeigen deines privaten Guthabens in Ledger Wallet erforderlich."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "Verfügbares Guthaben",
+      "availableBalanceTooltip" : "Übertragbares Guthaben",
+      "transparentBalance" : "Transparenter Saldo",
+      "transparentBalanceTooltip" : "Guthaben, das öffentlich einsehbar ist",
+      "privateBalance" : "Privater Saldo",
+      "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Öffentlich",
+        "private" : "Privat"
+      }
+    }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Neues Update verfügbar",
+    "downloadProgress" : "{{progress}} %",
+    "errorTryAgain" : "Fehler beim Update, bitte wiederholen",
+    "installAndRelaunch" : "Update installieren und neu starten"
   }
 }
