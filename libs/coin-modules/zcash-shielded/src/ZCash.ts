@@ -192,27 +192,27 @@ export default class ZCash {
   async *syncShielded(args: {
     startBlockHeight: number;
     viewingKey: string;
+    maxBatchSize: number;
   }): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
-    const { startBlockHeight, viewingKey } = args;
+    const { startBlockHeight, viewingKey, maxBatchSize } = args;
     let balance = new BigNumber(0);
     let processedBlocks = 0;
     let remainingBlocks = 0;
     let lastProcessed;
 
     // 1. get end block height
-    let endBlockHeight = await this.jsonRpcClient.getBlockCount();
+    let endBlockHeight = (await this.jsonRpcClient.getBlockCount()) || 0;
     if (!endBlockHeight) {
       log(LOG_TYPE, "error: could not retrieve the last block");
-      return { balance, processedBlocks, remainingBlocks, lastProcessed };
     }
 
     for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
       // 2. on last iteration, update end block height
       if (blockHeight === endBlockHeight) {
-        endBlockHeight = await this.jsonRpcClient.getBlockCount();
+        endBlockHeight = (await this.jsonRpcClient.getBlockCount()) || 0;
         if (!endBlockHeight) {
           log(LOG_TYPE, "error: could not retrieve the last block");
-          return { balance, processedBlocks, remainingBlocks, lastProcessed };
+          break;
         }
       }
 
@@ -220,7 +220,7 @@ export default class ZCash {
       const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
       if (!block) {
         log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
-        return { balance, processedBlocks, remainingBlocks, lastProcessed };
+        break;
       }
 
       // 4. find shielded tx in block
@@ -232,19 +232,26 @@ export default class ZCash {
       remainingBlocks = endBlockHeight - blockHeight;
       lastProcessed = block.height;
 
-      const stop = yield {
-        balance,
-        processedBlocks,
-        remainingBlocks,
-        lastProcessed,
-      };
+      if (!(blockHeight % maxBatchSize) || blockHeight === endBlockHeight) {
+        const stop = yield {
+          balance,
+          processedBlocks,
+          remainingBlocks,
+          lastProcessed,
+        };
 
-      if (stop) {
-        return { balance, processedBlocks, remainingBlocks, lastProcessed };
+        if (stop) {
+          break;
+        }
       }
     }
 
-    return { balance, processedBlocks, remainingBlocks, lastProcessed };
+    return {
+      balance,
+      processedBlocks,
+      remainingBlocks,
+      lastProcessed,
+    };
   }
 }
 

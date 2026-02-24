@@ -204,6 +204,7 @@ describe("syncShielded", () => {
     const syncedShieldedIterator = await zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: "abc456",
+      maxBatchSize: 1,
     });
     let syncedShielded;
 
@@ -231,6 +232,7 @@ describe("syncShielded", () => {
     const syncedShielded = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
+      maxBatchSize: 1,
     });
 
     expect(await syncedShielded.next()).toEqual({
@@ -259,6 +261,7 @@ describe("syncShielded", () => {
     const syncedShieldedIterator = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
+      maxBatchSize: 1,
     });
     let syncedShielded;
 
@@ -279,11 +282,43 @@ describe("syncShielded", () => {
     });
   });
 
+  test.only("returns the shielded balance in batches of max size 3", async () => {
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncedShieldedIterator = zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      viewingKey: testAccount1.viewingKey,
+      maxBatchSize: 3,
+    });
+    let syncedShielded;
+    let processedBlocks = 0;
+
+    for await (syncedShielded of syncedShieldedIterator) {
+      expect(syncedShielded).toMatchObject({
+        balance: expect.any(BigNumber),
+        processedBlocks: expect.any(Number),
+        remainingBlocks: expect.any(Number),
+        lastProcessed: expect.any(Number),
+      });
+
+      expect(syncedShielded.processedBlocks - processedBlocks).toBeLessThanOrEqual(3);
+      processedBlocks = syncedShielded.processedBlocks;
+    }
+
+    expect(syncedShielded).toEqual({
+      balance: new BigNumber(0.3),
+      lastProcessed: blockWithMyTx.height + 5,
+      processedBlocks: 6,
+      remainingBlocks: 0,
+    });
+    expect(syncedShielded.processedBlocks - processedBlocks).toBeLessThanOrEqual(3);
+  });
+
   test("as observable: returns the shielded balance", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
     const syncShieldedGenerator = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
+      maxBatchSize: 1,
     });
 
     const syncShieldedObs = rxjs.from(syncShieldedGenerator);
@@ -319,6 +354,7 @@ describe("syncShielded", () => {
     const syncShieldedGenerator = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
+      maxBatchSize: 3,
     });
 
     const syncShieldedObs = rxjs.from(syncShieldedGenerator);
