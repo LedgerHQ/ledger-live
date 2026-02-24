@@ -31,6 +31,7 @@ export function LegacyTabNavigator({
         options={{
           headerShown: false,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
+          tabBarButtonTestID: "tab-bar-portfolio",
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -101,6 +102,7 @@ export function LegacyTabNavigator({
             tabBarIcon: props => (
               <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
+            tabBarButtonTestID: "tab-bar-discover",
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
@@ -120,6 +122,7 @@ export function LegacyTabNavigator({
             tabBarIcon: props => (
               <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
+            tabBarButtonTestID: "tab-bar-discover",
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
