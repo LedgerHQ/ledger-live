@@ -87,7 +87,7 @@ async function handleTransferTransaction({
   }
 
   if (account.balance.isLessThan(calculatedAmount.totalSpent)) {
-    errors.amount = new NotEnoughBalance("");
+    errors.amount = new NotEnoughBalance();
   }
 
   return {
