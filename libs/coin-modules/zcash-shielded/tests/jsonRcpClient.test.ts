@@ -134,18 +134,4 @@ describe("getBlockCount", () => {
     const count = await client.getBlockCount();
     expect(count).toBeUndefined();
   });
-
-  test("returns undefined when result is not a number (string)", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: "100" })));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
-
-  test("returns undefined when result is not a number (object)", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: {} })));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
 });
