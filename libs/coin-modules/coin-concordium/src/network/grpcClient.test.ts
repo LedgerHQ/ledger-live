@@ -395,7 +395,7 @@ describe("grpcClient", () => {
       const currency = createMockCurrency();
       const result = await getOperations(currency, "address", { minHeight: 2000 });
 
-      expect(result).toEqual([[], ""]);
+      expect(result).toEqual({ items: [], next: undefined });
     });
 
     it("should scan blocks for address operations", async () => {
@@ -428,7 +428,7 @@ describe("grpcClient", () => {
       );
 
       const currency = createMockCurrency();
-      const [operations] = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { items: operations } = await getOperations(currency, "my-address", { minHeight: 100 });
 
       expect(operations.length).toBeGreaterThanOrEqual(0);
     });
@@ -463,7 +463,7 @@ describe("grpcClient", () => {
       );
 
       const currency = createMockCurrency();
-      const [operations] = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { items: operations } = await getOperations(currency, "my-address", { minHeight: 100 });
 
       // Should not include transactions not involving my-address
       expect(
@@ -490,9 +490,9 @@ describe("grpcClient", () => {
       mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
 
       const currency = createMockCurrency();
-      const [, cursor] = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { next } = await getOperations(currency, "my-address", { minHeight: 100 });
 
-      expect(cursor).toBe("");
+      expect(next).toBeUndefined();
     });
 
     it("should return next block height as cursor when more blocks exist", async () => {
@@ -513,10 +513,10 @@ describe("grpcClient", () => {
 
       const currency = createMockCurrency();
       // Scan from height 100, will hit MAX_BLOCKS_TO_SCAN (1000) limit at height 1100
-      const [, cursor] = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { next } = await getOperations(currency, "my-address", { minHeight: 100 });
 
       // Next height should be 1101 (endHeight + 1 where endHeight = 100 + 1000)
-      expect(cursor).toBe(JSON.stringify(1101));
+      expect(next).toBe(JSON.stringify(1101));
     });
 
     it("should return correct cursor when scan ends before MAX_BLOCKS_TO_SCAN", async () => {
@@ -537,10 +537,10 @@ describe("grpcClient", () => {
 
       const currency = createMockCurrency();
       // Scan from 100 to 150 (current height)
-      const [, cursor] = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { next } = await getOperations(currency, "my-address", { minHeight: 100 });
 
       // At chain tip, should return empty cursor
-      expect(cursor).toBe("");
+      expect(next).toBeUndefined();
     });
   });
 
