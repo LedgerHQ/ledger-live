@@ -2145,6 +2145,24 @@
       }
     }
   },
+  "buyDeviceModal": {
+    "title": "Connect a Ledger device",
+    "subtitle": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
+    "0": {
+      "title": "Full ownership",
+      "desc": "Your private keys never leave the device."
+    },
+    "1": {
+      "title": "Trade securely",
+      "desc": "Verify transactions on a secure screen."
+    },
+    "2": {
+      "title": "Access the most powerful wallet",
+      "desc": "Manage thousands of assets in one place."
+    },
+    "connectCTA": "Connect",
+    "buyCTA": "Buy your Ledger device"
+  },
   "fund": {
     "title": "Fund",
     "titleCrypto": "Fund {{currency}}",
