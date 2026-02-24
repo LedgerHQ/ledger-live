@@ -359,7 +359,7 @@ async function operations(
   pagination: Pagination = { minHeight: 0, order: "asc" },
 ): Promise<[Operation[], string]> {
   const [operations, newNextCursor] = await listOperations(address, {
-    limit: 200,
+    limit: 1000, // Increased limit to 1000 to ensure delegation information is available when displaying account details (temporary fix until proper pagination is implemented).
     token: pagination.lastPagingToken,
     sort: pagination.order === "asc" ? "Ascending" : "Descending",
     minHeight: pagination.minHeight,
