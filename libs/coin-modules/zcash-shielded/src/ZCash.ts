@@ -148,7 +148,7 @@ export default class ZCash {
 
     while (low <= high) {
       const mid = Math.floor((low + high) / 2);
-      const block = await this.jsonRpcClient.getBlockByHeight(mid);
+      const block = await this.jsonRpcClient.getBlock(mid.toString());
 
       if (!block) {
         log(LOG_TYPE, `Block ${mid} not found.`);
