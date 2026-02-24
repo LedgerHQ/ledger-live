@@ -462,7 +462,6 @@ export type AccountInfo = {
   ownerCount: number;
   sequence: number;
 };
-// NOTE: future proof export type Pagination = Record<string, unknown>;
 
 export type AddressValidationCurrencyParameters = {
   currency: CryptoCurrency;
