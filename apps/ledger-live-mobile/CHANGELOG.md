@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.107.0-next.2
+
+### Minor Changes
+
+- [#14724](https://github.com/LedgerHQ/ledger-live/pull/14724) [`b1db721`](https://github.com/LedgerHQ/ledger-live/commit/b1db721d5b5b0336290f02e417ddd3d6d1a25eec) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Stop polling before genuine check to prevent BLE race condition
+
 ## 3.107.0-next.1
 
 ### Minor Changes
