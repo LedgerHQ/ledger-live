@@ -200,6 +200,7 @@ export default class ZCash {
    * @param {{
    *    startBlockHeight: number
    *    viewingKey: string
+   *    maxBatchSize: number
    * }} args, Block and the UFVK - unified full viewing key.
    * @returns {AsyncGenerator<SyncedShielded>} the current synced shielded context.
    */
