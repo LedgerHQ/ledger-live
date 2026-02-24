@@ -74,78 +74,78 @@ describe("jsonRpcClient", () => {
       }
     });
   });
-});
 
-describe("getBlockCount", () => {
-  test("returns block count when network returns numeric result", async () => {
-    server.use(
-      http.post(JSON_RPC_SERVER, async ({ request }) => {
-        const body = await request.clone().json();
-        if (
-          body &&
-          typeof body === "object" &&
-          "method" in body &&
-          body.method === "getblockcount"
-        ) {
-          return HttpResponse.json({ result: 42 });
-        }
-      }),
-    );
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBe(42);
-  });
-
-  test("calls network with POST, nodeUrl, getblockcount method and empty params", async () => {
-    let capturedBody: unknown;
-    server.use(
-      http.post(JSON_RPC_SERVER, async ({ request }) => {
-        const body = await request.clone().json();
-        capturedBody = body;
-        return HttpResponse.json({ result: 100 });
-      }),
-    );
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    await client.getBlockCount();
-    expect(capturedBody).toEqual({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "getblockcount",
-      params: [],
-    });
-  });
-
-  test("returns undefined when RPC returns error", async () => {
-    server.use(
-      http.post(JSON_RPC_SERVER, () =>
-        HttpResponse.json({
-          error: { code: -1, message: "node error" },
+  describe("getBlockCount", () => {
+    test("returns block count when network returns numeric result", async () => {
+      server.use(
+        http.post(JSON_RPC_SERVER, async ({ request }) => {
+          const body = await request.clone().json();
+          if (
+            body &&
+            typeof body === "object" &&
+            "method" in body &&
+            body.method === "getblockcount"
+          ) {
+            return HttpResponse.json({ result: 42 });
+          }
         }),
-      ),
-    );
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
+      );
+      const client = new JsonRpcClient(JSON_RPC_SERVER);
+      const count = await client.getBlockCount();
+      expect(count).toBe(42);
+    });
 
-  test("returns undefined when response has no result", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({})));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
+    test("calls network with POST, nodeUrl, getblockcount method and empty params", async () => {
+      let capturedBody: unknown;
+      server.use(
+        http.post(JSON_RPC_SERVER, async ({ request }) => {
+          const body = await request.clone().json();
+          capturedBody = body;
+          return HttpResponse.json({ result: 100 });
+        }),
+      );
+      const client = new JsonRpcClient(JSON_RPC_SERVER);
+      await client.getBlockCount();
+      expect(capturedBody).toEqual({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getblockcount",
+        params: [],
+      });
+    });
 
-  test("returns undefined when result is not a number (string)", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: "100" })));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
-  });
+    test("returns undefined when RPC returns error", async () => {
+      server.use(
+        http.post(JSON_RPC_SERVER, () =>
+          HttpResponse.json({
+            error: { code: -1, message: "node error" },
+          }),
+        ),
+      );
+      const client = new JsonRpcClient(JSON_RPC_SERVER);
+      const count = await client.getBlockCount();
+      expect(count).toBeUndefined();
+    });
 
-  test("returns undefined when result is not a number (object)", async () => {
-    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: {} })));
-    const client = new JsonRpcClient(JSON_RPC_SERVER);
-    const count = await client.getBlockCount();
-    expect(count).toBeUndefined();
+    test("returns undefined when response has no result", async () => {
+      server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({})));
+      const client = new JsonRpcClient(JSON_RPC_SERVER);
+      const count = await client.getBlockCount();
+      expect(count).toBeUndefined();
+    });
+
+    test("returns undefined when result is not a number (string)", async () => {
+      server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: "100" })));
+      const client = new JsonRpcClient(JSON_RPC_SERVER);
+      const count = await client.getBlockCount();
+      expect(count).toBeUndefined();
+    });
+
+    test("returns undefined when result is not a number (object)", async () => {
+      server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.json({ result: {} })));
+      const client = new JsonRpcClient(JSON_RPC_SERVER);
+      const count = await client.getBlockCount();
+      expect(count).toBeUndefined();
+    });
   });
 });
