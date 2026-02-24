@@ -57,7 +57,6 @@ libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/icons/                        @ledgerhq/wallet-xp
 libs/ledger-live-common/src/market/                       @ledgerhq/wallet-xp
-libs/ledger-live-common/src/transactionsAlerts/          @ledgerhq/wallet-xp
 # Wallet — desktop (WXP has all mvvm; Platform overrides below)
 apps/ledger-live-desktop/src/mvvm/                       @ledgerhq/wallet-xp
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ @ledgerhq/wallet-xp
@@ -296,8 +295,10 @@ apps/ledger-live-desktop/src/reducers/dynamicContent.ts                         
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
-libs/ledger-live-common/src/onboarding/                                                       @ledgerhq/engagement
+libs/ledger-live-common/src/onboarding/                                                        @ledgerhq/engagement
 libs/ledger-live-common/src/postOnboarding/                                                    @ledgerhq/engagement
+libs/ledger-live-common/src/transactionsAlerts/                                                @ledgerhq/engagement
+
 
 # UI tests
 apps/ledger-live-desktop/tests/                                             @ledgerhq/wallet-xp
