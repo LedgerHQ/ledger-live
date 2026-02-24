@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
+import { PAGE_TRACKING_WALLET_V4_TOUR } from "../const";
 
 export const useSlideFooterButtonViewModel = (onClose: () => void) => {
   const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
@@ -12,7 +13,7 @@ export const useSlideFooterButtonViewModel = (onClose: () => void) => {
     goToNext();
     track("button_clicked", {
       button: "Next",
-      page: "Product Tour WV4",
+      page: PAGE_TRACKING_WALLET_V4_TOUR,
       card: currentIndex + 1,
     });
   }, [currentIndex, goToNext]);
@@ -21,7 +22,7 @@ export const useSlideFooterButtonViewModel = (onClose: () => void) => {
     onClose();
     track("button_clicked", {
       button: "Discover my new portfolio",
-      page: "Product Tour WV4",
+      page: PAGE_TRACKING_WALLET_V4_TOUR,
     });
   }, [onClose]);
 

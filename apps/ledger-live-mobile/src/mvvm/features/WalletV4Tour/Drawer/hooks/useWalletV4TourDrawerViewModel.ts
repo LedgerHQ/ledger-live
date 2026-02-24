@@ -5,14 +5,14 @@ import { setHasSeenWalletV4Tour } from "~/actions/settings";
 import { hasCompletedOnboardingSelector, hasSeenWalletV4TourSelector } from "~/reducers/settings";
 import type { WalletV4TourDrawerViewModel } from "../types";
 import { useTranslation } from "~/context/Locale";
-import { useTrack } from "~/analytics";
 import animation01 from "../animations/01.lottie";
 import animation02 from "../animations/02.lottie";
 import animation03 from "../animations/03.lottie";
+import { track } from "~/analytics";
+import { PAGE_TRACKING_WALLET_V4_TOUR } from "../const";
 
 export const useWalletV4TourDrawerViewModel = (): WalletV4TourDrawerViewModel => {
   const dispatch = useDispatch();
-  const track = useTrack();
   const currentIndexRef = useRef(0);
   const hasSeenTour = useSelector(hasSeenWalletV4TourSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -39,22 +39,19 @@ export const useWalletV4TourDrawerViewModel = (): WalletV4TourDrawerViewModel =>
   const closeDrawer = useCallback(() => {
     track("button_clicked", {
       button: "Close",
-      page: "Product Tour WV4",
+      page: PAGE_TRACKING_WALLET_V4_TOUR,
       card: currentIndexRef.current + 1,
     });
     handleCloseDrawer();
-  }, [handleCloseDrawer, track]);
+  }, [handleCloseDrawer]);
 
-  const onSlideChange = useCallback(
-    (index: number) => {
-      currentIndexRef.current = index;
-      track("product_tour_card", {
-        page: "Product Tour WV4",
-        card: index + 1,
-      });
-    },
-    [track],
-  );
+  const onSlideChange = useCallback((index: number) => {
+    currentIndexRef.current = index;
+    track("product_tour_card", {
+      page: PAGE_TRACKING_WALLET_V4_TOUR,
+      card: index + 1,
+    });
+  }, []);
 
   const { t } = useTranslation();
   const slides = useMemo(

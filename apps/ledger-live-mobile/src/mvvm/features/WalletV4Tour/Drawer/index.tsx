@@ -10,6 +10,7 @@ import { SlideFooterButton } from "./components/SlideFooterButton";
 import { StyleSheet } from "react-native";
 import { ProgressIndicator } from "./components/ProgressIndicator";
 import { TrackScreen } from "~/analytics";
+import { PAGE_TRACKING_WALLET_V4_TOUR } from "./const";
 
 export const useWalletV4TourDrawer = () => {
   return useWalletV4TourDrawerViewModel();
@@ -43,13 +44,13 @@ export const WalletV4TourDrawer = ({
       noCloseButton={false}
       animateOnMount={false}
     >
-      <TrackScreen page="Product Tour WV4" source="Portfolio" />
+      <TrackScreen page={PAGE_TRACKING_WALLET_V4_TOUR} source="Wallet" />
       <Slides
-        scrollEnabled={false}
         bounces={false}
         as={AnimatedGestureHandlerFlatList}
         testID="walletv4-tour-slides-container"
         initialNumToRender={1}
+        maxToRenderPerBatch={1}
         onSlideChange={onSlideChange}
       >
         <Slides.Content>

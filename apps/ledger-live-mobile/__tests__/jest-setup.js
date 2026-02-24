@@ -143,7 +143,6 @@ jest.mock("~/analytics/segment", () => ({
   track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
   screen: jest.fn(),
-  useTrack: jest.fn(() => jest.fn()),
   useAnalytics: jest.fn(() => ({
     track: jest.fn(),
     screen: jest.fn(),
