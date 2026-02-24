@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import "ms";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
 import {
