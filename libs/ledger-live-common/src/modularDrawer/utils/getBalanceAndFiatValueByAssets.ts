@@ -1,5 +1,8 @@
 import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { groupAccountsByAsset, type GroupedAccount } from "./groupAccountsByAsset";
+import {
+  groupAccountsByAsset,
+  type GroupedAccount,
+} from "@ledgerhq/asset-aggregation/assetAggregation/groupAccountsByAsset";
 import { AssetType } from "./type";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

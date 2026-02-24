@@ -131,7 +131,7 @@
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
     "wallet": "pnpm --filter live-wallet",
-    "portfolio": "pnpm --filter live-portfolio",
+    "asset-aggregation": "pnpm --filter asset-aggregation",
     "promise": "pnpm --filter live-promise",
     "network": "pnpm --filter live-network",
     "config": "pnpm --filter live-config",

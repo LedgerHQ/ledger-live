@@ -19,32 +19,27 @@ export const groupAccountsByAsset = (
   const initialGroupedAccounts: Record<string, GroupedAccount> = {};
 
   return accounts.reduce((groupedAccounts, account) => {
-    const assetId = account.type === "Account" ? account.currency.id : account.token.id;
+    const currency = account.type === "Account" ? account.currency : account.token;
+    const assetId = currency.id;
 
     let assetGroup = groupedAccounts[assetId];
     if (!assetGroup) {
-      const currency = account.type === "Account" ? account.currency : account.token;
       assetGroup = groupedAccounts[assetId] = {
         totalBalance: new BigNumber(0),
         totalFiatValue: new BigNumber(0),
         accounts: [],
-        referenceCurrency: currency, // First currency becomes the reference
+        referenceCurrency: currency,
       };
     }
 
-    const currency = account.type === "Account" ? account.currency : account.token;
-    const balance = account.balance;
-
-    // Convert balance to reference currency magnitude before summing
-    const referenceMagnitude = assetGroup.referenceCurrency.units[0].magnitude || 0;
-    const currentMagnitude = currency.units[0].magnitude || 0;
-    const magnitudeDiff = referenceMagnitude - currentMagnitude;
-    const normalizedBalance = balance.shiftedBy(magnitudeDiff);
+    const referenceMagnitude = assetGroup.referenceCurrency.units[0].magnitude ?? 0;
+    const currentMagnitude = currency.units[0].magnitude ?? 0;
+    const normalizedBalance = account.balance.shiftedBy(referenceMagnitude - currentMagnitude);
 
     const fiatValue = calculateFiatValue(account, counterValuesState, targetCurrency);
 
     assetGroup.totalBalance = assetGroup.totalBalance.plus(normalizedBalance);
-    assetGroup.totalFiatValue = assetGroup.totalFiatValue.plus(fiatValue || 0);
+    assetGroup.totalFiatValue = assetGroup.totalFiatValue.plus(fiatValue ?? 0);
     assetGroup.accounts.push(account);
 
     return groupedAccounts;
@@ -66,5 +61,5 @@ function calculateFiatValue(
     value: balanceNumber,
   });
 
-  return fiatValue || 0;
+  return fiatValue ?? 0;
 }
