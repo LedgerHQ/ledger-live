@@ -21,15 +21,15 @@ function EarnBackgroundComponent() {
     [],
   );
 
-  const chosenSource = useMemo(() => {
-    return colorScheme === "dark"
-      ? require("~/images/liveApps/earn/background-dark.webp")
-      : require("~/images/liveApps/earn/background-light.webp");
+  const isDark = useMemo(() => {
+    return colorScheme === "dark";
   }, [colorScheme]);
+
+  const source = require("~/images/liveApps/earn/background-dark.webp");
 
   return (
     <View style={styles.container} pointerEvents="none">
-      <ImageBackground source={chosenSource} style={styles.imageContainer} />
+      {isDark && <ImageBackground source={source} style={styles.imageContainer} />}
     </View>
   );
 }

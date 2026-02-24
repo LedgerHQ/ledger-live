@@ -19,6 +19,8 @@ const MAIN_NAV_TOP_BAR_HEIGHT_ANDROID = TOP_BAR_BAR_HEIGHT + ANDROID_GRADIENT_EX
 export interface NavigationBarHeights {
   readonly top: number;
   readonly bottom: number;
+  readonly bottomBarHeight: number;
+  readonly topBarHeight: number;
 }
 
 /**
@@ -31,29 +33,35 @@ export interface NavigationBarHeights {
  *
  * @example
  * ```tsx
- * const { top, bottom } = useNavigationBarHeights();
+ * const { top, bottom, topBarHeight, bottomBarHeight } = useNavigationBarHeights();
  * const webviewInputs = {
  *   paddingTop: top.toString(),
  *   paddingBottom: bottom.toString(),
+ *   topBarHeight: topBarHeight.toString(),
+ *   bottomBarHeight: bottomBarHeight.toString(),
  * };
  * ```
  *
- * @returns `{ top: number, bottom: number }` - Top is safe area + 80px (iOS) or 68px (Android), bottom is 56px or 0
+ * @returns `{ top: number, bottom: number, topBarHeight: number, bottomBarHeight: number }` - Top is safe area + 80px (iOS) or 68px (Android), bottom is 56px or 0
+ * @returns `topBarHeight` - The height of the top bar excluding blur
+ * @returns `bottomBarHeight` - The height of the bottom bar
  */
 export function useNavigationBarHeights(): NavigationBarHeights {
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
   const insets = useSafeAreaInsets();
   const isTabBarVisible = useSelector(isMainNavigatorVisibleSelector);
 
-  const topBarHeight =
+  const topBarHeightWithBlur =
     Platform.OS === "ios" ? MAIN_NAV_TOP_BAR_HEIGHT_IOS : MAIN_NAV_TOP_BAR_HEIGHT_ANDROID;
 
   const result = useMemo(
     () => ({
-      top: insets.top + topBarHeight,
       bottom: isTabBarVisible ? TAB_BAR_HEIGHT : 0,
+      bottomBarHeight: TAB_BAR_HEIGHT,
+      top: insets.top + topBarHeightWithBlur,
+      topBarHeight: TOP_BAR_BAR_HEIGHT,
     }),
-    [insets.top, topBarHeight, isTabBarVisible],
+    [insets.top, topBarHeightWithBlur, isTabBarVisible],
   );
 
   if (!isWallet40Enabled) {
