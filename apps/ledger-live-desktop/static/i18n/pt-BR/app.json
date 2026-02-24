@@ -152,7 +152,8 @@
     "quote" : "Cotação",
     "memoTag" : {
       "learnMore" : "Saiba mais sobre a Tag/Memo"
-    }
+    },
+    "memo" : "Memo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -778,6 +779,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Comprar ou vender",
     "chooseProvider" : "Escolha entre {{providerCount}} provedor",
     "chooseProviders" : "Escolha entre {{providerCount}} provedores",
     "title" : "Compre e venda cripto",
@@ -1489,6 +1491,25 @@
         "secondaryCta" : "Talvez mais tarde"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
+    "continue" : "Continuar"
   },
   "currentAddress" : {
     "title" : "Endereço Atual",
@@ -2380,12 +2401,15 @@
       "walletNotExist" : "A carteira não existe"
     },
     "skipMemo" : {
-      "title" : "Pular adicionar a {{tag}}?",
-      "warning" : "O seu ativo pode ser perdido se a {{tag}} for necessária pelo seu recipiente"
+      "title" : "Pular adicionar a {{memoLabel}}?",
+      "description" : "O seu ativo pode ser perdido se a {{memoLabel}} for um requisito do seu recipiente",
+      "notRequired" : "O {{memoLabel}} não é exigido pelo destinatário?",
+      "confirm" : "Sim, pular",
+      "neverAskAgain" : "Não mostrar este aviso novamente"
     },
     "tagHelp" : {
-      "title" : "O que é uma {{tag}}?",
-      "description" : "Uma {{tag}} é necessária ao enviar {{currency}} para uma corretora de criptomoedas. É um recursos usado para identificar o recipiente da transação. Não incluir a memo {{tag}} pode resultar em perda de fundos."
+      "inputLabel" : "Inserir {{memoLabel}}",
+      "description" : "Uma {{memoLabel}} é necessária ao enviar {{currency}} para uma corretora de criptomoedas. É um recursos usado para identificar o recipiente da transação. Não incluir a memo {{memoLabel}} pode resultar em perda de fundos."
     },
     "networkFeesInFiat" : "Taxas de rede em {{currency}}",
     "feesAmount" : "Quantia da taxa ({{unit}})",
@@ -2417,8 +2441,9 @@
     }
   },
   "releaseNotes" : {
-    "title" : "Notas de lançamento",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Release note",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Entendi"
   },
   "troubleshootNetwork" : {
     "title" : "Solucionar problemas de rede",
@@ -4897,6 +4922,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "Esconder transações de tokens quando o valor for 0",
         "desc" : "Esconder transações de tokens sem valor pode prevenir possíveis ataques de envenenamento de endereço na Ethereum, Polygon, BSC, Tron..."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "Não perguntar novamente ignorar memo ao enviar",
+        "desc" : "Desative o aviso sobre ignorar o memo ao enviar fundos"
       }
     }
   },
@@ -5808,11 +5837,13 @@
     "casper" : {
       "transferIdPlaceholder" : "Opcional",
       "transferId" : "ID da Transferência (Memo)",
-      "transferIdWarningText" : "Ao usar um memo, verifique cuidadosamente as informações com o destinatário"
+      "transferIdWarningText" : "Ao usar um memo, verifique cuidadosamente as informações com o destinatário",
+      "memo" : "ID da Transferência (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "Opcional",
-      "comment" : "Comentários"
+      "comment" : "Comentários",
+      "memo" : "Comentário"
     },
     "canton" : {
       "commentPlaceholder" : "Opcional",
@@ -5970,6 +6001,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "Memo opcional"
+    },
+    "xrp" : {
+      "memo" : "Etiqueta"
     }
   },
   "errors" : {
@@ -7817,6 +7851,11 @@
           "description" : "No ecossistema {{currency}}, apenas um pequeno número de serviços pode criar novas contas. Embora a Ledger não ofereça atualmente esse serviço de criação de contas, há alternativas disponíveis. Você poderá adicionar sua conta {{currency}} na Ledger Wallet depois que ela for criada.",
           "cta" : "Como criar uma conta {{currency}}?",
           "close" : "Fechar"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "Nenhuma conta {{currency}} foi adicionada",
+          "description" : "Você não concluiu a configuração necessária para uma ou mais contas selecionadas.",
+          "close" : "Fechar"
         }
       },
       "status" : {
@@ -7923,6 +7962,12 @@
       "hoursAgo_other" : "Última sincronização: {{count}} horas atrás. Toque para atualizar",
       "daysAgo_one" : "Última sincronização: {{count}} dia atrás. Toque para atualizar",
       "daysAgo_other" : "Última sincronização: {{count}} dias atrás. Toque para atualizar"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Notificações"
+    },
+    "myLedger" : {
+      "tooltip" : "Minha Ledger"
     }
   },
   "geoBlocking" : {
@@ -7951,8 +7996,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Mostrar saldo",
-        "pausedAt" : "Pausado em ",
+        "startSync" : "Iniciar sincronização",
+        "stopSync" : "Parar sincronização",
+        "lastProcessedBlock" : "Bloco mais recente processado: {{block}}. {{missing}} blocos ainda não processados.",
         "lastSync" : "Última sincronização: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Altura de nascimento",
+        "tooltip" : "A altura de nascimento é o ponto na blockchain a partir do qual sua carteira começa a escanear seus fundos."
       },
       "flows" : {
         "export" : {
@@ -7991,12 +8042,58 @@
             }
           }
         }
-      },
-      "startSync" : "Iniciar sincronização",
-      "datepicker" : {
-        "label" : "Altura de nascimento",
-        "tooltip" : "A altura de nascimento é o ponto na blockchain a partir do qual sua carteira começa a escanear seus fundos."
       }
     }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Configurar saldo privado Aleo",
+        "description" : "A Ledger Wallet armazena sua chave de visualização para exibir seu saldo privado e utiliza serviços de terceiros para processar transações privadas. <0>Saiba mais</0>",
+        "bullets" : ["Acesso somente de leitura para descriptografar seu saldo privado", "A Ledger não pode enviar nem gastar seus fundos", "Somente você pode assinar e gastar seus fundos", "A geração de provas é feita por serviços de comprovação externos, a fim de garantir um processamento rápido", "Os comprovadores não podem acessar nem gastar seus fundos"],
+        "cta" : {
+          "allow" : "Permitir",
+          "cancel" : "Cancelar"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Aprovar na sua Ledger",
+        "description" : "Confirme o compartilhamento da chave de visualização no seu dispositivo",
+        "cancelAlert" : "Você pode rejeitar contas individuais no seu dispositivo. Cancelar tudo irá interromper a adição de contas ao seu portfólio.",
+        "cancelAllBtn_one" : "Cancelar",
+        "cancelAllBtn_other" : "Cancelar tudo"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Compartilhar chave de visualização",
+          "shareKey_other" : "Compartilhar chaves de visualização"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "Você não compartilhou chaves de visualização para nenhuma das contas selecionadas. As chaves de visualização são necessárias para exibir seu saldo privado na Ledger Wallet."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "Saldo disponível",
+      "availableBalanceTooltip" : "Saldo que pode ser transferido",
+      "transparentBalance" : "Saldo transparente",
+      "transparentBalanceTooltip" : "Saldo visível ao público",
+      "privateBalance" : "Saldo privado",
+      "privateBalanceTooltip" : "Saldo oculto ao público"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Pública",
+        "private" : "Privada"
+      }
+    }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Nova atualização disponível",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "Erro durante a atualização, tente novamente",
+    "installAndRelaunch" : "Instale a atualização e reinicie"
   }
 }
