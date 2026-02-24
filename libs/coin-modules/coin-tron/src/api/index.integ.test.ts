@@ -1,7 +1,7 @@
 import { randomBytes } from "crypto";
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import dotenv from "dotenv";
-import TronWeb from "tronweb";
+import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
 import { createApi } from ".";
 
@@ -80,7 +80,7 @@ describe("API", () => {
 async function _generateNewAccount(trongridUrl: string) {
   const privateKey = randomBytes(32).toString("hex");
 
-  const HttpProvider = TronWeb.providers.HttpProvider;
+  const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(trongridUrl);
   const solidityNode = new HttpProvider(trongridUrl);
   const eventServer = new HttpProvider(trongridUrl);
