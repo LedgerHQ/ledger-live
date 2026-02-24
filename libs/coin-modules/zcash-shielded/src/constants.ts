@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { ZcashPrivateInfo } from "@ledgerhq/coin-bitcoin/types";
 
-export const LAST_BLOCK_COUNT = 3697079;
 export const LOG_TYPE = "zcash-shielded";
 export const JSON_RPC_SERVER =
   "https://explorers.api.vault.ledger-test.com/nodes/zec_testnet/zaino/jsonrpc";

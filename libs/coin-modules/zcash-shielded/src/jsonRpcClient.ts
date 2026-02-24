@@ -139,7 +139,7 @@ export class JsonRpcClient {
 
     if (response.data.error) {
       const message = response.data.error.message ?? "unknown error";
-      log(LOG_TYPE, `error: ZCash RPC ${args.method} failed - ${message}`);
+      log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
     } else if (response.data.result === undefined || response.data.result === null) {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
     } else {
