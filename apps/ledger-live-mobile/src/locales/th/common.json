@@ -1575,12 +1575,49 @@
     "bannerButtonTitle2" : "ซื้อ Ledger",
     "setupCta" : "ฉันมี Ledger อยู่แล้ว ติดตั้งตอนนี้"
   },
+  "rebornBuyDevice" : {
+    "title" : "เชื่อมต่อกับอุปกรณ์ Ledger",
+    "desc" : "เชื่อมต่อกับอุปกรณ์ Ledger ของคุณ เพื่อใช้งานแอป Ledger Wallet ได้อย่างเต็มประสิทธิภาพ",
+    "0" : {
+      "title" : "การเป็นเจ้าของแบบเต็มรูปแบบ",
+      "desc" : "Private Key ของคุณจะไม่ถูกส่งออกไปจากอุปกรณ์"
+    },
+    "1" : {
+      "title" : "เทรดอย่างปลอดภัย",
+      "desc" : "ตรวจสอบธุรกรรมบนหน้าจอที่ปลอดภัย"
+    },
+    "2" : {
+      "title" : "เข้าถึงวอลเล็ตที่ปลอดภัยที่สุด",
+      "desc" : "จัดการสินทรัพย์นับพันได้ในที่เดียว"
+    },
+    "cta" : "เชื่อมต่อ",
+    "buyCta" : "ซื้ออุปกรณ์ Ledger"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "ได้รับ Ledger หรือยัง?",
     "desc" : "เมื่อได้ Ledger แล้ว ให้ตั้งค่าเพื่อปลดล็อกฟีเจอร์ทั้งหมดของแอป Ledger Wallet",
     "cta" : "ติดตั้ง Ledger ของฉัน",
     "bannerTitle" : "ได้รับ Ledger แล้วหรือยัง?",
     "bannerCta" : "เริ่มการติดตั้ง",
+    "continue" : "ดำเนินการต่อ"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ ไม่สามารถดำเนินการ Clear Sign สำหรับธุรกรรมนี้ได้",
+      "subtitle" : "ใช้อุปกรณ์ Ledger อื่น  เพื่อตรวจสอบรายละเอียดของธุรกรรมนี้ก่อนเซ็น หากไม่มีการ Clear Signing  ทรัพย์สินทั้งหมดของคุณอาจตกอยู่ในความเสี่ยง",
+      "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
+    },
+    "info" : {
+      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "reminder" : "ไม่ต้องเตือนฉันอีก"
+    },
+    "error" : {
+      "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+    },
+    "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
     "continue" : "ดำเนินการต่อ"
   },
   "purchaseDevice" : {
@@ -2638,7 +2675,9 @@
     "discover" : "ผู้ให้บริการ",
     "nanoX" : "Nano X",
     "market" : "ตลาด",
-    "earn" : "สร้างรายได้"
+    "earn" : "สร้างรายได้",
+    "card" : "บัตร",
+    "swap" : "สวอป"
   },
   "portfolio" : {
     "totalBalance" : "ยอดคงเหลือทั้งหมด",
@@ -2690,7 +2729,7 @@
     "walletBalance" : "ยอดคงเหลือในวอลเล็ต",
     "balance" : {
       "noSigner" : "วอลเล็ตที่ปลอดภัย\nที่สุด",
-      "noFund" : "ปกป้องคริปโตของคุณ"
+      "noAccounts" : "ปกป้อง\nคริปโตของคุณ"
     },
     "seeAllAssets" : "ดูสินทรัพย์ทั้งหมด",
     "seeAllAccounts" : "ดูบัญชีทั้งหมด",
@@ -3497,6 +3536,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Debug การอัปเดตระบบปฏิบัติการ"
         }
+      },
+      "contentCards" : {
+        "title" : "การ์ดเนื้อหา",
+        "titleDesc" : "สร้างการ์ดเนื้อหาที่ใช้เฉพาะที่โดยไม่ใช้ต้อง Braze ในการทดสอบ",
+        "description" : "การ์ดที่ใช้เฉพาะที่จะปรากฏในส่วนพอร์ตการลงทุน (และที่อื่น ๆ) โดยไม่ต้องใช้ Braze และจะยังคงอยู่จนกว่าคุณจะยกเลิกหรือลบออกไป",
+        "addSampleBanner" : "เพิ่มแบนเนอร์ตัวอย่าง",
+        "addSampleBannerDesc" : "เพิ่มฮีโร่แบนเนอร์ตัวอย่างบนพอร์ตการลงทุน",
+        "addSampleActionCarousel" : "ใส่ตัวอย่างข้อความที่เลื่อนได้ (Sample Action Carousel)",
+        "addSampleActionCarouselDesc" : "เพิ่ม Action Card (เช่น ซื้อ สวอป สเตค) ที่เลื่อนได้ตรงพอร์ตการลงทุน",
+        "dismissAll" : "ยกเลิกการ์ดเฉพาะที่ทั้งหมด",
+        "dismissAllDesc" : "ลบการ์ดเนื้อหาที่สร้างเฉพาะที่ทั้งหมด"
       }
     }
   },
@@ -4143,6 +4193,83 @@
     "loading" : "กำลังค้นหาอุปกรณ์..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "ส่ง {{currency}}",
+      "available" : "สามารถใช้ได้: {{amount}}",
+      "placeholder" : "ป้อน Address หรือ ENS",
+      "placeholderNoENS" : "ป้อน Address",
+      "editRecipientAccessibilityLabel" : "แก้ไขผู้รับ",
+      "recent" : "ล่าสุด",
+      "recentDetail" : "Recent detail",
+      "myAccounts" : "บัญชีของฉัน",
+      "account" : "Account",
+      "sendTo" : "ส่งไปยัง {{address}}",
+      "addressMatched" : "ที่อยู่ถูกต้องและตรงกัน",
+      "addressNotFound" : "ไม่พบที่อยู่",
+      "alreadyUsed" : "{{date}} ถูกใช้งานแล้ว",
+      "recentSendWillAppear" : "การส่งล่าสุดของคุณจะแสดงที่นี่",
+      "relativeDate" : {
+        "justNow" : "เมื่อสักครู่",
+        "minutesAgo_one" : "1 นาทีที่แล้ว",
+        "minutesAgo_other" : "{{count}} นาทีที่แล้ว",
+        "hoursAgo_one" : "1 ชั่วโมงที่แล้ว",
+        "hoursAgo_other" : "{{count}} ชั่วโมงที่แล้ว",
+        "daysAgo_one" : "1 วันที่แล้ว",
+        "daysAgo_other" : "{{count}} วันที่แล้ว"
+      },
+      "remove" : "ลบออก",
+      "enterTag" : "ป้อน {{tag}}",
+      "firstInteraction" : {
+        "title" : "คุณกำลังส่งไปยังที่อยู่ใหม่",
+        "description" : "ตรวจสอบว่า Address ถูกต้อง หากไม่แน่ใจ ให้ส่งจำนวนเล็กน้อยก่อน"
+      },
+      "sanctioned" : {
+        "title" : "ที่อยู่นี้ถูกระบุว่าไม่ปลอดภัย",
+        "description" : "ที่อยู่นี้ถูกระบุว่าไม่ปลอดภัย Ledger จึงไม่อนุญาตให้ส่งไปยังที่อยู่นี้",
+        "helpCenter" : "ศูนย์ช่วยเหลือ"
+      },
+      "errors" : {
+        "incorrectFormat" : "รูปแบบของที่อยู่ไม่ถูกต้อง",
+        "incompatibleAsset" : "ไม่สามารถใช้ที่อยู่นี้กับสินทรัพย์ที่คุณเลือกได้",
+        "walletNotExist" : "ไม่พบวอลเล็ตนี้"
+      },
+      "skipMemo" : {
+        "title" : "ข้ามการเพิ่ม {{tag}}?",
+        "warning" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{tag}} ในการรับ"
+      },
+      "tagHelp" : {
+        "title" : "{{tag}} คืออะไร?",
+        "description" : "จำเป็นต้องมี {{tag}} เมื่อส่ง {{currency}} ไปยัง Crypto Exchange นี่คือฟีเจอร์ที่ใช้ระบุตัวตนของผู้รับธุรกรรม หากไม่ใส่ Memo {{tag}} อาจทำให้สูญเสียเงินทุนได้"
+      },
+      "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
+      "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
+      "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
+      "feesPaid" : "ค่าธรรมเนียมที่ต้องชำระให้กับเครือข่ายเพื่อทำธุรกรรมของคุณ",
+      "insufficientBalanceFees" : "ยอดคงเหลือไม่เพียงพอสำหรับค่าธรรมเนียมเครือข่าย",
+      "amountToSend" : "จำนวนที่จะส่งใน {{currency}}",
+      "coinToSend" : "เหรียญที่จะส่ง",
+      "coinControlCustom" : "การเลือกเหรียญเฉพาะที่กำหนดเอง",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "สูงสุด"
+      },
+      "reviewCta" : "ตรวจสอบ",
+      "getCta" : "รับ {{currency}}",
+      "switchInputMode" : "สลับโหมดในการป้อนจำนวน",
+      "aboveMaximum" : "เกินยอดคงเหลือสูงสุด",
+      "transactionSigned" : "ลงนามธุรกรรมสำเร็จแล้ว",
+      "processingTransaction" : "กำลังประมวลผลธุรกรรมของคุณ",
+      "sign" : {
+        "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+        "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบนหน้าจอสัมผัสที่ปลอดภัยของคุณ"
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่ายได้",
+        "warningDescription" : "ค่าธรรมเนียมที่ตั้งไว้ล่วงหน้าอาจไม่อัปเดต"
+      }
+    },
     "pendingTxWarning" : "คุณมีธุรกรรมที่ค้างอยู่ โปรดระมัดระวังว่าธุรกรรมที่ค้างอยู่อาจถูกยกเลิกได้",
     "tooMuchUTXOBottomModal" : {
       "cta" : "ดำเนินการต่อ",
@@ -8311,22 +8438,36 @@
       "authorize" : "อนุญาต",
       "preapprove" : "เพิ่มบัญชีสำเร็จ",
       "validator" : "ผู้ตรวจสอบ Ledger",
-      "title" : "รับเงินทุนโดยอัตโนมัติ",
+      "title" : "การออนบอร์ด",
+      "success" : "ออนบอร์ดบัญชีเรียบร้อยแล้ว",
+      "status" : {
+        "prepare" : "กำลังเตรียมธุรกรรมสำหรับการออนบอร์ดบัญชี\nขั้นตอนนี้อาจใช้เวลา 1 นาที...",
+        "submit" : "กำลังออนบอร์ดบัญชี...",
+        "default" : "กำลังประมวลผล..."
+      },
       "processing" : {
         "title" : "กำลังประมวลผลธุรกรรม",
-        "description" : "ขั้นตอนนี้อาจใช้เวลาถึง 1 นาที",
+        "description" : "โปรดรอสักครู่",
         "keepDeviceNearby" : "อยู่ในแอป Ledger Wallet และเก็บอุปกรณ์ Ledger ของคุณไว้ใกล้ ๆ"
       },
       "reonboard" : {
         "title" : "จำเป็นต้องอัปเดตบัญชี",
         "account" : "บัญชี",
         "authorize" : "อนุญาตผู้ตรวจสอบใหม่",
+        "success" : "อัปเดตบัญชีเรียบร้อยแล้ว",
         "warning" : {
           "title" : "ตรวจพบการเปลี่ยนแปลง Topology",
           "description" : "ตรวจพบการเปลี่ยนแปลง Topology ในเครือข่าย Canton โปรดออนบอร์ดบัญชีของคุณใหม่เพื่อใช้งานต่อไป"
         }
       },
       "error429" : "ปัจจุบัน Canton Network รองรับการสร้างบัญชีจำนวนจำกัดต่อวัน โปรดลองอีกครั้งในภายหลัง"
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "กำลังรอการอนุมัติ...",
+        "submit" : "กำลังอนุมัติผู้ตรวจสอบ...",
+        "default" : "กำลังประมวลผล..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "ต้องดำเนินการ: มี UTXO มากเกินไป",
@@ -8402,5 +8543,40 @@
     "actions" : {
       "swap" : "สวอป"
     }
+  },
+  "cardLanding" : {
+    "title" : "ใช้จ่าย\nคริปโตของคุณ",
+    "subtitle" : "ชำระทั้งออนไลน์หรือในร้านค้าได้ด้วยบัตรคริปโต",
+    "ctas" : {
+      "exploreCards" : "ดูบัตรต่าง ๆ",
+      "iHaveACard" : "ฉันมีบัตรอยู่แล้ว"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "ดูพอร์ตการลงทุนใหม่ของคุณ",
+    "slides" : {
+      "portfolio" : {
+        "title" : "A clearer view of your portfolio",
+        "description" : "See your total balance at a glance, and tap “Today” to dive deeper."
+      },
+      "navigation" : {
+        "title" : "Access key actions faster",
+        "description" : "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
+      },
+      "actions" : {
+        "title" : "View market trends instantly",
+        "description" : "Quickly see what’s trending directly in your portfolio, and move from insights to action."
+      }
+    },
+    "cta" : {
+      "continue" : "Next",
+      "explore" : "Discover my new portfolio"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "หน้าหลัก",
+    "swap" : "สวอป",
+    "earn" : "สร้างรายได้",
+    "card" : "บัตร"
   }
 }
