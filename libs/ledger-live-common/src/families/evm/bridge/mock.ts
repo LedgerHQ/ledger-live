@@ -15,7 +15,7 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getGasLimit } from "@ledgerhq/coin-evm/utils";
+import { getGasLimit, isEthAddress } from "@ledgerhq/coin-evm/utils";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "../../../config";
@@ -116,23 +116,30 @@ const getTransactionStatus = (account, transaction) => {
 };
 
 const prepareTransaction = async (_a, t) => {
-  const feesStrategy = (t as unknown as { feesStrategy?: string }).feesStrategy;
-  const gasPriceByStrategy: Record<string, BigNumber> = {
-    slow: new BigNumber(20000000000), // 20 gwei
-    medium: new BigNumber(30000000000), // 30 gwei
-    fast: new BigNumber(50000000000), // 50 gwei
-  };
+  if (t.feesStrategy === "custom") {
+    return t;
+  }
 
-  const gasPrice = feesStrategy
-    ? gasPriceByStrategy[feesStrategy] ?? new BigNumber(30000000000)
-    : new BigNumber(30000000000);
-  const typedTransaction = getTypedTransaction(t, {
+  let gasPrice: BigNumber;
+  switch (t.feesStrategy) {
+    case "slow":
+      gasPrice = new BigNumber(20000000000);
+      break;
+    case "fast":
+      gasPrice = new BigNumber(50000000000);
+      break;
+    default:
+      gasPrice = new BigNumber(30000000000);
+      break;
+  }
+  const nextBaseFee = gasPrice;
+  const maxPriorityFeePerGas = gasPrice.div(2);
+  return getTypedTransaction(t, {
     gasPrice,
-    maxFeePerGas: gasPrice,
-    maxPriorityFeePerGas: gasPrice,
-    nextBaseFee: new BigNumber(30000000000),
+    maxFeePerGas: nextBaseFee.plus(maxPriorityFeePerGas),
+    maxPriorityFeePerGas,
+    nextBaseFee,
   });
-  return typedTransaction;
 };
 
 let isConfigLoaded = false;

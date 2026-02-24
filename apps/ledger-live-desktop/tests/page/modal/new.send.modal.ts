@@ -1,30 +1,35 @@
 import { expect } from "@playwright/test";
-import { FeePreset } from "tests/common/newSendFlow/types";
 import { step } from "tests/misc/reporters/step";
-import { Component } from "tests/page/abstractClasses";
+import { Modal } from "../../component/modal.component";
+import { looksLikeFiatValue } from "../../utils/looksLikeFiatValue";
 
 export type StellarMemoType = "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN";
 
-export class NewSendFlowPage extends Component {
+type FeePreset = "slow" | "medium" | "fast";
+
+export class NewSendModal extends Modal {
   // ========== Dialog container ==========
   readonly dialog = this.page.getByRole("dialog");
 
   // ========== Header elements ==========
   readonly headerTitle = this.dialog.getByTestId("send-dialog-header");
   readonly backButton = this.headerTitle.getByRole("button", { name: "Go back" });
-  readonly closeButton = this.headerTitle.getByRole("button", { name: "Close" });
+  override readonly closeButton = this.headerTitle.getByRole("button", { name: "Close" });
 
   readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
   readonly editRecipientButton = this.dialog.getByTestId("send-edit-recipient-button");
 
   // ========== RECIPIENT STEP ==========
-  readonly myAccountsSection = this.dialog.getByTestId("send-my-accounts-section");
   readonly addressMatchedTitle = this.dialog.getByTestId("send-address-matched-title");
-  // Recent addresses are rendered as tiles with a "More actions" secondary button.
-  readonly recentTileMoreActionsButtons = this.dialog.getByTestId("send-recent-tile-action");
+  readonly introCard = this.dialog.getByTestId("send-recipient-intro-card");
+  readonly securityToggle = this.dialog.getByTestId("send-recipient-security-toggle");
 
   // Primary selectable button in "Address matched" section (ListItem is a button with "Send to X" text)
   readonly sendToButton = this.dialog.getByTestId("send-matched-address-button");
+  readonly visibleSendToButton = this.dialog
+    .locator('[data-testid="send-matched-address-button"]')
+    .filter({ visible: true })
+    .first();
   readonly addressNotFoundText = this.dialog.getByText(/address not found/i).first();
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
 
@@ -32,11 +37,12 @@ export class NewSendFlowPage extends Component {
   readonly sanctionedBanner = this.dialog.getByTestId("sanctioned-address-banner");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly senderErrorBanner = this.dialog.getByTestId("sender-error-banner");
-  readonly newAddressBanner = this.dialog.getByText(/sending to a new address/i).first();
+  readonly recentHistoryWarningCard = this.dialog.getByTestId("send-recent-history-warning");
 
   // Memo
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly memoOptionsSelect = this.dialog.getByTestId("send-memo-options-select");
+  // Select content is portalled outside the dialog subtree.
   readonly memoOptionNoMemo = this.page.getByTestId("send-memo-select-option-NO_MEMO");
   readonly memoOptionText = this.page.getByTestId("send-memo-select-option-MEMO_TEXT");
   readonly memoOptionId = this.page.getByTestId("send-memo-select-option-MEMO_ID");
@@ -57,17 +63,51 @@ export class NewSendFlowPage extends Component {
   readonly quickAction75 = this.dialog.getByTestId("send-quick-actions-threeQuarters");
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
+  // Menu items are portalled outside the dialog subtree.
   readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
   readonly coinControlFeesMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
   readonly getFundsButton = this.dialog.getByTestId("send-get-funds-button");
   // Toggle button to switch between FIAT and CRYPTO input modes
   readonly toggleInputModeButton = this.dialog.getByTestId("send-toggle-input-mode-button");
+  readonly amountSecondaryValue = this.dialog.getByTestId("send-amount-secondary-value");
+
+  getFeePreset(preset: FeePreset) {
+    return this.page.getByTestId(`send-fees-preset-${preset}`);
+  }
+
+  // ========== CUSTOM FEES STEP ==========
+  readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: /confirm/i });
+  readonly customFeesFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
+  readonly customFeesMaxFeeInput = this.dialog.getByLabel(/max fee.*gwei/i);
+  readonly customFeesMaxPriorityFeeInput = this.dialog.getByLabel(/max priority fee.*gwei/i);
+
+  // ========== COIN CONTROL STEP ==========
+  readonly coinControlFooter = this.dialog.getByTestId("send-coin-control-footer");
+  readonly coinControlChangeToReturn = this.dialog.getByTestId("send-change-to-return-row");
+  readonly coinControlAmountInput = this.dialog.getByLabel(/amount to send/i);
 
   // ========== CONFIRMATION STEP ==========
-  readonly confirmationStatusContent = this.dialog.locator(
-    '[data-testid="send-confirmation-success-content"], [data-testid="send-confirmation-error-content"], [data-testid="send-confirmation-info-content"]',
+  readonly confirmationSuccessContent = this.dialog.getByTestId(
+    "send-confirmation-success-content",
   );
+  readonly confirmationErrorContent = this.dialog.getByTestId("send-confirmation-error-content");
+  readonly confirmationInfoContent = this.dialog.getByTestId("send-confirmation-info-content");
+  /**
+   * Any terminal confirmation screen (success, error, or info).
+   * Use `waitForSuccessConfirmation()` when asserting success specifically.
+   */
+  readonly confirmationTerminalContent = this.confirmationSuccessContent
+    .or(this.confirmationErrorContent)
+    .or(this.confirmationInfoContent);
+  readonly successConfirmationTitle = this.dialog.getByTestId("send-confirmation-success-title");
+
+  private async isCryptoInputMode(): Promise<boolean | null> {
+    const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
+    // Return null when the element isn't populated yet so callers can retry.
+    if (!secondaryValue) return null;
+    return looksLikeFiatValue(secondaryValue);
+  }
 
   // ========== DIALOG LIFECYCLE ==========
 
@@ -76,11 +116,6 @@ export class NewSendFlowPage extends Component {
     await this.dialog.waitFor({ state: "visible", timeout: 15000 });
     // Wait for animations
     await this.page.waitForTimeout(500);
-  }
-
-  @step("Close dialog")
-  async close() {
-    await this.closeButton.click();
   }
 
   @step("Click back button")
@@ -95,71 +130,50 @@ export class NewSendFlowPage extends Component {
   @step("Type address in search input: $0")
   async typeAddress(address: string) {
     await this.recipientInput.waitFor({ state: "visible" });
-    await this.recipientInput.clear();
     await this.recipientInput.fill(address);
   }
 
-  @step("Select address from list (index: $0)")
+  @step("Select address from list")
   async clickOnSendToButton() {
-    const visibleSendToButton = this.dialog
-      .locator('[data-testid="send-matched-address-button"]:visible')
-      .first();
-    await visibleSendToButton.waitFor({ state: "visible", timeout: 30000 });
+    await this.visibleSendToButton.waitFor({ state: "visible", timeout: 30000 });
     // Bridge async validation may cause re-renders; wait for DOM to stabilize
     await this.page.waitForTimeout(500);
-    await visibleSendToButton.scrollIntoViewIfNeeded();
-    await visibleSendToButton.click();
-  }
-
-  @step("Remove recent address tile (index: $0)")
-  async removeRecentAddressTile(index: number = 0) {
-    const moreActions = this.recentTileMoreActionsButtons.nth(index);
-    await moreActions.waitFor({ state: "visible", timeout: 10000 });
-    await moreActions.click();
-
-    const removeItem = this.page.getByRole("menuitem", { name: /remove/i });
-    await removeItem.waitFor({ state: "visible", timeout: 10000 });
-    await removeItem.dispatchEvent("click");
-
-    // Menu closes asynchronously.
-    await this.page.waitForTimeout(300);
+    await this.visibleSendToButton.scrollIntoViewIfNeeded();
+    await this.visibleSendToButton.click();
   }
 
   @step("Wait for address validation")
   async waitForRecipientValidation() {
     const timeoutMs = 20000;
-    const waiters = [
-      this.sendToButton.waitFor({ state: "visible", timeout: timeoutMs }),
-      this.addressNotFoundText.waitFor({ state: "visible", timeout: timeoutMs }),
-      this.validationStatusMessage.waitFor({ state: "visible", timeout: timeoutMs }),
-      this.sanctionedBanner.waitFor({ state: "visible", timeout: timeoutMs }),
-      this.recipientErrorBanner.waitFor({ state: "visible", timeout: timeoutMs }),
-      this.senderErrorBanner.waitFor({ state: "visible", timeout: timeoutMs }),
-      this.skipMemoProposal.waitFor({ state: "visible", timeout: timeoutMs }),
-    ];
-    try {
-      await Promise.any(waiters);
-    } catch {
-      throw new Error(
-        `Recipient validation did not complete within ${timeoutMs}ms: none of the expected states (Send to button, address not found, validation status, sanctioned/recipient/sender error banners, skip memo proposal) became visible.`,
-      );
-    }
-    await this.page.waitForTimeout(250);
+    await expect
+      .poll(
+        async () => {
+          if (await this.sendToButton.isVisible().catch(() => false)) return "sendToButton-visible";
+          if (await this.addressNotFoundText.isVisible().catch(() => false))
+            return "addressNotFound-visible";
+          if (await this.validationStatusMessage.isVisible().catch(() => false))
+            return "validationStatus-visible";
+          if (await this.sanctionedBanner.isVisible().catch(() => false))
+            return "sanctionedBanner-visible";
+          if (await this.recipientErrorBanner.isVisible().catch(() => false))
+            return "recipientErrorBanner-visible";
+          if (await this.senderErrorBanner.isVisible().catch(() => false))
+            return "senderErrorBanner-visible";
+          if (await this.skipMemoProposal.isVisible().catch(() => false))
+            return "skipMemoProposal-visible";
+          return null;
+        },
+        {
+          timeout: timeoutMs,
+          message: `Recipient validation did not complete within ${timeoutMs}ms: none of the expected states (Send to button, address not found, validation status, sanctioned/recipient/sender error banners, skip memo proposal) became visible.`,
+        },
+      )
+      .not.toBeNull();
   }
 
   @step("Verify sanctioned banner visible")
   async expectSanctionedBanner() {
     await expect(this.sanctionedBanner).toBeVisible({ timeout: 5000 });
-  }
-
-  @step("Verify recipient error banner visible")
-  async expectRecipientError() {
-    await expect(this.recipientErrorBanner).toBeVisible({ timeout: 5000 });
-  }
-
-  @step("Verify sender error banner visible")
-  async expectSenderError() {
-    await expect(this.senderErrorBanner).toBeVisible({ timeout: 5000 });
   }
 
   @step("Verify address matched section visible")
@@ -174,31 +188,8 @@ export class NewSendFlowPage extends Component {
     await this.page.waitForTimeout(300);
   }
 
-  @step("Verify validation message contains: $0")
-  async expectValidationMessage(text: RegExp | string) {
-    const hasValidationMessage = await this.validationStatusMessage.isVisible().catch(() => false);
-    if (hasValidationMessage) {
-      await expect(this.validationStatusMessage).toContainText(text, { timeout: 10000 });
-      return;
-    }
-
-    const hasAddressNotFound = await this.addressNotFoundText.isVisible().catch(() => false);
-    if (hasAddressNotFound) {
-      await expect(this.addressNotFoundText).toBeVisible({ timeout: 5000 });
-      return;
-    }
-
-    const hasRecipientBanner = await this.recipientErrorBanner.isVisible().catch(() => false);
-    if (hasRecipientBanner) {
-      await expect(this.recipientErrorBanner).toBeVisible({ timeout: 5000 });
-      return;
-    }
-
-    throw new Error("No validation message or error banner appeared");
-  }
-
   @step("Skip memo")
-  async skipMemo(confirm: boolean = true) {
+  async skipMemo({ confirm = true }: { confirm?: boolean } = {}) {
     await this.skipMemoLink.click();
     if (confirm) {
       await this.confirmSkipMemo();
@@ -253,36 +244,25 @@ export class NewSendFlowPage extends Component {
 
   @step("Switch to crypto input mode")
   async switchToCryptoMode() {
-    // By default, the amount input is in FIAT mode. Click toggle to switch to CRYPTO.
-    const toggleButton = this.toggleInputModeButton;
-    const isVisible = await toggleButton.isVisible().catch(() => false);
-    if (isVisible) {
-      await toggleButton.click();
-      await this.page.waitForTimeout(300);
+    // Poll until secondary value is populated (null = not ready yet)
+    await expect.poll(() => this.isCryptoInputMode()).not.toBeNull();
+    const isCryptoMode = await this.isCryptoInputMode();
+    if (!isCryptoMode) {
+      await this.toggleInputModeButton.click();
+      // null won't match true, so the poll keeps retrying until the switch completes
+      await expect.poll(() => this.isCryptoInputMode()).toBe(true);
     }
   }
 
-  @step("Wait for bridge to be ready (not loading)")
-  async waitForBridgeReady(timeout: number = 30000) {
-    // Wait for the review button to stop showing loading state
-    // The button has loading={reviewLoading} which is true when bridgePending && shouldPrepare
-    const start = Date.now();
-    while (Date.now() - start < timeout) {
-      const isLoading = await this.reviewButton.getAttribute("data-loading").catch(() => null);
-      const isDisabled = await this.reviewButton.isDisabled().catch(() => true);
-
-      // If button is visible and not in a loading state, bridge is ready
-      if (isLoading !== "true" && !isDisabled) {
-        return;
-      }
-
-      // Also check if button becomes enabled
-      const isEnabled = await this.reviewButton.isEnabled().catch(() => false);
-      if (isEnabled) {
-        return;
-      }
-
-      await this.page.waitForTimeout(250);
+  @step("Switch to fiat input mode")
+  async switchToFiatMode() {
+    // Poll until secondary value is populated (null = not ready yet)
+    await expect.poll(() => this.isCryptoInputMode()).not.toBeNull();
+    const isCryptoMode = await this.isCryptoInputMode();
+    if (isCryptoMode) {
+      await this.toggleInputModeButton.click();
+      // null won't match false, so the poll keeps retrying until the switch completes
+      await expect.poll(() => this.isCryptoInputMode()).toBe(false);
     }
   }
 
@@ -302,7 +282,7 @@ export class NewSendFlowPage extends Component {
   @step("Fill amount: $0")
   async fillAmount(amount: string) {
     await this.amountInput.waitFor({ state: "visible", timeout: 10000 });
-    await this.amountInput.clear();
+    await this.switchToFiatMode();
     await this.amountInput.fill(amount);
     await this.page.waitForTimeout(800); // Wait for validation
   }
@@ -312,7 +292,6 @@ export class NewSendFlowPage extends Component {
     await this.amountInput.waitFor({ state: "visible", timeout: 10000 });
 
     await this.switchToCryptoMode();
-    await this.amountInput.clear();
     await this.amountInput.fill(amount);
   }
 
@@ -350,12 +329,6 @@ export class NewSendFlowPage extends Component {
     await this.page.waitForTimeout(500);
   }
 
-  @step("Click review to proceed to signature")
-  async clickReview2() {
-    await this.reviewButton.waitFor({ state: "visible" });
-    await this.reviewButton.click();
-  }
-
   @step("Verify review button is disabled")
   async expectReviewDisabled() {
     await expect(this.reviewButton).toBeDisabled({ timeout: 10000 });
@@ -382,12 +355,6 @@ export class NewSendFlowPage extends Component {
     await expect(this.getFundsButton).toBeVisible({ timeout: 5000 });
   }
 
-  @step("Click Get Funds button")
-  async clickGetFunds() {
-    await this.getFundsButton.waitFor({ state: "visible", timeout: 5000 });
-    await this.getFundsButton.click();
-  }
-
   @step("Open fees menu")
   async openFeesMenu() {
     await this.feesMenuTrigger.waitFor({ state: "visible" });
@@ -398,70 +365,60 @@ export class NewSendFlowPage extends Component {
   async selectFeePreset(preset: FeePreset) {
     await this.openFeesMenu();
 
-    const item = this.page.getByTestId(`send-fees-preset-${preset}`);
+    const item = this.getFeePreset(preset);
     await item.waitFor({ state: "visible", timeout: 10000 });
     await item.click();
 
     await this.page.waitForTimeout(300);
   }
 
-  async getFeePreset(preset: FeePreset) {
-    return this.page.getByTestId(`send-fees-preset-${preset}`);
+  // ========== CUSTOM FEES STEP METHODS ==========
+
+  @step("Open custom fees screen")
+  async openCustomFees() {
+    await this.openFeesMenu();
+    await this.customFeesMenuItem.waitFor({ state: "visible" });
+    await this.customFeesMenuItem.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  @step("Open coin control screen")
+  async openCoinControl() {
+    await this.openFeesMenu();
+    await this.coinControlFeesMenuItem.waitFor({ state: "visible" });
+    await this.coinControlFeesMenuItem.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  @step("Confirm custom fees")
+  async confirmCustomFees() {
+    await this.customFeesConfirmButton.waitFor({ state: "visible" });
+    await this.customFeesConfirmButton.click();
+    await this.page.waitForTimeout(500);
   }
 
   // ========== SIGNATURE STEP METHODS ==========
 
+  // The device loader is rendered globally, outside the dialog subtree.
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
+  readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
 
-  @step("Wait for signature screen and device action loader")
+  @step("Wait for signature screen or device action loader")
   async waitForSignature() {
-    // Wait for device action loader to appear - this means we're in signature step
-    await this.deviceActionLoader.waitFor({ state: "visible" });
+    await this.deviceActionLoader.or(this.signaturePrompt).waitFor({ state: "visible" });
   }
 
   // ========== CONFIRMATION STEP METHODS ==========
 
-  @step("Wait for confirmation screen")
+  @step("Wait for terminal confirmation screen")
   async waitForConfirmation() {
-    await this.confirmationStatusContent.waitFor({ state: "visible" });
+    await this.confirmationTerminalContent.waitFor({ state: "visible" });
   }
 
-  @step("Wait for signature or confirmation step")
-  async waitForSignatureOrConfirmation() {
-    const timeout = 20000;
-    const start = Date.now();
-
-    while (Date.now() - start < timeout) {
-      const isSignatureLoaderVisible = await this.deviceActionLoader.isVisible().catch(() => false);
-      if (isSignatureLoaderVisible) {
-        return;
-      }
-
-      const isConfirmationVisible = await this.confirmationStatusContent
-        .isVisible()
-        .catch(() => false);
-      if (isConfirmationVisible) {
-        return;
-      }
-
-      await this.page.waitForTimeout(250);
-    }
-
-    throw new Error("Timed out waiting for signature or confirmation step");
-  }
-
-  @step("Verify success confirmation")
-  async expectSuccess() {
-    await expect(this.dialog.getByTestId("send-confirmation-success-title")).toBeVisible({
-      timeout: 10000,
-    });
-  }
-
-  @step("Verify error confirmation")
-  async expectError() {
-    await expect(this.dialog.getByTestId("send-confirmation-error-title")).toBeVisible({
-      timeout: 10000,
-    });
+  @step("Wait success confirmation screen")
+  async waitForSuccessConfirmation() {
+    await this.waitForConfirmation();
+    await expect(this.successConfirmationTitle).toBeVisible();
   }
 
   // ========== UTILITY METHODS ==========
@@ -478,10 +435,6 @@ export class NewSendFlowPage extends Component {
 
   async getAmountValue(): Promise<string> {
     return (await this.amountInput.inputValue()) || "";
-  }
-
-  async getAddressValue(): Promise<string> {
-    return (await this.recipientInput.inputValue()) || "";
   }
 
   @step("Going to the amount step")

@@ -80,7 +80,6 @@ export class SettingsPage extends AppPage {
 
   @step("Switch never ask again skip memo")
   async switchNeverAskAgainSkipMemo() {
-    await this.neverAskAgainSkipMemoSwitch.waitFor({ state: "visible" });
     await this.neverAskAgainSkipMemoSwitch.click();
   }
 

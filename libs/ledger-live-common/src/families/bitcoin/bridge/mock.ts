@@ -121,16 +121,12 @@ const prepareTransaction = async (
     };
   }
 
-  // In the new Send flow, selecting a preset updates `feesStrategy`.
-  // The real bitcoin bridge derives `feePerByte` from `feesStrategy` + `networkInfo.feeItems`.
-  // Our mock bridge must do the same, otherwise presets won't impact fees/max amount.
-  const feesStrategy = (nextTx as unknown as { feesStrategy?: string }).feesStrategy;
+  const { feesStrategy } = nextTx;
   if (feesStrategy && feesStrategy !== "custom") {
-    const feeItems = (nextTx.networkInfo as any)?.feeItems;
-    const items: Array<{ speed?: string; feePerByte?: BigNumber }> = feeItems?.items ?? [];
-    const match = items.find(i => i?.speed === feesStrategy);
+    const feeItems = nextTx.networkInfo?.feeItems;
+    const match = feeItems?.items.find(i => i.speed === feesStrategy);
     const feePerByte = match?.feePerByte ?? feeItems?.defaultFeePerByte;
-    if (BigNumber.isBigNumber(feePerByte)) {
+    if (feePerByte && feePerByte.gt(0)) {
       nextTx = { ...nextTx, feePerByte };
     }
   }
