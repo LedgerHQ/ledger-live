@@ -68,7 +68,7 @@ test("Market", async ({ page, electronApp }) => {
   });
 
   await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/fiat`, async route => {
-    route.fulfill({
+    await route.fulfill({
       headers: { teststatus: "mocked" },
       body: JSON.stringify([
         "AED",
@@ -177,7 +177,7 @@ test("Market", async ({ page, electronApp }) => {
   });
 
   await test.step("swap available to bitcoin", async () => {
-    await marketPage.swapButton("btc").isVisible();
+    await expect(marketPage.swapButton("btc")).toBeVisible();
   });
 
   await test.step("buy bitcoin from market page", async () => {
