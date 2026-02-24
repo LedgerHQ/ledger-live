@@ -190,10 +190,10 @@ export default class ZCash {
    *
    * Example:
    * ```typescript
-   * const syncedShielded = zcash.syncShielded(
+   * const syncedShielded = zcash.syncShielded({
    *   startBlockHeight: 3697074,
    *   viewingKey: testAccount1.viewingKey,
-   * );
+   * });
    * await syncedShielded.next(true)
    * ```
    *
