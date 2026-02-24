@@ -19,6 +19,7 @@ import type {
   Transaction,
   TransactionType,
   ProvableApi,
+  TransactionSelfTransfer,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -232,4 +233,13 @@ export function getOperationTransactionType(transactionType: TransactionType): A
     default:
       return "public";
   }
+}
+
+export function isSelfTransferTransaction(
+  transaction: Transaction,
+): transaction is TransactionSelfTransfer {
+  return (
+    transaction.type === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  );
 }
