@@ -809,6 +809,7 @@ type Feature_Wallet40_Params = {
   tour: boolean;
   lazyOnboarding: boolean;
   balanceRefreshRework: boolean;
+  assetSection: boolean;
 
   // Specifics
   newReceiveDialog?: boolean;
