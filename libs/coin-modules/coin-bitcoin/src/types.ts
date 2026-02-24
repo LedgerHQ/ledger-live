@@ -216,3 +216,10 @@ export type ZcashPrivateInfoRaw = {
     type: "sapling" | "orchard";
   }[];
 };
+
+export const ZCASH_SHIELDED_TX_TYPES = [
+  "SHIELDED_TX_SAPLING_IN",
+  "SHIELDED_TX_SAPLING_OUT",
+  "SHIELDED_TX_ORCHARD_IN",
+  "SHIELDED_TX_ORCHARD_OUT",
+];

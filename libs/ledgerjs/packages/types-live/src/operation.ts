@@ -64,7 +64,12 @@ export type OperationType =
   | "PRE_APPROVAL"
   | "TRANSFER_PROPOSAL"
   | "TRANSFER_REJECTED"
-  | "TRANSFER_WITHDRAWN";
+  | "TRANSFER_WITHDRAWN"
+  // ZCASH
+  | "SHIELDED_TX_SAPLING_IN"
+  | "SHIELDED_TX_SAPLING_OUT"
+  | "SHIELDED_TX_ORCHARD_IN"
+  | "SHIELDED_TX_ORCHARD_OUT";
 
 export type OperationExtra = unknown;
 /**
