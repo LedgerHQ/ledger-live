@@ -15,6 +15,7 @@ import aleoCoinConfig from "../config";
 import { TRANSACTION_TYPE } from "../constants";
 import { getTransactionStatus } from "./getTransactionStatus";
 
+jest.mock("../config");
 jest.mock("../logic");
 jest.mock("../logic/utils", () => ({
   ...jest.requireActual("../logic/utils"),
@@ -24,13 +25,13 @@ jest.mock("../logic/utils", () => ({
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockValidateAddress = jest.mocked(validateAddress);
 const mockCalculateAmount = jest.mocked(calculateAmount);
+const mockAleoConfig = jest.mocked(aleoCoinConfig);
 
 describe("getTransactionStatus", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
-  const mockFees = new BigNumber(5000);
+  const mockFees = BigInt(5000);
   const mockAmount = new BigNumber(500000);
   const mockConfig = getMockedConfig("testnet");
-  const mockGetCoinConfig = jest.spyOn(aleoCoinConfig, "getCoinConfig");
   const mockTransaction: Transaction = {
     family: "aleo",
     amount: new BigNumber(500000),
@@ -42,12 +43,12 @@ describe("getTransactionStatus", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetCoinConfig.mockReturnValue(mockConfig);
+    mockAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
     mockEstimateFees.mockReturnValue({ value: mockFees });
     mockValidateAddress.mockResolvedValue(true);
     mockCalculateAmount.mockReturnValue({
       amount: mockAmount,
-      totalSpent: mockAmount.plus(mockFees),
+      totalSpent: mockAmount.plus(new BigNumber(mockFees.toString())),
     });
   });
 
@@ -56,8 +57,8 @@ describe("getTransactionStatus", () => {
 
     expect(result).toMatchObject({
       amount: mockAmount,
-      totalSpent: mockAmount.plus(mockFees),
-      estimatedFees: mockFees,
+      totalSpent: mockAmount.plus(new BigNumber(mockFees.toString())),
+      estimatedFees: new BigNumber(mockFees.toString()),
       errors: {},
       warnings: {},
     });
@@ -70,7 +71,7 @@ describe("getTransactionStatus", () => {
     expect(mockCalculateAmount).toHaveBeenCalledWith({
       transaction: mockTransaction,
       account: mockAccount,
-      estimatedFees: mockFees,
+      estimatedFees: new BigNumber(mockFees.toString()),
     });
   });
 

@@ -11,7 +11,6 @@ import type {
   Transaction as AleoTransaction,
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
-  TransactionStatus,
   TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
@@ -56,7 +55,7 @@ async function handleTransferTransaction({
   account: Account;
   transaction: TransactionSelfTransfer | TransactionTransfer;
   allowSelfTransfer: boolean;
-}): Promise<TransactionStatus> {
+}): Promise<AleoTransactionStatus> {
   const errors: Errors = {};
   const warnings: Warnings = {};
 
