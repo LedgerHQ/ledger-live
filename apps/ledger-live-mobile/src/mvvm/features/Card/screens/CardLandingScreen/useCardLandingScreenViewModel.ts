@@ -1,6 +1,7 @@
-import { useCallback, useMemo } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useCallback, useMemo, useState } from "react";
 import { CreditCard, Screens } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
@@ -17,13 +18,22 @@ export interface CardLandingScreenViewModelResult {
   readonly ctas: readonly CardLandingCta[];
   readonly pageName: string;
   readonly topInset: number;
+  readonly backgroundColor: string;
+  readonly isWallet40DarkMode: boolean;
+  readonly imageLoaded: boolean;
+  readonly onImageLoaded: () => void;
 }
 
 const TRACKING_BUTTON_EVENT = "button_clicked";
 
 export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResult => {
   const { t } = useTranslation();
+  const { theme: lumenTheme } = useLumenTheme();
+  const { isWallet40DarkMode } = useWallet40Theme("mobile");
+  const [imageLoaded, setImageLoaded] = useState(false);
   const navigation = useNavigation();
+
+  const onImageLoaded = useCallback(() => setImageLoaded(true), []);
 
   const handleExploreCardsPress = useCallback(() => {
     track(TRACKING_BUTTON_EVENT, {
@@ -74,8 +84,7 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     [t, handleExploreCardsPress, handleIHaveACardPress],
   );
 
-  const insets = useSafeAreaInsets();
-  const topInset = insets.top + HEADER_HEIGHT;
+  const topInset = HEADER_HEIGHT;
 
   return {
     title: t("cardLanding.title"),
@@ -83,5 +92,9 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     ctas,
     pageName: PAGE_NAME,
     topInset,
+    backgroundColor: lumenTheme.colors.bg.base,
+    isWallet40DarkMode,
+    imageLoaded,
+    onImageLoaded,
   };
 };
