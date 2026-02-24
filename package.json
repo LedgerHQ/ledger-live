@@ -211,7 +211,6 @@
     "ui:icons": "pnpm --filter icons-ui",
     "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter ui-shared",
-    "ui:example:rspack": "pnpm  --filter=\"rspack-example\"",
     "actions": "pnpm --filter @actions/*",
     "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens"
   },
