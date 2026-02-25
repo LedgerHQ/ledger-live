@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, BackHandler, Platform, View, TouchableOpacity } from "react-native";
-import { useTranslation } from "~/context/Locale";
+import { BackHandler, Platform } from "react-native";
 import { useSelector } from "~/context/hooks";
-
-import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
@@ -13,7 +10,6 @@ import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 import storage from "LLM/storage";
 import { useNavigation } from "@react-navigation/native";
 
-import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -22,121 +18,21 @@ import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
-import { track } from "~/analytics";
-import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { Loading } from "../Loading";
 import { usePTXCustomHandlers } from "./CustomHandlers";
 import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { BackConfig, BackToInternalDomain } from "./BackToLwButton";
+import { handleBackToLwEntryPoint } from "./handleBackToLwEntryPoint";
 
-type BackToInternalDomainProps = {
-  config: {
-    screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
-    navigator: NavigatorName.Exchange | NavigatorName.Card;
-    btnText: string;
-  };
-};
-
-function BackToInternalDomain({ config }: BackToInternalDomainProps) {
-  const { t } = useTranslation();
-  const { screen, navigator, btnText } = config;
-  const navigation =
-    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-
-  const handleBackClick = async () => {
-    const manifestId = (await storage.getString("manifest-id")) ?? "";
-
-    if (manifestId) {
-      const [lastScreen = "", flowName = ""] = await Promise.all([
-        storage.getString("last-screen"),
-        storage.getString("flow-name"),
-      ]);
-
-      track("button_clicked", {
-        button: lastScreen === "compare_providers" ? "back to quote" : "back to liveapp",
-        provider: manifestId,
-        flow: flowName,
-      });
-
-      navigation.navigate(navigator, {
-        screen,
-        params: {
-          referrer: "isExternal",
-        },
-      });
-    } else {
-      // We've lost our persisted state so go all the back home
-      navigation.getParent()?.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      });
-    }
-  };
-
-  const buttonLabel = useMemo(() => {
-    return t("common.backTo", { to: btnText });
-  }, [t, btnText]);
-
-  return (
-    <View style={styles.headerLeft}>
-      <TouchableOpacity onPress={handleBackClick}>
-        <Flex alignItems="center" flexDirection="row" height={40}>
-          <Icon name="ChevronLeft" color="neutral.c100" size={30} />
-          <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {buttonLabel}
-          </Text>
-        </Flex>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-function HeaderRight({ softExit }: { softExit: boolean }) {
-  const navigation =
-    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-  const { colors } = useTheme();
-
-  const onClose = useCallback(() => {
-    softExit
-      ? navigation.goBack()
-      : navigation.navigate(NavigatorName.Base, {
-          screen: NavigatorName.Main,
-        });
-  }, [navigation, softExit]);
-
-  return (
-    <NavigationHeaderCloseButtonAdvanced
-      onClose={onClose}
-      color={colors.neutral.c100}
-      skipNavigation={softExit}
-    />
-  );
-}
+export type { BackConfig } from "./BackToLwButton";
 
 export type InterstitialType = React.ComponentType<{
   manifest: LiveAppManifest;
   isLoading: boolean;
   description?: string;
 }>;
-
-type Props = {
-  manifest: LiveAppManifest;
-  inputs?: Record<string, string | undefined>;
-  disableHeader?: boolean;
-  config?:
-    | {
-        screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell;
-        navigator: NavigatorName.Exchange;
-        btnText: string;
-      }
-    | {
-        screen: ScreenName.Card;
-        navigator: NavigatorName.Card;
-        btnText: string;
-      };
-  softExit?: boolean;
-  Interstitial?: InterstitialType;
-};
 
 export const WebPTXPlayer = ({
   manifest,
@@ -145,11 +41,17 @@ export const WebPTXPlayer = ({
   config = {
     screen: ScreenName.ExchangeSell,
     btnText: manifest.name,
-    navigator: NavigatorName.Exchange,
   },
   softExit = false,
   Interstitial,
-}: Props) => {
+}: {
+  manifest: LiveAppManifest;
+  inputs?: Record<string, string | undefined>;
+  disableHeader?: boolean;
+  config?: BackConfig;
+  softExit?: boolean;
+  Interstitial?: InterstitialType;
+}) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -193,12 +95,9 @@ export const WebPTXPlayer = ({
               storage.saveString("last-screen", lastScreen),
             ]);
 
-            navigation.navigate(config.navigator, {
-              screen: config.screen,
-              params: {
-                platform: manifestId,
-                goToURL,
-              },
+            handleBackToLwEntryPoint(navigation, config.screen, {
+              platform: manifestId,
+              goToURL,
             });
 
             return void 0;
@@ -210,7 +109,7 @@ export const WebPTXPlayer = ({
         lastMatchingURL.current = webviewState.url;
       }
     })();
-  }, [config.navigator, config.screen, isInternalApp, navigation, webviewState.url]);
+  }, [config.screen, isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -254,7 +153,7 @@ export const WebPTXPlayer = ({
   useEffect(() => {
     if (!disableHeader) {
       navigation.setOptions({
-        headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
+        headerRight: () => null,
         headerLeft: () => (isInternalApp ? null : <BackToInternalDomain config={config} />),
         headerTitle: () => null,
         title: "",
@@ -290,15 +189,3 @@ export const WebPTXPlayer = ({
 const PTXLoader = () => {
   return <Loading />;
 };
-
-const styles = StyleSheet.create({
-  headerLeft: {
-    display: "flex",
-    flexDirection: "row",
-    paddingRight: 8,
-  },
-  buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-  },
-});
