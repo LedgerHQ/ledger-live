@@ -80,7 +80,7 @@ export function createApi(
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
-    listOperations: async (
+    listOperations: (
       address: string,
       options: ListOperationsOptions,
     ): Promise<Page<Operation<MemoNotSupported>>> => listOperations(currency, address, options),
