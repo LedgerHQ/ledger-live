@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2": "Buy a Ledger",
     "setupCta": "I already have a Ledger, set it up"
   },
+  "rebornBuyDevice": {
+    "title": "Connect a Ledger device",
+    "desc": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
+    "0": {
+      "title": "Full ownership",
+      "desc": "Your private keys never leave the device."
+    },
+    "1": {
+      "title": "Trade securely",
+      "desc": "Verify transactions on a secure screen."
+    },
+    "2": {
+      "title": "Access the most powerful wallet",
+      "desc": "Manage thousands of assets in one place."
+    },
+    "cta": "Connect",
+    "buyCta": "Buy your Ledger device"
+  },
   "postBuyDeviceSetupNanoWall": {
     "title": "Did you get your Ledger yet?",
     "desc": "Once you have your Ledger, set it up to unlock all features of the Ledger Wallet app.",
@@ -2692,7 +2710,7 @@
     "walletBalance": "Wallet balance",
     "balance": {
       "noSigner": "The most secure\nwallet",
-      "noFund": "Secure your\ncrypto"
+      "noAccounts": "Secure your\ncrypto"
     },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
@@ -4164,7 +4182,9 @@
       "placeholderNoENS": "Enter address",
       "editRecipientAccessibilityLabel": "Edit recipient",
       "recent": "Recent",
+      "recentDetail": "Recent detail",
       "myAccounts": "My accounts",
+      "account": "Account",
       "sendTo": "Send to {{address}}",
       "addressMatched": "Address matched",
       "addressNotFound": "Address not found",
@@ -4230,6 +4250,23 @@
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
         "warningDescription": "Fee presets may be outdated."
+      },
+      "customFees": {
+        "title": "Custom fees",
+        "confirm": "Confirm",
+        "maxFee": "Max fee ({{unit}})",
+        "maxPriorityFee": "Max priority fee ({{unit}})",
+        "gasLimit": "Gas limit ({{unit}})",
+        "feePerByte": "Fees amount ({{unit}})",
+        "suggested": "Suggested",
+        "nextBlock": "Next block",
+        "networkFeesInFiat": "Network fees in {{currency}}",
+        "invalidValue": "Enter a valid number",
+        "belowMinimum": "Minimum is {{min}}",
+        "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+      },
+      "coinControl": {
+        "title": "Coin control"
       }
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
@@ -4284,7 +4321,8 @@
       "useMax": "Use max",
       "loadingNetwork": "Loading network fees...",
       "noRateProvider": "Not available",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "Quantity available",
+      "toggleCurrency": "Toggle currency"
     },
     "summary": {
       "solanaRawTransaction": {
@@ -4344,6 +4382,12 @@
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
       "higherFaster": "Higher gas price means a faster confirmation.",
+      "medium": "Medium",
+      "fast": "Fast",
+      "slow": "Slow",
+      "custom": "Custom",
+      "customFees": "Custom fees",
+      "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"
       },
@@ -8524,21 +8568,21 @@
     "title": "Discover your new portfolio",
     "slides": {
       "portfolio": {
-        "title": "Your portfolio, reimagined",
-        "description": "We've decluttered your home screen. Missing your graph? Just tap below your balance."
+        "title": "A clearer view of your portfolio",
+        "description": "See your total balance at a glance, and tap “Today” to dive deeper."
       },
       "navigation": {
-        "title": "Everything in its right place",
-        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the bottom for faster access."
+        "title": "Access key actions faster",
+        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
       },
       "actions": {
-        "title": "Actions at market speed",
-        "description": "Spot market trends with the new banner and trade instantly."
+        "title": "View market trends instantly",
+        "description": "Quickly see what’s trending directly in your portfolio, and move from insights to action."
       }
     },
     "cta": {
-      "continue": "Continue",
-      "explore": "Explore my new portfolio"
+      "continue": "Next",
+      "explore": "Discover my new portfolio"
     }
   },
   "mainNavigation": {

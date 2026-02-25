@@ -10,12 +10,14 @@ import FooterButton from "./components/FooterButton";
 import MainGraph from "./components/MainGraph";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ANALYTICS_PAGE } from "../../const";
+import useAnalyticsMainViewModel from "./useAnalyticsMainViewModel";
 
 type Props = StackNavigatorProps<AnalyticsNavigatorParamsList, ScreenName.Analytics>;
 
 export default function AnalyticsMain({ route }: Props): JSX.Element {
   const { params } = route;
   const sourceScreenName = params?.sourceScreenName;
+  const { isExchangeEnabled } = useAnalyticsMainViewModel();
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
@@ -27,9 +29,11 @@ export default function AnalyticsMain({ route }: Props): JSX.Element {
             <AssetAllocationBanner />
           </Box>
         </Box>
-        <Box lx={FooterButtonContainer}>
-          <FooterButton />
-        </Box>
+        {isExchangeEnabled && (
+          <Box lx={FooterButtonContainer}>
+            <FooterButton />
+          </Box>
+        )}
       </Box>
     </SafeAreaView>
   );

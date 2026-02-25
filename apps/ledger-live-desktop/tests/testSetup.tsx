@@ -234,6 +234,8 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
  * @param {DeepPartial<State>} [options.initialState] - The initial state for the Redux store.
  * @param {ReduxStore} [options.store] - The Redux store to be used.
  * @param {Boolean} [options.minimal] - Does not include all providers when true.
+ * @param {Boolean} [options.skipRouter] - Skips the MemoryRouter wrapper when true.
+ * @param {React.ComponentType<{ children: React.ReactNode }>} [options.wrapper] - Additional wrapper rendered inside the default Providers. Useful for injecting custom React Context providers (e.g. UpdaterContext) while still benefiting from the built-in i18n, Redux, and router setup.
  *
  * @returns {RenderHookResult<Result, Props>} The rendered hook result with the context providers and store.
  */
@@ -246,6 +248,7 @@ function renderHook<Result, Props>(
     store?: ReduxStore;
     minimal?: boolean;
     skipRouter?: boolean;
+    wrapper?: React.ComponentType<{ children: React.ReactNode }>;
   } = {},
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
@@ -255,6 +258,7 @@ function renderHook<Result, Props>(
     store = createStore({ state: initialState as State, dbMiddleware }),
     minimal = true,
     skipRouter = false,
+    wrapper: Wrapper,
   } = options;
 
   return {
@@ -262,7 +266,7 @@ function renderHook<Result, Props>(
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
         <Providers store={store} minimal={minimal} skipRouter={skipRouter}>
-          {children}
+          {Wrapper ? <Wrapper>{children}</Wrapper> : children}
         </Providers>
       ),
       initialProps,

@@ -14,7 +14,7 @@ import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
 import { ipcRenderer } from "electron";
 import React, {
-  RefObject,
+  type RefObject,
   forwardRef,
   useCallback,
   useEffect,
@@ -330,9 +330,9 @@ function useWebView(
     currentAccountHistDb,
     inputs,
   }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
-  webviewRef: RefObject<WebviewTag>,
+  webviewRef: RefObject<WebviewTag | null>,
   tracking: TrackingAPI,
-  serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
+  serverRef: RefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
@@ -488,7 +488,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       [],
     );
 
-    const serverRef = useRef<WalletAPIServer>();
+    const serverRef = useRef<WalletAPIServer>(undefined);
 
     const { webviewState, webviewRef, webviewProps, handleRefresh, webviewPartition } =
       useWebviewState({ manifest, inputs }, ref, serverRef);

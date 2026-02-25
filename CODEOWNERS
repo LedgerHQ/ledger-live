@@ -14,27 +14,66 @@
 tools                                                   @ledgerhq/wallet-ci
 apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
-# Platform & Wallet XP teams
-## by default, Platform and Wallet XP manage apps and libs related to them, with many overrides for exceptions
+# Platform & Wallet XP teams catchall
 apps/cli/src/commands/live                               @ledgerhq/platform
-apps/ledger-live-desktop/                                @ledgerhq/platform @ledgerhq/wallet-xp
-apps/ledger-live-mobile/                                 @ledgerhq/platform @ledgerhq/wallet-xp
 apps/web-tools/                                          @ledgerhq/platform
-libs/**/errors/                                          @ledgerhq/platform
+libs/ledger-live-common/src/                             @ledgerhq/platform
+apps/ledger-live-desktop/                                @ledgerhq/wallet-xp
+apps/ledger-live-mobile/                                 @ledgerhq/wallet-xp
+# Platform — desktop (overrides app catch-alls)
+apps/ledger-live-desktop/src/main/                       @ledgerhq/platform
+apps/ledger-live-desktop/src/preloader/                  @ledgerhq/platform
+apps/ledger-live-desktop/src/sentry/                     @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/logger/            @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/analytics/         @ledgerhq/platform
+apps/ledger-live-desktop/tools/                          @ledgerhq/platform
+apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
+# Platform — mobile
+apps/ledger-live-mobile/src/analytics/                   @ledgerhq/platform
+apps/ledger-live-mobile/android/                         @ledgerhq/platform
+apps/ledger-live-mobile/ios/                             @ledgerhq/platform
+# Platform — libs
 libs/**/logs/                                            @ledgerhq/platform
-libs/**/types-live/                                      @ledgerhq/platform @ledgerhq/wallet-xp
+libs/**/types-live/                                      @ledgerhq/platform
 libs/env/                                                @ledgerhq/platform
 libs/identities/                                         @ledgerhq/platform
-libs/ledger-live-common/src/                             @ledgerhq/platform @ledgerhq/wallet-xp
+libs/promise/                                            @ledgerhq/platform
+libs/ledger-key-ring-protocol/                           @ledgerhq/platform
+libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
+libs/ledger-live-common/src/featureFlags/                @ledgerhq/platform
+libs/ledger-live-common/src/analytics/                   @ledgerhq/platform
+# Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
 libs/live-countervalues/                                 @ledgerhq/wallet-xp
 libs/live-currency-format/                               @ledgerhq/wallet-xp
 libs/live-hooks/                                         @ledgerhq/wallet-xp
-libs/promise/                                            @ledgerhq/platform
 libs/ui/                                                 @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
-libs/ledger-key-ring-protocol/                           @ledgerhq/platform
-libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
+libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
+libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
+libs/ledger-live-common/src/cmc-client/                  @ledgerhq/wallet-xp
+libs/ledger-live-common/src/dada-client/                 @ledgerhq/wallet-xp
+libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
+libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
+libs/ledger-live-common/src/icons/                        @ledgerhq/wallet-xp
+libs/ledger-live-common/src/market/                       @ledgerhq/wallet-xp
+# Wallet — desktop (WXP has all mvvm; Platform overrides below)
+apps/ledger-live-desktop/src/mvvm/                       @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/screens/dashboard/ @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/screens/accounts/  @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/screens/account/   @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/screens/market/    @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/screens/asset/     @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Accounts/ @ledgerhq/wallet-xp
+# Wallet — mobile
+apps/ledger-live-mobile/src/mvvm/                        @ledgerhq/wallet-xp
+apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
+# Platform — desktop mvvm overrides (override WXP mvvm catch-all)
+apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
+apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
+apps/ledger-live-desktop/src/mvvm/features/LedgerSyncEntryPoints/ @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/ @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/platform
 
 # Coin integration team
 .github/**/bot-*.yml                                                @ledgerhq/coin-integration
@@ -55,6 +94,9 @@ libs/ledger-live-common/src/bot/                                    @ledgerhq/co
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/apps/config.ts                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
+libs/ledger-live-common/src/flows/send/                             @ledgerhq/coin-integration
+libs/ledger-live-common/src/transaction/                            @ledgerhq/coin-integration
+libs/ledger-live-common/src/walletConnect/                          @ledgerhq/coin-integration
 libs/ledger-services/                                               @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/mvvm/features/Send/                    @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/components/Transaction*/      @ledgerhq/coin-integration
@@ -107,6 +149,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 ## Hoodies
 libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
 libs/coin-modules/coin-canton/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
+libs/coin-modules/coin-concordium/                                       @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
 
 ## Blockydevs
 libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-blockydevs
@@ -145,6 +188,8 @@ libs/ledgerjs/packages/types-live/src/swap.ts                        					@ledge
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/buy.handler.ts      @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/earn.handler.ts     @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler.ts     @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Card/                                         @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -172,6 +217,7 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/discover.han
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices
 **/src/renderer/screens/manager/                                   @ledgerhq/live-devices
 **/screens/customImage 																				 		 @ledgerhq/live-devices
+libs/ledger-live-common/src/customImage/                            @ledgerhq/live-devices
 **/components/CustomImage																		 	 		 @ledgerhq/live-devices
 **/screens/CustomImage 																				 		 @ledgerhq/live-devices
 **/SyncOnboarding/**                                               @ledgerhq/live-devices
@@ -249,14 +295,22 @@ apps/ledger-live-desktop/src/reducers/dynamicContent.ts                         
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
+libs/ledger-live-common/src/onboarding/                                                        @ledgerhq/engagement
+libs/ledger-live-common/src/postOnboarding/                                                    @ledgerhq/engagement
+libs/ledger-live-common/src/transactionsAlerts/                                                @ledgerhq/engagement
+
 
 # UI tests
 apps/ledger-live-desktop/tests/                                             @ledgerhq/wallet-xp
 e2e/                                                                        @ledgerhq/qaa
+libs/ledger-live-common/src/e2e/                                            @ledgerhq/qaa
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
+libs/ledger-live-common/src/__fixtures__/
+libs/ledger-live-common/src/__tests__/
+libs/**/errors/
 apps/ledger-live-desktop/static/i18n/
 apps/ledger-live-mobile/src/locales/
 apps/ledger-live-mobile/src/components/RootNavigator/

@@ -3,12 +3,14 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { track } from "~/analytics";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export function useTopBarViewModel(
   navigation: NativeStackNavigationProp<{ [key: string]: object | undefined }>,
   screenName?: string,
 ) {
   const { notificationCards } = useDynamicContent();
+  const web3hub = useFeature("web3hub");
   const page = screenName ?? ScreenName.Portfolio;
 
   const hasUnreadNotifications = useMemo(
@@ -30,10 +32,16 @@ export function useTopBarViewModel(
 
   const onDiscoverPress = useCallback(() => {
     track("menuentry_clicked", { button: "Discover", page });
-    navigation.navigate(NavigatorName.Discover, {
-      screen: ScreenName.DiscoverScreen,
-    });
-  }, [navigation, page]);
+    if (web3hub?.enabled) {
+      navigation.navigate(NavigatorName.Web3HubTab, {
+        screen: ScreenName.Web3HubMain,
+      });
+    } else {
+      navigation.navigate(NavigatorName.Discover, {
+        screen: ScreenName.DiscoverScreen,
+      });
+    }
+  }, [navigation, page, web3hub?.enabled]);
 
   const onNotificationsPress = useCallback(() => {
     track("menuentry_clicked", { button: "Notifications", page });

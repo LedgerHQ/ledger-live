@@ -2,17 +2,17 @@ import type {
   Balance,
   Block,
   BlockInfo,
+  ListOperationsOptions,
   Operation,
   FeeEstimation,
-  Pagination,
   TransactionIntent,
   TransactionValidation,
   Api,
   AssetInfo,
-  Cursor,
   Page,
   Stake,
   Reward,
+  Cursor,
   CraftedTransaction,
   Validator,
 } from "@ledgerhq/coin-framework/api/index";
@@ -136,16 +136,16 @@ const buildGetSequence = (networkFamily: string) =>
 const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination: Pagination = { minHeight: 0, order: "asc" },
-  ): Promise<[Operation<any>[], string]> {
+    { minHeight = 0 }: ListOperationsOptions,
+  ): Promise<Page<Operation<any>>> {
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/operations`,
       data: {
-        from: pagination.minHeight,
+        from: minHeight,
       },
     });
-    return [data.operations.map(op => adaptOp(op)), ""];
+    return { items: data.operations.map(op => adaptOp(op)), next: undefined };
   };
 
 const buildLastBlock = networkFamily =>

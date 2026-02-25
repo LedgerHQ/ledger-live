@@ -153,6 +153,9 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
         fromToken: query.fromToken,
         toToken: query.toToken,
         affiliate: query.affiliate,
+        fromPath: query.fromPath,
+        fromCurrency: query.fromCurrency,
+        toCurrency: query.toCurrency,
       };
       return route;
     }

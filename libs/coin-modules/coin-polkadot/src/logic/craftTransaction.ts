@@ -210,7 +210,6 @@ export async function craftTransaction(
   ).toHex();
 
   const { blockHash, genesisHash } = info;
-  const metadataHash = await polkadotAPI.metadataHash(currency);
   const unsigned: TransactionPayloadInfo = {
     address,
     blockHash,
@@ -221,7 +220,7 @@ export async function craftTransaction(
     transactionVersion,
     specVersion,
     version: EXTRINSIC_VERSION,
-    metadataHash: hexToU8a("01" + metadataHash),
+    metadataHash: hexToU8a("0x01" + "00".repeat(32)),
     mode: 1,
   };
 

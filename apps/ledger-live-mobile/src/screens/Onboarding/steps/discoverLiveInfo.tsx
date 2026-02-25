@@ -60,7 +60,7 @@ const Item = ({
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow();
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 

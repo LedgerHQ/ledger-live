@@ -1,27 +1,27 @@
-import { renderHook, waitFor } from "@testing-library/react";
-import { useAddressValidation } from "../useAddressValidation";
-import { useSelector } from "LLD/hooks/redux";
-import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import {
-  getRecentAddressesStore,
-  getMainAccount,
   getAccountCurrency,
+  getMainAccount,
+  getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
-import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
-import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
-import { useMaybeAccountName, useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
+import { renderHook, waitFor } from "@testing-library/react";
+import { useSelector } from "LLD/hooks/redux";
+import { useBatchMaybeAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
 import {
   createMockAccount,
   createMockCurrency,
 } from "../../__integrations__/__fixtures__/accounts";
+import { useAddressValidation } from "../useAddressValidation";
+import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 
 jest.mock("LLD/hooks/redux");
 jest.mock("@ledgerhq/domain-service/hooks/index");
 jest.mock("@ledgerhq/coin-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("../useBridgeRecipientValidation");
+jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
 jest.mock("../useFormattedAccountBalance");
 jest.mock("~/renderer/reducers/wallet");
 jest.mock("@ledgerhq/live-common/bridge/descriptor");

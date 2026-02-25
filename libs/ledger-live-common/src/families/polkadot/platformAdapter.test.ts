@@ -1,6 +1,5 @@
 import dot from "./platformAdapter";
-import { PolkadotTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
-import { FAMILIES } from "@ledgerhq/live-app-sdk";
+import { PolkadotTransaction as PlatformTransaction, FAMILIES } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
 import { Transaction } from "./types";
 

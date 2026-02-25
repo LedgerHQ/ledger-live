@@ -1,12 +1,14 @@
 import React from "react";
 import { Routes, Route } from "react-router";
 import styled, { createGlobalStyle } from "styled-components";
+import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import SwapHistory from "./History";
 import SwapNavbar from "./Navbar";
-
 import { SwapApp } from "./App";
 import { cn } from "LLD/utils/cn";
+import PageHeader from "LLD/components/PageHeader";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const Main = styled.main`
   display: flex;
@@ -33,7 +35,10 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Swap2 = () => {
-  return (
+  const { t } = useTranslation();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
+
+  const content = (
     <Box className={cn(["bg-canvas", "flex-1"])}>
       <GlobalStyle />
       <SwapNavbar />
@@ -45,6 +50,17 @@ const Swap2 = () => {
       </Main>
     </Box>
   );
+
+  if (shouldDisplayWallet40MainNav) {
+    return (
+      <div className="-mt-8 flex flex-1 flex-col gap-24 pl-16">
+        <PageHeader title={t("swap.title")} />
+        {content}
+      </div>
+    );
+  }
+
+  return content;
 };
 
 export default Swap2;

@@ -5,9 +5,9 @@ import { NoBalanceView } from "./NoBalanceView";
 import { NoDeviceView } from "./NoDeviceView";
 
 export const Balance = () => {
-  const { hasCompletedOnboarding, hasAccount, ...viewModel } = useBalanceViewModel();
+  const { hasOnboardedDevice, hasAccount, ...viewModel } = useBalanceViewModel();
 
-  if (!hasCompletedOnboarding) {
+  if (!hasOnboardedDevice) {
     return <NoDeviceView />;
   }
 

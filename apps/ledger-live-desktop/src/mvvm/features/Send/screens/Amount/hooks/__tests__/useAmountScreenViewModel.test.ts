@@ -6,8 +6,7 @@ import { useAmountScreenViewModel } from "../useAmountScreenViewModel";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";
-import type { Account } from "@ledgerhq/types-live";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
@@ -58,6 +57,18 @@ jest.mock("../useFeePresetLegends", () => ({
 }));
 
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError");
+
+jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: () => ({
+    navigation: {
+      goToStep: jest.fn(),
+      goToNextStep: jest.fn(),
+      goToPreviousStep: jest.fn(),
+    },
+    currentStep: null,
+    contextValue: null,
+  }),
+}));
 
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedGetMainAccount = jest.mocked(getMainAccount);

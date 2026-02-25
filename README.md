@@ -207,6 +207,8 @@ It includes background information about the project and how to setup, run and b
 
 Please check the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
 
+For comprehensive developer documentation — including architecture, MVVM pattern, testing strategy, git conventions, and integration guides (blockchain, tokens, swap, staking, Discover/Live Apps, etc.) — visit the [**Ledger Developer Portal**](https://developers.ledger.com/docs/ledger-live/contributing/getting-started).
+
 ## Structure
 
 The sub-packages are (roughly) split into three categories.

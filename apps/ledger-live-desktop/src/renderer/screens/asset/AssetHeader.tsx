@@ -81,7 +81,7 @@ const AssetHeader: React.ComponentType<Props> = React.memo(function AssetHeader(
   return (
     <Box horizontal alignItems="center" flow={2} grow>
       <Box>
-        <ParentCryptoCurrencyIcon currency={currency} bigger />
+        <ParentCryptoCurrencyIcon currency={currency} />
       </Box>
       <Box grow>
         {contract && account.type === "TokenAccount" ? (

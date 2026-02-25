@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
@@ -25,10 +26,12 @@ interface TransferDrawerViewModel {
   actions: readonly TransferAction[];
   handleClose: () => void;
   t: (key: string) => string;
+  bottomInset: number;
 }
 
 export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
   const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const { isOpen, sourceScreenName, closeDrawer } = useTransferDrawerController();
@@ -129,5 +132,6 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
     actions,
     handleClose: closeDrawer,
     t,
+    bottomInset,
   };
 };

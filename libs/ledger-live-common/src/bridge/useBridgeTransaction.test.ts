@@ -9,10 +9,10 @@ import { getAccountBridge } from ".";
 import useBridgeTransaction, {
   setGlobalOnBridgeError,
   getGlobalOnBridgeError,
+  shouldSyncBeforeTx,
 } from "./useBridgeTransaction";
 import { setSupportedCurrencies } from "../currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { shouldSyncBeforeTx } from "./useBridgeTransaction";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 

@@ -7,7 +7,7 @@ import {
 } from "~/renderer/reducers/modularDrawer";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 
-export const ModularDialogRoot: React.FC = () => {
+const ModularDialogRoot: React.FC = () => {
   const onClose = useSelector(modularDialogOnCloseSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
   const dispatch = useDispatch();
@@ -23,3 +23,5 @@ export const ModularDialogRoot: React.FC = () => {
 
   return <ModularDialogFlowManager onClose={handleClose} />;
 };
+
+export default ModularDialogRoot;

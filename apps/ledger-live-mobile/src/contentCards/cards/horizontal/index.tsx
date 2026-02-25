@@ -1,10 +1,9 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Platform } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Close, Image, Subtitle, Tag, Title } from "~/contentCards/cards/horizontal/elements";
 import { ContentCardBuilder } from "~/contentCards/cards/utils";
-import { Platform } from "react-native";
 
 type Props = {
   title: string;

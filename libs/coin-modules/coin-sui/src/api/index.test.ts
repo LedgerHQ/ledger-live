@@ -111,10 +111,10 @@ describe("api/index", () => {
     };
     const mockListOperations = jest
       .spyOn(logic, "listOperations")
-      .mockResolvedValue([[minimalOperation], ""]); // Return empty string for cursor
+      .mockResolvedValue({ items: [minimalOperation], next: undefined });
     const result = await api.listOperations("address", { minHeight: 0, order: "asc" });
     expect(mockListOperations).toHaveBeenCalledWith("address", { minHeight: 0, order: "asc" });
-    expect(result).toEqual([[minimalOperation], ""]);
+    expect(result).toEqual({ items: [minimalOperation], next: undefined });
   });
 
   it("should call getStakes from logic", async () => {

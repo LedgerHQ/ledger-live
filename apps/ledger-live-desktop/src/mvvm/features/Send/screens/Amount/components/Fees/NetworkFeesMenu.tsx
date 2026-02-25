@@ -128,7 +128,10 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
 
   if (!hasMenuOptions) {
     return (
-      <div className="flex w-full items-center justify-between py-16">
+      <div
+        className="flex w-full items-center justify-between py-16"
+        data-testid="send-network-fees-row"
+      >
         <span className="flex items-center gap-8">
           <span className="body-2">{feesLabel}</span>
           {informationIcon}
@@ -139,7 +142,10 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   }
 
   return (
-    <div className="flex w-full items-center justify-between py-16">
+    <div
+      className="flex w-full items-center justify-between py-16"
+      data-testid="send-network-fees-row"
+    >
       <span className="flex items-center gap-8">
         <span className="body-2">{feesLabel}</span>
         {informationIcon}
@@ -149,6 +155,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
           <button
             type="button"
             className="flex items-center gap-8 transition-colors hover:opacity-70"
+            data-testid="send-network-fees-menu-trigger"
           >
             <span className="body-2 text-base">
               {feesValue} • {feesStrategyLabel}

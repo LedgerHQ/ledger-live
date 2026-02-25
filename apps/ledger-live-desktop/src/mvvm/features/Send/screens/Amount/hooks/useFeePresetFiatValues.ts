@@ -52,8 +52,8 @@ async function estimateFiatValuesForPresets(params: {
   convertCountervalue: (currency: Currency, value: BigNumber) => BigNumber | null | undefined;
   fiatUnit: Unit;
   requestId: number;
-  requestIdRef: React.MutableRefObject<number>;
-  inFlightRef: React.MutableRefObject<string | null>;
+  requestIdRef: React.RefObject<number | null>;
+  inFlightRef: React.RefObject<string | null>;
   setFiatByPreset: (value: FeeFiatMap) => void;
 }): Promise<void> {
   try {

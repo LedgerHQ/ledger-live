@@ -157,7 +157,14 @@ export function flattenOperationWithInternalsAndNfts(op: Operation): Operation[]
   return ops;
 }
 
-export const OPERATION_TYPE_IN_FAMILY = ["IN", "REWARD", "REWARD_PAYOUT", "WITHDRAW"];
+export const OPERATION_TYPE_IN_FAMILY = [
+  "IN",
+  "REWARD",
+  "REWARD_PAYOUT",
+  "WITHDRAW",
+  "SHIELDED_TX_SAPLING_IN",
+  "SHIELDED_TX_ORCHARD_IN",
+];
 export const OPERATION_TYPE_OUT_FAMILY = [
   "OUT",
   "REVEAL",
@@ -174,6 +181,8 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "ASSOCIATE_TOKEN",
   "CONTRACT_CALL",
   "UPDATE_ACCOUNT",
+  "SHIELDED_TX_SAPLING_OUT",
+  "SHIELDED_TX_ORCHARD_OUT",
 ];
 export const OPERATION_TYPE_STAKE_FAMILY = [
   "FREEZE",

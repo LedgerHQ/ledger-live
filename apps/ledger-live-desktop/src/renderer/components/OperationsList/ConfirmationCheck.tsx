@@ -130,6 +130,10 @@ const iconsComponent = {
   ASSOCIATE_TOKEN: IconPlus,
   CONTRACT_CALL: IconSend,
   UPDATE_ACCOUNT: IconPlus,
+  SHIELDED_TX_SAPLING_IN: IconReceive,
+  SHIELDED_TX_SAPLING_OUT: IconSend,
+  SHIELDED_TX_ORCHARD_IN: IconReceive,
+  SHIELDED_TX_ORCHARD_OUT: IconSend,
 };
 class ConfirmationCheck extends PureComponent<{
   marketColor: string;

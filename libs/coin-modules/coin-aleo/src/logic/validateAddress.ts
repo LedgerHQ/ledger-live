@@ -1,8 +1,43 @@
-import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import { bech32m } from "./bech32m";
 
+/**
+ * The human-readable-part of the bech32m addresses for Aleo.
+ */
+const ALEO_HRP = "aleo";
+
+/**
+ * The expected length of an Aleo address (63 characters).
+ */
+const ALEO_ADDRESS_LENGTH = 63;
+
+/**
+ * Validates an Aleo address by checking:
+ * - Correct bech32m format (Aleo uses bech32m encoding)
+ * - Correct prefix ("aleo")
+ * - Correct length (63 characters)
+ *
+ * See: https://developer.aleo.org/concepts/fundamentals/accounts/#account-address
+ *
+ * @param {string} address - The Aleo address to validate
+ * @returns {Promise<boolean>} - True if valid, false otherwise
+ */
 export async function validateAddress(
-  _address: string,
+  address: string,
   _parameters: Partial<AddressValidationCurrencyParameters>,
 ): Promise<boolean> {
-  throw new Error("validateAddress is not supported");
+  if (
+    typeof address !== "string" ||
+    address.length !== ALEO_ADDRESS_LENGTH ||
+    !address.startsWith(ALEO_HRP + "1")
+  ) {
+    return false;
+  }
+
+  try {
+    const decoded = bech32m.decode(address, ALEO_ADDRESS_LENGTH);
+    return decoded.prefix === ALEO_HRP;
+  } catch {
+    return false;
+  }
 }

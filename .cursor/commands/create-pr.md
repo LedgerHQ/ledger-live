@@ -34,11 +34,14 @@ $HAS_UI_CHANGES
 
 ## Instructions
 
+**IMPORTANT**: Before any git commit, read and follow the `.cursor/rules/git-workflow.mdc` rule. All commit messages MUST use the gitmoji shortcode format defined there (`:gitmoji: type(scope): description`). Analyze the staged diff to pick the correct gitmoji and scope.
+
 ### Step 1: Analyze the changes
 
-1. Run `git status` and `git diff` to understand current changes
-2. Run `git log develop..HEAD --oneline` to see commits on this branch
-3. Identify all modified packages for the changeset
+1. Read `.cursor/rules/git-workflow.mdc` to load commit conventions
+2. Run `git status` and `git diff` to understand current changes
+3. Run `git log develop..HEAD --oneline` to see commits on this branch
+4. Identify all modified packages for the changeset
 
 ### Step 2: Create the changeset
 

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -50,8 +50,24 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
+  const rebornFlowListener = useMemo(() => {
+    if (!readOnlyModeEnabled) {
+      return (_: { preventDefault: () => void }) => {};
+    }
+    return (e: { preventDefault: () => void }) => {
+      e.preventDefault();
+      managerLockAwareCallback(navigateToRebornFlow);
+    };
+  }, [readOnlyModeEnabled, navigateToRebornFlow, managerLockAwareCallback]);
+
   if (shouldDisplayWallet40MainNav) {
-    return <Wallet40TabNavigator tabBar={tabBar} screenOptions={screenOptions} />;
+    return (
+      <Wallet40TabNavigator
+        tabBar={tabBar}
+        screenOptions={screenOptions}
+        rebornFlowListener={rebornFlowListener}
+      />
+    );
   }
 
   return (

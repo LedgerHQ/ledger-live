@@ -1,31 +1,31 @@
-import { useState, useMemo, useCallback, useRef } from "react";
-import { useSelector } from "LLD/hooks/redux";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
+import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
+import { InvalidAddress } from "@ledgerhq/errors";
 import {
   getAccountCurrency,
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { InvalidAddress } from "@ledgerhq/errors";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { useMaybeAccountName, useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
-import { useBridgeRecipientValidation } from "./useBridgeRecipientValidation";
-import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
-import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
+import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import type {
   AddressSearchResult,
-  AddressValidationStatus,
   AddressValidationError,
-  MatchedAccount,
+  AddressValidationStatus,
   BridgeValidationErrors,
+  MatchedAccount,
   RecentAddress,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { useSelector } from "LLD/hooks/redux";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useBatchMaybeAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
+import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
   return domain.status === "loading" || domain.status === "queued";

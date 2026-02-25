@@ -27,6 +27,32 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
   // swap history
   if ((prev.swapHistory?.length ?? 0) !== (next.swapHistory?.length ?? 0)) return true;
 
+  // zcash private info (or any account with privateInfo)
+  const prevPrivateInfo =
+    "privateInfo" in prev ? (prev as { privateInfo?: any }).privateInfo : null;
+  const nextPrivateInfo =
+    "privateInfo" in next ? (next as { privateInfo?: any }).privateInfo : null;
+  if (prevPrivateInfo || nextPrivateInfo) {
+    if (!prevPrivateInfo || !nextPrivateInfo) return true;
+    if (prevPrivateInfo.ufvk !== nextPrivateInfo.ufvk) return true;
+    if (!prevPrivateInfo.balance?.eq?.(nextPrivateInfo.balance)) return true;
+    if (prevPrivateInfo.lastSyncTimestamp !== nextPrivateInfo.lastSyncTimestamp) return true;
+    if (prevPrivateInfo.lastSyncBlock !== nextPrivateInfo.lastSyncBlock) return true;
+    if (prevPrivateInfo.currentSync?.state !== nextPrivateInfo.currentSync?.state) return true;
+    if (
+      prevPrivateInfo.currentSync?.lastBlockDownloaded !==
+      nextPrivateInfo.currentSync?.lastBlockDownloaded
+    )
+      return true;
+    if (
+      prevPrivateInfo.currentSync?.lastBlockProcessed !==
+      nextPrivateInfo.currentSync?.lastBlockProcessed
+    )
+      return true;
+    if ((prevPrivateInfo.transactions?.length ?? 0) !== (nextPrivateInfo.transactions?.length ?? 0))
+      return true;
+  }
+
   // sub accounts
   if ((prev.subAccounts?.length ?? 0) !== (next.subAccounts?.length ?? 0)) return true;
   const prevSubs = prev.subAccounts ?? [];

@@ -5,9 +5,6 @@ import { addStarredMarketCoins } from "~/renderer/actions/settings";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider", () => ({
-  useMarketDataProvider: () => ({
-    supportedCounterCurrencies: ["usd", "eur"],
-  }),
   useMarketData: () => ({
     data: [],
     isLoading: false,

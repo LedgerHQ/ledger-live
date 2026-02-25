@@ -2,8 +2,11 @@ import { useMemo } from "react";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBridgeError";
-import { getAmountScreenMessage } from "../utils/messages";
-import { getStatusError, pickBlockingError } from "../utils/errors";
+import { getAmountScreenMessage } from "@ledgerhq/live-common/flows/send/amount/utils/messages";
+import {
+  getStatusError,
+  pickBlockingError,
+} from "@ledgerhq/live-common/flows/send/amount/utils/errors";
 import type { AmountScreenMessage } from "../types";
 
 export function useAmountScreenMessage(params: {

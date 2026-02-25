@@ -105,7 +105,7 @@ const AccountSyncStatusIndicator = ({ accountId, isUpToDateAccount }: Props) => 
   });
   const sync = useBridgeSync();
   const [userAction, setUserAction] = useState(false);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const onClick = useCallback(
     (e: React.SyntheticEvent<HTMLDivElement>) => {
       e.stopPropagation();

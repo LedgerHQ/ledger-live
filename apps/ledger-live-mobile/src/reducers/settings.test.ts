@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
+import reducer, {
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
   resolvedThemeSelector,
@@ -8,7 +8,6 @@ import {
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import reducer from "./settings";
 import { importSettings } from "../actions/settings";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];

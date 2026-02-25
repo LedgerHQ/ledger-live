@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import { TFunction } from "i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { zcashSyncStartNonceSelector, zcashSyncStateSelector } from "~/renderer/reducers/zcashSync";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
@@ -18,10 +16,15 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openModal } from "~/renderer/actions/modals";
-import { startZcashSync } from "~/renderer/reducers/zcashSync";
 import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
-import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type {
+  ZcashAccount,
+  ZcashPrivateInfo,
+  ZcashSyncState,
+} from "@ledgerhq/live-common/families/bitcoin/types";
+import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
+import { TokenAccount } from "@ledgerhq/types-live";
+import { ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES } from "@ledgerhq/zcash-shielded/constants";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -31,12 +34,13 @@ const Wrapper = styled(Box).attrs(() => ({
   scroll: true,
 }))`
   border-top: 1px solid ${p => p.theme.colors.neutral.c30};
+  justify-content: flex-start;
 `;
 
 const BalanceDetail = styled(Box).attrs(() => ({
-  flex: "0.25 0 auto",
+  flex: "0 0 auto",
   alignItems: "start",
-  paddingRight: 20,
+  paddingRight: 50,
 }))``;
 
 export const TitleWrapper = styled(Box).attrs(() => ({
@@ -62,127 +66,172 @@ const AmountValue = styled(Text).attrs(() => ({
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
 
-type ZCashSyncState = "disabled" | "ready" | "running" | "paused" | "complete" | "outdated";
-
 const ActionButton = ({
   t,
   syncState,
   updateSyncState,
 }: {
   t: TFunction<"translation", undefined>;
-  syncState: ZCashSyncState;
+  syncState: ZcashSyncState;
   updateSyncState: () => void;
 }) => {
+  const ActionButtonElement = styled(ButtonV3).attrs(() => ({
+    variant: "main",
+    onClick: updateSyncState,
+  }))`
+    min-width: 130px;
+  `;
+
   switch (syncState) {
     case "disabled":
       return (
-        <ButtonV3
-          variant="main"
-          onClick={updateSyncState}
-          buttonTestId="show-private-balance-button"
-        >
+        <ActionButtonElement buttonTestId="show-private-balance-button">
           <Text>{t("zcash.shielded.state.showBalance")}</Text>
-        </ButtonV3>
+        </ActionButtonElement>
       );
     case "ready":
+    case "stopped":
+    case "outdated":
       return (
-        <ButtonV3 variant="main" onClick={updateSyncState}>
-          <Text>{t("zcash.shielded.startSync")}</Text>
-        </ButtonV3>
-      );
-    case "paused":
-      return (
-        <ButtonV3
-          variant="main"
-          Icon={<Refresh size={20} />}
-          style={{ padding: "100%", fontSize: 1 }}
-          onClick={updateSyncState}
-        />
+        <ActionButtonElement buttonTestId="start-sync-button">
+          <Text>{t("zcash.shielded.state.startSync")}</Text>
+        </ActionButtonElement>
       );
     case "running":
       return (
-        <ButtonV3
-          variant="main"
-          Icon={<Pause size={20} />}
-          style={{ padding: "100%", fontSize: 1 }}
-          onClick={updateSyncState}
-        />
-      );
-    case "outdated":
-      return (
-        <ButtonV3
-          variant="main"
-          Icon={<Refresh size={20} />}
-          style={{ padding: "100%", fontSize: 1 }}
-          onClick={updateSyncState}
-        />
+        <ActionButtonElement buttonTestId="stop-sync-button">
+          <Text>{t("zcash.shielded.state.stopSync")}</Text>
+        </ActionButtonElement>
       );
   }
 };
 
-type Props = {
-  account: BitcoinAccount | TokenAccount;
+const SyncProgress = ({
+  syncState,
+  progress,
+  lastSync,
+}: {
+  syncState: ZcashSyncState;
+  progress: number;
+  lastSync: Date | null;
+}) => {
+  if (syncState !== "disabled") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "row",
+          fontSize: "12px",
+          paddingLeft: syncState === "running" || syncState === "stopped" ? "20px" : "0",
+          paddingTop: syncState === "outdated" ? "10px" : "0",
+        }}
+      >
+        {syncState === "running" ? (
+          <>
+            <Spinner size={14} />
+            <Text style={{ fontSize: "12px", paddingLeft: "10px" }}>{progress}%</Text>
+          </>
+        ) : null}
+        {syncState === "stopped" ? (
+          <Text style={{ fontSize: "12px" }}>
+            <Trans
+              i18nKey="zcash.shielded.state.lastProcessedBlock"
+              values={{ block: 1, missing: 10 }}
+            />
+          </Text>
+        ) : null}
+        {syncState === "complete" || syncState === "outdated" ? (
+          <Trans
+            i18nKey="zcash.shielded.state.lastSync"
+            values={{ date: lastSync?.toLocaleString().replace(",", "") }}
+            style={{}}
+          />
+        ) : null}
+      </div>
+    );
+  }
+
+  return null;
 };
 
-type SyncState = {
-  state: ZCashSyncState;
-  progress: number;
+type Props = {
+  account: ZcashAccount | TokenAccount;
 };
 
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
-  // TODO: retrieve initial sync state from the account data
-  const initialSyncState: SyncState = {
-    state: "disabled",
-    progress: 0,
+  const { balance } = account;
+  const privateInfo = account.type === "Account" ? account.privateInfo : null;
+  const { orchardBalance, saplingBalance } = privateInfo ?? {
+    orchardBalance: BigNumber(0),
+    saplingBalance: BigNumber(0),
   };
+  const syncState = privateInfo?.syncState ?? "disabled";
+  const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
 
-  const [syncState, setSyncState] = useState<ZCashSyncState>(initialSyncState.state);
-  const [progress, setProgress] = useState(initialSyncState.progress);
-  const [lastSync, setLastSync] = useState<Date | null>(null);
+  const [progress, setProgress] = useState(0);
+
+  const discreet = useDiscreetMode();
+  const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
+  const { getFeature } = useFeatureFlags();
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+
+  // Save sync state to the account
+  const saveSyncState = useCallback(
+    (info: Partial<ZcashPrivateInfo>) => {
+      dispatch(syncStateUpdater(account as ZcashAccount, info));
+    },
+    [account, dispatch],
+  );
 
   // TODO: Mocking progress. Delete this once we have a real progress.
   useEffect(() => {
     if (syncState === "running" && progress < 100) {
-      const interval = setInterval(() => setProgress(progress + 1), 100);
+      const interval = setInterval(() => setProgress(progress + 10), 500);
       return () => {
         if (interval) clearInterval(interval);
       };
     }
   }, [syncState, progress]);
 
+  // Check if sync is outdated
+  const isSyncOutdated = useCallback(() => {
+    const now = new Date().getTime();
+    if (
+      privateInfo?.lastSyncTimestamp &&
+      now - privateInfo.lastSyncTimestamp > 1000 * 60 * ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES
+    ) {
+      saveSyncState({
+        syncState: "outdated",
+      });
+    }
+  }, [privateInfo?.lastSyncTimestamp, saveSyncState]);
+
+  // Check if sync is outdated (every 5 seconds)
+  useEffect(() => {
+    if (syncState === "complete") {
+      isSyncOutdated();
+      setProgress(0);
+      const interval = setInterval(() => isSyncOutdated(), 5000);
+      return () => {
+        if (interval) clearInterval(interval);
+      };
+    }
+  }, [syncState, isSyncOutdated]);
+
+  // Set sync state to complete when progress is 100
   useEffect(() => {
     if (syncState === "running" && progress === 100) {
-      setSyncState("complete");
-      setLastSync(new Date());
+      saveSyncState({
+        syncState: "complete",
+        lastSyncTimestamp: new Date().getTime(),
+      });
     }
-  }, [syncState, progress]);
-
-  const discreet = useDiscreetMode();
-  const locale = useSelector(localeSelector);
-  const zcashSyncStartNonce = useSelector(zcashSyncStartNonceSelector);
-  const zcashSyncState = useSelector(zcashSyncStateSelector);
-  const unit = useAccountUnit(account);
-  const { getFeature } = useFeatureFlags();
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    if (zcashSyncStartNonce > 0) {
-      setProgress(0);
-      setSyncState("running");
-    }
-  }, [zcashSyncStartNonce]);
-
-  useEffect(() => {
-    if (zcashSyncState === "ready") {
-      setSyncState("ready");
-    }
-  }, [zcashSyncState]);
+  }, [syncState, progress, saveSyncState]);
 
   const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
-
-  const { spendableBalance } = account;
-  const privateInfo = account.type === "Account" ? account.privateInfo : null;
 
   if (
     account.type !== "Account" ||
@@ -198,8 +247,8 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
 
-  const _transparentBalance = spendableBalance ?? BigNumber(0);
-  const _privateBalance = privateInfo?.balance ?? BigNumber(0);
+  const _transparentBalance = balance ?? BigNumber(0);
+  const _privateBalance = orchardBalance.plus(saplingBalance);
   const _availableBalance = _transparentBalance.plus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
@@ -214,20 +263,28 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         break;
       case "ready":
         // Start
-        dispatch(startZcashSync());
-        setSyncState("running");
+        saveSyncState({
+          syncState: "running",
+        });
         break;
       case "running":
-        // Pause
-        setSyncState("paused");
+        // Stop
+        setProgress(0);
+        saveSyncState({
+          syncState: "stopped",
+        });
         break;
-      case "paused":
-        // Resume
-        setSyncState("running");
+      case "stopped":
+        // Start
+        saveSyncState({
+          syncState: "running",
+        });
         break;
       case "outdated":
         // Start sync from the last known block
-        setSyncState("running");
+        saveSyncState({
+          syncState: "running",
+        });
         break;
     }
   };
@@ -260,39 +317,28 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <Discreet>{transparentBalanceLabel}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      <BalanceDetail style={{ flexDirection: "row", alignItems: "center" }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
-            <TitleWrapper>
-              <Title>
-                <Trans i18nKey="zcash.account.privateBalance" />
-              </Title>
-              <InfoCircle size={13} />
-            </TitleWrapper>
-          </ToolTip>
-          <AmountValue>
-            <Discreet>{privateBalanceLabel}</Discreet>
-          </AmountValue>
-        </div>
-        <div style={{ display: "flex", paddingLeft: "30px" }}>
-          {syncState !== "disabled" ? (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {syncState === "running" ? <Spinner size={14} /> : null}
-              {syncState === "paused" ? <Trans i18nKey="zcash.shielded.state.pausedAt" /> : null}
-              {syncState === "complete" ? (
-                <Trans
-                  i18nKey="zcash.shielded.state.lastSync"
-                  values={{ date: lastSync?.toLocaleString().replace(",", "") }}
-                />
-              ) : null}
-              {(syncState === "running" || syncState === "paused") && progress < 100 ? (
-                <Text style={{ paddingLeft: "5px", minWidth: "50px" }}>{progress}%</Text>
-              ) : null}
-            </div>
-          ) : null}
-          <div>
-            <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
-          </div>
+      <BalanceDetail>
+        <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
+          <TitleWrapper>
+            <Title>
+              <Trans i18nKey="zcash.account.privateBalance" />
+            </Title>
+            <InfoCircle size={13} />
+          </TitleWrapper>
+        </ToolTip>
+        <AmountValue>
+          <Discreet>{privateBalanceLabel}</Discreet>
+        </AmountValue>
+      </BalanceDetail>
+      <BalanceDetail>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: syncState === "running" || syncState === "stopped" ? "row" : "column",
+          }}
+        >
+          <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
+          <SyncProgress syncState={syncState} progress={progress} lastSync={lastSync} />
         </div>
       </BalanceDetail>
     </Wrapper>

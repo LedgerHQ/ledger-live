@@ -31,7 +31,7 @@ export default {
   },
 };
 
-export const Default = (args: AlertProps): JSX.Element => {
+export const Default = (args: AlertProps): React.JSX.Element => {
   return <Alert {...args} />;
 };
 

@@ -3,8 +3,10 @@ import { Image, View, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
+import {
+  handleTransactionStatus,
+  denominate,
+} from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import { Text, Icons } from "@ledgerhq/native-ui";

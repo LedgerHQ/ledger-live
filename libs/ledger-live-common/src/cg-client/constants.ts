@@ -1,0 +1,5 @@
+const ONE_DAY = 24 * 60 * 60 * 1000;
+const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
+const BASIC_REFETCH = 3; // nb minutes
+
+export { ONE_DAY, REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH };

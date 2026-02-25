@@ -19,6 +19,7 @@ import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
+import { useOpenBuy } from "LLM/features/Buy";
 
 export type QuickAction = {
   disabled: boolean;
@@ -107,6 +108,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   });
 
   const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
+  const { handleOpenBuy } = useOpenBuy({ currency, sourceScreenName: route.name });
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -136,13 +138,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     if (canBeBought) {
       list.BUY = {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
-        route: [
-          NavigatorName.Exchange,
-          {
-            screen: ScreenName.ExchangeBuy,
-            params: { defaultCurrencyId: currency?.id },
-          },
-        ],
+        customHandler: handleOpenBuy,
         icon: IconsLegacy.PlusMedium,
       };
     }
@@ -215,6 +211,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
     handleOpenSwap,
+    handleOpenBuy,
     canBeBought,
     canBeSold,
     partnerStakeRoute,

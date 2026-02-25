@@ -5,7 +5,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSection as Section } from "./SettingsSection";
 import SectionDisplay from "./sections/General";
 import SectionExperimental from "./sections/Experimental";
@@ -17,6 +17,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { developerModeSelector } from "~/renderer/reducers/settings";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import PageHeader from "LLD/components/PageHeader";
 
 const getItems = (t: (a: string) => string, devMode?: boolean) => {
   const items = [
@@ -58,6 +59,7 @@ const getItems = (t: (a: string) => string, devMode?: boolean) => {
 // Props are passed from the <Route /> component in <Default />
 const Settings = () => {
   const { t } = useTranslation();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const navigate = useNavigate();
   const location = useLocation();
   const accounts = useSelector(shallowAccountsSelector);
@@ -99,11 +101,19 @@ const Settings = () => {
       setActiveTabIndex(idx > -1 && idx !== activeTabIndex ? idx : 0);
     }
   }, [navigate, location, items, activeTabIndex]);
+
   return (
     <Box pb={4} selectable>
-      <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={7} mb={5} data-e2e="settings_title">
-        {t("settings.title")}
-      </Box>
+      {shouldDisplayWallet40MainNav ? (
+        <div className="mb-24">
+          <PageHeader title={t("settings.title")} />
+        </div>
+      ) : (
+        <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={7} mb={5} data-e2e="settings_title">
+          {t("settings.title")}
+        </Box>
+      )}
+
       {ledgerSyncOptimisationFlag?.enabled && (
         <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
       )}

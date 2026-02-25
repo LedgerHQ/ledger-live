@@ -19,7 +19,7 @@ export function PerpsApp() {
   }
 
   return (
-    <div className="flex h-full w-full min-h-0 flex-1 flex-col justify-start">
+    <div className="flex size-full min-h-0 flex-1 flex-col justify-start">
       <PerpsWebView
         manifest={manifest}
         inputs={inputs}

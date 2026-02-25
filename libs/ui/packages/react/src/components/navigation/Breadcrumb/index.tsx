@@ -35,7 +35,7 @@ function isMultiSegment(segment: Segment): segment is Elements {
   return (segment as Elements).options !== undefined;
 }
 
-export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Element {
+export default memo(function Breadcrumb({ segments, onChange }: Props): React.JSX.Element {
   const theme = useTheme();
   const [contents] = segments.reduce<[React.ReactNode[], string[]]>(
     ([renderArray, valuesArray], segment, index) => {

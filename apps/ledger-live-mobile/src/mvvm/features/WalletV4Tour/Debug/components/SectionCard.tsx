@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 
 interface SectionCardProps {
   children: React.ReactNode;
@@ -7,12 +7,19 @@ interface SectionCardProps {
 }
 
 export const SectionCard = ({ children, title }: SectionCardProps) => (
-  <Flex p={5} backgroundColor="neutral.c40" borderRadius={12} mb={4}>
+  <Box
+    lx={{
+      padding: "s20",
+      backgroundColor: "surface",
+      borderRadius: "md",
+      marginBottom: "s16",
+    }}
+  >
     {title && (
-      <Text variant="h3Inter" color="neutral.c100" fontWeight="semiBold" mb={4}>
+      <Text typography="heading5SemiBold" lx={{ color: "base", marginBottom: "s16" }}>
         {title}
       </Text>
     )}
     {children}
-  </Flex>
+  </Box>
 );

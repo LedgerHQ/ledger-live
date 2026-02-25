@@ -209,7 +209,11 @@
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
-      "UPDATE_ACCOUNT": "Updated account"
+      "UPDATE_ACCOUNT": "Updated account",
+      "SHIELDED_TX_SAPLING_IN": "Received",
+      "SHIELDED_TX_SAPLING_OUT": "Sent",
+      "SHIELDED_TX_ORCHARD_IN": "Received",
+      "SHIELDED_TX_ORCHARD_OUT": "Sent"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -268,6 +272,8 @@
     "minute": "Minute",
     "minute_other": "Minutes",
     "minute_short": "min",
+    "second": "Second",
+    "second_other": "Seconds",
     "second_short": "sec",
     "hour": "Hour",
     "hour_other": "Hours",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
       "warningDescription": "Fee presets may be outdated."
+    },
+    "customFees": {
+      "title": "Custom fees",
+      "confirm": "Confirm",
+      "maxFee": "Max fee ({{unit}})",
+      "maxPriorityFee": "Max priority fee ({{unit}})",
+      "gasLimit": "Gas limit ({{unit}})",
+      "feePerByte": "Fees amount ({{unit}})",
+      "suggested": "Suggested",
+      "nextBlock": "Next block",
+      "networkFeesInFiat": "Network fees in {{currency}}",
+      "invalidValue": "Enter a valid number",
+      "belowMinimum": "Minimum is {{min}}",
+      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+    },
+    "coinControl": {
+      "title": "Coin control"
     }
   },
   "releaseNotes": {
-    "title": "Release notes",
-    "version": "Ledger Wallet {{versionNb}}"
+    "title": "Release note",
+    "version": "Ledger Wallet {{versionNb}}",
+    "gotIt": "Got it"
   },
   "troubleshootNetwork": {
     "title": "Troubleshoot networking",
@@ -5978,6 +6002,68 @@
         }
       }
     },
+    "concordium": {
+      "addAccount": {
+        "title": "Add Concordium Account",
+        "acknowledge": {
+          "title": "Acknowledgement",
+          "description": "Concordium requires external identity verification. Please read these important security warnings:",
+          "list": {
+            "1": "<0>No address verification</0> – Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds.",
+            "2": "<0>Concordium ID App uses a separate seed</0> – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
+            "3": "<0>You'll be redirected outside Ledger Live</0> – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
+            "4": "<0>Transaction signing stays secure</0> – Only your Ledger device can sign transactions and create accounts."
+          },
+          "allow": "Agree"
+        },
+        "identity": {
+          "title": "Connect",
+          "account": "Account",
+          "newAccount": "New Account",
+          "init": "Pressing Allow means you’re ready to continue to the KYC identity check needed to verify your account.",
+          "scanQRCode": "Scan the QR code with your mobile device to connect your Concordium ID App. <0>Learn more</0>",
+          "ledgerSeedWarning": "<0>DO NOT</0> use your Ledger Seed for Concordium ID App.",
+          "downloadApp": "Download Concordium ID App",
+          "connecting": "Connecting to Concordium ID App...",
+          "onboarded": "Onboarded accounts",
+          "success": "Successfully connected to Concordium ID App.",
+          "error": "Failed to onboard new account. Please try again.",
+          "status": {
+            "prepare": "Preparing account onboarding...",
+            "submit": "Onboarding account...",
+            "default": "Processing..."
+          }
+        },
+        "create": {
+          "title": "Create Account",
+          "init": {
+            "title": "Successfully connected to Concordium ID App"
+          },
+          "prepare": {
+            "title": "To create an account, match the code below in the Concordium ID App",
+            "resendButton": "Resend confirmation",
+            "resendDescription": "Confirmation can be resent in <0>{{count}}</0> {{unit}}"
+          },
+          "success": "Your Concordium account has been created successfully.",
+          "error": "Failed to create account. Please try again.",
+          "error429": "Too many requests. Please wait and try again later.",
+          "button": "Create",
+          "processing": "Processing...",
+          "status": {
+            "prepare": "Preparing account creation...",
+            "submit": "Creating account...",
+            "default": "Processing..."
+          }
+        },
+        "finish": {
+          "title": "Confirmation"
+        }
+      },
+      "receive": {
+        "messageIfSkipped": "It is not possible to verify your Concordium Address at the moment. Please make sure to double-check by pasting your address in the Concordium explorer.",
+        "verifyLink": "Verify"
+      }
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -6874,6 +6960,13 @@
     "CardanoMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 64 characters",
       "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
+    },
+    "ConcordiumMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
+    "ConcordiumInsufficientFunds": {
+      "title": "Sorry, insufficient funds"
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
@@ -8002,8 +8095,14 @@
     "shielded": {
       "state": {
         "showBalance": "Show balance",
-        "pausedAt": "Paused at ",
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
         "lastSync": "Last sync: {{date}}"
+      },
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       },
       "flows": {
         "export": {
@@ -8042,12 +8141,13 @@
             }
           }
         }
-      },
-      "startSync": "Start sync",
-      "datepicker": {
-        "label": "Birthday height",
-        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       }
+    },
+    "operationDetails": {
+      "txType": "Transaction type",
+      "transparentTx": "Transparent",
+      "shieldedSaplingTx": "🛡 Private (Sapling)",
+      "shieldedOrchardTx": "🛡 Private (Orchard)"
     }
   },
   "aleo": {
@@ -8093,6 +8193,18 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private"
+      }
     }
+  },
+  "updater": {
+    "newUpdateAvailable": "New update available",
+    "downloadProgress": "{{progress}}%",
+    "errorTryAgain": "Error during update, try again",
+    "installAndRelaunch": "Install update and relaunch"
   }
 }

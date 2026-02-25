@@ -13,7 +13,11 @@ export default function DoNotAskAgainSkipMemo() {
       title={t("settings.accounts.doNotAskAgainSkipMemo.title")}
       desc={t("settings.accounts.doNotAskAgainSkipMemo.desc")}
     >
-      <Switch isChecked={doNotAskAgainSkipMemo} onChange={setDoNotAskAgainSkipMemo} />
+      <Switch
+        isChecked={doNotAskAgainSkipMemo}
+        onChange={setDoNotAskAgainSkipMemo}
+        data-testid="settings-never-ask-again-skip-memo-switch"
+      />
     </Row>
   );
 }

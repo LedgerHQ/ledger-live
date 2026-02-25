@@ -38,6 +38,9 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
 
   if (process.env.REMOTE_SPECULOS === "true") {
     await waitForSpeculosReady(device.id);
+    console.warn(
+      `[E2E Setup] Remote Speculos ready - SPECULOS_ADDRESS: ${process.env.SPECULOS_ADDRESS}`,
+    );
   }
 
   setEnv("SPECULOS_API_PORT", device.port);
@@ -48,7 +51,9 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
     allure.parameter("App version:", device.appVersion || "");
   }
 
-  console.warn(`Speculos ${device.id} started on ${device.port}`);
+  console.warn(
+    `Speculos ${device.id} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,
+  );
   return device;
 }
 
