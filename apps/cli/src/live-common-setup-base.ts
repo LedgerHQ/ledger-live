@@ -24,6 +24,7 @@ setSupportedCurrencies([
   "ripple",
   "litecoin",
   "polygon",
+  "polygon_amoy",
   "bitcoin_cash",
   "stellar",
   "dogecoin",

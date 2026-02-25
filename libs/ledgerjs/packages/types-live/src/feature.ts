@@ -106,6 +106,7 @@ export type CurrencyFeatures = {
   currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
   currencyCoreum: DefaultFeature;
+  currencyPolygonAmoy: DefaultFeature;
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;

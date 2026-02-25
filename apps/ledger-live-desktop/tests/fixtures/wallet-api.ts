@@ -377,6 +377,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "polygon_amoy",
+    ticker: "POL",
+    name: "Polygon Amoy",
+    family: "ethereum",
+    color: "#6d29de",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
     id: "bitcoin_cash",
     ticker: "BCH",
     name: "Bitcoin Cash",

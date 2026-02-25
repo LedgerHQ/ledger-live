@@ -59,6 +59,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   solana_testnet: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
   solana_devnet: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
   polygon: EVM_DEAD_ADDRESS,
+  polygon_amoy: EVM_DEAD_ADDRESS,
   crypto_org: "cro1r3ywhs4ng96dnm9zkc5y3etl7tps5cvvz26lr4",
   crypto_org_croeseid: "cro1r3ywhs4ng96dnm9zkc5y3etl7tps5cvvz26lr4",
   celo: "0xE70E8AfeF87CC8F0D7a61F58535F6EC99cd860cA",
