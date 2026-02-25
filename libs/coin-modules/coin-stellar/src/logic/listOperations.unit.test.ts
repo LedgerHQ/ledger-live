@@ -398,5 +398,4 @@ describe("listOperations", () => {
       recipients: ["receiver1"],
     });
   });
-
 });
