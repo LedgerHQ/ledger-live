@@ -17,6 +17,7 @@ import {
   isProtocolParamsValid,
   isTestnet,
   toTyphonProtocolParams,
+  getTyphonInputFromUtxo,
 } from "./logic";
 import { getNetworkParameters } from "./networks";
 import {
@@ -27,30 +28,16 @@ import {
   Token,
   Transaction,
 } from "./types";
+import { buildVoteDelegationTransaction } from "./buildTransaction/buildVoteDelegateTx";
 
 function sortByAdaDesc(a: CardanoOutput, b: CardanoOutput): number {
   const diff = b.amount.minus(a.amount);
   return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
 }
 
-function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
-  const address = TyphonUtils.getAddressFromHex(
-    Buffer.from(utxo.address, "hex"),
-  ) as TyphonTypes.ShelleyAddress;
-  if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
-    address.paymentCredential.bipPath = utxo.paymentCredential.path;
-  }
-
-  return {
-    txId: utxo.hash,
-    index: utxo.index,
-    amount: new BigNumber(utxo.amount),
-    tokens: utxo.tokens,
-    address: address,
-  };
-}
-
-function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Withdrawal | null {
+export function getRewardWithdrawalCertificate(
+  account: CardanoAccount,
+): TyphonTypes.Withdrawal | null {
   if (
     !account.cardanoResources.delegation ||
     !account.cardanoResources.delegation.dRepHex ||
@@ -320,6 +307,10 @@ const buildDelegateTransaction = async ({
   const protocolParams = transaction.protocolParams;
   if (!protocolParams) throw new Error("Missing protocol parameters"); // protocolParams will always be present
 
+  if (transaction.poolId === undefined) {
+    throw new Error("Missing poolId for delegation");
+  }
+
   const cardanoResources = account.cardanoResources as CardanoResources;
 
   const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
@@ -344,7 +335,7 @@ const buildDelegateTransaction = async ({
     type: TyphonTypes.CertificateType.STAKE_DELEGATION,
     cert: {
       stakeCredential: stakeKeyHashCredential,
-      poolHash: transaction.poolId as string,
+      poolHash: transaction.poolId,
     },
   };
   typhonTx.addCertificate(delegationCert);
@@ -450,9 +441,13 @@ export const buildTransaction = async (
   const ttl = getTTL(account.currency.id);
   typhonTx.setTTL(ttl);
 
-  // add ABSTAIN vote certificate when account has rewards but not the vote delegation
+  /**
+   * add auto ABSTAIN vote certificate when account has rewards but not the vote delegation
+   * skip when transaction mode is voteDelegate
+   */
   if (
-    account.cardanoResources.delegation?.rewards.gt(0) &&
+    transaction.mode !== "voteDelegate" &&
+    account.cardanoResources.delegation?.rewards.gt(0) && // TODO: check if we can remove this
     !account.cardanoResources.delegation.dRepHex
   ) {
     const stakeCred = getAccountStakeCredential(account.xpub as string, account.index);
@@ -530,6 +525,8 @@ export const buildTransaction = async (
     return buildDelegateTransaction({ account, transaction, typhonTx, changeAddress });
   } else if (transaction.mode === "undelegate") {
     return buildUndelegateTransaction({ account, transaction, typhonTx, changeAddress });
+  } else if (transaction.mode === "voteDelegate") {
+    return buildVoteDelegationTransaction({ account, transaction, typhonTx, changeAddress });
   } else {
     throw new Error("Invalid transaction mode");
   }

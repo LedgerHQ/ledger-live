@@ -91,14 +91,33 @@ export type DelegationCertificate = {
   };
 };
 
-export type VoteDelegationCertificate = {
-  type: "VOTE_DELEGATION_ABSTAIN";
-  params: {
-    stakeCredential: {
-      keyPath: string;
+export type VoteDelegationCertificate =
+  | {
+      type: "VOTE_DELEGATION_ABSTAIN" | "VOTE_DELEGATION_NO_CONFIDENCE";
+      params: {
+        stakeCredential: {
+          keyPath: string;
+        };
+      };
+    }
+  | {
+      type: "VOTE_DELEGATION_DREP_KEY";
+      params: {
+        stakeCredential: {
+          keyPath: string;
+        };
+        keyHashHex: string;
+      };
+    }
+  | {
+      type: "VOTE_DELEGATION_DREP_SCRIPT";
+      params: {
+        stakeCredential: {
+          keyPath: string;
+        };
+        scriptHashHex: string;
+      };
     };
-  };
-};
 
 export type SignerTxCertificate =
   | RegistrationCertificate

@@ -40,7 +40,7 @@ const createTransaction = (): CardanoTransaction => {
     mode: "send",
     amount: new BigNumber(100),
     recipient: "",
-    poolId: "",
+    poolId: undefined,
   };
 };
 

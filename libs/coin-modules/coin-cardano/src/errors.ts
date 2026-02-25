@@ -39,6 +39,8 @@ export class CardanoInvalidPoolId extends Error {
   }
 }
 
+export const CardanoInvalidDRepHex = createCustomErrorClass("CardanoInvalidDRepHex");
+
 /**
  * Cardano warning/error for high fees
  */
