@@ -153,6 +153,38 @@ function prepareCertificate(cert: SignerTxCertificate): Certificate {
           },
         },
       };
+    case "VOTE_DELEGATION_NO_CONFIDENCE":
+      return {
+        type: CertificateType.VOTE_DELEGATION,
+        params: {
+          stakeCredential,
+          dRep: {
+            type: DRepParamsType.NO_CONFIDENCE,
+          },
+        },
+      };
+    case "VOTE_DELEGATION_DREP_KEY":
+      return {
+        type: CertificateType.VOTE_DELEGATION,
+        params: {
+          stakeCredential,
+          dRep: {
+            type: DRepParamsType.KEY_HASH,
+            keyHashHex: cert.params.keyHashHex,
+          },
+        },
+      };
+    case "VOTE_DELEGATION_DREP_SCRIPT":
+      return {
+        type: CertificateType.VOTE_DELEGATION,
+        params: {
+          stakeCredential,
+          dRep: {
+            type: DRepParamsType.SCRIPT_HASH,
+            scriptHashHex: cert.params.scriptHashHex,
+          },
+        },
+      };
     default:
       throw new Error("Invalid Certificate type");
   }

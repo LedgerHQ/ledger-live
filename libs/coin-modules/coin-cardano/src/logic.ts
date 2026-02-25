@@ -31,6 +31,7 @@ import {
   StakeCredential,
   Token,
   ProtocolParams,
+  CardanoOutput,
 } from "./types";
 
 /**
@@ -581,4 +582,46 @@ export function computeAdaBalance({
     spendable = spendable.plus(rewards);
   }
   return { total, spendable };
+}
+
+export function selectMinimumUtxos(
+  utxos: Array<CardanoOutput>,
+  amount: BigNumber,
+): Array<CardanoOutput> {
+  const selectedUtxos: Array<CardanoOutput> = [];
+
+  // Add 10 ADA as buffer amount for utxo selection to cover transaction fees.
+  const requiredAmount = amount.plus(10e6);
+  let usedUtxoAdaAmount = new BigNumber(0);
+
+  // sorting utxo from higher to lower ADA value
+  // to minimize the number of utxo use in transaction
+  const sortedUtxos = utxos.sort((a, b) => {
+    const diff = b.amount.minus(a.amount);
+    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
+  });
+
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredAmount); i++) {
+    const utxo = sortedUtxos[i];
+    selectedUtxos.push(utxo);
+    usedUtxoAdaAmount = usedUtxoAdaAmount.plus(utxo.amount);
+  }
+  return selectedUtxos;
+}
+
+export function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
+  const address = TyphonUtils.getAddressFromHex(
+    Buffer.from(utxo.address, "hex"),
+  ) as TyphonTypes.ShelleyAddress;
+  if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
+    address.paymentCredential.bipPath = utxo.paymentCredential.path;
+  }
+
+  return {
+    txId: utxo.hash,
+    index: utxo.index,
+    amount: new BigNumber(utxo.amount),
+    tokens: utxo.tokens,
+    address: address,
+  };
 }

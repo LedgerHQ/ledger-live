@@ -169,13 +169,7 @@ function prepareStakeRegistrationCertificate(
     return {
       type: "REGISTRATION",
       params: {
-        stakeCredential: {
-          keyPath: getBipPathString({
-            account: certificate.cert.stakeCredential.bipPath.account,
-            chain: certificate.cert.stakeCredential.bipPath.chain,
-            index: certificate.cert.stakeCredential.bipPath.index,
-          }),
-        },
+        stakeCredential: getStakeCred(certificate.cert.stakeCredential.bipPath),
         deposit: certificate.cert.deposit.toString(),
       },
     };
@@ -194,13 +188,7 @@ function prepareStakeDelegationCertificate(
     return {
       type: "DELEGATION",
       params: {
-        stakeCredential: {
-          keyPath: getBipPathString({
-            account: certificate.cert.stakeCredential.bipPath.account,
-            chain: certificate.cert.stakeCredential.bipPath.chain,
-            index: certificate.cert.stakeCredential.bipPath.index,
-          }),
-        },
+        stakeCredential: getStakeCred(certificate.cert.stakeCredential.bipPath),
         poolKeyHashHex: certificate.cert.poolHash,
       },
     };
@@ -219,13 +207,7 @@ function prepareStakeDeRegistrationCertificate(
     return {
       type: "DEREGISTRATION",
       params: {
-        stakeCredential: {
-          keyPath: getBipPathString({
-            account: certificate.cert.stakeCredential.bipPath.account,
-            chain: certificate.cert.stakeCredential.bipPath.chain,
-            index: certificate.cert.stakeCredential.bipPath.index,
-          }),
-        },
+        stakeCredential: getStakeCred(certificate.cert.stakeCredential.bipPath),
         deposit: certificate.cert.deposit.toString(),
       },
     };
@@ -245,18 +227,38 @@ function prepareVoteDelegationCertificate(
     certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
     certificate.cert.stakeCredential.bipPath
   ) {
-    return {
-      type: "VOTE_DELEGATION_ABSTAIN",
-      params: {
-        stakeCredential: {
-          keyPath: getBipPathString({
-            account: certificate.cert.stakeCredential.bipPath.account,
-            chain: certificate.cert.stakeCredential.bipPath.chain,
-            index: certificate.cert.stakeCredential.bipPath.index,
-          }),
+    const stakeCred = getStakeCred(certificate.cert.stakeCredential.bipPath);
+    const dRepCert = certificate.cert.dRep;
+
+    if (dRepCert.type === TyphonTypes.DRepType.ABSTAIN) {
+      return {
+        type: "VOTE_DELEGATION_ABSTAIN",
+        params: { stakeCredential: stakeCred },
+      };
+    } else if (dRepCert.type === TyphonTypes.DRepType.NO_CONFIDENCE) {
+      return {
+        type: "VOTE_DELEGATION_NO_CONFIDENCE",
+        params: { stakeCredential: stakeCred },
+      };
+    } else if (dRepCert.key && dRepCert.type === TyphonTypes.DRepType.ADDRESS) {
+      return {
+        type: "VOTE_DELEGATION_DREP_KEY",
+        params: {
+          stakeCredential: stakeCred,
+          keyHashHex: dRepCert.key.toString("hex"),
         },
-      },
-    };
+      };
+    } else if (dRepCert.key && dRepCert.type === TyphonTypes.DRepType.SCRIPT) {
+      return {
+        type: "VOTE_DELEGATION_DREP_SCRIPT",
+        params: {
+          stakeCredential: stakeCred,
+          scriptHashHex: dRepCert.key.toString("hex"),
+        },
+      };
+    } else {
+      throw new Error(`DRep type invalid certificate ${dRepCert}`);
+    }
   } else {
     throw new Error("Invalid stakeKey type");
   }
@@ -268,16 +270,20 @@ function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): SignerTxWithdraw
     withdrawal.rewardAccount.stakeCredential.bipPath
   ) {
     return {
-      stakeCredential: {
-        keyPath: getBipPathString({
-          account: withdrawal.rewardAccount.stakeCredential.bipPath.account,
-          chain: withdrawal.rewardAccount.stakeCredential.bipPath.chain,
-          index: withdrawal.rewardAccount.stakeCredential.bipPath.index,
-        }),
-      },
+      stakeCredential: getStakeCred(withdrawal.rewardAccount.stakeCredential.bipPath),
       amount: withdrawal.amount.toString(),
     };
   } else {
     throw new Error("Invalid stakeKey type");
   }
+}
+
+function getStakeCred(bipPath: TyphonTypes.BipPath) {
+  return {
+    keyPath: getBipPathString({
+      account: bipPath.account,
+      chain: bipPath.chain,
+      index: bipPath.index,
+    }),
+  };
 }

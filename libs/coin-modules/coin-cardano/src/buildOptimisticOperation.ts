@@ -55,6 +55,7 @@ export const buildOptimisticOperation = (
   const stakeDeRegistrationCertificates: Array<TyphonTypes.StakeDeRegistrationCertificate> = [];
   const stakeRegConwayCertificates: Array<TyphonTypes.StakeKeyRegistrationCertificate> = [];
   const stakeDeRegConwayCertificates: Array<TyphonTypes.StakeKeyDeRegistrationCertificate> = [];
+  const voteDelegationCertificates: Array<TyphonTypes.VoteDelegationCertificate> = [];
 
   txCertificates.forEach(c => {
     switch (c.type) {
@@ -69,6 +70,9 @@ export const buildOptimisticOperation = (
         break;
       case TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION:
         stakeDeRegConwayCertificates.push(c);
+        break;
+      case TyphonTypes.CertificateType.VOTE_DELEGATION:
+        voteDelegationCertificates.push(c);
         break;
     }
   });
@@ -166,6 +170,25 @@ export const buildOptimisticOperation = (
     }
   }
 
+  if (voteDelegationCertificates.length) {
+    const walletVoteDelegation = voteDelegationCertificates.find(
+      c =>
+        c.cert.stakeCredential.type === HashType.ADDRESS &&
+        c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
+    );
+    if (walletVoteDelegation) {
+      const isAbstain = walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN;
+      const isNoConfidence =
+        walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.NO_CONFIDENCE;
+
+      extra.vote = isAbstain
+        ? "ABSTAIN"
+        : isNoConfidence
+          ? "NO CONFIDENCE"
+          : walletVoteDelegation.cert.dRep.key?.toString("hex");
+    }
+  }
+
   if (txWithdrawals && txWithdrawals.length) {
     const walletWithdraw = txWithdrawals.find(
       w =>
@@ -185,16 +208,22 @@ export const buildOptimisticOperation = (
     }
   }
 
-  const opType: OperationType = txCertificates.find(
-    c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION,
-  )
-    ? "DELEGATE"
-    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
-      ? "UNDELEGATE"
-      : getOperationType({
-          valueChange: operationValue,
-          fees: unsignedTransaction.getFee(),
-        });
+  let opType: OperationType;
+
+  if (txCertificates.some(c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION)) {
+    opType = "DELEGATE";
+  } else if (
+    txCertificates.some(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
+  ) {
+    opType = "UNDELEGATE";
+  } else if (txCertificates.some(c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION)) {
+    opType = "VOTE";
+  } else {
+    opType = getOperationType({
+      valueChange: operationValue,
+      fees: unsignedTransaction.getFee(),
+    });
+  }
 
   const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),
