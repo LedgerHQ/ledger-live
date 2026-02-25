@@ -491,7 +491,7 @@ describe("EVM Family", () => {
     };
 
     it("should return the expected payload for an EIP1559 tx", async () => {
-      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
         if (method === "eth_feeHistory") {
           return {
             reward: [
@@ -515,7 +515,7 @@ describe("EVM Family", () => {
     });
 
     it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee", async () => {
-      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
         if (method === "eth_feeHistory") {
           return {
             reward: [
