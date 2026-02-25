@@ -139,7 +139,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ethereum",
     },
-    dependencies: [],
+    dependencies: [{ name: "1inch" }, { name: "Exchange" }, { name: "Velora" }],
   },
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),

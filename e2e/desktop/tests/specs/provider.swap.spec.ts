@@ -8,14 +8,18 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { Transaction } from "@ledgerhq/live-common/lib/e2e/models/Transaction";
+import { TransactionStatus } from "@ledgerhq/live-common/lib/e2e/enum/TransactionStatus";
+import { Addresses } from "@ledgerhq/live-common/lib/e2e/enum/Addresses";
 
-const app: AppInfos = AppInfos.EXCHANGE;
-
+const app: AppInfos = AppInfos.ETHEREUM;
+process.env.E2E_SKIP_DMK_CONNECT_APP_CHECKS = "1";
 const providerFlowTests = [
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDC_1,
     provider: Provider.VELORA,
+    providerAddress: Addresses.VELORA_CONTRACT_ADDRESS,
     xrayTicket: "B2CQA-3119",
     bugTicket: "QAA-854",
   },
@@ -23,25 +27,28 @@ const providerFlowTests = [
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
     provider: Provider.ONE_INCH,
+    providerAddress: Addresses.ONE_INCH_CONTRACT_ADDRESS,
     xrayTicket: "B2CQA-3120",
     bugTicket: "QAA-854",
   },
 ];
 
-for (const { fromAccount, toAccount, provider, xrayTicket, bugTicket } of providerFlowTests) {
+for (const {
+  fromAccount,
+  toAccount,
+  provider,
+  providerAddress,
+  xrayTicket,
+  bugTicket,
+} of providerFlowTests) {
   test.describe(`Swap - ${provider.uiName} flow`, () => {
     setupEnv(true);
 
-    const accPair: string[] = [fromAccount, toAccount].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
-    );
-
+    // const accPair: string[] = [fromAccount, toAccount].map(acc =>
+    //   acc.currency.speculosApp.name.replace(/ /g, "_"),
+    // );
     test.beforeEach(async () => {
-      setExchangeDependencies(
-        accPair.map(appName => ({
-          name: appName,
-        })),
-      );
+      setExchangeDependencies([{ name: "1inch" }]);
     });
 
     test.use({
@@ -98,6 +105,11 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTicket } of provid
         await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
         await app.swap.clickExecuteSwapButton(electronApp);
         await app.swap.clickContinueButton();
+        await app.speculos.signSendTransaction(new Transaction(fromAccount, toAccount, minAmount));
+
+        await app.getPage().getByTestId("toaster").click();
+        await app.sendDrawer.expectDrawerOperationType(TransactionStatus.SENT);
+        await app.sendDrawer.expectSwapNativeFlow(fromAccount.address!, providerAddress, minAmount);
       },
     );
   });

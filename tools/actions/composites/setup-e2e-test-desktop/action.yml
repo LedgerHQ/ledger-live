@@ -45,6 +45,9 @@ runs:
       run: |
         pnpm build:lld:deps
       shell: bash
+    - name: Patch live-dmk-shared for e2e (override ConnectAppDeviceAction)
+      run: pnpm --filter @ledgerhq/live-dmk-shared run build:test
+      shell: bash
     - name: Build LLD app for testing
       env:
         GOMEMLIMIT: 5GiB

@@ -166,6 +166,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
       },
       states: {
         DeviceReady: {
+          entry: () => console.log("Device ready, checking status..."),
           always: [
             {
               guard: not("shouldCheckDependencies"),
@@ -177,6 +178,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         GetDeviceStatus: {
+          entry: () => console.log("[ConnectAppDA] >>> GetDeviceStatus"),
           invoke: {
             src: "getStatus",
             input: _ => ({
@@ -217,6 +219,16 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         GetDeviceStatusCheck: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> GetDeviceStatusCheck",
+              JSON.stringify({
+                currentApp: context._internalState.deviceStatus?.currentApp,
+                currentAppVersion: context._internalState.deviceStatus?.currentAppVersion,
+                deviceModel: context._internalState.deviceModel,
+                hasError: context._internalState.error !== null,
+              }),
+            ),
           always: [
             {
               guard: "hasError",
@@ -300,6 +312,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         InstallDependencies: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> InstallDependencies",
+              JSON.stringify({
+                dependencies: context.input.dependencies?.map(d => d.name),
+              }),
+            ),
           exit: assign({
             intermediateValue: _ => ({
               ..._.context.intermediateValue,
@@ -349,6 +368,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         InstallDependenciesCheck: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> InstallDependenciesCheck",
+              JSON.stringify({
+                hasError: context._internalState.error !== null,
+              }),
+            ),
           always: [
             {
               guard: "hasError",
@@ -360,6 +386,14 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         OpenApp: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> OpenApp",
+              JSON.stringify({
+                application: context.input.application.name,
+                dependencies: context.input.dependencies?.map(d => d.name),
+              }),
+            ),
           exit: assign({
             intermediateValue: _ => ({
               ..._.context.intermediateValue,
@@ -410,6 +444,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         OpenAppCheck: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> OpenAppCheck",
+              JSON.stringify({
+                hasError: context._internalState.error !== null,
+              }),
+            ),
           always: [
             {
               guard: "hasError",
@@ -425,6 +466,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         GetDerivation: {
+          entry: () => console.log("[ConnectAppDA] >>> GetDerivation"),
           invoke: {
             src: "getDerivation",
             onDone: {
@@ -443,9 +485,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         Success: {
+          entry: () => console.log("[ConnectAppDA] >>> Success"),
           type: "final",
         },
         Error: {
+          entry: ({ context }) =>
+            console.log("[ConnectAppDA] >>> Error", JSON.stringify(context._internalState.error)),
           type: "final",
         },
       },
@@ -469,6 +514,11 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
     deviceStatus: GetDeviceStatusDAOutput,
     deviceModel: DeviceModelId,
   ) {
+    console.log(
+      `Checking if app ${application.name} is opened on device model ${deviceModel} with status:`,
+      JSON.stringify(deviceStatus),
+    );
+    console.log(`Application constraints:`, JSON.stringify(application.constraints));
     return (
       deviceStatus.currentApp === application.name &&
       (!application.constraints ||

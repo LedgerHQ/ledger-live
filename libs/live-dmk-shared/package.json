@@ -20,6 +20,7 @@
   "scripts": {
     "clean": "rimraf lib-es",
     "build": "tsc --project tsconfig.prod.json",
+    "build:test": "pnpm build && cd lib-es/device-action/ConnectApp && mv ConnectAppDeviceAction.js ConnectAppDeviceAction.original.js && sed 's/ConnectAppDeviceAction\"/ConnectAppDeviceAction.original\"/g' ConnectAppDeviceAction.e2e.js > ConnectAppDeviceAction.js",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.prod.json",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es --project tsconfig.test.json",

@@ -123,6 +123,7 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
       COINAPPS: ${{ github.workspace }}/coin-apps
+      IS_SPECULOS: "1"
     outputs:
       test_passed: ${{ steps.run-playwright.outputs.passed }}
       test_failed: ${{ steps.run-playwright.outputs.failed }}
@@ -172,7 +173,7 @@ jobs:
         shell: bash
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@feat/connect-app-skip-dependency-check-and-tracer-v2
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}

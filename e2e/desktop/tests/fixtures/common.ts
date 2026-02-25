@@ -52,6 +52,9 @@ if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
 
 const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
+  ldmkConnectApp: {
+    enabled: true,
+  },
   lldModularDrawer: {
     enabled: true,
     params: {
