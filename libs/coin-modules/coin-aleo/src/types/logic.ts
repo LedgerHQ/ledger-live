@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import type { TRANSACTION_TYPE } from "../constants";
 import type {
   AleoJWT,
@@ -16,6 +17,14 @@ export interface AleoUnspentRecord extends AleoPrivateRecord {
 export type EnrichedTransaction = {
   rawTx: AleoPublicTransaction;
   details: AleoPublicTransactionDetailsResponse | null;
+};
+
+export type EnrichedPrivateRecord = {
+  rawRecord: AleoPrivateRecord;
+  details: AleoPublicTransactionDetailsResponse;
+  sender: string;
+  recipient: string;
+  value: BigNumber;
 };
 
 export interface ProvableApi {

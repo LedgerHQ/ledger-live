@@ -288,7 +288,7 @@ const envDefinitions = {
     desc: "Aleo mainnet node URL",
   },
   ALEO_MAINNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
+    def: "https://aleo-backend.api.live.ledger-test.com/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
   },
@@ -298,7 +298,7 @@ const envDefinitions = {
     desc: "Aleo testnet node URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
+    def: "https://aleo-backend.api.live.ledger-test.com/network/testnet",
     parser: stringParser,
     desc: "Aleo testnet SDK URL",
   },
