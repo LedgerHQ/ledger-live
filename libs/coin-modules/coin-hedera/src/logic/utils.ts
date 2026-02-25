@@ -92,9 +92,8 @@ export const getOperationValue = ({
  * This function correctly handles that case since it reads from transaction_id,
  * which always identifies the actual fee payer.
  */
-export function extractFeesPayer(transactionId: string | undefined): string | undefined {
-  if (!transactionId) return undefined;
-  return transactionId.split("-")[0] || undefined;
+export function extractFeesPayer(transactionId: string): string {
+  return transactionId.split("-")[0];
 }
 
 // this utils extracts the bodyBytes from a Hedera Transaction that are required for signing

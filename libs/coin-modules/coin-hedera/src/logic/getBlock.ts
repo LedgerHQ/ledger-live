@@ -83,7 +83,7 @@ export async function getBlock(height: number): Promise<Block> {
     transactions
       .filter(tx => tx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount)
       .map(async tx => {
-        const payerAccount = extractFeesPayer(tx.transaction_id)!;
+        const payerAccount = extractFeesPayer(tx.transaction_id);
         const analysis = await analyzeStakingOperation(payerAccount, tx);
 
         return [tx.transaction_hash, analysis] as const;
@@ -92,7 +92,7 @@ export async function getBlock(height: number): Promise<Block> {
   const stakingAnalysisMap = new Map(stakingAnalyses);
 
   const blockTransactions: BlockTransaction[] = transactions.map(tx => {
-    const payerAccount = extractFeesPayer(tx.transaction_id)!;
+    const payerAccount = extractFeesPayer(tx.transaction_id);
     const stakingAnalysis = stakingAnalysisMap.get(tx.transaction_hash);
 
     let operations: BlockOperation[];

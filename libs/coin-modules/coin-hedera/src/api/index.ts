@@ -113,7 +113,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             }
           : { type: "native" };
 
-        const feesPayer = extractFeesPayer(liveOp.extra?.transactionId);
+        const feesPayer = liveOp.extra?.transactionId
+          ? extractFeesPayer(liveOp.extra.transactionId)
+          : undefined;
 
         return {
           id: liveOp.id,

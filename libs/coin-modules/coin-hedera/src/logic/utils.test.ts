@@ -295,14 +295,6 @@ describe("logic utils", () => {
     it("returns Hedera account ID from valid transaction_id", () => {
       expect(extractFeesPayer("0.0.12345-1625097600-000")).toBe("0.0.12345");
     });
-
-    it("returns undefined for undefined input", () => {
-      expect(extractFeesPayer(undefined)).toBeUndefined();
-    });
-
-    it("returns undefined for empty string input", () => {
-      expect(extractFeesPayer("")).toBeUndefined();
-    });
     // other kind of check are unnecessary, we trust the mirror node data
   });
 
