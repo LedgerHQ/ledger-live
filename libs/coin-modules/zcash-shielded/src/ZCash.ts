@@ -20,13 +20,12 @@ export type SyncedShielded = {
   processedBlocks: number;
   remainingBlocks: number;
   lastProcessed: number | undefined;
-}
+};
 
 type SyncShieldedArgs = {
   startBlockHeight: number;
   viewingKey: string;
   maxBatchSize: number;
-
 };
 
 export default class ZCash {
@@ -236,16 +235,16 @@ export default class ZCash {
 
     // 1. get end block height
     let endBlockHeight = await this.jsonRpcClient.getBlockCount();
-    if (!endBlockHeight) {
+    if (endBlockHeight === undefined) {
       log(LOG_TYPE, "error: could not retrieve the last block");
       return syncedShielded;
     }
 
     for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
-      // 2. on last iteration, update end block height
+      // 2. on the last iteration, update the end block height and process until the end
       if (blockHeight === endBlockHeight) {
         endBlockHeight = await this.jsonRpcClient.getBlockCount();
-        if (!endBlockHeight) {
+        if (endBlockHeight === undefined) {
           log(LOG_TYPE, "error: could not retrieve the last block");
           break;
         }
