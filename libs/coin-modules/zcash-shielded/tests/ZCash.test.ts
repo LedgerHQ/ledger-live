@@ -199,7 +199,7 @@ describe("syncShielded", () => {
   beforeEach(resetLastBlockCount);
 
   test.each([
-    { maxBatchSize: 3, startBlockHeight: 0 },
+    { maxBatchSize: -5, startBlockHeight: 5 },
     { maxBatchSize: 0, startBlockHeight: 5 },
     { maxBatchSize: 1, startBlockHeight: -1 },
   ])(
