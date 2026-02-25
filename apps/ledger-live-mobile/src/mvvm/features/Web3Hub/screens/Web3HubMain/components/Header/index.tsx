@@ -7,7 +7,6 @@ import { SharedValue } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { MainProps } from "LLM/features/Web3Hub/types";
 import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
-import TabButton from "LLM/features/Web3Hub/components/TabButton";
 import TextInput from "~/components/TextInput";
 import { NavigatorName, ScreenName } from "~/const";
 
@@ -61,7 +60,6 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
             />
           </View>
         </TouchableOpacity>
-        <TabButton count={2} navigation={navigation} />
       </Flex>
     </AnimatedBar>
   );

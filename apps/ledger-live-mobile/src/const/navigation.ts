@@ -553,7 +553,6 @@ export enum ScreenName {
   // Web3Hub
   Web3HubMain = "Web3HubMain",
   Web3HubSearch = "Web3HubSearch",
-  Web3HubTabs = "Web3HubTabs",
   Web3HubApp = "Web3HubApp",
 
   // Add Accountv2 / Receive shared screens
