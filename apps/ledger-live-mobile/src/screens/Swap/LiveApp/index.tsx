@@ -37,6 +37,9 @@ const SWAP_PARAM_KEYS: string[] = [
   "fromPath",
   "toTokenId",
   "fromTokenId",
+  "amountFrom",
+  "toCurrencyId",
+  "fromCurrencyId",
 ];
 
 function isDefaultAccountSwapParamsList(

@@ -59,6 +59,17 @@ export class MarketPage extends AppPage {
     await this.page.waitForURL(/.*\/exchange.*/);
   }
 
+  @step("Open buy page for $0 with account selection")
+  async openBuyPageWithAccountSelection(ticker: string, accountName: string) {
+    await this.buyButton(ticker).click();
+    const accountRow = this.page
+      .getByRole("button", { name: new RegExp(accountName, "i") })
+      .first();
+    await accountRow.waitFor({ state: "visible", timeout: 60_000 });
+    await accountRow.click();
+    await this.page.waitForURL(/.*\/exchange.*/);
+  }
+
   @step("Wait for loading")
   async waitForLoading() {
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
