@@ -20,14 +20,10 @@ function MemoTypeSelectComponent({ currencyId, options, value, onChange }: MemoT
 
   return (
     <Select onValueChange={onChange} value={value}>
-      <SelectTrigger data-testid="send-memo-options-select" />
+      <SelectTrigger />
       <SelectContent>
         {options.map(optionValue => (
-          <SelectItem
-            key={optionValue}
-            value={optionValue}
-            data-testid={`send-memo-select-option-${optionValue}`}
-          >
+          <SelectItem key={optionValue} value={optionValue}>
             <SelectItemText>{t(`families.${currencyId}.memoType.${optionValue}`)}</SelectItemText>
           </SelectItem>
         ))}

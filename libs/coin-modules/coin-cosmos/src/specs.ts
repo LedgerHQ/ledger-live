@@ -531,6 +531,16 @@ const quicksilver = {
   }),
 };
 
+const onomyMinimalTransactionAmount = new BigNumber(5000);
+const onomy = {
+  ...generateGenericCosmosTest("onomy", false, {
+    minViableAmount: onomyMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(onomyMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
 const axelarMinimalTransactionAmount = new BigNumber(10000);
 const axelar = {
   ...generateGenericCosmosTest("axelar", false, {
@@ -631,6 +641,7 @@ export default {
   umee,
   persistence,
   quicksilver,
+  onomy,
   secretNetwork,
   stargaze,
   coreum,

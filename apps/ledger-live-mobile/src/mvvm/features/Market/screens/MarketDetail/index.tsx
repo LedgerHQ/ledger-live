@@ -1,6 +1,7 @@
 import {
   KeysPriceChange,
   MarketCoinDataChart,
+  MarketCurrencyChartDataRequestParams,
   MarketCurrencyData,
 } from "@ledgerhq/live-common/market/utils/types";
 import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
@@ -27,7 +28,6 @@ import MarketStats from "./components/MarketStats";
 import TitleWithTooltip from "./components/TitleWithTooltip";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
 import Icon from "@ledgerhq/crypto-icons/native";
-import { MarketCurrencyChartDataRequestParams } from "@ledgerhq/live-common/cg-client/utils/types";
 
 interface ViewProps {
   loading: boolean;

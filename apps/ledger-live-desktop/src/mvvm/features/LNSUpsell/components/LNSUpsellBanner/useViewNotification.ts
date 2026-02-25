@@ -14,10 +14,9 @@ export function useViewNotification(location: LNSBannerLocation, variant: LNSBan
     if (variant.type !== "notification" || location !== "notification_center" || viewed) return;
 
     const viewedAt = Date.now();
-    const timer = setTimeout(
+    setTimeout(
       () => dispatch(updateAnonymousUserNotifications({ notifications: { LNSUpsell: viewedAt } })),
       OFFLINE_SEEN_DELAY,
     );
-    return () => clearTimeout(timer);
   }, [variant, location, viewed, dispatch]);
 }

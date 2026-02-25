@@ -173,7 +173,6 @@ export type LiveNetworkRequest<T> = {
   timeout?: number;
 };
 export type LiveNetworkResponse<T> = {
-  headers?: AxiosResponse<T>["headers"];
   data: T;
   status: number;
 };
@@ -214,9 +213,8 @@ export const newImplementation = async <T = unknown, U = unknown>(
     response = await axios(request);
   }
 
-  const { data, status, headers } = response;
-
-  return { data, status, headers };
+  const { data, status } = response;
+  return { data, status };
 };
 
 /**

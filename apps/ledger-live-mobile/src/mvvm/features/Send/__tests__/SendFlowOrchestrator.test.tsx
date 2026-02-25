@@ -39,8 +39,6 @@ function createStepRegistry(): StepRegistry<SendFlowStep> {
   return {
     [SEND_FLOW_STEP.RECIPIENT]: () => null,
     [SEND_FLOW_STEP.AMOUNT]: () => null,
-    [SEND_FLOW_STEP.CUSTOM_FEES]: () => null,
-    [SEND_FLOW_STEP.COIN_CONTROL]: () => null,
     [SEND_FLOW_STEP.SIGNATURE]: () => null,
     [SEND_FLOW_STEP.CONFIRMATION]: () => null,
   };
@@ -51,8 +49,6 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
     stepOrder: [
       SEND_FLOW_STEP.RECIPIENT,
       SEND_FLOW_STEP.AMOUNT,
-      SEND_FLOW_STEP.CUSTOM_FEES,
-      SEND_FLOW_STEP.COIN_CONTROL,
       SEND_FLOW_STEP.SIGNATURE,
       SEND_FLOW_STEP.CONFIRMATION,
     ],
@@ -63,8 +59,6 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
         screenName: "RecipientScreen",
       },
       [SEND_FLOW_STEP.AMOUNT]: { id: SEND_FLOW_STEP.AMOUNT, canGoBack: true },
-      [SEND_FLOW_STEP.CUSTOM_FEES]: { id: SEND_FLOW_STEP.CUSTOM_FEES, canGoBack: true },
-      [SEND_FLOW_STEP.COIN_CONTROL]: { id: SEND_FLOW_STEP.COIN_CONTROL, canGoBack: true },
       [SEND_FLOW_STEP.SIGNATURE]: {
         id: SEND_FLOW_STEP.SIGNATURE,
         canGoBack: true,

@@ -101,17 +101,13 @@ export const formatTrongridTxResponse = (
     const value = getValue();
     const fee = get(tx, "ret[0].fee", detail && detail.fee ? detail.fee : undefined);
     const blockHeight = blockNumber || detail?.blockNumber;
-    const isTrc20 = type === "TriggerSmartContract" && contract_address;
-    const isTrc10 = type === "TransferAssetContract";
-    const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
     const txInfo: TrongridTxInfo = {
       txID,
       date,
       type,
       tokenId,
-      // TRX native is TransferContract, TRC20 uses TriggerSmartContract
-      tokenType,
-      tokenAddress: isTrc20 ? encode58Check(contract_address) : undefined,
+      // TRX native is TransferContract
+      tokenType: type === "TransferAssetContract" ? "trc10" : undefined,
       from,
       to,
       value: !value.isNaN() ? value : new BigNumber(0),

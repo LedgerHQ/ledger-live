@@ -8,6 +8,7 @@ const RecoverSeedStep = () => {
 
   return (
     <SeedStepWrapper testId="recover-seed-step">
+      {/* @ts-expect-error weird props issue with React 18 */}
       <StepText>{t("syncOnboarding.manual.seedContent.recoverSeed")}</StepText>
     </SeedStepWrapper>
   );

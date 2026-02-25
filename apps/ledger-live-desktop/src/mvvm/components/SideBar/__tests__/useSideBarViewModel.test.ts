@@ -158,26 +158,18 @@ describe("useSideBarViewModel", () => {
       act(() => result.current.handleClickRecover());
 
       expect(mockNavigate).not.toHaveBeenCalled();
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "recover",
-        page: "/",
-        flagged: false,
-      });
+      expect(trackSpy).toHaveBeenCalledWith("button_clicked2", { button: "Protect" });
       trackSpy.mockRestore();
     });
 
-    it("should track menuentry_clicked for recover when feature is not enabled", () => {
+    it("should only track when feature is not enabled", () => {
       const trackSpy = jest.spyOn(segment, "track");
       const { result } = renderViewModel();
 
       act(() => result.current.handleClickRecover());
 
       expect(mockNavigate).not.toHaveBeenCalled();
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "recover",
-        page: "/",
-        flagged: false,
-      });
+      expect(trackSpy).toHaveBeenCalledWith("button_clicked2", { button: "Protect" });
       trackSpy.mockRestore();
     });
   });
@@ -222,11 +214,7 @@ describe("useSideBarViewModel", () => {
 
       act(() => result.current.handleActiveChange("recover"));
 
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "recover",
-        page: "/",
-        flagged: false,
-      });
+      expect(trackSpy).toHaveBeenCalledWith("button_clicked2", { button: "Protect" });
       trackSpy.mockRestore();
     });
 

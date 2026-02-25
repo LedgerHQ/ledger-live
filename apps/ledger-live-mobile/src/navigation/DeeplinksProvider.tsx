@@ -10,7 +10,8 @@ import {
 } from "@react-navigation/native";
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -41,11 +42,8 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
-  validateLargeMoverLedgerIds,
   validateMarketCurrencyId,
 } from "./deeplinks/validation";
-import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
-import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -361,8 +359,7 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
-  const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav } =
-    useWalletFeaturesConfig("mobile");
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -612,19 +609,14 @@ export const DeeplinksProvider = ({
           const platform = pathname.split("/")[1];
 
           if (hostname === "landing-page-large-mover") {
-            const validatedLedgerIds = validateLargeMoverLedgerIds(searchParams.get("ledgerIds"));
-            const validatedCurrencyIds = validateLargeMoverCurrencyIds(
-              searchParams.get("currencyIds"),
-            );
-            if (validatedLedgerIds) {
-              url.searchParams.set("currencyIds", "");
-              url.searchParams.set("ledgerIds", validatedLedgerIds);
-            } else if (validatedCurrencyIds) {
-              url.searchParams.delete("ledgerIds");
-              url.searchParams.set("currencyIds", validatedCurrencyIds);
-            } else {
-              return getStateFromPath("market", config);
+            const currencyIds = searchParams.get("currencyIds");
+
+            const validatedCurrencyIds = validateLargeMoverCurrencyIds(currencyIds);
+            if (!validatedCurrencyIds) {
+              // Redirect to market list when currencyIds is missing or invalid
+              return;
             }
+            url.searchParams.set("currencyIds", validatedCurrencyIds);
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
@@ -641,7 +633,16 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
             if (shouldDisplayMarketBanner) {
-              return handleMarketBannerDeeplink();
+              return {
+                routes: [
+                  {
+                    name: NavigatorName.Base,
+                    state: {
+                      routes: [{ name: ScreenName.MarketList }],
+                    },
+                  },
+                ],
+              };
             }
             return getStateFromPath("market", config);
           }
@@ -741,28 +742,6 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
-
-          if (hostname === "swap") {
-            const swapParams = new URLSearchParams();
-            const fromPath = searchParams.get("fromPath");
-            const fromToken = searchParams.get("fromToken");
-            const toToken = searchParams.get("toToken");
-            const amountFrom = searchParams.get("amountFrom");
-            const affiliate = searchParams.get("affiliate");
-            const fromCurrency = searchParams.get("fromCurrency");
-            const toCurrency = searchParams.get("toCurrency");
-            if (fromPath) swapParams.set("fromPath", fromPath);
-            if (fromToken) swapParams.set("fromTokenId", fromToken);
-            if (toToken) swapParams.set("toTokenId", toToken);
-            if (fromCurrency) swapParams.set("fromCurrencyId", fromCurrency);
-            if (toCurrency) swapParams.set("toCurrencyId", toCurrency);
-            if (amountFrom) swapParams.set("amountFrom", amountFrom);
-            if (affiliate) swapParams.set("affiliate", affiliate);
-            const swapSearch = swapParams.toString();
-            const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
-            return getStateFromPath(pathWithParams, config);
-          }
-
           if ((hostname === "discover" || hostname === "recover") && platform) {
             if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
@@ -788,11 +767,6 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          if (shouldDisplayWallet40MainNav) {
-            const w40State = handleWallet40Deeplink(hostname, platform, query);
-            if (w40State) return w40State;
-          }
-
           return getStateFromPath(path, config);
         },
       } as LinkingOptions<ReactNavigation.RootParamList>
@@ -806,7 +780,6 @@ export const DeeplinksProvider = ({
     buySellUiManifestId,
     dispatch,
     shouldDisplayMarketBanner,
-    shouldDisplayWallet40MainNav,
     liveAppProviderInitialized,
     manifests,
   ]);

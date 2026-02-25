@@ -6,7 +6,6 @@ import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as casper } from "../families/casper/setup";
 import { resolver as canton } from "../families/canton/setup";
 import { resolver as celo } from "../families/celo/setup";
-import { resolver as concordium } from "../families/concordium/setup";
 import { resolver as cosmos } from "../families/cosmos/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as hedera } from "../families/hedera/setup";
@@ -37,7 +36,6 @@ export default {
   casper,
   canton,
   celo,
-  concordium,
   cosmos,
   evm,
   hedera,

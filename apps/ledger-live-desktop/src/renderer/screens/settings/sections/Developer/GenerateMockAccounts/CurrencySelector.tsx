@@ -121,7 +121,7 @@ const CurrencyItemComponent = ({
 );
 
 const useClickOutside = (
-  ref: React.RefObject<HTMLElement | null>,
+  ref: React.RefObject<HTMLElement>,
   callback: () => void,
   isActive: boolean,
 ) => {

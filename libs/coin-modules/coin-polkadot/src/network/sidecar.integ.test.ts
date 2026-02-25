@@ -26,6 +26,13 @@ const CURRENCY_CONFIGS = {
       sidecar: { url: "https://polkadot-sidecar.coin.ledger.com" },
       indexer: { url: "https://polkadot.coin.ledger.com" },
       staking: { electionStatusThreshold: 25 },
+      metadataShortener: {
+        id: "dot",
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+      },
+      metadataHash: {
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+      },
     },
     testAddress: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
   },
@@ -37,6 +44,14 @@ const CURRENCY_CONFIGS = {
       node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
       staking: { electionStatusThreshold: 25 },
+      metadataShortener: {
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+        id: "dot-hub",
+      },
+      metadataHash: {
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+        id: "dot-hub",
+      },
       hasBeenMigrated: true,
     },
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
@@ -48,6 +63,14 @@ const CURRENCY_CONFIGS = {
       sidecar: { url: "https://polkadot-westend-sidecar.coin.ledger.com/rc" },
       node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
+      metadataShortener: {
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
+        id: "dot-hub",
+      },
+      metadataHash: {
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+        id: "dot-hub",
+      },
     },
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },
@@ -58,6 +81,14 @@ const CURRENCY_CONFIGS = {
       sidecar: { url: "https://polkadot-westend-sidecar.coin.ledger.com" },
       node: { url: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend" },
+      metadataShortener: {
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
+        id: "dot-hub",
+      },
+      metadataHash: {
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+        id: "dot-hub",
+      },
     },
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },

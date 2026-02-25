@@ -34,7 +34,7 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="grid h-full grid-rows-[auto_1fr] gap-24 py-32 pl-32">
+    <div className="grid h-full grid-rows-[auto_1fr] gap-24 pt-32 pb-40 pl-32">
       <div
         className={cn(
           "flex h-48 w-0 items-center justify-center justify-self-center overflow-visible transition-transform duration-300",

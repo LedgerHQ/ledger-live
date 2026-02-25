@@ -22,7 +22,7 @@ import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
-import dialogs, { DialogsState } from "./dialogs";
+import zcashSync, { ZcashSyncState } from "./zcashSync";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -42,7 +42,7 @@ export type State = LLDRTKApiState & {
   UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;
-  dialogs: DialogsState;
+  zcashSync: ZcashSyncState;
 };
 
 const appReducer = combineReducers({
@@ -63,7 +63,7 @@ const appReducer = combineReducers({
   wallet,
   walletSync,
   trustchain,
-  dialogs,
+  zcashSync,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

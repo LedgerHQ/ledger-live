@@ -29,7 +29,7 @@ export const usePortfolioBalanceSectionViewModel = ({
       return "noSigner";
     }
     if (!showAssets) {
-      return "noAccounts";
+      return "noFund";
     }
     return "normal";
   }, [isReadOnlyMode, showAssets]);

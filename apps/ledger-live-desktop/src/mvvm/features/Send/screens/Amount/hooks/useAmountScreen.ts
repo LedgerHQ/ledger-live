@@ -5,10 +5,9 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import {
-  SEND_FLOW_STEP,
-  type SendFlowTransactionActions,
-  type SendFlowUiConfig,
+import type {
+  SendFlowTransactionActions,
+  SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 
 type AmountScreenViewModelBase = Readonly<{
@@ -56,7 +55,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   }, [account, close, navigate, parentAccount]);
 
   const onReview = useCallback(() => {
-    navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
+    navigation.goToNextStep();
   }, [navigation]);
 
   if (!account || !transaction || !status || !uiConfig || !transactionActions) {

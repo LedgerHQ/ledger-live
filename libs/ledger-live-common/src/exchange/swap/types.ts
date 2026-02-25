@@ -177,7 +177,6 @@ export type SwapStatus = {
   provider: string;
   swapId: string;
   status: ValidSwapStatus;
-  finalAmount?: string;
 };
 
 // -----
@@ -238,7 +237,6 @@ export type MappedSwapOperation = {
   status: string;
   fromAmount: BigNumber;
   toAmount: BigNumber;
-  finalAmount?: BigNumber;
 };
 export type SwapState = {
   // NB fromAccount and fromParentAccount and amount come from `useBridgeTransaction`

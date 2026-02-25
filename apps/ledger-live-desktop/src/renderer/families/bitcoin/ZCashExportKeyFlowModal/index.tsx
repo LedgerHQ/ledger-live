@@ -3,10 +3,7 @@ import Modal from "~/renderer/components/Modal";
 import logger from "~/renderer/logger";
 import Body from "./Body";
 import { StepId } from "./types";
-import {
-  ZCASH_ACTIVATION_DATE,
-  ZCASH_ACTIVATION_DATE_STRING,
-} from "@ledgerhq/zcash-shielded/constants";
+import { ZCASH_ACTIVATION_DATE, ZCASH_ACTIVATION_DATE_STRING } from "./constants";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 
 const ExportKeyModal = () => {

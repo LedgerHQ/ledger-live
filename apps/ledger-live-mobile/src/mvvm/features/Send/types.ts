@@ -16,8 +16,6 @@ export type SendFlowConfig = ReactNativeFlowConfig<SendFlowStep, SendStepConfig>
 export type SendFlowStackParamList = {
   [ScreenName.SendFlowRecipient]: undefined;
   [ScreenName.SendFlowAmount]: undefined;
-  [ScreenName.SendFlowCustomFees]: undefined;
-  [ScreenName.SendFlowCoinControl]: undefined;
   [ScreenName.SendFlowSignature]: undefined;
   [ScreenName.SendFlowConfirmation]: undefined;
 };

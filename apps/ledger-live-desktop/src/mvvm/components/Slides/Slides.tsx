@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import { isValidReactElement } from "@ledgerhq/react-ui";
 import { cn } from "LLD/utils/cn";
 import { SlidesContext } from "./context";
 import { Content } from "./components/Content";
@@ -13,12 +12,7 @@ export type SlidesProps = {
   className?: string;
 };
 
-export function Slides({
-  children,
-  onSlideChange,
-  initialSlideIndex = 0,
-  className,
-}: Readonly<SlidesProps>) {
+export function Slides({ children, onSlideChange, initialSlideIndex = 0, className }: SlidesProps) {
   const { scrollContainerRef, handleScroll, contextValue } = useSlidesViewModel({
     children,
     onSlideChange,
@@ -29,18 +23,18 @@ export function Slides({
     <SlidesContext.Provider value={contextValue}>
       <div className={cn("flex flex-1 flex-col", className)}>
         {React.Children.map(children, child => {
-          if (isValidReactElement(child) && child.type === Content) {
+          if (React.isValidElement(child) && child.type === Content) {
             return (
               <div
                 ref={scrollContainerRef}
                 onScroll={handleScroll}
                 className="scrollbar-none flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth"
               >
-                {(child as React.ReactElement<{ children: ReactNode }>).props.children}
+                {child.props.children}
               </div>
             );
           }
-          if (isValidReactElement(child) && child.type === StaticSection) {
+          if (React.isValidElement(child) && child.type === StaticSection) {
             return child;
           }
           return null;

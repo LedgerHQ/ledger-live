@@ -1,12 +1,10 @@
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
 import BigNumber from "bignumber.js";
-import {
-  mockBtcCryptoCurrency,
-  mockArbitrumCryptoCurrency,
-  mockEthCryptoCurrency,
-  mockBaseCryptoCurrency,
-  mockScrollCryptoCurrency,
-} from "./currencies.mock";
+import { mockBtcCryptoCurrency } from "./currencies.mock";
+import { mockArbitrumCryptoCurrency } from "./currencies.mock";
+import { mockEthCryptoCurrency } from "./currencies.mock";
+import { mockBaseCryptoCurrency } from "./currencies.mock";
+import { mockScrollCryptoCurrency } from "./currencies.mock";
 
 export const MOCKED_ARB_ACCOUNT = {
   type: "Account",

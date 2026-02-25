@@ -222,20 +222,18 @@ export const fromOperationRaw = (
 };
 
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
-  const { fromAmount, toAmount, finalAmount, ...rest } = raw;
+  const { fromAmount, toAmount } = raw;
   return {
-    ...rest,
+    ...raw,
     fromAmount: new BigNumber(fromAmount),
     toAmount: new BigNumber(toAmount),
-    ...(finalAmount !== undefined && { finalAmount: new BigNumber(finalAmount) }),
   };
 }
 export function toSwapOperationRaw(so: SwapOperation): SwapOperationRaw {
-  const { fromAmount, toAmount, finalAmount, ...rest } = so;
+  const { fromAmount, toAmount } = so;
   return {
-    ...rest,
+    ...so,
     fromAmount: fromAmount.toString(),
     toAmount: toAmount.toString(),
-    ...(finalAmount !== undefined && { finalAmount: finalAmount.toString() }),
   };
 }

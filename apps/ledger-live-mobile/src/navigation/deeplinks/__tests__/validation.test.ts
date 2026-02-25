@@ -1,8 +1,4 @@
-import {
-  validateLargeMoverCurrencyIds,
-  validateLargeMoverLedgerIds,
-  validateMarketCurrencyId,
-} from "../validation";
+import { validateLargeMoverCurrencyIds, validateMarketCurrencyId } from "../validation";
 
 describe("validateLargeMoverCurrencyIds", () => {
   it("should return null when currencyIds is null", () => {
@@ -48,43 +44,6 @@ describe("validateLargeMoverCurrencyIds", () => {
   it("should handle mixed case currencyIds", () => {
     const result = validateLargeMoverCurrencyIds("BtC,eTh,XrP");
     expect(result).toBe("BTC,ETH,XRP");
-  });
-});
-
-describe("validateLargeMoverLedgerIds", () => {
-  it("should return null when ledgerIds is null", () => {
-    expect(validateLargeMoverLedgerIds(null)).toBeNull();
-  });
-
-  it("should return null when ledgerIds is empty string", () => {
-    expect(validateLargeMoverLedgerIds("")).toBeNull();
-  });
-
-  it("should return null when ledgerIds is only whitespace", () => {
-    expect(validateLargeMoverLedgerIds("   ")).toBeNull();
-  });
-
-  it("should lowercase and trim single ledger id", () => {
-    expect(validateLargeMoverLedgerIds("ethereum/erc20/usd__coin")).toBe(
-      "ethereum/erc20/usd__coin",
-    );
-    expect(validateLargeMoverLedgerIds("  bitcoin  ")).toBe("bitcoin");
-  });
-
-  it("should lowercase and trim multiple ledger ids", () => {
-    expect(validateLargeMoverLedgerIds("ethereum/erc20/usd__coin,bitcoin")).toBe(
-      "ethereum/erc20/usd__coin,bitcoin",
-    );
-  });
-
-  it("should remove duplicates", () => {
-    expect(validateLargeMoverLedgerIds("bitcoin,ethereum/erc20/usd__coin,bitcoin")).toBe(
-      "bitcoin,ethereum/erc20/usd__coin",
-    );
-  });
-
-  it("should filter out empty segments", () => {
-    expect(validateLargeMoverLedgerIds("btc,,eth")).toBe("btc,eth");
   });
 });
 

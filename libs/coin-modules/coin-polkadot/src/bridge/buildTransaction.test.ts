@@ -23,6 +23,7 @@ jest.mock("../network", () => {
         extrinsics: mockExtrinsics(),
       }),
     getTransactionParams: () => mockGetTransactionParams(),
+    metadataHash: () => "0x12345678",
   };
 });
 
@@ -43,6 +44,12 @@ describe("buildTransaction", () => {
         },
         staking: {
           electionStatusThreshold: 25,
+        },
+        metadataShortener: {
+          url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+        },
+        metadataHash: {
+          url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
         },
       };
     });
@@ -105,7 +112,7 @@ describe("buildTransaction", () => {
         era: "HexCodec 4 ExtrinsicEra",
         nonce: expect.any(Number),
         mode: 1,
-        metadataHash: new Uint8Array([1, ...new Array(32).fill(0)]),
+        metadataHash: new Uint8Array([1, 0, 18, 52, 86, 120]),
         specVersion: "HexCodec 4 u32",
         transactionVersion: "HexCodec 4 u32",
         version: 4,

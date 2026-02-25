@@ -33,7 +33,6 @@ export function usePortfolioCards(): UsePortfolioCards {
           card: slide.id,
           page: "Portfolio",
           type: "portfolio_carousel",
-          location: slide.location,
         });
       }
 
@@ -64,7 +63,6 @@ export function usePortfolioCards(): UsePortfolioCards {
         campaign: cardId,
         page: "Portfolio",
         type: "portfolio_carousel",
-        location: slide.location,
       });
 
       const currentCard = cachedContentCards.find(card => card.id === cardId);

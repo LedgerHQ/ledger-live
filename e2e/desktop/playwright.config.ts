@@ -20,10 +20,12 @@ const config: PlaywrightTestConfig = {
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
-  workers: "100%",
+  workers: "50%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
   reporter: process.env.CI
     ? [
-        ["list"],
+        ["html", { open: "never", outputFolder: "artifacts/html-report" }],
+        ["github"],
+        ["line"],
         [
           "allure-playwright",
           {

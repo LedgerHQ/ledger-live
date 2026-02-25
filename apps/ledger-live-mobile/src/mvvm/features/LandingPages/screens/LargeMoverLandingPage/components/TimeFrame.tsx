@@ -1,7 +1,7 @@
 import React from "react";
 import { TabSelector } from "@ledgerhq/native-ui";
 import { View } from "react-native";
-import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "~/context/Locale";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";

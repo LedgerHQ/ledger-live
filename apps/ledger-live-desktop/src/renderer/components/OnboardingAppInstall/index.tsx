@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Text, Button } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelInfo, SeedOriginType } from "@ledgerhq/types-live";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -13,6 +13,7 @@ import LockedModal from "./LockedModal";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsFlowName } from "../SyncOnboarding/Manual/shared";
 import { track, trackPage } from "~/renderer/analytics/segment";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 

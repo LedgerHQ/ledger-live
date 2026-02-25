@@ -15,7 +15,6 @@ export type SwapOperation = {
   operationId: string;
   fromAmount: BigNumber;
   toAmount: BigNumber;
-  finalAmount?: BigNumber;
 };
 
 /**
@@ -30,5 +29,4 @@ export type SwapOperationRaw = {
   operationId: string;
   fromAmount: string;
   toAmount: string;
-  finalAmount?: string;
 };

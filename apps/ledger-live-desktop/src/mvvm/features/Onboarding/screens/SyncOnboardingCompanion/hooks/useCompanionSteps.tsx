@@ -133,6 +133,7 @@ const useCompanionSteps = ({
               category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
               {t("syncOnboarding.manual.pairedContent.description", {
                 productName,
@@ -154,6 +155,7 @@ const useCompanionSteps = ({
         renderBody: () => (
           <Flex flexDirection="column">
             <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
               {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>

@@ -92,14 +92,12 @@ const OperationRow = ({
     toAccount,
     fromAmount,
     toAmount,
-    finalAmount,
     provider,
     swapId,
     operation,
     status,
     toExists,
   } = mappedSwapOperation;
-  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const dateFormatted = useDateFormatted(operation.date, hourFormat);
@@ -184,7 +182,7 @@ const OperationRow = ({
       </Box>
       <Box alignItems={"flex-end"} ml={20}>
         <Text data-testid={`swap-history-to-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={4}>
-          <FormattedVal alwaysShowSign val={displayToAmount} unit={unitTo} showCode />
+          <FormattedVal alwaysShowSign val={toAmount} unit={unitTo} showCode />
         </Text>
         <Text data-testid={`swap-history-from-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={3}>
           <FormattedVal

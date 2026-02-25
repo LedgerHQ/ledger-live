@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { type QueryableConsts } from "@polkadot/api/types";
+import { decorateConstants } from "@polkadot/types";
 import getApiPromise from "./apiPromise";
 
 /**
@@ -7,12 +7,15 @@ import getApiPromise from "./apiPromise";
  *
  * @async
  *
- * @returns {Promise<QueryableConsts<"promise">>}
+ * @returns {Object}
  */
-export const fetchConstants = async (
-  currency?: CryptoCurrency,
-): Promise<QueryableConsts<"promise">> => {
+export const fetchConstants = async (currency?: CryptoCurrency): Promise<Record<string, any>> => {
   const api = await getApiPromise(currency);
 
-  return api.consts;
+  const metadata = await api.rpc.state.getMetadata();
+  const registry = api.registry;
+
+  const consts = decorateConstants(registry, metadata.asLatest, metadata.version);
+
+  return consts;
 };

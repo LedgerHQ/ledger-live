@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Operation } from "@ledgerhq/types-live";
-import { useSendFlowOperationState } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowOperationState";
 import type {
   SendFlowOperationResult,
   SendFlowOperationActions,
@@ -12,36 +11,53 @@ type UseSendFlowOperationResult = Readonly<{
 }>;
 
 /**
- * Mobile-specific operation hook (pure state, no side-effects)
- * Wraps common operation state with mobile-specific behavior if needed
+ * Hook for managing operation state in Send flow
+ * Handles operation broadcast, signing, errors, and retry logic
  */
 export function useSendFlowOperation(): UseSendFlowOperationResult {
-  const { state, actions: stateActions } = useSendFlowOperationState();
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
+  const [signed, setSigned] = useState<boolean>(false);
 
-  const onOperationBroadcasted = useCallback(
-    (operation: Operation) => {
-      stateActions.dispatchSetOperation(operation);
-    },
-    [stateActions],
-  );
+  const onOperationBroadcasted = useCallback((operation: Operation) => {
+    setOptimisticOperation(operation);
+    setTransactionError(null);
+    setSigned(true);
+  }, []);
 
-  const onTransactionError = useCallback(
-    (error: Error) => {
-      stateActions.dispatchSetError(error);
-    },
-    [stateActions],
-  );
+  const onTransactionError = useCallback((error: Error) => {
+    setTransactionError(error);
+    setOptimisticOperation(null);
+    setSigned(false);
+  }, []);
 
   const onSigned = useCallback(() => {
-    stateActions.dispatchSetSigned();
-  }, [stateActions]);
+    setSigned(true);
+    setTransactionError(null);
+  }, []);
 
   const onRetry = useCallback(() => {
-    stateActions.dispatchReset();
-  }, [stateActions]);
+    setTransactionError(null);
+    setOptimisticOperation(null);
+    setSigned(false);
+  }, []);
+
+  const state: SendFlowOperationResult = useMemo(
+    () => ({
+      optimisticOperation,
+      transactionError,
+      signed,
+    }),
+    [optimisticOperation, transactionError, signed],
+  );
 
   const actions: SendFlowOperationActions = useMemo(
-    () => ({ onOperationBroadcasted, onTransactionError, onSigned, onRetry }),
+    () => ({
+      onOperationBroadcasted,
+      onTransactionError,
+      onSigned,
+      onRetry,
+    }),
     [onOperationBroadcasted, onTransactionError, onSigned, onRetry],
   );
 

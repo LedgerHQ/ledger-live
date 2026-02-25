@@ -130,8 +130,6 @@ export enum ScreenName {
   SendFlowRecipient = "SendFlowRecipient",
   SendFlowAmount = "SendFlowAmount",
   SendFlowConfirmation = "SendFlowConfirmation",
-  SendFlowCustomFees = "SendFlowCustomFees",
-  SendFlowCoinControl = "SendFlowCoinControl",
   SendFlowSignature = "SendFlowSignature",
   TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",

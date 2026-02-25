@@ -219,31 +219,29 @@ export async function createSpeculosDevice(
   const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
   const appPath = `./apps/${subpath}`;
 
-  const getPortMappings = (): string[] => {
-    if (process.env.CI) {
-      return [];
-    }
-    if (isSpeculosWebsocket) {
-      return [
-        "-p",
-        `${ports.apduPort}:40000`,
-        "-p",
-        `${ports.vncPort}:41000`,
-        "-p",
-        `${ports.buttonPort}:42000`,
-        "-p",
-        `${ports.automationPort}:43000`,
-      ];
-    }
-    return ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`];
-  };
-
   const params = [
     "run",
-    ...(process.env.CI ? ["--network=host"] : []),
     "-v",
     `${coinapps}:/speculos/apps`,
-    ...getPortMappings(),
+    ...(isSpeculosWebsocket
+      ? [
+          // websocket ports
+          "-p",
+          `${ports.apduPort}:40000`,
+          "-p",
+          `${ports.vncPort}:41000`,
+          "-p",
+          `${ports.buttonPort}:42000`,
+          "-p",
+          `${ports.automationPort}:43000`,
+        ]
+      : [
+          // http ports
+          "-p",
+          `${ports.apiPort}:40000`,
+          "-p",
+          `${ports.vncPort}:41000`,
+        ]),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
@@ -267,18 +265,23 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
-    ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []),
-    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", `${ports.vncPort}`] : []),
+    ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []), // to use the production PKI
+    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
       ? [
+          // websocket ports
           "--apdu-port",
-          process.env.CI ? `${ports.apduPort}` : "40000",
+          "40000",
           "--button-port",
-          process.env.CI ? `${ports.buttonPort}` : "42000",
+          "42000",
           "--automation-port",
-          process.env.CI ? `${ports.automationPort}` : "43000",
+          "43000",
         ]
-      : ["--api-port", process.env.CI ? `${ports.apiPort}` : "40000"]),
+      : [
+          // http ports
+          "--api-port",
+          "40000",
+        ]),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);

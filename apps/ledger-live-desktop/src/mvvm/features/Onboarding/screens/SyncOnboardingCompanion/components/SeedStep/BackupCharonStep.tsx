@@ -56,9 +56,11 @@ const BackupCharonStep = ({ productName, deviceIcon }: Props) => {
           >
             <StyledAnimation animation={CHARON as object} />
           </Flex>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={24} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
             {t("syncOnboarding.manual.seedContent.backupCharonTitle")}
           </StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={24} textAlign="center">
             {t("syncOnboarding.manual.seedContent.backupCharonDescription")}
           </StepText>

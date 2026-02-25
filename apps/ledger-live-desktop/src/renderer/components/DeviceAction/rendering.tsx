@@ -9,7 +9,8 @@ import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, ABTestingVariants } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {
   Button as ButtonV3,
@@ -44,11 +45,8 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
-import {
-  DmkError,
-  isInvalidGetFirmwareMetadataResponseError,
-  isDisconnectedWhileSendingApduError,
-} from "@ledgerhq/live-dmk-desktop";
+import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-desktop";
+import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
-import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 
 type Props = {
   firmware: FirmwareUpdateContext;
@@ -14,7 +14,7 @@ type Props = {
 
 export default function Disclaimer({ firmware, onContinue }: Props) {
   const { t } = useTranslation();
-  const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   return (
     <Flex flex={1} flexDirection="column" justifyContent="space-between" overflowY="hidden">
@@ -28,7 +28,7 @@ export default function Disclaimer({ firmware, onContinue }: Props) {
         my={12}
       >
         <TrackPage category="Manager" name="DisclaimerModal" />
-        {hasOnboardedDevice && (
+        {hasCompletedOnboarding && (
           <Alert
             type="info"
             title={t("manager.firmware.prepareSeed")}

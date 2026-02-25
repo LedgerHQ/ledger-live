@@ -1,13 +1,10 @@
 import "./test-helpers/staticTime";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-  setSupportedCurrencies,
-} from "../currencies";
+import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
+import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 // Setup mock store for unit tests

@@ -3,7 +3,8 @@ import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-commo
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useBannersVisibility } from "../useBannersVisibility";
-import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
+import { ActionContentCard } from "~/types/dynamicContent";
+import { LocationContentCard } from "~/types/dynamicContent";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/postOnboarding/hooks/index"),

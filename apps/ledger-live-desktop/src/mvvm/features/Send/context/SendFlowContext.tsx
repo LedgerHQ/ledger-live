@@ -4,12 +4,12 @@ import type {
   SendFlowUiConfig,
   SendFlowTransactionActions,
   SendFlowOperationActions,
-  SendFlowStep,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types";
 import type { FlowWizardContextValue } from "../../FlowWizard/types";
 import { FlowWizardProvider } from "../../FlowWizard/FlowWizardContext";
+import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
 
 /**

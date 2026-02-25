@@ -4,7 +4,6 @@ type CommonParams = {
   goToURL?: string;
   lastScreen?: string;
   name?: string;
-  path?: string;
   platform?: string;
   referrer?: string;
 };

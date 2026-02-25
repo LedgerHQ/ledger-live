@@ -14,6 +14,8 @@
     "src/operation.ts",
     "src/config.ts",
     "src/api/index.ts",
+    "src/bridge/preload.ts",
+    "src/bridge/synchronization.ts",
     "src/network/nft/index.ts",
     "src/logic/validateAddress.ts"
   ],

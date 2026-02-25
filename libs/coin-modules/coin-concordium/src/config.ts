@@ -1,12 +1,12 @@
-import buildCoinConfig, { type CoinConfig } from "@ledgerhq/coin-framework/config";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { ConcordiumCoinConfig } from "./types/config";
+import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export type { ConcordiumCoinConfig } from "./types/config";
+export type ConcordiumConfig = {
+  nodeUrl: string;
+  minReserve: number;
+};
 
-const coinConfig: {
-  setCoinConfig: (config: CoinConfig<ConcordiumCoinConfig>) => void;
-  getCoinConfig: (currency?: CryptoCurrency) => ConcordiumCoinConfig;
-} = buildCoinConfig<ConcordiumCoinConfig>();
+export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;
+
+const coinConfig = buildCoinConfig<ConcordiumCoinConfig>();
 
 export default coinConfig;

@@ -24,7 +24,6 @@ import {
   BlockInfo,
   FeeEstimation,
   Operation,
-  Page,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
@@ -290,12 +289,12 @@ export class AptosAPI {
     }
   }
 
-  async listOperations(rawAddress: string, minHeight: number): Promise<Page<Operation>> {
+  async listOperations(rawAddress: string, minHeight: number): Promise<[Operation[], string]> {
     const address = normalizeAddress(rawAddress);
     const transactions = await this.getAccountInfo(address, minHeight.toString());
     const newOperations = transactionsToOperations(address, transactions.transactions);
 
-    return { items: newOperations, next: undefined };
+    return [newOperations, ""];
   }
 
   private async getAllTransactions(address: string, gt?: string): Promise<TransactionVersion[]> {

@@ -5,8 +5,9 @@
 import { ipcRenderer } from "electron";
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
 import { log, trace, TraceContext } from "@ledgerhq/logs";
-import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
+import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { Observer } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 // No longer need transport channels - using direct invoke
 

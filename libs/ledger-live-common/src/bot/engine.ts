@@ -16,10 +16,11 @@ import {
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
-import { promiseAllBatched, delay } from "../promise";
+import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
 import { getOperationConfirmationNumber } from "../operation";
 import { getEnv } from "@ledgerhq/live-env";
+import { delay } from "../promise";
 import {
   listAppCandidates,
   createSpeculosDevice,

@@ -33,7 +33,6 @@ interface UsePortfolioViewModelResult {
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
   shouldDisplayQuickActionCtas: boolean;
-  shouldDisplayWallet40MainNav: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -44,6 +43,7 @@ interface UsePortfolioViewModelResult {
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
   goToAnalyticsAllocations: () => void;
+  shouldDisplayWallet40MainNav: boolean;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -139,7 +139,6 @@ const usePortfolioViewModel = (navigation: {
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
-    shouldDisplayWallet40MainNav,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -150,6 +149,7 @@ const usePortfolioViewModel = (navigation: {
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
+    shouldDisplayWallet40MainNav,
   };
 };
 

@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo } from "react";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
+import useAccountsListViewModel, { type Props } from "./useAccountsListViewModel";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import { Pressable } from "react-native";
+import AccountItem from "./components/AccountItem";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import isEqual from "lodash/isEqual";
-import useAccountsListViewModel, { type Props } from "../../hooks/useAccountsListViewModel";
-import AccountItem from "../AccountItem";
 
 type ViewProps = ReturnType<typeof useAccountsListViewModel>;
 

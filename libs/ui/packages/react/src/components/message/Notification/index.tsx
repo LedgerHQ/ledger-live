@@ -46,7 +46,7 @@ function Notification({
   onLinkClick,
   hasBackground = false,
   ...containerProps
-}: Readonly<Props>): React.JSX.Element {
+}: Props): JSX.Element {
   return (
     <Container hasBackground={hasBackground} {...containerProps}>
       {badge}
@@ -72,5 +72,5 @@ function Notification({
 }
 Notification.Badge = Badge;
 
-export type NotificationType = { (p: Props): React.JSX.Element; Badge: typeof Badge };
+export type NotificationType = { (p: Props): JSX.Element; Badge: typeof Badge };
 export default Notification as NotificationType;

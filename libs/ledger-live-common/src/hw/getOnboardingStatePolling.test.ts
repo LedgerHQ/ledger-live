@@ -7,8 +7,6 @@ import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   LockedDeviceError,
-  TransportStatusError,
-  StatusCodes,
   UnexpectedBootloader,
 } from "@ledgerhq/errors";
 import { withDevice } from "./deviceAccess";
@@ -321,7 +319,7 @@ describe("getOnboardingStatePolling", () => {
 
       jest.advanceTimersByTime(pollingPeriodMs);
     });
-    it("should not call quitApp when getVersion succeeds", done => {
+    it("should call quitApp before fetching the device version", done => {
       mockedGetVersion.mockResolvedValue(aFirmwareInfo);
       mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
 
@@ -335,7 +333,12 @@ describe("getOnboardingStatePolling", () => {
         next: value => {
           try {
             expect(value.onboardingState).toEqual(anOnboardingState);
-            expect(mockedQuitApp).not.toHaveBeenCalled();
+
+            expect(mockedQuitApp).toHaveBeenCalledTimes(1);
+
+            const firstCallArgs = (mockedQuitApp as jest.Mock).mock.calls[0];
+            expect(firstCallArgs[0]).toBeInstanceOf(Transport);
+
             done();
           } catch (err) {
             done(err);
@@ -347,118 +350,71 @@ describe("getOnboardingStatePolling", () => {
       jest.advanceTimersByTime(pollingPeriodMs - 1);
     });
 
-    it.each([
-      { name: "INS_NOT_SUPPORTED", statusCode: StatusCodes.INS_NOT_SUPPORTED },
-      { name: "CLA_NOT_SUPPORTED", statusCode: StatusCodes.CLA_NOT_SUPPORTED },
-    ])(
-      "should call quitApp and retry getVersion when getVersion fails with $name",
-      ({ statusCode }, done) => {
-        const error = new TransportStatusError(statusCode);
-        mockedGetVersion.mockRejectedValueOnce(error).mockResolvedValue(aFirmwareInfo);
-        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+    it("should call quitApp only once when polling", () => {
+      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
 
-        const device = aDevice;
+      const device = aDevice;
 
-        onboardingStatePollingSubscription = getOnboardingStatePolling({
-          deviceId: device.deviceId,
-          deviceName: null,
-          pollingPeriodMs,
-        }).subscribe({
-          next: value => {
-            try {
-              expect(value.onboardingState).toEqual(anOnboardingState);
-              expect(mockedQuitApp).toHaveBeenCalledTimes(1);
-              expect(mockedGetVersion).toHaveBeenCalledTimes(2);
-              done();
-            } catch (err) {
-              done(err);
-            }
-          },
-          error: err => done(err),
-        });
+      onboardingStatePollingSubscription = getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        deviceName: null,
+        pollingPeriodMs,
+      }).subscribe();
 
-        jest.advanceTimersByTime(pollingPeriodMs - 1);
-      },
-    );
+      jest.advanceTimersByTime(pollingPeriodMs - 1);
 
-    it.each([
-      { name: "INS_NOT_SUPPORTED", statusCode: StatusCodes.INS_NOT_SUPPORTED },
-      { name: "CLA_NOT_SUPPORTED", statusCode: StatusCodes.CLA_NOT_SUPPORTED },
-    ])(
-      "should only attempt quitApp once even if getVersion keeps failing with $name",
-      async ({ statusCode }) => {
-        const appError = new TransportStatusError(statusCode);
-        mockedGetVersion.mockRejectedValue(appError);
-        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+      expect(mockedQuitApp).toHaveBeenCalledTimes(1);
+      const firstCallArgs = (mockedQuitApp as jest.Mock).mock.calls[0];
+      expect(firstCallArgs[0]).toBeInstanceOf(Transport);
 
-        const device = aDevice;
-        const values: { onboardingState: OnboardingState | null; allowedError: Error | null }[] =
-          [];
+      jest.advanceTimersByTime(pollingPeriodMs * 5);
 
-        onboardingStatePollingSubscription = getOnboardingStatePolling({
-          deviceId: device.deviceId,
-          deviceName: null,
-          pollingPeriodMs,
-        }).subscribe({
-          next: value => values.push(value),
-        });
+      expect(mockedQuitApp).toHaveBeenCalledTimes(1);
 
-        await jest.advanceTimersByTimeAsync(pollingPeriodMs * 3);
+      expect(mockedGetVersion.mock.calls.length).toBeGreaterThanOrEqual(1);
+    });
 
-        expect(values.length).toBeGreaterThanOrEqual(1);
-        expect(values[0].onboardingState).toBeNull();
-        expect(values[0].allowedError).toBeInstanceOf(TransportStatusError);
-        expect(mockedQuitApp).toHaveBeenCalledTimes(1);
-      },
-    );
-
-    it("should not call getVersion retry until quitApp completes", async () => {
-      const insError = new TransportStatusError(StatusCodes.INS_NOT_SUPPORTED);
+    it("should not call getVersion until quitApp completes (race condition fix)", done => {
       const quitAppSubject = new Subject<void>();
       mockedQuitApp.mockReturnValue(quitAppSubject.asObservable());
       mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
 
       const callOrder: string[] = [];
-      let callCount = 0;
 
       mockedGetVersion.mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) {
-          callOrder.push("getVersion:fail");
-          return Promise.reject(insError);
-        }
-        callOrder.push("getVersion:success");
+        callOrder.push("getVersion");
         return Promise.resolve(aFirmwareInfo);
       });
 
       const device = aDevice;
-      const values: { onboardingState: OnboardingState | null }[] = [];
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
         deviceName: null,
         pollingPeriodMs,
       }).subscribe({
-        next: value => values.push(value),
+        next: value => {
+          try {
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            expect(callOrder).toContain("getVersion");
+            done();
+          } catch (err) {
+            done(err);
+          }
+        },
+        error: err => done(err),
       });
 
-      // Flush microtasks so the first getVersion rejection is processed
-      await Promise.resolve();
-      await Promise.resolve();
-
       expect(mockedQuitApp).toHaveBeenCalledTimes(1);
-      expect(callOrder).toEqual(["getVersion:fail"]);
+      expect(callOrder).not.toContain("getVersion");
 
+      // Complete quitApp - getVersion is called immediately after via switchMap
       callOrder.push("quitApp completed");
       quitAppSubject.next();
       quitAppSubject.complete();
 
-      // Flush microtasks for the retry getVersion
-      await Promise.resolve();
-      await Promise.resolve();
-
-      expect(callOrder).toEqual(["getVersion:fail", "quitApp completed", "getVersion:success"]);
-      expect(values[0].onboardingState).toEqual(anOnboardingState);
+      expect(callOrder).toEqual(["quitApp completed", "getVersion"]);
     });
   });
 
@@ -479,30 +435,6 @@ describe("getOnboardingStatePolling", () => {
         error: error => {
           try {
             expect(error).toBeInstanceOf(UnexpectedBootloader);
-            done();
-          } catch (expectError) {
-            done(expectError);
-          }
-        },
-      });
-
-      jest.advanceTimersByTime(pollingPeriodMs - 1);
-    });
-
-    it("should not call quitApp when device is in bootloader (getVersion succeeds)", done => {
-      mockedGetVersion.mockResolvedValue({ ...aFirmwareInfo, isBootloader: true });
-
-      const device = aDevice;
-
-      onboardingStatePollingSubscription = getOnboardingStatePolling({
-        deviceId: device.deviceId,
-        deviceName: null,
-        pollingPeriodMs,
-      }).subscribe({
-        error: error => {
-          try {
-            expect(error).toBeInstanceOf(UnexpectedBootloader);
-            expect(mockedQuitApp).not.toHaveBeenCalled();
             done();
           } catch (expectError) {
             done(expectError);

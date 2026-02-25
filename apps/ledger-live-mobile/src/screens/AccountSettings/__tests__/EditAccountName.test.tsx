@@ -91,7 +91,7 @@ describe("EditAccountName", () => {
     const input = getByTestId("account-rename-text-input");
     await user.clear(input);
     await user.type(input, newName);
-    expect(getByTestId("account-rename-text-input").props.value).toBe(newName);
+    expect(input.props.value).toBe(newName);
   });
 
   test("dispatches actions and navigates back on valid name submission from AccountPage", async () => {

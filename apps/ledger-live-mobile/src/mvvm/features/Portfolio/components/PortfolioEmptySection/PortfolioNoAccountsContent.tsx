@@ -28,13 +28,7 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
-      <Button
-        appearance="gray"
-        size="lg"
-        lx={{ width: "full" }}
-        onPress={openAddModal}
-        testID="add-account-cta"
-      >
+      <Button appearance="gray" size="lg" lx={{ width: "full" }} onPress={openAddModal}>
         {t("account.emptyState.addCryptoAccount")}
       </Button>
       <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} doesNotHaveAccount />

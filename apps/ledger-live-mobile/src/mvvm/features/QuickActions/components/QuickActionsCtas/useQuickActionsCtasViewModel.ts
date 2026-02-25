@@ -157,7 +157,7 @@ export const useQuickActionsCtasViewModel = ({
         id: "swap",
         label: t("portfolio.quickActionsCtas.swap"),
         icon: Exchange,
-        disabled: !isExchangeEnabled,
+        disabled: !isExchangeEnabled || !hasFunds,
         onPress: handleSwapPress,
         testID: QUICK_ACTIONS_TEST_IDS.ctas.swap,
       },
@@ -170,7 +170,7 @@ export const useQuickActionsCtasViewModel = ({
         testID: QUICK_ACTIONS_TEST_IDS.ctas.buy,
       },
     ],
-    [t, isExchangeEnabled, handleTransferPress, handleSwapPress, handleBuyPress],
+    [t, hasFunds, isExchangeEnabled, handleTransferPress, handleSwapPress, handleBuyPress],
   );
 
   const quickActions = userState === "no_signer" ? noSignerActions : standardActions;

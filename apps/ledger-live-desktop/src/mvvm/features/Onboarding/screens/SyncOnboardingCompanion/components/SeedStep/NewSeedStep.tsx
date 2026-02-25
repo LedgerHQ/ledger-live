@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, ContinueOnDevice } from "@ledgerhq/react-ui";
-import { SubtitleText } from "LLD/features/Onboarding/components/VerticalTimeline";
+import { Flex, VerticalTimeline, ContinueOnDevice } from "@ledgerhq/react-ui";
 import StepText from "LLD/features/Onboarding/components/StepText";
 import SecretRecoveryPhrasePng from "../../assets/secret-recovery-phrase.png";
 import SeedStepWrapper from "./SeedStepWrapper";
@@ -32,6 +31,7 @@ const NewSeedStep = ({ productName, deviceIcon }: Props) => {
               style={{ height: 220, objectFit: "contain" }}
             />
           </Flex>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText
             mb={6}
             fontWeight="semiBold"
@@ -41,9 +41,11 @@ const NewSeedStep = ({ productName, deviceIcon }: Props) => {
           >
             {t("syncOnboarding.manual.seedContent.selectionNewSeedTitle")}
           </StepText>
-          <SubtitleText textAlign="center">
+          {/* @ts-expect-error weird props issue with React 18 */}
+          <VerticalTimeline.SubtitleText textAlign="center">
             {t("syncOnboarding.manual.seedContent.selectionNewSeedSubtitle")}
-          </SubtitleText>
+          </VerticalTimeline.SubtitleText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6} justifyContent={"center"} textAlign="center">
             {t("syncOnboarding.manual.seedContent.selectionNewSeedDescription")}
           </StepText>

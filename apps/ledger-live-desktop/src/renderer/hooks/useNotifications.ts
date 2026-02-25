@@ -78,7 +78,6 @@ export function useNotifications() {
         link: card.path || card.url,
         campaign: card.id,
         page: "notification_center",
-        location: card.location,
       });
     },
     [cachedNotifications, isTrackedUser],

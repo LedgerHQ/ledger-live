@@ -41,5 +41,4 @@ export type DerivationMode =
   | "celo"
   | "celoMM"
   | "celoEvm"
-  | "aleo"
-  | "concordium";
+  | "aleo";

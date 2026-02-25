@@ -24,7 +24,7 @@ import swipedAccountSubject from "~/types/subject";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
-import AccountItem from "LLM/features/Accounts/components/AccountItem";
+import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";

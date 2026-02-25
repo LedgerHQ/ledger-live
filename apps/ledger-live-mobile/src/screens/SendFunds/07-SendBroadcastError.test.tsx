@@ -35,7 +35,6 @@ const mockExportLogs = jest.fn();
 const setup = (error: Error | null, url: string | null = null) => {
   const mockRoute = {
     params: {
-      accountId: mockAccount.id,
       error: error ? { ...error, url } : null,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

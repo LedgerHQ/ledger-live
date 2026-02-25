@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Flex, Switch, Text } from "@ledgerhq/native-ui";
 
 interface ToggleRowProps {
   label: string;
@@ -9,24 +9,17 @@ interface ToggleRowProps {
 }
 
 export const ToggleRow = ({ label, value, onChange, description }: ToggleRowProps) => (
-  <Box
-    lx={{
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingVertical: "s8",
-    }}
-  >
-    <Box lx={{ flex: 1, marginRight: "s16" }}>
-      <Text typography="body2" lx={{ color: "base" }}>
+  <Flex flexDirection="row" alignItems="center" justifyContent="space-between" py={2}>
+    <Flex flex={1} mr={4}>
+      <Text variant="body" fontWeight="medium" color="neutral.c100">
         {label}
       </Text>
       {description && (
-        <Text typography="body3" lx={{ color: "muted", marginTop: "s4" }}>
+        <Text variant="small" color="neutral.c70" mt={1}>
           {description}
         </Text>
       )}
-    </Box>
-    <Switch checked={value} onCheckedChange={onChange} />
-  </Box>
+    </Flex>
+    <Switch checked={value} onChange={onChange} />
+  </Flex>
 );

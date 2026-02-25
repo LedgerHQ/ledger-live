@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import expect from "expect";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
@@ -32,8 +32,7 @@ const api = createApi({
   enableNetworkLogs: false,
 });
 
-const fromGenesisMinHeight = 0;
-const fromGenesisOrder = "asc" as const;
+const fromGenesis: Pagination = { minHeight: 0, order: "asc" };
 
 describe("operations", () => {
   beforeEach(() => {
@@ -62,13 +61,10 @@ describe("operations", () => {
     mockGetOperations.mockResolvedValue([[], ""]);
 
     // When
-    const operations = await api.listOperations("addr", {
-      minHeight: fromGenesisMinHeight,
-      order: fromGenesisOrder,
-    });
+    const operations = await api.listOperations("addr", fromGenesis);
 
     // Then
-    expect(operations).toEqual({ items: [], next: undefined });
+    expect(operations).toEqual([[], ""]);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
@@ -76,13 +72,10 @@ describe("operations", () => {
     mockGetOperations.mockResolvedValue([[mockOperation], ""]);
 
     // When
-    const operations = await api.listOperations("addr", {
-      minHeight: fromGenesisMinHeight,
-      order: fromGenesisOrder,
-    });
+    const operations = await api.listOperations("addr", fromGenesis);
 
     // Then
-    expect(operations).toEqual({ items: [mockOperation], next: undefined });
+    expect(operations).toEqual([[mockOperation], ""]);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
@@ -92,13 +85,10 @@ describe("operations", () => {
       .mockResolvedValueOnce([[mockOperation], ""]);
 
     // When
-    const operations = await api.listOperations("addr", {
-      minHeight: fromGenesisMinHeight,
-      order: fromGenesisOrder,
-    });
+    const operations = await api.listOperations("addr", fromGenesis);
 
     // Then
-    expect(operations).toEqual({ items: [mockOperation, mockOperation], next: undefined });
+    expect(operations).toEqual([[mockOperation, mockOperation], ""]);
     expect(mockGetOperations).toHaveBeenCalledTimes(2);
   });
 });

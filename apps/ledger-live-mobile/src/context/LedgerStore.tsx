@@ -3,11 +3,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import {
-  findCryptoCurrencyById,
-  getCryptoCurrencyById,
-  listSupportedFiats,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
@@ -33,6 +29,7 @@ import { importBle } from "~/actions/ble";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
+import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";

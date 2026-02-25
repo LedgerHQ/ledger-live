@@ -12,7 +12,7 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { Delegation, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+import { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import { openURL } from "~/renderer/linking";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -20,6 +20,7 @@ import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import BakerImage from "../BakerImage";
 import ContextMenu from "./ContextMenu";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {

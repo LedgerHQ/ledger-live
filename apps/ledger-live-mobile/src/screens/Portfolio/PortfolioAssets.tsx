@@ -18,7 +18,8 @@ import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import MarketBanner from "LLM/features/MarketBanner";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
+import useListsAnimation, { type TabListType } from "./useListsAnimation";
+import TabSection, { TAB_OPTIONS } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
@@ -72,19 +73,26 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const filteredAssets = useMemo(
+  const assetsToDisplay = useMemo(
     () =>
-      distribution.list.filter(
-        ({ currency }) =>
-          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-      ),
+      distribution.list
+        .filter(asset => {
+          return (
+            asset.currency.type !== "TokenCurrency" ||
+            !blacklistedTokenIdsSet.has(asset.currency.id)
+          );
+        })
+        .slice(0, maxItemsToDisplay),
     [distribution, blacklistedTokenIdsSet],
   );
 
-  const assetsToDisplay = useMemo(
-    () => filteredAssets.slice(0, maxItemsToDisplay),
-    [filteredAssets],
-  );
+  const {
+    handleButtonLayout,
+    handleAccountsContentSizeChange,
+    handleAssetsContentSizeChange,
+    assetsFullHeight,
+    accountsFullHeight,
+  } = useListsAnimation(selectedTab);
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
 
@@ -124,11 +132,8 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
-  const {
-    isEnabled: isWallet40Enabled,
-    shouldDisplayQuickActionCtas,
-    shouldDisplayMarketBanner,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayQuickActionCtas, shouldDisplayMarketBanner } =
+    useWalletFeaturesConfig("mobile");
 
   return (
     <>
@@ -144,11 +149,11 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         </Box>
       )}
 
-      {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
+      <Box>
+        <PortfolioPerpsEntryPoint />
+      </Box>
 
       <MarketBanner />
-
-      {isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
       {shouldDisplayMarketBanner && __DEV__ && (
         <Box my={24}>
@@ -159,11 +164,16 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}
+          handleButtonLayout={handleButtonLayout}
+          handleAssetsContentSizeChange={handleAssetsContentSizeChange}
+          handleAccountsContentSizeChange={handleAccountsContentSizeChange}
           onPressButton={onPressButton}
           initialTab={initialSelectedTab}
           showAssets={showAssets}
-          assetsLength={filteredAssets.length}
+          assetsLength={assetsToDisplay.length}
           accountsLength={allAccounts.length}
+          assetsFullHeight={assetsFullHeight}
+          accountsFullHeight={accountsFullHeight}
           maxItemsToDisplay={maxItemsToDisplay}
         />
       ) : (

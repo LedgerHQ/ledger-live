@@ -29,7 +29,7 @@ function QrCodeInput(
     ...inputProps
   }: InputProps & { onQrCodeClick?: (e: React.FormEvent<HTMLButtonElement>) => void },
   ref?: React.ForwardedRef<HTMLInputElement>,
-): React.JSX.Element {
+): JSX.Element {
   return (
     <Input
       ref={ref}

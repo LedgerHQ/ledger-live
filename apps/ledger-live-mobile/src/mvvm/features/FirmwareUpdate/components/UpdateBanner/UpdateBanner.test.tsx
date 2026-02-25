@@ -94,14 +94,10 @@ const newUpdateFlowSupportedDataSet: Array<{
 describe("<UpdateBanner />", () => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
-    // Use clearAllMocks instead of restoreAllMocks to avoid restoring global mocks
-    // that other tests depend on (netinfo, vision-camera, etc.)
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
+    //Can't reset all mocks https://github.com/facebook/react-native/issues/42904
     navigateToNewUpdateFlow.mockClear();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
-  });
-  afterEach(() => {
-    PlatformSpy?.mockRestore();
   });
 
   it("should not display the firmware update banner if there is no update", async () => {

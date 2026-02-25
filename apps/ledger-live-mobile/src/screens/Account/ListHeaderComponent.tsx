@@ -60,11 +60,8 @@ type Props = {
   t: TFunction;
 };
 
-/** Sync-only component type; family components never return a Promise (avoids React 19 FC return type). */
-type SyncComponent<P = object> = (props: P) => ReactNode;
-
 type MaybeComponent =
-  | SyncComponent<
+  | React.FunctionComponent<
       Partial<{
         account?: AccountLike;
         parentAccount?: Account;
@@ -206,6 +203,7 @@ export function useListHeaderComponents({
               <Box>
                 {AccountHeaderRendered && (
                   <Box mx={6} mb={6}>
+                    {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
                     {AccountHeaderRendered}
                   </Box>
                 )}
@@ -218,7 +216,12 @@ export function useListHeaderComponents({
           ]
         : []),
       ...(!empty && AccountBodyHeaderRendered
-        ? [<SectionContainer key="AccountBody">{AccountBodyHeaderRendered}</SectionContainer>]
+        ? [
+            <SectionContainer key="AccountBody">
+              {/* @ts-expect-error REACT19FIXME: ReactNode Promise<ReactNode> not compatible with React 18 */}
+              {AccountBodyHeaderRendered}
+            </SectionContainer>,
+          ]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts
         ? [

@@ -1,24 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 import IconUpdate from "~/renderer/icons/Update";
 import IconDonjon from "~/renderer/icons/Donjon";
 import IconWarning from "~/renderer/icons/TriangleWarning";
 import Spinner from "~/renderer/components/Spinner";
 import TopBanner, { FakeLink, Content } from "~/renderer/components/TopBanner";
+import { UpdaterContext } from "./UpdaterContext";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { TFunction } from "i18next";
-import {
-  BANNER_VISIBLE_STATUS,
-  useUpdaterStatus,
-} from "LLD/features/Updater/hooks/useUpdaterStatus";
 
-export const VISIBLE_STATUS = BANNER_VISIBLE_STATUS;
+export const VISIBLE_STATUS = [
+  "download-progress",
+  "checking",
+  "check-success",
+  "error",
+  "update-available",
+  "downloading-update",
+];
 
 const getContentByStatus = (
+  quitAndInstall: () => void,
+  reDownload: () => void,
   progress: number,
   version: string,
   t: TFunction,
-  quitAndInstall?: () => void,
-  reDownload?: () => void,
 ): Record<string, Content> => ({
   "download-progress": {
     Icon: Spinner,
@@ -50,15 +57,15 @@ const getContentByStatus = (
 });
 
 const UpdaterTopBanner: React.FC = () => {
-  const { context, isBannerVisible, getActionHandler } = useUpdaterStatus();
+  const context = useContext(UpdaterContext);
+  const urlLive = useLocalizedUrl(urls.liveHome);
   const { t } = useTranslation();
 
-  const quitAndInstall = getActionHandler("check-success");
-  const reDownload = getActionHandler("error");
+  const reDownload = () => openURL(urlLive);
 
-  if (!context || !isBannerVisible) return null;
-  const { status, downloadProgress, version } = context;
-  const content = getContentByStatus(downloadProgress, version!, t, quitAndInstall, reDownload)[
+  if (!context?.version || !VISIBLE_STATUS.includes(context.status)) return null;
+  const { status, quitAndInstall, downloadProgress, version } = context;
+  const content = getContentByStatus(quitAndInstall, reDownload, downloadProgress, version, t)[
     status
   ];
 

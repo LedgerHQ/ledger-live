@@ -154,12 +154,11 @@ const earnDashboardCurrencies = [
     xrayTicket: "B2CQA-3683",
     staking: true,
   },
-  // FIXME: Solana is delegated but we need to wait for BE to be updated
-  // {
-  //   account: Account.SOL_2,
-  //   xrayTicket: "B2CQA-3684",
-  //   staking: true,
-  // },
+  {
+    account: Account.SOL_2,
+    xrayTicket: "B2CQA-3684",
+    staking: true,
+  },
   {
     account: Account.ATOM_1,
     xrayTicket: "B2CQA-3685",

@@ -38,6 +38,7 @@ export const IDS = [
   "osmo",
   "axelar",
   "persistence",
+  "onomy",
   "mantra",
   "crypto_org",
   "xion",
@@ -72,6 +73,35 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/axelar/txs/$hash",
         address: "https://www.mintscan.io/axelar/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "onomy",
+    coinType: 118,
+    name: "Onomy",
+    managerAppName: "Cosmos",
+    ticker: "NOM",
+    scheme: "onomy",
+    color: "#8c94d3",
+    family: "cosmos",
+    units: [
+      {
+        name: "Onomy",
+        code: "NOM",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-Onomy",
+        code: "anom",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/onomy-protocol/txs/$hash",
+        address: "https://www.mintscan.io/onomy-protocl/validators/$address",
       },
     ],
   },

@@ -12,6 +12,7 @@
     ],
     "outDir": "lib",
     "typeRoots": [
+      "./types",
       "./node_modules/@types"
     ]
   },

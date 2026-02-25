@@ -1,5 +1,6 @@
 import { App, AppType } from "@ledgerhq/types-live";
-import { getDependencies, calculateDependencies } from "./polyfill";
+import { getDependencies } from "./polyfill";
+import { calculateDependencies } from "./polyfill";
 
 calculateDependencies();
 

@@ -1,4 +1,3 @@
-import React from "react";
 import baseStyled, { BaseStyledProps } from "../../styled";
 import {
   compose,
@@ -44,7 +43,6 @@ export interface TextProps extends BaseStyledProps {
   textOverflow?: string;
   uppercase?: boolean;
   whiteSpace?: WhiteSpace;
-  children?: React.ReactNode;
 }
 
 const Text = baseStyled.span.attrs<TextProps, TextProps>(

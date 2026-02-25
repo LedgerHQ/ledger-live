@@ -1,5 +1,6 @@
 import { createAction } from "redux-actions";
-import { LargeMoverActionTypes, LargeMoverPayload } from "./types";
+import { LargeMoverActionTypes } from "./types";
+import { LargeMoverPayload } from "./types";
 
 export const setTutorial = createAction<boolean>(LargeMoverActionTypes.SET_TUTORIAL);
 

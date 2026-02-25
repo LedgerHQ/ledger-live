@@ -12,7 +12,7 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const Logo = (): React.JSX.Element => {
+const Logo = (): JSX.Element => {
   const { isExpanded } = useContext(SideBarContext);
 
   return (

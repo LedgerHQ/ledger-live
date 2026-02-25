@@ -1,7 +1,9 @@
-import { useUpdaterStatus } from "LLD/features/Updater/hooks/useUpdaterStatus";
+import { useContext } from "react";
+import { UpdaterContext } from "./UpdaterContext";
+import { VISIBLE_STATUS } from "./Banner";
 
 const useIsUpdateAvailable = () => {
-  const { isBannerVisible } = useUpdaterStatus();
-  return isBannerVisible;
+  const context = useContext(UpdaterContext);
+  return context && context.version && VISIBLE_STATUS.includes(context.status);
 };
 export default useIsUpdateAvailable;

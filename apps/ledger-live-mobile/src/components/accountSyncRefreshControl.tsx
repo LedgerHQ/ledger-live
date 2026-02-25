@@ -71,6 +71,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
   }
 
   return React.forwardRef<unknown, P & Props>((prop, ref) => (
-    <Inner {...({ ...prop, forwardedRef: ref } as P & Props)} />
+    // @ts-expect-error REACT19FIXME: Generic forwardRef type inference issue with spread props
+    <Inner {...prop} forwardedRef={ref} />
   ));
 };

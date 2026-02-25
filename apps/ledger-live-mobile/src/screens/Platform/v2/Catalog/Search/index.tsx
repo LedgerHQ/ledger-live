@@ -12,7 +12,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
 import { Disclaimer } from "../../hooks";
-import type { Search as SearchType } from "../../types";
+import { Search as SearchType } from "../../types";
 
 export * from "./SearchBar";
 
@@ -22,13 +22,14 @@ const noResultIllustration = {
 };
 
 interface Props {
-  title?: React.ReactNode;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  listTitle?: React.ReactNode;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: SearchType;
-  isLegacySearch?: boolean;
 }
 
-export function Search({ title, disclaimer, search, isLegacySearch = true }: Props) {
+export function Search({ title, disclaimer, search }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -70,29 +71,23 @@ export function Search({ title, disclaimer, search, isLegacySearch = true }: Pro
   return (
     <>
       <Layout
-        isTitleVisible={!!title}
+        isTitleVisible={true}
         title={title}
         topHeaderContent={
-          isLegacySearch ? (
-            <TouchableOpacity
-              hitSlop={{
-                bottom: 10,
-                left: 24,
-                right: 24,
-                top: 10,
-              }}
-              style={{ paddingVertical: 16 }}
-              onPress={search.onCancel}
-              accessibilityLabel={t("common.back")}
-              accessibilityRole="button"
-            >
-              <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-search-arrow-left" />
-            </TouchableOpacity>
-          ) : undefined
+          <TouchableOpacity
+            hitSlop={{
+              bottom: 10,
+              left: 24,
+              right: 24,
+              top: 10,
+            }}
+            style={{ paddingVertical: 16 }}
+            onPress={search.onCancel}
+          >
+            <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-search-arrow-left" />
+          </TouchableOpacity>
         }
-        searchContent={
-          <SearchBar search={search} onCancel={isLegacySearch ? undefined : search.onCancel} />
-        }
+        searchContent={<SearchBar search={search} />}
         bodyContent={
           search.isSearching ? (
             <Flex marginTop={100}>

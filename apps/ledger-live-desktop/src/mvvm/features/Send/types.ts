@@ -7,14 +7,6 @@ export type SendStepConfig = FlowStepConfig<SendFlowStep> &
     addressInput?: boolean;
     showTitle?: boolean;
     height?: "fixed" | "hug";
-    /**
-     * A step that is not in an original order of previous <-> next paradigm
-     */
-    floating?: boolean;
-    /** i18n key used as the header title, overrides the default flow title. */
-    titleKey?: string;
-    /** Explicit step to navigate to when the user presses Back. */
-    backTarget?: SendFlowStep;
   }>;
 
 export type SendFlowConfig = FlowConfig<SendFlowStep, SendStepConfig>;

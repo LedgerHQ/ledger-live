@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { FlowWizardOrchestrator } from "../FlowWizardOrchestrator";
-import { useFlowWizard, FlowWizardProvider } from "../FlowWizardContext";
+import { useFlowWizard } from "../FlowWizardContext";
+import { FlowWizardProvider } from "../FlowWizardContext";
 import type { FlowConfig, StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
 const TEST_STEPS = {

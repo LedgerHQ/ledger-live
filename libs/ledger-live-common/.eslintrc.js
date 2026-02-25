@@ -21,7 +21,6 @@ module.exports = {
   plugins: ["react", "react-hooks", "import", "jsx-a11y"],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
-    "import/no-duplicates": "error",
     "linebreak-style": ["error", "unix"],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],

@@ -12,7 +12,6 @@ module.exports = {
     ],
   },
   passWithNoTests: true,
-  setupFiles: ["<rootDir>/jest.setup.js"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
   collectCoverageFrom: [
     "src/**/*.ts",
@@ -22,9 +21,6 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
-  transformIgnorePatterns: [
-    "node_modules/(?!(@walletconnect)/)",
-  ],
   workerThreads: true,
   reporters: [
     "default",

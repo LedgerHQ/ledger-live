@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -24,9 +24,6 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import SafeAreaView from "~/components/SafeAreaView";
-import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerChooseDevice>
@@ -48,7 +45,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -108,41 +104,35 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       if (request.type === "set") {
         navigation.setOptions({
           headerShown: true,
-          headerTitle: "",
           headerLeft: request.options.headerLeft,
           headerRight: request.options.headerRight,
           title: "",
         });
         setIsHeaderOverridden(true);
       } else {
-        navigation.setOptions(
-          shouldDisplayWallet40MainNav
-            ? { ...wallet40HeaderOptions, headerRight: () => null }
-            : { headerLeft: () => null, headerRight: () => null, ...headerOptions },
-        );
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...headerOptions,
+        });
         setIsHeaderOverridden(false);
       }
     },
-    [navigation, shouldDisplayWallet40MainNav],
-  );
-
-  const Container = shouldDisplayWallet40MainNav ? SafeAreaView : TabBarSafeAreaView;
-  const containerProps = useMemo(
-    () => (shouldDisplayWallet40MainNav ? { isFlex: true, edges: ["left", "right"] as const } : {}),
-    [shouldDisplayWallet40MainNav],
+    [navigation],
   );
 
   if (!isFocused) return null;
 
-  const showInlineTitle = !shouldDisplayWallet40MainNav && !isHeaderOverridden;
-
   return (
-    <Container {...containerProps}>
+    <TabBarSafeAreaView>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      {showInlineTitle ? (
-        <Text pt={3} px={16} pb={8} fontWeight="semiBold" variant="h4" testID="manager-title">
-          {t("manager.title")}
-        </Text>
+      {!isHeaderOverridden ? (
+        <Flex px={16} pb={8}>
+          <Text pt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
+            {t("manager.title")}
+          </Text>
+        </Flex>
       ) : null}
       <Flex flex={1}>
         <SelectDevice2
@@ -169,7 +159,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         onError={onError}
         location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
       />
-    </Container>
+    </TabBarSafeAreaView>
   );
 };
 

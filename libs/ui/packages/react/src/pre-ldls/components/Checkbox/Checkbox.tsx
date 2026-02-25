@@ -71,7 +71,7 @@ export const Checkbox = ({
   name,
   onChange,
   size,
-}: CheckboxProps): React.JSX.Element => (
+}: CheckboxProps): JSX.Element => (
   <Container data-disabled={isDisabled}>
     <Input
       type="checkbox"

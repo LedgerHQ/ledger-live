@@ -1,13 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CreditCard, Screens } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
 import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
 
 const HEADER_HEIGHT = 48;
@@ -18,35 +17,22 @@ export interface CardLandingScreenViewModelResult {
   readonly ctas: readonly CardLandingCta[];
   readonly pageName: string;
   readonly topInset: number;
-  readonly backgroundColor: string;
-  readonly isWallet40DarkMode: boolean;
-  readonly imageLoaded: boolean;
-  readonly onImageLoaded: () => void;
 }
 
 const TRACKING_BUTTON_EVENT = "button_clicked";
 
 export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResult => {
   const { t } = useTranslation();
-  const { theme: lumenTheme } = useLumenTheme();
-  const { isWallet40DarkMode } = useWallet40Theme("mobile");
-  const [imageLoaded, setImageLoaded] = useState(false);
   const navigation = useNavigation();
-
-  const onImageLoaded = useCallback(() => setImageLoaded(true), []);
 
   const handleExploreCardsPress = useCallback(() => {
     track(TRACKING_BUTTON_EVENT, {
       button: "explore cards",
       page: PAGE_NAME,
     });
-    navigation.navigate(NavigatorName.Card, {
-      screen: ScreenName.Card,
-      params: {
-        platform: CARD_APP_ID,
-        name: "Card Program",
-        path: "/providers-list",
-      },
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: CARD_APP_ID,
+      name: "Card Program",
     });
   }, [navigation]);
 
@@ -55,12 +41,9 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
       button: "I have a card",
       page: PAGE_NAME,
     });
-    navigation.navigate(NavigatorName.Card, {
-      screen: ScreenName.Card,
-      params: {
-        platform: CL_CARD_APP_ID,
-        name: "CL Card Powered by Ledger",
-      },
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: CL_CARD_APP_ID,
+      name: "CL Card Powered by Ledger",
     });
   }, [navigation]);
 
@@ -84,7 +67,8 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     [t, handleExploreCardsPress, handleIHaveACardPress],
   );
 
-  const topInset = HEADER_HEIGHT;
+  const insets = useSafeAreaInsets();
+  const topInset = insets.top + HEADER_HEIGHT;
 
   return {
     title: t("cardLanding.title"),
@@ -92,9 +76,5 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     ctas,
     pageName: PAGE_NAME,
     topInset,
-    backgroundColor: lumenTheme.colors.bg.base,
-    isWallet40DarkMode,
-    imageLoaded,
-    onImageLoaded,
   };
 };

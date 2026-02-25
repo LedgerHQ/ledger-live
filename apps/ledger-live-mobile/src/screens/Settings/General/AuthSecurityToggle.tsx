@@ -3,10 +3,11 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorName } from "~/const";
 import { privacySelector } from "~/reducers/settings";
 import SettingsRow from "~/components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
+import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 
 export default function AuthSecurityToggle() {

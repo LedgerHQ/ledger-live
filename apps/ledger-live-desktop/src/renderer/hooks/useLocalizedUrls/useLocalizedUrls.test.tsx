@@ -25,10 +25,7 @@ jest.mock("LLD/hooks/redux", () => {
 describe("useLocalizedUrl", () => {
   // Needed to wrap hook in a Redux Store
   const HookWrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>
-      {/* eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- react-redux uses @types/react@18, desktop uses @19; ReactNode differs */}
-      {children as React.ComponentProps<typeof Provider>["children"]}
-    </Provider>
+    <Provider store={store}>{children}</Provider>
   );
 
   let localizedUrl: ReturnType<typeof useLocalizedUrl>;

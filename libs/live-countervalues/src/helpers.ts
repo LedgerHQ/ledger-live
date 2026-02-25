@@ -11,10 +11,6 @@ export const inferCurrencyAPIID = (currency: Currency): string => {
     case "TokenCurrency": {
       // temporary solution to support assethub_polkadot
       if (currency.id === "assethub_polkadot") return "polkadot";
-
-      // temporary solution to support concordium_testnet
-      if (currency.id === "concordium_testnet") return "concordium";
-
       return currency.id;
     }
   }

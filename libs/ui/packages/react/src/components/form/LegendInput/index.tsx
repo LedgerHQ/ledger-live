@@ -16,7 +16,7 @@ const Legend = styled(Text)`
 function LegendInput(
   { legend, ...inputProps }: Props,
   ref?: React.ForwardedRef<HTMLInputElement>,
-): React.JSX.Element {
+): JSX.Element {
   return (
     <Input
       ref={ref}

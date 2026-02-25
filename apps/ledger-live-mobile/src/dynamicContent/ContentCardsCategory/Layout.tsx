@@ -6,7 +6,6 @@ import {
   BrazeContentCard,
   CategoryContentCard,
   ContentCardsLayout,
-  ContentCardsType,
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata } from "~/contentCards/cards/types";
@@ -22,6 +21,7 @@ import {
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "../useDynamicContent";
+import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
 import HeroCard from "~/contentCards/cards/hero";
@@ -153,7 +153,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
           displayedPosition={item.props.metadata.displayedPosition}
           location={card?.location}
         >
-          <Flex mx={6}>{item.component(item.props)}</Flex>
+          <Flex mx={6}>
+            {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
+            {item.component(item.props)}
+          </Flex>
         </LogContentCardWrapper>
       );
     }

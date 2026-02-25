@@ -3,10 +3,8 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 import { UseBalanceDeps, CreateBalanceItem } from "../utils/type";
-import {
-  calculateProviderTotals,
-  groupAccountsByAsset,
-} from "@ledgerhq/asset-aggregation/assetAggregation/index";
+import { calculateProviderTotals } from "../utils/calculateProviderTotal";
+import { groupAccountsByAsset } from "../utils/groupAccountsByAsset";
 
 export type AssetDeps = {
   useBalanceDeps: UseBalanceDeps;

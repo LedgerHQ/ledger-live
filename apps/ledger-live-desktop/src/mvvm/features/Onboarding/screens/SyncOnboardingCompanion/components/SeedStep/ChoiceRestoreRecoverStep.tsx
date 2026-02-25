@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
-import { SubtitleText } from "LLD/features/Onboarding/components/VerticalTimeline";
+import { Flex, VerticalTimeline, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
 import StepText from "LLD/features/Onboarding/components/StepText";
 import SeedStepWrapper from "./SeedStepWrapper";
 
@@ -17,14 +16,17 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
   return (
     <SeedStepWrapper testId="choice-restore-recover-step">
       <Flex flexDirection="column">
+        {/* @ts-expect-error weird props issue with React 18 */}
         <StepText mb={6}>{t("syncOnboarding.manual.seedContent.restoreDescription")}</StepText>
 
         <Flex mb={8}>
           <Icons.Note size="M" color="white" />
           <Flex ml={5} flexDirection="column" flex={1}>
-            <SubtitleText mb={2}>
+            {/* @ts-expect-error weird props issue with React 18 */}
+            <VerticalTimeline.SubtitleText mb={2}>
               {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
-            </SubtitleText>
+            </VerticalTimeline.SubtitleText>
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
               {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
             </StepText>
@@ -35,9 +37,11 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
             <Icons.RecoveryKey size="M" color="white" />
 
             <Flex ml={5} flexDirection="column" flex={1}>
-              <SubtitleText mb={2}>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <VerticalTimeline.SubtitleText mb={2}>
                 {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
-              </SubtitleText>
+              </VerticalTimeline.SubtitleText>
+              {/* @ts-expect-error weird props issue with React 18 */}
               <StepText>
                 {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
               </StepText>
@@ -49,9 +53,11 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
           <Icons.ShieldCheck size="M" color="white" />
 
           <Flex ml={5} flexDirection="column" flex={1}>
-            <SubtitleText mb={2}>
+            {/* @ts-expect-error weird props issue with React 18 */}
+            <VerticalTimeline.SubtitleText mb={2}>
               {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
-            </SubtitleText>
+            </VerticalTimeline.SubtitleText>
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
               {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
             </StepText>

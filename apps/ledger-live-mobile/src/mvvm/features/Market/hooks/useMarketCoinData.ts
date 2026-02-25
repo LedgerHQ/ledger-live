@@ -1,5 +1,7 @@
-import { useCurrencyChartData } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
-import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import {
+  useCurrencyChartData,
+  useCurrencyData,
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 
 import { useSelector } from "~/context/hooks";
 import { marketParamsSelector } from "~/reducers/market";

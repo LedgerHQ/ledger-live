@@ -1,15 +1,8 @@
 import React, { memo, useMemo } from "react";
-import { Animated, ImageBackground, View } from "react-native";
+import { View, ImageBackground } from "react-native";
 import { useTheme, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
-const FADE_DISTANCE = 150;
-
-type Props = {
-  scrollY?: Animated.Value;
-  fadeDistance?: number;
-};
-
-function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
+function EarnBackgroundComponent() {
   const { colorScheme } = useTheme();
   const styles = useStyleSheet(
     theme => ({
@@ -28,31 +21,15 @@ function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
     [],
   );
 
-  const isDark = useMemo(() => {
-    return colorScheme === "dark";
+  const chosenSource = useMemo(() => {
+    return colorScheme === "dark"
+      ? require("~/images/liveApps/earn/background-dark.webp")
+      : require("~/images/liveApps/earn/background-light.webp");
   }, [colorScheme]);
-
-  const opacity = useMemo(
-    () =>
-      scrollY
-        ? scrollY.interpolate({
-            inputRange: [0, fadeDistance ?? FADE_DISTANCE],
-            outputRange: [1, 0],
-            extrapolate: "clamp",
-          })
-        : 1,
-    [scrollY, fadeDistance],
-  );
-
-  const source = require("~/images/liveApps/earn/background-dark.webp");
 
   return (
     <View style={styles.container} pointerEvents="none">
-      {isDark && (
-        <Animated.View style={{ opacity }}>
-          <ImageBackground source={source} style={styles.imageContainer} />
-        </Animated.View>
-      )}
+      <ImageBackground source={chosenSource} style={styles.imageContainer} />
     </View>
   );
 }

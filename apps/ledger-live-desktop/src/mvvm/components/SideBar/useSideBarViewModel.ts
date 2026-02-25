@@ -200,15 +200,13 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
-    trackEntry("send");
     openSendFlow();
-  }, [maybeRedirectToAccounts, openSendFlow, trackEntry]);
+  }, [maybeRedirectToAccounts, openSendFlow]);
 
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
-    trackEntry("receive");
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts, trackEntry]);
+  }, [dispatch, maybeRedirectToAccounts]);
 
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
@@ -220,7 +218,9 @@ export function useSideBarViewModel(): SideBarViewModel {
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
-    trackEntry("recover");
+    track("button_clicked2", {
+      button: "Protect",
+    });
   }, [
     recoverFeature?.enabled,
     recoverFeature?.params?.openRecoverFromSidebar,
@@ -228,7 +228,6 @@ export function useSideBarViewModel(): SideBarViewModel {
     recoverHomePath,
     navigate,
     dispatch,
-    trackEntry,
   ]);
 
   const liveAppPaths = [referralProgramConfig?.params?.path].filter(

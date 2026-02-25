@@ -1,5 +1,5 @@
 import { handleActions } from "redux-actions";
-import type { ReducerMap, Action } from "redux-actions";
+import type { ReducerMap } from "redux-actions";
 import { LargeMoverState, State } from "./types";
 import {
   LargeMoverActionTypes,
@@ -7,6 +7,7 @@ import {
   LargeMoverPayload,
   LargeMoverTutorialPayload,
 } from "~/actions/types";
+import type { Action } from "redux-actions";
 
 export const LARGE_MOVER_INITIAL_STATE: LargeMoverState = {
   tutorial: true,

@@ -15,7 +15,7 @@ import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
  * - Bank transfer: Navigates to buy flow for stablecoin purchases
  */
 export const TransferDrawer = () => {
-  const { isOpen, actions, handleClose, t, bottomInset } = useTransferDrawerViewModel();
+  const { isOpen, actions, handleClose, t } = useTransferDrawerViewModel();
   const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   if (isEnabled) {
@@ -28,7 +28,6 @@ export const TransferDrawer = () => {
         <TransferDrawerView
           actions={actions}
           title={t("portfolio.quickActionsCtas.transferDrawer.title")}
-          bottomInset={bottomInset}
         />
       </QueuedDrawerBottomSheet>
     );

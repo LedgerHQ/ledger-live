@@ -63,19 +63,10 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
 
-  const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
-    useWalletV4TourDrawer();
+  const { isDrawerOpen, handleCloseDrawer } = useWalletV4TourDrawer();
 
   const data = useMemo(() => {
     const sections: React.JSX.Element[] = [];
-
-    const heroCtasNode =
-      showAssets && shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
-        <>
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </>
-      ) : undefined;
 
     sections.push(
       <PortfolioHeaderSection
@@ -83,7 +74,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         showAssets={showAssets}
         hideGraph={shouldDisplayGraphRework}
         onBackFromUpdate={onBackFromUpdate}
-        ctas={heroCtasNode}
       />,
     );
 
@@ -94,9 +84,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       return sections;
     }
 
-    if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
+    if (shouldDisplayQuickActionCtas) {
       sections.push(
-        <Box px={6} pt={6} key="quickActions">
+        <Box px={6} pt={shouldDisplayGraphRework ? 0 : 6} key="quickActions">
           <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
           <TransferDrawer />
         </Box>,
@@ -174,13 +164,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           doesNotHaveAccount={!showAssets}
         />
       </Animated.View>
-      <WalletV4TourDrawer
-        isDrawerOpen={isDrawerOpen}
-        handleCloseDrawer={handleCloseDrawer}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-        slides={slides}
-      />
+      <WalletV4TourDrawer isDrawerOpen={isDrawerOpen} handleCloseDrawer={handleCloseDrawer} />
     </>
   );
 };

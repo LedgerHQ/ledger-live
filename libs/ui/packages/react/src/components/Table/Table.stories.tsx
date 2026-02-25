@@ -295,7 +295,7 @@ function SubAccounts({
 }: {
   account: Account;
   columns: Column<Account>[];
-}): React.JSX.Element | null {
+}): JSX.Element | null {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
   const { subAccounts } = account;
@@ -339,7 +339,7 @@ function SubAccounts({
   );
 }
 
-export function Nested(args: Props<Account>): React.JSX.Element {
+export function Nested(args: Props<Account>): JSX.Element {
   return (
     <Table
       {...args}

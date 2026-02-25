@@ -78,6 +78,10 @@ export const migrationAddresses: MigrationAddress[] = [
     address: "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
   },
   {
+    currencyId: "onomy",
+    address: "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
+  },
+  {
     currencyId: "osmosis",
     address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
   },

@@ -11,12 +11,10 @@ import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import PageHeader from "LLD/components/PageHeader";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const { openAssetFlow } = useOpenAssetFlow(
@@ -31,31 +29,6 @@ const AccountsHeader = () => {
     });
     openAssetFlow();
   };
-  if (shouldDisplayWallet40MainNav) {
-    return (
-      <div className="flex items-start justify-between pb-24">
-        <PageHeader title={t("accounts.title")} />
-        <div className="flex items-center gap-8">
-          {!ledgerSyncOptimisationFlag?.enabled && (
-            <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
-          )}
-          <Button
-            small
-            primary
-            onClick={handleAddAccountClick}
-            data-testid="accounts-add-account-button"
-          >
-            <Box horizontal flow={1} alignItems="center">
-              <IconPlus size={12} />
-              <Box>{t("addAccounts.cta.add")}</Box>
-            </Box>
-          </Button>
-          <OptionsButton />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Box
       horizontal

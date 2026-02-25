@@ -5,7 +5,7 @@ export function useDebouncedCallback<T extends unknown[]>(
   delay?: number,
 ) {
   const [debouncedCallback, setDebouncedCallback] = useState<(...args: T) => void>();
-  const timeout = useRef<number>(3000);
+  const timeout = useRef<number>();
 
   useEffect(() => {
     if (!callback) return setDebouncedCallback(undefined);

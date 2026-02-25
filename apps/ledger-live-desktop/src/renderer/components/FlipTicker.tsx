@@ -44,12 +44,7 @@ class FlipTicker extends PureComponent<Props, State> {
     const { value, ...p } = this.props;
     const { height } = this.state;
     return (
-      <Container
-        {...p}
-        ref={n => {
-          this._node = n;
-        }}
-      >
+      <Container {...p} ref={n => (this._node = n)}>
         {[...value].map((l, i) => (
           <Box key={i}>
             {!/[0-9]/.test(l) ? (
@@ -76,10 +71,6 @@ class FlipTicker extends PureComponent<Props, State> {
     );
   }
 }
-const AnimatedDiv = animated.div as React.ComponentType<
-  React.PropsWithChildren<{ style: React.CSSProperties }>
->;
-
 function Tick(props: { height: number; value: string }) {
   const { height, value } = props;
   const index = RANGE_NUMBER.indexOf(value);
@@ -94,7 +85,7 @@ function Tick(props: { height: number; value: string }) {
       }}
     >
       {m => (
-        <AnimatedDiv
+        <animated.div
           style={{
             // @ts-expect-error react-spring types are broken
             transform: m.offset.interpolate(v => `translate3d(0, -${v}px, 0)`),
@@ -103,7 +94,7 @@ function Tick(props: { height: number; value: string }) {
           }}
         >
           {Content}
-        </AnimatedDiv>
+        </animated.div>
       )}
     </Spring>
   );

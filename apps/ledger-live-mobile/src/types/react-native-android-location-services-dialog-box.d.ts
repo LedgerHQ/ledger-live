@@ -18,8 +18,8 @@ declare module "react-native-android-location-services-dialog-box" {
     status: string;
   };
 
-  function checkLocationServicesIsEnabled(args: Options): Promise<Success>;
+  declare function checkLocationServicesIsEnabled(args: Options): Promise<Success>;
 
-  function forceCloseDialog(): void;
-  function stopListener(): void;
+  declare function forceCloseDialog(): void;
+  declare function stopListener(): void;
 }

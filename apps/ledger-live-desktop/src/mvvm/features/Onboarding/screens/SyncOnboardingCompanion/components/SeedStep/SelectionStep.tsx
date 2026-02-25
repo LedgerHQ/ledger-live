@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, ContinueOnDevice } from "@ledgerhq/react-ui";
-import { SubtitleText } from "LLD/features/Onboarding/components/VerticalTimeline";
+import { Flex, VerticalTimeline, ContinueOnDevice } from "@ledgerhq/react-ui";
 import StepText from "LLD/features/Onboarding/components/StepText";
 import SeedStepWrapper from "./SeedStepWrapper";
 
@@ -17,18 +16,25 @@ const SelectionStep = ({ productName, deviceIcon, charonSupported }: Props) => {
   return (
     <SeedStepWrapper testId="selection-step">
       <Flex flexDirection="column">
+        {/* @ts-expect-error weird props issue with React 18 */}
         <StepText mb={6}>
           {t("syncOnboarding.manual.seedContent.selection", {
             productName,
           })}
         </StepText>
-        <SubtitleText>
+        {/* @ts-expect-error weird props issue with React 18 */}
+        <VerticalTimeline.SubtitleText>
           {t("syncOnboarding.manual.seedContent.selectionNewLedgerTitle")}
-        </SubtitleText>
+        </VerticalTimeline.SubtitleText>
+        {/* @ts-expect-error weird props issue with React 18 */}
         <StepText mb={6}>
           {t("syncOnboarding.manual.seedContent.selectionNewLedgerDescription")}
         </StepText>
-        <SubtitleText>{t("syncOnboarding.manual.seedContent.selectionRestoreTitle")}</SubtitleText>
+        {/* @ts-expect-error weird props issue with React 18 */}
+        <VerticalTimeline.SubtitleText>
+          {t("syncOnboarding.manual.seedContent.selectionRestoreTitle")}
+        </VerticalTimeline.SubtitleText>
+        {/* @ts-expect-error weird props issue with React 18 */}
         <StepText>
           {charonSupported
             ? t("syncOnboarding.manual.seedContent.selectionRestoreDescriptionWithCharon")

@@ -15,8 +15,7 @@ const accounts = [
   { account: Account.BCH_1, xrayTicket: "B2CQA-2558, B2CQA-2693" },
   { account: Account.ATOM_1, xrayTicket: "B2CQA-2560, B2CQA-2694" },
   { account: Account.XTZ_1, xrayTicket: "B2CQA-2564, B2CQA-2695" },
-  //TODO: re-enable test when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
-  //{ account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
+  { account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
 ];
 
 for (const account of accounts) {

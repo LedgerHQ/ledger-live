@@ -260,6 +260,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
@@ -659,6 +661,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format OP Mainnet unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
@@ -1060,6 +1064,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
@@ -1459,6 +1465,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ontology unit (ONT) 1`] = `"123 456 789,00000000- -ONT"`;
 
@@ -1860,6 +1868,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900.000000- -OSMO"`;
@@ -2259,6 +2269,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format OP Mainnet unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
@@ -2660,6 +2672,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
@@ -3059,6 +3073,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ontology unit (ONT) 1`] = `"123 456 789,00000000- -ONT"`;
 
@@ -3460,6 +3476,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
@@ -3860,6 +3878,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900.000000- -OSMO"`;
@@ -4259,6 +4279,8 @@ exports[`formatCurrencyUnit with default options should correctly format Nyx uni
 exports[`formatCurrencyUnit with default options should correctly format OP Mainnet unit (ether) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format OP Sepolia unit (ether) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Onomy unit (Onomy) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Ontology unit (ONT) 1`] = `"123,456,789"`;
 

@@ -113,7 +113,7 @@ export default function Tag({
   textProps,
   size = "large",
   ...props
-}: TagProps): React.JSX.Element {
+}: TagProps): JSX.Element {
   const textColor = getColor(props);
   const baseTextProps = getTextProps({ size, ...props });
   return (

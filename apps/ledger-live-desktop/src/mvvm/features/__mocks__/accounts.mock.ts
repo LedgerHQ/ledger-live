@@ -7,7 +7,6 @@ import {
   ethereumCurrency,
   hederaCurrency,
   scrollCurrency,
-  usdcToken,
 } from "./useSelectAssetFlow.mock";
 
 type Mock = ((...args: unknown[]) => unknown) & {
@@ -84,9 +83,7 @@ export const ARB_ACCOUNT = genAccount("arbitrum-1", {
 });
 export const ETH_ACCOUNT_WITH_USDC = genAccount("ethereum-usdc", {
   currency: ethereumCurrency,
-  tokensData: [usdcToken],
-  tokenIds: [usdcToken.id],
-  subAccountsCount: 1,
+  tokenIds: ["ethereum/erc20/usdc"],
 });
 export const BASE_ACCOUNT = genAccount("base-1", {
   currency: baseCurrency,

@@ -111,7 +111,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
 
-    function ${componentName} ({ size = "M", color = "currentColor", style }: Props): React.JSX.Element {
+    function ${componentName} ({ size = "M", color = "currentColor", style }: Props): JSX.Element {
       const strokeWidth = availableSizes[size]?.stroke
       const appliedSize = availableSizes[size]?.size
 
@@ -145,7 +145,7 @@ function reactNativeTemplate(
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
 
-    function ${componentName} ({ size = "M", color = "neutral.c100", style }: Props): React.JSX.Element {
+    function ${componentName} ({ size = "M", color = "neutral.c100", style }: Props): JSX.Element {
         const strokeWidth = availableSizes[size]?.stroke
         const appliedSize = availableSizes[size]?.size
 
@@ -177,7 +177,7 @@ function reactNativeRTLTemplate(
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
     const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
-    function ${componentName} ({size = "M", color = "neutral.c100", style = rtlStyle }: Props): React.JSX.Element {
+    function ${componentName} ({size = "M", color = "neutral.c100", style = rtlStyle }: Props): JSX.Element {
       const strokeWidth = availableSizes[size]?.stroke
       const appliedSize = availableSizes[size]?.size
 

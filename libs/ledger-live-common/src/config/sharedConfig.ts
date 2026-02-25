@@ -27,7 +27,6 @@ import { iconConfig } from "../families/icon/config";
 import { suiConfig } from "../families/sui/config";
 import { cantonConfig } from "../families/canton/config";
 import { aleoConfig } from "../families/aleo/config";
-import { concordiumConfig } from "../families/concordium/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -74,5 +73,4 @@ export const liveConfig: ConfigSchema = {
   ...suiConfig,
   ...cantonConfig,
   ...aleoConfig,
-  ...concordiumConfig,
 };

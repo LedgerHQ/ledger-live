@@ -89,17 +89,9 @@ export default class ModularDrawer {
     const id = this.networkItemIdMAD(networkName);
     if (!(await IsIdVisible(id))) {
       await getElementById(this.networkBasedTitleIdMAD).swipe("up");
-      await this.swipeToNetworkItem(id);
+      await scrollToId(id, this.networkSelectionScrollViewId);
     }
     await tapById(id, 0);
-  }
-
-  private async swipeToNetworkItem(id: string | RegExp, maxAttempts = 5): Promise<void> {
-    const scrollView = getElementById(this.networkSelectionScrollViewId);
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      if (await IsIdVisible(id)) return;
-      await scrollView.swipe("up", "slow", 0.2, 0.5);
-    }
   }
 
   @Step("Select currency in modular drawer")
@@ -156,7 +148,7 @@ export default class ModularDrawer {
     await getElementById(this.networkBasedTitleIdMAD).swipe("up");
     for (const network of networks) {
       const networkItemId = this.networkItemIdMAD(network);
-      await this.swipeToNetworkItem(networkItemId);
+      await scrollToId(networkItemId, this.networkSelectionScrollViewId);
       await detoxExpect(getElementById(networkItemId)).toBeVisible();
     }
   }

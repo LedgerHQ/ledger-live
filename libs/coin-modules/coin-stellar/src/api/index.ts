@@ -3,11 +3,11 @@ import {
   Block,
   BlockInfo,
   Cursor,
-  ListOperationsOptions,
   Page,
   Validator,
   FeeEstimation,
   Operation,
+  Pagination,
   Stake,
   Reward,
   TransactionIntent,
@@ -31,6 +31,7 @@ import {
   getTokenFromAsset,
   getAssetFromToken,
 } from "../logic";
+import { ListOperationsOptions } from "../logic/listOperations";
 import { fetchSequence } from "../network";
 import { StellarBurnAddressError, StellarMemo } from "../types";
 
@@ -137,21 +138,18 @@ async function estimate(_transactionIntent: TransactionIntent): Promise<FeeEstim
   return { value };
 }
 
-async function operations(
-  address: string,
-  { minHeight, cursor }: ListOperationsOptions,
-): Promise<Page<Operation>> {
+async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
+  const minHeight = pagination.minHeight;
+  const lastPagingToken = pagination.lastPagingToken ?? "";
   if (minHeight) {
-    const [items, next] = await operationsFromHeight(address, minHeight);
-    return { items, next: next || undefined };
+    return operationsFromHeight(address, minHeight);
   }
-  const isInitSync = !cursor || cursor === "";
+  const isInitSync = lastPagingToken === "";
   // FIXME: why bother creating limit and pagingToken here, something is off?!
   const newPagination = isInitSync
     ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
-    : { pagingToken: cursor, minHeight: 0 };
-  const [items, next] = await operationsFromHeight(address, newPagination.minHeight);
-  return { items, next: next || undefined };
+    : { pagingToken: lastPagingToken, minHeight: 0 };
+  return operationsFromHeight(address, newPagination.minHeight);
 }
 
 type PaginationState = {

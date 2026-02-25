@@ -24,7 +24,7 @@ const Radio = ({
   onChange,
   children,
   containerProps,
-}: RadioProps): React.JSX.Element => {
+}: RadioProps): JSX.Element => {
   return (
     <Flex columnGap="1.5rem" {...containerProps}>
       <RadioContext.Provider value={{ currentValue, name, onChange }}>

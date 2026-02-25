@@ -4,7 +4,7 @@ import Animated from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
-import AccountItem from "../../../AccountItem";
+import AccountItem from "../AccountItem";
 import useItemAnimation from "./useItemAnimation";
 import { AccountLikeEnhanced } from "LLM/features/Accounts/screens/ScanDeviceAccounts/types";
 

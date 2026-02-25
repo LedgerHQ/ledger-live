@@ -1,4 +1,4 @@
-import React, { memo, type ReactNode } from "react";
+import React, { memo } from "react";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
@@ -19,7 +19,7 @@ const SectionContainer = styled(Flex).attrs<SectionContainerProps>(p => ({
 const MemoizedSectionContainer = memo(SectionContainer);
 
 interface AnimatedSectionContainerProps extends SectionContainerProps {
-  children: ReactNode;
+  children: React.ReactNode;
   py?: string;
   key?: string;
 }

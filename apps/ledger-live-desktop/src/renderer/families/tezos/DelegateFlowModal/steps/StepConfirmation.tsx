@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
@@ -17,6 +17,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+import { useEffect } from "react";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";

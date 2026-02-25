@@ -55,8 +55,6 @@ function MemoValueInputComponent({
 
   return (
     <TextInput
-      id="send-memo-input"
-      data-testid="send-memo-input"
       label={t("newSendFlow.tagHelp.inputLabel", { memoLabel })}
       onChange={handleChange}
       inputMode={isTagType ? "numeric" : "text"}

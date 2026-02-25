@@ -3,9 +3,9 @@ import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import {
   useCurrencyChartData,
+  useCurrencyData,
   useMarketDataProvider,
-} from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
-import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { Page, useMarketActions } from "./useMarketActions";
 import { useCallback } from "react";
 import { useParams } from "react-router";

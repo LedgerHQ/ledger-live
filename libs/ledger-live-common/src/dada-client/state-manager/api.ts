@@ -7,8 +7,6 @@ import {
   AssetsDataTags,
   AssetsDataWithPagination,
   GetAssetsDataParams,
-  GetAssetsByCategoryParams,
-  ONE_DAY_IN_SECONDS,
   PageParam,
 } from "./types";
 
@@ -104,20 +102,7 @@ export const assetsDataApi = createApi({
       providesTags: [AssetsDataTags.Assets],
       transformResponse: transformAssetsResponse,
     }),
-    getAssetsByCategory: build.query<string[], GetAssetsByCategoryParams>({
-      query: queryArg => {
-        const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
-        return {
-          url: `${baseUrl}/assets`,
-          params: { category: queryArg.category, product: queryArg.product, pageSize: 100 },
-        };
-      },
-      transformResponse: (response: RawApiResponse) =>
-        Object.values(response.cryptoAssets).map(a => a.ticker),
-      keepUnusedDataFor: ONE_DAY_IN_SECONDS,
-    }),
   }),
 });
 
-export const { useGetAssetsDataInfiniteQuery, useGetAssetDataQuery, useGetAssetsByCategoryQuery } =
-  assetsDataApi;
+export const { useGetAssetsDataInfiniteQuery, useGetAssetDataQuery } = assetsDataApi;

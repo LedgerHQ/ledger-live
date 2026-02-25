@@ -119,7 +119,7 @@ const Switch = ({
   disabled,
   reversed,
   size,
-}: SwitchProps): React.JSX.Element => {
+}: SwitchProps): JSX.Element => {
   const handleFocusKeyDown = (e: React.FormEvent<HTMLDivElement> & { key: string }) => {
     if (e.key.match(/enter/i)) onChange(e);
   };

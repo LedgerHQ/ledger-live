@@ -5,7 +5,7 @@ import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { hasInstalledAnyAppSelector } from "~/reducers/settings";
-import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorName } from "~/const";
 import Button from "~/components/Button";
 import noAccountsImgDark from "~/images/illustration/Dark/_048.webp";
 import noAccountsImgLight from "~/images/illustration/Light/_048.webp";
@@ -17,6 +17,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { ScreenName } from "~/const";
 
 type Props = {
   showHelp?: boolean;

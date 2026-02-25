@@ -1,8 +1,7 @@
 import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { countervaluesApi } from "@ledgerhq/live-common/market/state-manager/api";
-import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
+import { marketApi, countervaluesApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import { pushDevicesApi } from "@ledgerhq/client-ids/api";
@@ -14,7 +13,7 @@ const APIs = {
   [cmcApi.reducerPath]: cmcApi,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
   [firebaseRemoteConfigApi.reducerPath]: firebaseRemoteConfigApi,
-  [cgApi.reducerPath]: cgApi,
+  [marketApi.reducerPath]: marketApi,
   [countervaluesApi.reducerPath]: countervaluesApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,

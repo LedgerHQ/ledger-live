@@ -1,8 +1,9 @@
-import React, { createRef } from "react";
+import React from "react";
 import { act, renderHook } from "tests/testSetup";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import useSyncOnboardingCompanionViewModel from "../useSyncOnboardingCompanionViewModel";
+import { createRef } from "react";
 
 import * as UseOnboardingStatePolling from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";

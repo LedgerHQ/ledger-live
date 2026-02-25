@@ -1,4 +1,4 @@
-import type { AppManifest, BroadcastTrackingData } from "../types";
+import type { AppManifest } from "../types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Properties = Record<string, any> | null;
@@ -79,21 +79,13 @@ export default function trackingWrapper(trackCall: TrackExchange) {
     },
 
     // Failed to broadcast a signed transaction
-    broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
-      const properties: Record<string, unknown> = getEventData(manifest);
-      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
-      if (data?.network !== undefined) properties.network = data.network;
-      track("WalletAPI ACRE Broadcast Fail", properties);
+    broadcastFail: (manifest: AppManifest) => {
+      track("WalletAPI ACRE Broadcast Fail", getEventData(manifest));
     },
 
     // Successfully broadcast a signed transaction
-    broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
-      const properties: Record<string, unknown> = getEventData(manifest);
-      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
-      if (data?.network !== undefined) properties.network = data.network;
-      track("WalletAPI ACRE Broadcast Success", properties);
+    broadcastSuccess: (manifest: AppManifest) => {
+      track("WalletAPI ACRE Broadcast Success", getEventData(manifest));
     },
 
     // Successfully broadcast a signed transaction

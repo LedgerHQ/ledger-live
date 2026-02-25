@@ -34,8 +34,6 @@ export function AmountInputSection({
     <section className="relative flex flex-col items-center pt-56 text-center">
       <div className="relative flex w-full items-center justify-center">
         <AmountInput
-          id="send-amount-input"
-          data-testid="send-amount-input"
           value={amountValue}
           placeholder="0"
           onChange={onAmountChange}
@@ -55,14 +53,11 @@ export function AmountInputSection({
           size="xs"
           appearance="gray"
           aria-label={toggleLabel}
-          data-testid="send-toggle-input-mode-button"
           className="absolute top-12 right-8"
           onClick={onToggleInputMode}
         />
       </div>
-      <p className="mt-8 body-2 text-muted" data-testid="send-amount-secondary-value">
-        {secondaryValue}
-      </p>
+      <p className="mt-8 body-2 text-muted">{secondaryValue}</p>
       <div className="mt-8 min-h-20">
         <AmountMessageText message={amountMessage} />
       </div>

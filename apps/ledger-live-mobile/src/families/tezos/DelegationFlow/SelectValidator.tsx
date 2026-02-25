@@ -16,10 +16,8 @@ import { Icons } from "@ledgerhq/native-ui";
 import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type {
-  Transaction as TezosTransaction,
-  Baker,
-} from "@ledgerhq/live-common/families/tezos/types";
+import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
+import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { useTheme } from "@react-navigation/native";

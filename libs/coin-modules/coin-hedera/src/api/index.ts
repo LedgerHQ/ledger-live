@@ -70,17 +70,12 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlock: height => getBlock(height),
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
-    listOperations: async (address, { cursor, limit, order }) => {
-      // FIXME This listOperations implementation ignores the required minHeight option entirely.
-      //  Implementations must error when minHeight != 0 is not supported, this should either filter
-      //  by minHeight or explicitly throw a "not supported" error when minHeight is non-zero.
+    listOperations: async (address, pagination) => {
       const mirrorTokens = await apiClient.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
         address,
-        cursor,
-        limit,
-        order,
+        pagination,
         mirrorTokens,
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -96,7 +91,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
       const sortedLiveOperations = [...liveOperations].sort((a, b) => {
         const aTime = a.date.getTime();
         const bTime = b.date.getTime();
-        return order === "desc" ? bTime - aTime : aTime - bTime;
+        return pagination.order === "desc" ? bTime - aTime : aTime - bTime;
       });
 
       const alpacaOperations = sortedLiveOperations.map(liveOp => {
@@ -137,7 +132,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
         } satisfies Operation;
       });
 
-      return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
+      return [alpacaOperations, latestAccountOperations.nextCursor ?? ""];
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,

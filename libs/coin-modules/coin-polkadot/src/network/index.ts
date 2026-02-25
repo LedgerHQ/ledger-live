@@ -1,6 +1,8 @@
 import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
@@ -17,7 +19,6 @@ import {
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
-  getMetadata as sidecarGetMetadata,
   getLastBlock,
 } from "./sidecar";
 
@@ -109,13 +110,32 @@ const isNewAccount = makeLRUCache(
   minutes(1),
 );
 
-const getMetadata = async (
-  callData: string,
-  includedInExtrinsic: string,
-  includedInSignedData: string,
-  currency?: CryptoCurrency,
-): Promise<{ metadataBlob: string; metadataHash: string }> => {
-  return sidecarGetMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
+const metadataHash = async (currency?: CryptoCurrency): Promise<string> => {
+  const id = coinConfig.getCoinConfig(currency).metadataShortener.id;
+  const res: any = await network({
+    method: "POST",
+    url: coinConfig.getCoinConfig(currency).metadataHash.url,
+    data: {
+      id: id,
+    },
+  });
+  return res.data.metadataHash;
+};
+
+const shortenMetadata = async (transaction: string, currency?: CryptoCurrency): Promise<string> => {
+  const id = coinConfig.getCoinConfig(currency).metadataShortener.id;
+  const res: any = await network({
+    method: "POST",
+    url: coinConfig.getCoinConfig(currency).metadataShortener.url,
+    data: {
+      chain: {
+        id: id,
+      },
+      txBlob: transaction,
+    },
+  });
+
+  return res.data.txMetadata;
 };
 
 export default {
@@ -142,7 +162,8 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
-  getMetadata,
+  metadataHash,
+  shortenMetadata,
   submitExtrinsic: async (extrinsic: string, currency?: CryptoCurrency) =>
     sidecarSubmitExtrinsic(extrinsic, currency),
   verifyValidatorAddresses: async (

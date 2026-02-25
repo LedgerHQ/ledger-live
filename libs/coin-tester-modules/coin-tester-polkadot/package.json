@@ -60,22 +60,21 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@polkadot/api": "catalog:",
-    "@polkadot/util-crypto": "catalog:",
+    "@polkadot/api": "11.2.1",
+    "@polkadot/util-crypto": "12.6.2",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",
+    "chalk": "^4.1.2",
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@polkadot/rpc-provider": "catalog:",
-    "@polkadot/util": "catalog:",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
+    "@polkadot/util": "12.6.2",
     "@types/jest": "catalog:",
     "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

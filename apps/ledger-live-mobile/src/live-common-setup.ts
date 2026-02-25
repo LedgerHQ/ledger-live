@@ -35,6 +35,7 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "dydx",
+  "onomy",
   "quicksilver",
   "persistence",
   "bitcoin",

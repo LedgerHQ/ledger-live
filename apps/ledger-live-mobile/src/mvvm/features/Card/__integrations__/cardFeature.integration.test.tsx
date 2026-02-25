@@ -16,18 +16,6 @@ function MockCardLiveApp() {
   );
 }
 
-function CardLiveAppStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name={ScreenName.Card}
-        component={MockCardLiveApp}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
-  );
-}
-
 function CardFeatureTestNavigator() {
   return (
     <Stack.Navigator initialRouteName={NavigatorName.CardTab}>
@@ -37,8 +25,8 @@ function CardFeatureTestNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.Card}
-        component={CardLiveAppStack}
+        name={ScreenName.PlatformApp}
+        component={MockCardLiveApp}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

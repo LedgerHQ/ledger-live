@@ -1,8 +1,8 @@
-import type { RecentAddress } from "@ledgerhq/live-common/flows/send/recipient/types";
-import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import React from "react";
+import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { RecentAddressTile } from "./RecentAddressTile";
+import type { RecentAddress } from "../types";
 
 type RecentAddressesSectionProps = Readonly<{
   recentAddresses: RecentAddress[];
@@ -22,7 +22,7 @@ export function RecentAddressesSection({
   }
 
   return (
-    <div className="flex flex-col gap-8" data-testid="send-recent-addresses-section">
+    <div className="flex flex-col gap-8">
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{t("newSendFlow.recent")}</SubheaderTitle>

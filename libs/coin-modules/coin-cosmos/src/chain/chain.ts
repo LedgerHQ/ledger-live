@@ -11,6 +11,7 @@ import Dydx from "./Dydx";
 import Injective from "./Injective";
 import Mantra from "./Mantra";
 import Nyx from "./Nyx";
+import Onomy from "./Onomy";
 import Osmosis from "./Osmosis";
 import Persistence from "./Persistence";
 import Quicksilver from "./Quicksilver";
@@ -47,6 +48,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "nyx":
         cosmosChainParams[currencyId] = new Nyx();
+        break;
+      case "onomy":
+        cosmosChainParams[currencyId] = new Onomy();
         break;
       case "persistence":
         cosmosChainParams[currencyId] = new Persistence();

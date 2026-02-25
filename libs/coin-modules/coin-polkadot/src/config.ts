@@ -15,6 +15,13 @@ export type PolkadotConfig = {
   staking?: {
     electionStatusThreshold: number;
   };
+  metadataShortener: {
+    url: string;
+    id: string;
+  };
+  metadataHash: {
+    url: string;
+  };
 };
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;

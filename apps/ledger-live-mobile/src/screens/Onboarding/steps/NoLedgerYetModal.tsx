@@ -29,7 +29,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const [isFromBuy, setFromBuy] = useState(false);
-  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow();
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
   const identifyUser = useCallback(
     (hasDevice: boolean | null) => {

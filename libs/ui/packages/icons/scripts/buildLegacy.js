@@ -64,7 +64,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
     import Svg from "./StyledSvg"
     type Props = { size?: number | string; color?: string; style?: object };
     ${interfaces}
-    function ${componentName} ({ size = 16, color = "currentColor", style }: Props): React.JSX.Element {
+    function ${componentName} ({ size = 16, color = "currentColor", style }: Props): JSX.Element {
       return ${jsx};
     }
     ${exports}
@@ -89,7 +89,7 @@ function reactNativeTemplate(
     type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
-    function ${componentName} ({ size = 16, color = "neutral.c100", style }: Props): React.JSX.Element {
+    function ${componentName} ({ size = 16, color = "neutral.c100", style }: Props): JSX.Element {
       return ${jsx};
     }
     ${exports}
@@ -113,7 +113,7 @@ function reactNativeRTLTemplate(
     type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
     ${interfaces}
     const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
-    function ${componentName} ({ size = 16, color = "neutral.c100", style = rtlStyle }: Props): React.JSX.Element {
+    function ${componentName} ({ size = 16, color = "neutral.c100", style = rtlStyle }: Props): JSX.Element {
       return ${jsx};
     }
     ${exports}

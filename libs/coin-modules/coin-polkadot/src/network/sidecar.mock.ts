@@ -34,18 +34,6 @@ const handlers = [
   ),
   http.get(`${SIDECAR_BASE_URL_TEST}/runtime/spec`, () => HttpResponse.json(fixtureChainSpec)),
   http.post(`${SIDECAR_BASE_URL_TEST}/transaction/fee-estimate`, () => HttpResponse.json({})),
-  http.post(`${SIDECAR_BASE_URL_TEST}/transaction/metadata-blob`, () =>
-    HttpResponse.json({
-      at: { hash: "0xabc", height: "12345" },
-      metadataHash: "0x1234",
-      metadataBlob: "0xdeadbeef",
-      specVersion: "1002000",
-      specName: "polkadot",
-      base58Prefix: "0",
-      decimals: "10",
-      tokenSymbol: "DOT",
-    }),
-  ),
   http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
     HttpResponse.json(fixtureStakingProgress),
   ),

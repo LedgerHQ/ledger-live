@@ -9,7 +9,7 @@ import {
   TransferTransaction,
   AccountUpdateTransaction,
 } from "@hashgraph/sdk";
-import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { getSyntheticBlock } from "../logic/utils";
@@ -591,26 +591,26 @@ describe("createApi", () => {
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
       const block = await api.lastBlock();
-      const { items: operations } = await api.listOperations(
-        MAINNET_TEST_ACCOUNTS.pristine.accountId,
-        { minHeight: block.height, order: "desc" },
-      );
+      const [operations] = await api.listOperations(MAINNET_TEST_ACCOUNTS.pristine.accountId, {
+        minHeight: block.height,
+        order: "desc",
+      });
 
       expect(operations).toBeInstanceOf(Array);
       expect(operations.length).toBe(0);
     });
 
     it("returns operations with valid synthetic block info", async () => {
-      const cursor = "1753099264.927988000";
+      const lastPagingToken = "1753099264.927988000";
       const block = await api.lastBlock();
-      const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
-        cursor,
-        limit: 4,
         order: "asc",
+        limit: 4,
+        lastPagingToken,
       });
 
-      const expectedSyntheticBlock = getSyntheticBlock(cursor);
+      const expectedSyntheticBlock = getSyntheticBlock(lastPagingToken);
       const blockHeights = ops.map(o => o.tx.block.height);
 
       expect(blockHeights).toHaveLength(6);
@@ -618,13 +618,13 @@ describe("createApi", () => {
     });
 
     it("returns operations for real account with tokens", async () => {
-      const cursor = "1753099264.927988000";
+      const lastPagingToken = "1753099264.927988000";
       const block = await api.lastBlock();
-      const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
-        cursor,
-        limit: 100,
         order: "desc",
+        limit: 100,
+        lastPagingToken,
       });
 
       const memoTxHash = "WvMcFERtxRsGJqxqGVDYa6JR5PqLgFeJxiSVoimayaWra/AMEJMzC09LhdRLTZ/M";
@@ -667,12 +667,14 @@ describe("createApi", () => {
     });
 
     it("returns staking operations with correct metadata", async () => {
-      const cursor = "1762202113.000000000";
+      const lastPagingToken = "1762202113.000000000";
       const block = await api.lastBlock();
-      const { items: ops } = await api.listOperations(
-        MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
-        { minHeight: block.height, cursor, limit: 30, order: "desc" },
-      );
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.activeStaking.accountId, {
+        minHeight: block.height,
+        order: "desc",
+        limit: 30,
+        lastPagingToken,
+      });
 
       const rewardOp = ops.find(op => op.type === "REWARD");
       const delegateOp = ops.find(op => op.type === "DELEGATE");
@@ -706,9 +708,13 @@ describe("createApi", () => {
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
       const block = await api.lastBlock();
-      const { items: ops } = await api.listOperations(
+      const [ops] = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.withQuickBalanceChanges.accountId,
-        { minHeight: block.height, limit: 10, order: "asc" },
+        {
+          minHeight: block.height,
+          order: "asc",
+          limit: 10,
+        },
       );
 
       const opDelegate1 = ops[2];
@@ -745,18 +751,26 @@ describe("createApi", () => {
     it.each(["desc", "asc"] as const)(
       "returns paginated operations for account with high activity (%s)",
       async order => {
-        const minHeight = 0;
-        const limit = 10;
-        const initialCursor = order === "desc" ? "1762168437.643463899" : undefined;
+        const commonPagination = {
+          minHeight: 0,
+          limit: 10,
+          order,
+          ...(order === "desc" && {
+            lastPagingToken: "1762168437.643463899",
+          }),
+        } satisfies Pagination;
 
-        const { items: page1, next: pagingToken1 } = await api.listOperations(
+        const [page1, pagingToken1] = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: initialCursor, limit, order },
+          commonPagination,
         );
 
-        const { items: page2, next: pagingToken2 } = await api.listOperations(
+        const [page2, pagingToken2] = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: pagingToken1, limit, order },
+          {
+            ...commonPagination,
+            lastPagingToken: pagingToken1,
+          },
         );
 
         const firstPage1Timestamp = page1[0]?.tx?.date;
@@ -768,8 +782,8 @@ describe("createApi", () => {
         const hasOverlap = [...page2Hashes].some(hash => page1Hashes.has(hash));
 
         // NOTE: this won't be equal to limit, because single Hedera transaction can generate multiple operations
-        expect(page1.length).toBeGreaterThanOrEqual(limit);
-        expect(page2.length).toBeGreaterThanOrEqual(limit);
+        expect(page1.length).toBeGreaterThanOrEqual(commonPagination.limit);
+        expect(page2.length).toBeGreaterThanOrEqual(commonPagination.limit);
         expect(pagingToken1).not.toBeNull();
         expect(pagingToken2).not.toBeNull();
         expect(hasOverlap).toBe(false);

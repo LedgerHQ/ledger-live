@@ -64,7 +64,7 @@ export default {
 
 export const ContinueOnDevice = (
   args: React.ComponentProps<typeof ContinueOnDeviceComponent>,
-): React.JSX.Element => {
+): JSX.Element => {
   return (
     <Flex flex={1}>
       <ContinueOnDeviceComponent {...args} />

@@ -15,7 +15,7 @@ import type {
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
 import aleoCoinConfig, { type AleoCoinConfig } from "../config";
-import type { AleoAccount, Transaction as AleoTransaction } from "../types/index";
+import type { Transaction as AleoTransaction } from "../types/index";
 import type { AleoSigner } from "../types/signer";
 import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";
@@ -23,7 +23,6 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getAccountShape, sync } from "./sync";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
@@ -43,7 +42,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
 
 export function buildAccountBridge(
   signerContext: SignerContext<AleoSigner>,
-): AccountBridge<AleoTransaction, AleoAccount> {
+): AccountBridge<AleoTransaction> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
@@ -64,8 +63,6 @@ export function buildAccountBridge(
       throw new Error("broadcast is not supported");
     },
     estimateMaxSpendable,
-    assignFromAccountRaw,
-    assignToAccountRaw,
     getSerializedAddressParameters,
     validateAddress,
   };
@@ -74,7 +71,7 @@ export function buildAccountBridge(
 export function createBridges(
   signerContext: SignerContext<AleoSigner>,
   coinConfig: CoinConfig<AleoCoinConfig>,
-): Bridge<AleoTransaction, AleoAccount> {
+): Bridge<AleoTransaction> {
   aleoCoinConfig.setCoinConfig(coinConfig);
 
   return {

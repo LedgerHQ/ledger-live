@@ -16,8 +16,6 @@ import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
-  [SEND_FLOW_STEP.CUSTOM_FEES]: () => <></>,
-  [SEND_FLOW_STEP.COIN_CONTROL]: () => <></>,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
 };

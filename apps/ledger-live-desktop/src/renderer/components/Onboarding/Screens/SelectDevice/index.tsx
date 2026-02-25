@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
@@ -34,10 +34,8 @@ const TitleText = styled(Text).attrs({
 export function SelectDevice() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const fromQuickAction = !!location.state?.fromQuickAction;
 
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
@@ -58,13 +56,7 @@ export function SelectDevice() {
       <TrackPage category="Onboarding Device - Selection" flow="Onboarding" />
       <OnboardingNavHeader
         onClickPrevious={() =>
-          navigate(
-            fromQuickAction
-              ? "/"
-              : hasCompletedOnboarding
-                ? "/settings/help"
-                : "/onboarding/welcome",
-          )
+          navigate(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")
         }
       />
       <DeviceSelector onClick={handleDeviceSelect} />

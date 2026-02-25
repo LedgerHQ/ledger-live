@@ -49,7 +49,7 @@ describe("Portfolio Screen", () => {
 
       await screen.findByTestId("PortfolioEmptyList");
 
-      expect(await screen.findByTestId("portfolio-balance-noAccounts")).toBeVisible();
+      expect(await screen.findByTestId("portfolio-balance-noFund")).toBeVisible();
     });
 
     it("should display noSigner state when graphRework is enabled and user is in readOnly mode", async () => {

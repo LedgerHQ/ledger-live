@@ -9,10 +9,6 @@ export enum AssetsAdditionalData {
   MarketTrend = "marketTrend",
 }
 
-export enum AssetCategory {
-  Stablecoin = "stablecoin",
-}
-
 export interface GetAssetsDataParams {
   search?: string;
   currencyIds?: string[];
@@ -32,12 +28,4 @@ export interface AssetsDataWithPagination extends AssetsData {
   pagination: {
     nextCursor?: string;
   };
-}
-
-export const ONE_DAY_IN_SECONDS = 86_400;
-
-export interface GetAssetsByCategoryParams {
-  category: AssetCategory;
-  product: "llm" | "lld";
-  isStaging?: boolean;
 }

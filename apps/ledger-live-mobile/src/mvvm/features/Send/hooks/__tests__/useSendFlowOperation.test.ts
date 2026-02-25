@@ -19,23 +19,22 @@ const createMockOperation = (overrides?: Partial<Operation>): Operation =>
     ...overrides,
   }) as Operation;
 
-describe("useSendFlowOperation (mobile)", () => {
+describe("useSendFlowOperation", () => {
   describe("initial state", () => {
-    it("returns null optimisticOperation, null transactionError and signed false", () => {
+    it("should return null optimisticOperation, null transactionError and signed false", () => {
       const { result } = renderHook(() => useSendFlowOperation());
+
       expect(result.current.state).toEqual({
         optimisticOperation: null,
         transactionError: null,
         signed: false,
       });
-    });
-
-    it("exposes all required action callbacks", () => {
-      const { result } = renderHook(() => useSendFlowOperation());
-      expect(typeof result.current.actions.onOperationBroadcasted).toBe("function");
-      expect(typeof result.current.actions.onTransactionError).toBe("function");
-      expect(typeof result.current.actions.onSigned).toBe("function");
-      expect(typeof result.current.actions.onRetry).toBe("function");
+      expect(result.current.actions).toMatchObject({
+        onOperationBroadcasted: expect.any(Function),
+        onTransactionError: expect.any(Function),
+        onSigned: expect.any(Function),
+        onRetry: expect.any(Function),
+      });
     });
   });
 
@@ -57,10 +56,14 @@ describe("useSendFlowOperation (mobile)", () => {
   });
 
   describe("onTransactionError", () => {
-    it("should set transactionError and set signed to false", () => {
+    it("should set transactionError, clear optimisticOperation and set signed to false", () => {
       const { result } = renderHook(() => useSendFlowOperation());
+      const operation = createMockOperation();
       const error = new Error("Broadcast failed");
 
+      act(() => {
+        result.current.actions.onOperationBroadcasted(operation);
+      });
       act(() => {
         result.current.actions.onTransactionError(error);
       });
@@ -74,9 +77,13 @@ describe("useSendFlowOperation (mobile)", () => {
   });
 
   describe("onSigned", () => {
-    it("should set signed to true", () => {
+    it("should set signed to true and clear transactionError", () => {
       const { result } = renderHook(() => useSendFlowOperation());
+      const error = new Error("Sign failed");
 
+      act(() => {
+        result.current.actions.onTransactionError(error);
+      });
       act(() => {
         result.current.actions.onSigned();
       });
@@ -124,15 +131,6 @@ describe("useSendFlowOperation (mobile)", () => {
         transactionError: null,
         signed: false,
       });
-    });
-  });
-
-  describe("actions stability", () => {
-    it("actions object reference is stable across renders", () => {
-      const { result, rerender } = renderHook(() => useSendFlowOperation());
-      const actions1 = result.current.actions;
-      rerender({});
-      expect(result.current.actions).toBe(actions1);
     });
   });
 });

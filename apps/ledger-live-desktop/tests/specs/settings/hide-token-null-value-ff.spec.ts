@@ -22,7 +22,7 @@ test("Hide Token Null Value with evm in feature flag", async ({ page }) => {
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
 
-  await test.step("check if operations is not filtered by zero amount because of FF", async () => {
+  await test.step("check if operations is filtered by zero amount", async () => {
     await layout.goToSettings();
     await settingsPage.goToAccountsTab();
     expect(await settingsPage.isFilterTokenOperationsZeroAmountToggleChecked()).toBe(true);
@@ -30,31 +30,31 @@ test("Hide Token Null Value with evm in feature flag", async ({ page }) => {
     await accountsPage.navigateToAccountByName(Account.ETH_2.accountName);
     await accountPage.scrollToOperations();
 
-    const mainAccountOperationRowNoValue = await accountPage.operationRowByTestId(
+    const mainAccountOperationRowNoValue = page.getByTestId(
       "operation-row-mock_op_0_mock:1:ethereum:true_ethereum_1:",
     );
-    await expect(mainAccountOperationRowNoValue).toBeVisible();
+    expect(mainAccountOperationRowNoValue).toBeVisible();
     expect(await mainAccountOperationRowNoValue.textContent()).not.toContain("ETH");
 
-    const mainAccountOperationWithValue = await accountPage.operationRowByTestId(
+    const mainAccountOperationWithValue = page.getByTestId(
       "operation-row-mock_op_1_mock:1:ethereum:true_ethereum_1:",
     );
-    await expect(mainAccountOperationWithValue).toBeVisible();
+    expect(mainAccountOperationWithValue).toBeVisible();
     expect(await mainAccountOperationWithValue.textContent()).toContain("ETH");
 
-    await accountPage.navigateToToken("token-row-USDC");
+    await page.getByTestId("token-row-USDC").click();
     await accountPage.scrollToOperations();
 
-    const tokenAccountOperationRowNoValue = await accountPage.operationRowByTestId(
+    const tokenAccountOperationRowNoValue = page.getByTestId(
       "operation-row-mock_op_0_mock:1:ethereum:true_ethereum_1:|1",
     );
-    await expect(tokenAccountOperationRowNoValue).toBeVisible();
+    expect(tokenAccountOperationRowNoValue).toBeVisible();
     expect(await tokenAccountOperationRowNoValue.textContent()).not.toContain("USDC");
 
-    const tokenAccountOperationRowWithValue = await accountPage.operationRowByTestId(
+    const tokenAccountOperationRowWithValue = page.getByTestId(
       "operation-row-mock_op_1_mock:1:ethereum:true_ethereum_1:|1",
     );
-    await expect(tokenAccountOperationRowWithValue).toBeVisible();
+    expect(tokenAccountOperationRowWithValue).toBeVisible();
     expect(await tokenAccountOperationRowWithValue.textContent()).toContain("USDC");
   });
 });

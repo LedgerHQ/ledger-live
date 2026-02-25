@@ -85,8 +85,8 @@ export const getAccountShape: GetAccountShape = async info => {
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const newTransactions = await getTransactions(address, {
-    minHeight: startAt,
-    limit: 100,
+    from: startAt,
+    size: 100,
   });
   const newOperations = filterOperations(newTransactions, accountId, address);
   const operations = mergeOps(oldOperations, newOperations as Operation[]);

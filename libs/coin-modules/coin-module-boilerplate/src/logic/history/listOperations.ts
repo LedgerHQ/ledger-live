@@ -1,19 +1,21 @@
-import type { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-framework/api/index";
+import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getTransactions } from "../../network/indexer";
 import { BoilerplateOperation } from "../../network/types";
 
 /**
  * Returns list of operations associated to an account.
  * @param address Account address
- * @param options List operations options
- * @returns Operations found and the next cursor for pagination.
+ * @param pagination Pagination options
+ * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
+ * If `0` is returns, no pagination needed.
+ * This "id" or "index" value, thus it has functional meaning, is different for each blockchain.
  */
 export async function listOperations(
   address: string,
-  options: ListOperationsOptions,
-): Promise<Page<Operation>> {
-  const transactions = await getTransactions(address, options);
-  return { items: transactions.map(convertToCoreOperation(address)), next: undefined };
+  page: Pagination,
+): Promise<[Operation[], string]> {
+  const transactions = await getTransactions(address, { from: page.minHeight });
+  return [transactions.map(convertToCoreOperation(address)), ""];
 }
 
 const convertToCoreOperation =

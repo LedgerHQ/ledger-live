@@ -42,28 +42,17 @@ export function useSendHeaderModel({
   const currencyName = state.account.currency?.ticker ?? "";
 
   const { navigation, currentStep } = wizard;
-  const currentStepConfig = wizard.currentStepConfig;
+  const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
 
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
   const showMemoControls = Boolean(
     showRecipientInput && uiConfig.hasMemo && recipientSearch.value.length > 0,
   );
 
-  const backTarget = currentStepConfig?.backTarget;
-
   const showBackButton = navigation.canGoBack();
 
   const showTitle = currentStepConfig?.showTitle !== false;
-  const titleKey = currentStepConfig?.titleKey;
-
-  let title: string;
-  if (titleKey) {
-    title = t(titleKey);
-  } else if (showTitle) {
-    title = t("newSendFlow.title", { currency: currencyName });
-  } else {
-    title = "";
-  }
+  const title = showTitle ? t("newSendFlow.title", { currency: currencyName }) : "";
   const descriptionText =
     showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
 
@@ -71,35 +60,24 @@ export function useSendHeaderModel({
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
 
   const handleBack = useCallback(() => {
-    // Per-step state cleanup that runs regardless of whether navigation uses backTarget
-    // or goToPreviousStep, so floating steps and regular steps are treated uniformly
-    if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-      // Reset amount-related fields so they don't persist when the screen remounts
-      transaction.updateTransaction(tx => ({
-        ...tx,
-        amount: new BigNumber(0),
-        useAllAmount: false,
-        feesStrategy: null,
-      }));
-      resetViewState();
-    } else if (currentStep === SEND_FLOW_STEP.COIN_CONTROL) {
-      // Reset UTXO exclusions so the selection doesn't bleed into the next visit
-      transaction.updateTransaction(tx => {
-        if (!("utxoStrategy" in tx)) return tx;
-        return { ...tx, utxoStrategy: { ...tx.utxoStrategy, excludeUTXOs: [] } };
-      });
-    }
-
-    if (backTarget) {
-      navigation.goToStep(backTarget);
-      return;
-    }
     if (navigation.canGoBack()) {
+      // Reset amount-related state when leaving Amount step (back navigation),
+      // otherwise the transaction amount can persist while the UI remounts empty.
+      if (currentStep === SEND_FLOW_STEP.AMOUNT) {
+        transaction.updateTransaction(tx => ({
+          ...tx,
+          amount: new BigNumber(0),
+          useAllAmount: false,
+          feesStrategy: null,
+        }));
+
+        resetViewState();
+      }
       navigation.goToPreviousStep();
     } else {
       close();
     }
-  }, [backTarget, close, currentStep, navigation, resetViewState, transaction]);
+  }, [close, currentStep, navigation, resetViewState, transaction]);
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;

@@ -1,4 +1,4 @@
-import { accountNameWithDefaultSelector, setAccountName } from "@ledgerhq/live-wallet/store";
+import { accountNameWithDefaultSelector, setAccountName } from "@ledgerhq/live-wallet/lib-es/store";
 import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
 import { TextInput } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Account } from "@ledgerhq/types-live";

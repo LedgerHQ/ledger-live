@@ -1,13 +1,11 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
-import { Observable } from "rxjs";
-import { TransactionType, memoEncodedSize } from "@ledgerhq/concordium-core";
-import { ConcordiumSigner, Transaction } from "../types";
-import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../logic";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
+import { Transaction, ConcordiumSigner, ConcordiumNativeTransaction } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<ConcordiumSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -17,78 +15,76 @@ export const buildSignOperation =
         const { fee } = transaction;
         if (!fee) throw new FeeNotLoaded();
 
-        const status = await getTransactionStatus(account, transaction);
-        const actualAmount = status.amount;
+        try {
+          // o observables allows to define steps of the signing process with the device
+          o.next({
+            type: "device-signature-requested",
+          });
 
-        o.next({
-          type: "device-signature-requested",
-        });
+          const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
 
-        const nextSequenceNumber = await getNextValidSequence(
-          account.freshAddress,
-          account.currency,
-        );
+          const signature = await signerContext(deviceId, async signer => {
+            const { freshAddressPath: derivationPath } = account;
+            const { publicKey } = await signer.getAddress(derivationPath);
 
-        const transactionType = transaction.memo
-          ? TransactionType.TransferWithMemo
-          : TransactionType.Transfer;
+            const { nativeTransaction, serializedTransaction } = await craftTransaction(
+              {
+                address: account.freshAddress,
+                publicKey,
+              },
+              {
+                recipient: transaction.recipient,
+                amount: transaction.amount,
+                fee: fee,
+              },
+            );
 
-        const memoSize = transaction.memo ? memoEncodedSize(transaction.memo) : undefined;
+            const transactionSignature = await signer.signTransaction(
+              derivationPath,
+              serializedTransaction,
+            );
 
-        const estimation = await estimateFees(account.currency, transactionType, memoSize);
+            return combine(serializedTransaction, transactionSignature, publicKey);
+          });
 
-        const signature = await signerContext(deviceId, async signer => {
-          const { freshAddressPath: derivationPath } = account;
-          const publicKey = await signer.getPublicKey(derivationPath, false);
+          o.next({
+            type: "device-signature-granted",
+          });
 
-          const structuredTransaction = await craftTransaction(
-            {
-              address: account.freshAddress,
-              publicKey,
-              nextSequenceNumber,
+          // We create an optimistic operation here, the framework will then replace this transaction with the one returned by the indexer
+          const hash = "";
+          const operation: Operation = {
+            id: encodeOperationId(account.id, hash, "OUT"),
+            hash,
+            accountId: account.id,
+            type: "OUT",
+            value: transaction.amount,
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            date: new Date(),
+            transactionSequenceNumber: new BigNumber(nextSequenceNumber),
+            extra: {},
+          };
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature,
             },
-            {
-              recipient: transaction.recipient,
-              amount: actualAmount,
-              fee: new BigNumber(estimation.cost.toString()),
-              energy: estimation.energy,
-              ...(transaction.memo ? { memo: transaction.memo } : {}),
-            },
-          );
+          });
+        } catch (e) {
+          if (e instanceof Error) {
+            throw new Error(
+              (e as Error & { data?: { resultMessage?: string } })?.data?.resultMessage,
+            );
+          }
 
-          const result = await signer.signTransaction(structuredTransaction, derivationPath);
-
-          return combine(result.serialized, result.signature);
-        });
-
-        o.next({
-          type: "device-signature-granted",
-        });
-
-        const hash = "";
-        const operation: Operation = {
-          id: encodeOperationId(account.id, hash, "OUT"),
-          hash,
-          accountId: account.id,
-          type: "OUT",
-          value: actualAmount,
-          fee: new BigNumber(estimation.cost.toString()),
-          blockHash: null,
-          blockHeight: null,
-          senders: [account.freshAddress],
-          recipients: [transaction.recipient],
-          date: new Date(),
-          transactionSequenceNumber: new BigNumber(nextSequenceNumber.toString()),
-          extra: {},
-        };
-
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature,
-          },
-        });
+          throw e;
+        }
       }
 
       main().then(

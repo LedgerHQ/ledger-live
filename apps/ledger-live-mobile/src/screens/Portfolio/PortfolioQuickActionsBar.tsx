@@ -1,10 +1,11 @@
 import React, { useCallback } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import useQuickActions, { QuickAction } from "~/hooks/useQuickActions";
 import { QuickActionList, type QuickActionButtonProps } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
+import { useRoute } from "@react-navigation/native";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 

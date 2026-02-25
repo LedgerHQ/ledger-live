@@ -37,7 +37,6 @@ export type Props = Omit<BottomSheetModalProps, "snapPoints" | "children"> & {
   children: React.ReactNode;
   snapPoints?: (string | number)[];
   enableDynamicSizing?: boolean;
-  showHandle?: boolean;
 };
 
 const QueuedDrawerGorhom = ({
@@ -55,7 +54,6 @@ const QueuedDrawerGorhom = ({
   title,
   snapPoints = ["70%", "90%"],
   enableDynamicSizing = false,
-  showHandle,
   ...rest
 }: Props) => {
   const { colors } = useTheme();
@@ -124,13 +122,10 @@ const QueuedDrawerGorhom = ({
   );
 
   const handleIndicatorStyle = useMemo(
-    () =>
-      showHandle
-        ? {}
-        : {
-            display: "none" as const,
-          },
-    [showHandle],
+    () => ({
+      display: "none" as const,
+    }),
+    [],
   );
 
   const combinedStyle = useMemo(

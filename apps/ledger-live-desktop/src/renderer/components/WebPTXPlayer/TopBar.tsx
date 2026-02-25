@@ -109,7 +109,7 @@ const RightContainer = styled(Box).attrs(() => ({
 export type Props = {
   icon?: boolean;
   manifest: LiveAppManifest;
-  webviewAPIRef: RefObject<WebviewAPI | null>;
+  webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
   mobileView: MobileView;
   setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;

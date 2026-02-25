@@ -36,11 +36,7 @@ const Item = styled(Flex).attrs({
   background-color: ${p => (p.active ? p.theme.colors.neutral.c100 : "unset")};
 `;
 
-export default function BarTabs({
-  children,
-  onTabChange,
-  initialActiveIndex,
-}: Props): React.JSX.Element {
+export default function BarTabs({ children, onTabChange, initialActiveIndex }: Props): JSX.Element {
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   return (
     <Bar>

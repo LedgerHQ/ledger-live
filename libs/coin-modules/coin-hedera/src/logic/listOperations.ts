@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -238,9 +239,7 @@ export async function listOperations({
   currency,
   address,
   mirrorTokens,
-  cursor,
-  limit,
-  order,
+  pagination,
   fetchAllPages,
   skipFeesForTokenOperations,
   useEncodedHash,
@@ -249,9 +248,7 @@ export async function listOperations({
   currency: CryptoCurrency;
   address: string;
   mirrorTokens: HederaMirrorToken[];
-  cursor?: string | undefined;
-  limit?: number | undefined;
-  order?: "asc" | "desc" | undefined;
+  pagination: Pagination;
   // options for compatibility with old bridge
   fetchAllPages: boolean;
   skipFeesForTokenOperations: boolean;
@@ -266,9 +263,9 @@ export async function listOperations({
   const tokenOperations: Operation<HederaOperationExtra>[] = [];
   const mirrorResult = await apiClient.getAccountTransactions({
     address,
-    pagingToken: cursor ?? null,
-    order: order,
-    limit: limit,
+    pagingToken: pagination.lastPagingToken ?? null,
+    order: pagination.order,
+    limit: pagination.limit,
     fetchAllPages,
   });
   const ledgerAccountId = encodeAccountId({

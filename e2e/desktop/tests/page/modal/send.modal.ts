@@ -80,16 +80,15 @@ export class SendModal extends Modal {
 
   @step("Verify tx information before confirming")
   async expectTxInfoValidity(tx: Transaction) {
-    if (!tx.accountToCredit.address) {
-      throw new Error("Recipient address is not set");
-    }
-    await expect(this.recipientAddressDisplayedValue).toHaveText(tx.accountToCredit.address);
+    const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
+    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
 
-    await expect(this.amountDisplayedValue).toContainText(tx.amount);
-    await expect(this.amountDisplayedValue).toContainText(tx.accountToDebit.currency.ticker);
-
+    const displayedAmount = await this.amountDisplayedValue.innerText();
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
     if (tx.accountToCredit.ensName) {
-      await expect(this.recipientEnsDisplayed).toHaveText(tx.accountToCredit.ensName);
+      const displayedEns = await this.recipientEnsDisplayed.innerText();
+      expect(displayedEns).toEqual(tx.accountToCredit.ensName);
     }
   }
 

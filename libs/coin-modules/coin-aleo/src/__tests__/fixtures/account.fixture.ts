@@ -8,31 +8,11 @@ const defaultMockAccountId =
   "js:2:aleo:aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f::AViewKey123";
 
 export const mockAleoResources: AleoResources = {
-  transparentBalance: new BigNumber(1000),
-  provableApi: {
-    apiKey: "abc",
-    consumerId: "consumer123",
-    jwt: {
-      token: "jwt_token",
-      exp: Math.floor(Date.now() / 1000) + 3600,
-    },
-    uuid: "uuid-1234",
-    scannerStatus: {
-      percentage: 50,
-      synced: false,
-    },
-  },
-  privateBalance: new BigNumber(1),
-  unspentPrivateRecords: [],
-  lastPrivateSyncDate: new Date(),
+  transparentBalance: new BigNumber(0),
 };
 
 export const mockAleoResourcesRaw: AleoResourcesRaw = {
-  transparentBalance: mockAleoResources.transparentBalance.toString(),
-  provableApi: JSON.stringify(mockAleoResources.provableApi),
-  privateBalance: mockAleoResources.privateBalance?.toString() ?? null,
-  unspentPrivateRecords: JSON.stringify(mockAleoResources.unspentPrivateRecords),
-  lastPrivateSyncDate: mockAleoResources.lastPrivateSyncDate?.toISOString() ?? null,
+  transparentBalance: "0",
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {

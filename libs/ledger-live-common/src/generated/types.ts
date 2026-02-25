@@ -47,12 +47,6 @@ import type {
   TransactionStatusRaw as celoTransactionStatusRaw,
 } from "@ledgerhq/coin-celo/types/index";
 import type {
-  Transaction as concordiumTransaction,
-  TransactionRaw as concordiumTransactionRaw,
-  TransactionStatus as concordiumTransactionStatus,
-  TransactionStatusRaw as concordiumTransactionStatusRaw,
-} from "@ledgerhq/coin-concordium/types/index";
-import type {
   Transaction as cosmosTransaction,
   TransactionRaw as cosmosTransactionRaw,
   TransactionStatus as cosmosTransactionStatus,
@@ -182,7 +176,6 @@ export type Transaction =
   | cardanoTransaction
   | casperTransaction
   | celoTransaction
-  | concordiumTransaction
   | cosmosTransaction
   | evmTransaction
   | filecoinTransaction
@@ -213,7 +206,6 @@ export type TransactionRaw =
   | cardanoTransactionRaw
   | casperTransactionRaw
   | celoTransactionRaw
-  | concordiumTransactionRaw
   | cosmosTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
@@ -244,7 +236,6 @@ export type TransactionStatus =
   | cardanoTransactionStatus
   | casperTransactionStatus
   | celoTransactionStatus
-  | concordiumTransactionStatus
   | cosmosTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
@@ -275,7 +266,6 @@ export type TransactionStatusRaw =
   | cardanoTransactionStatusRaw
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
-  | concordiumTransactionStatusRaw
   | cosmosTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw

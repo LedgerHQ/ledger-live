@@ -205,7 +205,7 @@ const ValidatorRow = ({
   shouldRenderMax,
   className,
 }: ValidatorRowProps) => {
-  const inputRef = useRef<HTMLInputElement>(undefined);
+  const inputRef = useRef<HTMLInputElement>();
   const onTitleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     e => {
       e.stopPropagation();

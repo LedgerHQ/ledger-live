@@ -9,13 +9,12 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { ReactElement, ReactNode } from "react";
 
 export type NetworkListItemData = {
   currency: CryptoOrTokenCurrency;
   description?: string;
-  rightElement?: ReactNode;
-  apy?: ReactElement;
+  rightElement?: React.ReactNode;
+  apy?: React.ReactElement;
 };
 
 type NetworkListItemProps = NetworkListItemData & {

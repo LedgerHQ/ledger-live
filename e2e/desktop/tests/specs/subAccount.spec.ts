@@ -39,10 +39,9 @@ const subAccountReceive: Array<{
   { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
   { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
-  //TODO: re-enable tests when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
-  // { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
-  // { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
-  // { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
+  { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
+  { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
+  { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 

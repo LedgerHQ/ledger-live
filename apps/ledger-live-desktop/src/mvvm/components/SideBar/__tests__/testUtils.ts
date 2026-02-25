@@ -1,8 +1,11 @@
-import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
+const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
+
 export const defaultInitialState = {
-  accounts: [BTC_ACCOUNT],
+  accounts: [genAccount("sidebar-test-btc", { currency: bitcoinCurrency })],
   settings: {
     ...INITIAL_STATE,
     hasCompletedOnboarding: true,

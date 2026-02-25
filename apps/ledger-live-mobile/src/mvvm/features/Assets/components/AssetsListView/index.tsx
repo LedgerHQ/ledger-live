@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo } from "react";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
+import useAssetsListViewModel, { type Props } from "./useAssetsListViewModel";
 import { Flex } from "@ledgerhq/native-ui";
 import { Pressable } from "react-native";
+import AssetItem from "./components/AssetItem";
 import { Asset } from "~/types/asset";
 import BigNumber from "bignumber.js";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import isEqual from "lodash/isEqual";
-import useAssetsListViewModel, { type Props } from "../../hooks/useAssetsListViewModel";
-import AssetItem from "../AssetItem";
 
 type ViewProps = ReturnType<typeof useAssetsListViewModel>;
 

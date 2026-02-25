@@ -20,9 +20,5 @@ type AmountMessageTextProps = Readonly<{
 export function AmountMessageText({ message }: AmountMessageTextProps) {
   if (!message) return null;
 
-  return (
-    <p className={cn(messageStyles({ type: message.type }))} data-testid="send-amount-message">
-      {message.text}
-    </p>
-  );
+  return <p className={cn(messageStyles({ type: message.type }))}>{message.text}</p>;
 }

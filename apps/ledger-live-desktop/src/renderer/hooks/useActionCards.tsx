@@ -46,7 +46,6 @@ const useActionCards = () => {
         page: "Portfolio",
         type: "action_card",
         displayedPosition,
-        location: actionCard.location,
       });
     }
   };
@@ -73,7 +72,6 @@ const useActionCards = () => {
         campaign: actionCard.id,
         page: "Portfolio",
         type: "action_card",
-        location: actionCard.location,
         displayedPosition,
       });
     }

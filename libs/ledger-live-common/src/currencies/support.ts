@@ -61,7 +61,7 @@ export const OFAC_CURRENCIES = [
 
 async function initializeUserSupportedFiats() {
   const remoteSupportedTokens = await fetchSupportedFiatsTokens();
-  let supportedTokens: string[] = [];
+  let supportedTokens = [] as string[];
 
   if (remoteSupportedTokens.length !== 0) {
     remoteSupportedTokens.forEach(token => {

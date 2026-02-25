@@ -53,7 +53,7 @@ const Routes = ({
   onClick: (path: string) => void;
   routes?: Route[];
   previousPath?: string[];
-}): React.JSX.Element | null => {
+}): JSX.Element | null => {
   if (!routes || routes.length === 0) return null;
 
   return (
@@ -74,7 +74,7 @@ const Routes = ({
   );
 };
 
-export const Breadcrumb = (args: Props): React.JSX.Element => {
+export const Breadcrumb = (args: Props): JSX.Element => {
   const [route, setRoute] = useState("apps/swap/confirm");
 
   const onChange = useCallback((value: string[]) => setRoute(value.join("/")), [setRoute]);

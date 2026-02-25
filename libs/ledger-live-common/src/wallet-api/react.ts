@@ -25,13 +25,7 @@ import {
   setWalletApiIdForAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import {
-  WalletAPICurrency,
-  AppManifest,
-  WalletAPIAccount,
-  WalletAPICustomHandlers,
-  DiscoverDB,
-} from "./types";
+import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -61,6 +55,7 @@ import {
   INITIAL_PLATFORM_STATE,
   MAX_RECENTLY_USED_LENGTH,
 } from "./constants";
+import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
@@ -763,26 +758,15 @@ export function useWalletAPIServer({
 
             let optimisticOperation: Operation = signedOperation.operation;
 
-            const networkId =
-              account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
-                : account.currency.id;
-
-            const broadcastTrackingData = {
-              sourceCurrency:
-                account.type === "TokenAccount" ? account.token.name : account.currency.name,
-              network: networkId,
-            };
-
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
               try {
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation,
                 });
-                tracking.broadcastSuccess(manifest, broadcastTrackingData);
+                tracking.broadcastSuccess(manifest);
               } catch (error) {
-                tracking.broadcastFail(manifest, broadcastTrackingData);
+                tracking.broadcastFail(manifest);
                 throw error;
               }
             }
@@ -894,17 +878,6 @@ export function useWalletAPIServer({
               const bridge = getAccountBridge(account, parentAccount);
               const mainAccount = getMainAccount(account, parentAccount);
 
-              const networkId =
-                account.type === "TokenAccount"
-                  ? account.token.parentCurrency.id
-                  : account.currency.id;
-
-              const broadcastTrackingData = {
-                sourceCurrency:
-                  account.type === "TokenAccount" ? account.token.name : account.currency.name,
-                network: networkId,
-              };
-
               let optimisticOperation: Operation = signedOperation.operation;
 
               if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -917,9 +890,9 @@ export function useWalletAPIServer({
                       source: { type: "live-app", name: manifest.id },
                     },
                   });
-                  tracking.broadcastSuccess(manifest, broadcastTrackingData);
+                  tracking.broadcastSuccess(manifest);
                 } catch (error) {
-                  tracking.broadcastFail(manifest, broadcastTrackingData);
+                  tracking.broadcastFail(manifest);
                   throw error;
                 }
               }
@@ -990,19 +963,6 @@ export function useWalletAPIServer({
             const bridge = getAccountBridge(account, parentAccount);
             const mainAccount = getMainAccount(account, parentAccount);
 
-            const networkId =
-              account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
-                : account.currency.id;
-
-            const broadcastTrackingData = {
-              isEmbeddedSwap,
-              partner,
-              sourceCurrency:
-                account.type === "TokenAccount" ? account.token.name : account.currency.name,
-              network: networkId,
-            };
-
             let optimisticOperation: Operation = signedOperation.operation;
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -1016,9 +976,9 @@ export function useWalletAPIServer({
                     source: { type: "live-app", name: manifest.id },
                   },
                 });
-                tracking.broadcastSuccess(manifest, broadcastTrackingData);
+                tracking.broadcastSuccess(manifest, isEmbeddedSwap, partner);
               } catch (error) {
-                tracking.broadcastFail(manifest, broadcastTrackingData);
+                tracking.broadcastFail(manifest, isEmbeddedSwap, partner);
                 throw error;
               }
             }

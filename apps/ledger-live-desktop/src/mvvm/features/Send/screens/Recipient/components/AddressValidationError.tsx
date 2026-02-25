@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError as AddressValidationErrorType } from "../types";
 import { StatusMessage } from "./StatusMessage";
 
 type AddressValidationErrorProps = Readonly<{
@@ -20,5 +20,5 @@ export function AddressValidationError({ error }: AddressValidationErrorProps) {
 
   const text = errorMessages[error];
 
-  return <StatusMessage text={text} dataTestId="address-validation-status" />;
+  return <StatusMessage text={text} />;
 }

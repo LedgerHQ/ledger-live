@@ -42,32 +42,6 @@ describe("listOperations", () => {
     });
   });
 
-  describe("Account TTZQfHheDCDbY2kW5tETUGJrPKLUa3T4ag with failed trc20 transaction", () => {
-    const testingAccount = "TTZQfHheDCDbY2kW5tETUGJrPKLUa3T4ag";
-    const options = { ...defaultOptions, minHeight: 80285000, softLimit: 500 };
-    describe("listOperations", () => {
-      it("should return failed trc20 transaction", async () => {
-        // https://tronscan.org/#/address/TTZQfHheDCDbY2kW5tETUGJrPKLUa3T4ag
-        // Includes failed REVERT tx f8a52daf9a247f73432afa292b8063d5c5429c8fdb0f8c66f5e8b15b3767e14b at block 80285488
-        const failedTxHash = "f8a52daf9a247f73432afa292b8063d5c5429c8fdb0f8c66f5e8b15b3767e14b";
-        const [operations] = await listOperations(testingAccount, options);
-        expect(operations).toContainEqual(
-          expect.objectContaining({
-            tx: expect.objectContaining({
-              hash: failedTxHash,
-              failed: true,
-            }),
-            value: 0n, // unfortunately the value is not captured, it should be 300000000000
-            asset: {
-              type: "trc20",
-              assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", // USDT
-            },
-          }),
-        );
-      });
-    });
-  });
-
   describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight 0 / order asc / softLimit 2", () => {
     // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
 

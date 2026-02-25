@@ -17,8 +17,8 @@ import {
   processRawInput,
   processFiatInput,
   calculateFiatEquivalent,
-} from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
-import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
+} from "../utils/amountInput";
+import { syncAmountInputs } from "../utils/amountInputSync";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;

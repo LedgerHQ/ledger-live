@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Box, InfiniteLoader, Flex } from "@ledgerhq/native-ui";
+import { Box, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 
 type Props = {
   size?: number;

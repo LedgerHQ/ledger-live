@@ -1,5 +1,4 @@
 import React, { ReactNode, RefObject, useCallback, useMemo, useRef, useState } from "react";
-import { isValidReactElement } from "@ledgerhq/react-ui";
 import { Content } from "./components/Content";
 import { SlidesContextValue } from "./context";
 
@@ -25,8 +24,7 @@ export function useSlidesViewModel({
   const [currentIndex, setCurrentIndex] = useState(initialSlideIndex);
 
   const contentChild = React.Children.toArray(children).find(
-    (child): child is React.ReactElement<{ children: ReactNode }> =>
-      isValidReactElement(child) && child.type === Content,
+    (child): child is React.ReactElement => React.isValidElement(child) && child.type === Content,
   );
 
   const totalSlides = contentChild ? React.Children.toArray(contentChild.props.children).length : 0;

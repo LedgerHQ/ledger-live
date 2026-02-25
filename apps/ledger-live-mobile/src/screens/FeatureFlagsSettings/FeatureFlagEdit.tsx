@@ -1,11 +1,12 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-import { ScrollView, TextInput } from "react-native";
+import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 import { Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
+import { TextInput } from "react-native";
 import { useTheme } from "styled-components/native";
 
 const formatValue = (value: Feature) => {

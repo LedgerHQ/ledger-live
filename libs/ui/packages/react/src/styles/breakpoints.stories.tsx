@@ -66,7 +66,7 @@ export default {
   },
 };
 
-export const Breakpoints = (): React.JSX.Element => {
+export const Breakpoints = (): JSX.Element => {
   return (
     <Flex flexDirection="column" rowGap="24px">
       <Flex

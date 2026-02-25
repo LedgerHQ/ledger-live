@@ -1,19 +1,13 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["src/api/subscan.ts", "src/api/websocket.ts"]
 }

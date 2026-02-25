@@ -6,14 +6,16 @@ import { CARD_LANDING_TEST_IDS } from "../../testIds";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cardImage = require("~/images/card/card-landing.webp") as number;
 
-const IMAGE_SIZE = 350;
-const CARD_IMAGE_TOP_CROP = 50;
-
 const CardImageDisplay = () => {
   return (
     <Box
-      lx={{ alignItems: "center" }}
-      style={{ height: IMAGE_SIZE - CARD_IMAGE_TOP_CROP, overflow: "hidden" }}
+      lx={{
+        flexGrow: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingTop: "s24",
+        paddingBottom: "s24",
+      }}
     >
       <Image
         source={cardImage}
@@ -27,10 +29,9 @@ const CardImageDisplay = () => {
 
 const styles = StyleSheet.create({
   cardImage: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    position: "absolute",
-    bottom: 0,
+    width: 350,
+    height: 350,
+    alignSelf: "center",
   },
 });
 

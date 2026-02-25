@@ -17,7 +17,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state } = useSendFlowData();
 
-  const currentStepConfig = wizard.currentStepConfig;
+  const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
   const StepComponent = wizard.currentStepRenderer;
 
   const handleDialogOpenChange = useCallback(

@@ -90,7 +90,6 @@ export function SendHeader() {
               type="button"
               className="absolute inset-0"
               aria-label="Edit recipient"
-              data-testid="send-edit-recipient-button"
               onClick={handleRecipientInputClick}
             />
           </div>
@@ -102,8 +101,6 @@ export function SendHeader() {
       <>
         <AddressInput
           className="-mt-12 mb-12 px-24"
-          id="send-recipient-input"
-          data-testid="send-recipient-input"
           value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}
@@ -183,15 +180,13 @@ export function SendHeader() {
 
   return (
     <div className="flex flex-col">
-      <div data-testid="send-dialog-header">
-        <DialogHeader
-          appearance="compact"
-          title={title}
-          description={descriptionText || undefined}
-          onBack={showBackButton ? handleBack : undefined}
-          onClose={close}
-        />
-      </div>
+      <DialogHeader
+        appearance="compact"
+        title={title}
+        description={descriptionText || undefined}
+        onBack={showBackButton ? handleBack : undefined}
+        onClose={close}
+      />
       {recipientInputContent}
     </div>
   );

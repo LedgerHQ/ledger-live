@@ -9,6 +9,7 @@ packages:
   - "libs/ledgerjs/**"
   - "libs/ledger-services/**"
   - "libs/ui/packages/*"
+  - "libs/ui/examples/*"
   - "libs/ledger-live-common/tools"
   - "tools/**"
   - "docs"
@@ -25,9 +26,9 @@ catalog:
   "@ledgerhq/device-transport-kit-speculos": 1.1.3
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.1.1
-  "@ledgerhq/lumen-ui-react": 0.1.1
-  "@ledgerhq/lumen-ui-rnative": 0.1.2
+  "@ledgerhq/lumen-design-core": 0.0.53
+  "@ledgerhq/lumen-ui-react": 0.0.85
+  "@ledgerhq/lumen-ui-rnative": 0.0.76
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
@@ -91,8 +92,7 @@ catalog:
   "@storybook/theming": 8.6.14
   storybook-dark-mode: 4.0.2
   storybook-react-rsbuild: 3.2.2
-  "@swc/core": 1.15.11
-  "@swc/helpers": 0.5.17
+  "@swc/core": 1.15.8
   "@swc/jest": 0.2.39
   "@testing-library/dom": 10.4.1
   "@testing-library/jest-dom": 6.9.1
@@ -115,14 +115,6 @@ catalog:
   ethers: 6.15.0
   "@solana/spl-token": ^0.4.14
   "@solana/web3.js": ^1.98.4
-  "@polkadot/api": 16.5.4
-  "@polkadot/api-augment": 16.5.4
-  "@polkadot/api-derive": 16.5.4
-  "@polkadot/types": 16.5.4
-  "@polkadot/types-known": 16.5.4
-  "@polkadot/rpc-provider": 16.5.4
-  "@polkadot/util": 14.0.1
-  "@polkadot/util-crypto": 14.0.1
   expect: 30.2.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
@@ -134,8 +126,8 @@ catalog:
   jest-environment-node: 30.2.0
   jest-file-snapshot: 0.7.0
   jest-util: 30.2.0
-  react: 19.0.0
-  react-dom: 19.0.0
+  react: 18.3.1
+  react-dom: 18.3.1
   react-i18next: 16.5.0
   react-native-config: 1.5.3
   react-native-reanimated: 4.1.6
@@ -144,9 +136,7 @@ catalog:
   react-native-svg: 15.15.1
   react-redux: ^9.2.0
   redux: ^5.0.1
-  react-test-renderer: 19.0.0
-  "@types/react": 19.0.14
-  "@types/react-dom": 19.0.0
+  react-test-renderer: 18.3.1
   reselect: 5.1.1
   rxjs: 7.8.2
   tailwindcss: ^4.1.0

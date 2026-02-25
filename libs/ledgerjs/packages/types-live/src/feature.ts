@@ -100,6 +100,7 @@ export type CurrencyFeatures = {
   currencyDydx: DefaultFeature;
   currencyUmee: DefaultFeature;
   currencyStargaze: DefaultFeature;
+  currencyOnomy: DefaultFeature;
   currencyPersistence: DefaultFeature;
   currencyQuicksilver: DefaultFeature;
   currencyInternetComputer: DefaultFeature;
@@ -809,7 +810,6 @@ type Feature_Wallet40_Params = {
   tour: boolean;
   lazyOnboarding: boolean;
   balanceRefreshRework: boolean;
-  assetSection: boolean;
 
   // Specifics
   newReceiveDialog?: boolean;

@@ -23,8 +23,6 @@ import { ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 import { OnboardingType } from "~/reducers/types";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
   const trustchain = useSelector(trustchainSelector);
@@ -88,13 +86,6 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
         } else if (error instanceof NoTrustchainInitialized) {
           setScene({ kind: SceneKind.UnbackedError });
         } else if (error instanceof Error) {
-          if (error instanceof UserRefusedOnDevice) {
-            track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
-              page: "Ledger Sync",
-              modelId: device?.modelId,
-              connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
-            });
-          }
           setScene({ kind: SceneKind.GenericError, error });
         }
       }

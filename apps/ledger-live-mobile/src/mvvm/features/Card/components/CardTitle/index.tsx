@@ -9,7 +9,7 @@ interface CardTitleProps {
 
 const CardTitle = ({ title, subtitle }: CardTitleProps) => {
   return (
-    <Box lx={{ paddingHorizontal: "s24", alignItems: "center" }}>
+    <Box lx={{ paddingTop: "s56", paddingHorizontal: "s24", alignItems: "center" }}>
       <Text
         typography="heading1SemiBold"
         lx={{ color: "base", textAlign: "center" }}
@@ -22,7 +22,7 @@ const CardTitle = ({ title, subtitle }: CardTitleProps) => {
 
       <Text
         typography="body2"
-        lx={{ color: "muted", textAlign: "center", marginTop: "s16" }}
+        lx={{ color: "muted", textAlign: "center", marginTop: "s4" }}
         testID={CARD_LANDING_TEST_IDS.subtitle}
       >
         {subtitle}

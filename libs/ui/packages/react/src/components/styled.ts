@@ -1,4 +1,3 @@
-import React from "react";
 import gaps from "../styles/system/gaps";
 import styled, { StyledInterface, InterpolationFunction } from "styled-components";
 import {
@@ -35,7 +34,6 @@ export type BaseStyledProps = SpaceProps &
      */
     rowGap?: string | number;
     color?: string;
-    children?: React.ReactNode;
   };
 
 export const baseStyles: InterpolationFunction<unknown> = compose(

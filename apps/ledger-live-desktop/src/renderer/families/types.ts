@@ -101,11 +101,6 @@ export type LLDCoinFamily<
     addressCell?: Partial<Record<OperationType, React.ComponentType<AddressCellProps<O>>>>;
 
     /**
-     * Custom metadata cell before the amount cell in operation row
-     */
-    customMetadataCell?: React.ComponentType<{ operation: O }>;
-
-    /**
      * Cell amount before the amount cell in operation row
      */
     amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps<O>>>>;

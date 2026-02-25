@@ -1,5 +1,5 @@
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import type { TransactionType } from "./types";
+import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig from "@ledgerhq/coin-framework/config";
 
 export type AleoConfig = {
   networkType: "mainnet" | "testnet";
@@ -7,8 +7,6 @@ export type AleoConfig = {
     node: string;
     sdk: string;
   };
-  feeByTransactionType: Record<TransactionType, number>;
-  feeSafetyMultiplier: number;
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;

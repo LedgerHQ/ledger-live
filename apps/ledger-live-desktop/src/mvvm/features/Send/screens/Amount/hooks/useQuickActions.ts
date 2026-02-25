@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { areAmountsEqual } from "@ledgerhq/live-common/flows/send/amount/utils/amount";
+import { areAmountsEqual } from "../utils/amount";
 import type { AmountScreenQuickAction } from "../types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";

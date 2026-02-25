@@ -3,7 +3,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { Flex } from "@ledgerhq/native-ui";
 import { FlatList, ListRenderItemInfo, TouchableOpacity, View } from "react-native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import AccountItem from "../AccountItem";
+import AccountItem from "../AccountsListView/components/AccountItem";
 import CustomHeader from "./CustomHeader";
 import { useTheme } from "styled-components/native";
 import getAccountListKeyExtractor from "../../utils/getAccountListKeyExtractor";

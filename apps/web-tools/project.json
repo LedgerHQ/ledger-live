@@ -1,8 +1,0 @@
-{
-  "targets": {
-    "build": {
-      "outputs": ["{projectRoot}/dist/**"],
-      "cache": false
-    }
-  }
-}

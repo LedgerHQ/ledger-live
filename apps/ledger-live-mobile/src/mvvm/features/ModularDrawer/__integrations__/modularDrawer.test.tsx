@@ -27,7 +27,24 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
-// Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization
+jest.mock("@react-native-community/netinfo", () => {
+  const mockUseNetInfo = jest.fn(() => ({
+    isConnected: true,
+    isInternetReachable: true,
+    type: "unknown",
+    details: null,
+  }));
+
+  return {
+    NetInfoStateType: {
+      unknown: "unknown",
+      none: "none",
+    },
+    useNetInfo: mockUseNetInfo,
+    addEventListener: jest.fn(() => jest.fn()),
+  };
+});
+
 type NetInfoOverride =
   | ({
       type: NetInfoStateType.none;

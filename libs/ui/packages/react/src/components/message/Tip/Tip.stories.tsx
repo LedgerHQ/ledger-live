@@ -22,6 +22,6 @@ export default {
   },
 };
 
-export const Default = (args: TipProps): React.JSX.Element => {
+export const Default = (args: TipProps): JSX.Element => {
   return <Tip {...args} />;
 };

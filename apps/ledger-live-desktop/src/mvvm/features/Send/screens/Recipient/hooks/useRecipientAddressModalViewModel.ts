@@ -4,8 +4,6 @@ import {
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import type { RecentAddress } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
@@ -16,8 +14,10 @@ import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useMemo, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import type { RecentAddress } from "../types";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { useAddressValidation } from "./useAddressValidation";
+import { useRecipientSearchState } from "./useRecipientSearchState";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;

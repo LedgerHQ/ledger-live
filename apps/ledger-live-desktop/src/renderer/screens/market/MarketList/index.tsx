@@ -21,7 +21,7 @@ const ScrollContainer = styled.div`
 `;
 
 type MarketListVirtualization = {
-  parentRef: RefObject<HTMLDivElement | null>;
+  parentRef: RefObject<HTMLDivElement>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
 };
 

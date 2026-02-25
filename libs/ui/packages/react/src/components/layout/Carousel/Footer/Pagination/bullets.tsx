@@ -51,10 +51,7 @@ const useBulletStyles = () => {
 };
 
 const Bullet = ({ type }: { type: ItemStatus }) => {
-  const springStyle = useSpring(useBulletStyles()[type]);
-  /* react-spring animated.div typings don't include style; spread with assertion for compatibility */
-  /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
-  return <animated.div {...({ style: springStyle } as React.HTMLAttributes<HTMLDivElement>)} />;
+  return <animated.div style={useSpring(useBulletStyles()[type])} />;
 };
 
 export default Bullet;

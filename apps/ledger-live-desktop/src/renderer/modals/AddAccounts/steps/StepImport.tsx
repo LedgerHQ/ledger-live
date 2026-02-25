@@ -7,7 +7,6 @@ import { ignoreElements, filter, map, retry } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
-import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
@@ -408,14 +407,6 @@ export const StepImportFooter = ({
       !a.cantonResources.isOnboarded,
   );
 
-  const hasConcordiumCreatableAccounts = scannedAccounts.some(
-    a =>
-      checkedAccountsIds.includes(a.id) &&
-      a.currency?.family === "concordium" &&
-      isConcordiumAccount(a) &&
-      !a.concordiumResources.isOnboarded,
-  );
-
   const goCantonOnboard = () => {
     onCloseModal();
     const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -427,20 +418,6 @@ export const StepImportFooter = ({
           .map(id => scannedAccounts.find(a => a.id === id))
           .filter((account): account is Account => Boolean(account)),
         existingAccounts,
-        editedNames,
-      }),
-    );
-  };
-
-  const goConcordiumOnboard = () => {
-    onCloseModal();
-    const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
-    dispatch(
-      openModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT", {
-        currency: mainCurrency,
-        selectedAccounts: checkedAccountsIds
-          .map(id => scannedAccounts.find(a => a.id === id))
-          .filter((account): account is Account => Boolean(account)),
         editedNames,
       }),
     );
@@ -459,8 +436,6 @@ export const StepImportFooter = ({
     : async () => {
         if (hasCantonCreatableAccounts) {
           goCantonOnboard();
-        } else if (hasConcordiumCreatableAccounts) {
-          goConcordiumOnboard();
         } else {
           await onClickAdd();
           transitionTo("finish");

@@ -17,7 +17,7 @@ import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../ModularDrawer";
 import { track } from "~/renderer/analytics/segment";
-import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
@@ -29,7 +29,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
   const location = useLocation();
   const { t } = useTranslation();
   const { hasAccount, hasFunds } = useAccountStatus();
-  const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const urlLedgerShop = useLocalizedUrl(urls.ledgerShop);
   const openLedgerShop = useCallback(() => openURL(urlLedgerShop), [urlLedgerShop]);
 
@@ -110,8 +110,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       page: trackingPageName,
     });
 
-    navigate("/onboarding/select-device", { state: { fromQuickAction: true } });
-  }, [navigate, trackingPageName]);
+    dispatch(openModal("MODAL_CONNECT_DEVICE", { onResult: () => {} }));
+  }, [dispatch, trackingPageName]);
 
   const onBuyALedger = useCallback(() => {
     track("button_clicked", {
@@ -123,7 +123,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
   }, [trackingPageName, openLedgerShop]);
 
   const actionsList = useMemo((): QuickAction[] => {
-    if (!hasOnboardedDevice) {
+    if (!hasCompletedOnboarding) {
       return [
         {
           title: t("quickActions.connect"),
@@ -173,7 +173,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasOnboardedDevice, hasFunds, hasAccount]);
+  }, [hasCompletedOnboarding, hasFunds, hasAccount]);
 
   return { actionsList };
 };

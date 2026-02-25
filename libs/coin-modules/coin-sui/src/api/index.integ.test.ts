@@ -1,4 +1,9 @@
-import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  Operation,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from ".";
 
@@ -40,18 +45,19 @@ describe("Sui Api", () => {
     const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
 
     async function testListOperations(order: "asc" | "desc" | undefined) {
-      const { items: operations1, next: token1 } = await module.listOperations(binance, {
-        minHeight: 0,
-        order,
-      });
+      const baseOpts: Pagination = { minHeight: 0 };
+      if (order) {
+        baseOpts.order = order;
+      }
+
+      const [operations1, token1] = await module.listOperations(binance, baseOpts);
 
       expect(operations1.length).toBeGreaterThan(2);
       expect(token1.length).toBeGreaterThan(0);
 
-      const { items: operations2 } = await module.listOperations(binance, {
-        minHeight: 0,
-        cursor: token1,
-        order,
+      const [operations2, _] = await module.listOperations(binance, {
+        ...baseOpts,
+        lastPagingToken: token1,
       });
       expect(operations2.length).toBeGreaterThan(2);
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
@@ -73,7 +79,7 @@ describe("Sui Api", () => {
     });
 
     it("shouldn't return cursor on last page", async () => {
-      const { items: operations, next: cursor } = await module.listOperations(
+      const [operations, cursor] = await module.listOperations(
         "0xd8908c165dee785924e7421a0fd0418a19d5daeec395fd505a92a0fd3117e428",
         { minHeight: 0, order: "asc" },
       );
@@ -83,7 +89,7 @@ describe("Sui Api", () => {
       expect(operations.length).toBeLessThan(10);
       expect(operations.length).toBeGreaterThan(0);
 
-      expect(cursor).toBeUndefined();
+      expect(cursor).toBe("");
     });
   });
 
@@ -91,11 +97,10 @@ describe("Sui Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      const result = await module.listOperations(
+      [txs] = await module.listOperations(
         "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f",
         { minHeight: 0, order: "asc" },
       );
-      txs = result.items;
     });
 
     it("should map undelegate operations when it's not the first move call", async () => {
@@ -110,8 +115,7 @@ describe("Sui Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      const result = await module.listOperations(SENDER, { minHeight: 0, order: "asc" });
-      txs = result.items;
+      [txs] = await module.listOperations(SENDER, { minHeight: 0, order: "asc" });
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -138,7 +142,7 @@ describe("Sui Api", () => {
     });
 
     it("uses the minHeight to filter", async () => {
-      const { items: minHeightTxs } = await module.listOperations(SENDER, {
+      const minHeightTxs = await module.listOperations(SENDER, {
         minHeight: 154925948,
         order: "asc",
       });

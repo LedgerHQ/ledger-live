@@ -5,7 +5,7 @@ import { SendWorkflow } from ".";
 import { closeSendFlowDialog, sendFlowStateSelector } from "~/renderer/reducers/sendFlow";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 
-function SendFlowRoot() {
+export function SendFlowRoot() {
   const dispatch = useDispatch();
   const { isOpen, data } = useSelector(sendFlowStateSelector);
 
@@ -28,5 +28,3 @@ function SendFlowRoot() {
     </DomainServiceProvider>
   );
 }
-
-export default SendFlowRoot;

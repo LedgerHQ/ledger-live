@@ -1,24 +1,24 @@
-import type { RecentAddress } from "@ledgerhq/live-common/flows/send/recipient/types";
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
+  Tile,
+  TileContent,
+  TileSpot,
+  TileTitle,
+  TileDescription,
   Menu,
   MenuContent,
   MenuItem,
-  MenuTrigger,
-  Tile,
-  TileContent,
-  TileDescription,
   TileSecondaryAction,
-  TileSpot,
-  TileTitle,
+  MenuTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import { LedgerLogo, MoreVertical, Trash, Wallet } from "@ledgerhq/lumen-ui-react/symbols";
-import { useSelector } from "LLD/hooks/redux";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { Wallet, Trash, MoreVertical, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import type { RecentAddress } from "../types";
 
 type RecentAddressTileProps = Readonly<{
   recentAddress: RecentAddress;
@@ -59,11 +59,7 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
         secondaryAction={
           <Menu>
             <MenuTrigger asChild>
-              <TileSecondaryAction
-                icon={MoreVertical}
-                aria-label="More actions"
-                data-testid="send-recent-tile-action"
-              />
+              <TileSecondaryAction icon={MoreVertical} aria-label="More actions" />
             </MenuTrigger>
             <MenuContent>
               <MenuItem onSelect={handleRemove}>

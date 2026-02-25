@@ -17,6 +17,7 @@ import {
   Subheader,
   SubheaderRow,
   SubheaderTitle,
+  SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { track } from "~/analytics";
@@ -39,9 +40,10 @@ export const PortfolioPerpsEntryPoint = () => {
       <Subheader>
         <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
           <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>
+          <SubheaderShowMore />
         </SubheaderRow>
       </Subheader>
-      <Flex mb={6} mt={2}>
+      <Flex mb={6}>
         <ListItem onPress={handlePress} testID="portfolio-perps-entry-point">
           <ListItemLeading>
             <ListItemSpot appearance="icon" icon={Infinite} />

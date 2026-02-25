@@ -40,20 +40,8 @@ Object.defineProperties(globalThis, {
   MessagePort: { value: MessagePort },
   BroadcastChannel: {
     value: class {
-      _listeners = {};
-      postMessage(data) {
-        const event = { data };
-        (this._listeners["message"] || []).forEach(fn => fn(event));
-      }
+      postMessage() {}
       close() {}
-      addEventListener(type, fn) {
-        if (!this._listeners[type]) this._listeners[type] = [];
-        this._listeners[type].push(fn);
-      }
-      removeEventListener(type, fn) {
-        if (!this._listeners[type]) return;
-        this._listeners[type] = this._listeners[type].filter(l => l !== fn);
-      }
       onmessage = null;
       onmessageerror = null;
     },

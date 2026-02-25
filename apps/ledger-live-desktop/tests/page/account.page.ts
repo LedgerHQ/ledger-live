@@ -28,7 +28,6 @@ export class AccountPage extends AppPage {
 
   @step("Click Stake button on banner")
   async clickBannerCTA() {
-    await this.stakeBannerButton.waitFor({ state: "attached" });
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
   }
@@ -36,10 +35,6 @@ export class AccountPage extends AppPage {
   @step("Scroll to operations")
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
-    // Wait for the operation list to be attached to the DOM before scrolling.
-    // React 19's concurrent rendering may temporarily detach elements during re-renders
-    // (e.g. after navigating to a token sub-account).
-    await operationList.waitFor({ state: "attached" });
     await operationList.scrollIntoViewIfNeeded();
   }
 
@@ -58,22 +53,5 @@ export class AccountPage extends AppPage {
   @step("Click Receive button")
   async clickReceive() {
     await this.receiveButton.click();
-  }
-
-  @step("Navigate to token account")
-  async navigateToToken(tokenTestId: string) {
-    const tokenRow = this.page.getByTestId(tokenTestId);
-    // Wait for the token row to be attached to the DOM before navigating to it.
-    // React 19's concurrent rendering may temporarily detach elements during re-renders
-    await tokenRow.waitFor({ state: "attached" });
-    await tokenRow.click();
-  }
-
-  async operationRowByTestId(operationTestId: string) {
-    const operationRow = this.page.getByTestId(operationTestId);
-    // Wait for the operation row to be attached to the DOM before returning it.
-    // React 19's concurrent rendering may temporarily detach elements during re-renders
-    await operationRow.waitFor({ state: "attached" });
-    return operationRow;
   }
 }

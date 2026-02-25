@@ -24,8 +24,6 @@ if (process.env.MSW_ENABLED === "true") {
 import { AppRegistry } from "react-native";
 import App from "./src";
 import logReport from "./src/log-report";
-import { initDevServerAutoReload } from "./src/hooks/useDevServerAutoReload";
 logReport.logReportInit();
-initDevServerAutoReload();
 
 AppRegistry.registerComponent("ledgerlivemobile", () => App);

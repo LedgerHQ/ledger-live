@@ -2,12 +2,7 @@ import React from "react";
 import { render, fireEvent } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import PortfolioAssets from "../PortfolioAssets";
-import TestNavigator, {
-  INITIAL_STATE,
-  SlicedMockedAccounts,
-  MockedAccountsWithTokens,
-  BLACKLISTED_TOKEN_IDS,
-} from "./shared";
+import TestNavigator, { INITIAL_STATE, SlicedMockedAccounts } from "./shared";
 import { track } from "~/analytics";
 
 beforeEach(() => {
@@ -286,46 +281,5 @@ describe("portfolioAssets", () => {
       expect(getAllByText(name)[0]).toBeVisible();
       expect(getByText(count)).toBeVisible();
     });
-  });
-
-  it("should render see all assets button when blacklisted tokens still leave enough non-blacklisted assets", async () => {
-    const { getByText } = render(
-      <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
-      </TestNavigator>,
-      {
-        overrideInitialState: (state: State) => ({
-          ...INITIAL_STATE.overrideInitialState(state),
-          settings: {
-            ...INITIAL_STATE.overrideInitialState(state).settings,
-            blacklistedTokenIds: BLACKLISTED_TOKEN_IDS,
-          },
-        }),
-      },
-    );
-
-    // 7 crypto assets remain after blacklisting 3 tokens, still >= 5
-    expect(getByText(/see all assets/i)).toBeDefined();
-  });
-
-  it("should not render see all assets button when blacklisted tokens reduce non-blacklisted assets below threshold", async () => {
-    const { queryByText } = render(
-      <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
-      </TestNavigator>,
-      {
-        overrideInitialState: (state: State) => ({
-          ...INITIAL_STATE.overrideInitialState(state),
-          accounts: MockedAccountsWithTokens,
-          settings: {
-            ...INITIAL_STATE.overrideInitialState(state).settings,
-            blacklistedTokenIds: BLACKLISTED_TOKEN_IDS,
-          },
-        }),
-      },
-    );
-
-    // 4 crypto + 3 tokens = 7 total, but after blacklisting 3 tokens only 4 remain (< 5)
-    expect(queryByText(/see all assets/i)).toBeNull();
   });
 });

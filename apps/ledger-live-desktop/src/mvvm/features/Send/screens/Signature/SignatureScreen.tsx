@@ -33,7 +33,7 @@ export const SignatureScreen = () => {
   }
 
   return (
-    <div className="-mt-12 mb-24" data-testid="send-signature-step">
+    <div className="-mt-12 mb-24">
       <DeviceAction
         action={action}
         // @ts-expect-error This type is not compatible with the one expected by the action

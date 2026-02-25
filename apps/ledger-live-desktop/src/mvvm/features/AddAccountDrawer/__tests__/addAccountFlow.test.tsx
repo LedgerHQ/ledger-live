@@ -1,7 +1,8 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
-import { act, render, screen, userEvent } from "tests/testSetup";
+import { act } from "react-dom/test-utils";
+import { render, screen, userEvent } from "tests/testSetup";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";

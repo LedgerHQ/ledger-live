@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState } from "react";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { ScreenName } from "~/const";
 import { useRemoveImageDeviceAction } from "~/hooks/deviceActions";
+import { useCallback, useMemo } from "react";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useTranslation } from "~/context/Locale";

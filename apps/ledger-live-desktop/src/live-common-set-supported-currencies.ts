@@ -10,6 +10,7 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "dydx",
+  "onomy",
   "quicksilver",
   "persistence",
   "avalanche_c_chain",

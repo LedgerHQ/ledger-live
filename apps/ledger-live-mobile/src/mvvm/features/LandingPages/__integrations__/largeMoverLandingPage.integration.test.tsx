@@ -32,8 +32,8 @@ const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMover
 
 describe("LargeMoverLandingPage Integration Tests", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     jest.mocked(navigationModule.useNavigation).mockReturnValue(mockNavigation);
+    jest.clearAllMocks();
   });
 
   it("displays the ticker of the first currency", async () => {

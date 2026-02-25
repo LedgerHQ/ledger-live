@@ -32,7 +32,7 @@ function StatusNotification({
   badge,
   hasBorder = false,
   ...containerProps
-}: Readonly<Props>): React.JSX.Element {
+}: Props): JSX.Element {
   return (
     <Container hasBorder={hasBorder} {...containerProps}>
       {badge}

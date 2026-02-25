@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { type RefObject } from "react";
+import React from "react";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import {
   WebviewAPI,
@@ -14,10 +14,11 @@ import type { PerpsWebviewInputs } from "../PerpsApp/usePerpsAppViewModel";
 export type PerpsWebProps = {
   manifest: LiveAppManifest;
   inputs: PerpsWebviewInputs;
-  webviewAPIRef: RefObject<WebviewAPI | null>;
+  webviewAPIRef: React.RefObject<WebviewAPI>;
   webviewState: WebviewState;
   onStateChange: WebviewProps["onStateChange"];
   enablePlatformDevTools: boolean;
+  isEmbedded?: boolean;
   Loader?: WebviewLoader;
 };
 

@@ -1,10 +1,9 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
-import { useSpring, interpolate } from "react-spring";
+import { useSpring, animated, interpolate } from "react-spring";
 import useTheme from "~/renderer/hooks/useTheme";
 import { ChartTooltipModel } from "chart.js";
 import { Item } from "./types";
-import { AnimatedDiv } from "LLD/components/AnimatedDiv";
 
 type TooltipContainerProps = {
   opacity: number;
@@ -76,12 +75,9 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
           />
         </svg>
       </div>
-      <AnimatedDiv
+      <animated.div
         style={{
-          transform: interpolate(
-            [x as number, y as number],
-            (x, y) => `translate3d(${x}px,${y - 35}px,0)`,
-          ),
+          transform: interpolate([x, y], (x, y) => `translate3d(${x}px,${y - 35}px,0)`),
           pointerEvents: "none",
           position: "absolute",
           top: 0,
@@ -93,7 +89,7 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
             {renderTooltip(tooltipData)}
           </TooltipContainer>
         )}
-      </AnimatedDiv>
+      </animated.div>
     </>
   );
 };

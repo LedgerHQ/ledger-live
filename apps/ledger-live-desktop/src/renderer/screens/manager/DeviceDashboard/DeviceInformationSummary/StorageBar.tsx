@@ -1,11 +1,12 @@
-import React, { useRef, useEffect, type RefObject } from "react";
-import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
+import React, { useRef, useEffect } from "react";
+import { Transition, TransitionGroup } from "react-transition-group";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel } from "@ledgerhq/devices";
 import ByteSize from "~/renderer/components/ByteSize";
 import { Text } from "@ledgerhq/react-ui";
 import styled, { css, keyframes } from "styled-components";
+import { TransitionStatus } from "react-transition-group";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -164,70 +165,71 @@ const StorageBar = ({
   installQueue: string[];
   uninstallQueue: string[];
 }) => {
-  const refsMapRef = useRef<Map<string, RefObject<HTMLDivElement | null>>>(new Map());
-
-  const getNodeRef = (name: string): RefObject<HTMLDivElement | null> => {
-    let ref = refsMapRef.current.get(name);
-    if (!ref) {
-      ref = React.createRef<HTMLDivElement>();
-      refsMapRef.current.set(name, ref);
-    }
-    return ref;
-  };
+  const refsMapRef = useRef<Map<string, React.RefObject<HTMLDivElement>>>(new Map());
 
   useEffect(() => {
     const refsMap = refsMapRef.current;
     const currentNames = new Set(distribution.apps.map(({ name }) => name));
+    // Remove refs for apps that no longer exist
     for (const [name] of refsMap) {
       if (!currentNames.has(name)) {
         refsMap.delete(name);
       }
     }
+    // Add refs for new apps
+    distribution.apps.forEach(({ name }) => {
+      if (!refsMap.has(name)) {
+        refsMap.set(name, React.createRef<HTMLDivElement>());
+      }
+    });
   }, [distribution.apps]);
 
   return (
     <StorageBarWrapper>
       {!isIncomplete && (
         <TransitionGroup component={StorageBarGraph}>
-          {distribution.apps.map(({ name, currency, bytes, blocks }) => {
-            const nodeRef = getNodeRef(name);
-            return (
-              <Transition
-                timeout={{
-                  appear: 333,
-                  enter: 333,
-                  exit: 1200,
-                }}
-                key={`${name}`}
-                nodeRef={nodeRef}
-              >
-                {state => (
-                  <StorageBarItem
-                    ref={nodeRef}
-                    state={state}
-                    installing={installQueue.includes(name) || uninstallQueue.includes(name)}
-                    color={getAppStorageBarColor({
-                      name,
-                      currency,
-                    })}
-                    ratio={blocks / distribution.appsSpaceBlocks}
-                  >
-                    <Tooltip
-                      hideOnClick={false}
-                      content={
-                        <TooltipContent
-                          name={name}
-                          bytes={bytes}
-                          deviceModel={deviceModel}
-                          deviceInfo={deviceInfo}
-                        />
-                      }
-                    />
-                  </StorageBarItem>
-                )}
-              </Transition>
-            );
-          })}
+          {distribution.apps
+            .map(({ name, currency, bytes, blocks }) => {
+              const nodeRef = refsMapRef.current.get(name);
+              if (!nodeRef) return null;
+              return (
+                <Transition
+                  timeout={{
+                    appear: 333,
+                    enter: 333,
+                    exit: 1200,
+                  }}
+                  key={`${name}`}
+                  nodeRef={nodeRef}
+                >
+                  {state => (
+                    <StorageBarItem
+                      ref={nodeRef}
+                      state={state}
+                      installing={installQueue.includes(name) || uninstallQueue.includes(name)}
+                      color={getAppStorageBarColor({
+                        name,
+                        currency,
+                      })}
+                      ratio={blocks / distribution.appsSpaceBlocks}
+                    >
+                      <Tooltip
+                        hideOnClick={false}
+                        content={
+                          <TooltipContent
+                            name={name}
+                            bytes={bytes}
+                            deviceModel={deviceModel}
+                            deviceInfo={deviceInfo}
+                          />
+                        }
+                      />
+                    </StorageBarItem>
+                  )}
+                </Transition>
+              );
+            })
+            .filter((item): item is React.ReactElement => item !== null)}
         </TransitionGroup>
       )}
     </StorageBarWrapper>

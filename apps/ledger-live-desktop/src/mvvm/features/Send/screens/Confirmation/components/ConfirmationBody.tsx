@@ -11,7 +11,7 @@ interface ConfirmationBodyProps {
 
 export const ConfirmationBody: React.FC<ConfirmationBodyProps> = ({ status, transactionError }) => {
   return (
-    <div className="flex flex-col items-center gap-24" data-testid="send-confirmation-step">
+    <div className="flex flex-col items-center gap-24">
       {status === FLOW_STATUS.SUCCESS && <SuccessContent />}
 
       {status === FLOW_STATUS.IDLE && (

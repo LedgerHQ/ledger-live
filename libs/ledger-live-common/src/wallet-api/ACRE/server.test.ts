@@ -30,7 +30,6 @@ jest.mock("../../bridge", () => ({
 
 jest.mock("@ledgerhq/live-env", () => ({
   getEnv: jest.fn(),
-  changes: { subscribe: jest.fn() },
 }));
 
 // Mock types
@@ -327,10 +326,7 @@ describe("ACRE Server Handlers", () => {
       };
 
       const mockSignedOperation = {
-        operation: {
-          hash: "0x1234567890abcdef",
-          recipients: ["0x1234567890123456789012345678901234567890"],
-        },
+        operation: { hash: "0x1234567890abcdef" },
         signature: "0xabcdef1234567890",
       };
 

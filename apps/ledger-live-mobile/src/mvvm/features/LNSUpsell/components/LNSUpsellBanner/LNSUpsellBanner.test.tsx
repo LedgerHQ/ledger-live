@@ -8,11 +8,10 @@ import { track } from "~/analytics";
 import { LNSUpsellBanner } from ".";
 
 describe("LNSUpsellBanner ", () => {
-  let t: ReturnType<typeof useTranslation>["t"];
+  const { t } = renderHook(useTranslation).result.current;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    t = renderHook(useTranslation).result.current.t;
   });
 
   describe.each([

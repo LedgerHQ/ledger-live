@@ -62,6 +62,17 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
+  config_currency_onomy: {
+    type: "object",
+    default: {
+      lcd: "https://rest-mainnet.onomy.io",
+      minGasPrice: 0.003,
+      ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
+      status: {
+        type: "active",
+      },
+    },
+  },
   config_currency_osmo: {
     type: "object",
     default: {

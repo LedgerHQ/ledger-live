@@ -1,10 +1,12 @@
-import type { Transaction as AlgoTransaction } from "algosdk";
+import { encode as msgpackEncode } from "algo-msgpack-with-bigint";
+import type {
+  EncodedSignedTransaction as AlgoSignedTransactionPayload,
+  Transaction as AlgoTransaction,
+  EncodedTransaction as AlgoTransactionPayload,
+} from "algosdk";
 import {
-  encodeMsgpack,
-  SignedTransaction,
-  base64ToBytes,
-  makeAssetTransferTxnWithSuggestedParamsFromObject,
-  makePaymentTxnWithSuggestedParamsFromObject,
+  makeAssetTransferTxnWithSuggestedParams,
+  makePaymentTxnWithSuggestedParams,
 } from "algosdk";
 
 import algorandAPI from "./api";
@@ -14,7 +16,7 @@ import type { AlgorandAccount, Transaction } from "./types";
 export const buildTransactionPayload = async (
   account: AlgorandAccount,
   transaction: Transaction,
-): Promise<AlgoTransaction> => {
+): Promise<AlgoTransactionPayload> => {
   const { amount, recipient, mode, memo, assetId, subAccountId } = transaction;
   const subAccount = subAccountId
     ? account.subAccounts && account.subAccounts.find(t => t.id === subAccountId)
@@ -23,13 +25,8 @@ export const buildTransactionPayload = async (
   const note = memo ? new TextEncoder().encode(memo) : undefined;
 
   const params = await algorandAPI.getTransactionParams();
-  const suggestedParams = {
-    ...params,
-    firstValid: params.lastRound,
-    lastValid: params.lastRound + 1000,
-    genesisHash: base64ToBytes(params.genesisHash),
-  };
 
+  let algoTxn: AlgoTransaction;
   if (subAccount || (assetId && mode === "optIn")) {
     const targetAssetId =
       subAccount && subAccount.type === "TokenAccount"
@@ -42,41 +39,52 @@ export const buildTransactionPayload = async (
       throw new Error("Token Asset Id not found");
     }
 
-    return makeAssetTransferTxnWithSuggestedParamsFromObject({
-      sender: account.freshAddress,
-      receiver: recipient,
-      amount: amount.toNumber(),
-      assetIndex: Number(targetAssetId),
-      suggestedParams,
-      ...(note ? { note } : {}),
-    });
+    algoTxn = makeAssetTransferTxnWithSuggestedParams(
+      account.freshAddress,
+      recipient,
+      undefined,
+      undefined,
+      amount.toNumber(),
+      note,
+      Number(targetAssetId),
+      params,
+      undefined,
+    );
+  } else {
+    algoTxn = makePaymentTxnWithSuggestedParams(
+      account.freshAddress,
+      recipient,
+      amount.toNumber(),
+      undefined,
+      note,
+      params,
+    );
   }
 
-  return makePaymentTxnWithSuggestedParamsFromObject({
-    sender: account.freshAddress,
-    receiver: recipient,
-    amount: amount.toNumber(),
-    suggestedParams,
-    ...(note ? { note } : {}),
-  });
+  // Bit of safety: set tx validity to the next 1000 blocks
+  algoTxn.firstRound = params.lastRound;
+  algoTxn.lastRound = params.lastRound + 1000;
+
+  // Flaw in the SDK: payload isn't sorted, but it needs to be for msgPack encoding
+  const sorted = Object.fromEntries(
+    Object.entries(algoTxn.get_obj_for_encoding()).sort(),
+  ) as AlgoTransactionPayload;
+
+  return sorted;
 };
 
-export const encodeToSign = (payload: AlgoTransaction): string => {
-  const msgPackEncoded = encodeMsgpack(payload);
+export const encodeToSign = (payload: AlgoTransactionPayload): string => {
+  const msgPackEncoded = msgpackEncode(payload);
 
   return Buffer.from(msgPackEncoded).toString("hex");
 };
 
-export const encodeToBroadcast = (payload: AlgoTransaction, signature: Buffer): Buffer => {
-  // App Algorand returns 66 bytes signatures, including the status word
-  // ED25519 signature length is exactly 64 bytes
-  const ED25519_SIGNATURE_LENGTH = 64;
-
-  const signedPayload = new SignedTransaction({
-    sig: signature.subarray(0, ED25519_SIGNATURE_LENGTH),
+export const encodeToBroadcast = (payload: AlgoTransactionPayload, signature: Buffer): Buffer => {
+  const signedPayload: AlgoSignedTransactionPayload = {
+    sig: signature,
     txn: payload,
-  });
-  const msgPackEncoded = encodeMsgpack(signedPayload);
+  };
+  const msgPackEncoded = msgpackEncode(signedPayload);
 
   return Buffer.from(msgPackEncoded);
 };

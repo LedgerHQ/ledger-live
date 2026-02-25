@@ -1,12 +1,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import {
-  WalletSyncTestApp,
-  mockedSdk,
-  simpleTrustChain,
-  walletSyncActivatedState,
-  INSTANCES,
-} from "./shared";
+import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
+import { INSTANCES } from "./shared";
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({

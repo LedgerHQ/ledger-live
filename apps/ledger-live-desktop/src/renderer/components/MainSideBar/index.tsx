@@ -120,6 +120,9 @@ const sideBarTransitionStyles: Record<TransitionStatus, React.CSSProperties> = {
   unmounted: { flexBasis: collapsedWidth },
 };
 
+// React 18 vs 19 compatibility
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any
+const InfiniteIcon: React.FC<{ size?: number }> = Infinite as any;
 const enableTransitions = () =>
   document.body &&
   setTimeout(
@@ -329,7 +332,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"perps"}
                     label={t("sidebar.perps")}
-                    icon={() => <Infinite size={20} />}
+                    icon={() => <InfiniteIcon size={20} />}
                     iconActiveColor="wallet"
                     onClick={handleClickPerps}
                     isActive={locationPathname.startsWith("/perps")}

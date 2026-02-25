@@ -18,13 +18,10 @@ export const SimplifiedTransactionConfirm = ({ device }: SimplifiedTransactionCo
   if (!device) return null;
 
   return (
-    <div
-      className="flex flex-col items-center gap-24 px-24 pb-16 text-center"
-      data-testid="send-signature-prompt"
-    >
+    <div className="flex flex-col items-center gap-24 px-24 pb-16 text-center">
       <DeviceBlocker />
       <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
-      <h2 className="heading-3-semi-bold text-base" data-testid="send-signature-title">
+      <h2 className="heading-3-semi-bold text-base">
         {t("newSendFlow.sign.title", { wording: getProductName(device.modelId) })}
       </h2>
       <p className="body-2 text-muted">{t("newSendFlow.sign.description")}</p>

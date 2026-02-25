@@ -41,12 +41,16 @@ export type SlidesProps = {
   FlatListProps<React.ReactElement>,
   | "data"
   | "renderItem"
+  | "keyExtractor"
   | "horizontal"
   | "pagingEnabled"
+  | "showsHorizontalScrollIndicator"
   | "onScroll"
+  | "scrollEventThrottle"
   | "onMomentumScrollEnd"
+  | "getItemLayout"
   | "initialScrollIndex"
-  | "onViewableItemsChanged"
+  | "ref"
 >;
 
 export function Slides({
@@ -124,6 +128,9 @@ export function Slides({
       const newIndex = Math.round(offsetX / width);
       if (newIndex !== currentIndex) {
         scheduleOnRN(setCurrentIndex, newIndex);
+        if (onSlideChange) {
+          scheduleOnRN(onSlideChange, newIndex);
+        }
       }
     },
   });
@@ -157,27 +164,6 @@ export function Slides({
     [currentIndex, totalSlides, goToNext, goToPrevious, goToSlide],
   );
 
-  const onViewableItemsChanged = useCallback(
-    ({
-      viewableItems,
-    }: {
-      viewableItems: Array<{
-        index: number;
-        key: string;
-        isViewable: boolean;
-      }>;
-    }) => {
-      const items = viewableItems.filter((item) => item.isViewable);
-
-      // Since it's a horizontal scroll view, and we display one by one, we only want to trigger the onSlideChange event when one item is visible.
-      if (items.length === 1) {
-        const index = items[0].index;
-        onSlideChange?.(index);
-      }
-    },
-    [onSlideChange],
-  );
-
   const renderOrderedChildren = useCallback(() => {
     return React.Children.map(children, (child) => {
       if (isElementOfType(child, Content)) {
@@ -198,7 +184,6 @@ export function Slides({
             scrollEventThrottle={16}
             getItemLayout={getItemLayout}
             initialScrollIndex={initialSlideIndex}
-            onViewableItemsChanged={onViewableItemsChanged}
             {...flatListProps}
           />
         );

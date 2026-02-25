@@ -8,6 +8,6 @@ declare module "react-native-easy-markdown" {
     // Add additional props if needed here.
     // See: https://github.com/TitanInvest/react-native-easy-markdown#props
   };
-  const Markdown: React.ComponentType<Props>;
+  declare const Markdown: React.ComponentType<Props>;
   export default Markdown;
 }

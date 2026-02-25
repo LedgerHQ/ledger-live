@@ -8,7 +8,13 @@ import MarketList from "../index";
 import { ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 
-// Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization
+jest.mock("@react-native-community/netinfo", () => {
+  return {
+    __esModule: true,
+    default: { addEventListener: jest.fn },
+    useNetInfo: jest.fn(() => ({ isConnected: true })),
+  };
+});
 
 const setNetInfoState = (state: { isConnected: boolean }) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

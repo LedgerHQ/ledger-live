@@ -12,14 +12,13 @@ import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export function useWelcomeNewViewModel() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lldRebornABtest = useFeature("lldRebornABtest");
-  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("desktop");
 
   // URLs
   const urlBuyNew = useLocalizedUrl(urls.buyNew);
@@ -36,23 +35,18 @@ export function useWelcomeNewViewModel() {
   // Redux selectors
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const trustchain = useSelector(trustchainSelector);
-  const shouldInitiallySelectDevice = useRef(hasCompletedOnboarding && !trustchain);
 
   // Navigation effect
   useEffect(() => {
-    if (shouldInitiallySelectDevice.current) {
-      if (shouldUseLazyOnboarding) {
-        navigate("/");
-      } else {
-        navigate("/onboarding/select-device");
-      }
+    if (hasCompletedOnboarding && !trustchain) {
+      navigate("/onboarding/select-device");
     }
-  }, [navigate, shouldUseLazyOnboarding]);
+  }, [hasCompletedOnboarding, navigate, trustchain]);
 
   // Feature flags easter egg state
   const countRef1 = useRef(0);
   const countRef2 = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
   const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
     useState<boolean>(false);
 
@@ -86,25 +80,16 @@ export function useWelcomeNewViewModel() {
   }, [navigate]);
 
   // Skip onboarding (dev only)
-  const skipOnboardingDev = useCallback(() => {
+  const skipOnboarding = useCallback(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
     navigate("/settings");
   }, [dispatch, navigate]);
 
-  const skipOnboarding = useCallback(() => {
-    dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    navigate("/");
-  }, [dispatch, navigate]);
   // Main navigation handlers
   const handleAcceptTermsAndGetStarted = useCallback(() => {
     acceptTerms();
-
-    if (shouldUseLazyOnboarding) {
-      skipOnboarding();
-    } else {
-      navigate("/onboarding/select-device");
-    }
-  }, [navigate, shouldUseLazyOnboarding, skipOnboarding]);
+    navigate("/onboarding/select-device");
+  }, [navigate]);
 
   // Analytics opt-in prompt
   const {
@@ -184,7 +169,7 @@ export function useWelcomeNewViewModel() {
     handleOpenFeatureFlagsDrawer,
 
     // Dev utilities
-    skipOnboarding: skipOnboardingDev,
+    skipOnboarding,
 
     // Action handlers
     handleGetStarted,

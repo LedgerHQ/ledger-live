@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import { ReceiveOptionsDialog } from "../screens/ReceiveOptions";
 import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
@@ -69,7 +69,10 @@ describe("Receive feature integration", () => {
 
       const closeButton = screen.getByRole("button", { name: /close/i });
       await user.click(closeButton);
-      expect(onClose).toHaveBeenCalledTimes(1);
+
+      await waitFor(() => {
+        expect(onClose).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

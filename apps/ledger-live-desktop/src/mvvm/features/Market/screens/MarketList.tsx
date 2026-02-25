@@ -13,7 +13,7 @@ import { ListSkeleton } from "../components/ListSkeleton";
 import { ListData } from "../components/ListData";
 
 type MarketListVirtualization = {
-  parentRef: RefObject<HTMLDivElement | null>;
+  parentRef: RefObject<HTMLDivElement>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
 };
 
@@ -47,7 +47,7 @@ function MarketList({
   toggleStar,
   virtualization,
   t,
-}: Readonly<MarketListProps>) {
+}: MarketListProps) {
   const { order, search, starred, range, counterCurrency } = marketParams;
   const { parentRef, rowVirtualizer } = virtualization;
 

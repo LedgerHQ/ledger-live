@@ -1,6 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
-import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../../config";
 
 let coinConfig: PolkadotCoinConfig | undefined;
@@ -28,7 +27,7 @@ export default async function (currency?: CryptoCurrency) {
     }
 
     api = await ApiPromise.create({
-      provider: provider as ProviderInterface,
+      provider,
       noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
     });
   }

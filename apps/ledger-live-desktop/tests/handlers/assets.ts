@@ -1,7 +1,6 @@
 import { http, HttpResponse } from "msw";
 import jsonResponse from "./fixtures/assets/getAssets.json";
 import { RawApiResponse } from "@ledgerhq/live-common/dada-client/entities/index";
-import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks/stablecoins.mock";
 
 const handleEthereumAssets = (
   name: "ethereum" | "arbitrum" | "base" | "scroll",
@@ -129,10 +128,6 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
 
 const handler = ({ request }: { request: Request }) => {
   const searchParams = new URL(request.url).searchParams;
-  const category = searchParams.get("category");
-
-  if (category === "stablecoin") return HttpResponse.json(mockStablecoinsResponse);
-
   const search = searchParams.get("search")?.toLowerCase().trim();
 
   const currencyIds = searchParams.get("currencyIds")?.trim().toLowerCase().split(",") || [];

@@ -13,7 +13,7 @@ type Props = {
   onRepair?: (a: boolean) => void;
 };
 
-function RepairDeviceButton({ buttonProps, onRepair }: Readonly<Props>) {
+function RepairDeviceButton({ buttonProps, onRepair }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [opened, setOpened] = useState(false);
@@ -21,8 +21,8 @@ function RepairDeviceButton({ buttonProps, onRepair }: Readonly<Props>) {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState(0);
 
-  const subRef = useRef<Subscription | undefined>(undefined);
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const subRef = useRef<Subscription | undefined>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>();
 
   useEffect(() => {
     return () => {

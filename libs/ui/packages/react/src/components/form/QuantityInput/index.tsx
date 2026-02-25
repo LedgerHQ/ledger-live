@@ -39,7 +39,7 @@ function QuantityInput(
     price?: string;
   },
   ref?: React.ForwardedRef<HTMLInputElement>,
-): React.JSX.Element {
+): JSX.Element {
   return (
     <Input
       ref={ref}

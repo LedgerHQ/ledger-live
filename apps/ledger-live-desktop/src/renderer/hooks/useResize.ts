@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect, type RefObject } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 /**
- * @param {RefObject<HTMLElement>} myRef - reference to the element
+ * @param {React.MutableRefObject<HTMLElement>} myRef - reference to the element
  * @returns {Object} - width and height of the element
  */
 
 export const useResize = (
-  myRef: RefObject<HTMLElement | null>,
+  myRef: React.MutableRefObject<HTMLElement | null>,
 ): { width: number; height: number } => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);

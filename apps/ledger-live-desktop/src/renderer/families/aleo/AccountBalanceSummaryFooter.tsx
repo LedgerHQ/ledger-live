@@ -36,7 +36,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
 
   const spendableBalance = account.spendableBalance;
   const transparentBalance = account.aleoResources.transparentBalance;
-  const privateBalance = account.aleoResources.privateBalance;
+  const privateBalance = null; // private sync will be added later
 
   const formattedAvailableBalance = formatCurrencyUnit(unit, spendableBalance, formatConfig);
   const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);

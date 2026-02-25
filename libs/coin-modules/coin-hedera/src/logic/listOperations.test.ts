@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { listOperations } from "./listOperations";
 import { apiClient } from "../network/api";
@@ -32,6 +33,11 @@ describe("listOperations", () => {
   it("should return empty arrays when no transactions are found", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "asc",
+    };
 
     (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: [],
@@ -41,9 +47,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "asc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -66,6 +70,11 @@ describe("listOperations", () => {
   it("should parse HBAR transfer transactions correctly", async () => {
     const address = "0.0.1234567";
     const mockCurrency = getMockedCurrency();
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "desc",
+    };
 
     const mockTransactions: Partial<HederaMirrorTransaction>[] = [
       {
@@ -92,9 +101,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "desc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -126,6 +133,11 @@ describe("listOperations", () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const tokenId = "0.0.7890";
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "desc",
+    };
 
     const mockToken = {
       id: "token1",
@@ -164,9 +176,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "desc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -200,6 +210,11 @@ describe("listOperations", () => {
   it("should parse token associate transactions correctly", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "desc",
+    };
 
     const mockTransactions: Partial<HederaMirrorTransaction>[] = [
       {
@@ -222,9 +237,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "desc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -253,6 +266,11 @@ describe("listOperations", () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const tokenId = "0.0.7890";
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "desc",
+    };
 
     const mockTransactions: Partial<HederaMirrorTransaction>[] = [
       {
@@ -283,9 +301,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "desc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -300,6 +316,12 @@ describe("listOperations", () => {
   it("should use pagination parameters correctly", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 20,
+      order: "asc",
+      lastPagingToken: "1625097500.000000000",
+    };
 
     (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: [],
@@ -309,10 +331,7 @@ describe("listOperations", () => {
     await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 20,
-      order: "asc",
-      cursor: "1625097500.000000000",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -333,6 +352,11 @@ describe("listOperations", () => {
   it("should handle failed transactions", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "desc",
+    };
 
     const mockTransactions: Partial<HederaMirrorTransaction>[] = [
       {
@@ -359,9 +383,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "desc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
@@ -375,6 +397,11 @@ describe("listOperations", () => {
   it("should create REWARD operation when staking rewards are present", async () => {
     const address = "0.0.1234567";
     const mockCurrency = getMockedCurrency();
+    const pagination: Pagination = {
+      minHeight: 0,
+      limit: 10,
+      order: "desc",
+    };
     const mockTransaction: Partial<HederaMirrorTransaction> = {
       consensus_timestamp: "1625097600.000000000",
       transaction_hash: "hash1",
@@ -395,9 +422,7 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
-      limit: 10,
-      order: "desc",
+      pagination,
       mirrorTokens: [],
       fetchAllPages: true,
       skipFeesForTokenOperations: false,

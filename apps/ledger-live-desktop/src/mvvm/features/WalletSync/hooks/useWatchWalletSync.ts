@@ -12,11 +12,7 @@ import walletsync, {
   makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  walletSelector,
-  latestDistantStateSelector,
-  latestDistantVersionSelector,
-} from "~/renderer/reducers/wallet";
+import { walletSelector } from "~/renderer/reducers/wallet";
 import {
   memberCredentialsSelector,
   resetTrustchainStore,
@@ -33,6 +29,10 @@ import {
   WSState,
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
+import {
+  latestDistantStateSelector,
+  latestDistantVersionSelector,
+} from "~/renderer/reducers/wallet";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";

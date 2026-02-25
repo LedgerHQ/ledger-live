@@ -27,7 +27,7 @@ import { ImageType } from "../components/CustomImage/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
+import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import type { CountervaluesState } from "./countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";

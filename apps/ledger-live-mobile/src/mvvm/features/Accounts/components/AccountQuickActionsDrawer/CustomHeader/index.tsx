@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
-import AccountItem from "../../AccountItem";
+import AccountItem from "../../AccountsListView/components/AccountItem";
 import { AccountLike } from "@ledgerhq/types-live";
 
 type Props = {

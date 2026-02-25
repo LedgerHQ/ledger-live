@@ -4,7 +4,6 @@ import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class AccountsPage extends AppPage {
-  private accountsTitle = this.page.locator("#accounts-title");
   private accountComponent = (accountName: string) =>
     this.page.getByTestId(`account-component-${accountName}`);
   private tokenRow = (parentName: string, childCurrency: Currency) =>
@@ -20,11 +19,6 @@ export class AccountsPage extends AppPage {
   private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
   private syncAccountButton = (accountName: string) =>
     this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
-
-  @step("Wait for Accounts title to be visible")
-  async expectAccountsTitleVisibility() {
-    await expect(this.accountsTitle).toBeVisible();
-  }
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
@@ -83,7 +77,7 @@ export class AccountsPage extends AppPage {
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number) {
-    await expect(this.accountListNumber).toHaveCount(count);
+    expect(await this.countAccounts()).toBe(count);
   }
 
   @step("Expect number of accounts to be not null")

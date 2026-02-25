@@ -317,7 +317,7 @@ describe.each([
           minHeight: 200,
           order: "asc",
         }),
-      ).toEqual({ items: [], next: "" });
+      ).toEqual([[], ""]);
     });
 
     it.each([
@@ -336,10 +336,10 @@ describe.each([
     ] as const)(
       "lists operations for an address with %s order",
       async (_s, order, isCorrectlyOrdered) => {
-        const { items: result } = await module.listOperations(
-          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
-          { minHeight: 200, order },
-        );
+        const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
+          minHeight: 200,
+          order,
+        });
         expect(result.length).toBeGreaterThanOrEqual(52);
         result.forEach(op => {
           expect([
@@ -410,7 +410,7 @@ describe.each([
 
         // -- Page 1
 
-        const { items: p1Ops, next: p1Token } = await module.listOperations(address, {
+        const [p1Ops, p1Token] = await module.listOperations(address, {
           minHeight: 200,
           order,
           limit,
@@ -424,11 +424,11 @@ describe.each([
 
         // -- Page 2
 
-        const { items: p2Ops, next: p2Token } = await module.listOperations(address, {
+        const [p2Ops, p2Token] = await module.listOperations(address, {
           minHeight: 200,
           order,
           limit,
-          cursor: p1Token,
+          pagingToken: p1Token,
         });
         const p2NbOps = p2Ops.length;
 
@@ -465,42 +465,39 @@ describe.each([
         const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
 
         // First call
-        const { items: firstCallResult, next: firstCallToken } = await module.listOperations(
-          address,
-          {
-            minHeight: 200,
-            order: "desc",
-            limit: 5,
-          },
-        );
+        const [firstCallResult, firstCallToken] = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 5,
+        });
 
         // Same call again - should return same result (cached or not)
-        const { items: cachedResult } = await module.listOperations(address, {
+        const [cachedResult] = await module.listOperations(address, {
           minHeight: 200,
           order: "desc",
           limit: 5,
         });
 
         // Different limit - should return different results
-        const { items: greaterLimitResult } = await module.listOperations(address, {
+        const [greaterLimitResult] = await module.listOperations(address, {
           minHeight: 200,
           order: "desc",
           limit: 10,
         });
 
         // Different order - should return different results
-        const { items: differentOrderResult } = await module.listOperations(address, {
+        const [differentOrderResult] = await module.listOperations(address, {
           minHeight: 200,
           order: "asc",
           limit: 5,
         });
 
         // Different pagingToken - should return different results
-        const { items: differentTokenResult } = await module.listOperations(address, {
+        const [differentTokenResult] = await module.listOperations(address, {
           minHeight: 200,
           order: "desc",
           limit: 5,
-          cursor: firstCallToken,
+          pagingToken: firstCallToken,
         });
 
         // Same parameters should return same results

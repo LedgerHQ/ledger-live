@@ -21,17 +21,18 @@ export class MarketPage extends AppPage {
   }
 
   @step("Switch counter value for $0")
-  async switchCountervalue(ticker: string) {
+  async switchCountervalue(_ticker: string) {
     await this.counterValueSelect.click();
-    // Use role-based selector instead of auto-generated react-select IDs which
-    // are counter-based and can shift across React versions.
-    await this.page.getByRole("option", { name: new RegExp(ticker, "i") }).click();
+    // TODO: For some reason need to hack selects like that
+    await this.page.click('#react-select-2-listbox div div:has-text("Thai Baht - THB")');
   }
 
   @step("Switch market range for $0")
   async switchMarketRange(range: string) {
     await this.marketRangeSelect.click();
-    await this.page.getByRole("option", { name: range }).click();
+    await this.page.click(`#react-select-3-listbox >> text=${range}`);
+    // NOTE: this.page.click(`text=${range}`);
+    // won't work on 7th row if the coin starts with d (e.g. "dogecoin")
   }
 
   @step("Toggle star filter")
@@ -54,20 +55,8 @@ export class MarketPage extends AppPage {
   @step("Open buy page for $0")
   async openBuyPage(ticker: string) {
     await this.buyButton(ticker).click();
-    // The onBuy handler is async (fetches asset data before navigating),
-    // so wait for the actual navigation to the exchange/buy page.
-    await this.page.waitForURL(/.*\/exchange.*/);
-  }
-
-  @step("Open buy page for $0 with account selection")
-  async openBuyPageWithAccountSelection(ticker: string, accountName: string) {
-    await this.buyButton(ticker).click();
-    const accountRow = this.page
-      .getByRole("button", { name: new RegExp(accountName, "i") })
-      .first();
-    await accountRow.waitFor({ state: "visible", timeout: 60_000 });
-    await accountRow.click();
-    await this.page.waitForURL(/.*\/exchange.*/);
+    // FIXME windows seems to be choking on the transition taking longer.
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   @step("Wait for loading")

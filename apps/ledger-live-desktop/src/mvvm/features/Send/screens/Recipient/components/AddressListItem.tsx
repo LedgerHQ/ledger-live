@@ -1,34 +1,19 @@
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
-import {
-  ListItem,
-  ListItemContent,
-  ListItemDescription,
-  ListItemLeading,
-  ListItemSpot,
-  ListItemTitle,
-  ListItemTrailing,
-} from "@ledgerhq/lumen-ui-react";
-import { ChevronRight, LedgerLogo, Wallet } from "@ledgerhq/lumen-ui-react/symbols";
-import { cn } from "LLD/utils/cn";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import {
+  ListItem,
+  ListItemTrailing,
+  ListItemDescription,
+  ListItemTitle,
+  ListItemContent,
+  ListItemLeading,
+  ListItemSpot,
+} from "@ledgerhq/lumen-ui-react";
+import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
-
-type AddressListItemProps = Readonly<{
-  address: string;
-  name?: string;
-  description?: string;
-  date?: Date;
-  balance?: string;
-  balanceFormatted?: string;
-  onSelect?: () => void;
-  onContextMenu?: (e: React.MouseEvent) => void;
-  showSendTo?: boolean;
-  isLedgerAccount?: boolean;
-  disabled?: boolean;
-  hideDescription?: boolean;
-  testId?: string;
-}>;
+import { cn } from "LLD/utils/cn";
+import type { AddressListItemProps } from "../types";
 
 export function AddressListItem({
   address,
@@ -43,7 +28,6 @@ export function AddressListItem({
   isLedgerAccount = false,
   disabled = false,
   hideDescription = false,
-  testId,
 }: AddressListItemProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
@@ -70,7 +54,6 @@ export function AddressListItem({
     <ListItem
       onClick={disabled ? undefined : onSelect}
       onContextMenu={onContextMenu}
-      data-testid={testId}
       className={cn("mb-6", {
         "cursor-not-allowed opacity-50": disabled,
       })}

@@ -1,5 +1,7 @@
 import { http, HttpResponse } from "msw";
 import marketsMock from "@mocks/api/market/markets.json";
+import supportedVsCurrenciesMock from "@mocks/api/market/supportedVsCurrencies.json";
+import coinsListMock from "@mocks/api/market/coinsList.json";
 
 const handlers = [
   http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
@@ -28,6 +30,15 @@ const handlers = [
   }),
   http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () => {
     return HttpResponse.json(["usd", "eur", "gbp"]);
+  }),
+  http.get("https://proxycg.api.live.ledger.com/api/v3/coins/:coin/market_chart", ({ params }) => {
+    return HttpResponse.json(marketsMock.find(({ id }) => id === params.coin));
+  }),
+  http.get("https://proxycg.api.live.ledger.com/api/v3/simple/supported_vs_currencies", () => {
+    return HttpResponse.json(supportedVsCurrenciesMock);
+  }),
+  http.get("https://proxycg.api.live.ledger.com/api/v3/coins/list", () => {
+    return HttpResponse.json(coinsListMock);
   }),
 ];
 

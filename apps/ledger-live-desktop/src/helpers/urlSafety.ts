@@ -1,4 +1,4 @@
-const ALLOWED_PROTOCOLS = ["http:", "https:", "ledgerlive:", "ledgerwallet:", "mailto:"];
+const ALLOWED_PROTOCOLS = ["http:", "https:", "ledgerlive:", "ledgerwallet:"];
 
 /**
  * Validates that a URL uses a safe protocol (http or https only) or LW deeplink protocols.

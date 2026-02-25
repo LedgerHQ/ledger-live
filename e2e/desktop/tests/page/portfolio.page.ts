@@ -30,10 +30,7 @@ export class PortfolioPage extends AppPage {
   private noBalanceTitle = this.page.getByTestId("no-balance-title");
   private quickActionButton = (action: QuickActionButton) =>
     this.page.getByTestId(`quick-action-button-${action}`);
-  private connectQuickActionButton = this.page.getByTestId("quick-action-button-connect");
-  private buyALedgerQuickActionButton = this.page.getByTestId("quick-action-button-buy-a-ledger");
   private portfolioAddAccountButton = this.page.getByTestId("portfolio-add-account-button");
-  private noDeviceTitle = this.page.getByTestId("no-device-title");
 
   private async checkVisibility(locator: Locator) {
     await expect(locator).toBeVisible();
@@ -233,16 +230,6 @@ export class PortfolioPage extends AppPage {
     await this.checkVisibility(this.quickActionButton("buy"));
   }
 
-  @step("Check connect button is visible")
-  async checkConnectButtonVisibility() {
-    await this.checkVisibility(this.connectQuickActionButton);
-  }
-
-  @step("Check buy a ledger button is visible")
-  async checkBuyALedgerButtonVisibility() {
-    await this.checkVisibility(this.buyALedgerQuickActionButton);
-  }
-
   @step("Check sell button is disabled")
   async checkSellButtonDisabled() {
     await expect(this.quickActionButton("sell")).toBeDisabled();
@@ -266,11 +253,6 @@ export class PortfolioPage extends AppPage {
   @step("Check add account button visibility")
   async checkAddAccountButtonVisibility() {
     await this.checkVisibility(this.portfolioAddAccountButton);
-  }
-
-  @step("Check no device title is visible")
-  async checkNoDeviceTitleVisibility() {
-    await this.checkVisibility(this.noDeviceTitle);
   }
 
   @step("Click add account button")

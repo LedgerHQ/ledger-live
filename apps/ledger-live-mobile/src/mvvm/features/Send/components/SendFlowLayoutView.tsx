@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
@@ -18,19 +18,18 @@ export function SendFlowLayoutView({ headerRight, headerContent, children }: Sen
         paddingHorizontal: theme.spacings.s16,
       },
       bodyContent: {
-        paddingVertical: theme.spacings.s24,
-        paddingHorizontal: theme.spacings.s16,
-        flex: 1,
+        padding: theme.spacings.s16,
+        flexGrow: 1,
       },
     }),
     [],
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <SendHeader headerRight={headerRight} />
       {headerContent ? <View style={styles.headerContent}>{headerContent}</View> : null}
-      <View style={styles.bodyContent}>{children}</View>
+      <ScrollView contentContainerStyle={styles.bodyContent}>{children}</ScrollView>
     </SafeAreaView>
   );
 }

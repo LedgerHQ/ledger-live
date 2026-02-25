@@ -113,7 +113,7 @@ type SwapLocationState = {
   defaultParentAccount?: Account;
   defaultAccountId?: string;
   defaultParentAccountId?: string;
-  defaultCurrency?: { id?: string; fromCurrencyId?: string; toCurrencyId?: string };
+  defaultCurrency?: string;
   defaultAmountFrom?: string;
   from?: string;
   defaultToken?: TokenParams;
@@ -504,18 +504,18 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             fromPath: simplifyFromPath(state?.from),
           }
         : {}),
-      ...(state?.defaultToken?.fromTokenId ? { fromTokenId: state.defaultToken.fromTokenId } : {}),
-      ...(state?.defaultToken?.toTokenId ? { toTokenId: state.defaultToken.toTokenId } : {}),
-      ...(state?.defaultToken ? { amountFrom: state?.defaultAmountFrom || "" } : {}),
-      ...(state?.defaultCurrency?.toCurrencyId || state?.defaultCurrency?.id
-        ? { toCurrencyId: state!.defaultCurrency!.toCurrencyId ?? state!.defaultCurrency!.id }
-        : {}),
-      ...(state?.defaultCurrency?.fromCurrencyId
-        ? { fromCurrencyId: state.defaultCurrency.fromCurrencyId }
-        : {}),
-      ...(state?.defaultAmountFrom
+      ...(state?.defaultToken
         ? {
-            amountFrom: state.defaultAmountFrom,
+            fromTokenId: state.defaultToken.fromTokenId,
+            toTokenId: state.defaultToken.toTokenId,
+            fromToken: state.defaultToken.fromTokenId,
+            toToken: state.defaultToken.toTokenId,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.defaultCurrency
+        ? {
+            toCurrencyId: state.defaultCurrency,
           }
         : {}),
       ...(state?.affiliate
@@ -526,7 +526,17 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     }).toString();
 
     return params;
-  }, [isOffline, resolvedDefaultAccount, resolvedDefaultParentAccount, state, walletState]);
+  }, [
+    isOffline,
+    resolvedDefaultAccount,
+    resolvedDefaultParentAccount,
+    state?.defaultAmountFrom,
+    state?.from,
+    state?.defaultToken,
+    state?.defaultCurrency,
+    state?.affiliate,
+    walletState,
+  ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     logger.critical(error);

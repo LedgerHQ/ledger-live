@@ -299,18 +299,6 @@ export function validateLargeMoverCurrencyIds(currencyIds: string | null): strin
   return currencyIds.trim().toUpperCase();
 }
 
-export function validateLargeMoverLedgerIds(ledgerIds: string | null): string | null {
-  if (!ledgerIds || ledgerIds.trim() === "") {
-    return null;
-  }
-  const ids = ledgerIds
-    .split(",")
-    .map(id => id.trim().toLowerCase())
-    .filter(Boolean);
-  const unique = [...new Set(ids)];
-  return unique.length ? unique.join(",") : null;
-}
-
 export function validateMarketCurrencyId(currencyId: string | null): string | null {
   if (!currencyId || currencyId.trim() === "") {
     return null;

@@ -1,10 +1,11 @@
 import { of, throwError } from "rxjs";
-import { retryOnErrorsCommandWrapper, sharedLogicTaskWrapper, isDmkError } from "./core";
+import { retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { DeviceBusyError } from "@ledgerhq/device-management-kit";
 import { concatMap } from "rxjs/operators";
 import { TransportRef } from "../transports/core";
 import { aTransportRefBuilder } from "../mocks/aTransportRef";
+import { isDmkError } from "./core";
 
 // Needs to mock the timer from rxjs used in the retry mechanism
 jest.mock("rxjs", () => {

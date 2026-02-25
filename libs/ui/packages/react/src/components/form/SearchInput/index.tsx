@@ -3,10 +3,7 @@ import { useTheme } from "styled-components";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
 import SearchMedium from "@ledgerhq/icons-ui/reactLegacy/SearchMedium";
 
-function SearchInput(
-  props: InputProps,
-  ref?: React.ForwardedRef<HTMLInputElement>,
-): React.JSX.Element {
+function SearchInput(props: InputProps, ref?: React.ForwardedRef<HTMLInputElement>): JSX.Element {
   const theme = useTheme();
 
   return (

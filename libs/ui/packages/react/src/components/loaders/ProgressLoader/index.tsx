@@ -144,7 +144,7 @@ export default function ProgressLoader({
   frontStrokeColor,
   frontStrokeLinecap,
   backgroundStrokeColor,
-}: Readonly<Props>): React.JSX.Element {
+}: Props): JSX.Element {
   return (
     <StyledProgressLoaderContainer>
       {showPercentage && (

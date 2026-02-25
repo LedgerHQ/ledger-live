@@ -49,7 +49,7 @@ export type Props = ImageBase64Data & {
  * @returns a promise with the image data & dimensions
  */
 async function cropAndResizeImage(
-  imageRef: React.RefObject<HTMLImageElement | null>,
+  imageRef: React.RefObject<HTMLImageElement>,
   targetDimensions: ImageDimensions,
   pixelCrop: Crop,
   /** increments of 90° */

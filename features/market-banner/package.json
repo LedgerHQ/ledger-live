@@ -19,7 +19,6 @@
   "devDependencies": {
     "tailwindcss": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
-    "eslint-plugin-import": "2.32.0",
     "@gorhom/bottom-sheet": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -29,7 +28,7 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "@types/react": "catalog:",
+    "@types/react": "18.2.73",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
@@ -45,7 +44,7 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependencies": {
-    "react": ">=19.0.0",
+    "react": ">=18.0.0",
     "react-native": ">=0.70.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

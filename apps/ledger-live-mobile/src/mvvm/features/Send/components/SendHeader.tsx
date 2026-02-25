@@ -29,13 +29,10 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
       addressInputContainer: {
         marginTop: theme.spacings.s8,
         paddingHorizontal: theme.spacings.s16,
-        position: "relative",
-      },
-      addressValue: {
-        color: theme.colors.text.base,
+        position: "relative" as const,
       },
       absoluteOverlay: {
-        position: "absolute",
+        position: "absolute" as const,
         top: 0,
         left: 0,
         right: 0,
@@ -80,8 +77,8 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
         <View style={styles.addressInputContainer}>
           {viewModel.isRecipientStep ? (
             <AddressInput
-              value={viewModel.recipientSearch.value}
-              onChangeText={viewModel.recipientSearch.setValue}
+              value={viewModel.recipientSearchValue}
+              onChangeText={viewModel.setRecipientSearchValue}
               onClear={viewModel.clearRecipientSearch}
               onQrCodeClick={viewModel.handleQrCodeClick}
               placeholder={viewModel.recipientPlaceholder}
@@ -93,7 +90,6 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
                 editable={false}
                 hideClearButton
                 placeholder={viewModel.recipientPlaceholder}
-                inputStyle={styles.addressValue}
               />
               <Pressable
                 style={styles.absoluteOverlay}
