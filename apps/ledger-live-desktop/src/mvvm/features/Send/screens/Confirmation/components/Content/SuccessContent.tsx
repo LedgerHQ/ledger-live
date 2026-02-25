@@ -7,7 +7,7 @@ export const SuccessContent = () => {
 
   return (
     <div
-      className="flex flex-col items-center gap-24 pt-16"
+      className="flex flex-col items-center gap-24 -mt-12"
       data-testid="send-confirmation-success-content"
     >
       <Spot appearance="check" size={72} />
