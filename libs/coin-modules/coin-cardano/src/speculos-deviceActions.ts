@@ -74,6 +74,13 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
         formatDeviceAmount(account.currency, status.estimatedFees),
     },
     {
+      title: "Delegate",
+    },
+    {
+      title: "vote",
+      button: SpeculosButton.BOTH,
+    },
+    {
       title: "Register",
     },
     {
@@ -95,6 +102,28 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
         });
         return `m/${bipPath}`;
       },
+    },
+    {
+      title: "Always",
+    },
+    {
+      title: "abstain",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "no confidence",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "DRep key hash",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "Confirm vote",
+    },
+    {
+      title: "delegation",
+      button: SpeculosButton.BOTH,
     },
     {
       title: "Transaction TTL",

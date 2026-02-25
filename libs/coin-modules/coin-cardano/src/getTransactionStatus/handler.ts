@@ -2,6 +2,7 @@ import { getDelegateTransactionStatus } from "./delegate";
 import { getSendTransactionStatus } from "./send";
 import { getUndelegateTransactionStatus } from "./undelegate";
 import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
+import { getVoteDelegateTransactionStatus } from "./voteDelegate";
 
 type StatusHandler = (
   account: CardanoAccount,
@@ -12,6 +13,7 @@ const modeHandlers: Record<string, StatusHandler> = {
   send: getSendTransactionStatus,
   delegate: getDelegateTransactionStatus,
   undelegate: getUndelegateTransactionStatus,
+  voteDelegate: getVoteDelegateTransactionStatus,
 };
 
 export async function getTransactionStatusByTransactionMode(

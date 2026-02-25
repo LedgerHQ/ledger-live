@@ -8,7 +8,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, delegate, undelegate",
+    desc: "mode of transaction: send, delegate, undelegate, voteDelegate",
   },
   {
     name: "token",
@@ -19,6 +19,21 @@ const options = [
     name: "poolId",
     type: String,
     desc: "Cardano stake pool id to delegate",
+  },
+  {
+    name: "dRepHex",
+    type: String,
+    desc: "Cardano dRep hex to delegate vote",
+  },
+  {
+    name: "dRepAbstain",
+    type: Boolean,
+    desc: "Cardano dRep hex for auto abstain vote",
+  },
+  {
+    name: "dRepNoConfidence",
+    type: Boolean,
+    desc: "Cardano dRep hex for auto no confidence vote",
   },
 ];
 
@@ -69,6 +84,9 @@ function inferTransactions(
       mode: opts.mode || "send",
       subAccountId: account.type === "TokenAccount" ? account.id : undefined,
       poolId: opts.poolId || "",
+      dRepHex: opts.dRepHex || undefined,
+      dRepAbstain: opts.dRepAbstain || undefined,
+      dRepNoConfidence: opts.dRepNoConfidence || undefined,
     };
   });
 }

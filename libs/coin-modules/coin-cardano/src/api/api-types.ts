@@ -42,12 +42,11 @@ export type StakeDeRegConway = {
   deposit: string;
 };
 
-export type TransactionCertificate =
-  | StakeKeyRegistrationCertificate
-  | StakeKeyDeRegistrationCertificate
-  | StakeDelegationCertificate
-  | StakeRegConway
-  | StakeDeRegConway;
+export type VoteDelegationCert = {
+  index: number;
+  stakeHex: string;
+  dRepHex: string;
+};
 
 export type TransactionCertificates = {
   stakeRegistrations: Array<StakeKeyRegistrationCertificate>;
@@ -55,6 +54,7 @@ export type TransactionCertificates = {
   stakeDelegations: Array<StakeDelegationCertificate>;
   stakeRegsConway?: Array<StakeRegConway>;
   stakeDeRegsConway?: Array<StakeDeRegConway>;
+  voteDelegations?: Array<VoteDelegationCert> | undefined;
 };
 
 export type APITransaction = {

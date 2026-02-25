@@ -300,6 +300,21 @@ export function mapTxToAccountOperation(
     }
   }
 
+  if (tx.certificate.voteDelegations?.length) {
+    const walletVoteDelegation = tx.certificate.voteDelegations.find(
+      w => stakeAddress.getHex() === w.stakeHex,
+    );
+    if (walletVoteDelegation) {
+      const isAbstain = walletVoteDelegation.dRepHex === "2";
+      const isNoConfidence = walletVoteDelegation.dRepHex === "3";
+      extra.vote = isAbstain
+        ? "ABSTAIN"
+        : isNoConfidence
+          ? "NO CONFIDENCE"
+          : walletVoteDelegation.dRepHex;
+    }
+  }
+
   if (tx.withdrawals && tx.withdrawals.length) {
     const walletWithdraw = tx.withdrawals.find(
       w =>
@@ -327,6 +342,8 @@ export function mapTxToAccountOperation(
     tx.certificate.stakeDeRegsConway?.length
   ) {
     mainOperationType = "UNDELEGATE";
+  } else if (tx.certificate.voteDelegations?.length) {
+    mainOperationType = "VOTE";
   } else {
     mainOperationType = getOperationType({
       valueChange: operationValue,

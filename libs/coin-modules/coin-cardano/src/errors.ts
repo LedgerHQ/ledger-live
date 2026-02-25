@@ -17,6 +17,8 @@ export const CardanoNotEnoughFunds = createCustomErrorClass("CardanoNotEnoughFun
 
 export const CardanoInvalidPoolId = createCustomErrorClass("CardanoInvalidPoolId");
 
+export const CardanoInvalidDRepHex = createCustomErrorClass("CardanoInvalidDRepHex");
+
 /**
  * Cardano warning/error for high fees
  */
