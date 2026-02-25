@@ -397,6 +397,15 @@ test.describe("e2e delegation - Mina", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: account.account.currency.speculosApp,
+    featureFlags: {
+      stakePrograms: {
+        enabled: true,
+        params: {
+          list: ["mina"],
+          redirects: {},
+        },
+      },
+    },
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
@@ -429,7 +438,7 @@ test.describe("e2e delegation - Mina", () => {
         description: "B2CQA-MINA-001",
       },
     },
-    async ({ app }) => {
+    async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.account.accountName);
@@ -439,6 +448,8 @@ test.describe("e2e delegation - Mina", () => {
       await app.delegate.openSearchProviderModal();
       await app.delegate.inputProvider(account.provider);
       await app.delegate.selectProviderByName(account.provider);
+      // Wait for prepareTransaction to complete (fee estimation from Mina API)
+      await page.waitForTimeout(15000);
       await app.delegate.continue();
 
       await app.speculos.signDelegationTransaction(account);

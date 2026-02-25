@@ -145,6 +145,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
       [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
       [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
+      [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     delegateConfirm: {
@@ -156,6 +157,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.SOLANA.name]: DeviceLabels.SIGN,
+      [AppInfos.MINA.name]: DeviceLabels.CAPS_APPROVE,
       default: DeviceLabels.APPROVE,
     },
     sendVerify: {

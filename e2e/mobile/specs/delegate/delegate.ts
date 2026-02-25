@@ -9,6 +9,13 @@ const beforeAllFunction = async (delegation: DelegateType) => {
     speculosApp: delegation.account.currency.speculosApp,
     featureFlags: {
       llmAccountListUI: { enabled: true },
+      stakePrograms: {
+        enabled: true,
+        params: {
+          list: ["mina"],
+          redirects: {},
+        },
+      },
     },
     cliCommands: [
       async (userdataPath?: string) => {
@@ -59,7 +66,7 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
 
       await app.stake.dismissDelegationStart(currencyId);
       if (delegation.account.currency.name === Currency.MINA.name) {
-        await app.stake.selectValidator(currencyId, delegation.provider);
+        await app.stake.searchAndSelectValidator(delegation.provider);
       } else if (delegation.account.currency.name !== Currency.ADA.name) {
         await app.stake.setAmount(currencyId, delegation.amount);
         await app.stake.validateAmount(currencyId);
