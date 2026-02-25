@@ -846,6 +846,44 @@ describe("network/utils", () => {
       expect(mockDecryptRecord).not.toHaveBeenCalled();
     });
 
+    it("should return null when sender is this address and transition has fewer inputs than expected", async () => {
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        sender: mockEnrichAddress,
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(rawRecord.transaction_id, {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [{ id: "in0", type: "public", value: "only_one_input" }], // only 1 input, needs 3 (indices 0, 1, 2)
+                outputs: [],
+                program: "credits.aleo",
+                function: "transfer_private_to_public",
+              },
+            ],
+          },
+        }),
+      );
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toBeNull();
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+      expect(mockDecryptRecord).not.toHaveBeenCalled();
+    });
+
     it("should return null when PRIVATE_TO_PUBLIC and recipient is own address", async () => {
       const rawRecord = getMockedRecord({
         function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
@@ -1000,6 +1038,52 @@ describe("network/utils", () => {
         functionName: rawRecord.function_name,
         outputIndex: 2, // AMOUNT_ARG_INDEX
       });
+    });
+
+    it("should return null when decrypted record has no microcredits field", async () => {
+      const senderAddress = "aleo1senderaddress789";
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        sender: senderAddress,
+        record_ciphertext: "ciphertext_no_microcredits",
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(rawRecord.transaction_id, {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [{ id: "in0", type: "private", value: "some_input" }],
+                outputs: [],
+                program: "credits.aleo",
+                function: "transfer_private",
+              },
+            ],
+          },
+        }),
+      );
+      mockDecryptRecord.mockResolvedValueOnce({
+        owner: mockEnrichAddress,
+        data: {}, // no microcredits key
+        nonce: "nonce1",
+        version: 1,
+      });
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toBeNull();
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
     it("should decrypt output record and return enriched record for incoming private transfer", async () => {
