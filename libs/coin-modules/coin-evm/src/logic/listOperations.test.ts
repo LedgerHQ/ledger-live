@@ -108,7 +108,6 @@ describe("listOperations", () => {
           transactionSequenceNumber: new BigNumber(6),
           extra: {},
         },
-        // fixme add an ambiguous sender (multiple senders)
       ],
       lastTokenOperations: [
         {
