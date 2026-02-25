@@ -11,29 +11,36 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { MainAppLayout } from "~/renderer/Default";
 import ModalsLayer from "~/renderer/ModalsLayer";
 
-jest.mock("electron-store", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({ get: () => undefined, set: () => {} })),
+jest.mock("~/renderer/store", () => ({}));
+jest.mock("@braze/web-sdk", () => ({
+  getCachedContentCards: jest.fn(() => ({})),
 }));
-jest.mock("@braze/web-sdk", () => ({}));
 
 jest.mock("~/renderer/bridge/SyncNewAccounts", () => ({
   SyncNewAccounts: () => <div data-testid="sync-new-accounts" />,
 }));
-jest.mock("~/renderer/components/Box/Box", () => ({
-  __esModule: true,
-  default: () => <div data-testid="main-layout-fallback" />,
-}));
-// Force the Box branch so we don't render the full wallet40 layout (which has more store deps).
-jest.mock("LLD/components/Page/utils", () => ({
-  ...jest.requireActual("LLD/components/Page/utils"),
-  isWallet40Page: () => false,
-}));
+// Avoid scrollTo in jsdom (Page uses scrollTo on ref which is not implemented in test env)
+jest.mock("LLD/components/Page", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    default: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+  };
+});
+// Test in Wallet V4 layout (route "/" with lwdWallet40 enabled uses the V4 branch in MainAppLayout).
+// Include vaultSigner and devicesModelList so selectors used by the full layout (LiveAppDrawer, NotificationIndicator) don't crash.
+const vaultSigner = { enabled: false, host: "", token: "", workspace: "" };
+const baseSettings = {
+  hasSeenWalletV4Tour: false,
+  lastUsedVersion: "2.0.0",
+  vaultSigner,
+  devicesModelList: [],
+  orderAccounts: "balance|desc",
+};
 
 const tourEnabledState = {
   settings: {
-    hasSeenWalletV4Tour: false,
-    lastUsedVersion: "2.0.0",
+    ...baseSettings,
     overriddenFeatureFlags: {
       lwdWallet40: { enabled: true, params: { tour: true } },
     },
@@ -42,9 +49,10 @@ const tourEnabledState = {
 
 const tourDisabledState = {
   settings: {
-    hasSeenWalletV4Tour: false,
-    lastUsedVersion: "2.0.0",
-    overriddenFeatureFlags: { lwdWallet40: { enabled: false } },
+    ...baseSettings,
+    overriddenFeatureFlags: {
+      lwdWallet40: { enabled: true, params: { tour: false } },
+    },
   },
 };
 
