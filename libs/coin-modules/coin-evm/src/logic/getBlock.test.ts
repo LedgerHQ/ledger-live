@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmCoinConfig, setCoinConfig } from "../config";
+import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
-import { RpcUnsupportedError } from "../network/node/rpc.common";
 import { getBlock } from "./getBlock";
 
 jest.mock("../network/node");
@@ -112,9 +112,12 @@ describe("getBlock", () => {
         },
       ],
     });
-    const mockGetBlockReceipts = jest
-      .fn()
-      .mockRejectedValueOnce(new RpcUnsupportedError("eth_getBlockReceipts", { code: -32601 }));
+    const mockGetBlockReceipts = jest.fn().mockRejectedValueOnce(
+      new UnsupportedRpcMethodError("eth_getBlockReceipts is not supported by this RPC provider", {
+        method: "eth_getBlockReceipts",
+        rawError: { code: -32601 },
+      }),
+    );
     const mockGetTransaction = jest.fn().mockResolvedValueOnce({
       hash: "0xtx1",
       blockHeight: 12345,

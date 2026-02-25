@@ -4,7 +4,7 @@ import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/ty
 import BigNumber from "bignumber.js";
 import { JsonRpcProvider, TransactionReceipt, TransactionResponse, ethers } from "ethers";
 import { getCoinConfig } from "../../config";
-import { GasEstimationError, InsufficientFunds } from "../../errors";
+import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   EvmTransactionLegacy,
@@ -754,7 +754,7 @@ describe("EVM Family", () => {
       ]);
     });
 
-    it("should throw RpcUnsupportedError for RPC -32601", async () => {
+    it("should throw UnsupportedRpcMethodError for RPC -32601", async () => {
       jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
         if (method === "eth_chainId") {
           return "0x1";
@@ -767,10 +767,10 @@ describe("EVM Family", () => {
 
       await expect(
         RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
-      ).rejects.toBeInstanceOf(RPC_API.RpcUnsupportedError);
+      ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
     });
 
-    it("should throw RpcUnsupportedError for nested responseBody code", async () => {
+    it("should throw UnsupportedRpcMethodError for nested responseBody code", async () => {
       jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
         if (method === "eth_chainId") {
           return "0x1";
@@ -789,7 +789,7 @@ describe("EVM Family", () => {
 
       await expect(
         RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
-      ).rejects.toBeInstanceOf(RPC_API.RpcUnsupportedError);
+      ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
     });
   });
 

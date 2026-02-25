@@ -3,8 +3,8 @@ import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
-import { RpcUnsupportedError } from "../network/node/rpc.common";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
@@ -99,7 +99,7 @@ async function getTransactionsFromPrefetchedData(
 
     return transactions;
   } catch (error) {
-    if (!(error instanceof RpcUnsupportedError) || error.method !== "eth_getBlockReceipts")
+    if (!(error instanceof UnsupportedRpcMethodError) || error.method !== "eth_getBlockReceipts")
       throw error;
 
     log("warn", "EVM getBlock fallback: eth_getBlockReceipts unsupported", {

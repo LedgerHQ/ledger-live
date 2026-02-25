@@ -10,7 +10,7 @@ import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { getCoinConfig } from "../../config";
-import { GasEstimationError, InsufficientFunds } from "../../errors";
+import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { getSerializedTransaction } from "../../transaction";
 import { FeeHistory } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
@@ -31,18 +31,6 @@ import {
  */
 export const ERC20_TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-
-export class RpcUnsupportedError extends Error {
-  readonly method: string;
-  readonly rawError: unknown;
-
-  constructor(method: string, rawError: unknown) {
-    super(`${method} is not supported by this RPC provider`);
-    this.name = "RpcUnsupportedError";
-    this.method = method;
-    this.rawError = rawError;
-  }
-}
 
 /**
  * Parse ERC20 Transfer events from transaction receipt logs.
@@ -383,8 +371,15 @@ export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> =
     try {
       receipts = await api.send("eth_getBlockReceipts", [blockTag]);
     } catch (error) {
-      if (isRpcUnsupportedError(error))
-        throw new RpcUnsupportedError("eth_getBlockReceipts", error);
+      if (isUnsupportedRpcMethodError(error)) {
+        throw new UnsupportedRpcMethodError(
+          "eth_getBlockReceipts is not supported by this RPC provider",
+          {
+            method: "eth_getBlockReceipts",
+            rawError: error,
+          },
+        );
+      }
       throw error;
     }
 
@@ -404,7 +399,7 @@ export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> =
     });
   });
 
-function isRpcUnsupportedError(error: unknown): boolean {
+function isUnsupportedRpcMethodError(error: unknown): boolean {
   const unsupportedCodes = new Set(["-32601", "method_not_found"]);
   return collectRpcErrorCodes(error).some(code => unsupportedCodes.has(code));
 }

@@ -17,6 +17,10 @@ export const InvalidExplorerResponse = createCustomErrorClass("InvalidExplorerRe
 export const UnknownNode = createCustomErrorClass("UnknownNode");
 export const LedgerNodeUsedIncorrectly = createCustomErrorClass("LedgerNodeUsedIncorrectly");
 export const ExternalNodeUsedIncorrectly = createCustomErrorClass("ExternalNodeUsedIncorrectly");
+export const UnsupportedRpcMethodError = createCustomErrorClass<{
+  method: string;
+  rawError: unknown;
+}>("UnsupportedRpcMethodError");
 
 // GasTracker errors
 export const LedgerGasTrackerUsedIncorrectly = createCustomErrorClass(
