@@ -18,6 +18,8 @@ jest.useFakeTimers();
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
+const now = Math.floor(Date.now() / 1000);
+
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
@@ -77,7 +79,7 @@ describe("EVM Family", () => {
       gasUsed: BigInt(2),
       extraData: "0x",
       baseFeePerGas: BigInt(123),
-      timestamp: Math.floor(Date.now() / 1000),
+      timestamp: now,
     } as Partial<ethers.Block> as ethers.Block);
 
     jest.spyOn(JsonRpcProvider.prototype, "getTransactionCount").mockResolvedValue(5);
@@ -662,7 +664,7 @@ describe("EVM Family", () => {
         // for this specific assertion we can't use Date.now() directly because
         // the timestamp returned by ethers (and mocked at the beginning of
         // thetestsuite) is rounded to the second
-        timestamp: Math.floor(Date.now() / 1000) * 1000,
+        timestamp: now * 1000,
         height: 1,
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
       });
@@ -673,7 +675,7 @@ describe("EVM Family", () => {
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
         number: 1,
-        timestamp: Math.floor(Date.now() / 1000),
+        timestamp: now,
         transactions: ["0xtx1"],
         prefetchedTransactions: [
           {
@@ -687,7 +689,7 @@ describe("EVM Family", () => {
 
       expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-        timestamp: Math.floor(Date.now() / 1000) * 1000,
+        timestamp: now * 1000,
         height: 1,
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
         transactions: [
@@ -707,7 +709,7 @@ describe("EVM Family", () => {
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
         number: 1,
-        timestamp: Math.floor(Date.now() / 1000),
+        timestamp: now,
         transactions: ["0xtx1"],
         get prefetchedTransactions() {
           const error = new Error("transactions were not prefetched with block request");
@@ -718,7 +720,7 @@ describe("EVM Family", () => {
 
       expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-        timestamp: Math.floor(Date.now() / 1000) * 1000,
+        timestamp: now * 1000,
         height: 1,
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
         transactionHashes: ["0xtx1"],
