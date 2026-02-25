@@ -183,7 +183,6 @@ if (testType === "mock") {
   if (shard) {
     filteredArgs.push("--shard", shard);
   }
-  filteredArgs.push("--runInBand");
 }
 
 if (outputFile) {

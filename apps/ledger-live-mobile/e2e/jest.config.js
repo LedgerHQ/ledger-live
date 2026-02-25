@@ -26,7 +26,7 @@ const transformIncludePatterns = ["ky"];
 
 module.exports = async () => ({
   rootDir: "..",
-  maxWorkers: 1,
+  maxWorkers: process.env.JEST_MAX_WORKERS ? parseInt(process.env.JEST_MAX_WORKERS, 10) : 1,
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
