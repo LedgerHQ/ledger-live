@@ -1,4 +1,5 @@
 import React from "react";
+import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -33,23 +34,25 @@ export const SignatureScreen = () => {
   }
 
   return (
-    <div className="-mt-12 mb-24" data-testid="send-signature-step">
-      <DeviceAction
-        action={action}
-        // @ts-expect-error This type is not compatible with the one expected by the action
-        request={request}
-        Result={Result}
-        onResult={onDeviceActionResult}
-        onError={finishWithError}
-        analyticsPropertyFlow="send"
-        renderLockedDevice={({ device, onRetry }) => {
-          if (!device) return null;
-          return <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} />;
-        }}
-        renderDeviceSignatureRequested={({ device }) => (
-          <SimplifiedTransactionConfirm device={device} />
-        )}
-      />
-    </div>
+    <DialogBody className="py-16">
+      <div className="-mt-12 mb-24" data-testid="send-signature-step">
+        <DeviceAction
+          action={action}
+          // @ts-expect-error This type is not compatible with the one expected by the action
+          request={request}
+          Result={Result}
+          onResult={onDeviceActionResult}
+          onError={finishWithError}
+          analyticsPropertyFlow="send"
+          renderLockedDevice={({ device, onRetry }) => {
+            if (!device) return null;
+            return <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} />;
+          }}
+          renderDeviceSignatureRequested={({ device }) => (
+            <SimplifiedTransactionConfirm device={device} />
+          )}
+        />
+      </div>
+    </DialogBody>
   );
 };

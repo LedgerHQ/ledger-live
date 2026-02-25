@@ -18,7 +18,7 @@ export const ErrorContent = ({ error }: ErrorContentProps) => {
 
   return (
     <div
-      className="flex flex-col items-center gap-24 pt-16"
+      className="flex flex-col items-center gap-24 -mt-12"
       data-testid="send-confirmation-error-content"
     >
       <Spot appearance="error" size={72} />
