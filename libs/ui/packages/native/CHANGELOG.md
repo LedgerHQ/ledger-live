@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.57.0
+
+### Minor Changes
+
+- [#14266](https://github.com/LedgerHQ/ledger-live/pull/14266) [`2f07682`](https://github.com/LedgerHQ/ledger-live/commit/2f07682ccfb504caf38ba8798e3b22847302890d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add Wallet V4 Tour drawer with slides showcasing new features
+
 ## 0.57.0-next.0
 
 ### Minor Changes

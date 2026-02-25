@@ -1,5 +1,22 @@
 # @ledgerhq/coin-celo
 
+## 1.11.0
+
+### Minor Changes
+
+- [#14381](https://github.com/LedgerHQ/ledger-live/pull/14381) [`d1d3272`](https://github.com/LedgerHQ/ledger-live/commit/d1d327216985cff383de408f17928bf9b0452a68) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - show not enough balance when account balance is below the network fee on send
+
+### Patch Changes
+
+- Updated dependencies [[`438989f`](https://github.com/LedgerHQ/ledger-live/commit/438989f96a31dfbd494284dadd05723f9eb864f5), [`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0), [`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0), [`5c9240a`](https://github.com/LedgerHQ/ledger-live/commit/5c9240aed148dd302cc6c29796fd1260411f0f9e), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078)]:
+  - @ledgerhq/coin-evm@2.44.0
+  - @ledgerhq/types-live@6.98.0
+  - @ledgerhq/live-env@2.28.0
+  - @ledgerhq/coin-framework@6.17.0
+  - @ledgerhq/cryptoassets@13.39.1
+  - @ledgerhq/hw-app-eth@7.4.1
+  - @ledgerhq/live-network@2.2.3
+
 ## 1.11.0-next.0
 
 ### Minor Changes

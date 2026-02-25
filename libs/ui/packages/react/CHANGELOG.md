@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.46.0
+
+### Minor Changes
+
+- [#14380](https://github.com/LedgerHQ/ledger-live/pull/14380) [`d38b48b`](https://github.com/LedgerHQ/ledger-live/commit/d38b48b105bd50e1d5ca45a1ea65f6e2ed4814fa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: walletv4 tour lwd slides component
+
 ## 0.46.0-next.0
 
 ### Minor Changes
