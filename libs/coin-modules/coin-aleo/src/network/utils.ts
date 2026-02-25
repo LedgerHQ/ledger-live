@@ -1,13 +1,22 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { PROGRAM_ID } from "../constants";
+import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
+import {
+  AMOUNT_ARG_INDEX,
+  EXPLORER_TRANSFER_TYPES,
+  PROGRAM_ID,
+  RECIPIENT_ARG_INDEX,
+} from "../constants";
 import { sdkClient } from "../network/sdk";
 import type {
   ProvableApi,
   AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
   EnrichedTransaction,
+  EnrichedPrivateRecord,
+  AleoPrivateRecord,
 } from "../types";
-import { generateUniqueUsername } from "../logic/utils";
+import { generateUniqueUsername, parseMicrocredits } from "../logic/utils";
 import { apiClient } from "./api";
 
 function limitTransactions(
@@ -228,4 +237,84 @@ export async function accessProvableApi({
     uuid,
     scannerStatus: { synced, percentage },
   };
+}
+
+export async function enrichPrivateRecord({
+  currency,
+  rawRecord,
+  address,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  rawRecord: AleoPrivateRecord;
+  address: string;
+  viewKey: string;
+}): Promise<EnrichedPrivateRecord | null> {
+  const transactionId = rawRecord.transaction_id.trim();
+  const details = await apiClient.getTransactionById(currency, transactionId);
+
+  // PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op
+  if (
+    rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE &&
+    rawRecord.sender === address
+  ) {
+    return null;
+  }
+
+  const recordTransition = details.execution?.transitions[rawRecord.transition_index];
+  if (!recordTransition) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: transition at index ${rawRecord.transition_index} not found for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  let recipient = "";
+  let sender = "";
+  let value: BigNumber;
+
+  if (rawRecord.sender === address) {
+    if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
+      if (recordTransition.inputs[RECIPIENT_ARG_INDEX].value === address) return null;
+      sender = address;
+      recipient = recordTransition.inputs[RECIPIENT_ARG_INDEX].value;
+      value = new BigNumber(parseMicrocredits(recordTransition.inputs[AMOUNT_ARG_INDEX].value));
+    } else {
+      const [recipientData, amountData] = await Promise.all([
+        sdkClient.decryptCiphertext({
+          currency,
+          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: rawRecord.program_name,
+          functionName: rawRecord.function_name,
+          outputIndex: RECIPIENT_ARG_INDEX,
+        }),
+        sdkClient.decryptCiphertext({
+          currency,
+          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: rawRecord.program_name,
+          functionName: rawRecord.function_name,
+          outputIndex: AMOUNT_ARG_INDEX,
+        }),
+      ]);
+      sender = address;
+      recipient = recipientData.plaintext;
+      value = new BigNumber(parseMicrocredits(amountData.plaintext));
+    }
+  } else {
+    const outputRecord = await sdkClient.decryptRecord({
+      currency,
+      ciphertext: rawRecord.record_ciphertext,
+      viewKey,
+    });
+    sender = rawRecord.sender;
+    recipient = address;
+    value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
+  }
+
+  return { rawRecord, details, sender, recipient, value };
 }
