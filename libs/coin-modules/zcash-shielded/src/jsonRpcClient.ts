@@ -110,6 +110,8 @@ export type RawTransaction = {
   blocktime: number;
 };
 
+type JsonRpcResponseData<T> = JsonRpcResponseOk<T> & JsonRpcResponseError;
+
 export class JsonRpcClient {
   serverUrl: string;
 
@@ -120,10 +122,10 @@ export class JsonRpcClient {
   private async jsonRpcRequest<ResponseResult>(
     args: JsonRpcRequestArgs,
   ): Promise<ResponseResult | undefined> {
-    let response;
+    let data: JsonRpcResponseData<ResponseResult>;
 
     try {
-      response = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
+      const response = await network<JsonRpcResponseData<ResponseResult>>({
         url: this.serverUrl,
         method: "POST",
         data: {
@@ -132,18 +134,20 @@ export class JsonRpcClient {
           id: 1,
         },
       });
+
+      data = response.data;
     } catch (err) {
       log(LOG_TYPE, "error: Network error");
       throw err;
     }
 
-    if (response.data.error) {
-      const message = response.data.error.message ?? "unknown error";
+    if (data.error) {
+      const message = data.error.message ?? "unknown error";
       log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
-    } else if (response.data.result === undefined || response.data.result === null) {
+    } else if (data.result === undefined || data.result === null) {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
     } else {
-      return response.data.result;
+      return data.result;
     }
   }
 
