@@ -8,10 +8,11 @@ import {
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { log } from "@ledgerhq/logs";
 import { getBalance, lastBlock, listOperations } from "../logic";
+import { isProvableApiConfigured, splitPrivateAndPublicOperations } from "../logic/utils";
 import { accessProvableApi } from "../network/utils";
-import type { AleoAccount, ProvableApi, AleoUnspentRecord } from "../types";
+import type { AleoAccount, AleoOperation, AleoUnspentRecord, ProvableApi } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
-import { isProvableApiConfigured } from "../logic/utils";
+import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { apiClient } from "../network/api";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
@@ -56,9 +57,14 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
   const shouldSyncFromScratch = !initialAccount;
-  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
-  const latestOperation = oldOperations[0];
-  const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+
+  // Keep public and private ops separate so each cursor is derived from the correct op type. Mixing them
+  // risks using a private op's blockHeight as the public sync cursor
+  const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
+
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
+  const lastPrivateBlockHeight = shouldSyncFromScratch ? 0 : oldPrivateOps[0]?.blockHeight ?? 0;
 
   const latestAccountPublicOperations = await listOperations({
     currency,
@@ -74,15 +80,33 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
 
   let privateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
   let unspentPrivateRecords: AleoUnspentRecord[] | null = null;
+  let latestAccountPrivateOperations: AleoOperation[] = [];
   let lastPrivateSyncDate = initialAccount?.aleoResources?.lastPrivateSyncDate ?? null;
 
   if (viewKey && isProvableApiConfigured(provableApi)) {
-    const rawUnspentPrivateRecords = await apiClient.getAccountOwnedRecords({
+    const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
+      apiClient.getAccountOwnedRecords({
+        currency,
+        jwtToken: provableApi.jwt.token,
+        uuid: provableApi.uuid,
+        apiKey: provableApi.apiKey,
+        start: lastPrivateBlockHeight,
+      }),
+      apiClient.getAccountOwnedRecords({
+        currency,
+        jwtToken: provableApi.jwt.token,
+        uuid: provableApi.uuid,
+        apiKey: provableApi.apiKey,
+        unspent: true,
+      }),
+    ]);
+
+    latestAccountPrivateOperations = await listPrivateOperations({
       currency,
-      jwtToken: provableApi.jwt.token,
-      uuid: provableApi.uuid,
-      apiKey: provableApi.apiKey,
-      unspent: true,
+      viewKey,
+      address,
+      ledgerAccountId,
+      privateRecords: rawNewPrivateRecords,
     });
 
     const privateBalanceResult = await getPrivateBalance({
@@ -101,10 +125,20 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   // sort by date desc
   latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  // merge old and new operations
-  const operations = shouldSyncFromScratch
+  // merge old and new public operations
+  const publicOperations = shouldSyncFromScratch
     ? latestAccountPublicOperations.operations
-    : mergeOps(oldOperations, latestAccountPublicOperations.operations);
+    : mergeOps(oldPublicOps, latestAccountPublicOperations.operations);
+
+  // merge old and new private operations — same incremental pattern as public ops;
+  // deduplication is by operation id (encodeOperationId(accountId, txHash, type))
+  const privateOperations = shouldSyncFromScratch
+    ? latestAccountPrivateOperations
+    : mergeOps(oldPrivateOps, latestAccountPrivateOperations);
+
+  const operations = [...publicOperations, ...privateOperations].sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
 
   return {
     type: "Account",

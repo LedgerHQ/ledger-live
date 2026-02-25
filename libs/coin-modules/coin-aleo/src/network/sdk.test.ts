@@ -157,4 +157,57 @@ describe("sdkClient", () => {
       ).rejects.toThrow("Network error");
     });
   });
+
+  describe("decryptCiphertext", () => {
+    const mockParams = {
+      currency: mockCurrency,
+      ciphertext: "ct1mock_ciphertext_data",
+      tpk: "tpk1mock_transition_public_key",
+      viewKey: "AViewKey1mock_view_key_data",
+      programId: "credits.aleo",
+      functionName: "transfer_private",
+      outputIndex: 0,
+    };
+    const mockDecryptedData = {
+      plaintext: "1000000u64",
+    };
+
+    it("should call network with correct method, url, headers and data", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData });
+
+      await sdkClient.decryptCiphertext(mockParams);
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/symmetric_decrypt`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          index: mockParams.outputIndex,
+          ciphertext: mockParams.ciphertext,
+          transition_public_key: mockParams.tpk,
+          view_key: mockParams.viewKey,
+          program: mockParams.programId,
+          function_name: mockParams.functionName,
+        },
+      });
+    });
+
+    it("should return res.data from the network response", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData });
+
+      const result = await sdkClient.decryptCiphertext(mockParams);
+
+      expect(result).toEqual(mockDecryptedData);
+    });
+
+    it("should propagate errors thrown by network", async () => {
+      const mockError = new Error("Network error");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(sdkClient.decryptCiphertext(mockParams)).rejects.toThrow("Network error");
+    });
+  });
 });

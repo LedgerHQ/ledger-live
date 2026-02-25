@@ -16,6 +16,7 @@ import type {
   AleoOperation,
   AleoTransactionType,
   EnrichedTransaction,
+  EnrichedPrivateRecord,
   Transaction,
   TransactionType,
   ProvableApi,
@@ -171,6 +172,36 @@ export const toBridgeOperation = (
   };
 };
 
+export const toPrivateBridgeOperation = (
+  ledgerAccountId: string,
+  enrichedRecord: EnrichedPrivateRecord,
+  address: string,
+): AleoOperation => {
+  const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
+  const blockHeight = enrichedRecord.rawRecord.block_height;
+  const timestamp = new Date(Number(enrichedRecord.rawRecord.block_timestamp) * 1000);
+  const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
+
+  return {
+    id: encodeOperationId(ledgerAccountId, transactionId, type),
+    senders: [enrichedRecord.sender],
+    recipients: [enrichedRecord.recipient],
+    value: enrichedRecord.value,
+    type,
+    hasFailed: false,
+    hash: transactionId,
+    fee: new BigNumber(enrichedRecord.details.fee_value),
+    blockHeight,
+    blockHash: enrichedRecord.details.block_hash,
+    accountId: ledgerAccountId,
+    date: timestamp,
+    extra: {
+      functionId: enrichedRecord.rawRecord.function_name,
+      transactionType: "private",
+    },
+  };
+};
+
 export const generateUniqueUsername = (address: string): string => {
   const timestamp = Date.now().toString();
   const combined = `${timestamp}_${address}`;
@@ -242,4 +273,25 @@ export function isSelfTransferTransaction(
     transaction.type === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
   );
+}
+
+function isPrivateOperation(operation: Operation): boolean {
+  const { extra } = operation;
+  return (
+    typeof extra === "object" &&
+    extra !== null &&
+    "transactionType" in extra &&
+    extra.transactionType === "private"
+  );
+}
+
+export function splitPrivateAndPublicOperations(
+  operations: Operation[],
+): [Operation[], Operation[]] {
+  const privateOps: Operation[] = [];
+  const publicOps: Operation[] = [];
+  for (const operation of operations) {
+    (isPrivateOperation(operation) ? privateOps : publicOps).push(operation);
+  }
+  return [privateOps, publicOps];
 }
