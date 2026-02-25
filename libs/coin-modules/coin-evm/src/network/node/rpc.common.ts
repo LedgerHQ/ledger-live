@@ -332,16 +332,16 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (
     }
 
     const transactionHashes =
-      block.transactions !== undefined
-        ? block.transactions.map((tx, index) => {
+      block.transactions === undefined
+        ? undefined
+        : block.transactions.map((tx, index) => {
             if (typeof tx !== "string") {
-              throw new Error(
+              throw new TypeError(
                 `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
               );
             }
             return tx;
-          })
-        : undefined;
+          });
 
     const prefetchedTransactions = prefetchTxs ? getPrefetchedBlockTransactions(block) : undefined;
     const transactions = prefetchedTransactions?.map((tx, index) => {
