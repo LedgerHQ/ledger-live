@@ -31,7 +31,7 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
 
   const transactions = await getTransactionsFromNode(
     currency,
-    result.transactions?.map(tx => tx.hash) || result.transactionHashes || [],
+    result.transactionHashes || result.transactions?.map(tx => tx.hash) || [],
     nodeApi,
     result.height,
     result.transactions,
