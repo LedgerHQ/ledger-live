@@ -49,8 +49,6 @@ export type APITransactionType = CommonOperationType & {
    * - For internal transactions (emitted by a smart contract): set to the original user account.
    *   In that case `sender` is the contract that emitted the internal operation.
    *
-   * Maps to the Tezos protocol's `source` (a.k.a. SENDER), while `sender` below
-   * maps to the protocol's `caller` (a.k.a. SOURCE) for internal operations.
    *
    * Example (real mainnet tx opK5rnDgd4ipyeS3JnFrENMpeu7xY44AMcke9u9GDku7Udt8sYd):
    *   initiator: { address: "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV" }  // user account, fee payer

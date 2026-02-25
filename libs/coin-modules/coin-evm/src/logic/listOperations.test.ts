@@ -10,7 +10,7 @@ describe("listOperations", () => {
   const currency = {} as CryptoCurrency;
   const address = "address";
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
   const buildOperationsSpy = (explorer: ExplorerApi) =>
     jest.spyOn(explorer, "getOperations").mockResolvedValue({
