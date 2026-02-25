@@ -21,7 +21,6 @@ import {
   smallChainScenario,
 } from "./mocks/findBlockHeightData";
 import BigNumber from "bignumber.js";
-import * as rxjs from "rxjs";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());

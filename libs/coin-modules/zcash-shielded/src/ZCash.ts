@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
-import * as rxjs from "rxjs";
+import { from, Observable } from "rxjs";
 import { LOG_TYPE } from "./constants";
 
 /**
@@ -306,8 +306,8 @@ export default class ZCash {
    * }} args, Block, the UFVK - unified full viewing key, and max batch size.
    * @returns {Observable<SyncedShielded>} the current synced shielded context.
    */
-  syncShielded(args: SyncShieldedArgs): rxjs.Observable<SyncedShielded> {
-    return rxjs.from(this.syncShieldedGenerator(args));
+  syncShielded(args: SyncShieldedArgs): Observable<SyncedShielded> {
+    return from(this.syncShieldedGenerator(args));
   }
 }
 
