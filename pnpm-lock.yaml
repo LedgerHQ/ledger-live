@@ -9996,46 +9996,6 @@ importers:
         specifier: ^14.0.0
         version: 14.0.1
 
-  libs/ui/examples/rspack:
-    dependencies:
-      '@ledgerhq/react-ui':
-        specifier: workspace:^
-        version: link:../../packages/react
-      react:
-        specifier: 19.0.0
-        version: 19.0.0
-      react-dom:
-        specifier: 19.0.0
-        version: 19.0.0(react@19.0.0)
-      react-is:
-        specifier: '*'
-        version: 17.0.2
-      styled-components:
-        specifier: ^5.3.3
-        version: 5.3.11(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0)
-    devDependencies:
-      '@rspack/cli':
-        specifier: 'catalog:'
-        version: 1.7.3(@rspack/core@1.7.3)
-      '@rspack/core':
-        specifier: 'catalog:'
-        version: 1.7.3
-      '@rspack/dev-server':
-        specifier: 'catalog:'
-        version: 1.1.5(@rspack/core@1.7.3)
-      '@rspack/plugin-react-refresh':
-        specifier: 'catalog:'
-        version: 1.6.0(react-refresh@0.18.0)
-      http-server:
-        specifier: ^14.0.0
-        version: 14.1.1
-      react-refresh:
-        specifier: 'catalog:'
-        version: 0.18.0
-      rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
-
   libs/ui/packages/icons:
     devDependencies:
       '@rspack/core':
@@ -37221,10 +37181,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-jsx@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-syntax-jsx@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -52222,18 +52178,6 @@ snapshots:
       lodash: 4.17.21
       picomatch: 2.3.1
       styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - supports-color
-
-  babel-plugin-styled-components@2.1.4(styled-components@5.3.11(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0))(supports-color@5.5.0):
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
-      '@babel/plugin-syntax-jsx': 7.27.1
-      lodash: 4.17.21
-      picomatch: 2.3.1
-      styled-components: 5.3.11(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -67902,24 +67846,6 @@ snapshots:
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5
       babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0))(supports-color@5.5.0)
-      css-to-react-native: 3.2.0
-      hoist-non-react-statics: 3.3.2
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-      react-is: 17.0.2
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    transitivePeerDependencies:
-      - '@babel/core'
-
-  styled-components@5.3.11(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0):
-    dependencies:
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
-      '@emotion/is-prop-valid': 1.4.0
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.1.4(styled-components@5.3.11(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0))(supports-color@5.5.0)
       css-to-react-native: 3.2.0
       hoist-non-react-statics: 3.3.2
       react: 19.0.0
