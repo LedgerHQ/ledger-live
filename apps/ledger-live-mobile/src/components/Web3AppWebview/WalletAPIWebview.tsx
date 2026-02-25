@@ -78,6 +78,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           onLoadError();
           setError(true);
         }}
+        androidLayerType="software"
         onOpenWindow={onOpenWindow}
         overScrollMode="content"
         bounces={false}
