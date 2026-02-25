@@ -21,7 +21,6 @@ export const handlers = [
         return HttpResponse.json({
           result: lastBlockCount,
         });
-        break;
       }
 
       case "getblock": {
@@ -41,7 +40,6 @@ export const handlers = [
             message: "block height not in best chain",
           },
         });
-        break;
       }
 
       case "getrawtransaction": {
@@ -61,7 +59,6 @@ export const handlers = [
             message: "No such mempool or main chain transaction",
           },
         });
-        break;
       }
 
       default: {
