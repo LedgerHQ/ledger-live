@@ -20,12 +20,13 @@ export type SyncedShielded = {
   processedBlocks: number;
   remainingBlocks: number;
   lastProcessed: number | undefined;
-};
+}
 
 type SyncShieldedArgs = {
   startBlockHeight: number;
   viewingKey: string;
   maxBatchSize: number;
+
 };
 
 export default class ZCash {
@@ -215,42 +216,29 @@ export default class ZCash {
     args: SyncShieldedArgs,
   ): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
     const { startBlockHeight, viewingKey, maxBatchSize } = args;
-    let balance = new BigNumber(0);
-    let processedBlocks = 0;
-    let remainingBlocks = 0;
-    let lastProcessed;
+    const syncedShielded: SyncedShielded = {
+      balance: new BigNumber(0),
+      processedBlocks: 0,
+      remainingBlocks: 0,
+      lastProcessed: undefined,
+    };
 
     // 0. validate args
     if (startBlockHeight < 0) {
       log(LOG_TYPE, "error: invalid negative arg startBlockHeight");
-      return {
-        balance,
-        processedBlocks,
-        remainingBlocks,
-        lastProcessed,
-      };
+      return syncedShielded;
     }
 
     if (maxBatchSize <= 0) {
       log(LOG_TYPE, "error: invalid negative or zero arg maxBatchSize");
-      return {
-        balance,
-        processedBlocks,
-        remainingBlocks,
-        lastProcessed,
-      };
+      return syncedShielded;
     }
 
     // 1. get end block height
     let endBlockHeight = await this.jsonRpcClient.getBlockCount();
     if (!endBlockHeight) {
       log(LOG_TYPE, "error: could not retrieve the last block");
-      return {
-        balance,
-        processedBlocks,
-        remainingBlocks,
-        lastProcessed,
-      };
+      return syncedShielded;
     }
 
     for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
@@ -273,19 +261,14 @@ export default class ZCash {
       // 4. find shielded tx in block
       const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
 
-      // 5. update balance and counters
-      balance = balance.plus(calculateShieldedBalance(shieldedTxs));
-      processedBlocks++;
-      remainingBlocks = endBlockHeight - blockHeight;
-      lastProcessed = block.height;
+      // 5. update syncedShielded's balance and counters
+      syncedShielded.balance = syncedShielded.balance.plus(calculateShieldedBalance(shieldedTxs));
+      syncedShielded.processedBlocks++;
+      syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
+      syncedShielded.lastProcessed = block.height;
 
-      if (!(processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
-        const stop = yield {
-          balance,
-          processedBlocks,
-          remainingBlocks,
-          lastProcessed,
-        };
+      if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
+        const stop = yield syncedShielded;
 
         if (stop) {
           break;
@@ -293,12 +276,7 @@ export default class ZCash {
       }
     }
 
-    return {
-      balance,
-      processedBlocks,
-      remainingBlocks,
-      lastProcessed,
-    };
+    return syncedShielded;
   }
 
   /**
