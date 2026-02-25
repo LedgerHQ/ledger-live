@@ -17,12 +17,14 @@ export const handlers = [
     const body = await request.clone().json();
 
     switch (body.method) {
-      case "getblockcount":
+      case "getblockcount": {
         return HttpResponse.json({
           result: lastBlockCount,
         });
+        break;
+      }
 
-      case "getblock":
+      case "getblock": {
         for (const block of blocks) {
           if (body.params[0] === block.hash || body.params[0] === block.height.toString()) {
             return HttpResponse.json({
@@ -39,6 +41,8 @@ export const handlers = [
             message: "block height not in best chain",
           },
         });
+        break;
+      }
 
       case "getrawtransaction": {
         for (const transaction of transactions) {
@@ -57,10 +61,12 @@ export const handlers = [
             message: "No such mempool or main chain transaction",
           },
         });
+        break;
       }
 
-      default:
+      default: {
         break;
+      }
     }
 
     return HttpResponse.json({
