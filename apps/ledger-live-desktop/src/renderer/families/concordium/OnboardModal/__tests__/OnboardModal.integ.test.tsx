@@ -86,7 +86,7 @@ jest.mock(
 
 // Test data — matches bridge fixture structure for deserializeCredentialDeploymentTransaction
 const TEST_SERIALIZED_CDT = {
-  expiry: 1700000000,
+  expiry: Math.floor(Date.now() / 1000) + 60 * 60,
   unsignedCdiStr: JSON.stringify({
     credentialPublicKeys: {
       keys: { "0": { schemeId: "Ed25519", verifyKey: "aa".repeat(32) } },
