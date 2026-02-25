@@ -11,6 +11,7 @@ import {
   MIN_GAS_FOR_NATIVE_TRANSFER,
 } from "../constants";
 import { valueToHex } from "./utils";
+import { TransactionTypes } from "@celo/connect/lib/types";
 
 const getFeesForTransaction = async ({
   account,
@@ -42,7 +43,7 @@ const getFeesForTransaction = async ({
   const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
 
   // Align with @celo/connect setFeeMarketGas: used for final fee for all modes.
-  const gasPrice = await kit.connection.gasPrice();
+  const gasPrice = await kit.connection.gasPrice(transaction.feeCurrency ?? undefined);
   const maxFeePerGas =
     ((BigInt(gasPrice) - BigInt(maxPriorityFeePerGas)) * BigInt(120)) / BigInt(100) +
     BigInt(maxPriorityFeePerGas);
@@ -65,23 +66,30 @@ const getFeesForTransaction = async ({
 
   let gas: number | null = null;
   if (transaction.mode === "lock") {
-    gas = await lockedGold
-      .lock()
-      .txo.estimateGas({ from: account.freshAddress, value: valueToHex(value) });
+    gas = await lockedGold.lock().txo.estimateGas({
+      from: account.freshAddress,
+      value: valueToHex(value),
+    });
   } else if (transaction.mode === "unlock") {
     const lockedGold = await kit.contracts.getLockedGold();
 
-    gas = await lockedGold.unlock(value).txo.estimateGas({ from: account.freshAddress });
+    gas = await lockedGold.unlock(value).txo.estimateGas({
+      from: account.freshAddress,
+    });
   } else if (transaction.mode === "withdraw") {
     const lockedGold = await kit.contracts.getLockedGold();
 
-    gas = await lockedGold.withdraw(index || 0).txo.estimateGas({ from: account.freshAddress });
+    gas = await lockedGold.withdraw(index || 0).txo.estimateGas({
+      from: account.freshAddress,
+    });
   } else if (transaction.mode === "vote") {
     const election = await kit.contracts.getElection();
 
     const vote = await election.vote(transaction.recipient, new BigNumber(value));
 
-    gas = await vote.txo.estimateGas({ from: account.freshAddress });
+    gas = await vote.txo.estimateGas({
+      from: account.freshAddress,
+    });
   } else if (transaction.mode === "revoke") {
     const election = await kit.contracts.getElection();
     const accounts = await kit.contracts.getAccounts();
@@ -100,7 +108,9 @@ const getFeesForTransaction = async ({
     });
     if (!revokeTx) return new BigNumber(0);
 
-    gas = await revokeTx.txo.estimateGas({ from: account.freshAddress });
+    gas = await revokeTx.txo.estimateGas({
+      from: account.freshAddress,
+    });
   } else if (transaction.mode === "activate") {
     const election = await kit.contracts.getElection();
     const accounts = await kit.contracts.getAccounts();
@@ -111,11 +121,15 @@ const getFeesForTransaction = async ({
     const activate = activates.find(a => a.txo.arguments[0] === transaction.recipient);
     if (!activate) return new BigNumber(0);
 
-    gas = await activate.txo.estimateGas({ from: account.freshAddress });
+    gas = await activate.txo.estimateGas({
+      from: account.freshAddress,
+    });
   } else if (transaction.mode === "register") {
     const accounts = await kit.contracts.getAccounts();
 
-    gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
+    gas = await accounts.createAccount().txo.estimateGas({
+      from: account.freshAddress,
+    });
   } else if (isTokenTransaction) {
     value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
 
@@ -137,6 +151,12 @@ const getFeesForTransaction = async ({
       maxFeePerGas: maxFeePerGas.toString(),
       maxPriorityFeePerGas,
       value: valueToHex(value),
+      ...(transaction.feeCurrency
+        ? {
+            type: "cip64" as TransactionTypes,
+            feeCurrency: transaction.feeCurrency,
+          }
+        : {}),
     };
 
     gas = Number(

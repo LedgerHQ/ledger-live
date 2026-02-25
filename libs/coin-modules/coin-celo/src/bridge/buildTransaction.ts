@@ -142,6 +142,12 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       from: account.freshAddress,
       to: transaction.recipient,
       value: valueToHex(value),
+      ...(transaction.feeCurrency
+        ? {
+            type: "cip64",
+            feeCurrency: transaction.feeCurrency,
+          }
+        : {}),
     };
   }
 
