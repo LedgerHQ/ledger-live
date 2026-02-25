@@ -1,31 +1,25 @@
 /**
- * Integration tests: Release Notes and Terms of Use are deferred (not mounted)
- * when the Wallet V4 tour is active. MainAppLayout only mounts them when
- * useShouldShowDeferredModals is true (tour disabled or already seen at mount).
- *
- * Tests what the user sees: the Terms of Use modal is visible when tour is
- * disabled and not visible when tour is enabled (no mocking of modal components).
+ * Integration tests: useShouldShowDeferredModals gates the deferred modals
+ * (IsNewVersion, IsSystemLanguageAvailable, IsTermOfUseUpdated) in Default.tsx.
+ * When the tour is active and not yet seen, they are not mounted; when tour is off
+ * or already seen at mount, they are. We assert via IsTermOfUseUpdated / Terms modal.
+ * Minimal layout to avoid Default’s asset-aggregation and families chain.
  */
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
-import { MainAppLayout } from "~/renderer/Default";
+import { act, render, screen, waitFor } from "tests/testSetup";
+import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
+import IsTermOfUseUpdated from "~/renderer/components/IsTermOfUseUpdated";
 import ModalsLayer from "~/renderer/ModalsLayer";
+import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 
 jest.mock("~/renderer/store", () => ({}));
-jest.mock("@braze/web-sdk", () => ({
-  getCachedContentCards: jest.fn(() => ({})),
-}));
-
-jest.mock("~/renderer/bridge/SyncNewAccounts", () => ({
-  SyncNewAccounts: () => <div data-testid="sync-new-accounts" />,
-}));
-// Avoid scrollTo in jsdom (Page uses scrollTo on ref which is not implemented in test env)
-jest.mock("LLD/components/Page", () => {
-  const React = require("react");
+jest.mock("@braze/web-sdk", () => ({}));
+// Only load TermOfUseUpdate modal to avoid ModularDrawer/families/asset-aggregation chain
+jest.mock("~/renderer/modals", () => {
+  const TermOfUseUpdate = require("~/renderer/modals/TermOfUseUpdate").default;
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(React.Fragment, null, children),
+    default: { MODAL_TERM_OF_USE_UPDATE: TermOfUseUpdate },
   };
 });
 // Test in Wallet V4 layout (route "/" with lwdWallet40 enabled uses the V4 branch in MainAppLayout).
@@ -57,10 +51,26 @@ const tourDisabledState = {
   },
 };
 
+/** Tour enabled but user had already seen it at app mount → deferred modals are shown */
+const tourEnabledAlreadySeenState = {
+  settings: {
+    ...baseSettings,
+    hasSeenWalletV4Tour: true,
+    overriddenFeatureFlags: {
+      lwdWallet40: { enabled: true, params: { tour: true } },
+    },
+  },
+};
+
+/** Same gate as Default.tsx: shouldShowDeferredModals controls mounting of IsNewVersion, IsSystemLanguageAvailable, IsTermOfUseUpdated. We only mount IsTermOfUseUpdated here and assert on Terms modal. */
+function DeferredModalsLayout() {
+  const shouldShowDeferredModals = useShouldShowDeferredModals();
+  return <>{shouldShowDeferredModals && <IsTermOfUseUpdated />}</>;
+}
+
 const AppWithModals = () => (
   <>
-    <MainAppLayout />
-    {/* Modal component portals into #modals (see ~/renderer/components/Modal) */}
+    <DeferredModalsLayout />
     <div id="modals" />
     <ModalsLayer />
   </>
@@ -92,6 +102,35 @@ describe("Wallet V4 Tour – deferred modals (Release Notes / Terms of Use)", ()
     render(<AppWithModals />, {
       initialRoute: "/",
       initialState: tourEnabledState,
+    });
+
+    expect(screen.queryByTestId("terms-update-popup")).not.toBeInTheDocument();
+  });
+
+  it("shows Terms of Use modal when tour is enabled but user had already seen tour at mount", async () => {
+    render(<AppWithModals />, {
+      initialRoute: "/",
+      initialState: tourEnabledAlreadySeenState,
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("terms-update-popup")).toBeInTheDocument();
+      },
+      { timeout: 500 },
+    );
+  });
+
+  it("does not show Terms of Use modal after user closes tour in same session (deferred modals stay hidden)", () => {
+    const { store } = render(<AppWithModals />, {
+      initialRoute: "/",
+      initialState: tourEnabledState,
+    });
+
+    expect(screen.queryByTestId("terms-update-popup")).not.toBeInTheDocument();
+
+    act(() => {
+      store.dispatch(setHasSeenWalletV4Tour(true));
     });
 
     expect(screen.queryByTestId("terms-update-popup")).not.toBeInTheDocument();
