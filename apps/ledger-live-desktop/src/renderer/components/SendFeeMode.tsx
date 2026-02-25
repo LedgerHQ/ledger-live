@@ -25,7 +25,7 @@ const SelectorContainer = styled.div`
 const Selector = styled(Tabbable)<{
   active: boolean;
 }>`
-  color: ${p => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c40)};
+  color: ${p => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c100)};
   background: ${p => (p.active ? p.theme.colors.primary.c80 : p.theme.colors.opacityDefault.c10)};
   padding: 4px 12px 4px 12px;
 `;
