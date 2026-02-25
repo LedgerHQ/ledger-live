@@ -5,6 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import React, { useCallback } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { NavigatorName, ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
 import { SearchProps } from "LLM/features/Web3Hub/types";
 import RecentCard from "./RecentCard";
 import useRecentlyUsedViewModel, {
@@ -34,40 +35,21 @@ const renderItem = ({
 };
 
 export default function RecentlyUsed({ navigation }: Props) {
+  const { data, extraData, clearAll } = useRecentlyUsedViewModel(navigation);
   const { colors } = useTheme();
-
-  const goToApp = useCallback(
-    (manifestId: string) => {
-      navigation.push(NavigatorName.Web3Hub, {
-        screen: ScreenName.Web3HubApp,
-        params: {
-          manifestId: manifestId,
-        },
-      });
-    },
-    [navigation],
-  );
-
-  const { data, extraData, clearAll } = useRecentlyUsedViewModel(goToApp);
+  const { t } = useTranslation();
 
   if (!data?.length) return null;
 
   return (
-    <View
-      style={{
-        flex: 1,
-        borderBottomWidth: 2,
-        borderBottomColor: colors.lightGrey,
-        paddingBottom: 15,
-      }}
-    >
+    <>
       <Flex flexDirection={"row"} px={5} mb={2} mt={6} justifyContent={"space-between"} height={32}>
         <Text variant="h5" color={colors.black}>
-          {"Recently used"}
+          {t("browseWeb3.catalog.section.recentlyUsed")}
         </Text>
         <TouchableOpacity onPress={clearAll}>
           <Text fontWeight="semiBold" variant="body" color={"primary.c80"}>
-            {"Clear all"}
+            {t("browseWeb3.catalog.section.clearAll")}
           </Text>
         </TouchableOpacity>
       </Flex>
@@ -78,12 +60,11 @@ export default function RecentlyUsed({ navigation }: Props) {
         contentContainerStyle={styles.container}
         keyExtractor={identityFn}
         renderItem={renderItem}
-        ListEmptyComponent={<Box height={50} />}
         data={data}
         showsHorizontalScrollIndicator={false}
         extraData={extraData}
       />
-    </View>
+    </>
   );
 }
 

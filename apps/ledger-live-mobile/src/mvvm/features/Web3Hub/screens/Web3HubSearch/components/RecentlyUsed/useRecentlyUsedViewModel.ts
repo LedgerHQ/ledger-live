@@ -1,25 +1,28 @@
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useCallback } from "react";
 import { recentlyUsedAtom } from "LLM/features/Web3Hub/db";
+import { SearchProps } from "LLM/features/Web3Hub/types";
 import { useAtom } from "jotai";
+import { NavigatorName, ScreenName } from "~/const";
 
 export type useRecentlyUsedViewModelExtraData = {
   onPressItem: (manifest: AppManifest) => void;
   onCloseItem: (manifest: AppManifest) => void;
 };
 
-export default function useRecentlyUsedViewModel(goToApp: (manifestId: string) => void) {
+export default function useRecentlyUsedViewModel(navigation: SearchProps["navigation"]) {
   const [recentlyUsed, setRecentlyUsed] = useAtom(recentlyUsedAtom);
 
-  const addToRecentlyUsed = useCallback(
-    (manifest: AppManifest) => {
-      setRecentlyUsed(async state => {
-        const s = await state;
-        const r = s.filter(item => item.id !== manifest.id);
-        return [manifest, ...r];
+  const goToApp = useCallback(
+    (manifestId: string) => {
+      navigation.push(NavigatorName.Web3Hub, {
+        screen: ScreenName.Web3HubApp,
+        params: {
+          manifestId: manifestId,
+        },
       });
     },
-    [setRecentlyUsed],
+    [navigation],
   );
 
   const onPressItem = useCallback(
@@ -43,7 +46,6 @@ export default function useRecentlyUsedViewModel(goToApp: (manifestId: string) =
   return {
     data: recentlyUsed,
     clearAll,
-    addToRecentlyUsed,
     extraData: {
       onPressItem,
       onCloseItem,

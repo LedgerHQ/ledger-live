@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTheme } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +15,7 @@ import { TrackScreen } from "~/analytics";
 const edges = ["top", "bottom", "left", "right"] as const;
 
 export default function Web3HubSearch({ navigation }: SearchProps) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const { layoutY, scrollHandler } = useScrollHandler(TOTAL_HEADER_HEIGHT);
@@ -48,11 +50,14 @@ export default function Web3HubSearch({ navigation }: SearchProps) {
               <>
                 <RecentlyUsed navigation={navigation} />
                 <Text
-                  mt={5}
+                  borderTopWidth={2}
+                  borderTopColor={colors.lightGrey}
+                  pt={5}
+                  mt={15}
                   mb={5}
                   numberOfLines={1}
                   variant="h5"
-                  mx={5}
+                  px={5}
                   accessibilityRole="header"
                 >
                   {t("web3hub.components.manifestsList.title")}

@@ -1,5 +1,4 @@
-import React, { useCallback } from "react";
-import { NavigatorName, ScreenName } from "~/const";
+import React from "react";
 import useManifestsListViewModel from "LLM/features/Web3Hub/components/ManifestsList/useManifestsListViewModel";
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
 import { MainProps } from "LLM/features/Web3Hub/types";
@@ -15,19 +14,7 @@ type Props = {
 const ManifestsCategoryList = ({ title, categoryId, navigation, testID }: Props) => {
   const { data, isLoading, onEndReached } = useManifestsListViewModel(categoryId);
 
-  const goToApp = useCallback(
-    (manifestId: string) => {
-      navigation.push(NavigatorName.Web3Hub, {
-        screen: ScreenName.Web3HubApp,
-        params: {
-          manifestId: manifestId,
-        },
-      });
-    },
-    [navigation],
-  );
-
-  const disclaimer = useDisclaimerViewModel(goToApp);
+  const disclaimer = useDisclaimerViewModel(navigation);
 
   return data && data.length > 0 ? (
     <>
