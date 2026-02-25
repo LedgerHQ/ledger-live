@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
-import { useIsFocused, useTheme } from "@react-navigation/native";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { useDispatch } from "~/context/hooks";
+import { setRefreshStarted, setRefreshCompleted } from "~/reducers/portfolioRefresh";
 
 type Props = {
   error?: Error;
@@ -18,13 +21,24 @@ export default <P,>(
   ScrollListLike: React.ComponentType<P>,
   defaultRefreshControlProps?: Partial<RefreshControlProps>,
 ) => {
-  function Inner({ forwardedRef, overrideRefreshControlProps, ...scrollListLikeProps }: Props & P) {
+  function Inner({
+    forwardedRef,
+    overrideRefreshControlProps,
+    isError,
+    ...scrollListLikeProps
+  }: Props & P) {
     const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
     const { onUserRefresh } = useWalletSyncUserState();
     const { poll } = useCountervaluesPolling();
     const IsFocused = useIsFocused();
+    const dispatch = useDispatch();
+    const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
+    const route = useRoute();
+    const refreshingRef = useRef(refreshing);
+    refreshingRef.current = refreshing;
+
     function onRefresh() {
       poll();
       setSyncBehavior({
@@ -33,13 +47,21 @@ export default <P,>(
         reason: "user-pull-to-refresh",
       });
       setRefreshing(true);
-      track("buttonClicked", { button: "pull to refresh" });
+      dispatch(setRefreshStarted());
+      track("button_clicked", {
+        button: "pull to refresh",
+        page: route.name,
+        triggered_after_sync_error: isError ?? false,
+      });
       onUserRefresh();
     }
 
     useEffect(() => {
+      if (!IsFocused && refreshingRef.current) {
+        dispatch(setRefreshCompleted(Date.now()));
+      }
       setRefreshing(false);
-    }, [IsFocused]);
+    }, [IsFocused, dispatch]);
 
     useEffect(() => {
       if (!refreshing) {
@@ -49,11 +71,12 @@ export default <P,>(
 
       const timer = setTimeout(() => {
         setRefreshing(false);
+        dispatch(setRefreshCompleted(Date.now()));
       }, SYNC_DELAY);
       return () => {
         clearTimeout(timer);
       };
-    }, [refreshing]);
+    }, [refreshing, dispatch]);
 
     const mergedRefreshControlProps = {
       ...defaultRefreshControlProps,
@@ -67,9 +90,9 @@ export default <P,>(
         refreshControl={
           <RefreshControl
             progressBackgroundColor={dark ? colors.background : colors.card}
-            colors={[colors.live]}
-            tintColor={colors.live}
-            refreshing={refreshing}
+            colors={shouldDisplayBalanceRefreshRework ? ["transparent"] : [colors.live]}
+            tintColor={shouldDisplayBalanceRefreshRework ? "transparent" : colors.live}
+            refreshing={shouldDisplayBalanceRefreshRework ? false : refreshing}
             onRefresh={onRefresh}
             {...mergedRefreshControlProps}
           />
