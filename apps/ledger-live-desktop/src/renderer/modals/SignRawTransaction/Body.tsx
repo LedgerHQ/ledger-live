@@ -54,6 +54,7 @@ export type Params = {
   dependencies?: string[];
   account: AccountLike;
   transaction: string;
+  broadcast?: boolean;
   onResult: (signedOperation: SignedOperation) => void;
   onCancel: (error: Error) => void;
   parentAccount: Account | undefined | null;
@@ -75,8 +76,16 @@ export default function Body({ onChangeStepId, onClose, setError, params, stepId
   const { t } = useTranslation();
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
-  const { account, parentAccount, transaction, manifestId, manifestName, useApp, dependencies } =
-    params;
+  const {
+    account,
+    parentAccount,
+    transaction,
+    broadcast,
+    manifestId,
+    manifestName,
+    useApp,
+    dependencies,
+  } = params;
 
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const handleOpenModal = useCallback(
@@ -123,6 +132,7 @@ export default function Body({ onChangeStepId, onClose, setError, params, stepId
       manifestName={manifestName}
       useApp={useApp}
       dependencies={dependencies}
+      broadcast={broadcast}
       steps={steps}
       errorSteps={errorSteps}
       device={device}

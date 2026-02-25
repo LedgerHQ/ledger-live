@@ -130,7 +130,7 @@ export class MockBtcSigner implements BitcoinSigner {
   signMessage(_path: string, _messageHex: string): Promise<BitcoinSignature> {
     return Promise.reject(new Error("not implemented"));
   }
-  signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
+  signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx?: string }> {
     return Promise.reject(new Error("not implemented"));
   }
   splitTransaction(

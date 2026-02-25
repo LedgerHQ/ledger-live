@@ -32,6 +32,7 @@ type RawTransactionRequest = {
   parentAccount: Account | null | undefined;
   account: AccountLike;
   transaction: string;
+  broadcast?: boolean;
   appName?: string;
   dependencies?: AppRequest[];
   requireLatestFirmware?: boolean;
@@ -53,17 +54,22 @@ const mapResult = ({
   device,
   signedOperation,
   transactionSignError,
-}: RawTransactionState): RawTransactionResult | null | undefined =>
-  signedOperation && device
-    ? {
-        signedOperation,
-        device,
-      }
-    : transactionSignError
-      ? {
-          transactionSignError,
-        }
-      : null;
+}: RawTransactionState): RawTransactionResult | null | undefined => {
+  if (signedOperation && device) {
+    return {
+      signedOperation,
+      device,
+    };
+  }
+
+  if (transactionSignError) {
+    return {
+      transactionSignError,
+    };
+  }
+
+  return null;
+};
 
 type Event =
   | SignOperationEvent
@@ -126,6 +132,7 @@ export const createAction = (
       account,
       parentAccount,
       transaction,
+      broadcast,
       appName,
       dependencies,
       requireLatestFirmware,
@@ -155,6 +162,7 @@ export const createAction = (
           transaction,
           deviceId: device.deviceId,
           deviceModelId: device.modelId,
+          broadcast,
         })
         .pipe(
           catchError(error =>
@@ -170,7 +178,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, mainAccount, transaction, opened, inWrongDeviceForAccount, error]);
+    }, [device, mainAccount, transaction, broadcast, opened, inWrongDeviceForAccount, error]);
     return {
       ...appState,
       ...state,

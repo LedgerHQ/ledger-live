@@ -417,6 +417,13 @@ describe("Btc", () => {
   });
 
   describe("signPsbtBuffer", () => {
+    const defaultSignPsbtOpts = {
+      finalizePsbt: true,
+      accountPath: "m/84'/0'/0'",
+      addressFormat: "bech32" as AddressFormat,
+      knownAddressDerivations: new Map<string, { pubkey: Buffer; path: number[] }>(),
+    };
+
     it("should sign a PSBT buffer", async () => {
       const transport = await openTransportReplayer(RecordStore.fromString(""));
       btc = new Btc({ transport, currency: "bitcoin" });
@@ -426,10 +433,10 @@ describe("Btc", () => {
       (BtcNew as jest.MockedClass<typeof BtcNew>).prototype.signPsbtBuffer = mockSignPsbtBuffer;
 
       const psbtBuffer = Buffer.from("psbt");
-      const result = await btc.signPsbtBuffer(psbtBuffer);
+      const result = await btc.signPsbtBuffer(psbtBuffer, defaultSignPsbtOpts);
 
       expect(result).toEqual(mockResult);
-      expect(mockSignPsbtBuffer).toHaveBeenCalledWith(psbtBuffer, undefined);
+      expect(mockSignPsbtBuffer).toHaveBeenCalledWith(psbtBuffer, defaultSignPsbtOpts);
     });
 
     it("should sign a PSBT buffer with options", async () => {
@@ -445,6 +452,7 @@ describe("Btc", () => {
         finalizePsbt: true,
         accountPath: "m/84'/0'/0'",
         addressFormat: "bech32" as AddressFormat,
+        knownAddressDerivations: new Map<string, { pubkey: Buffer; path: number[] }>(),
       };
 
       await btc.signPsbtBuffer(psbtBuffer, opts);
@@ -458,7 +466,7 @@ describe("Btc", () => {
 
       const psbtBuffer = Buffer.from("psbt");
 
-      await expect(btc.signPsbtBuffer(psbtBuffer)).rejects.toThrow(
+      await expect(btc.signPsbtBuffer(psbtBuffer, defaultSignPsbtOpts)).rejects.toThrow(
         "signPsbtBuffer is not supported with the legacy Bitcoin app",
       );
     });
