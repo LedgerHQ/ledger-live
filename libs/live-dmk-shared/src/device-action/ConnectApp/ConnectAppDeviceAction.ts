@@ -1,5 +1,5 @@
 import { Left, Right } from "purify-ts";
-import { assign, setup, fromPromise, and, not } from "xstate";
+import { assign, setup, fromPromise, and } from "xstate";
 import { gte } from "semver";
 
 import type {
@@ -122,10 +122,16 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           context.input.dependencies.length > 0 || !!context.input.requireLatestFirmware,
         isAppOpened: ({
           context: {
-            input: { application },
+            input: { application, dependencies },
             _internalState: { deviceStatus, deviceModel },
           },
-        }) => ConnectAppDeviceAction.isAppOpened(application, deviceStatus!, deviceModel!),
+        }) =>
+          ConnectAppDeviceAction.isAppOpened(
+            application,
+            deviceStatus!,
+            deviceModel!,
+            dependencies,
+          ),
         requiresDerivation: ({ context }) => context.input.requiredDerivation !== undefined,
         hasError: ({ context }) => context._internalState.error !== null,
       },
@@ -166,17 +172,15 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
       },
       states: {
         DeviceReady: {
+          entry: () => console.log("Device ready, checking status..."),
           always: [
             {
-              guard: not("shouldCheckDependencies"),
               target: "GetDeviceStatus",
-            },
-            {
-              target: "GetDeviceMetadata",
             },
           ],
         },
         GetDeviceStatus: {
+          entry: () => console.log("[ConnectAppDA] >>> GetDeviceStatus"),
           invoke: {
             src: "getStatus",
             input: _ => ({
@@ -217,6 +221,16 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         GetDeviceStatusCheck: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> GetDeviceStatusCheck",
+              JSON.stringify({
+                currentApp: context._internalState.deviceStatus?.currentApp,
+                currentAppVersion: context._internalState.deviceStatus?.currentAppVersion,
+                deviceModel: context._internalState.deviceModel,
+                hasError: context._internalState.error !== null,
+              }),
+            ),
           always: [
             {
               guard: "hasError",
@@ -300,6 +314,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         InstallDependencies: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> InstallDependencies",
+              JSON.stringify({
+                dependencies: context.input.dependencies?.map(d => d.name),
+              }),
+            ),
           exit: assign({
             intermediateValue: _ => ({
               ..._.context.intermediateValue,
@@ -349,6 +370,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         InstallDependenciesCheck: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> InstallDependenciesCheck",
+              JSON.stringify({
+                hasError: context._internalState.error !== null,
+              }),
+            ),
           always: [
             {
               guard: "hasError",
@@ -360,6 +388,14 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         OpenApp: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> OpenApp",
+              JSON.stringify({
+                application: context.input.application.name,
+                dependencies: context.input.dependencies?.map(d => d.name),
+              }),
+            ),
           exit: assign({
             intermediateValue: _ => ({
               ..._.context.intermediateValue,
@@ -410,6 +446,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         OpenAppCheck: {
+          entry: ({ context }) =>
+            console.log(
+              "[ConnectAppDA] >>> OpenAppCheck",
+              JSON.stringify({
+                hasError: context._internalState.error !== null,
+              }),
+            ),
           always: [
             {
               guard: "hasError",
@@ -425,6 +468,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           ],
         },
         GetDerivation: {
+          entry: () => console.log("[ConnectAppDA] >>> GetDerivation"),
           invoke: {
             src: "getDerivation",
             onDone: {
@@ -443,9 +487,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         Success: {
+          entry: () => console.log("[ConnectAppDA] >>> Success"),
           type: "final",
         },
         Error: {
+          entry: ({ context }) =>
+            console.log("[ConnectAppDA] >>> Error", JSON.stringify(context._internalState.error)),
           type: "final",
         },
       },
@@ -468,16 +515,29 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
     application: ApplicationDependency,
     deviceStatus: GetDeviceStatusDAOutput,
     deviceModel: DeviceModelId,
+    dependencies: ApplicationDependency[] = [],
   ) {
-    return (
-      deviceStatus.currentApp === application.name &&
-      (!application.constraints ||
-        application.constraints.every(c =>
-          (!c.applicableModels || c.applicableModels.includes(deviceModel)) &&
-          (!c.exemptModels || !c.exemptModels.includes(deviceModel))
-            ? gte(deviceStatus.currentAppVersion, c.minVersion)
-            : true,
-        ))
-    );
+    const matchesConstraints = (dep: ApplicationDependency) =>
+      !dep.constraints ||
+      dep.constraints.every(c =>
+        (!c.applicableModels || c.applicableModels.includes(deviceModel)) &&
+        (!c.exemptModels || !c.exemptModels.includes(deviceModel))
+          ? gte(deviceStatus.currentAppVersion, c.minVersion)
+          : true,
+      );
+
+    // Direct match: the requested app is currently open
+    if (deviceStatus.currentApp === application.name && matchesConstraints(application)) {
+      return true;
+    }
+
+    // Plugin match: the running app is a dependency of the requested app.
+    // This handles plugin apps (e.g. 1inch) that run inside their parent app (e.g. Ethereum).
+    const matchingDep = dependencies.find(dep => dep.name === deviceStatus.currentApp);
+    if (matchingDep && matchesConstraints(matchingDep)) {
+      return true;
+    }
+
+    return false;
   }
 }

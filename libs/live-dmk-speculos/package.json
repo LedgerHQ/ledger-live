@@ -44,6 +44,7 @@
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-env": "workspace:^"
   },
   "devDependencies": {

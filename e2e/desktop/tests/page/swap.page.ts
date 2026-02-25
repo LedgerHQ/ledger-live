@@ -132,6 +132,7 @@ export class SwapPage extends AppPage {
   async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
+    await webview.getByTestId(this.specificQuoteCardProviderName(provider.name)).waitFor();
     const providersList = await this.getProviderList(electronApp);
 
     if (providersList.includes(provider.uiName)) {

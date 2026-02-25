@@ -810,5 +810,82 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
       expect(result).toBe(true);
     });
+
+    it("should return true when current app matches a dependency (plugin pattern)", () => {
+      const application = {
+        name: "1inch",
+      } as ApplicationDependency;
+      const deviceStatus = {
+        currentApp: "Ethereum",
+        currentAppVersion: "1.12.1",
+      };
+      const deviceModel = DeviceModelId.NANO_X;
+      const dependencies: ApplicationDependency[] = [
+        {
+          name: "Ethereum",
+          constraints: [{ minVersion: "1.12.0", applicableModels: [DeviceModelId.NANO_X] }],
+        } as ApplicationDependency,
+      ];
+
+      const result = ConnectAppDeviceAction.isAppOpened(
+        application,
+        deviceStatus,
+        deviceModel,
+        dependencies,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it("should return false when current app matches a dependency but constraints are not met", () => {
+      const application = {
+        name: "1inch",
+      } as ApplicationDependency;
+      const deviceStatus = {
+        currentApp: "Ethereum",
+        currentAppVersion: "1.11.0",
+      };
+      const deviceModel = DeviceModelId.NANO_X;
+      const dependencies: ApplicationDependency[] = [
+        {
+          name: "Ethereum",
+          constraints: [{ minVersion: "1.12.0", applicableModels: [DeviceModelId.NANO_X] }],
+        } as ApplicationDependency,
+      ];
+
+      const result = ConnectAppDeviceAction.isAppOpened(
+        application,
+        deviceStatus,
+        deviceModel,
+        dependencies,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it("should return false when current app does not match any dependency", () => {
+      const application = {
+        name: "1inch",
+      } as ApplicationDependency;
+      const deviceStatus = {
+        currentApp: "Bitcoin",
+        currentAppVersion: "2.0.0",
+      };
+      const deviceModel = DeviceModelId.NANO_X;
+      const dependencies: ApplicationDependency[] = [
+        {
+          name: "Ethereum",
+        } as ApplicationDependency,
+      ];
+
+      const result = ConnectAppDeviceAction.isAppOpened(
+        application,
+        deviceStatus,
+        deviceModel,
+        dependencies,
+      );
+
+      expect(result).toBe(false);
+    });
   });
 });

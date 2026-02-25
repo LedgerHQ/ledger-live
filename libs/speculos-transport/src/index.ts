@@ -217,7 +217,7 @@ export async function createSpeculosDevice(
   const sdk = inferSDK(firmware, model);
 
   const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
-  const appPath = `./apps/${subpath}`;
+  const appPath = `${subpath}`;
 
   const getPortMappings = (): string[] => {
     if (process.env.CI) {
@@ -225,8 +225,9 @@ export async function createSpeculosDevice(
     }
     if (isSpeculosWebsocket) {
       return [
+        // websocket ports
         "-p",
-        `${ports.apduPort}:40000`,
+        `${ports.apduPort}:5000`,
         "-p",
         `${ports.vncPort}:41000`,
         "-p",
@@ -235,33 +236,38 @@ export async function createSpeculosDevice(
         `${ports.automationPort}:43000`,
       ];
     }
-    return ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`];
+    // http ports
+    return ["-p", `${ports.apiPort}:5000`, "-p", `${ports.vncPort}:41000`];
   };
 
   const params = [
     "run",
     ...(process.env.CI ? ["--network=host"] : []),
     "-v",
-    `${coinapps}:/speculos/apps`,
+    `${coinapps}:/app`,
+    "--user",
+    `502:${process.getgid?.() ?? 0}`,
     ...getPortMappings(),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
+    "-v",
+    "/tmp/.X11-unix:/tmp/.X11-unix",
+    "-e",
+    "DISPLAY=host.docker.internal:0",
     "--name",
     `${speculosID}`,
-    process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
+    "ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest",
+    "speculos",
+    appPath,
     "--model",
     getSpeculosModel(model),
-    appPath,
     ...(dependency
-      ? [
-          "-l",
-          `${dependency}:./apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`,
-        ]
+      ? ["-l", `${dependency}:${conventionalAppSubpath(model, firmware, dependency, appVersion)}`]
       : []),
     ...(dependencies !== undefined
       ? dependencies.flatMap(dependency => [
           "-l",
-          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
+          `${dependency.name}:${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
         ])
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
@@ -278,7 +284,14 @@ export async function createSpeculosDevice(
           "--automation-port",
           process.env.CI ? `${ports.automationPort}` : "43000",
         ]
-      : ["--api-port", process.env.CI ? `${ports.apiPort}` : "40000"]),
+      : [
+          // http ports
+          "--api-port",
+          "5000",
+          "--apdu-port",
+          "9999",
+          "-v",
+        ]),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);

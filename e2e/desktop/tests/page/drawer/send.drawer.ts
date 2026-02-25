@@ -75,4 +75,10 @@ export class SendDrawer extends Drawer {
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
     expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
   }
+
+  @step("Verify swap native flow")
+  async expectSwapNativeFlow(fromAccount: string, providerContractAddress: string, amount: string) {
+    await expect(this.operationFromAccount).toContainText(fromAccount);
+    await expect(this.operationToAccount).toContainText(providerContractAddress);
+  }
 }
