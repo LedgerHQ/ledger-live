@@ -9,7 +9,34 @@ import {
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoKit } from "../network/sdk";
 import type { CeloAccount, RevokeTxo, Transaction } from "../types";
-import { valueToHex } from "./utils";
+import { valueToHex, isSameTokenAsFee, normalizeAndSubtract, convertNumberDecimals } from "./utils";
+
+const calcTokenTransferValue = (
+  tokenAccount: NonNullable<ReturnType<typeof findSubAccountById>> & { type: "TokenAccount" },
+  transaction: Transaction,
+): BigNumber => {
+  if (!transaction.useAllAmount) return transaction.amount;
+
+  const shouldSubtractFee = isSameTokenAsFee(
+    true,
+    tokenAccount.token.contractAddress,
+    transaction.feeCurrencyUnwrapped,
+  );
+
+  if (shouldSubtractFee) {
+    const balanceAfterFee = normalizeAndSubtract(
+      tokenAccount.spendableBalance,
+      transaction.fees,
+      tokenAccount.token.units[0].magnitude,
+    );
+    return BigNumber.max(
+      0,
+      convertNumberDecimals(balanceAfterFee, tokenAccount.token.units[0].magnitude),
+    );
+  }
+
+  return tokenAccount.spendableBalance;
+};
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
@@ -116,7 +143,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       gas: await accounts.createAccount().txo.estimateGas({ from: account.freshAddress }),
     };
   } else if (isTokenTransaction) {
-    value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
+    value = calcTokenTransferValue(tokenAccount, transaction);
 
     let token;
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
@@ -130,6 +157,11 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       to: transaction.recipient,
       data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
       value: valueToHex(value),
+      ...(transaction.feeCurrency
+        ? {
+            feeCurrency: transaction.feeCurrency,
+          }
+        : {}),
     };
   } else {
     // Send
@@ -137,6 +169,11 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       from: account.freshAddress,
       to: transaction.recipient,
       value: valueToHex(value),
+      ...(transaction.feeCurrency
+        ? {
+            feeCurrency: transaction.feeCurrency,
+          }
+        : {}),
     };
   }
 
@@ -170,7 +207,20 @@ const transactionValue = (account: CeloAccount, transaction: Transaction): BigNu
       const revoke = getVote(account, transaction.recipient, transaction.index);
       if (revoke?.amount) value = revoke.amount;
     } else {
-      value = BigNumber.max(0, account.spendableBalance.minus(transaction.fees || 0));
+      // For native CELO send operations, check if fee is paid in CELO
+      const shouldSubtractFee = isSameTokenAsFee(
+        false,
+        undefined,
+        transaction.feeCurrencyUnwrapped,
+      );
+
+      if (shouldSubtractFee) {
+        // Fee is paid in CELO - subtract from balance
+        value = BigNumber.max(0, account.spendableBalance.minus(transaction.fees || 0));
+      } else {
+        // Fee is paid in different token - can send full balance
+        value = account.spendableBalance;
+      }
     }
   }
 
