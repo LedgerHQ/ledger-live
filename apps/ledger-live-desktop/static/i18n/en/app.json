@@ -2423,6 +2423,23 @@
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
       "warningDescription": "Fee presets may be outdated."
+    },
+    "customFees": {
+      "title": "Custom fees",
+      "confirm": "Confirm",
+      "maxFee": "Max fee ({{unit}})",
+      "maxPriorityFee": "Max priority fee ({{unit}})",
+      "gasLimit": "Gas limit ({{unit}})",
+      "feePerByte": "Fees amount ({{unit}})",
+      "suggested": "Suggested",
+      "nextBlock": "Next block",
+      "networkFeesInFiat": "Network fees in {{currency}}",
+      "invalidValue": "Enter a valid number",
+      "belowMinimum": "Minimum is {{min}}",
+      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+    },
+    "coinControl": {
+      "title": "Coin control"
     }
   },
   "releaseNotes": {

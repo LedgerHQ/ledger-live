@@ -58,6 +58,18 @@ jest.mock("../useFeePresetLegends", () => ({
 
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError");
 
+jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: () => ({
+    navigation: {
+      goToStep: jest.fn(),
+      goToNextStep: jest.fn(),
+      goToPreviousStep: jest.fn(),
+    },
+    currentStep: null,
+    contextValue: null,
+  }),
+}));
+
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);

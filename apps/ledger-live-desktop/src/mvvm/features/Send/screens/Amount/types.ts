@@ -73,4 +73,6 @@ export type AmountScreenViewProps = AmountInputProps & FeesProps & QuickActionsP
 export type AmountScreenViewModel = Omit<AmountScreenViewProps, "onReview" | "onGetFunds"> &
   Readonly<{
     showFeePresets: boolean;
+    onOpenCustomFees: () => void;
+    onOpenCoinControl: () => void;
   }>;

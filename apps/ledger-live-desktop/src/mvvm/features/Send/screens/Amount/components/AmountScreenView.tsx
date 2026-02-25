@@ -60,6 +60,8 @@ export function AmountScreenView({
         fiatByPreset={fiatByPreset}
         legendByPreset={legendByPreset}
         onSelectFeeStrategy={onSelectFeeStrategy}
+        onSelectCustomFees={() => {}}
+        onSelectCoinControl={() => {}}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}
         reviewDisabled={reviewDisabled}
