@@ -1,0 +1,70 @@
+name: "Create Branch"
+description: "Create a new branch using the GitHub API."
+inputs:
+  branch-name:
+    type: string
+    required: true
+    description: "Name of the new branch to create"
+  base-branch:
+    type: string
+    required: true
+    description: "Name of the branch to create from"
+  github-token:
+    type: string
+    required: true
+    description: "GitHub token with repo permissions"
+outputs:
+  status:
+    description: "HTTP status code of the create branch operation"
+    value: ${{ steps.create-branch.outputs.status }}
+  message:
+    description: "Message returned from the operation (if avail)"
+    value: ${{ steps.create-branch.outputs.message }}
+  sha:
+    description: "SHA of the ref created"
+    value: ${{ steps.create-branch.outputs.sha }}
+runs:
+  using: "composite"
+  steps:
+    - name: "Create branch ${{ inputs.branch-name }} from ${{ inputs.base-branch }}"
+      uses: actions/github-script@v7
+      id: create-branch
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          try {
+            // First get the SHA of the base branch
+            const baseRef = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `${{ inputs.base-branch }}`
+            });
+
+            // Create the new branch using the base branch's SHA
+            const output = await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/heads/${{ inputs.branch-name }}`,
+              sha: baseRef.data.object.sha
+            });
+
+            return {
+              status: output.status,
+              sha: output.data.object.sha
+            };
+
+          } catch (error) {
+            // Handle octokit errors
+            if (error.status) {
+              core.setFailed('Create branch failure: ' + error.response.data.message);
+              core.setOutput('status', error.status);
+              core.setOutput('message', error.response.data.message);
+
+              return {
+                status: error.status,
+                message: error.response.data.message,
+              };
+            } else {
+              throw error;
+            }
+          }
