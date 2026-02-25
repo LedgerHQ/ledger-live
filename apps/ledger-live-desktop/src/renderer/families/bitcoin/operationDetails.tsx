@@ -1,13 +1,11 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { AmountCellExtraProps } from "../types";
 import {
   OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import Box from "~/renderer/components/Box";
 
 const getI18nKey = (type: string) => {
   switch (type) {
@@ -20,29 +18,6 @@ const getI18nKey = (type: string) => {
     default:
       return "zcash.operationDetails.transparentTx";
   }
-};
-
-const AmountCellExtra = ({ operation, currency }: AmountCellExtraProps<Operation>) => {
-  if (currency.id !== "zcash") {
-    return null;
-  }
-
-  const { type } = operation;
-
-  return (
-    <Box style={{ fontSize: "12px" }}>
-      <Trans i18nKey={getI18nKey(type)} />
-    </Box>
-  );
-};
-
-const amountCellExtra = {
-  IN: AmountCellExtra,
-  OUT: AmountCellExtra,
-  SHIELDED_TX_SAPLING_IN: AmountCellExtra,
-  SHIELDED_TX_SAPLING_OUT: AmountCellExtra,
-  SHIELDED_TX_ORCHARD_IN: AmountCellExtra,
-  SHIELDED_TX_ORCHARD_OUT: AmountCellExtra,
 };
 
 const OperationDetailsExtra = ({
@@ -71,6 +46,5 @@ const OperationDetailsExtra = ({
 };
 
 export default {
-  amountCellExtra,
   OperationDetailsExtra,
 };
