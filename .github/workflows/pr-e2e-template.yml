@@ -1,0 +1,155 @@
+name: "E2E PR Checklist"
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "e2e/**"
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  add-e2e-checklist:
+    name: "Add E2E Checklist"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Detect changed E2E platforms
+        id: detect
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let desktop = false;
+            let mobile = false;
+
+            for await (const { data: files } of github.paginate.iterator(
+              github.rest.pulls.listFiles,
+              { owner: context.repo.owner, repo: context.repo.repo, pull_number: context.issue.number, per_page: 100 }
+            )) {
+              if (!desktop) desktop = files.some(f => f.filename.startsWith('e2e/desktop/'));
+              if (!mobile) mobile = files.some(f => f.filename.startsWith('e2e/mobile/'));
+              if (desktop && mobile) break;
+            }
+
+            core.setOutput('desktop', desktop.toString());
+            core.setOutput('mobile', mobile.toString());
+
+      - name: Add E2E checklist comment
+        uses: actions/github-script@v7
+        env:
+          CHANGED_DESKTOP: ${{ steps.detect.outputs.desktop }}
+          CHANGED_MOBILE: ${{ steps.detect.outputs.mobile }}
+        with:
+          script: |
+            const desktopChanged = process.env.CHANGED_DESKTOP === 'true';
+            const mobileChanged = process.env.CHANGED_MOBILE === 'true';
+
+            // Bump this version when the checklist template changes to refresh existing comments
+            const TEMPLATE_VERSION = 'v1';
+
+            if (!desktopChanged && !mobileChanged) {
+              console.log('PR touches e2e/ but not e2e/desktop/ or e2e/mobile/ — skipping checklist');
+              return;
+            }
+
+            const platformLabel = desktopChanged && mobileChanged
+              ? 'Desktop & Mobile'
+              : desktopChanged ? 'Desktop' : 'Mobile';
+
+            // Build device table with proof link columns per platform
+            const header = ['Device'];
+            const separator = ['--------'];
+            if (desktopChanged) {
+              header.push('Proof (Desktop)');
+              separator.push('---');
+            }
+            if (mobileChanged) {
+              header.push('Proof (Mobile)');
+              separator.push('---');
+            }
+
+            const devices = ['nanoS', 'nanoSP', 'nanoX', 'stax', 'flex', 'nanoGen5'];
+            const rows = devices.map(device => {
+              const cols = [`| ${device}`];
+              if (desktopChanged) cols.push('_paste link_');
+              if (mobileChanged) cols.push('_paste link_');
+              return cols.join(' | ') + ' |';
+            });
+
+            const deviceTable = [
+              '| ' + header.join(' | ') + ' |',
+              '| ' + separator.join(' | ') + ' |',
+              ...rows
+            ].join('\n');
+
+            // Build workflow trigger instructions
+            const workflowLinks = [];
+            if (desktopChanged) {
+              workflowLinks.push('- **Desktop:** Trigger [`test-ui-e2e-only-desktop.yml`](../actions/workflows/test-ui-e2e-only-desktop.yml) with `test_filter` set to your test name/tag');
+            }
+            if (mobileChanged) {
+              workflowLinks.push('- **Mobile:** Trigger [`test-mobile-e2e-reusable.yml`](../actions/workflows/test-mobile-e2e-reusable.yml) with `test_filter` set to your test name/tag');
+            }
+
+
+            const e2eChecklist = [
+              `<!-- e2e-checklist ${TEMPLATE_VERSION} ${platformLabel} -->`,
+              `## 🧪 E2E Test Checklist — ${platformLabel}`,
+              '',
+              '> This checklist was added automatically because your PR touches `e2e/` files.',
+              '',
+              '### General',
+              '- [ ] Tests pass locally before pushing',
+              '- [ ] Tests are independent and can run in any order',
+              '',
+              '### Test Quality',
+              '- [ ] Page Object Model (POM) pattern is followed for new pages/components',
+              '- [ ] Appropriate device tags are added: `@NanoSP`, `@LNS`, `@NanoX`, `@Stax`, `@Flex`, `@NanoGen5`',
+              '- [ ] Family tags are added where applicable: `@family-evm`, `@family-bitcoin`, etc.',
+              '- [ ] TMS/Xray ticket IDs are linked in test annotations (e.g., `B2CQA-XXXX`)',
+              '',
+              '### Device Coverage (Required for new/updated tests)',
+              'Run your tests on **all supported devices** using the E2E workflow(s):',
+              '',
+              ...workflowLinks,
+              '',
+              deviceTable,
+              '',
+              '> 💡 Use `workflow_dispatch` to trigger the workflow manually on your branch. Set the `speculos_device` input to test each device. Replace *paste link* with a link to the workflow run or Allure report.',
+            ].join('\n');
+
+            // Paginate through all comments to reliably find an existing bot comment
+            const marker = '<!-- e2e-checklist';
+            const versionTag = `<!-- e2e-checklist ${TEMPLATE_VERSION} ${platformLabel} -->`;
+            let botComment = null;
+            for await (const { data: comments } of github.paginate.iterator(
+              github.rest.issues.listComments,
+              { owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, per_page: 100 }
+            )) {
+              botComment = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+              if (botComment) break;
+            }
+
+            if (!botComment) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: e2eChecklist
+              });
+              console.log(`E2E checklist comment added (${TEMPLATE_VERSION}, ${platformLabel})`);
+            } else if (!botComment.body.includes(versionTag)) {
+              // Update if template version or platform changed
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: e2eChecklist
+              });
+              console.log(`E2E checklist comment updated (${TEMPLATE_VERSION}, ${platformLabel})`);
+            } else {
+              console.log('E2E checklist comment already exists and is up to date, skipping');
+            }
