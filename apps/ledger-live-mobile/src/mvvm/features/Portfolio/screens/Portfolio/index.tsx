@@ -63,7 +63,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
 
-  const { isDrawerOpen, handleCloseDrawer, slides } = useWalletV4TourDrawer();
+  const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
+    useWalletV4TourDrawer();
 
   const data = useMemo(() => {
     const sections: React.JSX.Element[] = [];
@@ -176,6 +177,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       <WalletV4TourDrawer
         isDrawerOpen={isDrawerOpen}
         handleCloseDrawer={handleCloseDrawer}
+        closeDrawer={closeDrawer}
+        onSlideChange={onSlideChange}
         slides={slides}
       />
     </>

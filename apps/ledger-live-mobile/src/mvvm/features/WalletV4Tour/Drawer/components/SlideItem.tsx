@@ -121,7 +121,6 @@ export function SlideItem({ title, description, index, lottieSrc, speed }: Slide
       <Box
         lx={{
           flex: 1,
-          marginBottom: "s40",
         }}
       >
         {shouldRender && isActive ? (
@@ -145,17 +144,24 @@ export function SlideItem({ title, description, index, lottieSrc, speed }: Slide
       </Box>
 
       <Animated.View style={textAnimatedStyle} pointerEvents="none">
-        <Text
-          typography="heading2SemiBold"
+        <Box
           lx={{
-            textAlign: "center",
-            color: "base",
-            marginBottom: "s8",
+            justifyContent: "center",
+            minHeight: "s56", // the height of 2 lines of text
           }}
-          numberOfLines={1}
         >
-          {title}
-        </Text>
+          <Text
+            typography="heading2SemiBold"
+            lx={{
+              textAlign: "center",
+              color: "base",
+              marginBottom: "s8",
+            }}
+            numberOfLines={2}
+          >
+            {title}
+          </Text>
+        </Box>
 
         <Text
           typography="body2"

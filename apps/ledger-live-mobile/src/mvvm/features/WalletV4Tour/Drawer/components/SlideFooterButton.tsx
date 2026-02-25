@@ -1,16 +1,17 @@
 import React from "react";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
-import { useSlidesContext } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useSlideFooterButtonViewModel } from "../hooks/useSlideFooterButtonViewModel";
 
 interface SlideFooterButtonProps {
   readonly onClose: () => void;
 }
 
 export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
-  const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
+  const { lastIndex, isLastSlide, scrollProgressSharedValue, goNext, complete } =
+    useSlideFooterButtonViewModel(onClose);
 
   const styles = useStyleSheet(
     () => ({
@@ -28,9 +29,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
   );
   const { t } = useTranslation();
 
-  const lastIndex = totalSlides - 1;
   const fadeStart = lastIndex - 0.5;
-  const isLastSlide = currentIndex >= lastIndex;
   const isInTest = process.env.NODE_ENV === "test";
 
   const continueStyle = useAnimatedStyle(
@@ -63,7 +62,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
         style={[styles.button, continueStyle]}
         pointerEvents={isLastSlide ? "none" : "box-none"}
       >
-        <Button appearance="base" size="lg" onPress={goToNext}>
+        <Button appearance="base" size="lg" onPress={goNext}>
           {t("walletV4Tour.cta.continue")}
         </Button>
       </Animated.View>
@@ -72,7 +71,7 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
         style={[styles.button, exploreStyle]}
         pointerEvents={isLastSlide || isInTest ? "box-none" : "none"}
       >
-        <Button appearance="base" size="lg" onPress={onClose}>
+        <Button appearance="base" size="lg" onPress={complete}>
           {t("walletV4Tour.cta.explore")}
         </Button>
       </Animated.View>
