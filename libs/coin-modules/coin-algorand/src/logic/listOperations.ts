@@ -1,4 +1,4 @@
-import { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import { Operation, Page } from "@ledgerhq/coin-framework/api/types";
 import {
   getAccountTransactions,
   AlgoTransaction,
@@ -19,13 +19,13 @@ const SECONDS_TO_MILLISECONDS = 1000;
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,
-): Promise<[Operation<AlgorandMemo>[], string]> {
-  const { minHeight, order, limit, token } = options;
+): Promise<Page<Operation>> {
+  const { minHeight, order, limit, cursor } = options;
 
   const result = await getAccountTransactions(address, {
     minRound: minHeight,
     limit,
-    nextToken: token,
+    nextToken: cursor,
   });
 
   // Filter to only payment and asset transfer transactions
@@ -44,10 +44,10 @@ export async function listOperations(
   }
 
   // Return operations with next pagination token (empty string if no more pages)
-  return [operations, result.nextToken ?? ""];
+  return { items: operations, next: result.nextToken ?? "" };
 }
 
-function convertToOperation(tx: AlgoTransaction, address: string): Operation<AlgorandMemo> {
+function convertToOperation(tx: AlgoTransaction, address: string): Operation {
   const type = getOperationType(tx, address);
   const value = getOperationValue(tx, address);
   const { senders, recipients } = getOperationParties(tx);
@@ -59,7 +59,7 @@ function convertToOperation(tx: AlgoTransaction, address: string): Operation<Alg
     ? { type: "string", kind: "note", value: tx.note }
     : undefined;
 
-  const operation: Operation<AlgorandMemo> = {
+  const operation: Operation = {
     id: tx.id,
     type,
     value,
@@ -79,16 +79,21 @@ function convertToOperation(tx: AlgoTransaction, address: string): Operation<Alg
     },
   };
 
+  const details: Record<string, unknown> = {};
+
+  // Add memo to details if present
   if (memo) {
-    operation.memo = memo;
+    details.memo = memo;
   }
 
   // Add rewards to details if present
   const rewards = tx.senderRewards.plus(tx.recipientRewards);
   if (!rewards.isZero()) {
-    operation.details = {
-      rewards: BigInt(rewards.toString()),
-    };
+    details.rewards = BigInt(rewards.toString());
+  }
+
+  if (Object.keys(details).length) {
+    operation.details = details;
   }
 
   return operation;
@@ -169,25 +174,4 @@ function getOperationAsset(tx: AlgoTransaction): { type: string; assetReference?
   }
 
   return { type: "native" };
-}
-
-export async function listApiOperations(
-  address: string,
-  pagination: Pagination,
-): Promise<[Operation[], string]> {
-  const options: ListOperationsOptions = {
-    minHeight: pagination.minHeight,
-    order: pagination.order ?? "asc",
-  };
-
-  if (pagination.limit) {
-    options.limit = pagination.limit;
-  }
-
-  if (pagination.lastPagingToken) {
-    options.token = pagination.lastPagingToken;
-  }
-
-  const [ops, token] = await listOperations(address, options);
-  return [ops as unknown as Operation[], token];
 }

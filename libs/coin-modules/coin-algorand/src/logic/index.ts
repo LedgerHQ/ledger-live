@@ -7,7 +7,7 @@ export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { getBlockInfo } from "./getBlockInfo";
 export { lastBlock } from "./lastBlock";
-export { listOperations, listApiOperations } from "./listOperations";
+export { listOperations } from "./listOperations";
 export { validateIntent } from "./validateIntent";
 export { validateMemo, ALGORAND_MAX_MEMO_SIZE } from "./validateMemo";
 

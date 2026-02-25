@@ -10,7 +10,7 @@ jest.mock("../logic", () => ({
   getBalance: jest.fn(),
   getBlockInfo: jest.fn(),
   lastBlock: jest.fn(),
-  listApiOperations: jest.fn(),
+  listOperations: jest.fn(),
   validateIntent: jest.fn(),
 }));
 
@@ -156,7 +156,7 @@ describe("Algorand API", () => {
   });
 
   describe("listOperations", () => {
-    it("should delegate to logic.listApiOperations", async () => {
+    it("should delegate to logic.listOperations", async () => {
       const mockOperations = [
         {
           id: "op1",
@@ -174,14 +174,14 @@ describe("Algorand API", () => {
           },
         },
       ];
-      (logic.listApiOperations as jest.Mock).mockResolvedValue([mockOperations, ""]);
+      (logic.listOperations as jest.Mock).mockResolvedValue({ items: mockOperations, next: "" });
 
       const pagination = { minHeight: 0, order: "asc" as const };
-      const [operations, nextToken] = await api.listOperations("TESTADDRESS", pagination);
+      const { items, next } = await api.listOperations("TESTADDRESS", pagination);
 
-      expect(logic.listApiOperations).toHaveBeenCalledWith("TESTADDRESS", pagination);
-      expect(operations).toEqual(mockOperations);
-      expect(nextToken).toBe("");
+      expect(logic.listOperations).toHaveBeenCalledWith("TESTADDRESS", pagination);
+      expect(items).toEqual(mockOperations);
+      expect(next).toBe("");
     });
   });
 
