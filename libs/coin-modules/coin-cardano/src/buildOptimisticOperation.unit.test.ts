@@ -55,21 +55,48 @@ describe("buildOptimisticOperation", () => {
   });
 
   describe("Conway era certificates operation identification", () => {
+    const createMockUnsignedTx = (
+      overrides?: Partial<{
+        inputs: unknown[];
+        outputs: unknown[];
+        certificates: unknown[];
+        withdrawals: unknown[];
+        fee: BigNumber;
+        txHash: string;
+      }>,
+    ) => {
+      const defaultInputs = [
+        {
+          address: accountAddress,
+          amount: new BigNumber(10e6), // 10 ADA Input
+        },
+      ];
+      const defaultOutputs = [
+        {
+          address: accountAddress,
+          amount: new BigNumber(7e6), // 7 ADA Output
+        },
+      ];
+      const defaultFee = new BigNumber(1e6); // 1 ADA fee
+
+      const tx = {
+        getInputs: () => overrides?.inputs ?? defaultInputs,
+        getOutputs: () => overrides?.outputs ?? defaultOutputs,
+        getCertificates: () => overrides?.certificates ?? [],
+        getWithdrawals: () => overrides?.withdrawals ?? [],
+        getFee: () => overrides?.fee ?? defaultFee,
+        getTransactionHash: () => ({
+          toString: (_encoding: string) => overrides?.txHash ?? "txhash123",
+        }),
+        getAuxiliaryData: () => null,
+      } as unknown as TyphonTransaction;
+
+      return tx;
+    };
+
     it("should correctly identify stake registration", () => {
-      const mockUnsignedTx = {
-        getInputs: () => [
-          {
-            address: accountAddress,
-            amount: new BigNumber(10e6), // 10 ADA Input
-          },
-        ],
-        getOutputs: () => [
-          {
-            address: accountAddress,
-            amount: new BigNumber(7e6), // 7 ADA Output
-          },
-        ],
-        getCertificates: () => [
+      const mockUnsignedTx = createMockUnsignedTx({
+        certificates: [
           {
             type: TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
             cert: {
@@ -95,13 +122,7 @@ describe("buildOptimisticOperation", () => {
             },
           },
         ],
-        getWithdrawals: () => [],
-        getFee: () => new BigNumber(1e6), // 1 ADA fee
-        getTransactionHash: () => ({
-          toString: (_encoding: string) => "txhash123",
-        }),
-        getAuxiliaryData: () => null,
-      } as unknown as TyphonTransaction;
+      });
 
       const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
@@ -120,20 +141,20 @@ describe("buildOptimisticOperation", () => {
        * Transaction has total 13 ADA available to use
        *  (8 ADA input + 2 ADA deregister refund + 3 ADA rewards withdrawal)
        */
-      const mockUnsignedTx = {
-        getInputs: () => [
+      const mockUnsignedTx = createMockUnsignedTx({
+        inputs: [
           {
             address: accountAddress,
             amount: new BigNumber(8e6), // 8 ADA Input
           },
         ],
-        getOutputs: () => [
+        outputs: [
           {
             address: accountAddress,
             amount: new BigNumber(12e6), // 12 ADA Output
           },
         ],
-        getCertificates: () => [
+        certificates: [
           {
             type: TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION,
             cert: {
@@ -147,7 +168,7 @@ describe("buildOptimisticOperation", () => {
             },
           },
         ],
-        getWithdrawals: () => [
+        withdrawals: [
           {
             rewardAccount: {
               stakeCredential: {
@@ -160,12 +181,8 @@ describe("buildOptimisticOperation", () => {
             amount: new BigNumber(3e6), // 3 ADA withdrawal
           },
         ],
-        getFee: () => new BigNumber(1e6), // 1 ADA fee
-        getTransactionHash: () => ({
-          toString: (_encoding: string) => "txhash456",
-        }),
-        getAuxiliaryData: () => null,
-      } as unknown as TyphonTransaction;
+        txHash: "txhash456",
+      });
 
       const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
@@ -176,6 +193,92 @@ describe("buildOptimisticOperation", () => {
           refund: expect.stringMatching(/^2\s*ADA$/),
           rewards: expect.stringMatching(/^3\s*ADA$/),
         },
+      });
+    });
+
+    describe("Vote delegation identification", () => {
+      it("should correctly identify abstain vote", () => {
+        const mockUnsignedTx = createMockUnsignedTx({
+          certificates: [
+            {
+              type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+              cert: {
+                stakeCredential: {
+                  type: TyphonTypes.HashType.ADDRESS,
+                  hash: {
+                    toString: (_encoding: string) => stakeCredKey,
+                  },
+                },
+                dRep: {
+                  type: TyphonTypes.DRepType.ABSTAIN,
+                },
+              },
+            },
+          ],
+        });
+
+        const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
+
+        expect(operation).toBeDefined();
+        expect(operation.type).toBe("VOTE");
+        expect(operation.extra.vote).toBe("ABSTAIN");
+      });
+
+      it("should correctly identify no confidence vote", () => {
+        const mockUnsignedTx = createMockUnsignedTx({
+          certificates: [
+            {
+              type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+              cert: {
+                stakeCredential: {
+                  type: TyphonTypes.HashType.ADDRESS,
+                  hash: {
+                    toString: (_encoding: string) => stakeCredKey,
+                  },
+                },
+                dRep: {
+                  type: TyphonTypes.DRepType.NO_CONFIDENCE,
+                },
+              },
+            },
+          ],
+        });
+
+        const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
+
+        expect(operation).toBeDefined();
+        expect(operation.type).toBe("VOTE");
+        expect(operation.extra.vote).toBe("NO CONFIDENCE");
+      });
+
+      it("should correctly identify dRep vote", () => {
+        const mockUnsignedTx = createMockUnsignedTx({
+          certificates: [
+            {
+              type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+              cert: {
+                stakeCredential: {
+                  type: TyphonTypes.HashType.ADDRESS,
+                  hash: {
+                    toString: (_encoding: string) => stakeCredKey,
+                  },
+                },
+                dRep: {
+                  type: TyphonTypes.DRepType.ADDRESS,
+                  key: {
+                    toString: (_encoding: string) => "testDRep",
+                  },
+                },
+              },
+            },
+          ],
+        });
+
+        const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
+
+        expect(operation).toBeDefined();
+        expect(operation.type).toBe("VOTE");
+        expect(operation.extra.vote).toBe("testDRep");
       });
     });
   });
