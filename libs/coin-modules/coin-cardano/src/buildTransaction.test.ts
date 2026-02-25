@@ -197,4 +197,183 @@ describe("buildTransaction", () => {
       expect(registerCertificate).toBeUndefined();
     });
   });
+
+  describe("vote delegate transaction", () => {
+    it("should skip default abstain vote with voteDelegate tx", async () => {
+      // scenario when it might add default abstain vote
+      const account = getCardanoAccountFixture({
+        delegation: {
+          status: true, // stake key already registered
+          dRepHex: undefined, // drepHex absent
+          rewards: new BigNumber(10e6), // rewards available
+        },
+      });
+      const txPayloadVoteDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepHex: "22aabbcc",
+        protocolParams: getProtocolParamsFixture(),
+      };
+      const transaction = await buildTransaction(account, txPayloadVoteDelegate);
+      const certificates = transaction.getCertificates();
+      expect(certificates.length).toBe(1);
+      expect(certificates[0].type).toBe(TyphonTypes.CertificateType.VOTE_DELEGATION);
+      const voteDelegationCertificate = certificates[0] as TyphonTypes.VoteDelegationCertificate;
+      expect(voteDelegationCertificate.cert.dRep.key?.toString("hex")).toBe("aabbcc");
+    });
+
+    it("should build vote delegate transaction with stake key registration", async () => {
+      /**
+       * if stake key is not already registered
+       * it should add stake key registration certificate along with vote delegation certificate
+       */
+      const account = getCardanoAccountFixture({
+        delegation: undefined, // stake key not registered
+      });
+      const txPayloadVoteDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepHex: "22bbccdd",
+        protocolParams: getProtocolParamsFixture(),
+      };
+
+      const transaction = await buildTransaction(account, txPayloadVoteDelegate);
+      const certificates = transaction.getCertificates();
+
+      // only two certificates should be present (stake key registration + vote delegation)
+      expect(certificates.length).toBe(2);
+
+      const registerCertificate = certificates.find(
+        c => c.type === TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
+      ) as TyphonTypes.StakeKeyRegistrationCertificate | undefined;
+
+      const voteDelegateCertificate = certificates.find(
+        c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION,
+      ) as TyphonTypes.VoteDelegationCertificate | undefined;
+
+      // should have stake key registration certificate
+      expect(registerCertificate).toBeDefined();
+      expect(registerCertificate!.cert.deposit.toString()).toBe(
+        transaction.protocolParams.stakeKeyDeposit.toString(),
+      );
+      // should have vote delegation certificate
+      expect(voteDelegateCertificate).toBeDefined();
+      expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("bbccdd");
+    });
+
+    it("should build vote delegate transaction without stake key registration", async () => {
+      /**
+       * if stake key is already registed it should only add vote delegation certificate
+       */
+      const account = getCardanoAccountFixture({
+        delegation: {
+          status: true, // stake key already registered
+          deposit: (2e6).toString(),
+          rewards: new BigNumber(0),
+        },
+      });
+      const txPayloadVoteDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepHex: "22aacc",
+        protocolParams: getProtocolParamsFixture(),
+      };
+
+      const transaction = await buildTransaction(account, txPayloadVoteDelegate);
+      const certificates = transaction.getCertificates();
+
+      // only one certificate should be present (vote delegation)
+      expect(certificates.length).toBe(1);
+
+      const registerCertificate = certificates.find(
+        c => c.type === TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
+      ) as TyphonTypes.StakeKeyRegistrationCertificate | undefined;
+
+      const voteDelegateCertificate = certificates.find(
+        c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION,
+      ) as TyphonTypes.VoteDelegationCertificate | undefined;
+
+      expect(registerCertificate).toBeUndefined(); // should not have stake key registration certificate
+      expect(voteDelegateCertificate).toBeDefined(); // should have vote delegation certificate
+      expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("aacc");
+    });
+
+    it("should add abstain vote certificate", async () => {
+      const account = getCardanoAccountFixture({});
+      const txPayloadVoteDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepAbstain: true,
+        protocolParams: getProtocolParamsFixture(),
+      };
+
+      const transaction = await buildTransaction(account, txPayloadVoteDelegate);
+
+      const voteDelegateCertificate = transaction
+        .getCertificates()
+        .find(c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION) as
+        | TyphonTypes.VoteDelegationCertificate
+        | undefined;
+      // should have vote delegation certificate
+      expect(voteDelegateCertificate).toBeDefined();
+      // should have abstain vote
+      expect(voteDelegateCertificate?.cert.dRep.type).toBe(TyphonTypes.DRepType.ABSTAIN);
+      expect(voteDelegateCertificate?.cert.dRep.key).toBeUndefined();
+    });
+
+    it("should add no confidence vote certificate", async () => {
+      const account = getCardanoAccountFixture({});
+      const txPayloadVoteDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepNoConfidence: true,
+        protocolParams: getProtocolParamsFixture(),
+      };
+
+      const transaction = await buildTransaction(account, txPayloadVoteDelegate);
+
+      const voteDelegateCertificate = transaction
+        .getCertificates()
+        .find(c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION) as
+        | TyphonTypes.VoteDelegationCertificate
+        | undefined;
+      // should have vote delegation certificate
+      expect(voteDelegateCertificate).toBeDefined();
+      // should have no confidence vote
+      expect(voteDelegateCertificate?.cert.dRep.type).toBe(TyphonTypes.DRepType.NO_CONFIDENCE);
+      expect(voteDelegateCertificate?.cert.dRep.key).toBeUndefined();
+    });
+
+    it("should throw for invalid dRep hex", async () => {
+      const account = getCardanoAccountFixture({});
+      const txPayloadVoteDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepHex: "invalid",
+        protocolParams: getProtocolParamsFixture(),
+      };
+
+      await expect(buildTransaction(account, txPayloadVoteDelegate)).rejects.toThrow(
+        "Invalid dRepHex",
+      );
+    });
+  });
 });

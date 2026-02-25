@@ -376,5 +376,127 @@ describe("mapTxToAccountOperation", () => {
       expect(op.extra.refund).toMatch(/^2\s*ADA$/);
       expect(op.extra.rewards).toMatch(/^10\s*ADA$/);
     });
+
+    describe("vote delegation transaction", () => {
+      let mockTxResult: APITransaction;
+
+      beforeEach(() => {
+        mockTxResult = {
+          fees: (1e6).toString(), // 1 ADA
+          hash: "txHash",
+          inputs: [
+            {
+              index: 1,
+              txId: "txId1",
+              address: accountAddress.getHex(),
+              value: (13e6).toString(), // 13 ADA
+              tokens: [],
+              paymentKey: paymentCredKey,
+            },
+          ],
+          outputs: [
+            {
+              address: accountAddress.getHex(),
+              value: (12e6).toString(), // 12 ADA
+              tokens: [],
+              paymentKey: paymentCredKey,
+            },
+          ],
+          timestamp: "2024-01-01T00:00:00.000Z",
+          blockHeight: 0,
+          certificate: {
+            stakeDeRegsConway: [],
+            stakeRegistrations: [],
+            stakeDeRegistrations: [],
+            stakeDelegations: [],
+          },
+          withdrawals: [],
+        };
+      });
+
+      it("should correctly map abstain vote delegation transaction", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              voteDelegations: [
+                {
+                  index: 0,
+                  stakeHex: stakeCredHex,
+                  dRepHex: "2",
+                },
+              ],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op).toBeDefined();
+        expect(op.type).toBe("VOTE");
+        expect(op.extra.vote).toBe("ABSTAIN");
+      });
+
+      it("should correctly map no confidence vote delegation transaction", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              voteDelegations: [
+                {
+                  index: 0,
+                  stakeHex: stakeCredHex,
+                  dRepHex: "3",
+                },
+              ],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op).toBeDefined();
+        expect(op.type).toBe("VOTE");
+        expect(op.extra.vote).toBe("NO CONFIDENCE");
+      });
+
+      it("should correctly map dRep vote delegation transaction", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              voteDelegations: [
+                {
+                  index: 0,
+                  stakeHex: stakeCredHex,
+                  dRepHex: "mockDrepHex",
+                },
+              ],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op).toBeDefined();
+        expect(op.type).toBe("VOTE");
+        expect(op.extra.vote).toBe("mockDrepHex");
+      });
+    });
   });
 });
