@@ -461,6 +461,9 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
     "hash" in value &&
     "value" in value &&
     "from" in value &&
+    ("to" in value
+      ? typeof value.to === "string" || value.to === null || value.to === undefined
+      : true) &&
     typeof value.hash === "string" &&
     typeof value.value === "bigint" &&
     typeof value.from === "string"
