@@ -1,4 +1,3 @@
-import * as rxjs from "rxjs";
 import ZCash, { SyncedShielded } from "../src/ZCash";
 import {
   testAccount1,
@@ -11,6 +10,7 @@ import {
   decryptedSaplingData,
   decryptedOrchardData,
   txShieldedSapling,
+  LAST_BLOCK_COUNT,
 } from "./testAccounts";
 import { server } from "./mocks/node";
 import { resetLastBlockCount, setLastBlockCount } from "./mocks/handlers";
@@ -21,6 +21,7 @@ import {
   smallChainScenario,
 } from "./mocks/findBlockHeightData";
 import BigNumber from "bignumber.js";
+import * as rxjs from "rxjs";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -205,101 +206,59 @@ describe("syncShielded", () => {
     "returns early if maxBatchSize or startBlockHeight are invalid (negative or 0)",
     async (args: { maxBatchSize: number; startBlockHeight: number }) => {
       const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-      const syncedShieldedIterator = zcash.syncShielded({
+      const syncedShieldedObs = zcash.syncShielded({
         viewingKey: "abc456",
         ...args,
       });
+      const steps: SyncedShielded[] = [];
 
-      expect(await syncedShieldedIterator.next()).toEqual({
-        done: true,
-        value: {
-          balance: new BigNumber(0),
-          processedBlocks: 0,
-          remainingBlocks: 0,
-          lastProcessed: undefined,
-        },
-      });
+      await syncedShieldedObs.forEach(step => steps.push(step));
+
+      expect(steps).toEqual([]);
     },
   );
 
   test("returns an empty shielded balance when the viewingKey doesn't match any shielded transactions", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShieldedIterator = zcash.syncShielded({
+    const syncedShieldedObs = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: "abc456",
       maxBatchSize: 1,
     });
-    let syncedShielded;
+    const steps: SyncedShielded[] = [];
 
-    for await (syncedShielded of syncedShieldedIterator) {
-      expect(syncedShielded).toMatchObject({
-        balance: expect.any(BigNumber),
-        processedBlocks: expect.any(Number),
-        remainingBlocks: expect.any(Number),
-        lastProcessed: expect.any(Number),
-      });
-    }
-
-    expect(syncedShielded).toEqual({
-      balance: new BigNumber(0),
-      processedBlocks: 6,
-      remainingBlocks: 0,
-      lastProcessed: blockWithMyTx.height + 5,
-    });
-  });
-
-  test("stops the iterator after the next iteration and returns the current context", async () => {
-    setLastBlockCount(blockWithMyTx.height + 100);
-
-    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShielded = zcash.syncShielded({
-      startBlockHeight: blockWithMyTx.height,
-      viewingKey: testAccount1.viewingKey,
-      maxBatchSize: 1,
+    await syncedShieldedObs.forEach(value => {
+      steps.push(value);
     });
 
-    expect(await syncedShielded.next()).toEqual({
-      done: false,
-      value: {
-        balance: new BigNumber(0.3),
-        processedBlocks: 1,
-        remainingBlocks: 100,
-        lastProcessed: blockWithMyTx.height,
-      },
-    });
+    expect(steps.length).toBe(6);
 
-    expect(await syncedShielded.next(true)).toEqual({
-      done: true,
-      value: {
-        balance: new BigNumber(0.3),
-        processedBlocks: 1,
-        remainingBlocks: 100,
-        lastProcessed: blockWithMyTx.height,
-      },
-    });
+    expect(steps).toEqual(
+      expect.arrayOf(
+        expect.objectContaining({
+          balance: new BigNumber(0),
+          processedBlocks: expect.any(Number),
+          remainingBlocks: expect.any(Number),
+          lastProcessed: expect.any(Number),
+        }),
+      ),
+    );
   });
 
   test("returns the shielded balance", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShieldedIterator = zcash.syncShielded({
+    const syncShieldedObs = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 1,
     });
-    let syncedShielded;
+    const steps: SyncedShielded[] = [];
 
-    for await (syncedShielded of syncedShieldedIterator) {
-      expect(syncedShielded).toMatchObject({
-        balance: expect.any(BigNumber),
-        processedBlocks: expect.any(Number),
-        remainingBlocks: expect.any(Number),
-        lastProcessed: expect.any(Number),
-      });
-    }
+    await syncShieldedObs.forEach(step => steps.push(step));
 
-    expect(syncedShielded).toEqual({
+    expect(steps[steps.length - 1]).toEqual({
       balance: new BigNumber(0.3),
-      lastProcessed: blockWithMyTx.height + 5,
+      lastProcessed: LAST_BLOCK_COUNT,
       processedBlocks: 6,
       remainingBlocks: 0,
     });
@@ -307,56 +266,34 @@ describe("syncShielded", () => {
 
   test("returns the shielded balance in batches of max size 3", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncedShieldedIterator = zcash.syncShielded({
+    const maxBatchSize = 3;
+    const syncedShieldedObs = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
-      maxBatchSize: 3,
+      maxBatchSize,
     });
-    let syncedShielded;
     let processedBlocks = 0;
+    const steps: SyncedShielded[] = [];
 
-    for await (syncedShielded of syncedShieldedIterator) {
-      expect(syncedShielded).toMatchObject({
-        balance: expect.any(BigNumber),
-        processedBlocks: expect.any(Number),
-        remainingBlocks: expect.any(Number),
-        lastProcessed: expect.any(Number),
-      });
+    await syncedShieldedObs.forEach(syncedShielded => {
+      steps.push(syncedShielded);
 
       expect(syncedShielded.processedBlocks - processedBlocks).toBeLessThanOrEqual(3);
       processedBlocks = syncedShielded.processedBlocks;
+    });
+
+    // checks that it completes in the correct amount of steps
+    expect(steps.length).toBe((LAST_BLOCK_COUNT - blockWithMyTx.height + 1) / maxBatchSize);
+
+    // checks that each step processes max maxBatchSize blocks
+    for (const step of steps) {
+      expect(step.processedBlocks % maxBatchSize).toEqual(0);
     }
-
-    expect(syncedShielded).toEqual({
-      balance: new BigNumber(0.3),
-      lastProcessed: blockWithMyTx.height + 5,
-      processedBlocks: 6,
-      remainingBlocks: 0,
-    });
-    expect(syncedShielded.processedBlocks - processedBlocks).toBeLessThanOrEqual(3);
-  });
-
-  test("as observable: returns the shielded balance", async () => {
-    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncShieldedGenerator = zcash.syncShielded({
-      startBlockHeight: blockWithMyTx.height,
-      viewingKey: testAccount1.viewingKey,
-      maxBatchSize: 1,
-    });
-
-    const syncShieldedObs = rxjs.from(syncShieldedGenerator);
-    expect(syncShieldedObs).toBeInstanceOf(rxjs.Observable);
-
-    const steps: SyncedShielded[] = [];
-
-    await syncShieldedObs.forEach(value => {
-      steps.push(value);
-    });
 
     expect(steps).toEqual(
       expect.arrayOf(
         expect.objectContaining({
-          balance: expect.any(BigNumber),
+          balance: new BigNumber(0.3),
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
           lastProcessed: expect.any(Number),
@@ -364,24 +301,21 @@ describe("syncShielded", () => {
       ),
     );
 
-    expect(steps[steps.length - 1]).toMatchObject({
+    expect(steps[steps.length - 1]).toEqual({
       balance: new BigNumber(0.3),
+      lastProcessed: LAST_BLOCK_COUNT,
       processedBlocks: 6,
       remainingBlocks: 0,
-      lastProcessed: blockWithMyTx.height + 5,
     });
   });
 
-  test("as observable: retrieves and process also latest block if it changed while processing", async () => {
+  test("retrieves and processes also the latest block if a new blocks became available while processing", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
-    const syncShieldedGenerator = zcash.syncShielded({
+    const syncShieldedObs = zcash.syncShielded({
       startBlockHeight: blockWithMyTx.height,
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 3,
     });
-
-    const syncShieldedObs = rxjs.from(syncShieldedGenerator);
-    expect(syncShieldedObs).toBeInstanceOf(rxjs.Observable);
 
     const steps: SyncedShielded[] = [];
 
@@ -389,7 +323,7 @@ describe("syncShielded", () => {
       steps.push(value);
 
       // Note: Last block count increased while processing syncShielded!
-      setLastBlockCount(blockWithMyTx.height + 6);
+      setLastBlockCount(LAST_BLOCK_COUNT + 1);
     });
 
     expect(steps).toEqual(
@@ -407,7 +341,7 @@ describe("syncShielded", () => {
       balance: new BigNumber(0.3),
       processedBlocks: 7,
       remainingBlocks: 0,
-      lastProcessed: blockWithMyTx.height + 6,
+      lastProcessed: LAST_BLOCK_COUNT + 1,
     });
   });
 });

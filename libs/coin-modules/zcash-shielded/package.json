@@ -62,14 +62,14 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "msw": "catalog:",
-    "rxjs": "catalog:"
+    "msw": "catalog:"
   },
   "dependencies": {
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.1.0",
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^9.1.2",
+    "rxjs": "catalog:"
   }
 }

@@ -3,6 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
+import * as rxjs from "rxjs";
 import { LOG_TYPE } from "./constants";
 
 /**
@@ -19,6 +20,12 @@ export type SyncedShielded = {
   processedBlocks: number;
   remainingBlocks: number;
   lastProcessed: number | undefined;
+};
+
+type SyncShieldedArgs = {
+  startBlockHeight: number;
+  viewingKey: string;
+  maxBatchSize: number;
 };
 
 export default class ZCash {
@@ -167,7 +174,7 @@ export default class ZCash {
   }
 
   /**
-   * Parses the blocks in the provided range and, after each iteration,
+   * Private method for parsing the blocks in the provided range and, after each iteration,
    * it returns a synced shielded context including aggregate information
    * like the computed balance and processing progress.
    *
@@ -204,11 +211,9 @@ export default class ZCash {
    * }} args, Block, the UFVK - unified full viewing key, and max batch size.
    * @returns {AsyncGenerator<SyncedShielded>} the current synced shielded context.
    */
-  async *syncShielded(args: {
-    startBlockHeight: number;
-    viewingKey: string;
-    maxBatchSize: number;
-  }): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
+  private async *syncShieldedGenerator(
+    args: SyncShieldedArgs,
+  ): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
     const { startBlockHeight, viewingKey, maxBatchSize } = args;
     let balance = new BigNumber(0);
     let processedBlocks = 0;
@@ -283,6 +288,26 @@ export default class ZCash {
       remainingBlocks,
       lastProcessed,
     };
+  }
+
+  /**
+   * Parses the blocks in the provided range and, after each iteration,
+   * it returns a synced shielded context including aggregate information
+   * like the computed balance and processing progress.
+   *
+   * ### Stop the iterator
+   * The sync operation can be gracefully stopped by calling unsubscribe on the
+   * observable subscription.
+   *
+   * @param {{
+   *    startBlockHeight: number
+   *    viewingKey: string
+   *    maxBatchSize: number
+   * }} args, Block, the UFVK - unified full viewing key, and max batch size.
+   * @returns {Observable<SyncedShielded>} the current synced shielded context.
+   */
+  syncShielded(args: SyncShieldedArgs): rxjs.Observable<SyncedShielded> {
+    return rxjs.from(this.syncShieldedGenerator(args));
   }
 }
 
