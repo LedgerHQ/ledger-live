@@ -4,18 +4,19 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import {
-  AccountOnboardStatus,
-  ConcordiumAccount,
-  ConcordiumResources,
-} from "@ledgerhq/coin-concordium/types";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
 import { Account } from "@ledgerhq/types-live";
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import BigNumber from "bignumber.js";
 import OnboardModal from "../index";
+import {
+  createConcordiumAccount,
+  createDefaultProps,
+  createInitialState,
+  createMockDevice,
+  defaultConcordiumResources,
+  SESSION_TOPIC,
+  T,
+  WAIT_OPTS,
+} from "./testUtils";
 
 setSupportedCurrencies(["concordium"]);
 
@@ -38,59 +39,7 @@ jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => ({
 }));
 
 const currency = getCryptoCurrencyById("concordium");
-
-const mockDevice: Device = {
-  deviceId: "test-device-id",
-  modelId: DeviceModelId.nanoS,
-  wired: false,
-};
-
-const defaultConcordiumResources: ConcordiumResources = {
-  isOnboarded: false,
-  credId: "",
-  publicKey: "",
-  identityIndex: 0,
-  credNumber: 0,
-  ipIdentity: 0,
-};
-
-function createConcordiumAccount(overrides: Partial<ConcordiumAccount> = {}): ConcordiumAccount {
-  const derivationMode = "concordium" as const;
-  const scheme = getDerivationScheme({ derivationMode, currency });
-  const freshAddressPath = runDerivationScheme(scheme, currency, { account: 0 });
-
-  return {
-    id: "js:2:concordium:test-address:concordium",
-    type: "Account",
-    used: false,
-    currency,
-    derivationMode,
-    index: 0,
-    freshAddress: "test_address",
-    freshAddressPath,
-    creationDate: new Date(),
-    lastSyncDate: new Date(),
-    balance: new BigNumber(0),
-    spendableBalance: new BigNumber(0),
-    seedIdentifier: "test_seed",
-    blockHeight: 0,
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    balanceHistoryCache: createEmptyHistoryCache(),
-    swapHistory: [],
-    subAccounts: [],
-    concordiumResources: defaultConcordiumResources,
-    ...overrides,
-  };
-}
-
-// STEP_TRANSITION_TIMEOUT in OnboardModal is 1500ms.
-// Each emission must be spaced > 1500ms so the previous state update
-// is applied before the next emission overrides its pending timer.
-const T = 1500;
-
-const SESSION_TOPIC = "ABCDsession-topic-rest";
+const mockDevice = createMockDevice();
 
 function createMockPairObservable() {
   return {
@@ -158,11 +107,9 @@ function createMockOnboardErrorObservable(error: Error) {
   };
 }
 
-const WAIT_OPTS = { timeout: 2 * T + 500 };
-
 describe("OnboardModal", () => {
-  const creatableAccount = createConcordiumAccount({ used: false });
-  const completedAccount = createConcordiumAccount({
+  const creatableAccount = createConcordiumAccount(currency, { used: false });
+  const completedAccount = createConcordiumAccount(currency, {
     id: "js:2:concordium:completed-address:concordium",
     freshAddress: "completed_address",
     used: true,
@@ -174,19 +121,8 @@ describe("OnboardModal", () => {
     },
   });
 
-  const defaultProps = {
-    currency,
-    editedNames: {},
-    selectedAccounts: [creatableAccount],
-  };
-
-  const initialState = {
-    devices: { currentDevice: mockDevice, devices: [mockDevice] },
-    accounts: [],
-    modals: {
-      MODAL_CONCORDIUM_ONBOARD_ACCOUNT: { isOpened: true },
-    },
-  };
+  const defaultProps = createDefaultProps(currency, creatableAccount);
+  const initialState = createInitialState(mockDevice);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -366,7 +302,7 @@ describe("OnboardModal", () => {
   });
 
   it("should throw when no creatable account exists", () => {
-    const importableAccount = createConcordiumAccount({
+    const importableAccount = createConcordiumAccount(currency, {
       id: "js:2:concordium:imported:concordium",
       used: true,
     });

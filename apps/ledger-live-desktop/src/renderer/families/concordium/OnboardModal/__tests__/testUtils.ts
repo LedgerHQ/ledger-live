@@ -1,10 +1,32 @@
-import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
+import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import {
+  AccountOnboardStatus,
+  ConcordiumAccount,
+  ConcordiumResources,
+} from "@ledgerhq/coin-concordium/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 import { createMockAccount, createMockConcordiumCurrency } from "../../__tests__/testUtils";
 export { createMockAccount, createMockConcordiumCurrency };
+
+// STEP_TRANSITION_TIMEOUT in OnboardModal
+export const T = 1500;
+export const SESSION_TOPIC = "ABCDsession-topic-rest";
+export const WAIT_OPTS = { timeout: 2 * T + 500 };
+
+export const defaultConcordiumResources: ConcordiumResources = {
+  isOnboarded: false,
+  credId: "",
+  publicKey: "",
+  identityIndex: 0,
+  credNumber: 0,
+  ipIdentity: 0,
+};
 
 export const createMockDevice = (overrides: Partial<Device> = {}): Device => ({
   deviceId: "test-device-id",
@@ -12,6 +34,65 @@ export const createMockDevice = (overrides: Partial<Device> = {}): Device => ({
   wired: false,
   ...overrides,
 });
+
+export function createConcordiumAccount(
+  currency: CryptoCurrency,
+  overrides: Partial<ConcordiumAccount> = {},
+): ConcordiumAccount {
+  const derivationMode = "concordium" as const;
+  const scheme = getDerivationScheme({ derivationMode, currency });
+  const freshAddressPath = runDerivationScheme(scheme, currency, { account: 0 });
+
+  return {
+    id: "js:2:concordium:test-address:concordium",
+    type: "Account",
+    used: false,
+    currency,
+    derivationMode,
+    index: 0,
+    freshAddress: "test_address",
+    freshAddressPath,
+    creationDate: new Date(),
+    lastSyncDate: new Date(),
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    seedIdentifier: "test_seed",
+    blockHeight: 0,
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    balanceHistoryCache: createEmptyHistoryCache(),
+    swapHistory: [],
+    subAccounts: [],
+    concordiumResources: defaultConcordiumResources,
+    ...overrides,
+  };
+}
+
+export function createDefaultProps(
+  currency: CryptoCurrency,
+  creatableAccount: ConcordiumAccount,
+  overrides: Partial<{
+    editedNames: Record<string, string>;
+    selectedAccounts: ConcordiumAccount[];
+  }> = {},
+) {
+  return {
+    currency,
+    editedNames: {},
+    selectedAccounts: [creatableAccount],
+    ...overrides,
+  };
+}
+
+export function createInitialState(device: Device, overrides: Record<string, unknown> = {}) {
+  return {
+    devices: { currentDevice: device, devices: [device] },
+    accounts: [],
+    modals: { MODAL_CONCORDIUM_ONBOARD_ACCOUNT: { isOpened: true } },
+    ...overrides,
+  };
+}
 
 export const createMockImportableAccount = (overrides: Partial<Account> = {}): Account => {
   return createMockAccount({
