@@ -275,6 +275,14 @@ export async function enrichPrivateRecord({
   let value: BigNumber;
 
   if (rawRecord.sender === address) {
+    if (recordTransition.inputs.length <= AMOUNT_ARG_INDEX) {
+      log(
+        "aleo/sync",
+        `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${AMOUNT_ARG_INDEX + 1} for tx ${transactionId}`,
+      );
+      return null;
+    }
+
     if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
       if (recordTransition.inputs[RECIPIENT_ARG_INDEX].value === address) return null;
       sender = address;
@@ -311,9 +319,17 @@ export async function enrichPrivateRecord({
       ciphertext: rawRecord.record_ciphertext,
       viewKey,
     });
+    const microcredits = outputRecord.data?.microcredits;
+    if (!microcredits) {
+      log(
+        "aleo/sync",
+        `enrichPrivateRecord: microcredits missing in decrypted record for tx ${transactionId}`,
+      );
+      return null;
+    }
     sender = rawRecord.sender;
     recipient = address;
-    value = new BigNumber(parseMicrocredits(outputRecord.data?.microcredits));
+    value = new BigNumber(parseMicrocredits(microcredits));
   }
 
   return { rawRecord, details, sender, recipient, value };
