@@ -183,7 +183,7 @@ export default class ZCash {
    *
    * Example:
    * ```typescript
-   * const syncShieldedGenerator = zcash.syncShielded({
+   * const syncShieldedGenerator = zcash.syncShieldedGenerator({
    *   startBlockHeight: blockWithMyTx.height,
    *   viewingKey: testAccount1.viewingKey,
    *   maxBatchSize: 3,
