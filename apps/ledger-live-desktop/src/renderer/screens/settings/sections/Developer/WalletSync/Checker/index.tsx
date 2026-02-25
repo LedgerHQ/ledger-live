@@ -3,7 +3,7 @@ import { Alert, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLedgerSyncInfo } from "LLD/features/WalletSync/hooks/useLedgerSyncInfo";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
 

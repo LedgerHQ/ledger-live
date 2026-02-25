@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -16,8 +16,16 @@ type Props = {
   counterValue: Currency;
   chartColor: string;
   range: PortfolioRange;
+  isWallet40?: boolean;
+  shouldDisplayGraphRework?: boolean;
 };
-export default function PortfolioBalanceSummary({ range, chartColor, counterValue }: Props) {
+export default function PortfolioBalanceSummary({
+  range,
+  chartColor,
+  counterValue,
+  isWallet40,
+  shouldDisplayGraphRework,
+}: Props) {
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
   const renderTickY = useCallback(
@@ -42,8 +50,8 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     ),
     [counterValue, dayFormatter, hourFormatter],
   );
-  return (
-    <Card p={0} py={5} grow>
+  const content = (
+    <>
       <Box px={6}>
         <BalanceInfos
           counterValueId={counterValue.type !== "FiatCurrency" ? counterValue.id : undefined}
@@ -51,6 +59,7 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
           isAvailable={portfolio.balanceAvailable}
           valueChange={portfolio.countervalueChange}
           totalBalance={portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value}
+          shouldDisplayGraphRework={shouldDisplayGraphRework}
         />
       </Box>
 
@@ -85,6 +94,20 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
           />
         )}
       </Box>
+    </>
+  );
+
+  if (isWallet40) {
+    return (
+      <div className="flex flex-1 flex-col py-20" style={{ overflow: "visible" }}>
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Card p={0} py={5} grow>
+      {content}
     </Card>
   );
 }

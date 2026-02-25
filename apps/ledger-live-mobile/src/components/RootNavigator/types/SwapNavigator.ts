@@ -1,12 +1,5 @@
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
-import type { NavigatorScreenParams } from "@react-navigation/core";
-import {
-  ExchangeRate,
-  SwapDataType,
-  SwapLiveError,
-} from "@ledgerhq/live-common/exchange/swap/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { SwapFormNavigatorParamList } from "./SwapFormNavigator";
+import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 
 import type {
   AlgorandAccount,
@@ -41,58 +34,23 @@ import type {
   Transaction as KaspaTransaction,
   TransactionStatus as KaspaTransactionStatus,
 } from "@ledgerhq/live-common/families/kaspa/types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
   SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
-  Target,
 } from "~/screens/Swap/types";
 
 export type SwapNavigatorParamList = {
   [ScreenName.SwapTab]:
-    | NavigatorScreenParams<SwapFormNavigatorParamList>
     | DetailsSwapParamList
     | DefaultAccountSwapParamList
     | SwapSelectCurrency
     | SwapPendingOperation;
-  [ScreenName.SwapSelectAccount]: {
-    target: Target;
-    provider?: string;
-    swap: SwapDataType;
-    selectableCurrencyIds: string[];
-    selectedCurrency?: CryptoCurrency | TokenCurrency;
-  };
-  [ScreenName.SwapSelectCurrency]: SwapSelectCurrency;
-  [ScreenName.SwapSelectProvider]: {
-    provider?: string;
-    swap: SwapDataType;
-    selectedRate: ExchangeRate | undefined;
-  };
-  [ScreenName.SwapSelectFees]: {
-    accountId?: string;
-    parentAccountId?: string;
-    swap: SwapDataType;
-    rate?: ExchangeRate;
-    provider?: string;
-    transaction?: Transaction | null;
-    overrideAmountLabel?: string;
-    hideTotal?: boolean;
-    operation?: Operation;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
@@ -105,28 +63,16 @@ export type SwapNavigatorParamList = {
     account: AlgorandAccount;
     transaction: AlgorandTransaction;
     status?: AlgorandTransactionStatus;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.BitcoinEditCustomFees]: {
     accountId: string;
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
     satPerByte?: BigNumber | null;
     setSatPerByte?: (_: BigNumber) => void;
   };
@@ -135,60 +81,32 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     account: CardanoAccount;
     transaction: CardanoTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.EvmCustomFees]: {
     accountId: string;
     parentId?: string;
     transaction: EvmTransaction;
     gasOptions?: GasOptions;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.EvmEditGasLimit]: {
     accountId: string;
     setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
     transaction: EvmTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.KaspaEditCustomFees]: {
     accountId: string;
     parentId?: string;
     transaction: KaspaTransaction;
     status?: KaspaTransactionStatus;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
     sompiPerByte?: BigNumber | null;
     setSompiPerByte?: (_: BigNumber) => void;
   };
@@ -198,82 +116,46 @@ export type SwapNavigatorParamList = {
     account: Account;
     transaction: StellarTransaction;
     memoType?: string;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
   };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
     parentId?: string;
     transaction: StellarTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.CosmosFamilyEditMemo]: {
     accountId: string;
     parentId?: string;
     account: CosmosAccount;
     transaction: CosmosTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.HederaEditMemo]: {
     accountId: string;
     parentId?: string;
     account: Account;
     transaction: HederaTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.XrpEditTag]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.SolanaEditMemo]: {
     accountId: string;
     parentId?: string;
     account: SolanaAccount;
     transaction: SolanaTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.StellarEditMemoType]: {
     accountId: string;
@@ -281,14 +163,8 @@ export type SwapNavigatorParamList = {
     account: Account;
     transaction: StellarTransaction;
     memoType?: string;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.InternetComputerEditMemo]: {
     accountId: string;
@@ -311,42 +187,24 @@ export type SwapNavigatorParamList = {
     account: Account;
     transaction: StacksTransaction;
     memoType?: string;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.CasperEditTransferId]: {
     accountId: string;
     account: Account;
     parentId?: string;
     transaction: CasperTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.TonEditComment]: {
     accountId: string;
     account: Account;
     parentId?: string;
     transaction: TonTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
   };
   [ScreenName.SwapCustomError]: {
     error?: SwapLiveError | Error;

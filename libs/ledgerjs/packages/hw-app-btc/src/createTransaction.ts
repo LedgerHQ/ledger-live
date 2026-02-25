@@ -202,8 +202,6 @@ export async function createTransaction(
     version: defaultVersion,
     timestamp: Buffer.alloc(0),
   };
-  const getTrustedInputCall =
-    useBip143 && !useTrustedInputForSegwit ? getTrustedInputBIP143 : getTrustedInput;
   const outputScript = Buffer.from(outputScriptHex, "hex");
   notify(0, 0);
   // first pass on inputs to get trusted inputs
@@ -212,7 +210,10 @@ export async function createTransaction(
       if (isZcash) {
         input[0].consensusBranchId = getZcashBranchId(input[4]);
       }
-      const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
+      const trustedInput =
+        useBip143 && !useTrustedInputForSegwit
+          ? getTrustedInputBIP143(input[1], input[0], additionals)
+          : await getTrustedInput(transport, input[1], input[0], additionals);
       log("hw", "got trustedInput=" + trustedInput);
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(

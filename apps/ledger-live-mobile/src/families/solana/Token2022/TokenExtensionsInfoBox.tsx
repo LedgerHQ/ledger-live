@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Flex, Text, Alert, Box } from "@ledgerhq/native-ui";
 import {
   SolanaTokenAccount,
@@ -151,7 +151,6 @@ export default function TokenExtensionsInfoBox({
             <Button
               type="color"
               size="small"
-              maxWidth={150}
               alignSelf="center"
               outline
               Icon={InfoMedium}

@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import semver from "semver";
-import { RouteComponentProps, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
   counterValueCurrencySelector,
@@ -25,18 +26,22 @@ import {
   WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import { ProviderInterstitial } from "LLD/components/ProviderInterstitial";
+import PageHeader from "LLD/components/PageHeader";
+import { getWallet40HeaderKey } from "./helpers";
 
 type ExchangeState = { account?: string } | undefined;
 
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams, search } = useLocation<ExchangeState>();
+  const location = useLocation();
+  const urlParams = location.state as ExchangeState;
+  const { search } = location;
   const searchParams = new URLSearchParams(search);
   const lang = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
@@ -55,6 +60,9 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
 
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const providerInterstitialEnabled = useProviderInterstitalEnabled({
     manifest,
   });
@@ -99,36 +107,42 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
     localStorage.removeItem("flow-name");
   }
 
+  const headerKey = getWallet40HeaderKey(manifest.id);
   return (
-    <Card
-      grow
-      style={{
-        overflow: "hidden",
-        height: "100%",
-      }}
-    >
-      <WebPTXPlayer
-        manifest={manifest}
-        inputs={{
-          theme: themeType,
-          ...customUrlParams,
-          lang,
-          locale,
-          currencyTicker,
-          devMode,
-          discreetMode: discreetMode ? "true" : "false",
-          ...(localManifest?.providerTestBaseUrl && {
-            providerTestBaseUrl: localManifest?.providerTestBaseUrl,
-          }),
-          ...(localManifest?.providerTestId && {
-            providerTestId: localManifest?.providerTestId,
-          }),
-
-          ...Object.fromEntries(searchParams.entries()),
+    <>
+      {shouldDisplayWallet40MainNav && headerKey ? (
+        <PageHeader title={t(headerKey)} onBack={() => navigate(-1)} />
+      ) : null}
+      <Card
+        grow
+        style={{
+          overflow: "hidden",
+          height: "100%",
         }}
-        Loader={providerInterstitialEnabled ? ProviderInterstitial : undefined}
-      />
-    </Card>
+      >
+        <WebPTXPlayer
+          manifest={manifest}
+          inputs={{
+            theme: themeType,
+            ...customUrlParams,
+            lang,
+            locale,
+            currencyTicker,
+            devMode,
+            discreetMode: discreetMode ? "true" : "false",
+            ...(localManifest?.providerTestBaseUrl && {
+              providerTestBaseUrl: localManifest?.providerTestBaseUrl,
+            }),
+            ...(localManifest?.providerTestId && {
+              providerTestId: localManifest?.providerTestId,
+            }),
+
+            ...Object.fromEntries(searchParams.entries()),
+          }}
+          Loader={providerInterstitialEnabled ? ProviderInterstitial : undefined}
+        />
+      </Card>
+    </>
   );
 };
 
@@ -136,8 +150,8 @@ export type ExchangeComponentParams = {
   appId?: string;
 };
 
-const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
-  const appId = match?.params?.appId;
+const Exchange = () => {
+  const { appId } = useParams<ExchangeComponentParams>();
   const buySellUiFlag = useFeature("buySellUi");
   const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
 

@@ -1,6 +1,6 @@
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/lib-es/types";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RenderHookResult,
@@ -12,7 +12,7 @@ import userEvent from "@testing-library/user-event";
 import React from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
@@ -28,7 +28,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
-import { DialogProvider } from "LLD/components/Dialog";
 
 config.disabled = true;
 
@@ -40,6 +39,7 @@ interface ExtraOptions {
   store?: ReduxStore;
   initialRoute?: string;
   userEventOptions?: Parameters<typeof userEvent.setup>[0];
+  skipRouter?: boolean;
 }
 
 interface RenderReturn {
@@ -47,6 +47,7 @@ interface RenderReturn {
   user: ReturnType<typeof userEvent.setup>;
   container: HTMLElement;
   i18n: typeof i18n;
+  rerender: (ui: React.ReactElement) => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type DeepPartial<T> = T extends Function
@@ -97,26 +98,38 @@ function Providers({
   minimal = false,
   withLiveApp = false,
   initialCountervalues,
+  skipRouter = false,
+  initialRoute,
 }: {
   children: React.ReactNode;
   store: ReduxStore;
   minimal?: boolean;
   withLiveApp?: boolean;
   initialCountervalues?: CounterValuesStateRaw;
+  skipRouter?: boolean;
+  initialRoute?: string;
 }): React.JSX.Element {
   const queryClient = new QueryClient();
 
   const content = minimal ? <>{children}</> : <EnhancedProviders>{children}</EnhancedProviders>;
 
+  const routerContent = (
+    <CountervaluesProviders savedState={initialCountervalues}>
+      {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+    </CountervaluesProviders>
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-          <MemoryRouter>
-            <CountervaluesProviders savedState={initialCountervalues}>
-              {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
-            </CountervaluesProviders>
-          </MemoryRouter>
+          {skipRouter ? (
+            routerContent
+          ) : (
+            <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+              {routerContent}
+            </MemoryRouter>
+          )}
         </FirebaseFeatureFlagsProvider>
       </Provider>
     </QueryClientProvider>
@@ -127,11 +140,9 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): React.J
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
-        <DialogProvider>
-          <StyleProvider selectedPalette="dark">
-            <ContextMenuWrapper>{children}</ContextMenuWrapper>
-          </StyleProvider>
-        </DialogProvider>
+        <StyleProvider selectedPalette="dark">
+          <ContextMenuWrapper>{children}</ContextMenuWrapper>
+        </StyleProvider>
       </DrawerProvider>
     </I18nextProvider>
   );
@@ -156,6 +167,7 @@ function renderWithMockedCounterValuesProvider(
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
+    skipRouter = false,
     ...renderOptions
   } = options;
 
@@ -165,7 +177,11 @@ function renderWithMockedCounterValuesProvider(
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
-        <Providers store={store} initialCountervalues={initialCountervaluesMock}>
+        <Providers
+          store={store}
+          initialCountervalues={initialCountervaluesMock}
+          skipRouter={skipRouter}
+        >
           {children}
         </Providers>
       ),
@@ -188,6 +204,8 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
+    skipRouter = false,
+    initialRoute,
     ...renderOptions
   } = options;
 
@@ -196,7 +214,11 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     i18n,
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
-      wrapper: ({ children }) => <Providers store={store}>{children}</Providers>,
+      wrapper: ({ children }) => (
+        <Providers store={store} skipRouter={skipRouter} initialRoute={initialRoute}>
+          {children}
+        </Providers>
+      ),
       ...renderOptions,
     }),
   };
@@ -211,6 +233,9 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
  * @param {Props} [options.initialProps] - The initial props to be passed to the hook.
  * @param {DeepPartial<State>} [options.initialState] - The initial state for the Redux store.
  * @param {ReduxStore} [options.store] - The Redux store to be used.
+ * @param {Boolean} [options.minimal] - Does not include all providers when true.
+ * @param {Boolean} [options.skipRouter] - Skips the MemoryRouter wrapper when true.
+ * @param {React.ComponentType<{ children: React.ReactNode }>} [options.wrapper] - Additional wrapper rendered inside the default Providers. Useful for injecting custom React Context providers (e.g. UpdaterContext) while still benefiting from the built-in i18n, Redux, and router setup.
  *
  * @returns {RenderHookResult<Result, Props>} The rendered hook result with the context providers and store.
  */
@@ -221,22 +246,27 @@ function renderHook<Result, Props>(
     initialProps?: Props;
     initialState?: DeepPartial<State>;
     store?: ReduxStore;
+    minimal?: boolean;
+    skipRouter?: boolean;
+    wrapper?: React.ComponentType<{ children: React.ReactNode }>;
   } = {},
-  minimalProviders = true,
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
+    minimal = true,
+    skipRouter = false,
+    wrapper: Wrapper,
   } = options;
 
   return {
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} minimal={minimalProviders}>
-          {children}
+        <Providers store={store} minimal={minimal} skipRouter={skipRouter}>
+          {Wrapper ? <Wrapper>{children}</Wrapper> : children}
         </Providers>
       ),
       initialProps,

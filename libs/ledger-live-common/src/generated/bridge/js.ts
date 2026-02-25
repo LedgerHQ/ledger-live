@@ -1,3 +1,4 @@
+import { bridge as aleo } from "../../families/aleo/setup";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as aptos } from "../../families/aptos/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
@@ -23,6 +24,7 @@ import { bridge as sui } from "../../families/sui/setup";
 import { bridge as mina } from "../../families/mina/setup";
 
 export default {
+  aleo,
   algorand,
   aptos,
   bitcoin,

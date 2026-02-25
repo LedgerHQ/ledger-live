@@ -3,27 +3,26 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRegistrationFlowParamList } from "./types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloRegistrationFlowParamList, ScreenName.CeloRegistrationStarted>;
 
 export default function RegisterAccountStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
 
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account needed");
 
   const mainAccount = getMainAccount(account, parentAccount);

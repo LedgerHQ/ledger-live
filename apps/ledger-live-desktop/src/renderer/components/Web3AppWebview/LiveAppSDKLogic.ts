@@ -105,7 +105,10 @@ export const broadcastTransactionLogic = (
           optimisticOperation = await bridge.broadcast({
             account: mainAccount,
             signedOperation,
-            broadcastConfig: { mevProtected },
+            broadcastConfig: {
+              mevProtected,
+              source: { type: "live-app", name: manifest.id },
+            },
           });
           tracking.platformBroadcastSuccess(manifest);
         } catch (error) {

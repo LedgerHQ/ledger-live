@@ -18,16 +18,14 @@ export type Props = {
 const DEFAULT_BOX_SIZE = 56;
 const DEFAULT_ICON_SIZE = 24;
 
-const IconContainer = styled(Flex).attrs<{ size: Props["boxSize"] }>(
-  ({ size = DEFAULT_BOX_SIZE }) => ({
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: "1px",
-    borderColor: "neutral.c40",
-    width: `${size}px`,
-    height: `${size}px`,
-  }),
-)`
+const IconContainer = styled(Flex).attrs<{ boxSize: number }>(({ boxSize = DEFAULT_BOX_SIZE }) => ({
+  justifyContent: "center",
+  alignItems: "center",
+  borderWidth: "1px",
+  borderColor: "neutral.c40",
+  width: `${boxSize}px`,
+  height: `${boxSize}px`,
+}))<{ boxSize: number }>`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
@@ -40,13 +38,14 @@ export default function IconBox({
 }: Props): React.ReactElement {
   const { colors } = useTheme();
   return (
-    <IconContainer size={boxSize} {...iconContainerProps}>
-      {React.isValidElement(Icon) ? (
-        Icon
-      ) : (
-        /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
-        <Icon size={iconSize} color={color || colors.neutral.c100} />
-      )}
+    <IconContainer boxSize={boxSize} {...iconContainerProps}>
+      {React.isValidElement(Icon)
+        ? Icon
+        : // Cast to a React component type to satisfy TS without suppressions
+          ((): React.ReactElement => {
+            const Comp = Icon as React.ComponentType<{ size?: number; color?: string }>;
+            return <Comp size={iconSize} color={color || colors.neutral.c100} />;
+          })()}
     </IconContainer>
   );
 }

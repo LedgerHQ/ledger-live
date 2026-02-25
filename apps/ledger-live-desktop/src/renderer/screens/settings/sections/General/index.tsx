@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -16,8 +16,7 @@ import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
 import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import MarketPerformanceWidgetRow from "./MarketPerformanceWidget";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import MevProtectionRow from "./MevProtection";
 import { useEntryPoint } from "LLD/features/LedgerSyncEntryPoints/hooks/useEntryPoint";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
@@ -25,17 +24,18 @@ import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
   useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
-  const llMevProtectionFeatureFlag = useFeature("llMevProtection");
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
-  const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
   const { closeDrawer } = useActivationDrawer();
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
+  const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
 
   return (
     <>
@@ -85,16 +85,16 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
-
-        <FeatureToggle featureId="marketperformanceWidgetDesktop">
+        {shouldDisplayEntryPoint && ledgerSyncOptimisationFlag?.enabled ? (
           <Row
-            title={t("settings.display.marketPerformanceWidget")}
-            desc={t("settings.display.marketPerformanceWidgetDesc")}
-            dataTestId="setting-marketPerformanceWidget"
+            title={t("settings.display.walletSync")}
+            desc={t("settings.display.walletSyncDescription")}
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
           >
-            <MarketPerformanceWidgetRow />
+            <WalletSync variant="sync" />
           </Row>
-        </FeatureToggle>
+        ) : null}
 
         <Row title={t("settings.profile.password")} desc={t("settings.profile.passwordDesc")}>
           <PasswordButton />
@@ -108,18 +108,16 @@ const SectionGeneral = () => {
           </Row>
         ) : null}
 
-        <FeatureToggle featureId="llMevProtection">
-          <Row
-            title={t("settings.display.mevProtection")}
-            desc={t("settings.display.mevProtectionDesc")}
-            dataTestId="setting-mevProtection"
-            id="setting-mevProtection"
-            linkText={t("settings.display.mevProtectionLearnMore")}
-            externalUrl={mevLearnMoreLink}
-          >
-            <MevProtectionRow />
-          </Row>
-        </FeatureToggle>
+        <Row
+          title={t("settings.display.mevProtection")}
+          desc={t("settings.display.mevProtectionDesc")}
+          dataTestId="setting-mevProtection"
+          id="setting-mevProtection"
+          linkText={t("settings.display.mevProtectionLearnMore")}
+          externalUrl={mevProtectionUrl}
+        >
+          <MevProtectionRow />
+        </Row>
 
         <Row
           title={t("settings.profile.reportErrors")}

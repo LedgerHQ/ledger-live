@@ -1,11 +1,11 @@
-import { Observable } from "rxjs";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
-import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
-import { Transaction, BoilerplateSigner, BoilerplateNativeTransaction } from "../types";
+import { Observable } from "rxjs";
+import { combine, craftTransaction, getNextValidSequence } from "../logic";
+import { Transaction, BoilerplateSigner } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<BoilerplateSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -27,7 +27,7 @@ export const buildSignOperation =
             const { freshAddressPath: derivationPath } = account;
             const { publicKey } = await signer.getAddress(derivationPath);
 
-            const { nativeTransaction, serializedTransaction } = await craftTransaction(
+            const { serializedTransaction } = await craftTransaction(
               {
                 address: account.freshAddress,
                 publicKey,

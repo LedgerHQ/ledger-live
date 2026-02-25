@@ -1,5 +1,5 @@
-import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 
 const typeWording = {

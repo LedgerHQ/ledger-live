@@ -4,7 +4,6 @@ import {
   isDmkError,
   isiOSPeerRemovedPairingError,
 } from "./errors";
-import { expect } from "vitest";
 import { BleError } from "react-native-ble-plx";
 
 describe("errors", () => {

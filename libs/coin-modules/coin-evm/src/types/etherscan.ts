@@ -92,6 +92,9 @@ export type EtherscanInternalTransaction = {
   blockNumber: string;
   timeStamp: string;
   hash: string;
+  // blockscout returns tx hash in transactionHash field
+  // instead of hash field
+  transactionHash?: string;
   from: string;
   to: string;
   value: string;

@@ -1,10 +1,10 @@
-import { log } from "@ledgerhq/logs";
-import { ChainAPI, Config, getChainAPI } from "../network";
-import { makeBridges } from "./bridge";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { SolanaSigner } from "../signer";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { log } from "@ledgerhq/logs";
 import solanaCoinConfig, { SolanaCoinConfig } from "../config";
+import { ChainAPI, Config, getChainAPI } from "../network";
+import { SolanaSigner } from "../signer";
+import { makeBridges } from "./bridge";
 
 const httpRequestLogger = (url: string, options: any) => {
   log("network", url, {

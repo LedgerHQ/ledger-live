@@ -1,22 +1,22 @@
 /* istanbul ignore file: don't test the test. */
 
-import expect from "expect";
-import invariant from "invariant";
-import sample from "lodash/sample";
-import BigNumber from "bignumber.js";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import {
   AppSpec,
   MutationSpec,
   TransactionDestinationTestInput,
   TransactionRes,
 } from "@ledgerhq/coin-framework/bot/types";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
+import sample from "lodash/sample";
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees } from "./utils";
@@ -37,13 +37,15 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   base: 0.001,
   base_sepolia: 0.001,
   avalanche_c_chain: 0.001,
+  avalanche_c_chain_fuji: 0.001,
+  bitlayer: 0.0001,
   bsc: 0.005,
   polygon: 0.005,
   ethereum: 0.001,
   ethereum_sepolia: 0.001,
-  ethereum_holesky: 0.001,
   ethereum_hoodi: 0.001,
   ethereum_classic: 0.05,
+  klaytn_baobab: 0.1,
   lukso: 0.01,
   linea: 0.001,
   linea_sepolia: 0.001,
@@ -51,11 +53,15 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   blast_sepolia: 0.001,
   hyperevm: 0.001,
   berachain: 0.001,
-  sei_network_evm: 0.001,
+  sei_evm: 0.001,
+  shape: 0.001,
+  story: 0.1,
   monad: 0.05,
   monad_testnet: 0.05,
   somnia: 0.001,
   zero_gravity: 0.01,
+  unichain: 0.001,
+  unichain_sepolia: 0.001,
 };
 
 /**

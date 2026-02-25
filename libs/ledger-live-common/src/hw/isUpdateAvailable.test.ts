@@ -2,9 +2,15 @@ import isUpdateAvailable from "./isUpdateAvailable";
 import { deviceInfo155, deviceInfo222 } from "../apps/mock";
 import { AppAndVersion } from "../hw/connectApp";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { appConfig } from "../apps/config";
 
-LiveConfig.setConfig(appConfig);
+LiveConfig.setConfig({
+  config_nanoapp_ethereum: {
+    type: "object",
+    default: {
+      minVersion: "1.10.3-0",
+    },
+  },
+});
 describe("isUpdateAvailable tests", () => {
   const scenarios = [
     {

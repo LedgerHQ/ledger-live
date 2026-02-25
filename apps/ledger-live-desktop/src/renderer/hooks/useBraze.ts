@@ -3,7 +3,8 @@ import { ClassicCard } from "@braze/web-sdk";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { getBrazeConfig } from "~/braze-setup";
 import getUser from "~/helpers/user";
 import {
@@ -52,7 +53,7 @@ export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
 };
 
 export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => ({
-  created: card.created,
+  created: card.updated ?? null,
   description: card.extras?.description,
   id: String(card.id),
   image: card.extras?.image,
@@ -65,7 +66,7 @@ export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => 
 });
 
 export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard => ({
-  created: card.created,
+  created: card.updated ?? null,
   cta: card.extras?.cta,
   description: card.extras?.description,
   id: String(card.id),
@@ -79,7 +80,7 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
 });
 
 export const mapAsNotificationContentCard = (card: ClassicCard): NotificationContentCard => ({
-  created: card.created,
+  created: card.updated ?? null,
   cta: card.extras?.cta,
   description: card.extras?.description,
   id: String(card.id),
@@ -114,7 +115,6 @@ export async function useBraze() {
     const isInitialized = braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
       allowUserSuppliedJavascript: true,
-      enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
       appVersion: isTrackedUser ? __APP_VERSION__ : undefined,

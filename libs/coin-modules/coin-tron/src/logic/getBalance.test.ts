@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { computeBalance, computeBalanceBridge, getBalance } from "./getBalance";
+import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import coinConfig from "../config";
-import { HttpResponse, http } from "msw";
+import { computeBalance, computeBalanceBridge, getBalance } from "./getBalance";
 
 const account = JSON.parse(`
   {
@@ -306,7 +306,7 @@ describe("getBalance", () => {
       ),
     );
     const balance = await getBalance("41ae18eb0a9e067f8884058470ed187f44135d816d");
-    expect(balance).toEqual([]);
+    expect(balance).toEqual([{ asset: { type: "native" }, value: 0n }]);
   });
 
   mockServer.close();

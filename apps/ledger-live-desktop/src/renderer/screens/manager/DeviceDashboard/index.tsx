@@ -25,7 +25,7 @@ import {
   setHasInstalledApps,
   setLastSeenDeviceInfo,
 } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
@@ -38,7 +38,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  animation: ${p => p.theme.animations.fadeIn};
+  ${p => p.theme.animations.fadeIn}
 `;
 
 const QuitIconWrapper = styled.div`

@@ -1,12 +1,4 @@
-import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
-import type {
-  Account,
-  AccountLike,
-  Operation,
-  OperationType,
-  TokenAccount,
-} from "@ledgerhq/types-live";
 import {
   encodeTokenAccountId,
   findSubAccountById,
@@ -14,6 +6,14 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   APTOS_ASSET_ID,
   OP_TYPE,
@@ -21,12 +21,12 @@ import {
   DEFAULT_GAS_PRICE,
   APTOS_ASSET_FUNGIBLE_ID,
 } from "../constants";
-import type { AptosAccount, AptosTransaction, Transaction } from "../types";
-import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
-import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
 import { calculateAmount } from "../logic/calculateAmount";
-import { processRecipients } from "../logic/processRecipients";
+import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
 import { getFunctionAddress } from "../logic/getFunctionAddress";
+import { processRecipients } from "../logic/processRecipients";
+import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
+import type { AptosAccount, AptosTransaction, Transaction } from "../types";
 
 export const getMaxSendBalance = (
   account: AccountLike<AptosAccount>,

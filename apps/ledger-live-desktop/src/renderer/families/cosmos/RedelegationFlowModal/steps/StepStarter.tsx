@@ -72,7 +72,7 @@ export function StepStarterFooter({ transitionTo, account, onClose }: StepProps)
         onClick={() => openURL(stakingUrl)}
       />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
         <Button

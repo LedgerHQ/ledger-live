@@ -2,7 +2,7 @@ import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index"
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, memo } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

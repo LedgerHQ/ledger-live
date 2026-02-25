@@ -1,15 +1,13 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TrackScreen, track } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import {
   BaseComposite,
   StackNavigatorNavigation,
@@ -18,6 +16,8 @@ import {
 import { SolanaDelegationFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getTrackingDelegationType } from "../../helpers";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationValidationSuccess>
@@ -25,7 +25,8 @@ type Props = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const validator = route.params.validatorName ?? "unknown";
   const source = route.params.source?.name ?? "unknown";
@@ -39,7 +40,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [navigation]);
 
   useEffect(() => {
-    if (delegation)
+    if (delegation) {
       track("staking_completed", {
         currency: ticker,
         validator,
@@ -47,7 +48,9 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         delegation,
         flow: "stake",
       });
-  }, [source, validator, delegation, ticker]);
+      tryTriggerPushNotificationDrawerAfterAction("stake");
+    }
+  }, [source, validator, delegation, ticker, tryTriggerPushNotificationDrawerAfterAction]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

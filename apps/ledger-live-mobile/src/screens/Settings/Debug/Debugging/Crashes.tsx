@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react-native";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Button from "~/components/Button";
@@ -44,14 +43,6 @@ const Crashes = (_: Props) => {
         type="primary"
         title="JS Crash"
         onPress={jsCrash}
-        containerStyle={styles.buttonStyle}
-      />
-
-      <Button
-        event="DebugCrashNative"
-        type="primary"
-        title="Native Crash"
-        onPress={Sentry.nativeCrash}
         containerStyle={styles.buttonStyle}
       />
 

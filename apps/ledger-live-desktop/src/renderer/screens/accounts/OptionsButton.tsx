@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import Track from "~/renderer/analytics/Track";
 import Box from "~/renderer/components/Box";
@@ -106,7 +106,6 @@ const OptionsButton = () => {
             <Button
               small
               outlineGrey
-              flow={1}
               style={{
                 width: 34,
                 padding: 0,

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar } from "./TopBar";

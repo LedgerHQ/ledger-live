@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
-import { Switch } from "@ledgerhq/ldls-ui-react";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "../../SettingsSection";

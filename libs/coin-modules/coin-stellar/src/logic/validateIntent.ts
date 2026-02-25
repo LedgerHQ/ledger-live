@@ -1,40 +1,42 @@
 import {
-  AmountRequired,
-  NotEnoughBalance,
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughSpendableBalance,
-  NotEnoughBalanceBecauseDestinationNotCreated,
-  RecipientRequired,
-  InvalidAddress,
-} from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
   TransactionValidation,
   TransactionIntent,
   FeeEstimation,
+  Balance,
 } from "@ledgerhq/coin-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
+  AmountRequired,
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
+  NotEnoughBalanceBecauseDestinationNotCreated,
+  NotEnoughSpendableBalance,
+  RecipientRequired,
+} from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { fetchAccountNetworkInfo, getRecipientAccount } from "../network";
-import {
-  StellarWrongMemoFormat,
-  StellarAssetRequired,
-  StellarAssetNotAccepted,
-  StellarAssetNotFound,
-  StellarNotEnoughNativeBalance,
-  StellarFeeSmallerThanRecommended,
-  StellarFeeSmallerThanBase,
-  StellarNotEnoughNativeBalanceToAddTrustline,
-  StellarMuxedAccountNotExist,
-  StellarSourceHasMultiSign,
-  StellarMemo,
-} from "../types";
 import { fetchAccount } from "../network/horizon";
 import { BASE_RESERVE, MIN_BALANCE } from "../network/serialization";
-import { getBalance } from "./getBalance";
-import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
+import {
+  StellarAssetNotAccepted,
+  StellarAssetNotFound,
+  StellarAssetRequired,
+  StellarFeeSmallerThanBase,
+  StellarFeeSmallerThanRecommended,
+  StellarMemo,
+  StellarMuxedAccountNotExist,
+  StellarNotEnoughNativeBalance,
+  StellarNotEnoughNativeBalanceToAddTrustline,
+  StellarSourceHasMultiSign,
+  StellarWrongMemoFormat,
+} from "../types";
+import { isAccountMultiSign, isAddressValid } from "./utils";
+import { validateMemo } from "./validateMemo";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<StellarMemo>,
+  balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
@@ -53,7 +55,6 @@ export const validateIntent = async (
     ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
     : 0n;
   const isAssetPayment = transactionIntent.asset.type !== "native";
-  const balances = await getBalance(transactionIntent.sender);
   const nativeBalance = BigInt(balance.toString());
   const nativeAmountAvailable = BigInt(spendableBalance.toString()) - estimatedFees;
   let amount = 0n;
@@ -212,9 +213,10 @@ export const validateIntent = async (
   if (await isAccountMultiSign(transactionIntent.sender)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
+
   if (
     transactionIntent?.memo?.type !== "NO_MEMO" &&
-    !isMemoValid(transactionIntent?.memo?.type, transactionIntent?.memo?.value)
+    !validateMemo(transactionIntent?.memo?.value, transactionIntent?.memo?.type)
   ) {
     errors.transaction = new StellarWrongMemoFormat();
   }

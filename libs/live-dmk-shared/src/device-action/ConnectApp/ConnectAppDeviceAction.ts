@@ -256,6 +256,9 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                   ..._.context.intermediateValue,
                   requiredUserInteraction:
                     _.event.snapshot.context.intermediateValue.requiredUserInteraction,
+                  deviceId:
+                    _.event.snapshot.context.intermediateValue.deviceId ??
+                    _.context.intermediateValue.deviceId,
                 }),
               }),
             },
@@ -317,6 +320,9 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                   requiredUserInteraction:
                     _.event.snapshot.context.intermediateValue.requiredUserInteraction,
                   installPlan: _.event.snapshot.context.intermediateValue.installPlan,
+                  deviceId:
+                    _.event.snapshot.context.intermediateValue.deviceId ??
+                    _.context.intermediateValue.deviceId,
                 }),
               }),
             },
@@ -375,6 +381,9 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                   requiredUserInteraction:
                     _.event.snapshot.context.intermediateValue.requiredUserInteraction,
                   installPlan: _.event.snapshot.context.intermediateValue.installPlan,
+                  deviceId:
+                    _.event.snapshot.context.intermediateValue.deviceId ??
+                    _.context.intermediateValue.deviceId,
                 }),
               }),
             },

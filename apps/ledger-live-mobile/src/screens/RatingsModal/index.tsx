@@ -10,7 +10,7 @@ import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
 import getOrCreateUser from "~/user";
 import { trackingEnabledSelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 
 const RatingsModal = () => {
   const {
@@ -72,7 +72,9 @@ const RatingsModal = () => {
       init: <Init closeModal={closeModal} setStep={setStep} />,
       enjoy: <Enjoy closeModal={closeModal} />,
       disappointed: <Disappointed closeModal={closeModal} setStep={setStep} />,
-      disappointedForm: <DisappointedForm setStep={setStep} equipmentId={equipmentId} />,
+      disappointedForm: (
+        <DisappointedForm setStep={setStep} equipmentId={equipmentId} closeModal={closeModal} />
+      ),
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 

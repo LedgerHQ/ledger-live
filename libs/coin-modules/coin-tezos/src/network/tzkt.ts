@@ -1,6 +1,6 @@
 import URL from "url";
-import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network";
+import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import { APIAccount, APIBlock, APIOperation, AccountsGetOperationsOptions } from "./types";
 

@@ -92,7 +92,6 @@ export default function Switch({
           onChange(!isChecked);
         }
       }}
-      className="switch"
       forceBgColor={forceBgColor}
     >
       <input type="checkbox" disabled={disabled || false} checked={isChecked} readOnly />

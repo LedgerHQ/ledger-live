@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type {
   CommandDescriptor,
   SolanaExtraDeviceTransactionField,

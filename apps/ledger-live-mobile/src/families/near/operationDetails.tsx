@@ -1,13 +1,13 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -29,7 +29,7 @@ function OperationDetailsExtra({ account, operation }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale: locale,
+    locale,
   });
 
   return (

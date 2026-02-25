@@ -1,6 +1,8 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
-import { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
+import {
+  getSwapProvider,
+  AdditionalProviderConfig,
+} from "@ledgerhq/live-common/exchange/providers/swap";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -13,8 +15,8 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useSelector } from "LLD/hooks/redux";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -114,13 +116,23 @@ const SwapOperationDetails = ({
   onClose?: () => void;
 }) => {
   const [providerData, setproviderData] = useState<AdditionalProviderConfig | undefined>(undefined);
-  const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
-    mappedSwapOperation;
+  const {
+    fromAccount,
+    toAccount,
+    operation,
+    provider,
+    swapId,
+    status,
+    fromAmount,
+    toAmount,
+    finalAmount,
+  } = mappedSwapOperation;
+  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const fromAccountName = useAccountName(fromAccount);
   const toAccountName = useAccountName(toAccount);
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
   const language = useSelector(languageSelector);
-  const history = useHistory();
+  const navigate = useNavigate();
   const fromUnit = useAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
   const toUnit = useAccountUnit(toAccount);
@@ -148,6 +160,12 @@ const SwapOperationDetails = ({
     case "nearintents":
       url = "https://track.swapkit.dev/tx/$hash".replace("$hash", operation.hash);
       break;
+    case "okx":
+      if (mainCurrency?.id) {
+        url = `https://web3.okx.com/fi/explorer/${mainCurrency.id}/tx/${operation.hash}`;
+        break;
+      }
+    // fallthrough to default if mainCurrency.id is undefined
     default:
       url = getTransactionExplorer
         ? getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation)
@@ -170,12 +188,10 @@ const SwapOperationDetails = ({
       const mainAccount = getMainAccount(account, parentAccount);
       const url = `/account/${mainAccount.id}/${parentAccount ? account.id : ""}`;
       setTrackingSource("swap operation details");
-      history.push({
-        pathname: url,
-      });
+      navigate(url);
       onClose?.();
     },
-    [accounts, history, onClose],
+    [accounts, navigate, onClose],
   );
 
   // Fixme, at this point it might be a good idea to refactor into the op details modal
@@ -192,8 +208,7 @@ const SwapOperationDetails = ({
       const parentAccount =
         fromAccount.type !== "Account" ? accounts.find(a => a.id === fromAccount.parentId) : null;
       const mainAccount = getMainAccount(fromAccount, parentAccount);
-      history.push({
-        pathname: "/platform/moonpay",
+      navigate("/platform/moonpay", {
         state: {
           returnTo: "/swap/history",
           accountId: mainAccount.id,
@@ -207,7 +222,7 @@ const SwapOperationDetails = ({
     if (onClose) {
       onClose();
     }
-  }, [provider, fromAccount, history, accounts, onClose, language, providerData]);
+  }, [provider, fromAccount, navigate, accounts, onClose, language, providerData]);
 
   return (
     <Box flow={3} px={20} mt={20}>
@@ -251,7 +266,7 @@ const SwapOperationDetails = ({
             unit={toUnit}
             alwaysShowSign
             showCode
-            val={toAmount}
+            val={displayToAmount}
             fontSize={6}
             disableRounding
             color={statusColor}
@@ -410,7 +425,7 @@ const SwapOperationDetails = ({
             <FormattedVal
               unit={toUnit}
               showCode
-              val={toAmount}
+              val={displayToAmount}
               fontSize={6}
               disableRounding
               color={"neutral.c70"}

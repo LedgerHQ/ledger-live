@@ -3,7 +3,7 @@ import { Linking, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
 import ArrowLeft from "~/icons/ArrowLeft";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
@@ -12,7 +12,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
 import { Disclaimer } from "../../hooks";
-import { Search as SearchType } from "../../types";
+import type { Search as SearchType } from "../../types";
 
 export * from "./SearchBar";
 
@@ -22,14 +22,13 @@ const noResultIllustration = {
 };
 
 interface Props {
-  title: React.ReactNode;
-  subtitle?: React.ReactNode;
-  listTitle?: React.ReactNode;
+  title?: React.ReactNode;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: SearchType;
+  isLegacySearch?: boolean;
 }
 
-export function Search({ title, disclaimer, search }: Props) {
+export function Search({ title, disclaimer, search, isLegacySearch = true }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -71,23 +70,29 @@ export function Search({ title, disclaimer, search }: Props) {
   return (
     <>
       <Layout
-        isTitleVisible={true}
+        isTitleVisible={!!title}
         title={title}
         topHeaderContent={
-          <TouchableOpacity
-            hitSlop={{
-              bottom: 10,
-              left: 24,
-              right: 24,
-              top: 10,
-            }}
-            style={{ paddingVertical: 16 }}
-            onPress={search.onCancel}
-          >
-            <ArrowLeft size={18} color={colors.neutral.c100} />
-          </TouchableOpacity>
+          isLegacySearch ? (
+            <TouchableOpacity
+              hitSlop={{
+                bottom: 10,
+                left: 24,
+                right: 24,
+                top: 10,
+              }}
+              style={{ paddingVertical: 16 }}
+              onPress={search.onCancel}
+              accessibilityLabel={t("common.back")}
+              accessibilityRole="button"
+            >
+              <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-search-arrow-left" />
+            </TouchableOpacity>
+          ) : undefined
         }
-        searchContent={<SearchBar search={search} />}
+        searchContent={
+          <SearchBar search={search} onCancel={isLegacySearch ? undefined : search.onCancel} />
+        }
         bodyContent={
           search.isSearching ? (
             <Flex marginTop={100}>

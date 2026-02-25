@@ -3,7 +3,7 @@ import { StyleSheet, Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 // "no associated accounts" text when adding/importing accounts

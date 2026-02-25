@@ -12,7 +12,13 @@
       "dom"
     ],
     "composite": true, // required on the dependency project for references to work
-    "isolatedModules": false
+    "isolatedModules": false,
+    "baseUrl": ".",
+    "paths": {
+      "react": ["../../node_modules/@types/react"],
+      "@types/react": ["../../node_modules/@types/react"],
+      "@tests/*": ["src/__tests__/*"]
+    }
   },
   "files": [
     // by whitelisting the files to include, TS won't automatically

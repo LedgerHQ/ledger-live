@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { closeModal } from "~/renderer/actions/modals";
@@ -46,7 +46,7 @@ const PasswordModal = () => {
     [setPassword, onClose],
   );
   const handleSave = useCallback(
-    async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    async (e?: React.SyntheticEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
       if (e) {
         e.preventDefault();
       }

@@ -1,7 +1,7 @@
 import { Flex, Text, Link, IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { ImageSourcePropType, Linking } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Language } from "@ledgerhq/types-live";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/types-devices";
 import { urls } from "~/utils/urls";

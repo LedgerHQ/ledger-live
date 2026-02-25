@@ -1,16 +1,24 @@
 import { getMinVersion, mustUpgrade, shouldUpgrade } from "./support";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { appConfig } from "./config";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 
-LiveConfig.setConfig(appConfig);
 describe("Support.ts", () => {
+  beforeAll(() => {
+    LiveConfig.setConfig({
+      config_nanoapp_ethereum: {
+        type: "object",
+        default: {
+          minVersion: "1.10.3-0",
+        },
+      },
+    });
+  });
   describe("shouldUpgrade", () => {
     it("should ask for an ugprade for an outdated Bitcoin nano app", () => {
       expect(shouldUpgrade("Bitcoin", "0.1.0")).toBe(true);
     });
 
-    it("should not ask for any ugprade for a valid Bitcoin nano app", () => {
+    it("should not ask for any upgrade for a valid Bitcoin nano app", () => {
       expect(shouldUpgrade("Bitcoin", "1.4.0")).toBe(false);
     });
 

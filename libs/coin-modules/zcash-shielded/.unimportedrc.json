@@ -1,0 +1,23 @@
+{
+  "entry": ["src/ZCash.ts"],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/coin-bitcoin",
+    "bignumber.js"
+  ],
+  "ignoreUnimported": [
+    "src/ZCash.ts",
+    "src/constants.ts",
+    "src/types.ts"
+  ]
+}

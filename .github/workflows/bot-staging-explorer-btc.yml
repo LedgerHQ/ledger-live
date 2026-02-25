@@ -3,25 +3,26 @@ on:
   workflow_dispatch:
   schedule:
     - cron: 0 8 * * 3
-
 concurrency:
   group: bot-seed2
-
 jobs:
   run-bot:
     runs-on: [ledger-live-medium]
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: main
       - name: Retrieving coin apps
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps

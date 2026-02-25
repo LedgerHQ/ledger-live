@@ -4,7 +4,7 @@ import { Text, Flex, Tag } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import FeatureFlagEdit from "./FeatureFlagEdit";
-import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import styled from "styled-components";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import { useTranslation } from "react-i18next";
 
@@ -14,14 +14,14 @@ type Props = {
   setFocusedName: (arg0: string | undefined) => void;
 };
 
-export const Row: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Flex).attrs({
+export const Row = styled(Flex).attrs<FlexBoxProps>({
   px: 4,
   py: 1,
   padding: 4,
   flexDirection: "row",
   borderRadius: 1,
 })`
-  :hover {
+  &:hover {
     background: ${p => p.theme.colors.opacityDefault.c05};
   }
 `;

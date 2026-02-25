@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { setAccountsViewMode } from "~/renderer/actions/settings";
 import { accountsViewModeSelector } from "~/renderer/reducers/settings";

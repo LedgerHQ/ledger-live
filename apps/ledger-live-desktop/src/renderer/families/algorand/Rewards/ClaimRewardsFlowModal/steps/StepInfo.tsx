@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { StepProps } from "../types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -73,7 +73,7 @@ export function StepInfoFooter({
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
         <Button disabled={!canNext} primary onClick={() => transitionTo("connectDevice")}>

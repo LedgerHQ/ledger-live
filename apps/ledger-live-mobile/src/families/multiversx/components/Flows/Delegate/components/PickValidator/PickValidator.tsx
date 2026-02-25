@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Box, SearchInput, Text } from "@ledgerhq/native-ui";
 import { FlatList, View } from "react-native";

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -19,7 +19,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { ScreenName } from "~/const";
 import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   transaction: Transaction;

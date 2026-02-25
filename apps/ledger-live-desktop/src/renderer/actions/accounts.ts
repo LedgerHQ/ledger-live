@@ -1,12 +1,12 @@
-import { Dispatch } from "redux";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { ThunkResult } from "./types";
 
 export const removeAccount = (payload: Account) => ({
-  type: "DB:REMOVE_ACCOUNT",
+  type: "REMOVE_ACCOUNT",
   payload,
 });
 
@@ -25,23 +25,26 @@ export const initAccounts = (data: [Account, AccountUserData][]) => {
 };
 
 export const replaceAccounts = (accounts: Account[]) => ({
-  type: "DB:REPLACE_ACCOUNTS",
+  type: "REPLACE_ACCOUNTS",
   payload: accounts,
 });
 
-export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dispatch) =>
-  dispatch({
-    type: "DB:REORDER_ACCOUNTS",
-    payload: { comparator },
-  });
+export const reorderAccounts =
+  (comparator: AccountComparator): ThunkResult =>
+  (dispatch, _getState, _extra) =>
+    dispatch({
+      type: "REORDER_ACCOUNTS",
+      payload: { comparator },
+    });
 
-export const fetchAccounts = () => async (dispatch: Dispatch) => {
-  const data = await getKey("app", "accounts", []);
-  if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
-  return dispatch(initAccounts(data));
-};
+export const fetchAccounts =
+  (): ThunkResult<Promise<void>> => async (dispatch, _getState, _extra) => {
+    const data = await getKey("app", "accounts", []);
+    if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
+    dispatch(initAccounts(data));
+  };
 
-type UpdateAccountAction = {
+export type UpdateAccountAction = {
   type: string;
   payload: { updater: (account: Account) => Account; accountId?: string };
 };
@@ -52,20 +55,17 @@ export type UpdateAccountWithUpdater = (
 ) => UpdateAccountAction;
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => ({
-  type: "DB:UPDATE_ACCOUNT",
+  type: "UPDATE_ACCOUNT",
   payload: { accountId, updater },
 });
 
 export type UpdateAccount = (account: Partial<Account>) => UpdateAccountAction;
 export const updateAccount: UpdateAccount = payload => ({
-  type: "DB:UPDATE_ACCOUNT",
+  type: "UPDATE_ACCOUNT",
   payload: {
     updater: (account: Account) => ({ ...account, ...payload }),
     accountId: payload.id,
   },
 });
 
-export const cleanAccountsCache = () => ({ type: "DB:CLEAN_ACCOUNTS_CACHE" });
-export const cleanFullNodeDisconnect = () => ({
-  type: "DB:CLEAN_FULLNODE_DISCONNECT",
-});
+export const cleanAccountsCache = () => ({ type: "CLEAN_ACCOUNTS_CACHE" });

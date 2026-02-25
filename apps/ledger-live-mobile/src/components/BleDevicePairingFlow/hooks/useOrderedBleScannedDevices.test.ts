@@ -11,15 +11,22 @@ type MockKnownDevice = { id: string };
 
 jest.mock("react-redux", () => {
   const actual = jest.requireActual("react-redux");
+  type MockWithTypes = jest.Mock & { withTypes: () => jest.Mock };
+  const mockUseDispatch = jest.fn(() => jest.fn()) as MockWithTypes;
+  mockUseDispatch.withTypes = () => mockUseDispatch;
+  const mockUseSelector = jest.fn() as MockWithTypes;
+  mockUseSelector.withTypes = () => mockUseSelector;
+  const mockUseStore = jest.fn(() => ({
+    getState: jest.fn(() => ({})),
+    dispatch: jest.fn(),
+    subscribe: jest.fn(),
+  })) as MockWithTypes;
+  mockUseStore.withTypes = () => mockUseStore;
   return {
     ...actual,
-    useDispatch: jest.fn(() => jest.fn()),
-    useSelector: jest.fn(),
-    useStore: jest.fn(() => ({
-      getState: jest.fn(() => ({})),
-      dispatch: jest.fn(),
-      subscribe: jest.fn(),
-    })),
+    useDispatch: mockUseDispatch,
+    useSelector: mockUseSelector,
+    useStore: mockUseStore,
   };
 });
 

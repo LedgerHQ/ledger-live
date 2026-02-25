@@ -20,7 +20,11 @@ export const signExtrinsic = async (
     version: unsigned.version,
   });
   if (typeof signature === "string") {
-    extrinsic.addSignature(unsigned.address, Buffer.from(signature, "hex"), unsigned as any);
+    extrinsic.addSignature(
+      unsigned.address,
+      new Uint8Array(Buffer.from(signature, "hex")),
+      unsigned as any,
+    );
   } else {
     // todo: remove it after runtime upgrade
     extrinsic.addSignature(unsigned.address, signature, unsigned as any);

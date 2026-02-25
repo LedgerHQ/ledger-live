@@ -28,7 +28,7 @@ import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
@@ -124,7 +124,10 @@ export const useSignWithDevice = ({
                   .broadcast({
                     account: mainAccount,
                     signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
-                    broadcastConfig: { mevProtected },
+                    broadcastConfig: {
+                      mevProtected,
+                      source: { type: "coin-module", name: "ledger-live-mobile" },
+                    },
                   })
                   .then(operation => ({
                     type: "broadcasted",
@@ -269,7 +272,10 @@ export function useSignedTxHandler({
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: { mevProtected },
+    broadcastConfig: {
+      mevProtected,
+      source: { type: "coin-module", name: "ledger-live-mobile" },
+    },
   });
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);

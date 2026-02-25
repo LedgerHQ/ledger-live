@@ -116,7 +116,7 @@ const StepClaimRewardsFooter = (props: StepProps) => {
       <AccountFooter account={account} status={status} />
 
       <Box horizontal={true}>
-        <Button mr={1} secondary={true} onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
 

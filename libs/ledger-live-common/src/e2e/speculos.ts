@@ -50,6 +50,7 @@ import {
 } from "./deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "./deviceInteraction/DeviceController";
 import { sanitizeError } from ".";
+import { sendVechain } from "./families/vechain";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -60,8 +61,6 @@ export type Spec = {
     appName: string;
     appVersion?: string;
   };
-  /** @deprecated */
-  dependency?: string;
   dependencies?: Dependency[];
   onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
 };
@@ -72,6 +71,7 @@ export type SpeculosDevice = {
   port: number;
   appName?: string;
   appVersion?: string;
+  dependencies?: Dependency[];
 };
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
@@ -101,7 +101,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Bitcoin",
     },
-    dependency: "",
+    dependencies: [],
   },
   Aptos: {
     currency: getCryptoCurrencyById("aptos"),
@@ -109,7 +109,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Aptos",
     },
-    dependency: "",
+    dependencies: [],
   },
   Exchange: {
     appQuery: {
@@ -123,7 +123,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ledger Sync",
     },
-    dependency: "",
+    dependencies: [],
   },
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
@@ -131,7 +131,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Dogecoin",
     },
-    dependency: "",
+    dependencies: [],
   },
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
@@ -139,15 +139,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ethereum",
     },
-    dependency: "",
-  },
-  Ethereum_Holesky: {
-    currency: getCryptoCurrencyById("ethereum_holesky"),
-    appQuery: {
-      model: getSpeculosModel(),
-      appName: "Ethereum",
-    },
-    dependency: "",
+    dependencies: [],
   },
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
@@ -155,7 +147,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ethereum",
     },
-    dependency: "",
+    dependencies: [],
   },
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
@@ -163,7 +155,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ethereum Classic",
     },
-    dependency: "Ethereum",
+    dependencies: [{ name: "Ethereum" }],
   },
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
@@ -171,7 +163,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Bitcoin Test",
     },
-    dependency: "",
+    dependencies: [],
   },
   Solana: {
     currency: getCryptoCurrencyById("solana"),
@@ -179,7 +171,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Solana",
     },
-    dependency: "",
+    dependencies: [],
   },
   Cardano: {
     currency: getCryptoCurrencyById("cardano"),
@@ -187,7 +179,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "CardanoADA",
     },
-    dependency: "",
+    dependencies: [],
   },
   Polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
@@ -195,7 +187,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Polkadot",
     },
-    dependency: "",
+    dependencies: [],
   },
   Tron: {
     currency: getCryptoCurrencyById("tron"),
@@ -203,7 +195,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Tron",
     },
-    dependency: "",
+    dependencies: [],
   },
   XRP: {
     currency: getCryptoCurrencyById("ripple"),
@@ -211,7 +203,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "XRP",
     },
-    dependency: "",
+    dependencies: [],
   },
   Stellar: {
     currency: getCryptoCurrencyById("stellar"),
@@ -219,7 +211,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Stellar",
     },
-    dependency: "",
+    dependencies: [],
   },
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
@@ -227,7 +219,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Bitcoin Cash",
     },
-    dependency: "",
+    dependencies: [],
   },
   Algorand: {
     currency: getCryptoCurrencyById("algorand"),
@@ -235,7 +227,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Algorand",
     },
-    dependency: "",
+    dependencies: [],
   },
   Cosmos: {
     currency: getCryptoCurrencyById("cosmos"),
@@ -243,7 +235,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Cosmos",
     },
-    dependency: "",
+    dependencies: [],
   },
   Tezos: {
     currency: getCryptoCurrencyById("tezos"),
@@ -251,7 +243,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "TezosWallet",
     },
-    dependency: "",
+    dependencies: [],
   },
   Polygon: {
     currency: getCryptoCurrencyById("polygon"),
@@ -259,7 +251,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ethereum",
     },
-    dependency: "",
+    dependencies: [],
   },
   BNB_Chain: {
     currency: getCryptoCurrencyById("bsc"),
@@ -267,7 +259,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Ethereum",
     },
-    dependency: "",
+    dependencies: [],
   },
   Ton: {
     currency: getCryptoCurrencyById("ton"),
@@ -275,7 +267,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "TON",
     },
-    dependency: "",
+    dependencies: [],
   },
   Near: {
     currency: getCryptoCurrencyById("near"),
@@ -283,7 +275,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "NEAR",
     },
-    dependency: "",
+    dependencies: [],
   },
   Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
@@ -291,7 +283,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "MultiversX",
     },
-    dependency: "",
+    dependencies: [],
   },
   Osmosis: {
     currency: getCryptoCurrencyById("osmo"),
@@ -299,7 +291,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Cosmos",
     },
-    dependency: "",
+    dependencies: [],
   },
   Injective: {
     currency: getCryptoCurrencyById("injective"),
@@ -307,7 +299,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Cosmos",
     },
-    dependency: "",
+    dependencies: [],
   },
   Celo: {
     currency: getCryptoCurrencyById("celo"),
@@ -315,7 +307,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Celo",
     },
-    dependency: "",
+    dependencies: [],
   },
   Litecoin: {
     currency: getCryptoCurrencyById("litecoin"),
@@ -323,7 +315,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Litecoin",
     },
-    dependency: "",
+    dependencies: [],
   },
   Kaspa: {
     currency: getCryptoCurrencyById("kaspa"),
@@ -331,7 +323,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Kaspa",
     },
-    dependency: "",
+    dependencies: [],
   },
   Hedera: {
     currency: getCryptoCurrencyById("hedera"),
@@ -339,7 +331,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Hedera",
     },
-    dependency: "",
+    dependencies: [],
   },
   Sui: {
     currency: getCryptoCurrencyById("sui"),
@@ -347,7 +339,31 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Sui",
     },
-    dependency: "",
+    dependencies: [],
+  },
+  Base: {
+    currency: getCryptoCurrencyById("base"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+    },
+    dependencies: [],
+  },
+  Vechain: {
+    currency: getCryptoCurrencyById("vechain"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Vechain",
+    },
+    dependencies: [],
+  },
+  Zcash: {
+    currency: getCryptoCurrencyById("zcash"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Zcash",
+    },
+    dependencies: [],
   },
 };
 
@@ -367,7 +383,7 @@ export async function startSpeculos(
 
   const nanoAppCatalogPath = getEnv("E2E_NANO_APP_VERSION_PATH");
 
-  const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
+  const { appQuery, onSpeculosDeviceCreated } = spec;
   try {
     const displayName = spec.currency?.managerAppName || appQuery.appName;
     const catalogVersion = await getAppVersionFromCatalog(displayName, nanoAppCatalogPath);
@@ -410,7 +426,6 @@ export async function startSpeculos(
     ...(appCandidate as AppCandidate),
     appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,
     seed,
-    dependency,
     dependencies,
     coinapps,
     onSpeculosDeviceCreated,
@@ -423,8 +438,9 @@ export async function startSpeculos(
           return {
             id: device.id,
             port: device.ports.apiPort,
-            appName: appCandidate.appName,
-            appVersion: appCandidate.appVersion,
+            appName: deviceParams.appName,
+            appVersion: deviceParams.appVersion,
+            dependencies: deviceParams.dependencies,
           };
         });
   } catch (e: unknown) {
@@ -622,7 +638,7 @@ export const removeMemberLedgerSync = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.CONNECT_WITH);
+      await waitFor(DeviceLabels.CONNECT_TO);
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.CONNECT);
@@ -631,17 +647,22 @@ export const removeMemberLedgerSync = withDeviceController(
         await waitFor(DeviceLabels.CONFIRM_CHANGE);
         await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-        await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+        const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+        await pressAndRelease(
+          DeviceLabels.TURN_ON_SYNC,
+          turnOnSyncCoordinates.x,
+          turnOnSyncCoordinates.y,
+        );
       } else {
-        await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+        await pressUntilTextFound(DeviceLabels.CONNECT, true);
         await buttons.both();
-        await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-        await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
+        await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+        await pressUntilTextFound(DeviceLabels.REMOVE, true);
         await buttons.both();
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
         await buttons.both();
       }
@@ -650,19 +671,25 @@ export const removeMemberLedgerSync = withDeviceController(
 
 export const activateLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
-  await waitFor(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
 
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
+    await pressAndRelease(DeviceLabels.CONNECT);
   } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+    await pressUntilTextFound(DeviceLabels.CONNECT_TO_LEDGER_SYNC);
+    await buttons.right();
     await buttons.both();
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+    const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+    await pressAndRelease(
+      DeviceLabels.TURN_ON_SYNC,
+      turnOnSyncCoordinates.x,
+      turnOnSyncCoordinates.y,
+    );
   } else {
-    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await buttons.both();
   }
@@ -695,6 +722,21 @@ const getSettingsCogwheelCoordinates = () => {
       return { x: 253, y: 58 };
     default:
       return { x: 400, y: 80 };
+  }
+};
+
+const getTurnOnSyncCoordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 121, y: 532 };
+    case DeviceModelId.europa:
+      return { x: 151, y: 446 };
+    case DeviceModelId.apex:
+      return { x: 90, y: 301 };
+    default:
+      return { x: 147, y: 548 };
   }
 };
 
@@ -811,63 +853,66 @@ export const expectValidAddressDevice = withDeviceController(
 );
 
 export async function signSendTransaction(tx: Transaction) {
-  const currencyName = tx.accountToDebit.currency;
-  switch (currencyName) {
-    case Currency.sepETH:
-    case Currency.POL:
-    case Currency.ETH:
+  const currencyId = tx.accountToDebit.currency.id;
+  switch (currencyId) {
+    case Currency.sepETH.id:
+    case Currency.BASE.id:
+    case Currency.POL.id:
+    case Currency.ETH.id:
+    case Currency.ETH_USDT.id:
       await sendEVM(tx);
       break;
-    case Currency.BTC:
+    case Currency.BTC.id:
       await sendBTC(tx);
       break;
-    case Currency.ETH_USDT:
-      await sendEVM(tx);
-      break;
-    case Currency.DOGE:
-    case Currency.BCH:
+    case Currency.DOGE.id:
+    case Currency.BCH.id:
+    case Currency.ZEC.id:
       await sendBTCBasedCoin(tx);
       break;
-    case Currency.DOT:
+    case Currency.DOT.id:
       await sendPolkadot(tx);
       break;
-    case Currency.ALGO:
+    case Currency.ALGO.id:
       await sendAlgorand(tx);
       break;
-    case Currency.SOL:
-    case Currency.SOL_GIGA:
+    case Currency.SOL.id:
+    case Currency.SOL_GIGA.id:
       await sendSolana(tx);
       break;
-    case Currency.TRX:
+    case Currency.TRX.id:
       await sendTron(tx);
       break;
-    case Currency.XLM:
+    case Currency.XLM.id:
       await sendStellar(tx);
       break;
-    case Currency.ATOM:
+    case Currency.ATOM.id:
       await sendCosmos(tx);
       break;
-    case Currency.ADA:
+    case Currency.ADA.id:
       await sendCardano(tx);
       break;
-    case Currency.XRP:
+    case Currency.XRP.id:
       await sendXRP(tx);
       break;
-    case Currency.APT:
+    case Currency.APT.id:
       await sendAptos(tx);
       break;
-    case Currency.KAS:
+    case Currency.KAS.id:
       await sendKaspa(tx);
       break;
-    case Currency.HBAR:
+    case Currency.HBAR.id:
       await sendHedera();
       break;
-    case Currency.SUI:
-    case Currency.SUI_USDC:
+    case Currency.SUI.id:
+    case Currency.SUI_USDC.id:
       await sendSui(tx);
       break;
+    case Currency.VET.id:
+      await sendVechain(tx);
+      break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+      throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
   }
 }
 
@@ -1008,3 +1053,22 @@ function expectDeviceScreenContains(substring: string, events: string[], message
     );
   }
 }
+
+export const exportUfvk = withDeviceController(
+  ({ getButtonsController }) =>
+    async (account: Account) => {
+      const buttons = getButtonsController();
+      const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
+        account.currency.speculosApp,
+      );
+      await waitFor(receiveVerifyLabel);
+
+      if (isTouchDevice()) {
+        await pressUntilTextFound(receiveConfirmLabel);
+        await pressAndRelease(DeviceLabels.CONFIRM);
+      } else {
+        await pressUntilTextFound(receiveConfirmLabel);
+        await buttons.both();
+      }
+    },
+);

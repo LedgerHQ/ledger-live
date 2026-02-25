@@ -35,10 +35,13 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  */
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyPolkadot: { enabled: true },
+  currencyAleo: DEFAULT_FEATURE,
+  currencyAleoTestnet: DEFAULT_FEATURE,
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
+  currencyAvalancheCChainFuji: DEFAULT_FEATURE,
   currencyAptos: DEFAULT_FEATURE,
   currencyAptosTestnet: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
@@ -52,11 +55,12 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
+  currencyBitlayer: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
+  currencyKlaytnBaobab: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
-  currencyOnomy: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
@@ -65,7 +69,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyQuicksilver: DEFAULT_FEATURE,
   currencyRsk: DEFAULT_FEATURE,
   currencySecretNetwork: DEFAULT_FEATURE,
-  currencySeiNetwork: DEFAULT_FEATURE,
   currencyStacks: DEFAULT_FEATURE,
   currencyStargaze: DEFAULT_FEATURE,
   currencySyscoin: DEFAULT_FEATURE,
@@ -81,6 +84,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBlastSepolia: DEFAULT_FEATURE,
   currencyScroll: DEFAULT_FEATURE,
   currencyScrollSepolia: DEFAULT_FEATURE,
+  currencyShape: DEFAULT_FEATURE,
+  currencyStory: DEFAULT_FEATURE,
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
   currencyEtherlink: DEFAULT_FEATURE,
@@ -112,6 +117,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZeroGravity: DEFAULT_FEATURE,
   currencyConcordium: DEFAULT_FEATURE,
   currencyConcordiumTestnet: DEFAULT_FEATURE,
+  currencyUnichain: DEFAULT_FEATURE,
+  currencyUnichainSepolia: DEFAULT_FEATURE,
 };
 
 /**
@@ -140,6 +147,13 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
+  lldOnboardingEnableSync: initFeature({
+    enabled: false,
+    params: {
+      nanos: false,
+      touchscreens: false,
+    },
+  }),
   mixpanelAnalytics: initFeature({
     enabled: false,
     params: { record_sessions_percent: 100 },
@@ -459,6 +473,20 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxPerpsLiveApp: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
+  ptxPerpsLiveAppMobile: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {
@@ -469,6 +497,13 @@ export const DEFAULT_FEATURES: Features = {
   ptxEarnDrawerConfiguration: {
     enabled: false,
     params: {},
+  },
+
+  ptxEarnUi: {
+    enabled: false,
+    params: {
+      value: "v1",
+    },
   },
 
   ptxSwapLiveAppMobile: {
@@ -514,18 +549,6 @@ export const DEFAULT_FEATURES: Features = {
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
 
-  marketperformanceWidgetDesktop: {
-    enabled: false,
-    params: {
-      variant: ABTestingVariants.variantA,
-      refreshRate: 2,
-      top: 100,
-      limit: 100,
-      supported: true,
-      enableNewFeature: false,
-    },
-  },
-
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
   lldRefreshMarketData: {
@@ -566,10 +589,6 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  llMevProtection: {
-    ...DEFAULT_FEATURE,
-    params: { link: null },
-  },
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {
@@ -585,6 +604,7 @@ export const DEFAULT_FEATURES: Features = {
       manager: true,
       accounts: true,
       settings: true,
+      onboarding: true,
       postOnboarding: true,
     },
   },
@@ -600,6 +620,10 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
+  lwmNewWordingOptInNotificationsDrawer: {
+    ...DEFAULT_FEATURE,
+    params: { variant: ABTestingVariants.variantA },
+  },
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
@@ -641,7 +665,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
-  largemoverLandingpage: DEFAULT_FEATURE,
   llmMmkvMigration: {
     ...DEFAULT_FEATURE,
     params: {
@@ -717,7 +740,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
-  llmHomescreen: DEFAULT_FEATURE,
+  llmHomescreen: {
+    enabled: true,
+  },
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
@@ -727,19 +752,76 @@ export const DEFAULT_FEATURES: Features = {
       activeCurrencyIds: [],
     },
   },
-  newSendFlow: DEFAULT_FEATURE,
-  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
-  lldSessionReplay: {
+  newSendFlow: {
     ...DEFAULT_FEATURE,
     params: {
-      sampling: 100,
+      families: [],
     },
   },
+  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
   lifiSolana: DEFAULT_FEATURE,
+  llmAnimatedSplashScreen: {
+    enabled: true,
+    params: {
+      ios: true,
+      android: true,
+    },
+  },
+  llmOnboardingEnableSync: initFeature({
+    enabled: false,
+    params: {
+      nanos: false,
+      touchscreens: false,
+    },
+  }),
+  lwmWallet40: {
+    ...DEFAULT_FEATURE,
+    params: {
+      marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
+      tour: true,
+      mainNavigation: true,
+      lazyOnboarding: true,
+      balanceRefreshRework: true,
+      assetSection: true,
+    },
+  },
+  lwdWallet40: {
+    ...DEFAULT_FEATURE,
+    params: {
+      marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
+      mainNavigation: true,
+      tour: true,
+      lazyOnboarding: true,
+      newReceiveDialog: true,
+      balanceRefreshRework: true,
+      assetSection: true,
+    },
+  },
+  addressPoisoningOperationsFilter: {
+    ...DEFAULT_FEATURE,
+    enabled: true,
+    params: {
+      families: [
+        "evm",
+        "tron",
+        "solana",
+        "xrp",
+        "stellar",
+        "hedera",
+        "algorand",
+        "cardano",
+        "cosmos",
+      ],
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

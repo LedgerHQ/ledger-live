@@ -7,6 +7,7 @@ import {
   ClaimRewardsFeesWarning,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import * as accountHelpers from "@ledgerhq/coin-framework/account";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
@@ -17,11 +18,9 @@ import {
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
   HederaRedundantStakingNodeIdError,
+  HederaMemoExceededSizeError,
 } from "../errors";
-import { getTransactionStatus } from "./getTransactionStatus";
-import * as estimateFees from "../logic/estimateFees";
-import * as logicUtils from "../logic/utils";
-import * as preloadData from "../preload-data";
+import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -29,7 +28,44 @@ import {
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
-import type { EstimateFeesResult, HederaPreloadData } from "../types";
+import type { EstimateFeesResult, HederaPreloadData, Transaction } from "../types";
+
+// Mock modules before importing
+jest.mock("../logic/estimateFees", () => ({
+  ...jest.requireActual("../logic/estimateFees"),
+  estimateFees: jest.fn(),
+}));
+
+jest.mock("../logic/utils", () => ({
+  ...jest.requireActual("../logic/utils"),
+  getCurrencyToUSDRate: jest.fn(),
+  checkAccountTokenAssociationStatus: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/coin-framework/account", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-framework/account");
+  return {
+    ...actual,
+    findSubAccountById: jest.fn(actual.findSubAccountById),
+  };
+});
+
+jest.mock("../preload-data", () => ({
+  ...jest.requireActual("../preload-data"),
+  getCurrentHederaPreloadData: jest.fn(),
+}));
+
+import * as estimateFees from "../logic/estimateFees";
+import * as logicUtils from "../logic/utils";
+import * as preloadData from "../preload-data";
+import { getTransactionStatus } from "./getTransactionStatus";
+
+const mockEstimateFees = estimateFees.estimateFees as jest.Mock;
+const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as jest.Mock;
+const mockCheckAccountTokenAssociationStatus =
+  logicUtils.checkAccountTokenAssociationStatus as jest.Mock;
+const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
+const mockFindSubAccountById = accountHelpers.findSubAccountById as jest.Mock;
 
 describe("getTransactionStatus", () => {
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
@@ -41,13 +77,20 @@ describe("getTransactionStatus", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.spyOn(estimateFees, "estimateFees").mockResolvedValueOnce(mockedEstimatedFee);
-    jest.spyOn(logicUtils, "getCurrencyToUSDRate").mockResolvedValueOnce(mockedUsdRate);
-    jest.spyOn(preloadData, "getCurrentHederaPreloadData").mockReturnValueOnce(mockPreload);
+    // Use persistent mocks (better for test suites) instead of mockResolvedValueOnce
+    mockEstimateFees.mockResolvedValue(mockedEstimatedFee);
+    mockGetCurrencyToUSDRate.mockResolvedValue(mockedUsdRate);
+    mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
+    // Default: association is verified
+    mockCheckAccountTokenAssociationStatus.mockResolvedValue(true);
+    // Reset findSubAccountById to use actual implementation
+    mockFindSubAccountById.mockImplementation(
+      jest.requireActual("@ledgerhq/coin-framework/account").findSubAccountById,
+    );
   });
 
-  afterAll(() => {
-    rpcClient._resetInstance();
+  afterAll(async () => {
+    await rpcClient._resetInstance();
   });
 
   it("coin transfer with valid recipient and sufficient balance completes successfully", async () => {
@@ -66,7 +109,7 @@ describe("getTransactionStatus", () => {
   });
 
   it("hts token transfer with valid recipient and sufficient balance completes successfully", async () => {
-    jest.spyOn(logicUtils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(true);
+    mockCheckAccountTokenAssociationStatus.mockResolvedValueOnce(true);
 
     const tokenCurrency = getMockedHTSTokenCurrency();
     const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(500) });
@@ -135,6 +178,75 @@ describe("getTransactionStatus", () => {
     expect(result.warnings).toEqual({});
   });
 
+  it.each([
+    ["undefined", undefined],
+    ["empty", ""],
+    ["short", "aaaaa"],
+    ["exact limit", "a".repeat(HEDERA_MAX_MEMO_SIZE)],
+  ])("allows %s memo", async (_description, memo) => {
+    const mockedAccount = getMockedAccount();
+    const mockedTransaction = getMockedTransaction({ memo });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.errors.transaction).toBeUndefined();
+  });
+
+  it.each([
+    {
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      description: "delegate",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+      description: "undelegate",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Redelegate,
+      description: "redelegate",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      description: "claim rewards",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      description: "send native",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      description: "send hts token",
+      subAccount: getMockedTokenAccount(getMockedHTSTokenCurrency(), { id: "hts-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      description: "send erc20 token",
+      subAccount: getMockedTokenAccount(getMockedERC20TokenCurrency(), { id: "erc20-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      description: "token associate",
+      properties: { token: getMockedHTSTokenCurrency() },
+    },
+  ])("adds error for too long memo - $description", async ({ mode, subAccount, properties }) => {
+    const tooLongMemo = "a".repeat(HEDERA_MAX_MEMO_SIZE + 1);
+    const mockedAccount = getMockedAccount();
+    const mockedTransaction = getMockedTransaction({
+      mode,
+      memo: tooLongMemo,
+      ...(subAccount && { subAccountId: subAccount.id }),
+      ...(properties && { properties }),
+    } as Transaction);
+
+    mockFindSubAccountById.mockImplementation(() => {
+      return subAccount;
+    });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.errors.transaction).toBeInstanceOf(HederaMemoExceededSizeError);
+  });
+
   it("adds error for invalid recipient address", async () => {
     const mockedAccount = getMockedAccount();
 
@@ -194,7 +306,7 @@ describe("getTransactionStatus", () => {
   });
 
   it("adds warning during token transfer if recipient has no token associated", async () => {
-    jest.spyOn(logicUtils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(false);
+    mockCheckAccountTokenAssociationStatus.mockResolvedValueOnce(false);
 
     const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);

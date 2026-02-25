@@ -1,3 +1,4 @@
+import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
@@ -8,15 +9,11 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
-// We can't use new createRoot for now. We have issues we react-redux 7.x and lazy load of components
-// https://github.com/reduxjs/react-redux/issues/1977
-// eslint-disable-next-line react/no-deprecated
-import { render } from "react-dom";
 import each from "lodash/each";
-import { reload, getKey, loadLSS } from "~/renderer/storage";
+import { reload, getKey } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
 import "~/renderer/styles/global";
-import "~/renderer/live-common-setup";
+import { registerTransportModules } from "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -31,8 +28,9 @@ import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
-import type { ReduxStore } from "~/renderer/createStore";
+import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
+import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
@@ -53,9 +51,9 @@ import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
-import { registerTransportModules } from "~/renderer/live-common-setup";
 import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 const rootNode = document.getElementById("react-root");
 
@@ -121,7 +119,9 @@ async function init() {
   const store = createStore({
     dbMiddleware,
   });
+  const dispatch: AppDispatch = store.dispatch;
 
+  setupListeners(store.dispatch);
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
 
@@ -187,7 +187,6 @@ async function init() {
   const language = languageSelector(state);
 
   i18n.changeLanguage(language);
-  await loadLSS(); // Set env handled inside
 
   const hideEmptyTokenAccounts = hideEmptyTokenAccountsSelector(state);
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);
@@ -209,6 +208,13 @@ async function init() {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
+
+  // Load persisted identities
+  const persistedIdentities = await getKey("app", "identities");
+  if (persistedIdentities) {
+    store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+  }
+
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
@@ -221,8 +227,8 @@ async function init() {
     );
   }
 
-  await fetchTrustchain()(store.dispatch);
-  await fetchWallet()(store.dispatch);
+  await dispatch(fetchTrustchain());
+  await dispatch(fetchWallet());
 
   const marketState = await getKey("app", "market");
   if (marketState) {
@@ -299,10 +305,9 @@ async function init() {
     },
   };
 }
+const root = rootNode ? createRoot(rootNode) : null;
 function r(Comp: React.JSX.Element) {
-  if (rootNode) {
-    render(Comp, rootNode);
-  }
+  root?.render(Comp);
 }
 
 init()

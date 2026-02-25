@@ -1,5 +1,45 @@
 # @actions/submit-bot-report
 
+## 1.4.0
+
+### Minor Changes
+
+- [#13946](https://github.com/LedgerHQ/ledger-live/pull/13946) [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - move from tsup to @rslib/core
+
+- [#13871](https://github.com/LedgerHQ/ledger-live/pull/13871) [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - add EVM currencies avalanche_c_chain_fuji, bitlayer, klaytn_baobab, shape, story
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#13946](https://github.com/LedgerHQ/ledger-live/pull/13946) [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - move from tsup to @rslib/core
+
+- [#13871](https://github.com/LedgerHQ/ledger-live/pull/13871) [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - add EVM currencies avalanche_c_chain_fuji, bitlayer, klaytn_baobab, shape, story
+
+## 1.3.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 1.2.0
+
+### Minor Changes
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
 ## 1.1.0
 
 ### Minor Changes

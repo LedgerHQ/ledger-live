@@ -55,6 +55,34 @@ index 1234567890abcdef1234567890abcdef12345678..abcdef1234567890abcdef1234567890
          }
        }
      } catch (error) {
+diff --git a/src/utils/ExclusiveLockfile.js b/src/utils/ExclusiveLockfile.js
+index 1234567890abcdef1234567890abcdef12345678..abcdef1234567890abcdef1234567890abcdef12 100644
+--- a/src/utils/ExclusiveLockfile.js
++++ b/src/utils/ExclusiveLockfile.js
+@@ -6,6 +6,14 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+ 
+ const retry = require('./retry');
+ 
++// Increase stale threshold for CI environments where disk I/O can be slow
++// Default is 10000ms which causes ECOMPROMISED errors under heavy load
++const LOCKFILE_STALE_MS = parseInt(process.env.DETOX_LOCKFILE_STALE_MS, 10) || 60000;
++const LOCKFILE_OPTIONS = {
++  stale: LOCKFILE_STALE_MS,
++  update: Math.floor(LOCKFILE_STALE_MS / 2),
++};
++
+ const DEFAULT_OPTIONS = {
+   retry: { retries: 10000, interval: 5 },
+   read: { encoding: 'utf8' },
+@@ -100,7 +108,7 @@ class ExclusiveLockfile {
+     this._ensureFileExists();
+ 
+     await retry(this._options.retry, () => {
+-      const operationResult = plockfile.lockSync(this._lockFilePath);
++      const operationResult = plockfile.lockSync(this._lockFilePath, LOCKFILE_OPTIONS);
+ 
+       this._isLocked = true;
+       this._invalidate();
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
 index ab269f5ba3cb6ec033594a5e05284b95f01a39a6..f38390723a0bb70af36ef4017353c3f9257afe53 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js

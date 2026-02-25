@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
@@ -16,7 +16,7 @@ import BondedIcon from "~/icons/LinkIcon";
 import UnbondingIcon from "~/icons/Clock";
 import Unbonded from "~/icons/Undelegate";
 import WarningIcon from "~/icons/Warning";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: PolkadotAccount;

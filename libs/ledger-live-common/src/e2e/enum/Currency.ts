@@ -25,6 +25,8 @@ export class Currency {
 
   static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS, [Network.APTOS]);
 
+  static readonly ZEC = new Currency("Zcash", "ZEC", "zcash", AppInfos.ZCASH, [Network.ZCASH]);
+
   static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
 
   static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
@@ -48,13 +50,6 @@ export class Currency {
     AppInfos.ETHEREUM,
     [Network.ETHEREUM],
     "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-  );
-  static readonly tETH = new Currency(
-    "Ethereum Holesky",
-    "𝚝ETH",
-    "ethereum_holesky",
-    AppInfos.ETHEREUM_HOLESKY,
-    [Network.ETHEREUM_HOLESKY],
   );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",
@@ -137,7 +132,7 @@ export class Currency {
     AppInfos.ETHEREUM,
     [Network.ETHEREUM],
   );
-  static readonly XLM_USCD = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
+  static readonly XLM_USDC = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
     Network.STELLAR,
   ]);
   static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [
@@ -198,6 +193,12 @@ export class Currency {
   ]);
 
   static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
+
+  static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
+
+  static readonly VET = new Currency("Vechain", "VET", "vechain", AppInfos.VECHAIN, [
+    Network.VECHAIN,
+  ]);
 
   static readonly SUI_USDC = new Currency(
     "USD Coin",

@@ -2,7 +2,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import React, { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking, Pressable, View } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Track, track } from "~/analytics";

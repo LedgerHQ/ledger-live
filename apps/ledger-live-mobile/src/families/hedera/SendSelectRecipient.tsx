@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Linking, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { sendRecipientCanNext } from "@ledgerhq/live-common/families/hedera/utils";

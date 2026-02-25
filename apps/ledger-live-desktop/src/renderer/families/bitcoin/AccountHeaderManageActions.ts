@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
@@ -8,7 +8,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useStake } from "LLD/hooks/useStake";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
   const availableOnStake =
     getCanStakeCurrency("bitcoin") ||
@@ -53,8 +53,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const stakeOnClick = () => {
     track("button_clicked2", trackingProperties);
 
-    history.push({
-      pathname: routeToPlatformApp?.pathname,
+    navigate(routeToPlatformApp?.pathname ?? "/", {
       state: {
         returnTo: `/account/${account.id}`,
         ...routeToPlatformApp?.state,

@@ -1,11 +1,9 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import React, { useRef, forwardRef, useMemo } from "react";
+import React, { forwardRef, useMemo } from "react";
 import { Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import { ScopeProvider } from "jotai-scope";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
@@ -18,7 +16,6 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { DefaultAccountSwapParamList } from "../types";
-import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";
@@ -26,7 +23,8 @@ import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/Custom
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import SafeAreaView from "~/components/SafeAreaView";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -61,48 +59,50 @@ export const WebView = forwardRef<WebviewAPI, Props>(
 
     const devMode = exportSettings.developerModeEnabled.toString();
     const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-
-    const currentAccounts = useSelector(flattenAccountsSelector);
-    const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
-    const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
+    const swapParams = useTranslateToSwapAccount(params);
     const llmModularDrawerFF = useFeature("llmModularDrawer");
 
     const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
+
+    const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("mobile");
+    const insets = useSafeAreaInsets();
 
     // Capture the initial source to prevent webview refreshes.
     // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
     const initialSource = useMemo(() => currentRouteNameRef.current || "", []);
 
-    // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
     return (
-      <ScopeProvider atoms={[currentAccountAtom]}>
-        <SafeAreaView edges={["bottom"]} isFlex>
-          <Web3AppWebview
-            ref={ref}
-            manifest={manifest}
-            customHandlers={customHandlers}
-            onStateChange={setWebviewState}
-            inputs={{
-              source: initialSource,
-              swapApiBase: SWAP_API_BASE,
-              swapUserIp: SWAP_USER_IP,
-              devMode,
-              theme,
-              lang: language,
-              locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
-              countryLocale,
-              currencyTicker,
-              lastSeenDevice: lastSeenDevice?.modelId,
-              OS: Platform.OS,
-              platform: "LLM", // need consistent format with LLD, Platform doesn't work
-              shareAnalytics,
-              hasSeenAnalyticsOptInPrompt,
-              isModularDrawer: isLlmModularDrawer ? "true" : "false",
-              ...swapParams,
-            }}
-          />
-        </SafeAreaView>
-      </ScopeProvider>
+      <SafeAreaView edges={["bottom"]} isFlex>
+        <Web3AppWebview
+          ref={ref}
+          manifest={manifest}
+          customHandlers={customHandlers}
+          onStateChange={setWebviewState}
+          inputs={{
+            source: initialSource,
+            swapApiBase: SWAP_API_BASE,
+            swapUserIp: SWAP_USER_IP,
+            devMode,
+            theme,
+            lang: language,
+            locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
+            countryLocale,
+            currencyTicker,
+            lastSeenDevice: lastSeenDevice?.modelId,
+            OS: Platform.OS,
+            platform: "LLM", // need consistent format with LLD, Platform doesn't work
+            shareAnalytics,
+            hasSeenAnalyticsOptInPrompt,
+            isModularDrawer: isLlmModularDrawer ? "true" : "false",
+            lwm40enabled: isLwm40Enabled ? "true" : "false",
+            safeAreaTop: insets.top.toString(),
+            safeAreaBottom: insets.bottom.toString(),
+            safeAreaLeft: insets.left.toString(),
+            safeAreaRight: insets.right.toString(),
+            ...swapParams,
+          }}
+        />
+      </SafeAreaView>
     );
   },
 );

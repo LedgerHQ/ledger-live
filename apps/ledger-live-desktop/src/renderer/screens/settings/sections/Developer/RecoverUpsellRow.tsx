@@ -1,7 +1,7 @@
 import React from "react";
 import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
-import { Switch } from "@ledgerhq/ldls-ui-react";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 
 export function RecoverUpsellRow() {
   const { overrideFeature, resetFeature } = useFeatureFlags();

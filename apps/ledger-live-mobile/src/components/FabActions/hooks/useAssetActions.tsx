@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import {
   getAccountCurrency,

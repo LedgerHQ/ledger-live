@@ -3,7 +3,6 @@ import axios from "axios";
 import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
-import announcementsApi from "../notifications/AnnouncementProvider/api/api";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
 
 export type TroubleshootStatus = {
@@ -48,12 +47,6 @@ export function troubleshoot(): Troubleshoot[] {
       title: "Countervalues API",
       translationKey: "troubleshootNetwork.countervaluesApi",
       ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?froms=bitcoin&to=eur`),
-    },
-    {
-      title: "Announcements",
-      translationKey: "troubleshootNetwork.announcements",
-      technicalDescription: "fetching announcements",
-      job: announcementsApi.fetchAnnouncements(),
     },
     {
       title: "Status",

@@ -1,19 +1,19 @@
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import { getTransactions } from "../network/indexer";
 import { getAccountInfo, getBlockHeight } from "../network/node";
 
 import { BoilerplateOperation } from "../network/types";
-import coinConfig from "../config";
 
 const operationAdapter =
   (accountId: string, address: string) =>
   ({
     meta: { delivered_amount },
-    tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
+    tx: { Fee, hash, inLedger, Account, Destination, Sequence },
   }: BoilerplateOperation) => {
     const type = Account === address ? "OUT" : "IN";
     let value =
@@ -85,8 +85,8 @@ export const getAccountShape: GetAccountShape = async info => {
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const newTransactions = await getTransactions(address, {
-    from: startAt,
-    size: 100,
+    minHeight: startAt,
+    limit: 100,
   });
   const newOperations = filterOperations(newTransactions, accountId, address);
   const operations = mergeOps(oldOperations, newOperations as Operation[]);

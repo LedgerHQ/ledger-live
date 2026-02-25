@@ -1,4 +1,4 @@
-import React, { useCallback, memo, useState, useMemo, useEffect, SyntheticEvent } from "react";
+import React, { useCallback, memo, useState, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import {
@@ -75,8 +75,8 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
   const visible = update.length > 0;
   const updateProgress = updateAllProgress(state);
   const onUpdateAll = useCallback(
-    (e: SyntheticEvent<HTMLButtonElement>) => {
-      if (open) e.stopPropagation();
+    (e?: React.MouseEvent) => {
+      if (open && e) e.stopPropagation();
       dispatch({
         type: "updateAll",
       });
@@ -177,7 +177,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
     [optimisticState, state, dispatch, isIncomplete],
   );
   return (
-    <FadeInOutBox in={visible} mt={4}>
+    <FadeInOutBox in={visible} mt={4} timing={800} state="entered">
       <CollapsibleCard
         header={<UpdatableHeader>{visible && updateHeader}</UpdatableHeader>}
         open={open}

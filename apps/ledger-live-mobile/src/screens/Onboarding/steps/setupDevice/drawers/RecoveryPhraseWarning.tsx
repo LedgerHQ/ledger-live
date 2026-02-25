@@ -1,7 +1,7 @@
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
 
 const OnboardingRecoveryPhraseWarning = ({

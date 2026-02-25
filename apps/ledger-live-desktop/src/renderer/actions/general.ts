@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
-// eslint-disable-next-line no-restricted-imports
 import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -23,12 +22,12 @@ import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
   counterValueCurrencySelector,
   getOrderAccounts,
+  selectedTimeRangeSelector,
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
 import { countervaluesActions } from "./countervalues";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
-import { useMarketPerformanceTrackingPairs } from "./marketperformance";
 
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
@@ -109,9 +108,7 @@ export const themeSelector = createSelector(
 export function useCalculateCountervaluesUserSettings() {
   const dispatch = useDispatch();
   const countervalue = useSelector(counterValueCurrencySelector);
-
-  // countervalues for top coins (market performance feature)
-  const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
+  const selectedTimeRange = useSelector(selectedTimeRangeSelector);
 
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);
@@ -123,9 +120,7 @@ export function useCalculateCountervaluesUserSettings() {
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
 
   useEffect(() => {
-    const trackingPairs = resolveTrackingPairs(
-      extraSessionTrackingPairs.concat(trPairs).concat(trackingPairsForTopCoins),
-    );
+    const trackingPairs = resolveTrackingPairs(extraSessionTrackingPairs.concat(trPairs));
 
     const granularitiesRates = granularitiesRatesConfig?.enabled
       ? {
@@ -133,6 +128,7 @@ export function useCalculateCountervaluesUserSettings() {
           hourly: Number(granularitiesRatesConfig.params?.hourly),
         }
       : undefined;
+
     dispatch(
       countervaluesActions.COUNTERVALUES_USER_SETTINGS_SET({
         trackingPairs,
@@ -142,13 +138,8 @@ export function useCalculateCountervaluesUserSettings() {
           "config_countervalues_marketCapBatchingAfterRank",
         ),
         granularitiesRates,
+        selectedTimeRange,
       }),
     );
-  }, [
-    dispatch,
-    granularitiesRatesConfig,
-    extraSessionTrackingPairs,
-    trackingPairsForTopCoins,
-    trPairs,
-  ]);
+  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs, selectedTimeRange]);
 }

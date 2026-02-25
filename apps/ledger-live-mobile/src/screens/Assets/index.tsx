@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList, FlatListProps } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";

@@ -2,8 +2,8 @@ import { test } from "tests/fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "tests/utils/cliUtils";
 import { FileUtils } from "tests/utils/fileUtils";
+import { liveDataCommand } from "tests/utils/cliCommandsUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -45,16 +45,7 @@ test.describe("Password", () => {
   const account = Account.ETH_1;
   test.use({
     userdata: "skip-onboarding",
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.currency.id,
-          index: account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
 
@@ -92,16 +83,7 @@ test.describe("counter value selection", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
     userdata: "skip-onboarding",
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.currency.id,
-          index: account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
 

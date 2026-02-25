@@ -1,5 +1,5 @@
-import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
 
 async function getDeviceTransactionConfig({
@@ -27,11 +27,11 @@ async function getDeviceTransactionConfig({
     });
   }
 
-  if (tag) {
+  if (typeof tag === "number") {
     fields.push({
       type: "text",
       label: "Tag",
-      value: tag ? String(tag) : "",
+      value: String(tag),
     });
   }
 

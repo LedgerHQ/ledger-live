@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { shallowEqual, useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "~/context/Locale";
+import { shallowEqual } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
@@ -15,10 +16,12 @@ import {
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import useListsAnimation, { type TabListType } from "./useListsAnimation";
-import TabSection, { TAB_OPTIONS } from "./TabSection";
+import MarketBanner from "LLM/features/MarketBanner";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
+import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -69,26 +72,19 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const assetsToDisplay = useMemo(
+  const filteredAssets = useMemo(
     () =>
-      distribution.list
-        .filter(asset => {
-          return (
-            asset.currency.type !== "TokenCurrency" ||
-            !blacklistedTokenIdsSet.has(asset.currency.id)
-          );
-        })
-        .slice(0, maxItemsToDisplay),
+      distribution.list.filter(
+        ({ currency }) =>
+          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
+      ),
     [distribution, blacklistedTokenIdsSet],
   );
 
-  const {
-    handleButtonLayout,
-    handleAccountsContentSizeChange,
-    handleAssetsContentSizeChange,
-    assetsFullHeight,
-    accountsFullHeight,
-  } = useListsAnimation(selectedTab);
+  const assetsToDisplay = useMemo(
+    () => filteredAssets.slice(0, maxItemsToDisplay),
+    [filteredAssets],
+  );
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
 
@@ -128,6 +124,12 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
+  const {
+    isEnabled: isWallet40Enabled,
+    shouldDisplayQuickActionCtas,
+    shouldDisplayMarketBanner,
+  } = useWalletFeaturesConfig("mobile");
+
   return (
     <>
       <TrackScreen
@@ -135,22 +137,33 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <Box my={24}>
-        <PortfolioQuickActionsBar />
-      </Box>
+
+      {!shouldDisplayQuickActionCtas && (
+        <Box my={24}>
+          <PortfolioQuickActionsBar />
+        </Box>
+      )}
+
+      {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
+
+      <MarketBanner />
+
+      {isWallet40Enabled && <PortfolioPerpsEntryPoint />}
+
+      {shouldDisplayMarketBanner && __DEV__ && (
+        <Box my={24}>
+          <MarketBannerFeature />
+        </Box>
+      )}
+
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}
-          handleButtonLayout={handleButtonLayout}
-          handleAssetsContentSizeChange={handleAssetsContentSizeChange}
-          handleAccountsContentSizeChange={handleAccountsContentSizeChange}
           onPressButton={onPressButton}
           initialTab={initialSelectedTab}
           showAssets={showAssets}
-          assetsLength={assetsToDisplay.length}
+          assetsLength={filteredAssets.length}
           accountsLength={allAccounts.length}
-          assetsFullHeight={assetsFullHeight}
-          accountsFullHeight={accountsFullHeight}
           maxItemsToDisplay={maxItemsToDisplay}
         />
       ) : (

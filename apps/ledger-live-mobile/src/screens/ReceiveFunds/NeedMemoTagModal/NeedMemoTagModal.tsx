@@ -2,7 +2,7 @@ import { useTheme } from "styled-components/native";
 import React, { useState } from "react";
 import { Linking } from "react-native";
 import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { urls } from "~/utils/urls";

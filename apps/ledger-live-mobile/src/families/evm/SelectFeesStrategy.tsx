@@ -8,7 +8,7 @@ import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   FlatList,
   ListRenderItemInfo,

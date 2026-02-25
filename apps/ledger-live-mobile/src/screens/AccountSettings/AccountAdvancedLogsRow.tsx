@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { ScreenName } from "~/const";

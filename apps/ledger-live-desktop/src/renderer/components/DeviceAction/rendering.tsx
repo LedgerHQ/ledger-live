@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 import React, { Fragment, useCallback, useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { connect, useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { connect } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { Account, ABTestingVariants } from "@ledgerhq/types-live";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {
   Button as ButtonV3,
@@ -44,8 +44,11 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
-import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-desktop";
-import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
+import {
+  DmkError,
+  isInvalidGetFirmwareMetadataResponseError,
+  isDisconnectedWhileSendingApduError,
+} from "@ledgerhq/live-dmk-desktop";
 
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
@@ -348,7 +351,7 @@ const OpenManagerBtn = ({
   mt?: number;
   ml?: number;
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { setDrawer } = useContext(context);
 
   const onClick = useCallback(() => {
@@ -359,10 +362,7 @@ const OpenManagerBtn = ({
     });
     const search = urlParams.toString();
     setTrackingSource("device action open manager button");
-    history.push({
-      pathname: "/manager",
-      search: search ? `?${search}` : "",
-    });
+    navigate(`/manager${search ? `?${search}` : ""}`);
     closeAllModal();
     closePlatformAppDrawer();
     setDrawer(undefined);
@@ -370,7 +370,7 @@ const OpenManagerBtn = ({
     updateApp,
     firmwareUpdate,
     appName,
-    history,
+    navigate,
     closeAllModal,
     closePlatformAppDrawer,
     setDrawer,
@@ -386,14 +386,14 @@ const OpenManagerBtn = ({
 const OpenOnboardingBtn = () => {
   const { setDrawer } = useContext(context);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClick = useCallback(() => {
     setTrackingSource("device action open onboarding button");
     dispatch(closeAllModal());
     setDrawer(undefined);
-    history.push("/onboarding");
-  }, [dispatch, history, setDrawer]);
+    navigate("/onboarding");
+  }, [dispatch, navigate, setDrawer]);
 
   return (
     <Button primary onClick={onClick}>
@@ -652,7 +652,7 @@ export const renderWarningOutdated = ({
       <Trans i18nKey="DeviceAction.outdatedDesc" values={{ appName }} />
     </ErrorDescription>
     <ButtonContainer>
-      <Button secondary onClick={passWarning}>
+      <Button onClick={passWarning}>
         <Trans i18nKey="common.continue" />
       </Button>
       <OpenManagerButton ml={4} mt={0} appName={appName} updateApp />
@@ -705,7 +705,7 @@ export const renderLockedDeviceError = ({
 export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   ({ t, device }: { t: TFunction; device?: Device | null }) => {
     const productName = device ? getDeviceModel(device.modelId).productName : null;
-    const history = useHistory();
+    const navigate = useNavigate();
     const { setDrawer } = useContext(context);
     const dispatch = useDispatch();
 
@@ -714,15 +714,15 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       dispatch(closeAllModal());
       setDrawer(undefined);
       if (!device?.modelId) {
-        history.push("/onboarding");
+        navigate("/onboarding");
       } else {
-        history.push(
+        navigate(
           isSyncOnboardingSupported(device.modelId)
             ? `/sync-onboarding/${device.modelId}`
             : "/onboarding",
         );
       }
-    }, [device?.modelId, dispatch, history, setDrawer]);
+    }, [device?.modelId, dispatch, navigate, setDrawer]);
 
     return (
       <Wrapper id="error-device-not-onboarded">
@@ -754,12 +754,12 @@ const FirmwareNotRecognizedErrorComponent: React.FC<{
   onRetry?: (() => void) | null | undefined;
 }> = ({ onRetry }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToExperimentalSettings = () => {
     setDrawer();
     dispatch(closeAllModal());
-    history.push("/settings/experimental");
+    navigate("/settings/experimental");
   };
   return (
     <Wrapper>
@@ -1023,7 +1023,7 @@ export const HardwareUpdate = ({
 }) => (
   <Wrapper>
     <Header>
-      <Image resource={Nano} alt="NanoS" mb="40px"></Image>
+      <Image resource={Nano} alt="NanoS" style={{ marginBottom: 40 }} />
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="neutral.c100">
@@ -1317,7 +1317,10 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
         )}
       </ConfirmWrapper>
       <Separator />
-      <DrawerFooter provider={exchangeRate.provider} />
+      <DrawerFooter
+        provider={exchangeRate.provider}
+        sponsored={transaction.family === "evm" && transaction.sponsored}
+      />
     </>
   );
 };

@@ -10,7 +10,6 @@ import {
 import * as logic from "../../logic";
 import { IconAccount, Transaction } from "../../types";
 import { getSendTransactionStatus, getTransactionStatus } from "../../getTransactionStatus";
-import * as TransactionStatus from "../../getTransactionStatus";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IconDoMaxSendInstead } from "../../errors";
@@ -119,29 +118,39 @@ describe("getTransactionStatus", () => {
   beforeEach(() => {
     account = {
       spendableBalance: new BigNumber(1000),
-      currency: { name: "ICON", units: [{ code: "ICX" }] },
+      currency: {
+        name: "Icon",
+        units: [{ code: "ICX", name: "", magnitude: 0 }],
+      } as CryptoCurrency,
+      iconResources: {
+        totalDelegated: new BigNumber(0),
+        votingPower: new BigNumber(0),
+        nonce: 0,
+      },
     } as IconAccount;
     transaction = {
       fees: new BigNumber(10),
       mode: "send",
+      recipient: "hx1234567890abcdef",
       useAllAmount: false,
     } as Transaction;
     mockedLogic.calculateAmount.mockReturnValue(new BigNumber(100));
+    mockedLogic.getMinimumBalance.mockReturnValue(new BigNumber(0));
+    mockedLogic.isSelfTransaction.mockReturnValue(false);
+    mockedLogic.isValidAddress.mockReturnValue(true);
   });
 
   it("should delegate to getSendTransactionStatus for send mode", async () => {
-    const sendTransactionStatus = {
-      errors: {},
-      warnings: {},
-      estimatedFees: new BigNumber(10),
-      amount: new BigNumber(100),
-      totalSpent: new BigNumber(110),
-    } as any;
-    jest
-      .spyOn(TransactionStatus, "getSendTransactionStatus")
-      .mockResolvedValue(sendTransactionStatus);
+    // When mode is "send", getTransactionStatus delegates to getSendTransactionStatus
+    // We verify this by checking that the result matches getSendTransactionStatus behavior
     const result = await getTransactionStatus(account, transaction);
-    expect(result).toEqual(sendTransactionStatus);
+
+    // Verify the result structure matches what getSendTransactionStatus returns
+    expect(result.errors).toEqual({});
+    expect(result.warnings).toEqual({});
+    expect(result.estimatedFees).toEqual(new BigNumber(10));
+    expect(result.amount).toEqual(new BigNumber(100));
+    expect(result.totalSpent).toEqual(new BigNumber(110));
   });
 
   it("should handle default case correctly", async () => {

@@ -19,11 +19,12 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
-    "src/network/mock-network.ts",
     "src/test/bot-specs.ts",
-    "src/types/assets.ts"
+    "src/test/concordiumTestUtils.ts",
+    "src/test/fixtures.ts",
+    "src/test/testHelpers.ts",
+    "src/test/walletConnectFixtures.ts",
+    "src/types/errors.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/devices"
-  ]
+  "ignoreUnused": []
 }

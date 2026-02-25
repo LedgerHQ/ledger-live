@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItem } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import AccountRow from "../Accounts/AccountRow";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";

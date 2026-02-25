@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";

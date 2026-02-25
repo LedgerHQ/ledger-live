@@ -3,10 +3,8 @@ import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
 import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
-import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
 import updater from "./updater";
-import path from "path";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
@@ -90,46 +88,6 @@ ipcMain.handle(
     return false;
   },
 );
-
-const lssFileName = "lss.json";
-ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boolean> => {
-  const userDataDirectory = app.getPath("userData");
-  const filePath = path.resolve(userDataDirectory, lssFileName);
-  if (filePath) {
-    if (filePath && data) {
-      await fs.writeFile(filePath, data, { mode: "640" });
-      log("satstack", "wrote to lss.json file");
-      return true;
-    }
-  }
-  return false;
-});
-
-ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
-  const userDataDirectory = app.getPath("userData");
-  const filePath = path.resolve(userDataDirectory, lssFileName);
-  if (filePath) {
-    await fs.unlink(filePath);
-    log("satstack", "deleted lss.json file");
-    return true;
-  }
-  return false;
-});
-
-ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> => {
-  try {
-    const userDataDirectory = app.getPath("userData");
-    const filePath = path.resolve(userDataDirectory, lssFileName);
-    if (filePath) {
-      const contents = await fs.readFile(filePath, "utf8");
-      log("satstack", `loaded lss.json file with length ${contents.length}`);
-      return contents;
-    }
-  } catch {
-    log("satstack", "tried to load lss.json");
-  }
-  return undefined;
-});
 
 ipcMain.handle("activate-keep-screen-awake", () => {
   return powerSaveBlocker.start("prevent-display-sleep");

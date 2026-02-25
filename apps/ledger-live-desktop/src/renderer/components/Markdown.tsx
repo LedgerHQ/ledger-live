@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
-import { shell } from "electron";
+import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 
 export const Notes = styled(Box).attrs(() => ({
@@ -144,7 +144,7 @@ export default class Markdown extends PureComponent<Props> {
           e.preventDefault();
 
           const href = e.target && (e.target as typeof link).href;
-          if (href) shell.openExternal(href);
+          if (href) openURL(href, "MarkdownLinkClick");
         });
       });
     }
@@ -154,7 +154,12 @@ export default class Markdown extends PureComponent<Props> {
   render() {
     const { children } = this.props;
     return (
-      <div id="terms-markdown" ref={c => (this.parent = c)}>
+      <div
+        id="terms-markdown"
+        ref={c => {
+          this.parent = c;
+        }}
+      >
         {/* @ts-expect-error ReactMarkdown being weird, also we are using v4, and v8 has been out for a while */}
         <ReactMarkdown>{children}</ReactMarkdown>
       </div>

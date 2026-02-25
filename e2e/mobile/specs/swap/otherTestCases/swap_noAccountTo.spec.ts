@@ -5,7 +5,18 @@ const noAccountToTestConfig = {
   account2: Account.BTC_NATIVE_SEGWIT_1,
   testTitle: "from Account present to Account not present",
   tmsLinks: ["B2CQA-3354"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
 };
 
 runSwapWithoutAccountTest(

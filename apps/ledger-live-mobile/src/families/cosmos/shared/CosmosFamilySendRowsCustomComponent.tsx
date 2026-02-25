@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 import LText from "~/components/LText";

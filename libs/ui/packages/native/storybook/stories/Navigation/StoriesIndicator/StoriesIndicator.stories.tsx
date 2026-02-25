@@ -8,7 +8,7 @@ export default {
   component: StoriesIndicator,
 };
 
-export const StoriesIndicatorSample: StoryFn<typeof StoriesIndicator> = (
+export const StoriesIndicatorSample: StoryFn<typeof StoriesIndicatorSampleArgs> = (
   args: typeof StoriesIndicatorSampleArgs,
 ) => {
   const [activeIndex, setActiveIndex] = useState<number>(1);

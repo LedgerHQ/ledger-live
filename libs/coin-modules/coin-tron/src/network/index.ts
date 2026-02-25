@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -8,8 +9,7 @@ import compact from "lodash/compact";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
-import { stringify } from "querystring";
-import TronWeb from "tronweb";
+import { TronWeb, providers } from "tronweb";
 import coinConfig from "../config";
 import type {
   FreezeTransactionData,
@@ -288,15 +288,30 @@ async function extendExpiration(
   preparedTransaction: any,
   expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
-  const HttpProvider = TronWeb.providers.HttpProvider;
+  const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(getBaseApiUrl());
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
-  return tronWeb.transactionBuilder.extendExpiration(
-    preparedTransaction,
-    expiration ?? DEFAULT_EXPIRATION,
-  ) as unknown as Promise<SendTransactionDataSuccess>;
+  const extension = expiration ?? DEFAULT_EXPIRATION;
+  try {
+    return (await tronWeb.transactionBuilder.extendExpiration(
+      preparedTransaction,
+      extension,
+    )) as unknown as Promise<SendTransactionDataSuccess>;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : typeof err === "string" ? err : "";
+    if (message === "Invalid extension provided") {
+      // https://github.com/tronprotocol/tronweb/blob/2da130f4a295b9e9bd45361c15b5ca9d689cfa65/src/lib/transactionBuilder.js#L2929
+      log("tron/extendExpiration", message, {
+        preparedTransaction,
+        extensionInS: extension,
+        extensionInMs: extension * 1000,
+        minFinalExpiration: Date.now() + 3000,
+      });
+    }
+    throw err;
+  }
 }
 
 type BroadcastSuccessResponseTronAPI = { result: true; txid: string };
@@ -523,14 +538,13 @@ export async function fetchTronAccountTxs(
         tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
       // and also a duplicated malformed tx that we have to ignore
       const isDuplicated = tx.tx_id;
-      const type = tx.raw_data.contract[0].type;
 
       if (hasInternalTxs) {
         // log once
         log("tron-error", `unsupported transaction ${tx.txID}`);
       }
 
-      return !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract";
+      return !isDuplicated && !hasInternalTxs;
     })
     .map(tx => formatTrongridTxResponse(tx));
 
@@ -561,7 +575,7 @@ export async function fetchTronAccountTxs(
         invalids.push(i);
       }
     }
-    txs.filter(tx => !isValid(tx)).map((tx, index) => index);
+    txs.filter(tx => !isValid(tx)).map((_tx, index) => index);
     return invalids;
   }
 
@@ -606,11 +620,21 @@ export async function fetchTronAccountTxs(
     }
   }
 
-  const trc20Txs = (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse);
-
-  const txInfos: TrongridTxInfo[] = compact(nativeTxs.concat(trc20Txs)).sort(
-    (a, b) => b.date.getTime() - a.date.getTime(),
+  const trc20Txs = compact(
+    (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse),
   );
+  const trc20TxIds = new Set(trc20Txs.map(t => t.txID));
+  const isSuccessfulTriggerSmartContract = (tx: TrongridTxInfo) =>
+    tx.type === "TriggerSmartContract" && !tx.hasFailed;
+  const nativeDeduped = compact(nativeTxs)
+    // remove any trc20 transaction from native
+    .filter(tx => !trc20TxIds.has(tx.txID))
+    // remove any successful TriggerSmartContract from native; successful ones must come from TRC20
+    .filter(tx => !isSuccessfulTriggerSmartContract(tx));
+
+  const txInfos: TrongridTxInfo[] = nativeDeduped
+    .concat(trc20Txs)
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
   return txInfos;
 }
 

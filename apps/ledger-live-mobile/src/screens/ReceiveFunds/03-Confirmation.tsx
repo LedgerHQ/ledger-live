@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import QRCode from "react-native-qrcode-svg";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,7 +17,6 @@ import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledger
 import { useRoute } from "@react-navigation/native";
 import { hasMemoTag } from "LLM/features/MemoTag/utils/hasMemoTag";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
@@ -35,15 +34,12 @@ import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
@@ -68,7 +64,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>``;
 
 export default function ReceiveConfirmation({ navigation }: Props) {
   const route = useRoute<ScreenProps["route"]>();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   return account ? (
     <ReceiveConfirmationInner
@@ -195,11 +191,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     });
   }, [network, currency?.name]);
 
-  useEffect(() => {
-    if (verified || !isModalOpened) {
-      triggerSuccessEvent();
-    }
-  }, [verified, isModalOpened, triggerSuccessEvent]);
   const freshAccountAddress = useMemo(() => {
     return mainAccount && getFreshAccountAddress(mainAccount);
   }, [mainAccount]);
@@ -253,7 +244,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     () => ({
       height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
         if (onFinish && bannerHeight.value === 0) {
-          runOnJS(hideBanner)();
+          scheduleOnRN(hideBanner);
         }
       }),
       opacity: withTiming(bannerOpacity.value, { duration: 200 }),

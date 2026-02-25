@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useMemo, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import Button from "~/components/Button";
 import SectionSeparator from "~/components/SectionSeparator";

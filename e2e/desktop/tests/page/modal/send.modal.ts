@@ -4,7 +4,8 @@ import { step } from "tests/misc/reporters/step";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
-  private accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
+  private accountDebitContainer = this.page.locator("#account-debit-placeholder");
+  private accountDebitInput = this.page.locator("#account-debit-placeholder input");
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
   private checkDeviceLabel = this.page.locator(
@@ -30,7 +31,10 @@ export class SendModal extends Modal {
   }
 
   @step("Enter recipient as $0")
-  async fillRecipient(recipient: string) {
+  async fillRecipient(recipient: string | undefined) {
+    if (!recipient) {
+      throw new Error("Recipient address is not set");
+    }
     await this.recipientInput.clear();
     await this.recipientInput.fill(recipient);
   }
@@ -76,15 +80,16 @@ export class SendModal extends Modal {
 
   @step("Verify tx information before confirming")
   async expectTxInfoValidity(tx: Transaction) {
-    const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
-    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
+    if (!tx.accountToCredit.address) {
+      throw new Error("Recipient address is not set");
+    }
+    await expect(this.recipientAddressDisplayedValue).toHaveText(tx.accountToCredit.address);
 
-    const displayedAmount = await this.amountDisplayedValue.innerText();
-    expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
-    expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
+    await expect(this.amountDisplayedValue).toContainText(tx.amount);
+    await expect(this.amountDisplayedValue).toContainText(tx.accountToDebit.currency.ticker);
+
     if (tx.accountToCredit.ensName) {
-      const displayedEns = await this.recipientEnsDisplayed.innerText();
-      expect(displayedEns).toEqual(tx.accountToCredit.ensName);
+      await expect(this.recipientEnsDisplayed).toHaveText(tx.accountToCredit.ensName);
     }
   }
 
@@ -147,9 +152,9 @@ export class SendModal extends Modal {
 
   @step("Select currency to debit")
   async selectDebitCurrency(tx: Transaction) {
-    await expect(this.accountDebitPlaceholder).toBeVisible();
-    await this.accountDebitPlaceholder.click();
-    await this.accountDebitPlaceholder.fill(tx.accountToDebit.currency.ticker);
+    await expect(this.accountDebitContainer).toBeVisible();
+    await this.accountDebitContainer.click();
+    await this.accountDebitInput.fill(tx.accountToDebit.currency.ticker);
     await this.dropdownOptions
       .locator(this.optionWithText(tx.accountToDebit.currency.ticker.toUpperCase()))
       .click();

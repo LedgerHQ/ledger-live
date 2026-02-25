@@ -81,7 +81,7 @@ const RepairFunnelSolution = ({
         {t("connectTroubleshooting.steps.4.notFixed.desc")}
       </Subtitle>
       <Box horizontal>
-        <Button secondary onClick={onBack} mr={2}>
+        <Button onClick={onBack} mr={2}>
           {t("connectTroubleshooting.steps.4.notFixed.cta2")}
         </Button>
         <Button primary onClick={onContactSupport}>

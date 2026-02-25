@@ -1,5 +1,5 @@
 import React, { memo, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";

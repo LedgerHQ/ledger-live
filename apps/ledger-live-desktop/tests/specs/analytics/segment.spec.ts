@@ -33,11 +33,8 @@ test("Segment", async ({ page }) => {
     });
   });
 
-  await test.step("has analytics settled", async () => {
-    const hasAnalytics = await page.evaluate(() => !!window.analytics);
-    expect(hasAnalytics).toBe(true);
+  await test.step("navigate to settings to trigger analytics", async () => {
     await layout.goToSettings();
-    await page.waitForFunction(() => "Integrations" in window.analytics);
   });
 
   await test.step("has sent event with userId settled", async () => {

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import AccountSubHeader from "~/components/AccountSubHeader";
 import Alert from "~/components/Alert";

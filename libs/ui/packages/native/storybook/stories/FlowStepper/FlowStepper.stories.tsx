@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { Animated, ScrollView, StyleSheet, ImageSourcePropType, Platform } from "react-native";
 import { RenderTransitionProps } from "../../../src/components/Navigation/FlowStepper";
 import {

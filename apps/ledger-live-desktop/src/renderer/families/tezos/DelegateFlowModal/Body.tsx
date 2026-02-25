@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { bindActionCreators } from "redux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";

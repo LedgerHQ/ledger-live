@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { TransportError } from "@ledgerhq/errors";
-import WebSocketTransport from "@ledgerhq/hw-transport-http/lib-es/WebSocketTransport";
+import WebSocketTransport from "@ledgerhq/hw-transport-http/WebSocketTransport";
 
 type VaultData = {
   token: string;

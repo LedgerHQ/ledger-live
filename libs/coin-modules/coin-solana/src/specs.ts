@@ -1,7 +1,3 @@
-import invariant from "invariant";
-import expect from "expect";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { DeviceModelId } from "@ledgerhq/devices";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
@@ -9,13 +5,15 @@ import {
   pickSiblings,
 } from "@ledgerhq/coin-framework/bot/specs";
 import { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
-import {
-  SolanaAccount,
-  SolanaOperation,
-  SolanaTokenAccount,
-  SolanaTokenAccountExtensions,
-  Transaction,
-} from "./types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
+import { sample } from "lodash/fp";
+import { SolanaRecipientAssociatedTokenAccountWillBeFunded } from "./errors";
+import { getCurrentSolanaPreloadData } from "./preload-data";
 import {
   acceptStakeCreateAccountTransaction,
   acceptStakeDelegateTransaction,
@@ -25,12 +23,14 @@ import {
   acceptTransferTokensWithATACreationTransaction,
   acceptTransferTransaction,
 } from "./speculos-deviceActions";
+import {
+  SolanaAccount,
+  SolanaOperation,
+  SolanaTokenAccount,
+  SolanaTokenAccountExtensions,
+  Transaction,
+} from "./types";
 import { SYSTEM_ACCOUNT_RENT_EXEMPT, assertUnreachable } from "./utils";
-import { getCurrentSolanaPreloadData } from "./preload-data";
-import { sample } from "lodash/fp";
-import BigNumber from "bignumber.js";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { SolanaRecipientAssociatedTokenAccountWillBeFunded } from "./errors";
 
 const maxAccount = 9;
 

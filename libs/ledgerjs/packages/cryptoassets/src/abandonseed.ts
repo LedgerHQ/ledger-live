@@ -13,9 +13,12 @@ const EVM_RAND_ADDRESS = "0x123000000000000000000000000000000000dEaD";
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
 const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
+  aleo: "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv",
+  aleo_testnet: "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv",
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: EVM_DEAD_ADDRESS,
+  avalanche_c_chain_fuji: EVM_DEAD_ADDRESS,
   aptos: EVM_DEAD_ADDRESS,
   aptos_testnet: EVM_DEAD_ADDRESS,
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
@@ -49,6 +52,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   zclassic: "t1Qmwyih5F7Mw6Vts4tSnXuA2o3NgJPYNgP",
   zcoin: "a1bW3sVVUsLqgKuTMXtSaAHGvpxKwugxPH",
   zencash: "zngWJRgpBa45KUeRuCmdMsqti4ohhe9sVwC",
+  bitlayer: EVM_DEAD_ADDRESS,
   bsc: EVM_DEAD_ADDRESS,
   solana: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
   solana_testnet: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",
@@ -61,7 +65,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   elrond: "erd1sqhjrtmsn5yjk6w85099p8v0ly0g8z9pxeqe5dvu5rlf2n7vq3vqytny9g",
   ethereum_classic: EVM_DEAD_ADDRESS,
   ethereum_sepolia: EVM_DEAD_ADDRESS,
-  ethereum_holesky: EVM_DEAD_ADDRESS,
   ethereum_hoodi: EVM_DEAD_ADDRESS,
   hedera: "0.0.163372",
   cardano_testnet:
@@ -91,12 +94,12 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   syscoin: EVM_DEAD_ADDRESS,
   near: "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d",
   axelar: "axelar19rl4cm2hmr8afy4kldpxz3fka4jguq0acwm455",
-  onomy: "onomy19rl4cm2hmr8afy4kldpxz3fka4jguq0axpetws",
   quicksilver: "quick19rl4cm2hmr8afy4kldpxz3fka4jguq0ahya0x8",
   persistence: "persistence19rl4cm2hmr8afy4kldpxz3fka4jguq0ajvtw33",
   internet_computer: "454109defbdd79d7283cdde63b8dab4d48f590b8b2923574cca0356ab6958b2b",
   telos_evm: EVM_DEAD_ADDRESS,
   klaytn: EVM_DEAD_ADDRESS,
+  klaytn_baobab: EVM_DEAD_ADDRESS,
   polygon_zk_evm: EVM_DEAD_ADDRESS,
   polygon_zk_evm_testnet: EVM_DEAD_ADDRESS,
   base: EVM_DEAD_ADDRESS,
@@ -108,7 +111,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   umee: "umee19rl4cm2hmr8afy4kldpxz3fka4jguq0awkszm8",
   coreum: "core19rl4cm2hmr8afy4kldpxz3fka4jguq0a0w4xcw",
   injective: "inj1npvwllfr9dqr8erajqqr6s0vxnk2ak55re90dz",
-  sei_network: "sei19rl4cm2hmr8afy4kldpxz3fka4jguq0a3vute5",
   casper: "02030d18d5bed9f5015824D89367EF448041E912F358655184412E48557491aAdB85",
   neon_evm: EVM_DEAD_ADDRESS,
   dydx: "dydx19rl4cm2hmr8afy4kldpxz3fka4jguq0a4erelz",
@@ -123,6 +125,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   blast_sepolia: EVM_DEAD_ADDRESS,
   scroll: EVM_DEAD_ADDRESS,
   scroll_sepolia: EVM_DEAD_ADDRESS,
+  shape: EVM_DEAD_ADDRESS,
+  story: EVM_DEAD_ADDRESS,
   etherlink: EVM_DEAD_ADDRESS,
   zksync: EVM_RAND_ADDRESS,
   zksync_sepolia: EVM_RAND_ADDRESS,
@@ -135,7 +139,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   mina: "B62qmphduibdMJQjEvnnDizL9kVV4ripuiE9adR2wsqtegJaxHJzCic",
   babylon: "bbn1vh34djka7ug2gww9njrsmmr7emj3dx3paz5sj4",
   hyperevm: EVM_DEAD_ADDRESS,
-  sei_network_evm: EVM_DEAD_ADDRESS,
+  sei_evm: EVM_DEAD_ADDRESS,
   berachain: EVM_DEAD_ADDRESS,
   canton_network: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   canton_network_devnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -146,6 +150,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   zero_gravity: EVM_DEAD_ADDRESS,
   concordium: "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w",
   concordium_testnet: "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w",
+  unichain: EVM_DEAD_ADDRESS,
+  unichain_sepolia: EVM_DEAD_ADDRESS,
 };
 
 /**

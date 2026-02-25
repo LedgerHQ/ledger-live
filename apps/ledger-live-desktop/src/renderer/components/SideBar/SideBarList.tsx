@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Space from "~/renderer/components/Space";
-import { BoxProps } from "../Box/Box";
 
 /**
  * when collapsed =>
@@ -78,22 +77,14 @@ class SideBarList extends Component<Props> {
     );
   }
 }
-const SideBarListTitle: StyledComponent<
-  "div",
-  DefaultTheme,
-  BoxProps & {
-    collapsed?: boolean;
-  }
-> = styled(Box).attrs(() => ({
+const SideBarListTitle = styled(Box).attrs<React.ComponentProps<typeof Box>>({
   horizontal: true,
+  paddingX: 4,
   alignItems: "center",
-  color: "neutral.c100",
   ff: "Inter|ExtraBold",
-  fontSize: 1,
-  px: 4,
-}))<{
-  collapsed?: boolean;
-}>`
+})<{ collapsed?: boolean }>`
+  color: ${p => p.theme.colors.neutral.c100};
+  font-size: ${p => p.theme.fontSizes[1]}px;
   cursor: default;
   letter-spacing: 2px;
   text-transform: uppercase;

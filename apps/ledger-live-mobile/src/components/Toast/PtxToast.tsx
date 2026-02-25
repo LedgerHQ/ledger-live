@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Toast } from "./Toast";
 
 export const PtxToast = ({ onClose, isOpen }: { onClose(): void; isOpen?: boolean }) => {

@@ -76,8 +76,6 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "dydx",
-  "onomy",
-  "sei_network",
   "persistence",
   "quicksilver",
   "vechain",
@@ -88,7 +86,7 @@ setSupportedCurrencies([
   "base_sepolia",
   "stacks",
   "telos_evm",
-  "sei_network_evm",
+  "sei_evm",
   "berachain",
   "hyperevm",
   "coreum",
@@ -104,6 +102,13 @@ setSupportedCurrencies([
   "monad_testnet",
   "somnia",
   "zero_gravity",
+  "avalanche_c_chain_fuji",
+  "bitlayer",
+  "klaytn_baobab",
+  "shape",
+  "story",
+  "unichain",
+  "unichain_sepolia",
 ]);
 
 LiveConfig.setConfig(liveConfig);

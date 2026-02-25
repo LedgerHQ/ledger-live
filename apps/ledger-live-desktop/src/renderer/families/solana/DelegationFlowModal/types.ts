@@ -15,7 +15,7 @@ export type StepProps = {
   device: Device | undefined | null;
   account: SolanaAccount;
   parentAccount: never;
-  onRetry: (a: void) => void;
+  onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
   optimisticOperation: Operation | undefined;

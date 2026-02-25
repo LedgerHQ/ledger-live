@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import {
   fontSize,
@@ -10,7 +10,7 @@ import {
 } from "styled-system";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getDefaultExplorerView,
@@ -77,11 +77,11 @@ const Wrapper = styled(Box)`
   display: flex;
   align-items: center;
 
-  :hover ${CurNameTokenIcon} {
+  &:hover ${CurNameTokenIcon} {
     display: flex;
   }
 
-  :hover ${CurNameTokenLink} {
+  &:hover ${CurNameTokenLink} {
     color: ${colors.wallet};
     background-color: ${colors.pillActiveBackground};
   }
@@ -110,6 +110,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
   text-overflow: ellipsis;
   display: inline-block;
   background-color: transparent;
+  outline: none;
 
   + svg {
     display: inline;
@@ -117,7 +118,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
     transition: opacity 0.2s;
   }
 
-  :hover {
+  &:hover {
     border-color: ${p => (!p.disabled ? p.theme.colors.neutral.c40 : "transparent")};
     cursor: text;
 
@@ -126,7 +127,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
     }
   }
 
-  :focus {
+  &:focus {
     border-color: ${p => p.theme.colors.wallet};
     background: ${p => (p.theme.theme === "light" ? "#fff" : "none")};
 
@@ -168,6 +169,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
   // local state of the name
   const [name, setName] = useState(storeAccountName);
   const [editingName, setEditingName] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
@@ -233,14 +235,15 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
         )}
         <AccountNameBox horizontal alignItems="center" flow={2}>
           <AccountName
+            ref={inputRef}
             color="neutral.c100"
             disabled={account.type !== "Account"}
             ff="Inter|SemiBold"
             fontSize={7}
-            onFocus={e => {
+            onFocus={() => {
               setEditingName(true);
               setTimeout(() => {
-                e.currentTarget.select();
+                inputRef.current?.select();
               });
             }}
             onBlur={() => {

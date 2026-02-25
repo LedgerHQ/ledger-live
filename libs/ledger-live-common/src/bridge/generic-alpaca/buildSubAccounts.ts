@@ -76,8 +76,14 @@ export async function buildSubAccounts({
     return tokenAccounts;
   }
 
-  for (const balance of allTokenAssetsBalances) {
-    const token = await getTokenFromAsset(balance.asset);
+  const tokenBalances = await Promise.all(
+    allTokenAssetsBalances.map(async balance => ({
+      balance,
+      token: await getTokenFromAsset(balance.asset),
+    })),
+  );
+
+  for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
       tokenAccounts.push(

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -25,7 +25,6 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -35,7 +34,7 @@ export type SaveSettings = (a: Partial<Settings>) => {
   payload: Partial<Settings>;
 };
 export const saveSettings: SaveSettings = payload => ({
-  type: "DB:SAVE_SETTINGS",
+  type: "SAVE_SETTINGS",
   payload,
 });
 export const setCountervalueFirst = (countervalueFirst: boolean) =>
@@ -366,11 +365,6 @@ export const setMevProtection = (payload: boolean) => ({
   payload,
 });
 
-export const setMarketWidget = (payload: boolean) => ({
-  type: TOGGLE_MARKET_WIDGET,
-  payload,
-});
-
 export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
   return {
     type: TOGGLE_MEMOTAG_INFO,
@@ -393,3 +387,8 @@ export const updateAnonymousUserNotifications = (payload: {
     payload,
   };
 };
+
+export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
+  type: "SET_HAS_SEEN_WALLET_V4_TOUR",
+  payload: hasSeenWalletV4Tour,
+});

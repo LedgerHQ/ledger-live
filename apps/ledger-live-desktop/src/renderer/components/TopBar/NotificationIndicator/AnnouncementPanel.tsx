@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -158,7 +159,7 @@ function ArticleLink({ label, href, utmCampaign, color }: ArticleLinkProps) {
   const onLinkClick = useCallback(() => {
     const isDeepLink = ["ledgerlive:", "ledgerwallet:"].includes(url.protocol);
     if (isDeepLink) {
-      handler(null, url.href);
+      handler(url.href, false);
       dispatch(closeInformationCenter());
     } else openURL(url.href);
   }, [url, handler, dispatch]);
@@ -289,24 +290,26 @@ export function AnnouncementPanel() {
         {groups.map((group, index) => (
           <React.Fragment key={index}>
             {group.day ? <DateRow date={group.day} /> : null}
-            {group.data.map(({ title, description, path, url, viewed, id, cta }, index) => (
-              <div key={id} onClick={() => onClickNotif(group.data[index])}>
-                <LogContentCardWrapper id={id}>
-                  <Article
-                    title={title}
-                    text={description}
-                    isRead={viewed}
-                    level={"info"}
-                    icon={"info"}
-                    link={{
-                      label: cta,
-                      href: url || path || urls.ledger,
-                    }}
-                  />
-                </LogContentCardWrapper>
-                {index < group.data.length - 1 ? <Separator /> : null}
-              </div>
-            ))}
+            {group.data.map(
+              ({ title, description, path, url, viewed, id, cta, location }, index) => (
+                <div key={id} onClick={() => onClickNotif(group.data[index])}>
+                  <LogContentCardWrapper id={id} location={location}>
+                    <Article
+                      title={title}
+                      text={description}
+                      isRead={viewed}
+                      level={"info"}
+                      icon={"info"}
+                      link={{
+                        label: cta,
+                        href: url || path || urls.ledger,
+                      }}
+                    />
+                  </LogContentCardWrapper>
+                  {index < group.data.length - 1 ? <Separator /> : null}
+                </div>
+              ),
+            )}
           </React.Fragment>
         ))}
       </Box>

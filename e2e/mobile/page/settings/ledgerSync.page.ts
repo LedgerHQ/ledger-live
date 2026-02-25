@@ -1,9 +1,12 @@
+import { Step } from "jest-allure2-reporter/api";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 
 export default class LedgerSyncPage {
   successPage = "walletsync-success";
   confirmDeleteSyncId = "delete-trustchain";
   deleteSyncId = "walletSync-manage-backup";
+  backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
+  useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
 
   activationButton = () => getElementById("walletsync-activation-button");
   activationTitle = () => getElementById("walletsync-activation-title");
@@ -25,6 +28,11 @@ export default class LedgerSyncPage {
   @Step("Tap on the activation button")
   async tapTurnOnSync() {
     await tapByElement(this.activationButton());
+  }
+
+  @Step("Tap on the use my ledger device button")
+  async tapUseMyLedgerDevice() {
+    await tapById(this.useMyLedgerDeviceButtonId);
   }
 
   @Step("Expect Ledger Sync success page")
@@ -50,8 +58,10 @@ export default class LedgerSyncPage {
   }
 
   @Step("Expect deletion success page")
-  async closeDeletionSuccessPage() {
-    await waitForElementById(this.successPage);
-    await tapByElement(this.deletionSuccessCloseButton());
+  async expectBackupDeletion() {
+    await waitForElementById(this.backupDeletionSuccessTextId);
+    await detoxExpect(getElementById(this.backupDeletionSuccessTextId)).toHaveText(
+      "Your Ledger Wallet apps are no longer synced",
+    );
   }
 }

@@ -3,16 +3,17 @@ import {
   Block,
   BlockInfo,
   Cursor,
+  ListOperationsOptions,
   Page,
   Validator,
   FeeEstimation,
   Operation,
-  Pagination,
   Reward,
   Stake,
   TransactionIntent,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -24,7 +25,6 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import type { BroadcastConfig } from "@ledgerhq/types-live";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -85,8 +85,9 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
-  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
-  return [ops, JSON.stringify(nextHeight)];
+  { minHeight }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  // FIXME Options are ignored here
+  const [items, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
+  return { items, next: nextHeight !== null ? JSON.stringify(nextHeight) : undefined };
 }

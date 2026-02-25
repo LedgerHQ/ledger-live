@@ -1,8 +1,8 @@
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { fakeSignExtrinsic } from "./signTransaction";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import polkadotAPI from "../network";
 import { CoreTransaction } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
+import { fakeSignExtrinsic } from "./signTransaction";
 
 export async function estimateFees(
   { unsigned, registry }: CoreTransaction,

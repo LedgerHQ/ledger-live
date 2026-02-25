@@ -1,6 +1,5 @@
-import React, { PureComponent } from "react";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "i18next";
+import React, { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { repairChoices } from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
@@ -68,14 +67,13 @@ const DisclaimerStep = ({ desc }: { desc?: React.ReactNode }) => (
 );
 const FlashStep = ({
   progress,
-  t,
   isAlreadyBootloader,
 }: {
   progress: number;
-  t: TFunction;
   isAlreadyBootloader?: boolean;
-}) =>
-  progress === 0 && !isAlreadyBootloader ? (
+}) => {
+  const { t } = useTranslation();
+  return progress === 0 && !isAlreadyBootloader ? (
     <Container>
       <FlashMCU />
     </Container>
@@ -94,6 +92,7 @@ const FlashStep = ({
       </Box>
     </Box>
   );
+};
 const ErrorStep = ({ error }: { error: Error }) => (
   <ErrorDisplay error={error} withExportLogs list />
 );
@@ -108,7 +107,6 @@ type Props = {
   cancelText?: string;
   onReject: (_?: { needHelp?: boolean }) => void;
   repair: (a?: string | null) => void;
-  t: TFunction;
   isLoading?: boolean;
   analyticsName: string;
   cancellable?: boolean;
@@ -117,39 +115,46 @@ type Props = {
   isAlreadyBootloader?: boolean;
   enableSomethingElseChoice?: boolean;
 };
-type State = {
-  selectedOption: ChoiceOption | null | undefined;
-  availableRepairChoices: Array<ChoiceOption>;
-};
-class RepairModal extends PureComponent<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    const availableRepairChoices = [...repairChoices];
-    if (props.enableSomethingElseChoice) {
-      availableRepairChoices.push({
+
+const RepairModal = ({
+  cancellable,
+  isOpened,
+  title,
+  desc,
+  isDanger,
+  onReject,
+  isLoading,
+  analyticsName,
+  progress,
+  error,
+  isAlreadyBootloader,
+  enableSomethingElseChoice,
+  repair,
+  ...props
+}: Props) => {
+  const { t } = useTranslation();
+  const [selectedOption, setSelectedOption] = useState<ChoiceOption | null | undefined>(null);
+
+  const availableRepairChoices = useMemo(() => {
+    const choices = [...repairChoices];
+    if (enableSomethingElseChoice) {
+      choices.push({
         forceMCU: "",
-        label: this.props.t("connectTroubleshooting.steps.4.repair.somethingElse"),
+        label: t("connectTroubleshooting.steps.4.repair.somethingElse"),
         id: "somethingElse",
       });
     }
-    this.state = {
-      selectedOption: null,
-      availableRepairChoices,
-    };
-  }
+    return choices;
+  }, [enableSomethingElseChoice, t]);
 
-  onSelectOption = (selectedOption: ChoiceOption | null | undefined) => {
-    this.setState({
-      selectedOption,
-    });
-    track(`${this.props.analyticsName}SelectOption`, {
-      selectedOption,
+  const onSelectOption = (option: ChoiceOption | null | undefined) => {
+    setSelectedOption(option);
+    track(`${analyticsName}SelectOption`, {
+      selectedOption: option,
     });
   };
 
-  onSubmit = () => {
-    const { selectedOption } = this.state;
-    const { onReject, repair } = this.props;
+  const onSubmit = () => {
     if (!selectedOption) {
       return;
     }
@@ -162,90 +167,76 @@ class RepairModal extends PureComponent<Props, State> {
     }
   };
 
-  render() {
-    const {
-      cancellable,
-      isOpened,
-      title,
-      desc,
-      isDanger,
-      onReject,
-      isLoading,
-      t,
-      analyticsName,
-      progress,
-      error,
-      isAlreadyBootloader,
-      ...props
-    } = this.props;
-    const { selectedOption, availableRepairChoices } = this.state;
-    const onClose = !cancellable && isLoading ? undefined : onReject;
-    const disableRepair =
-      isLoading || !selectedOption || !!(error && error instanceof MCUNotGenuineToDashboard);
-    return (
-      <Modal
-        isOpened={isOpened}
-        centered
-        preventBackdropClick={isLoading}
-        onClose={onClose}
-        {...props}
-      >
-        <TrackPage category="Modal" name={analyticsName} />
-        <ModalBody
-          title={title}
-          onClose={onClose}
-          noScroll
-          render={() => (
-            <Box>
-              {error ? (
-                <ErrorStep error={error} />
-              ) : isLoading ? (
-                <FlashStep t={t} progress={progress} isAlreadyBootloader={isAlreadyBootloader} />
-              ) : (
-                <DisclaimerStep desc={desc} />
-              )}
+  const onClose = !cancellable && isLoading ? undefined : onReject;
+  const disableRepair =
+    isLoading || !selectedOption || !!(error && error instanceof MCUNotGenuineToDashboard);
 
-              {!isLoading && !error ? (
-                <Box py={2} px={5} color="neutral.c100" fontSize={4}>
-                  {availableRepairChoices.map(choice => (
-                    <Choice
-                      key={choice.id}
-                      onSelect={this.onSelectOption}
-                      selected={choice === selectedOption}
-                      choice={choice}
-                    />
-                  ))}
-                </Box>
-              ) : null}
-            </Box>
-          )}
-          renderFooter={() =>
-            !isLoading ? (
-              <Box horizontal alignItems="center" flow={2} flex={1}>
-                <HelpCenterButton t={t} />
-                <div
-                  style={{
-                    flex: 1,
-                  }}
-                />
-                <Button onClick={onReject}>{t(`common.${error ? "close" : "cancel"}`)}</Button>
-                <Button
-                  onClick={this.onSubmit}
-                  primary={!isDanger}
-                  danger={isDanger}
-                  isLoading={isLoading}
-                  disabled={disableRepair}
-                >
-                  {selectedOption?.id === "somethingElse"
-                    ? t("common.continue")
-                    : t("settings.repairDevice.button")}
-                </Button>
+  return (
+    <Modal
+      isOpened={isOpened}
+      centered
+      preventBackdropClick={isLoading}
+      onClose={onClose}
+      {...props}
+    >
+      <TrackPage category="Modal" name={analyticsName} />
+      <ModalBody
+        title={title}
+        onClose={onClose}
+        noScroll
+        render={() => (
+          <Box>
+            {error ? (
+              <ErrorStep error={error} />
+            ) : isLoading ? (
+              <FlashStep progress={progress} isAlreadyBootloader={isAlreadyBootloader} />
+            ) : (
+              <DisclaimerStep desc={desc} />
+            )}
+
+            {!isLoading && !error ? (
+              <Box py={2} px={5} color="neutral.c100" fontSize={4}>
+                {availableRepairChoices.map(choice => (
+                  <Choice
+                    key={choice.id}
+                    onSelect={onSelectOption}
+                    selected={choice === selectedOption}
+                    choice={choice}
+                  />
+                ))}
               </Box>
-            ) : null
-          }
-        />
-      </Modal>
-    );
-  }
-}
-export default withTranslation()(RepairModal);
+            ) : null}
+          </Box>
+        )}
+        renderFooter={() =>
+          !isLoading ? (
+            <Box horizontal alignItems="center" flow={2} flex={1}>
+              <HelpCenterButton t={t} />
+              <div
+                style={{
+                  flex: 1,
+                }}
+              />
+              <Button onClick={() => onReject()}>
+                {t(`common.${error ? "close" : "cancel"}`)}
+              </Button>
+              <Button
+                onClick={onSubmit}
+                primary={!isDanger}
+                danger={isDanger}
+                isLoading={isLoading}
+                disabled={disableRepair}
+              >
+                {selectedOption?.id === "somethingElse"
+                  ? t("common.continue")
+                  : t("settings.repairDevice.button")}
+              </Button>
+            </Box>
+          ) : null
+        }
+      />
+    </Modal>
+  );
+};
+
+export default RepairModal;

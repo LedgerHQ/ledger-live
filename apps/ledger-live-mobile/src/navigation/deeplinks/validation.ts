@@ -5,7 +5,9 @@
  * injection attacks, phishing attempts, and other security vulnerabilities.
  */
 
-import * as Sentry from "@sentry/react-native";
+import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { isDatadogEnabled } from "../../datadog";
 import type { OptionMetadata } from "../../reducers/types";
 
 // Maximum allowed lengths for string parameters
@@ -289,6 +291,37 @@ export function validateEarnDepositScreen(
   };
 }
 
+export function validateLargeMoverCurrencyIds(currencyIds: string | null): string | null {
+  if (!currencyIds || currencyIds?.trim() === "") {
+    return null;
+  }
+
+  return currencyIds.trim().toUpperCase();
+}
+
+export function validateLargeMoverLedgerIds(ledgerIds: string | null): string | null {
+  if (!ledgerIds || ledgerIds.trim() === "") {
+    return null;
+  }
+  const ids = ledgerIds
+    .split(",")
+    .map(id => id.trim().toLowerCase())
+    .filter(Boolean);
+  const unique = [...new Set(ids)];
+  return unique.length ? unique.join(",") : null;
+}
+
+export function validateMarketCurrencyId(currencyId: string | null): string | null {
+  if (!currencyId || currencyId.trim() === "") {
+    return null;
+  }
+
+  const normalizedCurrencyId = currencyId.trim().toLowerCase();
+  const currency = findCryptoCurrencyById(normalizedCurrencyId);
+
+  return currency?.id ?? null;
+}
+
 /**
  * Validates earn menu modal parameters
  */
@@ -360,24 +393,22 @@ export function logSecurityEvent(
   eventType: "validation_failed" | "malicious_url" | "invalid_json" | "blocked_action",
   details: Record<string, unknown>,
 ): void {
-  // Send security events to Sentry for monitoring
-  Sentry.withScope(scope => {
-    scope.setContext("deeplink_security", {
-      event_type: eventType,
-      timestamp: new Date().toISOString(),
-      ...details,
-    });
+  const eventData = {
+    event_type: eventType,
+    timestamp: new Date().toISOString(),
+    ...details,
+  };
 
-    scope.setTag("security_event", eventType);
-    scope.setLevel("warning");
-
-    Sentry.addBreadcrumb({
-      category: "security",
-      message: `Deeplink validation: ${eventType}`,
-      level: "warning",
-      data: details,
-    });
-
-    Sentry.captureMessage(`Deeplink security event: ${eventType}`);
-  });
+  // Track security events in Datadog if enabled
+  if (isDatadogEnabled) {
+    DdRum.addError(
+      `Deeplink security event: ${eventType}`,
+      ErrorSource.SOURCE,
+      "", // No stacktrace for security events
+      {
+        deeplink_security: eventData,
+        security_event: eventType,
+      },
+    );
+  }
 }

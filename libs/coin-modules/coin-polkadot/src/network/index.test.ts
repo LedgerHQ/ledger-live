@@ -1,13 +1,46 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as sidecar from "./sidecar";
 import network from ".";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./sidecar");
 const mockedSidecar = jest.mocked(sidecar);
 
 const currency: CryptoCurrency = getCryptoCurrencyById("polkadot");
+
+describe("getMetadata", () => {
+  afterEach(() => {
+    mockedSidecar.getMetadata.mockClear();
+  });
+
+  it("should pass callData, includedInExtrinsic, includedInSignedData and currency to sidecar", async () => {
+    mockedSidecar.getMetadata.mockResolvedValueOnce({
+      metadataBlob: "0xmetadatablob",
+      metadataHash: "0xmetadatahash",
+    });
+
+    const callData = "0x0a0300abcdef";
+    const includedInExtrinsic = "0xf50020000001";
+    const includedInSignedData = "0x" + "aa".repeat(105);
+
+    const result = await network.getMetadata(
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+      currency,
+    );
+
+    expect(result).toEqual({ metadataBlob: "0xmetadatablob", metadataHash: "0xmetadatahash" });
+    expect(mockedSidecar.getMetadata).toHaveBeenCalledTimes(1);
+    expect(mockedSidecar.getMetadata).toHaveBeenCalledWith(
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+      currency,
+    );
+  });
+});
 
 describe("getMinimumBondBalance", () => {
   afterEach(() => {

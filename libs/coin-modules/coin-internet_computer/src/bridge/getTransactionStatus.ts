@@ -5,12 +5,13 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { getAddress } from "./bridgeHelpers/addresses";
-import { validateAddress, validateMemo } from "@zondax/ledger-live-icp/utils";
-import { Transaction, TransactionStatus } from "../types";
+import { validateAddress } from "@zondax/ledger-live-icp/utils";
+import BigNumber from "bignumber.js";
 import { InvalidMemoICP } from "../errors";
+import { validateMemo } from "../logic/validateMemo";
+import { Transaction, TransactionStatus } from "../types";
+import { getAddress } from "./bridgeHelpers/addresses";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,
@@ -40,7 +41,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     });
   }
 
-  if (!validateMemo(transaction.memo).isValid) {
+  if (!validateMemo(transaction.memo)) {
     errors.transaction = new InvalidMemoICP();
   }
 

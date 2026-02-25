@@ -1,3 +1,4 @@
+import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
 type CosmosConfig = Record<string, ConfigInfo>;
@@ -11,6 +12,10 @@ export const cosmosConfig: CosmosConfig = {
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", type: "active" },
+          { id: "staking_txs", type: "active" },
+        ],
       },
     },
   },
@@ -22,6 +27,10 @@ export const cosmosConfig: CosmosConfig = {
       ledgerValidator: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", type: "active" },
+          { id: "staking_txs", type: "active" },
+        ],
       },
     },
   },
@@ -48,17 +57,6 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://api.nyx.nodes.guru",
       minGasPrice: 0,
-      status: {
-        type: "active",
-      },
-    },
-  },
-  config_currency_onomy: {
-    type: "object",
-    default: {
-      lcd: "https://rest-mainnet.onomy.io",
-      minGasPrice: 0.003,
-      ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
       status: {
         type: "active",
       },
@@ -100,16 +98,6 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://lcd.mainnet.secretsaturn.net",
       minGasPrice: 0.25,
-      status: {
-        type: "active",
-      },
-    },
-  },
-  config_currency_sei_network: {
-    type: "object",
-    default: {
-      lcd: "https://sei-api.polkachu.com",
-      minGasPrice: 0.1,
       status: {
         type: "active",
       },
@@ -210,8 +198,6 @@ export const cosmosConfig: CosmosConfig = {
     },
   },
 };
-
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type CosmosCoinConfig = CurrencyConfig & CosmosConfig;
 const coinConfig = buildCoinConfig<CosmosCoinConfig>();

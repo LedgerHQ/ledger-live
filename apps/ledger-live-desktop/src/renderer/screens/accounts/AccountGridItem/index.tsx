@@ -53,10 +53,10 @@ const Card = styled(Box).attrs(() => ({
   cursor: pointer;
   border: 1px solid transparent;
   transition: background-color ease-in-out 200ms;
-  :hover {
+  &:hover {
     border-color: ${p => p.theme.colors.neutral.c40};
   }
-  :active {
+  &:active {
     border-color: ${p => p.theme.colors.neutral.c40};
     background: ${p => p.theme.colors.opacityDefault.c10};
   }

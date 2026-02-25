@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { withTranslation, useTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { StyleSheet } from "react-native";
 import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";

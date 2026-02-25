@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking, SafeAreaView } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";

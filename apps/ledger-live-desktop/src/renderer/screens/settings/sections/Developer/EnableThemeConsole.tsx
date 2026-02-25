@@ -1,7 +1,7 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
 import React, { useCallback } from "react";
-import { Switch } from "@ledgerhq/ldls-ui-react";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 
 const EnableThemeConsole = () => {
   const env = useEnv("DEBUG_THEME");

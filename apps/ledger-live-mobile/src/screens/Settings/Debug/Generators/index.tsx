@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";

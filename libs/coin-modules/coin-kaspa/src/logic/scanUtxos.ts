@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { AccountAddress, AccountAddresses, KaspaUtxo } from "../types";
 import { getUtxosForAddresses } from "../network";
+import { AccountAddress, AccountAddresses, KaspaUtxo } from "../types";
 import { scanAddresses } from "./scanAddresses";
 
 export async function scanUtxos(

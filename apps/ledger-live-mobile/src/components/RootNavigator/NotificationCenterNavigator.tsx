@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";

@@ -67,6 +67,7 @@ export type GenericTransaction = TransactionCommon & {
   networkInfo?: NetworkInfo | null;
   chainId?: number | null;
   gasLimit?: BigNumber | null;
+  customGasLimit?: BigNumber | null;
   gasPrice?: BigNumber | null;
   maxFeePerGas?: BigNumber | null;
   maxPriorityFeePerGas?: BigNumber | null;
@@ -103,6 +104,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   networkInfo?: NetworkInfoRaw | null;
   chainId?: number | null;
   gasLimit?: string | null;
+  customGasLimit?: string | null;
   gasPrice?: string | null;
   maxFeePerGas?: string | null;
   maxPriorityFeePerGas?: string | null;

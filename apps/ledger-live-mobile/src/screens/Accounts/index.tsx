@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
@@ -8,7 +8,7 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import SafeAreaView from "~/components/SafeAreaView";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useRefreshAccountsOrdering } from "~/actions/general";

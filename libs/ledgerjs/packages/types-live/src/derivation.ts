@@ -36,4 +36,10 @@ export type DerivationMode =
   | "sui"
   | "aptos"
   | "minabip44"
-  | "canton";
+  | "canton"
+  | "cashaddr"
+  | "celo"
+  | "celoMM"
+  | "celoEvm"
+  | "aleo"
+  | "concordium";

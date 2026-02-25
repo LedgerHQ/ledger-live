@@ -6,9 +6,8 @@ import {
 import React from "react";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { render } from "@testing-library/react";
-import { expect } from "vitest";
 
-vi.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   useFeature: () => ({
     enabled: true,
   }),

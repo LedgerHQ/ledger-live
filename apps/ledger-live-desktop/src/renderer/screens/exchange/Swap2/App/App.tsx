@@ -1,12 +1,14 @@
 import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import {
+  useRemoteLiveAppManifest,
+  useRemoteLiveAppContext,
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
 import styled from "styled-components";
 import SwapWebView from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 const Root = styled.div`
   display: flex;

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { css, DefaultTheme, ThemedStyledProps } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import styled, { css, DefaultTheme } from "styled-components";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { colors } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
@@ -48,7 +48,9 @@ const getIcon = (type: AlertType) => {
 
 type ContainerProps = { small: boolean | undefined; type: AlertType };
 
-const getStyle = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) => {
+type ThemedProps<P> = P & { theme: DefaultTheme };
+
+const getStyle = (p: ThemedProps<ContainerProps>) => {
   switch (p.type) {
     case "primary":
     case "hint":

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import BigNumber from "bignumber.js";
 import { Text } from "@ledgerhq/native-ui";
 import { TokenAccount } from "@ledgerhq/types-live";

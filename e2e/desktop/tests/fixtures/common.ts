@@ -9,12 +9,15 @@ import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
+import { isLastRetry } from "tests/utils/testInfoUtils";
+import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import { attachNetworkLogging } from "../utils/networkLogging";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -23,6 +26,7 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
+  extraUserdataFiles?: Record<string, string>;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
   userdataOriginalFile?: string;
@@ -42,8 +46,29 @@ type TestFixtures = {
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+const getSpeculosAddress = () => process.env.SPECULOS_ADDRESS || "http://localhost";
+
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
+
+const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
+  lldModularDrawer: {
+    enabled: true,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: false,
+      send_flow: false,
+      enableModularization: true,
+      enableDialogDesktop: true,
+      searchDebounceTime: 300,
+      backendEnvironment: "PROD",
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
+    },
+  },
+};
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   const promise = await cmd(`${userdataDestinationPath}/app.json`);
@@ -62,6 +87,7 @@ export const test = base.extend<TestFixtures>({
   speculosApp: undefined,
   cliCommands: [],
   cliCommandsOnApp: [],
+  extraUserdataFiles: undefined,
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -92,6 +118,7 @@ export const test = base.extend<TestFixtures>({
       speculosApp,
       cliCommands,
       cliCommandsOnApp,
+      extraUserdataFiles,
     },
     use,
     testInfo,
@@ -105,6 +132,13 @@ export const test = base.extend<TestFixtures>({
 
     const userData = merge({ data: { settings } }, fileUserData);
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+    if (extraUserdataFiles) {
+      await Promise.all(
+        Object.entries(extraUserdataFiles).map(([name, contents]) =>
+          writeFile(path.join(userdataDestinationPath, name), contents),
+        ),
+      );
+    }
 
     let speculos: SpeculosDevice | undefined;
 
@@ -118,7 +152,7 @@ export const test = base.extend<TestFixtures>({
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
             speculos = await launchSpeculos(app.name);
-            CLI.registerSpeculosTransport(speculos.port.toString());
+            CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
             await executeCliCommand(cmd, userdataDestinationPath);
             await killSpeculos(speculos.id);
           }
@@ -127,12 +161,14 @@ export const test = base.extend<TestFixtures>({
         speculos = await launchSpeculos(speculosApp.name, testInfo.title);
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculos.port.toString());
+          CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
           for (const cmd of cliCommands) {
             await executeCliCommand(cmd, userdataDestinationPath);
           }
         }
       }
+
+      const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, featureFlags);
 
       // default environment variables
       env = Object.assign(
@@ -146,9 +182,10 @@ export const test = base.extend<TestFixtures>({
           PLAYWRIGHT_RUN: true,
           CRASH_ON_INTERNAL_CRASH: true,
           LEDGER_MIN_HEIGHT: 768,
-          FEATURE_FLAGS: JSON.stringify(featureFlags),
+          FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          SPECULOS_ADDRESS: IS_NOT_MOCK ? getSpeculosAddress() : undefined,
         },
         env,
       );
@@ -163,12 +200,16 @@ export const test = base.extend<TestFixtures>({
         userdataDestinationPath,
         simulateCamera,
         windowSize,
+        recordVideo: isLastRetry(testInfo),
       });
 
       await use(electronApp);
 
-      // close app
-      await electronApp.close();
+      try {
+        await electronApp.close();
+      } catch {
+        // App may already be closed when capturing failure video
+      }
     } finally {
       if (speculos) {
         await killSpeculos(speculos.id);
@@ -180,6 +221,8 @@ export const test = base.extend<TestFixtures>({
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
+
+    attachNetworkLogging(page, testInfo);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
@@ -202,6 +245,10 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
+    // capture webview console and network logs for debugging (e.g. swap live app)
+    const webviewCollector = new WebviewLogCollector();
+    webviewCollector.start(electronApp);
+
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
@@ -211,10 +258,10 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      await captureArtifacts(page, testInfo);
+      await captureArtifacts(page, testInfo, electronApp, webviewCollector);
     }
 
-    //Remove video if test passed
+    // Remove video if test passed
     if (testInfo.status === "passed") {
       await electronApp.close();
       await page.video()?.delete();

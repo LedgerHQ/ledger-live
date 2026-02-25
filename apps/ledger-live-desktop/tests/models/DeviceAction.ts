@@ -252,63 +252,6 @@ export class DeviceAction {
     });
   }
 
-  async initiateSwap() {
-    await this.page.evaluate(() => window.mock.events.mockDeviceEvent({ type: "opened" }));
-    await this.page.waitForTimeout(500);
-    // Keeping the same subject because it's too close and it's failing and I don't want to cry.
-    // await this.page.evaluate(() =>
-    //   window.mock.events.mockDeviceEvent({ type: "complete" }),
-    // );
-    await this.page.waitForTimeout(2000);
-    await this.page.evaluate(() =>
-      window.mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
-    );
-
-    await this.loader.waitFor({ state: "detached" });
-    await this.swapSummary.waitFor({ state: "visible" });
-  }
-
-  async confirmSwap() {
-    await this.page.evaluate(() => {
-      const mock = window.mock;
-      const transaction = mock.fromTransactionRaw({
-        family: "bitcoin",
-        recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
-        amount: "12",
-        feePerByte: "1",
-        networkInfo: {
-          family: "bitcoin",
-          feeItems: {
-            items: [
-              { key: "0", speed: "high", feePerByte: "3" },
-              { key: "1", speed: "standard", feePerByte: "2" },
-              { key: "2", speed: "low", feePerByte: "1" },
-            ],
-            defaultFeePerByte: "1",
-          },
-        },
-        rbf: false,
-        utxoStrategy: {
-          strategy: 0,
-          excludeUTXOs: [],
-        },
-      });
-      mock.events.mockDeviceEvent(
-        {
-          type: "init-swap-result",
-          initSwapResult: {
-            transaction,
-            swapId: "12345",
-            magnitudeAwareRate: 1.397e11,
-          },
-        },
-        {
-          type: "complete",
-        },
-      );
-    });
-  }
-
   async silentSign() {
     await this.page.evaluate(() => {
       window.mock.events.mockDeviceEvent({ type: "opened" }, { type: "complete" });

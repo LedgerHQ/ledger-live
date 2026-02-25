@@ -36,7 +36,7 @@ export const buildSignOperation =
             } = {
               recipient: transaction.recipient,
               amount: transaction.amount,
-              expireInSeconds: 60 * 60,
+              expireInSeconds: transaction.expireInSeconds ?? 24 * 60 * 60, // Default to 1 day
               tokenId: transaction.tokenId,
             };
             if (transaction.instrumentAdmin) {

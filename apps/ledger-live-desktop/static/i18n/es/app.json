@@ -173,6 +173,9 @@
       "UNDELEGATE" : "Desdelegado",
       "APPROVE" : "Aprobado",
       "PRE_APPROVAL" : "Preaprobación",
+      "TRANSFER_PROPOSAL" : "Propuesta de transferencia",
+      "TRANSFER_REJECTED" : "Transferencia rechazada",
+      "TRANSFER_WITHDRAWN" : "Transferencia retirada",
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
       "UNFREEZE" : "Desinmovilizado",
@@ -203,7 +206,9 @@
       "WITHDRAW_UNSTAKED" : "Retirado",
       "SENDING" : "Enviando",
       "BURN" : "Quemado",
-      "ASSOCIATE_TOKEN" : "Asociar token"
+      "ASSOCIATE_TOKEN" : "Asociar token",
+      "CONTRACT_CALL" : "Llamada a contrato",
+      "UPDATE_ACCOUNT" : "Cuenta actualizada"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -277,11 +282,13 @@
     "advanced" : "Avanzado",
     "custom" : "Personalizado",
     "fast" : "Rápida",
+    "networkFees" : "Tarifas de red",
     "high" : "Alta",
     "low" : "Baja",
     "slow" : "Lenta",
     "standard" : "Estándar",
     "medium" : "Media",
+    "coinControl" : "Control de monedas",
     "feesAmount" : "Importe de tarifas"
   },
   "sidebar" : {
@@ -293,6 +300,7 @@
     "earn" : "Earn",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
+    "perps" : "Perpetuos",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
     "catalog" : "Discover",
@@ -333,7 +341,7 @@
         },
         "rate" : {
           "title" : "Tasa de cambio",
-          "tooltip" : "Una <0>tasa variable</0> fluctúa en función de las condiciones del mercado, con lo que tus beneficios pueden ser mayores o menores de lo que has calculado.<br/><br/>Una <0>tasa fija</0> coincide con el importe mostrado al comenzar el intercambio."
+          "tooltip" : "Una <0>tasa variable</0> fluctúa en función de las condiciones del mercado, con lo que tus beneficios pueden ser mayores o menores de lo que has calculado.  Una <0>tasa fija</0> coincide con el importe mostrado al comenzar el intercambio."
         },
         "receive" : {
           "title" : "Recibir",
@@ -367,7 +375,7 @@
       },
       "notAvailable" : {
         "title" : "La permuta aún no está disponible en tu área",
-        "content" : "Ten un poco más de paciencia,<br/>implementaremos esta función muy pronto"
+        "content" : "Ten un poco más de paciencia, implementaremos esta función muy pronto"
       },
       "timeout" : {
         "message" : "No se pudieron generar las cotizaciones por problemas técnicos. Intenta realizar de nuevo la permuta en unos instantes."
@@ -475,7 +483,11 @@
       "kaspa_title" : "No es posible usar el Ledger Nano S™ para permutar Kaspa",
       "kaspa_description" : "Para permutar Kaspa, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "celo_title" : "No es posible utilizar el Ledger Nano S™ para permutar Celo",
-      "celo_description" : "Para permutar Celo, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+      "celo_description" : "Para permutar Celo, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "monad_title" : "No es posible usar el Ledger Nano S™ para permutar Monad",
+      "monad_description" : "Para permutar Monad, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "zcash_title" : "No es posible usar el Ledger Nano S™ para permutar Zcash",
+      "zcash_description" : "Para permutar Zcash, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -620,9 +632,6 @@
   "lottieDebugger" : {
     "buttonTitle" : "Prueba"
   },
-  "storylyDebugger" : {
-    "buttonTitle" : "Prueba"
-  },
   "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
   },
@@ -644,134 +653,6 @@
         "placeholder" : "Token"
       },
       "submit" : "Conectar"
-    }
-  },
-  "fullNode" : {
-    "status" : "Estado",
-    "connect" : "Conectar",
-    "disconnect" : "Desconectar",
-    "checkNodeSettings" : "Verificar configuración del nodo",
-    "edit" : "Editar",
-    "modal" : {
-      "title" : "Conectar nodo completo de Bitcoin",
-      "disconnectTitle" : "Desconectar nodo completo",
-      "steps" : {
-        "landing" : {
-          "header" : "Inicia tu nodo completo. No confíes, verifica.",
-          "description" : "Un nodo completo de Bitcoin valida todas las transacciones y bloques, permitiéndote usar Bitcoin de una manera que no requiere confianza, a la vez que contribuyes a la red de Bitcoin.",
-          "list" : {
-            "item1" : "Configura Bitcoin Core en un dispositivo con recursos suficientes.",
-            "item2" : "Espera a que el nodo se sincronice completamente.",
-            "item3" : "Toma nota de tus credenciales de nodo RPC, dirección de IP y número de puerto."
-          },
-          "disclaimer" : "Ejecutar un nodo completo requiere que tu PC tenga  recursos suficientes y una conexión de banda ancha sin restricciones de datos."
-        },
-        "node" : {
-          "title" : "Nodo",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ingresa los parámetros de tu nodo",
-              "disclaimer" : "Tu nodo completo debe estar completamente sincronizado antes de conectar a Ledger Wallet.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "Anfitrión",
-                  "tooltip" : "Utiliza el valor predeterminado si el nodo se ejecuta en esta PC o ingresa la dirección de IP y el número de puerto del nodo."
-                },
-                "rpcCredentials" : {
-                  "title" : "Credenciales de RPC",
-                  "tooltip" : "Ingresa la contraseña y el nombre de usuario RPC de tu nodo, que se encuentran en el archivo bitcoin.conf.",
-                  "usernamePlaceholder" : "Nombre de usuario",
-                  "passwordPlaceholder" : "Contraseña"
-                },
-                "tls" : {
-                  "title" : "Usar TLS",
-                  "tooltip" : "Habilita la seguridad de la capa de transporte. Por ejemplo, cuando utilices una solución de nodo alojado."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "Comprobando la conexión de nodo",
-              "description" : "Espera mientras comprobamos si tu nodo completo responde."
-            },
-            "success" : {
-              "header" : "Conexión de nodo completo exitosa",
-              "description" : "Ahora puedes configurar tu nodo para buscar tus cuentas en la cadena de bloques."
-            },
-            "failure" : {
-              "header" : "No fue posible hacer contacto con el nodo completo",
-              "description" : "Asegúrate de que tu nodo esté perfectamente sincronizado y verifica sus ajustes de conexión."
-            }
-          }
-        },
-        "device" : {
-          "title" : "Dispositivo",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "Obteniendo cuentas desde el dispositivo",
-              "description" : "Espera mientras se agregan las cuentas a buscar al archivo de configuración del nodo."
-            },
-            "success" : {
-              "header" : "Cuentas agregadas a la configuración del nodo",
-              "description" : "Se guardó un archivo de configuración en la carpeta de datos del usuario. Esto permite que Ledger SatStack se conecte a tu nodo y busque tus cuentas en la cadena de bloques.",
-              "cta" : "Ver datos de usuario"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "Cuentas",
-          "existing" : "Cuentas existentes a buscar",
-          "toScan" : "Cuentas a buscar",
-          "toScanDescription" : "Cuentas a buscar por cada tipo de dirección",
-          "toScanTooltip" : "Aumenta la cantidad sólo si tienes más de 10 cuentas de BTC. La búsqueda inicial será más lenta. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Descarga y ejecuta Ledger SatStack",
-              "description" : "Ledger SatStack es una aplicación pequeña que le permite a Ledger Wallet comunicarse con tu nodo completo. Descarga y ejecuta Ledger SatStack antes de continuar.",
-              "disclaimer" : "SatStack debe estar en ejecución para que Ledger Wallet se conecte a tu nodo completo.  Evalúa configurarla para que se inicie automáticamente al encender tu PC.",
-              "cta" : "Descargar SatStack"
-            },
-            "satstack-disconnected" : {
-              "header" : "No fue posible hacer contacto con SatStack",
-              "description" : "Comprueba que SatStack está en ejecución en esta PC."
-            },
-            "satstack-outdated" : {
-              "header" : "Actualiza SatStack",
-              "description" : "La versión de SatStack que estás utilizando es demasiado antigua y puede contener errores o incompatibilidades."
-            },
-            "node-disconnected" : {
-              "header" : "No fue posible hacer contacto con el nodo completo",
-              "description" : "Verifica que tu nodo esté accesible y que los ajustes de conexión ingresados sean los correctos."
-            },
-            "invalid-chain" : {
-              "header" : "cadena inválida título",
-              "description" : "cadena inválida descripción de tooltip"
-            },
-            "initializing" : {
-              "header" : "Cargando",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "Listo",
-              "description" : "Se ha sincronizado por completo todo el nodo. Los saldos de tu cuenta de Bitcoin son correctos ahora."
-            },
-            "syncing" : {
-              "header" : "Sincronización de nodo en curso…",
-              "description" : "Las transacciones recientes pueden no ser todavía visibles, por lo que los saldos de tu cuenta de Bitcoin podrían ser incorrectos. Si es posible, mantén tu nodo continuamente en ejecución para que siempre esté sincronizado."
-            },
-            "scanning" : {
-              "header" : "Escaneo de cuenta en curso...",
-              "description" : "Puedes agregar tus cuentas una vez que finalice el escaneo de cuenta. Se eliminó cualquier cuenta de Bitcoin previamente agregada a través de los exploradores de Ledger."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "Desconectar",
-          "description" : "¿Deseas continuar? Desconectar el nodo completo eliminará todas las cuentas de Bitcoin. Puedes agregar tus cuentas de nuevo utilizando los exploradores de Ledger."
-        }
-      }
     }
   },
   "account" : {
@@ -843,7 +724,7 @@
     "stake" : "Participar",
     "delegatedAssets" : "Activos delegados",
     "undelegating" : "Desdelegando",
-    "availableBalanceTooltip" : "Este importe está disponible.",
+    "availableBalanceTooltip" : "Fondos que puedes usar de inmediato.",
     "frozenAssetsTooltip" : "Los activos inmovilizados se utilizan en el proceso de votación de TRON. Esto representa tu cantidad total de votos.",
     "bandwidthTooltip" : "Inmoviliza activos para ganar Ancho de banda",
     "energyTooltip" : "Inmoviliza activos para ganar Energía",
@@ -929,7 +810,15 @@
     }
   },
   "card" : {
-    "backToCard" : "todas las tarjetas"
+    "backToCard" : "todas las tarjetas",
+    "title" : "Tarjeta",
+    "imageAlt" : "Imagen de la tarjeta",
+    "spendYourCrypto" : "Gasta tus cripto",
+    "payDescription" : "Paga en tiendas online o físicas con una tarjeta cripto",
+    "exploreCards" : "Explorar tarjetas",
+    "iAlreadyHaveACard" : "Ya tengo una tarjeta",
+    "unlockLiquidity" : "Desbloquear liquidez",
+    "exploreCryptoCardsDescription" : "Explora nuestras tarjetas cripto y elige la que mejor se ajuste a tus necesidades."
   },
   "lend" : {
     "title" : "Prestar cripto",
@@ -1307,6 +1196,17 @@
         "depositButton" : "Proteger mis cripto",
         "skipButton" : "Quizás más tarde"
       },
+      "sync" : {
+        "timelineTitle" : "Sincronización de wallets",
+        "timelineTitleCompleted" : "Sincronización activada",
+        "title" : "Activa la sincronización de tu wallet",
+        "description" : "Mantén tu portfolio actualizado al cambiar de PC o si usas un móvil",
+        "skipButton" : "Lo haré más tarde",
+        "skipTitle" : "¿No quieres activar la sincronización?",
+        "skipDescription" : "Si no la activas, tendrás que volver a agregar manualmente todas tus cuentas cripto en caso de cambiar a un móvil o PC nuevos. Puedes desactivarla posteriormente desde los ajustes de Ledger Wallet.",
+        "skipConfirm" : "Sí, omitir",
+        "skipNo" : "No, activar sincronización"
+      },
       "backup" : {
         "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
         "description" : "Restaura el acceso a tu billetera sin tu Frase de Recuperación Secreta con una copia de respaldo cifrada digital.\n\nElige si quieres tener una copia de respaldo digital:",
@@ -1422,7 +1322,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "A continuación, usa tu {{productName}} para... ",
+      "title" : "¿Y ahora qué?",
       "titleCompleted" : "¡Todo listo!\nYa puedes explorar tu portfolio.",
       "exploreCTA" : "Explorar mi portfolio"
     },
@@ -1431,19 +1331,22 @@
     },
     "postOnboardingBanner" : {
       "title" : "¿Qué es lo próximo que puedes hacer con tu {{productName}}?",
-      "description" : "Transfiere tus activos desde cualquier exchange o billetera, compra cripto, personaliza la pantalla de bloqueo o suscríbete a Ledger Recover.",
+      "description" : "Protege tus activos y ve más allá.",
       "link" : "Mira lo que puedes hacer ahora",
       "dismiss" : "Quizás más tarde"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Configura tu dispositivo Ledger"
+      },
       "buyCrypto" : {
-        "title" : "Comprar cripto",
-        "description" : "Elige entre más de 500 monedas y las mejores cotizaciones, adaptadas a tus preferencias.",
+        "title" : "Compra cripto desde Ledger Wallet",
+        "description" : "Elige entre más de 500 monedas y tokens.",
         "actionCompletedPopupLabel" : "Cripto comprada"
       },
       "assetsTransfer" : {
-        "title" : "Transferir tus activos al Ledger",
-        "description" : "Desde cualquier exchange o billetera, directamente a tu Ledger.",
+        "title" : "Transfiere tus activos",
+        "description" : "Transfiere desde cualquier exchange o wallet.",
         "actionCompletedPopupLabel" : "Activos transferidos"
       },
       "syncAccounts" : {
@@ -1585,34 +1488,6 @@
         "primaryCta" : "Conectar dispositivo",
         "secondaryCta" : "Quizás más tarde"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "Tendencia de {{time}}",
-      "buy" : "Comprar",
-      "swap" : "Permutar",
-      "gainers" : "Ganadores",
-      "losers" : "Perdedores",
-      "error" : {
-        "title" : "Lo sentimos pero no hemos podido cargar la tendencia",
-        "description" : "Inténtalo de nuevo más tarde"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "No hay ningún activo entre los {{count}} principales ganadores en el último periodo de {{trend}}",
-          "description" : "Considera consultar los principales perdedores o vuelve más tarde"
-        },
-        "losers" : {
-          "title" : "No hay ningún activo entre los {{count}} principales perdedores en el último periodo de {{trend}}",
-          "description" : "Considera consultar los principales ganadores o vuelve más tarde"
-        }
-      },
-      "trend" : {
-        "day" : "24 horas",
-        "week" : "7 días",
-        "month" : "30 días",
-        "year" : "año",
-        "all" : "año"
-      }
     }
   },
   "currentAddress" : {
@@ -1661,6 +1536,7 @@
     "currency" : "Divisa",
     "rangeLabel" : "Tiempo",
     "goBack" : "Volver",
+    "searchPlaceholder" : "Buscar activo",
     "filters" : {
       "title" : "Filtros",
       "show" : "Mostrar",
@@ -1766,8 +1642,6 @@
       "import" : "Cuentas",
       "finish" : "Confirmación"
     },
-    "fullNodeReadyInfo" : "Se agregarán las cuentas utilizando tu nodo completo de Bitcoin.",
-    "fullNodeConfigure" : "Configurar nodo",
     "tokensTip" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
     "accountToImportSubtitle_other" : "Agregar cuentas existentes",
     "selectAll" : "Seleccionar todas ({{count}})",
@@ -1863,7 +1737,13 @@
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
       "version" : "Versión",
-      "accountCreationFee" : "Tarifa de creación de cuenta"
+      "accountCreationFee" : "Tarifa de creación de cuenta",
+      "associatedTokenId" : "ID del token asociado",
+      "targetStakingNodeId" : "ID del nodo de destino",
+      "previousStakingNodeId" : "ID del nodo anterior",
+      "gasConsumed" : "Gas consumido",
+      "gasUsed" : "Gas usado",
+      "gasLimit" : "Límite de gas"
     }
   },
   "operationList" : {
@@ -1912,6 +1792,7 @@
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
       "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
+      "acceptTermsSponsored" : "Para poder beneficiarte de las tarifas de red gratuitas, aceptas compartir los detalles de tu transacción (incluida la dirección de tu wallet) con Blinklabs.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -2334,6 +2215,19 @@
       "description" : "Puede que necesites una <0>etiqueta o memo</0> para recibir este activo de un exchange. Puedes usar cualquier combinación de números, como 1234."
     }
   },
+  "newReceive" : {
+    "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Transferencia bancaria",
+          "description" : "Envía dinero fiduciario y recibe monedas estables"
+        },
+        "fromCrypto" : {
+          "title" : "Recibir cripto"
+        }
+      }
+    }
+  },
   "send" : {
     "title" : "Enviar",
     "totalSpent" : "Total a debitar",
@@ -2446,6 +2340,80 @@
         "cta.not.addTag" : "No agregar etiqueta",
         "checkbox.label" : "No mostrar esto de nuevo."
       }
+    }
+  },
+  "newSendFlow" : {
+    "title" : "Enviar {{currency}}",
+    "available" : "Disponibles {{amount}}",
+    "placeholder" : "Ingresa la dirección o el ENS",
+    "placeholderNoENS" : "Ingresar dirección",
+    "recent" : "Recientes",
+    "myAccounts" : "Mis cuentas",
+    "sendTo" : "Enviar a {{address}}",
+    "addressMatched" : "Dirección coincidente",
+    "addressNotFound" : "Dirección no encontrada",
+    "alreadyUsed" : "Ya utilizado · {{date}}",
+    "recentSendWillAppear" : "Tus envíos anteriores aparecerán aquí",
+    "relativeDate" : {
+      "justNow" : "Ahora",
+      "minutesAgo_one" : "Hace 1 min",
+      "minutesAgo_other" : "Hace {{count}} min",
+      "hoursAgo_one" : "Hace 1 hora",
+      "hoursAgo_other" : "hace {{count}} horas",
+      "daysAgo_one" : "Hace 1 día",
+      "daysAgo_other" : "hace {{count}} días"
+    },
+    "remove" : "Eliminar",
+    "enterTag" : "Ingresar {{tag}}",
+    "firstInteraction" : {
+      "title" : "Enviarás a una dirección nueva",
+      "description" : "Verifica que la dirección sea correcta. Si tienes alguna duda, envía primero una cantidad pequeña."
+    },
+    "sanctioned" : {
+      "title" : "Dirección con alerta",
+      "description" : "Esta dirección ha sido marcada con un alerta y Ledger no permite envíos a esa dirección",
+      "helpCenter" : "Centro de ayuda"
+    },
+    "errors" : {
+      "incorrectFormat" : "Formato de dirección incorrecto",
+      "incompatibleAsset" : "La dirección no es compatible con el activo seleccionado",
+      "walletNotExist" : "La wallet no existe"
+    },
+    "skipMemo" : {
+      "title" : "¿Omitir agregar {{tag}}?",
+      "warning" : "Es posible que pierdas tus activos si el receptor solicita una {{tag}}"
+    },
+    "tagHelp" : {
+      "title" : "¿Qué es una {{tag}}?",
+      "description" : "Cuando envías {{currency}} a un exchange cripto, es necesaria una {{tag}}. Es una función utilizada para identificar al receptor de la transacción. Si no incluyes la {{tag}} memo, es posible que se pierdan los fondos."
+    },
+    "networkFeesInFiat" : "Tarifas de red en {{currency}}",
+    "feesAmount" : "Monto de la tarifa ({{unit}})",
+    "gasLimit" : "Limite de gas ({{unit}})",
+    "feesPaid" : "Tarifa abonada a la red para procesar tu transacción",
+    "insufficientBalanceFees" : "Saldo insuficiente para cubrir las tarifas de red.",
+    "amountToSend" : "Monto a enviar en ({{currency}})",
+    "coinToSend" : "Monedas a enviar",
+    "coinControlCustom" : "Selección de monedas personalizada",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "Máx."
+    },
+    "reviewCta" : "Revisar",
+    "getCta" : "Obtener {{currency}}",
+    "switchInputMode" : "Cambiar modo de entrada de cantidad",
+    "aboveMaximum" : "Supera el saldo máximo",
+    "transactionSigned" : "Transacción firmada",
+    "processingTransaction" : "Tu transacción está en proceso",
+    "sign" : {
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "No se pueden actualizar las tarifas de red",
+      "warningDescription" : "Puede que los preajustes de la tarifa estén obsoletos."
     }
   },
   "releaseNotes" : {
@@ -3686,6 +3654,8 @@
       "activeTooltip" : "Cantidad activa genera recompensas",
       "inactiveTooltip" : "Cantidad inactiva no genera recompensas",
       "delegatedInfoTooltip" : "Cantidad total delegada a validadores.",
+      "inactiveStakeTooltip" : "Es posible retirar tu participación inactiva sin desactivar tu delegación.",
+      "inactiveStakeTitle" : "Recompensas retirables",
       "withdrawableInfoTooltip" : "Cantidad total que es posible retirar de las delegaciones.",
       "withdrawableTitle" : "Puede retirarse",
       "statusUpdateNotice" : "El estado de la delegación se actualizará cuando se confirme la transacción.",
@@ -4493,11 +4463,10 @@
       "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Wallet entre distintos teléfonos y PCs.",
+      "walletSyncDescription" : "Mantén tu portfolio actualizado al cambiar de PC o si usas un móvil",
       "mevProtection" : "Protección contra MEV",
       "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables en Ethereum.",
-      "mevProtectionLearnMore" : "Aviso de privacidad",
-      "marketPerformanceWidget" : "Widget de rendimiento del mercado",
-      "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
+      "mevProtectionLearnMore" : "Aviso de privacidad"
     },
     "developer" : {
       "search" : "Buscar",
@@ -4527,6 +4496,10 @@
       "analyticsConsole" : {
         "title" : "Permitir consola de análisis",
         "desc" : "Muestra y permite abrir la consola de análisis."
+      },
+      "themeConsole" : {
+        "title" : "Conmutador de tema",
+        "desc" : "Muestra una superposición flotante con la que cambiar de tema rápidamente."
       },
       "brazeTools" : {
         "title" : "Herramientas de Braze",
@@ -4565,6 +4538,10 @@
           "title" : "Generación rápida",
           "desc" : "Genera 10 cuentas aleatorias con divisas al azar."
         },
+        "emptyGenerate" : {
+          "title" : "Generación vacía",
+          "desc" : "Generar una cuenta vacía"
+        },
         "currencySelector" : {
           "placeholder" : "Elegir divisas...",
           "searchPlaceholder" : "Buscar",
@@ -4580,7 +4557,8 @@
         "buttons" : {
           "generateAccounts" : "Generar {{count}} cuenta",
           "generateAccounts_other" : "Generar {{count}} cuentas",
-          "generateAccountsQuick" : "Generar {{count}} cuentas"
+          "generateAccountsQuick" : "Generar {{count}} cuentas",
+          "generateEmptyAccount" : "Generar cuenta vacía"
         },
         "alerts" : {
           "selectCurrency" : "Selecciona al menos una divisa",
@@ -4618,7 +4596,23 @@
       },
       "modularDrawerDevTool" : {
         "title" : "Herramienta del drawer modular para desarrolladores",
-        "description" : "Te permite probar el drawer modular con facilidad"
+        "description" : "Te permite probar el drawer modular con facilidad",
+        "openDrawer" : "Abrir drawer",
+        "debugDialog" : "Diálogo de depuración",
+        "debugDuplicates" : "Depurar duplicados"
+      },
+      "walletFeaturesDevTool" : {
+        "title" : "Herramienta de desarrollo de funciones de wallet",
+        "description" : "Activar/desactivar las funciones de wallet 4.0 para escritorio (marca de función lwdWallet40).",
+        "mainFeatureToggle" : "Alternar característica principal",
+        "enableAll" : "Activar todo",
+        "disableAll" : "Desactivar todo",
+        "featureParameters" : "Parámetros de la función",
+        "tourState" : "Estado del tour",
+        "drawerPreview" : "Vista previa del drawer",
+        "openDrawer" : "Abrir drawer",
+        "showJson" : "Mostrar JSON",
+        "hideJson" : "Ocultar JSON"
       },
       "cryptoAssetsList" : {
         "title" : "Lista de activos cripto",
@@ -4717,6 +4711,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
       "enableLearnStagingUrlDesc" : "Activar el URL de ensayo de la página Learn.",
+      "enableCountervaluesStaging" : "Entorno de prueba de API de contravalores",
+      "enableCountervaluesStagingDesc" : "Usa el entorno de prueba de la API de contravalores en lugar del entorno de producción.",
       "openOnboardingAppInstallDebug" : "Abre la pantalla de depuración de la instalación de aplicaciones iniciales",
       "openOnboardingAppInstallDebugDesc" : "Abre una pantalla con los componentes del paso de sincronización de la instalación de aplicaciones iniciales"
     },
@@ -4897,10 +4893,6 @@
         "desc" : "Puedes ocultar los tokens yendo a la cuenta principal y haciendo clic derecho en el token y seleccionando “Ocultar token”.",
         "count" : "1 token",
         "count_other" : "{{count}} tokens"
-      },
-      "fullNode" : {
-        "title" : "Conectar nodo completo de Bitcoin",
-        "desc" : "Configura tu nodo completo de Bitcoin para sincronizar y enviar transacciones sin usar el Explorer de Ledger."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Ocultar transacciones con tokens cuando el valor es 0",
@@ -5168,7 +5160,9 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Frase de Recuperación",
           "hideRecoveryPhrase" : "Oculta tu Frase de Recuperación",
-          "pairNano" : "Conectar Nano"
+          "pairNano" : "Conectar Nano",
+          "enableSync" : "Sincronización",
+          "secureYourCrypto" : "Protege tus cripto"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5454,37 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "enableSync" : {
+            "title" : "Activa la sincronización de tu wallet",
+            "description" : "Mantén tu portfolio actualizado si cambias de móvil o usas tu PC.",
+            "buttons" : {
+              "next" : "Continuar",
+              "nextSecondary" : "Lo haré más tarde"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Protege tus cripto",
+            "description" : "Transfiere tus primeras cripto desde un exchange o wallet a tu Ledger Wallet para disfrutar de la máxima seguridad.",
+            "buttons" : {
+              "next" : "Proteger mis cripto",
+              "nextSecondary" : "Quizás más tarde",
+              "prev" : "Paso anterior"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Todo listo",
+            "description" : "Tu dispositivo Ledger ya está preparado. Si has enviado cripto a tu Ledger Wallet, las recibirás en cuestión de minutos.",
+            "buttons" : {
+              "next" : "Continuar"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Todo listo",
+            "description" : "Tu dispositivo Ledger está preparado, ya puedes proteger tus activos con él.",
+            "buttons" : {
+              "next" : "Continuar"
             }
           }
         }
@@ -5792,10 +5817,32 @@
     "canton" : {
       "commentPlaceholder" : "Opcional",
       "comment" : "Comentario",
+      "expiryDuration" : {
+        "label" : "Duración de la caducidad",
+        "summaryLabel" : "Oferta de caducidad",
+        "threeHours" : "3 horas",
+        "sixHours" : "6 horas",
+        "oneDay" : "1 día",
+        "oneWeek" : "1 semana",
+        "oneMonth" : "30 días"
+      },
+      "account" : {
+        "lockedBalance" : "Bloqueado",
+        "lockedBalanceTooltip" : "Tus fondos están bloqueados en ofertas que has enviado a otros usuarios. Puedes cancelar estas ofertas en cualquier momento o esperar a que el destinatario acepte o rechace tu oferta.",
+        "withdrawableBalance" : "Puede retirarse",
+        "withdrawableBalanceTooltip" : "Fondos que puedes reclamar de ofertas que has enviado y han caducado. Retira para moverlos a tu saldo disponible."
+      },
       "addAccount" : {
         "title" : "Agregar cuenta de Canton",
+        "reonboard" : {
+          "title" : "Es necesario actualizar la cuenta",
+          "init" : "Se ha detectado un cambio de topología en la red Canton. Vuelve a incorporar tu cuenta para seguir usándola.",
+          "success" : "Cuenta actualizada con éxito",
+          "successDescription" : "Ya puedes seguir usando tu cuenta"
+        },
         "onboard" : {
           "title" : "Incorporación",
+          "account" : "Cuenta",
           "newAccount" : "Nueva cuenta",
           "init" : "Clic en Continuar para configurar tu nueva cuenta de Canton",
           "onboarded" : "Cuentas incorporadas",
@@ -5812,6 +5859,9 @@
           "title" : "Autorización",
           "validator" : "Autorizar",
           "hint" : "Acepta automáticamente fondos ingresantes a esta cuenta.",
+          "reonboard" : {
+            "hint" : "Se ha detectado un cambio de topología. Vuelve a autorizar el validador Ledger para seguir recibiendo fondos automáticamente."
+          },
           "error" : "La autorización ha fallado. Inténtalo de nuevo.",
           "validatorLabel" : "Validador de Ledger",
           "validatorDescription" : "Aceptación de fondos automatizada"
@@ -5820,12 +5870,73 @@
           "title" : "Confirmación"
         }
       },
+      "topologyChangeError" : {
+        "message" : "Cambio de topología detectado. Es necesario realizar la incorporación de nuevo."
+      },
       "tooManyUtxos" : {
         "title" : "Acción necesaria: Demasiadas UTXOs",
         "description" : "Tu cuenta tiene demasiadas UTXOs pequeñas para procesar esta transferencia. Fusiónalas para evitar que caduquen debido a la acumulación de las tarifas por retención y para habilitar las transferencias.",
         "quickFix" : "Solución rápida: Envíate fondos para consolidarlas.",
         "warning" : "Tu cuenta tiene demasiadas UTXOs pequeñas. Envíate fondos para consolidarlas.",
         "consolidate" : "Consolidar"
+      },
+      "pendingTransactions" : {
+        "title" : "Transacciones pendientes ({{count}})",
+        "incoming" : {
+          "title" : "Transferencia entrante a revisar ({{count}})",
+          "detailsTitle" : "Detalles de la transferencia entrante"
+        },
+        "outgoing" : {
+          "title" : "Ofertas salientes ({{count}})",
+          "detailsTitle" : "Detalles de la transferencia saliente"
+        },
+        "pending" : "Pendiente",
+        "expired" : "Caducado",
+        "status" : {
+          "label" : "Estado",
+          "expired" : "Caducado",
+          "incoming" : "Entrantes",
+          "outgoing" : "Salientes"
+        },
+        "from" : "De",
+        "to" : "A",
+        "memo" : "Memo",
+        "noMemo" : "Sin Memo",
+        "date" : "Fecha",
+        "expiresAt" : "Caduca a las",
+        "expiresIn" : "Caduca en",
+        "amount" : "Importe",
+        "transaction" : "Transacción",
+        "viewTransaction" : "Ver transacción",
+        "action" : "Acción",
+        "accept" : "Aceptar",
+        "withdraw" : "Retirar",
+        "reject" : "Rechazar",
+        "deviceAppModal" : {
+          "title" : "{{action}} oferta",
+          "description" : "Abre la app Canton en tu dispositivo Ledger para {{action}} esta oferta.",
+          "contractId" : "ID del contrato",
+          "cancel" : "Cancelar",
+          "openApp" : "Abrir app Canton",
+          "opening" : "Abriendo...",
+          "noDevice" : "No hay ningún dispositivo conectado",
+          "appOpenError" : "No se pudo abrir la app Canton. Inténtalo de nuevo.",
+          "processing" : "Procesando {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "Oferta aceptada",
+              "description" : "La oferta de transferencia se ha aceptado correctamente."
+            },
+            "reject" : {
+              "title" : "Oferta rechazada",
+              "description" : "La oferta de transferencia se ha rechazado correctamente."
+            },
+            "withdraw" : {
+              "title" : "Oferta retirada",
+              "description" : "La oferta de transferencia se ha retirado correctamente."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6047,6 +6158,11 @@
       "title" : "Actualizar el firmware del dispositivo",
       "description" : "Actualiza el firmware de tu dispositivo a la versión más reciente para acceder a esta opción"
     },
+    "UnsupportedFeatureError" : {
+      "title" : "Función no compatible",
+      "description" : "La app necesaria para esta operación no está disponible actualmente en tu dispositivo Ledger. Para obtener más detalles, ponte en contacto con el Soporte de Ledger.",
+      "ctaLabel" : "Ponte en contacto con el Soporte de Ledger"
+    },
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Wallet, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto.",
@@ -6248,22 +6364,6 @@
     "RPCPassRequired" : {
       "title" : "Es necesario ingresar la contraseña RPC"
     },
-    "SatStackAccessDown" : {
-      "title" : "No fue posible hacer contacto con el nodo completo",
-      "description" : "Verifica que SatStack y tu nodo estén funcionando. Comprueba la configuración del nodo completo en Ajustes si persiste el problema."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Sincronización de nodo en curso...",
-      "description" : "Espera mientras se sincroniza el nodo. No es posible realizar el envío, ya que los saldos de tu cuenta de Bitcoin pueden ser incorrectos."
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "Actualiza SatStack",
-      "description" : "La versión de SatStack que estás utilizando es demasiado antigua y puede contener errores o incompatibilidades."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "Cuenta no escaneada por el nodo completo",
-      "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
-    },
     "SwapRateExpiredError" : {
       "title" : "Tasa caducada",
       "description" : "La tasa de cambio ha caducado. Actualiza e inténtalo de nuevo."
@@ -6277,7 +6377,11 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Error de procesamiento",
-      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB{{errorCode}}"
+      "description" : "El proveedor de permuta no puede procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+    },
+    "SwapQuoteLowLiquidity" : {
+      "title" : "Proveedor no disponible",
+      "description" : "No podemos completar tu permuta con este proveedor. Inténtalo con otro."
     },
     "TimeoutError" : {
       "title" : "El servidor ha tardado demasiado en responder",
@@ -6571,7 +6675,7 @@
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Habilita la firma a ciegas o los datos de contrato en los ajustes de la aplicación Ethereum"
+      "title" : "Activar la Firma a ciegas o Datos de contrato en la app de Ethereum"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Habilita los datos de contrato en los ajustes de la aplicación Celo"
@@ -6725,6 +6829,10 @@
       "title" : "Parámetros de protocolo no válidos para Cardano",
       "description" : "Las transacciones con ADA no están disponibles en este momento. Sincroniza tu cuenta de nuevo e inténtalo otra vez, o contacta al equipo de Soporte si necesitas ayuda."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "Tamaño de memo no válido; el límite máximo permitido es de 64 caracteres.",
+      "description" : "El memo de Cardano tiene un tamaño máximo limitado. Reduce el tamaño del memo."
+    },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
@@ -6784,6 +6892,23 @@
     "HederaRecipientTokenAssociationUnverified" : {
       "title" : "No se puede verificar la asociación del token",
       "description" : "No hemos podido confirmar si la cuenta de destino puede recibir este token. Puede que la dirección no sea válida, o podría haber un problema de red o de servicio."
+    },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Verificación de dirección EVM necesaria",
+      "description" : "Verifica la dirección EVM visible en tu dispositivo Ledger antes de confirmar."
+    },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "Ya estás delegando en este nodo"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "El nodo seleccionado no es un validador aceptado"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "No hay recompensas que reclamar"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Tamaño de memo no válido; el límite máximo permitido es de 100 caracteres.",
+      "description" : "El memo de Hedera tiene un tamaño máximo limitado. Reduce el tamaño del memo."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "Error al cargar la imagen desde el archivo.",
@@ -7062,6 +7187,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "cryptoOrg" : {
@@ -7107,6 +7238,152 @@
         }
       }
     },
+    "account" : {
+      "header" : {
+        "actions" : {
+          "stake" : {
+            "alreadyDelegatedTooltip" : "Todo tu saldo ya está delegado"
+          }
+        }
+      },
+      "balanceFooter" : {
+        "delegated" : {
+          "tooltip" : "Al poner en participación en Hedera, todo tu saldo se delega y permanece líquido"
+        },
+        "claimable" : {
+          "tooltip" : "Las recompensas se reclamarán automáticamente tras cada transacción. También puedes reclamarlas manualmente."
+        }
+      },
+      "bodyHeader" : {
+        "delegatedPositions" : {
+          "header" : "Delegación",
+          "button" : "Reclamar recompensas",
+          "columns" : {
+            "inactiveTooltip" : "Validador no encontrado",
+            "overstakedTooltip" : "En este nodo se ha puesto en participación en exceso, el APY no es óptimo",
+            "activeTooltip" : "Las cantidades delegadas generan recompensas",
+            "delegated" : "Delegado",
+            "rewards" : "Recompensas"
+          },
+          "actions" : {
+            "redelegation" : "Redelegar",
+            "undelegation" : "Desdelegar",
+            "claimRewards" : "Reclamar recompensas"
+          }
+        }
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "validator" : {
+            "title" : "Validadores",
+            "rowTitle" : "Nodo {{index}}: {{name}}",
+            "rowSubtitlePercentage" : "Puesto en participación: {{percentage}}% del máx.",
+            "rowSubtitleOverstaked" : "En el nodo se ha puesto en participación en exceso"
+          },
+          "amount" : {
+            "title" : "Importe",
+            "alert" : "Al poner en participación en Hedera, se pone en participación todo tu saldo. Permanece totalmente líquido, no se expone a periodo de inmovilización ni a riesgos de penalización. Puede que tengas que esperar hasta 48 horas para que comiences a recibir recompensas por puesta en participación.",
+            "learnMore" : "Más información"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "flow" : {
+        "title" : "Desdelegar activos",
+        "steps" : {
+          "summary" : {
+            "title" : "Importe",
+            "validatorLabel" : "Validador",
+            "amountLabel" : "Importe a desdelegar",
+            "alert" : "Tras cancelar la delegación, obtendrás de inmediato tu saldo y tus recompensas pendientes. No es posible cancelar la delegación parcial de tu puesta en participación.",
+            "learnMore" : "Más información"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has desdelegado tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "Redelegar activos",
+        "steps" : {
+          "validators" : {
+            "title" : "Validadores",
+            "currentValidatorLabel" : "Delegación actual",
+            "newValidatorLabel" : "Nueva delegación",
+            "newValidatorSelectPlaceholder" : "Seleccionar validador",
+            "removedValidatorSelectPlaceholder" : "El validador seleccionado anteriormente ya no está disponible.",
+            "newValidatorSelectNoOption" : "Ningún validador coincide con \"{{validatorName}}\"",
+            "amountLabel" : "Importe a redelegar",
+            "alert" : "Al poner en participación en Hedera, se pone en participación todo tu saldo. Permanece totalmente líquido, no se expone a periodo de inmovilización ni a riesgos de penalización. Puede que tengas que esperar hasta 48 horas para que comiences a recibir recompensas por puesta en participación.",
+            "learnMore" : "Más información"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has redelegado tus activos correctamente",
+              "text" : "La redelegación se actualizará una vez que la cadena de bloques haya confirmado la transacción",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Reclamar recompensas",
+        "steps" : {
+          "rewards" : {
+            "title" : "Recompensas",
+            "description" : "Has ganado <0>{{formattedClaimableRewards}}</0> del siguiente validador. Al hacer clic en Continuar, serán reclamados y agregados automáticamente al saldo disponible.",
+            "currentValidatorLabel" : "Delegación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has reclamado tus recompensas correctamente",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (opcional)",
@@ -7118,6 +7395,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Más información"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vas a enviar un token ERC20. Para este tipo de transacción, en tu dispositivo Ledger se muestra la dirección EVM del remitente, no el ID de su cuenta.\nSigue <0>esta guía</0> para verificar que la dirección es correcta antes de confirmar."
         }
       }
     },
@@ -7127,6 +7407,12 @@
         "text" : "En cuanto esta transacción se haya confirmado, podrás recibir tu token. <0>Haz clic aquí</0> para iniciar el flujo de recepción.",
         "learnMore" : "Más información"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "Todavía no tienes cuentas de {{network}}. Para continuar, agrega una.",
+      "addAccount" : "Agregar cuenta"
     }
   },
   "drawers" : {
@@ -7175,7 +7461,7 @@
     },
     "postOnboarding" : {
       "title" : "Personalizar la pantalla de bloqueo",
-      "description" : "Elige cualquier obra de arte digital o imagen para establecerla como pantalla de bloqueo de tu {{productName}}.",
+      "description" : "Exhibe tu ilustración digital o foto favoritos como pantalla de bloqueo de tu dispositivo.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Pantalla de bloqueo personalizada",
@@ -7295,15 +7581,26 @@
       "analyticsDesc" : "Permite que Ledger recopile los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Wallet y mejorar tanto la aplicación como tu experiencia."
     }
   },
+  "analytics" : {
+    "title" : "Análisis"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Cerrar",
+    "banner" : {
+      "title" : "Tu wallet no está sincronizada",
+      "description" : "Mantén tu portfolio actualizado al cambiar de PC o si usas un móvil",
+      "cta" : "Sincronizar mi wallet"
+    },
     "activate" : {
       "title" : "¿Quieres activar Ledger Sync en tu PC?",
       "description" : "Sincroniza automáticamente tus cuentas de cripto en todos tus teléfonos y PCs, incluso cuando cambies a un dispositivo nuevo.",
       "cta" : "Activar Ledger Sync",
       "alreadySync" : "Ya lo he activado",
-      "learnMore" : "¿Cómo funciona Ledger Sync?"
+      "learnMore" : "¿Cómo funciona Ledger Sync?",
+      "titleModal" : "Sincroniza tu wallet",
+      "descriptionModal" : "Mantén tu portfolio actualizado al cambiar de PC o si usas un móvil. Todo ello, protegido por tu dispositivo Ledger.",
+      "ctaModal" : "Continuar"
     },
     "entryPoints" : {
       "accounts" : {
@@ -7380,6 +7677,11 @@
         "title" : "Sincronización correcta",
         "desc" : "Los cambios que se produzcan en tus cuentas de cripto ahora aparecerán automáticamente en las aplicaciones Ledger Wallet en los teléfonos y PCs sincronizados. "
       },
+      "complete" : {
+        "title" : "Sincronización finalizada",
+        "description" : "Desde ahora, tu portfolio estará sincronizado automáticamente en todos tus dispositivos.",
+        "syncAnother" : "¿Usas Ledger en un dispositivo móvil? Escanear código QR "
+      },
       "synchAnother" : "Sincronizar con otra aplicación Ledger Wallet",
       "close" : "Cerrar"
     },
@@ -7391,7 +7693,7 @@
         "cancel" : "Mantener sincronización"
       },
       "deleteBackupSuccess" : {
-        "title" : "Tus aplicaciones Ledger Wallet dejarán de sincronizarse",
+        "title" : "Tus apps de Ledger Wallet ya no se sincronizan",
         "description" : "Puedes activar la sincronización de nuevo en cualquier momento"
       },
       "deleteBackupError" : {
@@ -7409,7 +7711,8 @@
         "connectDevice" : {
           "title" : "Usa tu Ledger",
           "description" : "Sincronizar firmando con tu Ledger"
-        }
+        },
+        "descriptionModal" : "Elige si tienes Ledger Wallet sincronizado en otro móvil"
       },
       "qrCode" : {
         "title" : "Sincronizar tus aplicaciones de Ledger Wallet",
@@ -7547,13 +7850,79 @@
       "title" : "Se ha producido un error de red",
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda.",
       "cta" : "Reintentar"
+    },
+    "errors" : {
+      "network" : {
+        "title" : "La conexión ha fallado",
+        "description" : "No tienes conexión a Internet. Inténtalo de nuevo."
+      },
+      "backend" : {
+        "title" : "La conexión ha fallado",
+        "description" : "Algo ha salido mal en nuestro sistema. Inténtalo de nuevo más tarde"
+      },
+      "cta" : "Intentarlo de nuevo"
     }
+  },
+  "portfolio" : {
+    "title" : "Inicio",
+    "today" : "Hoy",
+    "addAccountCta" : "Agregar cuenta cripto",
+    "noBalanceTitle" : "Protege tus cripto",
+    "perpsEntry" : {
+      "title" : "Perpetuos",
+      "description" : "Opera con apalancamiento",
+      "cta" : "Discover"
+    },
+    "noDeviceTitle" : "La wallet más segura"
+  },
+  "marketBanner" : {
+    "title" : "Explorar mercado",
+    "genericError" : "La conexión ha fallado",
+    "cta" : "Ver todo",
+    "fearAndGreed" : {
+      "title" : "Sentimiento"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Más miedo",
+      "fear" : "Miedo",
+      "neutral" : "Neutro",
+      "greed" : "Avaricia",
+      "extremeGreed" : "Más avaricia"
+    },
+    "dialog" : {
+      "title" : "Índice de sentimiento",
+      "content" : "El índice de sentimiento indica el estado emocional del mercado. Oscila entre el 0 y el 100. Un valor más bajo indica miedo extremo, mientras que uno más alto representa avaricia extrema.",
+      "cta" : "Entendido"
+    }
+  },
+  "quickActions" : {
+    "send" : "Enviar",
+    "receive" : "Recibir",
+    "buy" : "Comprar",
+    "sell" : "Vender",
+    "connect" : "Conectar",
+    "buyALedger" : "Compra un Ledger"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "topBar" : {
+    "activityIndicator" : {
+      "errorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Lista de cuentas afectadas: {{accounts}}. Pulsa para reintentar",
+      "emptyErrorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Pulsa para reintentar",
+      "upToDate" : "Estás al día",
+      "minutesAgo_one" : "Última sincronización: Hace {{count}} minuto. Pulsa para actualizar",
+      "minutesAgo_other" : "Última sincronización: Hace {{count}} minutos. Pulsa para actualizar",
+      "hoursAgo_one" : "Última sincronización: Hace {{count}} hora. Pulsa para actualizar",
+      "hoursAgo_other" : "Última sincronización: Hace {{count}} horas. Pulsa para actualizar",
+      "daysAgo_one" : "Última sincronización: Hace {{count}} día. Pulsa para actualizar",
+      "daysAgo_other" : "Última sincronización: Hace {{count}} días. Pulsa para actualizar"
     }
   },
   "geoBlocking" : {
@@ -7569,5 +7938,65 @@
     "restart" : "Reiniciar",
     "downloadOnLedger" : "Descargar desde Ledger.com",
     "downloadProgress" : "Descargando... {{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Saldo disponible",
+      "availableBalanceTooltip" : "Saldo que puede transferirse",
+      "transparentBalance" : "Saldo transparente",
+      "transparentBalanceTooltip" : "Saldo visible para el público",
+      "privateBalance" : "Saldo privado",
+      "privateBalanceTooltip" : "Saldo que está oculto al público"
+    },
+    "shielded" : {
+      "state" : {
+        "showBalance" : "Mostrar saldo",
+        "pausedAt" : "Se pausó a las: ",
+        "lastSync" : "Última sincronización: {{date}}"
+      },
+      "flows" : {
+        "export" : {
+          "title" : "Activar saldo privado de Zcash",
+          "breadcrumbs" : {
+            "0" : "Altura de nacimiento",
+            "1" : "UFVK",
+            "2" : "Dispositivo",
+            "3" : "Confirmación"
+          },
+          "steps" : {
+            "birthday" : {
+              "text" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos.",
+              "cta" : "Más información",
+              "label" : "Altura de nacimiento",
+              "tooltip" : "Valor predeterminado: La fecha de hoy. Cámbialo solo para las cuentas ya existentes con actividad privada (protegida) anterior.",
+              "syncFromZero" : "Esta cuenta recibió ZEC blindado en el pasado, pero no puedo recuperar la altura de nacimiento. Escanea a partir del bloque 0 (este proceso puede llevar mucho tiempo).",
+              "error" : "Fecha no válida"
+            },
+            "ufvk" : {
+              "text" : "Para comenzar, debes exportar tu Clave de Visualización Completa Unificada (UFVK). Debes confirmar esta acción con tu dispositivo Ledger."
+            },
+            "device" : {
+              "text" : "Confirma la exportación de tu UFVK en tu dispositivo Ledger"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "UFVK importada correctamente",
+                "text" : "Podrás recibir Shielded ZEC y firmar transacciones privadas.",
+                "info" : {
+                  "text" : "Tu Clave de Visualización Completa Unificada se mantiene almacenada localmente en tu PC y nunca se transmite ni expone a sistemas externos.",
+                  "cta" : "Más información"
+                },
+                "warning" : "Las cuentas que tengan una altura de nacimiento más antigua pueden requerir una sincronización más prolongada (de hasta 2 horas). Mantén la app abierta hasta que finalice la sincronización."
+              }
+            }
+          }
+        }
+      },
+      "startSync" : "Iniciar sincronización",
+      "datepicker" : {
+        "label" : "Altura de nacimiento",
+        "tooltip" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos."
+      }
+    }
   }
 }

@@ -14,6 +14,9 @@ test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
     portfolioExchangeBanner: { enabled: true },
+    lwdWallet40: {
+      enabled: false,
+    },
   },
 });
 

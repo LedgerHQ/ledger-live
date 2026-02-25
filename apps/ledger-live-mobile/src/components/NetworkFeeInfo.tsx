@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";

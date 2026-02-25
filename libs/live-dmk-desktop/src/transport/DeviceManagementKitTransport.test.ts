@@ -16,9 +16,9 @@ let deviceManagementKit: DeviceManagementKit;
 
 describe("DeviceManagementKitTransport", () => {
   const mockObserver = {
-    next: vi.fn(),
-    error: vi.fn(),
-    complete: vi.fn(),
+    next: jest.fn(),
+    error: jest.fn(),
+    complete: jest.fn(),
   };
 
   const testDevice1 = {
@@ -36,7 +36,7 @@ describe("DeviceManagementKitTransport", () => {
 
   beforeAll(async () => {
     deviceManagementKit = getDeviceManagementKit();
-    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockImplementation(() => {
+    jest.spyOn(deviceManagementKit, "listenToAvailableDevices").mockImplementation(() => {
       return of<DiscoveredDevice[]>([
         {
           id: `test-123`,
@@ -51,8 +51,8 @@ describe("DeviceManagementKitTransport", () => {
         },
       ]);
     });
-    vi.spyOn(deviceManagementKit, "connect").mockResolvedValue(`session-123`);
-    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockImplementation(() => {
+    jest.spyOn(deviceManagementKit, "connect").mockResolvedValue(`session-123`);
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockImplementation(() => {
       obs.next({
         deviceStatus: DeviceStatus.CONNECTED,
       } as DeviceSessionState);
@@ -65,7 +65,7 @@ describe("DeviceManagementKitTransport", () => {
   afterEach(() => {
     obs.complete();
     obs = new Subject<DeviceSessionState>();
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("should open a device", async () => {
@@ -73,7 +73,7 @@ describe("DeviceManagementKitTransport", () => {
   });
 
   it("should be able to exchange APDU", async () => {
-    vi.spyOn(deviceManagementKit, "sendApdu").mockResolvedValue({
+    jest.spyOn(deviceManagementKit, "sendApdu").mockResolvedValue({
       data: Buffer.from([]),
       statusCode: Buffer.from([0x90, 0x00]),
     });
@@ -94,11 +94,13 @@ describe("DeviceManagementKitTransport", () => {
       subscriber.complete();
     });
 
-    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
-    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(
-      new Observable<ConnectedDevice>(),
-    );
-    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
+    jest
+      .spyOn(deviceManagementKit, "listenToAvailableDevices")
+      .mockReturnValue(mockAvailableDevices);
+    jest
+      .spyOn(deviceManagementKit, "listenToConnectedDevice")
+      .mockReturnValue(new Observable<ConnectedDevice>());
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
 
     DeviceManagementKitTransport.listen(mockObserver);
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -135,9 +137,13 @@ describe("DeviceManagementKitTransport", () => {
       subscriber.complete();
     });
 
-    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
-    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(mockConnectedDevices);
-    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
+    jest
+      .spyOn(deviceManagementKit, "listenToAvailableDevices")
+      .mockReturnValue(mockAvailableDevices);
+    jest
+      .spyOn(deviceManagementKit, "listenToConnectedDevice")
+      .mockReturnValue(mockConnectedDevices);
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
 
     DeviceManagementKitTransport.listen(mockObserver);
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -180,9 +186,13 @@ describe("DeviceManagementKitTransport", () => {
       subscriber.complete();
     });
 
-    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
-    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(mockConnectedDevices);
-    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(mockSessionState);
+    jest
+      .spyOn(deviceManagementKit, "listenToAvailableDevices")
+      .mockReturnValue(mockAvailableDevices);
+    jest
+      .spyOn(deviceManagementKit, "listenToConnectedDevice")
+      .mockReturnValue(mockConnectedDevices);
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(mockSessionState);
 
     DeviceManagementKitTransport.listen(mockObserver);
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -225,9 +235,13 @@ describe("DeviceManagementKitTransport", () => {
       subscriber.complete();
     });
 
-    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
-    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(mockConnectedDevices);
-    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(mockSessionState);
+    jest
+      .spyOn(deviceManagementKit, "listenToAvailableDevices")
+      .mockReturnValue(mockAvailableDevices);
+    jest
+      .spyOn(deviceManagementKit, "listenToConnectedDevice")
+      .mockReturnValue(mockConnectedDevices);
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(mockSessionState);
 
     DeviceManagementKitTransport.listen(mockObserver);
     await new Promise(resolve => setTimeout(resolve, 0));

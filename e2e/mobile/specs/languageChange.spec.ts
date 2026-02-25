@@ -1,29 +1,63 @@
 $TmsLink("B2CQA-2344");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-tags.forEach(tag => $Tag(tag));
+
+const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
+
+const langButtonText = [
+  {
+    lang: "Français",
+    localization: "Général",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "Español",
+    localization: "General",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke"],
+  },
+  {
+    lang: "Русский",
+    localization: "Общие",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "Deutsch",
+    localization: "Allgemeines",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "Português (Brasil)",
+    localization: "Geral",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "Türkçe",
+    localization: "Genel",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "简体中文",
+    localization: "常规",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "한국어",
+    localization: "일반",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "日本語",
+    localization: "一般",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+  {
+    lang: "English",
+    localization: "General",
+    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  },
+];
+
+const nanoApp = AppInfos.ETHEREUM;
+
 describe("Change Language", () => {
-  const langButtonText = [
-    { lang: "Français", localization: "Général" },
-    { lang: "Español", localization: "General" },
-    { lang: "Русский", localization: "Общие" },
-    { lang: "Deutsch", localization: "Allgemeines" },
-    { lang: "Português (Brasil)", localization: "Geral" },
-    { lang: "Türkçe", localization: "Genel" },
-    { lang: "简体中文", localization: "常规" },
-    { lang: "한국어", localization: "일반" },
-    { lang: "日本語", localization: "一般" },
-    { lang: "English", localization: "General" },
-  ];
-
-  const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }) => {
-    it(`should change selected language to ${l10n.lang}`, async () => {
-      await app.settingsGeneral.navigateToLanguageSelect();
-      await app.settingsGeneral.selectLanguage(l10n.lang);
-      await app.settingsGeneral.expectLocalizedText(l10n.localization);
-    });
-  };
-  const nanoApp = AppInfos.ETHEREUM;
-
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
@@ -46,8 +80,15 @@ describe("Change Language", () => {
     await app.settings.navigateToGeneralSettings();
   });
 
-  // test steps for each language
   for (const l10n of langButtonText) {
-    verifyLanguageCanBeChanged(l10n);
+    const isSmoke = l10n.tags.includes("@smoke");
+    const shouldSkip = isSmokeTestRun && !isSmoke;
+
+    l10n.tags.forEach(tag => $Tag(tag));
+    (shouldSkip ? it.skip : it)(`should change selected language to ${l10n.lang}`, async () => {
+      await app.settingsGeneral.navigateToLanguageSelect();
+      await app.settingsGeneral.selectLanguage(l10n.lang);
+      await app.settingsGeneral.expectLocalizedText(l10n.localization);
+    });
   }
 });

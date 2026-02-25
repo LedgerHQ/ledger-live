@@ -1,11 +1,11 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { StakingOperation } from "../types/staking";
 import { isStakingIntent } from "../utils";
-import { STAKING_CONTRACTS } from "./contracts";
-import { encodeStakingData } from "./encoder";
-import { isStakingOperation } from "./detectOperationType";
 import { isPayable } from "./abis";
+import { STAKING_CONTRACTS } from "./contracts";
+import { isStakingOperation } from "./detectOperationType";
+import { encodeStakingData } from "./encoder";
 
 type OperationFn = (
   valAddress: string,
@@ -15,7 +15,7 @@ type OperationFn = (
 ) => unknown[];
 
 const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
-  sei_network_evm: {
+  sei_evm: {
     delegate: valAddress => [valAddress],
     undelegate: (valAddress, amount) => [valAddress, amount],
     redelegate: (valAddress, amount, dstValAddress) => {

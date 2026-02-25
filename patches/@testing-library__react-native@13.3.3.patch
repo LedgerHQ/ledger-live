@@ -1,0 +1,64 @@
+diff --git a/build/render-act.js b/build/render-act.js
+index 9c2450ea9cdb7a0fcceca5efcc7130350853f320..cc6678bd39a57145194434f03e6c448ad905a482 100644
+--- a/build/render-act.js
++++ b/build/render-act.js
+@@ -8,15 +8,22 @@ exports.renderWithAsyncAct = renderWithAsyncAct;
+ var _reactTestRenderer = _interopRequireDefault(require("react-test-renderer"));
+ var _act = _interopRequireDefault(require("./act"));
+ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
++
++// PATCHED for React 19: capture thenable from act() instead of discarding with void
+ function renderWithAct(component, options) {
+   let renderer;
+ 
+   // This will be called synchronously.
+-  void (0, _act.default)(() => {
++  const actResult = (0, _act.default)(() => {
+     // @ts-expect-error `TestRenderer.create` is not typed correctly
+     renderer = _reactTestRenderer.default.create(component, options);
+   });
+ 
++  // PATCH: Handle React 19 thenable from act()
++  if (actResult && typeof actResult.then === 'function') {
++    Promise.resolve(actResult).catch(() => {});
++  }
++
+   // @ts-expect-error: `act` is synchronous, so `renderer` is already initialized here
+   return renderer;
+ }
+diff --git a/build/render.js b/build/render.js
+index 01ec7f6abb61614a4f7fcfcafc3c0e8ee7f36703..d77df4e0f8a14cc1f2a0e9f4b53900ca9a581dc5 100644
+--- a/build/render.js
++++ b/build/render.js
+@@ -66,10 +66,14 @@ function renderWithStringValidation(component, options = {}) {
+ }
+ function buildRenderResult(renderer, wrap) {
+   const instance = renderer.root;
++  // PATCHED for React 19: capture thenable from act() instead of discarding with void
+   const rerender = component => {
+-    void (0, _act.default)(() => {
++    const actResult = (0, _act.default)(() => {
+       renderer.update(wrap(component));
+     });
++    if (actResult && typeof actResult.then === 'function') {
++      Promise.resolve(actResult).catch(() => {});
++    }
+   };
+   const rerenderAsync = async component => {
+     // eslint-disable-next-line require-await
+@@ -77,10 +81,14 @@ function buildRenderResult(renderer, wrap) {
+       renderer.update(wrap(component));
+     });
+   };
++  // PATCHED for React 19: capture thenable from act() instead of discarding with void
+   const unmount = () => {
+-    void (0, _act.default)(() => {
++    const actResult = (0, _act.default)(() => {
+       renderer.unmount();
+     });
++    if (actResult && typeof actResult.then === 'function') {
++      Promise.resolve(actResult).catch(() => {});
++    }
+   };
+   const unmountAsync = async () => {
+     // eslint-disable-next-line require-await

@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/TextInput";
 import Button from "~/components/wrappedUi/Button";
@@ -16,12 +16,11 @@ import {
   setAccountName as setAccountNameStore,
 } from "@ledgerhq/live-wallet/store";
 import { walletSelector } from "~/reducers/wallet";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
 import { getFontStyle } from "~/components/LText";
-import { Keyboard } from "react-native";
 import KeyboardView from "~/components/KeyboardView";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
@@ -31,7 +30,7 @@ type NavigationProps =
   | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>;
 
 const EditAccountName = ({ navigation, route }: NavigationProps) => {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const { colors } = useTheme();
   const { t } = useTranslation();

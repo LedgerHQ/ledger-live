@@ -9,7 +9,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import ensureContrast from "~/renderer/ensureContrast";
 import Spinner from "./Spinner";
 import { BoxProps } from "./Box/Box";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 
 type CryptoIconWrapperProps = {

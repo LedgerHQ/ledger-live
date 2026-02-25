@@ -1,6 +1,7 @@
 import * as braze from "@braze/web-sdk";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { LocationContentCard, NotificationContentCard, Platform } from "~/types/dynamicContent";
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { track } from "../analytics/segment";
@@ -13,13 +14,11 @@ export function useNotifications() {
   const isTrackedUser = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
-    const cards = braze
-      .getCachedContentCards()
-      .cards.filter(
-        card =>
-          card.extras?.platform === Platform.Desktop &&
-          card.extras?.location === LocationContentCard.NotificationCenter,
-      );
+    const cards = (braze.getCachedContentCards()?.cards ?? []).filter(
+      card =>
+        card.extras?.platform === Platform.Desktop &&
+        card.extras?.location === LocationContentCard.NotificationCenter,
+    );
     setCachedNotifications(cards);
   }, [dispatch, notificationsCards]);
 
@@ -79,6 +78,7 @@ export function useNotifications() {
         link: card.path || card.url,
         campaign: card.id,
         page: "notification_center",
+        location: card.location,
       });
     },
     [cachedNotifications, isTrackedUser],

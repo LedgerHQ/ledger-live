@@ -48,7 +48,3 @@ pnpm ui:native storybook
 pnpm ui:shared clean
 pnpm ui:icons build
 ```
-
-## Examples
-
-The [examples folder](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/examples) contains some code samples and minimal projects that you can look into in order to understand how to use the UI libraries with popular development stacks.

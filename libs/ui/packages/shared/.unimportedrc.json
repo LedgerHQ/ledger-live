@@ -3,6 +3,9 @@
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**", "lib/**", "scripts/**"],
   "ignoreUnimported": [],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnused": []
 }

@@ -39,6 +39,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -83,6 +84,10 @@ export type ConnectAppEvent =
     }
   | {
       type: "device-permission-granted";
+    }
+  | {
+      type: "device-id";
+      deviceId: DeviceId;
     }
   | {
       type: "app-not-installed";
@@ -550,18 +555,23 @@ export default function connectAppFactory(
       const deviceAction = new ConnectAppDeviceAction({
         input: {
           application: appNameToDependency(appName),
-          dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
+          dependencies: dependencies ? dependencies.map(name => appNameToDependency(name)) : [],
           requireLatestFirmware,
           allowMissingApplication: allowPartialDependencies,
           unlockTimeout: 0, // Expect to fail immediately when device is locked
           requiredDerivation: requiresDerivation
             ? async () => {
-                const { currencyId, ...derivationRest } = requiresDerivation;
-                const derivation = await getAddress(transport, {
-                  currency: getCryptoCurrencyById(currencyId),
-                  ...derivationRest,
-                });
-                return derivation.address;
+                try {
+                  dmk._unsafeBypassIntentQueue({ bypass: true, sessionId });
+                  const { currencyId, ...derivationRest } = requiresDerivation;
+                  const derivation = await getAddress(transport, {
+                    currency: getCryptoCurrencyById(currencyId),
+                    ...derivationRest,
+                  });
+                  return derivation.address;
+                } finally {
+                  dmk._unsafeBypassIntentQueue({ bypass: false, sessionId });
+                }
               }
             : undefined,
         },

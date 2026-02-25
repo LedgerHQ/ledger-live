@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { Observable, of } from "rxjs";
 import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
@@ -10,7 +9,6 @@ import type {
   GetProviders,
   PostSwapAccepted,
   PostSwapCancelled,
-  SwapRequestEvent,
 } from "./types";
 import type { Transaction } from "../../generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -108,21 +106,6 @@ export const mockGetExchangeRates = async (
   ];
 };
 
-export const mockInitSwap = (
-  exchange: ExchangeSwap,
-  exchangeRate: ExchangeRate,
-  transaction: Transaction,
-): Observable<SwapRequestEvent> => {
-  return of({
-    type: "init-swap-result",
-    initSwapResult: {
-      transaction,
-      swapId: "mockedSwapId",
-      magnitudeAwareRate: new BigNumber(50000),
-    },
-  });
-};
-
 // Need to understand how and why this gets used
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
@@ -205,7 +188,7 @@ export const mockGetProviders: GetProviders = async () => {
 export const mockGetStatus: GetMultipleStatus = async statusList => {
   //Fake delay to show loading UI
   await new Promise(r => setTimeout(r, 800));
-  return statusList.map(s => ({ ...s, status: "finished" }));
+  return statusList.map(s => ({ ...s, status: "finished", finalAmount: undefined }));
 };
 
 export const mockPostSwapAccepted: PostSwapAccepted = async ({

@@ -1,7 +1,7 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import Box from "~/renderer/components/Box";

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

@@ -2,10 +2,10 @@ module.exports = {
   globalSetup: "<rootDir>/jest-global-setup.js",
   transform: {
     "^.+\\.(ts|tsx)?$": [
-      "ts-jest",
+      "@swc/jest",
       {
-        globals: {
-          isolatedModules: true,
+        jsc: {
+          target: "esnext",
         },
       },
     ],

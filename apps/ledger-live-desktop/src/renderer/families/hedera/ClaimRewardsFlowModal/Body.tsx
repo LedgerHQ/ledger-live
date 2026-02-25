@@ -1,7 +1,8 @@
 import type { TFunction } from "i18next";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";

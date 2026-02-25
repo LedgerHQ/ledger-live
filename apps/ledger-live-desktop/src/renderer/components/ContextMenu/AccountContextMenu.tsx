@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useNavigate } from "react-router";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { openModal } from "~/renderer/actions/modals";
@@ -23,6 +23,7 @@ import { State } from "~/renderer/reducers";
 import { useStake } from "LLD/hooks/useStake";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 type Props = {
   account: AccountLike;
@@ -39,7 +40,7 @@ export default function AccountContextMenu({
   parentAccount,
   withStar,
 }: Props) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
@@ -51,6 +52,7 @@ export default function AccountContextMenu({
   const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
   const stakeLabel = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
+  const openSendFlow = useOpenSendFlow();
 
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
@@ -60,12 +62,10 @@ export default function AccountContextMenu({
         label: "accounts.contextMenu.send",
         Icon: IconSend,
         callback: () =>
-          dispatch(
-            openModal("MODAL_SEND", {
-              account,
-              parentAccount,
-            }),
-          ),
+          openSendFlow({
+            account,
+            parentAccount: parentAccount ?? undefined,
+          }),
       },
       {
         label: "accounts.contextMenu.receive",
@@ -86,8 +86,7 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/exchange",
+          navigate("/exchange", {
             state: {
               currency: currency?.id,
               account: mainAccount?.id,
@@ -104,8 +103,7 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/exchange",
+          navigate("/exchange", {
             state: {
               currency: currency?.id,
               account: mainAccount?.id,
@@ -122,14 +120,13 @@ export default function AccountContextMenu({
         Icon: IconSwap,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/swap",
+          navigate("/swap", {
             state: {
               defaultCurrency: currency,
-              defaultAccount: account,
+              defaultAccountId: account.id,
               defaultAmountFrom: "0",
-              defaultParentAccount: parentAccount,
-              from: history.location.pathname,
+              defaultParentAccountId: parentAccount?.id,
+              from: location.pathname,
             },
           });
         },
@@ -142,8 +139,7 @@ export default function AccountContextMenu({
         Icon: IconCoins,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: routeToStake.pathname,
+          navigate(routeToStake.pathname, {
             state: {
               ...routeToStake.state,
             },
@@ -196,8 +192,9 @@ export default function AccountContextMenu({
     getCanStakeCurrency,
     withStar,
     dispatch,
-    history,
+    navigate,
     stakeLabel,
+    openSendFlow,
     isStarred,
     refreshAccountsOrdering,
   ]);

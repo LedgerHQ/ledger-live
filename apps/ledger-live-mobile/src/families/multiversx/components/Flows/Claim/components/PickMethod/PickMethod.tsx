@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
@@ -27,7 +27,7 @@ import { ScreenName } from "~/const";
 import { TransactionMethodEnum } from "./enums";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.

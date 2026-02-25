@@ -56,7 +56,7 @@ const buildOptimisticCoinOperation = async ({
     transactionType === "FEES" ? transaction.amount : transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
-  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
+  const [_, recipientAddress] = await safeParseAccountId(transaction.recipient);
   const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
   const memo = transaction.memo;
 
@@ -92,7 +92,7 @@ const buildOptimisticHTSTokenOperation = async ({
   const fee = transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
   const type: OperationType = "OUT";
-  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
+  const [_, recipientAddress] = await safeParseAccountId(transaction.recipient);
   const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
   const memo = transaction.memo;
 

@@ -544,8 +544,10 @@ export const integrateERC20Operations = async ({
   newERC20TokenOperations: Operation[];
 }> => {
   const newERC20TokenOperations: Operation[] = [];
-  const latestERC20Operations = await getERC20Operations(latestERC20Transactions);
-  const evmAddress = toEVMAddress(address);
+  const [latestERC20Operations, evmAddress] = await Promise.all([
+    getERC20Operations(latestERC20Transactions),
+    toEVMAddress(address),
+  ]);
 
   // avoid duplicated CONTRACT_CALL operations if ERC20 operations are already present
   const uniqueOperations = removeDuplicatedContractCallOperations(

@@ -1,3 +1,4 @@
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
@@ -304,8 +305,11 @@ class Xpub {
     };
   }
 
-  async broadcastTx(rawTxHex: string): Promise<{ data: { result: string } }> {
-    return this.explorer.broadcast(rawTxHex);
+  async broadcastTx(
+    rawTxHex: string,
+    broadcastConfig?: Pick<BroadcastConfig, "source">,
+  ): Promise<{ data: { result: string } }> {
+    return this.explorer.broadcast(rawTxHex, broadcastConfig);
   }
 
   // internal

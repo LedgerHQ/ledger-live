@@ -1,9 +1,9 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -20,6 +20,7 @@ import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner"
 import BuyDeviceBanner, {
   IMAGE_PROPS_BUY_DEVICE_FLEX,
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
+import MarketBanner from "LLM/features/MarketBanner";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
@@ -84,6 +85,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
           showGraphCard
           areAccountsEmpty={false}
           currentPositionY={currentPositionY}
+          screenName={ScreenName.Portfolio}
           graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,
@@ -94,7 +96,10 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
-      <Box background={colors.background.main} px={6} mt={6} key="Assets">
+      <Box mx={6} key="MarketBanner">
+        <MarketBanner key="MarketBanner" />
+      </Box>,
+      <Box background={colors.background.main} px={6} key="Assets">
         <Assets assets={assets} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seeAllAssets")}

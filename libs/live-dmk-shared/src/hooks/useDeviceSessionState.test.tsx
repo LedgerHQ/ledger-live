@@ -19,19 +19,21 @@ describe("useDeviceSessionState", () => {
 
   beforeEach(() => {
     deviceManagementKitMock = {
-      getDeviceSessionState: vi.fn(),
+      getDeviceSessionState: jest.fn(),
     } as unknown as DeviceManagementKit;
 
-    vi.spyOn(deviceManagementKitMock, "getDeviceSessionState").mockImplementation(({ sessionId }) =>
-      of({
-        deviceStatus:
-          sessionId === "valid-session" ? DeviceStatus.CONNECTED : DeviceStatus.NOT_CONNECTED,
-      } as DeviceSessionState),
-    );
+    jest
+      .spyOn(deviceManagementKitMock, "getDeviceSessionState")
+      .mockImplementation(({ sessionId }) =>
+        of({
+          deviceStatus:
+            sessionId === "valid-session" ? DeviceStatus.CONNECTED : DeviceStatus.NOT_CONNECTED,
+        } as DeviceSessionState),
+      );
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("provides a default state when there is no active session", async () => {

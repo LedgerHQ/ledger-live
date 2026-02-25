@@ -11,9 +11,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { EventTrigger, DataOfUser } from "../logic/notifications";
+import type { DataOfUser } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
@@ -29,12 +27,17 @@ import { ImageType } from "../components/CustomImage/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
-import { CountervaluesState } from "./countervalues";
-import { ToastState } from "./toast";
-import { ModularDrawerState } from "./modularDrawer";
-import { LLMRTKApiState } from "~/context/rtkQueryApi";
-import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
+import type { CountervaluesState } from "./countervalues";
+import type { ToastState } from "./toast";
+import type { ModularDrawerState } from "./modularDrawer";
+import type { LLMRTKApiState } from "~/context/rtkQueryApi";
+import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import type { TransferDrawerState } from "./transferDrawer";
+import type { SendFlowState } from "./sendFlow";
+import { IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -111,21 +114,21 @@ export type BleState = {
 // === NOTIFICATIONS STATE ===
 
 export type NotificationsState = {
+  /** The authorization status of the system notifications */
+  permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
-  /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType: string;
-  /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
-  currentRouteName?: string;
-  /** The event that triggered the oppening of the push notifications modal */
-  eventTriggered?: EventTrigger;
+  /** This helps us know what action caused the push notifications modal to open */
+  drawerSource?:
+    | "onboarding"
+    | "send"
+    | "receive"
+    | "swap"
+    | "stake"
+    | "add_favorite_coin"
+    | "inactivity";
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
-  /**
-   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
-   * If true, it means another modal is already opened or being opened
-   */
-  isPushNotificationsModalLocked: boolean;
 };
 
 // === DYNAMIC CONTENT STATE ===
@@ -145,6 +148,10 @@ export type DynamicContentState = {
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
+  /** Local/debug category cards (merged in selectors, not from Braze) */
+  localCategoriesCards: CategoryContentCard[];
+  /** Local/debug mobile cards (merged in selectors, not from Braze) */
+  localMobileCards: BrazeContentCard[];
 };
 
 // === IN VIEW STATE ===
@@ -167,12 +174,6 @@ export type RatingsState = {
 
   /** Data related to the user's app usage. We use this data to prompt the rating flow on certain conditions only */
   dataOfUser?: RatingsDataOfUser;
-
-  /**
-   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
-   * If true, it means another modal is already opened or being opened
-   */
-  isRatingsModalLocked: boolean;
 };
 
 // === SETTINGS STATE ===
@@ -246,7 +247,7 @@ export type SettingsState = {
   discreetMode: boolean;
   language: string;
   languageIsSetByUser: boolean;
-  locale: string | null | undefined;
+  locale: string;
   swap: {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
@@ -288,6 +289,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  hasSeenWalletV4Tour: boolean;
 };
 
 export type NotificationsSettings = {
@@ -301,16 +303,6 @@ export type NotificationsSettings = {
 
 export type WalletConnectState = {
   uri?: string;
-};
-
-// === SWAP STATE ===
-
-export type SwapStateType = {
-  providers?: AvailableProviderV3[];
-  pairs?: AvailableProviderV3["pairs"];
-  transaction?: Transaction;
-  exchangeRate?: ExchangeRate;
-  exchangeRateExpiration?: Date;
 };
 
 // === EARN STATE ===
@@ -386,17 +378,20 @@ export type State = LLMRTKApiState & {
   countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
+  rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
+  transferDrawer: TransferDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   ratings: RatingsState;
+  sendFlow: SendFlowState;
   settings: SettingsState;
-  swap: SwapStateType;
   toasts: ToastState;
   trustchain: TrustchainStore;
   wallet: WalletState;

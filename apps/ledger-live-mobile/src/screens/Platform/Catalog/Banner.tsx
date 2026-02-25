@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import DAppsIcons from "~/icons/DAppsIcons";

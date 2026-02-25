@@ -1,5 +1,5 @@
 import { getOnboardingStatePolling } from "./getOnboardingStatePolling";
-import { from, of, Subscription, TimeoutError } from "rxjs";
+import { from, of, Subscription, TimeoutError, Subject } from "rxjs";
 import * as rxjsOperators from "rxjs/operators";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
@@ -73,6 +73,7 @@ describe("getOnboardingStatePolling", () => {
     mockedGetVersion.mockClear();
     mockedExtractOnboardingState.mockClear();
     mockedQuitApp.mockClear();
+    mockedQuitApp.mockReturnValue(of(undefined));
     jest.clearAllTimers();
     onboardingStatePollingSubscription?.unsubscribe();
   });
@@ -315,6 +316,8 @@ describe("getOnboardingStatePolling", () => {
           done(error);
         },
       });
+
+      jest.advanceTimersByTime(pollingPeriodMs);
     });
     it("should call quitApp before fetching the device version", done => {
       mockedGetVersion.mockResolvedValue(aFirmwareInfo);
@@ -370,6 +373,48 @@ describe("getOnboardingStatePolling", () => {
       expect(mockedQuitApp).toHaveBeenCalledTimes(1);
 
       expect(mockedGetVersion.mock.calls.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it("should not call getVersion until quitApp completes (race condition fix)", done => {
+      const quitAppSubject = new Subject<void>();
+      mockedQuitApp.mockReturnValue(quitAppSubject.asObservable());
+      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+      const callOrder: string[] = [];
+
+      mockedGetVersion.mockImplementation(() => {
+        callOrder.push("getVersion");
+        return Promise.resolve(aFirmwareInfo);
+      });
+
+      const device = aDevice;
+
+      onboardingStatePollingSubscription = getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        deviceName: null,
+        pollingPeriodMs,
+      }).subscribe({
+        next: value => {
+          try {
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            expect(callOrder).toContain("getVersion");
+            done();
+          } catch (err) {
+            done(err);
+          }
+        },
+        error: err => done(err),
+      });
+
+      expect(mockedQuitApp).toHaveBeenCalledTimes(1);
+      expect(callOrder).not.toContain("getVersion");
+
+      // Complete quitApp - getVersion is called immediately after via switchMap
+      callOrder.push("quitApp completed");
+      quitAppSubject.next();
+      quitAppSubject.complete();
+
+      expect(callOrder).toEqual(["quitApp completed", "getVersion"]);
     });
   });
 

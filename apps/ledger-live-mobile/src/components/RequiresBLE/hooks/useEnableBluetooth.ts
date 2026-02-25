@@ -3,7 +3,6 @@ import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
 import getBLETransport from "~/react-native-hw-transport-ble";
-import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -77,7 +76,7 @@ export type UseEnableBluetoothArgs = {
  *
  * Works for both iOS and Android.
  *
- * Not Transport agnostic. It uses @ledgerhq/react-native-hw-transport-ble.
+ * Not Transport agnostic. It uses the BLE transport.
  *
  * @param isHookEnabled if false, the hook will not check/request the bluetooth services, and will not listen to the
  *   the bluetooth services state from BleTransport. Defaults to true.
@@ -92,8 +91,6 @@ export function useEnableBluetooth(
   },
 ) {
   const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
-
-  const isLDMKEnabled = useDeviceManagementKitEnabled();
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
@@ -122,7 +119,7 @@ export function useEnableBluetooth(
     let sub: null | Subscription;
 
     if (isHookEnabled) {
-      sub = new Observable(getBLETransport({ isLDMKEnabled }).observeState).subscribe({
+      sub = new Observable(getBLETransport().observeState).subscribe({
         next: ({ type }: { type: string }) => setObservedTransportState(type),
       });
     }
@@ -131,7 +128,7 @@ export function useEnableBluetooth(
         sub.unsubscribe();
       }
     };
-  }, [isHookEnabled, isLDMKEnabled]);
+  }, [isHookEnabled]);
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
 

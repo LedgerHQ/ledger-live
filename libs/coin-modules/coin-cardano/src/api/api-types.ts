@@ -5,8 +5,8 @@ type APIToken = { assetName: string; policyId: string; value: string };
 type APIMetadata = { label: string; value: string };
 
 export enum HashType {
-  ADDRESS = "ADDRESS",
-  SCRIPT = "SCRIPT",
+  ADDRESS = 0,
+  SCRIPT = 1,
 }
 
 export type StakeCredential = {

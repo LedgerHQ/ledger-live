@@ -9,7 +9,7 @@ import {
   WalletAPICustomHandlers,
   AccountIdFormatsResponse,
 } from "@ledgerhq/live-common/wallet-api/types";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { track } from "~/analytics";
@@ -21,14 +21,26 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+  makeEmptyTokenAccount,
+} from "@ledgerhq/coin-framework/account/helpers";
+import {
+  decodeTokenAccountIdSync,
+  decodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { useDispatch } from "~/context/hooks";
+import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -54,8 +66,9 @@ export function useCustomExchangeHandlers({
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const route = useRoute();
   const [device, setDevice] = useState<Device>();
-  const deviceRef = useRef<Device>();
+  const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
+  const dispatch = useDispatch();
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -68,6 +81,33 @@ export function useCustomExchangeHandlers({
     parentRoute: route,
     alwaysShowNoFunds: false,
   });
+
+  const getAccount = useCallback(
+    async (accountId: string): Promise<AccountLike | null> => {
+      const foundAccount = accounts.find(acc => acc.id === accountId);
+
+      if (foundAccount) {
+        return foundAccount;
+      }
+
+      if (accountId.includes("+")) {
+        const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
+
+        const parentAccount = accounts.find(
+          acc => acc.type === "Account" && acc.id === parentAccountId,
+        ) as Account | undefined;
+
+        const { token } = await decodeTokenAccountId(accountId);
+
+        if (parentAccount && token) {
+          return makeEmptyTokenAccount(parentAccount, token);
+        }
+      }
+
+      return null;
+    },
+    [accounts],
+  );
 
   // Helper to get manifest by ID - checks local first, then remote
   const getManifestById = useCallback(
@@ -141,31 +181,37 @@ export function useCustomExchangeHandlers({
         const accountId = request.params?.accountId;
 
         return new Promise<void>((resolve, reject) => {
-          try {
-            if (accountId) {
-              const id = getAccountIdFromWalletAccountId(accountId);
-              const account = accounts.find(acc => acc.id === id);
+          (async () => {
+            try {
+              if (accountId) {
+                const id = getAccountIdFromWalletAccountId(accountId);
+                if (!id) {
+                  reject(new Error("Invalid accountId"));
+                  return;
+                }
+                const account = await getAccount(id);
 
-              if (!account) {
-                reject(new Error("Account not found"));
-                return;
+                if (!account) {
+                  reject(new Error("Account not found"));
+                  return;
+                }
+
+                navigation.navigate(NavigatorName.NoFundsFlow, {
+                  screen: ScreenName.NoFunds,
+                  params: {
+                    account,
+                    parentAccount: isTokenAccount(account)
+                      ? getParentAccount(account, accounts)
+                      : undefined,
+                  },
+                });
+
+                resolve();
               }
-
-              navigation.navigate(NavigatorName.NoFundsFlow, {
-                screen: ScreenName.NoFunds,
-                params: {
-                  account,
-                  parentAccount: isTokenAccount(account)
-                    ? getParentAccount(account, accounts)
-                    : undefined,
-                },
-              });
-
-              resolve();
+            } catch (error) {
+              reject(error);
             }
-          } catch (error) {
-            reject(error);
-          }
+          })();
         });
       },
       "custom.navigate": async (request: {
@@ -385,6 +431,22 @@ export function useCustomExchangeHandlers({
 
                     onCompleteResult?.(exchangeParams, operationHash);
 
+                    const params = getUpdateAccountWithUpdaterParams({
+                      result: { operation: result.operation, swapId: exchangeParams.swapId },
+                      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                      exchange: exchangeParams.exchange as ExchangeSwap,
+                      transaction: exchangeParams.transaction,
+                      magnitudeAwareRate: exchangeParams.magnitudeAwareRate!,
+                      provider: exchangeParams.provider,
+                    });
+
+                    if (!params.length) return;
+                    const dispatchAction = updateAccountWithUpdater({
+                      accountId: params[0],
+                      updater: params[1],
+                    });
+                    dispatch(dispatchAction);
+
                     // return success to swap live app
                     onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
@@ -413,6 +475,8 @@ export function useCustomExchangeHandlers({
     handleOpenStakeDrawer,
     goToAccountStakeFlow,
     getManifestById,
+    getAccount,
+    dispatch,
   ]);
 }
 

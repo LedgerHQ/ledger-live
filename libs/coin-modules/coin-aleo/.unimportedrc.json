@@ -1,0 +1,25 @@
+{
+  "entry": [
+    "src/api/index.ts",
+    "src/logic/index.ts",
+    "src/logic/utils.ts",
+    "src/bridge/index.ts",
+    "src/bridge/deviceTransactionConfig.ts",
+    "src/signer/index.ts",
+    "src/test/index.ts",
+    "src/index.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnimported": [
+    "src/test/bot-specs.ts",
+    "src/bridge/transaction.ts",
+    "src/bridge/buildOptimisticOperation.ts"
+  ],
+  "ignoreUnused": ["@ledgerhq/devices", "@ledgerhq/live-env"]
+}

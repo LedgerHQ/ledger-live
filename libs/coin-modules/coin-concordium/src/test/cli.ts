@@ -7,12 +7,12 @@ const options = [
   {
     name: "fee",
     type: String,
-    desc: "how much fee",
+    desc: "how much fee in CCD",
   },
   {
-    name: "tag",
-    type: Number,
-    desc: "ripple tag",
+    name: "memo",
+    type: String,
+    desc: "transaction memo",
   },
 ];
 
@@ -21,7 +21,7 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  opts: { tag?: number | null | undefined; fee?: string },
+  opts: { memo?: string | null | undefined; fee?: string },
   {
     inferAmount,
   }: { inferAmount: (account: AccountLike, fee?: string) => BigNumber | null | undefined },
@@ -30,8 +30,8 @@ function inferTransactions(
     invariant(transaction.family === "concordium", "Concordium family");
     return {
       ...transaction,
-      fee: inferAmount(account, opts.fee || "0.001brp"),
-      tag: opts.tag,
+      fee: inferAmount(account, opts.fee || "0.01"),
+      memo: opts.memo ?? undefined,
     };
   });
 }

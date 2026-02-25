@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View, Linking } from "react-native";
 import { useNavigation, useTheme, ParamListBase, RouteProp } from "@react-navigation/native";
 import { differenceInCalendarDays } from "date-fns";
@@ -28,7 +28,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   isOpened: boolean;

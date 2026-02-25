@@ -1,8 +1,10 @@
+import { Step } from "jest-allure2-reporter/api";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -25,11 +27,8 @@ export default class SwapLiveAppPage {
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
   liveAppTitle = "live-app-title";
-  quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
-
-  feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -42,6 +41,12 @@ export default class SwapLiveAppPage {
   async getFromCurrencyTexts() {
     await waitWebElementByTestId(this.fromSelector);
     return await getWebElementText(this.fromSelector);
+  }
+
+  @Step("Check if the to currency is already selected")
+  async getToCurrencyTexts() {
+    await waitWebElementByTestId(this.toSelector);
+    return await getWebElementText(this.toSelector);
   }
 
   @Step("Tap from currency")
@@ -59,16 +64,6 @@ export default class SwapLiveAppPage {
   @Step("Tap to currency")
   async tapToCurrency() {
     await tapWebElementByTestId(this.toSelector);
-  }
-
-  @Step("Tap quote infos fees selector $0")
-  async tapQuoteInfosFeesSelector(index: number) {
-    await tapWebElementByTestId(this.quoteInfosFeesSelector, index);
-  }
-
-  @Step("Tap fee container $0")
-  async tapFeeContainer(strategy: "slow" | "medium" | "fast") {
-    await tapById(this.feeContainerId(strategy));
   }
 
   @Step("Input amount")
@@ -221,7 +216,7 @@ export default class SwapLiveAppPage {
       );
       jestExpect(bestOffer?.quote).toContain("Best Offer");
     } catch (error) {
-      console.error("Error checking Best offer:", error);
+      console.error("Error checking Best offer:", sanitizeError(error));
     }
   }
 
@@ -336,7 +331,6 @@ export default class SwapLiveAppPage {
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       const summaryContinueButton = app.send.summaryContinueButton();
       await waitForElement(summaryContinueButton);
-      //Test will fail here with a known issue: LIVE-21138
       await tapByElement(summaryContinueButton);
     }
   }

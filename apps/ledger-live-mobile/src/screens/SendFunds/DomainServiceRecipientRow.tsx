@@ -8,7 +8,7 @@ import { Platform, StyleSheet, View } from "react-native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "~/components/RecipientInput";
 import Alert from "~/components/Alert";

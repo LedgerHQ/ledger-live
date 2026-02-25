@@ -50,12 +50,13 @@ export async function signP2SHTransaction(transport: Transport, arg: SignP2SHTra
     inputs: [],
     version: defaultVersion,
   };
-  const getTrustedInputCall = segwit ? getTrustedInputBIP143 : getTrustedInput;
   const outputScript = Buffer.from(outputScriptHex, "hex");
 
   for (const input of inputs) {
     if (!resuming) {
-      const trustedInput = await getTrustedInputCall(transport, input[1], input[0]);
+      const trustedInput = segwit
+        ? getTrustedInputBIP143(input[1], input[0])
+        : await getTrustedInput(transport, input[1], input[0]);
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,

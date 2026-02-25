@@ -4,7 +4,6 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
-import { toEVMAddress } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -270,7 +269,7 @@ describe("utils", () => {
 
   describe("integrateERC20Operations", () => {
     const address = "0.0.12345";
-    const evmAddress = toEVMAddress(address);
+    const evmAddress = "0x0000000000000000000000000000000000003039";
     const ledgerAccountId = `js:2:hedera:${address}:`;
     const tokenCurrency = getTokenCurrencyFromCALByType("erc20");
 

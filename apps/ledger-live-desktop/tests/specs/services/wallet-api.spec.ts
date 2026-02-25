@@ -1,6 +1,7 @@
 import "../../../src/live-common-set-supported-currencies";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
@@ -19,6 +20,7 @@ const methods = [
   "message.sign",
   "storage.get",
   "storage.set",
+  "bitcoin.signPsbt",
   "transaction.sign",
   "transaction.signRaw",
   "transaction.signAndBroadcast",
@@ -28,6 +30,7 @@ const methods = [
   "device.exchange",
   "device.close",
   "bitcoin.getAddress",
+  "bitcoin.getAddresses",
   "bitcoin.getPublicKey",
   "bitcoin.getXPub",
   "exchange.start",
@@ -123,15 +126,20 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.accountRequest();
 
     await drawer.waitForDrawerToBeVisible();
+    await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("tether usd");
+    await expect(drawer.selectAccountTitle).toBeVisible();
+
     // Test name and balance for tokens
     await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
       "Ethereum 3 (USDT)71.8174 USDT",
     );
     await drawer.back();
+    await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("bitcoin");
+    await expect(drawer.selectAccountTitle).toBeVisible();
     await drawer.selectAccount("bitcoin");
 
     await drawer.waitForDrawerToDisappear();
@@ -733,7 +741,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   });
 
   await test.step("transaction.sign should block sanctioned address", async () => {
-    const recipient = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf"; // Sanctioned address
+    const recipient = Addresses.SANCTIONED_ETHEREUM; // Sanctioned address
     const amount = "500000000000000"; // 0.0005 ETH in wei
 
     await liveAppWebview.setAccountId("a758d3a7-e057-5fcc-8b6e-23169bc4d577");
@@ -792,7 +800,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await expect(drawer.getByText("Confirmed")).toBeVisible();
 
     const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
+    expect(res).toBe("93036A2539D5DEEECE463E04A7D43C4BAFA60F6118EF295D35D175A514002FB4");
 
     await resetWebview();
   });

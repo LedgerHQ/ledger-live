@@ -1,6 +1,9 @@
 import { useMemo, useCallback } from "react";
-import { LiveAppManifest, LiveAppManifestParams } from "@ledgerhq/live-common/platform/types";
-import { LiveAppManifestParamsDapp } from "@ledgerhq/live-common/platform/types";
+import {
+  LiveAppManifest,
+  LiveAppManifestParams,
+  LiveAppManifestParamsDapp,
+} from "@ledgerhq/live-common/platform/types";
 import { PropsCard } from "./types";
 
 const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestParamsDapp => {

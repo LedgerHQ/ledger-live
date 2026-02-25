@@ -4,6 +4,16 @@ import type { DomainServiceResolution } from "./domain";
 import type { Operation, OperationRaw } from "./operation";
 
 /**
+ * TransactionSource identifies the origin of a transaction
+ */
+export type TransactionSource = {
+  // Type of the transaction source
+  type: "dApp" | "live-app" | "coin-module" | "swap";
+  // Name/identifier of the source (e.g., manifestId, provider name)
+  name: string;
+};
+
+/**
  *
  */
 export type SignedOperation = {

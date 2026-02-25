@@ -161,10 +161,11 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   return tokens;
 }
 
-async function getLatestTransaction(): Promise<HederaMirrorTransaction> {
+async function getLatestTransaction(before: Date): Promise<HederaMirrorTransaction> {
   const params = new URLSearchParams({
     limit: "1",
     order: "desc",
+    timestamp: `lt:${before.getTime() / 1000}`,
   });
 
   const res = await network<HederaMirrorTransactionsResponse>({
@@ -262,18 +263,24 @@ async function estimateContractCallGas(
   return new BigNumber(res.data.result);
 }
 
-async function getTransactionsByTimestampRange(
-  startTimestamp: string,
-  endTimestamp: string,
-): Promise<HederaMirrorTransaction[]> {
+async function getTransactionsByTimestampRange({
+  address,
+  startTimestamp,
+  endTimestamp,
+}: {
+  address?: string;
+  startTimestamp: `${string}:${string}`;
+  endTimestamp: `${string}:${string}`;
+}): Promise<HederaMirrorTransaction[]> {
   const transactions: HederaMirrorTransaction[] = [];
   const params = new URLSearchParams({
     limit: "100",
     order: "desc",
+    ...(address && { "account.id": address }),
   });
 
-  params.append("timestamp", `gte:${startTimestamp}`);
-  params.append("timestamp", `lt:${endTimestamp}`);
+  params.append("timestamp", startTimestamp);
+  params.append("timestamp", endTimestamp);
 
   let nextPath: string | null = `/api/v1/transactions?${params.toString()}`;
 

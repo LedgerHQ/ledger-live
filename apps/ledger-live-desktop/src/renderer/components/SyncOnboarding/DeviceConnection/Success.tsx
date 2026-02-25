@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import Animation from "~/renderer/animations";
@@ -17,14 +17,14 @@ const SyncOnboardingDeviceConnectionSuccess = ({
   device,
 }: SyncOnboardingDeviceConnectionSuccessProps) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const deviceName = device.deviceName ?? getDeviceModel(device.modelId).productName;
   const theme = useTheme();
 
   return (
     <Flex height="100%" width="100%" flexDirection="column">
-      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
+      <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
       <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
         <Animation
           animation={getDeviceAnimation(device.modelId, theme.theme, "connectionSuccess") as object}

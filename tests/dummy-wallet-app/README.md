@@ -5,7 +5,7 @@ The purpose of this app is to allow automated front end testing of Ledger Live's
 - handles the rendering of external Live Apps
 - handles calls of the Wallet API client from external Live apps
 
-The app is a simple [Create React App](https://github.com/facebook/create-react-app) which uses the [Wallet API](https://www.npmjs.com/package/@ledgerhq/wallet-api).
+The app is a simple React app bundled with Rspack which uses the [Wallet API](https://www.npmjs.com/package/@ledgerhq/wallet-api).
 
 ## Local Dummy App setup steps
 

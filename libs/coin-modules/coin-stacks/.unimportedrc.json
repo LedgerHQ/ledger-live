@@ -15,13 +15,17 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "jest-get-type",
     "jest-matcher-utils",
     "jest-message-util"
   ],
   "ignoreUnimported": [
     "src/network/index.ts",
-    "src/signer/signMessage.ts"
+    "src/signer/signMessage.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/types-cryptoassets",

@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { AnimationSource, AnimationRecord } from "~/helpers/getDeviceAnimation";
 import pinCodeNanoXLight from "../assets/nanoX/pinCode/light.json";
 import pinCodeNanoXDark from "../assets/nanoX/pinCode/dark.json";

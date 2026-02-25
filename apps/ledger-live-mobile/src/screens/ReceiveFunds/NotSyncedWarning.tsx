@@ -1,11 +1,12 @@
 import React from "react";
-
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { Trans } from "react-i18next";
-import { StyleSheet } from "react-native";
+import { Trans } from "~/context/Locale";
+import { StyleSheet, View } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { deviceNames } from "../../wording";
-import PendingContainer from "../PairDevices/PendingContainer";
+import Spinning from "~/components/Spinning";
+import LiveLogo from "~/icons/LiveLogoIcon";
 
 const styles = StyleSheet.create({
   title: {
@@ -20,10 +21,29 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 24,
   },
+  root: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 type Props = {
   accountId: string;
+};
+
+const PendingContainer = ({ children }: { children: React.ReactNode }) => {
+  const { colors } = useTheme();
+
+  return (
+    <View style={styles.root}>
+      <Spinning>
+        <LiveLogo color={colors.grey} size={32} />
+      </Spinning>
+
+      {children}
+    </View>
+  );
 };
 
 const NotSyncedWarning = (props: Props) => {

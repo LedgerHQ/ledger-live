@@ -1,51 +1,36 @@
 import React, { useCallback, useMemo } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useSelector } from "LLD/hooks/redux";
+import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { useTrack } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
 export type LiveAppProps = {
-  match: {
-    params: {
-      appId: string;
-    };
-    isExact: boolean;
-    path: string;
-    url: string;
-  };
   appId?: string;
-  location: {
-    hash: string;
-    params: {
-      [key: string]: string;
-    };
-    pathname: string;
-    search: string;
-    customDappUrl?: string;
-  };
 };
 
-export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
-  const history = useHistory();
+export function LiveApp({ appId: propsAppId }: LiveAppProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const routeParams = useParams<{ appId: string }>();
   const track = useTrack();
   const swapTrackingProperties = useGetSwapTrackingProperties();
-  const { params: internalParams, search } = location;
+  const { search } = location;
+  const internalParams =
+    (location as { params?: { [key: string]: string | undefined } }).params || {};
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
-    LiveAppProps["location"] & {
-      state: {
-        returnTo: string;
-        accountId?: string;
-        customDappUrl?: string;
-      };
-    };
-  const appId = propsAppId || match.params?.appId;
+  const urlParams = location.state as {
+    returnTo?: string;
+    accountId?: string;
+    customDappUrl?: string;
+    [key: string]: string | undefined;
+  } | null;
+  const customDappUrl = (location as { customDappUrl?: string }).customDappUrl;
+  const appId = propsAppId || routeParams.appId;
   const returnTo = useMemo<string | undefined>(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
@@ -60,6 +45,8 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
     );
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
+  const manifest = useLiveAppManifest(appId, _customDappUrl);
+
   const handleClose = useCallback(() => {
     if (returnTo?.startsWith("/swap")) {
       track("button_click", {
@@ -70,8 +57,8 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
       });
     }
 
-    history.push(returnTo || `/platform`);
-  }, [history, returnTo, appId, swapTrackingProperties, track]);
+    navigate(returnTo || `/platform`);
+  }, [navigate, returnTo, appId, swapTrackingProperties, track]);
   const themeType = useTheme().theme;
   const lang = useSelector(languageSelector);
   const params = {
@@ -81,24 +68,6 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
     ...internalParams,
   };
 
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-  let manifest = localManifest || remoteManifest;
-  if (_customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
-    manifest = {
-      ...manifest,
-      params: {
-        ...manifest.params,
-        dappUrl: _customDappUrl,
-      },
-    };
-  }
-  if (_customDappUrl && manifest && manifest.dapp) {
-    manifest = {
-      ...manifest,
-      url: _customDappUrl,
-    };
-  }
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
   // - check if the app is available in store, else display a loader if apps are getting fetched from remote, else display an error stating that the app doesn't exist

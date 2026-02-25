@@ -467,6 +467,9 @@
       "title": "Device authentication failed",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "EthAppPleaseEnableContractData": {
+      "title": "Enable Blind signing or Contract data in Ethereum app"
+    },
     "HardResetFail": {
       "title": "Sorry, could not reset",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -1131,6 +1134,12 @@
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
     },
+    "XrpInvalidMemo": {
+      "title": "Memo format is wrong, it should be less than 4294967296"
+    },
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters"
+    },
     "PinNotSet": {
       "title": "PIN not set"
     },
@@ -1565,6 +1574,24 @@
     "bannerButtonTitle": "Discover the Flex",
     "bannerButtonTitle2": "Buy a Ledger",
     "setupCta": "I already have a Ledger, set it up"
+  },
+  "rebornBuyDevice": {
+    "title": "Connect a Ledger device",
+    "desc": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
+    "0": {
+      "title": "Full ownership",
+      "desc": "Your private keys never leave the device."
+    },
+    "1": {
+      "title": "Trade securely",
+      "desc": "Verify transactions on a secure screen."
+    },
+    "2": {
+      "title": "Access the most powerful wallet",
+      "desc": "Manage thousands of assets in one place."
+    },
+    "cta": "Connect",
+    "buyCta": "Buy your Ledger device"
   },
   "postBuyDeviceSetupNanoWall": {
     "title": "Did you get your Ledger yet?",
@@ -2510,6 +2537,20 @@
       "description": "Just like any password or passcode, the PIN lets you unlock your {{productName}} and prevent unwanted access.",
       "continueOnDevice": "Set your PIN on your {{productName}}."
     },
+    "syncStep": {
+      "title": "Synchronization",
+      "doneTitle": "Wallet synched",
+      "descriptionTitle": "Sync your wallet",
+      "description": "Keep your portfolio up to date when switching phones or using a computer",
+      "skipCta": "I’ll do it later",
+      "skip": {
+        "title": "Are you sure?",
+        "description": "If you skip this, you'll have to manually re-add all your accounts, balances, and history if you switch to a new phone or computer.",
+        "descriptionEmphasis": "You can always disable it from your settings.",
+        "skipCTA": "Yes, skip",
+        "syncCTA": "No, sync my wallet"
+      }
+    },
     "seedStep": {
       "title": "Setup and backup",
       "doneTitle": "Secret Recovery Phrase confirmed",
@@ -2615,7 +2656,9 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn"
+    "earn": "Earn",
+    "card": "Card",
+    "swap": "Swap"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -2653,6 +2696,10 @@
     "carousel": {
       "title": "For you"
     },
+    "perpsEntry": {
+      "title": "Perpetuals",
+      "description": "Trade with leverage"
+    },
     "recommended": {
       "title": "Recommended"
     },
@@ -2661,6 +2708,10 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
+    "balance": {
+      "noSigner": "The most secure\nwallet",
+      "noAccounts": "Secure your\ncrypto"
+    },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
@@ -2681,6 +2732,20 @@
       "send": "Send",
       "deposit": "Receive",
       "stake": "Stake"
+    },
+    "quickActionsCtas": {
+      "transfer": "Transfer",
+      "swap": "Swap",
+      "buy": "Buy",
+      "connect": "Connect",
+      "buyLedger": "Buy a Ledger",
+      "transferDrawer": {
+        "title": "Transfer",
+        "receiveCrypto": "Receive crypto",
+        "sendCrypto": "Send crypto",
+        "bankTransfer": "Bank transfer",
+        "bankTransferDescription": "Receive stablecoin by sending cash"
+      }
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -2960,7 +3025,8 @@
         "receiveFunds": "Receive",
         "buyCrypto": "Buy"
       },
-      "addAccountCta": "Add Account"
+      "addAccountCta": "Add Account",
+      "addCryptoAccount": "Add crypto account"
     },
     "settings": {
       "header": "Account settings",
@@ -3452,13 +3518,26 @@
         "firmwareUpdate": {
           "headerTitle": "Debug firmware update"
         }
+      },
+      "contentCards": {
+        "title": "Content Cards",
+        "titleDesc": "Generate local content cards without Braze for testing.",
+        "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
+        "addSampleBanner": "Add sample banner",
+        "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
+        "addSampleActionCarousel": "Add sample action carousel",
+        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "dismissAll": "Dismiss all local cards",
+        "dismissAllDesc": "Remove all locally generated content cards."
       }
     }
   },
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
+      "titleVariantB": "Don't miss what matters",
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
+      "descVariantB": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
@@ -3830,7 +3909,8 @@
         "title": "Select quote"
       },
       "twoStepApproval": {
-        "title": "Complete steps"
+        "title": "Complete steps",
+        "completedTitle": "Transaction Status"
       },
       "loader": {
         "title": "Processing Swap",
@@ -3875,7 +3955,9 @@
         "celo_title": "Ledger Nano S™ does not support swapping Celo",
         "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "monad_title": "Ledger Nano S™ does not support swapping Monad",
-        "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
+        "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -4093,6 +4175,100 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "newSendFlow": {
+      "title": "Send {{currency}}",
+      "available": "Available {{amount}}",
+      "placeholder": "Enter address or ENS",
+      "placeholderNoENS": "Enter address",
+      "editRecipientAccessibilityLabel": "Edit recipient",
+      "recent": "Recent",
+      "recentDetail": "Recent detail",
+      "myAccounts": "My accounts",
+      "account": "Account",
+      "sendTo": "Send to {{address}}",
+      "addressMatched": "Address matched",
+      "addressNotFound": "Address not found",
+      "alreadyUsed": "Already used · {{date}}",
+      "recentSendWillAppear": "Your recent send will appear here",
+      "relativeDate": {
+        "justNow": "Just now",
+        "minutesAgo_one": "1 min ago",
+        "minutesAgo_other": "{{count}} min ago",
+        "hoursAgo_one": "1 hour ago",
+        "hoursAgo_other": "{{count}} hours ago",
+        "daysAgo_one": "1 day ago",
+        "daysAgo_other": "{{count}} days ago"
+      },
+      "remove": "Remove",
+      "enterTag": "Enter {{tag}}",
+      "firstInteraction": {
+        "title": "You’re sending to a new address",
+        "description": "Verify that the address is correct. In case of doubt send a small amount first."
+      },
+      "sanctioned": {
+        "title": "Flagged address",
+        "description": "This address has been flagged and Ledger doesn’t allow sending to it",
+        "helpCenter": "Help center"
+      },
+      "errors": {
+        "incorrectFormat": "Incorrect address format",
+        "incompatibleAsset": "Address isn’t compatible with the asset selected",
+        "walletNotExist": "Wallet doesn’t exist"
+      },
+      "skipMemo": {
+        "title": "Skip adding {{tag}}?",
+        "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
+      },
+      "tagHelp": {
+        "title": "What’s a {{tag}}?",
+        "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      },
+      "networkFeesInFiat": "Network fees in {{currency}}",
+      "feesAmount": "Fees amount ({{unit}})",
+      "gasLimit": "Gas limit ({{unit}})",
+      "feesPaid": "Fees paid to the network to proceed your transaction",
+      "insufficientBalanceFees": "Insufficient balance to cover the network fees",
+      "amountToSend": "Amount to send in ({{currency}})",
+      "coinToSend": "Coin to send",
+      "coinControlCustom": "Custom coin selection",
+      "quickActions": {
+        "quarter": "25%",
+        "half": "50%",
+        "threeQuarters": "75%",
+        "max": "Max"
+      },
+      "reviewCta": "Review",
+      "getCta": "Get {{currency}}",
+      "switchInputMode": "Switch amount input mode",
+      "aboveMaximum": "Above maximum balance",
+      "transactionSigned": "Transaction signed",
+      "processingTransaction": "Your transaction is being processed",
+      "sign": {
+        "title": "Continue on your Ledger {{wording}}",
+        "description": "Follow the instructions displayed on your Secure Touchscreen."
+      },
+      "gasOptionsSync": {
+        "warningTitle": "Unable to refresh network fees",
+        "warningDescription": "Fee presets may be outdated."
+      },
+      "customFees": {
+        "title": "Custom fees",
+        "confirm": "Confirm",
+        "maxFee": "Max fee ({{unit}})",
+        "maxPriorityFee": "Max priority fee ({{unit}})",
+        "gasLimit": "Gas limit ({{unit}})",
+        "feePerByte": "Fees amount ({{unit}})",
+        "suggested": "Suggested",
+        "nextBlock": "Next block",
+        "networkFeesInFiat": "Network fees in {{currency}}",
+        "invalidValue": "Enter a valid number",
+        "belowMinimum": "Minimum is {{min}}",
+        "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+      },
+      "coinControl": {
+        "title": "Coin control"
+      }
+    },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
@@ -4145,7 +4321,8 @@
       "useMax": "Use max",
       "loadingNetwork": "Loading network fees...",
       "noRateProvider": "Not available",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "Quantity available",
+      "toggleCurrency": "Toggle currency"
     },
     "summary": {
       "solanaRawTransaction": {
@@ -4205,6 +4382,12 @@
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
       "higherFaster": "Higher gas price means a faster confirmation.",
+      "medium": "Medium",
+      "fast": "Fast",
+      "slow": "Slow",
+      "custom": "Custom",
+      "customFees": "Custom fees",
+      "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"
       },
@@ -4524,6 +4707,7 @@
       },
       "acceptTerms": "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
       "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
+      "acceptTermsSponsored": "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and its <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact Changelly’s <2>customer support.</2>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },
@@ -6358,6 +6542,7 @@
       "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
+      "inactiveStake": "Withdrawable Rewards",
       "stakeAvailableBalance": "Available balance",
       "actions": {
         "activate": "Activate",
@@ -7837,7 +8022,7 @@
       "sync": "Sync successful",
       "syncDesc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers.",
       "activation": "Ledger Sync turned on for this phone",
-      "complete" : {
+      "complete": {
         "title": "Sync complete",
         "description": "From now on, your portfolio will automatically stay sync across all your devices."
       },
@@ -8067,12 +8252,25 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements.",
       "cta": "Learn more"
+    }
+  },
+  "marketBanner": {
+    "title": "Explore market",
+    "viewAll": "View all",
+    "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "connectionFailed": "Connection failed",
+    "errorAccessibilityHint": "Unable to load market data. Please try again later.",
+    "tile": {
+      "accessibilityLabel": "{{name}}, {{change}}",
+      "accessibilityHint": "Double tap to view market details"
     }
   },
   "largeMover": {
@@ -8216,7 +8414,7 @@
     },
     "transactionCannotBeCreated": {
       "title": "Partner unavailable",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity": {
       "title": "Partner unavailable",
@@ -8232,6 +8430,15 @@
     }
   },
   "canton": {
+    "expiryDuration": {
+      "label": "Expiry duration",
+      "summaryLabel": "Expiry Offer",
+      "threeHours": "3 hours",
+      "sixHours": "6 hours",
+      "oneDay": "1 day",
+      "oneWeek": "1 week",
+      "oneMonth": "30 days"
+    },
     "account": {
       "lockedBalance": "Locked",
       "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
@@ -8243,17 +8450,36 @@
       "authorize": "Authorize",
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
-      "title": "Automatically accept incoming funds",
+      "title": "Onboarding",
+      "success": "Account onboarded successfully",
+      "status": {
+        "prepare": "Preparing account onboarding transaction.\nThis may take up to 1 minute...",
+        "submit": "Onboarding account...",
+        "default": "Processing..."
+      },
+      "processing": {
+        "title": "Processing transaction",
+        "description": "Please wait",
+        "keepDeviceNearby": "Stay in the Ledger Wallet app and keep your Ledger nearby."
+      },
       "reonboard": {
         "title": "Account Update Required",
         "account": "Account",
         "authorize": "Re-authorize Validator",
+        "success": "Account updated successfully",
         "warning": {
           "title": "Topology Change Detected",
           "description": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it."
         }
       },
       "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
+    },
+    "authorize": {
+      "status": {
+        "prepare": "Preparing authorization...",
+        "submit": "Authorizing validator...",
+        "default": "Processing..."
+      }
     },
     "tooManyUtxos": {
       "title": "Action Needed: Too Many UTXOs",
@@ -8306,5 +8532,63 @@
         }
       }
     }
+  },
+  "fearAndGreed": {
+    "title": "Mood index",
+    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
+    },
+    "tileTitle": "Mood"
+  },
+  "analyticsAllocation": {
+    "header": {
+      "main": "Analytics"
+    },
+    "allocation": {
+      "title": "Asset Allocation"
+    },
+    "actions": {
+      "swap": "Swap"
+    }
+  },
+  "cardLanding": {
+    "title": "Spend your\ncrypto",
+    "subtitle": "Pay online or in store with a crypto card",
+    "ctas": {
+      "exploreCards": "Explore cards",
+      "iHaveACard": "I have a card"
+    }
+  },
+  "walletV4Tour": {
+    "title": "Discover your new portfolio",
+    "slides": {
+      "portfolio": {
+        "title": "A clearer view of your portfolio",
+        "description": "See your total balance at a glance, and tap “Today” to dive deeper."
+      },
+      "navigation": {
+        "title": "Access key actions faster",
+        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
+      },
+      "actions": {
+        "title": "View market trends instantly",
+        "description": "Quickly see what’s trending directly in your portfolio, and move from insights to action."
+      }
+    },
+    "cta": {
+      "continue": "Next",
+      "explore": "Discover my new portfolio"
+    }
+  },
+  "mainNavigation": {
+    "home": "Home",
+    "swap": "Swap",
+    "earn": "Earn",
+    "card": "Card"
   }
 }

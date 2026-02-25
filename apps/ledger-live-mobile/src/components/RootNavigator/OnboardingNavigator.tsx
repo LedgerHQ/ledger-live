@@ -6,7 +6,7 @@ import {
 import { Flex } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/styles/theme";
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName, NavigatorName } from "~/const";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";

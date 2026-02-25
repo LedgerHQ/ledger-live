@@ -17,8 +17,12 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
+import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
+import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
+import dialogs, { DialogsState } from "./dialogs";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -26,9 +30,11 @@ export type State = LLDRTKApiState & {
   countervalues: CountervaluesState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
+  identities: IdentitiesState;
   market: MarketState;
   modals: ModalsState;
   modularDrawer: ModularDrawerState;
+  sendFlow: SendFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
@@ -36,16 +42,19 @@ export type State = LLDRTKApiState & {
   UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;
+  dialogs: DialogsState;
 };
 
-export default combineReducers({
+const appReducer = combineReducers({
   accounts,
   application,
   countervalues,
   devices,
   dynamicContent,
+  identities: identitiesSlice.reducer,
   modals,
   modularDrawer,
+  sendFlow,
   settings,
   UI,
   onboarding,
@@ -54,6 +63,13 @@ export default combineReducers({
   wallet,
   walletSync,
   trustchain,
+  dialogs,
   ...lldRTKApiReducers,
-  ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_, action) => action }),
+  ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });
+
+const rootReducer = (state: State | undefined, action: UnknownAction) => {
+  return appReducer(state, action);
+};
+
+export default rootReducer;

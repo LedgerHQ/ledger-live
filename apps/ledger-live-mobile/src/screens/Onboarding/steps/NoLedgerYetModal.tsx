@@ -1,8 +1,8 @@
 import React, { ReactNode, useCallback, useState } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/core";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import styled from "styled-components/native";
 import { setHasOrderedNano, setOnboardingHasDevice } from "~/actions/settings";
 import { ScreenName } from "~/const";
@@ -29,7 +29,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const [isFromBuy, setFromBuy] = useState(false);
-  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow();
 
   const identifyUser = useCallback(
     (hasDevice: boolean | null) => {

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "~/analytics";
 

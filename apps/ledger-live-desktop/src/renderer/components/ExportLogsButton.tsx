@@ -1,6 +1,6 @@
 import { ipcRenderer, webFrame } from "electron";
 import React, { useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getAllEnvs, getEnv } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";

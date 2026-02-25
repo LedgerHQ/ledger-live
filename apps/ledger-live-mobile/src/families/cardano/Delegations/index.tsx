@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   CardanoAccount,
@@ -30,7 +30,7 @@ import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: CardanoAccount;

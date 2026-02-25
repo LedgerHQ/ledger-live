@@ -15,6 +15,21 @@ import {
   createFixtureTokenAccount,
 } from "../mock/fixtures/cryptoCurrencies";
 import * as converters from "./converters";
+
+jest.mock("../hw/signMessage/index", () => ({
+  ...jest.requireActual("../hw/signMessage/index"),
+  prepareMessageToSign: jest.fn(),
+}));
+
+jest.mock("./converters", () => ({
+  ...jest.requireActual("./converters"),
+  accountToPlatformAccount: jest.fn(),
+}));
+
+jest.mock("./serializers", () => ({
+  ...jest.requireActual("./serializers"),
+  deserializePlatformSignedTransaction: jest.fn(),
+}));
 import {
   broadcastTransactionLogic,
   completeExchangeLogic,
@@ -47,6 +62,7 @@ describe("receiveOnAccountLogic", () => {
     mockPlatformReceiveRequested.mockClear();
     mockPlatformReceiveFail.mockClear();
     uiNavigation.mockClear();
+    mockedAccountToPlatformAccount.mockClear();
   });
 
   describe("when nominal case", () => {
@@ -62,24 +78,31 @@ describe("receiveOnAccountLogic", () => {
         ...createPlatformAccount(),
         address: "Converted address",
       };
-      jest.spyOn(converters, "accountToPlatformAccount").mockReturnValueOnce(convertedAccount);
+      mockedAccountToPlatformAccount.mockReturnValueOnce(convertedAccount);
 
       // When
       const result = await receiveOnAccountLogic(walletState, context, accountId, uiNavigation);
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
       expect(uiNavigation.mock.calls[0][2]).toEqual("Converted address");
       expect(result).toEqual(expectedResult);
     });
 
     it("calls the tracking for success", async () => {
+      // Given
+      const convertedAccount = {
+        ...createPlatformAccount(),
+        address: "Converted address",
+      };
+      mockedAccountToPlatformAccount.mockReturnValueOnce(convertedAccount);
+
       // When
       await receiveOnAccountLogic(walletState, context, accountId, uiNavigation);
 
       // Then
-      expect(mockPlatformReceiveRequested).toBeCalledTimes(1);
-      expect(mockPlatformReceiveFail).toBeCalledTimes(0);
+      expect(mockPlatformReceiveRequested).toHaveBeenCalledTimes(1);
+      expect(mockPlatformReceiveFail).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -91,10 +114,10 @@ describe("receiveOnAccountLogic", () => {
       // When
       await expect(async () => {
         await receiveOnAccountLogic(walletState, context, nonFoundAccountId, uiNavigation);
-      }).rejects.toThrowError("Account required");
+      }).rejects.toThrow("Account required");
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(0);
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
     });
 
     it("calls the tracking for error", async () => {
@@ -104,8 +127,8 @@ describe("receiveOnAccountLogic", () => {
       }).rejects.toThrow();
 
       // Then
-      expect(mockPlatformReceiveRequested).toBeCalledTimes(1);
-      expect(mockPlatformReceiveFail).toBeCalledTimes(1);
+      expect(mockPlatformReceiveRequested).toHaveBeenCalledTimes(1);
+      expect(mockPlatformReceiveFail).toHaveBeenCalledTimes(1);
     });
   });
 });
@@ -180,7 +203,7 @@ describe("completeExchangeLogic", () => {
       const result = await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
       expect(uiNavigation.mock.calls[0][0]).toEqual({
         provider: "provider",
         exchange: {
@@ -239,7 +262,7 @@ describe("completeExchangeLogic", () => {
       const result = await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
       expect(uiNavigation.mock.calls[0][0]).toEqual({
         provider: "provider",
         exchange: {
@@ -281,7 +304,7 @@ describe("completeExchangeLogic", () => {
         await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
         // Then
-        expect(uiNavigation).toBeCalledTimes(1);
+        expect(uiNavigation).toHaveBeenCalledTimes(1);
         expect(uiNavigation.mock.calls[0][0]["transaction"].feesStrategy).toEqual(
           expectedFeeStrategy,
         );
@@ -305,7 +328,7 @@ describe("completeExchangeLogic", () => {
       await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
       // Then
-      expect(mockPlatformCompleteExchangeRequested).toBeCalledTimes(1);
+      expect(mockPlatformCompleteExchangeRequested).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -334,10 +357,10 @@ describe("completeExchangeLogic", () => {
       // When
       await expect(async () => {
         await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
-      }).rejects.toThrowError("Account and transaction must be from the same family");
+      }).rejects.toThrow("Account and transaction must be from the same family");
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(0);
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
     });
   });
 });
@@ -357,6 +380,7 @@ describe("broadcastTransactionLogic", () => {
   beforeEach(() => {
     mockplatformBroadcastFail.mockClear();
     uiNavigation.mockClear();
+    mockedDeserializePlatformSignedTransaction.mockClear();
   });
 
   describe("when nominal case", () => {
@@ -368,9 +392,7 @@ describe("broadcastTransactionLogic", () => {
       // Given
       const expectedResult = "Function called";
       const signedOperation = createSignedOperation();
-      jest
-        .spyOn(serializers, "deserializePlatformSignedTransaction")
-        .mockReturnValueOnce(signedOperation);
+      mockedDeserializePlatformSignedTransaction.mockReturnValueOnce(signedOperation);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
@@ -382,7 +404,7 @@ describe("broadcastTransactionLogic", () => {
       );
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
       expect(uiNavigation.mock.calls[0][2]).toEqual(signedOperation);
       expect(result).toEqual(expectedResult);
     });
@@ -392,7 +414,7 @@ describe("broadcastTransactionLogic", () => {
       await broadcastTransactionLogic(context, accountId, rawSignedTransaction, uiNavigation);
 
       // Then
-      expect(mockplatformBroadcastFail).toBeCalledTimes(0);
+      expect(mockplatformBroadcastFail).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -405,9 +427,7 @@ describe("broadcastTransactionLogic", () => {
       // Given
       const expectedResult = "Function called";
       const signedOperation = createSignedOperation();
-      jest
-        .spyOn(serializers, "deserializePlatformSignedTransaction")
-        .mockReturnValueOnce(signedOperation);
+      mockedDeserializePlatformSignedTransaction.mockReturnValueOnce(signedOperation);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
@@ -418,10 +438,10 @@ describe("broadcastTransactionLogic", () => {
           rawSignedTransaction,
           uiNavigation,
         );
-      }).rejects.toThrowError("Account required");
+      }).rejects.toThrow("Account required");
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(0);
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
     });
 
     it("calls the tracking for error", async () => {
@@ -436,10 +456,16 @@ describe("broadcastTransactionLogic", () => {
       }).rejects.toThrow();
 
       // Then
-      expect(mockplatformBroadcastFail).toBeCalledTimes(1);
+      expect(mockplatformBroadcastFail).toHaveBeenCalledTimes(1);
     });
   });
 });
+
+const mockedPrepareMessageToSign = jest.mocked(signMessage.prepareMessageToSign);
+const mockedAccountToPlatformAccount = jest.mocked(converters.accountToPlatformAccount);
+const mockedDeserializePlatformSignedTransaction = jest.mocked(
+  serializers.deserializePlatformSignedTransaction,
+);
 
 describe("signMessageLogic", () => {
   // Given
@@ -459,28 +485,26 @@ describe("signMessageLogic", () => {
     mockPlatformSignMessageRequested.mockClear();
     mockPlatformSignMessageFail.mockClear();
     uiNavigation.mockClear();
+    mockedPrepareMessageToSign.mockClear();
   });
 
   describe("when nominal case", () => {
     // Given
     const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
-    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
-
-    beforeEach(() => spyPrepareMessageToSign.mockClear());
 
     it("calls uiNavigation callback with a signedOperation", async () => {
       // Given
       const expectedResult = "Function called";
       const formattedMessage = createMessageData();
-      spyPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
+      mockedPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
       const result = await signMessageLogic(context, accountId, messageToSign, uiNavigation);
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
       expect(uiNavigation.mock.calls[0][1]).toEqual(formattedMessage);
       expect(result).toEqual(expectedResult);
     });
@@ -490,8 +514,8 @@ describe("signMessageLogic", () => {
       await signMessageLogic(context, accountId, messageToSign, uiNavigation);
 
       // Then
-      expect(mockPlatformSignMessageRequested).toBeCalledTimes(1);
-      expect(mockPlatformSignMessageFail).toBeCalledTimes(0);
+      expect(mockPlatformSignMessageRequested).toHaveBeenCalledTimes(1);
+      expect(mockPlatformSignMessageFail).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -504,10 +528,10 @@ describe("signMessageLogic", () => {
       // When
       await expect(async () => {
         await signMessageLogic(context, nonFoundAccountId, messageToSign, uiNavigation);
-      }).rejects.toThrowError(`account with id "${nonFoundAccountId}" not found`);
+      }).rejects.toThrow(`account with id "${nonFoundAccountId}" not found`);
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(0);
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
     });
 
     it("calls the tracking for error", async () => {
@@ -517,8 +541,8 @@ describe("signMessageLogic", () => {
       }).rejects.toThrow();
 
       // Then
-      expect(mockPlatformSignMessageRequested).toBeCalledTimes(1);
-      expect(mockPlatformSignMessageFail).toBeCalledTimes(1);
+      expect(mockPlatformSignMessageRequested).toHaveBeenCalledTimes(1);
+      expect(mockPlatformSignMessageFail).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -532,10 +556,10 @@ describe("signMessageLogic", () => {
       // When
       await expect(async () => {
         await signMessageLogic(context, tokenAccountId, messageToSign, uiNavigation);
-      }).rejects.toThrowError("account provided should be the main one");
+      }).rejects.toThrow("account provided should be the main one");
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(0);
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
     });
 
     it("calls the tracking for error", async () => {
@@ -545,8 +569,8 @@ describe("signMessageLogic", () => {
       }).rejects.toThrow();
 
       // Then
-      expect(mockPlatformSignMessageRequested).toBeCalledTimes(1);
-      expect(mockPlatformSignMessageFail).toBeCalledTimes(1);
+      expect(mockPlatformSignMessageRequested).toHaveBeenCalledTimes(1);
+      expect(mockPlatformSignMessageFail).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -554,28 +578,25 @@ describe("signMessageLogic", () => {
     // Given
     const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
-    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
-
-    beforeEach(() => spyPrepareMessageToSign.mockClear());
 
     it("returns an error", async () => {
       // Given
-      spyPrepareMessageToSign.mockImplementationOnce(() => {
+      mockedPrepareMessageToSign.mockImplementationOnce(() => {
         throw new Error("Some error");
       });
 
       // When
       await expect(async () => {
         await signMessageLogic(context, accountId, messageToSign, uiNavigation);
-      }).rejects.toThrowError("Some error");
+      }).rejects.toThrow("Some error");
 
       // Then
-      expect(uiNavigation).toBeCalledTimes(0);
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
     });
 
     it("calls the tracking for error", async () => {
       // Given
-      spyPrepareMessageToSign.mockImplementationOnce(() => {
+      mockedPrepareMessageToSign.mockImplementationOnce(() => {
         throw new Error("Some error");
       });
 
@@ -585,8 +606,8 @@ describe("signMessageLogic", () => {
       }).rejects.toThrow();
 
       // Then
-      expect(mockPlatformSignMessageRequested).toBeCalledTimes(1);
-      expect(mockPlatformSignMessageFail).toBeCalledTimes(1);
+      expect(mockPlatformSignMessageRequested).toHaveBeenCalledTimes(1);
+      expect(mockPlatformSignMessageFail).toHaveBeenCalledTimes(1);
     });
   });
 });

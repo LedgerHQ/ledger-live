@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "../actions/general";
 
 const Certificate = ({ size = 24 }: { size?: number }) => {

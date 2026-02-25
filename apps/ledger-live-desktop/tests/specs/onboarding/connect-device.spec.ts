@@ -3,7 +3,14 @@ import test from "../../fixtures/common";
 import { OnboardingPage } from "../../page/onboarding.page";
 
 test.use({
-  settings: { hasSeenAnalyticsOptInPrompt: false },
+  settings: {
+    hasSeenAnalyticsOptInPrompt: false,
+    hasSeenWalletV4Tour: true,
+  },
+  featureFlags: {
+    welcomeScreenVideoCarousel: { enabled: false },
+    noah: { enabled: false },
+  },
 });
 
 enum Nano {
@@ -29,7 +36,10 @@ test.describe.parallel("Onboarding", () => {
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
         await onboardingPage.hoverDevice(Nano.nanoS);
-        await expect(page).toHaveScreenshot("v3-device-selection.png", { animations: "disabled" });
+        await expect(page).toHaveScreenshot("v3-device-selection.png", {
+          mask: [page.locator("video")],
+          animations: "disabled",
+        });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
@@ -37,6 +47,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}] Already set up`, async () => {
+        await page.getByTestId("v3-onboarding-initialized-device").waitFor({ state: "visible" });
         await expect(page).toHaveScreenshot(`v3-device-connection-${nano}.png`);
         await onboardingPage.connectDevice();
       });

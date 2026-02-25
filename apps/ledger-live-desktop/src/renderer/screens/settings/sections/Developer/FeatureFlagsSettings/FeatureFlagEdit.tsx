@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { Text, Input, Flex } from "@ledgerhq/react-ui";
-import { Switch, Button } from "@ledgerhq/ldls-ui-react";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { InputRenderRightContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
 import Alert from "~/renderer/components/Alert";

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";

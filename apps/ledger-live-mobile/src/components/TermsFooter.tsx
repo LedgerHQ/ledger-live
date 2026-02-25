@@ -1,7 +1,7 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
 import { urls } from "~/utils/urls";
@@ -31,7 +31,8 @@ const NEAR_INTENTS_PROVIDER = "nearintents";
 
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
-}> = ({ provider }) => {
+  sponsored?: boolean;
+}> = ({ provider, sponsored }) => {
   // Map changelly_v2 to changelly to access the correct urls
   const providerName = provider?.includes(CHANGELLY_PROVIDER) ? CHANGELLY_PROVIDER : provider;
   const providerUrls = providerName && urls.swap.providers[providerName];
@@ -80,6 +81,12 @@ const TermsFooter: React.FC<{
           />
         ))}
       />
+      {sponsored && (
+        <>
+          {" "}
+          <Trans i18nKey="DeviceAction.confirmSwap.acceptTermsSponsored" />
+        </>
+      )}
     </CenteredText>
   );
 };

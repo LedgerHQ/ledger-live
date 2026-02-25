@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import {
   hasBeenRedirectedToPostOnboardingSelector,
   hasBeenUpsoldProtectSelector,

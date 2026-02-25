@@ -30,7 +30,7 @@ export default {
   },
 };
 
-export const FlexStory: StoryFn<typeof Flex> = (args: typeof FlexStoryArgs) => {
+export const FlexStory: StoryFn<typeof FlexStoryArgs> = (args: typeof FlexStoryArgs) => {
   const {
     alignItems,
     flexDirection,
@@ -78,7 +78,7 @@ const FlexStoryArgs = {
 };
 FlexStory.args = FlexStoryArgs;
 
-export const FlexStoryTwo: StoryFn<typeof Flex> = (args: typeof FlexStoryTwoArgs) => {
+export const FlexStoryTwo: StoryFn<typeof FlexStoryTwoArgs> = (args: typeof FlexStoryTwoArgs) => {
   const {
     alignItems,
     flexDirection,

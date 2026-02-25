@@ -1,10 +1,11 @@
+import invariant from "invariant";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync/index";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommandWithRetry } from "./runCli";
+import { runCliCommand, runCliCommandWithRetry } from "./runCli";
 import {
   registerTransportModule,
   unregisterAllTransportModules,
@@ -15,6 +16,8 @@ import {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { isRemoteIos } from "../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export type LiveDataOpts = {
   currency: string;
@@ -22,6 +25,14 @@ export type LiveDataOpts = {
   scheme?: string;
   appjson?: string;
   add?: boolean;
+};
+
+type GetAddressOpts = {
+  currency?: string;
+  device?: string;
+  path?: string;
+  derivationMode?: string;
+  verify?: boolean;
 };
 
 type LedgerKeyRingProtocolOpts = {
@@ -221,5 +232,52 @@ export const CLI = {
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
+  },
+  getAddress: async (opts: GetAddressOpts) => {
+    const cliOpts = ["getAddress"];
+
+    if (opts.currency) {
+      cliOpts.push(`--currency+${opts.currency}`);
+    }
+
+    if (opts.device) {
+      cliOpts.push(`--device+${opts.device}`);
+    }
+
+    if (opts.path) {
+      cliOpts.push(`--path+${opts.path}`);
+    }
+
+    if (opts.derivationMode) {
+      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
+    }
+
+    if (opts.verify) {
+      cliOpts.push("--verify");
+    }
+
+    return runCliCommand(cliOpts.join("+")).then(output => {
+      const lines = output
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
+      const lastLine = lines[lines.length - 1] ?? "";
+      return JSON.parse(lastLine);
+    });
+  },
+  getAddressForAccount: async (account: Account) => {
+    if (account.currency.id === Currency.HBAR.id) {
+      invariant(account.address, "hedera: account address must be pre-set");
+      return account.address;
+    }
+
+    const addressInfo = await CLI.getAddress({
+      currency: account.currency.speculosApp.name,
+      path: account.accountPath,
+      derivationMode: account.derivationMode,
+    });
+    account.address = addressInfo.address;
+    return addressInfo.address;
   },
 };

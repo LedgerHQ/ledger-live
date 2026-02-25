@@ -190,6 +190,42 @@ describe("BitcoinApi", () => {
         "f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474",
       );
     });
+
+    it("broadcast api should include source headers when provided", async () => {
+      const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+      await explorer.broadcast(
+        "02000000000101f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff564740000000000ffffffff02a0860100000000001600141a1653e4395b75aa062bbe6a05c1bedc5f268d790000000000000",
+        { source: { type: "live-app", name: "test-app" } },
+      );
+
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: {
+            "X-Ledger-Source-Type": "live-app",
+            "X-Ledger-Source-Name": "test-app",
+          },
+        }),
+      );
+    });
+
+    it("broadcast api should not include headers when source is not provided", async () => {
+      const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+      await explorer.broadcast(
+        "02000000000101f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff564740000000000ffffffff02a0860100000000001600141a1653e4395b75aa062bbe6a05c1bedc5f268d790000000000000",
+      );
+
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "POST",
+          data: expect.any(Object),
+        }),
+      );
+
+      const callArgs = mockNetwork.mock.calls[mockNetwork.mock.calls.length - 1][0];
+      expect(callArgs.headers).toEqual({});
+    });
   });
 
   describe("hydrateTx unit test rbf", () => {

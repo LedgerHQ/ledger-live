@@ -1,8 +1,8 @@
-import { validatePublicKey, ValidationResult, b58Encode, PrefixV2 } from "@taquito/utils";
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import type { APIAccount } from "./network/types";
+import { validatePublicKey, ValidationResult, b58Encode, PrefixV2 } from "@taquito/utils";
 import coinConfig from "./config";
+import type { APIAccount } from "./network/types";
 
 /**
  * Dust margin in mutez to prevent transaction failures on send max operations

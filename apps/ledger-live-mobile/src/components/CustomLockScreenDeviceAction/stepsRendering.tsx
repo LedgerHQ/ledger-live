@@ -4,7 +4,7 @@ import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
 import { FramedImageWithContext } from "../CustomImage/FramedPicture";
 import { getFramedPictureConfig } from "../CustomImage/framedPictureConfigs";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { useTheme } from "styled-components/native";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";

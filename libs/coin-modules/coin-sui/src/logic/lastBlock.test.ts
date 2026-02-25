@@ -1,5 +1,5 @@
-import { lastBlock } from "./lastBlock";
 import { getLastBlock } from "../network/sdk";
+import { lastBlock } from "./lastBlock";
 
 jest.mock("../network/sdk");
 
@@ -18,11 +18,13 @@ describe("lastBlock", () => {
   });
 
   it("should return block info with correct height and hash", async () => {
-    const { hash, height, time } = await lastBlock();
+    const block = await lastBlock();
 
-    expect(hash).toBeDefined();
-    expect(height).toBeDefined();
-    expect(time).toBeDefined();
+    expect(block).toEqual({
+      hash: mockHash,
+      height: Number(mockSeq),
+      time: expect.any(Date),
+    });
     expect(mock).toHaveBeenCalledTimes(1);
   });
 });

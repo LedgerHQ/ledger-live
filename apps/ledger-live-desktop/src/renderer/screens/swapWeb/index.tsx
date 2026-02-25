@@ -2,8 +2,8 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
-import { useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useSelector } from "LLD/hooks/redux";
+import { useNavigate, useLocation } from "react-router";
 import Card from "~/renderer/components/Box/Card";
 import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
@@ -15,7 +15,7 @@ import { captureException } from "~/sentry/renderer";
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
 const Swap = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const locale = useSelector(languageSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -35,7 +35,7 @@ const Swap = () => {
         "Failed to load swap live app using WebPlatformPlayer in SwapWeb",
       ),
     );
-    history.goBack();
+    navigate(-1);
   }, 500);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {

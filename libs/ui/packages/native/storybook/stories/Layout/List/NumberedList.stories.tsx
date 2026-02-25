@@ -13,7 +13,7 @@ export default {
   },
 };
 
-export const Default: StoryFn<typeof NumberedList> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => {
   return (
     <NumberedList
       items={[

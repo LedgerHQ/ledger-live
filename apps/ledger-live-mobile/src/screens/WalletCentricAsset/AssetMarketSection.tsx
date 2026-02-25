@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import SectionContainer from "../WalletCentricSections/SectionContainer";

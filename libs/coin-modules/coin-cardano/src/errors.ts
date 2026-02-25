@@ -24,3 +24,5 @@ export const CardanoFeeHigh = createCustomErrorClass("CardanoFeeHigh");
 export const CardanoFeeTooHigh = createCustomErrorClass("CardanoFeeTooHigh");
 
 export const CardanoInvalidProtoParams = createCustomErrorClass("CardanoInvalidProtoParams");
+
+export const CardanoMemoExceededSizeError = createCustomErrorClass("CardanoMemoExceededSizeError");

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
@@ -98,7 +98,6 @@ const SystemLanguageAvailableBody = (props: Props) => {
         <Box horizontal justifyContent="flex-end">
           <Button
             mx={15}
-            secondary
             event={`Discoverability - Denied - ${osLanguage}`}
             eventProperties={{
               language: osLanguage,

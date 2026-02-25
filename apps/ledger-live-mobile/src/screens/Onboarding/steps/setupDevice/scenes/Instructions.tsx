@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { NumberedList } from "@ledgerhq/native-ui";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import Button from "~/components/PreventDoubleClickButton";

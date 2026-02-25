@@ -4,7 +4,7 @@ import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommand } from "./runCli";
+import { runCliCommandWithRetry } from "./runCli";
 import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
@@ -21,6 +21,14 @@ type LiveDataOpts = {
   scheme?: string;
   appjson?: string;
   add?: boolean;
+};
+
+type GetAddressOpts = {
+  currency?: string;
+  device?: string;
+  path?: string;
+  derivationMode?: string;
+  verify?: boolean;
 };
 
 type LedgerKeyRingProtocolOpts = {
@@ -204,12 +212,13 @@ export const CLI = {
       cliOpts.push("--add");
     }
 
-    return runCliCommand(cliOpts.join("+"));
+    return runCliCommandWithRetry(cliOpts.join("+"));
   },
-  registerSpeculosTransport: function (apiPort: string) {
+  registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,
+      baseURL: speculosAddress,
     };
 
     registerTransportModule({
@@ -217,5 +226,51 @@ export const CLI = {
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
+  },
+  getAddress: async (opts: GetAddressOpts) => {
+    const cliOpts = ["getAddress"];
+
+    if (opts.currency) {
+      cliOpts.push(`--currency+${opts.currency}`);
+    }
+
+    if (opts.device) {
+      cliOpts.push(`--device+${opts.device}`);
+    }
+
+    if (opts.path) {
+      cliOpts.push(`--path+${opts.path}`);
+    }
+
+    if (opts.derivationMode) {
+      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
+    }
+
+    if (opts.verify) {
+      cliOpts.push("--verify");
+    }
+
+    const output = await runCliCommandWithRetry(cliOpts.join("+"));
+    const lines = output
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line.length > 0);
+
+    if (lines.length === 0) {
+      throw new Error("CLI getAddress returned empty output");
+    }
+
+    const jsonLine =
+      [...lines].reverse().find(line => line.startsWith("{") || line.startsWith("[")) ?? "";
+
+    if (!jsonLine) {
+      throw new Error("CLI getAddress output does not contain JSON");
+    }
+
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      throw new Error("Failed to parse CLI getAddress output");
+    }
   },
 };

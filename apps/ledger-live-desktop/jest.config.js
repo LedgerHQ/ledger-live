@@ -1,6 +1,25 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { pathsToModuleNameMapper } = require("ts-jest");
 const { compilerOptions } = require("./tsconfig");
+
+// Helper function to convert TypeScript paths to Jest moduleNameMapper
+// This replaces pathsToModuleNameMapper from ts-jest which is not available in @swc/jest
+function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
+  const jestPaths = {};
+  if (!paths) return jestPaths;
+
+  Object.keys(paths).forEach(pathKey => {
+    const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
+    pathValues.forEach(pathValue => {
+      // Convert TypeScript path pattern to Jest regex pattern
+      // Use /\*$/ for key (wildcard at end) but /\*/ for value (wildcard can be anywhere)
+      const jestKey = pathKey.replace(/\*$/, "(.*)");
+      const jestValue = pathValue.replace(/\*/, "$1");
+      jestPaths[jestKey] = `${prefix}${jestValue}`;
+    });
+  });
+
+  return jestPaths;
+}
 
 const testPathIgnorePatterns = [
   "benchmark/",
@@ -15,10 +34,14 @@ const testPathIgnorePatterns = [
 ];
 
 const moduleNameMapper = {
+  ".*\\.lottie$": "<rootDir>/fileMock.js",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
-  "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+  "^@features/(.*)$": "<rootDir>/../../features/$1/src",
+  "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
+  "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":
     "<rootDir>/fileMock.js",
+  "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
   "styled-components": require.resolve("styled-components"),
   electron: "<rootDir>/tests/mocks/electron.ts",
   uuid: require.resolve("uuid"),
@@ -29,7 +52,7 @@ const moduleNameMapper = {
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
-const transformIncludePatterns = ["ky", "@ledgerhq\\+ldls-ui-react"];
+const transformIncludePatterns = ["ky", "@ledgerhq\\+lumen-ui-react"];
 
 const commonConfig = {
   testEnvironment: "jsdom",
@@ -69,6 +92,7 @@ const commonConfig = {
 };
 
 module.exports = {
+  workerIdleMemoryLimit: "1GB",
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",

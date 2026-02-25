@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
+import BigNumber from "bignumber.js";
 import get from "lodash/get";
-import TronWeb from "tronweb";
+import { TronWeb, providers, utils } from "tronweb";
 import coinConfig from "../config";
 import { TronResources, UnFrozenInfo } from "../types";
 
@@ -10,7 +10,7 @@ export function createTronWeb(trongridUrl?: string): TronWeb {
     trongridUrl = coinConfig.getCoinConfig().explorer.url;
   }
 
-  const HttpProvider = TronWeb.providers.HttpProvider;
+  const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(trongridUrl);
   const solidityNode = new HttpProvider(trongridUrl);
   const eventServer = new HttpProvider(trongridUrl);
@@ -32,7 +32,9 @@ export async function decodeTransaction(rawTx: string): Promise<{
   const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
 
   return {
-    txID: createHash("sha256").update(Buffer.from(rawTx, "hex")).digest("hex"),
+    txID: createHash("sha256")
+      .update(new Uint8Array(Buffer.from(rawTx, "hex")))
+      .digest("hex"),
     raw_data: convertTxFromRaw(transaction),
     raw_data_hex: rawTx,
   };
@@ -214,21 +216,12 @@ const CONTRACT_TYPE: Record<number, ContractInfo> = {
 };
 const convertNumberToContractType = (value: number): ContractInfo => CONTRACT_TYPE[value];
 
-/**
- * Convert for instance: "41FD49EDA0F23FF7EC1D03B52C3A45991C24CD440E" to "TZ4UXDV5ZhNW7fb2AMSbgfAEZ7hWsnYS2g"
- * @param address
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function convertHexToBase58(address: string): string {
-  return TronWeb.address.fromHex(address);
-}
-
 function convertBufferToHex(address: Buffer): string {
-  return (TronWeb.utils.bytes.byteArray2hexStr(address) as string).toLowerCase();
+  return utils.bytes.byteArray2hexStr(new Uint8Array(address)).toLowerCase();
 }
 
 function convertBufferToString(address: Buffer): string {
-  return TronWeb.utils.bytes.bytesToString(address);
+  return utils.bytes.bytesToString(new Uint8Array(address));
 }
 
 export type AccountInfo = {

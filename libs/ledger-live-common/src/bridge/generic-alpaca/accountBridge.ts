@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { getSigner, getValidateAddress } from "./signer";
+import { getSigner } from "./signer";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";
 import { genericEstimateMaxSpendable } from "./estimateMaxSpendable";
@@ -17,18 +17,20 @@ import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
 import type { AlpacaSigner } from "./signer/types";
 import { postSync } from "./postSync";
+import { getValidateAddress } from "./validateAddress";
+import { GenericTransaction } from "./types";
 
 export function getAlpacaAccountBridge(
   network: string,
   kind: string,
   customSigner?: AlpacaSigner,
-): AccountBridge<any> {
+): AccountBridge<GenericTransaction> {
   const signer = customSigner ?? getSigner(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
     createTransaction: createTransaction,
-    updateTransaction: updateTransaction<any>,
+    updateTransaction: updateTransaction<GenericTransaction>,
     prepareTransaction: genericPrepareTransaction(network, kind),
     getTransactionStatus: genericGetTransactionStatus(network, kind),
     estimateMaxSpendable: genericEstimateMaxSpendable(network, kind),
@@ -37,5 +39,5 @@ export function getAlpacaAccountBridge(
     signRawOperation: genericSignRawOperation(network, kind)(signer.context),
     getSerializedAddressParameters, // NOTE: check wether it should be exposed by coin-module's api instead?
     validateAddress: getValidateAddress(network),
-  } satisfies Partial<AccountBridge<any>>;
+  } satisfies Partial<AccountBridge<GenericTransaction>>;
 }

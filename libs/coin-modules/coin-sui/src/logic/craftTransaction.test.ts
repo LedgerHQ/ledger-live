@@ -1,6 +1,6 @@
+import { BigNumber } from "bignumber.js";
 import { craftTransaction } from "../logic/craftTransaction";
 import suiAPI from "../network";
-import { BigNumber } from "bignumber.js";
 
 jest.mock("../network");
 
@@ -39,6 +39,7 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
+      undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -69,6 +70,7 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
+      undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -99,6 +101,7 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
+      undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -129,6 +132,7 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
+      undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });

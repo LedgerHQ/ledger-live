@@ -11,11 +11,11 @@ import {
   postAptosFullNode,
   TransactionResponseType,
 } from "@aptos-labs/ts-sdk";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
-import { AptosAPI } from "../../network";
-import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID } from "../../constants";
+import { AptosAPI } from "../../network";
 import { AptosBalance, AptosTransaction } from "../../types";
 
 jest.mock("@aptos-labs/ts-sdk");
@@ -41,35 +41,27 @@ describe("Aptos API", () => {
   it("builds the client properly for mainnet", () => {
     const api = new AptosAPI("aptos");
 
-    expect(api.broadcast).toBeDefined();
-    expect(typeof api.broadcast).toBe("function");
-    expect(api.estimateGasPrice).toBeDefined();
-    expect(typeof api.estimateGasPrice).toBe("function");
-    expect(api.generateTransaction).toBeDefined();
-    expect(typeof api.generateTransaction).toBe("function");
-    expect(api.getAccount).toBeDefined();
-    expect(typeof api.getAccount).toBe("function");
-    expect(api.getAccountInfo).toBeDefined();
-    expect(typeof api.getAccountInfo).toBe("function");
-    expect(api.simulateTransaction).toBeDefined();
-    expect(typeof api.simulateTransaction).toBe("function");
+    expect(api).toMatchObject({
+      broadcast: expect.any(Function),
+      estimateGasPrice: expect.any(Function),
+      generateTransaction: expect.any(Function),
+      getAccount: expect.any(Function),
+      getAccountInfo: expect.any(Function),
+      simulateTransaction: expect.any(Function),
+    });
   });
 
   it("builds the client properly for testnet", () => {
     const api = new AptosAPI("aptos_testnet");
 
-    expect(api.broadcast).toBeDefined();
-    expect(typeof api.broadcast).toBe("function");
-    expect(api.estimateGasPrice).toBeDefined();
-    expect(typeof api.estimateGasPrice).toBe("function");
-    expect(api.generateTransaction).toBeDefined();
-    expect(typeof api.generateTransaction).toBe("function");
-    expect(api.getAccount).toBeDefined();
-    expect(typeof api.getAccount).toBe("function");
-    expect(api.getAccountInfo).toBeDefined();
-    expect(typeof api.getAccountInfo).toBe("function");
-    expect(api.simulateTransaction).toBeDefined();
-    expect(typeof api.simulateTransaction).toBe("function");
+    expect(api).toMatchObject({
+      broadcast: expect.any(Function),
+      estimateGasPrice: expect.any(Function),
+      generateTransaction: expect.any(Function),
+      getAccount: expect.any(Function),
+      getAccountInfo: expect.any(Function),
+      simulateTransaction: expect.any(Function),
+    });
   });
 
   describe("getAccount", () => {
@@ -859,7 +851,7 @@ describe("Aptos API", () => {
     it("list of operations", async () => {
       const api = new AptosAPI("aptos");
       const address = "0x12345";
-      const pagination: Pagination = { minHeight: 0, order: "asc" };
+      const minHeight = 0;
 
       const txs: AptosTransaction[] = [
         {
@@ -1296,10 +1288,10 @@ describe("Aptos API", () => {
 
       api.getAccountInfo = jest.fn().mockResolvedValue({ transactions });
 
-      const ops = await api.listOperations(address, pagination.minHeight);
+      const ops = await api.listOperations(address, minHeight);
 
-      expect(ops[0]).toHaveLength(2);
-      expect(ops[1]).toBe("");
+      expect(ops.items).toHaveLength(2);
+      expect(ops.next).toBeUndefined();
     });
   });
 });

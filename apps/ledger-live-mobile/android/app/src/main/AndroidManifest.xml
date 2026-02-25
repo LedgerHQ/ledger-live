@@ -37,7 +37,7 @@
         android:required="true" />
 
     <application
-      android:extractNativeLibs="true"
+      android:extractNativeLibs="false"
       android:largeHeap="true"
       android:name=".MainApplication"
       android:label="@string/app_name"

@@ -63,15 +63,17 @@ export type PrepareTransferResponse = {
   serialized: string;
 };
 
-export type PrepareTransferRequest = {
+type BaseTransferRequest = {
   type: "token-transfer-request";
   amount: string;
   recipient: string;
-  execute_before_secs: number;
   instrument_id: string;
   instrument_admin?: string;
   reason?: string;
 };
+
+export type PrepareTransferRequest = BaseTransferRequest &
+  ({ execute_before_secs: number } | { execute_before: string });
 
 export type PrepareTransferInstructionRequest = {
   type:
@@ -91,6 +93,7 @@ export type TransferProposal = {
   instrument_admin: string;
   memo: string;
   expires_at_micros: number;
+  update_id?: string;
 };
 
 type OnboardingSubmitRequest = {
@@ -327,6 +330,10 @@ export type OperationInfo =
       };
     };
 
+export const SEPARATOR = "____";
+
+export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
+
 const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
 const getNodeId = (currency: CryptoCurrency) => {
   const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
@@ -427,25 +434,23 @@ export function clearIsTopologyChangeRequiredCache(currency: CryptoCurrency, pub
 }
 
 export type InstrumentInfo = {
-  instrument_id: string;
-  display_name?: string;
+  id: string;
+  admin: string;
 };
 
-export type InstrumentsResponse = {
-  instruments: InstrumentInfo[];
-};
+export type InstrumentsResponse = InstrumentInfo[];
 
-export async function getEnabledInstruments(currency: CryptoCurrency): Promise<string[]> {
+export async function getEnabledInstruments(currency: CryptoCurrency): Promise<Set<string>> {
   try {
     const { data } = await gatewayNetwork<InstrumentsResponse>({
       method: "GET",
       url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/instruments`,
     });
-    return data.instruments.map(instrument => instrument.instrument_id);
+    return new Set(data.map(({ id, admin }) => getKey(id, admin)));
   } catch (error) {
     // If API fails, return empty array (fail-safe: only native instrument will work)
     console.error("Failed to fetch enabled instruments:", error);
-    return [];
+    return new Set();
   }
 }
 

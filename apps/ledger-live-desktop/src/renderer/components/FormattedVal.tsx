@@ -14,7 +14,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import { BoxProps } from "./Box/Box";
 import { Icons } from "@ledgerhq/react-ui";
 
-const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string } & BoxProps) => ({
+const T = styled(Box).attrs<{ color?: string; inline?: boolean; ff?: string } & BoxProps>(p => ({
   ff: p.ff || "Inter|Medium",
   horizontal: true,
   color: p.color,
@@ -44,6 +44,7 @@ export type OwnProps = {
   animateTicker?: boolean;
   disableRounding?: boolean;
   isPercent?: boolean;
+  percentageTwoDecimals?: boolean;
   subMagnitude?: number;
   prefix?: React.ReactNode;
   ellipsis?: boolean;
@@ -69,6 +70,7 @@ function FormattedVal(props: Props) {
     disableRounding,
     unit,
     isPercent,
+    percentageTwoDecimals,
     alwaysShowSign,
     showCode,
     withIcon,
@@ -91,12 +93,19 @@ function FormattedVal(props: Props) {
   const isZero = val.isZero();
   const isNegative = val.isNegative() && !isZero;
   let text: React.ReactNode = "";
+  // FIXME move out the % feature of this component... totally unrelated to currency & annoying for flow type.
   if (isPercent) {
-    // FIXME move out the % feature of this component... totally unrelated to currency & annoying for flow type.
-    text = `${alwaysShowSign ? (isNegative ? "- " : "+ ") : ""}${(isNegative
-      ? val.negated()
-      : val
-    ).toString()} %`;
+    if (percentageTwoDecimals) {
+      text = `${alwaysShowSign ? (isNegative ? "- " : "+ ") : ""}${(isNegative
+        ? val.negated()
+        : val
+      ).toFixed(2)} %`;
+    } else {
+      text = `${alwaysShowSign ? (isNegative ? "- " : "+ ") : ""}${(isNegative
+        ? val.negated()
+        : val
+      ).toString()} %`;
+    }
   } else {
     invariant(unit, "FormattedVal require a `unit` prop. Received `undefined`");
     if (withIcon && isNegative) {

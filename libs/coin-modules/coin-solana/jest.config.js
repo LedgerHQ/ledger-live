@@ -1,8 +1,6 @@
 const transformIncludePatterns = ["ky"];
 
-/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
-  preset: "ts-jest",
   passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
@@ -14,6 +12,14 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   transform: {
+    "^.+\\.(ts|tsx)$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
     [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
       "@swc/jest",
       {

@@ -43,7 +43,8 @@ describe("Stellar Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      const result = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      txs = result.items;
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -68,7 +69,10 @@ describe("Stellar Api", () => {
     });
 
     it("returns all operations from the latest, but in asc order", async () => {
-      const [txsDesc] = await module.listOperations(ADDRESS, { minHeight: 0, order: "desc" });
+      const { items: txsDesc } = await module.listOperations(ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
       expect(txsDesc[0]).toStrictEqual(txs[0]);
     });
   });
@@ -101,6 +105,14 @@ describe("Stellar Api", () => {
         expect(balance.asset.type).not.toEqual("native");
         expect(balance.value).toBeGreaterThanOrEqual(0);
       });
+    });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance(
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3000000",
+      );
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
     });
   });
 

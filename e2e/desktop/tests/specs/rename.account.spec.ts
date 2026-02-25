@@ -1,10 +1,9 @@
 import { test } from "tests/fixtures/common";
-import { expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { getUserdata } from "tests/utils/userdata";
+import { waitForAccountRenamed } from "tests/utils/userdata";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
@@ -46,7 +45,7 @@ for (const account of accounts) {
           description: account.xrayTicket,
         },
       },
-      async ({ app, userdataFile, electronApp }) => {
+      async ({ app, userdataFile }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.redux.listenToReduxActions();
 
@@ -58,9 +57,9 @@ for (const account of accounts) {
         await app.account.renameAccount(newName);
         await app.account.expectAccountVisibility(newName);
         await app.redux.waitForReduxAction("UPDATE_ACCOUNT");
-        await electronApp.close();
-        const userData = await getUserdata(userdataFile);
-        expect(userData.data.wallet.accountsData.accountNames[0][1]).toBe(newName);
+
+        // Wait for the userdata to be persisted to disk with the renamed account
+        await waitForAccountRenamed(userdataFile, newName);
       },
     );
   });

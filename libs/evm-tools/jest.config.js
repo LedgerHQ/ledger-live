@@ -1,10 +1,19 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
-  preset: "ts-jest",
-  globals: {
-    "ts-jest": {
-      tsconfig: "./src/__tests__/tsconfig.json",
-    },
+  transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "es2022",
+          parser: {
+            syntax: "typescript",
+            tsx: false,
+            decorators: false,
+            dynamicImport: true,
+          },
+        },
+      },
+    ],
   },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",
@@ -14,7 +23,12 @@ module.exports = {
   moduleDirectories: ["node_modules"],
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text", "clover"],
+  coverageReporters: [
+    "json",
+    ["lcov", { file: "lcov.info", projectRoot: "../../" }],
+    "text",
+    "clover",
+  ],
   reporters: [
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],

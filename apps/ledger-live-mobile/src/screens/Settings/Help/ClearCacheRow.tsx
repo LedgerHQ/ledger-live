@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useCleanCache } from "~/actions/general";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import Button from "~/components/wrappedUi/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import Alert from "~/renderer/components/Alert";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
@@ -10,11 +10,11 @@ const ProviderWarning = () => {
   const oddProvider = forcedProvider !== 1;
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onLearnMore = useCallback(() => {
-    history.push("/settings/experimental");
-  }, [history]);
+    navigate("/settings/experimental");
+  }, [navigate]);
 
   return oddProvider || devMode ? (
     <Alert

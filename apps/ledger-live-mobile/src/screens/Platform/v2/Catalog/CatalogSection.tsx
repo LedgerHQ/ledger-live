@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 import KeyboardView from "~/components/KeyboardView";

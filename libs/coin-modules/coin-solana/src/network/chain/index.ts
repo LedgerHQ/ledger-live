@@ -1,4 +1,5 @@
-import ky from "ky";
+import { NetworkError } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -21,10 +22,9 @@ import {
   Commitment,
   GetLatestBlockhashConfig,
 } from "@solana/web3.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { NetworkError } from "@ledgerhq/errors";
-import { Awaited } from "../../logic";
+import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
+import { Awaited } from "../../logic";
 import { SolanaTokenProgram } from "../../types";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";

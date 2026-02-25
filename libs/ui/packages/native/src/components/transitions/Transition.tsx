@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, type JSX } from "react";
 import { TransitionStatus } from "./index";
 
 export interface Props {

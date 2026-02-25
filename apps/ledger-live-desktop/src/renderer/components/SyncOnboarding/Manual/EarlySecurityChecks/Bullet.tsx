@@ -1,17 +1,17 @@
 import React from "react";
 import { Flex, Text, InfiniteLoader, IconsLegacy } from "@ledgerhq/react-ui";
-import styled, { StyledComponent, DefaultTheme } from "styled-components";
+import styled from "styled-components";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import { Status } from "../types";
 
-const BorderFlex: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Flex).attrs({
+const BorderFlex = styled(Flex).attrs({
   border: "1px solid",
   borderColor: "neutral.c40",
   borderWidth: 1,
   borderRadius: 1,
 })``;
 
-const IconContainer: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(BorderFlex).attrs({
+const IconContainer = styled(BorderFlex).attrs({
   width: 48,
   height: 48,
   flexDirection: "row",
@@ -19,12 +19,12 @@ const IconContainer: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled
   alignItems: "center",
 })``;
 
-const Row: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Flex).attrs({
+const Row = styled(Flex).attrs({
   flexDirection: "row",
   justifyContent: "flex-start",
 })``;
 
-const Column: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Flex).attrs({
+const Column = styled(Flex).attrs({
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "stretch",

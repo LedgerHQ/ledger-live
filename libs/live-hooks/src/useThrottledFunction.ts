@@ -34,10 +34,10 @@ export const useThrottledFunction = <FnReturnType, Args extends unknown[]>(
   args: Args,
 ): FnReturnType => {
   const [state, setState] = useState<FnReturnType>(() => callbackFunction(...args));
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timeoutMs = useRef<number>(throttleMs);
   const skipInitialValue = useRef(true);
-  const nextArgs = useRef<Args>();
+  const nextArgs = useRef<Args | null>(null);
 
   useEffect(() => {
     const throttleDelayChanged = timeoutMs.current !== throttleMs;
@@ -45,10 +45,10 @@ export const useThrottledFunction = <FnReturnType, Args extends unknown[]>(
     const timeoutCallback = () => {
       if (nextArgs.current) {
         setState(callbackFunction(...nextArgs.current));
-        nextArgs.current = undefined;
+        nextArgs.current = null;
         timeout.current = setTimeout(timeoutCallback, timeoutMs.current);
       } else {
-        timeout.current = undefined;
+        timeout.current = null;
       }
     };
     if (!timeout.current) {

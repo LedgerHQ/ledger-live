@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { State } from "@ledgerhq/live-common/apps/index";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { updateAllProgress } from "@ledgerhq/live-common/apps/logic";

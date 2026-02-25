@@ -2,12 +2,12 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import React, { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import type { TFunction } from "i18next";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
 

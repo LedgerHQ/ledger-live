@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 import type { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";

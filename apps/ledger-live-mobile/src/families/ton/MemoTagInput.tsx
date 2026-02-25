@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";

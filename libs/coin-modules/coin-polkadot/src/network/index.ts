@@ -1,4 +1,7 @@
 import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
   getAccount as sidecardGetAccount,
@@ -14,13 +17,9 @@ import {
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
+  getMetadata as sidecarGetMetadata,
   getLastBlock,
 } from "./sidecar";
-import BigNumber from "bignumber.js";
-import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
-import network from "@ledgerhq/live-network/network";
-import coinConfig from "../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -110,32 +109,13 @@ const isNewAccount = makeLRUCache(
   minutes(1),
 );
 
-const metadataHash = async (currency?: CryptoCurrency): Promise<string> => {
-  const id = coinConfig.getCoinConfig(currency).metadataShortener.id;
-  const res: any = await network({
-    method: "POST",
-    url: coinConfig.getCoinConfig(currency).metadataHash.url,
-    data: {
-      id: id,
-    },
-  });
-  return res.data.metadataHash;
-};
-
-const shortenMetadata = async (transaction: string, currency?: CryptoCurrency): Promise<string> => {
-  const id = coinConfig.getCoinConfig(currency).metadataShortener.id;
-  const res: any = await network({
-    method: "POST",
-    url: coinConfig.getCoinConfig(currency).metadataShortener.url,
-    data: {
-      chain: {
-        id: id,
-      },
-      txBlob: transaction,
-    },
-  });
-
-  return res.data.txMetadata;
+const getMetadata = async (
+  callData: string,
+  includedInExtrinsic: string,
+  includedInSignedData: string,
+  currency?: CryptoCurrency,
+): Promise<{ metadataBlob: string; metadataHash: string }> => {
+  return sidecarGetMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
 };
 
 export default {
@@ -162,8 +142,7 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
-  metadataHash,
-  shortenMetadata,
+  getMetadata,
   submitExtrinsic: async (extrinsic: string, currency?: CryptoCurrency) =>
     sidecarSubmitExtrinsic(extrinsic, currency),
   verifyValidatorAddresses: async (

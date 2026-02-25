@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useIsFocused } from "@react-navigation/core";
 import { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import { internetReachable } from "~/logic/internetReachable";
 import { lastConnectedDeviceSelector, onboardingTypeSelector } from "~/reducers/settings";

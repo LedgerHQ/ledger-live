@@ -1,4 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { ReactElement } from "react";
 import { createUseLeftAccountsModule } from "../hooks/useLeftAccounts";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
 import { createUseRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
@@ -57,7 +58,7 @@ type NetworksWithComponents = CryptoOrTokenCurrency &
   Network & {
     balanceData?: BalanceUI;
     count?: number;
-    apy?: React.ReactElement;
+    apy?: ReactElement;
     description?: string;
   };
 
@@ -98,7 +99,7 @@ export const createNetworkConfigurationHook =
         Network & {
           balanceData?: BalanceUI;
           count?: number;
-          apy?: React.ReactElement;
+          apy?: ReactElement;
           description?: string;
         }
     > => {

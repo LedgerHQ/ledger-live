@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Text, IconBoxList, IconsLegacy } from "@ledgerhq/native-ui";
 import Button from "~/components/PreventDoubleClickButton";
 

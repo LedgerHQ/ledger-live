@@ -86,14 +86,12 @@ export const getVotesCount = (
     case "tron":
       return (mainAccount as TronAccount)?.tronResources?.votes.length || 0;
     case "axelar":
-    case "onomy":
     case "quicksilver":
     case "stride":
     case "persistence":
     case "stargaze":
     case "nyx":
     case "secret_network":
-    case "sei_network":
     case "desmos":
     case "dydx":
     case "umee":

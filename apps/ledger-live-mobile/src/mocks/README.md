@@ -2,11 +2,12 @@ Mocking API calls in development (MSW)
 
 Enable
 
-- Set env var before starting Metro: `ENABLE_MSW=true pnpm start  -- --reset-cache` or `pnpm start:msw -- --reset-cache`.
+- Set env var before starting Metro: `MSW_ENABLED=true pnpm start -- --reset-cache` or `pnpm start:msw -- --reset-cache`.
 
 How it works
 
-- `index.js` imports `src/mocks/init`, which checks `ENABLE_MSW` and starts the worker.
+- `index.js` imports `src/mocks/init`, which checks `MSW_ENABLED` and starts the worker.
+- `init.ts` loads `polyfills.ts` first (adds TransformStream for React Native).
 - Handlers live in `src/mocks/handlers.ts` and are registered via `src/mocks/server.ts`.
 
 Add/edit mocks

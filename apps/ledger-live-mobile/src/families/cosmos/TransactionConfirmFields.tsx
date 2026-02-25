@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
@@ -12,7 +12,7 @@ import LText from "~/components/LText";
 import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import Info from "~/icons/Info";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type FieldProps = {
   account: Account;

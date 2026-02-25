@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
@@ -14,7 +14,7 @@ import Touchable from "~/components/Touchable";
 
 import styles from "../styles";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the hook declaration.

@@ -11,11 +11,20 @@ const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 function WalletTabHeader({
   hidePortfolio,
   animated,
+  useWallet40TopBar = false,
 }: {
   hidePortfolio: boolean;
   animated?: boolean;
+  useWallet40TopBar?: boolean;
 }) {
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
+  const insets = useSafeAreaInsets();
+  const hasExperimentalHeader = useExperimental();
+
+  if (useWallet40TopBar) {
+    return null;
+  }
+
   const y = animated
     ? 0
     : scrollY.interpolate({
@@ -31,9 +40,6 @@ function WalletTabHeader({
         extrapolateRight: "clamp",
       });
 
-  const insets = useSafeAreaInsets();
-  const hasExperimentalHeader = useExperimental();
-
   return (
     <>
       <AnimatedFlex
@@ -47,7 +53,6 @@ function WalletTabHeader({
           },
           { transform: [{ translateY: y }] },
         ]}
-        mode={"margin"}
       >
         <Box flex={1} px={6} justifyContent={"flex-end"}>
           <PortfolioHeader hidePortfolio={hidePortfolio} />

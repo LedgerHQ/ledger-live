@@ -38,7 +38,7 @@ const ecc = {
 import { getXpubComponents, pathArrayToString } from "../../src/bip32";
 import BtcNew from "../../src/BtcNew";
 import { DefaultDescriptorTemplate, WalletPolicy } from "../../src/newops/policy";
-import { PsbtV2 } from "../../src/newops/psbtv2";
+import type { PsbtV2 } from "@ledgerhq/psbtv2";
 import { splitTransaction } from "../../src/splitTransaction";
 import {
   StandardPurpose,
@@ -79,6 +79,18 @@ test("getWalletXpub normal path", async () => {
   await testGetWalletXpub("m/11'/12'");
   await testGetWalletXpub("m/11");
   await testGetWalletXpub("m/44'/0'/0'");
+});
+
+test("getWalletXpub throws on xpub version mismatch", async () => {
+  const [client] = await createClient();
+  const path = "m/44'/0'/0'";
+  const expectedXpub =
+    "tpubDCwYjpDhUdPGP5rS3wgNg13mTrrjBuG8V9VpWbyptX6TRPbNoZVXsoVUSkCjmQ8jJycjuDKBb9eataSymXakTTaGifxR6kmVsfFehH1ZgJT";
+  client.mockGetPubkeyResponse(path, expectedXpub);
+  const btc = new BtcNew(client);
+  await expect(btc.getWalletXpub({ path, xpubVersion: 0x043587cf + 1 })).rejects.toThrow(
+    /Expected xpub version/,
+  );
 });
 
 function testPaths(type: StandardPurpose): { ins: string[]; out?: string } {

@@ -16,6 +16,7 @@ type Props = BaseStyledProps &
     hasExternalLinkIcon?: boolean;
     unread?: boolean;
     onPress: () => void;
+    variant?: "default" | "titleProminent";
   }>;
 
 export default function NewBannerCard({
@@ -26,6 +27,7 @@ export default function NewBannerCard({
   hasExternalLinkIcon,
   unread,
   onPress,
+  variant = "default",
   p = 4,
   borderRadius = 12,
   ...styledProps
@@ -59,12 +61,20 @@ export default function NewBannerCard({
 
         <Flex ml={5} flexShrink={1}>
           {title && (
-            <Text color="neutral.c70" variant="subtitle">
+            <Text
+              color={variant === "titleProminent" ? "neutral.c100" : "neutral.c70"}
+              variant={variant === "titleProminent" ? "body" : "subtitle"}
+              fontWeight={variant === "titleProminent" ? "semiBold" : undefined}
+            >
               {title}
             </Text>
           )}
 
-          <Text color="neutral.c100" variant="body" mt={2}>
+          <Text
+            color={variant === "titleProminent" ? "neutral.c70" : "neutral.c100"}
+            variant={variant === "titleProminent" ? "paragraph" : "body"}
+            mt={2}
+          >
             {description}
           </Text>
 

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   formatVotes,

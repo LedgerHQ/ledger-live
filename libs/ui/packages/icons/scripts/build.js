@@ -63,7 +63,9 @@ const reactSvgStyledComponent = `
 import styled from "styled-components";
 import { system } from "styled-system";
 
-export default styled.svg\`
+export default styled.svg.withConfig({
+  shouldForwardProp: (prop) => true,
+})\`
   \${system({
     color: {
       property: "color",
@@ -85,9 +87,12 @@ const fillSystem = system({
   },
 });
 
-export default styled(Svg).attrs((props:  SvgProps) => ({
+const StyledSvg = styled(Svg).attrs<SvgProps & { xmlns?: string }>((props) => ({
   ...fillSystem(props),
+  xmlns: props.xmlns || "http://www.w3.org/2000/svg",
 }))\`\`;
+
+export default StyledSvg;
 `;
 
 // Component template
@@ -106,7 +111,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
 
-    function ${componentName} ({ size = "M", color = "currentColor", style }: Props): JSX.Element {
+    function ${componentName} ({ size = "M", color = "currentColor", style }: Props): React.JSX.Element {
       const strokeWidth = availableSizes[size]?.stroke
       const appliedSize = availableSizes[size]?.size
 
@@ -140,7 +145,7 @@ function reactNativeTemplate(
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
 
-    function ${componentName} ({ size = "M", color = "neutral.c100", style }: Props): JSX.Element {
+    function ${componentName} ({ size = "M", color = "neutral.c100", style }: Props): React.JSX.Element {
         const strokeWidth = availableSizes[size]?.stroke
         const appliedSize = availableSizes[size]?.size
 
@@ -172,7 +177,7 @@ function reactNativeRTLTemplate(
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
     const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
-    function ${componentName} ({size = "M", color = "neutral.c100", style = rtlStyle }: Props): JSX.Element {
+    function ${componentName} ({size = "M", color = "neutral.c100", style = rtlStyle }: Props): React.JSX.Element {
       const strokeWidth = availableSizes[size]?.stroke
       const appliedSize = availableSizes[size]?.size
 

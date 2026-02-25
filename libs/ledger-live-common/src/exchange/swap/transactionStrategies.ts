@@ -294,6 +294,7 @@ export type TransactionStrategyFunction = (
 export const transactionStrategy: {
   [K in Transaction["family"]]: TransactionStrategyFunction;
 } = {
+  aleo: defaultTransaction,
   algorand: defaultTransaction,
   aptos: defaultTransaction,
   bitcoin: bitcoinTransaction,

@@ -1,11 +1,11 @@
 import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import storage from "LLM/storage";
 
 import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import { generalTermsVersionAcceptedSelector } from "~/reducers/settings";
 import { setGeneralTermsVersionAccepted } from "~/actions/settings";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { StoreType } from "~/context/store";
 
 const generalTermsVersionRequired = "2022-05-10";

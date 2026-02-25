@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { delay, isIos } from "../helpers/commonHelpers";
@@ -16,7 +17,7 @@ export default class CommonPage {
   deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
   deviceItemRegex = /device-item-.*/;
   walletApiWebview = "wallet-api-webview";
-
+  closeWithConfirmationButtonId = "button-close-add-account";
   errorPage = new ErrorPage();
 
   searchBar = () => getElementById(this.searchBarId);
@@ -77,8 +78,14 @@ export default class CommonPage {
 
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemNameRegExp, this.assetScreenFlatlistId);
+    await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
     await tapByElement(this.accountItem(accountId));
+  }
+
+  @Step("Tap on close with confirmation button")
+  async tapCloseWithConfirmationButton() {
+    await waitForElementById(this.closeWithConfirmationButtonId);
+    await tapById(this.closeWithConfirmationButtonId);
   }
 
   @Step("Check number of account rows")

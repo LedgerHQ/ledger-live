@@ -13,6 +13,7 @@ import type {
   SignedOperation,
   TransactionCommon,
   TransactionStatusCommon,
+  TransactionSource,
 } from "./transaction";
 import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
@@ -46,6 +47,7 @@ export type PreloadStrategy = Partial<{
 export type BroadcastConfig = {
   mevProtected: boolean;
   sponsored?: boolean;
+  source?: TransactionSource;
 };
 
 /**
@@ -125,6 +127,9 @@ export interface CurrencyBridge {
   // Scan all available accounts with a device
   scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
+  // Get the UI descriptor for this currency (defines structure for transaction flows)
+  // Returns descriptor with inputs, fees configuration, etc.
+  getDescriptor?: (currency: CryptoCurrency) => Record<string, unknown>;
   nftResolvers?: {
     nftMetadata: (arg: {
       contract: string;

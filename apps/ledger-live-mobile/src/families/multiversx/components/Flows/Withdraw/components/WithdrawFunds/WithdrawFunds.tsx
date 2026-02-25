@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -18,7 +18,7 @@ import { ScreenName } from "~/const";
 import type { WithdrawFundsPropsType } from "./types";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.

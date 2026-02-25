@@ -60,8 +60,11 @@ type Props = {
   t: TFunction;
 };
 
+/** Sync-only component type; family components never return a Promise (avoids React 19 FC return type). */
+type SyncComponent<P = object> = (props: P) => ReactNode;
+
 type MaybeComponent =
-  | React.FunctionComponent<
+  | SyncComponent<
       Partial<{
         account?: AccountLike;
         parentAccount?: Account;

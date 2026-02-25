@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
 import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import {
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,
@@ -23,7 +23,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/core";
 import Button from "~/components/Button";
 import styled from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { TrackScreen, track } from "~/analytics";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 

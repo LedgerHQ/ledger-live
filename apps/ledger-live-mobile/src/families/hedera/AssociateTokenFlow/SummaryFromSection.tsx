@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import Wallet from "@ledgerhq/icons-ui/native/Wallet";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";

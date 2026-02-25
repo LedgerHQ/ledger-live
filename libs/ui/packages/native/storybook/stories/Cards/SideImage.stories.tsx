@@ -16,7 +16,7 @@ export default {
   },
 } as Meta<typeof SideImageCard>;
 
-export const SideImageCardStory: StoryFn<typeof SideImageCard> = (
+export const SideImageCardStory: StoryFn<typeof SideImageCardStoryArgs> = (
   args: typeof SideImageCardStoryArgs,
 ) => {
   return (

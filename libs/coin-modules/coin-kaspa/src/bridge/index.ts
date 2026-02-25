@@ -1,28 +1,28 @@
+import getAddressWrapper, { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { Result, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountBridge, CurrencyBridge, DerivationMode } from "@ledgerhq/types-live";
-import getAddressWrapper, { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
+import resolver from "../hw-getAddress";
 import type { KaspaAccount, Transaction, TransactionStatus } from "../types";
 import { KaspaSigner } from "../types";
 
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
-import { getAccountShape } from "./synchronization";
-import { prepareTransaction } from "./prepareTransaction";
-import { createTransaction } from "./createTransaction";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { broadcast } from "./broadcast";
 import { initAccount } from "./initAccount";
-import resolver from "../hw-getAddress";
+import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
-import { Result, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getAccountShape } from "./synchronization";
 import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): CurrencyBridge {

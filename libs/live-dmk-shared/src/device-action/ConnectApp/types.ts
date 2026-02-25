@@ -34,6 +34,7 @@ export type ConnectAppDARequiredInteraction =
 export type ConnectAppDAIntermediateValue = {
   requiredUserInteraction: ConnectAppDARequiredInteraction;
   installPlan: InstallPlan | null;
+  deviceId?: Uint8Array;
 };
 
 export type ConnectAppDAState = DeviceActionState<

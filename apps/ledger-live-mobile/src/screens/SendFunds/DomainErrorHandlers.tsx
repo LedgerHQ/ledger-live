@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { DomainServiceResponseError } from "@ledgerhq/domain-service/hooks/types";
 import { View, StyleSheet, Platform } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";

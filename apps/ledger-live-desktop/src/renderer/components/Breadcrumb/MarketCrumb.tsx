@@ -1,22 +1,20 @@
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import { Separator, TextLink } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useTranslation } from "react-i18next";
-import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
+import { useMarketCoin } from "LLD/features/Market/hooks/useMarketCoin";
 
 export default function MarketCrumb() {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { currency, isLoadingCurrency } = useMarketCoin();
   const goBackToMarket = useCallback(() => {
     setTrackingSource("Page Market Coin - Breadcrumb");
-    history.push({
-      pathname: `/market`,
-    });
-  }, [history]);
+    navigate("/market");
+  }, [navigate]);
 
   return currency ? (
     <>

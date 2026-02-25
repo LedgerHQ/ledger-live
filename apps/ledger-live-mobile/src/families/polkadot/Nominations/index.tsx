@@ -3,7 +3,7 @@ import isAfter from "date-fns/isAfter";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -44,9 +44,9 @@ import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 
 type Props = {

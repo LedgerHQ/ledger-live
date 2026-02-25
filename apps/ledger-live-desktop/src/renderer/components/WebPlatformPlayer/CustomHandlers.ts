@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { ipcRenderer } from "electron";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -15,7 +15,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { replaceAccounts, updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { WebviewProps } from "../Web3AppWebview/types";
-import { setAccountName } from "@ledgerhq/live-wallet/lib-es/store";
+import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
@@ -137,7 +137,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onError,
           }) => {
             try {
-              // Desktop: Limitation, can't add one single account, only REPLACE_ACCOUNT redux store action has 'DB:' prefix and make the storage
+              // Desktop: add account via replaceAccounts so the db middleware persists to storage
               dispatch(replaceAccounts([parentAccount, ...existingAccounts]));
               dispatch(setAccountName(parentAccount.id, accountName));
               onSuccess();

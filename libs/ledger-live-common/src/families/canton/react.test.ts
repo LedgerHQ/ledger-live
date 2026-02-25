@@ -26,35 +26,39 @@ describe("getRemainingTime", () => {
   test("should format seconds only", () => {
     expect(getRemainingTime(30 * SECOND)).toBe("30s");
     expect(getRemainingTime(59 * SECOND)).toBe("59s");
-    expect(getRemainingTime(1 * SECOND)).toBe("1s");
+    expect(getRemainingTime(1 * SECOND)).toBe("01s");
   });
 
   test("should format minutes and seconds", () => {
-    expect(getRemainingTime(1 * MINUTE + 30 * SECOND)).toBe("1m 30s");
-    expect(getRemainingTime(5 * MINUTE + 15 * SECOND)).toBe("5m 15s");
+    expect(getRemainingTime(1 * MINUTE + 30 * SECOND)).toBe("01m 30s");
+    expect(getRemainingTime(5 * MINUTE + 15 * SECOND)).toBe("05m 15s");
     expect(getRemainingTime(59 * MINUTE + 59 * SECOND)).toBe("59m 59s");
   });
 
   test("should format hours, minutes and seconds", () => {
-    expect(getRemainingTime(1 * HOUR + 30 * MINUTE + 15 * SECOND)).toBe("1h 30m 15s");
-    expect(getRemainingTime(2 * HOUR + 5 * MINUTE + 10 * SECOND)).toBe("2h 5m 10s");
+    expect(getRemainingTime(1 * HOUR + 30 * MINUTE + 15 * SECOND)).toBe("01h 30m 15s");
+    expect(getRemainingTime(2 * HOUR + 5 * MINUTE + 10 * SECOND)).toBe("02h 05m 10s");
     expect(getRemainingTime(23 * HOUR + 59 * MINUTE + 59 * SECOND)).toBe("23h 59m 59s");
   });
 
   test("should format days, hours, minutes and seconds", () => {
-    expect(getRemainingTime(1 * DAY + 2 * HOUR + 30 * MINUTE + 15 * SECOND)).toBe("1d 2h 30m 15s");
-    expect(getRemainingTime(5 * DAY + 10 * HOUR + 5 * MINUTE + 10 * SECOND)).toBe("5d 10h 5m 10s");
+    expect(getRemainingTime(1 * DAY + 2 * HOUR + 30 * MINUTE + 15 * SECOND)).toBe(
+      "01d 02h 30m 15s",
+    );
+    expect(getRemainingTime(5 * DAY + 10 * HOUR + 5 * MINUTE + 10 * SECOND)).toBe(
+      "05d 10h 05m 10s",
+    );
     expect(getRemainingTime(10 * DAY + 23 * HOUR + 59 * MINUTE + 59 * SECOND)).toBe(
       "10d 23h 59m 59s",
     );
   });
 
   test("should skip zero values", () => {
-    expect(getRemainingTime(1 * DAY)).toBe("1d 0s");
-    expect(getRemainingTime(1 * HOUR)).toBe("1h 0s");
-    expect(getRemainingTime(1 * MINUTE)).toBe("1m 0s");
-    expect(getRemainingTime(1 * DAY + 1 * MINUTE)).toBe("1d 1m 0s");
-    expect(getRemainingTime(1 * DAY + 1 * HOUR)).toBe("1d 1h 0s");
+    expect(getRemainingTime(1 * DAY)).toBe("01d 00h 00m 00s");
+    expect(getRemainingTime(1 * HOUR)).toBe("01h 00m 00s");
+    expect(getRemainingTime(1 * MINUTE)).toBe("01m 00s");
+    expect(getRemainingTime(1 * DAY + 1 * MINUTE)).toBe("01d 00h 01m 00s");
+    expect(getRemainingTime(1 * DAY + 1 * HOUR)).toBe("01d 01h 00m 00s");
   });
 });
 
@@ -89,41 +93,41 @@ describe("useTimeRemaining", () => {
   test("should return formatted time remaining for valid proposal", () => {
     const expiresAt = Date.now() + 2 * HOUR + 30 * MINUTE + 15 * SECOND;
     const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000));
-    expect(result.current).toBe("2h 30m 15s");
+    expect(result.current).toBe("02h 30m 15s");
   });
 
   test("should update time remaining every second", () => {
     const expiresAt = Date.now() + 2 * MINUTE + 30 * SECOND;
     const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000));
 
-    expect(result.current).toBe("2m 30s");
+    expect(result.current).toBe("02m 30s");
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("2m 29s");
+    expect(result.current).toBe("02m 29s");
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("2m 28s");
+    expect(result.current).toBe("02m 28s");
 
     act(() => {
       jest.advanceTimersByTime(30 * SECOND);
     });
-    expect(result.current).toBe("1m 58s");
+    expect(result.current).toBe("01m 58s");
   });
 
   test("should return empty string when time expires", () => {
     const expiresAt = Date.now() + 2 * SECOND;
     const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000));
 
-    expect(result.current).toBe("2s");
+    expect(result.current).toBe("02s");
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("1s");
+    expect(result.current).toBe("01s");
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
@@ -135,7 +139,7 @@ describe("useTimeRemaining", () => {
     const expiresAt = Date.now() + 1 * HOUR;
     const { result, unmount } = renderHook(() => useTimeRemaining(expiresAt * 1000));
 
-    expect(result.current).toBe("1h 0s");
+    expect(result.current).toBe("01h 00m 00s");
 
     unmount();
 

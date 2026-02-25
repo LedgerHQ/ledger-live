@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "../Body";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 
@@ -47,7 +47,7 @@ const Content = styled(Box)`
 
 export default function StepOptions(props: Readonly<StepProps>) {
   const { transitionTo, closeModal } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function handleGoToBankProvider() {
     track("button_clicked", {
@@ -55,9 +55,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
       page: "receive_drawer",
     });
     closeModal();
-    history.push({
-      pathname: "/bank",
-    });
+    navigate("/bank");
   }
 
   function handleGoToReceiveAccount() {
@@ -69,9 +67,9 @@ export default function StepOptions(props: Readonly<StepProps>) {
   }
 
   return (
-    <Box>
+    <Box data-testid="receive-step-options">
       <TrackPage category="receive_drawer" type="drawer" />
-      <Option onClick={handleGoToBankProvider}>
+      <Option onClick={handleGoToBankProvider} data-testid="receive-step-options-bank">
         <IconWrapper>
           <Icons.Bank size={"M"} />
         </IconWrapper>
@@ -84,7 +82,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
           </Text>
         </Content>
       </Option>
-      <Option onClick={handleGoToReceiveAccount}>
+      <Option onClick={handleGoToReceiveAccount} data-testid="receive-step-options-crypto">
         <IconWrapper>
           <Icons.CoinsCrypto size={"M"} />
         </IconWrapper>

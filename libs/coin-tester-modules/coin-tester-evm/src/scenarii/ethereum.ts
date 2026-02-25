@@ -1,20 +1,19 @@
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_ETHEREUM } from "../tokenFixtures";
+import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type EthereumScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({
   address,
@@ -56,16 +55,28 @@ const makeScenarioTransactions = ({
     },
   };
 
-  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
+  const scenarioSendMaxEthTransaction: EthereumScenarioTransaction = {
+    name: "Send Max ETH",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction, scenarioSendMaxEthTransaction];
 };
 
-export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
+export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://ethereum-rpc.publicnode.com"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://ethereum-rpc.publicnode.com", signer.exportMnemonic());
 
     setCoinConfig(() => ({
       info: {
@@ -113,8 +124,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(ethereum).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "ethereum");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: ethereum,
@@ -141,7 +151,6 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
     };
   },
   beforeAll: account => {
@@ -154,7 +163,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(ethereum.ethereumLikeInfo?.chainId || 1);
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
@@ -162,10 +171,10 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
-    expect(account.operations.length).toBe(3);
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
     resetIndexer();
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   },
 };

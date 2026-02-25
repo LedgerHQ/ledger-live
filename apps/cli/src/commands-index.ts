@@ -10,9 +10,6 @@ import generateTestTransaction from "./commands/blockchain/generateTestTransacti
 import getAddress from "./commands/blockchain/getAddress";
 import getTransactionStatus from "./commands/blockchain/getTransactionStatus";
 import receive from "./commands/blockchain/receive";
-import satstack from "./commands/blockchain/satstack";
-import satstackStatus from "./commands/blockchain/satstackStatus";
-import scanDescriptors from "./commands/blockchain/scanDescriptors";
 import send from "./commands/blockchain/send";
 import signMessage from "./commands/blockchain/signMessage";
 import sync from "./commands/blockchain/sync";
@@ -60,7 +57,6 @@ import portfolio from "./commands/live/portfolio";
 import synchronousOnboarding from "./commands/live/synchronousOnboarding";
 import user from "./commands/live/user";
 import version from "./commands/live/version";
-import swap from "./commands/ptx/swap";
 
 export default {
   bot,
@@ -75,9 +71,6 @@ export default {
   getAddress,
   getTransactionStatus,
   receive,
-  satstack,
-  satstackStatus,
-  scanDescriptors,
   send,
   signMessage,
   sync,
@@ -125,5 +118,4 @@ export default {
   synchronousOnboarding,
   user,
   version,
-  swap,
 };

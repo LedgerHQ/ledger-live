@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
 
 const transactionE2E = {
@@ -6,7 +7,18 @@ const transactionE2E = {
   errorMessage: new RegExp(/Minimum \d+(\.\d{1,10})? USDT needed for quotes\.[\s\S]*Learn More/),
   ctaBanner: false,
   quotesVisible: false,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
 };
 
 runTooLowAmountForQuoteSwapsTest(

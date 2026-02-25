@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from "react";
 
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import { DeviceModel } from "@ledgerhq/devices";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";

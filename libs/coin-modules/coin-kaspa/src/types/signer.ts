@@ -1,4 +1,4 @@
-import { KaspaHwTransaction } from "./index";
+import { KaspaHwTransaction } from "./kaspaHwTransaction";
 
 export type KaspaAddress = {
   address: string;

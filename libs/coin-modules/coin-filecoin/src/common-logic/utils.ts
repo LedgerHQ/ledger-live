@@ -1,13 +1,13 @@
-import { Account, Operation } from "@ledgerhq/types-live";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { BigNumber } from "bignumber.js";
-import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
-import { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../api/api";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
+import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../api/api";
 import { buildTokenAccounts } from "../erc20/tokenAccounts";
+import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
 
 export const mapTxToOps =
   (accountId: string, { address }: AccountShapeInfo) =>
@@ -72,7 +72,6 @@ export const getAddress = (
 } => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
 
 export const getTxToBroadcast = (
-  operation: Operation,
   signature: string,
   rawData: Record<string, any>,
 ): BroadcastTransactionRequest => {

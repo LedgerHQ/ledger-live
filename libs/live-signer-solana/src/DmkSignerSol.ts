@@ -13,6 +13,7 @@ import {
   SignMessageDAError,
   SignTransactionDAError,
   SignerSolana,
+  TransactionResolutionContext,
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
@@ -132,6 +133,21 @@ export class DmkSignerSol implements SolanaSigner {
   }
 
   /**
+   * Converts a Resolution from coin-solana to a TransactionResolutionContext for device-signer-kit-solana.
+   * The userInputType values are identical between both types ("sol" | "ata") but defined separately
+   */
+  private _toTransactionResolutionContext(resolution: Resolution): TransactionResolutionContext {
+    return {
+      tokenAddress: resolution.tokenAddress,
+      tokenInternalId: resolution.tokenInternalId,
+      createATA: resolution.createATA,
+      templateId: resolution.templateId,
+      // Cast is safe: UserInputType enum values ("sol" | "ata") are identical in both types
+      userInputType: resolution.userInputType as TransactionResolutionContext["userInputType"],
+    };
+  }
+
+  /**
    * signs a Solana transaction via DMK.
    * @param path - BIP32 derivation path
    * @param txBuffer - transaction data as a uint8 array
@@ -141,8 +157,11 @@ export class DmkSignerSol implements SolanaSigner {
     txBuffer: Uint8Array,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
+    const transactionResolutionContext = resolution
+      ? this._toTransactionResolutionContext(resolution)
+      : undefined;
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
-      transactionResolutionContext: resolution,
+      transactionResolutionContext,
       skipOpenApp: true,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {

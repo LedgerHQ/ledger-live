@@ -15,7 +15,7 @@ export type StepProps = {
   readonly device: Device | undefined | null;
   readonly account: SuiAccount;
   readonly parentAccount: never;
-  readonly onRetry: (a: void) => void;
+  readonly onRetry: () => void;
   readonly onClose: () => void;
   readonly openModal: OpenModal;
   readonly optimisticOperation: Operation | undefined;

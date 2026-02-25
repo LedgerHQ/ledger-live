@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
-import { Transaction, MinaAccount } from "../types/common";
 import { CoinType } from "@ledgerhq/types-cryptoassets";
-import { MAX_MEMO_LENGTH, MINA_DECODED_ADDRESS_LENGTH } from "../consts";
+import { BigNumber } from "bignumber.js";
 import bs58check from "bs58check";
+import { MINA_DECODED_ADDRESS_LENGTH } from "../consts";
+import { Transaction, MinaAccount } from "../types/common";
 
 /*
  * Validate a Mina address.
@@ -18,10 +18,6 @@ export function isValidAddress(address: string) {
     return false;
   }
 }
-
-export const isValidMemo = (memo: string): boolean => {
-  return memo.length <= MAX_MEMO_LENGTH;
-};
 
 // Get the account number from the path
 export const getAccountNumFromPath = (path: string): number | undefined => {

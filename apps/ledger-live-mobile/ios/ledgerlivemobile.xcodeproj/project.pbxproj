@@ -23,7 +23,6 @@
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
 		CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */; };
 		CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA33C2502ED88BBB003C128E /* AppDelegate.swift */; };
-		CA33C2542ED88BBB003C128E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA33C2522ED88BBB003C128E /* main.swift */; };
 		CA3D2EB42EDDA65A008E836E /* BrazeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */; };
 		CA3D2EB62EDDA670008E836E /* FirebaseConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB52EDDA670008E836E /* FirebaseConfigurator.swift */; };
 		CA3D2EBC2EDDA6FB008E836E /* Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EBB2EDDA6FA008E836E /* Overlay.swift */; };
@@ -68,7 +67,6 @@
 		CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelperModule.m; sourceTree = "<group>"; };
 		CA33C2502ED88BBB003C128E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA33C2512ED88BBB003C128E /* LedgerWallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LedgerWallet-Bridging-Header.h"; sourceTree = "<group>"; };
-		CA33C2522ED88BBB003C128E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrazeManager.swift; sourceTree = "<group>"; };
 		CA3D2EB52EDDA670008E836E /* FirebaseConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseConfigurator.swift; sourceTree = "<group>"; };
 		CA3D2EBB2EDDA6FA008E836E /* Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overlay.swift; sourceTree = "<group>"; };
@@ -133,7 +131,6 @@
 				CA3D2EBD2EDDA70E008E836E /* AppKeys.swift */,
 				CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */,
 				CA33C2512ED88BBB003C128E /* LedgerWallet-Bridging-Header.h */,
-				CA33C2522ED88BBB003C128E /* main.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				E9558F012AF93CD200BBEB55 /* InfoPlist.strings */,
@@ -344,7 +341,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nSENTRY_XCODE=\"../node_modules/@sentry/react-native/scripts/sentry-xcode.sh\"\nBUNDLE_REACT_NATIVE=\"/bin/sh $SENTRY_XCODE $REACT_NATIVE_XCODE\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"$BUNDLE_REACT_NATIVE\\\"\"\n";
+			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nif [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\nexport CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'\")\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n\n# Copy bundle to ios/build so CI can upload bundle+sourcemap to Datadog\nif [[ -f \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/main.jsbundle\" ]]; then\n  mkdir -p \"${PROJECT_DIR}/build\"\n  cp \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/main.jsbundle\" \"${PROJECT_DIR}/build/main.jsbundle\"\nfi\n";
 		};
 		3B8A85D90BB941F538378AA1 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -392,7 +389,6 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG/RNSVGFilters.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/Sentry/Sentry.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
@@ -429,7 +425,6 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNSVGFilters.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Sentry.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TOCropViewControllerBundle.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
@@ -470,11 +465,16 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/ledgerlivemobile/ledgerlivemobile.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-ledgerlivemobile/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-ledgerlivemobile/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -534,7 +534,6 @@
 				CA3D2EB62EDDA670008E836E /* FirebaseConfigurator.swift in Sources */,
 				CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */,
 				CA3D2EBE2EDDA70E008E836E /* AppKeys.swift in Sources */,
-				CA33C2542ED88BBB003C128E /* main.swift in Sources */,
 				CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */,
 				CA3D2EC22EDE0D9B008E836E /* BluetoothHelperModule.swift in Sources */,
 				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
@@ -752,7 +751,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
@@ -897,7 +896,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
@@ -986,7 +985,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1076,7 +1075,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1216,7 +1215,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;

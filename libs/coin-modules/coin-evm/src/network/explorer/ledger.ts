@@ -1,11 +1,8 @@
-import axios from "axios";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { Operation } from "@ledgerhq/types-live";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { LedgerExplorerUsedIncorrectly } from "../../errors";
-import { LedgerExplorerOperation } from "../../types";
-import { getCoinConfig } from "../../config";
+import axios from "axios";
 import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
@@ -13,7 +10,10 @@ import {
   ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
-import { ExplorerApi, isLedgerExplorerConfig } from "./types";
+import { getCoinConfig } from "../../config";
+import { LedgerExplorerUsedIncorrectly } from "../../errors";
+import { LedgerExplorerOperation } from "../../types";
+import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
 
 export const DEFAULT_BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
@@ -76,8 +76,12 @@ export async function fetchPaginatedOpsWithRetries(
 
 /**
  * Returns all operation types from an address
+ *
+ * Note: Ledger explorer fetches all pages recursively internally,
+ * so pagination parameters are ignored and nextPagingToken is always empty.
+ * Pagination may be supported in the future.
  */
-export const getLastOperations: ExplorerApi["getLastOperations"] = async (
+export const getOperations: ExplorerApi["getOperations"] = async (
   currency,
   address,
   accountId,
@@ -136,11 +140,12 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
     lastTokenOperations,
     lastNftOperations,
     lastInternalOperations,
+    nextPagingToken: NO_TOKEN, // Ledger explorer fetches all pages internally
   };
 };
 
 const ledgerExplorerAPI: ExplorerApi = {
-  getLastOperations,
+  getOperations,
 };
 
 export default ledgerExplorerAPI;

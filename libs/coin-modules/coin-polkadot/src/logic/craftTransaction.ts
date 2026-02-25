@@ -1,16 +1,16 @@
-import BigNumber from "bignumber.js";
-import { stringCamelCase } from "@polkadot/util";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import polkadotAPI from "../network";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { stringCamelCase } from "@polkadot/util";
 import { hexToU8a } from "@polkadot/util";
+import BigNumber from "bignumber.js";
+import polkadotAPI from "../network";
 import {
   CoreTransaction,
   PalletMethodName,
   PolkadotOperationMode,
   TransactionPayloadInfo,
 } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
@@ -210,7 +210,6 @@ export async function craftTransaction(
   ).toHex();
 
   const { blockHash, genesisHash } = info;
-  const metadataHash = await polkadotAPI.metadataHash(currency);
   const unsigned: TransactionPayloadInfo = {
     address,
     blockHash,
@@ -221,7 +220,7 @@ export async function craftTransaction(
     transactionVersion,
     specVersion,
     version: EXTRINSIC_VERSION,
-    metadataHash: hexToU8a("01" + metadataHash),
+    metadataHash: hexToU8a("0x01" + "00".repeat(32)),
     mode: 1,
   };
 

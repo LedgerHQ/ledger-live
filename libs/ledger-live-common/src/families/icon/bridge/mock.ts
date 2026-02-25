@@ -13,10 +13,9 @@ import {
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
-
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();

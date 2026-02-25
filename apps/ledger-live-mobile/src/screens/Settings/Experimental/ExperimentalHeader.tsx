@@ -7,13 +7,13 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
 import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featureFlags/useHasOverriddenFeatureFlags";
 import { Flex } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useExperimental } from "../../../experimental";
 import LText from "~/components/LText";
 import ExperimentalIcon from "~/icons/Experimental";

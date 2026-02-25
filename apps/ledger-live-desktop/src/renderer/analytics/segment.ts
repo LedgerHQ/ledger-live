@@ -1,3 +1,4 @@
+import { AnalyticsBrowser } from "@segment/analytics-next";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import {
   getStablecoinYieldSetting,
@@ -5,7 +6,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { AccountLike, Feature, FeatureId, Features } from "@ledgerhq/types-live";
@@ -27,7 +28,6 @@ import {
   languageSelector,
   lastSeenDeviceSelector,
   localeSelector,
-  marketPerformanceWidgetSelector,
   mevProtectionSelector,
   shareAnalyticsSelector,
   sharePersonalizedRecommendationsSelector,
@@ -37,12 +37,16 @@ import {
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
-import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
+import {
+  onboardingIsSyncFlowSelector,
+  onboardingReceiveFlowSelector,
+  onboardingSyncFlowSelector,
+} from "../reducers/onboarding";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import mixpanel from "mixpanel-browser";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 
-type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
+type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -62,6 +66,7 @@ const getContext = () => ({
 });
 
 let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let analyticsInstance: AnalyticsBrowser | null = null;
 let analyticsFeatureFlagMethod:
   | null
   | (<T extends FeatureId>(key: T) => Feature<Features[T]["params"]> | null);
@@ -69,18 +74,6 @@ let analyticsFeatureFlagMethod:
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
 }
-
-const getMarketWidgetAnalytics = (state: State) => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
-
-  const hasMarketWidgetActivated = marketPerformanceWidgetSelector(state);
-
-  return {
-    hasMarketWidget: !marketWidget?.enabled ? "Null" : hasMarketWidgetActivated ? "Yes" : "No",
-    hasMarketWidgetV2: marketWidget?.params?.enableNewFeature ? "Yes" : "No",
-  };
-};
 
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
@@ -96,12 +89,11 @@ const getLedgerSyncAttributes = (state: State) => {
 
 const getMEVAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
-  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
 
   const hasMEVActivated = mevProtectionSelector(state);
 
   return {
-    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+    MEVProtectionActivated: hasMEVActivated ? "Yes" : "No",
   };
 };
 
@@ -122,6 +114,7 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+    enableDialogDesktop: madFeatureFlag?.params?.enableDialogDesktop ?? false,
   };
 };
 
@@ -213,8 +206,12 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
-  const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
   const { postOnboardingInProgress } = hubStateSelector(state);
+
+  const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
+  const isOnboardingSyncFlow = onboardingIsSyncFlowSelector(state);
+  const onboardingSyncFlow = onboardingSyncFlowSelector(state);
+  const isOnboardingFlow = isOnboardingReceiveFlow || isOnboardingSyncFlow;
 
   const ptxAttributes = getPtxAttributes();
   const ldmkTransport = analyticsFeatureFlagMethod
@@ -235,10 +232,8 @@ const extraProperties = (store: ReduxStore) => {
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
-  const marketWidgetAttributes = getMarketWidgetAnalytics(state);
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
-  const sessionReplayProperties = mixpanel.get_session_recording_properties?.();
 
   const deviceInfo = device
     ? {
@@ -278,6 +273,8 @@ const extraProperties = (store: ReduxStore) => {
 
   const tokenWithFunds = getTokensWithFunds(accounts);
 
+  const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
+
   return {
     ...mandatoryProperties,
     appVersion: __APP_VERSION__,
@@ -299,7 +296,6 @@ const extraProperties = (store: ReduxStore) => {
     ...deviceInfo,
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
-    ...marketWidgetAttributes,
     ...addAccountAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
@@ -307,21 +303,36 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
-    ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
-    ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
-    ...sessionReplayProperties,
+    ...(postOnboardingInProgress && !isOnboardingFlow ? { flow: "post-onboarding" } : {}),
+    ...(isOnboardingFlow ? { flow: "Onboarding", ...onboardingSyncFlow } : {}),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
+    wallet40Attributes,
   };
 };
 
-function getAnalytics() {
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.critical(new Error("window.analytics must not be undefined!"));
-  }
-  return analytics;
+function initializeSegment() {
+  if (analyticsInstance) return;
+
+  const writeKey = process.env.SEGMENT_WRITE_KEY || "olBQc203GA3fXVa48rJB9c3826CY1axp";
+
+  // Initialize Segment with cdnSettings to avoid fetching settings from CDN
+  analyticsInstance = AnalyticsBrowser.load({
+    writeKey,
+    cdnSettings: {
+      integrations: {
+        "Segment.io": {
+          apiKey: writeKey,
+          apiHost: "api.segment.io/v1",
+        },
+      },
+    },
+  });
+}
+
+function getAnalytics(): AnalyticsBrowser | null {
+  return analyticsInstance;
 }
 export const startAnalytics = async (store: ReduxStore) => {
   if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
@@ -332,6 +343,9 @@ export const startAnalytics = async (store: ReduxStore) => {
 
   const canBeTracked = trackingEnabledSelector(store.getState());
   if (!canBeTracked) return;
+
+  // Initialize Segment with the write key from config
+  initializeSegment();
 
   const analytics = getAnalytics();
   if (!analytics) return;
@@ -357,7 +371,7 @@ export const trackSubject = new ReplaySubject<LoggableEvent>(30);
 function sendTrack(event: string, properties: object | undefined | null) {
   const analytics = getAnalytics();
   if (!analytics) return;
-  analytics.track(event, properties, {
+  analytics.track(event, properties ?? undefined, {
     context: getContext(),
   });
 }
@@ -385,9 +399,26 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   };
 };
 
-export const updateIdentify = async () => {
-  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
-  const analytics = getAnalytics();
+export interface UpdateIdentifyOptions {
+  /** When true, send identify even when both analytics opt-ins are false (e.g. after analytics prompt "Refuse all"). */
+  force?: boolean;
+}
+
+export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force: false }) => {
+  if (!storeInstance) return;
+
+  const canTrack = force || trackingEnabledSelector(storeInstance.getState());
+  if (!canTrack) return;
+
+  let analytics = getAnalytics();
+  if (!analytics) {
+    initializeSegment();
+    analytics = getAnalytics();
+
+    // Unlikely scenario where we are unable to initialise the analytics instance
+    if (!analytics) return;
+  }
+
   const { id } = await user();
 
   const allProperties = {

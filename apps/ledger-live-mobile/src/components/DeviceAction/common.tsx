@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";

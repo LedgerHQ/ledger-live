@@ -1,22 +1,25 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useSelector } from "LLD/hooks/redux";
+import { useNavigate, useLocation, useParams } from "react-router";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import {
   counterValueCurrencySelector,
   developerModeSelector,
+  devicesModelListSelector,
   languageSelector,
+  localeSelector,
 } from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { StaticContext } from "react-router";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { getCountryCodeFromLocale } from "@ledgerhq/live-common/locale/index";
 
 const pollingPeriodMs = 1000;
 
@@ -42,21 +45,27 @@ const FullscreenWrapper = styled.div`
   background-color: ${p => p.theme.colors.background.default};
 `;
 
-export default function RecoverPlayer({
-  match,
-  location,
-}: RouteComponentProps<RecoverComponentParams, StaticContext, RecoverState | undefined>) {
-  const { params } = match;
-  const { search, state } = location;
+export default function RecoverPlayer() {
+  const params = useParams<RecoverComponentParams>();
+  const location = useLocation();
+  const { search } = location;
+  const state = location.state as RecoverState | undefined;
+  const navigate = useNavigate();
   const queryParams = useMemo(() => Object.fromEntries(new URLSearchParams(search)), [search]);
   const locale = useSelector(languageSelector);
+  const userLocale = useSelector(localeSelector);
+  const devicesModelList = useSelector(devicesModelListSelector);
   const currencySettings = useSelector(counterValueCurrencySelector);
-  const localManifest = useLocalLiveAppManifest(params.appId);
-  const remoteManifest = useRemoteLiveAppManifest(params.appId);
+  const hasConnectedNanoS = useMemo(
+    () => devicesModelList.includes(DeviceModelId.nanoS),
+    [devicesModelList],
+  );
+  const countryCode = useMemo(() => getCountryCodeFromLocale(userLocale), [userLocale]);
+  const localManifest = useLocalLiveAppManifest(params.appId || "");
+  const remoteManifest = useRemoteLiveAppManifest(params.appId || "");
   const manifest = localManifest || remoteManifest;
   const theme = useTheme().theme;
-  const history = useHistory();
-  const onClose = useCallback(() => history.goBack(), [history]);
+  const onClose = useCallback(() => navigate(-1), [navigate]);
   const recoverConfig = useFeature("protectServicesDesktop");
 
   const availableOnDesktop = recoverConfig?.enabled && recoverConfig?.params?.availableOnDesktop;
@@ -90,6 +99,8 @@ export default function RecoverPlayer({
       deviceModelId: device?.modelId,
       devModeEnabled,
       currency,
+      hasConnectedNanoS,
+      countryCode,
       ...params,
       ...queryParams,
     }),
@@ -99,7 +110,17 @@ export default function RecoverPlayer({
      * This is to ensure the WebRecoverPlayer is not reloaded given the user disconnects their cable.
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme, locale, availableOnDesktop, state?.deviceId, currency, params, queryParams],
+    [
+      theme,
+      locale,
+      availableOnDesktop,
+      state?.deviceId,
+      currency,
+      hasConnectedNanoS,
+      countryCode,
+      params,
+      queryParams,
+    ],
   );
 
   return manifest ? (

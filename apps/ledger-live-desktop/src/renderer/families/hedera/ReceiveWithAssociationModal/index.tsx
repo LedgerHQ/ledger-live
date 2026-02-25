@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
@@ -84,7 +84,9 @@ const ReceiveWithAssociationModal = () => {
 
   if (!hasAccounts) return null;
 
-  const isModalLocked = stepId === "receive" && isAddressVerified === null;
+  const isAssociationLock = ["associationDevice", "associationConfirmation"].includes(stepId);
+  const isReceiveLock = stepId === "receive" && isAddressVerified === null;
+  const isModalLocked = isAssociationLock || isReceiveLock;
 
   return (
     <Modal

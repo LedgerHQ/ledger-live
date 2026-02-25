@@ -2,7 +2,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import styled from "styled-components/native";
 import { PartialNullable } from "~/types/helpers";
 import QueuedDrawer from "./QueuedDrawer";
@@ -92,7 +92,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
       {onResult && result
         ? null
         : device && (
-            <Flex alignItems="center">
+            <Flex alignItems="center" testID="device-action-modal">
               <DeviceActionContainer marginBottom={showInfo ? "16px" : 0}>
                 <DeviceAction
                   action={action as unknown as Action<Req, PartialNullable<Stt>, Res>}

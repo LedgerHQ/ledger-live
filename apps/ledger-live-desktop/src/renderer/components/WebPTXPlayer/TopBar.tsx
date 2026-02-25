@@ -1,5 +1,5 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
-import { useHistory, useRouteMatch } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -9,7 +9,7 @@ import ArrowRight from "~/renderer/icons/ArrowRight";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
@@ -22,6 +22,15 @@ import Switch from "../Switch";
 import { Icons } from "@ledgerhq/react-ui/index";
 import Input from "~/renderer/components/Input";
 import { MobileView } from "~/renderer/hooks/useMobileView";
+
+/** When Back fails (refs not ready), redirect to this path if location.state has the key set. */
+const BACK_FALLBACK_ROUTES: Record<string, string> = {
+  fromCardLanding: "/card-new-wallet",
+};
+
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj !== null && typeof obj === "object";
+}
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -100,7 +109,7 @@ const RightContainer = styled(Box).attrs(() => ({
 export type Props = {
   icon?: boolean;
   manifest: LiveAppManifest;
-  webviewAPIRef: RefObject<WebviewAPI>;
+  webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
   mobileView: MobileView;
   setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;
@@ -115,8 +124,8 @@ export const TopBar = ({
 }: Props) => {
   const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { localStorage } = window;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
@@ -155,32 +164,43 @@ export const TopBar = ({
         flow: flowName,
       });
 
-      const pathname = match.path.replace("/:appId?", "");
-      history.replace({
-        pathname,
-        search: `?referrer=isExternal`,
+      // Extract base path from current location (remove appId segment)
+      const pathParts = location.pathname.split("/");
+      pathParts.pop(); // Remove the appId
+      const pathname = pathParts.join("/") || "/";
+      navigate(`${pathname}?referrer=isExternal`, {
         state: {
           mode: flowName,
         },
       });
     } else {
-      const currentHostname = new URL(webviewState.url).hostname;
-      const webview = safeGetRefValue(webviewAPIRef);
-      const safeUrl = safeGetRefValue(lastMatchingURL);
-      const url = new URL(safeUrl);
-      const urlParams = new URLSearchParams(url.searchParams);
-      const flowName = urlParams.get("liveAppFlow");
+      try {
+        const currentHostname = new URL(webviewState.url).hostname;
+        const webview = safeGetRefValue(webviewAPIRef);
+        const safeUrlValue = safeGetRefValue(lastMatchingURL);
+        const url = new URL(safeUrlValue);
+        const urlParams = new URLSearchParams(url.searchParams);
+        const flowName = urlParams.get("liveAppFlow");
 
-      track("button_clicked2", {
-        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
-        provider: currentHostname,
-        flow: flowName,
-      });
+        track("button_clicked2", {
+          button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
+          provider: currentHostname,
+          flow: flowName,
+        });
 
-      await webview.loadURL(safeUrl);
-      webview.clearHistory();
+        await webview.loadURL(safeUrlValue);
+        webview.clearHistory();
+      } catch {
+        // Refs not ready: redirect using BACK_FALLBACK_ROUTES if state matches
+        const state = isRecord(location.state) ? location.state : null;
+        const matchedKey = state ? Object.keys(BACK_FALLBACK_ROUTES).find(key => state[key]) : null;
+        const fallbackPath = matchedKey ? BACK_FALLBACK_ROUTES[matchedKey] : null;
+        if (fallbackPath) {
+          navigate(fallbackPath);
+        }
+      }
     }
-  }, [localStorage, history, match.path, webviewAPIRef, webviewState.url]);
+  }, [localStorage, navigate, location.pathname, location.state, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
@@ -228,13 +248,13 @@ export const TopBar = ({
             url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
           );
 
-          history.replace(`${match.url}/${manifestId}?goToURL=${goToURL}`);
+          navigate(`${location.pathname}/${manifestId}?goToURL=${goToURL}`);
         }
       } else {
         lastMatchingURL.current = webviewState.url;
       }
     }
-  }, [localStorage, history, isInternalApp, match.url, webviewState.url]);
+  }, [localStorage, navigate, isInternalApp, location.pathname, webviewState.url]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 

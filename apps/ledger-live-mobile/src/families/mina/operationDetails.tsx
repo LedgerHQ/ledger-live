@@ -1,9 +1,8 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Section from "~/screens/OperationDetails/Section";
 import { MinaOperation } from "@ledgerhq/live-common/families/mina/types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit, getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 
 type Props = {

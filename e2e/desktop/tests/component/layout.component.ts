@@ -5,6 +5,8 @@ import { Component } from "tests/page/abstractClasses";
 export class Layout extends Component {
   readonly renderError = this.page.getByTestId("render-error");
   readonly appVersion = this.page.getByTestId("app-version");
+  private readonly topbarActionButton = (action: string) =>
+    this.page.getByTestId(`topbar-action-button-${action}`);
 
   // side bar
   readonly drawerPortfolioButton = this.page.getByTestId("drawer-dashboard-button");
@@ -16,11 +18,19 @@ export class Layout extends Component {
   readonly drawerSwapButton = this.page.getByTestId("drawer-swap-button");
 
   // topbar
-  readonly topbarSynchronizeButton = this.page.getByTestId("topbar-synchronize-button");
-  readonly topbarSettingsButton = this.page.getByTestId("topbar-settings-button");
-
-  // general
-  readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
+  readonly topbarSynchronizeButton = this.topbarActionButton("synchronize").or(
+    this.page.getByTestId("topbar-synchronize-button"),
+  );
+  readonly topbarNotificationButton = this.topbarActionButton("notifications").or(
+    this.page.getByTestId("topbar-notification-button"),
+  );
+  readonly topbarSettingsButton = this.topbarActionButton("settings").or(
+    this.page.getByTestId("topbar-settings-button"),
+  );
+  readonly topbarDiscreetButton = this.topbarActionButton("discreet").or(
+    this.page.getByTestId("topbar-discreet-button"),
+  );
+  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
   @step("Go to Portfolio")
   async goToPortfolio() {
@@ -65,6 +75,11 @@ export class Layout extends Component {
   @step("synchronize accounts")
   async syncAccounts() {
     await this.topbarSynchronizeButton.click();
+  }
+
+  @step("toggle discreet mode")
+  async toggleDiscreetMode() {
+    await this.topbarDiscreetButton.click();
   }
 
   @step("Wait for accounts sync to be finished")

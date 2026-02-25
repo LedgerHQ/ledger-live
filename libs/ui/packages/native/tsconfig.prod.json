@@ -6,7 +6,11 @@
     "declaration": true,
     "target": "esnext",
     "noEmit": false,
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "types": [
+      "react",
+      "react-native"
+    ],
     "rootDir": "./src",
     "outDir": "./lib"
   },

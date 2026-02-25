@@ -3,7 +3,7 @@ import * as array from "d3-array";
 import { View } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { runOnJS } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { ScaleContinuousNumeric, ScaleTime } from "d3-scale";
 import type { Item, ItemArray } from "./types";
 import Bar from "./Bar";
@@ -98,19 +98,19 @@ export default class BarInteraction extends Component<
       .activateAfterLongPress(250)
       .onStart(e => {
         "worklet";
-        runOnJS(onGestureBegin)(e.x);
+        scheduleOnRN(onGestureBegin, e.x);
       })
       .onUpdate(e => {
         "worklet";
-        runOnJS(onGestureUpdate)(e.x);
+        scheduleOnRN(onGestureUpdate, e.x);
       })
       .onEnd(() => {
         "worklet";
-        runOnJS(onGestureEnd)();
+        scheduleOnRN(onGestureEnd);
       })
       .onFinalize(() => {
         "worklet";
-        runOnJS(onGestureEnd)();
+        scheduleOnRN(onGestureEnd);
       });
 
     return (

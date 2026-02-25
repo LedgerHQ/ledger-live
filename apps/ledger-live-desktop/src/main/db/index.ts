@@ -42,6 +42,9 @@ const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
 const save = debounce(saveToDisk, DEBOUNCE_MS);
 
+// Track which keyPaths triggered saves for each namespace
+const saveTriggers: Map<string, Set<string>> = new Map();
+
 /**
  * Reset memory state, db path, encryption keys, transforms..
  */
@@ -49,6 +52,7 @@ function init(_DBPath: string) {
   DBPath = _DBPath;
   memoryNamespaces = {};
   encryptionKeys = {};
+  saveTriggers.clear();
 }
 
 /**
@@ -159,6 +163,11 @@ async function removeEncryptionKey() {
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
   await ensureNSLoaded(ns);
   set(memoryNamespaces[ns]!, keyPath, value);
+  // Track keyPath to identify what triggered the save
+  if (!saveTriggers.has(ns)) {
+    saveTriggers.set(ns, new Set());
+  }
+  saveTriggers.get(ns)!.add(keyPath);
   return save(ns);
 }
 
@@ -201,6 +210,10 @@ async function saveToDisk(ns: string) {
   if (!DBPath) throw new NoDBPathGiven();
   await ensureNSLoaded(ns);
 
+  const startTime = Date.now();
+  const triggersSet = saveTriggers.get(ns);
+  const triggers = triggersSet ? Array.from(triggersSet) : [];
+
   // cloning because we are mutating the obj
   const clone = cloneDeep(memoryNamespaces[ns]);
 
@@ -221,7 +234,15 @@ async function saveToDisk(ns: string) {
   const fileContent = JSON.stringify({
     data: clone,
   });
-  await writeFile(path.resolve(DBPath, `${ns}.json`), fileContent);
+  const filePath = path.resolve(DBPath, `${ns}.json`);
+  await writeFile(filePath, fileContent);
+
+  const duration = Date.now() - startTime;
+  const sizeInBytes = Buffer.byteLength(fileContent, "utf8");
+  const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
+  const triggersStr = ` | ${triggers.join(", ")}`;
+  console.log(`${ns}.json saved in ${duration}ms (${sizeInMB} MB)${triggersStr}`);
+  saveTriggers.delete(ns);
 }
 async function cleanCache() {
   await setKey("app", "countervalues", null);

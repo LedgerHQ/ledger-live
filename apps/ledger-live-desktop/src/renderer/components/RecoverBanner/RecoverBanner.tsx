@@ -1,6 +1,6 @@
 import { Flex, ProgressLoader, Text, Icons } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -46,7 +46,7 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
   }, [getStorageSubscriptionState]);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const recoverResumeActivatePath = useCustomPath(
     recoverServices,
@@ -64,15 +64,24 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
         return undefined;
       case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
         setStepNumber(2);
-        recoverBannerWording = t("dashboard.recoverBanner.subscribeDone", { returnObjects: true });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recoverBannerWording = t("dashboard.recoverBanner.subscribeDone", {
+          returnObjects: true,
+        }) as RecoverBannerType;
         break;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
         setStepNumber(3);
-        recoverBannerWording = t("dashboard.recoverBanner.verifyIdentity", { returnObjects: true });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recoverBannerWording = t("dashboard.recoverBanner.verifyIdentity", {
+          returnObjects: true,
+        }) as RecoverBannerType;
         break;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
         setStepNumber(4);
-        recoverBannerWording = t("dashboard.recoverBanner.connectDevice", { returnObjects: true });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recoverBannerWording = t("dashboard.recoverBanner.connectDevice", {
+          returnObjects: true,
+        }) as RecoverBannerType;
         break;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
         setStepNumber(5);
@@ -87,7 +96,7 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
 
   const onRedirectRecover = () => {
     if (recoverResumeActivatePath) {
-      history.push(recoverResumeActivatePath);
+      navigate(recoverResumeActivatePath);
     }
   };
 

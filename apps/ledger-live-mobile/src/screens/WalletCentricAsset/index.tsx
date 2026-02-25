@@ -1,8 +1,11 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
-import { FlatList, LayoutChangeEvent } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+  AnimatedProps,
+} from "react-native-reanimated";
+import { useTranslation } from "~/context/Locale";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -11,13 +14,12 @@ import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssets
 import VersionNumber from "react-native-version-number";
 import { Loading } from "~/components/Loading";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import isEqual from "lodash/isEqual";
 import BigNumber from "bignumber.js";
 
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SafeAreaView from "~/components/SafeAreaView";
-import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
+import { useFlattenAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
@@ -41,7 +43,7 @@ import { renderItem } from "LLM/utils/renderItem";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
-);
+) as React.ComponentType<AnimatedProps<FlatListProps<React.JSX.Element | null>>>;
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
@@ -67,10 +69,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     return assetData.cryptoOrTokenCurrencies?.[currencyId];
   }, [preloadedCurrency, currencyId, assetData]);
 
-  const cryptoAccounts = useSelector(
-    flattenAccountsByCryptoCurrencyScreenSelector(currency),
-    isEqual,
-  );
+  const cryptoAccounts = useFlattenAccountsByCryptoCurrency(currency);
 
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
@@ -201,7 +200,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         style={{ flex: 1 }}
         data={data}
         renderItem={renderItem<React.JSX.Element>}
-        keyExtractor={(_: unknown, index: number) => String(index)}
+        keyExtractor={(_: React.JSX.Element | null, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         testID="asset-screen-flatlist"

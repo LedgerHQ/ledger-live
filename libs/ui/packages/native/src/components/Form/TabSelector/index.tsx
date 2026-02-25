@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { JSX } from "react";
 import { Pressable, LayoutChangeEvent } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
@@ -47,10 +48,16 @@ export default function TabSelector<T extends string>({
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
   useEffect(() => {
+    if (selectedIndex !== initialIndex) {
+      setSelectedIndex(initialIndex);
+    }
+  }, [initialIndex]);
+
+  useEffect(() => {
     if (containerWidth > 0) {
       translateX.value = (containerWidth / labels.length) * initialIndex;
     }
-  }, [containerWidth, labels.length, initialIndex]);
+  }, [containerWidth, labels.length, initialIndex, translateX]);
 
   const handlePress = (id: T, index: number) => {
     setSelectedIndex(index);

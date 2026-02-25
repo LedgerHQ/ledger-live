@@ -1,3 +1,46 @@
+// Common import restrictions
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+    message: "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
+  },
+];
+
+// Lodash import restriction
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+// React-redux import restrictions
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "reselect",
+    importNames: ["createStructuredSelector", "createSelector"],
+    message:
+      "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
+  },
+];
+
+// React-i18next import restrictions
+const reacti18nextImportRestrictions = [
+  {
+    name: "react-i18next",
+    importNames: ["useTranslation", "Trans"],
+    message:
+      "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance.",
+  },
+];
+
 module.exports = {
   env: {
     node: true,
@@ -9,7 +52,7 @@ module.exports = {
     __REDUX_DEVTOOLS_EXTENSION__: "readonly",
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks", "i18next", "jsx-a11y"],
+  plugins: ["react", "react-hooks", "import", "i18next", "jsx-a11y"],
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
@@ -40,22 +83,15 @@ module.exports = {
       },
     ],
     "no-unsafe-optional-chaining": "off",
+    "import/no-duplicates": "error",
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-          {
-            group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-            message:
-              "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
-          },
-        ],
+        patterns: commonImportRestrictions,
         paths: [
-          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+          ...lodashImportRestriction,
+          ...reactReduxImportRestrictions,
+          ...reacti18nextImportRestrictions,
         ],
       },
     ],
@@ -103,6 +139,19 @@ module.exports = {
   },
   overrides: [
     {
+      // Allow direct react-redux imports in hooks.ts/store.ts where typed hooks are defined
+      files: ["src/context/hooks.ts", "src/context/store.ts", "src/context/selectors.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
+      },
+    },
+    {
       files: [
         "src/**/*.test.{ts,tsx}",
         "src/screens/Settings/Debug/**/*",
@@ -112,10 +161,19 @@ module.exports = {
         "src/components/PerformanceConsole/**/*",
         "src/components/CustomImage/TestImage.tsx",
         "**/*Mock*",
+        "__tests__/**/*",
       ],
       rules: {
         "i18next/no-literal-string": "off",
         "no-console": "off",
+        // Allow direct react-redux imports in test files for mocking purposes
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
       },
     },
     {

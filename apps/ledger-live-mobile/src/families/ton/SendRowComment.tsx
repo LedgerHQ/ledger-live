@@ -2,7 +2,7 @@ import type { Transaction as TonTransaction } from "@ledgerhq/live-common/famili
 import type { Account } from "@ledgerhq/types-live";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import LText from "~/components/LText";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";

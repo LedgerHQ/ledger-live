@@ -1,4 +1,3 @@
-import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { FC, ReactElement, useContext } from "react";
 
@@ -93,7 +92,7 @@ export const PortfolioContentCards: StoryObj<Args> = {
   },
 };
 
-const onSlideAction = action("onSlideAction");
+const onSlideAction = (_label: string) => {};
 
 const IMAGE_SRC =
   "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='526' viewBox='0 0 450 526'><defs><linearGradient id='g' x0='0' y0='0' x1='1' y1='1'><stop stop-color='%23000' offset='0%' /><stop stop-color='%23FFF' offset='100%' /></linearGradient></defs><path d='M0,0 H450 V526 Q0,526 0,0 z' fill='url(%23g)' /></svg>";

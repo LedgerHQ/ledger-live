@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { RawCard, RawCardProps } from "~/renderer/components/Box/Card";
@@ -106,6 +106,7 @@ const CollapsibleCard = ({
   useEffect(() => {
     setOpen(defaultOpen);
   }, [defaultOpen]);
+  const nodeRef = useRef(null);
   return (
     <Container {...props} timing={timing}>
       <HeaderContainer onClick={toggle} chevronVisible={chevronVisible}>
@@ -124,9 +125,10 @@ const CollapsibleCard = ({
           exit: timing * 3, // leaves extra time for the animation to end before unmount
         }}
         unmountOnExit
+        nodeRef={nodeRef}
       >
         {state => (
-          <ChildrenContainer timing={timing} state={state}>
+          <ChildrenContainer ref={nodeRef} timing={timing} state={state}>
             {children}
           </ChildrenContainer>
         )}

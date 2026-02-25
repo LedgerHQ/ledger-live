@@ -8,7 +8,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { ReducedAmountUtxoWarning, UtxoLimitReachedError } from "../types/errors";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { BigNumber } from "bignumber.js";
 import {
   calcMaxSpendableAmount,
@@ -18,9 +18,9 @@ import {
   scanUtxos,
   selectUtxos,
 } from "../logic";
-import { KaspaAccount, Transaction, TransactionStatus } from "../types";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { MAX_UTXOS_PER_TX } from "../logic/constants";
+import { KaspaAccount, Transaction, TransactionStatus } from "../types";
+import { ReducedAmountUtxoWarning, UtxoLimitReachedError } from "../types/errors";
 
 const getCachedUtxos = makeLRUCache(
   async (account: KaspaAccount) => {

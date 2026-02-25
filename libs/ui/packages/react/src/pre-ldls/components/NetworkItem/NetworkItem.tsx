@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 import { Text } from "../../../components";
-import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 export type Network = {
   name: string;
@@ -32,11 +32,11 @@ const Wrapper = styled.div`
   border-radius: var(--radius-s, 8px);
   align-items: center;
 
-  :hover {
+  &:hover {
     background-color: var(--colors-surface-transparent-hover);
   }
 
-  :active {
+  &:active {
     background-color: var(--colors-surface-transparent-pressed);
   }
 `;

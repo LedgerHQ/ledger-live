@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
-import { HashRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import "./global.css";
@@ -20,7 +21,7 @@ import { CountervaluesBridgedProvider } from "~/renderer/components/Countervalue
 import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
-import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
+import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatusProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
@@ -32,8 +33,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
-import { ThemeProvider } from "@ledgerhq/ldls-ui-react";
-import { DialogProvider } from "LLD/components/Dialog";
+import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -84,22 +84,20 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                     <CountervaluesMarketcapBridgedProvider>
                       <CountervaluesBridgedProvider initialState={initialCountervalues}>
                         <ToastProvider>
-                          <AnnouncementProviderWrapper>
+                          <ServiceStatusProviderWrapper>
                             <Router>
                               <PostOnboardingProviderWrapped>
                                 <PlatformAppProviderWrapper>
                                   <DrawerProvider>
-                                    <DialogProvider>
-                                      <QueryClientProvider client={queryClient}>
-                                        <Default />
-                                        <ReactQueryDevtoolsProvider />
-                                      </QueryClientProvider>
-                                    </DialogProvider>
+                                    <QueryClientProvider client={queryClient}>
+                                      <Default />
+                                      <ReactQueryDevtoolsProvider />
+                                    </QueryClientProvider>
                                   </DrawerProvider>
                                 </PlatformAppProviderWrapper>
                               </PostOnboardingProviderWrapped>
                             </Router>
-                          </AnnouncementProviderWrapper>
+                          </ServiceStatusProviderWrapper>
                         </ToastProvider>
                       </CountervaluesBridgedProvider>
                     </CountervaluesMarketcapBridgedProvider>

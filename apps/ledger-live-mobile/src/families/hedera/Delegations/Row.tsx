@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { HederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/types";

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -18,6 +18,7 @@ import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/l
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useOpenSwap } from "LLM/features/Swap";
 
 export type QuickAction = {
   disabled: boolean;
@@ -56,8 +57,13 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
 
-  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
-    useStake();
+  const {
+    getCanStakeUsingLedgerLive,
+    getCanStakeUsingPlatformApp,
+    getRouteParamsForPlatformApp,
+    enabledCurrencies,
+    partnerSupportedAssets,
+  } = useStake();
   const canStakeCurrencyUsingLedgerLive = !currency
     ? false
     : getCanStakeUsingLedgerLive(currency?.id);
@@ -75,8 +81,23 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
+  const whitelistedCurrencies = useMemo(
+    () => Array.from(new Set([...enabledCurrencies, ...partnerSupportedAssets])),
+    [enabledCurrencies, partnerSupportedAssets],
+  );
+
+  const stakeDrawerCurrencies = useMemo(() => {
+    if (currency) {
+      return [currency.id];
+    }
+    if (whitelistedCurrencies.length > 0) {
+      return whitelistedCurrencies;
+    }
+    return undefined;
+  }, [currency, whitelistedCurrencies]);
+
   const { handleOpenStakeDrawer } = useOpenStakeDrawer({
-    currencies: currency ? [currency.id] : undefined,
+    currencies: stakeDrawerCurrencies,
     sourceScreenName: route.name,
   });
 
@@ -84,6 +105,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     currency,
     sourceScreenName: route.name,
   });
+
+  const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -105,13 +128,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       },
       SWAP: {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
-        route: [
-          NavigatorName.Swap,
-          {
-            screen: ScreenName.SwapTab,
-            params: { currency },
-          },
-        ],
+        customHandler: handleOpenSwap,
         icon: IconsLegacy.BuyCryptoMedium,
       },
     };
@@ -197,6 +214,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
+    handleOpenSwap,
     canBeBought,
     canBeSold,
     partnerStakeRoute,

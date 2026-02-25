@@ -4,9 +4,9 @@ import {
   Block,
   BlockInfo,
   FeeEstimation,
+  ListOperationsOptions,
   MemoNotSupported,
   Operation,
-  Pagination,
   TransactionIntent,
   Cursor,
   Page,
@@ -82,9 +82,8 @@ export function createApi(
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
-      pagination: Pagination,
-    ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination),
+      options: ListOperationsOptions,
+    ): Promise<Page<Operation<MemoNotSupported>>> => listOperations(currency, address, options),
     getBlock: (height: number): Promise<Block> => getBlock(currency, height),
     getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
     getStakes(_address: string): Promise<Page<Stake>> {
@@ -99,14 +98,25 @@ export function createApi(
     getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      balances: Balance[],
       customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => validateIntent(currency, intent, customFees),
+    ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
     getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
     computeIntentType,
-    refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
-      refreshOperations(currency, operations),
+    /**
+     * Only expose this method if the chain has no explorer (the only chain that passes a function
+     * is Celo that works with an explorer)
+     * Not exposing this methods ensures that we don't try to force the update of pending operations
+     * in the context of the generic adapter and wait for explorers more accurate results instead
+     */
+    ...(typeof config !== "function" && config.explorer.type === "none"
+      ? {
+          refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
+            refreshOperations(currency, operations),
+        }
+      : {}),
   };
 }

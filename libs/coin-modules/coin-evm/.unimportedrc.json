@@ -14,20 +14,21 @@
     "src/operation.ts",
     "src/config.ts",
     "src/api/index.ts",
-    "src/bridge/preload.ts",
-    "src/bridge/synchronization.ts",
     "src/network/nft/index.ts",
     "src/logic/validateAddress.ts"
   ],
   "ignoreUnimported": [
-    "src/__tests__/*",
     "**/*.test.*",
     "**/*.spec.*",
+    "**/*.fixtures.*",
     "src/datasets/ethereum1.ts",
     "src/abis/index.ts",
-    "src/test/bridge.dataset.ts"
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "@ethersproject/bytes",
     "@ethersproject/logger",
     "@ethersproject/bignumber",

@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   Account,
   AccountRaw,
@@ -10,9 +9,11 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { ValidatorsAppValidator } from "./network/validator-app";
+import BigNumber from "bignumber.js";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
+import { ValidatorsAppValidator } from "./network/validator-app";
+import { UserInputType } from "./signer";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -93,7 +94,7 @@ export type TokenRecipientDescriptor = {
   walletAddress: string;
   tokenAccAddress: string;
   shouldCreateAsAssociatedTokenAccount: boolean;
-  userInputType: "sol" | "ata";
+  userInputType: UserInputType;
 };
 
 export type TransferFeeCalculated = {

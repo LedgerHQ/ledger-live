@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import {
   View,
   TouchableOpacity,
@@ -10,21 +10,21 @@ import {
   LayoutChangeEvent,
   TextStyle,
 } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import CheckBox from "./CheckBox";
 import swipedAccountSubject from "~/types/subject";
-import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
-import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
+import AccountItem from "LLM/features/Accounts/components/AccountItem";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
@@ -142,7 +142,7 @@ const SelectableAccountsList = ({
   );
 
   return (
-    <Flex marginBottom={7} {...props}>
+    <Flex marginBottom={7} testID="selectable-accounts-list" {...props}>
       {header ? (
         <Header
           text={header}
@@ -250,6 +250,8 @@ const SelectableAccount = ({
   const editAccountName = useCallback(() => {
     if (!onAccountNameChange) return;
 
+    track("EditAccountNameFromSlideAction");
+
     swipedAccountSubject.next({ row: -1, list: -1 });
 
     navigation.navigate(NavigatorName.AccountSettings, {
@@ -272,14 +274,16 @@ const SelectableAccount = ({
     return (
       <Flex width="auto" flexDirection="row" alignItems="center" justifyContent="center" ml={2}>
         <Animated.View style={[animatedStyle]} onLayout={setLayout}>
-          <Button
-            event="EditAccountNameFromSlideAction"
-            type="primary"
-            title={<Trans i18nKey="common.editName" />}
+          <RectButton
+            enabled={!isDisabled}
             onPress={editAccountName}
-            paddingLeft={0}
-            paddingRight={0}
-          />
+            hitSlop={selectAllHitSlop}
+            style={{ borderRadius: space[10] }}
+          >
+            <Button type="main" disabled={isDisabled} paddingLeft={0} paddingRight={0}>
+              <Trans i18nKey="common.editName" />
+            </Button>
+          </RectButton>
         </Animated.View>
       </Flex>
     );
@@ -297,7 +301,7 @@ const SelectableAccount = ({
   }, [startAnimation]);
 
   const inner = (
-    <Animated.View style={[animatedStyle]}>
+    <Animated.View style={[animatedStyle]} testID={`account-${account.id}`}>
       <Flex
         {...styles.selectableAccount}
         flexDirection="row"

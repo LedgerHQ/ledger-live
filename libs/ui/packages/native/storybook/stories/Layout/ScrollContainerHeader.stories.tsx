@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 import ScrollContainerHeader from "../../../src/components/Layout/ScrollContainerHeader";
 import Button, { ButtonProps } from "../../../src/components/cta/Button";
 import Text from "../../../src/components/Text";
@@ -16,8 +15,8 @@ export default {
 const TopRightSection = ({ debug }: { debug: boolean }) => {
   return (
     <Flex flexDirection="row" border={debug ? "1px solid purple" : "none"}>
-      <Button mx={2} Icon={IconsLegacy.PlusMedium} onPress={action("plus icon pressed")} />
-      <Button Icon={IconsLegacy.CloseMedium} onPress={action("cross icon pressed")} />
+      <Button mx={2} Icon={IconsLegacy.PlusMedium} onPress={() => {}} />
+      <Button Icon={IconsLegacy.CloseMedium} onPress={() => {}} />
     </Flex>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -40,18 +40,17 @@ export default function Row({
   const unit = useAccountUnit(account);
   const accounts = useSelector(accountsSelector);
   const theme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
   const onAccountClick = useCallback(
     (account: Account | TokenAccount) => {
       setTrackingSource("account allocation");
-      history.push({
-        pathname:
-          account.type !== "Account"
-            ? `/account/${account.parentId}/${account.id}`
-            : `/account/${account.id}`,
-      });
+      navigate(
+        account.type !== "Account"
+          ? `/account/${account.parentId}/${account.id}`
+          : `/account/${account.id}`,
+      );
     },
-    [history],
+    [navigate],
   );
   const parentAccount =
     account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;

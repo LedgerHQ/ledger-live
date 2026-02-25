@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import Svg, { LinearGradient, Defs, Stop, Rect } from "react-native-svg";
 import styled from "styled-components/native";
 
@@ -6,7 +6,7 @@ const StyledSVG = styled(Svg)`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 164;
+  height: 164px;
 `;
 
 export type Props = {

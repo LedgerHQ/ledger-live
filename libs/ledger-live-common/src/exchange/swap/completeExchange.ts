@@ -33,6 +33,7 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/erro
 import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
+const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
 
 const completeExchange = (
   input: CompleteExchangeInputSwap,
@@ -95,7 +96,9 @@ const completeExchange = (
         if (mainRefundCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
 
-        // Thorswap ERC20 token exception hack:
+        const isDex = ["lifi", "thorswap"].includes(provider.toLowerCase());
+
+        // Thorswap/LiFi ERC20 token exception hack:
         // - We remove subAccountId to prevent EVM calldata swap during prepareTransaction.
         // - Set amount to 0 to ensure correct handling of the transaction
         //   (this is adjusted during prepareTransaction before signing the actual EVM transaction for tokens but we skip it).
@@ -103,13 +106,8 @@ const completeExchange = (
         //   because no ETH is being sent, only tokens.
         // - This workaround can't be applied earlier in the flow as the amount is used for display purposes and checks.
         //   We must set the amount to 0 at this stage to avoid issues during the transaction.
-        // - This ensures proper handling of Thorswap-ERC20-specific transactions.
-        if (
-          (provider.toLocaleLowerCase() === "thorswap" ||
-            provider.toLocaleLowerCase() === "lifi") &&
-          transaction.subAccountId &&
-          transaction.family === "evm"
-        ) {
+        // - This ensures proper handling of Thorswap/LiFi ERC20-specific transactions.
+        if (isDex && transaction.subAccountId && transaction.family === "evm") {
           const transactionFixed = {
             ...transaction,
             subAccountId: undefined,
@@ -129,6 +127,29 @@ const completeExchange = (
         }
 
         if (unsubscribed) return;
+
+        // The result of estimateGas is quite accurate in calculating how much gas the user will have to pay
+        // for after the execution of the transaction,
+        // but it does not represent how much gas the blockchain requires to successfully evaluate a transaction.
+        // This is due to gas refunds of storage slots that get set and cleaned in the same transaction,
+        // gas buffers in some implementations and other things.
+        // Please always add a buffer on top of that value, LiFi recommends 25-30%.
+        if (
+          isDex &&
+          transaction.family === "evm" &&
+          transaction.gasLimit &&
+          BigNumber.isBigNumber(transaction.gasLimit)
+        ) {
+          const gasLimit = transaction.gasLimit
+            .times(LIFI_GAS_LIMIT_BUFFER_MULTIPLIER)
+            .integerValue(BigNumber.ROUND_UP);
+          const transactionFixed = {
+            ...transaction,
+            fees: undefined, // to be recalculated
+            customGasLimit: gasLimit,
+          };
+          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+        }
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
@@ -155,6 +176,7 @@ const completeExchange = (
           exchange.transactionType === ExchangeTypes.SwapNg
             ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
             : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+
         await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 

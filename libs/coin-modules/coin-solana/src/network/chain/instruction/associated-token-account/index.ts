@@ -1,9 +1,8 @@
-import { ParsedInfo } from "../../validators";
-import { create, Infer } from "superstruct";
 import { ParsedInstruction } from "@solana/web3.js";
-import { AssociatedTokenAccountInstructionType, IX_STRUCTS, IX_TITLES } from "./types";
-
+import { create, Infer } from "superstruct";
 import { PARSED_PROGRAMS } from "../../program/constants";
+import { ParsedInfo } from "../../validators";
+import { AssociatedTokenAccountInstructionType, IX_STRUCTS, IX_TITLES } from "./types";
 
 export function parseAssociatedTokenAccountInstruction(
   ix: ParsedInstruction & {

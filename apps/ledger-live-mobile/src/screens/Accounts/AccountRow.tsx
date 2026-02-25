@@ -3,18 +3,16 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import AccountRowLayout from "~/components/AccountRowLayout";
-import { parentAccountSelector } from "~/reducers/accounts";
+import { useParentAccount } from "LLM/hooks/useParentAccount";
 import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
-import { State } from "~/reducers/types";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -41,7 +39,7 @@ const AccountRow = ({
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
-  const parentAccount = useSelector((state: State) => parentAccountSelector(state, { account }));
+  const parentAccount = useParentAccount(account);
 
   const name = useAccountName(account);
   const parentName = useMaybeAccountName(parentAccount);

@@ -1,5 +1,6 @@
 import {
-  RefObject,
+  type RefObject,
+  type ForwardedRef,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -23,7 +24,7 @@ import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappL
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
@@ -50,15 +51,15 @@ type UseWebviewStateReturn = {
   webviewProps: {
     src: string;
   };
-  webviewRef: RefObject<WebviewTag>;
+  webviewRef: RefObject<WebviewTag | null>;
   webviewPartition: WebviewPartition;
   handleRefresh: () => void;
 };
 
 export function useWebviewState(
   params: UseWebviewStateParams,
-  webviewAPIRef: React.ForwardedRef<WebviewAPI>,
-  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
+  webviewAPIRef: ForwardedRef<WebviewAPI>,
+  serverRef?: RefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
@@ -303,8 +304,10 @@ export function useSelectAccount({
   });
 
   const currencyIds = useDAppManifestCurrencyIds(manifest);
-  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
-    useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
+    manifest.id,
+    currentAccountHistDb,
+  );
 
   const onSuccess = useCallback(
     (account: AccountLike) => {

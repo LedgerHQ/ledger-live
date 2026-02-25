@@ -91,11 +91,11 @@ const Wrapper = styled.div<{ backgroundColor?: string; isClickable: boolean }>`
       ? `
     border-radius: var(--radius-m);
     padding: var(--margin-s);
-    :hover {
+    &:hover {
       background-color: var(--colors-surface-transparent-hover);
     }
 
-    :active {
+    &:active {
       background-color: var(--colors-surface-transparent-pressed);
     }
   `

@@ -11,7 +11,7 @@ type Props = {
 };
 
 const ContentCardsCategory = ({ category, categoryContentCards }: Props) => (
-  <LogContentCardWrapper id={category.id}>
+  <LogContentCardWrapper id={category.id} location={category.location}>
     <Flex>
       <Header
         title={category.title}

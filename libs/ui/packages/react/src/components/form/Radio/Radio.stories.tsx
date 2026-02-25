@@ -1,5 +1,5 @@
 import React from "react";
-import { useArgs } from "@storybook/manager-api";
+import { useArgs } from "storybook/manager-api";
 
 import Radio from "./index";
 import type { RadioProps } from "./index";

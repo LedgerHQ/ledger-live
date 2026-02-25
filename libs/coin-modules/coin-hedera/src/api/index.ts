@@ -2,9 +2,6 @@ import type {
   Api,
   CraftedTransaction,
   Operation,
-  Page,
-  Reward,
-  Stake,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -23,8 +20,10 @@ import {
   getTokenFromAsset,
   lastBlock,
   getValidators,
+  getStakes,
+  getRewards,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
+import { mapIntentToSDKOperation, getOperationValue, getBlockHash } from "../logic/utils";
 import { apiClient } from "../network/api";
 import type { HederaMemo } from "../types";
 
@@ -71,12 +70,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlock: height => getBlock(height),
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
-    listOperations: async (address, pagination) => {
+    listOperations: async (address, { cursor, limit, order }) => {
+      // FIXME This listOperations implementation ignores the required minHeight option entirely.
+      //  Implementations must error when minHeight != 0 is not supported, this should either filter
+      //  by minHeight or explicitly throw a "not supported" error when minHeight is non-zero.
       const mirrorTokens = await apiClient.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
         address,
-        pagination,
+        cursor,
+        limit,
+        order,
         mirrorTokens,
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -92,7 +96,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
       const sortedLiveOperations = [...liveOperations].sort((a, b) => {
         const aTime = a.date.getTime();
         const bTime = b.date.getTime();
-        return pagination.order === "desc" ? bTime - aTime : aTime - bTime;
+        return order === "desc" ? bTime - aTime : aTime - bTime;
       });
 
       const alpacaOperations = sortedLiveOperations.map(liveOp => {
@@ -125,28 +129,30 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             date: liveOp.date,
             block: {
               height: liveOp.blockHeight ?? 10,
+              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? 10),
+              time: liveOp.date,
             },
             failed: liveOp.hasFailed ?? false,
           },
         } satisfies Operation;
       });
 
-      return [alpacaOperations, latestAccountOperations.nextCursor ?? ""];
+      return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
     getValidators: cursor => getValidators(cursor),
-    validateIntent: async (_transactionIntent, _customFees): Promise<TransactionValidation> => {
+    getStakes: async address => getStakes(address),
+    getRewards: async (address, cursor) => getRewards(address, cursor),
+    validateIntent: async (
+      _transactionIntent,
+      _balances,
+      _customFees,
+    ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
-    },
-    getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards: async (_address, _cursor): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
     },
   };
 }

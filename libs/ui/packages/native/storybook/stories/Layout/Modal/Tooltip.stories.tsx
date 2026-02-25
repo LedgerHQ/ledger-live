@@ -9,7 +9,7 @@ export default {
   component: Tooltip,
 };
 
-export const Default: StoryFn<typeof Tooltip> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => {
   return (
     <Tooltip
       title={args.title}

@@ -1,15 +1,80 @@
-import * as sdk from "./sdk";
-import coinConfig from "../config";
-
-import { BigNumber } from "bignumber.js";
+import assert, { fail } from "assert";
 import { SuiClient } from "@mysten/sui/client";
 import type {
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
   PaginatedTransactionResponse,
+  SuiObjectResponse,
 } from "@mysten/sui/client";
-import assert, { fail } from "assert";
+import { BigNumber } from "bignumber.js";
+import coinConfig from "../config";
+import * as sdkOriginal from "./sdk";
+
+// Create a mutable copy of the sdk module for mocking specific functions
+const mockLoadOperations = jest.fn<
+  ReturnType<typeof sdkOriginal.loadOperations>,
+  Parameters<typeof sdkOriginal.loadOperations>
+>();
+
+// Create a wrapped version of getOperations that uses the mock
+const createWrappedGetOperations = () => {
+  return async (
+    accountId: string,
+    addr: string,
+    cursor?: Parameters<typeof sdkOriginal.getOperations>[2],
+    order?: Parameters<typeof sdkOriginal.getOperations>[3],
+  ) => {
+    // Use the mocked loadOperations if available
+    const loadOps = mockLoadOperations.getMockImplementation() || sdkOriginal.loadOperations;
+
+    // Re-implement getOperations logic with mocked loadOperations
+    return sdkOriginal.withApi(async api => {
+      let rpcOrder: "ascending" | "descending";
+      if (order) {
+        rpcOrder = order === "asc" ? "ascending" : "descending";
+      } else {
+        rpcOrder = cursor ? "ascending" : "descending";
+      }
+
+      const sendOps = await loadOps({
+        api,
+        addr,
+        type: "OUT",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+      });
+      const receivedOps = await loadOps({
+        api,
+        addr,
+        type: "IN",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+      });
+      // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
+      const rawTransactions = sdkOriginal.filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
+
+      return rawTransactions.operations.map(transaction =>
+        sdkOriginal.transactionToOperation(accountId, addr, transaction),
+      );
+    });
+  };
+};
+
+// Proxy to allow mocking specific functions
+const sdk = new Proxy(sdkOriginal, {
+  get(target, prop) {
+    if (prop === "loadOperations" && mockLoadOperations.getMockImplementation()) {
+      return mockLoadOperations;
+    }
+    if (prop === "getOperations" && mockLoadOperations.getMockImplementation()) {
+      return createWrappedGetOperations();
+    }
+    return target[prop as keyof typeof target];
+  },
+});
 
 // Mock SUI client for tests
 jest.mock("@mysten/sui/client", () => {
@@ -62,6 +127,7 @@ jest.mock("@mysten/sui/client", () => {
           status: { status: "success" },
         },
       }),
+      multiGetObjects: jest.fn().mockResolvedValue([]),
     })),
     getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
   };
@@ -90,6 +156,7 @@ jest.mock("@mysten/sui/transactions", () => {
         },
         build: jest.fn().mockResolvedValue(mockTxb),
         setGasBudgetIfNotSet: jest.fn(),
+        getData: jest.fn().mockImplementation(() => ({ gasData: {}, inputs: [] })),
       };
     }),
   };
@@ -307,21 +374,8 @@ beforeEach(() => {
 
 describe("SDK Functions", () => {
   test("getAccountBalances should return array of account balances", async () => {
-    // Patch getAllBalancesCached to return a valid array for this test
-    jest.spyOn(sdk, "getAllBalancesCached").mockResolvedValue([
-      {
-        coinType: "0x2::sui::SUI",
-        totalBalance: "1000000000",
-        coinObjectCount: 1,
-        lockedBalance: {},
-      },
-      {
-        coinType: "0x123::test::TOKEN",
-        totalBalance: "500000",
-        coinObjectCount: 1,
-        lockedBalance: {},
-      },
-    ]);
+    // The SuiClient mock already has getAllBalances mocked, so getAllBalancesCached should use it
+    // We just need to ensure the mock returns the expected structure
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     const balances = await sdk.getAccountBalances(address);
 
@@ -342,12 +396,14 @@ describe("SDK Functions", () => {
 
   test("getOperationType should return IN for incoming tx", () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    expect(sdk.getOperationType(address, mockTransaction)).toBe("IN");
+    const result = sdk.getOperationType(address, mockTransaction);
+    expect(result).toBe("IN");
   });
 
   test("getOperationType should return OUT for outgoing tx", () => {
     const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
-    expect(sdk.getOperationType(address, mockTransaction)).toBe("OUT");
+    const result = sdk.getOperationType(address, mockTransaction);
+    expect(result).toBe("OUT");
   });
 
   test("getOperationSenders should return sender address", () => {
@@ -368,7 +424,6 @@ describe("SDK Functions", () => {
 
   test("getOperationDate should return correct date", () => {
     const date = sdk.getOperationDate(mockTransaction);
-    expect(date).toBeDefined();
     expect(date).toBeInstanceOf(Date);
   });
 
@@ -537,7 +592,11 @@ describe("SDK Functions", () => {
       ],
     };
 
-    const operation = sdk.alpacaTransactionToOp(address, tokenTx as SuiTransactionBlockResponse);
+    const operation = sdk.alpacaTransactionToOp(
+      address,
+      tokenTx as SuiTransactionBlockResponse,
+      "mockCheckpointHash",
+    );
     expect(operation.id).toEqual("DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt");
     expect(operation.type).toEqual("IN");
     expect(operation.senders).toEqual([
@@ -550,10 +609,12 @@ describe("SDK Functions", () => {
     expect(operation.asset).toEqual({ type: "token", assetReference: "0x123::test::TOKEN" });
     expect(operation.memo).toBeUndefined();
     expect(operation.details).toBeUndefined();
-    expect(operation.tx.block.hash).toBeUndefined();
+    expect(operation.tx.block.hash).toBe("mockCheckpointHash");
     expect(operation.tx).toMatchObject({
       hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
-      block: {},
+      block: {
+        hash: "mockCheckpointHash",
+      },
       fees: 1009880n,
       date: new Date("2025-03-18T10:40:54.878Z"),
     });
@@ -592,7 +653,7 @@ describe("SDK Functions", () => {
     };
 
     const tx = await sdk.createTransaction(address, transaction);
-    expect(tx).toBeDefined();
+    expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
   test("executeTransactionBlock should execute a transaction", async () => {
@@ -602,12 +663,10 @@ describe("SDK Functions", () => {
       options: { showEffects: true },
     });
 
-    expect(result).toHaveProperty("digest", "transaction_digest_123");
-    expect(result?.effects).toBeDefined();
-    if (result?.effects) {
-      expect(result.effects).toHaveProperty("status");
-      expect(result.effects.status).toHaveProperty("status", "success");
-    }
+    expect(result).toEqual({
+      digest: "transaction_digest_123",
+      effects: { status: { status: "success" } },
+    });
   });
 });
 
@@ -747,7 +806,7 @@ describe("Staking Operations", () => {
       };
 
       const tx = await sdk.createTransaction(address, transaction);
-      expect(tx).toBeDefined();
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
     test("createTransaction should build undelegate transaction with specific amount", async () => {
@@ -762,7 +821,7 @@ describe("Staking Operations", () => {
       };
 
       const tx = await sdk.createTransaction(address, transaction);
-      expect(tx).toBeDefined();
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
     test("createTransaction should build undelegate transaction with all amount", async () => {
@@ -777,7 +836,7 @@ describe("Staking Operations", () => {
       };
 
       const tx = await sdk.createTransaction(address, transaction);
-      expect(tx).toBeDefined();
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
   });
 
@@ -862,40 +921,46 @@ describe("Staking Operations", () => {
     test("transactionToOp should map staking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1001050000"));
+      const operation = sdk.alpacaTransactionToOp(
+        address,
+        mockStakingTx(address, "-1001050000"),
+        "mockCheckpointHash",
+      );
 
-      expect(operation.id).toEqual("delegate_tx_digest_123");
-      expect(operation.type).toEqual("DELEGATE");
-      expect(operation.senders).toEqual([address]);
-      expect(operation.recipients).toEqual([]);
-      expect(operation.value).toEqual(1000000000n); // The function returns minus of the balance change
-      expect(operation.asset).toEqual({ type: "native" });
-      expect(operation.tx.block.hash).toBeUndefined();
+      expect(operation).toMatchObject({
+        id: "delegate_tx_digest_123",
+        type: "DELEGATE",
+        senders: [address],
+        recipients: [],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { block: expect.any(Object) },
+        details: {
+          stakedAmount: 1000000000n,
+        },
+      });
     });
 
     test("transactionToOp should map unstaking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx(address, "998950000"));
-
-      expect(operation.id).toEqual("undelegate_tx_digest_456");
-      expect(operation.type).toEqual("UNDELEGATE");
-      expect(operation.senders).toEqual([address]);
-      expect(operation.recipients).toEqual([]);
-      expect(operation.value).toEqual(1000000000n);
-      expect(operation.asset).toEqual({ type: "native" });
-      expect(operation.tx.block.hash).toBeUndefined();
-    });
-  });
-
-  describe("Operation Extra Information", () => {
-    test("getOperationExtra should be a function", () => {
-      expect(typeof sdk.getOperationExtra).toBe("function");
-    });
-
-    test("getOperationExtra should return a Promise", () => {
-      const result = sdk.getOperationExtra("test_digest");
-      expect(result).toBeInstanceOf(Promise);
+      const operation = sdk.alpacaTransactionToOp(
+        address,
+        mockUnstakingTx(address, "998950000"),
+        "mockCheckpointHash",
+      );
+      expect(operation).toMatchObject({
+        id: "undelegate_tx_digest_456",
+        type: "UNDELEGATE",
+        senders: [address],
+        recipients: [],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { block: expect.any(Object) },
+        details: {
+          stakedAmount: 1000000000n,
+        },
+      });
     });
   });
 });
@@ -1076,8 +1141,7 @@ describe("getOperations filtering logic", () => {
   const mockAccountId = "mockAccountId";
   const mockAddr = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
-  // Mock loadOperations to return controlled test data
-  const mockLoadOperations = jest.spyOn(sdk, "loadOperations");
+  // Use the module-level mockLoadOperations
 
   // Helper function to create mock transaction data
   const createMockTransaction = (
@@ -1171,7 +1235,8 @@ describe("getOperations filtering logic", () => {
   });
 
   afterEach(() => {
-    // Remove mockRestore as it might interfere with the mock setup
+    mockLoadOperations.mockReset();
+    mockLoadOperations.mockClear();
   });
 
   test("should not apply timestamp filter when cursor is provided", async () => {
@@ -1909,7 +1974,7 @@ describe("filterOperations", () => {
           operationType: "DELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: -10000000000n,
+          stakedAmount: -10000000000n,
         },
       ]);
     });
@@ -1932,31 +1997,30 @@ describe("filterOperations", () => {
           operationType: "UNDELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: 10000000000n,
+          stakedAmount: 10000000000n,
         },
       ]);
     });
 
-    test("toBlockInfo should map checkpoints correctly", () => {
-      expect(
-        sdk.toBlockInfo({
-          checkpointCommitments: [],
-          digest: "0xaaaaaaaaa",
-          previousDigest: "0xbbbbbbbbbb",
-          epoch: "",
-          epochRollingGasCostSummary: {
-            computationCost: "",
-            nonRefundableStorageFee: "",
-            storageCost: "",
-            storageRebate: "",
-          },
-          networkTotalTransactions: "",
-          sequenceNumber: "42",
-          timestampMs: "1751696298663",
-          transactions: [],
-          validatorSignature: "",
-        }),
-      ).toEqual({
+    test("toBlockInfo should map checkpoints correctly", async () => {
+      const result = await sdk.toBlockInfo({
+        checkpointCommitments: [],
+        digest: "0xaaaaaaaaa",
+        previousDigest: "0xbbbbbbbbbb",
+        epoch: "",
+        epochRollingGasCostSummary: {
+          computationCost: "",
+          nonRefundableStorageFee: "",
+          storageCost: "",
+          storageRebate: "",
+        },
+        networkTotalTransactions: "",
+        sequenceNumber: "42",
+        timestampMs: "1751696298663",
+        transactions: [],
+        validatorSignature: "",
+      });
+      expect(result).toEqual({
         height: 42,
         hash: "0xaaaaaaaaa",
         time: new Date(1751696298663),
@@ -2122,7 +2186,7 @@ describe("getCoinsForAmount", () => {
     });
   });
 
-  describe.only("dedup", () => {
+  describe("dedup", () => {
     const outs: PaginatedTransactionResponse = {
       data: [],
       hasNextPage: false,
@@ -2132,14 +2196,14 @@ describe("getCoinsForAmount", () => {
       hasNextPage: true,
     };
 
-    test("handles no data in asc mode", async () => {
+    test("handles no data in asc mode", () => {
       const r = sdk.dedupOperations(outs, ins, "asc");
-      expect(r.operations.length).toBe(0);
+      expect(r).toEqual({ operations: [] });
     });
 
-    test("handles no data in desc mode", async () => {
+    test("handles no data in desc mode", () => {
       const r = sdk.dedupOperations(outs, ins, "desc");
-      expect(r.operations.length).toBe(0);
+      expect(r).toEqual({ operations: [] });
     });
   });
 
@@ -2208,5 +2272,98 @@ describe("getCoinsForAmount", () => {
       expect(result[3].balance).toBe("100");
       expect(mockApi.getCoins).toHaveBeenCalledTimes(2);
     });
+  });
+});
+
+describe("withBatchedMultiGetObjects", () => {
+  const createMockClient = () => {
+    const multiGetObjects = jest.fn(
+      async (params: { ids: string[]; options?: Record<string, boolean> }) => {
+        if (params.ids.length > 50) {
+          throw new Error("Input exceeds limit of 50");
+        }
+        return params.ids.map(
+          id =>
+            ({
+              data: {
+                objectId: id,
+                version: "1",
+                digest: `digest-${id}`,
+              },
+            }) as SuiObjectResponse,
+        );
+      },
+    );
+    return { client: { multiGetObjects } as unknown as SuiClient, multiGetObjects };
+  };
+
+  it("should pass through when <= 50 objects", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 30 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids, options: { showBcs: true } });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(1);
+    expect(result).toHaveLength(30);
+  });
+
+  it("should batch when > 50 objects", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 120 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids, options: { showBcs: true } });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(3);
+    expect(multiGetObjects).toHaveBeenNthCalledWith(1, {
+      ids: ids.slice(0, 50),
+      options: { showBcs: true },
+    });
+    expect(multiGetObjects).toHaveBeenNthCalledWith(2, {
+      ids: ids.slice(50, 100),
+      options: { showBcs: true },
+    });
+    expect(multiGetObjects).toHaveBeenNthCalledWith(3, {
+      ids: ids.slice(100, 120),
+      options: { showBcs: true },
+    });
+    expect(result).toHaveLength(120);
+    expect(result[0].data?.objectId).toBe("0xobj0");
+    expect(result[119].data?.objectId).toBe("0xobj119");
+  });
+
+  it("should handle exactly 50 objects without batching", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 50 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(1);
+    expect(result).toHaveLength(50);
+  });
+
+  it("should handle exactly 51 objects with batching", async () => {
+    // GIVEN
+    const { client, multiGetObjects } = createMockClient();
+    const ids = Array.from({ length: 51 }, (_, i) => `0xobj${i}`);
+
+    // WHEN
+    const batched = sdk.withBatchedMultiGetObjects(client);
+    const result = await batched.multiGetObjects({ ids });
+
+    // THEN
+    expect(multiGetObjects).toHaveBeenCalledTimes(2);
+    expect(result).toHaveLength(51);
   });
 });

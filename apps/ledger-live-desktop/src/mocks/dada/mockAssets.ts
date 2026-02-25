@@ -93,7 +93,6 @@ export const mockAssets = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    currenciesIds: ["bitcoin"],
     metaCurrencyIds: ["bitcoin"],
   },
 };

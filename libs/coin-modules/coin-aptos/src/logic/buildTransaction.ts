@@ -1,10 +1,10 @@
 import type { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
-import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import type { Account } from "@ledgerhq/types-live";
 import { APTOS_ASSET_ID, TOKEN_TYPE } from "../constants";
 import type { AptosAPI } from "../network";
-import { normalizeTransactionOptions } from "./normalizeTransactionOptions";
 import type { Transaction } from "../types";
+import { normalizeTransactionOptions } from "./normalizeTransactionOptions";
 
 const buildTransaction = async (
   account: Account,

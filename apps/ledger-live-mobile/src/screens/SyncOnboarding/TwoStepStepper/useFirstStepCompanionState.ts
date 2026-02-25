@@ -15,7 +15,8 @@ interface UseFirstStepCompanionStateProps {
    */
   notifyEarlySecurityCheckShouldReset: () => void;
   setSeedPathStatus: (status: SeedPathStatus) => void;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
+  hasSyncStep: boolean;
 }
 
 const useFirstStepCompanionState = ({
@@ -25,6 +26,7 @@ const useFirstStepCompanionState = ({
   setSeedPathStatus,
   analyticsSeedConfiguration,
   activeStep,
+  hasSyncStep,
 }: UseFirstStepCompanionStateProps) => {
   const seededDeviceHandled = useRef(false);
 
@@ -60,7 +62,9 @@ const useFirstStepCompanionState = ({
         deviceOnboardingState.currentOnboardingStep,
       )
     ) {
-      setCompanionStep(FirstStepCompanionStepKey.Ready);
+      setCompanionStep(
+        hasSyncStep ? FirstStepCompanionStepKey.Sync : FirstStepCompanionStepKey.Ready,
+      );
       seededDeviceHandled.current = true;
       return;
     }

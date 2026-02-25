@@ -1,4 +1,3 @@
-import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./anvil";
 import { scenarioEthereum } from "./scenarii/ethereum";
@@ -7,6 +6,7 @@ import { scenarioScroll } from "./scenarii/scroll";
 import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
+import { scenarioBnb } from "./scenarii/bnb";
 // Import tokenFixtures to setup mock store
 import "./tokenFixtures";
 
@@ -22,7 +22,7 @@ describe("EVM Deterministic Tester", () => {
       await executeScenario(scenarioEthereum);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
+        await killAnvil();
         throw e;
       }
     }
@@ -33,7 +33,7 @@ describe("EVM Deterministic Tester", () => {
       await executeScenario(scenarioSonic);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
+        await killAnvil();
         throw e;
       }
     }
@@ -44,7 +44,7 @@ describe("EVM Deterministic Tester", () => {
       await executeScenario(scenarioPolygon);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
+        await killAnvil();
         throw e;
       }
     }
@@ -55,29 +55,40 @@ describe("EVM Deterministic Tester", () => {
       await executeScenario(scenarioCore);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
+        await killAnvil();
         throw e;
       }
     }
   });
 
-  it.skip("scenario scroll", async () => {
+  it("scenario Scroll", async () => {
     try {
       await executeScenario(scenarioScroll);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
+        await killAnvil();
         throw e;
       }
     }
   });
 
-  it.skip("scenario blast", async () => {
+  it("scenario Blast", async () => {
     try {
       await executeScenario(scenarioBlast);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
+        await killAnvil();
+        throw e;
+      }
+    }
+  });
+
+  it("scenario BNB (BSC)", async () => {
+    try {
+      await executeScenario(scenarioBnb);
+    } catch (e) {
+      if (e != "done") {
+        await killAnvil();
         throw e;
       }
     }
@@ -86,6 +97,6 @@ describe("EVM Deterministic Tester", () => {
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   }),
 );

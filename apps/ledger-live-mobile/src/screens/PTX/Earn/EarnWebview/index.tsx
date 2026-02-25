@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useSelector } from "react-redux";
+import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { View, StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
+import WebView from "react-native-webview";
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
@@ -36,71 +37,89 @@ export enum MobileViewState {
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
+  isLwm40Enabled?: boolean;
+  onScroll?: ComponentProps<typeof WebView>["onScroll"];
 };
 /** Subset of WebPTXPlayer functionality required for Earn live app. */
-export const EarnWebview = ({ manifest, inputs }: Props) => {
+export const EarnWebview = ({ manifest, inputs, isLwm40Enabled, onScroll }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
-  const handleHardwareBackPress = useCallback(
-    (currentView: MobileViewState | null) => {
-      const webview = safeGetRefValue(webviewAPIRef);
+  const handleHardwareBackPress = useCallback(() => {
+    if (!webviewAPIRef.current) {
+      return false;
+    }
 
+    const url = safeUrl(webviewState.url);
+    const currentView = url?.searchParams.get("view") as unknown as MobileViewState | null;
+
+    const isInitialWebviewStep = currentView === MobileViewState.AmountInputScreen;
+    const isFinalWebviewStep = currentView === MobileViewState.DepositCompleteScreen;
+
+    if (isInitialWebviewStep || isFinalWebviewStep) {
+      return false;
+    }
+
+    const webview = safeGetRefValue(webviewAPIRef);
+
+    if (webviewState.canGoBack) {
+      track("button_clicked", {
+        button: "EarnWebviewBack",
+        page: ScreenName.Earn,
+        webviewPage: currentView,
+      });
+      webview.goBack();
+      return true;
+    }
+
+    return false;
+  }, [webviewState.canGoBack, webviewState.url]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== "android") {
+        return;
+      }
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleHardwareBackPress,
+      );
+
+      return () => {
+        subscription.remove();
+      };
+    }, [handleHardwareBackPress]),
+  );
+
+  useEffect(() => {
+    const backHandler = (e: { preventDefault: () => void }) => {
+      if (!webviewAPIRef.current) {
+        return;
+      }
+
+      const url = safeUrl(webviewState.url);
+      const currentView = url?.searchParams.get("view");
+
+      const webviewAPI = safeGetRefValue(webviewAPIRef);
       if (webviewState.canGoBack) {
         track("button_clicked", {
           button: "EarnWebviewBack",
           page: ScreenName.Earn,
           webviewPage: currentView,
         });
-        webview.goBack();
-        return true; // prevent default behavior (native navigation)
-      }
-
-      return false;
-    },
-    [webviewState.canGoBack],
-  );
-
-  useEffect(() => {
-    const url = safeUrl(webviewState.url);
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const currentView = url?.searchParams.get("view") as unknown as MobileViewState | null;
-
-    const isInitialWebviewStep = currentView === MobileViewState.AmountInputScreen;
-    const isFinalWebviewStep = currentView === MobileViewState.DepositCompleteScreen;
-
-    const webviewBackHandler = () => handleHardwareBackPress(currentView);
-
-    if (Platform.OS === "android" && !isInitialWebviewStep && !isFinalWebviewStep) {
-      const subscription = BackHandler.addEventListener("hardwareBackPress", webviewBackHandler);
-
-      return () => {
-        subscription.remove();
-      };
-    }
-  }, [handleHardwareBackPress, navigation, webviewState.url]);
-
-  useEffect(() => {
-    const backHandler = (e: { preventDefault: () => void }) => {
-      const webviewAPI = safeGetRefValue(webviewAPIRef);
-      if (webviewState.canGoBack) {
-        track("button_clicked", {
-          button: "EarnWebviewBack",
-          page: ScreenName.Earn,
-          webviewPage: safeUrl(webviewState.url)?.searchParams.get("view"),
-        });
-        // go back in webview
         webviewAPI.goBack();
         e.preventDefault();
       }
     };
 
     const url = safeUrl(webviewState.url);
-    const isInitialWebviewStep = url?.searchParams.get("view") === "amount";
-    const isFinalWebviewStep = url?.searchParams.get("view") === "confirmation";
+    const currentView = url?.searchParams.get("view");
+    const isInitialWebviewStep = currentView === MobileViewState.AmountInputScreen;
+    const isFinalWebviewStep = currentView === MobileViewState.DepositCompleteScreen;
 
     if (isInitialWebviewStep || isFinalWebviewStep) {
       navigation.removeListener("beforeRemove", backHandler);
@@ -122,31 +141,25 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
     };
   }, [customEarnHandlers, customDeeplinkHandlers]);
 
+  const Container = isLwm40Enabled ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={[styles.root]}>
+    <Container style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+        onScroll={onScroll}
+        Loader={() => <Loading backgroundColor="transparent" />}
       />
-      {webviewState.loading ? <Loading /> : null}
-    </SafeAreaView>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  headerLeft: {
-    display: "flex",
-    flexDirection: "row",
-    paddingRight: 8,
-  },
-  buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
   },
 });

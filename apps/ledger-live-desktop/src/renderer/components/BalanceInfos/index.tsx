@@ -6,8 +6,8 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useSelector } from "LLD/hooks/redux";
+import { useNavigate, useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/ButtonV3";
@@ -40,8 +40,15 @@ type BalanceTotalProps = {
 type Props = {
   unit: Unit;
   counterValueId?: string;
+  shouldDisplayGraphRework?: boolean;
 } & BalanceSinceProps;
-export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Props) {
+export function BalanceDiff({
+  valueChange,
+  unit,
+  isAvailable,
+  shouldDisplayGraphRework,
+  ...boxProps
+}: Props) {
   if (!isAvailable) return null;
   return (
     <Box horizontal {...boxProps}>
@@ -61,6 +68,7 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
             val={Math.round(valueChange.percentage * 100)}
             inline
             withIcon
+            percentageTwoDecimals={shouldDisplayGraphRework}
           />
         )}
         {valueChange.value === 0 ? (
@@ -127,10 +135,12 @@ export default function BalanceInfos({
   isAvailable,
   unit,
   counterValueId,
+  shouldDisplayGraphRework,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
@@ -140,6 +150,7 @@ export default function BalanceInfos({
       counterValueId
         ? getAvailableAccountsById(counterValueId, flattenedAccounts).find(Boolean)
         : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [counterValueId, flattenedAccounts],
   );
 
@@ -154,25 +165,23 @@ export default function BalanceInfos({
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         mode: "buy", // buy or sell
       },
     });
-  }, [history]);
+  }, [navigate]);
   const onSwap = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    history.push({
-      pathname: "/swap",
+    navigate("/swap", {
       state: {
-        from: history.location.pathname,
-        defaultAccount,
+        from: location.pathname,
+        defaultAccountId: defaultAccount?.id,
         defaultAmountFrom: "0",
-        defaultParentAccount: parentAccount,
+        defaultParentAccountId: parentAccount?.id,
       },
     });
-  }, [history, defaultAccount, parentAccount]);
+  }, [navigate, location, defaultAccount, parentAccount]);
 
   const ref = useRef<HTMLDivElement>(null);
   const { width } = useResize(ref);
@@ -221,6 +230,7 @@ export default function BalanceInfos({
         valueChange={valueChange}
         unit={unit}
         isAvailable={isAvailable}
+        shouldDisplayGraphRework={shouldDisplayGraphRework}
       />
     </Box>
   );

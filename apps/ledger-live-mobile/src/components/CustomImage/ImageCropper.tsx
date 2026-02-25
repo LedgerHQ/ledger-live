@@ -4,7 +4,7 @@ import { CropView } from "react-native-image-crop-tools";
 import styled from "styled-components/native";
 import { Image, StyleProp, ViewStyle } from "react-native";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ImageDimensions, ImageFileUri } from "./types";
 
 const HiddenImage = styled(Image)`

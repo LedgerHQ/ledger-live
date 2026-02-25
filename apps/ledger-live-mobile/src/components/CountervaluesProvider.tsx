@@ -7,7 +7,7 @@ import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { flow } from "lodash/fp";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { useUserSettings } from "~/actions/general";
 import {
   setCountervaluesPollingIsPolling,

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import CollapsibleStep from "./CollapsibleStep";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./types";
@@ -15,7 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LayoutChangeEvent } from "react-native";
 import { SeedOriginType } from "@ledgerhq/types-live";
-import NewSeedConfirmation from "./NewSeedConfirmation";
+import NewSeedPanel from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel";
 
 const ENTRY_TIMING = 300;
 const ENTRY_OPACITY_TIMING = 400;
@@ -27,7 +27,7 @@ interface SecondStepSyncOnboardingProps {
   device: Device;
   companionStep: CompanionStep;
   handleDone: (done: boolean) => void;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 const SecondStepSyncOnboarding = ({
@@ -121,9 +121,9 @@ const SecondStepSyncOnboarding = ({
         <Animated.View onLayout={handleLayout}>
           <Box mt={isFinished ? 0 : 3}>
             {companionStep === SEED_STATE.NEW_SEED ? (
-              <NewSeedConfirmation
+              <NewSeedPanel
                 handlePress={handleExit}
-                seedConfiguration={analyticsSeedConfiguration.current}
+                seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
             ) : (
               <InstallSetOfApps
@@ -131,7 +131,7 @@ const SecondStepSyncOnboarding = ({
                 device={device}
                 onResult={handleExit}
                 dependencies={initialAppsToInstall}
-                seedConfiguration={analyticsSeedConfiguration.current}
+                seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
             )}
           </Box>

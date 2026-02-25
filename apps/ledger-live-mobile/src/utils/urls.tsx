@@ -1,4 +1,6 @@
 export const urls = {
+  mevProtection:
+    "https://support.ledger.com/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
   faq: "https://support.ledger.com/",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
@@ -167,6 +169,11 @@ export const urls = {
       paraswap: {
         main: "https://www.paraswap.io/",
         tos: "https://files.paraswap.io/tos_v4.pdf",
+      },
+      okx: {
+        main: "https://web3.okx.com/",
+        tos: "https://web3.okx.com/help/okx-web3-build-user-agreement",
+        support: "https://web3.okx.com/build/dev-docs/wallet-api/support",
       },
     },
   },

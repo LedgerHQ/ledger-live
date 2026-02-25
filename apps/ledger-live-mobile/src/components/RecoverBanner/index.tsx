@@ -1,7 +1,7 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icon, ProgressLoader, Text, Icons } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTheme } from "styled-components/native";
 import { RecoverBannerType } from "./types";
@@ -18,7 +18,12 @@ enum LedgerRecoverSubscriptionStateEnum {
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 
-function RecoverBanner() {
+type Props = {
+  readonly mb?: number;
+  readonly px?: number;
+};
+
+function RecoverBanner({ mb, px }: Props) {
   const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
     LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
   );
@@ -47,24 +52,28 @@ function RecoverBanner() {
   }, [protectID]);
 
   const recoverBannerSelected: RecoverBannerType | undefined = useMemo(() => {
-    let recoverBannerWording: RecoverBannerType;
-
     switch (storageData) {
       case LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION:
         setStepNumber(1);
         return undefined;
       case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
         setStepNumber(2);
-        recoverBannerWording = t("portfolio.recoverBanner.subscribeDone", { returnObjects: true });
-        break;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return t("portfolio.recoverBanner.subscribeDone", {
+          returnObjects: true,
+        }) as RecoverBannerType;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
         setStepNumber(3);
-        recoverBannerWording = t("portfolio.recoverBanner.verifyIdentity", { returnObjects: true });
-        break;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return t("portfolio.recoverBanner.verifyIdentity", {
+          returnObjects: true,
+        }) as RecoverBannerType;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
         setStepNumber(4);
-        recoverBannerWording = t("portfolio.recoverBanner.connectDevice", { returnObjects: true });
-        break;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return t("portfolio.recoverBanner.connectDevice", {
+          returnObjects: true,
+        }) as RecoverBannerType;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
         setStepNumber(5);
         return undefined;
@@ -72,8 +81,6 @@ function RecoverBanner() {
         setStepNumber(0);
         return undefined;
     }
-
-    return recoverBannerWording;
   }, [storageData, t]);
 
   const onRedirectRecover = () => {
@@ -99,7 +106,7 @@ function RecoverBanner() {
   const isWarning = stepNumber > 2;
 
   return (
-    <Flex justifyContent="center" position="relative" mt={3}>
+    <Flex justifyContent="center" position="relative" mt={3} px={px} mb={mb}>
       <Flex
         position="relative"
         columnGap={12}

@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
@@ -23,13 +23,16 @@ export function useBalanceHistoryWithCountervalue({
   });
 }
 
-export function usePortfolioAllAccounts(options?: GetPortfolioOptionsType) {
+export function usePortfolioAllAccounts(
+  options?: GetPortfolioOptionsType & { range?: PortfolioRange },
+) {
   const to = useSelector(counterValueCurrencySelector);
   const accounts = useSelector(accountsSelector);
-  const range = useSelector(selectedTimeRangeSelector);
+  const globalRange = useSelector(selectedTimeRangeSelector);
+
   return usePortfolioThrottled({
     accounts,
-    range,
+    range: options?.range ?? globalRange,
     to,
     options,
   });

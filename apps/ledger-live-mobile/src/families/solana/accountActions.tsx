@@ -1,7 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { NavigatorName, ScreenName } from "~/const";

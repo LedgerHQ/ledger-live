@@ -1,6 +1,6 @@
+import type { Account } from "@ledgerhq/types-live";
 import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, MultiversXTransactionMode, MultiversXDelegation } from "./types";
 
 /**

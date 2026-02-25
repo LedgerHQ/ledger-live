@@ -1,5 +1,5 @@
 import React from "react";
-import { components, ControlProps, OptionTypeBase } from "react-select";
+import { components, ControlProps } from "react-select";
 import { useTheme } from "styled-components";
 import SelectInput, {
   Props as SelectInputProps,
@@ -15,7 +15,7 @@ export type Props<O> = SelectInputProps<O> & {
   label?: React.ReactNode;
 };
 
-function DropdownControl<O extends OptionTypeBase>(props: ControlProps<O, false>) {
+function DropdownControl<O>(props: ControlProps<O, false>) {
   const { children } = props;
 
   return (
@@ -27,7 +27,7 @@ function DropdownControl<O extends OptionTypeBase>(props: ControlProps<O, false>
   );
 }
 
-function DropdownValueContainer<O extends OptionTypeBase>(
+function DropdownValueContainer<O>(
   props: ValueContainerProps<O, false> & { label?: React.ReactNode },
 ) {
   const ChevronIcon = props.selectProps.menuIsOpen
@@ -60,52 +60,58 @@ function DropdownIndicatorsContainer() {
   return null;
 }
 
-export default function Dropdown<O extends OptionTypeBase>(props: Props<O>): React.JSX.Element {
+export default function Dropdown<O>(props: Props<O>): React.JSX.Element {
   const theme = useTheme();
 
   return (
     <SelectInput
       placeholder=""
       isSearchable={props.searchable}
-      styles={{
-        singleValue: provided => ({
-          ...provided,
-          color: theme.colors.neutral.c100,
-          margin: 0,
-          top: undefined,
-          position: undefined,
-          overflow: undefined,
-          maxWidth: undefined,
-          transform: undefined,
-          lineHeight: "32px",
-        }),
-        menu: provided => ({
-          ...provided,
-          border: 0,
-          boxShadow: "none",
-          background: "none",
-          width: "max-content",
-          minWidth: "100px",
-          margin: 0,
-          padding: 0,
-          right: 0,
-        }),
-        control: () => ({
-          padding: 0,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-        }),
-      }}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      styles={
+        {
+          singleValue: (provided: object) => ({
+            ...provided,
+            color: theme.colors.neutral.c100,
+            margin: 0,
+            top: undefined,
+            position: undefined,
+            overflow: undefined,
+            maxWidth: undefined,
+            transform: undefined,
+            lineHeight: "32px",
+          }),
+          menu: (provided: object) => ({
+            ...provided,
+            border: 0,
+            boxShadow: "none",
+            background: "none",
+            width: "max-content",
+            minWidth: "100px",
+            margin: 0,
+            padding: 0,
+            right: 0,
+          }),
+          control: () => ({
+            padding: 0,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            display: "flex",
+          }),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any
+      }
       {...props}
-      components={{
-        // This error is caused by a mismatch between react-select versions
-        // @ts-expect-error DropdownControl uses the component from react-select@4 but SelectInput relies on react-select@5
-        Control: DropdownControl,
-        ValueContainer: DropdownValueContainer,
-        IndicatorsContainer: DropdownIndicatorsContainer,
-      }}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      components={
+        {
+          Control: DropdownControl,
+          ValueContainer: DropdownValueContainer,
+          IndicatorsContainer: DropdownIndicatorsContainer,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any
+      }
     />
   );
 }

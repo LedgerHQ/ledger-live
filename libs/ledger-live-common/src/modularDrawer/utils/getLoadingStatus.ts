@@ -1,6 +1,6 @@
 import { LoadingStatus } from "../../deposit/type";
 import { SerializedError } from "@reduxjs/toolkit";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
 export const getLoadingStatus = ({
   isLoading,

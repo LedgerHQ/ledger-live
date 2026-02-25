@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, type JSX } from "react";
 import Svg, { LinearGradient, Stop, Mask, Path, Rect, G, Defs } from "react-native-svg";
 import styled from "styled-components/native";
 import { system, size, SizeProps } from "styled-system";
@@ -121,7 +121,11 @@ const Loader = styled(Svg).attrs<SizeProps>((props) => ({
   ...strokeSystem(props),
   width: props.size,
   height: props.size,
-}))<SizeProps>`
+}))<
+  SizeProps & {
+    xmlns?: string;
+  }
+>`
   ${size}
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;

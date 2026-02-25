@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { Button, Icons, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 type Props = {
   readonly text: string;

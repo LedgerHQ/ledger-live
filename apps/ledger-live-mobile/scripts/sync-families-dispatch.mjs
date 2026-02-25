@@ -40,6 +40,7 @@ const targets = [
   "EditOperationPanel",
   "MemoTagInput",
   "MemoTagSummary",
+  "ExpiryDurationInput",
   "ShouldUseReceiveOptions",
   "PendingTransferProposals",
 ];

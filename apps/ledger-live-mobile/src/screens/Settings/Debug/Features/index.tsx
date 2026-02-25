@@ -117,14 +117,13 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugTransactionsAlerts)}
       />
 
-      <FeatureToggle featureId="largemoverLandingpage">
-        <SettingsRow
-          title="Large Mover"
-          desc="See the large mover landing page"
-          iconLeft={<Icons.Dollar />}
-          onPress={navigateToLargeMover}
-        />
-      </FeatureToggle>
+      <SettingsRow
+        title="Large Mover"
+        desc="See the large mover landing page"
+        iconLeft={<Icons.Dollar />}
+        onPress={navigateToLargeMover}
+      />
+
       <SettingsRow
         title="Swiper"
         desc="Swipe cards"

@@ -101,7 +101,7 @@ export const StepCustomFooter = ({
   }, [transitionTo]);
   return (
     <>
-      <Button secondary onClick={onBack} mr={1}>
+      <Button onClick={onBack} mr={1}>
         {t("common.back")}
       </Button>
       <Button primary disabled={!canNext} onClick={onNext}>

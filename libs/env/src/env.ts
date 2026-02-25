@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  JS_THREAD_MONITOR: {
+    def: false,
+    parser: boolParser,
+    desc: "Show JS thread stall monitor overlay",
+  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
@@ -276,6 +281,26 @@ const envDefinitions = {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,
     desc: "Thorest API for VeChain",
+  },
+  ALEO_MAINNET_NODE_ENDPOINT: {
+    def: "https://api.provable.com",
+    parser: stringParser,
+    desc: "Aleo mainnet node URL",
+  },
+  ALEO_MAINNET_SDK_ENDPOINT: {
+    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
+    parser: stringParser,
+    desc: "Aleo mainnet SDK URL",
+  },
+  ALEO_TESTNET_NODE_ENDPOINT: {
+    def: "https://api.provable.com",
+    parser: stringParser,
+    desc: "Aleo testnet node URL",
+  },
+  ALEO_TESTNET_SDK_ENDPOINT: {
+    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
+    parser: stringParser,
+    desc: "Aleo testnet SDK URL",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
@@ -497,11 +522,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger regtest Bitcoin explorer API",
   },
-  EXPLORER_SATSTACK: {
-    def: "http://localhost:20000",
-    parser: stringParser,
-    desc: "Ledger satstack Bitcoin explorer API",
-  },
   EXPORT_EXCLUDED_LOG_TYPES: {
     def: "ble-frame",
     parser: stringParser,
@@ -557,6 +577,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger countervalues API",
   },
+  LEDGER_COUNTERVALUES_API_STAGING: {
+    def: "https://countervalues-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Ledger countervalues API (staging)",
+  },
   LEDGER_REST_API_BASE: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
@@ -581,11 +606,6 @@ const envDefinitions = {
     def: 1000,
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
-  },
-  MIXPANEL_API_HOST: {
-    def: "https://api.mixpanel.com",
-    parser: stringParser,
-    desc: "Mixpanel API host URL",
   },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
@@ -670,11 +690,6 @@ const envDefinitions = {
     def: 25,
     parser: intParser,
     desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
-  },
-  SATSTACK: {
-    def: false,
-    parser: boolParser,
-    desc: "Switch to satstack mode",
   },
   SCAN_FOR_INVALID_PATHS: {
     def: false,
@@ -803,16 +818,6 @@ const envDefinitions = {
     parser: floatParser,
     desc: "delay when polling device",
   },
-  ANNOUNCEMENTS_API_URL: {
-    def: "https://cdn.live.ledger.com/announcements",
-    parser: stringParser,
-    desc: "url used to fetch new announcements",
-  },
-  ANNOUNCEMENTS_API_VERSION: {
-    def: 1,
-    parser: intParser,
-    desc: "version used for the announcements api",
-  },
   STATUS_API_URL: {
     def: "https://ledger.statuspage.io/api",
     parser: stringParser,
@@ -847,6 +852,11 @@ const envDefinitions = {
     def: "https://dada.api.ledger.com/v1",
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
+  },
+  CMC_API_URL: {
+    def: "https://proxycmc.api.live.ledger.com/v3",
+    parser: stringParser,
+    desc: "CoinMarketCap API",
   },
   PLATFORM_DEBUG: {
     def: false,
@@ -898,15 +908,20 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  WALLETCONNECT_PROJECT_ID: {
+    def: "053f3301d5f72cf59dbab8ebeab71f23",
+    parser: stringParser,
+    desc: "WalletConnect Project ID",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
     desc: "true when launched for E2E testing",
   },
-  MARKET_API_URL: {
+  COINGECKO_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
-    desc: "Market data api",
+    desc: "Coingecko API",
   },
   USE_LEARN_STAGING_URL: {
     def: false,
@@ -927,6 +942,11 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger-test.com",
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
+  },
+  PUSH_DEVICES_SERVICE_URL: {
+    def: "https://device-gateway.api.ledger.com",
+    parser: stringParser,
+    desc: "Push Devices Service url for device tracking",
   },
   FEATURE_FLAGS: {
     def: "{}",

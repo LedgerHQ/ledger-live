@@ -1,21 +1,21 @@
-import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { Transaction, TransactionLike } from "ethers";
-import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
-import { getGasTracker } from "../network/gasTracker";
-import { isEthAddress } from "../utils";
-import { getNodeApi } from "../network/node";
 import { getAdditionalLayer2Fees } from "../logic";
+import { getGasTracker } from "../network/gasTracker";
+import { getNodeApi } from "../network/node";
+import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
+import { isEthAddress } from "../utils";
 import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 
-function computeAdditionalFees(
+async function computeAdditionalFees(
   currency: CryptoCurrency,
   unsignedTransaction: TransactionLike,
 ): Promise<BigNumber | undefined> {
@@ -29,7 +29,11 @@ function computeAdditionalFees(
     },
   };
 
-  return getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+  try {
+    return await getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+  } catch {
+    return new BigNumber(0);
+  }
 }
 
 function toApiFeeData(feeData: FeeData): ApiFeeData {
@@ -56,15 +60,21 @@ function extractFeeData(data: unknown): FeeData {
   }
 
   const gasPrice =
-    "gasPrice" in data && BigNumber.isBigNumber(data.gasPrice) ? data.gasPrice : null;
+    "gasPrice" in data && typeof data.gasPrice === "bigint"
+      ? new BigNumber(data.gasPrice.toString())
+      : null;
   const maxFeePerGas =
-    "maxFeePerGas" in data && BigNumber.isBigNumber(data.maxFeePerGas) ? data.maxFeePerGas : null;
+    "maxFeePerGas" in data && typeof data.maxFeePerGas === "bigint"
+      ? new BigNumber(data.maxFeePerGas.toString())
+      : null;
   const maxPriorityFeePerGas =
-    "maxPriorityFeePerGas" in data && BigNumber.isBigNumber(data.maxPriorityFeePerGas)
-      ? data.maxPriorityFeePerGas
+    "maxPriorityFeePerGas" in data && typeof data.maxPriorityFeePerGas === "bigint"
+      ? new BigNumber(data.maxPriorityFeePerGas.toString())
       : null;
   const nextBaseFee =
-    "nextBaseFee" in data && BigNumber.isBigNumber(data.nextBaseFee) ? data.nextBaseFee : null;
+    "nextBaseFee" in data && typeof data.nextBaseFee === "bigint"
+      ? new BigNumber(data.nextBaseFee.toString())
+      : null;
 
   return { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee };
 }
@@ -105,6 +115,7 @@ export async function estimateFees(
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
     currency,
     transactionIntent,
+    customFeesParameters,
   );
 
   // Some apps including, including Magic Eden, set the nonce to -1

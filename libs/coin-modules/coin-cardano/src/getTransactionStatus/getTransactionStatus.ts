@@ -1,13 +1,19 @@
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { CardanoNotEnoughFunds, CardanoFeeTooHigh, CardanoFeeHigh } from "../errors";
+import {
+  CardanoNotEnoughFunds,
+  CardanoFeeTooHigh,
+  CardanoFeeHigh,
+  CardanoMemoExceededSizeError,
+} from "../errors";
 import type { CardanoAccount, CardanoOutput, Transaction, TransactionStatus } from "../types";
 import coinConfig from "../config";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getTransactionStatusByTransactionMode } from "./handler";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { validateMemo } from "../logic/validateMemo";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -60,6 +66,10 @@ export const getTransactionStatus: AccountBridge<
     txStatus.warnings.feeTooHigh = new CardanoFeeHigh();
   }
 
+  if (!validateMemo(transaction.memo)) {
+    txStatus.errors.transaction = new CardanoMemoExceededSizeError();
+  }
+
   return txStatus;
 };
 
@@ -69,9 +79,11 @@ async function findSanctionedAddressesOnUtxos(
 ): Promise<string[]> {
   const sanctionedAddresses = [];
   for (const utxo of utxos) {
-    const addressIsSanctioned = await isAddressSanctioned(currency, utxo.address);
-    if (addressIsSanctioned) {
-      sanctionedAddresses.push(utxo.address);
+    if (utxo?.address) {
+      const addressIsSanctioned = await isAddressSanctioned(currency, utxo.address);
+      if (addressIsSanctioned) {
+        sanctionedAddresses.push(utxo.address);
+      }
     }
   }
 

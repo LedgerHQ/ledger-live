@@ -3,12 +3,7 @@ import { useDispatch } from "react-redux";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import {
-  WalletHandlers,
-  ServerConfig,
-  WalletAPIServer,
-  useWalletAPIServer as useWalletAPIServerRaw,
-} from "@ledgerhq/wallet-api-server";
+import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
@@ -16,20 +11,27 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { InfiniteData } from "@reduxjs/toolkit/query";
+import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import type {
   TokensDataWithPagination,
   PageParam,
 } from "@ledgerhq/cryptoassets/lib/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
+import { useFeatureFlags } from "../featureFlags/FeatureFlagsContext";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
   setWalletApiIdForAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
+import {
+  WalletAPICurrency,
+  AppManifest,
+  WalletAPIAccount,
+  WalletAPICustomHandlers,
+  DiscoverDB,
+} from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -45,9 +47,11 @@ import {
   signMessageLogic,
   signTransactionLogic,
   bitcoinFamilyAccountGetAddressLogic,
+  bitcoinFamilyAccountGetAddressesLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
 } from "./logic";
+import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
@@ -57,7 +61,6 @@ import {
   INITIAL_PLATFORM_STATE,
   MAX_RECENTLY_USED_LENGTH,
 } from "./constants";
-import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
@@ -200,7 +203,7 @@ export function useConfig({
 }
 
 function useDeviceTransport({ manifest, tracking }) {
-  const ref = useRef<Subject<BidirectionalEvent> | undefined>();
+  const ref = useRef<Subject<BidirectionalEvent> | undefined>(undefined);
 
   const subscribe = useCallback((deviceId: string) => {
     ref.current = openTransportAsSubject({ deviceId });
@@ -303,8 +306,11 @@ export function useWalletAPIServer({
   onLoadError: () => void;
   widgetLoaded: boolean;
 } {
+  // Enables the proper typing on dispatch with RTK
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const { getFeature } = useFeatureFlags();
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
@@ -313,13 +319,44 @@ export function useWalletAPIServer({
   // If we don't want the map to be empty when requesting an account
   useSetWalletAPIAccounts(accounts);
 
-  const { server, onMessage } = useWalletAPIServerRaw({
-    transport,
-    config,
-    permission,
-    customHandlers,
-  });
+  // Merge featureFlags handler with customHandlers
+  const mergedCustomHandlers = useMemo(() => {
+    const featureFlagsHandlersInstance = featureFlagsHandlers({ manifest, getFeature });
 
+    return {
+      ...featureFlagsHandlersInstance,
+      ...customHandlers,
+    };
+  }, [manifest, customHandlers, getFeature]);
+
+  const serverRef = useRef<WalletAPIServer | undefined>(undefined);
+  // Lazily initialize WalletAPIServer once to avoid re-creation on re-renders
+  // https://react.dev/reference/react/useRef#avoiding-recreating-the-ref-contents
+  if (serverRef.current === undefined) {
+    serverRef.current = new WalletAPIServer(transport, config, undefined, mergedCustomHandlers);
+  }
+  const server = serverRef.current;
+
+  useEffect(() => {
+    if (mergedCustomHandlers) {
+      server.setCustomHandlers(mergedCustomHandlers);
+    }
+  }, [mergedCustomHandlers, server]);
+
+  useEffect(() => {
+    server.setConfig(config);
+  }, [config, server]);
+
+  useEffect(() => {
+    server.setPermissions(permission);
+  }, [permission, server]);
+
+  const onMessage = useCallback(
+    (event: string) => {
+      transport.onMessage?.(event);
+    },
+    [transport],
+  );
   useEffect(() => {
     tracking.load(manifest);
   }, [tracking, manifest]);
@@ -678,6 +715,94 @@ export function useWalletAPIServer({
   }, [server, uiStorageSet]);
 
   useEffect(() => {
+    if (!uiTxSignRaw) return;
+
+    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast }) => {
+      const signedOperation = await signRawTransactionLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        psbt,
+        (account, parentAccount, tx) =>
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiTxSignRaw({
+              account,
+              parentAccount,
+              transaction: tx,
+              options: undefined,
+              onSuccess: signedOperation => {
+                if (done) return;
+                done = true;
+                tracking.signRawTransactionSuccess(manifest);
+                resolve(signedOperation);
+              },
+              onError: error => {
+                if (done) return;
+                done = true;
+                tracking.signRawTransactionFail(manifest);
+                reject(error);
+              },
+            });
+          }),
+      );
+
+      const rawData = signedOperation.rawData;
+      if (!rawData || typeof rawData.psbtSigned !== "string") {
+        throw new Error("Missing psbtSigned in signed operation rawData");
+      }
+      const psbtSigned = rawData.psbtSigned;
+
+      if (broadcast) {
+        const txHash = await broadcastTransactionLogic(
+          { manifest, accounts, tracking },
+          accountId,
+          signedOperation,
+          async (account, parentAccount, signedOperation) => {
+            const bridge = getAccountBridge(account, parentAccount);
+            const mainAccount = getMainAccount(account, parentAccount);
+
+            let optimisticOperation: Operation = signedOperation.operation;
+
+            const networkId =
+              account.type === "TokenAccount"
+                ? account.token.parentCurrency.id
+                : account.currency.id;
+
+            const broadcastTrackingData = {
+              sourceCurrency:
+                account.type === "TokenAccount" ? account.token.name : account.currency.name,
+              network: networkId,
+            };
+
+            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+              try {
+                optimisticOperation = await bridge.broadcast({
+                  account: mainAccount,
+                  signedOperation,
+                });
+                tracking.broadcastSuccess(manifest, broadcastTrackingData);
+              } catch (error) {
+                tracking.broadcastFail(manifest, broadcastTrackingData);
+                throw error;
+              }
+            }
+
+            if (uiTxBroadcast) {
+              uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+            }
+
+            return optimisticOperation.hash;
+          },
+        );
+
+        return { psbtSigned, txHash };
+      }
+
+      return { psbtSigned };
+    });
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+
+  useEffect(() => {
     if (!uiTxSign) return;
 
     server.setHandler(
@@ -769,6 +894,17 @@ export function useWalletAPIServer({
               const bridge = getAccountBridge(account, parentAccount);
               const mainAccount = getMainAccount(account, parentAccount);
 
+              const networkId =
+                account.type === "TokenAccount"
+                  ? account.token.parentCurrency.id
+                  : account.currency.id;
+
+              const broadcastTrackingData = {
+                sourceCurrency:
+                  account.type === "TokenAccount" ? account.token.name : account.currency.name,
+                network: networkId,
+              };
+
               let optimisticOperation: Operation = signedOperation.operation;
 
               if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -776,11 +912,14 @@ export function useWalletAPIServer({
                   optimisticOperation = await bridge.broadcast({
                     account: mainAccount,
                     signedOperation,
-                    broadcastConfig: { mevProtected: !!config.mevProtected },
+                    broadcastConfig: {
+                      mevProtected: !!config.mevProtected,
+                      source: { type: "live-app", name: manifest.id },
+                    },
                   });
-                  tracking.broadcastSuccess(manifest);
+                  tracking.broadcastSuccess(manifest, broadcastTrackingData);
                 } catch (error) {
-                  tracking.broadcastFail(manifest);
+                  tracking.broadcastFail(manifest, broadcastTrackingData);
                   throw error;
                 }
               }
@@ -808,10 +947,9 @@ export function useWalletAPIServer({
       "transaction.signAndBroadcast",
       async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         const sponsored = transaction.family === "ethereum" && transaction.sponsored;
-        // isEmbedded is passed via meta (not transaction) as it's a tracking param, not a tx property
-        const isEmbeddedSwap =
-          transaction.family === "ethereum" &&
-          (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
+        // isEmbedded and partner are passed via meta (not transaction) as they're tracking params, not tx properties
+        const isEmbeddedSwap = (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
+        const partner = (meta as { partner?: string } | undefined)?.partner;
 
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
@@ -828,19 +966,20 @@ export function useWalletAPIServer({
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionSuccess(manifest, isEmbeddedSwap);
+                  tracking.signTransactionSuccess(manifest, isEmbeddedSwap, partner);
                   resolve(signedOperation);
                 },
                 onError: error => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionFail(manifest, isEmbeddedSwap);
+                  tracking.signTransactionFail(manifest, isEmbeddedSwap, partner);
                   reject(error);
                 },
               });
             }),
           tokenCurrency,
           isEmbeddedSwap,
+          partner,
         );
 
         return broadcastTransactionLogic(
@@ -850,6 +989,19 @@ export function useWalletAPIServer({
           async (account, parentAccount, signedOperation) => {
             const bridge = getAccountBridge(account, parentAccount);
             const mainAccount = getMainAccount(account, parentAccount);
+
+            const networkId =
+              account.type === "TokenAccount"
+                ? account.token.parentCurrency.id
+                : account.currency.id;
+
+            const broadcastTrackingData = {
+              isEmbeddedSwap,
+              partner,
+              sourceCurrency:
+                account.type === "TokenAccount" ? account.token.name : account.currency.name,
+              network: networkId,
+            };
 
             let optimisticOperation: Operation = signedOperation.operation;
 
@@ -861,11 +1013,12 @@ export function useWalletAPIServer({
                   broadcastConfig: {
                     mevProtected: !!config.mevProtected,
                     sponsored,
+                    source: { type: "live-app", name: manifest.id },
                   },
                 });
-                tracking.broadcastSuccess(manifest, isEmbeddedSwap);
+                tracking.broadcastSuccess(manifest, broadcastTrackingData);
               } catch (error) {
-                tracking.broadcastFail(manifest, isEmbeddedSwap);
+                tracking.broadcastFail(manifest, broadcastTrackingData);
                 throw error;
               }
             }
@@ -1048,6 +1201,16 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         accountId,
         derivationPath,
+      );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    server.setHandler("bitcoin.getAddresses", ({ accountId, intentions }) => {
+      return bitcoinFamilyAccountGetAddressesLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        intentions,
       );
     });
   }, [accounts, manifest, server, tracking]);

@@ -3,12 +3,12 @@ import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
 import CollapsibleStep from "./CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useCompanionSteps from "./useCompanionSteps";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
 import { NavigatorName, ScreenName } from "~/const";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
@@ -33,6 +33,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LayoutChangeEvent, ScrollView } from "react-native";
 import { SEED_STATE, SeedPathStatus, FirstStepCompanionStepKey } from "./types";
+import { useIsFocused } from "@react-navigation/core";
 
 /*
  * Constants
@@ -72,8 +73,8 @@ interface FirstStepSyncOnboardingProps {
   isPollingOn: boolean;
   setIsPollingOn: (isPolling: boolean) => void;
   handleFinishStep: (nextStep: SEED_STATE) => void;
-  parentRef: null | React.RefObject<ScrollView>;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  parentRef: null | React.RefObject<ScrollView | null>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 const FirstStepSyncOnboarding = ({
@@ -92,6 +93,7 @@ const FirstStepSyncOnboarding = ({
 }: FirstStepSyncOnboardingProps) => {
   const { t } = useTranslation();
   const safeAreaInsets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
 
   /*
    * Local State
@@ -109,7 +111,7 @@ const FirstStepSyncOnboarding = ({
   /*
    * Refs
    */
-  const lastCompanionStepKey = useRef<FirstStepCompanionStepKey>();
+  const lastCompanionStepKey = useRef<FirstStepCompanionStepKey | undefined>(undefined);
   const analyticsSeedingTracked = useRef(false);
   const addedToKnownDevices = useRef(false);
 
@@ -119,14 +121,14 @@ const FirstStepSyncOnboarding = ({
    * Value is undefined until the onboarding state polling returns a first
    * result.
    * */
-  const deviceInitiallyOnboarded = useRef<boolean>();
+  const deviceInitiallyOnboarded = useRef<boolean | undefined>(undefined);
   /**
    * Variable holding the seed phrase type (number of words) until we are
    * ready to track the event (when the seeding step finishes).
    * Should only be maintained if the device is not onboarded/not seeded as the
    * onboarding flags can only be trusted for a non-onboarded device.
    */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+  const analyticsSeedPhraseType = useRef<SeedPhraseType | undefined>(undefined);
 
   /*
    * Redux State
@@ -173,6 +175,7 @@ const FirstStepSyncOnboarding = ({
     productName,
     seedPathStatus,
     deviceOnboardingState,
+    analyticsSeedConfiguration,
   });
 
   // Destructure for useEffect dependency
@@ -186,6 +189,7 @@ const FirstStepSyncOnboarding = ({
     setSeedPathStatus,
     analyticsSeedConfiguration,
     activeStep: companionSteps.activeStep,
+    hasSyncStep: companionSteps.hasSyncStep,
   });
 
   useTrackOnboardingFlow({
@@ -431,6 +435,33 @@ const FirstStepSyncOnboarding = ({
       sharedOpacity.value = withTiming(100, { duration: OPACITY_DURATION });
     }
   }, [showSuccess, sharedOpacity]);
+
+  useEffect(() => {
+    if (
+      isFocused &&
+      companionSteps.activeStep === FirstStepCompanionStepKey.Sync &&
+      companionSteps.isLedgerSyncActive
+    ) {
+      screen(
+        "Set up device: Step 4 Ledger Sync Success",
+        undefined,
+        {
+          seedConfiguration: analyticsSeedConfiguration.current,
+          flow: "onboarding",
+        },
+        true,
+        true,
+      );
+      const timer = setTimeout(() => setStep(FirstStepCompanionStepKey.Ready), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [
+    isFocused,
+    companionSteps.activeStep,
+    companionSteps.isLedgerSyncActive,
+    setStep,
+    analyticsSeedConfiguration,
+  ]);
 
   return (
     <CollapsibleStep

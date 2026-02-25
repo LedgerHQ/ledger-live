@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import isEqual from "lodash/isEqual";
 import {
   FeatureFlagsProvider,
@@ -89,6 +89,5 @@ export const FirebaseFeatureFlagsProvider = ({
     }),
     [overrideFeature, resetFeature, resetFeatures, wrappedGetFeature],
   );
-
   return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
 };

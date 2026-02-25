@@ -9,10 +9,11 @@ import {
   TransferTransaction,
   AccountUpdateTransaction,
 } from "@hashgraph/sdk";
-import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { getSyntheticBlock } from "../logic/utils";
+import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
@@ -21,6 +22,10 @@ describe("createApi", () => {
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
     setupCalClientStore();
+  });
+
+  afterAll(async () => {
+    await rpcClient._resetInstance();
   });
 
   describe("craftTransaction", () => {
@@ -504,7 +509,7 @@ describe("createApi", () => {
           operationType: "DELEGATE",
           stakedNodeId: 34,
           previousStakedNodeId: null,
-          stakedAmount: BigInt(21083561014),
+          stakedAmount: BigInt(21083322293),
         },
       ]);
       expect(undelegateOperations).toEqual([
@@ -513,7 +518,7 @@ describe("createApi", () => {
           operationType: "UNDELEGATE",
           stakedNodeId: null,
           previousStakedNodeId: 22,
-          stakedAmount: BigInt(21083561014),
+          stakedAmount: BigInt(21083441623),
         },
       ]);
       expect(redelegateOperations).toEqual([
@@ -522,7 +527,7 @@ describe("createApi", () => {
           operationType: "REDELEGATE",
           stakedNodeId: 6,
           previousStakedNodeId: 34,
-          stakedAmount: BigInt(21083561014),
+          stakedAmount: BigInt(21083202902),
         },
       ]);
       expect(rewardsTransaction?.operations).toEqual([
@@ -560,6 +565,17 @@ describe("createApi", () => {
         },
       ]);
     });
+
+    it("returns block for latest finalized height from lastBlock", async () => {
+      const latestBlockInfo = await api.lastBlock();
+      const block = await api.getBlock(latestBlockInfo.height);
+
+      expect(block.info.height).toBe(latestBlockInfo.height);
+      expect(block.info.hash).toBe(latestBlockInfo.hash);
+      // Note: lastBlock().time is the transaction timestamp, while getBlock().info.time is the block start time
+      expect(block.info.time).toBeInstanceOf(Date);
+      expect(block.transactions).toBeInstanceOf(Array);
+    });
   });
 
   describe("lastBlock", () => {
@@ -575,26 +591,26 @@ describe("createApi", () => {
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
       const block = await api.lastBlock();
-      const [operations] = await api.listOperations(MAINNET_TEST_ACCOUNTS.pristine.accountId, {
-        minHeight: block.height,
-        order: "desc",
-      });
+      const { items: operations } = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.pristine.accountId,
+        { minHeight: block.height, order: "desc" },
+      );
 
       expect(operations).toBeInstanceOf(Array);
       expect(operations.length).toBe(0);
     });
 
     it("returns operations with valid synthetic block info", async () => {
-      const lastPagingToken = "1753099264.927988000";
+      const cursor = "1753099264.927988000";
       const block = await api.lastBlock();
-      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
+      const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
-        order: "asc",
+        cursor,
         limit: 4,
-        lastPagingToken,
+        order: "asc",
       });
 
-      const expectedSyntheticBlock = getSyntheticBlock(lastPagingToken);
+      const expectedSyntheticBlock = getSyntheticBlock(cursor);
       const blockHeights = ops.map(o => o.tx.block.height);
 
       expect(blockHeights).toHaveLength(6);
@@ -602,13 +618,13 @@ describe("createApi", () => {
     });
 
     it("returns operations for real account with tokens", async () => {
-      const lastPagingToken = "1753099264.927988000";
+      const cursor = "1753099264.927988000";
       const block = await api.lastBlock();
-      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
+      const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
-        order: "desc",
+        cursor,
         limit: 100,
-        lastPagingToken,
+        order: "desc",
       });
 
       const memoTxHash = "WvMcFERtxRsGJqxqGVDYa6JR5PqLgFeJxiSVoimayaWra/AMEJMzC09LhdRLTZ/M";
@@ -651,35 +667,33 @@ describe("createApi", () => {
     });
 
     it("returns staking operations with correct metadata", async () => {
-      const lastPagingToken = "1762202113.000000000";
+      const cursor = "1762202113.000000000";
       const block = await api.lastBlock();
-      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.activeStaking.accountId, {
-        minHeight: block.height,
-        order: "desc",
-        limit: 30,
-        lastPagingToken,
-      });
+      const { items: ops } = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
+        { minHeight: block.height, cursor, limit: 30, order: "desc" },
+      );
 
       const rewardOp = ops.find(op => op.type === "REWARD");
       const delegateOp = ops.find(op => op.type === "DELEGATE");
       const undelegateOp = ops.find(op => op.type === "UNDELEGATE");
       const redelegateOp = ops.find(op => op.type === "REDELEGATE");
 
-      expect(delegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(delegateOp?.value).toBe(BigInt(0));
       expect(delegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(delegateOp?.details).toMatchObject({
         previousStakingNodeId: null,
         targetStakingNodeId: expect.any(Number),
         stakedAmount: expect.any(BigInt),
       });
-      expect(undelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.value).toBe(BigInt(0));
       expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(undelegateOp?.details).toMatchObject({
         previousStakingNodeId: expect.any(Number),
         targetStakingNodeId: null,
         stakedAmount: expect.any(BigInt),
       });
-      expect(redelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(redelegateOp?.value).toBe(BigInt(0));
       expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(redelegateOp?.details).toMatchObject({
         previousStakingNodeId: expect.any(Number),
@@ -690,29 +704,59 @@ describe("createApi", () => {
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
     });
 
+    it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
+      const block = await api.lastBlock();
+      const { items: ops } = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.withQuickBalanceChanges.accountId,
+        { minHeight: block.height, limit: 10, order: "asc" },
+      );
+
+      const opDelegate1 = ops[2];
+      const opOut1 = ops[3];
+      const opUndelegate = ops[4];
+      const opOut2 = ops[5];
+      const opDelegate2 = ops[6];
+
+      // starting point has known, hardcoded balance
+      const expectedBalanceDelegate1 = BigInt(999834971);
+
+      // after undelegate1 we expect stakedAmount to be initial balance reduced by:
+      // 1. first DELEGATE fee
+      // 2. first OUT value + fee
+      const expectedBalanceUndelegate =
+        expectedBalanceDelegate1 - opDelegate1.tx.fees - opOut1.value - opOut1.tx.fees;
+
+      // after delegate2 we expect stakedAmount to be undelegate1 balance reduced by:
+      // 1. first UNDELEGATE fee
+      // 2. second OUT value + fee
+      const expectedBalanceDelegate2 =
+        expectedBalanceUndelegate - opUndelegate.tx.fees - opOut2.value - opOut2.tx.fees;
+
+      expect(opOut1.type).toBe("OUT");
+      expect(opOut2.type).toBe("OUT");
+      expect(opDelegate1.type).toBe("DELEGATE");
+      expect(opDelegate1.details?.stakedAmount).toBe(expectedBalanceDelegate1);
+      expect(opUndelegate.type).toBe("UNDELEGATE");
+      expect(opUndelegate.details?.stakedAmount).toBe(expectedBalanceUndelegate);
+      expect(opDelegate2.type).toBe("DELEGATE");
+      expect(opDelegate2.details?.stakedAmount).toBe(expectedBalanceDelegate2);
+    });
+
     it.each(["desc", "asc"] as const)(
       "returns paginated operations for account with high activity (%s)",
       async order => {
-        const commonPagination = {
-          minHeight: 0,
-          limit: 10,
-          order,
-          ...(order === "desc" && {
-            lastPagingToken: "1762168437.643463899",
-          }),
-        } satisfies Pagination;
+        const minHeight = 0;
+        const limit = 10;
+        const initialCursor = order === "desc" ? "1762168437.643463899" : undefined;
 
-        const [page1, pagingToken1] = await api.listOperations(
+        const { items: page1, next: pagingToken1 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          commonPagination,
+          { minHeight, cursor: initialCursor, limit, order },
         );
 
-        const [page2, pagingToken2] = await api.listOperations(
+        const { items: page2, next: pagingToken2 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          {
-            ...commonPagination,
-            lastPagingToken: pagingToken1,
-          },
+          { minHeight, cursor: pagingToken1, limit, order },
         );
 
         const firstPage1Timestamp = page1[0]?.tx?.date;
@@ -724,8 +768,8 @@ describe("createApi", () => {
         const hasOverlap = [...page2Hashes].some(hash => page1Hashes.has(hash));
 
         // NOTE: this won't be equal to limit, because single Hedera transaction can generate multiple operations
-        expect(page1.length).toBeGreaterThanOrEqual(commonPagination.limit);
-        expect(page2.length).toBeGreaterThanOrEqual(commonPagination.limit);
+        expect(page1.length).toBeGreaterThanOrEqual(limit);
+        expect(page2.length).toBeGreaterThanOrEqual(limit);
         expect(pagingToken1).not.toBeNull();
         expect(pagingToken2).not.toBeNull();
         expect(hasOverlap).toBe(false);
@@ -756,6 +800,34 @@ describe("createApi", () => {
         expect(item.apy).toBeGreaterThanOrEqual(0);
         expect(item.apy).toBeLessThanOrEqual(1);
       });
+    });
+  });
+
+  describe("getStakes", () => {
+    it("returns empty stakes for pristine account", async () => {
+      const stakes = await api.getStakes(MAINNET_TEST_ACCOUNTS.pristine.accountId);
+
+      expect(stakes.items.length).toBe(0);
+    });
+
+    it("returns stake for delegated account", async () => {
+      const stakes = await api.getStakes(MAINNET_TEST_ACCOUNTS.activeStaking.accountId);
+
+      expect(stakes.items.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("getRewards", () => {
+    it("returns empty rewards for pristine account", async () => {
+      const rewards = await api.getRewards(MAINNET_TEST_ACCOUNTS.pristine.accountId);
+
+      expect(rewards.items.length).toBe(0);
+    });
+
+    it("returns rewards for delegated account", async () => {
+      const rewards = await api.getRewards(MAINNET_TEST_ACCOUNTS.activeStaking.accountId);
+
+      expect(rewards.items.length).toBeGreaterThan(0);
     });
   });
 });

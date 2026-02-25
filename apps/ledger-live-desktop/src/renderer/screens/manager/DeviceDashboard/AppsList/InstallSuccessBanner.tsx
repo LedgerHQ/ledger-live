@@ -89,7 +89,7 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
   const appNameToDisplay = numberOfApps === 1 && installedSupportedApps[0].name;
   return (
     <Container ref={cardRef}>
-      <FadeInOutBox in={visible} timing={800} color="neutral.c00">
+      <FadeInOutBox in={visible} timing={800} color="neutral.c00" state="entered">
         <Box horizontal pt={2} overflow="hidden">
           <Box
             borderRadius={1}

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
@@ -7,7 +7,8 @@ import { AnnouncementPanel } from "~/renderer/components/TopBar/NotificationIndi
 import { ServiceStatusPanel } from "~/renderer/components/TopBar/NotificationIndicator/ServiceStatusPanel";
 import { useTranslation } from "react-i18next";
 import { CSSTransition } from "react-transition-group";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { setTabInformationCenter } from "~/renderer/actions/UI";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
@@ -75,6 +76,7 @@ export const InformationDrawer = ({
   );
   const tabIndex = useMemo(() => tabs.findIndex(tab => tab.id === tabId), [tabId, tabs]);
   const CurrentPanel = tabs[tabIndex].Component;
+  const nodeRef = useRef(null);
   return (
     <SideDrawer
       isOpen={isOpen}
@@ -97,8 +99,9 @@ export const InformationDrawer = ({
           key={tabIndex}
           timeout={FADE_DURATION}
           classNames="information-panel-switch"
+          nodeRef={nodeRef}
         >
-          <PanelContainer>
+          <PanelContainer ref={nodeRef}>
             <CurrentPanel key={tabs[tabIndex].id} />
           </PanelContainer>
         </CSSTransition>

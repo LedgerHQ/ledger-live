@@ -13,7 +13,31 @@ if (os.platform() === "win32") {
 
 echo(chalk.green("Building bundled javascript"));
 
-await $`tsup src/cli.ts`;
+await $`rslib build`;
+
+// Fix: Replace raw import.meta references that weren't shimmed (from @polkadot/api)
+// This prevents Node.js from auto-detecting the file as ESM
+const cliJsPath = "lib/cli.js";
+if (fs.existsSync(cliJsPath)) {
+  let content = fs.readFileSync(cliJsPath, "utf8");
+  // Replace import.meta (but not import.meta.url which is already shimmed)
+  // Only replace standalone import.meta references
+  content = content.replace(/\bimport\.meta\b(?!\.url)/g, "__rslib_import_meta_url__");
+  
+  // Fix: Add window polyfill at the top for browser-specific code (from @dfinity packages)
+  // This allows browser code to run in Node.js
+  if (content.includes("window") && !content.includes("globalThis.window")) {
+    const windowPolyfill = `(function() {
+  if (typeof globalThis.window === 'undefined') {
+    globalThis.window = globalThis;
+  }
+})();
+`;
+    content = windowPolyfill + content;
+  }
+  
+  fs.writeFileSync(cliJsPath, content, "utf8");
+}
 
 echo(chalk.green("Copy the built folder to the publication folder"));
 fs.cpSync("lib", "dist/lib", {

@@ -2,7 +2,7 @@ import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import RingChart from "./RingChart";
 import { useDistribution } from "~/actions/general";
 import DistributionCard, { DistributionItem } from "./DistributionCard";
@@ -11,7 +11,12 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
 import SafeAreaView from "~/components/SafeAreaView";
 
-const Container = styled(SafeAreaView).attrs({
+type ContainerProps = {
+  flex?: number;
+  alignItems?: string;
+};
+
+const Container = styled(SafeAreaView).attrs<ContainerProps>({
   flex: 1,
   alignItems: "center",
 })``;

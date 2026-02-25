@@ -32,6 +32,11 @@ module.exports = {
       util: require.resolve("util/"),
     },
     resolveRequest: (context, moduleName, platform) => {
+      // Suppress source map warnings for @celo/contractkit
+      if (moduleName.includes("@celo/contractkit") && moduleName.endsWith(".map")) {
+        return { type: "empty" };
+      }
+
       let resolution;
       // Necessary because expo removed the ability to override package.json main field…
       if (moduleName === "./lib/index") {

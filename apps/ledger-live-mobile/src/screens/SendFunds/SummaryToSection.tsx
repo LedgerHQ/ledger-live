@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 
 import { StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";

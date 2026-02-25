@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -12,7 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import DelegationDetailsModal from "./DelegationDetailsModal";
 import BakerImage from "./BakerImage";
 import Button from "~/components/wrappedUi/Button";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   root: {

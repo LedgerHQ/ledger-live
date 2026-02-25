@@ -26,7 +26,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
   invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
   const bridge = getAccountBridge(account);
   const { feePerByte, networkInfo } = transaction;
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { units } = account.currency;
   const satoshi = units[units.length - 1];
   const onSelectChange = useCallback(

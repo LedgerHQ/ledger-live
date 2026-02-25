@@ -5,7 +5,7 @@ export class AccountsPage extends AppPage {
   private addAccountButton = this.page.getByTestId("accounts-add-account-button");
   private accountComponent = (accountName: string) =>
     this.page.getByTestId(`account-component-${accountName}`);
-  private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
+  private firstAccount = this.page.getByTestId("accounts-account-row-item").locator("div").first();
   // Accounts context menu
   private contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
@@ -31,6 +31,6 @@ export class AccountsPage extends AppPage {
   }
 
   async countAccounts(): Promise<number> {
-    return await this.page.locator(".accounts-account-row-item-content").count();
+    return await this.page.getByTestId("accounts-account-row-item").count();
   }
 }

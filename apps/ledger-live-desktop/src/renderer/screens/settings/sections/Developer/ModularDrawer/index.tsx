@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
@@ -10,13 +10,13 @@ import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
 import { useDrawerConfiguration, useDevToolState } from "./hooks";
 import { ModularDrawerDevToolContentProps } from "./types";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import {
   setIsDebuggingDuplicates,
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDrawer";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
@@ -55,7 +55,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
 
   const debugDuplicates = () => {
     dispatch(setIsDebuggingDuplicates(true));
-    openAssetFlow({
+    openAssetFlowDialog({
       assets: { leftElement: "undefined", rightElement: "undefined" },
       networks: { leftElement: "undefined", rightElement: "undefined" },
     });
@@ -117,13 +117,13 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
               size="sm"
               onClick={() => openDrawerFunctions[location.value]()}
             >
-              Open Drawer
+              {t("settings.developer.modularDrawerDevTool.openDrawer")}
             </Button>
             <Button size="sm" onClick={() => openDrawerFunctionsDialog[location.value]()}>
-              Debug Dialog
+              {t("settings.developer.modularDrawerDevTool.debugDialog")}
             </Button>
             <Button appearance="accent" size="sm" onClick={debugDuplicates}>
-              Debug Duplicates
+              {t("settings.developer.modularDrawerDevTool.debugDuplicates")}
             </Button>
           </Flex>
         </Flex>
@@ -135,11 +135,12 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
 const ModularDrawerDevTool = () => {
   const { t } = useTranslation();
   const [contentExpanded, setContentExpanded] = useState(false);
-  const location = useLocation<{ shouldOpenFeatureFlags?: boolean }>();
+  const location = useLocation();
+  const locationState = location.state as { shouldOpenFeatureFlags?: boolean } | null;
 
   useEffect(
-    () => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)),
-    [location.state?.shouldOpenFeatureFlags],
+    () => setContentExpanded(Boolean(locationState?.shouldOpenFeatureFlags)),
+    [locationState?.shouldOpenFeatureFlags],
   );
 
   const toggleContentVisibility = useCallback(() => {

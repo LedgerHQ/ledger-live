@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setPersonalizedRecommendations } from "~/actions/settings";

@@ -35,7 +35,6 @@ const Placeholder = () => {
               light: lightEmptyAccountTile,
               dark: darkEmptyAccountTile,
             }}
-            themeTyped
           />
         </Box>
         <Box

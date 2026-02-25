@@ -4,9 +4,10 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { ArrowEvolutionUpMedium, ArrowEvolutionDownMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   valueChange: ValueChange;
@@ -24,6 +25,10 @@ type Props = {
   testID?: string;
 };
 
+const getDecimalPlaces = (shouldDisplayGraphRework: boolean) => {
+  return shouldDisplayGraphRework ? 2 : 0;
+};
+
 function Delta({
   valueChange,
   percent,
@@ -38,6 +43,7 @@ function Delta({
   testID,
 }: Props) {
   const { t } = useTranslation();
+  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
     // eslint-disable-next-line i18next/no-literal-string
@@ -51,7 +57,8 @@ function Delta({
       ? valueChange.percentage * 100
       : valueChange.value;
 
-  const roundedDelta = parseFloat(delta.toFixed(0));
+  const decimalPlaces = getDecimalPlaces(shouldDisplayGraphRework);
+  const roundedDelta = parseFloat(delta.toFixed(decimalPlaces));
 
   if (roundedDelta === 0) {
     return percentPlaceholder;
@@ -101,7 +108,7 @@ function Delta({
               value={absDelta}
             />
           ) : percent ? (
-            `${absDelta.toFixed(0)}%`
+            `${absDelta.toFixed(decimalPlaces)}%`
           ) : null}
           {range && ` (${t(`time.${range}`)})`}
           {isPercentSignDisplayed ? "%" : ""}
@@ -121,4 +128,8 @@ const styles = StyleSheet.create({
   },
 });
 
+/**
+ * @note Use the Delta component from the mvvm directory instead.
+ * The new one relies on Lumen UI lib.
+ */
 export default memo<Props>(Delta);

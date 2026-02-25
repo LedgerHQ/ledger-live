@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
-import type { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   CommandDescriptor,
   TokenTransferCommand,
@@ -171,5 +171,6 @@ function optimisticOpcommons(commandDescriptor: CommandDescriptor) {
     blockHash: null,
     blockHeight: null,
     extra: {},
+    transactionSequenceNumber: new BigNumber(Date.now()),
   };
 }

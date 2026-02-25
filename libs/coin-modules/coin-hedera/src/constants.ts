@@ -53,6 +53,16 @@ export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
 
 export const HEDERA_MAINNET_CHAIN_ID = 295;
 
+export const TRANSACTION_VALID_DURATION_SECONDS = 180;
+
+/**
+ * On Hedera, transactions are not appended to a global chain of immutable blocks. Instead, each consensus node
+ * publishes its own transactions stream, and mirrornode publishes transactions data as it receives it from each
+ * consensus node. This leads to a changing transaction history on the window [now - delay of worst node, now].
+ * This delay has been empirically observed to be maximum 10 seconds (see BACK-10242).
+ */
+export const FINALITY_MS = 10_000;
+
 /**
  * Enum representing the delegation status of a Hedera account
  */
@@ -128,3 +138,15 @@ export const MAP_STAKING_MODE_TO_METHOD: Record<string, string> = {
   [HEDERA_TRANSACTION_MODES.Redelegate]: "Redelegate",
   [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Claim Rewards",
 };
+
+/**
+ * Operation types where fees should be excluded from value of native HBAR operations.
+ */
+export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
+  "OUT",
+  "DELEGATE",
+  "UNDELEGATE",
+  "REDELEGATE",
+  "UPDATE_ACCOUNT",
+  "CONTRACT_CALL",
+];

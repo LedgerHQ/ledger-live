@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "~/icons/NoLocationImage";

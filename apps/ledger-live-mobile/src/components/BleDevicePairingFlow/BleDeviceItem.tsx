@@ -2,7 +2,7 @@ import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icons, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Pressable } from "react-native";
 

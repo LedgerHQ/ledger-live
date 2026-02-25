@@ -1,9 +1,7 @@
 import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -11,13 +9,14 @@ import { ethers } from "ethers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { VITALIK, core, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../constants";
 import { STCORE_ON_CORE } from "../tokenFixtures";
+import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type CoreScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }): CoreScenarioTransaction[] => {
-  const scenarioSendSTransaction: CoreScenarioTransaction = {
+  const scenarioSendCoreTransaction: CoreScenarioTransaction = {
     name: "Send 1 CORE",
     amount: new BigNumber(1e18),
     recipient: VITALIK,
@@ -53,16 +52,29 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
     },
   };
 
-  return [scenarioSendSTransaction];
+  const scenarioSendMaxCoreTransaction: CoreScenarioTransaction = {
+    name: "Send Max CORE",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendCoreTransaction, scenarioSendMaxCoreTransaction];
 };
 
-export const scenarioCore: Scenario<EvmTransaction, Account> = {
+export const scenarioCore: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.ankr.com/core"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://rpc.ankr.com/core", signer.exportMnemonic());
+
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
     setCoinConfig(() => ({
@@ -101,8 +113,7 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(core).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "core");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: core,
@@ -112,8 +123,9 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
     const scenarioAccount = makeAccount(address, core);
 
     const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    setBlock(lastBlockNumber + 1);
+    // Anvil does not produce block if no transactions are sent.
+    // This is indeed the case for Core, since we do not top up tokens at the moment.
+    setBlock(lastBlockNumber);
 
     // Get STCORE
     // TODO: uncomment when explorer is ready
@@ -128,7 +140,6 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
     };
   },
   beforeAll: account => {
@@ -141,7 +152,7 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(core.ethereumLikeInfo?.chainId || 1116);
   },
   afterAll: _account => {
     // TODO: uncomment when explorer is ready
@@ -152,6 +163,6 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
   },
   teardown: async () => {
     resetIndexer();
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   },
 };

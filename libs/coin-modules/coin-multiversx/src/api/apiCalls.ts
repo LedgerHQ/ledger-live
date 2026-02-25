@@ -136,9 +136,11 @@ export default class MultiversXApi {
   }
 
   async getHistory(addr: string, startAt: number): Promise<MultiversXApiTransaction[]> {
+    // API requires a strictly positive timestamp for `after`
+    const after = Math.max(1, startAt);
     const { data: transactionsCount } = await network<number>({
       method: "GET",
-      url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
+      url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${after}`,
     });
 
     let allTransactions: MultiversXApiTransaction[] = [];
@@ -146,7 +148,7 @@ export default class MultiversXApi {
     while (from < transactionsCount) {
       const { data: transactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
       for (const transaction of transactions) {
@@ -175,9 +177,11 @@ export default class MultiversXApi {
     token: string,
     startAt: number,
   ): Promise<MultiversXApiTransaction[]> {
+    // API requires a strictly positive timestamp for `after`
+    const after = Math.max(1, startAt);
     const { data: tokenTransactionsCount } = await network<number>({
       method: "GET",
-      url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${startAt}`,
+      url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${after}`,
     });
 
     let allTokenTransactions: MultiversXApiTransaction[] = [];
@@ -185,7 +189,7 @@ export default class MultiversXApi {
     while (from < tokenTransactionsCount) {
       const { data: tokenTransactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${after}&size=${MAX_PAGINATION_SIZE}`,
       });
 
       allTokenTransactions = [...allTokenTransactions, ...tokenTransactions];

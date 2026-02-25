@@ -1,9 +1,8 @@
 import React from "react";
-import { useArgs } from "@storybook/manager-api";
+import { useArgs } from "storybook/manager-api";
 
 import SideBar from "./SideBar";
 import type { SideBarProps } from "./SideBar";
-import { action } from "@storybook/addon-actions";
 import PortfolioIcon from "@ledgerhq/icons-ui/reactLegacy/PortfolioMedium";
 import WalletIcon from "@ledgerhq/icons-ui/reactLegacy/WalletMedium";
 import ManagerIcon from "@ledgerhq/icons-ui/reactLegacy/ManagerMedium";
@@ -38,31 +37,31 @@ const Template = (args: SideBarProps) => {
   const sidebarIconSize = 20;
   return (
     <SideBar {...args} onToggle={handleToggle}>
-      <SideBar.Item onClick={action("go to portfolio")} label="portfolio">
+      <SideBar.Item onClick={() => {}} label="portfolio">
         <PortfolioIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to accounts")} label="accounts" isActive>
+      <SideBar.Item onClick={() => {}} label="accounts" isActive>
         <WalletIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to discover")} label="discover" isDisabled>
+      <SideBar.Item onClick={() => {}} label="discover" isDisabled>
         <ManagerIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to send")} label="send" isDisabled>
+      <SideBar.Item onClick={() => {}} label="send" isDisabled>
         <ArrowTopIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to receive")} label="receive">
+      <SideBar.Item onClick={() => {}} label="receive">
         <ArrowBottomIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to buy / Sell")} label="buy / Sell">
+      <SideBar.Item onClick={() => {}} label="buy / Sell">
         <BuyCryptoAltIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to exchange")} label="exchange">
+      <SideBar.Item onClick={() => {}} label="exchange">
         <BuyCryptoIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to lend")} label="lend">
+      <SideBar.Item onClick={() => {}} label="lend">
         <LendIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to manager")} label="manager" displayNotificationBadge>
+      <SideBar.Item onClick={() => {}} label="manager" displayNotificationBadge>
         <NanoFoldedIcon size={sidebarIconSize} />
       </SideBar.Item>
     </SideBar>
@@ -71,6 +70,6 @@ const Template = (args: SideBarProps) => {
 
 export const Default: StoryTemplate<SideBarProps> = Template.bind({});
 Default.args = {
-  onToggle: action("toggle sidebar"),
+  onToggle: () => {},
   isExpanded: true,
 };

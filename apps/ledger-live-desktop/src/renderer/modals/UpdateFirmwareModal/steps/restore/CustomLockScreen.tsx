@@ -7,7 +7,7 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { StepProps } from "../../types";
 import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { reconstructImage } from "~/renderer/components/CustomImage/TestImage";
 import TrackPage from "~/renderer/analytics/TrackPage";
 

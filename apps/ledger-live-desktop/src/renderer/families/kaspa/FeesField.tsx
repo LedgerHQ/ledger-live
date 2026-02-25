@@ -23,7 +23,7 @@ const InputRight = styled(Box).attrs(() => ({
 }))``;
 
 export const FeesField = ({ account, transaction, onChange, status }: Props) => {
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { units } = account.currency;
   const sompis = units[units.length - 1];
   const { errors } = status;

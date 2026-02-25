@@ -1,5 +1,5 @@
-import { BigNumber } from "bignumber.js";
 import type { Account, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import type { PolkadotAccount, Transaction } from "../types";
 import { getCurrentPolkadotPreloadData } from "./state";
 

@@ -1,6 +1,6 @@
 import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
   DeviceInfo,
@@ -9,9 +9,7 @@ import type {
   FeatureId,
 } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -31,14 +29,13 @@ import type {
   MarketState,
   LargeMoverState,
   InViewState,
-  SwapStateType,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
-import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
-import { Steps } from "LLM/features/WalletSync/types/Activation";
+import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
+import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
+import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { AnyAction } from "redux";
+import type { UnknownAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -165,34 +162,25 @@ export type CountervaluesPayload =
 
 export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_MODAL_OPEN = "NOTIFICATIONS_SET_MODAL_OPEN",
-  NOTIFICATIONS_SET_MODAL_LOCKED = "NOTIFICATIONS_SET_MODAL_LOCKED",
-  NOTIFICATIONS_SET_MODAL_TYPE = "NOTIFICATIONS_SET_MODAL_TYPE",
-  NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
-  NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
+  NOTIFICATIONS_SET_DRAWER_SOURCE = "NOTIFICATIONS_SET_DRAWER_SOURCE",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
 }
 
 export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
 
-export type NotificationsSetModalLockedPayload =
-  NotificationsState["isPushNotificationsModalLocked"];
+export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
 
-export type NotificationsSetModalTypePayload = NotificationsState["notificationsModalType"];
-
-export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
-
-export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
+export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
 export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
 
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
-  | NotificationsSetModalLockedPayload
-  | NotificationsSetModalTypePayload
-  | NotificationsSetCurrentRouteNamePayload
-  | NotificationsSetEventTriggeredPayload
-  | NotificationsSetDataOfUserPayload;
+  | NotificationsSetDrawerSourcePayload
+  | NotificationsSetDataOfUserPayload
+  | NotificationSetPermissionStatusPayload;
 
 // === DYNAMIC CONTENT ACTIONS ===
 
@@ -204,6 +192,9 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS = "DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS",
   DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
   DYNAMIC_CONTENT_IS_LOADING = "DYNAMIC_CONTENT_IS_LOADING",
+  DYNAMIC_CONTENT_ADD_LOCAL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_CARDS",
+  DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS = "DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS",
+  DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -218,19 +209,27 @@ export type DynamicContentSetLandingStickyCtaCardsPayload =
 
 export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
 
+export type DynamicContentAddLocalCardsPayload = {
+  category: import("../dynamicContent/types").CategoryContentCard;
+  cards: import("../dynamicContent/types").BrazeContentCard[];
+};
+
+export type DynamicContentRemoveLocalCardPayload = string;
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
   | DynamicContentSetNotificationCardsPayload
   | DynamicContentSetCategoriesCardsPayload
   | DynamicContentSetLandingStickyCtaCardsPayload
-  | DynamicContentSetMobileCardsPayload;
+  | DynamicContentSetMobileCardsPayload
+  | DynamicContentAddLocalCardsPayload
+  | DynamicContentRemoveLocalCardPayload;
 
 // === RATINGS ACTIONS ===
 
 export enum RatingsActionTypes {
   RATINGS_SET_MODAL_OPEN = "RATINGS_SET_MODAL_OPEN",
-  RATINGS_SET_MODAL_LOCKED = "RATINGS_SET_MODAL_LOCKED",
   RATINGS_SET_CURRENT_ROUTE_NAME = "RATINGS_SET_CURRENT_ROUTE_NAME",
   RATINGS_SET_HAPPY_MOMENT = "RATINGS_SET_HAPPY_MOMENT",
   RATINGS_SET_DATA_OF_USER = "RATINGS_SET_DATA_OF_USER",
@@ -238,13 +237,11 @@ export enum RatingsActionTypes {
 }
 
 export type RatingsSetModalOpenPayload = RatingsState["isRatingsModalOpen"];
-export type RatingsSetModalLockedPayload = RatingsState["isRatingsModalLocked"];
 export type RatingsSetCurrentRouteNamePayload = RatingsState["currentRouteName"];
 export type RatingsSetHappyMomentPayload = RatingsState["happyMoment"];
 export type RatingsDataOfUserPayload = RatingsState["dataOfUser"];
 export type RatingsPayload =
   | RatingsSetModalOpenPayload
-  | RatingsSetModalLockedPayload
   | RatingsSetCurrentRouteNamePayload
   | RatingsSetHappyMomentPayload
   | RatingsDataOfUserPayload;
@@ -285,7 +282,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
-  ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
@@ -297,7 +293,6 @@ export enum SettingsActionTypes {
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
@@ -320,6 +315,7 @@ export enum SettingsActionTypes {
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
+  SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -376,8 +372,6 @@ export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
-export type SettingsSetNeverClickedOnAllowNotificationsButton =
-  SettingsState["neverClickedOnAllowNotificationsButton"];
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
@@ -409,6 +403,7 @@ export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTerms
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
@@ -475,7 +470,8 @@ export type SettingsPayload =
   | SettingsSetMevProtectionPayload
   | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
-  | SettingsRemoveStarredMarketcoinsPayload;
+  | SettingsRemoveStarredMarketcoinsPayload
+  | SettingsSetHasSeenWalletV4TourPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
@@ -492,12 +488,6 @@ export enum SwapActionTypes {
   UPDATE_RATE = "UPDATE_RATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
-
-export type UpdateProvidersPayload = SwapStateType["providers"];
-export type UpdateTransactionPayload = Transaction | undefined;
-export type UpdateRatePayload = ExchangeRate | undefined;
-
-export type SwapPayload = UpdateTransactionPayload | UpdateRatePayload;
 
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
@@ -614,8 +604,7 @@ export type ActionsPayload =
   | Action<SettingsPayload>
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
-  | Action<SwapPayload>
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | AnyAction;
+  | UnknownAction;

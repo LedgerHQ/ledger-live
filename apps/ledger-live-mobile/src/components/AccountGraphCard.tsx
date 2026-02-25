@@ -10,7 +10,7 @@ import {
 import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Flex, Text, Transitions, InfiniteLoader, GraphTabs, Tag } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { QrCodeMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
@@ -31,7 +31,7 @@ import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator
 import { GraphPlaceholder } from "./Graph/Placeholder";
 import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { getFreshAccountAddress } from "~/utils/address";
 
 const { width } = getWindowDimensions();

@@ -1,7 +1,7 @@
-import { BigNumber } from "bignumber.js";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { StrKey } from "@stellar/stellar-sdk";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
+import { BigNumber } from "bignumber.js";
 import { fetchSigners } from "../network";
 import type { BalanceAsset, Transaction, TransactionRaw } from "../types";
 
@@ -38,34 +38,6 @@ export function getAssetCodeIssuer(tr: Transaction | TransactionRaw): string[] {
   }
 
   return [tr.assetReference || "", tr.assetOwner || ""];
-}
-
-export function isMemoValid(memoType: string, memoValue: string): boolean {
-  switch (memoType) {
-    case "MEMO_TEXT":
-      if (memoValue.length > 28) {
-        return false;
-      }
-
-      break;
-
-    case "MEMO_ID":
-      if (new BigNumber(memoValue.toString()).isNaN()) {
-        return false;
-      }
-
-      break;
-
-    case "MEMO_HASH":
-    case "MEMO_RETURN":
-      if (!memoValue.length || memoValue.length !== 64) {
-        return false;
-      }
-
-      break;
-  }
-
-  return true;
 }
 
 export async function isAccountMultiSign(account: string): Promise<boolean> {

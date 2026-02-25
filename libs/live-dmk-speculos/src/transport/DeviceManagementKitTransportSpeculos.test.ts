@@ -1,6 +1,23 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, beforeAll, afterEach, vi } from "vitest";
+jest.mock("@ledgerhq/device-transport-kit-speculos", () => {
+  class HttpSpeculosDatasource {
+    openEventStream() {
+      return Promise.resolve({ cancel: jest.fn() });
+    }
+  }
+
+  return {
+    __esModule: true,
+    speculosTransportFactory: jest.fn(),
+    HttpSpeculosDatasource,
+  };
+});
+
+jest.mock("@ledgerhq/speculos-device-controller", () => ({
+  deviceControllerClientFactory: jest.fn(),
+}));
+
 import DeviceManagementKitTransportSpeculos, {
   SpeculosButton,
 } from "./DeviceManagementKitTransportSpeculos";
@@ -15,10 +32,27 @@ import { Subject } from "rxjs";
 
 const flushPromises = () => new Promise<void>(resolve => setImmediate(resolve));
 
+const fakeDevice: DiscoveredDevice = {
+  id: "dev-1",
+  deviceModel: { id: "dm-1", model: DeviceModelId.STAX, name: "stax" },
+  rssi: undefined,
+  name: "test-device",
+  transport: "web-hid",
+};
+
+async function openTransport(
+  options?: Parameters<typeof DeviceManagementKitTransportSpeculos.open>[0],
+) {
+  const openPromise = DeviceManagementKitTransportSpeculos.open(options);
+  await flushPromises();
+  listenSubject.next([fakeDevice]);
+  return openPromise;
+}
+
 let listenSubject: Subject<DiscoveredDevice[]>;
 let fakeDmk: any;
 
-let pressMock: ReturnType<typeof vi.fn>;
+let pressMock: ReturnType<typeof jest.fn>;
 let openEventHandlers: { onEvent?: (e: any) => void; onClose?: () => void };
 
 beforeAll(() => {
@@ -27,51 +61,52 @@ beforeAll(() => {
   listenSubject = new Subject<DiscoveredDevice[]>();
 
   fakeDmk = {
-    listenToAvailableDevices: vi.fn().mockImplementation(() => listenSubject.asObservable()),
-    connect: vi.fn().mockResolvedValue("session-1"),
-    sendApdu: vi.fn(),
-    disconnect: vi.fn(),
+    listenToAvailableDevices: jest.fn().mockImplementation(() => listenSubject.asObservable()),
+    connect: jest.fn().mockResolvedValue("session-1"),
+    sendApdu: jest.fn(),
+    disconnect: jest.fn(),
   };
 
-  vi.spyOn(DeviceManagementKitBuilder.prototype, "addTransport").mockReturnThis();
-  vi.spyOn(DeviceManagementKitBuilder.prototype, "addLogger").mockReturnThis();
-  vi.spyOn(DeviceManagementKitBuilder.prototype, "build").mockReturnValue(fakeDmk);
+  jest.spyOn(DeviceManagementKitBuilder.prototype, "addTransport").mockReturnThis();
+  jest.spyOn(DeviceManagementKitBuilder.prototype, "addLogger").mockReturnThis();
+  jest.spyOn(DeviceManagementKitBuilder.prototype, "build").mockReturnValue(fakeDmk);
 
-  vi.spyOn(speculosTransportFactoryModule, "speculosTransportFactory").mockReturnValue(
+  jest.spyOn(speculosTransportFactoryModule, "speculosTransportFactory").mockReturnValue(
     // @ts-expect-error – just a placeholder for the DMK builder
     "fake-transport",
   );
 
-  pressMock = vi.fn().mockResolvedValue(undefined);
-  vi.spyOn(speculosDeviceControllerModule, "deviceControllerClientFactory").mockImplementation(
+  pressMock = jest.fn().mockResolvedValue(undefined);
+  jest.spyOn(speculosDeviceControllerModule, "deviceControllerClientFactory").mockImplementation(
     //@ts-expect-error adf
     () => ({
       buttonFactory: () => ({
         press: pressMock,
-        left: vi.fn().mockResolvedValue(undefined),
-        right: vi.fn().mockResolvedValue(undefined),
-        both: vi.fn().mockResolvedValue(undefined),
-        pressSequence: vi.fn().mockResolvedValue(undefined),
+        left: jest.fn().mockResolvedValue(undefined),
+        right: jest.fn().mockResolvedValue(undefined),
+        both: jest.fn().mockResolvedValue(undefined),
+        pressSequence: jest.fn().mockResolvedValue(undefined),
       }),
     }),
   );
 
   openEventHandlers = {};
-  vi.spyOn(
-    speculosTransportFactoryModule.HttpSpeculosDatasource.prototype,
-    "openEventStream",
-  ).mockImplementation(async function (onEvent: any, onClose: any) {
-    openEventHandlers.onEvent = onEvent;
-    openEventHandlers.onClose = onClose;
-    // Return an object that has a cancel() method so transport.close() is safe
-    return { cancel: vi.fn() } as any;
-  });
+  jest
+    .spyOn(speculosTransportFactoryModule.HttpSpeculosDatasource.prototype, "openEventStream")
+    .mockImplementation(async function (onEvent: any, onClose: any) {
+      openEventHandlers.onEvent = onEvent;
+      openEventHandlers.onClose = onClose;
+      // Return an object that has a cancel() method so transport.close() is safe
+      return { cancel: jest.fn() } as any;
+    });
 });
 
 afterEach(() => {
-  vi.clearAllMocks();
+  jest.clearAllMocks();
   listenSubject = new Subject<DiscoveredDevice[]>();
   fakeDmk.listenToAvailableDevices.mockImplementation(() => listenSubject.asObservable());
+  // Clear the static cache between tests
+  DeviceManagementKitTransportSpeculos["byBase"].clear();
 });
 
 describe("DeviceManagementKitTransportSpeculos", () => {
@@ -90,26 +125,8 @@ describe("DeviceManagementKitTransportSpeculos", () => {
   });
 
   it("open() successfully opens a transport instance", async () => {
-    // given
-    const openPromise = DeviceManagementKitTransportSpeculos.open({ apiPort: "1234" });
-
     // when
-    await flushPromises();
-    listenSubject.next([
-      {
-        id: "dev-1",
-        deviceModel: {
-          id: "dm-1",
-          model: DeviceModelId.STAX,
-          name: "stax",
-        },
-        rssi: undefined,
-        name: "test-device",
-        transport: "web-hid",
-      },
-    ]);
-
-    const transport = await openPromise;
+    const transport = await openTransport({ apiPort: "1234" });
 
     // then
     expect(transport).toBeInstanceOf(DeviceManagementKitTransportSpeculos);
@@ -121,7 +138,7 @@ describe("DeviceManagementKitTransportSpeculos", () => {
     [SpeculosButton.BOTH, "both"],
   ])("button() maps press", async (buttonEnum, expected) => {
     // given
-    const transport = await DeviceManagementKitTransportSpeculos.open();
+    const transport = await openTransport();
     pressMock.mockClear();
 
     // when
@@ -134,7 +151,7 @@ describe("DeviceManagementKitTransportSpeculos", () => {
 
   it("propagates errors from button() controller call", async () => {
     // given
-    const transport = await DeviceManagementKitTransportSpeculos.open();
+    const transport = await openTransport();
 
     // when
     pressMock.mockRejectedValueOnce(new Error("button-failed"));
@@ -150,23 +167,11 @@ describe("DeviceManagementKitTransportSpeculos", () => {
       statusCode: new Uint8Array([0x00]),
     });
 
-    const transport = await DeviceManagementKitTransportSpeculos.open();
-
+    const transport = await openTransport();
     const apdu = Buffer.from([0x00, 0x01]);
 
     // when
-    const respPromise = transport.exchange(apdu);
-    await flushPromises();
-    listenSubject.next([
-      {
-        id: "dev-1",
-        deviceModel: { id: "dm-1", model: DeviceModelId.STAX, name: "stax" },
-        rssi: undefined,
-        name: "test-device",
-        transport: "web-hid",
-      },
-    ]);
-    const resp = await respPromise;
+    const resp = await transport.exchange(apdu);
 
     // then
     expect(fakeDmk.sendApdu).toHaveBeenCalledWith({
@@ -176,27 +181,20 @@ describe("DeviceManagementKitTransportSpeculos", () => {
     expect(resp).toEqual(Buffer.from([0x90, 0x00]));
   });
 
-  it("propagates errors from exchange() when sendApdu fails", async () => {
+  it("propagates errors from exchange() when sendApdu fails after retry", async () => {
     // given
+    const transport = await openTransport();
     fakeDmk.sendApdu.mockRejectedValue(new Error("apdu-failed"));
 
-    const transport = await DeviceManagementKitTransportSpeculos.open();
+    // when - exchange fails, triggers session reset and retry
+    const exchangePromise = transport.exchange(Buffer.from([0x00]));
 
-    // when
-    const p = transport.exchange(Buffer.from([0x00]));
+    // Allow session re-establishment by emitting devices again
     await flushPromises();
-    listenSubject.next([
-      {
-        id: "dev-1",
-        deviceModel: { id: "dm-1", model: DeviceModelId.STAX, name: "stax" },
-        rssi: undefined,
-        name: "test-device",
-        transport: "web-hid",
-      },
-    ]);
+    listenSubject.next([fakeDevice]);
 
-    // then
-    await expect(p).rejects.toThrow("apdu-failed");
+    // then - retry also fails with the same error
+    await expect(exchangePromise).rejects.toThrow("apdu-failed");
   });
 
   // it("automationEvents emits objects from openEventStream callback", async () => {

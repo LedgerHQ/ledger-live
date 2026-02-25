@@ -19,6 +19,7 @@ import Expo
 import ExpoModulesCore
 
 
+@main
 class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
 
   override func application(

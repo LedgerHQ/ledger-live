@@ -9,7 +9,7 @@ import { FeesNavigatorParamsList } from "~/components/RootNavigator/types/FeesNa
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { FeeContainer } from "./FeeContainer";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 export type Props = RootComposite<
   StackNavigatorProps<FeesNavigatorParamsList, ScreenName.FeeHomePage>

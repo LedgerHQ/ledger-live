@@ -6,6 +6,10 @@ export const celoConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", type: "active" },
+          { id: "staking_txs", type: "active" },
+        ],
       },
       node: {
         type: "external",

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 
 export const SWAP_VERSION = "2.35";
@@ -15,21 +15,20 @@ export const useGetSwapTrackingProperties = () => {
 };
 
 export const useRedirectToSwapHistory = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   return useCallback(
     ({
       swapId,
     }: {
       swapId?: string;
     } = {}) => {
-      history.push({
-        pathname: "/swap/history",
+      navigate("/swap/history", {
         state: {
           swapId,
         },
       });
     },
-    [history],
+    [navigate],
   );
 };
 

@@ -1,5 +1,6 @@
-import { setupServer } from "msw/node";
-import { http, passthrough } from "msw";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import http, { ClientRequest } from "node:http";
+import https from "node:https";
 
 export type Dist = {
   min: number;
@@ -116,28 +117,53 @@ type CallCounter = {
 };
 
 function createCallCounter(): CallCounter {
-  const server = setupServer();
   const counters: Record<string, number> = {};
   let started = false;
 
-  const bump = (req: Request) => {
-    const key = new URL(req.url).hostname;
-    counters[key] = (counters[key] ?? 0) + 1;
-  };
+  const originalHttpRequest = http.request;
+  const originalHttpsRequest = https.request;
+  const originalFetch = globalThis.fetch;
 
   function start() {
     if (started) return;
-    server.use(http.all("*", passthrough));
-    server.events.on("request:start", ({ request }) => bump(request));
-    server.listen({ onUnhandledRequest: "warn" });
+
+    http.request = patchedRequestOnHttp;
+    https.request = patchedRequestOnHttps;
+    globalThis.fetch = patchedFetch;
+
     started = true;
   }
 
+  function bump(url: string): void {
+    const key = new URL(url).hostname;
+    counters[key] = (counters[key] ?? 0) + 1;
+  }
+
+  const patchedRequestOnHttp: typeof http.request = (...args: unknown[]) => {
+    const request: ClientRequest = originalHttpRequest.apply(http, args as never);
+    bump(request.protocol + "//" + request.host + request.path);
+    return request;
+  };
+
+  const patchedRequestOnHttps: typeof https.request = (...args: unknown[]) => {
+    const request: ClientRequest = originalHttpsRequest.apply(https, args as never);
+    bump(request.protocol + "//" + request.host + request.path);
+    return request;
+  };
+
+  const patchedFetch: typeof globalThis.fetch = (input, init) => {
+    const url =
+      typeof input === "string" ? input : input instanceof Request ? input.url : input.href;
+    bump(url);
+    return originalFetch(input, init);
+  };
+
   function stop() {
     if (!started) return;
-    server.events.removeAllListeners?.("request:start");
-    server.resetHandlers();
-    server.close();
+    http.request = originalHttpRequest;
+    https.request = originalHttpsRequest;
+    globalThis.fetch = originalFetch;
+
     started = false;
   }
 

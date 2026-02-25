@@ -1,0 +1,16 @@
+export enum EntryPoint {
+  manager = "manager",
+  accounts = "accounts",
+  settings = "settings",
+  onboarding = "onboarding",
+  postOnboarding = "postOnboarding",
+}
+
+export type EntryPointsData = Record<
+  keyof typeof EntryPoint,
+  {
+    enabled: boolean;
+    onClick: ({ page }: { page: string }) => void;
+    component: ({ onPress }: { onPress: () => void }) => React.JSX.Element;
+  }
+>;

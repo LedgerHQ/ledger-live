@@ -64,10 +64,10 @@ export const Base = baseStyled.a<LinkProps>`
   align-items: center;
   justify-content: center;
 
-  :hover {
+  &:hover {
     text-decoration: underline;
   }
-  :active {
+  &:active {
     color: ${({ color, theme, type = "main" }) =>
       color || getLinkColors(theme.colors)[type]["pressed"]};
     text-decoration: underline;

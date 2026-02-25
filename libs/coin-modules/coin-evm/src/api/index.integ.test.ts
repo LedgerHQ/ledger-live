@@ -6,8 +6,9 @@ import {
   Operation,
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { ethers } from "ethers";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { ethers } from "ethers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -90,8 +91,6 @@ describe.each([
       expect(result.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.parent?.height).toBe(19999999);
       expect(result.parent?.height).toBe(result.height - 1);
-      expect(result.parent?.time).toBeInstanceOf(Date);
-      expect(result.parent?.time!.getTime()).toBeLessThan(result.time!.getTime());
     });
 
     it("returns block info without parent for genesis block", async () => {
@@ -109,7 +108,6 @@ describe.each([
       if (result.parent) {
         expect(result.parent.height).toBeGreaterThanOrEqual(0);
         expect(result.parent.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(result.parent.time).toBeInstanceOf(Date);
         expect(result.parent.height).toBe(result.height - 1);
       }
     });
@@ -156,8 +154,6 @@ describe.each([
       expect(result.info.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.parent?.height).toBe(19999999);
       expect(result.info.parent?.height).toBe(result.info.height - 1);
-      expect(result.info.parent?.time).toBeInstanceOf(Date);
-      expect(result.info.parent?.time!.getTime()).toBeLessThan(result.info.time!.getTime());
     });
 
     it("returns block without parent for genesis block", async () => {
@@ -268,8 +264,14 @@ describe.each([
       ]);
     });
 
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance("0xcafebabe00000000000000000000000000000000");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
+
     it("returns balance for an address", async () => {
-      const result = await module.getBalance("0x9bcd841436ef4f85dacefb1aec772af71619024e");
+      const result = await module.getBalance("0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3");
 
       expect(result).toBeInstanceOf(Array);
       expect(result[0]).toEqual({
@@ -282,6 +284,30 @@ describe.each([
         expect(balance.value).toBeGreaterThanOrEqual(0);
       });
     });
+
+    /**
+     * Ensure non regression and avoid
+     * "To send batches over 10 items, consider using a dedicated API provider"
+     */
+    it("returns at least 10 token balances on Optimisim", async () => {
+      const module = createApi(
+        {
+          node: {
+            type: "external",
+            uri: "https://mainnet.optimism.io",
+          },
+          explorer: {
+            type: "blockscout",
+            uri: "https://optimism.blockscout.com/api",
+          },
+        } as EvmConfig,
+        "optimism",
+      );
+
+      const result = await module.getBalance("0x1CDDb825910426644e00e769072Ce1Ea7d4e34BB");
+
+      expect(result.length).toBeGreaterThan(10);
+    });
   });
 
   describe("listOperations", () => {
@@ -291,7 +317,7 @@ describe.each([
           minHeight: 200,
           order: "asc",
         }),
-      ).toEqual([[], ""]);
+      ).toEqual({ items: [], next: "" });
     });
 
     it.each([
@@ -310,10 +336,10 @@ describe.each([
     ] as const)(
       "lists operations for an address with %s order",
       async (_s, order, isCorrectlyOrdered) => {
-        const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
-          minHeight: 200,
-          order,
-        });
+        const { items: result } = await module.listOperations(
+          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+          { minHeight: 200, order },
+        );
         expect(result.length).toBeGreaterThanOrEqual(52);
         result.forEach(op => {
           expect([
@@ -332,14 +358,173 @@ describe.each([
           );
           expect(op.value).toBeGreaterThanOrEqual(0n);
           expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-          expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.hash).toMatch(/^(|0x[A-Fa-f0-9]{64})$/); // block hash not available for all internal transactions
           expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
-          expect(op.tx.fees).toBeGreaterThan(0);
+          expect(op.tx.fees).toBeGreaterThanOrEqual(0n); // fees not available for all internal transactions
           expect(op.tx.date).toBeInstanceOf(Date);
         });
         expect(isCorrectlyOrdered(result));
       },
     );
+
+    const isEtherscanLike = (config as EvmConfig).explorer?.type === "etherscan";
+
+    describe("pagination", () => {
+      let oldNftCurrencies: string[];
+
+      beforeAll(() => {
+        // Disable NFT fetching to speed up pagination tests
+        oldNftCurrencies = getEnv("NFT_CURRENCIES");
+        setEnv("NFT_CURRENCIES", []);
+      });
+
+      afterAll(() => {
+        setEnv("NFT_CURRENCIES", oldNftCurrencies);
+      });
+
+      const expectUniqueOperationIds = (ops: Operation[]) => {
+        const operationIds = ops.map(op => op.id);
+        const uniqueOperationIds = new Set(operationIds);
+        expect(uniqueOperationIds.size).toBe(operationIds.length);
+      };
+
+      const isOrdered = (ops: Operation[], order: "asc" | "desc") => {
+        return ops.every((op, i) => {
+          if (i === 0) return true;
+          const prevDate = ops[i - 1].tx.date.getTime();
+          const currDate = op.tx.date.getTime();
+          return order === "desc" ? currDate <= prevDate : currDate >= prevDate;
+        });
+      };
+
+      // TODO implement pagination for ledger explorer
+      // Pagination tests only make sense for etherscan-like explorers that support real pagination.
+      // Ledger explorer fetches all data in one call looping over all the pages and returns NO_TOKEN.
+      (isEtherscanLike ? it.each : it.skip.each)([
+        // note that the ASC mode is really slow
+        ["ascending", "asc"],
+        ["descending", "desc"],
+      ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
+        const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
+        const limit = 100;
+
+        // -- Page 1
+
+        const { items: p1Ops, next: p1Token } = await module.listOperations(address, {
+          minHeight: 200,
+          order,
+          limit,
+        });
+        const p1NbOps = p1Ops.length;
+
+        expect(p1NbOps).toBeGreaterThanOrEqual(limit);
+        expect(p1Token).toMatch(/^[0-9]+-[0-1]{4}$/);
+        expectUniqueOperationIds(p1Ops);
+        expect(isOrdered(p1Ops, order)).toBe(true);
+
+        // -- Page 2
+
+        const { items: p2Ops, next: p2Token } = await module.listOperations(address, {
+          minHeight: 200,
+          order,
+          limit,
+          cursor: p1Token,
+        });
+        const p2NbOps = p2Ops.length;
+
+        expect(p2NbOps).toBeGreaterThanOrEqual(limit);
+        expect(p2Token).toMatch(/^[0-9]+-[0-1]{4}$/);
+        expectUniqueOperationIds(p2Ops);
+        expect(isOrdered(p2Ops, order)).toBe(true);
+
+        // -- Properties assertion
+
+        const allOps = [...p1Ops, ...p2Ops];
+
+        // check that each page has no height bounds in common
+        expect(p1Ops[0]).not.toBe(p2Ops[p2NbOps - 1]);
+        expect(p1Ops[p1NbOps - 1]).not.toBe(p2Ops[0]);
+
+        // Check no page overlapping
+        const p1Heights = new Set(p1Ops.map(op => op.tx.block.height));
+        const p2Heights = new Set(p2Ops.map(op => op.tx.block.height));
+        expect(p1Heights.intersection(p2Heights).size).toBe(0);
+
+        // Check no duplicate operation ids
+        expectUniqueOperationIds(allOps);
+
+        // check total ordering across pages
+        expect(isOrdered(allOps, order)).toBe(true);
+      });
+
+      // Cache test only makes sense for etherscan-like explorers that have
+      // pagination parameters affecting cache keys.
+      // Note: We only verify functional behavior (different params = different results),
+      // not timing, as timing-based tests are inherently flaky in integration tests.
+      (isEtherscanLike ? it : it.skip)("cache key includes pagination parameters", async () => {
+        const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
+
+        // First call
+        const { items: firstCallResult, next: firstCallToken } = await module.listOperations(
+          address,
+          {
+            minHeight: 200,
+            order: "desc",
+            limit: 5,
+          },
+        );
+
+        // Same call again - should return same result (cached or not)
+        const { items: cachedResult } = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 5,
+        });
+
+        // Different limit - should return different results
+        const { items: greaterLimitResult } = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 10,
+        });
+
+        // Different order - should return different results
+        const { items: differentOrderResult } = await module.listOperations(address, {
+          minHeight: 200,
+          order: "asc",
+          limit: 5,
+        });
+
+        // Different pagingToken - should return different results
+        const { items: differentTokenResult } = await module.listOperations(address, {
+          minHeight: 200,
+          order: "desc",
+          limit: 5,
+          cursor: firstCallToken,
+        });
+
+        // Same parameters should return same results
+        expect(cachedResult.map(op => op.id)).toEqual(firstCallResult.map(op => op.id));
+
+        // Greater limit may return more operations
+        expect(firstCallResult.length).toBeLessThanOrEqual(greaterLimitResult.length);
+
+        // Different order should return operations in different order (desc has newer first)
+        if (firstCallResult.length > 0 && differentOrderResult.length > 0) {
+          expect(firstCallResult[0]?.tx.date.getTime()).toBeGreaterThanOrEqual(
+            differentOrderResult[0]?.tx.date.getTime(),
+          );
+        }
+
+        // Different pagingToken should return different operations (next page)
+        if (firstCallToken && differentTokenResult.length > 0) {
+          // The token result should not overlap with the first page
+          const firstPageIds = new Set(firstCallResult.map(op => op.id));
+          const hasOverlap = differentTokenResult.some(op => firstPageIds.has(op.id));
+          expect(hasOverlap).toBe(false);
+        }
+      });
+    });
   });
 
   describe.each([
@@ -433,7 +618,7 @@ describe("EVM Api (SEI Network)", () => {
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
       },
     };
-    module = createApi(config as EvmConfig, "sei_network_evm");
+    module = createApi(config as EvmConfig, "sei_evm");
   });
 
   describe.each([

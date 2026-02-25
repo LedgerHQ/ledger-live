@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import { Text } from "@ledgerhq/native-ui";

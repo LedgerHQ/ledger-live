@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { DefaultTheme, withTheme } from "styled-components";
+import { DefaultTheme, useTheme } from "styled-components";
 import IconOpposingChevrons from "~/renderer/icons/OpposingChevrons";
 import { lighten } from "~/renderer/styles/helpers";
 import { Theme as OldTheme } from "~/renderer/styles/theme";
@@ -19,12 +19,11 @@ const getPalette = (theme: DefaultTheme) => ({
   },
 });
 
-type Props = {
+export type SliderProps = {
   steps: number;
   value: number;
   error: Error | undefined | null;
   onChange: (a: number) => void;
-  theme: DefaultTheme;
 };
 
 function xForEvent(node: HTMLDivElement | null, e: MouseEvent) {
@@ -84,7 +83,8 @@ const Track = React.memo(function Track({ x, colors }: { x: number; colors: OldT
     />
   );
 });
-const Slider = ({ steps, value, onChange, error, theme }: Props) => {
+const Slider = ({ steps, value, onChange, error }: SliderProps) => {
+  const theme = useTheme();
   const [down, setDown] = useState<{
     touchId: number;
     x: number;
@@ -226,4 +226,4 @@ const Slider = ({ steps, value, onChange, error, theme }: Props) => {
     </div>
   );
 };
-export default withTheme(Slider);
+export default Slider;

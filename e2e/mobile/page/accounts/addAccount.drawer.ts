@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";

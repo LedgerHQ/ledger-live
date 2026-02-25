@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import React, { useCallback, useRef } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -133,7 +133,7 @@ export function StepConfirmationFooter({
   }
   return wasFirstBond.current ? (
     <Box horizontal alignItems="right">
-      <Button ml={2} onClick={onClose} secondary>
+      <Button ml={2} onClick={onClose}>
         <Trans i18nKey="polkadot.bond.steps.confirmation.success.later" />
       </Button>
       <ToolTip content={isLoading ? <TooltipContent /> : null}>

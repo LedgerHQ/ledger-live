@@ -11,13 +11,12 @@ jest.mock("../alpaca", () => ({
 }));
 
 jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
   transactionToIntent: jest.fn(),
+  extractBalances: jest.fn(),
 }));
 
 describe("genericPrepareTransaction", () => {
-  const network = "testnet";
-  const kind = "local";
-
   const account = {
     id: "test-account",
     address: "0xabc",
@@ -31,11 +30,9 @@ describe("genericPrepareTransaction", () => {
     family: "family",
   };
 
-  const txIntent = { mock: "intent" };
-
   beforeEach(() => {
     jest.clearAllMocks();
-    (transactionToIntent as jest.Mock).mockReturnValue(txIntent);
+    (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
   });
 
   it("updates fees if they differ", async () => {
@@ -45,7 +42,7 @@ describe("genericPrepareTransaction", () => {
       estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
     });
 
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const result = await prepareTransaction(account, { ...baseTransaction });
 
     expect((result as any).fees.toString()).toBe(newFee.toString());
@@ -63,7 +60,7 @@ describe("genericPrepareTransaction", () => {
       estimateFees: jest.fn().mockResolvedValue({ value: sameFee }),
     });
 
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const result = await prepareTransaction(account, baseTransaction);
 
     expect(result).toBe(baseTransaction);
@@ -76,7 +73,7 @@ describe("genericPrepareTransaction", () => {
     });
 
     const txWithoutFees = { ...baseTransaction, fees: undefined as any };
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const result = await prepareTransaction(account, txWithoutFees);
 
     expect((result as any).fees.toString()).toBe(newFee.toString());
@@ -89,7 +86,7 @@ describe("genericPrepareTransaction", () => {
       estimateFees: jest.fn().mockResolvedValue({ value: sameValue }),
     });
 
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const result = await prepareTransaction(account, baseTransaction);
 
     expect(result).toBe(baseTransaction); // still same reference
@@ -114,7 +111,7 @@ describe("genericPrepareTransaction", () => {
       });
 
       const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
-      const prepareTransaction = genericPrepareTransaction(network, kind);
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
       const result = await prepareTransaction(account, txWithoutCustomFees);
 
       expect(result).toEqual(
@@ -140,7 +137,7 @@ describe("genericPrepareTransaction", () => {
       estimateFees,
       validateIntent: intent => Promise.resolve({ amount: intent.amount }),
     });
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
 
     await prepareTransaction(
       {
@@ -167,7 +164,7 @@ describe("genericPrepareTransaction", () => {
       getAssetFromToken: (token, owner) =>
         token.id === "usdc" ? { assetOwner: owner, assetReference: token.id } : undefined,
     });
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
 
     await prepareTransaction(
       {

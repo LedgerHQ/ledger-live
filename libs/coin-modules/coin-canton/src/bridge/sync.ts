@@ -12,6 +12,9 @@ import {
   getPendingTransferProposals,
   getEnabledInstrumentsCached,
   getCalTokensCached,
+  getKey,
+  SEPARATOR,
+  type TransferProposal,
 } from "../network/gateway";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
@@ -21,10 +24,6 @@ import { isAccountOnboarded } from "./onboard";
 import { isCantonAccountEmpty } from "../helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { buildSubAccounts } from "./buildSubAccounts";
-
-const SEPARATOR = "____";
-
-const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
@@ -95,36 +94,33 @@ const filterOperations = (
   transactions: OperationInfo[],
   accountId: string,
   partyId: string,
+  pendingTransferProposals: TransferProposal[],
 ): Operation[] => {
-  return transactions.map(txInfoToOperationAdapter(accountId, partyId));
+  const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
+
+  return transactions
+    .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
+    .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
 export async function filterDisabledTokenAccounts(
   currency: CryptoCurrency,
   subAccounts: TokenAccount[] | undefined,
+  calTokens: Map<string, string>,
 ): Promise<TokenAccount[]> {
   if (!subAccounts || subAccounts.length === 0) {
     return [];
   }
 
-  let enabledInstruments: Set<string>;
-
-  try {
-    const enabledList = await getEnabledInstrumentsCached(currency);
-    enabledInstruments = new Set(enabledList);
-  } catch (error) {
-    // If API fails, hide all token accounts
-    return [];
-  }
-
+  const enabledInstruments = await getEnabledInstrumentsCached(currency);
   return subAccounts.filter(subAccount => {
-    const instrumentId = subAccount.token.contractAddress;
-
-    if (!instrumentId) {
+    const instrumentId = calTokens.get(subAccount.token.id);
+    const adminId = subAccount.token.contractAddress;
+    if (!instrumentId || !adminId) {
       return false;
     }
 
-    return enabledInstruments.has(instrumentId);
+    return enabledInstruments.has(getKey(instrumentId, adminId));
   });
 }
 
@@ -201,12 +197,16 @@ export function makeGetAccountShape(
       });
     }
 
+    const calTokens = await getCalTokensCached(currency);
+    const tokenIdentifierToId = new Map<string, string>();
+    for (const [tokenId, tokenIdentifier] of calTokens.entries()) {
+      tokenIdentifierToId.set(tokenIdentifier, tokenId);
+    }
+
     const tokensByKey = new Map<string, TokenCurrency>();
     for await (const balance of balances) {
-      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-        balance.adminId,
-        currency.id,
-      );
+      const tokenId = tokenIdentifierToId.get(balance.instrumentId) ?? "";
+      const token = await getCryptoAssetsStore().findTokenById(tokenId);
       if (!token) continue;
       tokensByKey.set(getKey(balance.instrumentId, balance.adminId), token);
     }
@@ -268,7 +268,13 @@ export function makeGetAccountShape(
         cursor: startAt,
         limit: 100,
       });
-      const newOperations = filterOperations(transactionData.operations, accountId, xpubOrAddress);
+      const newOperations = filterOperations(
+        transactionData.operations,
+        accountId,
+        xpubOrAddress,
+        pendingTransferProposals,
+      );
+
       operations = mergeOps(oldOperations, newOperations);
     }
 
@@ -279,9 +285,6 @@ export function makeGetAccountShape(
     });
 
     // Build sub-accounts for tokens with their filtered operations
-
-    const calTokens = await getCalTokensCached(currency);
-
     const subAccounts = buildSubAccounts({
       accountId,
       tokenBalances,
@@ -301,7 +304,7 @@ export function makeGetAccountShape(
       xpub: xpubOrAddress,
     };
 
-    const filteredSubAccounts = await filterDisabledTokenAccounts(currency, subAccounts);
+    const filteredSubAccounts = await filterDisabledTokenAccounts(currency, subAccounts, calTokens);
 
     const used = !isCantonAccountEmpty({
       operationsCount: mainAccountOperations.length,

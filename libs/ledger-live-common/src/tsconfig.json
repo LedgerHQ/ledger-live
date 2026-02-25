@@ -10,7 +10,12 @@
     "jsx": "react",
     "lib": ["es2020", "dom"],
     "rootDir": ".",
-    "outDir": "../lib/"
+    "outDir": "../lib/",
+    "baseUrl": ".",
+    "paths": {
+      "react": ["../../../node_modules/@types/react"],
+      "@types/react": ["../../../node_modules/@types/react"]
+    }
   },
   "references": [
     // this is how we declare a dependency from

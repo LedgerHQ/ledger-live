@@ -15,7 +15,7 @@ const ScrollableContentContainer = styled.div<{
   height: 100%;
   width: 100%;
   overflow-y: auto;
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: ${({ hideScrollbar }) => (hideScrollbar ? "none" : "initial")};
   }
 `;

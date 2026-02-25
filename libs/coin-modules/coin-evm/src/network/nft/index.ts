@@ -1,8 +1,8 @@
+import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framework/nft/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
-import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framework/nft/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 
 export type NftMetdataParams = { chainId: number };
 

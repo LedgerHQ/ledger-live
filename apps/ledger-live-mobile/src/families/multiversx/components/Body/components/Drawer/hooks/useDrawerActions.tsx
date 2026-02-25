@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 

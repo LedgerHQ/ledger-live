@@ -78,10 +78,6 @@ export const migrationAddresses: MigrationAddress[] = [
     address: "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
   },
   {
-    currencyId: "onomy",
-    address: "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
-  },
-  {
     currencyId: "osmosis",
     address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
   },
@@ -97,10 +93,6 @@ export const migrationAddresses: MigrationAddress[] = [
   //   currencyId: "secret_network",
   //   address: "secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4",
   // },
-  {
-    currencyId: "sei_network",
-    address: "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
-  },
   {
     currencyId: "stargaze",
     address: "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",

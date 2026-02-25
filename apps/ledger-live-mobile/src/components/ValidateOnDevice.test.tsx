@@ -1,6 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+/* eslint-disable @typescript-eslint/no-require-imports */
 import React from "react";
 import { render } from "@tests/test-renderer";
 import ValidateOnDevice from "./ValidateOnDevice";
@@ -8,12 +10,12 @@ import BigNumber from "bignumber.js";
 
 // Mocks
 jest.mock("@ledgerhq/live-common/hooks/useDeviceTransactionConfig");
-jest.mock("~/hooks/useAccountUnit");
+jest.mock("LLM/hooks/useAccountUnit");
 
 const mockUseDeviceTransactionConfig =
   require("@ledgerhq/live-common/hooks/useDeviceTransactionConfig")
     .useDeviceTransactionConfig as jest.Mock;
-const mockUseAccountUnit = require("~/hooks/useAccountUnit").useAccountUnit as jest.Mock;
+const mockUseAccountUnit = require("LLM/hooks/useAccountUnit").useAccountUnit as jest.Mock;
 
 const mockAccount = {
   type: "Account",

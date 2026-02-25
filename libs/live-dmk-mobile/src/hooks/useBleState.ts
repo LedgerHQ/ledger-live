@@ -68,13 +68,15 @@ export function useBleState(
        * never sends an update after a state change.
        */
       if (UndeterminedBleStates.includes(state)) {
-        requestCurrentStateFn().then(s => {
-          if (dead) return;
-          // As this is async, only update if the current state is still undetermined, to avoid a race condition.
-          setObservedTransportState(savedState =>
-            UndeterminedBleStates.includes(savedState) ? s : savedState,
-          );
-        });
+        requestCurrentStateFn()
+          .then(s => {
+            if (dead) return;
+            // As this is async, only update if the current state is still undetermined, to avoid a race condition.
+            setObservedTransportState(savedState =>
+              UndeterminedBleStates.includes(savedState) ? s : savedState,
+            );
+          })
+          .catch(() => undefined);
       }
     });
     return () => {

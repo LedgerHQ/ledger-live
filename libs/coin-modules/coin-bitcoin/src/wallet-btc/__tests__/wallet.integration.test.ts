@@ -4,7 +4,7 @@ import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import { Merge } from "../pickingstrategies/Merge";
-import MockBtcSigner from "../../mockBtcSigner";
+import { MockBtcSigner } from "./fixtures/common.fixtures";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 jest.setTimeout(180000);

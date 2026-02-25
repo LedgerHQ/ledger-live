@@ -6,12 +6,13 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import RowItem from "../../RowItem";
 import ReleaseNotesButton from "./ReleaseNotesButton";
 import { setDeveloperMode } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { v4 as uuidv4 } from "uuid";
 import { developerModeSelector } from "~/renderer/reducers/settings";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const SectionHelp = () => {
   const { t } = useTranslation();
@@ -22,6 +23,8 @@ const SectionHelp = () => {
   const { pushToast } = useToasts();
   const version = getEnv("PLAYWRIGHT_RUN") ? "0.0.0" : __APP_VERSION__;
   const [clickCounter, setClickCounter] = useState(0);
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
+
   const onVersionClick = useCallback(() => {
     if (clickCounter < 10) {
       setClickCounter(counter => counter + 1);
@@ -51,6 +54,29 @@ const SectionHelp = () => {
         >
           <ReleaseNotesButton />
         </Row>
+
+        {shouldDisplayWallet40MainNav && (
+          <>
+            <RowItem
+              title={t("help.facebook.title")}
+              desc={t("help.facebook.desc")}
+              url={urls.social.facebook}
+              dataTestId="facebook-link"
+            />
+            <RowItem
+              title={t("help.twitter.title")}
+              desc={t("help.twitter.desc")}
+              url={urls.social.twitter}
+              dataTestId="twitter-link"
+            />
+            <RowItem
+              title={t("help.github.title")}
+              desc={t("help.github.desc")}
+              url={urls.social.github}
+              dataTestId="github-link"
+            />
+          </>
+        )}
 
         <RowItem
           title={t("settings.help.terms")}

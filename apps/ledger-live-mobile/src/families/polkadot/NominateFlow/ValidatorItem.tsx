@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import { useTheme } from "styled-components/native";
 import CheckBox from "~/components/CheckBox";

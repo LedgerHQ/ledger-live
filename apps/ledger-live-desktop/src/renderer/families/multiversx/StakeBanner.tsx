@@ -1,6 +1,9 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { getAccountBannerState as getMultiversXBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
+import {
+  getAccountBannerState as getMultiversXBannerState,
+  AccountBannerState,
+} from "@ledgerhq/live-common/families/multiversx/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
@@ -11,9 +14,8 @@ import {
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
-import { AccountBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 
 const StakeBanner: React.FC<{ account: MultiversXAccount }> = ({ account }) => {
   const { t } = useTranslation();

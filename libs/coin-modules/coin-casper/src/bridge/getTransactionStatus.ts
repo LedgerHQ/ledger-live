@@ -9,14 +9,13 @@ import {
 } from "@ledgerhq/errors";
 import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
 import { CasperAccount, Transaction, TransactionStatus } from "../types";
-import { isTransferIdValid } from "./bridgeHelpers/transferId";
 import { CasperInvalidTransferId } from "../errors";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
-  CASPER_MAX_TRANSFER_ID,
   MayBlockAccountError,
   InvalidMinimumAmountError,
 } from "../consts";
+import { CASPER_MAX_TRANSFER_ID, validateMemo } from "../logic/validateMemo";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -45,8 +44,12 @@ export const getTransactionStatus: AccountBridge<
     errors.sender = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
-  } else if (!isTransferIdValid(transaction.transferId)) {
+  } else if (!validateMemo(transaction.transferId)) {
     errors.sender = new CasperInvalidTransferId("", {
+      maxTransferId: CASPER_MAX_TRANSFER_ID,
+    });
+
+    errors.transaction = new CasperInvalidTransferId("", {
       maxTransferId: CASPER_MAX_TRANSFER_ID,
     });
   }

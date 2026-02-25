@@ -17,7 +17,7 @@ const HelpCenterButton = ({ t }: Props) => {
   }, [localizedUrl]);
 
   return (
-    <Button onClick={handleClick} textColor={colors.wallet}>
+    <Button onClick={handleClick} color={colors.wallet}>
       {t("common.help")}
     </Button>
   );

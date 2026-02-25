@@ -11,7 +11,7 @@ import {
   TransactionIntent,
   Operation,
   Balance,
-  Pagination,
+  ListOperationsOptions,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type CantonConfig } from "../config";
@@ -45,7 +45,7 @@ export function createApi(config: CantonConfig): AlpacaApi {
     lastBlock(): Promise<BlockInfo> {
       throw new Error("listOperations is not supported");
     },
-    listOperations(_address: string, _pagination: Pagination): Promise<[Operation[], string]> {
+    listOperations(_address: string, _options: ListOperationsOptions): Promise<Page<Operation>> {
       throw new Error("listOperations is not supported");
     },
     getBlock(_height): Promise<Block> {

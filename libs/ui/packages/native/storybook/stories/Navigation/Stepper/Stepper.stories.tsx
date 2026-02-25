@@ -7,7 +7,9 @@ export default {
   component: Stepper,
 };
 
-export const Default: StoryFn<typeof Stepper> = (args: typeof DefaultArgs) => <Stepper {...args} />;
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => (
+  <Stepper {...args} />
+);
 const DefaultArgs = {
   steps: ["First step", "Second step", "Third step", "Fourth step"],
   activeIndex: 0,

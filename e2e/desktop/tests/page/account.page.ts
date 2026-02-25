@@ -10,6 +10,7 @@ export class AccountPage extends AppPage {
   private swapButton = this.page.getByTestId("swap-account-action-button");
   private stakeButton = this.page.getByTestId("stake-button");
   private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
+  private activatePrivateBalanceButton = this.page.getByTestId("show-private-balance-button");
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private buyButton = this.page.getByRole("button", { name: "Buy" });
   private accountName = this.page.locator("#account-header-name");
@@ -33,30 +34,30 @@ export class AccountPage extends AppPage {
   private viewDetailsButton = this.page.getByText("View details");
   private editName = this.page.locator("#input-edit-name");
   private applyButton = this.page.getByTestId("account-settings-apply-button");
-  private accountHeaderName = this.page.locator("#account-header-name");
   private accountChart = this.page.getByTestId("chart-container");
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
 
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
-    // Try to navigate using name first, then fallback to ticker
-    const nameElement = this.tokenValue(account.currency.name);
-    if (await nameElement.isVisible().catch(() => false)) {
-      await nameElement.click();
-      return;
-    }
-    const tickerElement = this.tokenRowByTicker(account.currency.ticker);
-    if (await tickerElement.isVisible().catch(() => false)) {
-      await tickerElement.click();
-      return;
-    }
-    throw new Error(`Token element not found for: ${account.currency.name}`);
+    const tokenRow = this.tokenValue(account.currency.name).or(
+      this.tokenRowByTicker(account.currency.ticker),
+    );
+    await tokenRow.waitFor({ state: "visible" });
+    await tokenRow.click();
   }
 
   @step("Click `Receive` button")
   async clickReceive() {
     await this.receiveButton.click();
+  }
+
+  @step("Click `Show balance` button")
+  async clickShowBalance() {
+    if (await this.activatePrivateBalanceButton.isVisible().catch(() => false)) {
+      await this.activatePrivateBalanceButton.click();
+      return;
+    }
   }
 
   @step("Click on add token button")
@@ -104,6 +105,8 @@ export class AccountPage extends AppPage {
   @step("Scroll to operations")
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
+    // Wait for the operation list to be attached and stable before scrolling (React 19 deferred rendering)
+    await operationList.waitFor({ state: "attached" });
     await operationList.scrollIntoViewIfNeeded();
   }
 
@@ -141,17 +144,10 @@ export class AccountPage extends AppPage {
 
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
-    const nameButton = this.accountButton(account.currency.name);
-    if (await nameButton.isVisible().catch(() => false)) {
-      await expect(nameButton).toBeVisible();
-      return;
-    }
-    const tickerButton = this.accountButton(account.currency.ticker);
-    if (await tickerButton.isVisible().catch(() => false)) {
-      await expect(tickerButton).toBeVisible();
-      return;
-    }
-    throw new Error(`Token account button not found for: ${account.currency.name}`);
+    const tokenButton = this.accountButton(account.currency.name).or(
+      this.accountButton(account.currency.ticker),
+    );
+    await expect(tokenButton).toBeVisible();
   }
 
   @step("Expect `show more` button to show more operations")
@@ -182,11 +178,18 @@ export class AccountPage extends AppPage {
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
     await this.tokenRow(tokenAccount.currency.ticker).click();
+    await this.waitForAccountHeaderName(tokenAccount.currency.name, tokenAccount.currency.ticker);
+  }
+
+  @step("Wait for account header name $0 to be visible")
+  async waitForAccountHeaderName(headerName: string, fallbackName?: string) {
+    const expectedNames = fallbackName ? [headerName, fallbackName] : [headerName];
+    await expect(this.accountName).toHaveValue(new RegExp(`^(${expectedNames.join("|")})$`));
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountHeaderName).toHaveValue(headerName);
+    await expect(this.accountName).toHaveValue(headerName);
   }
 
   @step("Check account chart is visible")

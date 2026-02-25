@@ -3,8 +3,9 @@ require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
+import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React, { Component, useCallback, useMemo, useEffect } from "react";
+import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
@@ -16,12 +17,10 @@ import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
-  osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
   hasCompletedOnboardingSelector,
   trackingEnabledSelector,
@@ -34,6 +33,7 @@ import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
@@ -41,7 +41,6 @@ import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
-import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
@@ -52,6 +51,7 @@ import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags"
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
+import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -77,8 +77,7 @@ import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
-import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKitEnabled, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
@@ -98,15 +97,12 @@ import {
   customLogEventMapper,
   initializeDatadogProvider,
 } from "./datadog";
-import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
-import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
-
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
@@ -131,7 +127,6 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
-  const sentryFF = useFeature("llmSentry");
   const isLDMKEnabled = useDeviceManagementKitEnabled();
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
@@ -221,8 +216,11 @@ function App() {
       });
     };
     initializeDatadogProvider(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      datadogFF?.params as PartialInitializationConfiguration,
+      {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        ...(datadogFF?.params as PartialInitializationConfiguration),
+        ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
+      },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     )
       .then(setUserEquipmentId)
@@ -230,12 +228,6 @@ function App() {
         console.error("Datadog initialization failed", e);
       });
   }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
-
-  useEffect(() => {
-    if (sentryFF?.enabled) {
-      initSentry(automaticBugReportingEnabled);
-    }
-  }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 
@@ -260,6 +252,7 @@ function App() {
       <AnalyticsConsole />
 
       <DebugTheme />
+      <JsThreadMonitor />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">
         <StoragePerformanceOverlay />
@@ -300,31 +293,38 @@ function RebootProvider({ children }: { children: React.ReactNode }) {
 }
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
-  const { theme } = useSettings();
-  const osTheme = useSelector(osThemeSelector);
+  const { osTheme, resolvedTheme } = useSettings();
   const dispatch = useDispatch();
+  const hasCheckedOnMountRef = useRef(false);
+  const osThemeRef = useRef(osTheme);
 
-  const compareOsTheme = useCallback(() => {
-    const currentOsTheme = Appearance.getColorScheme();
-
-    if (currentOsTheme && osTheme !== currentOsTheme) {
-      dispatch(setOsTheme(currentOsTheme));
-    }
-  }, [dispatch, osTheme]);
+  // Keep osThemeRef in sync with Redux state
+  osThemeRef.current = osTheme;
 
   useEffect(() => {
-    compareOsTheme();
+    const compareOsTheme = () => {
+      const currentOsTheme = Appearance.getColorScheme();
+      // Only dispatch if the OS theme is different from what's stored in Redux
+      if (currentOsTheme && osThemeRef.current !== currentOsTheme) {
+        dispatch(setOsTheme(currentOsTheme));
+      }
+    };
 
-    const osThemeChangeHandler = (nextAppState: string) =>
-      nextAppState === "active" && compareOsTheme();
+    // Check on mount only once
+    if (!hasCheckedOnMountRef.current) {
+      hasCheckedOnMountRef.current = true;
+      compareOsTheme();
+    }
+
+    const osThemeChangeHandler = (nextAppState: string) => {
+      if (nextAppState === "active") {
+        compareOsTheme();
+      }
+    };
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
     return () => sub.remove();
-  }, [compareOsTheme]);
-  const resolvedTheme = useMemo(
-    () => (((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark"),
-    [theme, osTheme],
-  );
+  }, [dispatch]);
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>
@@ -353,8 +353,6 @@ export default class Root extends Component {
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
-              {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
-              <HookSentry />
               <SegmentSetup />
               <HookNotifications />
               <HookDynamicContentCards />
@@ -362,17 +360,17 @@ export default class Root extends Component {
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
                 <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                  <WaitForAppReady currencyInitialized={currencyInitialized}>
-                    <I18nextProvider i18n={i18n}>
-                      <LocaleProvider>
-                        <PlatformAppProviderWrapper>
-                          <SafeAreaProvider>
-                            <ModalSystemPrimer />
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
-                                <GestureHandlerRootView style={styles.root}>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <SafeAreaProvider>
+                          <ModalSystemPrimer />
+                          <StylesProvider>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <GestureHandlerRootView style={styles.root}>
+                                <WaitForAppReady currencyInitialized={currencyInitialized}>
                                   <AppProviders initialCountervalues={initialCountervalues}>
                                     <AppGeoBlocker>
                                       <AppVersionBlocker>
@@ -382,14 +380,14 @@ export default class Root extends Component {
                                       </AppVersionBlocker>
                                     </AppGeoBlocker>
                                   </AppProviders>
-                                </GestureHandlerRootView>
-                              </AuthPass>
-                            </StylesProvider>
-                          </SafeAreaProvider>
-                        </PlatformAppProviderWrapper>
-                      </LocaleProvider>
-                    </I18nextProvider>
-                  </WaitForAppReady>
+                                </WaitForAppReady>
+                              </GestureHandlerRootView>
+                            </AuthPass>
+                          </StylesProvider>
+                        </SafeAreaProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
                 </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>

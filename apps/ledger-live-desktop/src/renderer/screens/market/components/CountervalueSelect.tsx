@@ -7,7 +7,7 @@ import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 
 type Props = {
   counterCurrency?: string;

@@ -1,7 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { filterScannedDevice } from "./filterScannedDevice";
 import { ScannedDevice } from "./ScannedDevice";
-import { expect, describe, it } from "vitest";
 
 describe("filterScannedDevice", () => {
   // Mock device data for testing

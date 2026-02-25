@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 

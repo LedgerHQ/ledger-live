@@ -29,7 +29,7 @@ export const Search: Story = {
 // Interaction Testing
 export const WithInteraction: Story = {
   args: {},
-  controls: { expanded: true },
+  parameters: { controls: { expanded: true } },
 
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);

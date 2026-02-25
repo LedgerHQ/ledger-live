@@ -1,5 +1,29 @@
 # @ledgerhq/hw-app-sui
 
+## 1.6.0
+
+### Minor Changes
+
+- [#13163](https://github.com/LedgerHQ/ledger-live/pull/13163) [`d221665`](https://github.com/LedgerHQ/ledger-live/commit/d221665087351c7c59312bc557c758a0026c36c9) Thanks [@semeano](https://github.com/semeano)! - Add support for clear signing for Sui tokens
+
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#13163](https://github.com/LedgerHQ/ledger-live/pull/13163) [`d221665`](https://github.com/LedgerHQ/ledger-live/commit/d221665087351c7c59312bc557c758a0026c36c9) Thanks [@semeano](https://github.com/semeano)! - Add support for clear signing for Sui tokens
+
+## 1.5.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
 ## 1.4.0
 
 ### Minor Changes

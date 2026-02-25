@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation, useLocale } from "~/context/Locale";
 import { Stop } from "react-native-svg";
 import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import LText from "~/components/LText";
@@ -9,7 +9,6 @@ import { AppIcon } from "../AppIcon";
 import { Theme } from "../../../../colors";
 import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
 import { Cta } from "./Cta";
-import { useLocale } from "~/context/Locale";
 import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
@@ -123,7 +122,10 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
           ]}
         >
           <AppIcon isDisabled={isDisabled} size={52} name={manifest.name} icon={manifest.icon} />
-          <View style={styles.content}>
+          <View
+            style={styles.content}
+            testID={`catalog-app-card-${manifest.name.trim().toLowerCase()}`}
+          >
             <View style={styles.header}>
               <LText
                 variant="h3"

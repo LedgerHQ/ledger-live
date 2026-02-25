@@ -10,7 +10,7 @@ import SelectAccountButton from "./SelectAccountButton";
 
 type BottomBarProps = {
   manifest: AppManifest;
-  webviewAPIRef: RefObject<WebviewAPI>;
+  webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
   currentAccountHistDb: CurrentAccountHistDB;
 };

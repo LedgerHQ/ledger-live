@@ -6,6 +6,7 @@ import {
   BrazeContentCard,
   CategoryContentCard,
   ContentCardsLayout,
+  ContentCardsType,
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata } from "~/contentCards/cards/types";
@@ -21,7 +22,6 @@ import {
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "../useDynamicContent";
-import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
 import HeroCard from "~/contentCards/cards/hero";
@@ -70,15 +70,15 @@ type LayoutProps = {
 const Layout = ({ category, cards }: LayoutProps) => {
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
-  const onCardCick = (card: AnyContentCard) => {
+  const onCardCick = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_clicked", {
+      ...card.extras,
       page: card.location,
-      link: card.link,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
       layout: category.cardsLayout,
-      location: category.location,
+      displayedPosition,
     });
 
     logClickCard(card.id);
@@ -87,15 +87,15 @@ const Layout = ({ category, cards }: LayoutProps) => {
     }
   };
 
-  const onCardDismiss = (card: AnyContentCard) => {
+  const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_dismissed", {
+      ...card.extras,
       page: card.location,
-      link: card.link || undefined,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
       layout: category.cardsLayout,
-      location: category.location,
+      displayedPosition,
     });
     dismissCard(card.id);
   };
@@ -107,7 +107,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
 
-  const items = cardsSorted.map(card =>
+  const items = cardsSorted.map((card, index) =>
     contentCardItem(contentCardsType.contentCardComponent, {
       ...card,
       widthFactor:
@@ -117,10 +117,11 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
       metadata: {
         id: card.id,
+        displayedPosition: index,
 
         actions: {
-          onClick: card.link ? () => onCardCick(card) : undefined,
-          onDismiss: category.isDismissable ? () => onCardDismiss(card) : undefined,
+          onClick: card.link ? () => onCardCick(card, index) : undefined,
+          onDismiss: category.isDismissable ? () => onCardDismiss(card, index) : undefined,
         },
       },
     }),
@@ -145,8 +146,13 @@ const Layout = ({ category, cards }: LayoutProps) => {
     case ContentCardsLayout.unique:
     default: {
       const item = items[0];
+      const card = cardsSorted[0];
       return (
-        <LogContentCardWrapper id={item.props.metadata.id}>
+        <LogContentCardWrapper
+          id={item.props.metadata.id}
+          displayedPosition={item.props.metadata.displayedPosition}
+          location={card?.location}
+        >
           <Flex mx={6}>{item.component(item.props)}</Flex>
         </LogContentCardWrapper>
       );

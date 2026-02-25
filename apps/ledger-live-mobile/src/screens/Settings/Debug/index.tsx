@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "~/context/Locale";
 import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
@@ -10,6 +11,7 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 export default function DebugSettings({
   navigation: { navigate },
 }: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugSettings>) {
+  const { t } = useTranslation();
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
@@ -42,6 +44,12 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugGenerators)}
       />
       <SettingsRow
+        title={t("settings.debug.contentCards.title")}
+        desc={t("settings.debug.contentCards.titleDesc")}
+        iconLeft={<IconsLegacy.GraphGrowMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugContentCards)}
+      />
+      <SettingsRow
         title="Debugging"
         desc="Logs, application state, errors"
         iconLeft={<IconsLegacy.LogsMedium size={24} color="black" />}
@@ -64,6 +72,18 @@ export default function DebugSettings({
         desc="Easy to access blank debugging screen"
         iconLeft={<IconsLegacy.EmojiHappyMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPlayground)}
+      />
+      <SettingsRow
+        title="Lumen Debug"
+        desc="Playground for testing Lumen components"
+        iconLeft={<IconsLegacy.PenMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugLumen)}
+      />
+      <SettingsRow
+        title="Wallet Features Dev Tool"
+        desc="Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag)"
+        iconLeft={<IconsLegacy.WalletMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugWallet40)}
       />
     </SettingsNavigationScrollView>
   );

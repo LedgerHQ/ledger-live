@@ -1,5 +1,5 @@
-import { from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
-import { map, catchError, first, timeout, repeat, switchMap } from "rxjs/operators";
+import { defer, from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
+import { map, catchError, first, timeout, repeat, switchMap, tap } from "rxjs/operators";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { withDevice } from "./deviceAccess";
 import {
@@ -66,15 +66,21 @@ export const getOnboardingStatePolling = ({
       openTimeoutMs: transportAbortTimeoutMs,
       matchDeviceByName: deviceName ?? undefined,
     })(t => {
-      const getVersionObs = from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs }));
+      const getVersionObs = defer(() =>
+        from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs })),
+      );
 
       // only run quitApp the first time
       if (hasQuitAppAlreadyRun) {
         return getVersionObs;
       }
 
-      hasQuitAppAlreadyRun = true;
-      return quitApp(t).pipe(switchMap(() => getVersionObs));
+      return quitApp(t).pipe(
+        tap(() => {
+          hasQuitAppAlreadyRun = true;
+        }),
+        switchMap(() => getVersionObs),
+      );
     }).pipe(
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),

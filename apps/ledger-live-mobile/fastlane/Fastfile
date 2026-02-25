@@ -468,7 +468,8 @@ platform :android do
         )
     end
 
-    gradle(task: "clean", project_dir: 'android/')
+    gradle(tasks: ["clean", "generateCodegenArtifactsFromSchema"], project_dir: 'android/', flags: "--rerun-tasks")
+    
     if (options[:local])
       gradle(
         tasks: tasks,

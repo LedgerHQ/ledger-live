@@ -1,40 +1,34 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { Route, Switch, useRouteMatch, RouteComponentProps } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router";
 import CompletionScreen from "LLD/features/Onboarding/screens/SyncOnboardingCompletion";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import SyncOnboardingDeviceConnection, {
-  SyncOnboardingDeviceConnectionProps,
-} from "./DeviceConnection";
-import SyncOnboardingManual, { SyncOnboardingScreenProps } from "./Manual";
+import SyncOnboardingDeviceConnection from "./DeviceConnection";
+import SyncOnboardingManual from "./Manual";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
-export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;
-export type ManualRouteProps = RouteComponentProps<SyncOnboardingScreenProps>;
+// Wrapper components to extract params from URL and pass to children
+const ManualWrapper = () => {
+  const { deviceModelId } = useParams<{ deviceModelId: string }>();
+  return <SyncOnboardingManual deviceModelId={deviceModelId ?? ""} />;
+};
+
+const DeviceConnectionWrapper = () => {
+  const { deviceModelId } = useParams<{ deviceModelId: string }>();
+  return <SyncOnboardingDeviceConnection deviceModelId={deviceModelId ?? ""} />;
+};
 
 const SyncOnboarding = () => {
-  const { path } = useRouteMatch();
   useKeepScreenAwake(true);
 
   return (
     <Flex width="100%" height="100%" position="relative">
-      <Switch>
-        <Route
-          exact
-          path={[`${path}/manual/:deviceModelId`]}
-          render={(routeProps: ManualRouteProps) => (
-            <SyncOnboardingManual {...routeProps.match.params} />
-          )}
-        />
-        <Route exact path={`${path}/completion`} render={() => <CompletionScreen />} />
-        <Route
-          exact
-          path={[`${path}/:deviceModelId`, `${path}/connection/:deviceModelId`]}
-          render={(routeProps: DeviceConnectionRouteProps) => (
-            <SyncOnboardingDeviceConnection {...routeProps.match.params} />
-          )}
-        />
-      </Switch>
+      <Routes>
+        <Route path="manual/:deviceModelId" element={<ManualWrapper />} />
+        <Route path="completion" element={<CompletionScreen />} />
+        <Route path="connection/:deviceModelId" element={<DeviceConnectionWrapper />} />
+        <Route path=":deviceModelId" element={<DeviceConnectionWrapper />} />
+      </Routes>
     </Flex>
   );
 };

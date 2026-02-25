@@ -40,6 +40,7 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
+  [ScreenName.DebugContentCards]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;
 
   [ScreenName.DebugNetwork]: undefined;
@@ -47,12 +48,6 @@ export type SettingsNavigatorStackParamList = {
     deviceId: string;
   };
   [ScreenName.DebugSwap]: undefined;
-  [ScreenName.DebugBLE]: {
-    deviceId: string;
-  };
-  [ScreenName.DebugBLEBenchmark]: {
-    deviceId: string;
-  };
   [ScreenName.DebugBLEDevicePairing]: {
     areKnownDevicesDisplayed: boolean;
     onSuccessAddToKnownDevices: boolean;
@@ -64,6 +59,8 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
+  [ScreenName.DebugLumen]: undefined;
+  [ScreenName.DebugWallet40]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
   [ScreenName.DebugStorageMigration]: undefined;
@@ -87,4 +84,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugSwipe]: undefined;
   [ScreenName.DebugModularAssetDrawer]: undefined;
   [ScreenName.DebugTooltip]: undefined;
+  [ScreenName.DebugWalletV4Tour]: undefined;
 };

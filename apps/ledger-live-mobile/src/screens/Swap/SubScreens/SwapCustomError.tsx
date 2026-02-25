@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import type { TFunction } from "i18next";
 import { useHeaderHeight } from "@react-navigation/elements";
 import get from "lodash/get";
@@ -135,7 +135,7 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   return (
     <SafeAreaView style={[styles.root, { bottom: headerHeight }]}>
       <TrackScreen category="Swap" name="Swap Error Screen" {...sharedSwapTracking} {...error} />
-      <Flex justifyContent="center" alignItems="center">
+      <Flex justifyContent="center" alignItems="center" px={6}>
         <Icons.DeleteCircleFill color="red" size="XXL" />
         <Text variant="h3Inter" fontWeight="bold" fontSize={25} textAlign={"center"} mt={24}>
           {title}

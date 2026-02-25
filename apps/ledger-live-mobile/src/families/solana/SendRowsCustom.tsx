@@ -8,7 +8,7 @@ import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { ScreenName } from "~/const";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";

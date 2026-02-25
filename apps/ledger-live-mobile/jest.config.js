@@ -1,5 +1,24 @@
-const { pathsToModuleNameMapper } = require("ts-jest");
 const { compilerOptions } = require("./tsconfig");
+
+// Helper function to convert TypeScript paths to Jest moduleNameMapper
+// This replaces pathsToModuleNameMapper from ts-jest which is not available in @swc/jest
+function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
+  const jestPaths = {};
+  if (!paths) return jestPaths;
+
+  Object.keys(paths).forEach(pathKey => {
+    const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
+    pathValues.forEach(pathValue => {
+      // Convert TypeScript path pattern to Jest regex pattern
+      // Use /\*$/ for key (wildcard at end) but /\*/ for value (wildcard can be anywhere)
+      const jestKey = pathKey.replace(/\*$/, "(.*)");
+      const jestValue = pathValue.replace(/\*/, "$1");
+      jestPaths[jestKey] = `${prefix}${jestValue}`;
+    });
+  });
+
+  return jestPaths;
+}
 
 const transformIncludePatterns = [
   "@react-native/polyfills",
@@ -7,9 +26,9 @@ const transformIncludePatterns = [
   "@react-native(-community)?",
   "@react-navigation",
   "rn-range-slider",
+  "react-native-worklets",
   "react-native-reanimated",
   "react-native-modal",
-  "@sentry/react-native",
   "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
@@ -23,12 +42,17 @@ const transformIncludePatterns = [
   "react-native-safe-area-context",
   "react-native-gesture-handler",
   "@shopify/flash-list",
+  "@ledgerhq/lumen-.*",
+  "immer",
+  "@features/.*",
+  "@sbaiahmed1/react-native-blur",
 ];
 
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+/** @type {import('@swc/jest').JestConfigWithTsJest} */
 module.exports = {
   verbose: true,
   preset: "react-native",
+  workerIdleMemoryLimit: "1GB",
   modulePaths: [compilerOptions.baseUrl],
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
@@ -41,6 +65,11 @@ module.exports = {
       {
         jsc: {
           target: "esnext",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
         },
       },
     ],
@@ -67,12 +96,22 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
+    "^@features/(.*)$": "<rootDir>/../../features/$1/src",
+    "^@ledgerhq/(lumen-ui-rnative|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
     "^react$": "<rootDir>/node_modules/react",
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
+    "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
+    "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",
+    "^@tanstack/react-query$":
+      "<rootDir>/../../node_modules/.pnpm/@tanstack+react-query@5.28.9_react@19.0.0/node_modules/@tanstack/react-query",
+    // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
+    "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
+    // Global mock for .lottie (dotLottie) files
+    "\\.(lottie)$": "<rootDir>/__mocks__/lottieMock.js",
   },
 };

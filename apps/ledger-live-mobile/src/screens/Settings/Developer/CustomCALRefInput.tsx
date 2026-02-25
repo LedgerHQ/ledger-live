@@ -3,7 +3,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/FocusedTextInput";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { prepareCurrency } from "~/bridge/cache";
 import { useTheme } from "@react-navigation/native";

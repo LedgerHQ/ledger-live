@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { View, StyleSheet, Image, StyleProp, ViewStyle } from "react-native";
 import { rgba, Theme, withTheme } from "../colors";
 import QueuedDrawer from "./QueuedDrawer";

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 
 type Props = {

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
@@ -33,30 +33,38 @@ const TitleText = styled(Text).attrs({
 
 export function SelectDevice() {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const fromQuickAction = !!location.state?.fromQuickAction;
 
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
       // TODO: use a feature flag to do this properly
-      track("Onboarding Device - Selection", { deviceModelId });
+      track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
       if (isSyncOnboardingSupported(deviceModelId)) {
-        history.push(`/onboarding/sync/${deviceModelId}`);
+        navigate(`/onboarding/sync/${deviceModelId}`);
       } else {
         setDeviceModelId(deviceModelId);
-        history.push("/onboarding/select-use-case");
+        navigate("/onboarding/select-use-case");
       }
     },
-    [history, setDeviceModelId],
+    [navigate, setDeviceModelId],
   );
 
   return (
     <SelectDeviceContainer>
-      <TrackPage category="Onboarding Device - Selection" />
+      <TrackPage category="Onboarding Device - Selection" flow="Onboarding" />
       <OnboardingNavHeader
         onClickPrevious={() =>
-          history.push(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")
+          navigate(
+            fromQuickAction
+              ? "/"
+              : hasCompletedOnboarding
+                ? "/settings/help"
+                : "/onboarding/welcome",
+          )
         }
       />
       <DeviceSelector onClick={handleDeviceSelect} />

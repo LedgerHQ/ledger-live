@@ -23,21 +23,23 @@ import { testDeviceActionStates } from "../__test-utils__/testDeviceActionStates
 import { ConnectAppDeviceAction } from "./ConnectAppDeviceAction";
 import type { ConnectAppDAState } from "./types";
 
-vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
-  const original = await importOriginal<typeof import("@ledgerhq/device-management-kit")>();
+jest.mock("@ledgerhq/device-management-kit", () => {
+  const original = jest.requireActual<typeof import("@ledgerhq/device-management-kit")>(
+    "@ledgerhq/device-management-kit",
+  );
   return {
     ...original,
-    GetDeviceStatusDeviceAction: vi.fn(() => ({
-      makeStateMachine: vi.fn(),
+    GetDeviceStatusDeviceAction: jest.fn(() => ({
+      makeStateMachine: jest.fn(),
     })),
-    GetDeviceMetadataDeviceAction: vi.fn(() => ({
-      makeStateMachine: vi.fn(),
+    GetDeviceMetadataDeviceAction: jest.fn(() => ({
+      makeStateMachine: jest.fn(),
     })),
-    InstallOrUpdateAppsDeviceAction: vi.fn(() => ({
-      makeStateMachine: vi.fn(),
+    InstallOrUpdateAppsDeviceAction: jest.fn(() => ({
+      makeStateMachine: jest.fn(),
     })),
-    OpenAppWithDependenciesDeviceAction: vi.fn(() => ({
-      makeStateMachine: vi.fn(),
+    OpenAppWithDependenciesDeviceAction: jest.fn(() => ({
+      makeStateMachine: jest.fn(),
     })),
   };
 });
@@ -77,7 +79,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     apiMock.getDeviceSessionState.mockReturnValue({
       deviceModelId: DeviceModelId.NANO_X,
     } as unknown as DeviceSessionState);

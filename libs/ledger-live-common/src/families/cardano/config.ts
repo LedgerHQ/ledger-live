@@ -7,6 +7,10 @@ export const cardanoConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       maxFeesWarning: 5e6,
       maxFeesError: 10e6,

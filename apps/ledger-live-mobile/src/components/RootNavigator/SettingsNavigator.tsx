@@ -1,13 +1,9 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
-import DebugBLE from "~/screens/Settings/Debug/Connectivity/BLE";
-import DebugBLEBenchmark from "~/screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
 import DebugConnectivity, {
   connectivityHeaderOptions,
@@ -23,12 +19,15 @@ import DebugFetchCustomImage, {
 } from "~/screens/Settings/Debug/Features/FetchCustomImage";
 import DebugFirmwareUpdate from "~/screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "~/screens/Settings/Debug/Generators";
+import DebugContentCards from "~/screens/Settings/Debug/ContentCards";
 import DebugHttpTransport from "~/screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "~/screens/Settings/Debug/Information";
 import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetOfApps";
 import DebugPerformance from "~/screens/Settings/Debug/Performance";
 import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
+import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
+import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
@@ -57,7 +56,6 @@ import DeveloperSettings, {
   ExchangeDeveloperMode,
 } from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
 import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
@@ -79,6 +77,7 @@ import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDeb
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
+import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -91,9 +90,8 @@ export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
-
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-  const isLargeMoverFeatureEnabled = useFeature("largemoverLandingpage")?.enabled;
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -262,6 +260,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugContentCards}
+        component={DebugContentCards}
+        options={{
+          title: t("settings.debug.contentCards.title"),
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
         options={connectivityHeaderOptions}
@@ -302,6 +307,20 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugLumen}
+        component={DebugLumen}
+        options={{
+          title: "Lumen Debug",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugWallet40}
+        component={DebugWallet40}
+        options={{
+          title: "Wallet 4.0",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugBluetoothAndLocationServices}
         component={DebugBluetoothAndLocationServices}
         options={{
@@ -323,26 +342,6 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugBLE}
-        component={DebugBLE}
-        options={({ route, navigation }) => ({
-          title: "BLE Debugging",
-          headerRight: () => (
-            <Button
-              event="DebugBLEBenchmark"
-              type="lightSecondary"
-              containerStyle={{ width: 100 }}
-              onPress={() =>
-                navigation.navigate(ScreenName.DebugBLEBenchmark, {
-                  deviceId: route.params?.deviceId,
-                })
-              }
-              title="Benchmark"
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
         name={ScreenName.DebugBLEDevicePairing}
         component={BleEDevicePairingScreen}
         options={{
@@ -354,13 +353,6 @@ export default function SettingsNavigator() {
         component={DebugCommandSender}
         options={{
           title: "Command Sender",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugBLEBenchmark}
-        component={DebugBLEBenchmark}
-        options={{
-          title: "Debug BLE Benchmark",
         }}
       />
       <Stack.Screen
@@ -516,15 +508,13 @@ export default function SettingsNavigator() {
           title: "QueuedDrawers (Auto force open)",
         }}
       />
-      {isLargeMoverFeatureEnabled && (
-        <Stack.Screen
-          name={ScreenName.LargeMoverLandingPage}
-          component={LargeMoverLandingPage}
-          options={{
-            headerShown: false,
-          }}
-        />
-      )}
+      <Stack.Screen
+        name={ScreenName.LargeMoverLandingPage}
+        component={LargeMoverLandingPage}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name={ScreenName.DebugSwipe}
         component={SwiperScreenDebug}
@@ -538,6 +528,13 @@ export default function SettingsNavigator() {
         component={ModularDrawerScreenDebug}
         options={{
           title: "ModularAssetDrawer Screen Debug",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugWalletV4Tour}
+        component={WalletV4TourScreenDebug}
+        options={{
+          title: "Wallet V4 Tour",
         }}
       />
     </Stack.Navigator>

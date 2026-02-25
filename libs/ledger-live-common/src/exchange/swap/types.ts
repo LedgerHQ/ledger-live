@@ -3,7 +3,7 @@ import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
-import { Transaction, TransactionRaw } from "../../generated/types";
+import { Transaction } from "../../generated/types";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -165,12 +165,6 @@ export type GetExchangeRates = (
   exchangeObject: ExchangeObject,
 ) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
 
-export type InitSwapResult = {
-  transaction: Transaction;
-  swapId: string;
-  magnitudeAwareRate: BigNumber;
-};
-
 type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
 
 export type SwapStatusRequest = {
@@ -183,6 +177,7 @@ export type SwapStatus = {
   provider: string;
   swapId: string;
   status: ValidSwapStatus;
+  finalAmount?: string;
 };
 
 // -----
@@ -226,22 +221,6 @@ export type PostSwapCancelled = (arg0: SwapStateCancelledRequest) => Promise<nul
 
 export type UpdateAccountSwapStatus = (arg0: Account) => Promise<Account | null | undefined>;
 export type GetMultipleStatus = (arg0: SwapStatusRequest[]) => Promise<SwapStatus[]>;
-export type SwapRequestEvent =
-  | { type: "init-swap" }
-  | {
-      type: "init-swap-requested";
-      amountExpectedTo?: string;
-      estimatedFees: BigNumber;
-    }
-  | {
-      type: "init-swap-error";
-      error: Error;
-      swapId: string;
-    }
-  | {
-      type: "init-swap-result";
-      initSwapResult: InitSwapResult;
-    };
 
 export type SwapHistorySection = {
   day: Date;
@@ -259,6 +238,7 @@ export type MappedSwapOperation = {
   status: string;
   fromAmount: BigNumber;
   toAmount: BigNumber;
+  finalAmount?: BigNumber;
 };
 export type SwapState = {
   // NB fromAccount and fromParentAccount and amount come from `useBridgeTransaction`
@@ -279,20 +259,6 @@ export type SwapTransaction = Transaction & {
   tag?: number;
   memoValue?: string;
   memoType?: string;
-};
-
-export type InitSwapInput = {
-  exchange: ExchangeSwap;
-  exchangeRate: ExchangeRate;
-  transaction: SwapTransaction;
-  deviceId: string;
-};
-
-export type InitSwapInputRaw = {
-  exchange: ExchangeSwapRaw;
-  exchangeRate: ExchangeRateRaw;
-  transaction: TransactionRaw;
-  deviceId: string;
 };
 
 export interface CustomMinOrMaxError extends Error {

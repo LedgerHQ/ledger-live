@@ -1,7 +1,17 @@
-import { selectUtxos } from "../utxos/selection";
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
 import * as lib from "../utxos/lib";
+import { selectUtxos } from "../utxos/selection";
+
+jest.mock("../utxos/lib", () => {
+  const actual = jest.requireActual("../utxos/lib");
+  return {
+    ...actual,
+    calcMaxSpendableAmount: jest.fn(actual.calcMaxSpendableAmount),
+  };
+});
+
+const mockCalcMaxSpendableAmount = lib.calcMaxSpendableAmount as jest.Mock;
 
 const TX_MASS_PER_INPUT = 1118;
 const TX_MASS_FOR_TWO_OUTPUTS = 918;
@@ -118,7 +128,11 @@ describe("2 outputs - no discard", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
     const feerate = 8203;
 
-    expect(selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate - 1)).toBeDefined();
+    expect(selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate - 1)).toEqual({
+      utxos,
+      changeAmount: new BigNumber(0),
+      fee: new BigNumber(50000000),
+    });
     expect(() => selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate)).toThrow(
       "UTXO total amount is not sufficient for sending amount 450000000",
     );
@@ -292,7 +306,7 @@ describe("1 output without discard", () => {
   });
 
   test("should throw - UTXOs can't be determined to fulfill the specified amount", () => {
-    jest.spyOn(lib, "calcMaxSpendableAmount").mockReturnValue(BigNumber(1_2345_0000));
+    mockCalcMaxSpendableAmount.mockReturnValue(BigNumber(1_2345_0000));
     const feeRate = 1;
     const isEcdsaRecipient = false;
 
@@ -313,5 +327,9 @@ describe("1 output without discard", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    // Reset to actual implementation
+    mockCalcMaxSpendableAmount.mockImplementation(
+      jest.requireActual("../utxos/lib").calcMaxSpendableAmount,
+    );
   });
 });

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, type ReactNode } from "react";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
@@ -10,8 +10,8 @@ interface SectionContainerProps extends FlexBoxProps {
   testID?: string;
 }
 
-const SectionContainer = styled(Flex).attrs((p: SectionContainerProps) => ({
-  py: 8,
+const SectionContainer = styled(Flex).attrs<SectionContainerProps>(p => ({
+  py: p.py || 8,
   borderTopWidth: p.isFirst ? 0 : 1,
   borderTopColor: "neutral.c30",
 }))``;
@@ -19,7 +19,8 @@ const SectionContainer = styled(Flex).attrs((p: SectionContainerProps) => ({
 const MemoizedSectionContainer = memo(SectionContainer);
 
 interface AnimatedSectionContainerProps extends SectionContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  py?: string;
   key?: string;
 }
 

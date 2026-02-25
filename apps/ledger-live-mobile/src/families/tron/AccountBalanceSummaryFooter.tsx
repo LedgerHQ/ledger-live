@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import type { Account } from "@ledgerhq/types-live";
@@ -13,7 +13,7 @@ import EnergyIcon from "~/icons/Energy";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: Account;

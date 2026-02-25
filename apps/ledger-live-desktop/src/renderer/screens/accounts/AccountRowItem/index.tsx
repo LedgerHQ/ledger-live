@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
@@ -18,7 +18,7 @@ import Star from "~/renderer/components/Stars/Star";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -38,10 +38,10 @@ const Row = styled(Box)`
   margin-bottom: 9px;
   position: relative;
   transition: background-color ease-in-out 200ms;
-  :hover {
+  &:hover {
     border-color: ${p => p.theme.colors.neutral.c40};
   }
-  :active:not(:focus-within) {
+  &:active:not(:focus-within) {
     border-color: ${p => p.theme.colors.neutral.c40};
     background: ${p => p.theme.colors.opacityDefault.c10};
   }
@@ -142,8 +142,10 @@ const AccountRowItem = (props: Props) => {
     setExpanded(!!search);
   }, [search]);
 
-  const toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
-    e.stopPropagation();
+  const toggleAccordion = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     expandedStates[account.id] = !expandedStates[account.id];
     setExpanded(expandedStates[account.id]);
     if (scrollTopFocusRef.current && !expanded) {
@@ -197,7 +199,7 @@ const AccountRowItem = (props: Props) => {
     accountNameSelector(walletState, { accountId: account.id }) || getDefaultAccountName(account);
   return (
     <div
-      className={`accounts-account-row-item ${tokens && tokens.length > 0 ? "has-tokens" : ""}`}
+      data-testid="accounts-account-row-item"
       style={{
         position: "relative",
       }}
@@ -215,10 +217,11 @@ const AccountRowItem = (props: Props) => {
         <Row key={mainAccount.id}>
           <RowContent
             disabled={disabled}
-            className="accounts-account-row-item-content"
             isSubAccountsExpanded={showTokensIndicator && expanded}
             onClick={onClickHandler}
-            data-testid={account.type === "Account" && `account-component-${accountName}`}
+            data-testid={
+              account.type === "Account" ? `account-component-${accountName}` : undefined
+            }
           >
             <Header account={account} />
             <Box flex="12%">

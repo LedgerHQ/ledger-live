@@ -95,7 +95,7 @@ const StepWithdrawFooter = (props: StepProps) => {
       <AccountFooter status={status} account={account} />
 
       <Box horizontal={true}>
-        <Button mr={1} secondary={true} onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
 

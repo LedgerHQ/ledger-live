@@ -16,7 +16,7 @@ import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
@@ -51,7 +51,7 @@ export function useWebView(
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
-  const serverRef = useRef<WalletAPIServer>();
+  const serverRef = useRef<WalletAPIServer | undefined>(undefined);
 
   const tracking = useMemo(
     () =>
@@ -239,7 +239,7 @@ export function useWebviewState(
   params: Pick<WebviewProps, "manifest" | "inputs">,
   WebviewAPIRef: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
-  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
+  serverRef?: React.RefObject<WalletAPIServer | undefined>,
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;
@@ -609,8 +609,10 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencyIds = useDAppManifestCurrencyIds(manifest);
-  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
-    useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
+    manifest.id,
+    currentAccountHistDb,
+  );
   const { openDrawer } = useModularDrawerController();
 
   const onSelectAccountSuccess = useCallback(

@@ -72,7 +72,7 @@ const AmountButton = styled.button.attrs(() => ({
   error: boolean;
 }>`
   background-color: ${p => (p.error ? p.theme.colors.lightRed : p.theme.colors.primary.c80)};
-  color: ${p => (p.error ? p.theme.colors.alertRed : p.theme.colors.primary.c80)}!important;
+  color: ${p => (p.error ? p.theme.colors.alertRed : p.theme.colors.neutral.c00)}!important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";

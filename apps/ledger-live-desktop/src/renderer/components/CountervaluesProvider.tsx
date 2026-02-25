@@ -1,12 +1,15 @@
 import {
+  exportCountervalues,
+  hasNewCountervaluesToExport,
+} from "@ledgerhq/live-countervalues/logic";
+import {
   CountervaluesBridge,
   CountervaluesProvider,
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import { CounterValuesStateRaw, RateMapRaw } from "@ledgerhq/live-countervalues/types";
-import React, { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import type { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import React, { useEffect, useMemo, useRef } from "react";
+import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
 import { setKey } from "~/renderer/storage";
 import { countervaluesActions } from "../actions/countervalues";
@@ -16,7 +19,6 @@ import {
   useCountervaluesPollingTriggerLoad,
   useCountervaluesState,
   useCountervaluesStateError,
-  useCountervaluesStateExport,
   useCountervaluesStatePending,
   useCountervaluesUserSettings,
 } from "../reducers/countervalues";
@@ -77,26 +79,19 @@ export function CountervaluesBridgedProvider({
 
 function useCacheManager() {
   const userSettings = useCountervaluesUserSettings();
-  const { status, ...state } = useCountervaluesStateExport();
+  const state = useCountervaluesState();
+  const lastStateRef = useRef(state);
 
   useEffect(() => {
-    if (!Object.keys(status).length) return;
-    const ids = userSettings.trackingPairs.map(pairId);
-    const newState = Object.entries(state).reduce(
-      (prev: Record<string, RateMapRaw>, [key, val]) =>
-        ids.includes(key)
-          ? {
-              ...prev,
-              [key]: val,
-            }
-          : prev,
-      {},
+    if (!hasNewCountervaluesToExport(lastStateRef.current, state)) return;
+    const exported = exportCountervalues(
+      state,
+      userSettings.trackingPairs,
+      userSettings.selectedTimeRange,
     );
-    setKey("app", "countervalues", {
-      ...newState,
-      status: status,
-    });
-  }, [state, status, userSettings]);
+    setKey("app", "countervalues", exported);
+    lastStateRef.current = state;
+  }, [state, userSettings]);
 }
 
 function usePollingManager() {

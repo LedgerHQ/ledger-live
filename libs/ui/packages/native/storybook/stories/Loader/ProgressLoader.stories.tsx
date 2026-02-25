@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 import { Text, ProgressLoader } from "../../../src/components";
 import { StoryFn } from "@storybook/react";
 
@@ -8,12 +7,12 @@ export default {
   component: ProgressLoader,
 };
 
-export const LoaderSample: StoryFn<typeof ProgressLoader> = (args: typeof LoaderSampleArgs) => {
+export const LoaderSample: StoryFn<typeof LoaderSampleArgs> = (args: typeof LoaderSampleArgs) => {
   return (
     <ProgressLoader
       progress={args.progress}
       infinite={args.infinite}
-      onPress={action("onPress")}
+      onPress={() => {}}
       mainColor={args.mainColor}
       secondaryColor={args.secondaryColor}
       radius={args.radius}

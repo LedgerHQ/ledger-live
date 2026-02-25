@@ -1,3 +1,17 @@
+import { DerivationMode } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import * as api from "../api/api";
+import * as tokenAccounts from "../erc20/tokenAccounts";
+import {
+  createMockAccount,
+  createMockTransactionResponse,
+  createMockTransaction,
+  TEST_ADDRESSES,
+  createMockBalanceResponse,
+  createMockTokenAccount,
+  TEST_BLOCK_HEIGHTS,
+} from "../test/fixtures";
+import { TxStatus } from "../types";
 import {
   mapTxToOps,
   getAddress,
@@ -6,21 +20,6 @@ import {
   getSubAccount,
   valueFromUnit,
 } from "./utils";
-import {
-  createMockAccount,
-  createMockTransactionResponse,
-  createMockOperation,
-  createMockTransaction,
-  TEST_ADDRESSES,
-  createMockBalanceResponse,
-  createMockTokenAccount,
-  TEST_BLOCK_HEIGHTS,
-} from "../test/fixtures";
-import { TxStatus } from "../types";
-import BigNumber from "bignumber.js";
-import { DerivationMode } from "@ledgerhq/types-live";
-import * as api from "../api/api";
-import * as tokenAccounts from "../erc20/tokenAccounts";
 
 // Mock API and token account modules
 jest.mock("../api/api");
@@ -147,10 +146,6 @@ describe("common-logic/utils", () => {
 
   describe("getTxToBroadcast", () => {
     it("should format transaction for broadcasting", () => {
-      const account = createMockAccount();
-      const transaction = createMockTransaction();
-      const operation = createMockOperation(account, transaction);
-
       const rawData = {
         sender: TEST_ADDRESSES.F1_ADDRESS,
         recipient: TEST_ADDRESSES.RECIPIENT_F1,
@@ -165,7 +160,7 @@ describe("common-logic/utils", () => {
         value: "100000000000000000",
       };
 
-      const result = getTxToBroadcast(operation, "signature_data", rawData);
+      const result = getTxToBroadcast("signature_data", rawData);
 
       expect(result.message.from).toBe(TEST_ADDRESSES.F1_ADDRESS);
       expect(result.message.to).toBe(TEST_ADDRESSES.RECIPIENT_F1);
@@ -178,8 +173,6 @@ describe("common-logic/utils", () => {
     });
 
     it("should handle ERC20 contract calls with params", () => {
-      const operation = createMockOperation(createMockAccount(), createMockTransaction());
-
       const rawData = {
         sender: TEST_ADDRESSES.F4_ADDRESS,
         recipient: TEST_ADDRESSES.ERC20_CONTRACT,
@@ -194,7 +187,7 @@ describe("common-logic/utils", () => {
         value: "0",
       };
 
-      const result = getTxToBroadcast(operation, "sig", rawData);
+      const result = getTxToBroadcast("sig", rawData);
 
       expect(result.message.params).toBe("base64encodedparams");
       expect(result.message.method).toBe(3844450837);
@@ -280,7 +273,7 @@ describe("common-logic/utils", () => {
       expect(result.spendableBalance?.isEqualTo(new BigNumber("900000000000000000"))).toBe(true);
       expect(result.blockHeight).toBe(TEST_BLOCK_HEIGHTS.CURRENT);
       expect(result.subAccounts).toEqual(mockTokenAccounts);
-      expect(result.operations).toBeDefined();
+      expect(result.operations).toBeInstanceOf(Array);
     });
 
     it("should handle block height safe delta correctly", async () => {

@@ -12,6 +12,7 @@ import {
   activateContractData,
   removeMemberLedgerSync,
   providePublicKey,
+  exportUfvk,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -76,5 +77,10 @@ export class SpeculosPage extends AppPage {
   @step("Provide Public Key")
   async providePublicKey() {
     await providePublicKey();
+  }
+
+  @step("Export UFVK")
+  async exportUfvk(account: Account) {
+    await exportUfvk(account);
   }
 }

@@ -1,13 +1,13 @@
-import invariant from "invariant";
-import expect from "expect";
-import { DeviceModelId } from "@ledgerhq/devices";
-import BigNumber from "bignumber.js";
-import type { Transaction } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
-import { acceptTokenTransaction, acceptTransaction } from "./speculos-deviceActions";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
+import type { Transaction } from "../types";
+import { acceptTokenTransaction, acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(0.0001);
 const maxAccount = 6;

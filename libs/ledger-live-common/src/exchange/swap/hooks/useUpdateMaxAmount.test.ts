@@ -66,20 +66,20 @@ describe("updateAmountUsingMax", () => {
     });
 
     expect(result.current.isMaxEnabled).toBe(false);
-    expect(setFromAmount).toBeCalledTimes(0);
+    expect(setFromAmount).toHaveBeenCalledTimes(0);
     await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(true);
 
     // Lest resort solution, since waitFor and other helpers will not work here.
 
-    expect(setFromAmount).toBeCalledTimes(1);
+    expect(setFromAmount).toHaveBeenCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(amount);
     setFromAmount.mockClear();
 
     await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(false);
 
-    expect(setFromAmount).toBeCalledTimes(1);
+    expect(setFromAmount).toHaveBeenCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(ZERO);
   });
 
@@ -115,7 +115,7 @@ describe("updateAmountUsingMax", () => {
 
     // Updating dependencies when the toggle is off should not do anything.
     propsVariants.forEach(rerender);
-    expect(setFromAmount).toBeCalledTimes(0);
+    expect(setFromAmount).toHaveBeenCalledTimes(0);
 
     mockedEstimateMaxSpendable.mockResolvedValue(new BigNumber(0));
     await act(async () => result.current.toggleMax());
@@ -127,7 +127,7 @@ describe("updateAmountUsingMax", () => {
       setFromAmount.mockReset();
       mockedEstimateMaxSpendable.mockResolvedValue(amount);
       await act(async () => rerender(props));
-      expect(setFromAmount).toBeCalledTimes(1);
+      expect(setFromAmount).toHaveBeenCalledTimes(1);
       expect(setFromAmount.mock.calls[0][0]).toBe(amount);
       idx += 1;
     }

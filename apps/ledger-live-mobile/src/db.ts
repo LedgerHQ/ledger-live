@@ -20,6 +20,7 @@ import type {
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { PersistedIdentities } from "@ledgerhq/client-ids/store";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -73,23 +74,12 @@ async function getKeys(prefix: string) {
   return (await storage.keys()).filter(k => k.indexOf(prefix) === 0);
 }
 
-async function unsafeSaveCountervalues(
-  state: CounterValuesStateRaw,
-  {
-    changed,
-    pairIds,
-  }: {
-    changed: boolean;
-    pairIds: string[];
-  },
-): Promise<void> {
-  if (!changed) return;
-  const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(
-    k => ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
-  );
+async function unsafeSaveCountervalues(state: CounterValuesStateRaw): Promise<void> {
   const data = Object.entries(state).map<[string, RateMapRaw | CounterValuesStatus]>(
     ([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val],
   );
+  const dataKeys = new Set(data.map(([k]) => k));
+  const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(k => !dataKeys.has(k));
   await storage.save(data);
 
   if (deletedKeys.length) {
@@ -311,4 +301,11 @@ export async function saveCryptoAssetsCacheState(persistedData: PersistedCAL): P
   if (persistedData.tokens.length > 0) {
     await storage.save("cryptoAssetsCache", persistedData);
   }
+}
+
+export function getIdentities(): Promise<PersistedIdentities | null> {
+  return storage.get("identities") as Promise<PersistedIdentities | null>;
+}
+export async function saveIdentities(persistedData: PersistedIdentities): Promise<void> {
+  await storage.save("identities", persistedData);
 }

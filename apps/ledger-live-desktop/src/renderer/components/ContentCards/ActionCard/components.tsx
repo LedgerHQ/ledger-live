@@ -30,6 +30,7 @@ const Title = styled.div`
 const Description = styled.div`
   font-weight: 500;
   font-size: 13px;
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 
 const Actions = styled.div`

@@ -1,5 +1,5 @@
-import { decode } from "ripple-binary-codec";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { decode } from "ripple-binary-codec";
 import { createApi } from ".";
 //import { decode, encodeForSigning } from "ripple-binary-codec";
 //import { sign } from "ripple-keypairs";
@@ -35,7 +35,7 @@ describe("Xrp Api (testnet)", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200, order: "asc" });
+      const { items: tx } = await api.listOperations(SENDER, { minHeight: 200, order: "asc" });
 
       // https://blockexplorer.one/xrp/testnet/address/rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb
       // as of 2025-03-18, the address has 287 transactions
@@ -59,7 +59,7 @@ describe("Xrp Api (testnet)", () => {
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
 
       // When
-      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+      const { items: ops } = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
         minHeight: 0,
         order: "asc",
       });
@@ -79,7 +79,7 @@ describe("Xrp Api (testnet)", () => {
     it("returns operations from latest, but in asc order", async () => {
       // When
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
-      const [txDesc] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+      const { items: txDesc } = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
         minHeight: 200,
         order: "desc",
       });
@@ -97,7 +97,7 @@ describe("Xrp Api (testnet)", () => {
       const FAILED_TRANSACTIONS = new Set([
         "8C0D8EF7C52BE287F951ECDF01526D2ABF3BF189C56D0B59607DE1A192E72511",
       ]);
-      const [operations] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+      const { items: operations } = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
         minHeight: 200,
         order: "desc",
       });
@@ -141,6 +141,12 @@ describe("Xrp Api (testnet)", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
+    });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await api.getBalance("rhWTXC2m2gGGA9WozUaoMm6kLAVPb1tcS0");
+
       expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
     });
   });
@@ -243,7 +249,7 @@ describe("Xrp Api (mainnet)", () => {
 
     beforeAll(async () => {
       const resp = await api.listOperations(SENDER, { minHeight: 0 });
-      ops = resp[0];
+      ops = resp.items;
     });
 
     it("returns operations", async () => {
@@ -379,6 +385,15 @@ describe("Xrp Api (mainnet)", () => {
       expect(decode(result)).toMatchObject({
         Fee: customFees.toString(),
       });
+    });
+  });
+
+  describe("broadcast", () => {
+    it("returns the error message when sequence is outdated", async () => {
+      // This error is thrown after submit call, directly in broadcast method
+      const outdatedSequenceTx =
+        "120000228000000024052FCD872ECDD7D4AC201B06048C14614000000B085FA59C68400000000000000A73210311146AB612828EBCACF2F0538E031BFEB3C5CEE03C7297F30DF1A9CBDCB44D8C74463044022051E29B81D7C993E42E752FE7277E0F665EEF532CA23B72FBB49699F1E0511A33022069E4C62C9E8FC95AD32DE9FC9154F83BFBF9588FC69558B99D9C85603BFFEDF2811413B9F21190F88C84F71F0B64C5BCA3E4AA0FF7C783142B9D5E5EA5E91068791B65AFF97D15B11B44B929";
+      await expect(api.broadcast(outdatedSequenceTx)).rejects.toThrow("sequence");
     });
   });
 });

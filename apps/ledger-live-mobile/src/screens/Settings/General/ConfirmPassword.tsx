@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Platform, Vibration } from "react-native";
 import * as Keychain from "react-native-keychain";
-import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 
 import { CompositeScreenProps } from "@react-navigation/native";

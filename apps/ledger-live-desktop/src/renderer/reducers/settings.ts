@@ -34,7 +34,6 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -85,7 +84,6 @@ export type SettingsState = {
   accountsViewMode: "card" | "list";
   showAccountsHelperBanner: boolean;
   mevProtection: boolean;
-  marketPerformanceWidget: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
@@ -99,7 +97,6 @@ export type SettingsState = {
   };
   firstTimeLend: boolean;
   showClearCacheBanner: boolean;
-  fullNodeEnabled: boolean;
   // developer settings
   allowDebugApps: boolean;
   allowReactQueryDebug: boolean;
@@ -129,6 +126,8 @@ export type SettingsState = {
   lastOnboardedDevice: Device | null;
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
+  hasSeenWalletV4Tour: boolean;
+  doNotAskAgainSkipMemo: boolean;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -163,7 +162,7 @@ export const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   countervalueFirst: false,
   autoLockTimeout: 10,
-  selectedTimeRange: "month",
+  selectedTimeRange: "day",
   currenciesSettings: {},
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
@@ -184,7 +183,6 @@ export const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   lastSeenDevice: null,
   mevProtection: true,
-  marketPerformanceWidget: true,
   devicesModelList: [],
   lastSeenCustomImage: {
     size: 0,
@@ -195,7 +193,6 @@ export const INITIAL_STATE: SettingsState = {
   deepLinkUrl: null,
   firstTimeLend: false,
   showClearCacheBanner: false,
-  fullNodeEnabled: false,
   // developer settings
   allowDebugApps: false,
   allowReactQueryDebug: false,
@@ -229,6 +226,8 @@ export const INITIAL_STATE: SettingsState = {
   lastOnboardedDevice: null,
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
+  hasSeenWalletV4Tour: false,
+  doNotAskAgainSkipMemo: false,
 };
 
 /* Handlers */
@@ -283,30 +282,52 @@ type HandlersPayloads = {
   [PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS]: { now: Date };
   [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
-  [TOGGLE_MARKET_WIDGET]: boolean;
   [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: {
     notifications: Record<string, number>;
   };
+  SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
+
+/**
+ * Filters imported settings to only include valid SettingsState keys.
+ * This prevents unknown/obsolete fields (like nftCollectionsStatusByNetwork) from being imported.
+ */
+function isValidSettingsKey(key: string): key is keyof SettingsState {
+  return key in INITIAL_STATE;
+}
+
+export function filterValidSettings(
+  importedSettings: Partial<SettingsState>,
+): Partial<SettingsState> {
+  const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
+
+  return Object.fromEntries(
+    Object.entries(importedSettings).filter(
+      ([key]) => validKeys.has(key) && isValidSettingsKey(key),
+    ),
+  ) as Partial<SettingsState>;
+}
 
 const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
+    const filteredPayload = filterValidSettings(payload);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(payload) as (keyof typeof payload)[]).some(
-      key => payload[key] !== state[key],
+    const changed = (Object.keys(filteredPayload) as (keyof typeof filteredPayload)[]).some(
+      key => filteredPayload[key] !== state[key],
     );
     if (!changed) return state;
     return {
       ...state,
-      ...payload,
+      ...filteredPayload,
     };
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
+    const filteredSettings = filterValidSettings(settings);
     return {
       ...state,
-      ...settings,
+      ...filteredSettings,
       loaded: true,
     };
   },
@@ -467,10 +488,6 @@ const handlers: SettingsHandlers = {
     ...state,
     mevProtection: payload,
   }),
-  [TOGGLE_MARKET_WIDGET]: (state: SettingsState, { payload }) => ({
-    ...state,
-    marketPerformanceWidget: payload,
-  }),
   [TOGGLE_MEMOTAG_INFO]: (state: SettingsState, { payload }) => ({
     ...state,
     alwaysShowMemoTagInfo: payload,
@@ -484,6 +501,10 @@ const handlers: SettingsHandlers = {
       ...state.anonymousUserNotifications,
       ...notifications,
     },
+  }),
+  SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasSeenWalletV4Tour: payload,
   }),
 };
 
@@ -741,12 +762,15 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+
+export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
   const { lastSeenDevice } = state.settings;
   if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice.modelId))
     return null;
   return lastSeenDevice;
 };
+export const hasOnboardedDeviceSelector = (state: State) => lastSeenDeviceSelector(state) !== null;
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
@@ -773,8 +797,7 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
 export const lastOnboardedDeviceSelector = (state: State) => state.settings.lastOnboardedDevice;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
-export const marketPerformanceWidgetSelector = (state: State) =>
-  state.settings.marketPerformanceWidget;
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
+export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;

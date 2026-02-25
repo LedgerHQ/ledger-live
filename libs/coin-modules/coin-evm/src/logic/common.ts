@@ -1,6 +1,3 @@
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   BufferTxData,
   FeeEstimation,
@@ -8,7 +5,12 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import ERC20ABI from "../abis/erc20.abi.json";
+import { getNodeApi } from "../network/node";
+import { buildStakingTransactionParams } from "../staking";
 import {
   ApiFeeData,
   ApiGasOptions,
@@ -16,8 +18,6 @@ import {
   TransactionTypes,
   TransactionLikeWithPreparedParams,
 } from "../types";
-import { getNodeApi } from "../network/node";
-import { buildStakingTransactionParams } from "../staking";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -105,6 +105,7 @@ function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>):
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<TransactionLikeWithPreparedParams> {
   const { sender, type } = transactionIntent;
 
@@ -122,15 +123,18 @@ export async function prepareUnsignedTxParams(
         };
       })()
     : buildStakingTransactionParams(currency, transactionIntent);
-  // Implementations of `getGasEstimation` throw an error when
-  // trying to send more token asset than available.
-  // Fallback to an estimation of 0 to not break the UI.
-  const gasLimit = await node
-    .getGasEstimation(
-      { currency, freshAddress: sender },
-      { amount: BigNumber(value.toString()), recipient: to, data },
-    )
-    .catch(() => new BigNumber(0));
+  const gasLimit =
+    typeof customFeesParameters?.gasLimit === "bigint"
+      ? BigNumber(customFeesParameters.gasLimit.toString())
+      : // Implementations of `getGasEstimation` throw an error when
+        // trying to send more token asset than available.
+        // Fallback to an estimation of 0 to not break the UI.
+        await node
+          .getGasEstimation(
+            { currency, freshAddress: sender },
+            { amount: BigNumber(value.toString()), recipient: to, data },
+          )
+          .catch(() => new BigNumber(0));
 
   return {
     type: transactionType,

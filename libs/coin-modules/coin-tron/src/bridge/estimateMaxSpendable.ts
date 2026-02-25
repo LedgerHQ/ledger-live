@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account";
 import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { Transaction, TronAccount } from "../types";
 import createTransaction from "./createTransaction";
 import getEstimatedFees from "./getEstimateFees";

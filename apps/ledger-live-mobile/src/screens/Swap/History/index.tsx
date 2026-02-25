@@ -7,7 +7,7 @@ import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import {
   Animated,
   Linking,
@@ -17,9 +17,10 @@ import {
   StyleSheet,
   Pressable,
   View,
+  Text,
 } from "react-native";
 import Share from "react-native-share";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { track, TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
@@ -34,7 +35,6 @@ import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 import { getEnv } from "@ledgerhq/live-env";
 import { sendFile } from "../../../../e2e/bridge/client";
-import { Text } from "react-native";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
 import SafeAreaView from "~/components/SafeAreaView";
 
@@ -185,7 +185,7 @@ const History = () => {
           </Alert>
         </View>
       ) : null}
-      <AnimatedSectionList
+      <AnimatedSectionList<MappedSwapOperation, SwapHistorySection>
         ref={ref}
         sections={sections}
         style={styles.sectionList}
@@ -204,9 +204,7 @@ const History = () => {
             />
           ) : null
         }
-        keyExtractor={({ swapId, operation }: { swapId: string; operation?: { id: string } }) =>
-          swapId + operation?.id
-        }
+        keyExtractor={({ swapId, operation }: MappedSwapOperation) => swapId + operation?.id}
         renderItem={renderItem}
         renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
           <LText semiBold style={styles.section} color="grey">

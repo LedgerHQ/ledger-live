@@ -1,9 +1,9 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { UnknownNode } from "../../errors";
 import { getCoinConfig } from "../../config";
+import { UnknownNode } from "../../errors";
 import ledgerNodeApi from "./ledger";
-import { NodeApi } from "./types";
 import rpcNodeApi from "./rpc";
+import { NodeApi } from "./types";
 
 export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
   const config = getCoinConfig(currency).info;

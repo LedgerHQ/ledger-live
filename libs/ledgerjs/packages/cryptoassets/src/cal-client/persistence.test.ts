@@ -9,6 +9,7 @@ import {
   extractTokensFromState,
   extractHashesFromState,
   extractPersistedCALFromState,
+  persistedCALContentEqual,
   filterExpiredTokens,
   restoreTokensToCache,
   PERSISTENCE_VERSION,
@@ -814,6 +815,109 @@ describe("Token Persistence", () => {
       expect(persistedData.version).toBe(PERSISTENCE_VERSION);
       expect(persistedData.tokens).toHaveLength(0);
       expect(persistedData.hashes).toEqual({ ethereum: "hash123" });
+    });
+  });
+
+  describe("persistedCALContentEqual", () => {
+    const baseTokenData: TokenCurrencyRaw = {
+      id: "ethereum/erc20/usdt",
+      contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      parentCurrencyId: "ethereum",
+      tokenType: "erc20",
+      name: "Tether USD",
+      ticker: "USDT",
+      units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+    };
+
+    it("should return true when both are null", () => {
+      expect(persistedCALContentEqual(null, null)).toBe(true);
+    });
+
+    it("should return false when one is null and the other is not", () => {
+      const cal: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+      };
+      expect(persistedCALContentEqual(null, cal)).toBe(false);
+      expect(persistedCALContentEqual(cal, null)).toBe(false);
+    });
+
+    it("should return true for same version, hashes, and token data with different timestamps", () => {
+      const a: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+        hashes: { ethereum: "hash1" },
+      };
+      const b: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 2000 }],
+        hashes: { ethereum: "hash1" },
+      };
+      expect(persistedCALContentEqual(a, b)).toBe(true);
+    });
+
+    it("should return false when version differs", () => {
+      const a: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+      };
+      const b: PersistedCAL = {
+        version: PERSISTENCE_VERSION - 1,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+      };
+      expect(persistedCALContentEqual(a, b)).toBe(false);
+    });
+
+    it("should return false when hashes differ", () => {
+      const a: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+        hashes: { ethereum: "hash1" },
+      };
+      const b: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+        hashes: { ethereum: "hash2" },
+      };
+      expect(persistedCALContentEqual(a, b)).toBe(false);
+    });
+
+    it("should return false when token set differs", () => {
+      const a: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+      };
+      const otherTokenData: TokenCurrencyRaw = {
+        ...baseTokenData,
+        id: "ethereum/erc20/usdc",
+        contractAddress: "0xa0b8",
+        ticker: "USDC",
+      };
+      const b: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [
+          { data: baseTokenData, timestamp: 1000 },
+          { data: otherTokenData, timestamp: 1000 },
+        ],
+      };
+      expect(persistedCALContentEqual(a, b)).toBe(false);
+    });
+
+    it("should return false when token data differs", () => {
+      const a: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: baseTokenData, timestamp: 1000 }],
+      };
+      const b: PersistedCAL = {
+        version: PERSISTENCE_VERSION,
+        tokens: [
+          {
+            data: { ...baseTokenData, ticker: "USDC" },
+            timestamp: 1000,
+          },
+        ],
+      };
+      expect(persistedCALContentEqual(a, b)).toBe(false);
     });
   });
 });

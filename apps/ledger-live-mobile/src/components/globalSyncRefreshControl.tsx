@@ -11,12 +11,14 @@ type Props = {
   error?: Error;
   isError?: boolean;
   forwardedRef?: React.Ref<unknown>;
+  /** Override or extend refresh control options per render (e.g. progressViewOffset). Merged with defaultRefreshControlProps. */
+  overrideRefreshControlProps?: Partial<RefreshControlProps>;
 };
 export default <P,>(
   ScrollListLike: React.ComponentType<P>,
-  refreshControlprops?: Partial<RefreshControlProps>,
+  defaultRefreshControlProps?: Partial<RefreshControlProps>,
 ) => {
-  function Inner({ forwardedRef, ...scrollListLikeProps }: Props & P) {
+  function Inner({ forwardedRef, overrideRefreshControlProps, ...scrollListLikeProps }: Props & P) {
     const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
@@ -53,6 +55,11 @@ export default <P,>(
       };
     }, [refreshing]);
 
+    const mergedRefreshControlProps = {
+      ...defaultRefreshControlProps,
+      ...overrideRefreshControlProps,
+    };
+
     return (
       <ScrollListLike
         {...(scrollListLikeProps as P)}
@@ -64,12 +71,14 @@ export default <P,>(
             tintColor={colors.live}
             refreshing={refreshing}
             onRefresh={onRefresh}
-            {...refreshControlprops}
+            {...mergedRefreshControlProps}
           />
         }
       />
     );
   }
 
-  return React.forwardRef((props: P & Props, ref) => <Inner {...props} forwardedRef={ref} />);
+  return React.forwardRef<unknown, P & Props>((props, ref) => (
+    <Inner {...({ ...props, forwardedRef: ref } as P & Props)} />
+  ));
 };

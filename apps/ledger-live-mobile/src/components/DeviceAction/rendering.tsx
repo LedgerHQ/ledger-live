@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import { ParamListBase, T } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -236,6 +236,7 @@ export function renderConfirmSwap({
   device,
   theme,
   provider,
+  transaction,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
@@ -263,7 +264,10 @@ export function renderConfirmSwap({
           </Text>
         </Wrapper>
       </Wrapper>
-      <TermsFooter provider={provider} />
+      <TermsFooter
+        provider={provider}
+        sponsored={transaction.family === "evm" && transaction.sponsored}
+      />
       <ModalLock />
     </ScrollView>
   );

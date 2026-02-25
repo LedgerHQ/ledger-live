@@ -23,6 +23,7 @@ export const getMockedMirrorAccount = (
 ): HederaMirrorAccount => {
   return {
     account: "0.0.12345",
+    evm_address: "0x0000000000000000000000000000000000012345",
     balance: {
       balance: 1000,
       timestamp: "1764932745.835883000",

@@ -1,6 +1,6 @@
-name: "[Mobile] E2E Only - Scheduled/Manual"
+name: "[Mobile] - E2E Only - Scheduled/Manual"
 run-name: >
-  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'Schedule' && 'scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 on:
   schedule:
@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: "The branch which triggered this workflow"
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter to execute only test suite spec files according to pattern(s) (e.g. to execute nftGallery.spec.ts and deeplinks.spec.ts files "addAccount deeplinks")"
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -58,15 +58,20 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
+      smoke_tests:
+        description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
       ref:
-        description: "The branch which triggered this workflow"
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
         type: string
       test_filter:
-        description: "Filter to execute only test suite spec files according to pattern(s)"
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -88,6 +93,11 @@ on:
         required: false
         type: boolean
         default: false
+      smoke_tests:
+        description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -100,9 +110,19 @@ env:
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
+  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
+  # Android AVD configuration
+  AVD_API: 35
+  AVD_ARCH: x86_64
+  AVD_PROFILE: pixel_7_pro
+  AVD_TARGET: google_apis
+  AVD_NAME: "Android_Emulator"
+  AVD_CORES: 4
+  AVD_RAM_SIZE: 5120M
+  AVD_HEAP_SIZE: 1023M
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
 
 jobs:
   determine-builds:
@@ -112,6 +132,7 @@ jobs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
+      test_filter: ${{ steps.test-filter.outputs.filter }}
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
@@ -124,14 +145,19 @@ jobs:
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+      avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+      avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -141,14 +167,33 @@ jobs:
             e2e/mobile
           token: ${{ steps.generate-token.outputs.token }}
 
-      - name: Generate shards matrix and test files
-        id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
-        with:
-          test_directory: e2e/mobile
-          test_filter: ${{ inputs.test_filter || '' }}
-          event_name: ${{ github.event_name }}
-          ref: ${{ inputs.ref || github.ref_name }}
+      - name: Write summary
+        run: |
+          FILTER_PATTERN="${{ inputs.test_filter || '' }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+          BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
+          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+          SMOKE_TESTS="${{ inputs.smoke_tests }}"
+          TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
+          TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          {
+          echo "## Workflow Context"
+          echo ""
+          echo "- **Workflow source branch:** ${{ github.ref_name }}"
+          echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
+          echo "- **Commit SHA:** ${{ github.sha }}"
+          echo "- **Device selected:** $DEVICE"
+          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Smoke tests:** $SMOKE_TESTS"
+          echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
+          echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
+          echo "- **Firebase env to target:** $BUILD_TYPE"
+          echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          } >> $GITHUB_STEP_SUMMARY
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -164,8 +209,45 @@ jobs:
           echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+
+      - name: Prepare test filter
+        id: test-filter
+        run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
+          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
+            if [ -n "$BASE_FILTER" ]; then
+              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
+            else
+              echo "filter=@smoke" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Generate shards matrix and test files
+        id: generate-shards
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        with:
+          test_directory: e2e/mobile
+          test_filter: ${{ steps.test-filter.outputs.filter }}
+          event_name: ${{ github.event_name }}
+          ref: ${{ inputs.ref || github.ref_name }}
+          ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+          android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+          cache_bucket: ${{ env.cache-bucket }}
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -223,6 +305,18 @@ jobs:
           use-fallback: false
           lookup-only: true
 
+      - name: Check if Android AVD cache exists
+        id: check-avd
+        if: ${{ inputs.tests_type != 'iOS Only' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
+          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
+
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
@@ -254,8 +348,32 @@ jobs:
       production_firebase: ${{ inputs.production_firebase || false }}
     secrets: inherit
 
+  setup-android-avd:
+    name: "Setup Android AVD"
+    needs: [determine-builds]
+    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.outputs.avd_exists != 'true' }}
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    steps:
+      - name: Setup Android AVDs
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          avd_api: ${{ env.AVD_API }}
+          avd_arch: ${{ env.AVD_ARCH }}
+          avd_profile: ${{ env.AVD_PROFILE }}
+          avd_target: ${{ env.AVD_TARGET }}
+          avd_name: ${{ env.AVD_NAME }}
+          avd_cores: ${{ env.AVD_CORES }}
+          avd_ram_size: ${{ env.AVD_RAM_SIZE }}
+          avd_heap_size: ${{ env.AVD_HEAP_SIZE }}
+          avd_options: ${{ env.AVD_OPTIONS }}
+          cache_key: ${{ needs.determine-builds.outputs.avd_cache_key }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+
   detox-tests-ios:
-    name: iOS E2E Tests
+    name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on:
@@ -289,7 +407,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -302,42 +420,26 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Setup iOS timing cache
-        timeout-minutes: 5
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: e2e/mobile/artifacts/e2e-test-results-ios.json
-          key: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}"
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Generate timing-based shards
-        id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
-        with:
-          test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
-          test_directory: e2e/mobile
-          platform: ios
-          shard_index: ${{ matrix.shard }}
-          shard_total: ${{ matrix.total }}
-
-      - name: Set shard test files environment variable
+      - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "${{ matrix.files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
+
+      - name: Install scrcpy
+        run: |
+          brew install scrcpy
 
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
           mkdir -p e2e/mobile/artifacts
           nohup bash -c '
-            echo "🔧 Creating iOS Simulator 2"
-            xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            echo "🔧 Creating iOS Simulator 2 (if not exists)"
+            xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            echo "🔧 Creating iOS Simulator 3 (if not exists)"
+            xcrun simctl list devices | grep -q "iOS Simulator 3" || xcrun simctl create "iOS Simulator 3" "iPhone 15"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -345,6 +447,9 @@ jobs:
             xcrun simctl boot "iOS Simulator 2" || true
             xcrun simctl bootstatus "iOS Simulator 2"
             echo "✅ Simulator 2 is now fully booted"
+            xcrun simctl boot "iOS Simulator 3" || true
+            xcrun simctl bootstatus "iOS Simulator 3"
+            echo "✅ Simulator 3 is now fully booted"
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Simulator boot started in background."
         shell: bash
@@ -371,7 +476,8 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
 
       - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+        run: node node_modules/detox/scripts/postinstall.js
+        working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -445,13 +551,13 @@ jobs:
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         id: "test-artifacts"
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
@@ -459,7 +565,7 @@ jobs:
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: e2e/mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
           name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
@@ -470,15 +576,15 @@ jobs:
         run: |
           echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
 
-      - name: Delete iOS Simulator 2
+      - name: Delete iOS Simulators
         if: always()
         run: |
           xcrun simctl delete "iOS Simulator 2"
-          echo "🧹 Deleted iOS Simulator 2"
+          xcrun simctl delete "iOS Simulator 3"
           xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
   detox-tests-android:
-    name: Android E2E Tests
+    name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-android, determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
@@ -487,15 +593,6 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 35
-      AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_7_pro
-      AVD_TARGET: google_apis
-      AVD_NAME: "Android_Emulator"
-      AVD_NAME_2: "Android_Emulator_2"
-      AVD_CORES: 4
-      AVD_RAM_SIZE: 4096M
-      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -516,7 +613,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_android) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -529,45 +626,31 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Setup Android timing cache
-        timeout-minutes: 5
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: e2e/mobile/artifacts/e2e-test-results-android.json
-          key: "${{ needs.determine-builds.outputs.android_timing_cache_key }}"
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
+      - name: Install scrcpy 3.x and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
 
-      - name: Generate timing-based shards
-        id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
-        with:
-          test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
-          test_directory: e2e/mobile
-          platform: android
-          shard_index: ${{ matrix.shard }}
-          shard_total: ${{ matrix.total }}
+          # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
+          # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
+          SCRCPY_VERSION="3.3.4"
+          curl -L "https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz" -o /tmp/scrcpy.tar.gz
+          tar -xzf /tmp/scrcpy.tar.gz -C /tmp
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/bin/
 
-      - name: Set shard test files environment variable
+          scrcpy --version
+          ls -la /usr/local/bin/scrcpy*
+
+      - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "${{ matrix.files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - name: setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: "17"
-
-      - name: setup Android SDK
-        uses: android-actions/setup-android@v3.2.2
-        with:
-          packages: "tools platform-tools"
+      - name: Setup Android Environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -604,28 +687,20 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-pnpm-cache: "true"
+          skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - name: Enable Hardware Acceleration
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Fix emulator directory permissions
-        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
-
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+        run: node node_modules/detox/scripts/postinstall.js
+        working-directory: apps/ledger-live-mobile
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -640,7 +715,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          key: ${{ needs.determine-builds.outputs.avd_cache_key }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
@@ -648,54 +723,44 @@ jobs:
           region: auto
           destination: /
 
-      - name: create AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd
+      - name: Duplicate AVDs for parallel testing
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
         with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
+          source_avd_name: ${{ env.AVD_NAME }}
+          target_suffixes: "_2,_3"
+          avd_api: ${{ env.AVD_API }}
 
-      - name: create second AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd-2
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME_2 }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
+      - name: Cleanup any running Android emulators (pre-boot)
+        run: tools/scripts/cleanup-android-emulators.sh || true
 
-      - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        with:
-          path: |
-            /home/runner/.android/
-            /usr/local/lib/android/sdk/emulator/
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
+      - name: Boot Android Emulators in Background
+        run: |
+          LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
+          mkdir -p e2e/mobile/artifacts
+          nohup bash -c '
+            log() { echo "[$(date +%H:%M:%S)] $1"; }
+            ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
+
+            log "🛫 Starting emulators..."
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} --read-only  2>&1 | ts "EMU1" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} --read-only 2>&1 | ts "EMU2" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} --read-only 2>&1 | ts "EMU3" &
+
+            log "⏳ Waiting for 3 emulators to connect..."
+            while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
+            log "✅ 3 emulators connected"
+            log "⏳ Waiting for all emulators to finish booting..."
+            adb -s emulator-5554 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
+            log "✅ emulator-5554 booted"
+            adb -s emulator-5556 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
+            log "✅ emulator-5556 booted"
+            adb -s emulator-5558 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
+            log "✅ emulator-5558 booted"
+
+            log "✅ All 3 emulators are fully booted"
+          ' > "$LOG_FILE" 2>&1 &
+          echo "ℹ️ Android emulators boot started in background."
+        shell: bash
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
@@ -734,13 +799,14 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+          ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         id: "test-artifacts"
         with:
           name: android-test-artifacts-${{ matrix.shard }}
@@ -748,7 +814,7 @@ jobs:
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: e2e/mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
           name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
@@ -771,7 +837,7 @@ jobs:
       missingShards: ${{ steps.aggregate.outputs.missingShards }}
     steps:
       - name: Download Allure Report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
@@ -784,7 +850,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -822,7 +888,7 @@ jobs:
     needs: [determine-builds, detox-tests-android]
     steps:
       - name: Download Allure Report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: android-test-artifacts
           pattern: android-test-artifacts*
@@ -835,7 +901,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -882,13 +948,13 @@ jobs:
     needs: [detox-tests-android, detox-tests-ios]
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
       - name: Download Allure Results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: "artifacts-${{ matrix.platform }}"
           pattern: ${{ matrix.platform }}-test-artifacts-*
@@ -898,7 +964,7 @@ jobs:
         run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
 
       - name: Upload aggregated xray results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           retention-days: 1
           name: xray-reports-${{ matrix.platform }}
@@ -953,7 +1019,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
+                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                   "emoji": true
                 }
               },

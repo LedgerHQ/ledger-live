@@ -1,27 +1,29 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import NoAccounts from "./NoAccountsImage";
 import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
-import { DefaultTheme, withTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
-  const { push } = useHistory();
+
+const EmptyStateAccounts = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const urlFaq = useLocalizedUrl(urls.faq);
 
   const handleInstallApp = useCallback(() => {
-    push("/manager");
-  }, [push]);
+    navigate("/manager");
+  }, [navigate]);
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "emptyStateAccounts",
@@ -98,4 +100,4 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
     </Box>
   );
 };
-export default React.memo(withTheme(EmptyStateAccounts));
+export default React.memo(EmptyStateAccounts);

@@ -4,7 +4,7 @@ import { Logo } from "./Logo";
 import { PropsCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -22,7 +22,7 @@ export function MinimumCard(props: PropsCard<RecentlyUsedManifest | LiveAppManif
   }, [lang, manifest]);
 
   return (
-    <Container disabled={disabled} onClick={onClick} width={300}>
+    <Container disabled={disabled} onClick={onClick} width={300} highlighted={false}>
       <Flex alignItems="center">
         <Logo icon={manifest.icon} name={manifest.name} size="small" disabled={disabled} />
 

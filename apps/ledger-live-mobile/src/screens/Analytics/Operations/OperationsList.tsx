@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
 import { flattenAccounts, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import NoOperationFooter from "~/components/NoOperationFooter";
 import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";

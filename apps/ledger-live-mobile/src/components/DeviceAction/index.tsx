@@ -10,11 +10,7 @@ import {
   ImageDoesNotExistOnDevice,
   NoSuchAppOnProvider,
 } from "@ledgerhq/live-common/errors";
-import {
-  ExchangeRate,
-  ExchangeSwap,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -25,8 +21,8 @@ import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "~/context/Locale";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
@@ -72,6 +68,8 @@ import {
 } from "./rendering";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
@@ -89,6 +87,7 @@ type Status = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: DeviceId | null | undefined;
   requestOpenApp: string;
   allowOpeningRequestedWording: string;
   requiresAppInstallation: {
@@ -108,9 +107,6 @@ type Status = PartialNullable<{
   deviceStreamingProgress: number;
   displayUpgradeWarning: boolean;
   passWarning: () => void;
-  initSwapRequested: boolean;
-  initSwapError: Error;
-  initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
   imageRemoveRequested: boolean;
@@ -207,6 +203,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
+    deviceId,
     requestOpenApp,
     allowOpeningRequestedWording,
     requiresAppInstallation,
@@ -297,6 +294,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   });
 
   useTrackDmkErrorsEvents({ error });
+
+  // Add deviceId to identities store when detected
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
 
   useEffect(() => {
     if (deviceInfo && device) {

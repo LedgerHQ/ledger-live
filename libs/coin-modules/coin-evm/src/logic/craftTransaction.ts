@@ -5,10 +5,10 @@ import {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { Transaction, TransactionLike } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TransactionTypes } from "../types";
+import { Transaction, TransactionLike } from "ethers";
 import { getNodeApi } from "../network/node";
+import { TransactionTypes } from "../types";
 import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 
@@ -25,6 +25,7 @@ export async function craftTransaction(
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
     currency,
     transactionIntent,
+    customFees?.parameters,
   );
 
   // Some apps including, including Magic Eden, set the nonce to -1

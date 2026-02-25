@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { VirtualList } from "./VirtualList";
-import { action } from "@storybook/addon-actions";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const items = Array.from({ length: 50 }, (_, i) => ({ i }));
@@ -131,7 +130,8 @@ export const WithPagination: Story = {
     const [isFetching, setIsFetching] = useState(false);
 
     const handleFetchNextPage = async () => {
-      action("fetchNextPage")();
+      const logFetchNextPage = () => {};
+      logFetchNextPage();
       if (isFetching) return;
       setIsFetching(true);
       await new Promise(resolve => setTimeout(resolve, 1000));

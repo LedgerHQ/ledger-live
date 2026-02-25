@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
+import { useLocation, useNavigate } from "react-router";
 import { USBTroubleshootingIndexSelector } from "~/renderer/reducers/settings";
 import { setUSBTroubleshootingIndex } from "~/renderer/actions/settings";
 import { setTrackingSource } from "../analytics/TrackPage";
@@ -8,7 +9,7 @@ function useUSBTroubleshooting() {
   const lastLocation = useRef<string | null>(null);
   const dispatch = useDispatch();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const USBTroubleshootingIndex = useSelector(USBTroubleshootingIndexSelector);
   useEffect(() => {
     if (!lastLocation.current) lastLocation.current = location.pathname;
@@ -24,8 +25,7 @@ function useUSBTroubleshooting() {
       } else {
         setTrackingSource("USBTroubleshooting");
         lastLocation.current = "/USBTroubleshooting";
-        history.push({
-          pathname: "/USBTroubleshooting",
+        navigate("/USBTroubleshooting", {
           state: {
             USBTroubleshootingIndex,
           },
@@ -34,6 +34,6 @@ function useUSBTroubleshooting() {
     } else {
       lastLocation.current = location.pathname;
     }
-  }, [USBTroubleshootingIndex, dispatch, history, location.pathname]);
+  }, [USBTroubleshootingIndex, dispatch, navigate, location.pathname]);
 }
 export default useUSBTroubleshooting;

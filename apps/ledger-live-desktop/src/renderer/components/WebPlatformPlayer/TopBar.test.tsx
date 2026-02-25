@@ -1,13 +1,12 @@
 import React from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { render, screen, fireEvent } from "tests/testSetup";
 import { MemoryRouter } from "react-router";
 import { TopBar } from "./TopBar";
 import { WebviewState } from "../Web3AppWebview/types";
 
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
+jest.mock("LLD/hooks/redux", () => ({
   useSelector: jest.fn(),
   useDispatch: () => jest.fn(),
 }));
@@ -73,12 +72,13 @@ describe("Top Bar", () => {
   };
 
   it("does not render if isInternalApp is true and dev tools are disabled", () => {
-    (useSelector as jest.Mock).mockReturnValue(false);
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
 
     expect(screen.queryByText("common.sync.refresh")).toBeNull();
@@ -86,38 +86,41 @@ describe("Top Bar", () => {
   });
 
   it("renders refresh and dev tools buttons when dev tools are enabled", () => {
-    (useSelector as jest.Mock).mockReturnValue(true);
+    (useSelector as unknown as jest.Mock).mockReturnValue(true);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
     expect(screen.getByText("Refresh")).toBeInTheDocument();
     expect(screen.getByText("Dev tools")).toBeInTheDocument();
   });
 
   it("renders only refresh button when on an external app and dev tools disabled", () => {
-    (useSelector as jest.Mock).mockReturnValue(false);
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
     const internalManifest = { ...mockManifest, id: "" };
 
     render(
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} manifest={internalManifest} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
     expect(screen.getByText("Refresh")).toBeInTheDocument();
     expect(screen.queryByText("common.sync.devTools")).toBeNull();
   });
 
   it("toggles mobile view when mobile view switch is clicked", () => {
-    (useSelector as jest.Mock).mockReturnValue(true);
+    (useSelector as unknown as jest.Mock).mockReturnValue(true);
     const mockSetMobileView = jest.fn();
 
     render(
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} setMobileView={mockSetMobileView} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
 
     const mobileViewToggle = screen.getByTestId("mobile-view-toggle");
@@ -128,7 +131,7 @@ describe("Top Bar", () => {
   });
 
   it("updates mobile width when input value changes", () => {
-    (useSelector as jest.Mock).mockReturnValue(true);
+    (useSelector as unknown as jest.Mock).mockReturnValue(true);
     const mockSetMobileView = jest.fn();
     const mobileViewDisplayed = { display: true, width: 355 };
 
@@ -140,6 +143,7 @@ describe("Top Bar", () => {
           setMobileView={mockSetMobileView}
         />
       </MemoryRouter>,
+      { skipRouter: true },
     );
     const widthInput = screen.getByTestId("mobile-view-width-input");
     fireEvent.change(widthInput, { target: { value: "400" } });

@@ -61,7 +61,7 @@ export function StepAssetFooter({
     <>
       <AccountFooter account={account} status={status} />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
         <Button disabled={!canNext} primary onClick={() => transitionTo("connectDevice")}>

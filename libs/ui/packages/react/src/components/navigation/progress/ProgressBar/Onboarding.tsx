@@ -53,7 +53,7 @@ export type OnboardingProps = {
   currentIndex: number;
 };
 
-const Onboarding = ({ steps, currentIndex }: OnboardingProps): JSX.Element => {
+const Onboarding = ({ steps, currentIndex }: OnboardingProps): React.JSX.Element => {
   const currentStep = steps[currentIndex];
   const fill = ((currentIndex / (steps.length - 1)) * 100).toFixed(2);
 

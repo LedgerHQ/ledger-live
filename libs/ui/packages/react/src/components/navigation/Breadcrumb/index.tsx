@@ -23,9 +23,9 @@ const Link = styled(Text).attrs({
   tabIndex: 0,
 })`
   cursor: pointer;
-  :hover,
-  :active,
-  :focus {
+  &:hover,
+  &:active,
+  &:focus {
     color: ${p => p.theme.colors.neutral.c100};
     text-decoration: underline;
   }
@@ -35,7 +35,7 @@ function isMultiSegment(segment: Segment): segment is Elements {
   return (segment as Elements).options !== undefined;
 }
 
-export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Element {
+export default memo(function Breadcrumb({ segments, onChange }: Props): React.JSX.Element {
   const theme = useTheme();
   const [contents] = segments.reduce<[React.ReactNode[], string[]]>(
     ([renderArray, valuesArray], segment, index) => {
@@ -68,7 +68,7 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
                   maxWidth: undefined,
                   transform: undefined,
                   color: theme.colors.neutral.c80,
-                  ":hover": {
+                  "&:hover": {
                     color: theme.colors.neutral.c100,
                     textDecoration: "underline",
                   },

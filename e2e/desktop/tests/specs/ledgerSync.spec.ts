@@ -1,6 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { expect } from "@playwright/test";
@@ -62,7 +62,6 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["LIVE-22920"]);
 
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCount(0);

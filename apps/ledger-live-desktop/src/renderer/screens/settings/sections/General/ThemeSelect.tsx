@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { setTheme } from "~/renderer/actions/settings";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
-import { useTheme, ThemeMode } from "@ledgerhq/ldls-ui-react";
+import { useTheme, ThemeMode } from "@ledgerhq/lumen-ui-react";
 
 type ThemeSelectOption = {
   value: string | null;
@@ -26,7 +26,9 @@ const ThemeSelect = () => {
 
   const handleChangeTheme = useCallback(
     (theme: ThemeSelectOption) => {
-      setMode(theme.value as ThemeMode);
+      const lumenMode: ThemeMode =
+        theme.value === "dark" || theme.value === "light" ? theme.value : "system";
+      setMode(lumenMode);
       dispatch(setTheme(theme.value));
     },
     [dispatch, setMode],

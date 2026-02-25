@@ -41,11 +41,11 @@ const Wrapper = styled(Box)`
   display: flex;
   align-items: center;
 
-  :hover ${CurNameTokenIcon} {
+  &:hover ${CurNameTokenIcon} {
     display: flex;
   }
 
-  :hover ${CurNameTokenLink} {
+  &:hover ${CurNameTokenLink} {
     color: ${p => p.theme.colors.wallet};
     background-color: ${p => p.theme.colors.pillActiveBackground};
   }
@@ -81,7 +81,7 @@ const AssetHeader: React.ComponentType<Props> = React.memo(function AssetHeader(
   return (
     <Box horizontal alignItems="center" flow={2} grow>
       <Box>
-        <ParentCryptoCurrencyIcon currency={currency} bigger />
+        <ParentCryptoCurrencyIcon currency={currency} />
       </Box>
       <Box grow>
         {contract && account.type === "TokenAccount" ? (

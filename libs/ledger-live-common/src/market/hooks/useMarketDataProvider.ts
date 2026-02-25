@@ -1,18 +1,9 @@
-import { UseQueryResult, useQueries, useQuery } from "@tanstack/react-query";
-import {
-  fetchCurrency,
-  fetchCurrencyChartData,
-  fetchList,
-  getSupportedCoinsList,
-  supportedCounterCurrencies,
-} from "../api";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
-import { useMemo } from "react";
-import { listSupportedCurrencies } from "../../currencies";
-import { currencyFormatter, format } from "../utils/currencyFormatter";
+import { UseQueryResult, useQueries } from "@tanstack/react-query";
+import { fetchList } from "../api";
+import { useGetCurrencyDataQuery } from "../state-manager/api";
+import { currencyFormatter } from "../utils/currencyFormatter";
 import { QUERY_KEY } from "../utils/queryKeys";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
+import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import {
   MarketCurrencyRequestParams,
   MarketListRequestParams,
@@ -23,62 +14,13 @@ import {
   Order,
 } from "../utils/types";
 
-export function useMarketDataProvider() {
-  const supportedCurrenciesInLIve = listSupportedCurrencies();
-
-  const liveCompatibleIds: string[] = supportedCurrenciesInLIve
-    .map(({ id }: CryptoCurrency) => id)
-    .filter(Boolean);
-  const { data: supportedCounterCurrencies } = useSupportedCounterCurrencies();
-  const { data: supportedCurrencies } = useSupportedCurrencies();
-
-  const liveCoinsList = useMemo(
-    () =>
-      (supportedCurrencies || [])
-        ?.filter(({ id }) => liveCompatibleIds.includes(id))
-        .map(({ id }) => id),
-    [liveCompatibleIds, supportedCurrencies],
-  );
-
-  return {
-    supportedCounterCurrencies,
-    supportedCurrencies,
-    liveCoinsList,
-  };
-}
-
-export const useCurrencyChartData = ({ id, counterCurrency, range }: MarketCurrencyRequestParams) =>
-  useQuery({
-    queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
-    queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id }),
-    refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-  });
-
 export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestParams) =>
-  useQuery({
-    queryKey: [QUERY_KEY.CurrencyDataRaw, id, counterCurrency],
-    queryFn: () => fetchCurrency({ id, counterCurrency }),
-    refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    select: data => format(data),
-  });
-
-export const useSupportedCounterCurrencies = () =>
-  useQuery({
-    queryKey: [QUERY_KEY.SupportedCounterCurrencies],
-    queryFn: () => supportedCounterCurrencies(),
-    refetchOnWindowFocus: true,
-    staleTime: ONE_DAY,
-  });
-
-export const useSupportedCurrencies = () =>
-  useQuery({
-    queryKey: [QUERY_KEY.SupportedCurrencies],
-    queryFn: () => getSupportedCoinsList(),
-    refetchOnWindowFocus: true,
-    staleTime: ONE_DAY,
-  });
+  useGetCurrencyDataQuery(
+    { id, counterCurrency },
+    {
+      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    },
+  );
 
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
   const search = props.search?.toLowerCase() ?? "";
@@ -92,8 +34,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
           counterCurrency: props.counterCurrency,
           ...(props.search && props.search?.length >= 2 && { search: search }),
           ...(props.starred && props.starred?.length >= 1 && { starred: props.starred }),
-          ...(props.liveCoinsList &&
-            props.liveCoinsList?.length >= 1 && { liveCoinsList: props.liveCoinsList }),
+          ...(props.liveCompatible && { liveCompatible: props.liveCompatible }),
           ...(props.order &&
             [Order.topLosers, Order.topGainers].includes(props.order) && { range: props.range }),
         },
@@ -104,7 +45,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         page,
       }),
       refetchOnMount: false,
-      refetchOnReconnect: false,
+      refetchOnReconnect: true,
       refetchOnWindowFocus: false,
     })),
     combine: combineMarketData,

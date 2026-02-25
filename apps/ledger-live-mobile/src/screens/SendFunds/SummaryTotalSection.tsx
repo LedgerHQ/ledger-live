@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CounterValue from "~/components/CounterValue";
@@ -14,7 +14,7 @@ import Info from "~/icons/Info";
 import { withTheme, Theme } from "~/colors";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { InformationFill } from "@ledgerhq/native-ui/assets/icons";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;

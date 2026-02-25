@@ -17,8 +17,8 @@ describe("BlePlxManager", () => {
       emitCurrentState => {
         // given
         const instance = BlePlxManager.instance;
-        vi.spyOn(instance, "onStateChange");
-        const listener = vi.fn();
+        jest.spyOn(instance, "onStateChange");
+        const listener = jest.fn();
         // when
         BlePlxManager.onStateChange(listener, emitCurrentState);
         // then

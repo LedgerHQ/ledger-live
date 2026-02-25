@@ -2,7 +2,7 @@ import React, { ComponentType, ReactElement, ReactNode, useCallback, useState } 
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box } from "@ledgerhq/native-ui";
-import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -11,9 +11,8 @@ import InfoModal from "../InfoModal";
 import { useAnalytics } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 import { NavigatorName } from "~/const";
-import { useRoute } from "@react-navigation/native";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 
 export type ModalOnDisabledClickComponentProps = {

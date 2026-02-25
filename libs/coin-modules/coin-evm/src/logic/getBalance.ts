@@ -1,13 +1,13 @@
 import type { Balance, AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { getNodeApi } from "../network/node";
 import { getExplorerApi } from "../network/explorer";
-import { NodeApi } from "../network/node/types";
 import { ExplorerApi } from "../network/explorer/types";
+import { getNodeApi } from "../network/node";
+import { NodeApi } from "../network/node/types";
 import { getStakes } from "./getStakes";
 
-export const TOKEN_BALANCE_BATCH_SIZE = 10;
+export const TOKEN_BALANCE_BATCH_SIZE = 8;
 
 /**
  * Get all assets linked to the user (native, tokens, ...)
@@ -52,7 +52,7 @@ async function getTokenBalances(
   // Execute staking and token operations in parallel for better performance
   const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
     getStakes(currency, address),
-    explorerApi.getLastOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
+    explorerApi.getOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
   ]);
 
   // Add staking positions to balances (with error handling)

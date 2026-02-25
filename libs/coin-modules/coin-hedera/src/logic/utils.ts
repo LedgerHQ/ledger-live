@@ -22,6 +22,7 @@ import {
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   TINYBAR_SCALE,
+  OP_TYPES_EXCLUDING_FEES,
 } from "../constants";
 import { apiClient } from "../network/api";
 import type {
@@ -69,7 +70,7 @@ export const getOperationValue = ({
     return BigInt(0);
   }
 
-  if (asset.type === "native" && operation.type === "OUT") {
+  if (asset.type === "native" && OP_TYPES_EXCLUDING_FEES.includes(operation.type)) {
     return BigInt(operation.value.toFixed(0)) - BigInt(operation.fee.toFixed(0));
   }
 
@@ -245,7 +246,7 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
       return true;
     }
 
-    const [parsingError, parsingResult] = safeParseAccountId(address);
+    const [parsingError, parsingResult] = await safeParseAccountId(address);
 
     if (parsingError) {
       throw parsingError;
@@ -278,9 +279,9 @@ export const getChecksum = (accountId: string): string | null => {
   }
 };
 
-export const safeParseAccountId = (
+export const safeParseAccountId = async (
   address: string,
-): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
+): Promise<[Error, null] | [null, { accountId: string; checksum: string | null }]> => {
   const currency = findCryptoCurrencyById("hedera");
   const currencyName = currency?.name ?? "Hedera";
 
@@ -289,7 +290,7 @@ export const safeParseAccountId = (
     const checksum = getChecksum(address);
 
     if (checksum) {
-      const client = rpcClient.getInstance();
+      const client = await rpcClient.getInstance();
       const expectedChecksum = accountId.toStringWithChecksum(client).split("-")[1];
 
       if (checksum !== expectedChecksum) {
@@ -337,23 +338,20 @@ export function getSyntheticBlock(
 }
 
 /**
- * Calculates the timestamp range based on a synthetic block height.
+ * Calculates the date range based on a synthetic block height.
  *
  * @param blockHeight - The synthetic block height
  * @param blockWindowSeconds - Duration of one synthetic block in seconds (default: 10)
- * @returns Hedera timestamp range as a string
+ * @returns block date range
  */
-export function getTimestampRangeFromBlockHeight(
+export function getDateRangeFromBlockHeight(
   blockHeight: number,
   blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS,
 ) {
-  const startTimestamp = blockHeight * blockWindowSeconds;
-  const endTimestamp = (blockHeight + 1) * blockWindowSeconds;
+  const start = new Date(blockHeight * blockWindowSeconds * 1000);
+  const end = new Date((blockHeight + 1) * blockWindowSeconds * 1000);
 
-  return {
-    start: `${startTimestamp}.000000000`,
-    end: `${endTimestamp}.000000000`,
-  };
+  return { start, end };
 }
 
 export const formatTransactionId = (transactionId: TransactionId): string => {
@@ -364,16 +362,17 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
 };
 
 /**
- * Converts a Hedera account ID (e.g. "0.0.1234") into its corresponding EVM address in hexadecimal format.
- * If the conversion fails, it returns null.
+ * Fetches EVM address for given Hedera account ID (e.g. "0.0.1234").
+ * It returns null if the fetch fails.
  *
- * @param address - Hedera account ID in the format `shard.realm.num`
- * @returns the long-zero EVM address (`0x...`) or null if conversion fails
+ * @param accountId - Hedera account ID in the format `shard.realm.num`
+ * @returns EVM address (`0x...`) or null if fetch fails
  */
-export const toEVMAddress = (accountId: string) => {
+export const toEVMAddress = async (accountId: string): Promise<string | null> => {
   try {
-    const evmAddress = "0x" + AccountId.fromString(accountId).toEvmAddress();
-    return evmAddress;
+    const account = await apiClient.getAccount(accountId);
+
+    return account.evm_address;
   } catch {
     return null;
   }
@@ -505,6 +504,48 @@ export const calculateAPY = (rewardRateStart: number): number => {
 };
 
 /**
+ * Calculates the uncommitted balance change for an account between two timestamps.
+ *
+ * This function handles the timing mismatch between Mirror Node balance snapshots and actual transactions.
+ * Balance snapshots are taken at regular intervals, not at every transaction, so querying by exact timestamp
+ * may return a snapshot from before moment you need.
+ *
+ * @param address - Hedera account ID (e.g., "0.0.12345")
+ * @param startTimestamp - Start of the time range (exclusive, format: "1234567890.123456789")
+ * @param endTimestamp - End of the time range (inclusive, format: "1234567890.123456789")
+ * @returns The net balance change as BigInt (sum of all transfers to/from the account)
+ */
+export const calculateUncommittedBalanceChange = async ({
+  address,
+  startTimestamp,
+  endTimestamp,
+}: {
+  address: string;
+  startTimestamp: string;
+  endTimestamp: string;
+}): Promise<BigNumber> => {
+  if (Number(startTimestamp) >= Number(endTimestamp)) {
+    return new BigNumber(0);
+  }
+
+  const uncommittedTransactions = await apiClient.getTransactionsByTimestampRange({
+    address,
+    startTimestamp: `gt:${startTimestamp}`,
+    endTimestamp: `lte:${endTimestamp}`,
+  });
+
+  // Sum all balance changes from transfers related to this account
+  const uncommittedBalanceChange = uncommittedTransactions.reduce((total, tx) => {
+    const transfers = tx.transfers ?? [];
+    const relevantTransfers = transfers.filter(t => t.account === address);
+    const netChange = relevantTransfers.reduce((sum, t) => sum.plus(t.amount), new BigNumber(0));
+    return total.plus(netChange);
+  }, new BigNumber(0));
+
+  return uncommittedBalanceChange;
+};
+
+/**
  * Hedera uses the AccountUpdateTransaction for multiple purposes, including staking operations.
  * Mirror node classifies all such transactions under the same name: "CRYPTOUPDATEACCOUNT".
  *
@@ -517,6 +558,16 @@ export const calculateAPY = (rewardRateStart: number): number => {
  * 1. Fetching the account state BEFORE the transaction (using lt: timestamp filter)
  * 2. Fetching the account state AFTER the transaction (using eq: timestamp filter)
  * 3. Comparing the staked_node_id field to determine what changed
+ * 4. Calculating the actual staked amount by replaying uncommitted transactions between
+ *    the latest balance snapshot and the staking operation to handle snapshot timing mismatches
+ *
+ * @performance
+ * Makes 3 API calls per operation:
+ * - account state before
+ * - account state after
+ * - transaction history based on latest balance snapshot
+ *
+ * Batching would complicate code for minimal gain given low staking op frequency.
  */
 export const analyzeStakingOperation = async (
   address: string,
@@ -552,10 +603,19 @@ export const analyzeStakingOperation = async (
     return null;
   }
 
+  // calculate uncommitted balance changes between the last snapshot and the staking tx
+  const uncommittedBalanceChange = await calculateUncommittedBalanceChange({
+    address,
+    startTimestamp: accountAfter.balance.timestamp,
+    endTimestamp: mirrorTx.consensus_timestamp,
+  });
+
+  const actualStakedAmount = uncommittedBalanceChange.plus(accountAfter.balance.balance);
+
   return {
     operationType,
     previousStakingNodeId,
     targetStakingNodeId,
-    stakedAmount: BigInt(accountAfter.balance.balance), // always entire balance on Hedera (fully liquid)
+    stakedAmount: BigInt(actualStakedAmount.toString()), // always entire balance on Hedera (fully liquid)
   };
 };

@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable, Subject } from "rxjs";
-import { describe, it, beforeEach, expect, vi } from "vitest";
+import { waitFor } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   ConnectedDevice,
@@ -24,13 +24,13 @@ import { DisconnectedDevice } from "@ledgerhq/errors";
 
 function createMockDMK(): DeviceManagementKit {
   const mock = {
-    getDeviceSessionState: vi.fn<DeviceManagementKit["getDeviceSessionState"]>(),
-    getConnectedDevice: vi.fn<DeviceManagementKit["getConnectedDevice"]>(),
-    connect: vi.fn<DeviceManagementKit["connect"]>(),
-    disconnect: vi.fn<DeviceManagementKit["disconnect"]>(),
-    listenToAvailableDevices: vi.fn<DeviceManagementKit["listenToAvailableDevices"]>(),
-    listenToConnectedDevice: vi.fn<DeviceManagementKit["listenToConnectedDevice"]>(),
-    sendApdu: vi.fn<DeviceManagementKit["sendApdu"]>(),
+    getDeviceSessionState: jest.fn<DeviceManagementKit["getDeviceSessionState"]>(),
+    getConnectedDevice: jest.fn<DeviceManagementKit["getConnectedDevice"]>(),
+    connect: jest.fn<DeviceManagementKit["connect"]>(),
+    disconnect: jest.fn<DeviceManagementKit["disconnect"]>(),
+    listenToAvailableDevices: jest.fn<DeviceManagementKit["listenToAvailableDevices"]>(),
+    listenToConnectedDevice: jest.fn<DeviceManagementKit["listenToConnectedDevice"]>(),
+    sendApdu: jest.fn<DeviceManagementKit["sendApdu"]>(),
   };
   return mock as unknown as DeviceManagementKit;
 }
@@ -59,7 +59,7 @@ const createMockDiscoveredDevice = (
 
 describe("DeviceManagementKitHIDTransport", () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe("open", () => {
@@ -67,13 +67,13 @@ describe("DeviceManagementKitHIDTransport", () => {
       // given
       const mockDMK = createMockDMK();
       const deviceSessionState = aMockedDeviceSessionState;
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
         new Observable(subscriber => {
           subscriber.next(deviceSessionState);
         }),
       );
       const activeTransport = new DeviceManagementKitHIDTransport(mockDMK, "sessionId");
-      vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         transport: activeTransport,
       });
       const connectedDevice: ConnectedDevice = {
@@ -83,7 +83,7 @@ describe("DeviceManagementKitHIDTransport", () => {
         modelId: DeviceModelId.FLEX,
         name: "FLEX",
       };
-      vi.mocked(mockDMK.getConnectedDevice).mockReturnValue(connectedDevice);
+      jest.mocked(mockDMK.getConnectedDevice).mockReturnValue(connectedDevice);
 
       // when
       const transport = await DeviceManagementKitHIDTransport.open(
@@ -102,18 +102,18 @@ describe("DeviceManagementKitHIDTransport", () => {
         // given
         const mockDMK = createMockDMK();
 
-        vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
+        jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
           new BehaviorSubject({
             ...aMockedDeviceSessionState,
             deviceStatus: DeviceStatus.CONNECTED,
           }).asObservable(),
         );
         const activeTransport = new DeviceManagementKitHIDTransport(mockDMK, "sessionId");
-        vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
           transport: activeTransport,
         });
 
-        vi.mocked(mockDMK.getConnectedDevice).mockReturnValue({
+        jest.mocked(mockDMK.getConnectedDevice).mockReturnValue({
           id: "deviceId",
           type: "USB",
           sessionId: "sessionId",
@@ -136,18 +136,18 @@ describe("DeviceManagementKitHIDTransport", () => {
       it("when it is in a NOT_CONNECTED state, it should wait for a new device to be available and return a new transport", async () => {
         // given
         const mockDMK = createMockDMK();
-        vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
+        jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
           new BehaviorSubject({
             ...aMockedDeviceSessionState,
             deviceStatus: DeviceStatus.NOT_CONNECTED,
           }).asObservable(),
         );
         const activeTransport = new DeviceManagementKitHIDTransport(mockDMK, "sessionIdA");
-        vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
           transport: activeTransport,
         });
 
-        vi.mocked(mockDMK.getConnectedDevice).mockReturnValue({
+        jest.mocked(mockDMK.getConnectedDevice).mockReturnValue({
           id: "deviceId",
           type: "USB",
           sessionId: "sessionId",
@@ -156,13 +156,13 @@ describe("DeviceManagementKitHIDTransport", () => {
         });
 
         const mockedDiscoveredDevice = createMockDiscoveredDevice();
-        const mockedListenToAvailableDevices = vi.mocked(mockDMK.listenToAvailableDevices);
+        const mockedListenToAvailableDevices = jest.mocked(mockDMK.listenToAvailableDevices);
         mockedListenToAvailableDevices.mockReturnValue(
           new Observable(subscriber => {
             subscriber.next([mockedDiscoveredDevice]);
           }),
         );
-        const mockedConnect = vi.mocked(mockDMK.connect);
+        const mockedConnect = jest.mocked(mockDMK.connect);
         mockedConnect.mockResolvedValue("sessionIdB");
 
         // when
@@ -189,22 +189,22 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("given there is no active session, it should wait for a new device to be available and return a new transport", async () => {
       // given
       const mockDMK = createMockDMK();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
         new BehaviorSubject({
           ...aMockedDeviceSessionState,
           deviceStatus: DeviceStatus.NOT_CONNECTED,
         }).asObservable(),
       );
-      vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
+      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
 
       const mockedDiscoveredDevice = createMockDiscoveredDevice();
-      const mockedListenToAvailableDevices = vi.mocked(mockDMK.listenToAvailableDevices);
+      const mockedListenToAvailableDevices = jest.mocked(mockDMK.listenToAvailableDevices);
       mockedListenToAvailableDevices.mockReturnValue(
         new Observable(subscriber => {
           subscriber.next([mockedDiscoveredDevice]);
         }),
       );
-      const mockedConnect = vi.mocked(mockDMK.connect);
+      const mockedConnect = jest.mocked(mockDMK.connect);
       mockedConnect.mockResolvedValue("sessionId");
 
       // when
@@ -232,7 +232,7 @@ describe("DeviceManagementKitHIDTransport", () => {
     let subscription: TransportSubscription | undefined = undefined;
 
     beforeEach(() => {
-      vi.resetAllMocks();
+      jest.resetAllMocks();
       if (subscription) {
         subscription.unsubscribe();
         subscription = undefined;
@@ -246,12 +246,12 @@ describe("DeviceManagementKitHIDTransport", () => {
       const observer = new Subject();
       const mockedDiscoveredDevice = createMockDiscoveredDevice({ id: "deviceId" });
       const discoveredDevices: DiscoveredDevice[] = [mockedDiscoveredDevice];
-      vi.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
+      jest.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
         new Observable(subscriber => {
           subscriber.next(discoveredDevices);
         }),
       );
-      vi.spyOn(observer, "next");
+      jest.spyOn(observer, "next");
 
       // when
       subscription = staticTransport.listen(observer, undefined, mockDMK);
@@ -274,10 +274,10 @@ describe("DeviceManagementKitHIDTransport", () => {
 
       const discoveredDevicesSubject = new Subject<DiscoveredDevice[]>();
 
-      vi.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
-        discoveredDevicesSubject.asObservable(),
-      );
-      vi.spyOn(observer, "next");
+      jest
+        .mocked(mockDMK.listenToAvailableDevices)
+        .mockReturnValue(discoveredDevicesSubject.asObservable());
+      jest.spyOn(observer, "next");
       // when
       subscription = staticTransport.listen(observer, undefined, mockDMK);
 
@@ -285,7 +285,7 @@ describe("DeviceManagementKitHIDTransport", () => {
       discoveredDevicesSubject.next([]);
 
       // then
-      await vi.waitFor(() => {
+      await waitFor(() => {
         expect(observer.next).toHaveBeenNthCalledWith(1, {
           type: "add",
           descriptor: "deviceId",
@@ -306,12 +306,12 @@ describe("DeviceManagementKitHIDTransport", () => {
       const staticTransport = DeviceManagementKitHIDTransport;
       const observer = new Subject();
       const error = new Error("error");
-      vi.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
+      jest.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
         new Observable(subscriber => {
           subscriber.error(error);
         }),
       );
-      vi.spyOn(observer, "error");
+      jest.spyOn(observer, "error");
 
       // when
       subscription = staticTransport.listen(observer, undefined, mockDMK);
@@ -324,7 +324,7 @@ describe("DeviceManagementKitHIDTransport", () => {
   describe("close", () => {
     it("should just resolve", async () => {
       const mockDMK = createMockDMK();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
       await transport.close();
     });
@@ -334,8 +334,8 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("should throw an error if no active session", async () => {
       // given
       const mockDMK = createMockDMK();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
-      vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
 
       // when
@@ -352,14 +352,14 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("should call dmk sendApdu and return response", async () => {
       // given
       const mockDMK = createMockDMK();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
 
-      const mockSendApdu = vi.mocked(mockDMK.sendApdu);
+      const mockSendApdu = jest.mocked(mockDMK.sendApdu);
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
-      vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         transport,
       });
-      vi.mocked(mockDMK.sendApdu).mockResolvedValue({
+      jest.mocked(mockDMK.sendApdu).mockResolvedValue({
         data: Uint8Array.from([0x42, 0x21, 0x34, 0x44, 0x54, 0x67, 0x89]),
         statusCode: Uint8Array.from([0x90, 0x00]),
       });
@@ -382,10 +382,10 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("should return an error if dmk sendApdu throws", async () => {
       // given
       const mockDMK = createMockDMK();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
-      const mockSendApdu = vi.mocked(mockDMK.sendApdu);
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+      const mockSendApdu = jest.mocked(mockDMK.sendApdu);
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
-      vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         transport,
       });
       mockSendApdu.mockRejectedValue(new Error("SendApdu error"));
@@ -409,10 +409,10 @@ describe("DeviceManagementKitHIDTransport", () => {
       it(`should remap ${error.constructor.name} to DisconnectedDevice`, async () => {
         // given
         const mockDMK = createMockDMK();
-        vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
-        const mockSendApdu = vi.mocked(mockDMK.sendApdu);
+        jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+        const mockSendApdu = jest.mocked(mockDMK.sendApdu);
         const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
-        vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
           transport,
         });
         mockSendApdu.mockRejectedValue(error);
@@ -434,8 +434,8 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("should be called on new transport", () => {
       // given
       const mockDMK = createMockDMK();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
-      vi.spyOn(DeviceManagementKitHIDTransport.prototype, "listenToDisconnect");
+      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+      jest.spyOn(DeviceManagementKitHIDTransport.prototype, "listenToDisconnect");
 
       // when
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
@@ -448,12 +448,12 @@ describe("DeviceManagementKitHIDTransport", () => {
       // given
       const mockDMK = createMockDMK();
       const deviceSessionStateSubject = new Subject<DeviceSessionState>();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-        deviceSessionStateSubject.asObservable(),
-      );
-      vi.spyOn(activeDeviceSessionSubject, "next");
+      jest
+        .mocked(mockDMK.getDeviceSessionState)
+        .mockReturnValue(deviceSessionStateSubject.asObservable());
+      jest.spyOn(activeDeviceSessionSubject, "next");
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
-      vi.spyOn(transport, "emit");
+      jest.spyOn(transport, "emit");
 
       // when
       deviceSessionStateSubject.next({
@@ -470,13 +470,13 @@ describe("DeviceManagementKitHIDTransport", () => {
       // given
       const mockDMK = createMockDMK();
       const deviceSessionStateSubject = new Subject<DeviceSessionState>();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-        deviceSessionStateSubject.asObservable(),
-      );
-      vi.spyOn(activeDeviceSessionSubject, "next");
+      jest
+        .mocked(mockDMK.getDeviceSessionState)
+        .mockReturnValue(deviceSessionStateSubject.asObservable());
+      jest.spyOn(activeDeviceSessionSubject, "next");
 
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
-      vi.spyOn(transport, "emit");
+      jest.spyOn(transport, "emit");
 
       // when
       deviceSessionStateSubject.next({
@@ -493,11 +493,11 @@ describe("DeviceManagementKitHIDTransport", () => {
       // given
       const mockDMK = createMockDMK();
       const deviceSessionStateSubject = new Subject<DeviceSessionState>();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-        deviceSessionStateSubject.asObservable(),
-      );
+      jest
+        .mocked(mockDMK.getDeviceSessionState)
+        .mockReturnValue(deviceSessionStateSubject.asObservable());
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "sessionId");
-      vi.spyOn(transport, "emit");
+      jest.spyOn(transport, "emit");
 
       // when
       deviceSessionStateSubject.complete();
@@ -510,11 +510,11 @@ describe("DeviceManagementKitHIDTransport", () => {
       // given
       const mockDMK = createMockDMK();
       const deviceSessionStateSubject = new Subject<DeviceSessionState>();
-      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-        deviceSessionStateSubject.asObservable(),
-      );
+      jest
+        .mocked(mockDMK.getDeviceSessionState)
+        .mockReturnValue(deviceSessionStateSubject.asObservable());
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "sessionId");
-      vi.spyOn(transport, "emit");
+      jest.spyOn(transport, "emit");
 
       // when
       deviceSessionStateSubject.error(new Error("error"));

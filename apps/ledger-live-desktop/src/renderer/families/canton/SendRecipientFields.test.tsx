@@ -25,6 +25,10 @@ jest.mock("./CommentField", () => ({
   __esModule: true,
   default: () => <div data-testid="comment-field" />,
 }));
+jest.mock("./ExpiryDurationField", () => ({
+  __esModule: true,
+  default: () => <div />,
+}));
 
 const createMockTransactionStatus = (
   overrides: Partial<TransactionStatus> = {},

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { ChevronRightMedium, CloseMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import { TouchableOpacityProps, TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
@@ -32,7 +32,7 @@ export const Container = styled(TouchableOpacity)`
 
 export const CloseContainer = styled(TouchableOpacity)`
   background-color: ${(p) => p.theme.colors.opacityDefault.c05};
-  border-radius: 50;
+  border-radius: 50px;
   height: 24px;
   width: 24px;
   display: flex;

@@ -159,7 +159,7 @@ export function StepSummaryFooter({ transitionTo }: StepProps) {
   return (
     <>
       <Box horizontal>
-        <Button mr={1} secondary onClick={() => transitionTo("validator")}>
+        <Button mr={1} onClick={() => transitionTo("validator")}>
           <Trans i18nKey="common.back" />
         </Button>
         <Button

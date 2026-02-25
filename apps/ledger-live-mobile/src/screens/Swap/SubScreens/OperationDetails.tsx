@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { Trans } from "~/context/Locale";
+import { useSelector } from "~/context/hooks";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
@@ -21,12 +21,21 @@ import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
 import { OperationDetailsParamList } from "../types";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 
 export function OperationDetails({ route }: OperationDetailsParamList) {
   const { swapOperation } = route.params;
-  const { swapId, provider, toAccountId, fromAccountId, fromAmount, toAmount, operation } =
-    swapOperation;
+  const {
+    swapId,
+    provider,
+    toAccountId,
+    fromAccountId,
+    fromAmount,
+    toAmount,
+    finalAmount,
+    operation,
+  } = swapOperation;
+  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = useMemo(
     () => accounts.find(a => a.id === fromAccountId),
@@ -51,9 +60,22 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     color: colors[statusColorKey as keyof typeof colors],
   };
 
-  const url =
-    fromCurrency?.type === "CryptoCurrency" &&
-    getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+  const getProviderExplorerUrl = () => {
+    switch (provider.toLowerCase()) {
+      case "okx":
+        if (fromCurrency?.id) {
+          return `https://web3.okx.com/fi/explorer/${fromCurrency.id}/tx/${operation.hash}`;
+        }
+      // fallthrough to default if fromCurrency or fromCurrency.id is undefined
+      default:
+        return (
+          fromCurrency?.type === "CryptoCurrency" &&
+          getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash)
+        );
+    }
+  };
+
+  const url = getProviderExplorerUrl();
 
   const providerUrl =
     urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main || undefined;
@@ -87,7 +109,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
         </View>
         <LText style={styles.toAmount} color={statusColorKey}>
           {toAccount && unitTo ? (
-            <CurrencyUnitValue alwaysShowSign showCode unit={unitTo} value={toAmount} />
+            <CurrencyUnitValue alwaysShowSign showCode unit={unitTo} value={displayToAmount} />
           ) : null}
         </LText>
         <View style={styles.statusTextWrapper}>
@@ -188,7 +210,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           </LText>
           <LText style={styles.value} testID="swap-operation-details-toAmount">
             {toAccount && unitTo ? (
-              <CurrencyUnitValue showCode unit={unitTo} value={toAmount} />
+              <CurrencyUnitValue showCode unit={unitTo} value={displayToAmount} />
             ) : null}
           </LText>
         </View>

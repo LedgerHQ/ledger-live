@@ -1,7 +1,6 @@
-import React, { useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Linking } from "react-native";
-import SplashScreen from "react-native-splash-screen";
+import React, { useMemo, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { Platform, Linking, View, StyleSheet } from "react-native";
 import {
   getStateFromPath,
   LinkingOptions,
@@ -11,7 +10,7 @@ import {
 } from "@react-navigation/native";
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -28,13 +27,12 @@ import {
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
-import { navigationIntegration } from "../sentry";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
+import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
-import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
+import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
 const TRACKING_EVENT = "deeplink_clicked";
-import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import {
   validateEarnAction,
   validateEarnInfoModal,
@@ -42,9 +40,14 @@ import {
   logSecurityEvent,
   EarnDeeplinkAction,
   validateEarnDepositScreen,
+  validateLargeMoverCurrencyIds,
+  validateLargeMoverLedgerIds,
+  validateMarketCurrencyId,
 } from "./deeplinks/validation";
-import { viewNamePredicate } from "~/datadog";
+import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
+import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
 const themes: {
@@ -53,6 +56,18 @@ const themes: {
   light: lightTheme,
   dark: darkTheme,
 };
+
+const SPLASH_SCREEN_BACKGROUND_COLOR = "#18171A";
+const styles = StyleSheet.create({
+  appBackground: {
+    flex: 1,
+    backgroundColor: SPLASH_SCREEN_BACKGROUND_COLOR,
+  },
+});
+
+function handleStartComplete() {
+  logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+}
 
 function isWalletConnectUrl(url: string) {
   return url.startsWith("wc:");
@@ -330,7 +345,10 @@ export const DeeplinksProvider = ({
   children: React.ReactNode;
   resolvedTheme: "light" | "dark";
 }) => {
+  logStartupEvent("DeeplinksProvider render");
+
   const dispatch = useDispatch();
+  const triggeredAppStartRef = useRef(true);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   // Hook to close drawers when deeplink is triggered after app was in background
@@ -343,6 +361,8 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav } =
+    useWalletFeaturesConfig("mobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -503,6 +523,7 @@ export const DeeplinksProvider = ({
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Track deeplink session when app comes from background
             track("Start", { isDeeplinkSession: true });
+            triggeredAppStartRef.current = false;
 
             // Close all drawers if app was in background before deeplink
             onDeeplinkReceived();
@@ -560,9 +581,13 @@ export const DeeplinksProvider = ({
             }, 4000); // Allow 4 seconds before resetting password lock, unless on Detox e2e test, as this breaks CI.
           }
 
+          const triggeredAppStart = triggeredAppStartRef.current;
+          triggeredAppStartRef.current = false;
+
           // Track deeplink only when ajsPropSource attribute exists.
           if (ajsPropSource) {
             track(TRACKING_EVENT, {
+              triggeredAppStart,
               deeplinkSource: ajsPropSource,
               deeplinkCampaign: ajsPropCampaign,
               url: hostname,
@@ -574,6 +599,7 @@ export const DeeplinksProvider = ({
             });
           } else
             track(TRACKING_EVENT, {
+              triggeredAppStart,
               deeplinkSource,
               deeplinkType,
               deeplinkDestination,
@@ -584,6 +610,56 @@ export const DeeplinksProvider = ({
             });
 
           const platform = pathname.split("/")[1];
+
+          if (hostname === "landing-page-large-mover") {
+            const validatedLedgerIds = validateLargeMoverLedgerIds(searchParams.get("ledgerIds"));
+            const validatedCurrencyIds = validateLargeMoverCurrencyIds(
+              searchParams.get("currencyIds"),
+            );
+            if (validatedLedgerIds) {
+              url.searchParams.set("currencyIds", "");
+              url.searchParams.set("ledgerIds", validatedLedgerIds);
+            } else if (validatedCurrencyIds) {
+              url.searchParams.delete("ledgerIds");
+              url.searchParams.set("currencyIds", validatedCurrencyIds);
+            } else {
+              return getStateFromPath("market", config);
+            }
+            return getStateFromPath(url.href?.split("://")[1], config);
+          }
+
+          if (hostname === "market") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("market", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+            if (shouldDisplayMarketBanner) {
+              return handleMarketBannerDeeplink();
+            }
+            return getStateFromPath("market", config);
+          }
+
+          // Handle asset deeplink - validate currencyId before navigation
+          if (hostname === "asset") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("portfolio", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+          }
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
@@ -665,6 +741,24 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
+
+          if (hostname === "swap") {
+            const swapParams = new URLSearchParams();
+            const fromPath = searchParams.get("fromPath");
+            const fromToken = searchParams.get("fromToken");
+            const toToken = searchParams.get("toToken");
+            const amountFrom = searchParams.get("amountFrom");
+            const affiliate = searchParams.get("affiliate");
+            if (fromPath) swapParams.set("fromPath", fromPath);
+            if (fromToken) swapParams.set("fromTokenId", fromToken);
+            if (toToken) swapParams.set("toTokenId", toToken);
+            if (amountFrom) swapParams.set("amountFrom", amountFrom);
+            if (affiliate) swapParams.set("affiliate", affiliate);
+            const swapSearch = swapParams.toString();
+            const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
+            return getStateFromPath(pathWithParams, config);
+          }
+
           if ((hostname === "discover" || hostname === "recover") && platform) {
             if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
@@ -690,6 +784,11 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
+          if (shouldDisplayWallet40MainNav) {
+            const w40State = handleWallet40Deeplink(hostname, platform, query);
+            if (w40State) return w40State;
+          }
+
           return getStateFromPath(path, config);
         },
       } as LinkingOptions<ReactNavigation.RootParamList>
@@ -699,13 +798,16 @@ export const DeeplinksProvider = ({
     llmAccountListUI?.enabled,
     AccountsListScreenName,
     userAcceptedTerms,
+    onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
+    shouldDisplayMarketBanner,
+    shouldDisplayWallet40MainNav,
     liveAppProviderInitialized,
     manifests,
-    onDeeplinkReceived,
   ]);
   const [isReady, setIsReady] = React.useState(false);
+  const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
 
   useEffect(() => {
     if (userAcceptedTerms === null) return;
@@ -721,39 +823,34 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  if (!isReady) {
-    return null;
-  }
+  const animSplash = useFeature("llmAnimatedSplashScreen");
+  const showAnimatedSplashScreen = useRef(
+    (animSplash?.enabled && animSplash.params?.[Platform.OS]) ?? true,
+  );
+  const SplashScreenComponent = useRef(
+    showAnimatedSplashScreen.current ? AppLoadingManager : SplashScreenHandle,
+  );
 
   return (
-    <AppLoadingManager
-      isNavigationReady={isReady}
-      onAppReady={async () => {
-        navigationIntegration.registerNavigationContainer(navigationRef);
-
-        try {
-          DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
-
-          logStartupEvent(STARTUP_EVENTS.STARTED);
-          const events = await resolveStartupEvents();
-          const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
-          await track("app_startup_events", { appStartupTime, events });
-        } catch (error) {
-          console.error("Error during app startup tracking:", error);
-        }
-      }}
-    >
-      <NavigationContainer
-        theme={theme}
-        linking={linking}
-        ref={navigationRef}
-        onReady={() => {
-          isReadyRef.current = true;
-          setTimeout(() => SplashScreen.hide(), 300);
-        }}
+    <View style={styles.appBackground}>
+      <SplashScreenComponent.current
+        isNavigationReady={isReady && isNavigationContainerReady}
+        onAppReady={handleStartComplete}
       >
-        {children}
-      </NavigationContainer>
-    </AppLoadingManager>
+        {isReady ? (
+          <NavigationContainer
+            theme={theme}
+            linking={linking}
+            ref={navigationRef}
+            onReady={() => {
+              setIsNavigationContainerReady(true);
+              isReadyRef.current = true;
+            }}
+          >
+            {children}
+          </NavigationContainer>
+        ) : null}
+      </SplashScreenComponent.current>
+    </View>
   );
 };

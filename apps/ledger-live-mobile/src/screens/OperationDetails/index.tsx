@@ -1,7 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
-import { useSelector } from "react-redux";
 import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
@@ -10,7 +9,6 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import { Operation } from "@ledgerhq/types-live";
 
 import byFamiliesOperationDetails from "../../generated/operationDetails";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Footer from "./Footer";
@@ -20,13 +18,14 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import Config from "react-native-config";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigatorProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OperationDetails>
 >;
 
 function OperationDetails({ route }: NavigatorProps) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   if (!account) {
     return null;

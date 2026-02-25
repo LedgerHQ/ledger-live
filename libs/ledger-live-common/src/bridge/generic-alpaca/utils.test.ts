@@ -1,17 +1,107 @@
 import {
   adaptCoreOperationToLiveOperation,
+  applyMemoToIntent,
+  bigNumberToBigIntDeep,
   buildOptimisticOperation,
   cleanedOperation,
   extractBalance,
+  extractBalances,
   findCryptoCurrencyByNetwork,
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
+import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("applyMemoToIntent", () => {
+    it("does not apply any memo", () => {
+      const intent = applyMemoToIntent(
+        {} as unknown as TransactionIntent,
+        {} as GenericTransaction,
+      );
+
+      expect(intent).toEqual({});
+    });
+
+    it.each([
+      [0, "0"],
+      [1, "1"],
+    ])("applies '%s' as the destination tag", (tag, expectedTag) => {
+      const intent = applyMemoToIntent(
+        {} as unknown as TransactionIntent,
+        { tag } as GenericTransaction,
+      );
+
+      expect(intent).toEqual({
+        memo: { type: "map", memos: new Map([["destinationTag", expectedTag]]) },
+      });
+    });
+
+    it("applies a custom memo type", () => {
+      const intent = applyMemoToIntent(
+        {} as unknown as TransactionIntent,
+        { memoType: "memo-type", memoValue: "memo-value" } as GenericTransaction,
+      );
+
+      expect(intent).toEqual({
+        memo: { type: "memo-type", value: "memo-value" },
+      });
+    });
+  });
+
+  describe("bigNumberToBigIntDeep", () => {
+    it.each([
+      [undefined, undefined],
+      [null, null],
+      ["", ""],
+      ["str", "str"],
+      [0, 0],
+      [1, 1],
+      [true, true],
+      [false, false],
+      [new BigNumber(0), 0n],
+      [new BigNumber(1), 1n],
+      [[], []],
+      [
+        ["str", 1],
+        ["str", 1],
+      ],
+      [
+        ["str", BigNumber(1)],
+        ["str", 1n],
+      ],
+      [
+        [new BigNumber(0), new BigNumber(1)],
+        [0n, 1n],
+      ],
+      [{}, {}],
+      [
+        { a: "str", b: 0, c: true },
+        { a: "str", b: 0, c: true },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: true },
+        { a: "str", b: 1n, c: true },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: { ca: new BigNumber(2), cb: 4 } },
+        { a: "str", b: 1n, c: { ca: 2n, cb: 4 } },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: { ca: new BigNumber(2), cb: null } },
+        { a: "str", b: 1n, c: { ca: 2n, cb: null } },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: { ca: new BigNumber(2), cb: undefined } },
+        { a: "str", b: 1n, c: { ca: 2n } },
+      ],
+    ])("replaces BigNumbers with BigInts (%j)", (input, output) => {
+      expect(bigNumberToBigIntDeep(input)).toStrictEqual(output);
+    });
+  });
+
   describe("buildOptimisticOperation", () => {
     it.each([
       [
@@ -330,6 +420,59 @@ describe("Alpaca utils", () => {
 
     it("does not find non existing currencies", () => {
       expect(findCryptoCurrencyByNetwork("non_existing_currency")).toBeUndefined();
+    });
+  });
+
+  describe("extractBalances", () => {
+    it("extracts native balance only", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 0n, asset: { type: "native" } }]);
+
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(8),
+          balance: BigNumber(10),
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 2n, asset: { type: "native" } }]);
+    });
+
+    it("extracts native and token balances", () => {
+      expect(
+        extractBalances(
+          {
+            spendableBalance: BigNumber(10),
+            balance: BigNumber(10),
+            subAccounts: [
+              {
+                spendableBalance: BigNumber(11),
+                balance: BigNumber(20),
+                token: {
+                  tokenType: "erc20",
+                  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+              },
+            ],
+          } as unknown as Account,
+          token => ({
+            type: token.tokenType,
+            assetReference: token.contractAddress,
+          }),
+        ),
+      ).toEqual([
+        { value: 10n, locked: 0n, asset: { type: "native" } },
+        {
+          asset: {
+            assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            type: "erc20",
+          },
+          locked: 9n,
+          value: 20n,
+        },
+      ]);
     });
   });
 

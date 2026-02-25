@@ -1,7 +1,7 @@
 import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import styled from "styled-components";
-import { useArgs } from "@storybook/manager-api";
+import { useArgs } from "storybook/manager-api";
 import { Props as FlowStepperProps } from "./index";
 import { Divider, Flex, FlowStepper, Text, Button, Box, Link, IconsLegacy, Tag } from "../../..";
 import type { Size as TagSize } from "../../Tag";

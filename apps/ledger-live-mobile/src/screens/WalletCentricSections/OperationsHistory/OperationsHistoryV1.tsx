@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { OperationsHistoryList } from "./OperationsHistoryList";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";

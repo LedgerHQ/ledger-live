@@ -10,8 +10,9 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { TFunction } from "i18next";
 import { withTranslation } from "react-i18next";
-import { connect, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
+import { useNavigate, useLocation } from "react-router";
 import { compose } from "redux";
 import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
@@ -43,6 +44,7 @@ import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/in
 import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useStake } from "LLD/hooks/useStake";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -134,17 +136,16 @@ const ActionItem = ({
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
-  const history = useHistory();
+  const navigate = useNavigate();
   const onWalletConnectLiveApp = useCallback(() => {
     setTrackingSource("account header actions");
     const params = {
       initialAccountId: mainAccount.id,
     };
-    history.push({
-      pathname: `/platform/${WC_ID}`,
+    navigate(`/platform/${WC_ID}`, {
       state: params,
     });
-  }, [mainAccount.id, history]);
+  }, [mainAccount.id, navigate]);
 
   const isWalletConnectActionDisplayable = isWalletConnectSupported(currency);
 
@@ -190,7 +191,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const navigate = useNavigate();
+  const location = useLocation();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const openSendFlow = useOpenSendFlow();
 
   const manage = specific?.accountHeaderManageActions;
   let manageList: ManageAction[] = [];
@@ -221,7 +225,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const showButtons = !!getAvailableProviders();
   const availableOnSwap = currenciesAll.includes(currency.id);
 
-  const history = useHistory();
   const buttonSharedTrackingFields = useMemo(
     () => ({
       currency: currency.ticker,
@@ -239,15 +242,14 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       isRedirectConfig: true,
       ...buttonSharedTrackingFields,
     });
-    history.push({
-      pathname: routeToStakePlatformApp?.pathname,
+    navigate(routeToStakePlatformApp?.pathname ?? "/", {
       state: routeToStakePlatformApp?.state,
     });
   }, [
     routeToStakePlatformApp?.state,
     routeToStakePlatformApp?.pathname,
     buttonSharedTrackingFields,
-    history,
+    navigate,
   ]);
 
   const onBuySell = useCallback(
@@ -257,8 +259,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         button: mode,
         ...buttonSharedTrackingFields,
       });
-      history.push({
-        pathname: "/exchange",
+      navigate("/exchange", {
         state: {
           currency: currency?.id,
           account: mainAccount?.id,
@@ -266,7 +267,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         },
       });
     },
-    [currency, history, mainAccount.id, buttonSharedTrackingFields],
+    [currency, navigate, mainAccount.id, buttonSharedTrackingFields],
   );
 
   const onSwap = useCallback(() => {
@@ -276,28 +277,35 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       ...swapDefaultTrack,
     });
     setTrackingSource(pageName);
-    history.push({
-      pathname: "/swap",
+    navigate("/swap", {
       state: {
         defaultCurrency: currency,
-        defaultAccount: account,
-        defaultParentAccount: parentAccount,
+        defaultAccountId: account.id,
+        defaultParentAccountId: parentAccount?.id,
         defaultAmountFrom: "0",
-        from: history.location.pathname,
+        from: location.pathname,
       },
     });
-  }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
+  }, [
+    currency,
+    swapDefaultTrack,
+    navigate,
+    location,
+    account,
+    parentAccount,
+    buttonSharedTrackingFields,
+  ]);
 
   const onSend = useCallback(() => {
     track("button_clicked2", {
       button: "send",
       ...buttonSharedTrackingFields,
     });
-    openModal("MODAL_SEND", {
+    openSendFlow({
       parentAccount,
       account,
     });
-  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+  }, [openSendFlow, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Toast } from "./Toast";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";

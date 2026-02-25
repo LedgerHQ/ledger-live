@@ -1,21 +1,23 @@
 import { dirname, join } from "path";
-module.exports = {
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+
+const config = {
   typescript: {
     reactDocgen: true,
   },
 
-  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   staticDirs: ["../src"],
 
   addons: [
     getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-webpack5-compiler-babel"),
-    getAbsolutePath("@storybook/addon-interactions"),
+    getAbsolutePath("@storybook/addon-docs"),
   ],
 
   framework: {
-    name: getAbsolutePath("@storybook/react-webpack5"),
+    name: getAbsolutePath("storybook-react-rsbuild"),
     options: {},
   },
 
@@ -23,6 +25,7 @@ module.exports = {
     autodocs: true,
   },
 };
+export default config;
 
 function getAbsolutePath(value) {
   return dirname(require.resolve(join(value, "package.json")));

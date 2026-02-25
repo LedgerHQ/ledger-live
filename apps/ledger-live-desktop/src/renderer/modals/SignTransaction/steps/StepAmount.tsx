@@ -12,6 +12,8 @@ import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 import { closeAllModal } from "~/renderer/actions/modals";
+import { useDispatch } from "LLD/hooks/redux";
+
 const StepAmount = ({
   account,
   parentAccount,
@@ -24,6 +26,7 @@ const StepAmount = ({
   updateTransaction,
 }: StepProps) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const { gasPrice: gasPriceError } = status.errors;
@@ -65,7 +68,7 @@ const StepAmount = ({
       {mainAccount && gasPriceError && (
         <LowGasAlertBuyMore
           account={mainAccount}
-          handleRequestClose={closeAllModal}
+          handleRequestClose={() => dispatch(closeAllModal())}
           gasPriceError={gasPriceError}
           trackingSource={"sign flow"}
         />

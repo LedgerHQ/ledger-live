@@ -18,7 +18,9 @@ export default {
   },
 };
 
-export const BoxedIconStory: StoryFn<typeof BoxedIcon> = (args: typeof BoxedIconStoryArgs) => {
+export const BoxedIconStory: StoryFn<typeof BoxedIconStoryArgs> = (
+  args: typeof BoxedIconStoryArgs,
+) => {
   const variant = args.variant;
   return (
     <Flex flexDirection="column" alignItems="center">

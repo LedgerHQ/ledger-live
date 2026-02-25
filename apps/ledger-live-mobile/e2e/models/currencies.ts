@@ -1,15 +1,12 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,
   formatCurrencyUnitOptions,
-} from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { genAccount } from "@ledgerhq/live-common/mock/account";
-import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { BigNumber } from "bignumber.js";
+import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";

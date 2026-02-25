@@ -20,12 +20,16 @@ runs:
   using: composite
 
   steps:
-    - name: Generate token
+    - name: generate token
       id: generate-token
-      uses: tibdex/github-app-token@v1
+      uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
       with:
-        app_id: ${{ inputs.bot_id }}
-        private_key: ${{ inputs.bot_key }}
+        app-id: ${{ inputs.bot_id }}
+        private-key: ${{ inputs.bot_key }}
+        repositories: |
+          coin-apps
+          ledger-live
+
     - name: Retrieving coin apps
       uses: actions/checkout@v4
       with:
@@ -33,6 +37,7 @@ runs:
         repository: LedgerHQ/coin-apps
         token: ${{ steps.generate-token.outputs.token }}
         path: ${{ inputs.coinapps_path }}
+
     - name: Pull docker image
       if: ${{ inputs.speculos_tag }}
       run: docker pull ${{ inputs.speculos_tag }}

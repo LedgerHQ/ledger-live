@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
@@ -15,7 +15,7 @@ import LedgerLogo from "~/icons/LiveLogo";
 import type { ItemPropsType } from "./types";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.

@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "~/reducers/settings";

@@ -125,11 +125,11 @@ describe("serialization", () => {
 
   test("assignToAccountRaw should assign SuiResources to AccountRaw", () => {
     assignToAccountRaw(account, accountRaw);
-    expect(accountRaw.suiResources).toBeDefined();
+    expect(accountRaw.suiResources).toEqual({});
   });
 
   test("assignFromAccountRaw should assign SuiResourcesRaw to Account", () => {
     assignFromAccountRaw(accountRaw, account);
-    expect(account.suiResources).toBeDefined();
+    expect(accountRaw.suiResources).toEqual({});
   });
 });

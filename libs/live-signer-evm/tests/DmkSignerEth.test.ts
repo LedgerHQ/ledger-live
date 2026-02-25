@@ -7,6 +7,13 @@ import { SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
 describe("DmkSignerEth", () => {
   const dmkMock = {
     executeDeviceAction: jest.fn(),
+    getLoggerFactory: jest.fn().mockReturnValue(() => ({
+      tag: jest.fn().mockReturnThis(),
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    })),
   };
   let signer: DmkSignerEth;
 
@@ -253,7 +260,7 @@ describe("DmkSignerEth", () => {
               derivationPath: "path",
               transaction: Uint8Array.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06]),
               options: expect.objectContaining({
-                domain: undefined,
+                skipOpenApp: true,
               }),
             }),
           }),
@@ -306,7 +313,7 @@ describe("DmkSignerEth", () => {
               derivationPath: "path",
               transaction: Uint8Array.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06]),
               options: expect.objectContaining({
-                domain,
+                skipOpenApp: true,
               }),
             }),
           }),

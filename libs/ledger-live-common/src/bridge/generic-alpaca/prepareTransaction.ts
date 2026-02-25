@@ -1,6 +1,6 @@
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { transactionToIntent } from "./utils";
+import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -23,7 +23,6 @@ function assetInfosFallback(transaction: GenericTransaction): {
 
 function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
   const value = estimation?.parameters?.[field];
-
   if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") return;
 
   switch (field) {
@@ -44,10 +43,10 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
 }
 
 export function genericPrepareTransaction(
-  network: string,
-  kind,
-): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
-  return async (account, transaction: GenericTransaction) => {
+  _network: string,
+  kind: string,
+): AccountBridge<GenericTransaction>["prepareTransaction"] {
+  return async (account, transaction) => {
     const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
       account.currency.id,
       kind,
@@ -84,14 +83,16 @@ export function genericPrepareTransaction(
       },
       computeIntentType,
     );
+    const customFeesParameters = bigNumberToBigIntDeep({
+      gasPrice: transaction.gasPrice,
+      maxFeePerGas: transaction.maxFeePerGas,
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+      gasLimit: transaction.customGasLimit,
+      gasOptions: transaction.gasOptions,
+    });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
-      : await estimateFees(intent, {
-          gasPrice: transaction.gasPrice,
-          maxFeePerGas: transaction.maxFeePerGas,
-          maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-          gasOptions: transaction.gasOptions,
-        });
+      : await estimateFees(intent, customFeesParameters);
     const fees = new BigNumber(estimation.value.toString());
 
     if (!bnEq(transaction.fees, fees)) {
@@ -135,6 +136,7 @@ export function genericPrepareTransaction(
             },
             computeIntentType,
           ),
+          extractBalances(account, getAssetFromToken),
         );
         next.amount = new BigNumber(amount.toString());
       }

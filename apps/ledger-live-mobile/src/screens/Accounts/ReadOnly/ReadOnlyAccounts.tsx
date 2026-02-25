@@ -3,7 +3,7 @@ import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "~/analytics/TrackScreen";

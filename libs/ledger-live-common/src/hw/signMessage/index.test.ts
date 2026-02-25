@@ -40,7 +40,7 @@ describe("prepareMessageToSign", () => {
 
     // Then
     expect(error).toBeNull();
-    expect(signFunction).toBeCalledTimes(1);
+    expect(signFunction).toHaveBeenCalledTimes(1);
     expect(result).toEqual(signResult);
   });
 

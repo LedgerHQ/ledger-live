@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
@@ -9,7 +8,6 @@ import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { SignRawTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignRawTransactionNavigator";
@@ -21,6 +19,7 @@ import type {
 import { useRawTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 export type SignRawTransactionConnectDeviceProps = StackNavigatorProps<
   SignRawTransactionNavigatorParamList,
@@ -30,7 +29,7 @@ export type SignRawTransactionConnectDeviceProps = StackNavigatorProps<
 function ConnectDevice({ navigation, route }: SignRawTransactionConnectDeviceProps) {
   const action = useRawTransactionDeviceAction();
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const { transaction, appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);

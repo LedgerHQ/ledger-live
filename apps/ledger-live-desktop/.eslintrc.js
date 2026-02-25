@@ -1,6 +1,43 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const path = require("path");
 
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+    message: "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
+  },
+];
+
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+];
+
+const shellOpenExternalRestrictions = [
+  {
+    selector: "CallExpression[callee.object.name='shell'][callee.property.name='openExternal']",
+    message:
+      "Do not use shell.openExternal() directly. In renderer code, use openURL() from '~/renderer/linking' instead to prevent RCE vulnerabilities. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal. See: https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-openexternal-with-untrusted-content",
+  },
+  {
+    selector: "MemberExpression[object.name='shell'][property.name='openExternal']",
+    message:
+      "Do not use shell.openExternal directly. In renderer code, use openURL() from '~/renderer/linking'. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal.",
+  },
+];
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -26,21 +63,8 @@ const livecommonRules = {
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-          {
-            group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-            message:
-              "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
-          },
-        ],
-
-        paths: [
-          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
-        ],
+        patterns: commonImportRestrictions,
+        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
       },
     ],
   },
@@ -53,11 +77,11 @@ module.exports = {
     node: true,
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks"],
+  plugins: ["react", "react-hooks", "import", "better-tailwindcss"],
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:tailwindcss/recommended",
+    "plugin:better-tailwindcss/recommended",
   ],
   globals: {
     __DEV__: "readonly",
@@ -90,6 +114,8 @@ module.exports = {
     "space-before-function-paren": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+    "import/no-duplicates": "error",
+    "better-tailwindcss/enforce-consistent-line-wrapping": "off",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
@@ -101,6 +127,31 @@ module.exports = {
   overrides: [
     currencyFamiliesRules,
     livecommonRules,
+    {
+      files: ["src/**/*.ts", "src/**/*.tsx"],
+      excludedFiles: ["src/renderer/linking.ts"],
+      rules: {
+        "no-restricted-syntax": ["error", ...shellOpenExternalRestrictions],
+      },
+    },
+    {
+      files: [
+        "src/mvvm/hooks/redux.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.test.ts",
+        "src/**/*.integration.tsx",
+        "src/**/*.integration.ts",
+      ],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
+      },
+    },
     {
       files: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
       env: {
@@ -137,8 +188,10 @@ module.exports = {
     react: {
       version: "detect",
     },
-    tailwindcss: {
-      config: path.join(__dirname, "./tailwind.config.ts"),
+    "better-tailwindcss": {
+      entryPoint: path.join(__dirname, "./src/renderer/global.css"),
+      tailwindConfig: path.join(__dirname, "./tailwind.config.ts"),
+      callees: ["cn"],
     },
   },
 };

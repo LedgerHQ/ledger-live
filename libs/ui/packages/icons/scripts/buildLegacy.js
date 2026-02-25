@@ -22,7 +22,9 @@ const reactSvgStyledComponent = `
 import styled from "styled-components";
 import { system } from "styled-system";
 
-export default styled.svg\`
+export default styled.svg.withConfig({
+  shouldForwardProp: (prop) => true,
+})\`
   \${system({
     fill: {
       property: "fill",
@@ -44,9 +46,12 @@ const fillSystem = system({
   },
 });
 
-export default styled(Svg).attrs((props:  SvgProps) => ({
+const StyledSvg = styled(Svg).attrs<SvgProps &  { xmlns?: string }>((props) => ({
   ...fillSystem(props),
+  xmlns: props.xmlns || "http://www.w3.org/2000/svg",
 }))\`\`;
+
+export default StyledSvg;
 `;
 
 // Component template
@@ -59,7 +64,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
     import Svg from "./StyledSvg"
     type Props = { size?: number | string; color?: string; style?: object };
     ${interfaces}
-    function ${componentName} ({ size = 16, color = "currentColor", style }: Props): JSX.Element {
+    function ${componentName} ({ size = 16, color = "currentColor", style }: Props): React.JSX.Element {
       return ${jsx};
     }
     ${exports}
@@ -84,7 +89,7 @@ function reactNativeTemplate(
     type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
-    function ${componentName} ({ size = 16, color = "neutral.c100", style }: Props): JSX.Element {
+    function ${componentName} ({ size = 16, color = "neutral.c100", style }: Props): React.JSX.Element {
       return ${jsx};
     }
     ${exports}
@@ -108,7 +113,7 @@ function reactNativeRTLTemplate(
     type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
     ${interfaces}
     const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
-    function ${componentName} ({ size = 16, color = "neutral.c100", style = rtlStyle }: Props): JSX.Element {
+    function ${componentName} ({ size = 16, color = "neutral.c100", style = rtlStyle }: Props): React.JSX.Element {
       return ${jsx};
     }
     ${exports}
@@ -121,8 +126,9 @@ const convert = (svg, options, componentName, outputFile, removeFills) => {
       let component = result.replace("xlinkHref=", "href=").replace("import Svg,", "import ");
 
       if (!removeFills) component = component.replace(/fill=("(?!none)\S*")/g, "");
-      if (!options.native)
+      if (!options.native) {
         component = component.replace(/(<\s*\/?\s*)svg(\s*([^>]*)?\s*>)/gi, "$1Svg$2");
+      }
 
       fs.writeFileSync(outputFile, component, "utf-8");
     })

@@ -5,17 +5,19 @@ export function useDebouncedCallback<T extends unknown[]>(
   delay?: number,
 ) {
   const [debouncedCallback, setDebouncedCallback] = useState<(...args: T) => void>();
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!callback) return setDebouncedCallback(undefined);
 
     setDebouncedCallback(() => (...args: T) => {
-      clearTimeout(timeout.current);
+      if (timeout.current) clearTimeout(timeout.current);
       timeout.current = setTimeout(() => callback(...args), delay);
     });
 
-    return () => clearTimeout(timeout.current);
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
   }, [callback, delay]);
 
   return debouncedCallback;

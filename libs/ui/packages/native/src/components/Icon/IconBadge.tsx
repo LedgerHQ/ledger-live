@@ -43,12 +43,13 @@ const IconBadge = ({
       justifyContent="center"
       {...rest}
     >
-      {React.isValidElement(Icon) ? (
-        Icon
-      ) : (
-        /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
-        <Icon size={iconSize} color={iconColor} />
-      )}
+      {React.isValidElement(Icon)
+        ? Icon
+        : // Cast to a React component type to satisfy TS without suppressions
+          ((): React.ReactElement => {
+            const Comp = Icon as React.ComponentType<{ size?: number; color?: string }>;
+            return <Comp size={iconSize} color={iconColor} />;
+          })()}
     </Flex>
   );
 };

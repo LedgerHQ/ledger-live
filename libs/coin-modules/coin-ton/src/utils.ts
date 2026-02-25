@@ -13,7 +13,6 @@ import { estimateFee } from "./bridge/bridgeHelpers/api";
 import { getCoinConfig } from "./config";
 import {
   JettonOpCode,
-  MAX_COMMENT_BYTES,
   TOKEN_TRANSFER_FORWARD_AMOUNT,
   TOKEN_TRANSFER_MAX_FEE,
   TOKEN_TRANSFER_QUERY_ID,
@@ -23,7 +22,6 @@ import {
   KnownJetton,
   TonAccount,
   TonCell,
-  TonComment,
   TonPayloadJettonTransfer,
   TonSubAccount,
   TonTransaction,
@@ -155,12 +153,6 @@ export function buildTonTransaction(
 
   return tonTransaction;
 }
-
-/**
- * Validates if the given comment is valid.
- */
-export const commentIsValid = (msg: TonComment) =>
-  !msg.isEncrypted && msg.text.length <= MAX_COMMENT_BYTES && /^[\x20-\x7F]*$/.test(msg.text);
 
 /**
  * Gets the transfer expiration time.

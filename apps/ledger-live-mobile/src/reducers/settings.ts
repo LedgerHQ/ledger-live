@@ -6,16 +6,15 @@ import {
   findCryptoCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { createSelector } from "reselect";
+import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, FeatureId } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CurrencySettings, SettingsState, State } from "./types";
+import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
-  SettingsAcceptSwapProviderPayload,
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
@@ -34,7 +33,6 @@ import type {
   SettingsSetLocalePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
-  SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPairsPayload,
@@ -78,12 +76,14 @@ import type {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
+  SettingsSetHasSeenWalletV4TourPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -94,7 +94,7 @@ export const INITIAL_STATE: SettingsState = {
   personalizedRecommendationsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
-  selectedTimeRange: "month",
+  selectedTimeRange: "day",
   orderAccounts: "balance|desc",
   hasCompletedCustomImageFlow: false,
   hasCompletedOnboarding: false,
@@ -120,7 +120,7 @@ export const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
-  locale: null,
+  locale: getDefaultLocale(),
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -169,16 +169,53 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
+  generalTermsVersionAccepted: undefined,
+  hasSeenWalletV4Tour: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
+/**
+ * Filters imported settings to only include valid SettingsState keys.
+ * This prevents unknown/obsolete fields (like nftCollectionsStatusByNetwork) from being imported.
+ */
+function isValidSettingsKey(key: string): key is keyof SettingsState {
+  return key in INITIAL_STATE;
+}
+
+export function filterValidSettings(
+  importedSettings: Partial<SettingsState>,
+): Partial<SettingsState> {
+  const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
+
+  return Object.fromEntries(
+    Object.entries(importedSettings).filter(
+      ([key]) => validKeys.has(key) && isValidSettingsKey(key),
+    ),
+  ) as Partial<SettingsState>;
+}
+
+const LWM_WALLET_40: FeatureId = "lwmWallet40";
+
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
-  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => ({
-    ...state,
-    ...(action as Action<SettingsImportPayload>).payload,
-  }),
+  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
+    const payload = (action as Action<SettingsImportPayload>).payload;
+    const filteredPayload = filterValidSettings(payload);
+    const wallet40FF = getFeature({
+      key: LWM_WALLET_40,
+      localOverrides: filteredPayload.overriddenFeatureFlags,
+    });
+    const isWallet40Enabled = wallet40FF?.enabled === true;
+    const isWallet40GraphReworkEnabled =
+      wallet40FF?.params?.graphRework === true && isWallet40Enabled;
+    return {
+      ...state,
+      ...filteredPayload,
+      locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
+      ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
+    };
+  },
 
   [SettingsActionTypes.UPDATE_CURRENCY_SETTINGS]: (
     { currenciesSettings, ...state }: SettingsState,
@@ -402,19 +439,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     locale: (action as Action<SettingsSetLocalePayload>).payload,
   }),
 
-  [SettingsActionTypes.ACCEPT_SWAP_PROVIDER]: (state, action) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      acceptedProviders: [
-        ...new Set([
-          ...(state.swap?.acceptedProviders || []),
-          (action as Action<SettingsAcceptSwapProviderPayload>).payload,
-        ]),
-      ],
-    },
-  }),
-
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
     const { payload } = action as Action<SettingsLastSeenDeviceInfoPayload>;
     return {
@@ -504,13 +528,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state.notifications,
       ...(action as Action<SettingsSetNotificationsPayload>).payload,
     },
-  }),
-
-  [SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON]: (state, action) => ({
-    ...state,
-    neverClickedOnAllowNotificationsButton: (
-      action as Action<SettingsSetNeverClickedOnAllowNotificationsButton>
-    ).payload,
   }),
 
   [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
@@ -632,6 +649,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
       .payload,
+  }),
+
+  [SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR]: (state, action) => ({
+    ...state,
+    hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
   }),
 };
 
@@ -782,15 +804,28 @@ export const themeSelector = (state: State) => {
   return val;
 };
 export const osThemeSelector = (state: State) => state.settings.osTheme;
+
+/**
+ * Selector that computes the resolved theme based on user preference and OS theme.
+ * If theme is "system", it returns the OS theme (defaulting to "dark" if not available).
+ * Otherwise, it returns the user's explicit theme choice.
+ */
+export const resolvedThemeSelector = createSelector(
+  themeSelector,
+  osThemeSelector,
+  (theme: Theme, osTheme: SettingsState["osTheme"]): "light" | "dark" => {
+    if (theme === "system") {
+      return osTheme === "light" ? "light" : "dark";
+    }
+    return theme === "light" ? "light" : "dark";
+  },
+);
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
-
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
-export const swapAcceptedProvidersSelector = (state: State) =>
-  state.settings.swap.acceptedProviders;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 
@@ -817,8 +852,6 @@ export const onboardingTypeSelector = (state: State) => state.settings.onboardin
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
-export const neverClickedOnAllowNotificationsButtonSelector = (s: State) =>
-  s.settings.neverClickedOnAllowNotificationsButton;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
@@ -848,3 +881,4 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
+export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;

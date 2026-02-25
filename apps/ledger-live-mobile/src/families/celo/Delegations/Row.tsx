@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
@@ -11,7 +11,7 @@ import ArrowRight from "~/icons/ArrowRight";
 import LText from "~/components/LText";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { formatAmount } from "./utils";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: CeloAccount;

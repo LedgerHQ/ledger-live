@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
@@ -55,7 +55,7 @@ import AccountBanner from "~/components/AccountBanner";
 import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 

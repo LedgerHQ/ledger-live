@@ -5,7 +5,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
 type RightHeaderProps = {
-  webviewAPIRef: RefObject<WebviewAPI>;
+  webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
   handlePressInfo?: () => void;
 };

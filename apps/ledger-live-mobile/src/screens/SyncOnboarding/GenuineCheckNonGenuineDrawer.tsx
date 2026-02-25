@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation, useLocale } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen, track } from "~/analytics";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
-import { useLocale } from "~/context/Locale";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 
 export type Props = {

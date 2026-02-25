@@ -6,8 +6,8 @@ const headerHeight = 48;
 
 interface WalletTabNavigatorScrollContextData {
   scrollY: Animated.Value;
-  scrollableRefArray: React.MutableRefObject<{ key: string; value: ScrollView | FlatList }[]>;
-  scrollableOffsetMap: React.MutableRefObject<{ [key: string]: number }>;
+  scrollableRefArray: React.RefObject<{ key: string; value: ScrollView | FlatList }[]>;
+  scrollableOffsetMap: React.RefObject<{ [key: string]: number }>;
   onGetRef: ({ key, value }: { key: string; value: ScrollView | FlatList }) => void;
   syncScrollOffset: (key: string) => void;
   tabBarHeight: number;
@@ -33,7 +33,7 @@ export default function WalletTabNavigatorScrollManager({
   useEffect(() => {
     const listenerId = scrollY.addListener(({ value }) => {
       if (currentRouteName) {
-        scrollableOffsetMap.current[currentRouteName] = value;
+        scrollableOffsetMap.current[currentRouteName] = Math.max(value, 0); // prevent negative offset
       }
     });
     return () => {

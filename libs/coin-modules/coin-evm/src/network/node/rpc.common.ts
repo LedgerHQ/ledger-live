@@ -1,19 +1,64 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
-import { ethers, JsonRpcProvider } from "ethers";
-import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { delay } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { ethers, JsonRpcProvider, Log } from "ethers";
+import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
+import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { getSerializedTransaction } from "../../transaction";
-import ERC20Abi from "../../abis/erc20.abi.json";
-import { getCoinConfig } from "../../config";
 import { FeeHistory } from "../../types";
-import { NodeApi, isExternalNodeConfig } from "./types";
+import { safeEncodeEIP55, normalizeAddress } from "../../utils";
+import { NodeApi, isExternalNodeConfig, ERC20Transfer } from "./types";
+
+/**
+ * ERC20 Transfer event topic: keccak256("Transfer(address,address,uint256)")
+ *
+ * Note: ERC721 uses the same signature but with tokenId indexed (4 topics).
+ * ERC1155 uses different events (TransferSingle/TransferBatch).
+ */
+export const ERC20_TRANSFER_TOPIC =
+  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+/**
+ * Parse ERC20 Transfer events from transaction receipt logs.
+ *
+ * ERC20 Transfer event structure:
+ * - topic[0]: event signature hash (0xddf252ad...)
+ * - topic[1]: from address (indexed, padded to 32 bytes)
+ * - topic[2]: to address (indexed, padded to 32 bytes)
+ * - data: value (uint256, 32 bytes)
+ * - log.address: token contract address
+ *
+ * Distinction from other standards:
+ * - ERC20:   3 topics (sig, from, to) + value in data
+ * - ERC721:  4 topics (sig, from, to, tokenId) - filtered out by topics.length === 3
+ * - ERC1155: different event signature - filtered out by topic[0] check
+ *
+ * @param logs - Array of logs from transaction receipt
+ * @returns Array of parsed ERC20 transfers
+ */
+export function parseERC20TransfersFromLogs(logs: ReadonlyArray<Log>): ERC20Transfer[] {
+  return logs
+    .filter(
+      log =>
+        log.topics[0] === ERC20_TRANSFER_TOPIC && log.topics.length === 3 && log.data.length > 2, // must have data beyond "0x"
+    )
+    .map(log => ({
+      asset: {
+        type: "erc20" as const,
+        assetReference: safeEncodeEIP55(log.address),
+      },
+      from: safeEncodeEIP55("0x" + log.topics[1].slice(26)),
+      to: safeEncodeEIP55("0x" + log.topics[2].slice(26)),
+      value: BigInt(log.data).toString(),
+    }));
+}
 
 export const RPC_TIMEOUT =
   process.env.NODE_ENV === "test"
@@ -95,6 +140,7 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
       value: tx.value.toString(),
       from: tx.from,
       to: tx.to ?? undefined,
+      erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
     };
   });
 
@@ -103,7 +149,7 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
  */
 export const getCoinBalance: NodeApi["getCoinBalance"] = (currency, address) =>
   withApi(currency, async api => {
-    const balance = await api.getBalance(address);
+    const balance = await api.getBalance(normalizeAddress(address));
     return new BigNumber(balance.toString());
   });
 
@@ -112,8 +158,8 @@ export const getCoinBalance: NodeApi["getCoinBalance"] = (currency, address) =>
  */
 export const getTokenBalance: NodeApi["getTokenBalance"] = (currency, address, contractAddress) =>
   withApi(currency, async api => {
-    const erc20 = new ethers.Contract(contractAddress, ERC20Abi, api);
-    const balance = await erc20.balanceOf(address);
+    const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
+    const balance = await erc20.balanceOf(normalizeAddress(address));
     return new BigNumber(balance.toString());
   });
 
@@ -122,7 +168,7 @@ export const getTokenBalance: NodeApi["getTokenBalance"] = (currency, address, c
  */
 export const getTransactionCount: NodeApi["getTransactionCount"] = (currency, address) =>
   withApi(currency, async api => {
-    return api.getTransactionCount(address, "pending");
+    return api.getTransactionCount(normalizeAddress(address), "pending");
   });
 
 /**
@@ -132,14 +178,14 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
   withApi(
     account.currency,
     async api => {
-      const to = transaction.recipient;
+      const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
       const value = BigInt(transaction.amount.toFixed(0));
       const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
 
       try {
         const gasEstimation = await api.estimateGas({
           ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
-          from: account.freshAddress, // Necessary as no signature to infer the sender
+          from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
           value,
           data,
         });
@@ -254,13 +300,22 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
   withApi(currency, async api => {
     const block = await api.getBlock(blockHeight);
 
-    const transactionHashes = block?.transactions as string[] | undefined;
+    if (!block) {
+      throw new Error(`Block ${blockHeight} not found`);
+    }
+
+    if (!block.hash) {
+      throw new Error(`Block ${blockHeight} is missing hash`);
+    }
+
+    const transactionHashes = block.transactions as string[] | undefined;
 
     return {
-      hash: block?.hash || "",
-      height: block?.number ?? 0,
+      hash: block.hash,
+      height: block.number ?? 0,
       // timestamp is returned in seconds by getBlock, we need milliseconds
-      timestamp: (block?.timestamp ?? 0) * 1000,
+      timestamp: block.timestamp * 1000,
+      parentHash: block.parentHash,
       ...(transactionHashes !== undefined && { transactionHashes }),
     };
   });
@@ -277,7 +332,16 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
 export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
   async (currency, transaction) =>
     withApi(currency, async api => {
-      if (!["optimism", "optimism_sepolia", "base", "base_sepolia"].includes(currency.id)) {
+      if (
+        ![
+          "optimism",
+          "optimism_sepolia",
+          "base",
+          "base_sepolia",
+          "blast",
+          "blast_sepolia",
+        ].includes(currency.id)
+      ) {
         return new BigNumber(0);
       }
 

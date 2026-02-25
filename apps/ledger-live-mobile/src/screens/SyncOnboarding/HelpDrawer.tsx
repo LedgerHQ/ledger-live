@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
 
 export type Props = {

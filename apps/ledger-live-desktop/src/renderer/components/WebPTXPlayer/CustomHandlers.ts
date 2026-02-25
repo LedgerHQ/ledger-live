@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
@@ -18,11 +18,19 @@ import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewEr
 import { WebviewProps } from "../Web3AppWebview/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { openModal } from "~/renderer/actions/modals";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+  makeEmptyTokenAccount,
+} from "@ledgerhq/coin-framework/account/helpers";
+import {
+  decodeTokenAccountIdSync,
+  decodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import logger from "~/renderer/logger";
 import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -33,7 +41,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
   const { getRouteToPlatformApp } = useStake();
-  const history = useHistory();
+  const navigate = useNavigate();
   const walletState = useSelector(walletSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
@@ -77,6 +85,33 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     [],
   );
 
+  const getAccount = useCallback(
+    async (accountId: string): Promise<AccountLike | null> => {
+      const foundAccount = accounts.find(acc => acc.id === accountId);
+
+      if (foundAccount) {
+        return foundAccount;
+      }
+
+      if (accountId.includes("+")) {
+        const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
+
+        const parentAccount = accounts.find(
+          acc => acc.type === "Account" && acc.id === parentAccountId,
+        ) as Account | undefined;
+
+        const { token } = await decodeTokenAccountId(accountId);
+
+        if (parentAccount && token) {
+          return makeEmptyTokenAccount(parentAccount, token);
+        }
+      }
+
+      return null;
+    },
+    [accounts],
+  );
+
   const startStakeFlow = useCallback(
     (props: {
       account: AccountLike;
@@ -108,16 +143,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         // Push to history with both state and query params
         const searchStr = `?${queryParams.toString() ?? ""}`;
 
-        history.push({
-          pathname: platformAppRoute.pathname.toString(),
-          search: searchStr,
+        navigate(`${platformAppRoute.pathname.toString()}${searchStr}`, {
           state: stateObj, // Keep state object for components that rely on it
         });
       } else {
         dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
       }
     },
-    [dispatch, getRouteToPlatformApp, history, walletState],
+    [dispatch, getRouteToPlatformApp, navigate, walletState],
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
@@ -203,7 +236,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         if (action === "go-back") {
           // Handle back navigation using history
-          history.goBack();
+          navigate(-1);
           return { success: true };
         } else if (action === "redirect-provider") {
           const { currencyId, accountId, source } = request.params || {};
@@ -249,7 +282,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }
         throw new Error("Unknown navigation action");
       },
-      "custom.getFunds": request => {
+      "custom.getFunds": async request => {
         const accountId = request.params?.accountId;
 
         if (!accountId) {
@@ -258,7 +291,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         try {
           const id = getAccountIdFromWalletAccountId(accountId);
-          const account = accounts.find(acc => acc.id === id);
+          if (!id) {
+            throw new Error("Invalid accountId");
+          }
+          const account = await getAccount(id);
 
           if (!account) {
             throw new Error("Account not found");
@@ -319,5 +355,15 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }
       },
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer, history, startStakeFlow, getManifestById]);
+  }, [
+    accounts,
+    tracking,
+    manifest,
+    dispatch,
+    setDrawer,
+    navigate,
+    startStakeFlow,
+    getManifestById,
+    getAccount,
+  ]);
 }

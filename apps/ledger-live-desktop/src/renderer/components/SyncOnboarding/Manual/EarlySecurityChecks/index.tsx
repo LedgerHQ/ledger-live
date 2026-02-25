@@ -22,7 +22,7 @@ import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { FinalFirmware } from "@ledgerhq/types-live";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { NetworkDown } from "@ledgerhq/errors";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { urls } from "~/config/urls";
@@ -80,7 +80,7 @@ const EarlySecurityChecks = ({
     SoftwareCheckStatus.inactive,
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const deviceId = device.deviceId ?? "";
   const deviceModelId = device.modelId;
@@ -257,7 +257,7 @@ const EarlySecurityChecks = ({
           lastKnownDeviceId: deviceModelId,
           onClose: () => {
             resetGenuineCheckState();
-            history.push("/onboarding/select-device");
+            navigate("/onboarding/select-device");
           },
         },
         commonDrawerProps,
@@ -343,7 +343,7 @@ const EarlySecurityChecks = ({
     notGenuineIsOpen,
     productName,
     resetGenuineCheckState,
-    history,
+    navigate,
     networkStatus,
     genuineCheckStatus,
   ]);

@@ -1,15 +1,15 @@
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/signers/ledger";
 import type { SuiClient } from "@mysten/sui/client";
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import { withApi } from "../network/sdk";
+import type { SuiAccount, SuiSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-import type { SuiAccount, SuiSigner, Transaction } from "../types";
-import { withApi } from "../network/sdk";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -17,7 +17,7 @@ import { withApi } from "../network/sdk";
 export const buildSignOperation = (
   signerContext: SignerContext<SuiSigner>,
 ): AccountBridge<Transaction, SuiAccount>["signOperation"] => {
-  return ({ account, deviceId, transaction }) =>
+  return ({ account, deviceId, transaction, deviceModelId, certificateSignatureKind }) =>
     new Observable(subscriber => {
       async function main() {
         subscriber.next({
@@ -37,7 +37,13 @@ export const buildSignOperation = (
           }),
         };
 
-        const { unsigned } = await buildTransaction(account, transactionToSign);
+        const { unsigned, objects, resolution } = await buildTransaction(
+          account,
+          transactionToSign,
+          true,
+          deviceModelId,
+          certificateSignatureKind,
+        );
 
         const signed = await signerContext(deviceId, async suiSigner =>
           withApi(async (suiClient: SuiClient) => {
@@ -46,7 +52,7 @@ export const buildSignOperation = (
               suiSigner,
               suiClient,
             );
-            return ledgerSigner.signTransaction(unsigned);
+            return ledgerSigner.signTransaction(unsigned, objects, resolution);
           }),
         );
 

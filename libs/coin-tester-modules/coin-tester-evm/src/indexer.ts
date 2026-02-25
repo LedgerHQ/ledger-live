@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
-import BlueBirdPromise from "bluebird";
 import { http, HttpResponse, bypass } from "msw";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
@@ -14,6 +13,7 @@ import type {
   EtherscanOperation,
   LedgerExplorerOperation,
 } from "@ledgerhq/coin-evm/types/index";
+import { promiseAllBatched } from "@ledgerhq/live-common/promise";
 
 type TraceTransaction = {
   action: {
@@ -166,7 +166,7 @@ const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider)
     cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
     gasUsed: receipt?.gasUsed?.toString() || "0",
     input: tx?.data || "0x",
-    confirmations: tx?.confirmations.toString() || "0",
+    confirmations: tx ? (await tx.confirmations()).toString() : "0",
     contractAddress: tx?.to!.toLowerCase() || "",
   };
 
@@ -545,10 +545,19 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
     explorerLedgerOperationByAddress[from]!.set(ledgerOperation.hash, ledgerOperation);
     explorerLedgerOperationByAddress[to]!.set(ledgerOperation.hash, ledgerOperation);
 
-    for (const { action, result, type, transactionHash, transactionPosition } of traces.filter(
-      trace => trace.type === "call",
-    )) {
-      if (action?.callType !== "call") continue;
+    for (const {
+      traceAddress,
+      action,
+      result,
+      type,
+      transactionHash,
+      transactionPosition,
+    } of traces.filter(trace => trace.type === "call")) {
+      /**
+       * Empty `traceAddress` means this is a top-level operation
+       * {@link https://www.alchemy.com/docs/reference/what-are-evm-traces?utm_source=chatgpt.com#how-to-read-traceaddress}
+       */
+      if (!traceAddress.length) continue;
       const code = action.to ? await provider.getCode(action.to) : false;
       const from = safeEncodeEIP55(action.from || "");
       const to = safeEncodeEIP55(action.to || "");
@@ -659,12 +668,13 @@ export const setBlock = (blockHeight: number): void => {
   fromBlock = blockHeight;
 };
 
-export const indexBlocks = async () => {
+export const indexBlocks = async (chainId: number) => {
   if (!fromBlock) {
     throw new Error("fromBlock is not set");
   }
-
-  const provider = new ethers.JsonRpcProvider(process.env.RPC);
+  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545", chainId, {
+    staticNetwork: true,
+  });
   let latestBlockNumber = await provider.getBlockNumber();
   const toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, latestBlockNumber);
   const rangeSize = toBlock - fromBlock + 1;
@@ -683,20 +693,14 @@ export const indexBlocks = async () => {
       [TRANSFER_EVENTS_TOPICS.ERC20, TRANSFER_EVENTS_TOPICS.ERC721, TRANSFER_EVENTS_TOPICS.ERC1155],
     ],
   });
-  await BlueBirdPromise.map(
-    blocks,
-    async blockNumber =>
-      Promise.all([
-        handleBlock(blockNumber, provider),
-        new Promise(resolve => setTimeout(resolve, 500)),
-      ]),
-    { concurrency: 10 },
+  await promiseAllBatched(10, blocks, async blockNumber =>
+    Promise.all([
+      handleBlock(blockNumber, provider),
+      new Promise(resolve => setTimeout(resolve, 500)),
+    ]),
   );
-  await BlueBirdPromise.map(
-    logs,
-    async log =>
-      Promise.all([handleLog(log, provider), new Promise(resolve => setTimeout(resolve, 500))]),
-    { concurrency: 10 },
+  await promiseAllBatched(10, logs, async log =>
+    Promise.all([handleLog(log, provider), new Promise(resolve => setTimeout(resolve, 500))]),
   );
 
   latestBlockNumber = await provider.getBlockNumber();
@@ -707,7 +711,217 @@ export const indexBlocks = async () => {
 
 let server: SetupServerApi;
 export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
-  const handlers = [];
+  const handlers = [
+    http.get("https://crypto-assets-service.api.ledger.com/v1/currencies", ({ request }) => {
+      const response: Array<{ id: string; type: string }> = [];
+      const url = new URL(request.url);
+      const id = url.searchParams.get("id");
+
+      switch (id) {
+        case "ethereum":
+        case "sonic":
+        case "polygon":
+        case "core":
+        case "blast":
+        case "scroll":
+        case "bsc":
+          response.push({ id, type: "coin" });
+      }
+
+      return HttpResponse.json(response, { headers: { "X-Ledger-Commit": "hash" } });
+    }),
+    http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", ({ request }) => {
+      const response: Array<{
+        id: string;
+        contract_address: string;
+        ticker: string;
+        name: string;
+        units: Array<{ code: string; name: string; magnitude: number }>;
+        delisted: boolean;
+        standard: string;
+        decimals: number;
+      }> = [];
+      const url = new URL(request.url);
+      const id = url.searchParams.get("id");
+      const contractAddress = url.searchParams.get("contract_address");
+      const network = url.searchParams.get("network");
+
+      if (
+        id === "ethereum/erc20/usd__coin" ||
+        (contractAddress === "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" && network === "ethereum")
+      ) {
+        response.push({
+          id: "ethereum/erc20/usd__coin",
+          contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          ticker: "USDC",
+          name: "USD Coin",
+          units: [
+            {
+              code: "USDC",
+              name: "USDC",
+              magnitude: 6,
+            },
+          ],
+          delisted: false,
+          standard: "erc20",
+          decimals: 6,
+        });
+      } else if (
+        id === "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894" ||
+        (contractAddress === "0x29219dd400f2Bf60E5a23d13Be72B486D4038894" && network === "sonic")
+      ) {
+        response.push({
+          id: "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
+          contract_address: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+          ticker: "USDC.e",
+          name: "Bridged USDC (Sonic Labs)",
+          units: [
+            {
+              code: "USDC.e",
+              name: "USDC.e",
+              magnitude: 6,
+            },
+          ],
+          delisted: false,
+          standard: "erc20",
+          decimals: 6,
+        });
+      } else if (
+        id === "polygon/erc20/usd_coin_(pos)" ||
+        (contractAddress === "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174" && network === "polygon")
+      ) {
+        response.push({
+          id: "polygon/erc20/usd_coin_(pos)",
+          contract_address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+          ticker: "USDC",
+          name: "USD Coin (PoS)",
+          units: [
+            {
+              code: "USDC",
+              name: "USDC",
+              magnitude: 6,
+            },
+          ],
+          delisted: false,
+          standard: "erc20",
+          decimals: 6,
+        });
+      } else if (
+        id === "scroll/erc20/usd_coin" ||
+        (contractAddress === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && network === "scroll")
+      ) {
+        response.push({
+          id: "scroll/erc20/usd_coin",
+          contract_address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
+          ticker: "USDC",
+          name: "USD Coin",
+          units: [
+            {
+              code: "USDC",
+              name: "USDC",
+              magnitude: 6,
+            },
+          ],
+          delisted: false,
+          standard: "erc20",
+          decimals: 6,
+        });
+      } else if (
+        id === "blast/erc20/magic_internet_money" ||
+        (contractAddress === "0x76DA31D7C9CbEAE102aff34D3398bC450c8374c1" && network === "blast")
+      ) {
+        response.push({
+          id: "blast/erc20/magic_internet_money",
+          contract_address: "0x76DA31D7C9CbEAE102aff34D3398bC450c8374c1",
+          ticker: "MIM",
+          name: "Magic Internet Money",
+          units: [
+            {
+              code: "MIM",
+              name: "MIM",
+              magnitude: 18,
+            },
+          ],
+          delisted: false,
+          standard: "erc20",
+          decimals: 18,
+        });
+      } else if (
+        id === "bsc/bep20/binance-peg_bsc-usd" ||
+        (contractAddress === "0x55d398326f99059fF775485246999027B3197955" && network === "bsc")
+      ) {
+        response.push({
+          id: "bsc/bep20/binance-peg_bsc-usd",
+          contract_address: "0x55d398326f99059fF775485246999027B3197955",
+          ticker: "USDC",
+          name: "USD Coin (PoS)",
+          units: [
+            {
+              code: "USDC",
+              name: "USDC",
+              magnitude: 18,
+            },
+          ],
+          delisted: false,
+          standard: "bep20",
+          decimals: 18,
+        });
+      }
+
+      return HttpResponse.json(response, { headers: { "X-Ledger-Commit": "hash" } });
+    }),
+    http.get<{ explorerId: "eth" | "matic" | "bnb" }>(
+      "https://explorers.api.live.ledger.com/blockchain/v4/:explorerId/gastracker/barometer",
+      ({ params }) => {
+        if (!["eth", "matic", "bnb"].includes(params.explorerId)) {
+          return new HttpResponse(null, { status: 404 });
+        }
+
+        const values = {
+          eth: {
+            low: "111026756",
+            medium: "767080567",
+            high: "5141064700",
+            next_base: "4412356062",
+          },
+          matic: {
+            low: "59808980000",
+            medium: "60298094285",
+            high: "311646840394",
+            next_base: "599841329007",
+          },
+          bnb: {
+            low: "50000000",
+            medium: "51607000",
+            high: "143750000",
+            next_base: null,
+          },
+        };
+
+        return HttpResponse.json(values[params.explorerId]);
+      },
+    ),
+    // called by `provider.getFeeData()` inside `callMyDealer` for Polygon
+    http.get("https://gasstation.polygon.technology/v2", () =>
+      HttpResponse.json({
+        safeLow: {
+          maxPriorityFee: 29.659782351,
+          maxFee: 340.836669186,
+        },
+        standard: {
+          maxPriorityFee: 44.539955298,
+          maxFee: 355.716842133,
+        },
+        fast: {
+          maxPriorityFee: 87.14945324,
+          maxFee: 398.326340075,
+        },
+        estimatedBaseFee: 311.176886835,
+        blockTime: 2,
+        blockNumber: 82290307,
+      }),
+    ),
+  ];
 
   if (currencyConfig.explorer.type === "ledger") {
     handlers.push(
@@ -765,5 +979,11 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
   }
 
   server = setupServer(...handlers);
-  server.listen({ onUnhandledRequest: "bypass" });
+  server.listen({
+    onUnhandledRequest: request => {
+      const hostname = new URL(request.url).hostname;
+      if (["127.0.0.1", "localhost"].includes(hostname)) return;
+      throw new Error("Unhandled request");
+    },
+  });
 };

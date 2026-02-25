@@ -1,3 +1,4 @@
+import { cliTools as aleo } from "../families/aleo/setup";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as aptos } from "../families/aptos/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
@@ -27,6 +28,7 @@ import { cliTools as sui } from "../families/sui/setup";
 import { cliTools as mina } from "../families/mina/setup";
 
 export default {
+  aleo,
   algorand,
   aptos,
   bitcoin,

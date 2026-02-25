@@ -52,7 +52,7 @@ function AccountRow(props: Props) {
     e.stopPropagation();
   };
 
-  const handleKeyPress = (e: React.SyntheticEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // this fixes a bug with the event propagating to the Tabbable
     e.stopPropagation();
   };
@@ -82,7 +82,6 @@ function AccountRow(props: Props) {
   const tag = <AccountTagDerivationMode account={account} />;
   return (
     <AccountRowContainer
-      className="account-row"
       isDisabled={isDisabled}
       onClick={isDisabled ? undefined : onClickToggleAccount}
     >
@@ -107,7 +106,7 @@ function AccountRow(props: Props) {
               onEnter={handlePreventSubmit}
               onFocus={onFocus}
               onBlur={onBlur}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
               editInPlace
               autoFocus={autoFocusInput}

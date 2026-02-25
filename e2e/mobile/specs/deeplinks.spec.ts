@@ -1,4 +1,7 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { waitSwapReady } from "../bridge/server";
+
+const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
 $TmsLink("B2CQA-1837");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -7,6 +10,7 @@ describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
+  const randomLiveApp = app.discover.getRandomLiveApp();
 
   beforeAll(async () => {
     await app.init({
@@ -26,9 +30,7 @@ describe("DeepLinks Tests", () => {
           enabled: true,
           params: {
             manifest_id:
-              process.env.PRODUCTION === "true"
-                ? "swap-live-app-demo-3"
-                : "swap-live-app-demo-3-stg",
+              process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
           },
         },
       },
@@ -36,55 +38,69 @@ describe("DeepLinks Tests", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it("should open My Ledger page", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open My Ledger page", async () => {
     await app.manager.openViaDeeplink();
     await app.manager.expectManagerPage();
   });
 
+  $Tag("@smoke");
   it("should open Account page", async () => {
     await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
   });
 
-  it("should open ETH Account Asset page when given currency param", async () => {
-    await app.assetAccountsPage.openViaDeeplink(ethereumLong);
-    await app.assetAccountsPage.waitForAccountAssetsToLoad(ethereumLong);
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    "should open ETH Account Asset page when given currency param",
+    async () => {
+      await app.assetAccountsPage.openViaDeeplink(ethereumLong);
+      await app.assetAccountsPage.waitForAccountAssetsToLoad(ethereumLong);
+    },
+  );
 
-  it("should open BTC Account Asset page when given currency param", async () => {
-    await app.assetAccountsPage.openViaDeeplink(bitcoinLong);
-    await app.assetAccountsPage.waitForAccountAssetsToLoad(bitcoinLong);
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    "should open BTC Account Asset page when given currency param",
+    async () => {
+      await app.assetAccountsPage.openViaDeeplink(bitcoinLong);
+      await app.assetAccountsPage.waitForAccountAssetsToLoad(bitcoinLong);
+    },
+  );
 
-  it("should open Custom Lock Screen page", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open Custom Lock Screen page", async () => {
     await app.customLockscreen.openViaDeeplink();
     await app.customLockscreen.expectCustomLockscreenPage();
   });
 
-  it("should open the Discover page", async () => {
-    await app.discover.openViaDeeplink();
-    await app.discover.expectDiscoverPage();
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    `should open the Discover page and search for ${randomLiveApp}`,
+    async () => {
+      await app.discover.openViaDeeplink();
+      await app.discover.typeInCatalogSearchBar(randomLiveApp);
+      await app.discover.expectCatalogAppCard(randomLiveApp);
+      await app.discover.goBackFromCatalogSearch();
+      await app.discover.expectDiscoverPage();
+    },
+  );
 
-  it(`should open discovery to random live App`, async () => {
-    // Opening only one random liveApp to avoid flakiness
-    const randomLiveApp = app.discover.getRandomLiveApp();
-    await app.discover.openViaDeeplink(randomLiveApp);
-    await app.discover.expectApp(randomLiveApp);
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    `should open discovery to ${randomLiveApp} live App`,
+    async () => {
+      await app.discover.openViaDeeplink(randomLiveApp);
+      await app.discover.expectApp(randomLiveApp);
+    },
+  );
 
-  it("should open Swap Form page", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
     await app.swap.openViaDeeplink();
     await waitSwapReady();
     await app.swap.expectSwapPage();
   });
 
-  it("should open Market Detail page for Bitcoin", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open Market Detail page for Bitcoin", async () => {
     await app.market.openViaDeeplink("bitcoin");
     await app.market.expectMarketDetailPage();
   });
 
-  it("should open Send pages", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open Send pages", async () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
     await app.portfolio.openViaDeeplink();
@@ -94,17 +110,17 @@ describe("DeepLinks Tests", () => {
     await app.common.expectSearch(ethereumLong);
   });
 
-  it("should open Asset page for Bitcoin", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open Asset page for Bitcoin", async () => {
     await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
     await app.assetAccountsPage.expectAssetPage(bitcoinLong);
   });
 
-  it("should open Asset page for Ethereum", async () => {
+  (isSmokeTestRun ? it.skip : it)("should open Asset page for Ethereum", async () => {
     await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
     await app.assetAccountsPage.expectAssetPage(ethereumLong);
   });
 
-  describe("Open modular drawer via deeplinks", () => {
+  (isSmokeTestRun ? describe.skip : describe)("Open modular drawer via deeplinks", () => {
     const TOP_CRYPTO_TICKERS = ["BTC", "ETH", "USDT", "XRP", "BNB"];
 
     beforeEach(async () => {

@@ -1,19 +1,19 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
-import axios, { AxiosRequestConfig } from "axios";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Batcher } from "@ledgerhq/live-network/batcher/types";
 import { makeBatcher } from "@ledgerhq/live-network/batcher/index";
-import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
+import { Batcher } from "@ledgerhq/live-network/batcher/types";
+import { delay } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import axios, { AxiosRequestConfig } from "axios";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
+import { getCoinConfig } from "../../config";
+import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
-import { getCoinConfig } from "../../config";
+import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { getGasOptions } from "../gasTracker/ledger";
-import { padHexString } from "../../utils";
 import { NodeApi, isLedgerNodeConfig } from "./types";
 
 export const LEDGER_TIMEOUT = 10_000; // 10_000ms (10s) for network call timeout
@@ -83,6 +83,15 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     status: ledgerTransaction.status,
     from: ledgerTransaction.from,
     to: ledgerTransaction.to,
+    erc20Transfers: ledgerTransaction.transfer_events.map(event => ({
+      asset: {
+        type: "erc20" as const,
+        assetReference: safeEncodeEIP55(event.contract),
+      },
+      from: safeEncodeEIP55(event.from),
+      to: safeEncodeEIP55(event.to),
+      value: event.count,
+    })),
   };
 };
 
@@ -275,6 +284,12 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     sponsored: Boolean(broadcastConfig?.sponsored),
   };
 
+  const headers: Record<string, string> = {};
+  if (broadcastConfig?.source) {
+    headers["X-Ledger-Source-Type"] = broadcastConfig.source.type;
+    headers["X-Ledger-Source-Name"] = broadcastConfig.source.name;
+  }
+
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
@@ -282,6 +297,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
     params,
+    headers,
   });
   return hash;
 };
@@ -300,30 +316,38 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   }
 
   if (blockHeight === "latest") {
-    const { hash, height, time, txs } = await fetchWithRetries<{
+    const { hash, height, time, txs, prevHash } = await fetchWithRetries<{
       hash: string;
       height: number;
       time: string;
       txs: string[];
+      prevHash?: string;
     }>({
       method: "GET",
       url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
     });
 
-    return { hash, height, timestamp: new Date(time).getTime(), transactionHashes: txs };
+    return {
+      hash,
+      height,
+      timestamp: new Date(time).getTime(),
+      parentHash: prevHash || "",
+      transactionHashes: txs,
+    };
   }
 
   /**
    * for some reason, this explorer endpoint doesn't return the block object
    * but an array of one element with the requested block
    */
-  const [{ hash, height, time, txs }] = await fetchWithRetries<
+  const [{ hash, height, time, txs, prevHash }] = await fetchWithRetries<
     [
       {
         hash: string;
         height: number;
         time: string;
         txs: string[];
+        prevHash?: string;
       },
     ]
   >({
@@ -335,6 +359,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
     hash,
     height,
     timestamp: new Date(time).getTime(),
+    parentHash: prevHash || "",
     transactionHashes: txs,
   };
 };

@@ -1,16 +1,17 @@
 /* eslint-disable no-console */
-import { Observable } from "rxjs";
-import { BigNumber } from "bignumber.js";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { hexToU8a } from "@polkadot/util";
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import { signExtrinsic } from "../logic";
+import polkadotAPI from "../network";
 import type { PolkadotAccount, PolkadotSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-import { signExtrinsic } from "../logic";
-import polkadotAPI from "../network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -47,10 +48,64 @@ export const buildSignOperation =
             method: true,
           });
         const currency = getCryptoCurrencyById(account.currency.id);
-        const payloadString = Buffer.from(payload).toString("hex");
-        const metadata = await polkadotAPI.shortenMetadata(payloadString, currency);
+        // Decompose the ExtrinsicPayload into its three parts for the sidecar metadata-blob endpoint
+        // payload = callData ++ includedInExtrinsic (extra) ++ includedInSignedData (additional_signed)
+        const callData = unsigned.method;
+        // includedInSignedData: concatenation of all signed extensions' additional_signed() outputs
+        // = specVersion(u32) ++ txVersion(u32) ++ genesisHash(H256) ++ blockHash(H256) ++ Option<metadataHash>
+        const includedInSignedData =
+          "0x" +
+          unsigned.specVersion.slice(2) +
+          unsigned.transactionVersion.slice(2) +
+          unsigned.genesisHash.slice(2) +
+          unsigned.blockHash.slice(2) +
+          Buffer.from(unsigned.metadataHash).toString("hex");
+
+        // includedInExtrinsic: the signed extension extra data (era, nonce, tip, asset_id, mode)
+        // Extracted from the payload by removing the callData prefix and includedInSignedData suffix
+        const callDataBytesLength = (callData.length - 2) / 2;
+        const additionalSignedBytesLength = (includedInSignedData.length - 2) / 2;
+        const extraBytes = payload.subarray(
+          callDataBytesLength,
+          payload.length - additionalSignedBytesLength,
+        );
+        const includedInExtrinsic = "0x" + Buffer.from(extraBytes).toString("hex");
+
+        // First sidecar call: get the real metadataHash (placeholder is in includedInSignedData)
+        const { metadataHash } = await polkadotAPI.getMetadata(
+          callData,
+          includedInExtrinsic,
+          includedInSignedData,
+          currency,
+        );
+
+        // Rebuild unsigned and payload with the real metadataHash
+        unsigned.metadataHash = hexToU8a("0x01" + metadataHash.replace("0x", ""));
+        const finalIncludedInSignedData =
+          "0x" +
+          unsigned.specVersion.slice(2) +
+          unsigned.transactionVersion.slice(2) +
+          unsigned.genesisHash.slice(2) +
+          unsigned.blockHash.slice(2) +
+          Buffer.from(unsigned.metadataHash).toString("hex");
+        const finalPayload = registry
+          .createType("ExtrinsicPayload", unsigned, {
+            version: unsigned.version,
+          })
+          .toU8a({
+            method: true,
+          });
+
+        // Second sidecar call: get the correct metadataBlob with the real metadataHash
+        const { metadataBlob } = await polkadotAPI.getMetadata(
+          callData,
+          includedInExtrinsic,
+          finalIncludedInSignedData,
+          currency,
+        );
+
         const r = await signerContext(deviceId, signer =>
-          signer.sign(account.freshAddressPath, payload, metadata),
+          signer.sign(account.freshAddressPath, finalPayload, metadataBlob),
         );
 
         const signed = await signExtrinsic(unsigned, r.signature, registry);

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import BigNumber from "bignumber.js";
 import { ScrollView } from "react-native";
 import { bpsToPercent } from "@ledgerhq/live-common/families/solana/token";

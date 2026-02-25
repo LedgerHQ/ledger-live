@@ -6,6 +6,13 @@ import { Readable } from "stream";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
 import { Parse } from "unzipper";
+import {
+  extractBundleSize,
+  extractDuplicates,
+  type Metafile,
+  type EsbuildMetafile,
+  type RspackMetafile,
+} from "./metafile";
 
 export const desktopMetafilesKeys = {
   main: "metafile.main.json",
@@ -28,74 +35,38 @@ type ValueOf<T> = T[keyof T];
 export type DesktopMetafileSlug = keyof typeof desktopMetafilesKeys;
 export type DesktopMetafileKey = ValueOf<typeof desktopMetafilesKeys>;
 
-export interface FileImport {
-  path: string;
-  kind: string;
-  original?: string;
-  external?: boolean;
-}
-
-export interface FileBytes {
-  bytes: number;
-  imports: FileImport[];
-  format?: string;
-}
-
-export interface OutputFile {
-  imports: FileImport[];
-  exports: [];
-  inputs: { [key: string]: { bytesInOutput: number } };
-  bytes: number;
-  entryPoint?: string;
-}
-
-export interface DesktopMetafile {
-  inputs: { [key: string]: FileBytes };
-  outputs: { [key: string]: OutputFile };
-}
+// Re-export types from metafile module for compatibility
+export type { EsbuildMetafile, RspackMetafile, Metafile };
+export type DesktopMetafile = Metafile;
 
 export type DesktopMetafiles = {
   [K in DesktopMetafileKey]?: DesktopMetafile;
 };
 
 export function getMetafileBundleSize(
-  metafile: DesktopMetafiles,
+  metafiles: DesktopMetafiles,
   slug: DesktopMetafileSlug,
 ): number | undefined {
   const key = desktopMetafilesKeys[slug];
-  if (key in metafile) {
-    return metafile[key]?.outputs[`.webpack/${slug}.bundle.js`]?.bytes;
-  }
+  if (!(key in metafiles)) return undefined;
+
+  const m = metafiles[key];
+  if (!m) return undefined;
+
+  return extractBundleSize(m, slug);
 }
 
 export function getMetafileDuplicates(
   metafiles: DesktopMetafiles,
   slug: DesktopMetafileSlug,
 ): string[] {
-  const all = [];
   const key = desktopMetafilesKeys[slug];
-  if (key in metafiles) {
-    const m = metafiles[key]!;
-    // inspired from https://github.com/esbuild/esbuild.github.io/blob/main/src/analyze/warnings.ts
-    const inputs = m.inputs;
-    const resolvedPaths: Record<string, string[]> = {};
-    for (const i in inputs) {
-      const input = inputs[i];
-      for (const record of input.imports) {
-        if (record.original && record.original[0] !== ".") {
-          const array = resolvedPaths[record.original] || (resolvedPaths[record.original] = []);
-          if (!array.includes(record.path)) array.push(record.path);
-        }
-      }
-    }
-    for (const original in resolvedPaths) {
-      const array = resolvedPaths[original];
-      if (array.length > 1) {
-        all.push(original);
-      }
-    }
-  }
-  return all;
+  if (!(key in metafiles)) return [];
+
+  const m = metafiles[key];
+  if (!m) return [];
+
+  return extractDuplicates(m);
 }
 
 type Octokit = ReturnType<typeof github.getOctokit>;

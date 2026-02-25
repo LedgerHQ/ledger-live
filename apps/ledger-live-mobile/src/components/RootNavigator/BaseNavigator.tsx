@@ -1,20 +1,18 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
-import PairDevices from "~/screens/PairDevices";
 import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
@@ -25,13 +23,14 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
-import CardLiveAppNavigator from "./CardLiveAppNavigator";
+import { CardLiveAppNavigator } from "LLM/features/Card";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
+import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -47,6 +46,7 @@ import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketNavigator from "LLM/features/Market/Navigator";
+import SendWorkflow from "LLM/features/Send";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
@@ -82,13 +82,19 @@ import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
+import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import MyLedgerNavigator from "./MyLedgerNavigator";
+import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { AppState } from "react-native";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
@@ -110,11 +116,52 @@ export default function BaseNavigator() {
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
 
+  const { initPushNotificationsData, tryTriggerPushNotificationDrawerAfterInactivity } =
+    useNotifications();
+
+  useEffect(() => {
+    // This feature requires the user to be past onboarding, that's why it lives in the BaseNavigator for onboarded users only
+    initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
+
+    // No dependency because we only want to run it once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // This catches when the user is redirected back from toggling on notifications in the os settings
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "active") {
+        initPushNotificationsData();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [initPushNotificationsData]);
+
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
       <Stack.Navigator screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
+        <Stack.Screen
+          name={NavigatorName.MyLedger}
+          component={MyLedgerNavigator}
+          options={{ headerShown: false }}
+        />
+
+        {web3hub?.enabled ? (
+          <Stack.Screen
+            name={NavigatorName.Web3HubTab}
+            component={Web3HubTabNavigator}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <Stack.Screen
+            name={NavigatorName.Discover}
+            component={DiscoverNavigator}
+            options={{ headerShown: false }}
+          />
+        )}
         <Stack.Screen
           name={NavigatorName.BuyDevice}
           component={BuyDeviceNavigator}
@@ -181,6 +228,11 @@ export default function BaseNavigator() {
           component={SendFundsNavigator}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name={NavigatorName.SendFlow}
+          component={SendWorkflow}
+          options={{ headerShown: false }}
+        />
         {web3hub?.enabled ? (
           <Stack.Screen
             name={NavigatorName.Web3Hub}
@@ -235,6 +287,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Swap}
           component={SwapNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.Perps}
+          component={PerpsNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -329,19 +386,6 @@ export default function BaseNavigator() {
           name={NavigatorName.AccountSettings}
           component={AccountSettingsNavigator}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.PairDevices}
-          component={PairDevices}
-          options={({ navigation, route }) => ({
-            title: "",
-            headerRight: () => {
-              const nav = navigation;
-              return <ErrorHeaderInfo route={route} navigation={nav} />;
-            },
-            headerShown: true,
-            headerStyle: styles.headerNoShadow,
-          })}
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}
@@ -562,6 +606,12 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
+
+        <Stack.Screen
+          name={NavigatorName.Analytics}
+          component={AnalyticsNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </>
   );

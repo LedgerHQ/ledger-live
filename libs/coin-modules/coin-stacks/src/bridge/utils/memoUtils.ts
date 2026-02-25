@@ -18,7 +18,7 @@ export const memoToBufferCV = (memo?: any): ClarityValue => {
   if (memo === undefined || memo === null || memo === "") {
     return noneCV();
   }
-  return someCV(bufferCV(Buffer.from(String(memo))));
+  return someCV(bufferCV(new Uint8Array(Buffer.from(String(memo)))));
 };
 
 /**

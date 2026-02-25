@@ -19,6 +19,7 @@ import {
   HederaInvalidStakingNodeIdError,
   HederaRedundantStakingNodeIdError,
   HederaNoStakingRewardsError,
+  HederaMemoExceededSizeError,
 } from "../errors";
 import { estimateFees } from "../logic/estimateFees";
 import {
@@ -37,16 +38,17 @@ import type {
   TransactionTokenAssociate,
 } from "../types";
 import { calculateAmount } from "./utils";
+import { validateMemo } from "../logic/validateMemo";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
 
-function validateRecipient(account: Account, recipient: string): Error | null {
+async function validateRecipient(account: Account, recipient: string): Promise<Error | null> {
   if (!recipient || recipient.length === 0) {
     return new RecipientRequired();
   }
 
-  const [parsingError, parsingResult] = safeParseAccountId(recipient);
+  const [parsingError, parsingResult] = await safeParseAccountId(recipient);
 
   if (parsingError) {
     return parsingError;
@@ -79,6 +81,10 @@ async function handleTokenAssociateTransaction(
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
   const isAssociationFlow = isTokenAssociationRequired(account, transaction.properties.token);
+
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
+  }
 
   if (isAssociationFlow) {
     const hbarBalance = account.balance.dividedBy(10 ** account.currency.units[0].magnitude);
@@ -117,10 +123,14 @@ async function handleHTSTokenTransaction(
     }),
   ]);
 
-  const recipientError = validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient(account, transaction.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (!errors.recipient) {
@@ -188,10 +198,14 @@ async function handleERC20TokenTransaction(
     }),
   ]);
 
-  const recipientError = validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient(account, transaction.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (transaction.amount.eq(0)) {
@@ -230,7 +244,7 @@ async function handleCoinTransaction(
     }),
   ]);
 
-  const recipientError = validateRecipient(account, transaction.recipient);
+  const recipientError = await validateRecipient(account, transaction.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -242,6 +256,10 @@ async function handleCoinTransaction(
 
   if (account.balance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance("");
+  }
+
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   return {
@@ -265,6 +283,10 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
   });
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
+
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
+  }
 
   if (
     transaction.mode === HEDERA_TRANSACTION_MODES.Delegate ||

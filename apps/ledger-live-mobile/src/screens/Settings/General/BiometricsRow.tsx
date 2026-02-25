@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
 import { setPrivacyBiometrics } from "~/actions/settings";
 import { privacySelector } from "~/reducers/settings";

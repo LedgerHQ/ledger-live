@@ -1,34 +1,29 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { walletSelector } from "~/reducers/wallet";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 
 import { DefaultAccountSwapParamList } from "../../types";
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
-  fromAccountId?: string;
-  fromToken?: string;
+  toAccountId?: string;
+  toTokenId?: string;
+  fromTokenId?: string;
   amountFrom?: string;
   affiliate?: string;
+  toCurrencyId?: string;
+  fromPath?: string;
 };
 
 const isTokenAccount = (account: AccountLike | TokenAccount): account is TokenAccount =>
   (account as TokenAccount).token !== undefined;
 
-const isAccount = (account: AccountLike | undefined): account is Account =>
-  !!account && (account as Account).currency !== undefined;
-
-const getHighestBalanceAccount = (accounts: AccountLike[]): AccountLike => {
-  const sorted = [...accounts];
-  sorted.sort((a, b) => (a.spendableBalance.lt(b.spendableBalance) ? 1 : -1));
-  return sorted[0];
-};
-
 export const useTranslateToSwapAccount = (
   params: DefaultAccountSwapParamList | null,
-  currentAccounts: AccountLike[],
 ): SwapLiveUrlParams => {
   const walletState = useSelector(walletSelector);
 
@@ -40,49 +35,37 @@ export const useTranslateToSwapAccount = (
     }
 
     const defaultAccount = params.defaultAccount;
-    // @ts-expect-error params.currency comes from market
-    const defaultCurrency = params.defaultCurrency || params.currency;
+    const defaultCurrency = params.defaultCurrency;
 
-    // Pass through affiliate parameter from deep links
+    if (params.fromPath) newParams.fromPath = params.fromPath;
     if (params.affiliate) newParams.affiliate = params.affiliate;
 
-    // A specific account was given
+    if (params.fromTokenId) newParams.fromTokenId = params.fromTokenId;
+    if (params.toTokenId) newParams.toTokenId = params.toTokenId;
+    if (params.amountFrom) newParams.amountFrom = params.amountFrom;
+
     if (defaultAccount) {
-      newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
+      newParams.toAccountId = walletApi.accountToWalletAPIAccount(
         walletState,
         defaultAccount,
         params?.defaultParentAccount,
       ).id;
 
+      if (isTokenAccount(defaultAccount)) {
+        const currency = getAccountCurrency(defaultAccount);
+        newParams.toTokenId = walletApi.currencyToWalletAPICurrency(currency).id;
+      }
       return newParams;
     }
 
-    // No account was given, but a currency was
     if (defaultCurrency) {
-      const currency = walletApi.currencyToWalletAPICurrency(defaultCurrency);
-      const accounts = currentAccounts.filter(account =>
-        isTokenAccount(account)
-          ? account.token.id === currency.id
-          : account.currency?.id === currency.id,
-      );
-      const account = getHighestBalanceAccount(accounts);
-
-      if (account) {
-        const parentAccount = currentAccounts.find(currentAccount =>
-          isTokenAccount(account) ? currentAccount.id === account.parentId : false,
-        );
-
-        newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
-          walletState,
-          account,
-          isAccount(parentAccount) ? parentAccount : undefined,
-        ).id;
+      if (isTokenCurrency(defaultCurrency)) {
+        newParams.toTokenId = defaultCurrency.id;
+      } else {
+        newParams.toCurrencyId = defaultCurrency.id;
       }
-
-      newParams.fromToken = currency.id;
-      return newParams;
     }
 
     return newParams;
-  }, [params, walletState, currentAccounts]);
+  }, [params, walletState]);
 };

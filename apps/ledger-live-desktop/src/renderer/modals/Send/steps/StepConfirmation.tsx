@@ -136,7 +136,13 @@ export function StepConfirmationFooter({
           {t("send.steps.confirmation.success.cta")}
         </Button>
       ) : error ? (
-        ["LedgerAPI5xx", "NetworkDown"].includes(error.name) ? (
+        [
+          "LedgerAPI5xx",
+          "NetworkDown",
+          "DeviceLockedError",
+          "LockedDeviceError",
+          "UserRefusedOnDevice",
+        ].includes(error.name) ? (
           <RetryButton
             ml={2}
             primary

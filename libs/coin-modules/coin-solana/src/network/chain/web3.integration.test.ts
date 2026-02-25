@@ -1,8 +1,8 @@
 import { create } from "superstruct";
-import { getChainAPI } from ".";
 import { PARSED_PROGRAMS } from "./program/constants";
 import { PublicKeyFromString } from "./validators/pubkey";
 import { getMaybeTokenAccount, getTransactions } from "./web3";
+import { getChainAPI } from ".";
 
 const api = getChainAPI({
   endpoint: "https://solana.coin.ledger.com",

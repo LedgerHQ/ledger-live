@@ -44,7 +44,11 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
     >
       {items.map((item, index) => {
         return (
-          <LogContentCardWrapper key={item.props.metadata.id} id={item.props.metadata.id}>
+          <LogContentCardWrapper
+            key={item.props.metadata.id}
+            id={item.props.metadata.id}
+            location={item.props.location}
+          >
             <Flex style={{ width: cardWidth }}>
               <item.component {...item.props} itemStyle={getItemStyle(index, items.length)} />
             </Flex>

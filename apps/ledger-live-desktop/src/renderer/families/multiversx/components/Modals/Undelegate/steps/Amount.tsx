@@ -110,7 +110,7 @@ const StepAmountFooter = (props: StepProps) => {
       <AccountFooter account={account} status={status} />
 
       <Box horizontal>
-        <Button mr={1} secondary={true} onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           {t("common.cancel")}
         </Button>
         <Button disabled={!canNext} primary={true} onClick={() => transitionTo("device")}>

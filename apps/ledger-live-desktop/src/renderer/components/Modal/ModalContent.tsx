@@ -16,11 +16,11 @@ const ContentScrollableContainer = styled.div<{ noScroll?: boolean; pt?: number 
   flex: 0 auto;
   ${noScroll ? "overflow: hidden" : theme.overflow.y};
 
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 18px;
   }
 
-  ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     box-shadow: inset 0 0 0 12px ${theme.colors.neutral.c40};
     border: 6px solid rgba(0,0,0,0);
     border-radius: 12px;
@@ -45,16 +45,16 @@ const ContentScrollableContainerGradient = styled.div.attrs<{
   pointer-events: none;
 `;
 
-type Props = React.PropsWithRef<{
+type ModalContentProps = {
   children: React.ReactNode;
   noScroll?: boolean;
   pt?: number;
-}>;
+};
 
 function ModalContent(
   // eslint is wrong here, it should not complain
   // eslint-disable-next-line
-  { children, noScroll, pt }: Props,
+  { children, noScroll, pt }: ModalContentProps,
   containerRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const [isScrollable, setScrollable] = useState(false);

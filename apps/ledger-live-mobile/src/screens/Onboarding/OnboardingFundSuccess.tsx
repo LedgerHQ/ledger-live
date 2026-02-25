@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { BackHandler } from "react-native";
 import { Flex, Text, SlideIndicator, BoxedIcon, Icons } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";

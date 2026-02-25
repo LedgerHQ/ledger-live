@@ -19,10 +19,10 @@ const TouchButton = styled.button`
   color: ${p => p.theme.colors.neutral.c80};
   transition: filter 150ms ease-out;
   cursor: pointer;
-  :hover {
+  &:hover {
     filter: opacity(0.8);
   }
-  :active {
+  &:active {
     filter: opacity(0.5);
   }
 `;
@@ -77,11 +77,7 @@ const SideDrawerHeader = ({
           }}
         >
           {onRequestBack ? (
-            <Button
-              onClick={onRequestBack}
-              className="sidedrawer-close"
-              data-testid="drawer-close-button"
-            >
+            <Button onClick={onRequestBack} data-testid="drawer-close-button">
               <IconAngleLeft size={12} />
               <Text ff="Inter|Medium" fontSize={4} color="neutral.c60">
                 <Trans i18nKey="common.back" />

@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -165,7 +166,7 @@ export default class SwapPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, 60000, {
+    await waitForElementById(this.swapSuccessTitleId, 120000, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useState, FC } from "react";
 import { ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 
 import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
@@ -12,7 +12,7 @@ import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Create a higher order component that will return null if balance is zero (thus unable to delegate).

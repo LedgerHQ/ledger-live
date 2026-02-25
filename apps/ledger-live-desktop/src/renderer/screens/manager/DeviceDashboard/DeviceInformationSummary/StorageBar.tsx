@@ -1,12 +1,11 @@
-import React from "react";
-import { Transition, TransitionGroup } from "react-transition-group";
+import React, { useRef, useEffect, type RefObject } from "react";
+import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel } from "@ledgerhq/devices";
 import ByteSize from "~/renderer/components/ByteSize";
 import { Text } from "@ledgerhq/react-ui";
 import styled, { css, keyframes } from "styled-components";
-import { TransitionStatus } from "react-transition-group";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -39,7 +38,7 @@ const StorageBarGraph = styled.div`
   height: 100%;
   position: relative;
   transform-origin: left;
-  animation: ${p => p.theme.animations.fadeInGrowX};
+  ${p => p.theme.animations.fadeInGrowX};
 `;
 
 const transitionStyles = {
@@ -72,7 +71,6 @@ const StorageBarItem = styled.div.attrs<{
 }>(props => ({
   style: {
     backgroundColor: props.installing ? props.theme.colors.neutral.c40 : props.color,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ...transitionStyles[props.state as keyof typeof transitionStyles](
       `${(props.ratio * 1e2).toFixed(3)}%`,
     ),
@@ -94,7 +92,9 @@ const StorageBarItem = styled.div.attrs<{
       ? css`
           animation: ${blinkOpacity} 2s ease infinite;
         `
-      : ""};
+      : css`
+          animation: none;
+        `};
   & > * {
     width: 100%;
   }
@@ -163,47 +163,75 @@ const StorageBar = ({
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
-}) => (
-  <StorageBarWrapper>
-    {!isIncomplete && (
-      <TransitionGroup component={StorageBarGraph}>
-        {distribution.apps.map(({ name, currency, bytes, blocks }) => (
-          <Transition
-            timeout={{
-              appear: 333,
-              enter: 333,
-              exit: 1200,
-            }}
-            key={`${name}`}
-          >
-            {state => (
-              <StorageBarItem
-                state={state}
-                installing={installQueue.includes(name) || uninstallQueue.includes(name)}
-                color={getAppStorageBarColor({
-                  name,
-                  currency,
-                })}
-                ratio={blocks / distribution.appsSpaceBlocks}
+}) => {
+  const refsMapRef = useRef<Map<string, RefObject<HTMLDivElement | null>>>(new Map());
+
+  const getNodeRef = (name: string): RefObject<HTMLDivElement | null> => {
+    let ref = refsMapRef.current.get(name);
+    if (!ref) {
+      ref = React.createRef<HTMLDivElement>();
+      refsMapRef.current.set(name, ref);
+    }
+    return ref;
+  };
+
+  useEffect(() => {
+    const refsMap = refsMapRef.current;
+    const currentNames = new Set(distribution.apps.map(({ name }) => name));
+    for (const [name] of refsMap) {
+      if (!currentNames.has(name)) {
+        refsMap.delete(name);
+      }
+    }
+  }, [distribution.apps]);
+
+  return (
+    <StorageBarWrapper>
+      {!isIncomplete && (
+        <TransitionGroup component={StorageBarGraph}>
+          {distribution.apps.map(({ name, currency, bytes, blocks }) => {
+            const nodeRef = getNodeRef(name);
+            return (
+              <Transition
+                timeout={{
+                  appear: 333,
+                  enter: 333,
+                  exit: 1200,
+                }}
+                key={`${name}`}
+                nodeRef={nodeRef}
               >
-                <Tooltip
-                  hideOnClick={false}
-                  content={
-                    <TooltipContent
-                      name={name}
-                      bytes={bytes}
-                      deviceModel={deviceModel}
-                      deviceInfo={deviceInfo}
+                {state => (
+                  <StorageBarItem
+                    ref={nodeRef}
+                    state={state}
+                    installing={installQueue.includes(name) || uninstallQueue.includes(name)}
+                    color={getAppStorageBarColor({
+                      name,
+                      currency,
+                    })}
+                    ratio={blocks / distribution.appsSpaceBlocks}
+                  >
+                    <Tooltip
+                      hideOnClick={false}
+                      content={
+                        <TooltipContent
+                          name={name}
+                          bytes={bytes}
+                          deviceModel={deviceModel}
+                          deviceInfo={deviceInfo}
+                        />
+                      }
                     />
-                  }
-                />
-              </StorageBarItem>
-            )}
-          </Transition>
-        ))}
-      </TransitionGroup>
-    )}
-  </StorageBarWrapper>
-);
+                  </StorageBarItem>
+                )}
+              </Transition>
+            );
+          })}
+        </TransitionGroup>
+      )}
+    </StorageBarWrapper>
+  );
+};
 
 export default StorageBar;

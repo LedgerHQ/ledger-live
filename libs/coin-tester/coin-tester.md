@@ -21,7 +21,7 @@ You'll just need to define the transactions as expected by the coin module and t
 The coin modules works quite simply:
 
 1. Setup: During the setup we spawn the local test node and the transaction signer. It returns the [CurrencyBridge](https://github.com/LedgerHQ/ledger-live/wiki/LLC:CurrencyBridge), [AccountBridge](https://github.com/LedgerHQ/ledger-live/wiki/LLC:AccountBridge) and an account.
-2. (optional )We run additional checks if they are defined
+2. (optional) We run additional checks if they are defined
 3. We loop through the array of transaction and execute the transactions. For each transaction we check that the coin module acted as expected.
 4. We teardown the setup
 
@@ -43,5 +43,7 @@ The coin tester engine is located [here](https://github.com/LedgerHQ/ledger-live
 
 ## Examples
 
-- [EVM](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester)
-- [Polkadot](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-polkadot/src/test/coin-tester)
+- [Bitcoin](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-bitcoin)
+- [EVM](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-evm)
+- [Polkadot](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-polkadot)
+- [Solana](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-solana)

@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import { Button, ScrollView } from "react-native";
-import { action } from "@storybook/addon-actions";
 import { StoryFn } from "@storybook/react";
 import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
 import { Alert, Text } from "../../../../src/components";
@@ -11,7 +10,15 @@ export default {
   component: BottomDrawer,
 };
 
-const Template = (args: typeof BaseStoryArgs & typeof WithoutStoryArgs) => {
+type DrawerStoryArgs = {
+  noHeader: boolean;
+  title?: string;
+  description?: string;
+  subtitle?: string;
+  noCloseButton: boolean;
+};
+
+const Template = (args: DrawerStoryArgs) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = useCallback(() => {
@@ -24,7 +31,6 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutStoryArgs) => {
       <BottomDrawer
         isOpen={isOpen}
         onClose={() => {
-          action("onClose")();
           setIsOpen(false);
         }}
         {...(args.noHeader
@@ -40,7 +46,7 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutStoryArgs) => {
     </>
   );
 };
-export const BaseStory: StoryFn<typeof BottomDrawer> = Template.bind({});
+export const BaseStory: StoryFn<DrawerStoryArgs> = Template.bind({});
 BaseStory.storyName = "BottomDrawer";
 const BaseStoryArgs = {
   noHeader: false,
@@ -51,7 +57,7 @@ const BaseStoryArgs = {
 };
 BaseStory.args = BaseStoryArgs;
 
-export const WithoutHeaderStory: StoryFn<typeof BottomDrawer> = Template.bind({});
+export const WithoutHeaderStory: StoryFn<DrawerStoryArgs> = Template.bind({});
 WithoutHeaderStory.storyName = "BottomDrawer (no header)";
 const WithoutStoryArgs = {
   noHeader: true,
@@ -72,7 +78,6 @@ export const ScrollViewStory = (args: any) => {
       <BottomDrawer
         isOpen={isOpen}
         onClose={() => {
-          action("onClose")();
           setIsOpen(false);
         }}
         title={args.title}

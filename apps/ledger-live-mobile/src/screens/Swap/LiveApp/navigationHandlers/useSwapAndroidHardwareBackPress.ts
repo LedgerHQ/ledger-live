@@ -7,7 +7,7 @@ export function useSwapAndroidHardwareBackPress({
   webviewRef,
   canGoBack,
 }: {
-  webviewRef: React.RefObject<WebviewAPI>;
+  webviewRef: React.RefObject<WebviewAPI | null>;
   canGoBack: boolean;
 }) {
   const { isSwapTabScreen } = useIsSwapTab();

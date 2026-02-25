@@ -5,18 +5,17 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
-import { Linking, StyleSheet, View } from "react-native";
+import { Trans } from "~/context/Locale";
+import { Linking, StyleSheet, View, TouchableOpacity } from "react-native";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { urls } from "~/utils/urls";
 import ExternalLink from "~/icons/ExternalLink";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import { NavigatorName, ScreenName } from "~/const";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useNavigation } from "@react-navigation/core";
 import TokenTransferFeesWarning from "./Token2022/TokenTransferFeesWarning";
-import { TouchableOpacity } from "react-native";
 import TranslatedError from "~/components/TranslatedError";
 
 type Props = {

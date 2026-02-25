@@ -1,12 +1,11 @@
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomErrorNavigatorParamList } from "~/components/RootNavigator/types/CustomErrorNavigator";
 import { ScreenName } from "~/const";
-import { Trans, useTranslation } from "react-i18next";
-import { Icons } from "@ledgerhq/native-ui";
+import { Trans, useTranslation } from "~/context/Locale";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
 

@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import {
   ActivityIndicator,
@@ -78,7 +79,7 @@ export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
   position: relative;
   ${(p) => buttonSizeStyle[p.sizeVariant || "medium"]}
 
-  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : "")}
+  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : null)}
 `;
 
 const Container = styled.View<{

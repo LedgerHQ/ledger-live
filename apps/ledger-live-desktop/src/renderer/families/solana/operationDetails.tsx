@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import BigNumber from "bignumber.js";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";

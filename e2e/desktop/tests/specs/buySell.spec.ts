@@ -113,7 +113,7 @@ for (const asset of assets) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.layout.goToMarket();
-        await app.market.search(crypto.currency.name);
+        await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
 
         await app.layout.verifyBuySellSideBarIsSelected();
@@ -175,7 +175,6 @@ for (const asset of assets) {
           "@NanoGen5",
           `@${crypto.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",

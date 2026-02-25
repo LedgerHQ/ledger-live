@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Image, ImageSourcePropType } from "react-native";
 import { useTheme } from "styled-components/native";
 import { track } from "~/analytics";

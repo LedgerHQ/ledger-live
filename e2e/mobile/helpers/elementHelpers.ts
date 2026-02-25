@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
-import { by, element, expect as detoxExpect, waitFor, web } from "detox";
+import { by, element, expect as detoxExpect, waitFor, web, log } from "detox";
 import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
@@ -338,7 +339,11 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
-  async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT): Promise<WebElement> {
+  async waitWebElementByTestId(
+    id: string,
+    timeout = DEFAULT_TIMEOUT,
+    throwOnTimeout = true,
+  ): Promise<WebElement | undefined> {
     const start = Date.now();
     let lastErr: Error | undefined;
     while (Date.now() - start < timeout) {
@@ -351,7 +356,11 @@ export const WebElementHelpers = {
         await delay(200);
       }
     }
-    throw new Error(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
+    if (throwOnTimeout) {
+      throw new Error(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
+    } else {
+      log.warn(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
+    }
   },
 
   async tapWebElementByTestId(id: string, index = 0): Promise<void> {
@@ -395,7 +404,7 @@ export const WebElementHelpers = {
       await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
     } catch (error) {
       throw new Error(
-        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${error}`,
+        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${sanitizeError(error)}`,
       );
     }
   },

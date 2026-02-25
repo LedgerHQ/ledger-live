@@ -10,8 +10,13 @@ declare const __DEV__: boolean;
 declare module "*.svg";
 declare module "*.png";
 declare module "*.jpg";
+declare module "*.webp";
 declare module "*.webm";
 declare module "*.mp4";
+declare module "*.lottie" {
+  const src: string;
+  export default src;
+}
 
 type Store = import("redux").Store;
 type Device = import("@ledgerhq/live-common/hw/actions/types").Device;
@@ -39,6 +44,8 @@ declare namespace Electron {
 }
 
 interface Window {
+  // Electron's nodeIntegration provides require on window
+  require: NodeJS.Require;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 

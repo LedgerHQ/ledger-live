@@ -109,14 +109,6 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
     patchedStandard = "sui";
   }
 
-  // LIVE-22561: TON Jetton - Remove name prefix from ID (API: ton/jetton/name_address -> LL: ton/jetton/address)
-  if (patchedId.startsWith("ton/jetton/") && patchedId.indexOf("_") > 0) {
-    const parts = patchedId.split("_");
-    if (parts.length === 2) {
-      patchedId = "ton/jetton/" + parts[1];
-    }
-  }
-
   // Construct TokenCurrency directly from API data
   const tokenCurrency: TokenCurrency = {
     type: "TokenCurrency",

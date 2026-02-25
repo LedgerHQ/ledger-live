@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
@@ -76,12 +76,17 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
       return acc;
     }, new Set());
 
-    data.currenciesOrder.currenciesIds.forEach(id => {
-      const currency = data.cryptoOrTokenCurrencies[id];
-      if (currency && isAcceptedCurrency(currency)) {
-        orderedSet.add(currency);
-      }
-    });
+    data.currenciesOrder.metaCurrencyIds
+      .flatMap(metaCurrencyId => {
+        const assetsIds = data.cryptoAssets[metaCurrencyId]?.assetsIds;
+        return assetsIds ? Object.values(assetsIds) : [];
+      })
+      .forEach(currencyId => {
+        const currency = data.cryptoOrTokenCurrencies[currencyId];
+        if (currency && isAcceptedCurrency(currency)) {
+          orderedSet.add(currency);
+        }
+      });
 
     return Array.from(orderedSet);
   }, [data, ids, isAcceptedCurrency]);

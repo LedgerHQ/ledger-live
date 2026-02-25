@@ -113,19 +113,25 @@ const fadeInUp = keyframes`
       transform: translateY(0%);
     }
   `;
+
+const fadeInAnimation = css`
+  animation: ${fadeIn} ${animationLength} ${easings.outQuadratic} forwards;
+`;
+const fadeOutAnimation = css`
+  animation: ${fadeOut} ${animationLength} ${easings.outQuadratic} forwards;
+`;
+const fadeInGrowXAnimation = css`
+  animation: ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards;
+`;
+const fadeInUpAnimation = css`
+  animation: ${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards;
+`;
+
 const animations = {
-  fadeIn: () => css`
-    ${fadeIn} ${animationLength} ${easings.outQuadratic} forwards
-  `,
-  fadeOut: () => css`
-    ${fadeOut} ${animationLength} ${easings.outQuadratic} forwards
-  `,
-  fadeInGrowX: () => css`
-    ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards
-  `,
-  fadeInUp: () => css`
-    ${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards
-  `,
+  fadeIn: fadeInAnimation,
+  fadeOut: fadeOutAnimation,
+  fadeInGrowX: fadeInGrowXAnimation,
+  fadeInUp: fadeInUpAnimation,
 };
 const overflow = {
   x: css`
@@ -202,12 +208,8 @@ export type Theme = {
   colors: {
     [x: string]: string;
   };
-  animations: {
-    [x: string]: (props: never) => unknown;
-  };
-  overflow: {
-    [x: string]: unknown;
-  };
+  animations: typeof animations;
+  overflow: typeof overflow;
 };
 
 const theme: Theme = {

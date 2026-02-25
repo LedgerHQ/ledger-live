@@ -8,12 +8,12 @@ import {
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { STACKS_MAX_MEMO_SIZE } from "../constants";
 import { StacksMemoTooLong } from "../errors";
 import { Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "./utils/addresses";
 import { getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
+import { validateMemo } from "../logic/validateMemo";
 
 type ValidationErrors = TransactionStatus["errors"];
 
@@ -114,16 +114,6 @@ function handleStxTransaction(
   return { amount, totalSpent };
 }
 
-/**
- * Validates memo length
- */
-function validateMemo(memo: string | undefined, errors: ValidationErrors): void {
-  const memoBytesLength = Buffer.from(memo ?? "", "utf-8").byteLength;
-  if (memoBytesLength > STACKS_MAX_MEMO_SIZE) {
-    errors.transaction = new StacksMemoTooLong();
-  }
-}
-
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,
   transaction,
@@ -169,7 +159,9 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   }
 
   // Validate memo
-  validateMemo(memo, errors);
+  if (memo && !validateMemo(memo)) {
+    errors.transaction = new StacksMemoTooLong();
+  }
 
   return {
     errors,

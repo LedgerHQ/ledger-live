@@ -23,7 +23,7 @@ jobs:
       FORCE_COLOR: 3
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -40,6 +40,8 @@ jobs:
         run: pnpm i -F "web-tools..." -F "ledger-live"
       - name: build web-tools
         run: pnpm turbo run build --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+      - name: typecheck web-tools
+        run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
   report:
     needs: build-web-tools
@@ -47,7 +49,7 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: outputs-*
           merge-multiple: true
@@ -64,10 +66,10 @@ jobs:
               }
             };
 
-            const summary = `### Common Tools
+            const summary = `### Web Tools
 
-            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools build failed"}
-              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* build* ended with status \`${statuses.tool.status}\`
+            ${statuses.tool.pass ? "Web Tools are fine" : "Web Tools build or typecheck failed"}
+              - ${statuses.tool.pass ? "✅" : "❌"} **Web Tools** ended with status \`${statuses.tool.status}\`
             `;
 
             const actions = [];
@@ -78,7 +80,7 @@ jobs:
             };
 
             fs.writeFileSync("summary-web-tools.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary-web-tools.json

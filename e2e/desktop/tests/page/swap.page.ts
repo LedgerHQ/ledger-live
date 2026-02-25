@@ -6,6 +6,7 @@ import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { mkdir, readFile, rename } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
@@ -23,11 +24,15 @@ export class SwapPage extends AppPage {
   private numberOfQuotes = "number-of-quotes";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
-  private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
+  private swapBtn = "execute-button";
+  private executeSwapBtn = "execute-swap-button-step-approval";
   private continueBtn = this.page.locator("#sign-summary-continue-button");
+  private insufficientFundsBuyButton = "insufficient-funds-buy-button";
+  private insufficientFundsWarning = "insufficient-funds-warning";
+  private executeButtonDisabled = "execute-button-disabled";
 
   // Exchange Drawer Components
   readonly swapId = this.page.getByTestId("swap-id");
@@ -50,13 +55,7 @@ export class SwapPage extends AppPage {
     this.page.getByTestId(`swap-history-from-amount-${swapId}`);
   private selectSpecificOperationAmountTo = (swapId: string) =>
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
-  private drawerContent = this.page.locator('[data-testid="drawer-content"]');
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private insufficientFundsWarningElem = this.drawerContent.getByTestId(
-    "insufficient-funds-warning",
-  );
-  private continueButton = this.drawerContent.getByRole("button", { name: "Continue" });
-  private drawerCloseButton = this.drawerContent.getByTestId("drawer-close-button");
 
   async sendMax() {
     await this.maxSpendableToggle.click();
@@ -78,7 +77,6 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
     await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
-    await expect(webview.getByTestId(this.quoteInfosFeesSelector)).toBeVisible();
     await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
   }
 
@@ -98,7 +96,10 @@ export class SwapPage extends AppPage {
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await webview
+      .getByTestId(baseProviderLocator + "amount-label")
+      .first()
+      .click();
     await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
@@ -146,17 +147,36 @@ export class SwapPage extends AppPage {
   }
 
   @step("Select available provider without KYC")
-  async selectExchangeWithoutKyc(electronApp: ElectronApplication) {
+  async selectExchangeWithoutKyc(electronApp: ElectronApplication, swap?: Swap) {
     const [, webview] = electronApp.windows();
 
     const providersList = await this.getProviderList(electronApp);
 
+    // Check if the swap is ETH <-> SOL pair (exclude LiFi for these pairs)
+    const isEthSolPair =
+      swap &&
+      ((swap.accountToDebit.currency.id === Currency.ETH.id &&
+        swap.accountToCredit.currency.id === Currency.SOL.id) ||
+        (swap.accountToDebit.currency.id === Currency.SOL.id &&
+          swap.accountToCredit.currency.id === Currency.ETH.id));
+
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
-        return provider && !provider.kyc && provider.availableOnLns;
+      if (!provider || provider.kyc) {
+        return false;
       }
-      return provider && !provider.kyc;
+
+      // Exclude LiFi for ETH <-> SOL pairs on all devices
+      if (isEthSolPair && provider.name === Provider.LIFI.name) {
+        return false;
+      }
+
+      // Additional filter for LNS devices
+      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
+        return provider.availableOnLns;
+      }
+
+      return true;
     });
 
     for (const providerName of providersWithoutKYC) {
@@ -199,19 +219,6 @@ export class SwapPage extends AppPage {
     throw new Error("No valid providers found");
   }
 
-  @step("Tap quote infos fees selector")
-  async tapQuoteInfosFeesSelector(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.quoteInfosFeesSelector).nth(1).click();
-  }
-
-  @step("Check drawer error message ($0)")
-  async checkFeeDrawerErrorMessage(errorMessage: string | RegExp) {
-    await expect(this.insufficientFundsWarningElem).toHaveText(errorMessage);
-    await expect(this.continueButton).toBeDisabled();
-    await this.drawerCloseButton.click();
-  }
-
   @step("Get all swap providers available")
   async getAllSwapProviders(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
@@ -220,6 +227,18 @@ export class SwapPage extends AppPage {
         '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
       )
       .allTextContents();
+  }
+
+  @step("Check drawer error message ($0)")
+  async checkFeeErrorMessage(electronApp: ElectronApplication, errorMessage: string | RegExp) {
+    const [, webview] = electronApp.windows();
+
+    const insufficientFundsWarningElem = webview.getByTestId(this.insufficientFundsWarning);
+    const errorMessageSpan = insufficientFundsWarningElem.getByText(errorMessage);
+    await expect(errorMessageSpan).toBeVisible();
+    const insufficientFundsBuyButton = webview.getByTestId(this.insufficientFundsBuyButton);
+    await expect(insufficientFundsBuyButton).toBeEnabled();
+    await expect(webview.getByTestId(this.executeButtonDisabled)).toBeDisabled();
   }
 
   @step("Extract quotes and fees")
@@ -258,28 +277,44 @@ export class SwapPage extends AppPage {
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
 
-    const buttonText = [Provider.VELORA.uiName, Provider.MOONPAY.uiName].includes(provider)
-      ? `Continue with ${provider}`
-      : `Swap with ${provider}`;
-
-    const buttonLocator = webview.getByRole("button", { name: buttonText });
+    const buttonLocator = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(buttonLocator).toBeVisible();
     await expect(buttonLocator).toBeEnabled();
   }
 
   @step("Click Exchange button")
-  async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
+  async clickExchangeButton(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    const swapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
+    const swapButton = webview.getByTestId(this.swapBtn);
     await expect(swapButton).toBeVisible();
     await expect(swapButton).toBeEnabled();
     await swapButton.click();
   }
 
+  @step("Click Execute Swap button")
+  async clickExecuteSwapButton(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    const executeSwapButton = webview.getByTestId(this.executeSwapBtn);
+    await expect(executeSwapButton).toBeVisible();
+    await expect(executeSwapButton).toBeEnabled();
+    await executeSwapButton.waitFor({ state: "attached" });
+    await executeSwapButton.evaluate((btn: HTMLElement) => {
+      return new Promise<void>(resolve => {
+        const interval = setInterval(() => {
+          if (!btn.hasAttribute("disabled")) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 50);
+      });
+    });
+    await executeSwapButton.click();
+  }
+
   @step("Go to provider live app")
   async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    const continueButton = webview.getByRole("button", { name: `Continue with ${provider}` });
+    const continueButton = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(continueButton).toBeVisible();
     await expect(continueButton).toBeEnabled();
     await continueButton.click();
@@ -342,7 +377,17 @@ export class SwapPage extends AppPage {
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountAmountInput).fill(amount);
+
+    const amountInput = webview.getByTestId(this.fromAccountAmountInput);
+
+    // Wait for input to be fully interactive after dialog closes
+    await expect(amountInput).toBeVisible();
+    await expect(amountInput).toBeEnabled();
+
+    // Click to focus the input before filling
+    await amountInput.click();
+    await amountInput.fill(amount);
+
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
   }
@@ -535,7 +580,7 @@ export class SwapPage extends AppPage {
 
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
     const amount = await getMinimumSwapAmount(accountFrom, accountTo);
-    return amount ? parseFloat(amount.toFixed(6)).toString() : "";
+    return amount ? Number.parseFloat(amount.toFixed(6)).toString() : "";
   }
 
   @step("Click on swap max")

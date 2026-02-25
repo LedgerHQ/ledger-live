@@ -1,9 +1,9 @@
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import bs58check from "bs58check";
 import get from "lodash/get";
 import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType, TronTransactionInfo } from "../types";
 import { TransactionTronAPI, Trc20API } from "./types";
-import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import bs58check from "bs58check";
 
 export const decode58Check = (base58: string): string =>
   Buffer.from(bs58check.decode(base58)).toString("hex");
@@ -101,13 +101,17 @@ export const formatTrongridTxResponse = (
     const value = getValue();
     const fee = get(tx, "ret[0].fee", detail && detail.fee ? detail.fee : undefined);
     const blockHeight = blockNumber || detail?.blockNumber;
+    const isTrc20 = type === "TriggerSmartContract" && contract_address;
+    const isTrc10 = type === "TransferAssetContract";
+    const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
     const txInfo: TrongridTxInfo = {
       txID,
       date,
       type,
       tokenId,
-      // TRX native is TransferContract
-      tokenType: type === "TransferAssetContract" ? "trc10" : undefined,
+      // TRX native is TransferContract, TRC20 uses TriggerSmartContract
+      tokenType,
+      tokenAddress: isTrc20 ? encode58Check(contract_address) : undefined,
       from,
       to,
       value: !value.isNaN() ? value : new BigNumber(0),

@@ -12,6 +12,10 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { liveDataWithParentAddressCommand, liveDataCommand } from "tests/utils/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const subAccounts = [
   {
@@ -19,11 +23,11 @@ const subAccounts = [
     xrayTicket1: "B2CQA-2577, B2CQA-1079",
     xrayTicket2: "B2CQA-2583",
   },
-  { account: Account.XLM_USCD, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
-  { account: Account.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
-  { account: Account.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
-  { account: Account.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
-  { account: Account.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
+  { account: TokenAccount.XLM_USDC, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
+  { account: TokenAccount.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
+  { account: TokenAccount.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
+  { account: TokenAccount.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
+  { account: TokenAccount.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
 ];
 
@@ -34,10 +38,11 @@ const subAccountReceive: Array<{
 }> = [
   { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
   { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
-  { account: Account.TRX_USDT, xrayTicket: "B2CQA-2496" },
-  { account: Account.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
-  { account: Account.POL_DAI_1, xrayTicket: "B2CQA-2493" },
-  { account: Account.POL_UNI, xrayTicket: "B2CQA-2494" },
+  { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
+  //TODO: re-enable tests when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
+  // { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
+  // { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
+  // { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 
@@ -45,7 +50,7 @@ for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosApp: token.account.currency.speculosApp,
+      speculosApp: token.account.parentAccount?.currency.speculosApp,
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -55,14 +60,14 @@ for (const token of subAccounts) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
           "@NanoX",
           "@Stax",
           "@Flex",
           "@NanoGen5",
           `@${token.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.XLM_USCD ? ["@smoke"] : []),
+          ...(token.account === TokenAccount.XLM_USDC ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -74,11 +79,11 @@ for (const token of subAccounts) {
 
         await app.portfolio.openAddAccountModal();
 
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTicker(token.account.currency);
-          await app.modularDrawer.selectNetwork(token.account.currency);
+        const selector = await getModularSelector(app, "ASSET");
+        if (selector) {
+          await selector.validateItems();
+          await selector.selectAssetByTicker(token.account.currency);
+          await selector.selectNetwork(token.account.currency);
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();
         } else {
@@ -93,14 +98,13 @@ for (const token of subAccounts) {
           await app.portfolio.navigateToAsset(token.account.currency.name);
         }
         await app.account.navigateToToken(token.account);
-        await app.account.expectLastOperationsVisibility();
         await app.account.expectTokenAccount(token.account);
+        await app.account.expectLastOperationsVisibility();
       },
     );
   });
 }
 
-//Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
 for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
@@ -115,7 +119,7 @@ for (const token of subAccountReceive) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -166,7 +170,7 @@ for (const token of subAccounts) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -210,14 +214,10 @@ for (const transaction of transactionE2E) {
       userdata: "skip-onboarding",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
-            index: transaction.tx.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
+        liveDataWithParentAddressCommand(
+          transaction.tx.accountToDebit,
+          transaction.tx.accountToCredit,
+        ),
       ],
     });
 
@@ -262,20 +262,25 @@ for (const transaction of transactionE2E) {
 
 const transactionsAddressInvalid = [
   {
-    transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
-    recipient: Account.ALGO_USDT_2.address,
+    transaction: new Transaction(
+      TokenAccount.ALGO_USDT_1,
+      TokenAccount.ALGO_USDT_2,
+      "0.1",
+      Fee.MEDIUM,
+    ),
+    recipient: undefined,
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
     xrayTicket: "B2CQA-2702",
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
-    recipient: TokenAccount.SOL_WIF_2.address,
+    recipient: Addresses.SOL_WIF_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
     expectedErrorMessage: "This associated token account holds another token",
     xrayTicket: "B2CQA-3083",
   },
   {
     transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
-    recipient: TokenAccount.SOL_GIGA_2.address,
+    recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
     expectedErrorMessage: "This is a token account. Input a regular wallet address",
     xrayTicket: "B2CQA-3084",
   },
@@ -305,13 +310,18 @@ for (const transaction of transactionsAddressInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.speculosApp.name,
-            index: transaction.transaction.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
+        async (appjsonPath: string) => {
+          await liveDataCommand(transaction.transaction.accountToDebit, { useScheme: false })(
+            appjsonPath,
+          );
+          if (transaction.recipient === undefined) {
+            const receiveAddress = await CLI.getAddress({
+              currency: transaction.transaction.accountToCredit.currency.id,
+              path: transaction.transaction.accountToCredit.accountPath,
+            });
+            transaction.recipient = receiveAddress.address;
+          }
+          return transaction.recipient;
         },
       ],
     });
@@ -405,8 +415,8 @@ for (const transaction of transactionsAddressValid) {
 
         await app.layout.openSendModalFromSideBar();
         await app.send.selectDebitCurrency(transaction.transaction);
-        const recipientAddress = transaction.transaction.accountToCredit.address ?? "";
-        await app.send.fillRecipient(recipientAddress);
+        //CLI doesn't allow us to get ATA address
+        await app.send.fillRecipient(Addresses.SOL_GIGA_2_ATA_ADDRESS);
 
         await app.send.checkContinueButtonEnable();
         await app.send.checkInputWarningMessage(transaction.expectedErrorMessage);
@@ -417,7 +427,7 @@ for (const transaction of transactionsAddressValid) {
 
 const tokenTransactionInvalid = [
   {
-    tx: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
+    tx: new Transaction(TokenAccount.BSC_BUSD_1, TokenAccount.BSC_BUSD_2, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Chain network\. .*/,
     ),
@@ -457,14 +467,10 @@ for (const transaction of tokenTransactionInvalid) {
       userdata: "skip-onboarding",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
-            index: transaction.tx.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
+        liveDataWithParentAddressCommand(
+          transaction.tx.accountToDebit,
+          transaction.tx.accountToCredit,
+        ),
       ],
     });
 
@@ -512,7 +518,7 @@ for (const transaction of tokenTransactionInvalid) {
 test.describe("Send token (subAccount) - valid address & amount input", () => {
   const tokenTransactionValid = new Transaction(
     TokenAccount.ETH_USDT_1,
-    TokenAccount.ETH_USDT_2,
+    TokenAccount.ETH_USDT_3,
     "1",
     Fee.MEDIUM,
   );
@@ -520,14 +526,10 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     userdata: "skip-onboarding",
     speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
     cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: tokenTransactionValid.accountToDebit.currency.speculosApp.name,
-          index: tokenTransactionValid.accountToDebit.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
+      liveDataWithParentAddressCommand(
+        tokenTransactionValid.accountToDebit,
+        tokenTransactionValid.accountToCredit,
+      ),
     ],
   });
 
@@ -577,28 +579,20 @@ test.describe("Send token (subAccount) - e2e ", () => {
     userdata: "skip-onboarding",
     speculosApp: tokenValidSend.tx.accountToDebit.currency.speculosApp,
     cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: tokenValidSend.tx.accountToDebit.currency.speculosApp.name,
-          index: tokenValidSend.tx.accountToDebit.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: tokenValidSend.tx.accountToCredit.currency.speculosApp.name,
-          index: tokenValidSend.tx.accountToCredit.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
+      liveDataWithParentAddressCommand(
+        tokenValidSend.tx.accountToDebit,
+        tokenValidSend.tx.accountToDebit,
+      ),
+      liveDataWithParentAddressCommand(
+        tokenValidSend.tx.accountToCredit,
+        tokenValidSend.tx.accountToCredit,
+      ),
     ],
   });
   test(
     `Send from ${tokenValidSend.tx.accountToDebit.accountName} to ${tokenValidSend.tx.accountToCredit.accountName} - e2e`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
+      tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
       annotation: { type: "TMS", description: tokenValidSend.xrayTicket },
     },
     async ({ app }) => {

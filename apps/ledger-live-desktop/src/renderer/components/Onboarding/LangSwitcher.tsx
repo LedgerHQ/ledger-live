@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { setLanguage } from "~/renderer/actions/settings";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { Dropdown } from "@ledgerhq/react-ui";
 import { Languages } from "~/config/languages";
 import { useSupportedLanguages } from "~/renderer/hooks/useSupportedLanguages";

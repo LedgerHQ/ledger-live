@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { actionContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import * as braze from "@braze/web-sdk";
 import { setActionCards } from "~/renderer/actions/dynamicContent";
@@ -11,18 +12,20 @@ import { ActionContentCard } from "~/types/dynamicContent";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
-  const [cachedContentCards, setCachedContentCards] = useState(braze.getCachedContentCards().cards);
+  const [cachedContentCards, setCachedContentCards] = useState(
+    braze.getCachedContentCards()?.cards ?? [],
+  );
   const actionCards = useSelector(actionContentCardSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
-    setCachedContentCards(braze.getCachedContentCards().cards);
+    setCachedContentCards(braze.getCachedContentCards()?.cards ?? []);
   }, [actionCards]);
 
   const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);
   const findActionCard = (cardId: string) => actionCards.find(card => card.id === cardId);
 
-  const onDismiss = (cardId: string) => {
+  const onDismiss = (cardId: string, displayedPosition?: number) => {
     const currentCard = findCard(cardId);
     const actionCard = findActionCard(cardId);
 
@@ -42,11 +45,13 @@ const useActionCards = () => {
         campaign: actionCard.id,
         page: "Portfolio",
         type: "action_card",
+        displayedPosition,
+        location: actionCard.location,
       });
     }
   };
 
-  const onClick = (cardId: string, link?: string) => {
+  const onClick = (cardId: string, link?: string, displayedPosition?: number) => {
     const currentCard = findCard(cardId);
     const actionCard = findActionCard(cardId);
 
@@ -68,6 +73,8 @@ const useActionCards = () => {
         campaign: actionCard.id,
         page: "Portfolio",
         type: "action_card",
+        location: actionCard.location,
+        displayedPosition,
       });
     }
   };

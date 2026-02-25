@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isDeviceModelId } from "@ledgerhq/devices/helpers";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -15,7 +15,7 @@ import {
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import nanoS from "./assets/nanoS.png";
@@ -96,19 +96,18 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
   const [readyToDecide, setReadyToDecide] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
   const device = useSelector(getCurrentDevice);
-  const history = useHistory();
+  const navigate = useNavigate();
   const onReopenManager = useCallback(() => {
     onTryAgain(false);
   }, [onTryAgain]);
   const onBackToPortfolio = useCallback(() => {
-    history.push({
-      pathname: "/",
-    });
-  }, [history]);
+    navigate("/");
+  }, [navigate]);
   useEffect(() => {
-    setTimeout(() => {
+    const timerRef = setTimeout(() => {
       setReadyToDecide(true);
     }, 3000);
+    return () => clearTimeout(timerRef);
   }, []);
   useEffect(() => {
     let sub: Subscription;
@@ -152,7 +151,7 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
         <Button primary onClick={onReopenManager}>
           <Trans i18nKey={"manager.disconnected.ctaReopen"} />
         </Button>
-        <Button secondary mt={3} onClick={onBackToPortfolio}>
+        <Button mt={3} onClick={onBackToPortfolio}>
           <Trans i18nKey={"manager.disconnected.ctaPortfolio"} />
         </Button>
       </Box>

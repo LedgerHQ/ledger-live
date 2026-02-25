@@ -28,15 +28,10 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
-      - name: Checkout composite actions
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: tools/actions/composites
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Generate ref/tag version to use when running changeset status
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
@@ -46,7 +41,7 @@ jobs:
           application: ${{ github.event.inputs.application }}
 
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}

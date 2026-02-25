@@ -1,7 +1,7 @@
 import React, { ReactNode, useState, memo, useCallback } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { SearchInput, Flex } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import Search from "./Search";
 

@@ -7,7 +7,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
 import Circle from "~/components/Circle";

@@ -4,7 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { StrategyIcon } from "./StrategyIcon";

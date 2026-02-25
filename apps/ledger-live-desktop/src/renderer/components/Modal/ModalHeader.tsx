@@ -114,7 +114,6 @@ const ModalHeader = ({
         </TitleContainer>
       ) : null}
       {onClose ? (
-        // @ts-expect-error it is complicated to override styled-components prop types - right is supposed to be a string and inherited from Tabbable
         <ModalHeaderAction right onClick={onClose} data-testid="modal-close-button">
           <IconCross size={16} />
         </ModalHeaderAction>

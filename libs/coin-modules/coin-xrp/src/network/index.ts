@@ -1,7 +1,9 @@
 import network from "@ledgerhq/live-network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
 import type { AccountInfo } from "../types/model";
 import {
+  LedgerTxResponse,
   isErrorResponse,
   isResponseStatus,
   Marker,
@@ -16,6 +18,7 @@ import {
 const getNodeUrl = () => coinConfig.getCoinConfig().node;
 
 export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
+const NOT_FOUND_ERROR_MESSAGE = "actMalformed";
 
 export const submit = async (signature: string): Promise<SubmitReponse> => {
   return rpcCall<SubmitReponse>("submit", { tx_blob: signature });
@@ -41,7 +44,11 @@ export const getAccountInfo = async (
     },
   });
 
-  if (result.status !== "success" && result.error !== NEW_ACCOUNT_ERROR_MESSAGE) {
+  if (
+    result.status !== "success" &&
+    result.error &&
+    ![NOT_FOUND_ERROR_MESSAGE, NEW_ACCOUNT_ERROR_MESSAGE].includes(result.error)
+  ) {
     throw new Error(`couldn't fetch account info ${recipient}`);
   }
 
@@ -98,6 +105,36 @@ export async function getLedger(): Promise<LedgerResponse> {
   return rpcCall<LedgerResponse>("ledger", { ledger_index: "validated" });
 }
 
+async function fetchLedgerByIndex(index: number): Promise<LedgerTxResponse> {
+  return rpcCall<LedgerTxResponse>("ledger", {
+    ledger_index: index,
+    transactions: true,
+    expand: true,
+    owner_funds: false,
+    api_version: 2,
+  });
+}
+
+export const getLedgerByIndex = makeLRUCache(
+  fetchLedgerByIndex,
+  (index: number) => `${getNodeUrl()}:${index}`,
+  minutes(5),
+);
+
+export const getLedgerInfoByIndex = makeLRUCache(
+  fetchLedgerInfoByIndex,
+  (index: number) => `${getNodeUrl()}:${index}`,
+  minutes(5),
+);
+
+async function fetchLedgerInfoByIndex(index: number): Promise<LedgerResponse> {
+  return rpcCall<LedgerResponse>("ledger", {
+    ledger_index: index,
+    transactions: false,
+    api_version: 2,
+  });
+}
+
 export async function getLedgerIndex(): Promise<number> {
   const result = await getLedger();
 
@@ -124,7 +161,12 @@ async function rpcCall<T extends object>(
   });
 
   if (isResponseStatus(result) && result.status !== "success") {
-    throw new Error(`couldn't fetch ${method} with params ${JSON.stringify(params)}`);
+    const errResponse = result as unknown as ErrorResponse;
+    const parsedError =
+      errResponse.error_message ?? errResponse.error ?? `error code ${errResponse.error_code}`;
+    throw new Error(
+      `couldn't fetch ${method} with params ${JSON.stringify(params)}: ${parsedError}`,
+    );
   }
 
   return result;

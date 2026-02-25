@@ -2,13 +2,13 @@ import React, { useCallback, useContext, useEffect } from "react";
 import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import { OnboardingContext } from "../../Onboarding";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import Animation from "~/renderer/animations";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 
@@ -21,7 +21,7 @@ const SyncOnboardingDeviceConnectionSearching = ({
 }: SyncOnboardingDeviceConnectionSearchingProps) => {
   const { t } = useTranslation();
   const deviceModelName = getDeviceModel(deviceModelId).productName;
-  const history = useHistory();
+  const navigate = useNavigate();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const theme = useTheme();
   const currentDevice = useSelector(getCurrentDevice);
@@ -33,18 +33,18 @@ const SyncOnboardingDeviceConnectionSearching = ({
       !isSyncOnboardingSupported(deviceModelId)
     ) {
       setDeviceModelId(currentDevice.modelId);
-      history.replace("/onboarding/select-use-case");
+      navigate("/onboarding/select-use-case");
     }
-  }, [currentDevice, deviceModelId, history, setDeviceModelId]);
+  }, [currentDevice, deviceModelId, navigate, setDeviceModelId]);
 
   const handleConnectionTrouble = useCallback(() => {
     setDeviceModelId(deviceModelId);
-    history.push("/USBTroubleshooting");
-  }, [deviceModelId, history, setDeviceModelId]);
+    navigate("/USBTroubleshooting");
+  }, [deviceModelId, navigate, setDeviceModelId]);
 
   return (
     <Flex position="relative" height="100%" width="100%" flexDirection="column">
-      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
+      <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
       <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
         <Animation
           animation={getDeviceAnimation(deviceModelId, theme.theme, "plugAndPinCode") as object}

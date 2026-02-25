@@ -21,7 +21,7 @@ import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/typ
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 import { reduce, firstValueFrom } from "rxjs";
@@ -61,10 +61,10 @@ import {
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
-import { useGetMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
 import { SwapLoader } from "./SwapLoader";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -108,6 +108,21 @@ type TokenParams = {
   toTokenId?: string;
 };
 
+type SwapLocationState = {
+  defaultAccount?: AccountLike;
+  defaultParentAccount?: Account;
+  defaultAccountId?: string;
+  defaultParentAccountId?: string;
+  defaultCurrency?: string;
+  defaultAmountFrom?: string;
+  from?: string;
+  defaultToken?: TokenParams;
+  affiliate?: string;
+};
+
+const isSwapLocationState = (value: unknown): value is SwapLocationState =>
+  typeof value === "object" && value !== null;
+
 const SwapWebAppWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -142,17 +157,40 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
+  const discreetMode = useDiscreetMode();
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const { state } = useLocation<{
-    defaultAccount?: AccountLike;
-    defaultParentAccount?: Account;
-    defaultAmountFrom?: string;
-    from?: string;
-    defaultToken?: TokenParams;
-    affiliate?: string;
-  }>();
+  const location = useLocation();
+  const state = isSwapLocationState(location.state) ? location.state : null;
+  const resolvedDefaultAccount = useMemo(() => {
+    if (state?.defaultAccount) {
+      return state.defaultAccount;
+    }
+    if (state?.defaultAccountId) {
+      return accounts.find(acc => acc.id === state.defaultAccountId);
+    }
+    return undefined;
+  }, [accounts, state?.defaultAccount, state?.defaultAccountId]);
+  const resolvedDefaultParentAccount = useMemo(() => {
+    if (state?.defaultParentAccount) {
+      return state.defaultParentAccount;
+    }
+    if (state?.defaultParentAccountId) {
+      const candidate = accounts.find(acc => acc.id === state.defaultParentAccountId);
+      return candidate?.type === "Account" ? candidate : undefined;
+    }
+    if (resolvedDefaultAccount?.type === "TokenAccount") {
+      const candidate = accounts.find(acc => acc.id === resolvedDefaultAccount.parentId);
+      return candidate?.type === "Account" ? candidate : undefined;
+    }
+    return undefined;
+  }, [
+    accounts,
+    state?.defaultParentAccount,
+    state?.defaultParentAccountId,
+    resolvedDefaultAccount,
+  ]);
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
@@ -160,7 +198,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
-  const distinctId = useGetMixpanelDistinctId();
+  const { isEnabled: isLwd40Enabled } = useWalletFeaturesConfig("desktop");
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -451,12 +489,12 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const hashString = useMemo(() => {
     const params = new URLSearchParams({
       ...(isOffline ? { isOffline: "true" } : {}),
-      ...(state?.defaultAccount
+      ...(resolvedDefaultAccount
         ? {
             toAccountId: accountToWalletAPIAccount(
               walletState,
-              state?.defaultAccount,
-              state?.defaultParentAccount,
+              resolvedDefaultAccount,
+              resolvedDefaultParentAccount,
             ).id,
             amountFrom: state?.defaultAmountFrom || "",
           }
@@ -475,6 +513,11 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             amountFrom: state?.defaultAmountFrom || "",
           }
         : {}),
+      ...(state?.defaultCurrency
+        ? {
+            toCurrencyId: state.defaultCurrency,
+          }
+        : {}),
       ...(state?.affiliate
         ? {
             affiliate: state.affiliate,
@@ -485,11 +528,12 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     return params;
   }, [
     isOffline,
-    state?.defaultAccount,
-    state?.defaultParentAccount,
+    resolvedDefaultAccount,
+    resolvedDefaultParentAccount,
     state?.defaultAmountFrom,
     state?.from,
     state?.defaultToken,
+    state?.defaultCurrency,
     state?.affiliate,
     walletState,
   ]);
@@ -557,8 +601,9 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             ptxSwapLiveAppKycWarning,
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
-            distinctId,
             isEmbedded: isEmbedded ? "true" : "false",
+            discreetMode: discreetMode ? "true" : "false",
+            lwd40enabled: isLwd40Enabled ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

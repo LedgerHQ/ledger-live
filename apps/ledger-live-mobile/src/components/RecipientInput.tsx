@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Button } from "@ledgerhq/native-ui";
 import Paste from "@ledgerhq/icons-ui/native/Paste";
 import TextInput, { Props as TextInputProps } from "./TextInput";

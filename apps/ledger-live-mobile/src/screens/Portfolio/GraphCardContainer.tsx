@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Currency, TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SharedValue } from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";
@@ -16,6 +16,8 @@ const GraphCardContainer = ({
   counterValueCurrency,
   currentPositionY,
   graphCardEndPosition,
+  screenName,
+  hideGraph,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
@@ -23,15 +25,17 @@ const GraphCardContainer = ({
   counterValueCurrency: Currency;
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
+  screenName: string;
+  hideGraph?: boolean;
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(currenciesSelector);
 
   const handleTouchEndGraph = useCallback(() => {
     track("chart_clicked", {
       graph: "Portfolio",
-      page: "Wallet",
+      page: screenName,
     });
-  }, []);
+  }, [screenName]);
 
   return (
     <>
@@ -45,6 +49,7 @@ const GraphCardContainer = ({
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
           onTouchEndGraph={handleTouchEndGraph}
+          hideGraph={hideGraph}
         />
       )}
     </>

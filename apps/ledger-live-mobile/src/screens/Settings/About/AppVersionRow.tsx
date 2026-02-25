@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Text } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import getFullAppVersion from "~/logic/version";

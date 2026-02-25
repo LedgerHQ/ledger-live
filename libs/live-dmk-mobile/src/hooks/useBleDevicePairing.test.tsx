@@ -1,4 +1,5 @@
 import { useBleDevicePairing } from "./useBleDevicePairing";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import * as dmkUtils from "./useDeviceManagementKit";
 import React from "react";
 import { Device } from "@ledgerhq/types-devices";
@@ -15,17 +16,27 @@ const TestComponent: React.FC<{ device: Device }> = ({ device }) => {
   );
 };
 
-const dmk = dmkUtils.getDeviceManagementKit();
+jest.mock("./useDeviceManagementKit", () => ({
+  getDeviceManagementKit: jest.fn(),
+  useDeviceManagementKit: jest.fn(),
+}));
+
+const dmk = {
+  close: jest.fn(),
+  getDeviceSessionState: jest.fn(),
+  connect: jest.fn(),
+} as unknown as DeviceManagementKit;
 
 describe("useBleDevicePairing", () => {
   beforeEach(() => {
-    vi.spyOn(dmkUtils, "useDeviceManagementKit").mockReturnValue(dmk);
-    vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
+    jest.mocked(dmkUtils.useDeviceManagementKit).mockReturnValue(dmk);
+    dmk.close.mockResolvedValue(undefined);
+    dmk.getDeviceSessionState.mockReturnValue(new Observable());
   });
   it("should pair a device", async () => {
     // given
     let result: ReturnType<typeof render> | undefined;
-    vi.spyOn(dmk, "connect").mockResolvedValue("session");
+    dmk.connect.mockResolvedValue("session");
     const device = { deviceId: "id", deviceName: "name", modelId: "model" };
 
     // when
@@ -46,7 +57,7 @@ describe("useBleDevicePairing", () => {
   it("should set an error", async () => {
     // given
     let result: ReturnType<typeof render> | undefined;
-    vi.spyOn(dmk, "connect").mockRejectedValue(new Error("connect error"));
+    dmk.connect.mockRejectedValue(new Error("connect error"));
     const device = { deviceId: "id", deviceName: "name", modelId: "model" };
 
     // when

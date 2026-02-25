@@ -1,8 +1,17 @@
 import { TextDecoder, TextEncoder } from "util";
-global.TextEncoder = TextEncoder;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global.TextDecoder = TextDecoder;
+
+// Use defineProperty to avoid "Cannot assign to read only property" when
+// global already has TextEncoder/TextDecoder (e.g. in jsdom / Node 19+).
+Object.defineProperty(global, "TextEncoder", {
+  value: TextEncoder,
+  writable: true,
+  configurable: true,
+});
+Object.defineProperty(global, "TextDecoder", {
+  value: TextDecoder,
+  writable: true,
+  configurable: true,
+});
 
 jest.mock("uuid", () => ({
   v1: () => "110ec58a-a0f2-4ac4-8393-c866d813b8d1",

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import SettingsRow from "~/components/SettingsRow";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -8,7 +8,7 @@ import {
   AnalyticsPage,
   AnalyticsButton,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";

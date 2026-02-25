@@ -39,7 +39,7 @@ function ProgressBar({
     return {
       width: `${animatedProgress.value}%`,
     };
-  });
+  }, [animatedProgress]);
 
   return (
     <View

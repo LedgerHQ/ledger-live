@@ -14,7 +14,6 @@ describe("Event Component", () => {
 
   it("renders event name and date correctly", () => {
     render(<Event {...baseProps} />);
-
     expect(screen.getByText(/Test Event/i)).toBeVisible();
     expect(screen.getByText(/2:00:00 PM/i)).toBeVisible();
   });

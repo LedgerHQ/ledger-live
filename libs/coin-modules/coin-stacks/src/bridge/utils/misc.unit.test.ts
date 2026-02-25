@@ -1,19 +1,19 @@
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
-import * as api from "../../network/api";
 
 // Mock the CryptoAssets module
 jest.mock("@ledgerhq/cryptoassets/state");
 
 // Mock the API module to prevent actual network calls
-jest.mock("../../network/api", () => {
-  const originalModule = jest.requireActual("../../network/api");
-  return {
-    ...originalModule,
-    fetchFungibleTokenMetadataCached: jest.fn(),
-  };
-});
+jest.mock("../../network/api", () => ({
+  fetchFungibleTokenMetadataCached: jest.fn(),
+}));
+
+// Import the mocked module to access the mock function
+import * as api from "../../network/api";
+const mockFetchFungibleTokenMetadataCached =
+  api.fetchFungibleTokenMetadataCached as unknown as jest.Mock;
 
 const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 
@@ -25,7 +25,7 @@ beforeEach(() => {
   });
 
   // Mock fetchFungibleTokenMetadataCached to return empty results by default
-  (api.fetchFungibleTokenMetadataCached as unknown as jest.Mock).mockResolvedValue({
+  mockFetchFungibleTokenMetadataCached.mockResolvedValue({
     results: [],
   });
 });

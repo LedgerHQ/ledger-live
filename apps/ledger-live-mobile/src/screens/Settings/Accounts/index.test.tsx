@@ -14,6 +14,7 @@ jest.mock("@ledgerhq/cryptoassets/state", () => ({
   getCryptoAssetsStore: () => ({
     findTokenById: mockFindTokenById,
   }),
+  setCryptoAssetsStore: jest.fn(),
 }));
 
 const mockEthereumCurrency: CryptoCurrency = {

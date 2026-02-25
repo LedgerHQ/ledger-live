@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { lastSeenDeviceSelector, latestFirmwareSelector } from "~/renderer/reducers/settings";
 import { Item, MockContainer } from "./shared";
 import Box from "~/renderer/components/Box";

@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import { Button } from "react-native";
-import { action } from "@storybook/addon-actions";
 import { StoryFn } from "@storybook/react";
 import { Alert, BaseModal, IconBox } from "../../../../src/components";
 import { IconsLegacy } from "../../../../src/assets";
@@ -10,7 +9,15 @@ export default {
   component: BaseModal,
 };
 
-const Template = (args: typeof BaseStoryArgs & typeof WithoutHeaderStoryArgs) => {
+type ModalStoryArgs = {
+  noHeader: boolean;
+  title?: string;
+  description?: string;
+  subtitle?: string;
+  noCloseButton: boolean;
+};
+
+const Template = (args: ModalStoryArgs) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = useCallback(() => {
@@ -23,7 +30,6 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutHeaderStoryArgs) =>
       <BaseModal
         isOpen={isOpen}
         onClose={() => {
-          action("onClose")();
           setIsOpen(false);
         }}
         {...(args.noHeader
@@ -40,7 +46,7 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutHeaderStoryArgs) =>
   );
 };
 
-export const BaseStory: StoryFn<typeof BaseModal> = Template.bind({});
+export const BaseStory: StoryFn<ModalStoryArgs> = Template.bind({});
 BaseStory.storyName = "BaseModal";
 const BaseStoryArgs = {
   noHeader: false,
@@ -50,7 +56,7 @@ const BaseStoryArgs = {
   noCloseButton: false,
 };
 BaseStory.args = BaseStoryArgs;
-export const WithoutHeaderStory: StoryFn<typeof BaseModal> = Template.bind({});
+export const WithoutHeaderStory: StoryFn<ModalStoryArgs> = Template.bind({});
 WithoutHeaderStory.storyName = "BaseModal (no header)";
 const WithoutHeaderStoryArgs = {
   noHeader: true,

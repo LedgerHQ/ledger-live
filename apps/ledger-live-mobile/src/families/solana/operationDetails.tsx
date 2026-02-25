@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, View } from "react-native";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
@@ -12,7 +12,7 @@ import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/s
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 export const openAddressUrl = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);

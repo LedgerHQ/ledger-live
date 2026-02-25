@@ -1,12 +1,13 @@
 import { FC, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { closeModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 type Action = {
   key: string;
@@ -22,7 +23,7 @@ export interface ModalStartStakeProps {
 
 const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, source }) => {
   const { getRouteToPlatformApp } = useStake();
-  const history = useHistory();
+  const navigate = useNavigate();
   const walletState = useSelector(walletSelector);
 
   const currencyFamily = getMainAccount(account, parentAccount).currency.family;
@@ -40,8 +41,7 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, sou
     if (platformAppRoute) {
       // Redirect to the platform app preferentially
       dispatch(closeModal("MODAL_START_STAKE"));
-      history.push({
-        pathname: platformAppRoute.pathname,
+      navigate(platformAppRoute.pathname, {
         state: {
           ...platformAppRoute.state,
         },

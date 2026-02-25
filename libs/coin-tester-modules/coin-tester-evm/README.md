@@ -6,7 +6,7 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 
 - Deterministic testing scenarios for EVM-based coins
 - Support for multiple EVM chains (Ethereum, Polygon, Scroll, Blast, Sonic)
-- Integration with Speculos for hardware wallet simulation
+- Local signer written in Typescript
 - Integration with Anvil for local blockchain simulation
 
 ## Usage
@@ -21,8 +21,7 @@ await executeScenario(scenarioEthereum);
 
 ## Development
 
-1. Set up your environment variables in `.env` (see `.env.example`)
-2. Run the tests with `pnpm start`
+Run the tests with `pnpm start`
 
 ## Dependencies
 

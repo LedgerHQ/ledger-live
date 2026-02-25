@@ -3,8 +3,16 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+  listSupportedFiats,
+} from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
+import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
+import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
+import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import {
   getAccounts,
   getCountervalues,
@@ -17,6 +25,7 @@ import {
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
+  getIdentities,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -24,7 +33,6 @@ import { importBle } from "~/actions/ble";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
-import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
@@ -34,6 +42,7 @@ import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 interface Props {
   onInitFinished: () => void;
@@ -70,6 +79,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   const init = useCallback(async () => {
     try {
+      const readStorageStart = Date.now();
+      mmkvStorageWrapper.monitor(true);
       const [
         bleData,
         settingsData,
@@ -82,6 +93,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         initialCountervalues,
         largeMoverState,
         cryptoAssetsCache,
+        persistedIdentities,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -94,7 +106,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
-      ]);
+        retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
+      ]).finally(() => {
+        logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
+          readTime: Date.now() - readStorageStart,
+          mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
+        });
+      });
 
       store.dispatch(importBle(bleData));
 
@@ -150,6 +168,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importLargeMoverState(largeMoverState));
       }
 
+      // Load persisted identities
+      if (persistedIdentities) {
+        store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+      }
+
       setInitialCountervalues(initialCountervalues);
       setReady(true);
       onInitFinished();
@@ -183,22 +206,37 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 export default LedgerStoreProvider;
 
 async function hydrateCurrencies() {
+  const totalStartTime = Date.now();
   const cachedCurrencyIds = await retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY);
 
   // hydrate the store with the bridge/cache
   // Promise.allSettled doesn't exist in RN
-  await Promise.all(
-    cachedCurrencyIds
-      .map(id => {
-        const currency = findCryptoCurrencyById?.(id);
-        return currency ? hydrateCurrency(currency) : Promise.reject();
-      })
-      .map(promise =>
-        promise
-          .then((value: unknown) => ({ status: "fulfilled", value }))
-          .catch((reason: unknown) => ({ status: "rejected", reason })),
-      ),
-  );
+  const results: StorageCurrencyData["results"] = [];
+
+  mmkvStorageWrapper.monitor(true);
+  // The hydration is not actually asynchronous the function async signature is caused by the storage but MMKV is synchronous.
+  // Thus running the hydration sequentially is fine and it allows to actually measure per-currency durations.
+  for (const id of cachedCurrencyIds) {
+    const start = Date.now();
+    try {
+      const currency = findCryptoCurrencyById?.(id);
+      if (!currency) {
+        const duration = Date.now() - start;
+        results.push({ status: "rejected", id, reason: "unknown currency", duration });
+        continue;
+      }
+      await hydrateCurrency(currency);
+      results.push({ status: "fulfilled", id, duration: Date.now() - start });
+    } catch (error) {
+      results.push({ status: "rejected", id, reason: error, duration: Date.now() - start });
+    }
+  }
+
+  logStartupEvent<StorageCurrencyData>(STARTUP_EVENTS.CURRENCY_HYDRATED, {
+    results,
+    totalDuration: Date.now() - totalStartTime,
+    mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
+  });
 }
 
 async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {

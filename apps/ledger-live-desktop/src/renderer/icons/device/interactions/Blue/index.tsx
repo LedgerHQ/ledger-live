@@ -4,15 +4,12 @@ import Frame from "./Frame";
 import Screen from "./Screen";
 import Hint from "../Hint";
 import USBCable, { classByState } from "../USBCable";
-const DeviceContainer = styled.div.attrs((p: { width?: number; height?: number }) => ({
+const DeviceContainer = styled.div.attrs<{ width?: number; height?: number }>(p => ({
   style: {
     width: p.width || 300,
     height: p.height || 60,
   },
-}))<{
-  width?: number;
-  height?: number;
-}>`
+}))`
   margin: 32px auto 64px auto;
   justify-content: center;
   align-items: center;
@@ -21,10 +18,9 @@ const DeviceContainer = styled.div.attrs((p: { width?: number; height?: number }
 `;
 const DeviceSVG = styled.svg`
   overflow: visible;
-
-  .device {
-    transition: transform ease-in-out 700ms;
-  }
+`;
+const DeviceGroup = styled.g`
+  transition: transform ease-in-out 700ms;
 `;
 type Props = {
   open?: boolean;
@@ -37,7 +33,7 @@ type Props = {
 const Blue = ({ xOffset = 0, open, usb, screen, error, width }: Props) => (
   <DeviceContainer width={width}>
     <DeviceSVG width="118px" height="144px" viewBox="0 0 118 144">
-      <g className="device" transform={`translate(${xOffset}, 0)`}>
+      <DeviceGroup transform={`translate(${xOffset}, 0)`}>
         <USBCable vertical x="-67" y="117" active={open && !!usb} state={usb} />
         <Frame
           error={error}
@@ -49,7 +45,7 @@ const Blue = ({ xOffset = 0, open, usb, screen, error, width }: Props) => (
         >
           <Screen error={error} active={!!screen} display={screen} x="40" y="50%" />
         </Frame>
-      </g>
+      </DeviceGroup>
     </DeviceSVG>
   </DeviceContainer>
 );

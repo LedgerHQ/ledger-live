@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow as Row } from "../../SettingsSection";

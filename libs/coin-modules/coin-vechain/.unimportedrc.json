@@ -13,7 +13,10 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnimported": [
     "src/account.ts",
     "src/bridge/broadcast.ts",
@@ -61,7 +64,8 @@
     "src/types/constants.ts",
     "src/types/index.ts",
     "src/types/network.ts",
-    "src/types/signer.ts"
+    "src/types/signer.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/coin-framework",

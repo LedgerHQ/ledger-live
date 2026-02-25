@@ -1,8 +1,6 @@
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { buildSignOperation, buildOptimisticOperation } from "./signOperation";
-import { buildTransaction } from "./buildTransaction";
 import { reEncodeRawSignature } from "../common-logic";
 import {
   createMockAccount,
@@ -11,6 +9,8 @@ import {
   mockDeviceId,
   createMockSignerContext,
 } from "../test/fixtures";
+import { buildTransaction } from "./buildTransaction";
+import { buildSignOperation, buildOptimisticOperation } from "./signOperation";
 
 // Mock dependencies
 jest.mock("@ledgerhq/coin-framework/operation");

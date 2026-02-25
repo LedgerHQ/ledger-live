@@ -13,7 +13,10 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnimported": [
     "src/network/node/apiPromise.ts",
     "src/network/node/constants.ts",
@@ -22,7 +25,8 @@
     "src/network/node/stakingInfo.ts",
     "src/network/node/validators.ts",
     "src/network/sidecar.fixture.ts",
-    "src/types/bridge.fixture.ts"
+    "src/types/bridge.fixture.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@polkadot/api",

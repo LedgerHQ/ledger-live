@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import invariant from "invariant";
 import { useNavigation } from "@react-navigation/native";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";

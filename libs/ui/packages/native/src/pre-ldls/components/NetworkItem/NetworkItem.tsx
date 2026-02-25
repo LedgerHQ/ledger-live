@@ -70,7 +70,7 @@ export const NetworkItem = ({
       })}
       testID={`network-item-${name}`}
     >
-      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
+      <CryptoIcon size={48} overridesRadius={12} ledgerId={id} ticker={ticker} />
       <InfoWrapper tokens={tokens}>
         <Text
           variant="largeLineHeight"

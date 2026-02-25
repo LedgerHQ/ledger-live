@@ -1,17 +1,17 @@
-import { GroupTypeBase, OptionTypeBase, StylesConfig } from "react-select";
+import { GroupBase, StylesConfig } from "react-select";
 import { DefaultTheme } from "styled-components";
 import { ff } from "~/renderer/styles/helpers";
 
 export type CreateStylesReturnType<
-  OptionType extends OptionTypeBase,
+  OptionType,
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
 > = StylesConfig<OptionType, IsMulti, GroupType>;
 
 export default <
-  OptionType extends OptionTypeBase,
+  OptionType,
   IsMulti extends boolean,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
 >(
   theme: DefaultTheme,
   {
@@ -62,6 +62,11 @@ export default <
   input: styles => ({
     ...styles,
     color: theme.colors.neutral.c80,
+    // react-select v5 fix: ensure input text and caret are visible
+    "& input": {
+      color: "inherit !important",
+      caretColor: theme.colors.neutral.c80,
+    },
   }),
   indicatorSeparator: styles => ({
     ...styles,
@@ -81,14 +86,14 @@ export default <
     cursor: isDisabled ? "not-allowed" : "default",
     backgroundColor: isFocused ? theme.colors.background.default : undefined,
     // NB hover doesn't trigger isFocused since we disabled the onMouseMove/onMouseOver
-    ":hover:not(:active)": {
+    "&:hover:not(:active)": {
       backgroundColor: !isDisabled ? theme.colors.background.default : undefined,
       color: !isDisabled ? theme.colors.neutral.c100 : undefined,
     },
-    ":hover:active": {
+    "&:hover:active": {
       color: !isDisabled ? theme.colors.neutral.c100 : undefined,
     },
-    ":active": {
+    "&:active": {
       ...styles[":active"],
       backgroundColor: isDisabled ? undefined : theme.colors.neutral.c30,
     },

@@ -2,9 +2,10 @@ import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import MyLedgerChooseDeviceScreen, { headerOptions } from "~/screens/MyLedgerChooseDevice";
@@ -13,6 +14,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
+import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -39,6 +41,20 @@ const Badge = () => {
 export default function MyLedgerNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+
+  const chooseDeviceOptions = useMemo(
+    () =>
+      shouldDisplayWallet40MainNav
+        ? { ...wallet40HeaderOptions, gestureEnabled: true }
+        : { ...headerOptions, gestureEnabled: false },
+    [shouldDisplayWallet40MainNav],
+  );
+
+  const myLedgerDeviceOptions = useMemo(
+    () => (shouldDisplayWallet40MainNav ? wallet40HeaderOptions : { title: "" }),
+    [shouldDisplayWallet40MainNav],
+  );
 
   return (
     <Stack.Navigator
@@ -49,15 +65,12 @@ export default function MyLedgerNavigator() {
       <Stack.Screen
         name={ScreenName.MyLedgerChooseDevice}
         component={MyLedgerChooseDeviceScreen}
-        options={{
-          ...headerOptions,
-          gestureEnabled: false,
-        }}
+        options={chooseDeviceOptions}
       />
       <Stack.Screen
         name={ScreenName.MyLedgerDevice}
         component={MyLedgerDeviceScreen}
-        options={{ title: "" }}
+        options={myLedgerDeviceOptions}
       />
     </Stack.Navigator>
   );

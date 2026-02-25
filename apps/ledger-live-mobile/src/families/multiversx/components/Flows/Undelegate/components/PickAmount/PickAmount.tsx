@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
@@ -21,7 +21,7 @@ import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -239,7 +239,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, amount.minus(value), {
                           showCode: true,
-                          locale: locale,
+                          locale,
                         }),
                       }}
                     >

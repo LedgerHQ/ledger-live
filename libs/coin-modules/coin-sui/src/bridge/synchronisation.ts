@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   encodeAccountId,
   encodeTokenAccountId,
@@ -9,14 +8,15 @@ import {
   mergeOps,
   type GetAccountShape,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { type Operation } from "@ledgerhq/types-live";
+import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getAccountBalances, getOperations, getStakesRaw } from "../network";
 import { AccountBalance, DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
-import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 /**
  * Get the shape of the account including its operations and balance.
@@ -207,5 +207,6 @@ function buildSubAccount({
 }
 
 function latestHash(operations: Operation[]) {
-  return operations.length ? operations[0].blockHash : null;
+  const confirmedOp = operations.find(op => op.blockHash !== null);
+  return confirmedOp ? confirmedOp.blockHash : null;
 }

@@ -3,12 +3,12 @@ import { Flex } from "@ledgerhq/react-ui";
 import { MinimumCard } from "./Card";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { SectionHeader } from "./SectionHeader";
 import { useTranslation } from "react-i18next";
 
 export function LocalLiveAppSection({ localLiveApps }: { localLiveApps: LiveAppManifest[] }) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   return (
@@ -21,7 +21,7 @@ export function LocalLiveAppSection({ localLiveApps }: { localLiveApps: LiveAppM
           <Flex key={manifest.id} margin={2}>
             <MinimumCard
               manifest={manifest}
-              onClick={(manifest: LiveAppManifest) => history.push(`/platform/${manifest.id}`)}
+              onClick={(manifest: LiveAppManifest) => navigate(`/platform/${manifest.id}`)}
             />
           </Flex>
         ))}

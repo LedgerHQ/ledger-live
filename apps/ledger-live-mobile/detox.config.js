@@ -5,7 +5,7 @@ const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
-    $0: "ts-jest",
+    $0: "jest",
     args: {
       config: "e2e/jest.config.js",
     },
@@ -51,19 +51,19 @@ module.exports = {
     },
     "android.debug": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk",
     },
     "android.prerelease": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock.prerelease SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock.prerelease ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detoxPreRelease/app-${androidArch}-detoxPreRelease.apk`,
       testBinaryPath:
         "android/app/build/outputs/apk/androidTest/detoxPreRelease/app-detoxPreRelease-androidTest.apk",

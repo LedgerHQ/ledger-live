@@ -1,25 +1,26 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { UnknownExplorer } from "../../errors";
 import { getCoinConfig } from "../../config";
+import { UnknownExplorer } from "../../errors";
 import etherscanLikeApi from "./etherscan";
 import ledgerExplorerApi from "./ledger";
-import { ExplorerApi } from "./types";
 import noExplorerAPI from "./none";
+import { ExplorerApi } from "./types";
 
 /**
  * Switch to select one of the compatible explorer
  */
 export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
   const config = getCoinConfig(currency).info;
-  const apiType = config?.explorer?.type;
 
-  switch (apiType) {
+  switch (config?.explorer?.type) {
     case "etherscan":
     case "blockscout":
     case "teloscan":
     case "klaytnfinder":
     case "corescan":
-      return etherscanLikeApi;
+      return config.explorer.noCache
+        ? etherscanLikeApi.explorerApiNoCache
+        : etherscanLikeApi.explorerApi;
     case "ledger":
       return ledgerExplorerApi;
     case "none":

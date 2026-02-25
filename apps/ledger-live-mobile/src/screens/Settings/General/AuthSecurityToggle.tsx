@@ -1,13 +1,12 @@
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import React, { useState, useCallback } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { privacySelector } from "~/reducers/settings";
 import SettingsRow from "~/components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
-import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 
 export default function AuthSecurityToggle() {
@@ -16,12 +15,22 @@ export default function AuthSecurityToggle() {
   const privacy = useSelector(privacySelector);
   const { navigate } = useNavigation();
 
+  const [isToggleOn, setIsToggleOn] = useState(!!privacy?.hasPassword);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsToggleOn(!!privacy?.hasPassword);
+    }, [privacy?.hasPassword]),
+  );
+
   const onValueChange = (authSecurityEnabled: boolean): void => {
     track("toggle_clicked", {
       toggle: "Password Lock",
       page: ScreenName.GeneralSettings,
       enabled: !privacy?.hasPassword,
     });
+
+    setIsToggleOn(authSecurityEnabled);
 
     navigate(
       authSecurityEnabled ? NavigatorName.PasswordAddFlow : NavigatorName.PasswordModifyFlow,
@@ -40,11 +49,7 @@ export default function AuthSecurityToggle() {
         title={t("settings.display.password")}
         desc={getPasswordDesc()}
       >
-        <Switch
-          checked={!!privacy?.hasPassword}
-          onChange={onValueChange}
-          testID="password-settings-switch"
-        />
+        <Switch checked={isToggleOn} onChange={onValueChange} testID="password-settings-switch" />
       </SettingsRow>
       <BiometricsRow />
     </>

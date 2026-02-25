@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { BridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";

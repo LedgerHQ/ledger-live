@@ -3,7 +3,7 @@ import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
 import { ManageAction } from "../types";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
@@ -17,7 +17,7 @@ const AccountHeaderManageActions = ({
   account,
   parentAccount,
 }: Props): ManageAction[] | null | undefined => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const { tronResources } = mainAccount;
@@ -34,8 +34,7 @@ const AccountHeaderManageActions = ({
       provider: "Stakekit",
       currency: "TRX",
     });
-    history.push({
-      pathname: value,
+    navigate(value, {
       state: {
         yieldId: "tron-trx-native-staking",
         accountId: account.id,

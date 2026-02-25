@@ -130,7 +130,7 @@ const MainContent = styled(Flex).attrs({
   background-color: ${p => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00)};
 `;
 
-export default function Tabs(props: Props): JSX.Element {
+export default function Tabs(props: Props): React.JSX.Element {
   const { tabs, onTabChange } = props;
   const [activeIndex, setActiveIndex] = useState(tabs[0].index);
   const [bottomBar, updateBottomBar] = useState<HeaderBottomBarProps>({ left: 0, width: 0 });

@@ -1,8 +1,16 @@
-/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 // `workerThreads: true` is required for validating object with `bigint` values
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "node",
+  transform: {
+    "^.+\\.(ts|tsx)$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
   passWithNoTests: true,
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   collectCoverageFrom: [

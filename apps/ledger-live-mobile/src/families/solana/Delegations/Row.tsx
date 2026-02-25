@@ -6,7 +6,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";

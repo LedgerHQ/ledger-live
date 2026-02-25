@@ -1,11 +1,10 @@
-import type { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export type NetworkInfo = {
   family: "boilerplate";

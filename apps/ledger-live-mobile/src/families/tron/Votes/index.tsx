@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import {
@@ -30,7 +30,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScreenName } from "../../../const";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: TronAccount;

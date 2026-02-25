@@ -1,0 +1,71 @@
+name: "[Desktop] E2E Lint & Typecheck - PR"
+
+on:
+  pull_request: ~
+  merge_group:
+    types: [checks_requested]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  actions: write
+
+jobs:
+  pre_job:
+    name: "Skip Check"
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: "never"
+          skip_after_successful_duplicate: "true"
+          do_not_skip: '["pull_request","workflow_dispatch","schedule"]'
+
+  determine-affected:
+    name: "Turbo Affected"
+    needs: pre_job
+    if: ${{ !github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true' }}
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+
+  test-desktop-e2e-lint:
+    name: "Desktop E2E Lint & Typecheck"
+    needs: determine-affected
+    if: >-
+      ${{ !github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop') }}
+    runs-on: ubuntu-22.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Run lint and typecheck
+        run: pnpm turbo lint typecheck --filter="ledger-live-desktop-e2e-tests" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"

@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from "react";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import headerAnalytics from "./illustrations/header_analytics.webp";

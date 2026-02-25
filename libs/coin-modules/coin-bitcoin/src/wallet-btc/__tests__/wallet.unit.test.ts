@@ -10,7 +10,7 @@ import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
 
 import { getMockAccount } from "./fixtures/common.fixtures";
-import { mockSigner } from "../../__tests__/fixtures/common.fixtures";
+import { mockSigner } from "../../fixtures/common.fixtures";
 
 jest.mock("../explorer");
 jest.mock("../crypto/factory");

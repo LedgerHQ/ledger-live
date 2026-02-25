@@ -29,8 +29,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 ): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
   invariant(address, "hedera: address is expected");
-  const evmAddress = toEVMAddress(address);
-  invariant(evmAddress, "hedera: evm address is missing");
+  const evmAddress = await toEVMAddress(address);
+  invariant(evmAddress, `hedera: evm address is missing for ${address}`);
 
   const liveAccountId = encodeAccountId({
     type: "js",
@@ -83,10 +83,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
       currency,
       address,
       mirrorTokens,
-      pagination: {
-        minHeight: 0,
-        ...(latestOperationTimestamp && { lastPagingToken: latestOperationTimestamp.toString() }),
-      },
+      cursor: latestOperationTimestamp?.toString(),
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: true,

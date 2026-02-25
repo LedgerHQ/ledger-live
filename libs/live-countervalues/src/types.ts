@@ -1,6 +1,7 @@
 // CountervaluesSettings is user config that drives the countervalues logic.
 
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 
 // we generally will just infer it from Accounts
 export type CountervaluesSettings = {
@@ -16,6 +17,7 @@ export type CountervaluesSettings = {
   disableAutoRecoverErrors?: boolean;
 
   granularitiesRates?: Record<RateGranularity, number>;
+  selectedTimeRange?: PortfolioRange;
 };
 // This is the internal state of countervalues.
 export type CounterValuesState = {
@@ -25,6 +27,8 @@ export type CounterValuesState = {
   status: CounterValuesStatus;
   // this "cache" layer pre-compute all direct mapping for all dates of the range (complete holes...)
   cache: Record<string, PairRateMapCache>;
+  // set by import, cleared after first loadCountervalues; triggers hole check on first run after restore
+  checkHolesOnNextLoad?: boolean;
 };
 // serialized version of CounterValuesState to be saved/restored
 // The goal here is to make a key-value map where the value is not exceeding 2MB for Android to not glitch...

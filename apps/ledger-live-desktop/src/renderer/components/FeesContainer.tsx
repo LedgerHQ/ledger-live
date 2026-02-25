@@ -1,23 +1,21 @@
 import React from "react";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
-export default withTranslation()(
-  ({
-    children,
-    header,
-    t,
-    i18nKeyOverride,
-  }: {
-    children: React.ReactNode;
-    header?: React.ReactNode;
-    i18nKeyOverride?: string;
-    t: TFunction;
-  }) => (
+
+type Props = {
+  children: React.ReactNode;
+  header?: React.ReactNode;
+  i18nKeyOverride?: string;
+};
+
+const FeesContainer = ({ children, header, i18nKeyOverride }: Props) => {
+  const { t } = useTranslation();
+
+  return (
     <Box flow={1}>
       <Box horizontal alignItems="center" justifyContent="space-between">
         <LabelWithExternalIcon
@@ -31,5 +29,7 @@ export default withTranslation()(
       </Box>
       {children}
     </Box>
-  ),
-);
+  );
+};
+
+export default FeesContainer;

@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
@@ -34,6 +35,14 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
   );
 
   invariant(device, "[E2E Setup] Speculos not started");
+
+  if (process.env.REMOTE_SPECULOS === "true") {
+    await waitForSpeculosReady(device.id);
+    console.warn(
+      `[E2E Setup] Remote Speculos ready - SPECULOS_ADDRESS: ${process.env.SPECULOS_ADDRESS}`,
+    );
+  }
+
   setEnv("SPECULOS_API_PORT", device.port);
   process.env.SPECULOS_API_PORT = device.port.toString();
 
@@ -42,7 +51,9 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
     allure.parameter("App version:", device.appVersion || "");
   }
 
-  console.warn(`Speculos ${device.id} started on ${device.port}`);
+  console.warn(
+    `Speculos ${device.id} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,
+  );
   return device;
 }
 

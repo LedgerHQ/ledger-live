@@ -12,7 +12,6 @@ import {
   system,
 } from "styled-system";
 import baseStyled, { BaseStyledProps } from "../styled";
-
 import BracketRight from "../../icons/BracketLeft";
 import BracketLeft from "../../icons/BracketRight";
 import { getColor } from "../../styles";
@@ -51,7 +50,7 @@ export interface BaseTextProps
   children?: React.ReactNode;
 }
 
-const Base = baseStyled.Text.attrs((p: BaseTextProps) => ({
+const Base = baseStyled.Text.attrs<BaseTextProps>((p) => ({
   fontSize: p.fontSize ? p.fontSize : p.variant ?? "paragraph",
   color: p.color || "neutral.c100",
 }))<BaseTextProps>`
@@ -70,7 +69,7 @@ const T = styled.View`
 const BracketText = ({ children, color = "neutral.c100", ...props }: BaseTextProps) => {
   const size = getBracketSize(props);
   const theme = useTheme();
-  const c: string = theme ? (getColor(theme, color) as string) : "transparent";
+  const c: string = theme ? getColor(theme, color) : "transparent";
   return (
     <T>
       <BracketLeft fill={c} width={size} height={size} />

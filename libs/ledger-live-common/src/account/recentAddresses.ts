@@ -1,14 +1,16 @@
+import type { RecentAddressesState, RecentAddress } from "@ledgerhq/types-live";
+import { RecentAddressesArraySchema } from "./entities/recentAddresses";
+
 export const RECENT_ADDRESSES_COUNT_LIMIT = 12;
 
-export type RecentAddressesCache = Record<string, string[]>;
+export type RecentAddressesCache = RecentAddressesState;
 
 export interface RecentAddressesStore {
-  addAddress(currency: string, address: string): void;
+  addAddress(currency: string, address: string, ensName?: string): void;
+  removeAddress(currency: string, address: string): void;
   syncAddresses(cache: RecentAddressesCache): void;
-  getAddresses(currency: string): string[];
+  getAddresses(currency: string): RecentAddress[];
 }
-
-type CallbackMode = "triggerCallback" | "skipCallback";
 
 let recentAddressesStore: RecentAddressesStore | null = null;
 
@@ -30,54 +32,87 @@ export function setupRecentAddressesStore(
 
 class RecentAddressesStoreImpl implements RecentAddressesStore {
   private addressesByCurrency: RecentAddressesCache = {};
-  private readonly onAddAddressComplete: (addressesByCurrency: Record<string, string[]>) => void;
+  private readonly onAddAddressComplete: (addressesByCurrency: RecentAddressesCache) => void;
 
   constructor(
     addressesByCurrency: RecentAddressesCache,
     onAddAddressComplete: (addressesByCurrency: RecentAddressesCache) => void,
   ) {
-    this.addressesByCurrency = { ...addressesByCurrency };
+    this.addressesByCurrency = this.sanitizeCache(addressesByCurrency);
     this.onAddAddressComplete = onAddAddressComplete;
   }
 
-  addAddress(currency: string, address: string): void {
-    this.addAddressToCache(currency, address, "triggerCallback");
+  private sanitizeCache(cache: RecentAddressesCache): RecentAddressesCache {
+    const sanitized: RecentAddressesCache = {};
+    for (const currency in cache) {
+      const entries = cache[currency];
+      const result = RecentAddressesArraySchema.safeParse(entries);
+      sanitized[currency] = result.success ? result.data : [];
+    }
+    return sanitized;
+  }
+
+  addAddress(currency: string, address: string, ensName?: string): void {
+    this.addAddressToCache(currency, address, Date.now(), true, ensName);
+  }
+
+  removeAddress(currency: string, address: string): void {
+    if (!this.addressesByCurrency[currency]) return;
+    const addresses = this.addressesByCurrency[currency];
+    const index = addresses.findIndex(entry => entry.address === address);
+    if (index !== -1) {
+      addresses.splice(index, 1);
+      this.addressesByCurrency[currency] = [...addresses];
+      this.onAddAddressComplete(this.addressesByCurrency);
+    }
   }
 
   syncAddresses(cache: RecentAddressesCache): void {
     const previousAddresses = { ...this.addressesByCurrency };
-    this.addressesByCurrency = { ...cache };
+    this.addressesByCurrency = this.sanitizeCache(cache);
     for (const currency in previousAddresses) {
-      for (const address of previousAddresses[currency]) {
-        this.addAddressToCache(currency, address, "skipCallback");
+      const entries = previousAddresses[currency];
+      for (const entry of entries) {
+        this.addAddressToCache(currency, entry.address, entry.lastUsed, false, entry.ensName);
       }
     }
 
     this.onAddAddressComplete(this.addressesByCurrency);
   }
 
-  getAddresses(currency: string): string[] {
+  getAddresses(currency: string): RecentAddress[] {
     const addresses = this.addressesByCurrency[currency];
-    return addresses ?? [];
+    if (!addresses) return [];
+    return addresses.filter(
+      (entry): entry is RecentAddress =>
+        !!entry && typeof entry.address === "string" && entry.address.length > 0,
+    );
   }
 
-  private addAddressToCache(currency: string, address: string, callbackMode: CallbackMode): void {
+  private addAddressToCache(
+    currency: string,
+    address: string,
+    timestamp: number,
+    shouldTriggerCallback: boolean,
+    ensName?: string,
+  ): void {
     if (!this.addressesByCurrency[currency]) {
       this.addressesByCurrency[currency] = [];
     }
 
     const addresses = this.addressesByCurrency[currency];
-    const addressIndex = addresses.indexOf(address);
+    const addressIndex = addresses.findIndex(entry => entry.address === address);
+
     if (addressIndex !== -1) {
       addresses.splice(addressIndex, 1);
     } else if (addresses.length >= RECENT_ADDRESSES_COUNT_LIMIT) {
       addresses.pop();
     }
 
-    addresses.unshift(address);
+    addresses.unshift({ address, lastUsed: timestamp, ensName });
     this.addressesByCurrency[currency] = [...addresses];
 
-    if (callbackMode === "triggerCallback") {
+    if (shouldTriggerCallback) {
       this.onAddAddressComplete(this.addressesByCurrency);
     }
   }

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import { NumberedList } from "@ledgerhq/native-ui";
 import NanoDeviceCheckIcon from "~/icons/NanoDeviceCheckIcon";
 import NanoDeviceCancelIcon from "~/icons/NanoDeviceCancelIcon";

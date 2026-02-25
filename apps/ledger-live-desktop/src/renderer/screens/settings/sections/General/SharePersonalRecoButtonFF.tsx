@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { sharePersonalizedRecommendationsSelector } from "~/renderer/reducers/settings";
 import { setSharePersonalizedRecommendations } from "~/renderer/actions/settings";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
@@ -11,7 +11,7 @@ const SharePersonnalRecoButtonFF = () => {
 
   const toggleSharePersonalizedRecommendations = async (value: boolean) => {
     dispatch(setSharePersonalizedRecommendations(value));
-    await updateIdentify();
+    await updateIdentify({ force: true });
     track(
       "toggle_clicked",
       {

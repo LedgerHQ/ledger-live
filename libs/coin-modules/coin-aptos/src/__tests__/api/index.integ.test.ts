@@ -1,6 +1,6 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
-import { createApi } from "../../api";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { createApi } from "../../api";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, TOKEN_TYPE } from "../../constants";
 
 describe("createApi", () => {
@@ -35,7 +35,7 @@ describe("createApi", () => {
     it("returns the last block information", async () => {
       const lastBlock = await api.lastBlock();
       expect(lastBlock).toHaveProperty("hash");
-      expect(Hex.isValid(lastBlock.hash ?? "").valid).toBeTruthy();
+      expect(Hex.isValid(lastBlock.hash ?? "").valid).toBe(true);
 
       expect(lastBlock).toHaveProperty("height");
       expect(lastBlock.height).toBeGreaterThan(0);
@@ -43,7 +43,7 @@ describe("createApi", () => {
       const time = lastBlock.time as Date;
 
       expect(lastBlock).toHaveProperty("time");
-      expect(lastBlock.time).toBeDefined();
+      expect(lastBlock.time).toBeInstanceOf(Date);
       expect(time.getFullYear()).toBeGreaterThan(0);
       expect(time.getMonth() + 1).toBeGreaterThan(0);
       expect(time.getDay() + 1).toBeGreaterThan(0);
@@ -236,13 +236,20 @@ describe("createApi", () => {
       expect(balances.length).toBeGreaterThan(1);
       expect(balances[0].value).toBeGreaterThan(0);
     });
+
+    it("should return 0 for an address with 0 balance", async () => {
+      const result = await api.getBalance(
+        "0xbaeab99276f87a8751210a061952f8d0aad6923c8d9657f3b04f4db99d3a784f",
+      );
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
   });
 
   describe("listOperations", () => {
     it("returns operations from account", async () => {
       const block = await api.lastBlock();
 
-      const [operations] = await api.listOperations(sender.freshAddress, {
+      const { items: operations } = await api.listOperations(sender.freshAddress, {
         minHeight: block.height,
         order: "asc",
       });
@@ -264,7 +271,6 @@ describe("createApi", () => {
         asset: { type: "native" },
         tx: {
           hash: "0xe1987b67878faff326a179d59ab0f5df89cc10cdcbccab1147b52735579832a5",
-          block: { height: 0 },
           fees: 99900n,
           date: new Date("2025-05-29T13:16:30.763Z"),
         },
@@ -278,7 +284,6 @@ describe("createApi", () => {
         asset: { type: "native" },
         tx: {
           hash: "0xee3866ab35797a39102aeff6bdeb70d3d4df65adedf9efedfddad88f27dc6fa4",
-          block: { height: 0 },
           fees: 1100n,
           date: new Date("2025-05-29T13:39:28.702Z"),
         },
@@ -290,7 +295,7 @@ describe("createApi", () => {
     it("returns operations from account", async () => {
       const block = await api.lastBlock();
 
-      const [operations] = await api.listOperations(tokenAccount.freshAddress, {
+      const { items: operations } = await api.listOperations(tokenAccount.freshAddress, {
         minHeight: block.height,
         order: "asc",
       });
@@ -322,7 +327,6 @@ describe("createApi", () => {
         asset: { type: "native" },
         tx: {
           hash: "0xd841b502ce333e5b9ac394db81e6597d9bbbe475e5b12966b98b843d91cc0a09",
-          block: { height: 0 },
           fees: 99900n,
           date: new Date("2025-05-29T18:32:11.515Z"),
         },
@@ -336,7 +340,6 @@ describe("createApi", () => {
         asset: { type: "native" },
         tx: {
           hash: "0xb1114396c5b6f2f5ba955fa8e4102d0e3983d5ccdb0717ff792f6e4848e72366",
-          block: { height: 0 },
           fees: 1100n,
           date: new Date("2025-05-29T18:39:57.864Z"),
         },
@@ -357,7 +360,6 @@ describe("createApi", () => {
         },
         tx: {
           hash: "0x6869c933396d976af85b273a825fe264a910d0064fe28ce97285073b9e5306bb",
-          block: { height: 0 },
           fees: 51100n,
           date: new Date("2025-05-29T18:32:58.804Z"),
         },
@@ -375,7 +377,6 @@ describe("createApi", () => {
         },
         tx: {
           hash: "0xa720db7fe6327b1db23e778df5856ab1d8785d7e8edae98941a3f6e05fa58ddd",
-          block: { height: 0 },
           fees: 1200n,
           date: new Date("2025-05-29T18:38:08.283Z"),
         },
@@ -397,7 +398,6 @@ describe("createApi", () => {
         },
         tx: {
           hash: "0x88856968603dee4f08579036bc30322b9a5f329561656888e3467ce27cc11ea7",
-          block: { height: 0 },
           fees: 54300n,
           date: new Date("2025-05-29T18:33:58.097Z"),
         },
@@ -414,7 +414,6 @@ describe("createApi", () => {
         },
         tx: {
           hash: "0x8aa9e980760fe8aeb6804f387350b3019a2471aa61a5506a260c32cd5d6db32c",
-          block: { height: 0 },
           fees: 1000n,
           date: new Date("2025-05-29T18:38:56.897Z"),
         },

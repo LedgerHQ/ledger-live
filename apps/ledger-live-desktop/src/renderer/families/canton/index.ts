@@ -5,6 +5,7 @@ import TooManyUtxosModal from "./TooManyUtxosModal";
 import { CantonFamily } from "./types";
 import PendingTransferProposals from "./PendingTransferProposals";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 
 const family: CantonFamily = {
   operationDetails,
@@ -13,6 +14,7 @@ const family: CantonFamily = {
   TooManyUtxosModal,
   PendingTransferProposals,
   AccountBalanceSummaryFooter,
+  StepSummaryAdditionalRows,
 };
 
 export default family;

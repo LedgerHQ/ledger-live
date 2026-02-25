@@ -12,7 +12,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Placeholder from "~/components/Placeholder";
 import AccountHeaderLeft from "./AccountHeaderLeft";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 function AccountHeader({
   currentPositionY,

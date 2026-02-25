@@ -85,7 +85,7 @@ export function StepDelegationFooter({
   return (
     <Box horizontal justifyContent="flex-end" flow={2} grow>
       <AccountFooter account={account} status={status} />
-      <Button mr={1} secondary onClick={onClose}>
+      <Button mr={1} onClick={onClose}>
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button

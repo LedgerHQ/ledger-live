@@ -3,14 +3,18 @@ import type { Preview } from "@storybook/react";
 import { palettes, StyleProvider } from "../../../libs/ui/packages/react/src/styles";
 import "../src/renderer/i18n/init";
 import { Buffer } from "buffer";
+import "./globals.css";
+import { MemoryRouter } from "react-router";
 
 declare global {
   interface Window {
     Buffer: typeof Buffer;
+    __APP_VERSION__: string;
   }
 }
 
 window.Buffer = Buffer;
+window.__APP_VERSION__ = "2.128.1";
 
 export const decorators = [
   (Story, { globals }) => {
@@ -22,7 +26,9 @@ export const decorators = [
           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
           rel="stylesheet"
         ></link>
-        <Story />
+        <MemoryRouter initialEntries={["/"]}>
+          <Story />
+        </MemoryRouter>
       </StyleProvider>
     );
   },

@@ -5,6 +5,6 @@ export async function validateAddress(
   address: string,
   _parameters: Partial<AddressValidationCurrencyParameters>,
 ): Promise<boolean> {
-  const [error] = safeParseAccountId(address);
+  const [error] = await safeParseAccountId(address);
   return error === null;
 }

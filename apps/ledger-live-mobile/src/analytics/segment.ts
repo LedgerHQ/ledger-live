@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import "crypto";
 import { v4 as uuid } from "uuid";
-import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Linking, Platform } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
@@ -15,7 +14,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
-import React, { MutableRefObject, useCallback } from "react";
+import React, { type RefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
@@ -27,7 +26,6 @@ import {
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
-import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
@@ -65,6 +63,9 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
+import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -169,12 +170,11 @@ const getRebornAttributes = () => {
 
 const getMEVAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
-  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
 
   const hasMEVActivated = mevProtectionSelector(state);
 
   return {
-    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+    MEVProtectionActivated: hasMEVActivated ? "Yes" : "No",
   };
 };
 
@@ -211,6 +211,20 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
+const getOptimiseOptInNotificationsNewWordingAttributes = (): Record<string, unknown> => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const optimiseOptInNotificationsNewWording = analyticsFeatureFlagMethod(
+    "lwmNewWordingOptInNotificationsDrawer",
+  );
+  const isFFEnabled = optimiseOptInNotificationsNewWording?.enabled;
+
+  if (!isFFEnabled) return {};
+
+  return {
+    pushOptInVariant: optimiseOptInNotificationsNewWording?.params?.variant,
   };
 };
 
@@ -259,7 +273,8 @@ const extraProperties = async (store: AppStore) => {
   const isReborn = isRebornSelector(state);
 
   const notifications = notificationsSelector(state);
-  const hasEnabledOsNotifications = await getIsNotifEnabled();
+  const hasEnabledOsNotifications =
+    notificationsPermissionStatusSelector(state) === AuthorizationStatus.AUTHORIZED;
 
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
@@ -316,7 +331,7 @@ const extraProperties = async (store: AppStore) => {
   const mevProtectionAttributes = getMEVAttributes(state);
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
-
+  const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
   // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
@@ -327,8 +342,11 @@ const extraProperties = async (store: AppStore) => {
 
   const startupEvents = await resolveStartupEvents();
   const legacyStartupTime = startupEvents.find(
-    ({ event }) => event === STARTUP_EVENTS.LEGACY_STARTED,
+    ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;
+
+  const optimiseOptInNotificationsNewWordingAttributes =
+    getOptimiseOptInNotificationsNewWordingAttributes();
 
   return {
     ...mandatoryProperties,
@@ -383,6 +401,8 @@ const extraProperties = async (store: AppStore) => {
     madAttributes,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
+    wallet40Attributes,
+    ...optimiseOptInNotificationsNewWordingAttributes,
   };
 };
 
@@ -422,11 +442,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
 };
 
 export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
-  Sentry.addBreadcrumb({
-    category: "identify",
-    level: "debug",
-  });
-
   const state = storeInstance && storeInstance.getState();
   const isTracking = getIsTracking(state, mandatory);
   if (!storeInstance || !isTracking.enabled) {
@@ -476,13 +491,6 @@ export const track = async (
   eventProperties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  Sentry.addBreadcrumb({
-    message: event,
-    category: "track",
-    data: eventProperties || undefined,
-    level: "debug",
-  });
-
   const state = storeInstance && storeInstance.getState();
 
   const isTracking = getIsTracking(state, mandatory);
@@ -557,7 +565,7 @@ export const useAnalytics = () => {
   };
 };
 
-const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
+const lastScreenEventName: RefObject<string | null | undefined> = React.createRef();
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
@@ -615,12 +623,6 @@ export const screen = async (
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  Sentry.addBreadcrumb({
-    message: eventName,
-    category: "screen",
-    data: properties || {},
-    level: "info",
-  });
 
   const state = storeInstance && storeInstance.getState();
 

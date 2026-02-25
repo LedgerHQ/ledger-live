@@ -1,0 +1,160 @@
+import { log } from "@ledgerhq/logs";
+import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
+import { Block, JsonRpcClient } from "./jsonRpcClient";
+import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
+import { LOG_TYPE } from "./constants";
+
+/**
+ * ZCash API
+ */
+
+export type SyncEstimatedTime = {
+  hours: number;
+  minutes: number;
+};
+
+export default class ZCash {
+  jsonRpcClient: JsonRpcClient;
+
+  constructor(args: { nodeUrl: string }) {
+    this.jsonRpcClient = new JsonRpcClient(args.nodeUrl);
+  }
+
+  /**
+   * Estimates sync time given a total number of blocks to process.
+   * This is a curried function that returns a function that returns the estimated sync time.
+   * It should be called when processing a block (passing the total number of blocks to process)
+   * and then called again when processing the next block.
+   * The function will return the estimated sync time in hours and minutes.
+   *
+   * @param totalBlocks total blocks to process
+   * @return an object with the estimated sync time in hours and minutes
+   */
+  async estimatedSyncTime(totalBlocks: number) {
+    const start = Date.now();
+    let end: number | null = null;
+
+    return (): SyncEstimatedTime => {
+      end = Date.now();
+      const totalSeconds = ((end - start) / 1000) * totalBlocks;
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      return {
+        hours,
+        minutes,
+      };
+    };
+  }
+
+  /**
+   * Scans a block for shielded transactions matching the given viewing key.
+   *
+   * @param {{
+   *    block: Block,
+   *    viewingKey: string
+   * }} args, Block and the UFVK - unified full viewing key.
+   * @returns {ShieldedTransaction[]} list of shielded transactions
+   */
+  async findShieldedTxsInBlock(args: {
+    block: Block;
+    viewingKey: string;
+  }): Promise<ShieldedTransaction[]> {
+    const { block, viewingKey } = args;
+
+    // 1. get list of tx
+    const transactions = block?.tx;
+    const decryptedTransactions = [];
+
+    // 2. retrieve each tx hash
+    if (transactions) {
+      for (const txId of transactions) {
+        if (!txId) {
+          continue;
+        }
+
+        const tx = await this.jsonRpcClient.getRawTransaction(txId);
+
+        // 3. call decryptTransaction for each tx hash containing orchard actions
+        if (tx?.orchard.actions.length) {
+          const decryptedTx = await this.decryptTransaction(tx?.hex, viewingKey);
+
+          if (decryptedTx) {
+            decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
+          }
+        }
+      }
+    }
+
+    // 4. return list of transaction for the given viewingKey
+    return decryptedTransactions;
+  }
+
+  /**
+   * Decrypts a ZCash shielded - i.e., encrypted - transaction.
+   *
+   * @param {string} rawHexTransaction, raw string representing an encrypted transaction.
+   * @param {string} viewingKey the UFVK - unified full viewing key.
+   * @return {Promise<DecryptedOutput>} the decrypted transaction
+   */
+  async decryptTransaction(
+    rawHexTransaction: string,
+    viewingKey: string,
+  ): Promise<DecryptedTransaction | undefined> {
+    try {
+      return decrypt_tx(rawHexTransaction, viewingKey);
+    } catch (error) {
+      log(LOG_TYPE, "error: failed to decrypt transaction", error);
+    }
+  }
+
+  /**
+   * Finds the lowest block height correspondent to a given timestamp.
+   *
+   * @param {number} timestamp
+   * @return {Promise<number>} a block height
+   */
+  async findBlockHeight(timestamp: number): Promise<number | undefined> {
+    if (timestamp < 0 || !Number.isFinite(timestamp)) {
+      log(LOG_TYPE, `error: findBlockHeight invalid timestamp: ${timestamp}`);
+      return undefined;
+    }
+
+    const maxHeight = await this.jsonRpcClient.getBlockCount();
+    if (maxHeight === undefined) {
+      log(
+        LOG_TYPE,
+        "error: findBlockHeight failed to fetch block count from RPC node (getBlockCount returned undefined).",
+      );
+      return;
+    }
+
+    if (maxHeight <= 0) {
+      return 0;
+    }
+
+    let low = 0;
+    let high = maxHeight;
+    let candidate = 0;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const block = await this.jsonRpcClient.getBlockByHeight(mid);
+
+      if (!block) {
+        log(LOG_TYPE, `Block ${mid} not found.`);
+        return;
+      }
+
+      if (block.time <= timestamp) {
+        candidate = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    return candidate;
+  }
+}

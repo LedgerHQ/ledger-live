@@ -2,9 +2,11 @@ import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import MockAccountGenerator from "./MockAccountGenerator";
 import CustomMockAccountGenerator from "./CustomMockAccountGenerator";
+import EmptyAccountGenerator from "./EmptyAccountGenerator";
+
 type MockAccountGeneratorSectionContentProps = {
   expanded: boolean;
 };
@@ -27,6 +29,10 @@ export const MockAccountGeneratorSectionContent = ({
             count={10}
             title={t("settings.developer.mockAccounts.quickGenerate.title")}
             desc={t("settings.developer.mockAccounts.quickGenerate.desc")}
+          />
+          <EmptyAccountGenerator
+            title={t("settings.developer.mockAccounts.emptyGenerate.title")}
+            desc={t("settings.developer.mockAccounts.emptyGenerate.desc")}
           />
         </Flex>
       )}

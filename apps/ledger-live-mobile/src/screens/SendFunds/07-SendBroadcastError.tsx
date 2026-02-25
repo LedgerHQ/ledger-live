@@ -1,14 +1,12 @@
 import { CompositeScreenProps } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const/navigation";
-
 import Collapsible from "LLM/components/Collapsible";
 import CopyButton from "LLM/components/CopyButton";
 import { track, TrackScreen } from "~/analytics";
@@ -18,7 +16,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import GenericErrorView from "~/components/GenericErrorView";
 import Card from "~/components/Card";
 import useExportLogs from "~/components/useExportLogs";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { urls } from "~/utils/urls";
 
 type Props = CompositeScreenProps<
@@ -29,9 +27,15 @@ type Props = CompositeScreenProps<
 export default function SendBroadcastError({ navigation, route }: Props) {
   const { t } = useTranslation();
 
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const currency = account ? getAccountCurrency(account) : null;
-  const temporaryErrors = ["LedgerAPI5xx", "NetworkDown"];
+  const temporaryErrors = [
+    "LedgerAPI5xx",
+    "NetworkDown",
+    "DeviceLockedError",
+    "LockedDeviceError",
+    "UserRefusedOnDevice",
+  ];
 
   const error = route.params?.error;
   const helperUrl = error?.url ?? urls.faq;
@@ -148,7 +152,11 @@ function InformativeBanner({
   );
 }
 
-const InformativeBannerButton = styled(Button).attrs({
+type InformativeBannerButtonProps = {
+  activeOpacity?: number;
+};
+
+const InformativeBannerButton = styled(Button).attrs<InformativeBannerButtonProps>({
   isNewIcon: true,
   iconPosition: "left",
   size: "small",

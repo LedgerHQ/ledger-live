@@ -12,7 +12,7 @@ import { GenericTransaction } from "./types";
  * Sign Transaction with Ledger hardware
  */
 export const genericSignRawOperation =
-  (network, kind) =>
+  (_network: string, kind: string) =>
   (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signRawOperation"] =>
   ({
     account,

@@ -1,7 +1,3 @@
-import { isValidAddress } from "algosdk";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -13,17 +9,16 @@ import {
   NotEnoughBalanceInParentAccount,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import type { AccountBridge } from "@ledgerhq/types-live";
-
 import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
-import { AlgorandASANotOptInInRecipient } from "./errors";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { isValidAddress } from "algosdk";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 
-import {
-  ALGORAND_MAX_MEMO_SIZE,
-  computeAlgoMaxSpendable,
-  isAmountValid,
-  recipientHasAsset,
-} from "./logic";
+import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "./errors";
+
+import { computeAlgoMaxSpendable, isAmountValid, recipientHasAsset } from "./logic";
+import { validateMemo } from "./logic/validateMemo";
 import { extractTokenId } from "./tokens";
 import type { AlgorandAccount, Transaction, TransactionStatus } from "./types";
 
@@ -160,8 +155,8 @@ export const getTransactionStatus: AccountBridge<
     }
   }
 
-  if (transaction.memo && transaction.memo.length > ALGORAND_MAX_MEMO_SIZE) {
-    throw new Error("Memo is too long");
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new AlgorandMemoExceededSizeError();
   }
 
   return {

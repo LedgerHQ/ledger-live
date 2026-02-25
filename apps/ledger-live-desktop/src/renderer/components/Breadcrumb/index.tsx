@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import AccountCrumb from "./AccountCrumb";
 import AssetCrumb from "./AssetCrumb";
 import MarketCrumb from "./MarketCrumb";
@@ -31,13 +31,11 @@ const Wrapper = styled.div`
 `;
 const Breadcrumb = () => (
   <Wrapper>
-    <Route path="/account/" component={AccountCrumb} />
-    <Route path="/account/:id/" component={AccountCrumb} />
-    <Route path="/account/:parentId/:id/" component={AccountCrumb} />
-
-    <Route path="/asset/:assetId+" component={AssetCrumb} />
-
-    <Route path="/market/:currencyId/" component={MarketCrumb} />
+    <Routes>
+      <Route path="/account/*" element={<AccountCrumb />} />
+      <Route path="/asset/:assetId/*" element={<AssetCrumb />} />
+      <Route path="/market/:currencyId/" element={<MarketCrumb />} />
+    </Routes>
   </Wrapper>
 );
 export default Breadcrumb;

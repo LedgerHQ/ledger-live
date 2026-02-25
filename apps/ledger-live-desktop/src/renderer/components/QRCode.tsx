@@ -18,7 +18,7 @@ class QRCode extends PureComponent<Props> {
     this.drawQRCode();
   }
 
-  canvas: React.RefObject<HTMLCanvasElement> = React.createRef();
+  canvas: React.RefObject<HTMLCanvasElement | null> = React.createRef();
 
   drawQRCode() {
     const { data, size } = this.props;
@@ -44,7 +44,6 @@ class QRCode extends PureComponent<Props> {
     const px = size * (window.devicePixelRatio || 1);
     return (
       <canvas
-        className="visible-for-spectron"
         style={{
           cursor: "none",
           width: `${size}px`,

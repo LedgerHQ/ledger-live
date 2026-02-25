@@ -15,7 +15,7 @@ import {
   removeTestProviderInfo,
 } from "@ledgerhq/live-common/exchange/providers/index";
 import LText from "~/components/LText";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Trash from "~/icons/Trash";
 
 const DEFAULT_CAL = `{

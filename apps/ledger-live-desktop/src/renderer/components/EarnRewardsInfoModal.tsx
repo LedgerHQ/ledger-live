@@ -9,7 +9,7 @@ import Text from "./Text";
 import Button from "./Button";
 import Box from "./Box";
 import Modal, { ModalBody } from "./Modal";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { ModalData } from "../modals/types";
 
 type Props<Name extends keyof ModalData> = {
@@ -99,7 +99,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
           renderFooter={() => (
             <Box horizontal grow>
               <Box grow>{footerLeft}</Box>
-              <Button ml={2} secondary onClick={onClose}>
+              <Button ml={2} onClick={onClose}>
                 <Trans i18nKey="common.cancel" />
               </Button>
               <Button

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useMemo, useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotValidator, Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";

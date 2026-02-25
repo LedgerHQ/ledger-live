@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import { State } from "@ledgerhq/live-common/apps/index";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";

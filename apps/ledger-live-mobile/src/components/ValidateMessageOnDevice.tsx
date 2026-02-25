@@ -3,7 +3,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "./Animation";

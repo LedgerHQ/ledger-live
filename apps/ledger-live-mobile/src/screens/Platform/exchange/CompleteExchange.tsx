@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
@@ -35,7 +35,11 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: { mevProtected, sponsored: request.sponsored },
+    broadcastConfig: {
+      mevProtected,
+      sponsored: request.sponsored,
+      source: { type: "swap", name: request.provider },
+    },
   });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();

@@ -1,25 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useBleState, BleState, UndeterminedBleStates } from "./useBleState";
 
 describe("useBleState", () => {
-  let mockObserveStateFn: ReturnType<typeof vi.fn>;
-  let mockRequestCurrentStateFn: ReturnType<typeof vi.fn>;
-  let mockRemove: ReturnType<typeof vi.fn>;
+  let mockObserveStateFn: ReturnType<typeof jest.fn>;
+  let mockRequestCurrentStateFn: ReturnType<typeof jest.fn>;
+  let mockRemove: ReturnType<typeof jest.fn>;
   let stateListener: ((state: BleState) => void) | null = null;
 
   beforeEach(() => {
-    mockRemove = vi.fn();
-    mockObserveStateFn = vi.fn().mockImplementation((listener: (state: BleState) => void) => {
+    mockRemove = jest.fn();
+    mockObserveStateFn = jest.fn().mockImplementation((listener: (state: BleState) => void) => {
       stateListener = listener;
       return { remove: mockRemove };
     });
-    mockRequestCurrentStateFn = vi.fn();
+    mockRequestCurrentStateFn = jest.fn();
   });
 
   afterEach(() => {
     stateListener = null;
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("basic functionality", () => {
@@ -322,10 +321,10 @@ describe("useBleState", () => {
   describe("error handling", () => {
     it("should handle requestCurrentStateFn rejection gracefully", async () => {
       // Mock console.error to prevent unhandled rejection warnings
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       // Mock the unhandled rejection to prevent test failure
-      const unhandledRejectionHandler = vi.fn();
+      const unhandledRejectionHandler = jest.fn();
       process.on("unhandledRejection", unhandledRejectionHandler);
       mockRequestCurrentStateFn.mockRejectedValue(new Error("Request failed"));
 

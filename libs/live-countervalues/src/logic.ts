@@ -14,6 +14,7 @@ import type {
   RateGranularity,
   PairRateMapCache,
   RateMapRaw,
+  RateMapStats,
   BatchStrategySolver,
 } from "./types";
 import {
@@ -25,30 +26,79 @@ import {
   parseFormattedDate,
   incrementPerGranularity,
   datapointLimits,
+  datapointRetention,
 } from "./helpers";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, PortfolioRange } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { portfolioRangeToDays } from "./helpers";
 
-// yield raw version of the countervalues state to be saved in a db
-export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
+/**
+ * Heuristic to avoid calling exportCountervalues when the persisted export would be unchanged.
+ * Uses status (set of pairs) and cache.stats (oldest/earliest per pair) for history bounds.
+ */
+export function hasNewCountervaluesToExport(
+  oldState: CounterValuesState,
+  newState: CounterValuesState,
+): boolean {
+  const oldKeys = Object.keys(oldState.status);
+  const newKeys = Object.keys(newState.status);
+  if (oldKeys.length !== newKeys.length) return true;
+  const oldSet = new Set(oldKeys);
+  for (const id of newKeys) {
+    if (!oldSet.has(id)) return true;
+  }
+
+  for (const pairId of newKeys) {
+    const oldStats = oldState.cache[pairId]?.stats;
+    const newStats = newState.cache[pairId]?.stats;
+    if (oldStats?.oldest !== newStats?.oldest || oldStats?.earliest !== newStats?.earliest) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Raw state for db: history + status; no "latest" (so persistence only changes when history changes).
+export function exportCountervalues(
+  { data, status }: CounterValuesState,
+  trackingPair: TrackingPair[],
+  selectedTimeRange?: PortfolioRange,
+): CounterValuesStateRaw {
   const out = { status } as CounterValuesStateRaw;
+  const hourlyLimit = formatCounterValueDay(new Date(Date.now() - datapointRetention.hourly));
+  const pairIds = new Set(trackingPairIds(trackingPair));
+
+  const dailyRetentionDays = selectedTimeRange
+    ? portfolioRangeToDays(selectedTimeRange)
+    : undefined;
+  const shouldFilterDaily = dailyRetentionDays !== undefined;
+  const dailyLimit = shouldFilterDaily
+    ? formatCounterValueDay(new Date(Date.now() - dailyRetentionDays * 24 * 60 * 60 * 1000))
+    : null;
 
   for (const path in data) {
+    if (!(data[path] instanceof Map)) continue; // Skip entries that are not maps
+    if (!pairIds.has(path)) continue; // Skip pairs that are not tracked anymore
+
+    let size = 0;
     const obj: RateMapRaw = {};
 
     for (const [k, v] of data[path]) {
+      if (k === "latest") continue; // Don't persist latest; export only changes when history changes
+      if (k.length === 13 && k.slice(0, 10) < hourlyLimit) continue; // Skip old hourly data
+      if (shouldFilterDaily && k.length === 10 && dailyLimit && k < dailyLimit) continue; // Skip old daily data only if filtering is enabled
+      size++;
       obj[k] = v;
     }
 
-    out[path] = obj;
+    if (size > 0) out[path] = obj;
   }
 
   return out;
 }
 
-// restore a countervalues state from the raw version
+// Restore from raw; status is passed through as-is.
 export function importCountervalues(
   { status, ...rest }: CounterValuesStateRaw,
   settings: CountervaluesSettings,
@@ -57,7 +107,8 @@ export function importCountervalues(
 
   for (const path in rest) {
     const obj = rest[path];
-    const map = new Map();
+    if (!obj || typeof obj !== "object") continue;
+    const map = new Map<string, number>();
 
     for (const k in obj) {
       map.set(k, obj[k]);
@@ -68,37 +119,16 @@ export function importCountervalues(
 
   return {
     data,
-    status,
+    status: status ?? {},
     cache: Object.entries(data).reduce(
       (prev, [key, val]) => ({
         ...prev,
-        // $FlowFixMe
-        [key]: generateCache(key, <RateMap>val, settings),
+        [key]: generateCache(key, val, settings, true, undefined),
       }),
       {},
     ),
+    checkHolesOnNextLoad: true,
   };
-}
-
-export function trackingPairForTopCoins(
-  marketcapIds: string[],
-  size: number,
-  countervalue: Currency,
-  startDate: Date,
-) {
-  const pairs = [];
-  for (let i = 0; i < marketcapIds.length && pairs.length < size; i++) {
-    const id = marketcapIds[i];
-    const currency = findCryptoCurrencyById(id);
-    if (currency) {
-      pairs.push({
-        from: currency,
-        to: countervalue,
-        startDate,
-      });
-    }
-  }
-  return pairs;
 }
 
 // infer the tracking pair from user accounts to know which pairs are concerned
@@ -347,15 +377,19 @@ export async function loadCountervalues(
     });
   });
 
-  // synchronize the cache
+  // Synchronize cache. checkHoles on first run after restore (checkHolesOnNextLoad) or for new pairs (no status).
+  const checkHolesOnNextLoad = state.checkHolesOnNextLoad === true;
   Object.keys(changesKeys).forEach(pair => {
-    cache[pair] = generateCache(pair, data[pair], settings);
+    const checkHoles = checkHolesOnNextLoad || !status[pair];
+    const previousStats = state.cache[pair]?.stats;
+    cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
   });
 
   return {
     data,
     cache,
     status,
+    checkHolesOnNextLoad: false,
   };
 }
 
@@ -462,6 +496,8 @@ function generateCache(
   pair: string,
   rateMap: RateMap,
   settings: CountervaluesSettings,
+  checkHoles: boolean,
+  previousStats?: RateMapStats | null,
 ): PairRateMapCache {
   const map = new Map(rateMap);
   const sorted = Array.from(map.keys())
@@ -471,12 +507,13 @@ function generateCache(
   const earliest = sorted[sorted.length - 1];
   const oldestDate = oldest ? parseFormattedDate(oldest) : null;
   const earliestDate = earliest ? parseFormattedDate(earliest) : null;
-  let earliestStableDate = earliestDate;
+  let earliestStableDate: Date | null | undefined =
+    previousStats?.earliestStableDate ?? earliestDate;
   let fallback: number = 0;
   let hasHole = false;
 
   if (oldestDate && oldest) {
-    // we find the most recent stable day and we set it in earliestStableDate
+    // we find the most recent stable day and we set it in earliestStableDate (only on first run, not incremental)
     // if autofillGaps is on, shifting daily gaps (hourly don't need to be shifted as it automatically fallback on a day rate)
     const now = Date.now();
     const oldestTime = oldestDate.getTime();
@@ -491,7 +528,7 @@ function generateCache(
       const k = formatCounterValueDay(d);
 
       if (!map.has(k)) {
-        if (!hasHole) {
+        if (checkHoles && !hasHole) {
           hasHole = true;
           earliestStableDate = d;
         }

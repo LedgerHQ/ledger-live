@@ -5,19 +5,9 @@ import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
 import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
-import { setEnvOnAllThreads } from "~/helpers/env";
 
-// TODO move to bitcoin family
-// eslint-disable-next-line no-restricted-imports
-import {
-  editSatStackConfig,
-  stringifySatStackConfig,
-  parseSatStackConfig,
-  SatStackConfig,
-} from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
 import { DataModel } from "@ledgerhq/live-common/DataModel";
-import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/types";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsStoreSelector } from "./reducers/settings";
@@ -26,6 +16,7 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -51,11 +42,6 @@ export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 type DatabaseValues = {
   accounts: Account[];
   user: User;
-  announcements: {
-    announcements: Announcement[];
-    seenIds: string[];
-    lastUpdateTime: number;
-  };
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;
@@ -63,6 +49,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   cryptoAssets: PersistedCAL;
+  identities: PersistedIdentities;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };
@@ -192,38 +179,6 @@ export const resetAll = () => ipcRenderer.invoke("resetAll");
 export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
-
-export const saveLSS = async (lssConfig: SatStackConfig) => {
-  const configStub = {
-    node: {
-      host: "",
-      username: "",
-      password: "",
-    },
-    accounts: [],
-  };
-  const maybeExistingConfig = (await loadLSS()) || configStub;
-  const updated = editSatStackConfig(maybeExistingConfig, lssConfig);
-  await ipcRenderer.invoke("generate-lss-config", stringifySatStackConfig(updated));
-  setEnvOnAllThreads("SATSTACK", true);
-};
-
-export const removeLSS = async () => {
-  await ipcRenderer.invoke("delete-lss-config");
-  setEnvOnAllThreads("SATSTACK", false);
-};
-
-export const loadLSS = async (): Promise<SatStackConfig | undefined | null> => {
-  try {
-    const satStackConfigRaw = await ipcRenderer.invoke("load-lss-config");
-    const config = parseSatStackConfig(satStackConfigRaw);
-    setEnvOnAllThreads("SATSTACK", true);
-    return config;
-  } catch {
-    // For instance file no longer exists
-    setEnvOnAllThreads("SATSTACK", false);
-  }
-};
 
 export function useDB<
   Selected,

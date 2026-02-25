@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import QrCodeInput from "../../../../src/components/Form/Input/QrCodeInput";
 
 export default {

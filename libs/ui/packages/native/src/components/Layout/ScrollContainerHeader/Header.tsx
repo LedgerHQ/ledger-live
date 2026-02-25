@@ -1,6 +1,11 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState, type JSX } from "react";
 import styled from "styled-components/native";
-import Animated, { useAnimatedStyle, interpolate, Extrapolate } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+  SharedValue,
+} from "react-native-reanimated";
 
 import Flex from "../Flex";
 import { LayoutChangeEvent } from "react-native";
@@ -11,14 +16,14 @@ export type HeaderProps = {
   TopRightSection?: JSX.Element;
   MiddleSection?: JSX.Element;
   BottomSection?: JSX.Element;
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
 };
 
 const PADDING_HORIZONTAL = 16;
 
-const Container = styled(Flex).attrs({
+const Container = styled(Flex).attrs<{ paddingHorizontal: number }>({
   paddingHorizontal: PADDING_HORIZONTAL,
-})`
+})<{ paddingHorizontal?: number }>`
   background-color: ${(p) => p.theme.colors.background.main};
   width: 100%;
 `;

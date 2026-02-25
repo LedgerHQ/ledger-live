@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/lib-es/api/types";
+import type { BlockInfo } from "@ledgerhq/coin-framework/api/types";
 import { SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { getBlockHash } from "./utils";
 

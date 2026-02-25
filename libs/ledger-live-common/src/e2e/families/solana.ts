@@ -33,6 +33,9 @@ export const sendSolana = withDeviceController(
       expect(isAmountCorrect).toBeTruthy();
 
       if (process.env.SPECULOS_DEVICE !== Device.LNS.name) {
+        if (!tx.accountToCredit.address) {
+          throw new Error("Recipient address is not set");
+        }
         const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
         expect(isAddressCorrect).toBeTruthy();
       }

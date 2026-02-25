@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 import ScrollListContainer from "../../../src/components/Layout/ScrollListContainer";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
@@ -11,7 +10,7 @@ export default {
 
 export const ScrollListContainerStory = (args: typeof ScrollListContainerStoryArgs) => (
   <Flex flex={1} width="100%">
-    <ScrollListContainer horizontal={args.horizontal} onScroll={action("scroll")}>
+    <ScrollListContainer horizontal={args.horizontal} onScroll={() => {}}>
       {Array(20)
         .fill(0)
         .map((_, i) => (

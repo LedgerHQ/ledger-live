@@ -3,7 +3,7 @@ import { Button, Flex, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
@@ -25,12 +25,12 @@ const ErrorIcon = ({ size }: { size?: number }) => (
 
 const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const supportUrl = useLocalizedUrl(urls.contactSupportWebview);
 
   const exit = () => {
     setDrawer();
-    history.push("/onboarding/select-device");
+    navigate("/onboarding/select-device");
   };
 
   return (

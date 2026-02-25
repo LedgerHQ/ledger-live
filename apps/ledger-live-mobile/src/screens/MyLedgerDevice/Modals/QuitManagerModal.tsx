@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -40,7 +40,7 @@ const ButtonsContainer = styled(Flex).attrs({
 const CancelButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
-  margin-top: 25;
+  margin-top: 25px;
 `;
 
 const QuitManagerModal = ({

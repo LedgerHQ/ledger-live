@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Text, Button, Icons, Flex, Link } from "@ledgerhq/native-ui";
 import forgetDeviceIllustration from "../assets/forget-device.webp";
 import { useTheme } from "styled-components/native";

@@ -2,7 +2,14 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { PortfolioPage } from "../../page/portfolio.page";
 
-test.use({ userdata: "skip-onboarding-with-bad-account-data" });
+test.use({
+  userdata: "skip-onboarding-with-bad-account-data",
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+  },
+});
 
 test("Accounts resiliency works, the portfolio loads and evict 2 bad accounts from data", async ({
   page,

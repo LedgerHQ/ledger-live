@@ -12,7 +12,7 @@ export const TableLine = styled(Box).attrs<BoxProps>(() => ({
   justifyContent: "flex-start",
   fontSize: 3,
   flex: 1,
-  shrink: 1,
+  shrink: true,
   pr: 2,
 }))`
   box-sizing: border-box;

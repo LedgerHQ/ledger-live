@@ -49,7 +49,7 @@ import {
   ExchangeError,
 } from "./error";
 import { TrackingAPI } from "./tracking";
-import { getSwapStepFromError } from "../../exchange/error";
+import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "../../exchange/error";
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
@@ -626,12 +626,26 @@ export const handlers = ({
               resolve({ operationHash, swapId });
             },
             onCancel: error => {
+              const {
+                name: rawErrorName,
+                message: rawErrorMessage,
+                cause: rawErrorCause,
+              } = getErrorDetails(error);
+              const causeSuffix = rawErrorCause ? `, ${JSON.stringify(rawErrorCause)}` : "";
+              const errorMessageWithCause = rawErrorMessage + causeSuffix;
+
+              const completeExchangeError =
+                // step provided in libs/ledger-live-common/src/exchange/platform/transfer/completeExchange.ts
+                error instanceof CompleteExchangeError
+                  ? error
+                  : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
+
               postSwapCancelled({
                 provider: provider,
                 swapId: swapId,
-                swapStep: getSwapStepFromError(error),
-                statusCode: error.name,
-                errorMessage: error.message,
+                swapStep: getSwapStepFromError(completeExchangeError),
+                statusCode: completeExchangeError.title || completeExchangeError.name,
+                errorMessage: completeExchangeError.message || errorMessageWithCause,
                 sourceCurrencyId: fromCurrency.id,
                 targetCurrencyId: toCurrency?.id,
                 hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
@@ -649,7 +663,7 @@ export const handlers = ({
                   : "0x",
               });
 
-              reject(createStepError({ error, step: StepError.SIGNATURE }));
+              reject(completeExchangeError);
             },
           }),
         );
@@ -917,7 +931,6 @@ async function getStrategy(
 
 function isDrawerClosedError(error: unknown) {
   if (!error || typeof error !== "object") return false;
-  return (
-    get(error, "name") === "DrawerClosedError" || get(error, "cause.name") === "DrawerClosedError"
-  );
+  const details = getErrorDetails(error);
+  return details.name === "DrawerClosedError" || details.cause?.name === "DrawerClosedError";
 }

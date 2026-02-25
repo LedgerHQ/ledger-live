@@ -1,11 +1,15 @@
-name: "[Desktop] - E2E Test - Scheduled"
-run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+name: "[Desktop] - E2E Only - Scheduled/Manual"
+run-name: >
+  @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
 on:
   schedule:
     - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
+      ref:
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
+        required: false
       test_filter:
         description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
@@ -27,7 +31,6 @@ on:
         description: "Test Execution ticket ID"
         required: false
         type: string
-        default: "B2CQA-2461"
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -63,7 +66,7 @@ on:
   workflow_call:
     inputs:
       ref:
-        description: "The branch which triggered this workflow"
+        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
         type: string
       test_filter:
@@ -112,28 +115,32 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
-      SPECULOS_DEVICE: ${{ inputs.speculos_device }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
+      SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
     runs-on: [ledger-live-4xlarge-e2e]
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
       status_2: ${{ steps.set-output.outputs.status_2 }}
       status_3: ${{ steps.set-output.outputs.status_3 }}
       status_4: ${{ steps.set-output.outputs.status_4 }}
+      status_5: ${{ steps.set-output.outputs.status_5 }}
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -156,7 +163,7 @@ jobs:
           turborepo-server-port: ${{ steps.caches.outputs.port }}
 
       - name: Retrieving coin apps
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: master
           repository: LedgerHQ/coin-apps
@@ -177,11 +184,9 @@ jobs:
         id: test-filter
         run: |
           BASE_FILTER="${{ inputs.test_filter }}"
-
           if [ -n "$BASE_FILTER" ]; then
             BASE_FILTER="${BASE_FILTER//,/|}"
           fi
-
           if [ "${{ inputs.smoke_tests }}" = "true" ]; then
             if [ -n "$BASE_FILTER" ]; then
               echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
@@ -192,6 +197,31 @@ jobs:
             echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
           fi
         shell: bash
+
+      - name: Write summary
+        if: ${{ matrix.shardIndex == 1 }}
+        run: |
+          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+          BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
+          TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
+          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          {
+            echo "## Workflow Context"
+            echo ""
+            echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
+            echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
+            echo "- **Commit SHA:** ${{ github.sha }}"
+            echo "- **Device selected:** $DEVICE"
+            echo "- **Filtered pattern:** $FILTER_PATTERN"
+            echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
+            echo "- **Firebase env to target:** $BUILD_TYPE"
+            echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          } >> $GITHUB_STEP_SUMMARY
 
       - name: Run Playwright Tests
         id: run-playwright
@@ -208,17 +238,19 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+#          REMOTE_SPECULOS: "true"
+#          GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results-${{ matrix.shardIndex }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Xray Results
         if: ${{ !cancelled() && inputs.export_to_xray }}
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: xray-reports-${{ matrix.shardIndex }}
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
@@ -228,7 +260,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shardIndex }}=${{ steps.run-playwright.outcome }}" >> $GITHUB_OUTPUT
-
   report-to-allure:
     name: "Create Allure Report and upload it"
     runs-on: [ledger-live-medium]
@@ -244,7 +275,7 @@ jobs:
       ALLURE_RESULTS: "allure-results"
     steps:
       - name: Download Allure Report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: ${{ env.ALLURE_RESULTS }}
           pattern: ${{ env.ALLURE_RESULTS }}*
@@ -254,7 +285,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          platform: ${{ inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos' }}
+          platform: ${{ github.event_name == 'schedule' && 'linux-speculos-nightly' || (inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos') }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
@@ -271,11 +302,12 @@ jobs:
         id: aggregate
         uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
-          total_shards: 4
+          total_shards: 5
           status_1: ${{ needs.e2e-tests-linux.outputs.status_1 }}
           status_2: ${{ needs.e2e-tests-linux.outputs.status_2 }}
           status_3: ${{ needs.e2e-tests-linux.outputs.status_3 }}
           status_4: ${{ needs.e2e-tests-linux.outputs.status_4 }}
+          status_5: ${{ needs.e2e-tests-linux.outputs.status_5 }}
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -288,10 +320,10 @@ jobs:
     needs: e2e-tests-linux
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Download Xray Results
-        uses: actions/download-artifact@v4.1.3
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: "e2e/desktop/artifacts/xray"
           pattern: xray-reports-*
@@ -301,7 +333,7 @@ jobs:
         run: e2e/desktop/aggregate-xray-reports.sh e2e/desktop/artifacts/xray
 
       - name: Upload aggregated xray results
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: aggregated-xray-reports
           path: "e2e/desktop/artifacts/xray/aggregated-xray-reports.json"
@@ -311,7 +343,6 @@ jobs:
         run: |
           response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
           echo "xray_token=$response" >> $GITHUB_OUTPUT
-
       - name: Publish merged report on Xray
         id: publish-xray
         run: |
@@ -322,7 +353,6 @@ jobs:
                     ${{ env.XRAY_API_URL }}/import/execution)
             key=$(echo $response | jq -r '.key')
             echo "xray_key=$key" >> $GITHUB_OUTPUT
-
       - name: Write Xray report in summary
         shell: bash
         run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
@@ -346,13 +376,12 @@ jobs:
           script: |
             const fs = require("fs");
             const statusEmoji = process.env.STATUS_EMOJI;
-
             const blocks = [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
+                  "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                   "emoji": true
                 }
               },
@@ -367,7 +396,6 @@ jobs:
                 }
               }
             ];
-
             if (process.env.MISSING_SHARDS) {
               blocks.push({
                 "type": "section",
@@ -377,11 +405,9 @@ jobs:
                 }
               });
             }
-
             blocks.push({
               "type": "divider"
             });
-
             blocks.push({
               "type": "section",
               "fields": [
@@ -395,7 +421,6 @@ jobs:
                 }
               ]
             });
-
             if (process.env.EXPORT_TO_XRAY === 'true') {
               blocks.push({
                 "type": "section",
@@ -407,7 +432,6 @@ jobs:
                 ]
               });
             }
-
             const slackPayload = {
               "attachments": [
                 {
@@ -416,9 +440,7 @@ jobs:
                 }
               ]
             };
-
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
-
       - name: Print Slack Payload Content
         run: cat ${{ github.workspace }}/payload-slack-content.json
 

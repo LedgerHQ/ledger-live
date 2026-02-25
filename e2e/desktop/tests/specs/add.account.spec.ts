@@ -4,6 +4,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import invariant from "invariant";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 const currencies = [
   {
@@ -24,6 +25,8 @@ const currencies = [
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
   { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
+  { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
+  { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
 ];
 
 for (const currency of currencies) {
@@ -54,16 +57,17 @@ for (const currency of currencies) {
           description: currency.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app, userdataFile }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
         await app.portfolio.openAddAccountModal();
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
-          await app.modularDrawer.selectNetwork(currency.currency);
+
+        const selector = await getModularSelector(app, "ASSET");
+        if (selector) {
+          await selector.validateItems();
+          await selector.selectAssetByTicker(currency.currency);
+          await selector.selectNetwork(currency.currency);
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();
         } else {
@@ -75,6 +79,8 @@ for (const currency of currencies) {
 
         await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
+        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);

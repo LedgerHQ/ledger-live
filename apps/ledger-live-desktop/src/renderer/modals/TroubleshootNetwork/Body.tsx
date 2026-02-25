@@ -44,7 +44,7 @@ const Status = ({ status }: { status?: TroubleshootStatus }) => {
     case "error":
       return (
         <Tooltip
-          tooltipBg="alertRed"
+          tooltipBg="error-strong"
           content={
             <Box
               fontSize={4}

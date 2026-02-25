@@ -16,7 +16,7 @@ export default {
   },
 } as Meta<typeof NotificationCard>;
 
-export const NotificationCardStory: StoryFn<typeof NotificationCard> = (
+export const NotificationCardStory: StoryFn<typeof NotificationCardStoryArgs> = (
   args: typeof NotificationCardStoryArgs,
 ) => {
   return (

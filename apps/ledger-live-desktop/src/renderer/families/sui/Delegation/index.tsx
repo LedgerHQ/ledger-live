@@ -1,7 +1,7 @@
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

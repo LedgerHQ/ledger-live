@@ -3,6 +3,7 @@ export enum CoinType {
   AE = 457,
   AION = 425,
   AKA = 200625,
+  ALEO = 683,
   ALGO = 283,
   APTOS = 637,
   ATOM = 118,

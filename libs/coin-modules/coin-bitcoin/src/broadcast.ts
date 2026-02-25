@@ -10,10 +10,11 @@ import { Transaction } from "./types";
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   account,
   signedOperation,
+  broadcastConfig,
 }) => {
   const { signature, operation } = signedOperation;
   const walletAccount = getWalletAccount(account);
-  const hash = await wallet.broadcastTx(walletAccount, signature);
+  const hash = await wallet.broadcastTx(walletAccount, signature, broadcastConfig);
   return patchOperationWithHash(operation, hash);
 };
 

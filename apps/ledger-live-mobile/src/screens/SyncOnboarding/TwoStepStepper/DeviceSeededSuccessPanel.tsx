@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { BoxedIcon, Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 /*
  * Constants

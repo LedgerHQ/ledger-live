@@ -28,7 +28,7 @@ const Container = styled(Flex)<ElementState>`
   border-radius: ${p => `${p.theme.radii[2]}px`};
   padding: ${p => p.theme.space[6]}px;
 
-  :hover {
+  &:hover {
     border-color: ${p => (p.disabled || p.checked ? "" : p.theme.colors.primary.c80)};
   }
 `;
@@ -53,7 +53,7 @@ export type RadioListElementProps = InputAttributes & {
    * The string or component that will be rendered as label of this radio element
    * If it's a component, it's rendered with these props: { checked:boolean; disabled:boolean }
    * */
-  label: string | React.ComponentType<ElementState> | ((arg1: ElementState) => JSX.Element);
+  label: string | React.ComponentType<ElementState> | ((arg1: ElementState) => React.JSX.Element);
   /** Flex props to pass to the container */
   containerProps?: FlexBoxProps;
 };
@@ -64,7 +64,7 @@ const ListElement = ({
   disabled,
   containerProps,
   ...props
-}: RadioListElementProps): JSX.Element => {
+}: RadioListElementProps): React.JSX.Element => {
   const context = useContext(RadioContext);
   if (context === undefined) throw new Error("RadioElement must be used within a RadioProvider");
 

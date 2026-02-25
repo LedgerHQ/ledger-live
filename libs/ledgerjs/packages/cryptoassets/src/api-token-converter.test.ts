@@ -159,25 +159,10 @@ describe("convertApiToken", () => {
   });
 
   describe("TON Jetton transformation", () => {
-    it("should remove name prefix from jetton ID", () => {
+    it("should not transform jetton ID", () => {
       const apiToken: ApiTokenData = {
-        id: "ton/jetton/catizen_eqd-cvr0nz6xayrbvbhz-abtrrc6si5tvhvvpeqrav9uaad7",
-        contractAddress: "eqd-cvr0nz6xayrbvbhz-abtrrc6si5tvhvvpeqrav9uaad7",
-        name: "Catizen",
-        ticker: "CATI",
-        units: [{ code: "CATI", name: "Catizen", magnitude: 9 }],
-        standard: "jetton",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result?.id).toBe("ton/jetton/eqd-cvr0nz6xayrbvbhz-abtrrc6si5tvhvvpeqrav9uaad7");
-    });
-
-    it("should not transform jetton ID without underscore", () => {
-      const apiToken: ApiTokenData = {
-        id: "ton/jetton/eqdtest",
-        contractAddress: "eqdtest",
+        id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+        contractAddress: "eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
         name: "Test",
         ticker: "TEST",
         units: [{ code: "TEST", name: "Test", magnitude: 9 }],
@@ -186,7 +171,7 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result?.id).toBe("ton/jetton/eqdtest");
+      expect(result?.id).toBe("ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not");
     });
   });
 

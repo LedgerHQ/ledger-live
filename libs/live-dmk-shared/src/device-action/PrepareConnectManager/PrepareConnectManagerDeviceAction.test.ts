@@ -14,12 +14,14 @@ import { testDeviceActionStates } from "../__test-utils__/testDeviceActionStates
 import { PrepareConnectManagerDeviceAction } from "./PrepareConnectManagerDeviceAction";
 import type { PrepareConnectManagerDAState } from "./types";
 
-vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
-  const original = await importOriginal<typeof import("@ledgerhq/device-management-kit")>();
+jest.mock("@ledgerhq/device-management-kit", () => {
+  const original = jest.requireActual<typeof import("@ledgerhq/device-management-kit")>(
+    "@ledgerhq/device-management-kit",
+  );
   return {
     ...original,
-    GoToDashboardDeviceAction: vi.fn(() => ({
-      makeStateMachine: vi.fn(),
+    GoToDashboardDeviceAction: jest.fn(() => ({
+      makeStateMachine: jest.fn(),
     })),
   };
 });
@@ -28,7 +30,7 @@ describe("PrepareConnectManagerDeviceAction", () => {
   const apiMock = makeDeviceActionInternalApiMock();
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     apiMock.getDeviceSessionState.mockReturnValue({
       sessionStateType: DeviceSessionStateType.ReadyWithoutSecureChannel,
       deviceStatus: DeviceStatus.CONNECTED,

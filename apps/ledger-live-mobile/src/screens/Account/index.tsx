@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -19,7 +19,7 @@ import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "~/reducers/settings";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { track, TrackScreen } from "~/analytics";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { NavigatorName, ScreenName } from "~/const";
@@ -53,7 +53,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 /** If deep linking params are present, this Account Screen is redirected to from Accounts Screen. */
 function AccountScreen({ route }: Props) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 

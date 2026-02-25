@@ -19,6 +19,9 @@ test.use({
         enableModularization: false,
       },
     },
+    lwdWallet40: {
+      enabled: false,
+    },
   },
 });
 
@@ -74,6 +77,8 @@ test("Keyboard shortcuts", async ({ page }) => {
 
   // test right-click on the app doesn't open native browser menu
   await test.step("it doesn't open native browser menu", async () => {
+    await page.getByTestId("settings-accounts-tab").waitFor({ state: "visible" });
+    await layout.drawerPortfolioButton.waitFor({ state: "visible" });
     await layout.drawerPortfolioButton.click({ button: "right" });
     await expect(page).toHaveScreenshot("no-native-menu.png");
   });

@@ -1,7 +1,21 @@
-import { localForger } from "@taquito/local-forging";
 import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { localForger } from "@taquito/local-forging";
+import type { TezosConfig } from "../config";
 import type { TezosApi } from "./types";
 import { createApi } from ".";
+
+const defaultConfig: TezosConfig = {
+  baker: { url: "https://baker.example.com" },
+  explorer: { url: "https://api.ghostnet.tzkt.io", maxTxQuery: 100 },
+  node: { url: "https://rpc.ghostnet.teztnets.com" },
+  fees: {
+    minGasLimit: 600,
+    minRevealGasLimit: 300,
+    minStorageLimit: 0,
+    minFees: 500,
+    minEstimatedFees: 500,
+  },
+};
 
 /**
  * Ghostnet-specific integration tests
@@ -13,25 +27,7 @@ describe("Tezos Api", () => {
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
-    module = createApi({
-      baker: {
-        url: "https://baker.example.com",
-      },
-      explorer: {
-        url: "https://api.ghostnet.tzkt.io",
-        maxTxQuery: 100,
-      },
-      node: {
-        url: "https://rpc.ghostnet.teztnets.com",
-      },
-      fees: {
-        minGasLimit: 600,
-        minRevealGasLimit: 300,
-        minStorageLimit: 0,
-        minFees: 500,
-        minEstimatedFees: 500,
-      },
-    });
+    module = createApi(defaultConfig);
   });
 
   describe("estimateFees", () => {
@@ -106,7 +102,7 @@ describe("Tezos Api", () => {
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
+      const { items: tx } = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
@@ -125,7 +121,7 @@ describe("Tezos Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
+      const { items: tx } = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
@@ -135,7 +131,10 @@ describe("Tezos Api", () => {
 
     it("returns operations from latest, but in asc order", async () => {
       // When
-      const [txDesc] = await module.listOperations(address, { minHeight: 0, order: "desc" });
+      const { items: txDesc } = await module.listOperations(address, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       // Then
       // Check if the result is sorted in ascending order
@@ -165,6 +164,12 @@ describe("Tezos Api", () => {
       // Then
       expect(result[0].asset).toEqual({ type: "native" });
       expect(result[0].value).toBeGreaterThan(0);
+    });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance("tz1euQVEofitwkUzMRKCuBK9D1ZPiy4udXz1");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
     });
   });
 
@@ -237,5 +242,116 @@ describe("Tezos Api", () => {
         expect(decodedTransaction.contents[0].fee).toEqual(customFees.toString());
       },
     );
+  });
+
+  describe("with custom fees settings", () => {
+    let moduleCustomFees: TezosApi;
+    const minFees = 600;
+    const minEstimatedFees = 550;
+
+    beforeAll(() => {
+      moduleCustomFees = createApi({
+        ...defaultConfig,
+        fees: {
+          minGasLimit: 600,
+          minRevealGasLimit: 300,
+          minStorageLimit: 0,
+          minFees,
+          minEstimatedFees,
+        },
+      });
+    });
+
+    describe("estimateFees", () => {
+      it("estimate fees when default estimation is greater than minFees", async () => {
+        const result = await moduleCustomFees.estimateFees({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "send",
+          sender: address,
+          recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+          amount: BigInt(100),
+        });
+        expect(result.value).toBeGreaterThanOrEqual(BigInt(minFees));
+        expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+        expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
+      });
+
+      it("estimate fees when default estimation is lesser than minFees", async () => {
+        const result = await moduleCustomFees.estimateFees({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "delegate",
+          sender: address,
+          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+          amount: BigInt(0),
+        });
+        expect(result.value).toBeGreaterThanOrEqual(BigInt(minFees));
+      });
+    });
+
+    describe("craftTransaction", () => {
+      it("craft transaction when default estimation is greater than minFees", async () => {
+        const { transaction: encodedTransaction } = await moduleCustomFees.craftTransaction({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "send",
+          sender: address,
+          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+          amount: BigInt(10),
+        });
+        const decoded = await localForger.parse(encodedTransaction.slice(2));
+        const fee = BigInt(decoded.contents[0].fee ?? "0");
+        expect(fee).toBeGreaterThanOrEqual(BigInt(minFees));
+      });
+
+      it("craft transaction when default estimation is lesser than minFees", async () => {
+        const { transaction: encodedTransaction } = await moduleCustomFees.craftTransaction({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "delegate",
+          sender: address,
+          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+          amount: BigInt(0),
+        });
+        const decoded = await localForger.parse(encodedTransaction.slice(2));
+        const fee = BigInt(decoded.contents[0].fee ?? "0");
+        expect(fee).toBeGreaterThanOrEqual(BigInt(minFees));
+      });
+
+      it("craft transaction with customFee when default estimation is greater than customFee", async () => {
+        const customFee = BigInt(minFees - 50);
+        const { transaction: encodedTransaction } = await moduleCustomFees.craftTransaction(
+          {
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: "send",
+            sender: address,
+            recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+            amount: BigInt(10),
+          },
+          { value: customFee },
+        );
+        const decoded = await localForger.parse(encodedTransaction.slice(2));
+        expect(decoded.contents[0].fee).toBe(customFee.toString());
+      });
+
+      it("craft transaction with customFee when default estimation is lesser than customFee", async () => {
+        const customFee = BigInt(minFees * 2);
+        const { transaction: encodedTransaction } = await moduleCustomFees.craftTransaction(
+          {
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: "send",
+            sender: address,
+            recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+            amount: BigInt(10),
+          },
+          { value: customFee },
+        );
+        const decoded = await localForger.parse(encodedTransaction.slice(2));
+        expect(decoded.contents[0].fee).toBe(customFee.toString());
+      });
+    });
   });
 });

@@ -1,7 +1,7 @@
 import { isEnvDefault } from "@ledgerhq/live-env";
 import React from "react";
 import { ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import { developerFeatures } from "../../../experimental";

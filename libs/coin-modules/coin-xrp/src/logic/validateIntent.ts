@@ -1,4 +1,11 @@
 import {
+  TransactionValidation,
+  TransactionIntent,
+  FeeEstimation,
+  Balance,
+} from "@ledgerhq/coin-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
   AmountRequired,
   FeeNotLoaded,
   FeeTooHigh,
@@ -9,20 +16,16 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { isValidClassicAddress } from "ripple-address-codec";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  TransactionValidation,
-  TransactionIntent,
-  FeeEstimation,
-} from "@ledgerhq/coin-framework/api/types";
 import { getServerInfos } from "../network";
 import { XrpMapMemo } from "../types";
-import { cachedRecipientIsNew } from "./utils";
 import { parseAPIValue } from "./common";
-import { getBalance } from "./getBalance";
+import { XrpInvalidMemoError } from "./errors";
+import { cachedRecipientIsNew } from "./utils";
+import { validateMemo } from "./validateMemo";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<XrpMapMemo>,
+  balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
@@ -39,7 +42,6 @@ export const validateIntent = async (
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  const balances = await getBalance(transactionIntent.sender);
   const nativeBalance = balances.find(b => b.asset.type === "native");
   if (nativeBalance === undefined) {
     throw Error("Shouldn't happen");
@@ -85,6 +87,13 @@ export const validateIntent = async (
 
   if (!errors.amount && amount === 0n) {
     errors.amount = new AmountRequired();
+  }
+
+  const destinationTag = transactionIntent.memo?.memos
+    ? transactionIntent.memo.memos.get("destinationTag")
+    : undefined;
+  if (destinationTag && typeof destinationTag === "string" && !validateMemo(destinationTag)) {
+    errors.transaction = new XrpInvalidMemoError();
   }
 
   return {

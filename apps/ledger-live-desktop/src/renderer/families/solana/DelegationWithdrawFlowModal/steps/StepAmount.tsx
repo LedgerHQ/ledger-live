@@ -47,7 +47,7 @@ export function StepAmountFooter({
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           {t("common.cancel")}
         </Button>
         <Button

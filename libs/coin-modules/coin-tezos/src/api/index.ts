@@ -3,20 +3,20 @@ import {
   Block,
   BlockInfo,
   Cursor,
+  ListOperationsOptions,
   Page,
   Validator,
   IncorrectTypeError,
   type Operation,
-  type Pagination,
   Reward,
   Stake,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
-import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
-import { getRevealFee } from "@taquito/taquito";
 import { log } from "@ledgerhq/logs";
+import { getRevealFee } from "@taquito/taquito";
+import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -30,6 +30,7 @@ import {
   validateIntent,
   getStakes,
 } from "../logic";
+import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import { getTezosToolkit } from "../logic/tezosToolkit";
 import api from "../network/tzkt";
 import {
@@ -38,7 +39,6 @@ import {
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
-import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import type { TezosApi, TezosFeeEstimation } from "./types";
 
 export function createApi(config: TezosConfig): TezosApi {
@@ -165,16 +165,18 @@ async function craft(
   const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
   const totalFee = Number(fee.fees || "0");
 
+  const feesConfig = coinConfig.getCoinConfig().fees;
+  const revealFeeForSplit = needsReveal
+    ? Math.max(feesConfig.minFees ?? 0, getRevealFee(transactionIntent.sender))
+    : 0;
+
   let txFee: number;
   if (customFees) {
-    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
+    txFee = needsReveal ? Math.max(totalFee - revealFeeForSplit, 0) : totalFee;
   } else if (estimation.parameters?.txFee !== undefined) {
     txFee = Number(estimation.parameters.txFee);
   } else {
-    const calculatedTxFee = needsReveal
-      ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0)
-      : totalFee;
-    txFee = calculatedTxFee;
+    txFee = needsReveal ? Math.max(totalFee - revealFeeForSplit, 0) : totalFee;
   }
 
   const txForCraft = {
@@ -331,7 +333,9 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
         baseTxFee = BigInt(Math.max(DEFAULT_TX_FEE_FALLBACK, config.fees.minFees));
       }
 
-      const revealFee = needsReveal ? BigInt(getRevealFee(transactionIntent.sender)) : 0n;
+      const revealFee = needsReveal
+        ? BigInt(Math.max(config.fees.minFees ?? 0, getRevealFee(transactionIntent.sender)))
+        : 0n;
       const totalFee = baseTxFee + revealFee;
 
       return {
@@ -352,14 +356,17 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
 
 async function operations(
   address: string,
-  pagination: Pagination = { minHeight: 0, order: "asc" },
-): Promise<[Operation[], string]> {
-  const [operations, newNextCursor] = await listOperations(address, {
-    limit: 200,
-    token: pagination.lastPagingToken,
-    sort: pagination.order === "asc" ? "Ascending" : "Descending",
-    minHeight: pagination.minHeight,
+  { minHeight = 0, cursor, order = "asc" }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  // FIXME This wrapper hard-codes limit: 200 and ignores any caller-provided limit from ListOperationsOptions. Either
+  //  forward options.limit (as a soft/capped limit) or throw a "not supported" error when limit is set to match the
+  //  ListOperationsOptions contract.
+  const [items, newNextCursor] = await listOperations(address, {
+    limit: 1000, // Increased limit to 1000 to ensure delegation information is available when displaying account details (temporary fix until proper pagination is implemented).
+    token: cursor,
+    sort: order === "asc" ? "Ascending" : "Descending",
+    minHeight: minHeight,
   });
 
-  return [operations, newNextCursor || ""];
+  return { items, next: newNextCursor || undefined };
 }

@@ -36,7 +36,7 @@ export default {
   },
 };
 
-export function Notifications(args: Props & { active: boolean }): JSX.Element {
+export function Notifications(args: Props & { active: boolean }): React.JSX.Element {
   const { description, link, ...props } = args;
 
   const warningBadge = (

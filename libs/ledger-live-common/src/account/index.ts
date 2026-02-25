@@ -14,6 +14,7 @@ export {
 } from "@ledgerhq/coin-framework/account/index";
 export * from "./formatters";
 export * from "./helpers";
+export { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";
 export * from "./serialization";
 export * from "./support";
 export {

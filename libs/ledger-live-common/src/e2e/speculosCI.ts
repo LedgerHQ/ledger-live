@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/speculos-transport";
 import { SpeculosDevice } from "./speculos";
 import https from "https";
+import { sanitizeError } from "./index";
 
 const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
@@ -58,11 +59,8 @@ async function githubApiRequest<T = unknown>({
     });
     return response.data;
   } catch (error) {
-    console.warn(
-      `API Request failed: ${method} ${url}`,
-      axios.isAxiosError(error) ? error.response?.data : (error as Error).message,
-    );
-    throw error;
+    console.warn(`API Request failed: ${method} ${url}`, sanitizeError(error));
+    throw sanitizeError(error);
   }
 }
 
@@ -122,22 +120,21 @@ export function waitForSpeculosReady(
 }
 
 function createStartPayload(deviceParams: DeviceParams, runId: string) {
-  const { model, firmware, appName, appVersion, dependency, dependencies } = deviceParams;
+  const { model, firmware, appName, appVersion, dependencies } = deviceParams;
 
   let additional_args = "-p";
 
-  if (dependency) {
-    additional_args = `${additional_args} -l ${dependency}:/apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`;
-  } else if (dependencies) {
+  if (dependencies?.length) {
     additional_args = [
+      additional_args,
       ...new Set(
         dependencies.map(
           dep =>
-            `${additional_args} -l ${dep.name}:/apps/${conventionalAppSubpath(
+            `-l ${dep.name}:/apps/${conventionalAppSubpath(
               model,
               firmware,
               dep.name,
-              dep.appVersion ?? "1.0.0",
+              dep.appVersion ?? appVersion,
             )}`,
         ),
       ),
@@ -170,16 +167,19 @@ export async function createSpeculosDeviceCI(
       port: speculosPort,
       appName: deviceParams.appName,
       appVersion: deviceParams.appVersion,
+      dependencies: deviceParams.dependencies,
     };
-  } catch (e: unknown) {
+  } catch (error) {
     console.warn(
-      `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
+      `Failed to create remote Speculos ${deviceParams.appName}:${deviceParams.appVersion}:`,
+      sanitizeError(error),
     );
     return {
       id: runId,
       port: 0,
       appName: deviceParams.appName,
       appVersion: deviceParams.appVersion,
+      dependencies: deviceParams.dependencies,
     };
   }
 }
@@ -191,5 +191,9 @@ export async function releaseSpeculosDeviceCI(runId: string) {
       run_id: runId.toString(),
     },
   };
-  await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });
+  try {
+    await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });
+  } catch (error) {
+    console.warn(`Failed to release remote Speculos ${runId}:`, sanitizeError(error));
+  }
 }

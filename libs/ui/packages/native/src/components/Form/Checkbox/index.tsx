@@ -1,4 +1,4 @@
-import React from "react";
+import type { JSX } from "react";
 import { Pressable } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import Text from "../../Text";

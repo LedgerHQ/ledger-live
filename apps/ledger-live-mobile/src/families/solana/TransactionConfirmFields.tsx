@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import BigNumber from "bignumber.js";
 import { Linking, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Link } from "@ledgerhq/native-ui";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import {

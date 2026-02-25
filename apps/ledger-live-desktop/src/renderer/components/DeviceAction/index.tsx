@@ -1,8 +1,9 @@
 import React, { Component, useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
+import type { Theme } from "@ledgerhq/react-ui";
 import {
   EConnResetError,
   ImageDoesNotExistOnDevice,
@@ -10,7 +11,18 @@ import {
   NoSuchAppOnProvider,
   OutdatedApp,
 } from "@ledgerhq/live-common/errors";
-import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
+import {
+  LatestFirmwareVersionRequired,
+  ManagerNotEnoughSpaceError,
+  TransportRaceCondition,
+  UnresponsiveDeviceError,
+  UpdateYourApp,
+  UserRefusedAddress,
+  UserRefusedAllowManager,
+  UserRefusedDeviceNameChange,
+  UserRefusedFirmwareUpdate,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -28,17 +40,6 @@ import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import TransactionRawConfirm from "~/renderer/components/TransactionRawConfirm";
 import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
-import {
-  ManagerNotEnoughSpaceError,
-  TransportRaceCondition,
-  UnresponsiveDeviceError,
-  UpdateYourApp,
-  UserRefusedAddress,
-  UserRefusedAllowManager,
-  UserRefusedDeviceNameChange,
-  UserRefusedFirmwareUpdate,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
 import {
   DeviceNotOnboardedErrorComponent,
   InstallingApp,
@@ -68,11 +69,7 @@ import {
   DeviceInfo,
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
-import {
-  ExchangeRate,
-  ExchangeSwap,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
@@ -91,6 +88,8 @@ import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -112,6 +111,7 @@ type States = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: DeviceId | null | undefined;
   latestFirmware: unknown;
   onRepairModal: (open: boolean) => void;
   requestOpenApp: string;
@@ -133,9 +133,6 @@ type States = PartialNullable<{
   deviceStreamingProgress: number;
   displayUpgradeWarning: boolean;
   passWarning: () => void;
-  initSwapRequested: boolean;
-  initSwapError: Error;
-  initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
   signMessageRequested: AnyMessage;
@@ -165,6 +162,14 @@ type InnerProps<P> = {
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
   renderOnResult?: (_: P) => React.JSX.Element | null;
+  renderDeviceSignatureRequested?: (args: { device: Device; request: unknown }) => React.ReactNode;
+  renderLockedDevice?: (args: {
+    device?: Device | null;
+    modelId: DeviceModelId;
+    theme: Theme["theme"];
+    onRetry?: (() => void) | null | undefined;
+    inlineRetry?: boolean;
+  }) => React.ReactNode;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -195,6 +200,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   Result,
   onResult,
   onError,
+  renderDeviceSignatureRequested,
+  renderLockedDevice,
   overridesPreferredDeviceModel,
   inlineRetry = true,
   analyticsPropertyFlow,
@@ -214,6 +221,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
+    deviceId,
     latestFirmware,
     repairModalOpened,
     requestOpenApp,
@@ -235,9 +243,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     transactionChecksOptIn,
     displayUpgradeWarning,
     passWarning,
-    initSwapRequested,
-    initSwapError,
-    initSwapResult,
     completeExchangeStarted,
     completeExchangeResult,
     completeExchangeError,
@@ -368,6 +373,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
+  // Add deviceId to identities store when detected
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
+
   if (displayUpgradeWarning && appAndVersion && passWarning) {
     return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
   }
@@ -490,27 +502,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
-  if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const { transaction, exchange, exchangeRate } = request as {
-      transaction: Transaction;
-      exchange: ExchangeSwap;
-      exchangeRate: ExchangeRate;
-    };
-    const { amountExpectedTo, estimatedFees } = hookState;
-    return renderSwapDeviceConfirmation({
-      modelId,
-      type,
-      transaction,
-      exchangeRate,
-      exchange,
-      amountExpectedTo: amountExpectedTo ?? undefined,
-      estimatedFees: estimatedFees ?? undefined,
-      swapDefaultTrack,
-      stateSettings,
-      walletState,
-    });
-  }
-
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
     const wording = allowOpeningRequestedWording || requestOpenApp || "";
@@ -623,6 +614,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
+    if (renderLockedDevice) {
+      return renderLockedDevice({ device, modelId, theme: type, onRetry, inlineRetry });
+    }
     return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
@@ -640,11 +634,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderLoading();
   }
 
-  if (deviceInfo && deviceInfo.isBootloader && onAutoRepair) {
+  if (deviceInfo?.isBootloader && onAutoRepair) {
     return renderBootloaderStep({ onAutoRepair });
   }
 
   if (request && device && deviceSignatureRequested) {
+    if (renderDeviceSignatureRequested) {
+      return renderDeviceSignatureRequested({ device, request });
+    }
     const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;

@@ -1,5 +1,141 @@
 # @ledgerhq/native-ui
 
+## 0.56.0
+
+### Minor Changes
+
+- [#14303](https://github.com/LedgerHQ/ledger-live/pull/14303) [`7ac313c`](https://github.com/LedgerHQ/ledger-live/commit/7ac313c00fdfd6df29cc0767150f1ed0bbc380e2) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: slides component
+
+- [#14202](https://github.com/LedgerHQ/ledger-live/pull/14202) [`00c6ddd`](https://github.com/LedgerHQ/ledger-live/commit/00c6ddd11ebb925be63e651526f7bcfe50d0fda5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: create Slides component
+
+## 0.56.0-next.0
+
+### Minor Changes
+
+- [#14303](https://github.com/LedgerHQ/ledger-live/pull/14303) [`7ac313c`](https://github.com/LedgerHQ/ledger-live/commit/7ac313c00fdfd6df29cc0767150f1ed0bbc380e2) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: slides component
+
+- [#14202](https://github.com/LedgerHQ/ledger-live/pull/14202) [`00c6ddd`](https://github.com/LedgerHQ/ledger-live/commit/00c6ddd11ebb925be63e651526f7bcfe50d0fda5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - feat: create Slides component
+
+## 0.55.0
+
+### Minor Changes
+
+- [#13830](https://github.com/LedgerHQ/ledger-live/pull/13830) [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e) Thanks [@ysitbon](https://github.com/ysitbon)! - upgrade react-native-reanimated from v3 to v4
+
+  - Add new required dependency `react-native-worklets` (0.7.2)
+  - Migrate babel plugin from `react-native-reanimated/plugin` to `react-native-worklets/plugin`
+  - Migrate `runOnJS` API to `scheduleOnRN` from `react-native-worklets`
+  - Add missing dependency arrays to `useAnimatedStyle` hooks (required for Reanimated 4 without Babel plugin)
+  - Update test mocks for compatibility with Reanimated 4
+
+- [#14020](https://github.com/LedgerHQ/ledger-live/pull/14020) [`34cf993`](https://github.com/LedgerHQ/ledger-live/commit/34cf99398715d029c6d814cd9d4a697e5db775da) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change network crypto icons border radius to match LWD
+
+## 0.55.0-next.0
+
+### Minor Changes
+
+- [#13830](https://github.com/LedgerHQ/ledger-live/pull/13830) [`a90b9df`](https://github.com/LedgerHQ/ledger-live/commit/a90b9df5709ddcf0c1c7f6ceb31f0510b9888f7e) Thanks [@ysitbon](https://github.com/ysitbon)! - upgrade react-native-reanimated from v3 to v4
+
+  - Add new required dependency `react-native-worklets` (0.7.2)
+  - Migrate babel plugin from `react-native-reanimated/plugin` to `react-native-worklets/plugin`
+  - Migrate `runOnJS` API to `scheduleOnRN` from `react-native-worklets`
+  - Add missing dependency arrays to `useAnimatedStyle` hooks (required for Reanimated 4 without Babel plugin)
+  - Update test mocks for compatibility with Reanimated 4
+
+- [#14020](https://github.com/LedgerHQ/ledger-live/pull/14020) [`34cf993`](https://github.com/LedgerHQ/ledger-live/commit/34cf99398715d029c6d814cd9d4a697e5db775da) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change network crypto icons border radius to match LWD
+
+## 0.54.0
+
+### Minor Changes
+
+- [#13742](https://github.com/LedgerHQ/ledger-live/pull/13742) [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Suppress source map warnings for @celo/contractkit
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - bump `react` to `19.0.0` and `react-native` to `0.79`
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/icons-ui@0.19.0
+
+## 0.54.0-next.0
+
+### Minor Changes
+
+- [#13742](https://github.com/LedgerHQ/ledger-live/pull/13742) [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Suppress source map warnings for @celo/contractkit
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - bump `react` to `19.0.0` and `react-native` to `0.79`
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/icons-ui@0.19.0-next.0
+
+## 0.53.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 0.53.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 0.52.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13306](https://github.com/LedgerHQ/ledger-live/pull/13306) [`c2d4259`](https://github.com/LedgerHQ/ledger-live/commit/c2d425989b600732f4fb0a88993e2673e93698a7) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add ledger sync step to llm two step sync companion
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4)]:
+  - @ledgerhq/icons-ui@0.18.0
+
+## 0.52.0-next.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13306](https://github.com/LedgerHQ/ledger-live/pull/13306) [`c2d4259`](https://github.com/LedgerHQ/ledger-live/commit/c2d425989b600732f4fb0a88993e2673e93698a7) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add ledger sync step to llm two step sync companion
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4)]:
+  - @ledgerhq/icons-ui@0.18.0-next.0
+
+## 0.51.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13165](https://github.com/LedgerHQ/ledger-live/pull/13165) [`1a89145`](https://github.com/LedgerHQ/ledger-live/commit/1a89145dad955ebb1909d1034a4f4daf794a4800) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove palette (deprecated) from styled-components/native & theme
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+## 0.51.0-next.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13165](https://github.com/LedgerHQ/ledger-live/pull/13165) [`1a89145`](https://github.com/LedgerHQ/ledger-live/commit/1a89145dad955ebb1909d1034a4f4daf794a4800) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove palette (deprecated) from styled-components/native & theme
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
 ## 0.50.0
 
 ### Minor Changes

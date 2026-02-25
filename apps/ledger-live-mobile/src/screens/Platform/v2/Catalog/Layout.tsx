@@ -52,7 +52,7 @@ export function Layout({
     return {
       opacity,
     };
-  });
+  }, [scrollY, isTitleVisible]);
 
   return (
     <>

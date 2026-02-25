@@ -1,3 +1,4 @@
+import { getEnv } from "@ledgerhq/live-env";
 import {
   AccountInfo,
   Cluster,
@@ -6,10 +7,9 @@ import {
   PublicKey,
   clusterApiUrl,
 } from "@solana/web3.js";
-import { partition } from "lodash/fp";
-import { getEnv } from "@ledgerhq/live-env";
-import { ValidatorsAppValidator } from "./network/validator-app";
 import BigNumber from "bignumber.js";
+import { partition } from "lodash/fp";
+import { ValidatorsAppValidator } from "./network/validator-app";
 
 const SIGNATURE_SIZE = 64;
 const DUMMY_SIGNATURE_FILL = 1;

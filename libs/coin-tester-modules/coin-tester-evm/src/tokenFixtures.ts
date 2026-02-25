@@ -5,8 +5,9 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
-const scroll = getCryptoCurrencyById("scroll_sepolia");
+const scroll = getCryptoCurrencyById("scroll");
 const blast = getCryptoCurrencyById("blast");
+const bnb = getCryptoCurrencyById("bsc");
 const sonic = getCryptoCurrencyById("sonic");
 const core = getCryptoCurrencyById("core");
 
@@ -47,6 +48,19 @@ export const USDC_ON_SCROLL: TokenCurrency = {
   delisted: false,
   disableCountervalue: false,
   units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+export const USDT_ON_BNB: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "bsc/bep20/binance-peg_bsc-usd",
+  contractAddress: "0x55d398326f99059fF775485246999027B3197955",
+  parentCurrency: bnb,
+  tokenType: "bep20",
+  name: "Tether USD",
+  ticker: "USDT",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "USDT", code: "USDT", magnitude: 18 }],
 } as TokenCurrency;
 
 export const MIM_ON_BLAST: TokenCurrency = {

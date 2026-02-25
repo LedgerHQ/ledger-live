@@ -1,6 +1,5 @@
 import console from "console";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
-import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { scenarioBitcoin } from "./scenarii/bitcoin";
 import { killAtlas } from "./atlas";
 
@@ -13,7 +12,7 @@ describe("Bitcoin Deterministic Tester", () => {
       await executeScenario(scenarioBitcoin);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos(), killAtlas()]);
+        await killAtlas();
         throw e;
       }
     }
@@ -22,6 +21,6 @@ describe("Bitcoin Deterministic Tester", () => {
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
-    await Promise.all([killSpeculos(), killAtlas()]);
+    await killAtlas();
   }),
 );

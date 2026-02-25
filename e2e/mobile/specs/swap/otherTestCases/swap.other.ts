@@ -7,6 +7,7 @@ import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { setEnv } from "@ledgerhq/live-env";
+import { allure } from "jest-allure2-reporter/api";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -18,6 +19,28 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
     appjson: userdataPath,
   });
 
+const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
+  await CLI.liveData({
+    currency: account.currency.speculosApp.name,
+    index: account.index,
+    add: true,
+    appjson: userdataPath,
+  });
+
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  account.address = address;
+  if (account.parentAccount) {
+    account.parentAccount.address = address;
+  }
+
+  return address;
+};
+
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
     userdata: options.userdata,
@@ -27,7 +50,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
         enabled: true,
         params: {
           manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+            process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
         },
       },
       llmAnalyticsOptInPrompt: {
@@ -120,6 +143,8 @@ export function runSwapWithDifferentSeedTest(
   swap: SwapType,
   userData: string,
   errorMessage: string | null,
+  addressFrom: string,
+  addressTo: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -135,6 +160,8 @@ export function runSwapWithDifferentSeedTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+      swap.accountToDebit.address = addressFrom;
+      swap.accountToCredit.address = addressTo;
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -173,11 +200,11 @@ export function runSwapLandingPageTest(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
       });
@@ -218,17 +245,11 @@ export function runTooLowAmountForQuoteSwapsTest(
         cliCommandsOnApp: [
           {
             app: swap.accountToDebit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToDebit.currency.speculosApp,
-              swap.accountToDebit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToDebit),
           },
           {
             app: swap.accountToCredit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToCredit.currency.speculosApp,
-              swap.accountToCredit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToCredit),
           },
         ],
       });
@@ -277,11 +298,11 @@ export function runUserRefusesTransactionTest(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
       });
@@ -318,7 +339,7 @@ export function runSwapHistoryOperationsTest(
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
     });
@@ -338,6 +359,8 @@ export function runExportSwapHistoryOperationsTest(
   swap: SwapType,
   provider: Provider,
   swapId: string,
+  addressFrom: string,
+  addressTo: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -345,7 +368,7 @@ export function runExportSwapHistoryOperationsTest(
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
     });
@@ -353,6 +376,8 @@ export function runExportSwapHistoryOperationsTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+      swap.accountToDebit.address = addressFrom;
+      swap.accountToCredit.address = addressTo;
       await app.swap.goToSwapHistory();
       await app.swap.clickExportOperations();
       await app.swap.checkExportedFileContents(swap, provider, swapId);
@@ -481,11 +506,11 @@ export function runSwapCheckProvider(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
       });
@@ -506,15 +531,21 @@ export function runSwapCheckProvider(
 
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.goToProviderLiveApp(provider.uiName);
+      if (provider.uiName === "1inch") {
+        allure.issue("QAA-854");
+        allure.statusDetails({ message: "Skipping 1inch URL verification due to QAA-854" });
+        return;
+      }
       await app.swapLiveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
     });
   });
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
-  const handleSwapPageFlow = async (account: Account) => {
+  const validateSwapAssetsPage = async (accountFrom: string, accountTo: string) => {
     await app.swapLiveApp.expectSwapLiveApp();
-    await app.swapLiveApp.checkAssetFrom(account.currency.ticker, "");
+    await app.swapLiveApp.checkAssetFrom(accountFrom, "");
+    await app.swapLiveApp.checkAssetTo(accountTo, "-");
   };
 
   describe("Swap - Entry Points", () => {
@@ -533,21 +564,21 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
       let readyPromise = waitSwapReady();
       await app.transferMenuDrawer.navigateToSwap();
       await readyPromise;
-      await handleSwapPageFlow(account);
+      await validateSwapAssetsPage(account.currency.ticker, "");
 
       await app.account.openViaDeeplink();
       readyPromise = waitSwapReady();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapSwap();
       await readyPromise;
-      await handleSwapPageFlow(account);
+      await validateSwapAssetsPage("", account.currency.ticker);
 
       await app.portfolio.openViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
       readyPromise = waitSwapReady();
       await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
       await readyPromise;
-      await handleSwapPageFlow(account);
+      await validateSwapAssetsPage("", account.currency.ticker);
     });
   });
 }
@@ -567,17 +598,11 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
         cliCommandsOnApp: [
           {
             app: swap.accountToDebit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToDebit.currency.speculosApp,
-              swap.accountToDebit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToDebit),
           },
           {
             app: swap.accountToCredit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToCredit.currency.speculosApp,
-              swap.accountToCredit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToCredit),
           },
         ],
       });
@@ -585,6 +610,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
+
     it(`Swap - Network fees above account balance`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
@@ -600,8 +626,6 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       );
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapQuoteInfosFeesSelector(1);
-      await app.swapLiveApp.tapFeeContainer("fast");
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
     });
   });

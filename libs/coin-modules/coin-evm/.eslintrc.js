@@ -9,9 +9,17 @@ module.exports = {
     eqeqeq: ["error"],
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/explicit-function-return-type": "error",
     "import/no-cycle": ["error"],
-    "import/order": ["error"],
+    "import/order": [
+      "error",
+      {
+        alphabetize: {
+          order: "asc",
+        },
+      },
+    ],
   },
   overrides: [
     {
@@ -29,12 +37,7 @@ module.exports = {
             toBeDefined: null,
           },
         ],
-      },
-    },
-    {
-      // allow, as warning, only any in tests
-      files: ["*/__tests__/**/*.{ts,tsx}"],
-      rules: {
+        // allow, as warning, only any in tests
         "no-console": "off",
         "@typescript-eslint/no-explicit-any": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",

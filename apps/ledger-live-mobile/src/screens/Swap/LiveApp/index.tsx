@@ -9,7 +9,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
@@ -30,15 +30,23 @@ import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavig
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-const isDefaultAccountSwapParamsList = (
+const SWAP_PARAM_KEYS: string[] = [
+  "defaultAccount",
+  "defaultCurrency",
+  "affiliate",
+  "fromPath",
+  "toTokenId",
+  "fromTokenId",
+];
+
+function isDefaultAccountSwapParamsList(
   params: DefaultAccountSwapParamList | unknown,
-): params is DefaultAccountSwapParamList =>
-  params != null &&
-  typeof params === "object" &&
-  (("defaultAccount" in params && params.defaultAccount !== undefined) ||
-    ("defaultCurrency" in params && params.defaultCurrency !== undefined) ||
-    ("currency" in params && params.currency !== undefined) ||
-    ("affiliate" in params && params.affiliate !== undefined));
+): params is DefaultAccountSwapParamList {
+  if (params == null || typeof params !== "object") return false;
+  return SWAP_PARAM_KEYS.some(
+    key => key in params && Object.getOwnPropertyDescriptor(params, key)?.value !== undefined,
+  );
+}
 
 export function SwapLiveApp({
   route,
@@ -106,7 +114,7 @@ export function SwapLiveApp({
     if (isWebviewError) return APP_FAILED_TO_LOAD;
     if (!manifest) return APP_MANIFEST_NOT_FOUND_ERROR;
 
-    return error;
+    return null;
   }, [manifest, isWebviewError, isConnected, t]);
 
   if (error) {

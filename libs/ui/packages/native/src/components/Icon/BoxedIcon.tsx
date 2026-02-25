@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { PixelRatio } from "react-native";
 import { Rect, ClipPath, Svg, Defs } from "react-native-svg";
@@ -15,8 +15,8 @@ function getClipRectangleSize(badgeSize: number): number {
   return (3 / 4) * badgeSize;
 }
 
-const Container = styled(Flex).attrs((p: { size: number }) => ({
-  heigth: p.size,
+const Container = styled(Flex).attrs<{ size: number }>((p) => ({
+  height: p.size,
   width: p.size,
   alignItems: "center",
   justifyContent: "center",

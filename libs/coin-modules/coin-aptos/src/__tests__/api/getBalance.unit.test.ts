@@ -1,7 +1,7 @@
-import { AptosAPI } from "../../network";
-import { APTOS_ASSET_ID, TOKEN_TYPE } from "../../constants";
-import type { AptosConfig } from "../../config";
 import { createApi } from "../../api";
+import type { AptosConfig } from "../../config";
+import { APTOS_ASSET_ID, TOKEN_TYPE } from "../../constants";
+import { AptosAPI } from "../../network";
 
 jest.mock("@aptos-labs/ts-sdk");
 let mockedAptosApi: jest.Mocked<any>;
@@ -42,7 +42,14 @@ describe("getBalance", () => {
     const accountAddress = "0xno_contract_and_no_data";
 
     const api = createApi(mockAptosConfig);
-    expect(await api.getBalance(accountAddress)).toStrictEqual([]);
+    expect(await api.getBalance(accountAddress)).toStrictEqual([
+      {
+        asset: {
+          type: "native",
+        },
+        value: 0n,
+      },
+    ]);
   });
 
   it("should return balance with 'native' contract_address (APTOS_ASSET_ID)", async () => {

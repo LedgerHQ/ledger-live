@@ -28,6 +28,7 @@ jest.mock("~/renderer/components/CopyWithFeedback", () => ({
 }));
 
 jest.mock("~/renderer/components/OperationsList/AddressCell", () => ({
+  __esModule: true,
   SplitAddress: ({ value }: { value: string }) => (
     <span data-testid={`address-${value}`}>{value}</span>
   ),
@@ -75,6 +76,20 @@ const createMockAccount = (xpub: string): CantonAccount =>
     },
   }) as unknown as CantonAccount;
 
+const createMockParentAccount = (xpub: string): CantonAccount =>
+  ({
+    id: "test-parent-account-id",
+    name: "Test Parent Account",
+    xpub,
+    currency: {
+      id: "canton_network",
+      name: "Canton",
+    },
+    balance: {
+      toNumber: () => 5000,
+    },
+  }) as unknown as CantonAccount;
+
 describe("PendingTransactionDetails", () => {
   const mockOnClose = jest.fn();
   const mockOnOpenModal = jest.fn();
@@ -92,10 +107,12 @@ describe("PendingTransactionDetails", () => {
   describe("when proposal exists", () => {
     it("should render proposal details for incoming transaction", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -111,27 +128,32 @@ describe("PendingTransactionDetails", () => {
 
     it("should render proposal details for outgoing transaction", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
-          contractId="contract-456"
+          parentAccount={parentAccount}
+          contractId="contract-789"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
         />,
       );
 
       expect(screen.getByText("families.canton.pendingTransactions.amount")).toBeInTheDocument();
-      expect(screen.getByTestId("address-other-sender")).toBeInTheDocument();
+      // For outgoing: sender is xpub (receiver-address), receiver is other-receiver
       expect(screen.getByTestId("address-receiver-address")).toBeInTheDocument();
+      expect(screen.getByTestId("address-other-receiver")).toBeInTheDocument();
     });
 
     it("should display memo when present", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -145,10 +167,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should not display memo section when memo is empty", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-456"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -162,10 +186,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should display contract ID", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -178,10 +204,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should display expired status for expired proposals", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-456"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -193,6 +221,7 @@ describe("PendingTransactionDetails", () => {
 
     it("should update time remaining every second", async () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
       const futureTime = Date.now() + 10000; // 10 seconds from now to ensure it doesn't expire
 
       const accountWithFutureExpiry = {
@@ -210,6 +239,7 @@ describe("PendingTransactionDetails", () => {
       render(
         <PendingTransactionDetails
           account={accountWithFutureExpiry}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -256,10 +286,12 @@ describe("PendingTransactionDetails", () => {
   describe("action buttons for incoming transactions", () => {
     it("should show accept and reject buttons for incoming transaction", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -272,10 +304,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should disable accept button for expired incoming transaction", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-456"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -290,10 +324,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should call onOpenModal with accept action when accept button is clicked", async () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -312,10 +348,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should call onOpenModal with reject action when reject button is clicked", async () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -334,10 +372,12 @@ describe("PendingTransactionDetails", () => {
 
     it("should call onClose after opening modal", async () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-123"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
@@ -358,17 +398,20 @@ describe("PendingTransactionDetails", () => {
   describe("action buttons for outgoing transactions", () => {
     it("should show withdraw button for outgoing transaction", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-789"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
         />,
       );
 
-      expect(screen.getByText("families.canton.pendingTransactions.withdraw")).toBeInTheDocument();
+      // Outgoing action uses the common cancel label
+      expect(screen.getByText("common.cancel")).toBeInTheDocument();
       expect(
         screen.queryByText("families.canton.pendingTransactions.accept"),
       ).not.toBeInTheDocument();
@@ -379,19 +422,19 @@ describe("PendingTransactionDetails", () => {
 
     it("should call onOpenModal with withdraw action when withdraw button is clicked", async () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="contract-789"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
         />,
       );
 
-      const withdrawButton = screen
-        .getByText("families.canton.pendingTransactions.withdraw")
-        .closest("button");
+      const withdrawButton = screen.getByText("common.cancel").closest("button");
       fireEvent.click(withdrawButton!);
 
       await waitFor(() => {
@@ -403,10 +446,12 @@ describe("PendingTransactionDetails", () => {
   describe("when proposal does not exist", () => {
     it("should display not found message", () => {
       const account = createMockAccount("receiver-address");
+      const parentAccount = createMockParentAccount("receiver-address");
 
       render(
         <PendingTransactionDetails
           account={account}
+          parentAccount={parentAccount}
           contractId="non-existent-contract"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}

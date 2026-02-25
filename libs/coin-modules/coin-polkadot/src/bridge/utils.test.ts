@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { PolkadotAccount, PolkadotResources } from "../types";
-import { canUnbond, isController, isFirstBond, isStash, MAX_UNLOCKINGS } from "./utils";
 import { createFixtureAccount } from "../types/bridge.fixture";
+import { canUnbond, isController, isFirstBond, isStash, MAX_UNLOCKINGS } from "./utils";
 
 describe("isController", () => {
   const polkadotAccount: PolkadotAccount = createFixtureAccount();

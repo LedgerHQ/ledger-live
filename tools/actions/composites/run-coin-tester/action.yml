@@ -9,8 +9,3 @@ runs:
   steps:
     - run: pnpm coin:tester:${{ inputs.chain }} start
       shell: bash
-      env:
-        GH_TOKEN: ${{ env.GH_TOKEN }}
-        SEED: ${{ env.SEED }}
-        SPECULOS_IMAGE: ${{ env.SPECULOS_IMAGE }}
-        SPECULOS_API_PORT: ${{ env.SPECULOS_API_PORT }}

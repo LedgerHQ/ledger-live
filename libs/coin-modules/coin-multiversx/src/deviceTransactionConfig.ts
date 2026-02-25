@@ -1,10 +1,10 @@
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import type { TransactionStatus, Transaction } from "./types";
-import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { decodeTokenAccountId, getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { isAmountSpentFromBalance } from "./logic";
+import type { TransactionStatus, Transaction } from "./types";
 
 async function getDeviceTransactionConfig({
   account,

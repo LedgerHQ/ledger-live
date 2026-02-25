@@ -61,13 +61,18 @@ export const getRemainingTime = (diff: number): string => {
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  let format = "";
-  if (days > 0) format += `${days}d `;
-  if (hours > 0) format += `${hours}h `;
-  if (minutes > 0) format += `${minutes}m `;
-  format += `${seconds}s`;
+  const startIndex = days > 0 ? 0 : hours > 0 ? 1 : minutes > 0 ? 2 : 3;
+  const units = [
+    [days, "d"],
+    [hours, "h"],
+    [minutes, "m"],
+    [seconds, "s"],
+  ] as const;
 
-  return format.trim();
+  return units
+    .slice(startIndex)
+    .map(([value, suffix]) => `${value.toString().padStart(2, "0")}${suffix}`)
+    .join(" ");
 };
 
 export const useTimeRemaining = (expiresAtMicros = 0, isExpired = false): string => {

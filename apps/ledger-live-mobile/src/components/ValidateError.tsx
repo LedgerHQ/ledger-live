@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import GenericErrorView from "./GenericErrorView";
 import Button from "./Button";
@@ -10,7 +10,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { UpdateYourApp, LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
 

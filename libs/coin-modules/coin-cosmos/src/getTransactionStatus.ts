@@ -1,6 +1,3 @@
-import * as bech32 from "bech32";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
@@ -12,11 +9,15 @@ import {
   RecommendUndelegation,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
+import * as bech32 from "bech32";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
 import {
   ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
   CosmosRedelegationInProgress,
+  CosmosTooManyRedelegations,
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
 } from "./errors";
@@ -204,7 +205,7 @@ export class CosmosTransactionStatusManager {
       let isValid = true;
       try {
         bech32.decode(transaction.recipient);
-      } catch (e) {
+      } catch {
         isValid = false;
       }
       const currency = findCryptoCurrencyById(account.currency.name.toLowerCase());
@@ -259,10 +260,9 @@ export class CosmosTransactionStatusManager {
   ) => {
     if (account.cosmosResources) {
       const redelegations = account.cosmosResources.redelegations;
-      invariant(
-        redelegations.length < COSMOS_MAX_REDELEGATIONS,
-        "redelegation should not have more than 6 entries",
-      );
+      if (redelegations.length >= COSMOS_MAX_REDELEGATIONS) {
+        return new CosmosTooManyRedelegations();
+      }
 
       if (
         redelegations.some(redelegation => {

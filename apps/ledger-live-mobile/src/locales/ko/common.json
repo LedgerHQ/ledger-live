@@ -467,6 +467,9 @@
       "title" : "장치 인증에 실패했습니다",
       "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
+    "EthAppPleaseEnableContractData" : {
+      "title" : "이더리움 앱에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
+    },
     "HardResetFail" : {
       "title" : "죄송하지만 리셋할 수 없습니다",
       "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -664,6 +667,11 @@
     "NoSuchAppOnProvider" : {
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
+    },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™는 이 기능을 지원하지 않습니다",
+      "description" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Wallet의 모든 최신 기능을 이용해 보세요.",
+      "upsellCtaLabel" : "업그레이드 프로그램 살펴보기"
     },
     "NotEnoughGas" : {
       "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요.",
@@ -1093,6 +1101,15 @@
       "title" : "EVM 주소 인증 필요",
       "description" : "승인 전, Ledger 장치에 표시된 EVM 주소를 확인하세요."
     },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "이미 이 노드에 위임 중입니다"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "선택한 노드는 유효하지 않습니다"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "수령할 보상이 없습니다"
+    },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
     },
@@ -1117,6 +1134,12 @@
     "NearStakingThresholdNotMet" : {
       "title" : "금액은 {{threshold}} 이상이어야 합니다."
     },
+    "XrpInvalidMemo" : {
+      "title" : "메모 형식 오류. 4294967296보다 작아야 합니다."
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "메모 길이 초과. 최대 100자까지 지원됩니다"
+    },
     "PinNotSet" : {
       "title" : "PIN이 설정되지 않았습니다"
     },
@@ -1136,6 +1159,11 @@
       "title" : "장치가 잠금 상태입니다",
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "지원되지 않는 기능",
+      "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요",
+      "ctaLabel" : "문의하기"
     },
     "EtherscanAPIError" : {
       "title" : "트랜잭션을 가져오지 못했습니다",
@@ -2278,6 +2306,18 @@
     },
     "completionScreen" : {
       "title" : "이제 모든 것은 내 손끝에서 시작됩니다"
+    },
+    "secureYourCrypto" : {
+      "title" : "소중한 암호화폐를 안전하게",
+      "subtitle" : "첫 암호화폐를 거래소나 지갑에서 Ledger 장치로 옮기고 최고 수준을 보안을 누려보세요.",
+      "secureCryptoButton" : "자산 보호 시작하기",
+      "maybeLater" : "다음에 결정하기"
+    },
+    "fundSuccess" : {
+      "title" : "Ledger Wallet 연결 완료",
+      "receiveSuccess" : "Ledger 장치의 준비가 완료되었습니다. Ledger Wallet에 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+      "maybeLater" : "먼저 Ledger Wallet에 첫 암호화폐를 예치하세요",
+      "exploreLedger" : "Ledger Wallet 살펴보기"
     }
   },
   "blePairingFlow" : {
@@ -2479,6 +2519,20 @@
       "description" : "다른 비밀번호와 마찬가지로 PIN을 사용하면 {{productName}}의 잠금을 해제하고 원치 않는 액세스를 방지할 수 있습니다.",
       "continueOnDevice" : "{{productName}}에 PIN을 설정하세요."
     },
+    "syncStep" : {
+      "title" : "동기화",
+      "doneTitle" : "지갑 동기화",
+      "descriptionTitle" : "지갑 동기화",
+      "description" : "새 휴대폰이나 컴퓨터에서도 포트폴리오를 항상 최신 상태로 관리하세요.",
+      "skipCta" : "나중에 할게요",
+      "skip" : {
+        "title" : "정말 건너뛸까요?",
+        "description" : "이 단계를 건너뛰면 휴대폰이나 컴퓨터 변경 시 모든 계정, 잔액 및 트랜잭션 내역을 수동으로 다시 추가해야 합니다.",
+        "descriptionEmphasis" : "해당 기능은 설정에서 언제든지 비활성화할 수 있습니다.",
+        "skipCTA" : "네, 건너뛸게요",
+        "syncCTA" : "아니요, 지갑을 동기화할게요"
+      }
+    },
     "seedStep" : {
       "title" : "설정 및 백업",
       "doneTitle" : "비밀 복구 문구 확인됨",
@@ -2622,6 +2676,10 @@
     "carousel" : {
       "title" : "고객 맞춤 정보"
     },
+    "perpsEntry" : {
+      "title" : "무기한 계약",
+      "description" : "레버리지로 거래하기"
+    },
     "recommended" : {
       "title" : "추천"
     },
@@ -2630,6 +2688,10 @@
       "seeMarket" : "모두 보기"
     },
     "walletBalance" : "지갑 잔액",
+    "balance" : {
+      "noSigner" : "가장 안전한\n지갑",
+      "noFund" : "소중한 암호화폐를 안전하게"
+    },
     "seeAllAssets" : "모든 자산 보기",
     "seeAllAccounts" : "모든 계정 보기",
     "marketPriceSection" : {
@@ -2650,6 +2712,20 @@
       "send" : "전송",
       "deposit" : "수령",
       "stake" : "스테이킹"
+    },
+    "quickActionsCtas" : {
+      "transfer" : "전송",
+      "swap" : "스왑",
+      "buy" : "매수",
+      "connect" : "연결",
+      "buyLedger" : "Ledger 구매하기",
+      "transferDrawer" : {
+        "title" : "전송",
+        "receiveCrypto" : "암호화폐 받기",
+        "sendCrypto" : "암호화폐 보내기",
+        "bankTransfer" : "은행 이체",
+        "bankTransferDescription" : "현금 이체로 스테이블 코인 받기"
+      }
     },
     "recoverBanner" : {
       "subscribeDone" : {
@@ -2770,7 +2846,8 @@
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
       "ASSOCIATE_TOKEN" : "토큰 연동",
-      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)"
+      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)",
+      "UPDATE_ACCOUNT" : "업데이트된 계정"
     }
   },
   "operationDetails" : {
@@ -2838,7 +2915,12 @@
       "id" : "Id",
       "autoClaimedRewards" : "자동으로 청구된 보상",
       "stakedAmount" : "스테이킹 금액",
-      "accountCreationFee" : "계정 생성 수수료"
+      "accountCreationFee" : "계정 생성 수수료",
+      "associatedTokenId" : "연동된 토큰 ID",
+      "targetStakingNodeId" : "대상 노드 ID",
+      "previousStakingNodeId" : "이전 노드 ID",
+      "gasConsumed" : "소모된 가스비",
+      "gasUsed" : "사용된 가스비"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?"
   },
@@ -2923,7 +3005,8 @@
         "receiveFunds" : "수령",
         "buyCrypto" : "구매"
       },
-      "addAccountCta" : "계정 추가"
+      "addAccountCta" : "계정 추가",
+      "addCryptoAccount" : "암호화폐 계정 추가"
     },
     "settings" : {
       "header" : "계정 설정",
@@ -2988,6 +3071,7 @@
       }
     },
     "availableBalance" : "이용 가능 잔액",
+    "availableBalanceTooltip" : "지금 바로 사용 가능한 자산입니다.",
     "claimableRewards" : "신청 가능한 보상/리워드",
     "totalSupplied" : "입금 금액",
     "tronFrozen" : "동결됨",
@@ -2998,6 +3082,8 @@
     "delegation" : {
       "sectionLabel" : "위임",
       "addDelegation" : "위임 추가",
+      "delegationEarn" : "이제 계정을 위임하여 {{name}} 스테이킹 보상을 받을 수 있습니다.",
+      "howItWorks" : "위임은 어떤 원리인가요?",
       "info" : {
         "title" : "보상 받기",
         "cta" : "보상 받기"
@@ -3136,6 +3222,7 @@
       "dateFormatDesc" : "Ledger Wallet 날짜 형식 설정",
       "walletSync" : "Ledger 동기화",
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화",
+      "walletSyncDescription" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password" : "앱 잠금",
@@ -3416,7 +3503,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "알림 켜기",
+      "titleVariantB" : "중요한 소식을 놓치지 마세요",
       "desc" : "Ledger Wallet, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요.  해제는 언제든지 가능합니다.",
+      "descVariantB" : "새로운 토큰, 수익 창출 기회, 시장 변동성에 대한 실시간 알림을 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
     },
@@ -3585,7 +3674,7 @@
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
-      "title" : "구매 / 판매",
+      "title" : "매수 / 매도",
       "connectingTo" : "{{provider}}에 연결"
     },
     "stake" : {
@@ -3756,7 +3845,7 @@
         },
         "notAvailable" : {
           "title" : "아직 스왑이 불가능한 지역입니다",
-          "content" : "조금만 기다려 주세요. \n조만간 해당 기능을 런칭을 앞두고 있습니다"
+          "content" : "조금만 기다려 주세요.  조만간 해당 기능을 런칭을 앞두고 있습니다"
         },
         "amount" : {
           "useMax" : "최대치 사용"
@@ -3788,7 +3877,8 @@
         "title" : "견적 선택"
       },
       "twoStepApproval" : {
-        "title" : "단계 완료하기"
+        "title" : "단계 완료하기",
+        "completedTitle" : "트랜잭션 상태"
       },
       "loader" : {
         "title" : "스왑 처리 중",
@@ -3831,7 +3921,11 @@
         "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
         "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
         "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
-        "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+        "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "monad_title" : "Ledger Nano S™는 모나드(Monad) 스왑을 지원하지 않습니다.",
+        "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+        "zcash_title" : "Ledger Nano S™는 Zcash 스왑을 지원하지 않습니다.",
+        "zcash_description" : "Zcash를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -4150,7 +4244,8 @@
       "confirm" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔금이 업데이트됩니다.",
       "button" : {
         "details" : "세부사항 보기",
-        "retry" : "다시 시도"
+        "retry" : "다시 시도",
+        "abort" : "취소"
       }
     },
     "fees" : {
@@ -4481,6 +4576,7 @@
       },
       "acceptTerms" : "본 트랜잭션에 서명하면 <0><0>{{provider}}</0>의 이용약관</0>을 수락하는 것으로 간주합니다.",
       "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
+      "acceptTermsSponsored" : "네트워크 수수료 면제 혜택을 받으려면, 트랜잭션 상세 정보(지갑 주소 포함)를 Blinklabs와 공유하는 것에 동의해야 합니다.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 확인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, 이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
@@ -5062,16 +5158,11 @@
             "warning" : "계정에 빈 트랜잭션을 생성하라는 안내가 표시됩니다. 그렇게 할 경우, 최소 트랜잭션 수수료로 계정 잔금에 현재 보상이 추가됩니다.",
             "cta" : "계속"
           },
-          "verification" : {
+          "confirmation" : {
             "success" : {
               "title" : "보상을 성공적으로 수령했습니다!",
-              "text" : "보상이 이용 가능 잔액에 추가됩니다.",
-              "cta" : "계정으로 이동"
-            },
-            "pending" : {
-              "title" : "트랜잭션 브로드캐스팅 중..."
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 트랜잭션이 전송되지 않았는지 몇 분 후 다시 확인하고 재시도하세요."
+              "text" : "보상이 이용 가능 잔액에 추가됩니다."
+            }
           }
         }
       }
@@ -6127,7 +6218,7 @@
     },
     "unlockings" : {
       "header" : "본딩 해제",
-      "withdrawUnbonded" : "언본딩된 출금",
+      "withdrawUnbonded" : "언본딩 자산 출금",
       "rebond" : "재본딩"
     },
     "manage" : {
@@ -6141,7 +6232,7 @@
         "description" : "본딩된 금액을 다시 이용하려면 우선 언본딩해야 합니다. 28일의 언본딩 기간이 지난 후 출금할 수 있습니다."
       },
       "withdrawUnbonded" : {
-        "title" : "언본딩된 출금",
+        "title" : "언본딩 자산 출금",
         "description" : "언본딩된 금액을 다시 가용 잔금으로 가져오려면 직접 출금해야 합니다."
       },
       "nominate" : {
@@ -6274,7 +6365,7 @@
     "simpleOperation" : {
       "modes" : {
         "withdrawUnbonded" : {
-          "title" : "언본딩된 출금",
+          "title" : "언본딩 자산 출금",
           "description" : "언본딩된 자산을 가용 잔액으로 출금하세요."
         },
         "chill" : {
@@ -6316,6 +6407,7 @@
       "netApy" : "순 연간 수익률",
       "stakeActivationState" : "상태",
       "stakeActivePercent" : "활성",
+      "inactiveStake" : "인출 가능 보상",
       "stakeAvailableBalance" : "이용 가능 잔액",
       "actions" : {
         "activate" : "활성화",
@@ -7250,6 +7342,158 @@
         }
       }
     },
+    "info" : {
+      "available" : {
+        "title" : "HBAR 이용 가능",
+        "description" : "자유롭게 사용할 수 있는 수량입니다."
+      },
+      "delegated" : {
+        "title" : "위임된 자산",
+        "description" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 자동 위임되며 잠기지 않은 유동적인 상태를 유지합니다."
+      },
+      "claimable" : {
+        "title" : "신청 가능한 보상/리워드",
+        "description" : "보상은 매번 트랜잭션 후 자동으로 수령되지만, 직접 신청할 수도 있습니다."
+      }
+    },
+    "delegatedPositions" : {
+      "rewards" : {
+        "title" : "보상",
+        "cta" : "청구"
+      },
+      "details" : {
+        "validatorAddress" : "검증인 주소",
+        "delegatedAccount" : "위임된 계정",
+        "status" : {
+          "title" : "상태",
+          "active" : "활성",
+          "activeTooltip" : "위임된 수량이 보상을 생성합니다",
+          "inactive" : "비활성",
+          "inactiveTooltip" : "검증인을 찾을 수 없습니다",
+          "overstaked" : "스테이킹 한도 초과",
+          "overstakedTooltip" : "이 노드는 스테이킹 한도를 초과하여 연간 수익률이 최적 수준보다 낮습니다"
+        },
+        "rewards" : "보상",
+        "actions" : {
+          "redelegate" : "재위임",
+          "claim-rewards" : "보상 수령",
+          "undelegate" : "위임 해제"
+        }
+      }
+    },
+    "delegation" : {
+      "nodeName" : "Node {{index}}: {{name}}",
+      "alreadyDelegatedModal" : {
+        "title" : "이미 위임됨",
+        "description" : "이미 전체 수량이 위임되었습니다"
+      },
+      "stepperHeader" : {
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "steps" : {
+        "summary" : {
+          "delegate" : "위임",
+          "to" : ":",
+          "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
+          "learnMore" : "자세히 알아보기"
+        },
+        "validator" : {
+          "title" : "검증인",
+          "totalStake" : "총 스테이킹",
+          "rowSubtitlePercentage" : "최대 스테이킹 가능 수량의 {{percentage}}%가 스테이킹됨",
+          "rowSubtitleOverstaked" : "노드가 한도를 초과하여 스테이킹되었습니다",
+          "learnMore" : "자세히 알아보기"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "자산을 성공적으로 위임했습니다",
+            "description" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amount" : "위임 해제 수량",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "위임을 해제하면, 스테이킹한 수량과 보류 중인 보상이 즉시 지급됩니다. 자금의 일부만 위임 해제할 수는 없습니다.",
+          "learnMore" : "자세히 알아보기"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "자산을 성공적으로 위임 해제했습니다.",
+            "description" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "redelegation" : {
+      "stepperHeader" : {
+        "selectValidator" : "새 검증인을 선택하세요",
+        "amountTitle" : "{{from}} → {{to}}",
+        "amountSubtitle" : "재위임할 금액",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
+          "learnMore" : "자세히 알아보기"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "귀하의 자산을 성공적으로 재위임했습니다",
+            "description" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "selectReward" : "수령할 보상 선택",
+        "claim" : "보상 수령",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "steps" : {
+        "claim" : {
+          "earned" : "획득한 보상",
+          "delegatingTo" : "자산 위임 대상",
+          "description" : "바로 보상을 수령하여 사용 가능한 잔액에 추가됩니다."
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "보상을 성공적으로 수령했습니다. 보상이 이용 가능 잔액에 추가되었습니다.",
+            "description" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
     "operationDetails" : {
       "postAccountSection" : "연동된 토큰",
       "postAlert" : {
@@ -7306,33 +7550,36 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "다음으로 {{productName}}를 사용해...",
+      "title" : "이제 다음 단계는?",
       "areAllPostOnboardingActionsCompletedTitle" : "설정이 모두 완료되었습니다. 계속해서 내 포트폴리오를 살펴보세요.",
       "skip" : "나중에 할께요",
       "viewWallet" : "내 포트폴리오 살펴보기"
     },
     "entryPointCard" : {
       "title" : "{{productName}}의 다음 단계는 무엇인가요?",
-      "description" : "거래소나 지갑에서 자산을 전송하고, 암호화폐를 구매하고, 잠금 화면을 맞춤 설정하거나 Ledger Recover를 구독하세요.",
+      "description" : "자산을 안전하게 관리하며 수익을 창출해 보세요.",
       "buttonLabel" : "다음 단계를 확인하세요"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Ledger 장치 설정하기"
+      },
       "assetsTransfer" : {
-        "title" : "자산을 Ledger로 이체하세요",
+        "title" : "자산 이체",
         "titleCompleted" : "Ledger로 자산 이체 완료",
-        "description" : "모든 거래소나 지갑에서 Ledger로 바로 전송하세요.",
+        "description" : "거래소나 지갑에서 자산을 이체하세요.",
         "popupLabel" : "자산 이체 완료"
       },
       "buyCrypto" : {
-        "title" : "암호화폐 구매",
+        "title" : "Ledger Wallet을 통한 암호화폐 매수",
         "titleCompleted" : "구매한 암호화폐",
-        "description" : "500가지 이상의 코인과 최고의 견적을 살펴보고 선호에 맞게 선택하세요.",
+        "description" : "500가지 이상의 코인과 토큰을 자유롭게 거래해 보세요.",
         "popupLabel" : "구매한 암호화폐"
       },
       "customImage" : {
         "title" : "잠금화면을 취향대로 꾸며보세요",
         "titleCompleted" : "잠금화면 꾸미기 완료",
-        "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
+        "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
       "syncAccounts" : {
@@ -7594,6 +7841,10 @@
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
+    "banner" : {
+      "title" : "지갑이 동기화되지 않았습니다",
+      "description" : "포트폴리오를 항상 업데이트된 상태로 관리하세요"
+    },
     "entryPoints" : {
       "simpleCta" : {
         "title" : "Ledger 동기화 활성화"
@@ -7610,7 +7861,10 @@
         "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
         "mainCta" : "Ledger 동기화 켜기",
         "secondCta" : "이미 켜진 상태입니다",
-        "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
+        "learnMore" : "Ledger 동기화는 어떤 원리인가요?",
+        "titleModal" : "지갑 동기화",
+        "descriptionModal" : "새 휴대폰이나 컴퓨터에서도 항상 Ledger 장치의 확실한 보안은 물론, 최신 상태로 업데이트된 포트폴리오를 확인할 수 있습니다.",
+        "cta" : "계속"
       }
     },
     "deviceSelection" : {
@@ -7629,13 +7883,18 @@
       "sync" : "동기화 정상 완료",
       "syncDesc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대폰과 컴퓨터의 Ledger Wallet 앱에 자동으로 표시됩니다.",
       "activation" : "이 휴대전화에서 Ledger Sync가 켜짐",
+      "complete" : {
+        "title" : "동기화 완료",
+        "description" : "이제부터 모든 장치에서 포트폴리오가 자동으로 동기화됩니다."
+      },
       "syncAnother" : "다른 Ledger Wallet 앱과 동기화",
       "close" : "닫기"
     },
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "다른 Ledger Wallet 앱과 동기화",
-        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화"
+        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화",
+        "desc" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요"
       },
       "unauthorizeMember" : {
         "error" : {
@@ -7647,7 +7906,7 @@
       "manageKey" : {
         "title" : "동기화 삭제",
         "description" : "여러 휴대폰 및 컴퓨터의 암호화폐 계정 동기화가 중단됩니다.",
-        "success" : "Ledger Wallet 앱이 더 이상 동기화되지 않습니다",
+        "success" : "Ledger Wallet 앱 동기화가 해제되었습니다",
         "successHint" : "언제든지 동기화를 다시 켤 수 있습니다.",
         "confirm" : {
           "delete" : "네, 삭제하겠습니다",
@@ -7698,7 +7957,8 @@
         },
         "connectDevice" : {
           "title" : "내 Ledger 장치 사용"
-        }
+        },
+        "description" : "다른 휴대폰이나 컴퓨터에서 Ledger Wallet 앱이 동기화되어 있는 경우 선택하세요"
       },
       "qrCode" : {
         "title" : "Ledger Wallet 앱 동기화",
@@ -7853,12 +8113,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Ledger Flex와 같은 최신 장치로 Ledger Nano S를 업그레이드하여 더 커진 메모리, 최신 보안 업데이트, 새로운 기능, 20% 독점 할인 혜택까지 모두 누려보세요. ",
+      "title" : "Ledger Nano S™ 업그레이드 찬스",
+      "description" : "단독 기회! 최신 Ledger 사이너를 20% 할인된 가격에 만나보세요.",
       "cta" : "내 Ledger 업그레이드"
     },
     "opted_out" : {
-      "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
+      "title" : "Ledger Nano S™ 업그레이드",
+      "description" : "Ledger Nano S의 메모리 용량 한계로 최신 기능, 블록체인 변경 사항 및 보안 업데이트 이용 및 액세스가 제한됩니다.",
       "cta" : "자세히 알아보기"
+    }
+  },
+  "marketBanner" : {
+    "title" : "시장 탐색하기",
+    "viewAll" : "모두 보기",
+    "viewAllAccessibilityHint" : "두 번 탭하면 모든 시장 자산이 표시됩니다",
+    "connectionFailed" : "연결에 실패했습니다",
+    "errorAccessibilityHint" : "시장 데이터를 로드할 수 없습니다. 나중에 다시 시도해 주세요.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "두 번 탭하면 시장 상세 정보가 표시됩니다"
     }
   },
   "largeMover" : {
@@ -8002,7 +8275,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "서비스 제공 업체 이용 불가",
-      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
+      "description" : "스왑 서비스 제공업체에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "서비스 제공 업체 이용 불가",
+      "description" : "이 서비스 제공업체에서는 스왑을 완료할 수 없습니다. 다른 업체를 이용해 보세요."
+    },
+    "swapRateExpiredError" : {
+      "title" : "요율 만료",
+      "description" : "거래소 요율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
     },
     "default" : {
       "title" : "문제가 발생했습니다",
@@ -8010,12 +8291,41 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "만료 기간",
+      "summaryLabel" : "기간 한정 요청",
+      "threeHours" : "3시간",
+      "sixHours" : "6시간",
+      "oneDay" : "1일",
+      "oneWeek" : "1주",
+      "oneMonth" : "30일"
+    },
+    "account" : {
+      "lockedBalance" : "잠금",
+      "lockedBalanceTooltip" : "자산이 다른 사람에게 보낸 제안에 락업되어 있습니다. 언제든지 해당 제안을 취소할 수도 있고, 상대방이 수락/거절할 때까지 기다릴 수도 있습니다.",
+      "withdrawableBalance" : "출금 가능",
+      "withdrawableBalanceTooltip" : "기한이 만료된 제안에서 회수 가능한 자산입니다. 인출하여 가용 수량으로 되돌릴 수 있습니다."
+    },
     "onboard" : {
       "account" : "계정",
       "authorize" : "승인",
       "preapprove" : "성공적으로 추가된 계정",
       "validator" : "Ledger 검증인",
       "title" : "받은 자금을 자동으로 승인합니다",
+      "processing" : {
+        "title" : "트랜잭션 처리 중",
+        "description" : "최대 1 분 정도 소요될 수 있습니다",
+        "keepDeviceNearby" : "Ledger Wallet 앱을 종료하지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요."
+      },
+      "reonboard" : {
+        "title" : "계정 업데이트 필요",
+        "account" : "계정",
+        "authorize" : "검증인 재승인",
+        "warning" : {
+          "title" : "토폴로지 변경 감지",
+          "description" : "캔톤(Canton) 네트워크에서 토폴로지 변경이 감지되었습니다 계속해서 사용하려면 계정을 다시 등록하세요."
+        }
+      },
       "error429" : "현재 캔톤(Canton) 네트워크에서는 하루에 생성할 수 있는 계정 수가 제한됩니다. 나중에 다시 시도해 주세요."
     },
     "tooManyUtxos" : {
@@ -8024,6 +8334,73 @@
       "quickFix" : "빠른 해결책: 본인 주소로 자산을 추가로 송금하여 UTXO를 병합하세요.",
       "warning" : "현재 계정에 작은 단위의 UTXO가 너무 많습니다. 자산 일부를 본인 주소로 송금하여 병합하세요.",
       "consolidate" : "병합"
+    },
+    "pendingTransactions" : {
+      "expired" : "만료됨",
+      "accept" : "수락",
+      "reject" : "거부",
+      "review" : "검토",
+      "withdraw" : "이체 취소",
+      "incoming" : {
+        "title" : "수신 이체 검토"
+      },
+      "outgoing" : {
+        "title" : "발신 이체"
+      },
+      "details" : {
+        "incomingTitle" : "수신 이체 세부 내역",
+        "outgoingTitle" : "발신 이체 세부 내역"
+      },
+      "amount" : "수량",
+      "from" : "출금 주소",
+      "to" : "입금 주소",
+      "memo" : "메모",
+      "expiresAt" : "만료 날짜",
+      "expiresIn" : "만료까지 남은 시간",
+      "status" : {
+        "label" : "상태"
+      },
+      "deviceAppModal" : {
+        "contractId" : "컨트랙트 ID",
+        "processing" : "처리 중...",
+        "success" : {
+          "accept" : {
+            "title" : "이체 수락",
+            "description" : "수신 이체가 수락되었습니다."
+          },
+          "reject" : {
+            "title" : "이체 거부됨",
+            "description" : "수신 이체가 거부되었습니다."
+          },
+          "withdraw" : {
+            "title" : "이체 거부됨",
+            "description" : "발신 이체가 거부되었습니다."
+          }
+        }
+      }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "시장 심리 지수",
+    "description" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
+    "levels" : {
+      "extremeFear" : "공포+",
+      "fear" : "공포",
+      "neutral" : "중립",
+      "greed" : "탐욕",
+      "extremeGreed" : "탐욕+"
+    },
+    "tileTitle" : "시장 심리"
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "애널리틱스"
+    },
+    "allocation" : {
+      "title" : "자산 비중"
+    },
+    "actions" : {
+      "swap" : "스왑"
     }
   }
 }

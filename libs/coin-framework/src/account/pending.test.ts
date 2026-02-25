@@ -140,7 +140,7 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const retentionThreshold = getEnv("OPERATION_OPTIMISTIC_RETENTION");
-    const date = new Date(Date.now() - retentionThreshold + 1); // Within threshold
+    const date = new Date(Date.now() - retentionThreshold + 1000); // Within threshold (1s buffer)
     const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 
     // When

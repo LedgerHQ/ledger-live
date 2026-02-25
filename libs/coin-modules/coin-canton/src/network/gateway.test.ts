@@ -156,19 +156,19 @@ describe("getEnabledInstruments", () => {
   });
 
   it("should fetch and return enabled instruments from API", async () => {
-    const mockInstrumentsResponse: InstrumentsResponse = {
-      instruments: [
-        { instrument_id: "Amulet", display_name: "Canton Coin" },
-        { instrument_id: "0x1234567890abcdef", display_name: "Test Token 1" },
-        { instrument_id: "0xabcdef1234567890", display_name: "Test Token 2" },
-      ],
-    };
+    const mockInstrumentsResponse: InstrumentsResponse = [
+      { id: "Amulet", admin: "admin1" },
+      { id: "0x1234567890abcdef", admin: "admin2" },
+      { id: "0xabcdef1234567890", admin: "admin3" },
+    ];
 
     mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
 
     const result = await getEnabledInstruments(mockCurrency);
 
-    expect(result).toEqual(["Amulet", "0x1234567890abcdef", "0xabcdef1234567890"]);
+    expect(result).toEqual(
+      new Set(["Amulet____admin1", "0x1234567890abcdef____admin2", "0xabcdef1234567890____admin3"]),
+    );
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         method: "GET",
@@ -177,13 +177,13 @@ describe("getEnabledInstruments", () => {
     );
   });
 
-  it("should return empty array on API failure (fail-safe)", async () => {
+  it("should return empty Set on API failure (fail-safe)", async () => {
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
     mockNetwork.mockRejectedValue(new Error("Network error"));
 
     const result = await getEnabledInstruments(mockCurrency);
 
-    expect(result).toEqual([]);
+    expect(result).toEqual(new Set());
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       "Failed to fetch enabled instruments:",
       expect.any(Error),
@@ -192,26 +192,24 @@ describe("getEnabledInstruments", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("should return empty array when API returns empty instruments list", async () => {
-    const mockEmptyResponse: InstrumentsResponse = {
-      instruments: [],
-    };
+  it("should return empty Set when API returns empty instruments list", async () => {
+    const mockEmptyResponse: InstrumentsResponse = [];
 
     mockNetwork.mockResolvedValue({ data: mockEmptyResponse, status: 200 });
 
     const result = await getEnabledInstruments(mockCurrency);
 
-    expect(result).toEqual([]);
+    expect(result).toEqual(new Set());
   });
 
   it("should handle malformed API response gracefully", async () => {
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
-    // API returns data without instruments property
+    // API returns data that is not an array
     mockNetwork.mockResolvedValue({ data: { invalid: "response" }, status: 200 });
 
     const result = await getEnabledInstruments(mockCurrency);
 
-    expect(result).toEqual([]);
+    expect(result).toEqual(new Set());
     expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
@@ -245,42 +243,42 @@ describe("getEnabledInstrumentsCached", () => {
   });
 
   it("should cache results and return cached value on subsequent calls", async () => {
-    const mockInstrumentsResponse: InstrumentsResponse = {
-      instruments: [{ instrument_id: "Amulet" }, { instrument_id: "0x1234567890abcdef" }],
-    };
+    const mockInstrumentsResponse: InstrumentsResponse = [
+      { id: "Amulet", admin: "admin1" },
+      { id: "0x1234567890abcdef", admin: "admin2" },
+    ];
 
     mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
 
     // First call - should fetch from API
     const result1 = await getEnabledInstrumentsCached(mockCurrency);
-    expect(result1).toEqual(["Amulet", "0x1234567890abcdef"]);
+    expect(result1).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
     // Second call - should return cached value
     const result2 = await getEnabledInstrumentsCached(mockCurrency);
-    expect(result2).toEqual(["Amulet", "0x1234567890abcdef"]);
+    expect(result2).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
 
     // Third call - should still return cached value
     const result3 = await getEnabledInstrumentsCached(mockCurrency);
-    expect(result3).toEqual(["Amulet", "0x1234567890abcdef"]);
+    expect(result3).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
   });
 
   it("should fetch fresh data after cache is cleared", async () => {
-    const mockResponse1: InstrumentsResponse = {
-      instruments: [{ instrument_id: "Amulet" }],
-    };
+    const mockResponse1: InstrumentsResponse = [{ id: "Amulet", admin: "admin1" }];
 
-    const mockResponse2: InstrumentsResponse = {
-      instruments: [{ instrument_id: "Amulet" }, { instrument_id: "0xnewtoken" }],
-    };
+    const mockResponse2: InstrumentsResponse = [
+      { id: "Amulet", admin: "admin1" },
+      { id: "0xnewtoken", admin: "admin2" },
+    ];
 
     mockNetwork.mockResolvedValueOnce({ data: mockResponse1, status: 200 });
 
     // First call
     const result1 = await getEnabledInstrumentsCached(mockCurrency);
-    expect(result1).toEqual(["Amulet"]);
+    expect(result1).toEqual(new Set(["Amulet____admin1"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
     // Clear cache
@@ -291,7 +289,7 @@ describe("getEnabledInstrumentsCached", () => {
 
     // Second call after clear - should fetch fresh data
     const result2 = await getEnabledInstrumentsCached(mockCurrency);
-    expect(result2).toEqual(["Amulet", "0xnewtoken"]);
+    expect(result2).toEqual(new Set(["Amulet____admin1", "0xnewtoken____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
 });

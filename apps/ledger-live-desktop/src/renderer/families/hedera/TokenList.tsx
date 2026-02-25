@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import type { Account } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";

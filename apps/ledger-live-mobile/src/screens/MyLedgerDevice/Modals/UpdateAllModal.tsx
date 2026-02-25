@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { FlatList } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { InstalledItem, State } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
@@ -69,11 +69,13 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const FlatListContainer = styled(FlatList).attrs({
-  width: "100%",
-  maxHeight: 250,
-  marginBottom: 20,
-})`` as unknown as typeof FlatList;
+type AppWithInstalled = App & { installed?: InstalledItem };
+
+const FlatListContainer = styled(FlatList<AppWithInstalled>)`
+  width: 100%;
+  max-height: 250px;
+  margin-bottom: 20px;
+`;
 
 export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, state }: Props) {
   const { deviceInfo } = state;
@@ -88,7 +90,7 @@ export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, s
       item: { name, bytes, version: appVersion, installed },
       item,
     }: {
-      item: App & { installed: InstalledItem | null | undefined };
+      item: AppWithInstalled;
     }) {
       const { availableVersion: newVersion = appVersion, version: curVersion = appVersion } =
         installed ?? {};

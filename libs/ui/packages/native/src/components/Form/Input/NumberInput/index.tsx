@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";

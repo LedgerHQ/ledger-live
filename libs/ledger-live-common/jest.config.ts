@@ -6,7 +6,7 @@ const testPathIgnorePatterns = [
   "lib-es/",
   ".yalc",
   "cli/",
-  "test-helpers/",
+  "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
 ];
 
 const esmDeps = ["ky"];
@@ -42,7 +42,6 @@ if (process.env.CI) {
 }
 
 const defaultConfig = {
-  preset: "ts-jest",
   globals: {
     Buffer: Uint8Array,
   },
@@ -62,6 +61,14 @@ const defaultConfig = {
   testRegex,
   coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
     [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
       "@swc/jest",
       {
@@ -73,6 +80,17 @@ const defaultConfig = {
   },
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
+  moduleNameMapper: {
+    "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",
+    "^@tests$": "<rootDir>/src/__tests__/server",
+    // TODO: Remove this once we upgrade all projects React 19
+    "^react-dom/client$": require.resolve("react-dom/client"),
+    "^react/jsx-runtime$": require.resolve("react/jsx-runtime"),
+    "^react/jsx-dev-runtime$": require.resolve("react/jsx-dev-runtime"),
+    "^react-dom$": require.resolve("react-dom"),
+    "^react$": require.resolve("react"),
+    "react-test-renderer": require.resolve("react-test-renderer"),
+  },
   /**
    * Added because of this error happening when using toMatchInlineSnapshot:
    *     TypeError: prettier.resolveConfig.sync is not a function

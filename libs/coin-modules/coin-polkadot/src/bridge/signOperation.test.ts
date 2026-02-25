@@ -1,19 +1,18 @@
-import BigNumber from "bignumber.js";
-import { u8aConcat } from "@polkadot/util";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
-import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import buildSignOperation from "./signOperation";
+import { u8aConcat } from "@polkadot/util";
+import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
-
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
-import coinConfig from "../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import buildSignOperation from "./signOperation";
 
 jest.mock("../config");
 const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
@@ -27,13 +26,18 @@ const mockPaymentInfo = jest.fn().mockResolvedValue({
   partialFee: "155099814",
 });
 
-const shortenMetadataMock = jest.fn();
+const getMetadataMock = jest.fn();
 jest.mock("../network", () => ({
   ...jest.requireActual("../network").default,
-  metadataHash: () => jest.fn().mockResolvedValue(""),
-  shortenMetadata: (transaction: string, currency?: CryptoCurrency) =>
-    shortenMetadataMock(transaction, currency),
+  getMetadata: (
+    callData: string,
+    includedInExtrinsic: string,
+    includedInSignedData: string,
+    currency?: CryptoCurrency,
+  ) => getMetadataMock(callData, includedInExtrinsic, includedInSignedData, currency),
 }));
+
+type ShortenMetadataResult = { metadataBlob: string; metadataHash: string };
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
   paymentInfo: (args: any) => mockPaymentInfo(args),
@@ -69,22 +73,93 @@ describe("signOperation", () => {
         staking: {
           electionStatusThreshold: 25,
         },
-        metadataShortener: {
-          url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        },
-        metadataHash: {
-          url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        },
       };
     });
   });
 
   beforeEach(() => {
-    shortenMetadataMock.mockResolvedValue("");
+    getMetadataMock.mockResolvedValue({
+      metadataBlob: "",
+      metadataHash: "00".repeat(32),
+    } satisfies ShortenMetadataResult);
   });
 
   afterEach(() => {
-    shortenMetadataMock.mockClear();
+    getMetadataMock.mockClear();
+  });
+
+  it("should call getMetadata with callData, includedInExtrinsic, includedInSignedData and currency", done => {
+    // GIVEN
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction({ fees: new BigNumber(0) });
+
+    // WHEN & THEN
+    signOperation({ account, deviceId, transaction }).subscribe({
+      complete: () => {
+        try {
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
+          const [callData, includedInExtrinsic, includedInSignedData, currency] =
+            getMetadataMock.mock.lastCall!;
+
+          // callData should be a 0x-prefixed hex string (the encoded method call)
+          expect(callData).toMatch(/^0x[0-9a-f]+$/i);
+          expect(callData.length).toBeGreaterThan(2);
+
+          // includedInExtrinsic should be a 0x-prefixed hex string
+          expect(includedInExtrinsic).toMatch(/^0x[0-9a-f]*$/i);
+
+          // includedInSignedData should be a 0x-prefixed hex string containing
+          // specVersion ++ txVersion ++ genesisHash ++ blockHash ++ Option<metadataHash>
+          expect(includedInSignedData).toMatch(/^0x[0-9a-f]+$/i);
+          // specVersion(4B) + txVersion(4B) + genesisHash(32B) + blockHash(32B) + metadataHash(33B) = 105 bytes
+          expect(includedInSignedData.length).toBe(2 + 210);
+
+          // Should contain the genesis hash from fixture params
+          expect(includedInSignedData).toContain(fixtureTransactionParams.genesisHash.slice(2));
+          // Should contain the block hash from fixture params
+          expect(includedInSignedData).toContain(fixtureTransactionParams.blockHash.slice(2));
+
+          // currency should be the account currency
+          expect(currency).toEqual(getCryptoCurrencyById(account.currency.id));
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      },
+      error: done,
+    });
+  });
+
+  it("should pass callData matching the unsigned method from buildTransaction", done => {
+    // GIVEN
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction({
+      fees: new BigNumber(0),
+      mode: "send",
+      amount: new BigNumber(10_000_000_000),
+    });
+
+    // WHEN & THEN
+    signOperation({ account, deviceId, transaction }).subscribe({
+      complete: () => {
+        try {
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
+          const [callData] = getMetadataMock.mock.lastCall!;
+
+          // For a "send" (transferKeepAlive) on polkadot, callData starts with
+          // the balances pallet call index
+          expect(callData).toMatch(/^0x[0-9a-f]+$/i);
+          // Should contain the recipient address bytes
+          expect(callData.length).toBeGreaterThan(10);
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      },
+      error: done,
+    });
   });
 
   it("returns events in the right order", done => {
@@ -111,9 +186,9 @@ describe("signOperation", () => {
         eventIdx++;
 
         if (eventIdx === expectedEvent.length) {
-          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
           const currency = getCryptoCurrencyById(account.currency.id);
-          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
           done();
         }
       } catch (err) {
@@ -131,7 +206,7 @@ describe("signOperation", () => {
     const observer = {
       error: (e: Error) => {
         expect(e.name).toMatch("FeeNotLoaded");
-        expect(shortenMetadataMock).not.toHaveBeenCalled();
+        expect(getMetadataMock).not.toHaveBeenCalled();
         done();
       },
     };
@@ -181,9 +256,9 @@ describe("signOperation", () => {
       const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
         (e: SignOperationEvent) => {
           if (e.type === "device-signature-granted") {
-            expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+            expect(getMetadataMock).toHaveBeenCalledTimes(2);
             const currency = getCryptoCurrencyById(account.currency.id);
-            expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+            expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
           } else if (e.type === "signed") {
             const { operation } = e.signedOperation;
             expect(operation.recipients[0]).toEqual(transaction.recipient);
@@ -211,9 +286,9 @@ describe("signOperation", () => {
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
-          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
           const currency = getCryptoCurrencyById(account.currency.id);
-          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -240,9 +315,9 @@ describe("signOperation", () => {
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
-          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
           const currency = getCryptoCurrencyById(account.currency.id);
-          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -273,9 +348,9 @@ describe("signOperation", () => {
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
-          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
           const currency = getCryptoCurrencyById(account.currency.id);
-          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -306,9 +381,9 @@ describe("signOperation", () => {
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
-          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
           const currency = getCryptoCurrencyById(account.currency.id);
-          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -341,9 +416,9 @@ describe("signOperation", () => {
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
-          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getMetadataMock).toHaveBeenCalledTimes(2);
           const currency = getCryptoCurrencyById(account.currency.id);
-          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({

@@ -3,17 +3,17 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, scroll, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_SCROLL } from "../tokenFixtures";
+import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type ScrollScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type ScrollScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({
   address,
@@ -55,16 +55,28 @@ const makeScenarioTransactions = ({
     },
   };
 
-  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
+  const scenarioSendMaxEthTransaction: ScrollScenarioTransaction = {
+    name: "Send Max ETH",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction, scenarioSendMaxEthTransaction];
 };
 
-export const scenarioScroll: Scenario<EvmTransaction, Account> = {
+export const scenarioScroll: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.scroll.io"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://rpc.scroll.io", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
@@ -82,16 +94,36 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
           uri: "http://127.0.0.1:8545",
         },
         explorer: {
-          type: "etherscan",
-          uri: "https://api.scrollscan.com/api",
+          type: "blockscout",
+          noCache: true,
+          uri: "https://scroll.blockscout.com/api",
         },
         showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_scroll: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "blockscout",
+            noCache: true,
+            uri: "https://scroll.blockscout.com/api",
+          },
+          showNfts: true,
+        },
+      },
+    });
     initMswHandlers(getCoinConfig(scroll).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "scroll");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: scroll,
@@ -111,13 +143,11 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
-      retryLimit: 0,
     };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(scroll.ethereumLikeInfo?.chainId || 534352);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
@@ -131,10 +161,10 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
     );
-    expect(account.operations.length).toBe(3);
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
     resetIndexer();
   },
 };

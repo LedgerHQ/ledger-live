@@ -35,7 +35,7 @@ const ButtonContainer = styled(Flex)`
   align-items: center;
   align-self: flex-end;
   pointer-events: auto;
-  :hover {
+  &:hover {
     cursor: pointer;
   }
 `;

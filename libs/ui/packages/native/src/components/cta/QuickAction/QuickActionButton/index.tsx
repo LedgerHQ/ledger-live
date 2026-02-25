@@ -56,10 +56,15 @@ const QuickActionButton = ({
   isActive = true,
   ...otherProps
 }: QuickActionButtonProps): React.ReactElement => {
-  const text = // Extract the text to use it as a testID
-    React.isValidElement(children) && children.props?.i18nKey
-      ? children.props.i18nKey.split(".").pop() // Extract the last part of the key
-      : children?.toString().toLowerCase();
+  // Extract the text to use it as a testID
+  let text: string | undefined;
+  if (React.isValidElement<{ i18nKey?: string }>(children)) {
+    const key = children.props?.i18nKey;
+    text = key ? key.split(".").pop() : undefined;
+  }
+  if (!text) {
+    text = children?.toString().toLowerCase();
+  }
   return (
     <Base
       disabled={onPressWhenDisabled ? false : disabled}

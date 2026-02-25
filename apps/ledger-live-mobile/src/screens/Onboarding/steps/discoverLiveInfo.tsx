@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useMemo, useContext } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/native-ui";
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import {
@@ -24,6 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -59,9 +60,11 @@ const Item = ({
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow();
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
+
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const onClick = useCallback(
     (value: string) => {
@@ -94,7 +97,8 @@ const Item = ({
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-  }, [dispatch, exploreLedger, onClick]);
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  }, [dispatch, exploreLedger, onClick, tryTriggerPushNotificationDrawerAfterAction]);
 
   const pressBuy = useCallback(() => {
     buyLedger();

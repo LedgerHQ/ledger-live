@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -15,7 +15,7 @@ import {
 import { BaseNavigatorStackParamList } from "../../RootNavigator/types/BaseNavigator";
 import QueuedDrawer from "../../QueuedDrawer";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 

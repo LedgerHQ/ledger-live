@@ -8,6 +8,7 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 jest.mock("@ledgerhq/live-common/account/helpers", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/helpers"),
   getAccountCurrency: jest.fn(),
 }));
 
@@ -34,6 +35,7 @@ const mockExportLogs = jest.fn();
 const setup = (error: Error | null, url: string | null = null) => {
   const mockRoute = {
     params: {
+      accountId: mockAccount.id,
       error: error ? { ...error, url } : null,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,6 +74,39 @@ describe("SendBroadcastError", () => {
     const networkError = {
       name: "NetworkDown",
       message: "No internet connection",
+    };
+    setup(networkError);
+
+    expect(screen.queryByText(/Retry/i)).toBeTruthy();
+    expect(screen.queryByText(/Abort/i)).toBeNull();
+  });
+
+  test("should show Retry button for 'DeviceLockedError' error", () => {
+    const networkError = {
+      name: "DeviceLockedError",
+      message: "Device is locked",
+    };
+    setup(networkError);
+
+    expect(screen.queryByText(/Retry/i)).toBeTruthy();
+    expect(screen.queryByText(/Abort/i)).toBeNull();
+  });
+
+  test("should show Retry button for 'LockedDeviceError' error", () => {
+    const networkError = {
+      name: "LockedDeviceError",
+      message: "Device is locked (bis)",
+    };
+    setup(networkError);
+
+    expect(screen.queryByText(/Retry/i)).toBeTruthy();
+    expect(screen.queryByText(/Abort/i)).toBeNull();
+  });
+
+  test("should show Retry button for 'UserRefusedOnDevice' error", () => {
+    const networkError = {
+      name: "UserRefusedOnDevice",
+      message: "User refused the action on device",
     };
     setup(networkError);
 

@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import styled, { ThemedStyledProps, DefaultTheme } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import {
   space,
   fontSize,
@@ -20,8 +20,11 @@ import { focusedShadowStyle } from "~/renderer/components/Box/Tabbable";
 import Spinner from "~/renderer/components/Spinner";
 
 type BaseComponentProps = BaseProps & { ff?: string; fullWidth?: boolean };
-type ButtonStyle = (p: ThemedStyledProps<BaseComponentProps, DefaultTheme>) => string;
-const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
+type ThemedButtonProps = BaseComponentProps & { theme: DefaultTheme };
+type ButtonStyleFn = (props: ThemedButtonProps) => string;
+type ButtonStyles = Record<string, Record<string, ButtonStyleFn>>;
+
+const buttonStyles: ButtonStyles = {
   default: {
     default: p => `
       box-shadow: ${p.isFocused ? focusedShadowStyle : ""};
@@ -221,14 +224,14 @@ function getStyles(props: BaseComponentProps, state: string) {
       const style = buttonStyles[s][state];
       if (style) {
         hasModifier = true;
-        output += style(props as ThemedStyledProps<BaseComponentProps, DefaultTheme>);
+        output += style(props as ThemedButtonProps);
       }
     }
   }
   if (!hasModifier) {
     const defaultStyle = buttonStyles.default[state];
     if (defaultStyle) {
-      output += defaultStyle(props as ThemedStyledProps<BaseComponentProps, DefaultTheme>) || "";
+      output += defaultStyle(props as ThemedButtonProps) || "";
     }
   }
   return output;
@@ -313,7 +316,6 @@ export type Props = {
   outline?: boolean;
   fullWidth?: boolean;
   outlineGrey?: boolean;
-  onClick?: (e?: React.MouseEvent) => void;
   small?: boolean;
   isLoading?: boolean;
   event?: string;
@@ -360,7 +362,7 @@ class ButtonInner extends PureComponent<
     const { disabled, innerRef } = this.props;
     const { onClick, children, isLoading, event, eventProperties, ...rest } = this.props;
     const isClickDisabled = disabled || isLoading;
-    const onClickHandler = (e: React.MouseEvent) => {
+    const onClickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (onClick) {
         if (event) {
           track(event, eventProperties);
@@ -387,7 +389,9 @@ class ButtonInner extends PureComponent<
     );
   }
 }
-const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => (
-  <ButtonInner {...props} innerRef={ref} />
-));
+const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => {
+  const { ref: _, ...restProps } = props as Props & { ref?: React.Ref<HTMLButtonElement> };
+  return <ButtonInner {...restProps} innerRef={ref} />;
+});
+Button.displayName = "Button";
 export default Button;

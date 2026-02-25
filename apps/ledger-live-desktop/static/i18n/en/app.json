@@ -152,7 +152,8 @@
     "quote": "Quote",
     "memoTag": {
       "learnMore": "Learn more about Tag/Memo"
-    }
+    },
+    "memo": "Memo"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -208,7 +209,11 @@
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
-      "UPDATE_ACCOUNT": "Updated account"
+      "UPDATE_ACCOUNT": "Updated account",
+      "SHIELDED_TX_SAPLING_IN": "Received",
+      "SHIELDED_TX_SAPLING_OUT": "Sent",
+      "SHIELDED_TX_ORCHARD_IN": "Received",
+      "SHIELDED_TX_ORCHARD_OUT": "Sent"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -282,11 +287,13 @@
     "advanced": "Advanced",
     "custom": "Custom",
     "fast": "Fast",
+    "networkFees": "Network fees",
     "high": "High",
     "low": "Low",
     "slow": "Slow",
     "standard": "Standard",
     "medium": "Medium",
+    "coinControl": "Coin Control",
     "feesAmount": "Fees Amount"
   },
   "sidebar": {
@@ -298,6 +305,7 @@
     "earn": "Earn",
     "exchange": "Buy / Sell",
     "swap": "Swap",
+    "perps": "Perpetuals",
     "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
@@ -482,7 +490,9 @@
       "celo_title": "Ledger Nano S™ does not support swapping Celo",
       "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "monad_title": "Ledger Nano S™ does not support swapping Monad",
-      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
+      "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -650,134 +660,6 @@
       "submit": "Connect"
     }
   },
-  "fullNode": {
-    "status": "Status",
-    "connect": "Connect",
-    "disconnect": "Disconnect",
-    "checkNodeSettings": "Verify node settings",
-    "edit": "Edit",
-    "modal": {
-      "title": "Connect Bitcoin full node",
-      "disconnectTitle": "Disconnect full node",
-      "steps": {
-        "landing": {
-          "header": "Start your full node. Don’t trust, verify.",
-          "description": "A Bitcoin full node validates all transactions and blocks, allowing you to use Bitcoin in a trustless way while contributing to the Bitcoin network.",
-          "list": {
-            "item1": "Set up Bitcoin Core on a device with sufficient resources.",
-            "item2": "Wait for your node to fully synchronize.",
-            "item3": "Make note of your node RPC credentials, IP address, and port number."
-          },
-          "disclaimer": "Running a full node requires a computer with sufficient resources and a broadband connection without data restrictions."
-        },
-        "node": {
-          "title": "Node",
-          "connectionSteps": {
-            "notConnected": {
-              "header": "Enter your node parameters",
-              "disclaimer": "Your full node must be fully synchronized before connecting Ledger Wallet.",
-              "fields": {
-                "nodeHost": {
-                  "title": "Host",
-                  "tooltip": "Leave as default if node runs on this computer, or replace the node IP address and port number."
-                },
-                "rpcCredentials": {
-                  "title": "RPC Credentials",
-                  "tooltip": "Enter the RPC username and password of your node, found in the bitcoin.conf file.",
-                  "usernamePlaceholder": "Username",
-                  "passwordPlaceholder": "Password"
-                },
-                "tls": {
-                  "title": "Use TLS",
-                  "tooltip": "Enable Transport Layer Security, for example, when using a hosted node solution."
-                }
-              }
-            },
-            "connecting": {
-              "header": "Testing node connection",
-              "description": "Please wait while we check if your full node is responding."
-            },
-            "success": {
-              "header": "Full node connection successful",
-              "description": "You can now configure your full node to scan for your accounts on the blockchain."
-            },
-            "failure": {
-              "header": "Could not reach full node",
-              "description": "Please ensure your node is fully synchronized and verify its connection settings."
-            }
-          }
-        },
-        "device": {
-          "title": "Device",
-          "connectionSteps": {
-            "pending": {
-              "header": "Getting accounts from device",
-              "description": "Please wait while the accounts to scan are added to the node configuration file."
-            },
-            "success": {
-              "header": "Accounts added to node configuration",
-              "description": "A configuration file was saved to the user data folder. It enables Ledger SatStack to connect to your full node and let it scan for your accounts on the blockchain.",
-              "cta": "View user data"
-            }
-          }
-        },
-        "accounts": {
-          "title": "Accounts",
-          "existing": "Existing accounts to scan",
-          "toScan": "Accounts to scan",
-          "toScanDescription": "Accounts to scan for each address type",
-          "toScanTooltip": "Increase only if you have 10+ BTC accounts.  Initial scan will be slower. "
-        },
-        "satstack": {
-          "title": "SatStack",
-          "connectionSteps": {
-            "notConnected": {
-              "header": "Download and run Ledger SatStack",
-              "description": "Ledger SatStack is a small application enabling Ledger Wallet to talk to your full node. Please download and run it before you continue.",
-              "disclaimer": "SatStack must be running for Ledger Wallet to connect to your full node.  Consider setting it to launch automatically when your computer boots.",
-              "cta": "Download SatStack"
-            },
-            "satstack-disconnected": {
-              "header": "Could not reach SatStack",
-              "description": "Please verify that SatStack is running on this computer."
-            },
-            "satstack-outdated": {
-              "header": "Please upgrade SatStack",
-              "description": "The SatStack version you are using is too old and may contain bugs or incompatibilities."
-            },
-            "node-disconnected": {
-              "header": "Could not reach full node",
-              "description": "Please verify that your node is reachable and that the connection settings you entered are correct."
-            },
-            "invalid-chain": {
-              "header": "invalid-chain title",
-              "description": "invalid-chain description for tooltip"
-            },
-            "initializing": {
-              "header": "Loading",
-              "description": ""
-            },
-            "ready": {
-              "header": "Ready",
-              "description": "The full node is fully synced. Your Bitcoin account balances are now correct."
-            },
-            "syncing": {
-              "header": "Node sync in progress…",
-              "description": "Recent transactions may not yet be visible, so Bitcoin account balances may be incorrect. If possible, run your node continuously to keep it in sync."
-            },
-            "scanning": {
-              "header": "Account scan in progress...",
-              "description": "You can add your accounts once the account scan is completed. Any Bitcoin accounts previously added through Ledger's explorers were removed."
-            }
-          }
-        },
-        "disconnect": {
-          "cta": "Disconnect",
-          "description": "Are you sure? Disconnecting the full node will remove all Bitcoin accounts. You can add your accounts again using Ledger’s explorers."
-        }
-      }
-    }
-  },
   "account": {
     "subHeader": {
       "moreInfo": "More info",
@@ -901,6 +783,7 @@
     }
   },
   "exchange": {
+    "pageHeader": "Buy or sell",
     "chooseProvider": "Choose from {{providerCount}} provider",
     "chooseProviders": "Choose from {{providerCount}} providers",
     "title": "Buy and sell crypto",
@@ -933,7 +816,15 @@
     }
   },
   "card": {
-    "backToCard": "all cards"
+    "backToCard": "all cards",
+    "title": "Card",
+    "imageAlt": "Card Image",
+    "spendYourCrypto": "Spend your crypto",
+    "payDescription": "Pay online or in store with a crypto card",
+    "exploreCards": "Explore Cards",
+    "iAlreadyHaveACard": "I already have a card",
+    "unlockLiquidity": "Unlock liquidity",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
   },
   "lend": {
     "title": "Lend crypto",
@@ -1311,6 +1202,17 @@
         "depositButton": "Secure my crypto",
         "skipButton": "Maybe later"
       },
+      "sync": {
+        "timelineTitle": "Wallet sync",
+        "timelineTitleCompleted": "Sync enabled",
+        "title": "Enable sync for your wallet",
+        "description": "Keep your portfolio up to date when switching computers or using a phone",
+        "skipButton": "I’ll do it later",
+        "skipTitle": "Skip enabling sync?",
+        "skipDescription": "If you skip, you'll have to manually re-add all your crypto accounts if you ever switch to a new phone or computer. You can always disable it from your Ledger Wallet settings.",
+        "skipConfirm": "Yes, skip",
+        "skipNo": "No, enable sync"
+      },
       "backup": {
         "title": "Backup for your Secret Recovery Phrase",
         "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
@@ -1592,34 +1494,6 @@
         "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
-    },
-    "marketPerformanceWidget": {
-      "title": "{{time}} trend",
-      "buy": "Buy",
-      "swap": "Swap",
-      "gainers": "Gainers",
-      "losers": "Losers",
-      "error": {
-        "title": "Sorry, we’re unable to load the trend",
-        "description": "Please try again later"
-      },
-      "missingData": {
-        "gainers": {
-          "title": "No assets among the top {{count}} experienced gains in the last {{trend}}",
-          "description": "Consider viewing top losers or come back later"
-        },
-        "losers": {
-          "title": "No assets among the top {{count}} experienced losses in the last {{trend}}",
-          "description": "Consider viewing top gainers or come back later"
-        }
-      },
-      "trend": {
-        "day": "24 hours",
-        "week": "7 days",
-        "month": "30 days",
-        "year": "year",
-        "all": "year"
-      }
     }
   },
   "currentAddress": {
@@ -1668,6 +1542,7 @@
     "currency": "Currency",
     "rangeLabel": "Time",
     "goBack": "Go back",
+    "searchPlaceholder": "Search asset",
     "filters": {
       "title": "Filters",
       "show": "Show",
@@ -1773,8 +1648,6 @@
       "import": "Accounts",
       "finish": "Confirmation"
     },
-    "fullNodeReadyInfo": "Accounts will be added using your Bitcoin full node.",
-    "fullNodeConfigure": "Configure node",
     "tokensTip": "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_other": "Add existing accounts",
     "selectAll": "Select all ({{count}})",
@@ -1925,6 +1798,7 @@
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
+      "acceptTermsSponsored": "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
       "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
@@ -2347,6 +2221,19 @@
       "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
+  "newReceive": {
+    "steps": {
+      "options": {
+        "fromBank": {
+          "title": "Bank transfer",
+          "description": "Receive stablecoin by sending cash"
+        },
+        "fromCrypto": {
+          "title": "Receive crypto"
+        }
+      }
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
@@ -2461,9 +2348,104 @@
       }
     }
   },
+  "newSendFlow": {
+    "title": "Send {{currency}}",
+    "available": "Available {{amount}}",
+    "placeholder": "Enter address or ENS",
+    "placeholderNoENS": "Enter address",
+    "recent": "Recent",
+    "myAccounts": "My accounts",
+    "sendTo": "Send to {{address}}",
+    "addressMatched": "Address matched",
+    "addressNotFound": "Address not found",
+    "alreadyUsed": "Already used · {{date}}",
+    "recentSendWillAppear": "Your recent send will appear here",
+    "relativeDate": {
+      "justNow": "Just now",
+      "minutesAgo_one": "1 min ago",
+      "minutesAgo_other": "{{count}} min ago",
+      "hoursAgo_one": "1 hour ago",
+      "hoursAgo_other": "{{count}} hours ago",
+      "daysAgo_one": "1 day ago",
+      "daysAgo_other": "{{count}} days ago"
+    },
+    "remove": "Remove",
+    "enterTag": "Enter {{tag}}",
+    "firstInteraction": {
+      "title": "You’re sending to a new address",
+      "description": "Verify that the address is correct. In case of doubt send a small amount first."
+    },
+    "sanctioned": {
+      "title": "Flagged address",
+      "description": "This address has been flagged and Ledger doesn’t allow sending to it",
+      "helpCenter": "Help center"
+    },
+    "errors": {
+      "incorrectFormat": "Incorrect address format",
+      "incompatibleAsset": "Address isn’t compatible with the asset selected",
+      "walletNotExist": "Wallet doesn’t exist"
+    },
+    "skipMemo": {
+      "title": "Skip adding {{memoLabel}}?",
+      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient",
+      "notRequired": "{{memoLabel}} not required by recipient?",
+      "confirm": "Yes skip",
+      "neverAskAgain": "Don't show this warning again"
+    },
+    "tagHelp": {
+      "inputLabel": "Enter {{memoLabel}}",
+      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} memo may result in a loss of funds."
+    },
+    "networkFeesInFiat": "Network fees in {{currency}}",
+    "feesAmount": "Fees amount ({{unit}})",
+    "gasLimit": "Gas limit ({{unit}})",
+    "feesPaid": "Fees paid to the network to proceed your transaction",
+    "insufficientBalanceFees": "Insufficient balance to cover the network fees",
+    "amountToSend": "Amount to send in ({{currency}})",
+    "coinToSend": "Coin to send",
+    "coinControlCustom": "Custom coin selection",
+    "quickActions": {
+      "quarter": "25%",
+      "half": "50%",
+      "threeQuarters": "75%",
+      "max": "Max"
+    },
+    "reviewCta": "Review",
+    "getCta": "Get {{currency}}",
+    "switchInputMode": "Switch amount input mode",
+    "aboveMaximum": "Above maximum balance",
+    "transactionSigned": "Transaction signed",
+    "processingTransaction": "Your transaction is being processed",
+    "sign": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
+    },
+    "gasOptionsSync": {
+      "warningTitle": "Unable to refresh network fees",
+      "warningDescription": "Fee presets may be outdated."
+    },
+    "customFees": {
+      "title": "Custom fees",
+      "confirm": "Confirm",
+      "maxFee": "Max fee ({{unit}})",
+      "maxPriorityFee": "Max priority fee ({{unit}})",
+      "gasLimit": "Gas limit ({{unit}})",
+      "feePerByte": "Fees amount ({{unit}})",
+      "suggested": "Suggested",
+      "nextBlock": "Next block",
+      "networkFeesInFiat": "Network fees in {{currency}}",
+      "invalidValue": "Enter a valid number",
+      "belowMinimum": "Minimum is {{min}}",
+      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+    },
+    "coinControl": {
+      "title": "Coin control"
+    }
+  },
   "releaseNotes": {
-    "title": "Release notes",
-    "version": "Ledger Wallet {{versionNb}}"
+    "title": "Release note",
+    "version": "Ledger Wallet {{versionNb}}",
+    "gotIt": "Got it"
   },
   "troubleshootNetwork": {
     "title": "Troubleshoot networking",
@@ -3715,6 +3697,8 @@
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
       "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "inactiveStakeTitle": "Withdrawable Rewards",
       "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
@@ -4530,12 +4514,10 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
-      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
-      "mevProtectionLearnMore": "Privacy notice",
-      "marketPerformanceWidget": "Market Performance Widget",
-      "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
+      "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
       "search": "Search",
@@ -4608,6 +4590,10 @@
           "title": "Quick generation",
           "desc": "Generate 10 random accounts with random currencies"
         },
+        "emptyGenerate": {
+          "title": "Empty generation",
+          "desc": "Generate an empty account"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -4623,7 +4609,8 @@
         "buttons": {
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
-          "generateAccountsQuick": "Generate {{count}} accounts"
+          "generateAccountsQuick": "Generate {{count}} accounts",
+          "generateEmptyAccount": "Generate empty account"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -4661,7 +4648,23 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily"
+        "description": "Allows you to test the Modular Drawer easily",
+        "openDrawer": "Open Drawer",
+        "debugDialog": "Debug Dialog",
+        "debugDuplicates": "Debug Duplicates"
+      },
+      "walletFeaturesDevTool": {
+        "title": "Wallet Features Dev Tool",
+        "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "mainFeatureToggle": "Main Feature Toggle",
+        "enableAll": "Enable All",
+        "disableAll": "Disable All",
+        "featureParameters": "Feature Parameters",
+        "tourState": "Tour State",
+        "drawerPreview": "Drawer Preview",
+        "openDrawer": "Open Drawer",
+        "showJson": "Show JSON",
+        "hideJson": "Hide JSON"
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
@@ -4760,6 +4763,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableCountervaluesStaging": "Countervalues API staging",
+      "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -4941,13 +4946,13 @@
         "count": "1 token",
         "count_other": "{{count}} tokens"
       },
-      "fullNode": {
-        "title": "Connect Bitcoin full node",
-        "desc": "Set up your Bitcoin full node to synchronize and send transactions without using Ledger’s explorers."
-      },
       "filterTokenOperationsZeroAmount": {
         "title": "Hide token transactions when value is 0",
         "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
+      },
+      "doNotAskAgainSkipMemo": {
+        "title": "Do not ask again skip memo on send",
+        "desc": "Disable the warning about skipping the memo when sending funds"
       }
     }
   },
@@ -5212,6 +5217,7 @@
           "recoveryPhrase": "Recovery phrase",
           "hideRecoveryPhrase": "Hide recovery phrase",
           "pairNano": "Connect nano",
+          "enableSync": "Synchronization",
           "secureYourCrypto": "Secure your crypto"
         },
         "screens": {
@@ -5504,6 +5510,14 @@
             "help": {
               "help": "Need help",
               "descr": "Don't know what you have to do? Get some help to close this step."
+            }
+          },
+          "enableSync": {
+            "title": "Enable sync for your wallet",
+            "description": "Keep your portfolio up to date when switching phones or using a computer.",
+            "buttons": {
+              "next": "Continue",
+              "nextSecondary": "I'll do it later"
             }
           },
           "secureYourCrypto": {
@@ -5853,15 +5867,26 @@
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
-      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient",
+      "memo": "Transfer ID (Memo)"
     },
     "ton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment"
+      "comment": "Comment",
+      "memo": "Comment"
     },
     "canton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
+      "expiryDuration": {
+        "label": "Expiry duration",
+        "summaryLabel": "Expiry Offer",
+        "threeHours": "3 hours",
+        "sixHours": "6 hours",
+        "oneDay": "1 day",
+        "oneWeek": "1 week",
+        "oneMonth": "30 days"
+      },
       "account": {
         "lockedBalance": "Locked",
         "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
@@ -5919,10 +5944,12 @@
       "pendingTransactions": {
         "title": "Pending Transactions ({{count}})",
         "incoming": {
-          "title": "Incoming Offers ({{count}})"
+          "title": "Incoming transfer to review ({{count}})",
+          "detailsTitle": "Incoming transfer details"
         },
         "outgoing": {
-          "title": "Outgoing Offers ({{count}})"
+          "title": "Outgoing Offers ({{count}})",
+          "detailsTitle": "Outgoing transfer details"
         },
         "pending": "Pending",
         "expired": "Expired",
@@ -6004,6 +6031,9 @@
     },
     "mina": {
       "memoPlaceholder": "Optional Memo"
+    },
+    "xrp": {
+      "memo": "Tag"
     }
   },
   "errors": {
@@ -6398,22 +6428,6 @@
     "RPCPassRequired": {
       "title": "RPC Password is required"
     },
-    "SatStackAccessDown": {
-      "title": "Could not reach full node",
-      "description": "Please verify that SatStack and your node are running. Check the full node setup in the Settings if the problem persists."
-    },
-    "SatStackStillSyncing": {
-      "title": "Node sync in progress...",
-      "description": "Please wait while your node is syncing. Sending is not possible since your Bitcoin account balances may be incorrect."
-    },
-    "SatStackVersionTooOld": {
-      "title": "Please upgrade SatStack",
-      "description": "The SatStack version you are using is too old and may contain bugs or incompatibilities."
-    },
-    "SatStackDescriptorNotImported": {
-      "title": "Account not scanned by full node",
-      "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
-    },
     "SwapRateExpiredError": {
       "title": "Rate Expired",
       "description": "Exchange rate expired. Please refresh and try again."
@@ -6427,7 +6441,7 @@
     },
     "TransactionCannotBeCreated": {
       "title": "Processing Error",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "SwapQuoteLowLiquidity": {
       "title": "Partner unavailable",
@@ -6725,7 +6739,7 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+      "title": "Enable Blind signing or Contract data in Ethereum app"
     },
     "CeloAppPleaseEnableContractData": {
       "title": "Please enable Contract data in the Celo app Settings"
@@ -6879,6 +6893,10 @@
       "title": "Cardano invalid protocol parameters",
       "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
+    "CardanoMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 64 characters",
+      "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -6951,6 +6969,10 @@
     },
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
+    },
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters",
+      "description": "Hedera memo have a maximum limited size. Please reduce the size of the memo"
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
@@ -7451,6 +7473,12 @@
       }
     }
   },
+  "dialogs": {
+    "selectAccount": {
+      "description": "You don't have {{network}} accounts yet. Please add one to continue",
+      "addAccount": "Add account"
+    }
+  },
   "drawers": {
     "selectCurrency": {
       "title": "choose asset"
@@ -7617,12 +7645,15 @@
       "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience."
     }
   },
+  "analytics": {
+    "title": "Analytics"
+  },
   "walletSync": {
     "title": "Ledger Sync",
     "close": "Close",
     "banner": {
       "title": "Your wallet isn't synced",
-      "description": "Keep your portfolio up to date when switching computers or use a phone",
+      "description": "Keep your portfolio up to date when switching computers or using a phone",
       "cta": "Sync my wallet"
     },
     "activate": {
@@ -7632,7 +7663,7 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?",
       "titleModal": "Sync your wallet",
-      "descriptionModal": "Keep your portfolio up to date when switching computers or use a phone — all secured by your Ledger device.",
+      "descriptionModal": "Keep your portfolio up to date when switching computers or using a phone — all secured by your Ledger device.",
       "ctaModal": "Continue"
     },
     "entryPoints": {
@@ -7850,6 +7881,11 @@
           "description": "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Wallet once it's created.",
           "cta": "How to create a {{currency}} account?",
           "close": "Close"
+        },
+        "noAccountsAddedWarning": {
+          "title": "No {{currency}} accounts were added",
+          "description": "You haven't completed the required setup for one or more selected accounts.",
+          "close": "Close"
         }
       },
       "status": {
@@ -7881,13 +7917,85 @@
       "title": "A network error occurred",
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
       "cta": "Retry"
+    },
+    "errors": {
+      "network": {
+        "title": "Connection failed",
+        "description": "No internet connection. Please try again"
+      },
+      "backend": {
+        "title": "Connection failed",
+        "description": "Something went wrong on our end. Please try again later"
+      },
+      "cta": "Try again"
     }
+  },
+  "portfolio": {
+    "title": "Home",
+    "today": "Today",
+    "addAccountCta": "Add crypto account",
+    "noBalanceTitle": "Secure your crypto",
+    "perpsEntry": {
+      "title": "Perpetuals",
+      "description": "Trade with leverage",
+      "cta": "Discover"
+    },
+    "noDeviceTitle": "The most secure wallet"
+  },
+  "marketBanner": {
+    "title": "Explore market",
+    "genericError": "Connection failed",
+    "cta": "View all",
+    "fearAndGreed": {
+      "title": "Mood"
+    }
+  },
+  "fearAndGreed": {
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
+    },
+    "dialog": {
+      "title": "Mood index",
+      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "cta": "Got it"
+    }
+  },
+  "quickActions": {
+    "send": "Send",
+    "receive": "Receive",
+    "buy": "Buy",
+    "sell": "Sell",
+    "connect": "Connect",
+    "buyALedger": "Buy a Ledger"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
       "magiceden": "Magic Eden",
       "opensea": "OpenSea"
+    }
+  },
+  "topBar": {
+    "activityIndicator": {
+      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "upToDate": "You're up to date",
+      "minutesAgo_one": "Last sync: {{count}} min ago. Tap to refresh",
+      "minutesAgo_other": "Last sync: {{count}} mins ago. Tap to refresh",
+      "hoursAgo_one": "Last sync: {{count}} hour ago. Tap to refresh",
+      "hoursAgo_other": "Last sync: {{count}} hours ago. Tap to refresh",
+      "daysAgo_one": "Last sync: {{count}} day ago. Tap to refresh",
+      "daysAgo_other": "Last sync: {{count}} days ago. Tap to refresh"
+    },
+    "notificationIndicator": {
+      "tooltip": "Notifications"
+    },
+    "myLedger": {
+      "tooltip": "My Ledger"
     }
   },
   "geoBlocking": {
@@ -7912,6 +8020,120 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "shielded": {
+      "state": {
+        "showBalance": "Show balance",
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
+        "lastSync": "Last sync: {{date}}"
+      },
+      "datepicker": {
+        "label": "Birthday height",
+        "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      },
+      "flows": {
+        "export": {
+          "title": "Enable Zcash private balance",
+          "breadcrumbs": {
+            "0": "Birthday",
+            "1": "UFVK",
+            "2": "Device",
+            "3": "Confirmation"
+          },
+          "steps": {
+            "birthday": {
+              "text": "The birth height is the point on the blockchain where your wallet begins scanning for your funds.",
+              "cta": "Learn more",
+              "label": "Birthday height",
+              "tooltip": "Default: today's date. Change only for existing accounts with past private (shielded) activity.",
+              "syncFromZero": "This account received shielded ZEC in the past, but I can't retrieve the birth height. Scan from block 0 (this may take a long time).",
+              "error": "Invalid date"
+            },
+            "ufvk": {
+              "text": "To begin, you must export your Unified Full Viewing Key (UFVK). This action requires your confirmation on your Ledger device."
+            },
+            "device": {
+              "text": "Confirm UFVK export on your Ledger device"
+            },
+            "confirmation": {
+              "success": {
+                "title": "UFVK successfully imported",
+                "text": "You will be able to receive shielded ZEC and sign private transactions.",
+                "info": {
+                  "text": "Your Unified Full Viewing Key remains stored locally on your computer and is never transmitted or exposed to external systems.",
+                  "cta": "Learn more"
+                },
+                "warning": "Accounts with an older birth height may require a longer synchronisation (up to 2 hours). Please keep the app open until syncing finishes."
+              }
+            }
+          }
+        }
+      }
+    },
+    "operationDetails": {
+      "txType": "Transaction type",
+      "transparentTx": "Transparent",
+      "shieldedSaplingTx": "🛡 Private (Sapling)",
+      "shieldedOrchardTx": "🛡 Private (Orchard)"
     }
+  },
+  "aleo": {
+    "addAccount": {
+      "stepViewKeyWarning": {
+        "title": "Set up Aleo private balance",
+        "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
+        "bullets": [
+          "Read-only access to decrypt your private balance",
+          "Ledger cannot send or spend your funds",
+          "Only you can sign and spend your funds",
+          "Proof generation is handled by third-party prover services to ensure fast processing",
+          "Provers cannot access or spend your funds"
+        ],
+        "cta": {
+          "allow": "Allow",
+          "cancel": "Cancel"
+        }
+      },
+      "stepViewKeyApprove": {
+        "title": "Approve on your Ledger",
+        "description": "Confirm sharing the view key on your device",
+        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
+        "cancelAllBtn_one": "Cancel",
+        "cancelAllBtn_other": "Cancel all"
+      },
+      "stepScanAccounts": {
+        "cta": {
+          "shareKey_one": "Share view key",
+          "shareKey_other": "Share view keys"
+        }
+      },
+      "warnings": {
+        "noAccountsAddedWarning": {
+          "description": "You haven't shared view keys for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
+        }
+      }
+    },
+    "account": {
+      "availableBalance": "Available balance",
+      "availableBalanceTooltip": "Balance that can be transferred",
+      "transparentBalance": "Transparent balance",
+      "transparentBalanceTooltip": "Balance that is visible to the public",
+      "privateBalance": "Private balance",
+      "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private"
+      }
+    }
+  },
+  "updater": {
+    "newUpdateAvailable": "New update available",
+    "downloadProgress": "{{progress}}%",
+    "errorTryAgain": "Error during update, try again",
+    "installAndRelaunch": "Install update and relaunch"
   }
 }

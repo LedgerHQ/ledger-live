@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setTheme } from "~/renderer/actions/settings";
 import { themeSelector } from "~/renderer/actions/general";
-import { useTheme, ThemeMode, IconButton } from "@ledgerhq/ldls-ui-react";
-import { Moon, Sun } from "@ledgerhq/ldls-ui-react/symbols";
+import { useTheme, ThemeMode, IconButton } from "@ledgerhq/lumen-ui-react";
+import { Moon, Sun } from "@ledgerhq/lumen-ui-react/symbols";
 
 const STORAGE_KEY = "theme-console-position";
 
@@ -105,10 +105,10 @@ const ThemeConsole = () => {
 
   return (
     <div
-      className="pointer-events-auto fixed z-[9999999999]"
+      className="pointer-events-auto fixed z-9999999999"
       style={{ left: position.x, top: position.y, opacity: isDragging ? 0.8 : 1 }}
     >
-      <div className="flex select-none flex-row gap-8 rounded-[8px] bg-muted-transparent p-8 shadow-xl">
+      <div className="flex flex-row gap-8 rounded-[8px] bg-muted-transparent p-8 shadow-xl select-none">
         <div
           className="flex cursor-grab items-center justify-center px-2 text-muted active:cursor-grabbing"
           onMouseDown={handleMouseDown}

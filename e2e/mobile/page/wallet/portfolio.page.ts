@@ -1,4 +1,7 @@
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
+import { getFlags } from "../../bridge/server";
+import { Feature_Noah } from "@ledgerhq/types-live";
 
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
@@ -33,7 +36,23 @@ export default class PortfolioPage {
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
   tabBarEarnButton = "tab-bar-earn";
-  portfolioOperationHistorySection = "portfolio-operation-history-section";
+  marketBannerList = "market-banner-list";
+  marketBannerTileBase = "market-banner-tile-";
+  marketBannerViewAll = "market-banner-view-all";
+  fearAndGreedCard = "fear-and-greed-card";
+  fearAndGreedTitle = "fear-and-greed-title";
+  bottomSheetCloseButton = "bottom-sheet-header-close-button";
+  accountsList = "portfolio-assets-layout";
+  marketBannerTitle = "market-banner-title";
+  quickActionTransferButtonV4 = "quick-action-transfer";
+  quickActionSwapButtonV4 = "quick-action-swap";
+  quickActionBuyButtonV4 = "quick-action-buy";
+  portfolioBalanceNoAccount = "portfolio-balance-noAccounts";
+  portfolioBalanceNormal = "portfolio-balance-normal";
+  portfolioBalanceAnalyticsPill = "portfolio-balance-analytics-pill";
+  transferBottomSheetReceiveButton = "transfer-action-receive";
+  transferBottomSheetSendButton = "transfer-action-send";
+  transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -41,6 +60,19 @@ export default class PortfolioPage {
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
+  operationByType = (operationType?: string) =>
+    getElementByIdAndText(this.operationRowDate, new RegExp(`.*${operationType ?? ""}.*`, "i"));
+
+  private flags: Feature_Noah | null = null;
+
+  private async loadFlags(): Promise<void> {
+    this.flags ??= JSON.parse(await getFlags()).noah;
+  }
+
+  async isNoahEnabled(): Promise<boolean> {
+    await this.loadFlags();
+    return this.flags!.enabled;
+  }
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -71,6 +103,11 @@ export default class PortfolioPage {
     await this.expectAssetRowToBeVisible(asset);
     const text = await getTextOfElement(this.assetItemBalanceId(asset));
     jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect chart to be visible")
+  async expectBalanceToBeVisible() {
+    await detoxExpect(getElementById(this.graphCardBalanceId)).toBeVisible();
   }
 
   @Step("Expect total balance value")
@@ -123,6 +160,7 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
+    await waitForElementById(this.accountsListView, 10000);
     await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
 
     if (await IsIdVisible(this.assetItemId(currencyName))) {
@@ -190,19 +228,19 @@ export default class PortfolioPage {
   }
 
   @Step("Check asset transaction history")
-  async checkTransactionAllocationSection() {
+  async checkTransactionHistorySection() {
     await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
     await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
     jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
-    await scrollToId(this.seeAllTransactionsButton);
+    await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 2000, "down");
     await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
     await tapById(this.seeAllTransactionsButton);
     jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
   }
 
   @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation() {
-    await tapById(this.operationRowDate);
+  async selectAndClickOnLastOperation(operationType?: string) {
+    await tapByElement(this.operationByType(operationType));
   }
 
   @Step("Tap on tab selector")
@@ -245,5 +283,133 @@ export default class PortfolioPage {
       await scrollToId(this.addNewOrExistingAccount, app.portfolio.accountsListView, 400);
     }
     await tapById(this.addNewOrExistingAccount);
+  }
+
+  @Step("Expect market banner to be visible")
+  async expectMarketBannerVisible() {
+    await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, "down");
+    await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
+  }
+
+  @Step("Expect fear and greed card to be visible")
+  async expectFearAndGreedCardVisible() {
+    await detoxExpect(getElementById(this.fearAndGreedCard)).toBeVisible();
+  }
+
+  @Step("Tap on fear and greed card")
+  async tapFearAndGreedCard() {
+    await tapById(this.fearAndGreedCard);
+  }
+
+  @Step("Expect fear and greed title in drawer")
+  async expectFearAndGreedTitleInDrawer() {
+    await waitForElementById(this.fearAndGreedTitle);
+    await detoxExpect(getElementById(this.fearAndGreedTitle)).toBeVisible();
+  }
+
+  @Step("Close bottom sheet")
+  async closeBottomSheet() {
+    await getElementById(this.bottomSheetCloseButton).swipe("down");
+  }
+
+  @Step("Tap on market banner tile")
+  async tapMarketBannerTile(index: number) {
+    await detoxExpect(getElementById(`${this.marketBannerTileBase}${index}`)).toBeVisible();
+    await tapById(`${this.marketBannerTileBase}${index}`);
+  }
+
+  @Step("Tap on market banner view all")
+  async tapMarketBannerViewAll() {
+    await scrollToId(this.marketBannerViewAll, this.marketBannerList);
+    await tapById(this.marketBannerViewAll);
+  }
+
+  @Step("Tap on market banner title")
+  async tapMarketBannerTitle() {
+    await tapById(this.marketBannerTitle);
+  }
+
+  @Step("Swipe market banner to view all")
+  async swipeMarketBannerToViewAll() {
+    await scrollToId(this.marketBannerViewAll, this.marketBannerList, 1000, "right");
+  }
+
+  @Step("Check quick action transfer button visibility")
+  async checkQuickActionTransferButtonVisibility() {
+    await detoxExpect(getElementById(this.quickActionTransferButtonV4)).toBeVisible();
+  }
+
+  @Step("Check quick action swap button visibility")
+  async checkQuickActionSwapButtonVisibility() {
+    await detoxExpect(getElementById(this.quickActionSwapButtonV4)).toBeVisible();
+  }
+
+  @Step("Check quick action buy button visibility")
+  async checkQuickActionBuyButtonVisibility() {
+    await detoxExpect(getElementById(this.quickActionBuyButtonV4)).toBeVisible();
+  }
+
+  @Step("Press quick action buy button")
+  async pressQuickActionBuyButton() {
+    await tapById(this.quickActionBuyButtonV4);
+  }
+
+  @Step("Press quick action swap button")
+  async pressQuickActionSwapButton() {
+    await tapById(this.quickActionSwapButtonV4);
+  }
+
+  @Step("Press quick action transfer button")
+  async pressQuickActionTransferButton() {
+    await tapById(this.quickActionTransferButtonV4);
+  }
+  @Step("Check no balance title visibility")
+  async checkNoBalanceTitleVisibility() {
+    await detoxExpect(getElementById(this.portfolioBalanceNoAccount)).toBeVisible();
+  }
+
+  @Step("Check normal balance title visibility")
+  async checkNormalBalanceTitleVisibility() {
+    await detoxExpect(getElementById(this.portfolioBalanceNormal)).toBeVisible();
+  }
+
+  @Step("Check portfolio balance analytics pill visibility")
+  async checkPortfolioBalanceAnalyticsPillVisibility() {
+    await detoxExpect(getElementById(this.portfolioBalanceAnalyticsPill)).toBeVisible();
+  }
+
+  @Step("Tap on portfolio balance analytics pill")
+  async tapPortfolioBalanceAnalyticsPill() {
+    await tapById(this.portfolioBalanceAnalyticsPill);
+  }
+
+  @Step("Check transfer bottom sheet receive button visibility")
+  async checkTransferBottomSheetReceiveButtonVisibility() {
+    await detoxExpect(getElementById(this.transferBottomSheetReceiveButton)).toBeVisible();
+  }
+
+  @Step("Check transfer bottom sheet send button visibility")
+  async checkTransferBottomSheetSendButtonVisibility() {
+    await detoxExpect(getElementById(this.transferBottomSheetSendButton)).toBeVisible();
+  }
+
+  @Step("Check transfer bottom sheet bank transfer button visibility")
+  async checkTransferBottomSheetBankTransferButtonVisibility() {
+    await detoxExpect(getElementById(this.transferBottomSheetBankTransferButton)).toBeVisible();
+  }
+
+  @Step("Press transfer bottom sheet receive button")
+  async pressTransferBottomSheetReceiveButton() {
+    await tapById(this.transferBottomSheetReceiveButton);
+  }
+
+  @Step("Press transfer bottom sheet send button")
+  async pressTransferBottomSheetSendButton() {
+    await tapById(this.transferBottomSheetSendButton);
+  }
+
+  @Step("Press transfer bottom sheet bank transfer button")
+  async pressTransferBottomSheetBankTransferButton() {
+    await tapById(this.transferBottomSheetBankTransferButton);
   }
 }

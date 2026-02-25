@@ -10,6 +10,7 @@ import { fromTransactionRaw } from "../transaction";
 import type { Transaction } from "../types";
 
 export const hedera: CurrenciesData<Transaction> = {
+  FIXME_ignoreAccountFields: ["syncHash"],
   scanAccounts: [
     {
       name: "hedera seed 1",

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
@@ -9,7 +9,7 @@ import InfoModal from "~/modals/Info";
 import type { ModalInfo } from "~/modals/Info";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   readonly account: CeloAccount;

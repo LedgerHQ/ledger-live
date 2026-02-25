@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import PasswordAdd from "~/screens/Settings/General/PasswordAdd";

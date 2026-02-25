@@ -1,13 +1,11 @@
 import {
   Api,
-  Block,
-  BlockInfo,
   Cursor,
+  ListOperationsOptions as ApiListOperationsOptions,
   Page,
   Validator,
   FeeEstimation,
   Operation,
-  Pagination,
   Reward,
   Stake,
   TransactionIntent,
@@ -22,8 +20,10 @@ import {
   craftTransaction,
   craftRawTransaction,
   estimateFees,
-  getBalance,
   getAccountInfo,
+  getBalance,
+  getBlock,
+  getBlockInfo,
   getNextValidSequence,
   lastBlock,
   listOperations,
@@ -45,12 +45,8 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getSequence: async (address: string) => {
       const accountInfo = await getAccountInfo(address);
       return BigInt(accountInfo.sequence);
@@ -114,19 +110,24 @@ async function estimate(): Promise<FeeEstimation> {
 }
 
 // NOTE: double check
-async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
-  const { minHeight, lastPagingToken, order } = pagination;
+async function operations(
+  address: string,
+  { minHeight, cursor, order }: ApiListOperationsOptions,
+): Promise<Page<Operation>> {
+  // FIXME The public API type (ListOperationsOptions) includes an optional limit, but this wrapper always forces
+  //  limit: 200 and silently ignores any caller-provided limit. Either honor options.limit (possibly as a capped/soft
+  //  limit) or throw a "not supported" error when limit is provided.
   const options: ListOperationsOptions = {
     limit: 200,
     minHeight: minHeight,
     order: order ?? "asc",
   };
-  if (lastPagingToken) {
-    const token = lastPagingToken.split("-");
+  if (cursor) {
+    const token = cursor.split("-");
     options.token = JSON.stringify({ ledger: Number(token[0]), seq: Number(token[1]) });
     log(options.token);
   }
-  const [operations, apiNextCursor] = await listOperations(address, options);
+  const [ops, apiNextCursor] = await listOperations(address, options);
   const next = apiNextCursor ? JSON.parse(apiNextCursor) : null;
-  return [operations, next ? next.ledger + "-" + next.seq : ""];
+  return { items: ops, next: next ? next.ledger + "-" + next.seq : undefined };
 }

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Action, State } from "@ledgerhq/live-common/apps/index";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";

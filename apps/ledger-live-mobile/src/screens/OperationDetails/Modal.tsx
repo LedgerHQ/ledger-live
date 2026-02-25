@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";

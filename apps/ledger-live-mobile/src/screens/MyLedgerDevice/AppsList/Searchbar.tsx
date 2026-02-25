@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import { Platform, TouchableOpacity, TextInput } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 
@@ -11,7 +11,9 @@ type Props = {
   onBlur?(): void;
 };
 
-const SearchbarContainer = styled(Flex).attrs({
+const SearchbarContainer = styled(Flex).attrs<{
+  paddingHorizontal?: number;
+}>({
   flex: 1,
   paddingHorizontal: 17.5,
   borderWidth: 1,
@@ -21,7 +23,11 @@ const SearchbarContainer = styled(Flex).attrs({
   height: 48,
 })``;
 
-const SearchbarTextInput = styled(TextInput).attrs({
+const SearchbarTextInput = styled(TextInput).attrs<{
+  padding?: number;
+  paddingLeft?: number;
+  flex?: number;
+}>({
   padding: 0,
   paddingLeft: 10,
   flex: 1,

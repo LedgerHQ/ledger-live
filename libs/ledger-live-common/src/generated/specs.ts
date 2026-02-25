@@ -1,3 +1,4 @@
+import aleo from "@ledgerhq/coin-aleo/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import aptos from "@ledgerhq/coin-aptos/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
@@ -25,6 +26,7 @@ import xrp from "@ledgerhq/coin-xrp/specs";
 import mina from "@ledgerhq/coin-mina/specs";
 
 export default {
+  aleo,
   algorand,
   aptos,
   bitcoin,

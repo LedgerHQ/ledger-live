@@ -32,9 +32,6 @@ export class Layout extends Component {
   readonly topbarHelpButton = this.page.getByTestId("topbar-help-button");
   readonly discreetTooltip = this.page.locator("#tippy-12"); // automatically generated tippy id but it's consistent
 
-  // general
-  readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
-
   // updater
   readonly appUpdateBanner = this.page.getByTestId("layout-app-update-banner");
 
@@ -60,6 +57,7 @@ export class Layout extends Component {
 
   @step("Open Accounts")
   async goToAccounts() {
+    await this.drawerAccountsButton.waitFor({ state: "visible" });
     await this.drawerAccountsButton.click();
   }
 

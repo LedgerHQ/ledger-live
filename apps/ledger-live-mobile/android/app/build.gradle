@@ -1,7 +1,7 @@
+// Native cache invalidation: 2026-01-27
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply plugin: "io.sentry.android.gradle"
 
 apply plugin: 'com.google.gms.google-services'
 
@@ -92,14 +92,14 @@ def enableProguardInReleaseBuilds = false
  * The preferred build flavor of JavaScriptCore (JSC)
  *
  * For example, to use the international variant, you can use:
- * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
  *
  * The international variant includes ICU i18n library and necessary data
  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc-intl:+'
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 /**
  * Private function to get the list of Native Architectures you want to build.
@@ -119,13 +119,21 @@ android {
 
     namespace "com.ledger.live"
 
+    // 16 KB page size support for Android 15+ devices
+    // https://developer.android.com/guide/practices/page-sizes
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+
     defaultConfig {
         applicationId project.hasProperty('APP_IDENTIFIER') ? APP_IDENTIFIER : "com.ledger.live"
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.98.0"
+        versionName "3.100.1"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -191,16 +199,6 @@ android {
         }
     }
 }
-
-
-apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
-
-
-sentry {
-    autoUploadProguardMapping = shouldSentryAutoUpload()
-    uploadNativeSymbols = shouldSentryAutoUpload()
-}
-
 
 
 dependencies {

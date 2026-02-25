@@ -10,12 +10,13 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { colors } = useTheme();
   const { fromAccount, toAccount, ...routeParams } = item;
-  const { swapId, fromAmount, toAmount, status } = routeParams;
+  const { swapId, fromAmount, toAmount, finalAmount, status } = routeParams;
+  const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
 
   const onOpenOperationDetails = useCallback(() => {
@@ -70,7 +71,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
             {toAccountName}
           </LText>
           <LText style={styles.amount} color="grey" testID={`swap-history-toAmount-${swapId}`}>
-            <CurrencyUnitValue showCode unit={unitTo} value={toAmount} />
+            <CurrencyUnitValue showCode unit={unitTo} value={displayToAmount} />
           </LText>
         </View>
       </View>

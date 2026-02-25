@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

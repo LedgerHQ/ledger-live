@@ -1,7 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { getAccountShape } from "./synchronization";
-import api from "./api";
 import BigNumber from "bignumber.js";
+import api from "./api";
+import { getAccountShape } from "./synchronization";
 
 describe("Synchronization", () => {
   beforeAll(() => {

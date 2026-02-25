@@ -1,7 +1,9 @@
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";
+import cosmosCoinConfig, { cosmosConfig } from "../config";
 import { CosmosAPI } from "./Cosmos";
 
 jest.mock("@ledgerhq/live-network/network");
@@ -22,6 +24,10 @@ describe("CosmosApi", () => {
   let cosmosApi: CosmosAPI;
 
   beforeEach(() => {
+    LiveConfig.setConfig(cosmosConfig);
+    cosmosCoinConfig.setCoinConfig(
+      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+    );
     cosmosApi = new CosmosAPI("cosmos");
   });
 
@@ -228,14 +234,14 @@ describe("CosmosApi", () => {
         gas_info: {},
       });
 
-      await expect(cosmosApi.simulate([])).rejects.toThrowError();
+      await expect(cosmosApi.simulate([])).rejects.toThrow();
     });
 
     it("should throw an error when the network call fails", async () => {
       mockedNetwork.mockImplementation(() => {
         throw new Error();
       });
-      await expect(cosmosApi.simulate([])).rejects.toThrowError();
+      await expect(cosmosApi.simulate([])).rejects.toThrow();
     });
   });
 
@@ -283,9 +289,7 @@ describe("CosmosApi", () => {
         }
       });
       const txs = await cosmosApi.getTransactions("address", 50);
-      expect(txs.find(tx => tx.txhash === "senderhash")).toBeDefined();
-      expect(txs.find(tx => tx.txhash === "recipienthash")).toBeDefined();
-      expect(txs.length).toEqual(2);
+      expect(txs).toEqual([{ txhash: "senderhash" }, { txhash: "recipienthash" }]);
     });
 
     it("should return every pages of transactions", async () => {

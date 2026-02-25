@@ -19,8 +19,8 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
     if (!dynamicContentCard.link) return;
 
     trackContentCardEvent("contentcard_clicked", {
+      ...dynamicContentCard.extras,
       screen: dynamicContentCard.location,
-      link: dynamicContentCard.link,
       campaign: dynamicContentCard.id,
     });
 
@@ -33,8 +33,8 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
     if (!dynamicContentCard) return;
 
     trackContentCardEvent("contentcard_dismissed", {
+      ...dynamicContentCard.extras,
       screen: dynamicContentCard.location,
-      link: dynamicContentCard.link || "",
       campaign: dynamicContentCard.id,
     });
 
@@ -44,7 +44,7 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
   if (!dynamicContentCard) return null;
 
   return (
-    <LogContentCardWrapper id={dynamicContentCard.id}>
+    <LogContentCardWrapper id={dynamicContentCard.id} location={dynamicContentCard.location}>
       <Flex mt={6}>
         <SideImageCard
           title={dynamicContentCard.title}

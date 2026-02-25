@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import QueuedDrawer from "~/components/QueuedDrawer";

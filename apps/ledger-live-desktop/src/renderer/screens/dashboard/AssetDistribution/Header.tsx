@@ -1,10 +1,29 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Text from "~/renderer/components/Text";
 import { Trans } from "react-i18next";
 import { rgba } from "~/renderer/styles/helpers";
+import { HIDE_BAR_THRESHOLD } from "./constants";
 
-const Wrapper = styled.div`
+interface WrapperProps {
+  isResponsiveLayout?: boolean;
+}
+
+const responsiveStyles = css`
+  @media (max-width: ${HIDE_BAR_THRESHOLD}px) {
+    > *:nth-of-type(3) {
+      width: 10%;
+    }
+    > *:nth-of-type(4) {
+      width: 30%;
+    }
+    > *:nth-of-type(5) {
+      width: 20%;
+    }
+  }
+`;
+
+const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
@@ -24,9 +43,16 @@ const Wrapper = styled.div`
   > *:nth-of-type(5) {
     width: 15%;
   }
+
+  ${p => p.isResponsiveLayout && responsiveStyles}
 `;
-const Header = () => (
-  <Wrapper>
+
+interface HeaderProps {
+  isResponsiveLayout?: boolean;
+}
+
+const Header = ({ isResponsiveLayout }: HeaderProps) => (
+  <Wrapper isResponsiveLayout={isResponsiveLayout}>
     <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
       <Trans i18nKey={"distribution.asset"} />
     </Text>

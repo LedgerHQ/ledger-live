@@ -4,7 +4,6 @@ import {
   importCountervalues,
   inferTrackingPairForAccounts,
   loadCountervalues,
-  trackingPairForTopCoins,
 } from "@ledgerhq/live-countervalues/logic";
 import type {
   CounterValuesState,
@@ -166,9 +165,10 @@ function Effect({
     );
   }, [pending, currentState, userSettings, triggerLoad, batchStrategySolver, bridge]);
 
-  // save the state when it changes
+  // restore state from persisted raw (history only so we know it's first run and check holes)
   useEffect(() => {
-    if (!savedState?.status || !Object.keys(savedState.status).length) return;
+    if (!savedState || typeof savedState !== "object") return;
+    if (!Object.keys(savedState).length) return;
     bridge.setState(importCountervalues(savedState, userSettings));
   }, [bridge, savedState, userSettings]);
 
@@ -302,26 +302,6 @@ export function useSendAmount({
     [state, cryptoCurrency, fiatCurrency],
   );
   return { fiatAmount, fiatUnit, calculateCryptoAmount };
-}
-
-/**
- * Infer the tracking pairs for the top coins that the portfolio needs to display itself
- * if startDate is undefined, the feature is disabled
- */
-export function useTrackingPairsForTopCoins(
-  marketcapIds: string[],
-  countervalue: Currency,
-  size: number,
-  startDate: Date | undefined,
-) {
-  const dateTimestamp = startDate?.getTime();
-  return useMemo(
-    () =>
-      dateTimestamp
-        ? trackingPairForTopCoins(marketcapIds, size, countervalue, new Date(dateTimestamp))
-        : [],
-    [marketcapIds, countervalue, dateTimestamp, size],
-  );
 }
 
 export function useTrackingPairForAccounts(

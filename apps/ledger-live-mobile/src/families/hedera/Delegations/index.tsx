@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";
 import { capitalize } from "lodash/fp";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -18,7 +18,7 @@ import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
 import DelegationStatusIcon from "~/families/hedera/Delegations/DelegationStatusIcon";
 import { DelegationStatusModal } from "~/families/hedera/shared/DelegationStatusModal";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useAccountName } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { rgba } from "../../../colors";
