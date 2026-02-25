@@ -168,14 +168,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 36900,
     },
-    explorerViews: [
-      {
-        tx: "https://explorer.adifoundation.ai/tx/$hash",
-        address: "https://explorer.adifoundation.ai/address/$address",
-        token:
-          "https://explorer.adifoundation.ai/address/$address?tab=token_transfer&token=$contractAddress",
-      },
-    ],
+    explorerViews: [blockscoutExplorerView("https://explorer.adifoundation.ai")],
     keywords: ["adi", "adi chain"],
     tokenTypes: ["erc20"],
   },
