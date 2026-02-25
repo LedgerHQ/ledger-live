@@ -4,7 +4,6 @@ import { SharedValue } from "react-native-reanimated";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import BackButton from "LLM/features/Web3Hub/components/BackButton";
-import TabButton from "LLM/features/Web3Hub/components/TabButton";
 import { AppProps } from "LLM/features/Web3Hub/types";
 
 const BAR_HEIGHT = 60;
@@ -60,7 +59,6 @@ export default function Web3HubAppHeader({
               </>
             )}
           </Flex>
-          <TabButton count={2} navigation={navigation} />
         </Flex>
       }
     />

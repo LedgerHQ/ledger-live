@@ -12,7 +12,6 @@ export type Web3HubTabScreenProps<T extends keyof Web3HubTabStackParamList> = Ma
 
 export type Web3HubStackParamList = {
   [ScreenName.Web3HubSearch]: undefined;
-  [ScreenName.Web3HubTabs]: undefined;
   [ScreenName.Web3HubApp]: {
     manifestId: string;
     queryParams?: Record<string, string | undefined>;
@@ -28,8 +27,6 @@ export type MainProps = Web3HubTabScreenProps<ScreenName.Web3HubMain>;
 export type SearchProps = Web3HubScreenProps<ScreenName.Web3HubSearch>;
 
 export type AppProps = Web3HubScreenProps<ScreenName.Web3HubApp>;
-
-export type TabsProps = Web3HubScreenProps<ScreenName.Web3HubTabs>;
 
 export type Web3HubDB = {
   recentlyUsed: RecentlyUsed[];
