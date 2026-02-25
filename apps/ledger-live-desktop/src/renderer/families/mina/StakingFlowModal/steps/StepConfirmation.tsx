@@ -121,7 +121,7 @@ export function StepConfirmationFooter({
             }
           }}
         >
-          <Trans i18nKey="common.close" />
+          <Trans i18nKey="mina.selectValidator.success.viewDetails" defaults="View details" />
         </Button>
       ) : (
         error && <RetryButton primary ml={2} onClick={onRetry} />
