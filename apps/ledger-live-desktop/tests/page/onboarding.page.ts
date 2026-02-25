@@ -48,7 +48,9 @@ export class OnboardingPage extends AppPage {
   }
 
   async hoverDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
-    await this.page.hover(`[data-testid=v3-container-device-${device}]`);
+    const locator = this.page.getByTestId(`v3-container-device-${device}`);
+    await locator.waitFor({ state: "attached" });
+    await locator.hover();
   }
 
   async waitForDeviceToBeVisible(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
