@@ -1,19 +1,63 @@
-import { broadcastTransaction, getAccount, getTransactionParams } from "./algodv2";
-import { AlgoAccount, AlgoTransactionParams } from "./algodv2.types";
+import {
+  Api,
+  Block,
+  Cursor,
+  Page,
+  Validator,
+  Reward,
+  Stake,
+  CraftedTransaction,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
+import coinConfig, { type AlgorandCoinConfig } from "../config";
+import {
+  broadcast,
+  combine,
+  craftApiTransaction,
+  estimateFees,
+  getBalance,
+  getBlockInfo,
+  lastBlock,
+  listApiOperations,
+  validateIntent,
+} from "../logic";
+import type { AlgorandMemo } from "../types";
 
-import { getAccountTransactions } from "./indexer";
-import { AlgoTransaction } from "./indexer.types";
+export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
+  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
-export * from "./algodv2.types";
-export * from "./indexer.types";
-
-export default {
-  getAccount: async (address: string): Promise<AlgoAccount> => getAccount(address),
-
-  getTransactionParams: async (): Promise<AlgoTransactionParams> => getTransactionParams(),
-
-  broadcastTransaction: async (payload: Buffer): Promise<string> => broadcastTransaction(payload),
-
-  getAccountTransactions: async (address: string, startAt?: number): Promise<AlgoTransaction[]> =>
-    getAccountTransactions(address, startAt),
-};
+  return {
+    broadcast,
+    combine,
+    craftTransaction: craftApiTransaction,
+    estimateFees: (_transactionIntent: TransactionIntent<AlgorandMemo>) => estimateFees(),
+    getBalance,
+    getBlockInfo,
+    lastBlock,
+    listOperations: listApiOperations,
+    validateIntent,
+    getBlock(_height: number): Promise<Block> {
+      throw new Error("getBlock is not supported for Algorand");
+    },
+    getSequence(_address: string): Promise<bigint> {
+      throw new Error("getSequence is not applicable for Algorand");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported for Algorand");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported for Algorand");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported for Algorand");
+    },
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported for Algorand");
+    },
+  };
+}
