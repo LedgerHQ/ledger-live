@@ -7248,7 +7248,8 @@
         "website": "website"
       },
       "back": {
-        "card": "all cards"
+        "card": "all cards",
+        "cardTab": "card"
       }
     }
   },

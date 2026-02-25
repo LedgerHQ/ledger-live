@@ -212,8 +212,8 @@ export const TopBar = ({
       card: t("card.backToCard"),
     };
 
-    return screenMap[lastScreen] || manifest.name;
-  }, [localStorage, manifest, t]);
+    return screenMap[lastScreen] || null;
+  }, [localStorage, t]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -262,13 +262,19 @@ export const TopBar = ({
     return null;
   }
 
+  const buttonLabel = getButtonLabel();
+
   return (
     <Container>
       {!isInternalApp ? (
         <ItemContainer isInteractive onClick={onBackToMatchingURL}>
           <ArrowRight flipped size={16} />
           <ItemContent>
-            <Trans i18nKey="common.backToMatchingURL" values={{ appName: getButtonLabel() }} />
+            {buttonLabel ? (
+              <Trans i18nKey="common.backToMatchingURL" values={{ appName: buttonLabel }} />
+            ) : (
+              <Trans i18nKey="common.back" />
+            )}
           </ItemContent>
         </ItemContainer>
       ) : null}
