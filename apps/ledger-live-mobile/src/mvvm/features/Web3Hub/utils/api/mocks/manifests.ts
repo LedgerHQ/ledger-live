@@ -145,6 +145,7 @@ export const mocks: AppManifest[] = [
       "somnia",
       "zero_gravity",
       "unichain",
+      "adi",
     ],
     content: {
       shortDescription: {

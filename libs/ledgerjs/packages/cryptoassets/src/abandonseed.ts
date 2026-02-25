@@ -21,6 +21,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   avalanche_c_chain_fuji: EVM_DEAD_ADDRESS,
   aptos: EVM_DEAD_ADDRESS,
   aptos_testnet: EVM_DEAD_ADDRESS,
+  adi: EVM_DEAD_ADDRESS,
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",

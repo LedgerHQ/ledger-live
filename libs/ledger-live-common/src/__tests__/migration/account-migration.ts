@@ -42,6 +42,7 @@ setSupportedCurrencies([
   "digibyte",
   "algorand",
   "avalanche_c_chain",
+  "adi",
   "qtum",
   "bitcoin_gold",
   "komodo",

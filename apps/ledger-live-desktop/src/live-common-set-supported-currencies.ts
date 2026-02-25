@@ -65,6 +65,7 @@ setSupportedCurrencies([
   "near",
   "aptos",
   "aptos_testnet",
+  "adi",
   "icon",
   "icon_berlin_testnet",
   "optimism",

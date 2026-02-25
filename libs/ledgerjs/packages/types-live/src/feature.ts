@@ -158,6 +158,7 @@ export type CurrencyFeatures = {
   currencyZeroGravity: DefaultFeature;
   currencyConcordium: DefaultFeature;
   currencyConcordiumTestnet: DefaultFeature;
+  currencyAdi: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
   currencyUnichain: DefaultFeature;
