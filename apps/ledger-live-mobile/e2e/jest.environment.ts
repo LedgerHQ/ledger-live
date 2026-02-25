@@ -1,7 +1,43 @@
-const detoxEnvironment = require("detox/runners/jest/testEnvironment");
+import { config as detoxConfig } from "detox/internals";
+// @ts-expect-error detox doesn't provide type declarations for this module
+import DetoxEnvironment from "detox/runners/jest/testEnvironment";
+
+
+
 import { logMemoryUsage } from "./helpers/commonHelpers";
 
-class TestEnvironment extends detoxEnvironment {
+export default class TestEnvironment extends DetoxEnvironment {
+
+  async setup() {
+    const workerId = Number(process.env.JEST_WORKER_ID ?? 1);
+    if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
+    await super.setup();
+  }
+
+  private setupDeviceForSecondaryWorker(workerId: number) {
+    const configName = process.env.DETOX_CONFIGURATION;
+    if (!configName) throw new Error("Missing DETOX_CONFIGURATION environment variable");
+
+    const detoxConfigFile = require("../detox.config.js");
+    const targetConfig = detoxConfigFile.configurations[configName];
+    if (!targetConfig || !targetConfig.device) {
+      throw new Error(
+        `Detox configuration "${configName}" not found or missing device, check your detox config file`,
+      );
+    }
+
+    const deviceName = `${targetConfig.device}${workerId}`;
+    const targetDevice = detoxConfigFile.devices[deviceName];
+
+    if (!targetDevice) {
+      throw new Error(
+        `Device configuration not found for ${deviceName}, check your detox config file`,
+      );
+    }
+
+    Object.assign(detoxConfig, { device: targetDevice });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async handleTestEvent(event: any, state: any) {
     await super.handleTestEvent(event, state);
