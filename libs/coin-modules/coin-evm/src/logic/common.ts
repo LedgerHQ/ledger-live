@@ -96,10 +96,12 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
   return Buffer.from(data.slice(2), "hex");
 }
 
-function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
+export function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
   const data = intent.data?.value;
   if (Buffer.isBuffer(data) && data.length) return data;
-  return isNative(intent.asset) ? Buffer.from([]) : getErc20Data(intent.recipient, intent.amount);
+  return isNative(intent.asset) || !intent.recipient
+    ? Buffer.from([])
+    : getErc20Data(intent.recipient, intent.amount);
 }
 
 export async function prepareUnsignedTxParams(

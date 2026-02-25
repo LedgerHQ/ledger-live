@@ -30,12 +30,14 @@ import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
 import {
+  getCallData,
   getTransactionType,
   isApiGasOptions,
   isEip1559FeeEstimation,
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
+import { computeIntrinsicGasLimit } from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -124,7 +126,7 @@ function validateRecipient(
  */
 async function validateGas(
   currency: CryptoCurrency,
-  intent: TransactionIntent,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   estimatedFees: FeeEstimation,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
@@ -139,17 +141,23 @@ async function validateGas(
     typeof estimatedFees.parameters?.customGasLimit === "bigint" &&
     estimatedFees.parameters.customGasLimit;
 
+  const callData = getCallData(intent);
+  const intrinsicGasLimit = computeIntrinsicGasLimit(
+    BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
+    callData,
+  );
+
   // Gas Limit
   if (typeof customGasLimit === "bigint") {
     if (customGasLimit === 0n) {
       errors.gasLimit = new FeeNotLoaded();
-    } else if (customGasLimit < BigInt(DEFAULT_GAS_LIMIT.toFixed(0))) {
+    } else if (customGasLimit < intrinsicGasLimit) {
       errors.gasLimit = new GasLessThanEstimate();
     }
   } else {
     if (gasLimit === 0n) {
       errors.gasLimit = new FeeNotLoaded();
-    } else if (gasLimit < BigInt(DEFAULT_GAS_LIMIT.toFixed(0))) {
+    } else if (gasLimit < intrinsicGasLimit) {
       errors.gasLimit = new GasLessThanEstimate();
     }
   }
