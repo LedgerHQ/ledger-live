@@ -27,14 +27,6 @@ describe("jsonRpcClient", () => {
     });
   });
 
-  describe("getBlockCount", () => {
-    test("successfully fetches the last block count from the blockchain", async () => {
-      const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
-      const block = await jsonRpcClient.getBlockCount();
-      expect(block).toEqual(LAST_BLOCK_COUNT);
-    });
-  });
-
   describe("getRawTransaction", () => {
     test("successfully fetches a raw transaction from the blockchain", async () => {
       const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
@@ -76,6 +68,12 @@ describe("jsonRpcClient", () => {
   });
 
   describe("getBlockCount", () => {
+    test("successfully fetches the last block count from the blockchain", async () => {
+      const jsonRpcClient = new JsonRpcClient(JSON_RPC_SERVER);
+      const block = await jsonRpcClient.getBlockCount();
+      expect(block).toEqual(LAST_BLOCK_COUNT);
+    });
+
     test("returns block count when network returns numeric result", async () => {
       server.use(
         http.post(JSON_RPC_SERVER, async ({ request }) => {
