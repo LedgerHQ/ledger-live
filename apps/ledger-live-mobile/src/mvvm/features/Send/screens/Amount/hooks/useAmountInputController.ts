@@ -19,6 +19,7 @@ import {
   processFiatInput,
   calculateFiatEquivalent,
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
+import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
 
 type UseAmountInputControllerParams = Readonly<{
   account: AccountLike;
@@ -74,23 +75,28 @@ export function useAmountInputController({
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastTransactionAmountRef = useRef<BigNumber>(cryptoAmount);
-  const lastFiatAmountRef = useRef<BigNumber>(fiatAmount);
+  const lastTransactionAmountRef = useRef<BigNumber | null>(cryptoAmount);
+  const lastFiatAmountRef = useRef<BigNumber | null>(fiatAmount);
+  const lastUseAllAmountRef = useRef<boolean>(transaction.useAllAmount ?? false);
   const lastUserInputTimeRef = useRef<number>(0);
 
-  if (transaction.useAllAmount) {
-    if (inputMode === "fiat") {
-      const formatted = formatFiatForInput(fiatUnit, fiatAmount, locale);
-      if (formatted !== fiatInputValue) {
-        setFiatInputValue(formatted);
-      }
-    } else {
-      const formatted = formatAmountForInput(accountUnit, cryptoAmount, locale);
-      if (formatted !== cryptoInputValue) {
-        setCryptoInputValue(formatted);
-      }
-    }
-  }
+  syncAmountInputs({
+    cryptoAmount,
+    fiatAmount,
+    transactionUseAllAmount: Boolean(transaction.useAllAmount),
+    inputMode,
+    cryptoInputValue,
+    fiatInputValue,
+    locale,
+    accountUnit,
+    fiatUnit,
+    lastTransactionAmountRef,
+    lastFiatAmountRef,
+    lastUseAllAmountRef,
+    lastUserInputTimeRef,
+    setCryptoInputValue,
+    setFiatInputValue,
+  });
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
@@ -126,11 +132,6 @@ export function useAmountInputController({
     inputMode,
     locale,
   ]);
-
-  // Keep tracking refs in sync with bridge-computed amounts.
-  // Updated after secondaryValue so it reads the previous cycle's values (intentional).
-  lastTransactionAmountRef.current = cryptoAmount;
-  lastFiatAmountRef.current = fiatAmount;
 
   const cancelPendingUpdates = useCallback(() => {
     if (debounceTimeoutRef.current) {
@@ -240,8 +241,8 @@ export function useAmountInputController({
 
       const fiatEquivalent = calculateFiatEquivalent({
         amount,
-        lastTransactionAmount: lastTransactionAmountRef.current,
-        lastFiatAmount: lastFiatAmountRef.current,
+        lastTransactionAmount: lastTransactionAmountRef.current ?? new BigNumber(0),
+        lastFiatAmount: lastFiatAmountRef.current ?? new BigNumber(0),
         calculateFiatFromCrypto: value => calculateFiatFromCrypto(accountCurrency, value),
       });
 
