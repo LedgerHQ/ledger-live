@@ -2,7 +2,6 @@
 "ledger-live-desktop": minor
 "live-mobile": minor
 "@ledgerhq/live-common": minor
-"@ledgerhq/rspack-example": minor
 "@features/market-banner": minor
 "@ledgerhq/react-ui": minor
 "@ledgerhq/web-tools": minor
