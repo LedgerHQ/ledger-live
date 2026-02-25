@@ -17,14 +17,15 @@ type Props = {
   /** Override or extend refresh control options per render (e.g. progressViewOffset). Merged with defaultRefreshControlProps. */
   overrideRefreshControlProps?: Partial<RefreshControlProps>;
 };
-export default <P,>(
+function globalSyncRefreshControl<P>(
   ScrollListLike: React.ComponentType<P>,
   defaultRefreshControlProps?: Partial<RefreshControlProps>,
-) => {
+) {
   function Inner({
     forwardedRef,
     overrideRefreshControlProps,
     isError,
+    error: _error,
     ...scrollListLikeProps
   }: Props & P) {
     const { colors, dark } = useTheme();
@@ -40,6 +41,7 @@ export default <P,>(
     refreshingRef.current = refreshing;
 
     function onRefresh() {
+      if (refreshingRef.current) return;
       poll();
       setSyncBehavior({
         type: "SYNC_ALL_ACCOUNTS",
@@ -104,4 +106,6 @@ export default <P,>(
   return React.forwardRef<unknown, P & Props>((props, ref) => (
     <Inner {...({ ...props, forwardedRef: ref } as P & Props)} />
   ));
-};
+}
+
+export default globalSyncRefreshControl;

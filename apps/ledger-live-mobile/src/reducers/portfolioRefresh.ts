@@ -11,11 +11,9 @@ export const INITIAL_STATE: PortfolioRefreshState = {
   isRefreshing: false,
 };
 
-const initialState = INITIAL_STATE;
-
 const portfolioRefreshSlice = createSlice({
   name: "portfolioRefresh",
-  initialState,
+  initialState: INITIAL_STATE,
   reducers: {
     setRefreshStarted: state => {
       state.isRefreshing = true;

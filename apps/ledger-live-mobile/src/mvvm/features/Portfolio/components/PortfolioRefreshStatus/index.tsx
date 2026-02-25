@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { View } from "react-native";
 import { Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import Animated, {
   useSharedValue,
@@ -7,10 +6,10 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import { useTranslation } from "~/context/Locale";
 import { usePortfolioRefreshStatusViewModel } from "./usePortfolioRefreshStatusViewModel";
 
 const FADE_DURATION_MS = 300;
+const CONTENT_FADE_MS = 150;
 const VISIBLE_HEIGHT = 60;
 
 const innerStyle = {
@@ -29,15 +28,15 @@ const StatusText = ({ testID, children }: { testID: string; children: string }) 
 );
 
 export const PortfolioRefreshStatus = () => {
-  const { t } = useTranslation();
-  const { isVisible, isRefreshing, lastRefreshLabel } = usePortfolioRefreshStatusViewModel();
+  const { isVisible, isRefreshing, refreshingLabel, upToDateLabel } =
+    usePortfolioRefreshStatusViewModel();
 
   const opacity = useSharedValue(0);
   const height = useSharedValue(0);
+  const contentOpacity = useSharedValue(1);
 
   useEffect(() => {
     if (isVisible) {
-      // Delay height slightly so content has time to mount before the space opens
       height.value = withDelay(32, withTiming(VISIBLE_HEIGHT, { duration: FADE_DURATION_MS }));
       opacity.value = withDelay(32, withTiming(1, { duration: FADE_DURATION_MS }));
     } else {
@@ -46,32 +45,41 @@ export const PortfolioRefreshStatus = () => {
     }
   }, [isVisible, opacity, height]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    height: height.value,
-    opacity: opacity.value,
-    overflow: "hidden",
-  }));
+  // When isRefreshing changes, snap content to invisible so the incoming
+  // content fades in rather than appearing abruptly.
+  useEffect(() => {
+    contentOpacity.value = 0;
+    contentOpacity.value = withDelay(50, withTiming(1, { duration: CONTENT_FADE_MS }));
+  }, [isRefreshing, contentOpacity]);
+
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: height.value,
+      opacity: opacity.value,
+      overflow: "hidden",
+    }),
+    [height, opacity],
+  );
+
+  const contentAnimatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: contentOpacity.value,
+    }),
+    [contentOpacity],
+  );
 
   const getContent = () => {
     if (isRefreshing) {
-      const label = lastRefreshLabel
-        ? t("portfolio.refreshStatus.refreshing", { timeAgo: lastRefreshLabel })
-        : t("portfolio.refreshStatus.refreshingInitial");
-
       return (
         <>
           <Spinner size={16} testID="portfolio-refresh-status-spinner" />
-          <StatusText testID="portfolio-refresh-status-refreshing">{label}</StatusText>
+          <StatusText testID="portfolio-refresh-status-refreshing">{refreshingLabel}</StatusText>
         </>
       );
     }
 
     if (isVisible) {
-      return (
-        <StatusText testID="portfolio-refresh-status-up-to-date">
-          {t("portfolio.refreshStatus.upToDate")}
-        </StatusText>
-      );
+      return <StatusText testID="portfolio-refresh-status-up-to-date">{upToDateLabel}</StatusText>;
     }
 
     return null;
@@ -79,7 +87,7 @@ export const PortfolioRefreshStatus = () => {
 
   return (
     <Animated.View style={animatedStyle} testID="portfolio-refresh-status">
-      <View style={innerStyle}>{getContent()}</View>
+      <Animated.View style={[innerStyle, contentAnimatedStyle]}>{getContent()}</Animated.View>
     </Animated.View>
   );
 };
