@@ -17,7 +17,7 @@ This is the **ledger-live** monorepo — a pnpm + turborepo workspace containing
 
 ## Changeset Requirement
 
-Every PR that changes user-facing behavior or library APIs must include a changeset (`pnpm changeset`). Flag PRs that add features or fix bugs without one.
+Every PR that changes user-facing behavior or library APIs must include a changeset (`pnpm changeset`). Flag PRs that add features or fix bugs without one. This requirement does not apply to changes to the `.github` folder or composite actions in `tools/actions/composites`
 
 ## Dependency Review
 
