@@ -4,6 +4,8 @@ import {
   accountFixture,
   accountWithTokenAccountFixture,
   transactionFixture,
+  transactionWithUsdcFeeFixture,
+  tokenTransactionWithUsdcFeeFixture,
 } from "../../bridge/fixtures";
 
 const chainIdMock = jest.fn();
@@ -540,5 +542,71 @@ describe("buildTransaction", () => {
       value: "0xa",
       gas: "12",
     });
+  });
+
+  it("should build a send transaction with USDC fee currency", async () => {
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: BigNumber(123) },
+      {
+        ...transactionWithUsdcFeeFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(10),
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      value: "0xa",
+      gas: "12",
+    });
+
+    // Verify feeCurrency is included in the transaction
+    expect(transaction.feeCurrency).toEqual(transactionWithUsdcFeeFixture.feeCurrency);
+  });
+
+  it("should build a token transaction with USDC fee currency", async () => {
+    const transaction = await buildTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        spendableBalance: BigNumber(123),
+      },
+      {
+        ...tokenTransactionWithUsdcFeeFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        mode: "send",
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      gas: "12",
+    });
+
+    // Verify feeCurrency is included in the transaction
+    expect(transaction.feeCurrency).toEqual(tokenTransactionWithUsdcFeeFixture.feeCurrency);
+  });
+
+  it("should build transaction with feeCurrency when using useAllAmount", async () => {
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: BigNumber(123) },
+      {
+        ...transactionWithUsdcFeeFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(100),
+        useAllAmount: true,
+        fees: BigNumber(2),
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      value: "0x7b", // 123 (full balance when paying fees in USDC)
+      gas: "12",
+    });
+
+    // Verify feeCurrency is included
+    expect(transaction.feeCurrency).toEqual(transactionWithUsdcFeeFixture.feeCurrency);
   });
 });
