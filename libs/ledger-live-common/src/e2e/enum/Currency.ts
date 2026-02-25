@@ -132,7 +132,7 @@ export class Currency {
     AppInfos.ETHEREUM,
     [Network.ETHEREUM],
   );
-  static readonly XLM_USCD = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
+  static readonly XLM_USDC = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
     Network.STELLAR,
   ]);
   static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [

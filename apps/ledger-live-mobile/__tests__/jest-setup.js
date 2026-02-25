@@ -195,9 +195,22 @@ jest.mock("@braze/react-native-sdk", () => ({}));
 
 jest.mock("react-native-webview", () => jest.fn());
 
+jest.mock("react-native-linear-gradient", () => {
+  const { View } = require("react-native");
+  return { __esModule: true, default: View };
+});
+
 jest.mock("react-native-device-info", () => ({
   getDeviceNameSync: jest.fn(() => "Mocked Device"),
 }));
+
+jest.mock("react-native-linear-gradient", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    default: jest.fn(({ children, ...props }) => React.createElement("View", props, children)),
+  };
+});
 
 const originalError = console.error;
 const originalWarn = console.warn;

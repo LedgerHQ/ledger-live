@@ -1,7 +1,7 @@
 import { takeSpeculosScreenshot } from "./utils/speculosUtils";
 import { Circus } from "@jest/types";
 import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
-import * as detox from "detox/internals";
+import { config as detoxConfig } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -140,7 +140,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       );
     }
 
-    Object.assign(detox.config, { device: targetDevice });
+    Object.assign(detoxConfig, { device: targetDevice });
   }
 
   async teardown() {

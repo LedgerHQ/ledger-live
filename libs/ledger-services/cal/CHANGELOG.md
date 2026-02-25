@@ -1,5 +1,21 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.11.3
+
+### Patch Changes
+
+- Updated dependencies [[`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0)]:
+  - @ledgerhq/live-env@2.28.0
+  - @ledgerhq/live-network@2.2.3
+
+## 1.11.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`19e62ca`](https://github.com/LedgerHQ/ledger-live/commit/19e62ca57461e3201ce8186023d7896411fce0e0)]:
+  - @ledgerhq/live-env@2.28.0-next.0
+  - @ledgerhq/live-network@2.2.3-next.0
+
 ## 1.11.2
 
 ### Patch Changes

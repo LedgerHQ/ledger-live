@@ -19,6 +19,7 @@ import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 // Constants for tracking sources
 const TRACKING_SOURCES = {
@@ -44,6 +45,7 @@ export default function SwapNavigator(
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const track = useTrack();
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const goToSwapHistory = useCallback(() => {
     track("button_clicked", {
@@ -105,8 +107,10 @@ export default function SwapNavigator(
     [goToSwapHistory, noNanoBuyNanoWallScreenOptions, t],
   );
 
+  const shouldDisplayHeader = !shouldDisplayWallet40MainNav;
+
   return (
-    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: true }}>
+    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: shouldDisplayHeader }}>
       <Stack.Screen
         name={ScreenName.SwapTab}
         component={SwapLiveApp}

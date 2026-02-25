@@ -10,7 +10,7 @@ export interface ActionButtonsProps {
   secondaryAction: {
     text: string;
     onClick: () => void;
-  };
+  } | null;
 }
 
 export interface AccountsWarningProps {

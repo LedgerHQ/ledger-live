@@ -341,7 +341,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nBUNDLE_REACT_NATIVE=\"$REACT_NATIVE_XCODE\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"$BUNDLE_REACT_NATIVE\\\"\"\n";
+			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nBUNDLE_REACT_NATIVE=\"$REACT_NATIVE_XCODE\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"$BUNDLE_REACT_NATIVE\\\"\"\n\n# Copy bundle to ios/build so CI can upload bundle+sourcemap to Datadog\nif [[ -f \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/main.jsbundle\" ]]; then\n  mkdir -p \"${PROJECT_DIR}/build\"\n  cp \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/main.jsbundle\" \"${PROJECT_DIR}/build/main.jsbundle\"\nfi\n";
 		};
 		3B8A85D90BB941F538378AA1 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;

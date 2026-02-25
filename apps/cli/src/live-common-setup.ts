@@ -129,14 +129,15 @@ async function init() {
 
 export function registerSpeculosTransport(apiPort: number) {
   unregisterTransportModule("hid");
-  const req: Record<string, number> = {
-    apiPort: apiPort,
+  const speculosAddress = process.env.SPECULOS_ADDRESS;
+  const req: SpeculosHttpTransportOpts = {
+    apiPort: apiPort.toString(),
+    ...(speculosAddress && { baseURL: speculosAddress }),
   };
 
   registerTransportModule({
     id: "speculos-http",
-    open: () =>
-      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
+    open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
     disconnect: () => Promise.resolve(),
   });
 }

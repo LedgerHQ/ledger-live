@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",

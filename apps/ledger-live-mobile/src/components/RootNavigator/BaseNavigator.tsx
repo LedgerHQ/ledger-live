@@ -23,7 +23,7 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
-import CardLiveAppNavigator from "./CardLiveAppNavigator";
+import { CardLiveAppNavigator } from "LLM/features/Card";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -82,7 +82,10 @@ import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
+import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import MyLedgerNavigator from "./MyLedgerNavigator";
+import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
@@ -140,6 +143,25 @@ export default function BaseNavigator() {
       <RootDrawer drawer={route.params?.drawer} />
       <Stack.Navigator screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
+        <Stack.Screen
+          name={NavigatorName.MyLedger}
+          component={MyLedgerNavigator}
+          options={{ headerShown: false }}
+        />
+
+        {web3hub?.enabled ? (
+          <Stack.Screen
+            name={NavigatorName.Web3HubTab}
+            component={Web3HubTabNavigator}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <Stack.Screen
+            name={NavigatorName.Discover}
+            component={DiscoverNavigator}
+            options={{ headerShown: false }}
+          />
+        )}
         <Stack.Screen
           name={NavigatorName.BuyDevice}
           component={BuyDeviceNavigator}

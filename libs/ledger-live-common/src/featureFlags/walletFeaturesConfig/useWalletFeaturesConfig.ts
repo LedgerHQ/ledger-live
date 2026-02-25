@@ -37,6 +37,8 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
       shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
+      shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
+      shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
     };
   }, [walletFeatureFlag]);
 };

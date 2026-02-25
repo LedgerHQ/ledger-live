@@ -21,11 +21,16 @@ export class Layout extends Component {
   readonly topbarSynchronizeButton = this.topbarActionButton("synchronize").or(
     this.page.getByTestId("topbar-synchronize-button"),
   );
-  readonly topbarNotificationButton = this.page.getByTestId("topbar-notification-button");
-  readonly topbarSettingsButton = this.page.getByTestId("topbar-settings-button");
+  readonly topbarNotificationButton = this.topbarActionButton("notifications").or(
+    this.page.getByTestId("topbar-notification-button"),
+  );
+  readonly topbarSettingsButton = this.topbarActionButton("settings").or(
+    this.page.getByTestId("topbar-settings-button"),
+  );
   readonly topbarDiscreetButton = this.topbarActionButton("discreet").or(
     this.page.getByTestId("topbar-discreet-button"),
   );
+  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
   @step("Go to Portfolio")
   async goToPortfolio() {

@@ -1,41 +1,71 @@
-import { TopBarAction } from "../types";
+import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
+import { useMyLedger } from "./useMyLedger";
+import { useSettings } from "./useSettings";
 
 const useTopBarViewModel = () => {
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
-
   const {
     hasAccounts,
     handleSync,
     isDisabled,
     icon: activityIndicatorIcon,
-    tooltip,
+    tooltip: activityIndicatorTooltip,
   } = useActivityIndicator();
+  const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
+  const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
 
-  const topBarActionsList: TopBarAction[] = [
+  const topBarSlots: TopBarSlot[] = [
     ...(hasAccounts
       ? [
           {
-            label: "synchronize",
-            tooltip: tooltip,
-            icon: activityIndicatorIcon,
-            isInteractive: !isDisabled,
-            onClick: handleSync,
+            type: "action" as const,
+            action: {
+              label: "synchronize",
+              tooltip: activityIndicatorTooltip,
+              icon: activityIndicatorIcon,
+              isInteractive: !isDisabled,
+              onClick: handleSync,
+            },
           },
         ]
       : []),
+    { type: "notification" },
     {
-      label: "discreet",
-      tooltip: discreetTooltip,
-      icon: discreetIcon,
-      isInteractive: true,
-      onClick: handleDiscreet,
+      type: "action",
+      action: {
+        label: "discreet",
+        tooltip: discreetTooltip,
+        icon: discreetIcon,
+        isInteractive: true,
+        onClick: handleDiscreet,
+      },
+    },
+    {
+      type: "action",
+      action: {
+        label: "settings",
+        tooltip: settingsTooltip,
+        icon: settingsIcon,
+        isInteractive: true,
+        onClick: handleSettings,
+      },
+    },
+    {
+      type: "action",
+      action: {
+        label: "my ledger",
+        tooltip: myLedgerTooltip,
+        icon: myLedgerIcon,
+        isInteractive: true,
+        onClick: handleMyLedger,
+      },
     },
   ];
 
   return {
-    topBarActionsList,
+    topBarSlots,
   };
 };
 

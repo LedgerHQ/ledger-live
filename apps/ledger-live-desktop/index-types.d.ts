@@ -13,6 +13,10 @@ declare module "*.jpg";
 declare module "*.webp";
 declare module "*.webm";
 declare module "*.mp4";
+declare module "*.lottie" {
+  const src: string;
+  export default src;
+}
 
 type Store = import("redux").Store;
 type Device = import("@ledgerhq/live-common/hw/actions/types").Device;

@@ -114,6 +114,12 @@ export const getTransactionStatus: AccountBridge<
       });
     }
 
+    const insufficientBalance =
+      totalSpent.gt(totalSpendableBalance) || totalSpendableBalance.lt(estimatedFees);
+    if (!errors.amount && insufficientBalance) {
+      errors.amount = new NotEnoughBalance();
+    }
+
     if (isTokenTransaction) {
       return {
         errors,

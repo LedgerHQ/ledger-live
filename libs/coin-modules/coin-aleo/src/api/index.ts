@@ -13,10 +13,13 @@ import type {
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig, { type AleoConfig } from "../config";
+import { getBalance, lastBlock } from "../logic";
 
-export function createApi(config: AleoConfig, _currencyId: string): Api {
+export function createApi(config: AleoConfig, currencyId: string): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: (_signature: string): Promise<string> => {
@@ -42,11 +45,11 @@ export function createApi(config: AleoConfig, _currencyId: string): Api {
     estimateFees: async (): Promise<FeeEstimation> => {
       throw new Error("estimateFees is not supported");
     },
-    getBalance: (_address: string): Promise<Balance[]> => {
-      throw new Error("getBalance is not supported");
+    getBalance: (address: string): Promise<Balance[]> => {
+      return getBalance(currency, address);
     },
     lastBlock: async (): Promise<BlockInfo> => {
-      throw new Error("lastBlock is not supported");
+      return lastBlock(currency);
     },
     listOperations: async (_address, _pagination) => {
       throw new Error("listOperations is not supported");

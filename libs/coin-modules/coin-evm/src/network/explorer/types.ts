@@ -2,18 +2,25 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import { EvmConfigInfo } from "../../config";
 
+/** Constant representing no pagination token (end of pagination or first page) */
+export const NO_TOKEN = "";
+
 export type ExplorerApi = {
-  getLastOperations: (
+  getOperations: (
     currency: CryptoCurrency,
     address: string,
     accountId: string,
     fromBlock: number,
     toBlock?: number,
+    pagingToken?: string,
+    limit?: number,
+    order?: "asc" | "desc",
   ) => Promise<{
     lastCoinOperations: Operation[];
     lastTokenOperations: Operation[];
     lastNftOperations: Operation[];
     lastInternalOperations: Operation[];
+    nextPagingToken: string;
   }>;
 };
 

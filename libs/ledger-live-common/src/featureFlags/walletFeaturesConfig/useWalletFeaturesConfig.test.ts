@@ -38,6 +38,8 @@ const DISABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayQuickActionCtas: false,
   shouldDisplayNewReceiveDialog: false,
   shouldDisplayWallet40MainNav: false,
+  shouldUseLazyOnboarding: false,
+  shouldDisplayBalanceRefreshRework: false,
 };
 
 const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
@@ -47,6 +49,8 @@ const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
   shouldDisplayQuickActionCtas: false,
   shouldDisplayNewReceiveDialog: false,
   shouldDisplayWallet40MainNav: false,
+  shouldUseLazyOnboarding: false,
+  shouldDisplayBalanceRefreshRework: false,
 };
 
 const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
@@ -56,6 +60,8 @@ const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayQuickActionCtas: true,
   shouldDisplayNewReceiveDialog: true,
   shouldDisplayWallet40MainNav: true,
+  shouldUseLazyOnboarding: true,
+  shouldDisplayBalanceRefreshRework: true,
 };
 
 const ALL_PARAMS_ENABLED: Wallet40Params = {
@@ -64,6 +70,8 @@ const ALL_PARAMS_ENABLED: Wallet40Params = {
   quickActionCtas: true,
   newReceiveDialog: true,
   mainNavigation: true,
+  lazyOnboarding: true,
+  balanceRefreshRework: true,
 };
 
 describe("useWalletFeaturesConfig hook", () => {
@@ -108,6 +116,12 @@ describe("useWalletFeaturesConfig hook", () => {
         ["quickActionCtas", { quickActionCtas: true }, { shouldDisplayQuickActionCtas: true }],
         ["newReceiveDialog", { newReceiveDialog: true }, { shouldDisplayNewReceiveDialog: true }],
         ["mainNavigation", { mainNavigation: true }, { shouldDisplayWallet40MainNav: true }],
+        ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
+        [
+          "balanceRefreshRework",
+          { balanceRefreshRework: true },
+          { shouldDisplayBalanceRefreshRework: true },
+        ],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),

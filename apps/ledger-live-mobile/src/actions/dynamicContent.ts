@@ -14,6 +14,8 @@ import {
   DynamicContentSetCategoriesCardsPayload,
   DynamicContentSetMobileCardsPayload,
   DynamicContentSetLandingStickyCtaCardsPayload,
+  DynamicContentAddLocalCardsPayload,
+  DynamicContentRemoveLocalCardPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -64,3 +66,22 @@ const setIsDynamicContentLoadingAction = createAction<boolean>(
 
 export const setIsDynamicContentLoading = (isLoading: boolean) =>
   setIsDynamicContentLoadingAction(isLoading);
+
+const addLocalContentCardsAction = createAction<DynamicContentAddLocalCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_CARDS,
+);
+
+export const addLocalContentCards = (payload: DynamicContentAddLocalCardsPayload) =>
+  addLocalContentCardsAction(payload);
+
+const clearLocalContentCardsAction = createAction(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS,
+);
+
+export const clearLocalContentCards = () => clearLocalContentCardsAction();
+
+const removeLocalCardAction = createAction<DynamicContentRemoveLocalCardPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_REMOVE_LOCAL_CARD,
+);
+
+export const removeLocalCard = (cardId: string) => removeLocalCardAction(cardId);

@@ -64,10 +64,13 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
 import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import backgroundImg from "~/renderer/images/background.png";
+import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -218,6 +221,7 @@ const MainAppContent = ({
   <>
     <Routes>
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
+      <Route path="/perps/*" element={withSuspense(Perps)({})} />
     </Routes>
     {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
 
@@ -244,7 +248,6 @@ const MainAppContent = ({
         <Route path="/account/:id/*" element={withSuspense(Account)({})} />
         <Route path="/asset/*" element={withSuspense(Asset)({})} />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/perps/*" element={withSuspense(Perps)({})} />
         <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
         <Route
           path="/market"
@@ -262,11 +265,18 @@ const MainAppContent = ({
 // Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
   const { pathname } = useLocation();
+  const theme = useSelector(themeSelector);
   const {
     shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
   } = useWalletFeaturesConfig("desktop");
+
+  //TODO: Remove this once testing is done
+  const walletFeatureFlag = useFeature("lwdWallet40");
+  const walletParams = walletFeatureFlag?.params as WalletFeatureParams | undefined;
+  const shouldDisplayBackground =
+    isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
   return (
@@ -277,7 +287,14 @@ const MainAppLayout = () => {
       <SyncNewAccounts priority={2} />
 
       {useWallet40Layout ? (
-        <div className="flex size-full grow flex-row bg-canvas">
+        <div
+          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat"
+          style={
+            shouldDisplayBackground
+              ? { backgroundImage: `url(${backgroundImg})`, backgroundSize: "45% 70%" }
+              : undefined
+          }
+        >
           <MainAppContent
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}

@@ -78,7 +78,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         page,
       }),
       refetchOnMount: false,
-      refetchOnReconnect: false,
+      refetchOnReconnect: true,
       refetchOnWindowFocus: false,
     })),
     combine: combineMarketData,

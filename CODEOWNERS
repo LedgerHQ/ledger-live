@@ -37,25 +37,40 @@ libs/ledger-key-ring-protocol/                           @ledgerhq/platform
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
 
 # Coin integration team
-.github/**/bot-*.yml                                     @ledgerhq/coin-integration
-.github/workflows/coin-monitoring-*.yml                  @ledgerhq/coin-integration
-.github/workflows/import-cal-tokens.yml                  @ledgerhq/coin-integration
-.github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
-.github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
-.github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/wallet-ci
-.github/workflows/notify-e2e-required-reusable.yml       @ledgerhq/coin-integration @ledgerhq/wallet-ci
-.github/workflow-templates/bot-coin**                    @ledgerhq/coin-integration
-**/live-common-set*.ts                                   @ledgerhq/coin-integration
-apps/**/families/                                        @ledgerhq/coin-integration
-apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
-libs/coin-*/                                             @ledgerhq/coin-integration
-libs/domain-service/                                     @ledgerhq/coin-integration
-libs/evm-tools/                                          @ledgerhq/coin-integration
-libs/ledger-live-common/src/bot/                         @ledgerhq/coin-integration
-libs/ledger-live-common/src/bridge/                      @ledgerhq/coin-integration
-libs/ledger-live-common/src/apps/config.ts               @ledgerhq/coin-integration
-libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
-libs/ledger-services/                                    @ledgerhq/coin-integration
+.github/**/bot-*.yml                                                @ledgerhq/coin-integration
+.github/workflows/coin-monitoring-*.yml                             @ledgerhq/coin-integration
+.github/workflows/import-cal-tokens.yml                             @ledgerhq/coin-integration
+.github/workflows/test-coin-tester.yml                              @ledgerhq/coin-integration
+.github/workflows/test-coin-modules-integ.yml                       @ledgerhq/coin-integration
+.github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/wallet-ci
+.github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/wallet-ci
+.github/workflow-templates/bot-coin**                               @ledgerhq/coin-integration
+**/live-common-set*.ts                                              @ledgerhq/coin-integration
+apps/**/families/                                                   @ledgerhq/coin-integration
+apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
+libs/coin-*/                                                        @ledgerhq/coin-integration
+libs/domain-service/                                                @ledgerhq/coin-integration
+libs/evm-tools/                                                     @ledgerhq/coin-integration
+libs/ledger-live-common/src/bot/                                    @ledgerhq/coin-integration
+libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
+libs/ledger-live-common/src/apps/config.ts                          @ledgerhq/coin-integration
+libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
+libs/ledger-services/                                               @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/mvvm/features/Send/                    @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/components/Transaction*/      @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/components/SignMessage*/      @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/modals/Send/                  @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/modals/Receive/               @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/modals/SignMessage/           @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/modals/SignRawTransaction/    @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/modals/SignTransaction/       @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/mvvm/features/Send/                     @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/mvvm/features/Receive/                  @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/SendFunds/                      @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/ReceiveFunds/                   @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/SignMessage/                    @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/SignRawTransaction/             @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/coin-integration
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 libs/ledgerjs/packages/cryptoassets                      @ledgerhq/wallet-xp

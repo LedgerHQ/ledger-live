@@ -32,6 +32,7 @@ export interface SideBarViewModel {
   readonly displayBlueDot: boolean;
   readonly earnLabel: string;
   readonly isCardDisabled: boolean;
+  readonly isAccountsDisabled: boolean;
   readonly isLiveAppTabSelected: boolean;
   readonly isMarketBannerEnabled: boolean;
   readonly isQuickActionCtasEnabled: boolean;

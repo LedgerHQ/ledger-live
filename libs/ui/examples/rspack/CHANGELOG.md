@@ -1,5 +1,19 @@
 # rspack-example
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`d38b48b`](https://github.com/LedgerHQ/ledger-live/commit/d38b48b105bd50e1d5ca45a1ea65f6e2ed4814fa)]:
+  - @ledgerhq/react-ui@0.46.0
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d38b48b`](https://github.com/LedgerHQ/ledger-live/commit/d38b48b105bd50e1d5ca45a1ea65f6e2ed4814fa)]:
+  - @ledgerhq/react-ui@0.46.0-next.0
+
 ## 0.5.2
 
 ### Patch Changes

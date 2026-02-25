@@ -61,7 +61,7 @@ true;
 `;
 
 const StyledWebview = styled(WebView)`
-  background-color: transparent; // avoids white background before page loads
+  background-color: transparent;
   flex: 1;
 `;
 

@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
@@ -34,6 +35,11 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
   );
 
   invariant(device, "[E2E Setup] Speculos not started");
+
+  if (process.env.REMOTE_SPECULOS === "true") {
+    await waitForSpeculosReady(device.id);
+  }
+
   setEnv("SPECULOS_API_PORT", device.port);
   process.env.SPECULOS_API_PORT = device.port.toString();
 

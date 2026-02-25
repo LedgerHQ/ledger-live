@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "~/context/Locale";
 import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
@@ -10,6 +11,7 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 export default function DebugSettings({
   navigation: { navigate },
 }: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugSettings>) {
+  const { t } = useTranslation();
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
@@ -40,6 +42,12 @@ export default function DebugSettings({
         desc="Create new accounts, announcements, etc"
         iconLeft={<IconsLegacy.MicrochipMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugGenerators)}
+      />
+      <SettingsRow
+        title={t("settings.debug.contentCards.title")}
+        desc={t("settings.debug.contentCards.titleDesc")}
+        iconLeft={<IconsLegacy.GraphGrowMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugContentCards)}
       />
       <SettingsRow
         title="Debugging"

@@ -75,37 +75,18 @@ describe("TopBar", () => {
     expect(screen.queryByTestId("topbar-action-button-synchronize")).toBeNull();
   });
 
-  it("renders lock button when hasPassword is true", () => {
+  it("renders all slot actions when hasAccounts is true", () => {
     render(<TopBar />, {
       initialState: getDefaultInitialState({
-        application: { hasPassword: true },
-      }),
-    });
-
-    expect(screen.getByTestId("topbar-password-lock-button")).toBeVisible();
-  });
-
-  it("does not render lock button when hasPassword is false", () => {
-    render(<TopBar />, {
-      initialState: getDefaultInitialState(),
-    });
-
-    expect(screen.queryByTestId("topbar-password-lock-button")).toBeNull();
-  });
-
-  it("renders all elements when hasAccounts and hasPassword are true", () => {
-    render(<TopBar />, {
-      initialState: getDefaultInitialState({
-        application: { hasPassword: true },
         accounts: [mockAccount],
       }),
     });
 
+    expect(screen.getByTestId("topbar-action-button-my-ledger")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-synchronize")).toBeVisible();
-    expect(screen.getByTestId("topbar-password-lock-button")).toBeVisible();
+    expect(screen.getByTestId("topbar-action-button-notifications")).toBeVisible();
     expect(screen.getByTestId("topbar-action-button-discreet")).toBeVisible();
-    expect(screen.getByTestId("topbar-help-button")).toBeVisible();
-    expect(screen.getByTestId("topbar-settings-button")).toBeVisible();
+    expect(screen.getByTestId("topbar-action-button-settings")).toBeVisible();
   });
 
   describe("discreetMode", () => {

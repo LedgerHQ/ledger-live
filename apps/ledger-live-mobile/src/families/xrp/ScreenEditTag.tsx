@@ -33,7 +33,7 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
   const { t } = useTranslation();
   const transaction = route.params?.transaction;
   const [tag, setTag] = useState<BigNumber | null | undefined>(() => {
-    if (transaction.tag) {
+    if (typeof transaction.tag === "number") {
       return BigNumber(transaction.tag);
     }
 

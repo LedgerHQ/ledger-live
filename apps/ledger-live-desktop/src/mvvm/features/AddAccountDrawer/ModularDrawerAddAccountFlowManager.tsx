@@ -21,16 +21,17 @@ import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue } from "~/renderer/reducers/modularDrawer";
+import { getLLDCoinFamily } from "~/renderer/families";
 import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 
-const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
+export const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
 export type ModularDrawerAddAccountFlowManagerProps = {
   currency: CryptoOrTokenCurrency;
   onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void;
 };
 
-const Title = styled(Text)`
+export const Title = styled(Text)`
   font-size: 24px;
   font-weight: 600;
   color: var(--palette-text-shade100);
@@ -88,6 +89,18 @@ const ModularDrawerAddAccountFlowManager = ({
   );
 
   const dispatch = useDispatch();
+
+  const specific = getLLDCoinFamily(cryptoCurrency.family);
+  const CustomModularDrawerAddAccountFlowManager = specific?.ModularDrawerAddAccountFlowManager;
+
+  if (CustomModularDrawerAddAccountFlowManager) {
+    return (
+      <CustomModularDrawerAddAccountFlowManager
+        currency={currency}
+        onAccountSelected={onAccountSelected}
+      />
+    );
+  }
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {

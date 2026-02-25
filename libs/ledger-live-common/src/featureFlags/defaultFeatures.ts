@@ -785,6 +785,8 @@ export const DEFAULT_FEATURES: Features = {
       quickActionCtas: true,
       tour: true,
       mainNavigation: true,
+      lazyOnboarding: true,
+      balanceRefreshRework: true,
     },
   },
   lwdWallet40: {
@@ -795,7 +797,9 @@ export const DEFAULT_FEATURES: Features = {
       quickActionCtas: true,
       mainNavigation: true,
       tour: true,
+      lazyOnboarding: true,
       newReceiveDialog: true,
+      balanceRefreshRework: true,
     },
   },
   addressPoisoningOperationsFilter: {

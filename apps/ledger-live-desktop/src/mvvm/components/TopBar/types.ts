@@ -1,12 +1,15 @@
-import { Eye, EyeCross, Refresh, Warning } from "@ledgerhq/lumen-ui-react/symbols";
-import { Spinner } from "@ledgerhq/lumen-ui-react";
+import { Bell, BellNotification, Eye, EyeCross, Settings } from "@ledgerhq/lumen-ui-react/symbols";
+import { DeviceIconComponent } from "./utils/getDeviceIcon";
+import { ActivityIndicatorIcon } from "./utils/getActivityIndicatorIcon";
 
 type IconComponent =
+  | typeof Bell
+  | typeof BellNotification
   | typeof Eye
   | typeof EyeCross
-  | typeof Refresh
-  | typeof Spinner
-  | typeof Warning;
+  | typeof Settings
+  | ActivityIndicatorIcon
+  | DeviceIconComponent;
 
 type TopBarAction = {
   label: string;
@@ -16,8 +19,11 @@ type TopBarAction = {
   icon: IconComponent;
 };
 
+/** A slot is either a generic action (button) or the notification indicator (button + drawer). */
+type TopBarSlot = { type: "action"; action: TopBarAction } | { type: "notification" };
+
 type TopBarViewProps = {
-  actionsList: TopBarAction[];
+  slots: TopBarSlot[];
 };
 
-export type { TopBarAction, TopBarViewProps };
+export type { TopBarAction, TopBarSlot, TopBarViewProps };
