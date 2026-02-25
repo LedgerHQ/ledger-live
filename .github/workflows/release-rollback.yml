@@ -4,18 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       application:
-        description: 'Application to create branch for (live-desktop or live-mobile)'
+        description: "Application to create branch for (live-desktop or live-mobile)"
         required: true
         type: choice
         options:
           - live-desktop
           - live-mobile
       version-number:
-        description: 'Version number to restore'
+        description: "Version number to restore"
         required: true
         type: string
       replacement-version-number:
-        description: 'Version number to replace'
+        description: "Version number to replace"
         required: true
         type: string
 
@@ -29,7 +29,6 @@ jobs:
       RELEASE_NOTES: "This release includes small security improvements and minor bug fixes."
       REPO: "ledger-live"
     steps:
-
       - name: Set environment variables
         run: |
           echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
@@ -59,9 +58,10 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
         run: pnpm i -D -F "ledger-live" --ignore-scripts
@@ -143,13 +143,13 @@ jobs:
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
-              await github.rest.git.deleteRef({
-                owner: context.repo.owner,
-                repo: '${{ env.REPO }}',
-                ref: 'heads/rollback'
-              });
-              console.log('Successfully deleted rollback branch');
-            
+            await github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: '${{ env.REPO }}',
+              ref: 'heads/rollback'
+            });
+            console.log('Successfully deleted rollback branch');
+
       - uses: actions/github-script@v7
         name: Trigger release build for desktop
         if: ${{ inputs.application == 'live-desktop' }}

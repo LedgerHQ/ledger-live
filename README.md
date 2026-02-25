@@ -32,90 +32,18 @@ git clone git@github.com:LedgerHQ/ledger-live.git
 cd ledger-live
 ```
 
-### Proto
+### mise
 
-**⚠️ Important**: In order to install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
-Please follow the instructions on the [**proto**](https://moonrepo.dev/docs/proto/install) website to install it.
+**⚠️ Important**: In order to install the right version of the tools you will need to install the [`mise`](https://mise.jdx.dev) toolchain manager.
+Please follow the instructions on the [**mise**](https://mise.jdx.dev/installing-mise.html) website to install it.
 
-Once you have installed `proto`, please run the following command:
+Once you have installed `mise`, please run the following command:
 
 ```bash
-# Will download and install the supported versions of nodejs, npm and pnpm.
+# Will download and install the supported versions of Node.js (including npm) and pnpm.
 # Run it from the root or a subfolder of the repository.
-proto use
+mise setup
 ```
-
-### Dependencies
-
-#### Pre-requisites
-
-1. Install a newer ruby version
-
-We recommend to use [homebrew](https://brew.sh/) to install packages on your MacOs computer.
-
-Make sure to install Ruby in its `3.3.X` version
-
-```sh
-brew install ruby@3.3
-```
-
-Put the following content to your `~/.zshrc` file
-
-```
-if [ -d "/opt/homebrew/opt/ruby@3.3/bin" ]; then
-  export PATH=/opt/homebrew/opt/ruby@3.3/bin:$PATH
-  export PATH=`gem environment gemdir`/bin:$PATH
-fi
-```
-
-Reload the configuration
-
-```sh
-source ~/.zshrc
-```
-
-And check the ruby version
-
-```sh
-ruby --version
-```
-
-It displays the latest stable version among the one you've selected (`3.3.7` at the time writing)
-
-```sh
-ruby 3.3.7 (2025-01-15 revision be31f993d7) [arm64-darwin24]
-```
-
-2. Install `bundler` and `cocoapods` for `ledger-live-mobile` on iOS
-
-```sh
-gem install bundler:2.5.7
-gem install cocoapods
-```
-
-3. Downgrade the version of the `activesupport` gem
-
-There is known bug on the activesupport version with cocoapods (we did not dig into it), so we need to downgrade it to make it works
-
-```sh
-gem uninstall activesupport
-```
-
-You will have the following output
-
-```sh
-cocoapods-core-1.16.2 depends on activesupport (>= 5.0, < 8)
-If you remove this gem, these dependencies will not be met.
-Continue with Uninstall? [yN]
-```
-
-Type `y`, then
-
-```sh
-gem install activesupport -v  7.0.8 # this version was working for the install, an other may work also
-```
-
-And you are done !
 
 #### Install dependencies
 

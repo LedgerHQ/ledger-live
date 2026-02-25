@@ -27,10 +27,11 @@ jobs:
         run: |
           git checkout -b $RELEASE_BRANCH
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Push branch
         run: git push -u origin $RELEASE_BRANCH
       - name: Move patch updates to minor

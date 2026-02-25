@@ -3,19 +3,19 @@ name: "[Desktop] - Test Electron Builder Config"
 on:
   pull_request:
     paths:
-      - 'apps/ledger-live-desktop/electron-builder*.yml'
-      - 'apps/ledger-live-desktop/scripts/notarize.js'
-      - 'apps/ledger-live-desktop/scripts/sign-windows.js'
-      - 'apps/ledger-live-desktop/scripts/beforePack.js'
-      - 'apps/ledger-live-desktop/package.json'
+      - "apps/ledger-live-desktop/electron-builder*.yml"
+      - "apps/ledger-live-desktop/scripts/notarize.js"
+      - "apps/ledger-live-desktop/scripts/sign-windows.js"
+      - "apps/ledger-live-desktop/scripts/beforePack.js"
+      - "apps/ledger-live-desktop/package.json"
   push:
     branches: [main, develop]
     paths:
-      - 'apps/ledger-live-desktop/electron-builder*.yml'
-      - 'apps/ledger-live-desktop/scripts/notarize.js'
-      - 'apps/ledger-live-desktop/scripts/sign-windows.js'
-      - 'apps/ledger-live-desktop/scripts/beforePack.js'
-      - 'apps/ledger-live-desktop/package.json'
+      - "apps/ledger-live-desktop/electron-builder*.yml"
+      - "apps/ledger-live-desktop/scripts/notarize.js"
+      - "apps/ledger-live-desktop/scripts/sign-windows.js"
+      - "apps/ledger-live-desktop/scripts/beforePack.js"
+      - "apps/ledger-live-desktop/package.json"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,19 +33,20 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    
+
     strategy:
       fail-fast: false
       matrix:
-        config: ['electron-builder.yml', 'electron-builder-nightly.yml', 'electron-builder-pre.yml']
-    
+        config: ["electron-builder.yml", "electron-builder-nightly.yml", "electron-builder-pre.yml"]
+
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "true"
 
       - name: Install system dependencies

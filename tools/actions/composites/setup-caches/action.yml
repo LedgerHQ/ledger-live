@@ -1,14 +1,13 @@
 name: "Setup Caches"
 description: "Setup caches for faster running time"
 inputs:
-  install-proto:
-    description: "true to install proto, false by default"
-    required: false
+  use-mise:
+    description: "use mise instead of proto to install required tools"
     default: "false"
-  upgrade-proto:
-    description: "true to upgrade proto, false by default"
     required: false
-    default: "false"
+  gh-token:
+    description: "use the GITHUB_TOKEN to download binaries and avoid GitHub limits"
+    required: false
   skip-pnpm-cache:
     description: "true to skip pnpm caching, true by default"
     required: false
@@ -44,25 +43,20 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup proto
-      if: inputs.install-proto == 'true'
-      uses: moonrepo/setup-toolchain@v0
+    - name: Install mise and tools
+      if: inputs.use-mise == 'true'
+      uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
       with:
-        proto-version: "0.55.2"
+        install: true # [default: true] run `mise install`
+        cache: true
+        reshim: true
+        github_token: ${{ inputs['gh-token'] }}
 
-    - name: Update proto
-      if: inputs.upgrade-proto == 'true'
-      run: proto upgrade
+    - name: Force mise reshim
+      if: inputs.use-mise == 'true'
       shell: bash
-
-    - name: Setup the toolchain
-      shell: bash
-      run: proto use
-
-    - uses: pnpm/action-setup@v4
-      if: inputs.install-proto == 'true' && startsWith(env.CI_OS, 'windows')
-      with:
-        version: 10.24.0
+      run: |
+        mise reshim
 
     - name: Get pnpm store directory
       shell: bash
@@ -106,9 +100,9 @@ runs:
       if: inputs.skip-pod-cache == 'true' && runner.os == 'macOS'
       shell: bash
       run: |
-          rm -rf ~/.cocoapods/
-          rm -rf ~/Library/Caches/CocoaPods
-          rm -rf apps/ledger-live-mobile/ios/Pods
+        rm -rf ~/.cocoapods/
+        rm -rf ~/Library/Caches/CocoaPods
+        rm -rf apps/ledger-live-mobile/ios/Pods
 
     - name: TurboRepo local caching server
       id: turborepo-cache-server

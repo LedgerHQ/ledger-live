@@ -2,11 +2,10 @@ name: "[Nightly] - Build & Publish - Scheduled"
 
 on:
   schedule:
-    - cron: "0 2 * * TUE-SAT"  # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
+    - cron: "0 2 * * TUE-SAT" # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
   workflow_dispatch:
 
 jobs:
-
   nightly-release:
     name: Nightly Release
     runs-on: ubuntu-24.04
@@ -39,10 +38,11 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
 
       - uses: ruby/setup-ruby@v1
