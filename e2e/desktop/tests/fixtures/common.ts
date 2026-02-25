@@ -10,6 +10,7 @@ import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
+import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
@@ -244,6 +245,10 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
+    // capture webview console and network logs for debugging (e.g. swap live app)
+    const webviewCollector = new WebviewLogCollector();
+    webviewCollector.start(electronApp);
+
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
@@ -253,10 +258,10 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      await captureArtifacts(page, testInfo, electronApp);
+      await captureArtifacts(page, testInfo, electronApp, webviewCollector);
     }
 
-    //Remove video if test passed
+    // Remove video if test passed
     if (testInfo.status === "passed") {
       await electronApp.close();
       await page.video()?.delete();
