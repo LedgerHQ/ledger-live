@@ -21,8 +21,19 @@ jobs:
       matrix:
         config:
           [
-            { name: "Linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage", output-name: "linux" },
-            { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
+            {
+              name: "Linux",
+              os: "ubuntu-22.04",
+              image: "linux-x86_64.AppImage",
+              output-name: "linux",
+            },
+            {
+              name: "Windows",
+              os: "windows-2022",
+              dotnet: true,
+              image: "win-x64.exe",
+              output-name: "win",
+            },
             { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
           ]
     runs-on: ${{ matrix.config.os }}
@@ -63,10 +74,11 @@ jobs:
           ruby-version: 3.3.0
           bundler-cache: true
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         id: build-desktop
@@ -86,4 +98,3 @@ jobs:
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/ledger-live-desktop-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
-

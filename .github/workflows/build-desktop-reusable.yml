@@ -26,15 +26,25 @@ permissions:
   pull-requests: write
 
 jobs:
-
   build-desktop-app:
     strategy:
       fail-fast: false
       matrix:
         config:
           [
-            { name: "Linux", os: "ledger-live-linux-8CPU-32RAM", image: "linux-x86_64.AppImage", output-name: "linux" },
-            { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
+            {
+              name: "Linux",
+              os: "ledger-live-linux-8CPU-32RAM",
+              image: "linux-x86_64.AppImage",
+              output-name: "linux"
+            },
+            {
+              name: "Windows",
+              os: "windows-2022",
+              dotnet: true,
+              image: "win-x64.exe",
+              output-name: "win"
+            },
             { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
           ]
     name: "${{ matrix.config.name }} Build"
@@ -56,10 +66,11 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}

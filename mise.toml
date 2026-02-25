@@ -1,0 +1,91 @@
+min_version = '2026.3.1'
+
+[settings]
+experimental = true
+lockfile = true
+
+# Download the pre-compiled binaries
+ruby.compile = false
+
+[plugins]
+bundler = "jonathanmorley/asdf-bundler"
+cocoapods = "mise-plugins/mise-cocoapods"
+
+
+[tools]
+node = '22.13.1'
+pnpm = '10.24.0'
+npm = '10.3.0'
+
+
+# Mobile dev ecosystem, this is only done on macos and linux. 
+# We can ignore these tools on Windows 
+# ruby = { version = "3.3.7", os = ["linux", "macos"] }
+# bundler = { version = "2.5.7", os = ["linux", "macos"] }
+# cocoapods = { version = "1.14.3", os = ["linux", "macos"] }
+# java = { version = "zulu-17.64.17.0", os = ["linux", "macos"] }
+
+# Fix activesupport version to resolve cocoapods compatibility
+# "gem:activesupport" = { version = "7.0.8.4", os = ["linux", "macos"] }
+
+[env]
+_.path = ['{{config_root}}/node_modules/.bin']
+# Load .env file if it exists.
+_.file = ".env"
+
+# Use the project name derived from the current directory
+PROJECT_NAME = "{{ config_root | basename }}"
+
+# Set up the path for node module binaries
+BIN_PATH = "{{ config_root }}/node_modules/.bin"
+# NODE_ENV = "{{ env.NODE_ENV | default(value='development') }}"
+
+[tasks.info]
+description = "Display installed tools, versions, and project name"
+run = '''
+  echo 'Project Name: {{env.PROJECT_NAME}}'
+  echo '============='
+  echo "NODE_ENV: $NODE_ENV"
+  echo "BIN_PATH: $BIN_PATH"
+  echo '============='
+  echo 'Installed Tools:'
+  echo ''
+  mise ls --installed --local
+  echo ''
+  echo 'Tool Locations:'
+  echo ''
+  mise ls --installed --local | awk 'NR>1 {print $1}' | while read -r tool; do
+  echo "$tool: $(mise where "$tool" 2>/dev/null)"
+  done
+  echo ''
+  echo 'Missing Tools:'
+  echo ''
+  mise ls --missing --local
+'''
+
+[tasks.setup]
+description = "Clean project and install all dependencies"
+run = [
+  "mise install",
+  "mise reshim",
+  { task = "pnpm:install" },
+  "pnpm build:llm:deps",
+]
+alias = "s"
+depends = ["clean"]
+
+[tasks.clean]
+description = "Removes build artifacts, untracked files, and dependencies (ignored files are preserved)"
+depends = ['pnpm:clean', "pod:clean"]
+wait_for = []
+run = "git clean -fd"
+
+[tasks."pnpm:install"]
+description = 'Installs dependencies with pnpm'
+run = 'pnpm install'
+sources = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml']
+outputs = ['node_modules/.pnpm/lock.yaml']
+
+[tasks."pnpm:clean"]
+description = "Removes packages installed with pnpm"
+run = "pnpm store prune"

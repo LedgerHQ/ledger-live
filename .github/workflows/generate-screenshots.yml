@@ -37,7 +37,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
       - name: generate token
         id: generate-token
@@ -70,9 +70,10 @@ jobs:
 
       - name: Setup the toolchain
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         with:
-          install-proto: "true"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}

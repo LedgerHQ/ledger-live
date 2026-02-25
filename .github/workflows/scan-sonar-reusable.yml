@@ -40,10 +40,17 @@ jobs:
           git fetch origin develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
+<<<<<<< HEAD
           install-proto: false
+||||||| parent of f2eef875b0 (ci: migrate all workflows from proto to mise toolchain)
+          install-proto: true
+=======
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+>>>>>>> f2eef875b0 (ci: migrate all workflows from proto to mise toolchain)
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
