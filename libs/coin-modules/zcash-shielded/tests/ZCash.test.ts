@@ -199,10 +199,11 @@ describe("syncShielded", () => {
   beforeEach(resetLastBlockCount);
 
   test.each([
+    { maxBatchSize: 3, startBlockHeight: 0 },
     { maxBatchSize: 0, startBlockHeight: 5 },
     { maxBatchSize: 1, startBlockHeight: -1 },
   ])(
-    "returns early if maxBatchSize or startBlockHeight are invalid (negative or 0)",
+    "returns early if either maxBatchSize or startBlockHeight are invalid (negative or 0)",
     async (args: { maxBatchSize: number; startBlockHeight: number }) => {
       const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
       const syncedShieldedObs = zcash.syncShielded({
