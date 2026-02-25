@@ -491,7 +491,7 @@ describe("EVM Family", () => {
     };
 
     it("should return the expected payload for an EIP1559 tx", async () => {
-      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
         if (method === "eth_feeHistory") {
           return {
             reward: [
@@ -515,7 +515,7 @@ describe("EVM Family", () => {
     });
 
     it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee", async () => {
-      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
         if (method === "eth_feeHistory") {
           return {
             reward: [
@@ -666,6 +666,130 @@ describe("EVM Family", () => {
         height: 1,
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
       });
+    });
+
+    it("should prefetch block transactions when requested", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockResolvedValueOnce({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        number: 1,
+        timestamp: Math.floor(Date.now() / 1000),
+        transactions: ["0xtx1"],
+        prefetchedTransactions: [
+          {
+            hash: "0xtx1",
+            value: 1n,
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+          },
+        ],
+      } as any);
+
+      expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        timestamp: Math.floor(Date.now() / 1000) * 1000,
+        height: 1,
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        transactions: [
+          {
+            hash: "0xtx1",
+            value: "1",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+          },
+        ],
+        transactionHashes: ["0xtx1"],
+      });
+    });
+
+    it("should fallback to transaction hashes when prefetched transactions are unavailable", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockResolvedValueOnce({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        number: 1,
+        timestamp: Math.floor(Date.now() / 1000),
+        transactions: ["0xtx1"],
+        get prefetchedTransactions() {
+          const error = new Error("transactions were not prefetched with block request");
+          (error as Error & { code?: string }).code = "UNSUPPORTED_OPERATION";
+          throw error;
+        },
+      } as any);
+
+      expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        timestamp: Math.floor(Date.now() / 1000) * 1000,
+        height: 1,
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        transactionHashes: ["0xtx1"],
+      });
+    });
+  });
+
+  describe("getBlockReceipts", () => {
+    it("should return receipts mapped to node transaction payload", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_getBlockReceipts") {
+          return [
+            {
+              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              gasUsed: "0x7a120",
+              effectiveGasPrice: "0x3b9aca00",
+              status: "0x1",
+              logs: [],
+            },
+          ];
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      expect(await RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1)).toEqual([
+        {
+          hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+          gasUsed: "500000",
+          gasPrice: "1000000000",
+          status: 1,
+          erc20Transfers: [],
+        },
+      ]);
+    });
+
+    it("should throw RpcUnsupportedError for RPC -32601", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+        if (method === "eth_chainId") {
+          return "0x1";
+        }
+        if (method === "eth_getBlockReceipts") {
+          throw { code: -32601, message: "method not found" };
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      await expect(
+        RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
+      ).rejects.toBeInstanceOf(RPC_API.RpcUnsupportedError);
+    });
+
+    it("should throw RpcUnsupportedError for nested responseBody code", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+        if (method === "eth_chainId") {
+          return "0x1";
+        }
+        if (method === "eth_getBlockReceipts") {
+          throw {
+            code: "SERVER_ERROR",
+            info: {
+              responseBody:
+                '{"jsonrpc":"2.0","error":{"code":-32601,"message":"rpc method is unsupported"},"id":1}',
+            },
+          };
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      await expect(
+        RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
+      ).rejects.toBeInstanceOf(RPC_API.RpcUnsupportedError);
     });
   });
 
