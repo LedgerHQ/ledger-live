@@ -24,7 +24,8 @@ jest.mock("LLD/components/Page", () => {
   const React = require("react");
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+    default: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
   };
 });
 // Test in Wallet V4 layout (route "/" with lwdWallet40 enabled uses the V4 branch in MainAppLayout).
