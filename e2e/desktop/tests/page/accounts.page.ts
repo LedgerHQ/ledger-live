@@ -83,7 +83,7 @@ export class AccountsPage extends AppPage {
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number) {
-    expect(await this.countAccounts()).toBe(count);
+    await expect(this.accountListNumber).toHaveCount(count);
   }
 
   @step("Expect number of accounts to be not null")
