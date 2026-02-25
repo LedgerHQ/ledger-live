@@ -97,7 +97,6 @@ env:
   cache-bucket: ll-gha-s3-cache
 
 jobs:
-
   build-ios-native:
     name: "iOS Build Native"
     if: ${{ inputs.build-ios-native == true }}
@@ -192,7 +191,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
@@ -213,7 +212,8 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: "true"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"
@@ -265,6 +265,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     steps:
       - run: echo "Skipping"

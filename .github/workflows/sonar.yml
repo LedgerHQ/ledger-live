@@ -31,8 +31,9 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: caches
         with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
-          install-proto: false
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}

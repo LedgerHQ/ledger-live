@@ -40,7 +40,7 @@ jobs:
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
           application: ${{ github.event.inputs.application }}
-        
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
@@ -56,7 +56,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: install dependencies
         run: pnpm i -F "ledger-live"
       - name: Move minor updates to patch for hotfix branch
