@@ -17,7 +17,7 @@ export const celoConfig: Record<string, ConfigInfo> = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://celo.blockscout.com/api",
+        uri: "http://localhost:8010/proxy/api",
       },
     },
   },

@@ -144,7 +144,7 @@ const getFeesForTransaction = async ({
       token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
     }
 
-    const celoTransaction = {
+    const celoTransaction: any = {
       from: account.freshAddress,
       to: transaction.recipient,
       data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
@@ -158,6 +158,9 @@ const getFeesForTransaction = async ({
           }
         : {}),
     };
+    if (transaction.feeCurrency) {
+      celoTransaction.feeCurrency = transaction.feeCurrency;
+    }
 
     gas = Number(
       (
