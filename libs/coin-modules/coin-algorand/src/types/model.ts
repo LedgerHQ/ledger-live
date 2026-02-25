@@ -12,7 +12,7 @@ export type Order = "asc" | "desc";
 export type ListOperationsOptions = {
   limit?: number;
   minHeight?: number;
-  token?: string;
+  cursor?: string;
   order?: Order;
 };
 

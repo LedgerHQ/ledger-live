@@ -101,17 +101,17 @@ describe("Algorand Api (mainnet)", () => {
   describe("listOperations", () => {
     it("returns operations for an address", async () => {
       // When
-      const [operations, nextToken] = await api.listOperations(SENDER, {
+      const { items, next } = await api.listOperations(SENDER, {
         minHeight: 0,
         order: "desc",
       });
 
       // Then
-      expect(operations.length).toBeGreaterThan(0);
-      expect(typeof nextToken).toBe("string");
+      expect(items.length).toBeGreaterThan(0);
+      expect(typeof next).toBe("string");
 
       // Verify operation structure
-      const op = operations[0];
+      const op = items[0];
       expect(op.id).not.toBeUndefined();
       expect(op.type).toMatch(/^(IN|OUT|OPT_IN|OPT_OUT)$/);
       expect(op.value).toBeGreaterThanOrEqual(0n);
@@ -126,18 +126,16 @@ describe("Algorand Api (mainnet)", () => {
 
     it("returns operations in ascending order when specified", async () => {
       // When
-      const [operations] = await api.listOperations(SENDER, {
+      const { items } = await api.listOperations(SENDER, {
         minHeight: 0,
         order: "asc",
       });
 
       // Then
-      if (operations.length > 1) {
+      if (items.length > 1) {
         // Check ascending order by block height
-        for (let i = 1; i < operations.length; i++) {
-          expect(operations[i].tx.block.height).toBeGreaterThanOrEqual(
-            operations[i - 1].tx.block.height,
-          );
+        for (let i = 1; i < items.length; i++) {
+          expect(items[i].tx.block.height).toBeGreaterThanOrEqual(items[i - 1].tx.block.height);
         }
       }
     });
@@ -147,7 +145,7 @@ describe("Algorand Api (mainnet)", () => {
       const limit = 5;
 
       // When - fetch first page
-      const [firstPageOps, firstToken] = await api.listOperations(SENDER, {
+      const { items: firstPageOps, next: firstToken } = await api.listOperations(SENDER, {
         minHeight: 0,
         limit,
         order: "asc",
@@ -159,11 +157,11 @@ describe("Algorand Api (mainnet)", () => {
       expect(firstToken).not.toBe("");
 
       // When - fetch second page using the cursor
-      const [secondPageOps, secondToken] = await api.listOperations(SENDER, {
+      const { items: secondPageOps, next: secondToken } = await api.listOperations(SENDER, {
         minHeight: 0,
         limit,
         order: "asc",
-        lastPagingToken: firstToken,
+        cursor: firstToken,
       });
 
       // Then - second page should also have results
