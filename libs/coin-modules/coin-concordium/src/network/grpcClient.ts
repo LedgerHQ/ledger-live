@@ -16,7 +16,8 @@ import type {
   BlockOperation,
   BlockTransaction,
   Operation,
-  Pagination,
+  ListOperationsOptions,
+  Page,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
@@ -630,23 +631,25 @@ function processTransactionForAddress(
  *
  * @param currency - The cryptocurrency configuration
  * @param address - The account address to filter operations for
- * @param page - Pagination parameters (minHeight determines scan start)
+ * @param options - Pagination/filtering parameters (minHeight determines scan start)
  * @returns Array of operations and cursor (stringified next block height if more results, empty string otherwise)
  */
 export async function getOperations(
   currency: CryptoCurrency,
   address: string,
-  page: Pagination,
-): Promise<[Operation[], string]> {
+  options: ListOperationsOptions,
+): Promise<Page<Operation>> {
   try {
     const { height: currentHeight } = await getLastBlock(currency);
 
-    if (page.minHeight > currentHeight) {
-      return [[], ""];
+    if (options.minHeight > currentHeight) {
+      return { items: [], next: undefined };
     }
 
-    const startHeight = page.minHeight;
-    const endHeight = Math.min(currentHeight, page.minHeight + MAX_BLOCKS_TO_SCAN);
+    // FIXME Options are ignored here
+
+    const startHeight = options.minHeight;
+    const endHeight = Math.min(currentHeight, options.minHeight + MAX_BLOCKS_TO_SCAN);
 
     const operations: Operation[] = [];
 
@@ -672,9 +675,9 @@ export async function getOperations(
     operations.sort((a, b) => b.tx.date.getTime() - a.tx.date.getTime());
 
     const hasMore = endHeight < currentHeight;
-    const nextCursor = hasMore ? JSON.stringify(endHeight + 1) : "";
+    const nextCursor = hasMore ? JSON.stringify(endHeight + 1) : undefined;
 
-    return [operations, nextCursor];
+    return { items: operations, next: nextCursor };
   } catch (error) {
     log("concordium-grpc", "getOperations", { error });
     throw error;

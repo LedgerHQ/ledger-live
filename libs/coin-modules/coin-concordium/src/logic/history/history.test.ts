@@ -150,12 +150,12 @@ describe("history", () => {
         VALID_ADDRESS,
         expect.stringContaining("concordium"),
       );
-      expect(result[0]).toHaveLength(1);
-      expect(result[0][0]).toMatchObject({
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toMatchObject({
         id: "encoded-op-id-1",
         type: "OUT",
       });
-      expect(result[1]).toBe("");
+      expect(result.next).toBeUndefined();
     });
 
     it("should transform proxy operations to API format", async () => {
@@ -181,7 +181,7 @@ describe("history", () => {
       const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
 
       // THEN
-      const [operations] = result;
+      const { items: operations } = result;
       expect(operations[0]).toEqual({
         id: "encoded-op-id-2",
         asset: { type: "native" },
@@ -226,7 +226,7 @@ describe("history", () => {
       const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
 
       // THEN
-      const [operations] = result;
+      const { items: operations } = result;
       expect(operations[0].tx.block).toEqual({
         height: 0,
         hash: "txhash3", // Falls back to tx hash
@@ -242,7 +242,7 @@ describe("history", () => {
       const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
 
       // THEN
-      expect(result).toEqual([[], ""]);
+      expect(result).toEqual({ items: [], next: undefined });
     });
   });
 });

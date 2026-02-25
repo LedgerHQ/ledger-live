@@ -83,10 +83,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
       currency,
       address,
       mirrorTokens,
-      pagination: {
-        minHeight: 0,
-        ...(latestOperationTimestamp && { lastPagingToken: latestOperationTimestamp.toString() }),
-      },
+      cursor: latestOperationTimestamp?.toString(),
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: true,

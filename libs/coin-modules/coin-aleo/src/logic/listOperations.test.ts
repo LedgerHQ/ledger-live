@@ -51,7 +51,7 @@ describe("listOperations", () => {
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
-        pagination: { minHeight: 0, order: "asc" },
+        options: { minHeight: 0, order: "asc" },
       });
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
@@ -86,7 +86,7 @@ describe("listOperations", () => {
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
-        pagination: { minHeight: 0 },
+        options: { minHeight: 0 },
       });
 
       expect(mockEnrichTransaction).toHaveBeenCalledTimes(1);
@@ -109,7 +109,7 @@ describe("listOperations", () => {
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
-        pagination: { minHeight: 0 },
+        options: { minHeight: 0 },
       });
 
       expect(mockEnrichTransaction).not.toHaveBeenCalled();
@@ -135,7 +135,7 @@ describe("listOperations", () => {
         currency: mockCurrency,
         address: mockAddress,
         mode: "alpaca",
-        pagination: { minHeight: 0, order: "asc" },
+        options: { minHeight: 0, order: "asc" },
       });
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
@@ -164,7 +164,7 @@ describe("listOperations", () => {
         currency: mockCurrency,
         address: mockAddress,
         mode: "alpaca",
-        pagination: { minHeight: 0 },
+        options: { minHeight: 0 },
       });
 
       expect(mockEnrichTransaction).not.toHaveBeenCalled();
@@ -173,8 +173,8 @@ describe("listOperations", () => {
     });
   });
 
-  describe("pagination parameters", () => {
-    it("should pass pagination parameters correctly to fetchAccountTransactionsFromHeight", async () => {
+  describe("options parameters", () => {
+    it("should pass options parameters correctly to fetchAccountTransactionsFromHeight", async () => {
       mockFetchAccountTransactionsFromHeight.mockResolvedValue({
         transactions: [],
         nextCursor: null,
@@ -184,9 +184,9 @@ describe("listOperations", () => {
         currency: mockCurrency,
         address: mockAddress,
         mode: "alpaca",
-        pagination: {
+        options: {
           minHeight: 1000,
-          lastPagingToken: "500",
+          cursor: "500",
           limit: 20,
           order: "desc",
         },
@@ -218,7 +218,7 @@ describe("listOperations", () => {
         currency: mockCurrency,
         address: mockAddress,
         mode: "alpaca",
-        pagination: { minHeight: 0 },
+        options: { minHeight: 0 },
       });
 
       expect(mockEnrichTransaction).toHaveBeenCalledTimes(1);

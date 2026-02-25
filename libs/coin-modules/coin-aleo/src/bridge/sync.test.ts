@@ -197,14 +197,14 @@ describe("sync.ts", () => {
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
         mode: "bridge",
-        pagination: {
+        options: {
           minHeight: 0,
           order: "asc",
         },
       });
     });
 
-    it("should pass lastPagingToken from latest operation block height when resuming sync", async () => {
+    it("should pass cursor from latest operation block height when resuming sync", async () => {
       const mockOperation = getMockedOperation({
         blockHeight: 12345,
         accountId: mockInitialAccount.id,
@@ -233,10 +233,10 @@ describe("sync.ts", () => {
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
         mode: "bridge",
-        pagination: {
+        options: {
           minHeight: 0,
           order: "asc",
-          lastPagingToken: mockOperation.blockHeight?.toString(),
+          cursor: mockOperation.blockHeight?.toString(),
         },
       });
     });

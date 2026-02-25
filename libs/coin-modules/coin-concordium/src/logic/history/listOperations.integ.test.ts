@@ -23,7 +23,7 @@ describe("listOperations", () => {
 
   describe("Account with no transactions", () => {
     it("should return empty array for pristine account", async () => {
-      const [operations, cursor] = await listOperations(
+      const { items: operations, next: cursor } = await listOperations(
         ADDRESS_PRISTINE,
         { minHeight: 0 },
         currency,
@@ -31,16 +31,18 @@ describe("listOperations", () => {
 
       expect(Array.isArray(operations)).toBe(true);
       expect(operations.length).toBe(0);
-      expect(cursor).toBe("");
+      expect(cursor).toBeUndefined();
     });
   });
 
   describe("Account with transactions", () => {
     let operations: Operation[];
-    let cursor: string;
+    let cursor: string | undefined;
 
     beforeAll(async () => {
-      [operations, cursor] = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      const page = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      operations = page.items;
+      cursor = page.next;
     });
 
     it("should fetch operations successfully", async () => {
@@ -114,7 +116,7 @@ describe("listOperations", () => {
     });
 
     it("should return empty cursor for proxy-based operations", async () => {
-      expect(cursor).toBe("");
+      expect(cursor).toBeUndefined();
     });
   });
 
@@ -122,7 +124,8 @@ describe("listOperations", () => {
     let operations: Operation[];
 
     beforeAll(async () => {
-      [operations] = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      const page = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      operations = page.items;
     });
 
     it("should categorize operations as IN or OUT", async () => {
