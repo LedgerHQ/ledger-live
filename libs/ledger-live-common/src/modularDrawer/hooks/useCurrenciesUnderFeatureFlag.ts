@@ -39,6 +39,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
+  const polygonAmoy = useFeature("currencyPolygonAmoy");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
@@ -131,6 +132,7 @@ export function useCurrenciesUnderFeatureFlag() {
       berachain: berachain,
       hyperevm: hyperevm,
       coreum,
+      polygon_amoy: polygonAmoy,
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
@@ -219,6 +221,7 @@ export function useCurrenciesUnderFeatureFlag() {
       berachain,
       hyperevm,
       coreum,
+      polygonAmoy,
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
