@@ -797,6 +797,9 @@ importers:
       '@ledgerhq/coin-canton':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-canton
+      '@ledgerhq/coin-concordium':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-concordium
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
@@ -6240,6 +6243,9 @@ importers:
       '@ledgerhq/coin-celo':
         specifier: workspace:^
         version: link:../coin-modules/coin-celo
+      '@ledgerhq/coin-concordium':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-concordium
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../coin-modules/coin-cosmos
@@ -6330,6 +6336,9 @@ importers:
       '@ledgerhq/hw-app-celo':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-celo
+      '@ledgerhq/hw-app-concordium':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-concordium
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos

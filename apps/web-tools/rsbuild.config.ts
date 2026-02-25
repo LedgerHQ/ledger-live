@@ -48,8 +48,15 @@ export default defineConfig({
         fs: false,
         net: false,
         vm: false,
+        tls: false,
+        http2: false,
+        dns: false,
       };
-      appendPlugins([new rspack.IgnorePlugin({ resourceRegExp: /^electron$/ })]);
+      appendPlugins([
+        new rspack.IgnorePlugin({ resourceRegExp: /^electron$/ }),
+        new rspack.IgnorePlugin({ resourceRegExp: /@grpc\/grpc-js/ }),
+        new rspack.IgnorePlugin({ resourceRegExp: /@grpc\/proto-loader/ }),
+      ]);
     },
   },
 });
