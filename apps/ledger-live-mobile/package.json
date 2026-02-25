@@ -244,6 +244,7 @@
     "@callstack/repack-plugin-reanimated": "5.2.3",
     "@features/market-banner": "workspace:^",
     "@jest/reporters": "catalog:",
+    "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

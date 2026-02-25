@@ -156,6 +156,9 @@
     },
     "./libs/ledgerjs/packages/react-native-hid": {
       "entry": ["src/index.ts"]
+    },
+    "./libs/asset-aggregation": {
+      "entry": ["src/index.ts"]
     }
   }
 }

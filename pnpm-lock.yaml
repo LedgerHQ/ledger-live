@@ -785,6 +785,9 @@ importers:
       '@features/market-banner':
         specifier: workspace:^
         version: link:../../features/market-banner
+      '@ledgerhq/asset-aggregation':
+        specifier: workspace:^
+        version: link:../../libs/asset-aggregation
       '@ledgerhq/client-ids':
         specifier: workspace:*
         version: link:../../libs/client-ids
@@ -1876,6 +1879,9 @@ importers:
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.2.0
+      '@ledgerhq/asset-aggregation':
+        specifier: workspace:^
+        version: link:../../libs/asset-aggregation
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -2579,6 +2585,40 @@ importers:
       typescript:
         specifier: 5.4.3
         version: 5.4.3
+
+  libs/asset-aggregation:
+    dependencies:
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:*
+        version: link:../live-countervalues
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+    devDependencies:
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
 
   libs/client-ids:
     dependencies:
@@ -6170,6 +6210,9 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
+      '@ledgerhq/asset-aggregation':
+        specifier: workspace:^
+        version: link:../asset-aggregation
       '@ledgerhq/client-ids':
         specifier: workspace:^
         version: link:../client-ids
@@ -30260,11 +30303,13 @@ packages:
   prebuild-install@7.1.2:
     resolution: {integrity: sha512-UnNke3IQb6sgarcZIDU3gbMeTp/9SSU1DAIkil7PrqG1vZlBtY5msYccSKSHDqa3hNg436IXK+SNImReuA1wEQ==}
     engines: {node: '>=10'}
+    deprecated: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
     hasBin: true
 
   prebuild-install@7.1.3:
     resolution: {integrity: sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==}
     engines: {node: '>=10'}
+    deprecated: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
     hasBin: true
 
   preferred-pm@3.1.4:
@@ -30522,6 +30567,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:

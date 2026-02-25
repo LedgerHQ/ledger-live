@@ -58,6 +58,7 @@
     "@braze/web-sdk": "6.4.0",
     "@electron/fuses": "2.0.0",
     "@features/market-banner": "workspace:^",
+    "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/client-ids": "workspace:*",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",

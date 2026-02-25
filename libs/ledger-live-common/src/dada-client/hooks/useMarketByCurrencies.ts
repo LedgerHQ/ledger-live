@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { selectMarketByCurrency } from "../entities/marketSelectors";
 import { ApiState } from "../entities/selectorUtils";
@@ -16,14 +16,11 @@ export const useMarketByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {
         currencyMarket?.priceChangePercentage24h !== undefined
       ) {
         marketByCurrencies[currency.id] = {
-          ...(currencyMarket.price && { price: currencyMarket.price }),
-          ...(currencyMarket.priceChangePercentage24h && {
-            priceChangePercentage24h:
-              Math.round(currencyMarket.priceChangePercentage24h * 100) / 100,
-          }),
+          price: currencyMarket.price,
+          priceChangePercentage24h: Math.round(currencyMarket.priceChangePercentage24h * 100) / 100,
         };
       }
     }
     return marketByCurrencies;
-  });
+  }, shallowEqual);
 };
