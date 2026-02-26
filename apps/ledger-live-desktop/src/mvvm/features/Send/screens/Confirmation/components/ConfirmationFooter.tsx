@@ -65,8 +65,8 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
   };
 
   return (
-    <DialogFooter className="px-6">
-      <div className="mb-12 flex w-full flex-col">
+    <DialogFooter className="px-24">
+      <div className="flex w-full flex-col">
         {buttonsToRender.map(({ label, onClick, appearance }, index) => (
           <Button
             key={index}

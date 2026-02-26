@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
+import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
@@ -46,13 +46,11 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
           />
         )}
         <SendHeader />
-        <DialogBody className="-mb-24 gap-32 px-24 py-16">
-          {StepComponent && (
-            <div key={wizard.currentStep} className="animate-fade-in">
-              <StepComponent />
-            </div>
-          )}
-        </DialogBody>
+        {StepComponent && (
+          <div key={wizard.currentStep} className="animate-fade-in flex min-h-0 flex-1 flex-col">
+            <StepComponent />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
