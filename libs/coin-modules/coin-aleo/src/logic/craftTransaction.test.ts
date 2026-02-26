@@ -44,14 +44,14 @@ describe("craftTransaction", () => {
       viewKey: mockViewKey,
     });
 
-    expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockIntent);
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledTimes(1);
+    expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockIntent);
+    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
       currency: mockCurrency,
       intent: mockMappedIntent,
       viewKey: mockViewKey,
     });
-    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
   });
 
   it("should omit viewKey from request when not provided", async () => {
@@ -60,11 +60,11 @@ describe("craftTransaction", () => {
       txIntent: mockIntent,
     });
 
+    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
       currency: mockCurrency,
       intent: mockMappedIntent,
     });
-    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
   });
 
   it("should serialize the SDK response", async () => {
@@ -74,8 +74,8 @@ describe("craftTransaction", () => {
       viewKey: mockViewKey,
     });
 
-    expect(serializeTransaction).toHaveBeenCalledWith(mockSdkResponse);
     expect(serializeTransaction).toHaveBeenCalledTimes(1);
+    expect(serializeTransaction).toHaveBeenCalledWith(mockSdkResponse);
   });
 
   it("should propagate SDK client errors", async () => {

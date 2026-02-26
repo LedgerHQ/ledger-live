@@ -112,7 +112,7 @@ async function createRequestFromIntent({
     url: `${sdkUrl}/transactions/request`,
     data: {
       intent,
-      view_key: viewKey,
+      ...(viewKey && { view_key: viewKey }),
     },
   });
 

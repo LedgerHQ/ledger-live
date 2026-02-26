@@ -41,16 +41,6 @@ export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION
 export type AleoTransactionIntentData =
   | TxDataNotSupported
   | {
-      type: "private";
-      record: string;
-    }
-  | {
-      type: "fee_private";
-      record: string;
-      priorityFee?: number;
-      executionId: string;
-    }
-  | {
       type: "fee_public";
       priorityFee?: number;
       executionId: string;

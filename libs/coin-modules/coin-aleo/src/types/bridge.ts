@@ -21,16 +21,12 @@ export type Transaction = TransactionCommon & {
       }
     | {
         type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
-        amountRecord: string | null;
-        feeRecord: string | null;
       }
     | {
         type: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
       }
     | {
         type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
-        amountRecord: string | null;
-        feeRecord: string | null;
       }
   );
 
@@ -43,16 +39,12 @@ export type TransactionRaw = TransactionCommonRaw & {
       }
     | {
         type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
-        amountRecord: string | null;
-        feeRecord: string | null;
       }
     | {
         type: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
       }
     | {
         type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
-        amountRecord: string | null;
-        feeRecord: string | null;
       }
   );
 

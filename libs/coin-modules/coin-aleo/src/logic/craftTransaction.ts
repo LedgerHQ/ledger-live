@@ -1,6 +1,9 @@
-import type { CraftedTransaction, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import type {
+  CraftedTransaction,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { sdkClient } from "../network/sdk";
 import { AleoTransactionIntentData } from "../types";
 import { mapTransactionIntentToSdkIntent, serializeTransaction } from "./utils";

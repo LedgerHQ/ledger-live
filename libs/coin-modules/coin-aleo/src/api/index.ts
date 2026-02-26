@@ -37,8 +37,10 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
       txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => {
-      // fees are handled by txIntent of type fee public or fee private
-      invariant(!customFees, "customFees are not supported for Aleo transactions");
+      // fees are handled by txIntent of type fee_public or fee_private
+      invariant(!customFees, "customFees are not supported");
+      invariant(!txIntent.useAllAmount, "useAllAmount is not supported yet");
+
       return craftTransaction({ currency, txIntent });
     },
     craftRawTransaction: (

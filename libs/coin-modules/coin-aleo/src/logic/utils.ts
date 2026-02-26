@@ -306,7 +306,7 @@ export function splitPrivateAndPublicOperations(
   return [privateOps, publicOps];
 }
 
-export function hasSpecificIntentData<Type extends "private" | "fee_private" | "fee_public">(
+export function hasSpecificIntentData<Type extends AleoTransactionIntentData["type"]>(
   txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
   expectedType: Type,
 ): txIntent is Extract<
@@ -319,76 +319,33 @@ export function hasSpecificIntentData<Type extends "private" | "fee_private" | "
 export function mapTransactionIntentToSdkIntent(
   txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
 ): Intent {
-  const txType = txIntent.type;
+  const type = txIntent.type;
+  const to = txIntent.recipient;
+  const amount = txIntent.amount.toString();
 
-  switch (txType) {
-    case "transfer_public": {
-      return {
-        type: txType,
-        amount: txIntent.amount.toString(),
-        to: txIntent.recipient,
-      };
-    }
-    case "transfer_private": {
-      if (!hasSpecificIntentData(txIntent, "private")) {
-        throw new Error("aleo: private data is required for transfer_private");
-      }
-
-      return {
-        type: txType,
-        amount: txIntent.amount.toString(),
-        to: txIntent.recipient,
-        record: txIntent.data.record,
-      };
-    }
+  switch (type) {
+    case "transfer_public":
     case "transfer_public_to_private": {
       return {
-        type: txType,
-        amount: txIntent.amount.toString(),
-        to: txIntent.recipient,
-      };
-    }
-    case "transfer_private_to_public": {
-      if (!hasSpecificIntentData(txIntent, "private")) {
-        throw new Error("aleo: private data is required for transfer_private_to_public");
-      }
-
-      return {
-        type: txType,
-        amount: txIntent.amount.toString(),
-        to: txIntent.recipient,
-        record: txIntent.data.record,
-      };
-    }
-    case "fee_private": {
-      if (!hasSpecificIntentData(txIntent, "fee_private")) {
-        throw new Error("aleo: private data is required for fee_private");
-      }
-
-      return {
-        base_fee: txIntent.amount.toString(),
-        execution_id: txIntent.data.executionId,
-        priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
-        record: txIntent.data.record,
-        type: txType,
+        type,
+        amount,
+        to,
       };
     }
     case "fee_public": {
-      if (!hasSpecificIntentData(txIntent, "fee_public")) {
-        throw new Error("aleo: public data is required for fee_public");
+      if (!hasSpecificIntentData(txIntent, type)) {
+        throw new Error(`aleo: intent data is required for ${type}`);
       }
 
       return {
+        type,
         base_fee: txIntent.amount.toString(),
         execution_id: txIntent.data.executionId,
         priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
-        type: txType,
       };
     }
     default: {
-      throw new Error(
-        `aleo: unsupported transaction type in mapTransactionIntentToSdkIntent: ${txType}`,
-      );
+      throw new Error(`aleo: unsupported intent type: ${type}`);
     }
   }
 }
