@@ -23,7 +23,7 @@ const PurchaseDevice = () => {
   const dispatch = useDispatch();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
 
-  const defaultURL = useLocalizedUrl(urls.buyFlex);
+  const defaultURL = useLocalizedUrl(urls.reborn);
 
   const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
   const [isMessageDrawerOpen, setMessageDrawerOpen] = useState(false);
