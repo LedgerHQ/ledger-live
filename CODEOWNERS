@@ -92,7 +92,7 @@ libs/domain-service/                                                @ledgerhq/co
 libs/evm-tools/                                                     @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                                    @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
-libs/ledger-live-common/src/apps/                                   @ledgerhq/coin-integration
+libs/ledger-live-common/src/apps/config.ts                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
 libs/ledger-live-common/src/flows/send/                             @ledgerhq/coin-integration
 libs/ledger-live-common/src/transaction/                            @ledgerhq/coin-integration
