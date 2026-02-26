@@ -147,7 +147,7 @@ export function SlideItem({ title, description, index, lottieSrc, speed }: Slide
         <Box
           lx={{
             justifyContent: "center",
-            minHeight: "s56", // the height of 2 lines of text
+            minHeight: "s80", // the height of 2 lines of text
           }}
         >
           <Text
