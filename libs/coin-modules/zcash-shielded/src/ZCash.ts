@@ -212,11 +212,13 @@ export default class ZCash {
       if (startBlockHeight < 0) {
         log(LOG_TYPE, "error: invalid negative arg startBlockHeight");
         subscriber.error("error: invalid negative arg startBlockHeight");
+        return;
       }
 
       if (maxBatchSize <= 0) {
         log(LOG_TYPE, "error: invalid negative or zero arg maxBatchSize");
         subscriber.error("error: invalid negative or zero arg maxBatchSize");
+        return;
       }
 
       // 1. get end block height before the start of the cycle
@@ -225,43 +227,43 @@ export default class ZCash {
       if (endBlockHeight === undefined) {
         log(LOG_TYPE, "error: could not retrieve the last block");
         subscriber.error("error: could not retrieve the last block");
-      } else {
-        for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
-          // 2. on the last iteration, update the end block height and process until the end
-          if (blockHeight === endBlockHeight) {
-            endBlockHeight = await this.jsonRpcClient.getBlockCount();
-            if (endBlockHeight === undefined) {
-              log(LOG_TYPE, "error: could not retrieve the last block");
-              subscriber.error("error: could not retrieve the last block");
-              break;
-            }
-          }
+        return;
+      }
 
-          // 3. get current block
-          const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
-          if (!block) {
-            log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
+      for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
+        // 2. on the last iteration, update the end block height and process until the end
+        if (blockHeight === endBlockHeight) {
+          endBlockHeight = await this.jsonRpcClient.getBlockCount();
+          if (endBlockHeight === undefined) {
+            log(LOG_TYPE, "error: could not retrieve the last block");
+            subscriber.error("error: could not retrieve the last block");
             break;
           }
+        }
 
-          // 4. find shielded tx in block
-          const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
+        // 3. get current block
+        const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
+        if (!block) {
+          log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
+          break;
+        }
 
-          // 5. update syncedShielded's balance and counters
-          syncedShielded.balance = syncedShielded.balance.plus(
-            calculateShieldedBalance(shieldedTxs),
-          );
-          syncedShielded.processedBlocks++;
-          syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
-          syncedShielded.lastProcessed = block.height;
+        // 4. find shielded tx in block
+        const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
 
-          if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
-            subscriber.next(syncedShielded);
-          }
+        // 5. update syncedShielded's balance and counters
+        syncedShielded.balance = syncedShielded.balance.plus(calculateShieldedBalance(shieldedTxs));
+        syncedShielded.processedBlocks++;
+        syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
+        syncedShielded.lastProcessed = block.height;
+
+        if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
+          subscriber.next(syncedShielded);
         }
       }
 
       subscriber.complete();
+      return;
     };
   }
 }
