@@ -7,7 +7,10 @@ import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
-import { getMockedEnrichedTransaction } from "../__tests__/fixtures/api.fixture";
+import {
+  getMockedEnrichedTransaction,
+  getMockedEnrichedPrivateRecord,
+} from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
 import type { ProvableApi } from "../types";
@@ -18,12 +21,14 @@ import {
   patchAccountWithViewKey,
   toAlpacaOperation,
   toBridgeOperation,
+  toPrivateBridgeOperation,
   generateUniqueUsername,
   resolveConfig,
   getTransactionType,
   calculateAmount,
   isProvableApiConfigured,
   getOperationTransactionType,
+  splitPrivateAndPublicOperations,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -567,5 +572,203 @@ describe("getOperationTransactionType", () => {
     ["public", "unknown_type"],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getOperationTransactionType(transactionType)).toBe(expected);
+  });
+});
+
+describe("toPrivateBridgeOperation", () => {
+  const mockLedgerAccountId =
+    "js:2:aleo:aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px::";
+  const mockRecipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
+  const mockSenderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+
+  it("should return an IN operation when recipient matches address", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      recipient: mockRecipientAddress,
+      sender: mockSenderAddress,
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.type).toBe("IN");
+    expect(result.senders).toEqual([mockSenderAddress]);
+    expect(result.recipients).toEqual([mockRecipientAddress]);
+  });
+
+  it("should return an OUT operation when sender matches address", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      sender: mockSenderAddress,
+      recipient: mockRecipientAddress,
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockSenderAddress);
+
+    expect(result.type).toBe("OUT");
+    expect(result.senders).toEqual([mockSenderAddress]);
+    expect(result.recipients).toEqual([mockRecipientAddress]);
+  });
+
+  it("should encode operation id using ledgerAccountId, transaction_id and type", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      recipient: mockRecipientAddress,
+    });
+    const expectedId = encodeOperationId(
+      mockLedgerAccountId,
+      enriched.rawRecord.transaction_id.trim(),
+      "IN",
+    );
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.id).toBe(expectedId);
+    expect(result.accountId).toBe(mockLedgerAccountId);
+  });
+
+  it("should trim whitespace from transaction_id when building hash and id", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      rawRecord: { transaction_id: "  tx-with-spaces  " },
+      recipient: mockRecipientAddress,
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.hash).toBe("tx-with-spaces");
+    expect(result.id).toContain("tx-with-spaces");
+  });
+
+  it("should set fee from details.fee_value", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      details: { fee_value: 9999 },
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.fee).toEqual(new BigNumber(9999));
+  });
+
+  it("should set blockHash from details.block_hash", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      details: { block_hash: "ab1testhash", fee_value: 1000 },
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.blockHash).toBe("ab1testhash");
+  });
+
+  it("should set date from block_timestamp multiplied by 1000", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      rawRecord: { block_timestamp: 1704067200 },
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.date).toEqual(new Date(1704067200 * 1000));
+  });
+
+  it("should set extra.transactionType to private", () => {
+    const enriched = getMockedEnrichedPrivateRecord();
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.extra).toMatchObject({ transactionType: "private" });
+  });
+
+  it("should set extra.functionId from rawRecord.function_name", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      rawRecord: { function_name: "transfer_private" },
+    });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.extra).toMatchObject({ functionId: "transfer_private" });
+  });
+
+  it("should set hasFailed to false", () => {
+    const enriched = getMockedEnrichedPrivateRecord();
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.hasFailed).toBe(false);
+  });
+
+  it("should set value from enriched.value", () => {
+    const enriched = getMockedEnrichedPrivateRecord({ value: new BigNumber(42000000) });
+
+    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(result.value).toEqual(new BigNumber(42000000));
+  });
+});
+
+describe("splitPrivateAndPublicOperations", () => {
+  const makePublicOp = (id: string) =>
+    getMockedOperation({ id, extra: { functionId: "transfer_public", transactionType: "public" } });
+  const makePrivateOp = (id: string) =>
+    getMockedOperation({
+      id,
+      extra: { functionId: "transfer_private", transactionType: "private" },
+    });
+
+  it("should return two empty arrays for empty input", () => {
+    const [privateOps, publicOps] = splitPrivateAndPublicOperations([]);
+
+    expect(privateOps).toEqual([]);
+    expect(publicOps).toEqual([]);
+  });
+
+  it("should put all public operations into the public array", () => {
+    const ops = [makePublicOp("op1"), makePublicOp("op2")];
+
+    const [privateOps, publicOps] = splitPrivateAndPublicOperations(ops);
+
+    expect(privateOps).toEqual([]);
+    expect(publicOps).toHaveLength(2);
+    expect(publicOps).toEqual(ops);
+  });
+
+  it("should put all private operations into the private array", () => {
+    const ops = [makePrivateOp("op1"), makePrivateOp("op2")];
+
+    const [privateOps, publicOps] = splitPrivateAndPublicOperations(ops);
+
+    expect(publicOps).toEqual([]);
+    expect(privateOps).toHaveLength(2);
+    expect(privateOps).toEqual(ops);
+  });
+
+  it("should correctly split a mix of private and public operations", () => {
+    const pub1 = makePublicOp("pub1");
+    const priv1 = makePrivateOp("priv1");
+    const pub2 = makePublicOp("pub2");
+    const priv2 = makePrivateOp("priv2");
+
+    const [privateOps, publicOps] = splitPrivateAndPublicOperations([pub1, priv1, pub2, priv2]);
+
+    expect(privateOps).toEqual([priv1, priv2]);
+    expect(publicOps).toEqual([pub1, pub2]);
+  });
+
+  it("should treat operations without extra.transactionType as public", () => {
+    const opNoExtra = getMockedOperation({ id: "no-extra", extra: {} });
+
+    const [privateOps, publicOps] = splitPrivateAndPublicOperations([opNoExtra]);
+
+    expect(privateOps).toEqual([]);
+    expect(publicOps).toHaveLength(1);
+  });
+
+  it("should preserve original order within each group", () => {
+    const ops = [
+      makePublicOp("pub1"),
+      makePrivateOp("priv1"),
+      makePublicOp("pub2"),
+      makePrivateOp("priv2"),
+      makePublicOp("pub3"),
+    ];
+
+    const [privateOps, publicOps] = splitPrivateAndPublicOperations(ops);
+
+    expect(publicOps.map(o => o.id)).toEqual(["pub1", "pub2", "pub3"]);
+    expect(privateOps.map(o => o.id)).toEqual(["priv1", "priv2"]);
   });
 });

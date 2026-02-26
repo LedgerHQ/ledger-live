@@ -18,8 +18,8 @@ import {
   getBalance,
   getBlockInfo,
   lastBlock,
-  listApiOperations,
   validateIntent,
+  listOperations,
 } from "../logic";
 import type { AlgorandMemo } from "../types";
 
@@ -34,7 +34,7 @@ export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
     getBalance,
     getBlockInfo,
     lastBlock,
-    listOperations: listApiOperations,
+    listOperations,
     validateIntent,
     getBlock(_height: number): Promise<Block> {
       throw new Error("getBlock is not supported for Algorand");

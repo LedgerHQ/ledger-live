@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { useTranslation } from "~/context/Locale";
 import styles from "~/navigation/styles";
@@ -43,7 +43,6 @@ const createExchangeScreen =
         {...props}
         config={{
           screen: screenName,
-          navigator: NavigatorName.Exchange,
           btnText: t("common.quote"),
         }}
         route={{

@@ -6,7 +6,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Operation } from "@ledgerhq/types-live";
 import operationDetails from "../operationDetails";
 
-const { amountCellExtra, OperationDetailsExtra } = operationDetails;
+const { OperationDetailsExtra } = operationDetails;
 
 const ZCASH_OPERATION_TYPES = [
   "IN",
@@ -40,18 +40,6 @@ const zcashAccount = {
 
 const bitcoinAccount = createFixtureAccount();
 
-const zecUnit = {
-  code: "ZEC",
-  name: "Zcash",
-  magnitude: 8,
-};
-
-const btcUnit = {
-  code: "BTC",
-  name: "Bitcoin",
-  magnitude: 8,
-};
-
 describe("Bitcoin operationDetails", () => {
   describe("OperationDetailsExtra", () => {
     it.each(ZCASH_OPERATION_TYPES)(
@@ -68,52 +56,6 @@ describe("Bitcoin operationDetails", () => {
       const operation = createOperation("IN");
       const { container } = render(
         <OperationDetailsExtra account={bitcoinAccount} operation={operation} />,
-      );
-
-      expect(container.firstChild).toBeNull();
-    });
-  });
-
-  describe("amountCellExtra", () => {
-    it.each(ZCASH_OPERATION_TYPES)(
-      "should render amountCellExtra for Zcash with %s operation type",
-      operationType => {
-        const operation = createOperation(operationType);
-        const AmountCellExtraComponent = amountCellExtra[operationType];
-
-        expect(AmountCellExtraComponent).toBeDefined();
-
-        render(
-          <AmountCellExtraComponent
-            operation={operation}
-            currency={getCryptoCurrencyById("zcash")}
-            unit={zecUnit}
-          />,
-        );
-
-        const expectedLabels: Record<string, string> = {
-          IN: "Transparent",
-          OUT: "Transparent",
-          SHIELDED_TX_SAPLING_IN: "🛡 Private (Sapling)",
-          SHIELDED_TX_SAPLING_OUT: "🛡 Private (Sapling)",
-          SHIELDED_TX_ORCHARD_IN: "🛡 Private (Orchard)",
-          SHIELDED_TX_ORCHARD_OUT: "🛡 Private (Orchard)",
-        };
-
-        expect(screen.getByText(expectedLabels[operationType])).toBeInTheDocument();
-      },
-    );
-
-    it("should return null for Bitcoin account and operation", () => {
-      const operation = createOperation("IN");
-      const AmountCellExtraComponent = amountCellExtra.IN;
-
-      const { container } = render(
-        <AmountCellExtraComponent
-          operation={operation}
-          currency={getCryptoCurrencyById("bitcoin")}
-          unit={btcUnit}
-        />,
       );
 
       expect(container.firstChild).toBeNull();

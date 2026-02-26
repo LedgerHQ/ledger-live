@@ -15,3 +15,8 @@ export const TRANSACTION_TYPE = {
   CONVERT_PUBLIC_TO_PRIVATE: "convert_public_to_private",
   CONVERT_PRIVATE_TO_PUBLIC: "convert_private_to_public",
 } as const;
+
+// Indexes based on aleo credits program args
+// ref: https://developer.aleo.org/concepts/fundamentals/credits/#transfer_public
+export const RECIPIENT_ARG_INDEX = 1;
+export const AMOUNT_ARG_INDEX = 2;

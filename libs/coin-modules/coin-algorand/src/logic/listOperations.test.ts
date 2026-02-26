@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import { AlgoTransactionType } from "../network";
-import { listOperations, listApiOperations } from "./listOperations";
+import { listOperations } from "./listOperations";
 
 jest.mock("../network");
 
@@ -19,10 +19,10 @@ describe("listOperations", () => {
   it("should return empty array when no transactions", async () => {
     mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
 
-    const [operations, token] = await listOperations(address, { order: "desc" });
+    const { items, next } = await listOperations(address, { order: "desc" });
 
-    expect(operations).toEqual([]);
-    expect(token).toBe("");
+    expect(items).toEqual([]);
+    expect(next).toBe("");
   });
 
   it("should convert payment transaction to OUT operation for sender", async () => {
@@ -46,14 +46,14 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations).toHaveLength(1);
-    expect(operations[0].type).toBe("OUT");
-    expect(operations[0].value).toBe(1000000n);
-    expect(operations[0].senders).toEqual([address]);
-    expect(operations[0].recipients).toEqual(["RECIPIENT_ADDRESS"]);
-    expect(operations[0].asset).toEqual({ type: "native" });
+    expect(items).toHaveLength(1);
+    expect(items[0].type).toBe("OUT");
+    expect(items[0].value).toBe(1000000n);
+    expect(items[0].senders).toEqual([address]);
+    expect(items[0].recipients).toEqual(["RECIPIENT_ADDRESS"]);
+    expect(items[0].asset).toEqual({ type: "native" });
   });
 
   it("should convert payment transaction to IN operation for recipient", async () => {
@@ -77,13 +77,13 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].type).toBe("IN");
-    expect(operations[0].value).toBe(500000n);
-    expect(operations[0].senders).toEqual(["SENDER_ADDRESS"]);
-    expect(operations[0].recipients).toEqual([address]);
-    expect(operations[0].asset).toEqual({ type: "native" });
+    expect(items[0].type).toBe("IN");
+    expect(items[0].value).toBe(500000n);
+    expect(items[0].senders).toEqual(["SENDER_ADDRESS"]);
+    expect(items[0].recipients).toEqual([address]);
+    expect(items[0].asset).toEqual({ type: "native" });
   });
 
   it("should convert asset transfer to operation with asa type", async () => {
@@ -108,11 +108,11 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].type).toBe("OUT");
-    expect(operations[0].value).toBe(100n);
-    expect(operations[0].asset).toEqual({ type: "asa", assetReference: "12345" });
+    expect(items[0].type).toBe("OUT");
+    expect(items[0].value).toBe(100n);
+    expect(items[0].asset).toEqual({ type: "asa", assetReference: "12345" });
   });
 
   it("should detect OPT_IN operation", async () => {
@@ -137,9 +137,9 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].type).toBe("OPT_IN");
+    expect(items[0].type).toBe("OPT_IN");
   });
 
   it("should detect OPT_OUT operation", async () => {
@@ -164,9 +164,9 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].type).toBe("OPT_OUT");
+    expect(items[0].type).toBe("OPT_OUT");
   });
 
   it("should include memo when note is present", async () => {
@@ -190,12 +190,14 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].memo).toEqual({
-      type: "string",
-      kind: "note",
-      value: "Test memo",
+    expect(items[0].details).toEqual({
+      memo: {
+        type: "string",
+        kind: "note",
+        value: "Test memo",
+      },
     });
   });
 
@@ -220,9 +222,9 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].details).toEqual({ rewards: 800n });
+    expect(items[0].details).toEqual({ rewards: 800n });
   });
 
   it("should sort operations in descending order", async () => {
@@ -282,12 +284,12 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: "NEXT_TOKEN" });
 
-    const [operations, token] = await listOperations(address, { order: "desc" });
+    const { items, next } = await listOperations(address, { order: "desc" });
 
-    expect(operations[0].tx.block.height).toBe(3000);
-    expect(operations[1].tx.block.height).toBe(2000);
-    expect(operations[2].tx.block.height).toBe(1000);
-    expect(token).toBe("NEXT_TOKEN");
+    expect(items[0].tx.block.height).toBe(3000);
+    expect(items[1].tx.block.height).toBe(2000);
+    expect(items[2].tx.block.height).toBe(1000);
+    expect(next).toBe("NEXT_TOKEN");
   });
 
   it("should sort operations in ascending order", async () => {
@@ -330,10 +332,10 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "asc" });
+    const { items } = await listOperations(address, { order: "asc" });
 
-    expect(operations[0].tx.block.height).toBe(1000);
-    expect(operations[1].tx.block.height).toBe(3000);
+    expect(items[0].tx.block.height).toBe(1000);
+    expect(items[1].tx.block.height).toBe(3000);
   });
 
   it("should filter out non-payment/transfer transactions", async () => {
@@ -371,10 +373,10 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: undefined });
 
-    const [operations] = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(address, { order: "desc" });
 
-    expect(operations).toHaveLength(1);
-    expect(operations[0].id).toBe("TX_PAY");
+    expect(items).toHaveLength(1);
+    expect(items[0].id).toBe("TX_PAY");
   });
 
   it("should forward pagination options to getAccountTransactions", async () => {
@@ -384,7 +386,7 @@ describe("listOperations", () => {
       order: "asc",
       minHeight: 5000,
       limit: 50,
-      token: "PAGE_TOKEN",
+      cursor: "PAGE_TOKEN",
     });
 
     expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
@@ -418,136 +420,15 @@ describe("listOperations", () => {
       nextToken: "CURSOR_ABC",
     });
 
-    const [operations, token] = await listOperations(address, { order: "asc" });
+    const { items, next } = await listOperations(address, { order: "asc" });
 
-    expect(operations).toHaveLength(1);
-    expect(token).toBe("CURSOR_ABC");
+    expect(items).toHaveLength(1);
+    expect(next).toBe("CURSOR_ABC");
   });
 
   it("should propagate network errors", async () => {
     mockGetAccountTransactions.mockRejectedValue(new Error("Network error"));
 
     await expect(listOperations(address, { order: "desc" })).rejects.toThrow("Network error");
-  });
-});
-
-describe("listApiOperations", () => {
-  const address = "ALGO_ADDRESS_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("should map pagination params and delegate to listOperations", async () => {
-    const tx = {
-      id: "TX_123",
-      type: AlgoTransactionType.PAYMENT,
-      senderAddress: address,
-      fee: new BigNumber("1000"),
-      round: 1000000,
-      timestamp: "1700000000",
-      note: undefined,
-      senderRewards: new BigNumber("0"),
-      recipientRewards: new BigNumber("0"),
-      details: {
-        amount: new BigNumber("1000000"),
-        recipientAddress: "RECIPIENT_ADDRESS",
-        closeToAddress: undefined,
-        closeAmount: undefined,
-      },
-    };
-
-    mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: "next-token" });
-
-    const [ops, token] = await listApiOperations(address, {
-      minHeight: 100,
-      order: "asc",
-    });
-
-    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
-      minRound: 100,
-      limit: undefined,
-      nextToken: undefined,
-    });
-    expect(ops).toHaveLength(1);
-    expect(token).toBe("next-token");
-  });
-
-  it("should pass limit when provided", async () => {
-    mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
-
-    await listApiOperations(address, {
-      minHeight: 0,
-      order: "desc",
-      limit: 50,
-    });
-
-    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
-      minRound: 0,
-      limit: 50,
-      nextToken: undefined,
-    });
-  });
-
-  it("should pass lastPagingToken when provided", async () => {
-    mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
-
-    await listApiOperations(address, {
-      minHeight: 0,
-      order: "asc",
-      lastPagingToken: "page-token-123",
-    });
-
-    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
-      minRound: 0,
-      limit: undefined,
-      nextToken: "page-token-123",
-    });
-  });
-
-  it("should default order to asc when not specified", async () => {
-    const txs = [
-      {
-        id: "TX_HIGH",
-        type: AlgoTransactionType.PAYMENT,
-        senderAddress: address,
-        fee: new BigNumber("1000"),
-        round: 3000,
-        timestamp: "1700002000",
-        note: undefined,
-        senderRewards: new BigNumber("0"),
-        recipientRewards: new BigNumber("0"),
-        details: {
-          amount: new BigNumber("100"),
-          recipientAddress: "R1",
-          closeToAddress: undefined,
-          closeAmount: undefined,
-        },
-      },
-      {
-        id: "TX_LOW",
-        type: AlgoTransactionType.PAYMENT,
-        senderAddress: address,
-        fee: new BigNumber("1000"),
-        round: 1000,
-        timestamp: "1700000000",
-        note: undefined,
-        senderRewards: new BigNumber("0"),
-        recipientRewards: new BigNumber("0"),
-        details: {
-          amount: new BigNumber("200"),
-          recipientAddress: "R2",
-          closeToAddress: undefined,
-          closeAmount: undefined,
-        },
-      },
-    ];
-
-    mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: undefined });
-
-    const [ops] = await listApiOperations(address, { minHeight: 0 });
-
-    expect(ops[0].tx.block.height).toBe(1000);
-    expect(ops[1].tx.block.height).toBe(3000);
   });
 });

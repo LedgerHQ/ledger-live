@@ -72,22 +72,6 @@ export interface AleoPublicTransactionsResponse {
   };
 }
 
-export interface AleoPublicTransactionDetailsResponse {
-  type: string;
-  id: string;
-  execution: {
-    transitions: AleoTransition[];
-  };
-  global_state_root: string;
-  proof: string;
-  fee: { transition: AleoTransition };
-  fee_value: number;
-  block_height: number;
-  block_hash: string;
-  block_timestamp: string;
-  status: string;
-}
-
 export interface AleoRegisterAccountResponse {
   consumer: { id: string };
   created_at: number;
@@ -135,4 +119,8 @@ export interface AleoPrivateRecord {
   transition_id: string;
   transaction_index: number;
   transition_index: number;
+}
+
+export interface AleoDecryptedCiphertextResponse {
+  plaintext: string;
 }
