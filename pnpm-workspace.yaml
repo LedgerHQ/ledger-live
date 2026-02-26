@@ -110,7 +110,7 @@ catalog:
   bs58: ^4.0.1
   bs58check: ^2.1.2
   clsx: 2.1.1
-  electron: 39.2.7
+  electron: 40.6.0
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
   ethers: 6.15.0
   "@solana/spl-token": ^0.4.14
