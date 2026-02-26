@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Ledger-Gerät kaufen",
     "setupCta" : "Ich habe bereits ein Ledger-Gerät. Einrichtung starten."
   },
+  "rebornBuyDevice" : {
+    "title" : "Ledger-Gerät anschließen",
+    "desc" : "Wenn du das volle Potenzial von Ledger Wallet ausschöpfen möchtest, solltest du ein Ledger-Gerät anschließen.",
+    "0" : {
+      "title" : "Echtes Eigentum",
+      "desc" : "Deine privaten Schlüssel verlassen das Gerät zu keiner Zeit."
+    },
+    "1" : {
+      "title" : "Sicher traden",
+      "desc" : "Bestätige deine Transaktionen auf einem Secure Screen."
+    },
+    "2" : {
+      "title" : "Zugang zur wohl leistungsstärksten Wallet überhaupt",
+      "desc" : "Verwalte Tausende von Assets an einem zentralen Ort."
+    },
+    "cta" : "Verbinden",
+    "buyCta" : "Ledger-Gerät kaufen"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Hast du deine Ledger schon bekommen?",
     "desc" : "Sobald du dein Ledger-Gerät erhalten hast, richte es ein, um alle Funktionen der Ledger Wallet-App freizuschalten.",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "Kontostand der Wallet",
     "balance" : {
       "noSigner" : "Die sicherste\nWallet",
-      "noFund" : "Deine Kryptos schützen"
+      "noAccounts" : "Deine Kryptos schützen"
     },
     "seeAllAssets" : "Alle Vermögenswerte anzeigen",
     "seeAllAccounts" : "Alle Konten anzeigen",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "Adresse eingeben",
       "editRecipientAccessibilityLabel" : "Empfänger bearbeiten",
       "recent" : "Neulich",
+      "recentDetail" : "Aktuelles Detail",
       "myAccounts" : "Meine Konten",
+      "account" : "Konto",
       "sendTo" : "An {{address}} senden",
       "addressMatched" : "Adressen passen",
       "addressNotFound" : "Adresse nicht gefunden",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "Die Netzwerkgebühren können nicht neu geladen werden",
         "warningDescription" : "Möglicherweise sind die Gebühren-Presets veraltet."
+      },
+      "customFees" : {
+        "title" : "Angepasste Gebühren",
+        "confirm" : "Bestätigen",
+        "maxFee" : "Max. Gebühr ({{unit}})",
+        "maxPriorityFee" : "Max. Prioritätsgebühr ({{unit}})",
+        "gasLimit" : "Gaslimit ({{unit}})",
+        "feePerByte" : "Gebührenbetrag ({{unit}})",
+        "suggested" : "Empfohlen",
+        "nextBlock" : "Nächster Block",
+        "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
+        "invalidValue" : "Enter a valid number",
+        "belowMinimum" : "Minimum is {{min}}",
+        "maxFeeBelowPriorityFee" : "Max fee must be greater than or equal to max priority fee"
+      },
+      "coinControl" : {
+        "title" : "Coin-Kontrolle"
       }
     },
     "pendingTxWarning" : "Bei dir sind ausstehende Eingangstransaktionen vorhanden. Bitte bedenke, dass ausstehende Transaktionen rückgängig gemacht werden können.",
@@ -4283,7 +4320,8 @@
       "useMax" : "Max. verwenden",
       "loadingNetwork" : "Netzwerkgebühren werden geladen...",
       "noRateProvider" : "Nicht verfügbar",
-      "quantityAvailable" : "Verfügbare Menge"
+      "quantityAvailable" : "Verfügbare Menge",
+      "toggleCurrency" : "Währung umschalten"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "Gebühren sind erforderlich",
       "chooseGas" : "Wähle einen Gaspreis",
       "higherFaster" : "Ein höherer Gaspreis bedeutet eine schnellere Bestätigung.",
+      "medium" : "Medium",
+      "fast" : "Schnell",
+      "slow" : "Langsam",
+      "custom" : "Benutzerdefiniert",
+      "customFees" : "Angepasste Gebühren",
+      "coinControl" : "Coin-Kontrolle",
       "edit" : {
         "title" : "Einheit wählen"
       },
@@ -7241,7 +7285,8 @@
         "website" : "Website"
       },
       "back" : {
-        "card" : "alle Karten"
+        "card" : "alle Karten",
+        "cardTab" : "Card"
       }
     }
   },
@@ -8517,16 +8562,16 @@
     "title" : "Entdecke dein neues Portfolio",
     "slides" : {
       "portfolio" : {
-        "title" : "Dein Portfolio, neu definiert",
-        "description" : "Wir haben deinen Startbildschirm aufgeräumt. Vermisst du deinen Graphen? Tippe einfach unter deinem Saldo."
+        "title" : "Ein besserer Überblick über dein Portfolio",
+        "description" : "Zeige dein Gesamtguthaben auf einen Blick an und tippe auf „Heute“, um weitere Details einzusehen."
       },
       "navigation" : {
-        "title" : "Alles ist am richtigen Platz",
-        "description" : "„My Ledger“ und „Entdecken“ sind ganz oben. „Swap“ und „Karte“ wurden für den schnelleren Zugriff nach unten verschoben."
+        "title" : "Wichtige Funktionen im schnellen Zugriff",
+        "description" : "Die Funktionen zum Swappen, Übertragen und Kaufen kannst du direkt aufrufen. „Verdienen“ und deine Karte findest du in der unteren Navigationsleiste."
       },
       "actions" : {
-        "title" : "Maßnahmen im Markttempo",
-        "description" : "Erkenne Markttrends mit dem neuen Banner und trade sofort."
+        "title" : "Marktentwicklungen in Echtzeit verfolgen",
+        "description" : "Du kannst aktuelle Trends direkt in deinem Portfolio einsehen und Erkenntnisse sofort in Handeln umsetzen."
       }
     },
     "cta" : {
