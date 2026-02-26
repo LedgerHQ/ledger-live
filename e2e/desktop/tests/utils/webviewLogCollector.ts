@@ -53,7 +53,11 @@ export class WebviewLogCollector {
       if (response.status() >= 400) {
         // capture data for 4xx and 5xx for debugging
         logEntry.postData = request.postData() ?? "";
-        logEntry.responseBody = await response.text();
+        try {
+          logEntry.responseBody = await response.text();
+        } catch (error) {
+          logEntry.responseBody = `Failed to get response body: ${error}`;
+        }
       }
     }
   };
