@@ -36,10 +36,10 @@ export class AccountPage extends AppPage {
   @step("Scroll to operations")
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
-    // Wait for the operation list to be attached to the DOM before scrolling.
-    // React 19's concurrent rendering may temporarily detach elements during re-renders
-    // (e.g. after navigating to a token sub-account).
-    await operationList.waitFor({ state: "attached" });
+    // Wait for the operation list to be visible (not just attached) before scrolling.
+    // React 19's concurrent rendering may temporarily attach/detach elements during re-renders
+    // (e.g. after navigating to a token sub-account). "visible" ensures the element is stable.
+    await operationList.waitFor({ state: "visible" });
     await operationList.scrollIntoViewIfNeeded();
   }
 
@@ -63,10 +63,12 @@ export class AccountPage extends AppPage {
   @step("Navigate to token account")
   async navigateToToken(tokenTestId: string) {
     const tokenRow = this.page.getByTestId(tokenTestId);
-    // Wait for the token row to be attached to the DOM before navigating to it.
-    // React 19's concurrent rendering may temporarily detach elements during re-renders
     await tokenRow.waitFor({ state: "attached" });
     await tokenRow.click();
+    // The token row belongs to the parent account page. Waiting for it to detach
+    // guarantees React 19 has committed the new token sub-account page render,
+    // so subsequent interactions target the new DOM — not a stale element mid-transition.
+    await tokenRow.waitFor({ state: "detached" });
   }
 
   async operationRowByTestId(operationTestId: string) {
