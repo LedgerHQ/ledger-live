@@ -137,11 +137,6 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
     };
 
-    const shouldIncludeAddresses =
-      rest.statusCode === "WrongDeviceForAccountPayout" ||
-      rest.statusCode === "WrongDeviceForAccountRefund" ||
-      rest.statusCode === "FeeNotLoaded";
-
     const requestData = {
       provider,
       swapId,
@@ -149,12 +144,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
       fromAmount,
-      ...(shouldIncludeAddresses && {
-        fromAccountAddress,
-        toAccountAddress,
-        payloadRefundAddress: refundAddress,
-        payloadPayoutAddress: payoutAddress,
-      }),
+      fromAccountAddress,
       maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
       data,
       ...rest,
