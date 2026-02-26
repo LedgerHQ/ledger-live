@@ -14,6 +14,7 @@ import { PORTFOLIO_TRACKING_PAGE_NAME } from "./utils/constants";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
 import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
+import Assets from "LLD/features/Assets";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -23,6 +24,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayMarketBanner,
   shouldDisplayGraphRework,
   shouldDisplayQuickActionCtas,
+  shouldDisplayAssetSection,
   isWallet40Enabled,
   accounts,
   filterOperations,
@@ -60,7 +62,8 @@ export const PortfolioView = memo(function PortfolioView({
           {shouldDisplayAddAccountCta && <AddAccount />}
           <PerpsEntryPoint />
 
-          <AssetDistribution />
+          {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
+
           {totalOperations > 0 && (
             <OperationsList
               accounts={accounts}
