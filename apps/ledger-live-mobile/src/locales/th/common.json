@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "ซื้อ Ledger",
     "setupCta" : "ฉันมี Ledger อยู่แล้ว ติดตั้งตอนนี้"
   },
+  "rebornBuyDevice" : {
+    "title" : "เชื่อมต่อกับอุปกรณ์ Ledger",
+    "desc" : "เชื่อมต่อกับอุปกรณ์ Ledger ของคุณ เพื่อใช้งานแอป Ledger Wallet ได้อย่างเต็มประสิทธิภาพ",
+    "0" : {
+      "title" : "การเป็นเจ้าของแบบเต็มรูปแบบ",
+      "desc" : "Private Key ของคุณจะไม่ถูกส่งออกไปจากอุปกรณ์"
+    },
+    "1" : {
+      "title" : "เทรดอย่างปลอดภัย",
+      "desc" : "ตรวจสอบธุรกรรมบนหน้าจอที่ปลอดภัย"
+    },
+    "2" : {
+      "title" : "เข้าถึงวอลเล็ตที่ปลอดภัยที่สุด",
+      "desc" : "จัดการสินทรัพย์นับพันได้ในที่เดียว"
+    },
+    "cta" : "เชื่อมต่อ",
+    "buyCta" : "ซื้ออุปกรณ์ Ledger"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "ได้รับ Ledger หรือยัง?",
     "desc" : "เมื่อได้ Ledger แล้ว ให้ตั้งค่าเพื่อปลดล็อกฟีเจอร์ทั้งหมดของแอป Ledger Wallet",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "ยอดคงเหลือในวอลเล็ต",
     "balance" : {
       "noSigner" : "วอลเล็ตที่ปลอดภัย\nที่สุด",
-      "noFund" : "ปกป้องคริปโตของคุณ"
+      "noAccounts" : "ปกป้อง\nคริปโตของคุณ"
     },
     "seeAllAssets" : "ดูสินทรัพย์ทั้งหมด",
     "seeAllAccounts" : "ดูบัญชีทั้งหมด",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "ป้อน Address",
       "editRecipientAccessibilityLabel" : "แก้ไขผู้รับ",
       "recent" : "ล่าสุด",
+      "recentDetail" : "Recent detail",
       "myAccounts" : "บัญชีของฉัน",
+      "account" : "Account",
       "sendTo" : "ส่งไปยัง {{address}}",
       "addressMatched" : "ที่อยู่ถูกต้องและตรงกัน",
       "addressNotFound" : "ไม่พบที่อยู่",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่ายได้",
         "warningDescription" : "ค่าธรรมเนียมที่ตั้งไว้ล่วงหน้าอาจไม่อัปเดต"
+      },
+      "customFees" : {
+        "title" : "Custom fees",
+        "confirm" : "ยืนยัน",
+        "maxFee" : "ค่าธรรมเนียมสูงสุด ({{unit}})",
+        "maxPriorityFee" : "Priority Fee สูงสุด ({{unit}})",
+        "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
+        "feePerByte" : "ยอดค่าธรรมเนียม {{unit}}",
+        "suggested" : "แนะนำ",
+        "nextBlock" : "บล็อกถัดไป",
+        "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
+        "invalidValue" : "Enter a valid number",
+        "belowMinimum" : "Minimum is {{min}}",
+        "maxFeeBelowPriorityFee" : "Max fee must be greater than or equal to max priority fee"
+      },
+      "coinControl" : {
+        "title" : "Coin Control"
       }
     },
     "pendingTxWarning" : "คุณมีธุรกรรมที่ค้างอยู่ โปรดระมัดระวังว่าธุรกรรมที่ค้างอยู่อาจถูกยกเลิกได้",
@@ -4283,7 +4320,8 @@
       "useMax" : "ใช้สูงสุด",
       "loadingNetwork" : "กำลังโหลดค่าธรรมเนียมเครือข่าย...",
       "noRateProvider" : "ไม่สามารถใช้ได้",
-      "quantityAvailable" : "ปริมาณที่ใช้ได้"
+      "quantityAvailable" : "ปริมาณที่ใช้ได้",
+      "toggleCurrency" : "Toggle currency"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "มีค่าธรรมเนียม",
       "chooseGas" : "เลือกค่าแก๊ส",
       "higherFaster" : "ค่าแก๊สที่สูงขึ้นหมายถึงการยืนยันที่เร็วขึ้น",
+      "medium" : "Medium",
+      "fast" : "Fast",
+      "slow" : "Slow",
+      "custom" : "Custom",
+      "customFees" : "Custom fees",
+      "coinControl" : "Coin control",
       "edit" : {
         "title" : "เลือกหน่วย"
       },
@@ -7241,7 +7285,8 @@
         "website" : "เว็บไซต์"
       },
       "back" : {
-        "card" : "บัตรทั้งหมด"
+        "card" : "บัตรทั้งหมด",
+        "cardTab" : "บัตร"
       }
     }
   },
@@ -8517,21 +8562,21 @@
     "title" : "ดูพอร์ตการลงทุนใหม่ของคุณ",
     "slides" : {
       "portfolio" : {
-        "title" : "พอร์ตโฟลิโอของคุณ ในรูปแบบใหม่",
-        "description" : "เราได้ทำให้หน้าจอหลักของคุณดูง่ายขึ้น หากราฟของคุณอยู่ใช่ไหม? แค่แตะด้านล่างของยอดคงเหลือในบัญชีของคุณ"
+        "title" : "A clearer view of your portfolio",
+        "description" : "See your total balance at a glance, and tap “Today” to dive deeper."
       },
       "navigation" : {
-        "title" : "ทุกอย่างถูกจัดไว้อย่างลงตัว",
-        "description" : "'Ledger ของฉัน' และ 'ผู้ให้บริการ' ในตอนนี้ย้ายไปอยู่ด้านบนสุด ส่วน 'สวอป' และ 'การ์ด' ได้ย้ายไปที่ด้านล่างเพื่อให้เข้าถึงได้ง่ายขึ้น"
+        "title" : "Access key actions faster",
+        "description" : "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
       },
       "actions" : {
-        "title" : "เทรดเร็วทันตลาด",
-        "description" : "แค่ดูเทรนด์จากแบนเนอร์ แล้วลงมือเทรดได้ทันที"
+        "title" : "View market trends instantly",
+        "description" : "Quickly see what’s trending directly in your portfolio, and move from insights to action."
       }
     },
     "cta" : {
-      "continue" : "ดำเนินการต่อ",
-      "explore" : "สำรวจพอร์ตการลงทุนใหม่ของฉัน"
+      "continue" : "Next",
+      "explore" : "Discover my new portfolio"
     }
   },
   "mainNavigation" : {
