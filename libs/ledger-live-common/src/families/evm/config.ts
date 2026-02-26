@@ -1156,6 +1156,24 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_adi: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.adifoundation.ai",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.adifoundation.ai/api",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_unichain: {
     type: "object",
     default: {

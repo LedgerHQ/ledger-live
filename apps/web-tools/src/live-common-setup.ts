@@ -42,6 +42,7 @@ setSupportedCurrencies([
   "decred",
   "digibyte",
   "algorand",
+  "adi",
   "qtum",
   "bitcoin_gold",
   "komodo",

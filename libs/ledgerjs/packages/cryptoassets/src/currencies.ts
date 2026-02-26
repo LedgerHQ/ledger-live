@@ -148,6 +148,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  adi: {
+    type: "CryptoCurrency",
+    id: "adi",
+    coinType: CoinType.ETH,
+    name: "Adi",
+    managerAppName: "Ethereum",
+    ticker: "ADI",
+    scheme: "adi",
+    color: "#0066CC",
+    family: "evm",
+    units: [
+      {
+        name: "ADI",
+        code: "ADI",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 36900,
+    },
+    explorerViews: [blockscoutExplorerView("https://explorer.adifoundation.ai")],
+    keywords: ["adi", "adi chain"],
+    tokenTypes: ["erc20"],
+  },
   near: {
     type: "CryptoCurrency",
     id: "near",

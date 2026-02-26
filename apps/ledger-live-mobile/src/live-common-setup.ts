@@ -121,6 +121,7 @@ setSupportedCurrencies([
   "lukso",
   "aptos",
   "aptos_testnet",
+  "adi",
   "linea",
   "linea_sepolia",
   "blast",

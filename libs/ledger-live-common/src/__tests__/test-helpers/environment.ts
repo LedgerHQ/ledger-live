@@ -116,6 +116,7 @@ setSupportedCurrencies([
   "mantra",
   "aptos",
   "aptos_testnet",
+  "adi",
   "xion",
   "sui",
   "zenrock",

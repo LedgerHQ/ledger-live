@@ -710,6 +710,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "adi",
+    ticker: "ADI",
+    name: "Adi",
+    family: "ethereum",
+    color: "#0066CC",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
     id: "optimism",
     ticker: "ETH",
     name: "OP Mainnet",

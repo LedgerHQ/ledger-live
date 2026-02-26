@@ -117,6 +117,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZeroGravity: DEFAULT_FEATURE,
   currencyConcordium: DEFAULT_FEATURE,
   currencyConcordiumTestnet: DEFAULT_FEATURE,
+  currencyAdi: DEFAULT_FEATURE,
   currencyUnichain: DEFAULT_FEATURE,
   currencyUnichainSepolia: DEFAULT_FEATURE,
 };

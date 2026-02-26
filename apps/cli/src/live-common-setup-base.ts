@@ -13,6 +13,7 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "aptos",
   "aptos_testnet",
+  "adi",
   "bitcoin",
   "ethereum",
   "bsc",
