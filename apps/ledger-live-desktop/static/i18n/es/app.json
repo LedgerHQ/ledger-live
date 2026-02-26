@@ -209,7 +209,11 @@
       "BURN" : "Quemado",
       "ASSOCIATE_TOKEN" : "Asociar token",
       "CONTRACT_CALL" : "Llamada a contrato",
-      "UPDATE_ACCOUNT" : "Cuenta actualizada"
+      "UPDATE_ACCOUNT" : "Cuenta actualizada",
+      "SHIELDED_TX_SAPLING_IN" : "Recibido",
+      "SHIELDED_TX_SAPLING_OUT" : "Enviado",
+      "SHIELDED_TX_ORCHARD_IN" : "Recibido",
+      "SHIELDED_TX_ORCHARD_OUT" : "Enviado"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -268,6 +272,8 @@
     "minute" : "Minuto",
     "minute_other" : "Minutos",
     "minute_short" : "min",
+    "second" : "segundo",
+    "second_other" : "segundos",
     "second_short" : "s",
     "hour" : "Hora",
     "hour_other" : "Horas",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "No se pueden actualizar las tarifas de red",
       "warningDescription" : "Puede que los preajustes de la tarifa estén obsoletos."
+    },
+    "customFees" : {
+      "title" : "Tarifas personalizadas",
+      "confirm" : "Confirmar",
+      "maxFee" : "Tarifa máxima ({{unit}})",
+      "maxPriorityFee" : "Tarifa de prioridad máxima ({{unit}})",
+      "gasLimit" : "Limite de gas ({{unit}})",
+      "feePerByte" : "Monto de la tarifa ({{unit}})",
+      "suggested" : "Sugerida",
+      "nextBlock" : "Siguiente bloque",
+      "networkFeesInFiat" : "Tarifas de red en {{currency}}",
+      "invalidValue" : "Enter a valid number",
+      "belowMinimum" : "Minimum is {{min}}",
+      "maxFeeBelowPriorityFee" : "Max fee must be greater than or equal to max priority fee"
+    },
+    "coinControl" : {
+      "title" : "Control de monedas"
     }
   },
   "releaseNotes" : {
-    "title" : "Notas de versión",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Nota de versión",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Entendido"
   },
   "troubleshootNetwork" : {
     "title" : "Diagnosticar problemas de red",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Agregar cuenta de Concordium",
+        "acknowledge" : {
+          "title" : "Confirmación",
+          "description" : "Concordium requiere un proceso de verificación de identidad externo. Lee estas advertencias de seguridad importantes:",
+          "list" : {
+            "1" : "<0>Sin verificación de dirección</0>: Tu Ledger no puede verificar las direcciones de recepción de Concordium. Antes de recibir los fondos, verifica las direcciones manualmente.",
+            "2" : "<0>La app Concordium ID usa una Semilla independiente</0>: Crearás unas 24 Palabras NUEVAS en la app de Concordium. NO uses NUNCA tu Semilla de Ledger.",
+            "3" : "<0>Se te redirigirá fuera de Ledger Live</0>: El proceso de verificación de identidad se realiza en la app externa Concordium Wallet. Es un requisito del protocolo de blockchain de Concordium.",
+            "4" : "<0>La firma de la transacción se realiza de manera segura</0>: Solo tu dispositivo Ledger puede firmar transacciones y crear cuentas."
+          },
+          "allow" : "Estoy de acuerdo"
+        },
+        "identity" : {
+          "title" : "Conectar",
+          "account" : "Cuenta",
+          "newAccount" : "Nueva cuenta",
+          "init" : "Pulsar Permitir significa que estás preparado para continuar con el control de identidad KYC necesario para verificar tu cuenta.",
+          "scanQRCode" : "Escanea el código QR con tu dispositivo móvil para conectar la app Concordium ID. <0>Más información</0>",
+          "ledgerSeedWarning" : "<0>NO</0> uses tu Semilla de Ledger para la app Concordium ID.",
+          "downloadApp" : "Descargar la app Concordium ID",
+          "connecting" : "Conectando a la app Concordium ID...",
+          "onboarded" : "Cuentas incorporadas",
+          "success" : "Conexión con la app Concordium ID establecida correctamente.",
+          "error" : "Error al incorporar tu nueva cuenta. Inténtalo de nuevo.",
+          "status" : {
+            "prepare" : "Preparando incorporación de la cuenta...",
+            "submit" : "Incorporando cuenta...",
+            "default" : "Procesando..."
+          }
+        },
+        "create" : {
+          "title" : "Crear cuenta",
+          "init" : {
+            "title" : "Conexión con la app Concordium ID establecida correctamente."
+          },
+          "prepare" : {
+            "title" : "Para crear una cuenta, elige en la app Concordium ID el mismo código que aparece a continuación.",
+            "resendButton" : "Volver a enviar confirmación",
+            "resendDescription" : "La confirmación puede enviarse de nuevo en <0>{{count}}</0> {{unit}}"
+          },
+          "success" : "Se ha creado correctamente tu cuenta de Concordium.",
+          "error" : "No se pudo crear la cuenta. Inténtalo de nuevo.",
+          "error429" : "Demasiadas solicitudes. Espera e inténtalo de nuevo más tarde.",
+          "button" : "Crear",
+          "processing" : "Procesando...",
+          "status" : {
+            "prepare" : "Preparando creación de la cuenta...",
+            "submit" : "Creando cuenta...",
+            "default" : "Procesando..."
+          }
+        },
+        "finish" : {
+          "title" : "Confirmación"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "En este momento no se puede verificar tu dirección de Concordium. Para asegurarte de que la dirección es correcta, pégala en el explorador de Concordium.",
+        "verifyLink" : "Verificar"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "Tamaño de memo no válido; el límite máximo permitido es de 64 caracteres.",
       "description" : "El memo de Cardano tiene un tamaño máximo limitado. Reduce el tamaño del memo."
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "La nota memo supera la longitud máxima",
+      "description" : "Tu memo está compuesta por {{memoLength}} bytes, pero el máximo permitido es de {{maxLength}} bytes. Reduce el tamaño de la nota memo."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Fondos insuficientes"
     },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Mostrar saldo",
-        "pausedAt" : "Se pausó a las: ",
+        "startSync" : "Iniciar sincronización",
+        "stopSync" : "Detener sincronización",
+        "lastProcessedBlock" : "Último bloque procesado: {{block}}. Faltan {{missing}} bloques.",
         "lastSync" : "Última sincronización: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Altura de nacimiento",
+        "tooltip" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "Iniciar sincronización",
-      "datepicker" : {
-        "label" : "Altura de nacimiento",
-        "tooltip" : "La altura de nacimiento es el punto de la blockchain a partir del cual tu wallet empieza a escanear en busca de tus fondos."
       }
+    },
+    "operationDetails" : {
+      "txType" : "Transaction type",
+      "transparentTx" : "Transparent",
+      "shieldedSaplingTx" : "🛡 Private (Sapling)",
+      "shieldedOrchardTx" : "🛡 Private (Orchard)"
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "Saldo visible para el público",
       "privateBalance" : "Saldo privado",
       "privateBalanceTooltip" : "Saldo que está oculto al público"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Pública",
+        "private" : "Privada"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Nueva actualización disponible",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "Error al actualizar, inténtalo de nuevo",
+    "installAndRelaunch" : "Instalar actualización y ejecutar de nuevo"
   }
 }
