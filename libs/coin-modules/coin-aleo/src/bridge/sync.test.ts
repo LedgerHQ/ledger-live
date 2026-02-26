@@ -580,7 +580,7 @@ describe("sync.ts", () => {
 
       expect(mockListOperations).toHaveBeenCalledWith(
         expect.objectContaining({
-          pagination: expect.objectContaining({ lastPagingToken: "500" }),
+          options: expect.objectContaining({ cursor: "500" }),
         }),
       );
     });
