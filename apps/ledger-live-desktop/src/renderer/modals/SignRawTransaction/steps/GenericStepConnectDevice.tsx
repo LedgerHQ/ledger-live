@@ -31,6 +31,7 @@ export default function StepConnectDevice({
   account,
   parentAccount,
   transaction,
+  broadcast,
   useApp,
   transitionTo,
   onTransactionSigned,
@@ -45,6 +46,7 @@ export default function StepConnectDevice({
   account: AccountLike;
   parentAccount: Account | undefined | null;
   transaction: string;
+  broadcast?: boolean;
   useApp?: string;
   onTransactionError: (a: Error) => void;
   onTransactionSigned: (a: SignedOperation) => void;
@@ -61,6 +63,7 @@ export default function StepConnectDevice({
       account,
       appName: useApp,
       transaction,
+      broadcast,
       dependencies,
       requireLatestFirmware,
       manifestId,
@@ -68,6 +71,7 @@ export default function StepConnectDevice({
     }),
     [
       account,
+      broadcast,
       dependencies,
       manifestId,
       manifestName,

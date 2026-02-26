@@ -25,6 +25,22 @@ function pointAddScalar(point: Uint8Array, scalar: Uint8Array): Uint8Array | nul
   }
 }
 
+/**
+ * Computes the taproot output key (BIP341) from an internal x-only pubkey.
+ * Standalone so derivation population can build a hash-based lookup without AccountType.
+ */
+export function computeTaprootOutputKey(internalXonlyPubkey: Buffer): Buffer {
+  if (internalXonlyPubkey.length !== 32) {
+    throw new Error("Expected 32 byte pubkey. Got " + internalXonlyPubkey.length);
+  }
+  const h = crypto.sha256(Buffer.from("TapTweak", "utf-8"));
+  const tweak = crypto.sha256(Buffer.concat([h, h, internalXonlyPubkey]));
+  const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), internalXonlyPubkey]);
+  const tweakedKey = pointAddScalar(evenEcdsaPubkey, tweak);
+  if (!tweakedKey) throw new Error("Point addition failed");
+  return Buffer.from(tweakedKey).subarray(1);
+}
+
 export type SpendingCondition = {
   scriptPubKey: Buffer;
   redeemScript?: Buffer;
@@ -214,45 +230,14 @@ export class p2tr extends SingleKeyAccount {
     return "tr(@0)";
   }
 
-  /*
-  The following two functions are copied from wallet-btc and adapted.
-  They should be moved to a library to avoid code reuse.
-  */
-  private hashTapTweak(x: Buffer): Buffer {
-    // hash_tag(x) = SHA256(SHA256(tag) || SHA256(tag) || x), see BIP340
-    // See https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification
-    const h = crypto.sha256(Buffer.from("TapTweak", "utf-8"));
-    return crypto.sha256(Buffer.concat([h, h, x]));
-  }
-
   /**
-   * Calculates a taproot output key from an internal key. This output key will be
-   * used as witness program in a taproot output. The internal key is tweaked
-   * according to recommendation in BIP341:
-   * https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#cite_ref-22-0
+   * Calculates a taproot output key from an internal key (BIP341).
    *
    * @param internalPubkey A 32 byte x-only taproot internal key
    * @returns The output key
    */
   getTaprootOutputKey(internalPubkey: Buffer): Buffer {
-    if (internalPubkey.length != 32) {
-      throw new Error("Expected 32 byte pubkey. Got " + internalPubkey.length);
-    }
-    // A BIP32 derived key can be converted to a schnorr pubkey by dropping
-    // the first byte, which represent the oddness/evenness. In schnorr all
-    // pubkeys are even.
-    // https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#public-key-conversion
-    const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), internalPubkey]);
-    const tweak = this.hashTapTweak(internalPubkey);
-
-    // Q = P + int(hash_TapTweak(bytes(P)))G
-    const tweakedKey = pointAddScalar(evenEcdsaPubkey, tweak);
-    if (!tweakedKey) throw new Error("Point addition failed");
-    const outputEcdsaKey = Buffer.from(tweakedKey);
-    // Convert to schnorr.
-    const outputSchnorrKey = outputEcdsaKey.subarray(1);
-    // Create address
-    return outputSchnorrKey;
+    return computeTaprootOutputKey(internalPubkey);
   }
 }
 

@@ -198,6 +198,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         account,
         parentAccount,
         transaction,
+        broadcast,
         options,
         onSuccess,
         onError,
@@ -206,6 +207,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         dispatch(
           openModal("MODAL_SIGN_RAW_TRANSACTION", {
             transaction,
+            broadcast,
             useApp: options?.hwAppId,
             dependencies: options?.dependencies,
             account,

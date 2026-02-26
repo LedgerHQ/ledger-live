@@ -9,6 +9,7 @@ export default function StepConnectDevice({
   account,
   parentAccount,
   transaction,
+  broadcast,
   transitionTo,
   useApp,
   dependencies,
@@ -36,6 +37,7 @@ export default function StepConnectDevice({
         useApp={useApp}
         parentAccount={parentAccount}
         transaction={transaction}
+        broadcast={broadcast}
         transitionTo={transitionTo}
         onTransactionError={onTransactionError}
         onTransactionSigned={onTransactionSigned}
