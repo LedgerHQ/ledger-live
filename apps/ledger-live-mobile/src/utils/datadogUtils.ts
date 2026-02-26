@@ -3,7 +3,7 @@ import { Primitive } from "~/types/helpers";
 import { enabledExperimentalFeatures } from "../experimental";
 import { getAllDivergedFlags } from "../components/FirebaseFeatureFlags";
 import { languageSelector } from "../reducers/settings";
-import { store } from "../context/store";
+import { store } from "~/state-manager/configureStore";
 
 const MAX_KEYLEN = 32;
 const parseSafeKey = (k: string): string => {

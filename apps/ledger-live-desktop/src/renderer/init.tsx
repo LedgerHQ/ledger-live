@@ -28,8 +28,8 @@ import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
-import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
-import createStore from "~/renderer/createStore";
+import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
+import createStore from "~/state-manager/configureStore";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";

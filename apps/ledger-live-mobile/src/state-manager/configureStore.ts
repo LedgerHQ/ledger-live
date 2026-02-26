@@ -5,15 +5,14 @@ import NetInfo from "@react-native-community/netinfo";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
-import { applyLlmRTKApiMiddlewares } from "./rtkQueryApi";
-import { setupCryptoAssetsStore } from "../config/bridge-setup";
+import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
+import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import getOrCreateUser from "~/user";
 
-// === STORE CONFIGURATION ===
 export const store = configureStore({
   reducer: reducers,
   devTools: !!Config.DEBUG_RNDEBUGGER,

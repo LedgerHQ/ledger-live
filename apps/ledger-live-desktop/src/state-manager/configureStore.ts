@@ -2,7 +2,7 @@ import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
-import { applyLldRTKApiMiddlewares } from "./reducers/rtkQueryApi";
+import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getUserId } from "~/helpers/user";
