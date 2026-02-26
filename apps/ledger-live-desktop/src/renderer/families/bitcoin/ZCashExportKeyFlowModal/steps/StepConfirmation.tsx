@@ -8,7 +8,8 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { Container } from "../shared/Container";
-import type { ZcashAccount, ZcashPrivateInfo } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
 import type { StepProps } from "../types";
 import { syncStateUpdater } from "../sync";
 
