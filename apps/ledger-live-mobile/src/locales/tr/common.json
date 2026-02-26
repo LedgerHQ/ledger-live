@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Ledger satın alın",
     "setupCta" : "Zaten bir Ledger cihazım var, onu kuralım"
   },
+  "rebornBuyDevice" : {
+    "title" : "Bir Ledger cihazı bağlayın",
+    "desc" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
+    "0" : {
+      "title" : "Tam mülkiyet",
+      "desc" : "Özel anahtarlarınız asla cihazdan ayrılmaz."
+    },
+    "1" : {
+      "title" : "Güvenle alıp satın",
+      "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
+    },
+    "2" : {
+      "title" : "En güçlü cüzdana erişin",
+      "desc" : "Binlerce varlığı tek bir yerden yönetin."
+    },
+    "cta" : "Bağlan",
+    "buyCta" : "Ledger cihazınızı satın alın"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Ledger cihazınız elinize ulaştı mı?",
     "desc" : "Ledger cihazınız elinize ulaştığında Ledger Wallet uygulamasının tüm özelliklerinin kilidini açmak için cihazınızın kurulumunu yapın.",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "Cüzdan bakiyesi",
     "balance" : {
       "noSigner" : "En güvenli\ncüzdan",
-      "noFund" : "Kriptolarınızı\ngüvende tutun"
+      "noAccounts" : "Kriptolarınızı\ngüvende tutun"
     },
     "seeAllAssets" : "Tüm varlıkları gör",
     "seeAllAccounts" : "Tüm hesapları gör",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "Adresi girin",
       "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
       "recent" : "Son kullanılanlar",
+      "recentDetail" : "Son işlem ayrıntıları",
       "myAccounts" : "Hesaplarım",
+      "account" : "Hesap",
       "sendTo" : "{{address}} adresine gönder",
       "addressMatched" : "Adres eşleşti",
       "addressNotFound" : "Adres bulunamadı",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "Ağ ücretleri yenilenemiyor",
         "warningDescription" : "Önceden belirlenmiş ücretler eski olabilir."
+      },
+      "customFees" : {
+        "title" : "Custom fees",
+        "confirm" : "Onayla",
+        "maxFee" : "Ücret Üst Limiti ({{unit}})",
+        "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
+        "gasLimit" : "Gas limiti ({{unit}})",
+        "feePerByte" : "Ücret tutarı ({{unit}})",
+        "suggested" : "Önerilen",
+        "nextBlock" : "Sonraki blok",
+        "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+        "invalidValue" : "Enter a valid number",
+        "belowMinimum" : "Minimum is {{min}}",
+        "maxFeeBelowPriorityFee" : "Max fee must be greater than or equal to max priority fee"
+      },
+      "coinControl" : {
+        "title" : "Coin yönetimi"
       }
     },
     "pendingTxWarning" : "Beklemede olan gelen işlemleriniz var. Bekleyen işlemlerin geri alınabileceğini lütfen unutmayın.",
@@ -4283,7 +4320,8 @@
       "useMax" : "Tümünü kullan",
       "loadingNetwork" : "Ağ ücretleri yükleniyor...",
       "noRateProvider" : "Mevcut değil",
-      "quantityAvailable" : "Mevcut miktar"
+      "quantityAvailable" : "Mevcut miktar",
+      "toggleCurrency" : "Para birimini değiştir"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "Ücretler zorunludur",
       "chooseGas" : "Bir gas fiyatı seçin",
       "higherFaster" : "Yüksek gas fiyatı, daha hızlı işlem onayı anlamına gelir.",
+      "medium" : "Orta",
+      "fast" : "Hızlı",
+      "slow" : "Yavaş",
+      "custom" : "Özel",
+      "customFees" : "Özel ücretler",
+      "coinControl" : "Coin yönetimi",
       "edit" : {
         "title" : "Birim seçin"
       },
@@ -7241,7 +7285,8 @@
         "website" : "Web sitesi"
       },
       "back" : {
-        "card" : "tüm kartlar"
+        "card" : "tüm kartlar",
+        "cardTab" : "Kart"
       }
     }
   },
@@ -8517,21 +8562,21 @@
     "title" : "Yeni portföyünüzü keşfedin",
     "slides" : {
       "portfolio" : {
-        "title" : "Portföy sayfanız yeniden tasarlandı",
-        "description" : "Ana ekranınızı daha sade bir hâle getirdik. Grafiğinizi bulamadınız mı? Bakiyenizin altındaki kısma dokunun."
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
       },
       "navigation" : {
-        "title" : "Her şey olması gereken yerde",
-        "description" : "My Ledger ve Keşfet sekmeleri artık en üstte. Takas ve Kart, daha hızlı erişim için alt kısma taşındı."
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Takas, Transfer ve Satın Al işlevlerine anında erişin. Kazan bölümünü ve Kartınızı alt gezinti menüsünde bulabilirsiniz."
       },
       "actions" : {
-        "title" : "Piyasa hızında eylemler",
-        "description" : "Yeni banner ile piyasa trendlerini görün ve anında alım satım yapın."
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
       }
     },
     "cta" : {
-      "continue" : "Devam",
-      "explore" : "Yeni portföyünüzü keşfedin"
+      "continue" : "Sonraki",
+      "explore" : "Yeni portföyü keşfet"
     }
   },
   "mainNavigation" : {
