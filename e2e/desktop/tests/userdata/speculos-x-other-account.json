@@ -434,6 +434,14 @@
                           "value": "124013",
                           "address": "bc1qsss2ndzsnsqt5mlmyqmc40tly5h0mmhkeeamww",
                           "sequence": 0
+                        },
+                        {
+                          "output_tx_id": "8c4fb0092fb18ed7e5a3c6153552c99b3cb191c10b5881d63d22f753171244e5",
+                          "output_hash": "8c4fb0092fb18ed7e5a3c6153552c99b3cb191c10b5881d63d22f753171244e5",
+                          "output_index": 1,
+                          "value": "39919",
+                          "address": "bc1qqj6s9r97mdcr8264c0tlf8pm57lqfyekpmxjrm",
+                          "sequence": 0
                         }
                       ],
                       "outputs": [
