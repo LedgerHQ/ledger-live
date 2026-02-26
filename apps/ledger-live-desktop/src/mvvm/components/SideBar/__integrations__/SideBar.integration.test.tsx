@@ -46,7 +46,7 @@ describe("SideBar", () => {
     it("should render all leading sidebar items with correct labels", () => {
       renderSideBarWithRoute("/");
 
-      expect(screen.getByText("Portfolio")).toBeVisible();
+      expect(screen.getByText("Home")).toBeVisible();
       expect(screen.getByText("Accounts")).toBeVisible();
       expect(screen.getByText("Swap")).toBeVisible();
       expect(screen.getByText("Earn")).toBeVisible();
@@ -144,7 +144,7 @@ describe("SideBar", () => {
     it("should not navigate when clicking the already active item", async () => {
       const { user } = renderSideBarWithRoute("/");
 
-      await user.click(screen.getByText("Portfolio"));
+      await user.click(screen.getByText("Home"));
 
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -154,8 +154,8 @@ describe("SideBar", () => {
     it("should set home as active when on root path", () => {
       renderSideBarWithRoute("/");
 
-      const portfolioButton = screen.getByText("Portfolio").closest("button");
-      expect(portfolioButton).toHaveAttribute("aria-current", "page");
+      const homeButton = screen.getByText("Home").closest("button");
+      expect(homeButton).toHaveAttribute("aria-current", "page");
     });
 
     it("should set accounts as active when on accounts path", () => {
@@ -172,11 +172,11 @@ describe("SideBar", () => {
       expect(swapButton).toHaveAttribute("aria-current", "page");
     });
 
-    it("should set home as active when on asset sub-path", () => {
+    it("should not set home as active when on asset sub-path", () => {
       renderSideBarWithRoute("/asset/bitcoin");
 
-      const portfolioButton = screen.getByText("Portfolio").closest("button");
-      expect(portfolioButton).toHaveAttribute("aria-current", "page");
+      const homeButton = screen.getByText("Home").closest("button");
+      expect(homeButton).not.toHaveAttribute("aria-current", "page");
     });
 
     it("should set discover as active when on platform path", () => {
@@ -203,8 +203,8 @@ describe("SideBar", () => {
     it("should not set non-active items as current page", () => {
       renderSideBarWithRoute("/accounts");
 
-      const portfolioButton = screen.getByText("Portfolio").closest("button");
-      expect(portfolioButton).not.toHaveAttribute("aria-current");
+      const homeButton = screen.getByText("Home").closest("button");
+      expect(homeButton).not.toHaveAttribute("aria-current");
     });
   });
 
