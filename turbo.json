@@ -194,7 +194,17 @@
     },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
-      "outputs": ["react/**", "native/**", "reactLegacy/**", "nativeLegacy/**", "index.js"]
+      "outputs": [
+        "react/**",
+        "native/**",
+        "reactLegacy/**",
+        "nativeLegacy/**",
+        "index.js",
+        "src/react/**",
+        "src/native/**",
+        "src/reactLegacy/**",
+        "src/nativeLegacy/**"
+      ]
     },
     "@ledgerhq/live-common#build": {
       "dependsOn": ["^build"],
