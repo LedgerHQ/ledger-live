@@ -45,3 +45,5 @@ Only add or edit translation files for the **English** language:
 ## Jest Test Mocks
 
 For test file changes, apply the rules in `.github/instructions/jest-mocks.instructions.md`.
+
+Flag PRs that add new features or modify existing behavior without corresponding integration tests in `__integrations__/` directories.

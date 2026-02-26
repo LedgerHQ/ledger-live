@@ -66,3 +66,7 @@ When selecting elements in tests, follow this order:
 - Desktop: pass `initialState` to the render function.
 - Mobile: use `overrideInitialState`.
 - Never mock feature flags directly — use `overriddenFeatureFlags`.
+
+Ensure every test description accurately describes the single behavior being verified — flag mismatches between test names and actual assertions.
+
+Prefer testing through rendered UI (e.g., `getByText`, `getByRole`) over snapshot comparisons (`toJSON`) or internal state checks.

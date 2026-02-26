@@ -40,3 +40,7 @@ It restores **all** mocks including global ones from jest-setup, breaking other 
 **Flag:** `jest.clearAllMocks()` called **after** `mockReturnValue()` or other mock configuration.
 
 This clears the mock configuration. Call `clearAllMocks` first, then configure mocks.
+
+Never mock UI components, hooks under test, or `react-i18next` — test them through their actual behavior instead.
+
+Override feature flags using `overriddenFeatureFlags` instead of mocking feature flag hooks or modules directly.
