@@ -13,6 +13,9 @@
   "resolutions": {
     "node-abi": "^4.9.0"
   },
+
+  test
+  
   "scripts": {
     "bump": "changeset version",
     "clean": "git clean -fdX",
