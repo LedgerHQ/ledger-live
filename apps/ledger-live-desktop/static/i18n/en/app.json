@@ -7611,7 +7611,7 @@
       "skipCTA": "I'll do this later"
     },
     "default": {
-      "title": "{{ productName }} has it own apps. You need them to transact.",
+      "title": "{{ productName }} has its own apps. You need them to transact.",
       "subtitle": "As an example, the Bitcoin app for {{productName}} is required to sign Bitcoin transactions.\n\nInstall default apps to get your {{productName}} transaction-ready.",
       "installCTA": "Install now",
       "skipCTA": "I'll do this later"
