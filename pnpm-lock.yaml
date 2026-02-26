@@ -3099,6 +3099,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@ledgerhq/zcash-shielded':
+        specifier: workspace:^
+        version: link:../zcash-shielded
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -5403,9 +5406,6 @@ importers:
 
   libs/coin-modules/zcash-shielded:
     dependencies:
-      '@ledgerhq/coin-bitcoin':
-        specifier: workspace:^
-        version: link:../coin-bitcoin
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
