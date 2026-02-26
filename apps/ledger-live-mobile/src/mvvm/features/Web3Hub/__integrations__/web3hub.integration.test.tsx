@@ -250,6 +250,13 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByTestId("dummy-0-recently-used")).toBeOnTheScreen();
     expect(screen.queryByTestId("wallet-api-tools-0-recently-used")).not.toBeOnTheScreen();
 
+    await user.press(screen.getByTestId("dummy-0-recently-used"));
+    expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
+    expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
+
+    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByRole("searchbox")).toBeEnabled();
+
     expect(await screen.findByText("Clear All")).toBeOnTheScreen();
     await user.press(screen.getByText("Clear All"));
 
