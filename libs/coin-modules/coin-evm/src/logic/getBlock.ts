@@ -1,12 +1,20 @@
 import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
+import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
+  // Note: to use RPC calls efficiently, the strategy here is:
+  //  - fetch the block + transactions in one call (using prefetchTxs=true)
+  //  - fetch transaction receipts in one call using eth_getBlockReceipts
+  //  - if the RPC does not support prefetchTxs or eth_getBlockReceipts, fall back to fetching the transaction+receipts
+  //    one by one
   const nodeApi = getNodeApi(currency);
-  const result = await nodeApi.getBlockByHeight(currency, height);
+  const result = await nodeApi.getBlockByHeight(currency, height, true);
 
   const info: BlockInfo = {
     height: result.height,
@@ -23,8 +31,10 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
 
   const transactions = await getTransactionsFromNode(
     currency,
-    result.transactionHashes || [],
+    result.transactionHashes || result.transactions?.map(tx => tx.hash) || [],
     nodeApi,
+    result.height,
+    result.transactions,
   );
 
   return {
@@ -32,14 +42,23 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     transactions,
   };
 }
+
 async function getTransactionsFromNode(
   currency: CryptoCurrency,
   transactionHashes: string[],
   nodeApi: ReturnType<typeof getNodeApi>,
+  blockHeight: number,
+  prefetchedTransactions?: PrefetchedBlockTransaction[],
 ): Promise<BlockTransaction[]> {
-  if (transactionHashes.length === 0) {
-    return [];
-  }
+  if (transactionHashes.length === 0) return [];
+
+  const bulkTransactions = await getTransactionsFromPrefetchedData(
+    currency,
+    blockHeight,
+    prefetchedTransactions,
+    nodeApi,
+  );
+  if (bulkTransactions) return bulkTransactions;
 
   // some RPC nodes like the one on mainnet.optimism.io are limited to 10 concurrent calls
   // given that the underlying nodeApi calls are doing 2 calls in parallel to fetch the transaction
@@ -56,6 +75,62 @@ async function getTransactionsFromNode(
   );
 
   return transactionResults.filter((tx): tx is BlockTransaction => tx !== null);
+}
+
+async function getTransactionsFromPrefetchedData(
+  currency: CryptoCurrency,
+  blockHeight: number,
+  prefetchedTransactions: PrefetchedBlockTransaction[] | undefined,
+  nodeApi: ReturnType<typeof getNodeApi>,
+): Promise<BlockTransaction[] | null> {
+  if (!prefetchedTransactions || prefetchedTransactions.length === 0 || !nodeApi.getBlockReceipts)
+    return null;
+
+  try {
+    const receipts = await nodeApi.getBlockReceipts(currency, blockHeight);
+    const receiptsByHash = new Map(receipts.map(receipt => [receipt.hash, receipt]));
+
+    const transactions: BlockTransaction[] = [];
+    for (const tx of prefetchedTransactions) {
+      const receipt = receiptsByHash.get(tx.hash);
+      if (!receipt) return null;
+      transactions.push(prefetchedTransactionToBlockTransaction(tx, receipt));
+    }
+
+    return transactions;
+  } catch (error) {
+    if (!(error instanceof UnsupportedRpcMethodError) || error.method !== "eth_getBlockReceipts")
+      throw error;
+
+    log("warn", "EVM getBlock fallback: eth_getBlockReceipts unsupported", {
+      currencyId: currency.id,
+      blockHeight,
+      error: error.rawError,
+    });
+    return null;
+  }
+}
+
+function prefetchedTransactionToBlockTransaction(
+  tx: PrefetchedBlockTransaction,
+  receipt: BlockReceiptInfo,
+): BlockTransaction {
+  const failed = receipt.status === 0;
+  const fees = BigInt(receipt.gasUsed) * BigInt(receipt.gasPrice);
+  const operations = rpcTransactionToBlockOperations({
+    from: tx.from,
+    to: tx.to,
+    value: tx.value,
+    erc20Transfers: receipt.erc20Transfers,
+  });
+
+  return {
+    hash: tx.hash,
+    failed,
+    operations,
+    fees,
+    feesPayer: tx.from,
+  };
 }
 
 async function getTransactionFromHash(
