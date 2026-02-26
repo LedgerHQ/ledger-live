@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/coin-evm": minor
 ---
 
 Fix integration tests Arbitrum

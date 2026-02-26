@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 fix(mobile): Wallet V4 Tour Debug screen improvements

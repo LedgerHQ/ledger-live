@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/types-live": patch
+"ledger-live-desktop": minor
+"@ledgerhq/types-live": minor
 ---
 
 fix(desktop): defer Modals when Wallet V4 tour is active

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/psbtv2": patch
+"@ledgerhq/psbtv2": minor
 ---
 
 fix: correct previous transaction ID handling in PsbtV2
