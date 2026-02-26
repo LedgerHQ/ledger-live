@@ -190,6 +190,28 @@ describe("createApi", () => {
       invariant(rawTx instanceof TransferTransaction, "TransferTransaction type guard");
       expect(rawTx.maxTransactionFee).toEqual(expectedMaxFee);
     });
+
+    it("throws if useAllAmount is true", async () => {
+      await expect(
+        api.craftTransaction({
+          intentType: "transaction",
+          asset: {
+            type: "native",
+          },
+          amount: BigInt(100),
+          useAllAmount: true,
+          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          type: HEDERA_TRANSACTION_MODES.TokenAssociate,
+          memo: {
+            kind: "text",
+            type: "string",
+            value: "token association",
+          },
+        }),
+      ).rejects.toThrow("useAllAmount is not supported");
+    });
   });
 
   describe("estimateFees", () => {
@@ -590,10 +612,9 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
-      const block = await api.lastBlock();
       const { items: operations } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.pristine.accountId,
-        { minHeight: block.height, order: "desc" },
+        { minHeight: 0, order: "desc" },
       );
 
       expect(operations).toBeInstanceOf(Array);
@@ -602,9 +623,8 @@ describe("createApi", () => {
 
     it("returns operations with valid synthetic block info", async () => {
       const cursor = "1753099264.927988000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
-        minHeight: block.height,
+        minHeight: 0,
         cursor,
         limit: 4,
         order: "asc",
@@ -619,9 +639,8 @@ describe("createApi", () => {
 
     it("returns operations for real account with tokens", async () => {
       const cursor = "1753099264.927988000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
-        minHeight: block.height,
+        minHeight: 0,
         cursor,
         limit: 100,
         order: "desc",
@@ -670,10 +689,9 @@ describe("createApi", () => {
 
     it("returns staking operations with correct metadata", async () => {
       const cursor = "1762202113.000000000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
-        { minHeight: block.height, cursor, limit: 30, order: "desc" },
+        { minHeight: 0, cursor, limit: 30, order: "desc" },
       );
 
       const rewardOp = ops.find(op => op.type === "REWARD");
@@ -709,10 +727,9 @@ describe("createApi", () => {
     });
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.withQuickBalanceChanges.accountId,
-        { minHeight: block.height, limit: 10, order: "asc" },
+        { minHeight: 0, limit: 10, order: "asc" },
       );
 
       const opDelegate1 = ops[2];
