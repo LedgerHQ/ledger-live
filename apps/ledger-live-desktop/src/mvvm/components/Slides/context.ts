@@ -1,11 +1,9 @@
 import { createContext, useContext } from "react";
-import type { MotionValue } from "framer-motion";
 
 export interface SlidesContextValue {
   currentIndex: number;
-  previousIndex: number;
-  progress: MotionValue<number>;
   totalSlides: number;
+  initialIndex: number;
   goToNext: () => void;
   goToPrevious: () => void;
   goToSlide: (index: number) => void;

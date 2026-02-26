@@ -42,11 +42,11 @@ export const WalletV4TourDialog = ({ isOpen, onClose }: WalletV4TourDialogProps)
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="flex h-screen min-h-0 flex-col">
         <DialogHeader appearance="compact" onClose={onClose} />
-        <Slides>
+        <Slides initialSlideIndex={0}>
           <Slides.Content>
-            {slides.map((slide, index) => (
+            {slides.map(slide => (
               <Slides.Content.Item key={slide.title}>
-                <SlideItem index={index} title={slide.title} description={slide.description} />
+                <SlideItem title={slide.title} description={slide.description} />
               </Slides.Content.Item>
             ))}
           </Slides.Content>
