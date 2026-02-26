@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Transaction, TransactionRaw } from "../types";
+import { TRANSACTION_TYPE } from "../constants";
 
 export function formatTransaction(transaction: Transaction, account: Account): string {
   const amount = formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
@@ -23,6 +24,20 @@ export function formatTransaction(transaction: Transaction, account: Account): s
 export function fromTransactionRaw(tr: TransactionRaw): Transaction {
   const common = fromTransactionCommonRaw(tr);
 
+  if (
+    tr.type === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    tr.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    return {
+      ...common,
+      family: tr.family,
+      type: tr.type,
+      fees: new BigNumber(tr.fees),
+      amountRecord: tr.amountRecord,
+      feeRecord: tr.feeRecord,
+    };
+  }
+
   return {
     ...common,
     family: tr.family,
@@ -32,14 +47,26 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
 }
 
 export function toTransactionRaw(t: Transaction): TransactionRaw {
-  const common = toTransactionCommonRaw(t);
-
-  return {
-    ...common,
+  const commonGeneric = toTransactionCommonRaw(t);
+  const commonAleo = {
     family: t.family,
-    type: t.type,
     fees: t.fees.toString(),
   };
+
+  if (
+    t.type === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    t.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      type: t.type,
+      amountRecord: t.amountRecord,
+      feeRecord: t.feeRecord,
+    };
+  }
+
+  return { ...commonGeneric, ...commonAleo, type: t.type };
 }
 
 export default {

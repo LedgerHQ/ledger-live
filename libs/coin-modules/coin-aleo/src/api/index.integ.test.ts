@@ -3,6 +3,7 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
+import { deserializeTransaction } from "../logic/utils";
 
 describe("createApi", () => {
   const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
@@ -31,7 +32,7 @@ describe("createApi", () => {
   });
 
   describe("estimateFees", () => {
-    it("returns fee for coin transfer transaction", async () => {
+    it("should return fee for coin transfer transaction", async () => {
       const fees = await api.estimateFees({
         intentType: "transaction",
         asset: { type: "native" },
@@ -45,8 +46,271 @@ describe("createApi", () => {
     });
   });
 
+  describe("craftTransaction", () => {
+    const mockAmountRecord =
+      "record1qvqsps6wqrka73247spvsvdlgwr8qhmn5f4uze4t8zutp4k8mwm3zdgtqyxx66trwfhkxun9v35hguerqqpqzqrpdge64jwzyz32aknuxc800uugfwv52pqse4dk4p32datlzpd8z95td5t0dhdm4dfhtq9w285uj2arltzky4u6hmdv2xpdnkv365l3qg9hn0g";
+
+    describe("public transfers", () => {
+      it.each([
+        ["minimal amount", 1n, false],
+        ["typical amount", 123n, true],
+        ["large amount", 1_000_000_000n, false],
+      ] as const)(
+        "should craft valid transaction with %s",
+        async (_descr: string, amount: bigint, includeInputTypesValidation: boolean) => {
+          const { transaction } = await api.craftTransaction({
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+            amount,
+            sender: testAccountAddress,
+            recipient: emptyAccountAddress,
+          });
+
+          expect(typeof transaction).toBe("string");
+          expect(transaction.length).toBeGreaterThan(0);
+
+          const deserialized = deserializeTransaction(transaction);
+          expect(deserialized).toMatchObject({
+            is_root: true,
+          });
+          expect(deserialized.network_id).toBeGreaterThan(0);
+          expect(typeof deserialized.program_id).toBe("string");
+          expect(deserialized.program_id.length).toBeGreaterThan(0);
+          expect(typeof deserialized.function_name).toBe("string");
+          expect(deserialized.function_name.length).toBeGreaterThan(0);
+          expect(Array.isArray(deserialized.inputs)).toBe(true);
+          expect(deserialized.inputs.length).toBeGreaterThan(0);
+          expect(
+            deserialized.inputs.every(input => typeof input === "string" && input.length > 0),
+          ).toBe(true);
+
+          if (includeInputTypesValidation) {
+            expect(Array.isArray(deserialized.input_types)).toBe(true);
+            expect(deserialized.input_types.length).toBeGreaterThan(0);
+            expect(
+              deserialized.input_types.every(
+                inputType => typeof inputType === "string" && inputType.length > 0,
+              ),
+            ).toBe(true);
+          }
+        },
+      );
+    });
+
+    describe("private transfers", () => {
+      it("should craft a valid private transfer transaction with record", async () => {
+        const amount = 50n;
+        const { transaction } = await api.craftTransaction({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "transfer_private",
+          amount,
+          sender: testAccountAddress,
+          recipient: emptyAccountAddress,
+          data: {
+            type: "private",
+            amountRecord: mockAmountRecord,
+          },
+        });
+
+        expect(typeof transaction).toBe("string");
+
+        const deserialized = deserializeTransaction(transaction);
+        expect(deserialized).toHaveProperty("type", "BAD_REQUEST");
+        expect(deserialized).toHaveProperty("code", 400);
+        if ("message" in deserialized) {
+          expect(deserialized.message).toContain("deserialize error");
+        }
+      });
+
+      it("should throw when private data is missing for private transfer", async () => {
+        await expect(
+          api.craftTransaction({
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+            amount: 50n,
+            sender: testAccountAddress,
+            recipient: emptyAccountAddress,
+          }),
+        ).rejects.toThrow("private data is required");
+      });
+
+      it("should throw when record is missing in private data", async () => {
+        const { transaction } = await api.craftTransaction({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+          amount: 50n,
+          sender: testAccountAddress,
+          recipient: emptyAccountAddress,
+          data: {
+            type: "private",
+          },
+        });
+
+        const deserialized = deserializeTransaction(transaction);
+        expect(deserialized).toHaveProperty("type", "BAD_REQUEST");
+        expect(deserialized).toHaveProperty("code", 400);
+      });
+    });
+
+    describe("public to private conversions", () => {
+      it.each([
+        ["same address", 100n, testAccountAddress],
+        ["different addresses", 200n, emptyAccountAddress],
+      ] as const)(
+        "should craft valid conversion with %s",
+        async (_descr: string, amount: bigint, recipient: string) => {
+          const { transaction } = await api.craftTransaction({
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: "transfer_public_to_private",
+            amount,
+            sender: testAccountAddress,
+            recipient,
+          });
+
+          expect(typeof transaction).toBe("string");
+
+          const deserialized = deserializeTransaction(transaction);
+          expect(deserialized.is_root).toBe(true);
+          expect(typeof deserialized.program_id).toBe("string");
+          expect(deserialized.program_id.length).toBeGreaterThan(0);
+          expect(typeof deserialized.function_name).toBe("string");
+          expect(deserialized.function_name.length).toBeGreaterThan(0);
+          expect(Array.isArray(deserialized.inputs)).toBe(true);
+          expect(deserialized.inputs.length).toBeGreaterThan(0);
+          expect(
+            deserialized.inputs.every(input => typeof input === "string" && input.length > 0),
+          ).toBe(true);
+        },
+      );
+    });
+
+    describe("private to public conversions", () => {
+      it("should craft a valid convert private to public transaction with record", async () => {
+        const amount = 75n;
+        const { transaction } = await api.craftTransaction({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "transfer_private_to_public",
+          amount,
+          sender: testAccountAddress,
+          recipient: testAccountAddress,
+          data: {
+            type: "private",
+            amountRecord: mockAmountRecord,
+          },
+        });
+
+        expect(typeof transaction).toBe("string");
+
+        const deserialized = deserializeTransaction(transaction);
+        expect(deserialized).toHaveProperty("type", "BAD_REQUEST");
+        expect(deserialized).toHaveProperty("code", 400);
+        if ("message" in deserialized) {
+          expect(deserialized.message).toContain("deserialize error");
+        }
+      });
+
+      it("should throw when private data is missing for convert private to public", async () => {
+        await expect(
+          api.craftTransaction({
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: "transfer_private_to_public",
+            amount: 75n,
+            sender: testAccountAddress,
+            recipient: testAccountAddress,
+          }),
+        ).rejects.toThrow("private data is required");
+      });
+
+      it("should throw when amountRecord is missing in private data for conversion", async () => {
+        const { transaction } = await api.craftTransaction({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "transfer_private_to_public",
+          amount: 75n,
+          sender: testAccountAddress,
+          recipient: testAccountAddress,
+          data: {
+            type: "private",
+          },
+        });
+
+        const deserialized = deserializeTransaction(transaction);
+        expect(deserialized).toHaveProperty("type", "BAD_REQUEST");
+        expect(deserialized).toHaveProperty("code", 400);
+      });
+    });
+
+    describe("edge cases", () => {
+      it.each([
+        ["zero amount", 0n, testAccountAddress, emptyAccountAddress, { expectValid: true }],
+        [
+          "invalid recipient address",
+          100n,
+          testAccountAddress,
+          "invalid_address",
+          {
+            expectValid: false,
+            errorType: "INVALID_INTENT" as const,
+            errorMessage: "Invalid recipient address",
+          },
+        ],
+        [
+          "invalid sender address",
+          100n,
+          "invalid_address",
+          emptyAccountAddress,
+          { expectValid: true },
+        ],
+      ] as const)(
+        "should handle %s",
+        async (
+          _descr: string,
+          amount: bigint,
+          sender: string,
+          recipient: string,
+          expectation:
+            | { expectValid: true }
+            | { expectValid: false; errorType: string; errorMessage: string },
+        ) => {
+          const { transaction } = await api.craftTransaction({
+            intentType: "transaction",
+            asset: { type: "native" },
+            type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+            amount,
+            sender,
+            recipient,
+          });
+
+          expect(typeof transaction).toBe("string");
+          const deserialized = deserializeTransaction(transaction);
+
+          if (expectation.expectValid) {
+            expect(deserialized.is_root).toBe(true);
+            expect(typeof deserialized.program_id).toBe("string");
+            expect(deserialized.program_id.length).toBeGreaterThan(0);
+            expect(typeof deserialized.function_name).toBe("string");
+            expect(deserialized.function_name.length).toBeGreaterThan(0);
+          } else {
+            expect(deserialized).toHaveProperty("type", expectation.errorType);
+            expect(deserialized).toHaveProperty("code", 400);
+            if ("message" in deserialized) {
+              expect(deserialized.message).toContain(expectation.errorMessage);
+            }
+          }
+        },
+      );
+    });
+  });
+
   describe("listOperations", () => {
-    it("returns empty array for pristine account", async () => {
+    it("should return empty array for pristine account", async () => {
       const { items: operations } = await api.listOperations(emptyAccountAddress, {
         minHeight: 0,
         order: "desc",
@@ -55,7 +319,7 @@ describe("createApi", () => {
       expect(operations).toEqual([]);
     });
 
-    it("returns operations with correct metadata", async () => {
+    it("should return operations with correct metadata", async () => {
       const testTxId = "at1qe8ml060qvvqp5caxejnc2r4sj3yjx83nfe9mykyx0zyhv5h5yzsfa85j0";
       const testBlockHashOfTx = "ab1ae88smgn0cr80yzzd84kvupawre67j69xcpthcegmcutqew8wgrs6hrxh8";
       const { items: page } = await api.listOperations(testAccountAddress, {
@@ -80,8 +344,9 @@ describe("createApi", () => {
         },
       });
     });
+
     it.each(["desc", "asc"] as const)(
-      "returns paginated operations for account with high activity (%s)",
+      "should return paginated operations for account with high activity (%s)",
       async order => {
         const limit = 10;
         const { items: page1, next: cursor1 } = await api.listOperations(testAccountAddress, {
@@ -125,7 +390,7 @@ describe("createApi", () => {
     );
 
     it.each(["desc", "asc"] as const)(
-      "returns operations with min height filter (%s)",
+      "should return operations with min height filter (%s)",
       async order => {
         const minHeight = order === "asc" ? 200_000 : 13_940_000;
         const { items: page } = await api.listOperations(testAccountAddress, {
@@ -141,7 +406,7 @@ describe("createApi", () => {
   });
 
   describe("lastBlock", () => {
-    it("returns the last block information", async () => {
+    it("should return the last block information", async () => {
       const lastBlock = await api.lastBlock();
 
       expect(lastBlock.height).toBeGreaterThan(0);
@@ -151,28 +416,39 @@ describe("createApi", () => {
   });
 
   describe("getBalance", () => {
-    it("returns the balance for a valid address", async () => {
-      const address = "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f";
-      const balance = await api.getBalance(address);
+    it.each([
+      [
+        "valid address with balance",
+        "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f",
+        { expectBalance: true, shouldThrow: false },
+      ],
+      [
+        "valid address without balance",
+        "aleo1g82wnc9um2f50a64a8xnsfz6meqkl3e7rk3q327vc47kykxway8qphwg9p",
+        { expectBalance: false, shouldThrow: false },
+      ],
+      ["invalid address", "invalid_address", { shouldThrow: true }],
+    ] as const)(
+      "should handle %s",
+      async (
+        _descr: string,
+        address: string,
+        expectation: { shouldThrow: true } | { expectBalance: boolean; shouldThrow: false },
+      ) => {
+        if (expectation.shouldThrow) {
+          await expect(api.getBalance(address)).rejects.toThrow();
+        } else {
+          const balance = await api.getBalance(address);
+          expect(balance).toBeInstanceOf(Array);
 
-      expect(balance).toBeInstanceOf(Array);
-      expect(balance.length).toBeGreaterThanOrEqual(0);
-      balance.forEach(b => {
-        expect(b.value).toBeGreaterThan(0n);
-      });
-    });
-
-    it("returns an empty array for a non-existing valid address", async () => {
-      const address = "aleo1g82wnc9um2f50a64a8xnsfz6meqkl3e7rk3q327vc47kykxway8qphwg9p";
-      const balance = await api.getBalance(address);
-
-      expect(balance).toEqual([]);
-    });
-
-    it("throws an error for an invalid address", async () => {
-      const invalidAddress = "invalid_address";
-
-      await expect(api.getBalance(invalidAddress)).rejects.toThrow();
-    });
+          if (expectation.expectBalance) {
+            expect(balance.length).toBeGreaterThanOrEqual(0);
+            expect(balance.every(b => b.value > 0n)).toBe(true);
+          } else {
+            expect(balance).toEqual([]);
+          }
+        }
+      },
+    );
   });
 });

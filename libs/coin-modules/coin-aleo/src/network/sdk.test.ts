@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoEncryptedRegistrationResponse } from "../types/sdk";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
@@ -208,6 +209,143 @@ describe("sdkClient", () => {
       jest.mocked(network).mockRejectedValue(mockError);
 
       await expect(sdkClient.decryptCiphertext(mockParams)).rejects.toThrow("Network error");
+    });
+  });
+
+  describe("createRequestFromIntent", () => {
+    const mockIntent: TransactionIntent = {
+      type: "transfer",
+      from: "aleo1fromaddress",
+      to: "aleo1toaddress",
+      amount: BigInt(1000),
+    };
+    const mockViewKey = "AViewKey1mock_view_key_data";
+    const mockPreparedRequestResponse = {
+      request: "mock_prepared_request",
+      metadata: { foo: "bar" },
+    };
+
+    beforeEach(() => {
+      jest.mocked(network).mockResolvedValue({ data: mockPreparedRequestResponse });
+    });
+
+    it("should create a transaction request from intent", async () => {
+      const result = await sdkClient.createRequestFromIntent({
+        currency: mockCurrency,
+        intent: mockIntent,
+        viewKey: mockViewKey,
+      });
+
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        data: {
+          intent: mockIntent,
+          view_key: mockViewKey,
+        },
+      });
+      expect(result).toEqual(mockPreparedRequestResponse);
+    });
+
+    it("should use correct SDK URL from network config", async () => {
+      const testnetConfig = {
+        nodeUrl: "https://node.testnet.aleo.network",
+        sdkUrl: "https://sdk.testnet.aleo.network",
+        networkType: "testnet",
+      };
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+
+      await sdkClient.createRequestFromIntent({
+        currency: mockCurrency,
+        intent: mockIntent,
+        viewKey: mockViewKey,
+      });
+
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${testnetConfig.sdkUrl}/transactions/request`,
+        }),
+      );
+      expect(network).toHaveBeenCalledTimes(1);
+    });
+
+    it("should handle intent with BigInt amount correctly", async () => {
+      const largeAmountIntent: TransactionIntent = {
+        type: "transfer",
+        from: "aleo1fromaddress",
+        to: "aleo1toaddress",
+        amount: BigInt("1000000000000000000"),
+      };
+
+      await sdkClient.createRequestFromIntent({
+        currency: mockCurrency,
+        intent: largeAmountIntent,
+        viewKey: mockViewKey,
+      });
+
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        data: {
+          intent: largeAmountIntent,
+          view_key: mockViewKey,
+        },
+      });
+      expect(network).toHaveBeenCalledTimes(1);
+    });
+
+    it("should propagate network errors", async () => {
+      const mockError = new Error("SDK service unavailable");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        sdkClient.createRequestFromIntent({
+          currency: mockCurrency,
+          intent: mockIntent,
+          viewKey: mockViewKey,
+        }),
+      ).rejects.toThrow("SDK service unavailable");
+    });
+
+    it("should handle API error responses", async () => {
+      const apiError = new Error("Invalid intent format");
+      jest.mocked(network).mockRejectedValue(apiError);
+
+      await expect(
+        sdkClient.createRequestFromIntent({
+          currency: mockCurrency,
+          intent: mockIntent,
+          viewKey: mockViewKey,
+        }),
+      ).rejects.toThrow("Invalid intent format");
+
+      expect(network).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return the complete response with metadata", async () => {
+      const responseWithMetadata = {
+        request: "mock_prepared_request",
+        metadata: {
+          fee: "1000",
+          inputs: ["record1"],
+          outputs: ["record2"],
+        },
+      };
+      jest.mocked(network).mockResolvedValue({ data: responseWithMetadata });
+
+      const result = await sdkClient.createRequestFromIntent({
+        currency: mockCurrency,
+        intent: mockIntent,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual(responseWithMetadata);
+      expect(result.metadata).toHaveProperty("fee");
+      expect(result.metadata).toHaveProperty("inputs");
+      expect(result.metadata).toHaveProperty("outputs");
     });
   });
 });

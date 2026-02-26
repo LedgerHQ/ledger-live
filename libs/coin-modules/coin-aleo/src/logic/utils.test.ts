@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
@@ -13,7 +13,7 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
-import type { ProvableApi } from "../types";
+import type { ProvableApi, AleoTransactionIntentData } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -30,6 +30,9 @@ import {
   isRecordScannerReady,
   getOperationTransactionType,
   splitPrivateAndPublicOperations,
+  serializeTransaction,
+  deserializeTransaction,
+  mapTransactionIntentToSdkIntent,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -803,5 +806,524 @@ describe("splitPrivateAndPublicOperations", () => {
 
     expect(publicOps.map(o => o.id)).toEqual(["pub1", "pub2", "pub3"]);
     expect(privateOps.map(o => o.id)).toEqual(["priv1", "priv2"]);
+  });
+});
+
+describe("mapTransactionIntentToSdkIntent", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("TRANSFER_PUBLIC", () => {
+    it("should map TRANSFER_PUBLIC intent to SDK intent with correct type and fields", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(123456),
+        asset: { type: "native" },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result).toEqual({
+        type: "transfer_public",
+        amount: "123456",
+        to: "aleo1recipient",
+      });
+      expect(result).not.toHaveProperty("record");
+    });
+
+    it("should handle zero amount for TRANSFER_PUBLIC", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: 0n,
+        asset: { type: "native" },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result).toMatchObject({
+        type: "transfer_public",
+        amount: "0",
+      });
+    });
+
+    it("should handle large amounts for TRANSFER_PUBLIC", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt("999999999999999999"),
+        asset: { type: "native" },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result.amount).toBe("999999999999999999");
+    });
+  });
+
+  describe("TRANSFER_PRIVATE", () => {
+    it("should map TRANSFER_PRIVATE intent to SDK intent with record", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(654321),
+        asset: { type: "native" },
+        data: {
+          type: "private",
+          record: "record123",
+        },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result).toEqual({
+        type: "transfer_private",
+        amount: "654321",
+        to: "aleo1recipient",
+        record: "record123",
+      });
+    });
+
+    it("should throw when private data is missing for TRANSFER_PRIVATE", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(100),
+        asset: { type: "native" },
+      };
+
+      expect(() => mapTransactionIntentToSdkIntent(mockIntent)).toThrow(
+        "aleo: private data is required for transfer_private",
+      );
+    });
+
+    it("should throw when amountRecord is missing in private data", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(100),
+        asset: { type: "native" },
+        data: {
+          type: "private",
+        },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result).toHaveProperty("record");
+      expect(result.record).toBeUndefined();
+    });
+  });
+
+  describe("CONVERT_PUBLIC_TO_PRIVATE", () => {
+    it("should map CONVERT_PUBLIC_TO_PRIVATE intent to SDK intent", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: "transfer_public_to_private",
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(789),
+        asset: { type: "native" },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result).toEqual({
+        type: "transfer_public_to_private",
+        amount: "789",
+        to: "aleo1recipient",
+      });
+      expect(result).not.toHaveProperty("record");
+    });
+
+    it("should handle min amount for CONVERT_PUBLIC_TO_PRIVATE", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: "transfer_public_to_private",
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: 1n,
+        asset: { type: "native" },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result.amount).toBe("1");
+    });
+  });
+
+  describe("CONVERT_PRIVATE_TO_PUBLIC", () => {
+    it("should map CONVERT_PRIVATE_TO_PUBLIC intent to SDK intent with record", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: "transfer_private_to_public",
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(987),
+        asset: { type: "native" },
+        data: {
+          type: "private",
+          record: "record987",
+        },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(result).toEqual({
+        type: "transfer_private_to_public",
+        amount: "987",
+        to: "aleo1recipient",
+        record: "record987",
+      });
+    });
+
+    it("should throw when private data is missing for CONVERT_PRIVATE_TO_PUBLIC", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: "transfer_private_to_public",
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(100),
+        asset: { type: "native" },
+      };
+
+      expect(() => mapTransactionIntentToSdkIntent(mockIntent)).toThrow(
+        "aleo: private data is required for transfer_private_to_public",
+      );
+    });
+  });
+
+  describe("unsupported transaction types", () => {
+    it("should throw for unsupported transaction type", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        // @ts-expect-error - testing unsupported type
+        intentType: "transaction",
+        type: "UNSUPPORTED_TYPE",
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(1),
+        asset: { type: "native" },
+      };
+
+      expect(() => mapTransactionIntentToSdkIntent(mockIntent)).toThrow(
+        /aleo: unsupported transaction type in mapTransactionIntentToSdkIntent/,
+      );
+    });
+
+    it("should throw for null transaction type", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        // @ts-expect-error - testing invalid type
+        intentType: "transaction",
+        type: null,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(1),
+        asset: { type: "native" },
+      };
+
+      expect(() => mapTransactionIntentToSdkIntent(mockIntent)).toThrow();
+    });
+
+    it("should throw for undefined transaction type", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        // @ts-expect-error - testing invalid type
+        intentType: "transaction",
+        type: undefined,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt(1),
+        asset: { type: "native" },
+      };
+
+      expect(() => mapTransactionIntentToSdkIntent(mockIntent)).toThrow();
+    });
+  });
+
+  describe("common validation", () => {
+    it.each([["transfer_public"], ["transfer_public_to_private"]])(
+      "should preserve recipient address in all transaction types (%s)",
+      type => {
+        const recipient = "aleo1specific_recipient_address";
+        const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+          intentType: "transaction",
+          type,
+          sender: "aleo1sender",
+          recipient,
+          amount: 100n,
+          asset: { type: "native" },
+        };
+
+        const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+        expect(result.to).toBe(recipient);
+      },
+    );
+
+    it("should convert BigNumber amounts to string", () => {
+      const mockIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+        intentType: "transaction",
+        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        sender: "aleo1sender",
+        recipient: "aleo1recipient",
+        amount: BigInt("1234567890123"),
+        asset: { type: "native" },
+      };
+
+      const result = mapTransactionIntentToSdkIntent(mockIntent);
+
+      expect(typeof result.amount).toBe("string");
+      expect(result.amount).toBe("1234567890123");
+    });
+  });
+});
+
+describe("serializeTransaction", () => {
+  it("should serialize a transaction object to hex string", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+      nonce: 123,
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(typeof result).toBe("string");
+    expect(result).toMatch(/^[a-f0-9]*$/);
+  });
+
+  it("should produce a hex string with even length", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(result.length % 2).toBe(0);
+  });
+
+  it("should produce different hex strings for different objects", () => {
+    const mockTx1 = { chainId: "aleo:mainnet" };
+    const mockTx2 = { chainId: "aleo:testnet" };
+
+    const result1 = serializeTransaction(mockTx1);
+    const result2 = serializeTransaction(mockTx2);
+
+    expect(result1).not.toBe(result2);
+  });
+
+  it("should serialize empty object", () => {
+    const mockTx = {};
+
+    const result = serializeTransaction(mockTx);
+
+    expect(result).toBe("7b7d"); // "{}"
+  });
+
+  it("should serialize object with nested properties", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+      data: {
+        amount: "1000",
+        recipient: "aleo1test",
+      },
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(typeof result).toBe("string");
+    expect(result).toMatch(/^[a-f0-9]+$/);
+    expect(result.length % 2).toBe(0);
+  });
+
+  it("should serialize object with array properties", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+      recipients: ["aleo1addr1", "aleo1addr2"],
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(typeof result).toBe("string");
+    expect(result).toMatch(/^[a-f0-9]+$/);
+  });
+
+  it("should serialize object with null values", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+      data: null,
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(typeof result).toBe("string");
+    expect(result).toMatch(/^[a-f0-9]+$/);
+  });
+
+  it("should serialize object with numeric values", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+      nonce: 12345,
+      fee: 5000,
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(typeof result).toBe("string");
+    expect(result).toMatch(/^[a-f0-9]+$/);
+  });
+
+  it("should serialize object with boolean values", () => {
+    const mockTx = {
+      chainId: "aleo:mainnet",
+      isPrivate: true,
+      isSigned: false,
+    };
+
+    const result = serializeTransaction(mockTx);
+
+    expect(typeof result).toBe("string");
+    expect(result).toMatch(/^[a-f0-9]+$/);
+  });
+});
+
+describe("deserializeTransaction", () => {
+  it("should deserialize valid hex string back to object", () => {
+    const originalTx = {
+      chainId: "aleo:mainnet",
+    };
+    const serialized = serializeTransaction(originalTx);
+
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(originalTx);
+  });
+
+  it("should deserialize to correct object structure", () => {
+    const serialized = "7b22636861696e4964223a22616c656f3a6d61696e6e6574227d"; // {"chainId":"aleo:mainnet"}
+
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual({ chainId: "aleo:mainnet" });
+  });
+
+  it("should round-trip: serialize then deserialize returns equivalent object", () => {
+    const originalTx = {
+      chainId: "aleo:mainnet",
+      nonce: 123,
+      data: {
+        amount: "1000",
+        recipient: "aleo1test",
+      },
+    };
+
+    const serialized = serializeTransaction(originalTx);
+    const deserialized = deserializeTransaction(serialized);
+
+    expect(deserialized).toEqual(originalTx);
+  });
+
+  it("should deserialize empty object from hex", () => {
+    const serialized = "7b7d"; // "{}"
+
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual({});
+  });
+
+  it("should deserialize object with nested properties", () => {
+    const originalTx = {
+      chainId: "aleo:mainnet",
+      nested: {
+        level1: {
+          level2: "value",
+        },
+      },
+    };
+
+    const serialized = serializeTransaction(originalTx);
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(originalTx);
+  });
+
+  it("should deserialize object with array properties", () => {
+    const originalTx = {
+      chainId: "aleo:mainnet",
+      recipients: ["aleo1addr1", "aleo1addr2", "aleo1addr3"],
+    };
+
+    const serialized = serializeTransaction(originalTx);
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(originalTx);
+  });
+
+  it("should deserialize object with null values", () => {
+    const originalTx = {
+      chainId: "aleo:mainnet",
+      data: null,
+    };
+
+    const serialized = serializeTransaction(originalTx);
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(originalTx);
+  });
+
+  it("should deserialize object with mixed value types", () => {
+    const originalTx = {
+      chainId: "aleo:mainnet",
+      nonce: 12345,
+      isPrivate: true,
+      fee: 5000,
+      data: null,
+      recipients: ["addr1", "addr2"],
+    };
+
+    const serialized = serializeTransaction(originalTx);
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(originalTx);
+  });
+
+  it("should throw when hex string is invalid", () => {
+    const invalidHex = "invalid_hex_string";
+
+    expect(() => deserializeTransaction(invalidHex)).toThrow();
+  });
+
+  it("should throw when hex string contains invalid JSON", () => {
+    const invalidJsonHex = "7b22696e76616c6964"; // {"invalid (truncated)
+
+    expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
+  });
+
+  it("should throw when hex string is empty", () => {
+    expect(() => deserializeTransaction("")).toThrow();
+  });
+
+  it("should throw when hex string has odd length", () => {
+    const oddLengthHex = "7b7"; // odd length
+
+    expect(() => deserializeTransaction(oddLengthHex)).toThrow();
+  });
+
+  it("should throw when hex string decodes to invalid JSON", () => {
+    const notJsonHex = "6e6f745f6a736f6e"; // "not_json" in hex
+
+    expect(() => deserializeTransaction(notJsonHex)).toThrow();
   });
 });

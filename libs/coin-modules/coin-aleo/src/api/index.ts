@@ -12,11 +12,14 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
+  MemoNotSupported,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import invariant from "invariant";
 import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
-import { estimateFees, getBalance, lastBlock, listOperations } from "../logic";
+import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
+import { AleoTransactionIntentData } from "../types";
 
 export function createApi(config: AleoConfig, currencyId: string): Api {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
@@ -31,10 +34,12 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
       throw new Error("combine is not supported");
     },
     craftTransaction: async (
-      _account: unknown,
-      _transaction: unknown,
+      txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+      customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => {
-      throw new Error("craftTransaction is not supported");
+      // fees are handled by txIntent of type fee public or fee private
+      invariant(!customFees, "customFees are not supported for Aleo transactions");
+      return craftTransaction({ currency, txIntent });
     },
     craftRawTransaction: (
       _transaction: string,

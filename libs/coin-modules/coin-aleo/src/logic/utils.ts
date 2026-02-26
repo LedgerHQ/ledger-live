@@ -5,6 +5,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
   Operation as AlpacaOperation,
+  MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
@@ -22,6 +23,9 @@ import type {
   ProvableApi,
   TransactionSelfTransfer,
   AleoAccount,
+  Intent,
+  PreparedRequestResponse,
+  AleoTransactionIntentData,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -300,4 +304,99 @@ export function splitPrivateAndPublicOperations(
     (isPrivateOperation(operation) ? privateOps : publicOps).push(operation);
   }
   return [privateOps, publicOps];
+}
+
+export function hasSpecificIntentData<Type extends "private" | "fee_private" | "fee_public">(
+  txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+  expectedType: Type,
+): txIntent is Extract<
+  TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+  { data: { type: Type } }
+> {
+  return "data" in txIntent && txIntent.data.type === expectedType;
+}
+
+export function mapTransactionIntentToSdkIntent(
+  txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+): Intent {
+  const txType = txIntent.type;
+
+  switch (txType) {
+    case "transfer_public": {
+      return {
+        type: txType,
+        amount: txIntent.amount.toString(),
+        to: txIntent.recipient,
+      };
+    }
+    case "transfer_private": {
+      if (!hasSpecificIntentData(txIntent, "private")) {
+        throw new Error("aleo: private data is required for transfer_private");
+      }
+
+      return {
+        type: txType,
+        amount: txIntent.amount.toString(),
+        to: txIntent.recipient,
+        record: txIntent.data.record,
+      };
+    }
+    case "transfer_public_to_private": {
+      return {
+        type: txType,
+        amount: txIntent.amount.toString(),
+        to: txIntent.recipient,
+      };
+    }
+    case "transfer_private_to_public": {
+      if (!hasSpecificIntentData(txIntent, "private")) {
+        throw new Error("aleo: private data is required for transfer_private_to_public");
+      }
+
+      return {
+        type: txType,
+        amount: txIntent.amount.toString(),
+        to: txIntent.recipient,
+        record: txIntent.data.record,
+      };
+    }
+    case "fee_private": {
+      if (!hasSpecificIntentData(txIntent, "fee_private")) {
+        throw new Error("aleo: private data is required for fee_private");
+      }
+
+      return {
+        base_fee: txIntent.amount.toString(),
+        execution_id: txIntent.data.executionId,
+        priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
+        record: txIntent.data.record,
+        type: txType,
+      };
+    }
+    case "fee_public": {
+      if (!hasSpecificIntentData(txIntent, "fee_public")) {
+        throw new Error("aleo: public data is required for fee_public");
+      }
+
+      return {
+        base_fee: txIntent.amount.toString(),
+        execution_id: txIntent.data.executionId,
+        priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
+        type: txType,
+      };
+    }
+    default: {
+      throw new Error(
+        `aleo: unsupported transaction type in mapTransactionIntentToSdkIntent: ${txType}`,
+      );
+    }
+  }
+}
+
+export function serializeTransaction(tx: PreparedRequestResponse): string {
+  return Buffer.from(JSON.stringify(tx)).toString("hex");
+}
+
+export function deserializeTransaction(txHex: string): PreparedRequestResponse {
+  return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
