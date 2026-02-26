@@ -18,9 +18,11 @@ apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 apps/cli/src/commands/live                               @ledgerhq/platform
 apps/web-tools/                                          @ledgerhq/platform
 libs/ledger-live-common/src/                             @ledgerhq/platform
-apps/ledger-live-desktop/                                @ledgerhq/wallet-xp
-apps/ledger-live-mobile/                                 @ledgerhq/wallet-xp
-# Platform — desktop (overrides app catch-alls)
+apps/ledger-live-desktop/                                @ledgerhq/platform
+apps/ledger-live-mobile/                                 @ledgerhq/platform
+apps/ledger-live-desktop/src/                            @ledgerhq/wallet-xp
+apps/ledger-live-mobile/src/                             @ledgerhq/wallet-xp
+# Platform — desktop (overrides src catch-all)
 apps/ledger-live-desktop/src/main/                       @ledgerhq/platform
 apps/ledger-live-desktop/src/preloader/                  @ledgerhq/platform
 apps/ledger-live-desktop/src/sentry/                     @ledgerhq/platform
@@ -214,6 +216,7 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/bridge.handl
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/discover.handler.ts @ledgerhq/coin-integration
 
 # Devices team
+**/useTrackDmkErrorsEvents*                                        @ledgerhq/live-devices
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices
 **/src/renderer/screens/manager/                                   @ledgerhq/live-devices
 **/screens/customImage 																				 		 @ledgerhq/live-devices
@@ -308,6 +311,10 @@ apps/ledger-live-mobile/e2e/                                                @led
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
+libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
+libs/ledgerjs/packages/types-live/src/feature.ts
+libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts
+libs/env/src/env.ts
 libs/ledger-live-common/src/__fixtures__/
 libs/ledger-live-common/src/__tests__/
 libs/**/errors/
