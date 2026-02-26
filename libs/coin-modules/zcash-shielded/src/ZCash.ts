@@ -223,7 +223,6 @@ export default class ZCash {
 
       // 1. get end block height before the start of the cycle
       let endBlockHeight = await this.jsonRpcClient.getBlockCount();
-
       if (endBlockHeight === undefined) {
         log(LOG_TYPE, "error: could not retrieve the last block");
         subscriber.error("error: could not retrieve the last block");

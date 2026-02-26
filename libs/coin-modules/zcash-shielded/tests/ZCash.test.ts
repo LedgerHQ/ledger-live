@@ -21,6 +21,7 @@ import {
   smallChainScenario,
 } from "./mocks/findBlockHeightData";
 import BigNumber from "bignumber.js";
+import { http, HttpResponse } from "msw";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -223,6 +224,28 @@ describe("syncShielded", () => {
       expect.assertions(2);
     },
   );
+
+  test("rethrows when the network module throws an error", async () => {
+    server.use(http.post(JSON_RPC_SERVER, () => HttpResponse.error()));
+
+    const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
+    const syncedShieldedObs = zcash.syncShielded({
+      startBlockHeight: blockWithMyTx.height,
+      viewingKey: testAccount1.viewingKey,
+      maxBatchSize: 1,
+    });
+    const steps: SyncedShielded[] = [];
+
+    try {
+      await syncedShieldedObs.forEach(step => steps.push(step));
+    } catch (error) {
+      console.log(error);
+      expect(error).toMatchObject({ message: "Network error" });
+    }
+
+    expect(steps).toEqual([]);
+    expect.assertions(2);
+  });
 
   test("returns an empty shielded balance when the viewingKey doesn't match any shielded transactions", async () => {
     const zcash = new ZCash({ nodeUrl: JSON_RPC_SERVER });
