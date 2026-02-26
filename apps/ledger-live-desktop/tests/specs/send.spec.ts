@@ -9,7 +9,7 @@ test.use({
   userdata: "sanctioned-addresses",
 });
 
-test("Blacklisted addresses", async ({ app }) => {
+test("Blacklisted addresses", async ({ app, page }) => {
   await test.step("[Blacklist] Blocking transactions to sanctioned recipient addresses in send flow", async () => {
     const transaction = new Transaction(
       Account.ETH_1,
@@ -19,6 +19,7 @@ test("Blacklisted addresses", async ({ app }) => {
     );
 
     await app.layout.goToAccounts();
+    await page.getByTestId("accounts-account-row-item").first().waitFor({ state: "visible" });
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
 
     await app.account.clickSend();
@@ -40,6 +41,7 @@ test("Blacklisted addresses", async ({ app }) => {
     );
 
     await app.layout.goToAccounts();
+    await page.getByTestId("accounts-account-row-item").first().waitFor({ state: "visible" });
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
 
     await app.account.clickSend();
@@ -65,6 +67,7 @@ test("Blacklisted addresses", async ({ app }) => {
     );
 
     await app.layout.goToAccounts();
+    await page.getByTestId("accounts-account-row-item").first().waitFor({ state: "visible" });
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
 
     await app.account.clickSend();

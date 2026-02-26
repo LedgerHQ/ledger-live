@@ -30,6 +30,7 @@ export class SendModal extends Modal {
   @step("Close modal")
   async closeModal() {
     await this.closeButton.click();
+    await this.waitForModalToDisappear();
   }
 
   async getSenderError() {
