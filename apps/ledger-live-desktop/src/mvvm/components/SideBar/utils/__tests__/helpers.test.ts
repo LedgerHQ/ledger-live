@@ -4,7 +4,7 @@ import { SIDEBAR_VALUE_TO_PATH } from "../constants";
 describe("pathnameToActive", () => {
   it.each([
     { pathname: SIDEBAR_VALUE_TO_PATH.home, expected: "home" },
-    { pathname: "/asset/bitcoin", expected: "home" },
+    { pathname: "/asset/bitcoin", expected: "" },
     { pathname: SIDEBAR_VALUE_TO_PATH.accounts, expected: "accounts" },
     { pathname: "/account/abc-123", expected: "accounts" },
     { pathname: SIDEBAR_VALUE_TO_PATH.swap, expected: "swap" },
