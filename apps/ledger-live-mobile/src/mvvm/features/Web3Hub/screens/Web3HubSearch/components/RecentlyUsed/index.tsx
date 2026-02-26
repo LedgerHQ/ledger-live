@@ -1,10 +1,9 @@
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
-import React, { useCallback } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { NavigatorName, ScreenName } from "~/const";
+import React from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { SearchProps } from "LLM/features/Web3Hub/types";
 import RecentCard from "./RecentCard";

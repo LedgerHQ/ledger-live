@@ -34,7 +34,7 @@ export default function RecentCard({
         <Text fontWeight="semiBold" variant="body" color={colors.black}>
           {item.name}
         </Text>
-        <TouchableOpacity onPress={onClosePress}>
+        <TouchableOpacity onPress={onClosePress} testID={`${item.id}-recently-used-remove`}>
           <IconsLegacy.CloseMedium size={18} color={colors.grey} />
         </TouchableOpacity>
       </Flex>
