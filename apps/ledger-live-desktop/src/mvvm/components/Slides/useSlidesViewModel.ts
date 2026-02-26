@@ -1,10 +1,7 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { animate, useMotionValue } from "framer-motion";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import { isValidReactElement } from "@ledgerhq/react-ui";
 import { Content } from "./components/Content";
 import { SlidesContextValue } from "./context";
-import { isValidReactElement } from "@ledgerhq/react-ui";
-
-const PROGRESS_ANIMATION_DURATION_S = 0.5;
 
 type UseSlidesViewModelParams = {
   children: ReactNode;
@@ -12,43 +9,23 @@ type UseSlidesViewModelParams = {
   initialSlideIndex?: number;
 };
 
-type UseSlidesViewModelReturn = {
-  contextValue: SlidesContextValue;
-};
+type UseSlidesViewModelReturn = SlidesContextValue;
 
 export function useSlidesViewModel({
   children,
   onSlideChange,
   initialSlideIndex = 0,
 }: UseSlidesViewModelParams): UseSlidesViewModelReturn {
-  const [currentIndex, setCurrentIndex] = useState(initialSlideIndex);
-  const [previousIndex, setPreviousIndex] = useState(initialSlideIndex);
-  const currentIndexRef = useRef(initialSlideIndex);
-  const progress = useMotionValue(initialSlideIndex);
-
-  useEffect(() => {
-    setPreviousIndex(currentIndexRef.current);
-    currentIndexRef.current = currentIndex;
-  }, [currentIndex]);
-
-  useEffect(() => {
-    if (currentIndex === previousIndex) {
-      progress.set(currentIndex);
-      return;
-    }
-    const controls = animate(progress, currentIndex, {
-      duration: PROGRESS_ANIMATION_DURATION_S,
-      ease: "easeOut",
-    });
-    return () => controls.stop();
-  }, [currentIndex, previousIndex, progress]);
-
   const contentChild = React.Children.toArray(children).find(
     (child): child is React.ReactElement<{ children: ReactNode }> =>
       isValidReactElement(child) && child.type === Content,
   );
 
   const totalSlides = contentChild ? React.Children.toArray(contentChild.props.children).length : 0;
+  const clampedInitialIndex =
+    totalSlides > 0 ? Math.min(Math.max(0, initialSlideIndex), totalSlides - 1) : 0;
+
+  const [currentIndex, setCurrentIndex] = useState(clampedInitialIndex);
 
   const goToSlide = useCallback(
     (index: number) => {
@@ -76,15 +53,14 @@ export function useSlidesViewModel({
   const contextValue = useMemo(
     () => ({
       currentIndex,
-      previousIndex,
-      progress,
       totalSlides,
+      initialIndex: clampedInitialIndex,
       goToNext,
       goToPrevious,
       goToSlide,
     }),
-    [currentIndex, previousIndex, totalSlides, goToNext, goToPrevious, goToSlide, progress],
+    [currentIndex, totalSlides, clampedInitialIndex, goToNext, goToPrevious, goToSlide],
   );
 
-  return { contextValue };
+  return contextValue;
 }
