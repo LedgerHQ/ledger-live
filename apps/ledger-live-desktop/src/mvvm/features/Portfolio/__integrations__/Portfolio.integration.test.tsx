@@ -12,6 +12,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
+import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -75,7 +76,17 @@ jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
   }),
 }));
 
-const mockUsePortfolio = jest.spyOn(portfolioReact, "usePortfolio");
+const mockUsePortfolioThrottled = jest.spyOn(portfolioReact, "usePortfolioThrottled");
+const mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
+
+const defaultPollingMock = {
+  pending: false,
+  error: null,
+  poll: jest.fn(),
+  start: jest.fn(),
+  stop: jest.fn(),
+  wipe: jest.fn(),
+};
 
 const createPortfolioMock = (countervalueChange: {
   percentage: number | null;
@@ -114,7 +125,8 @@ describe("PortfolioView", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolio.mockReturnValue(defaultPortfolioMock);
+    mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
+    mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
     mockedUseNavigate.mockReturnValue(mockNavigate);
   });
 
@@ -122,13 +134,9 @@ describe("PortfolioView", () => {
     server.resetHandlers();
   });
 
-  it("should render BannerSection", () => {
+  it("should render BannerSection and portfolio container", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.getByTestId("banner-section")).toBeVisible();
-  });
-
-  it("should render portfolio container", () => {
-    render(<PortfolioView {...defaultProps} />);
     expect(screen.getByTestId("portfolio-container")).toBeVisible();
   });
 
@@ -252,7 +260,7 @@ describe("PortfolioView", () => {
       expect(balanceElement).not.toHaveTextContent("$1,000.00");
     });
 
-    it("should display actual balance when discreet mode is disabled", () => {
+    it("should render Balance with total balance and show actual amount when discreet mode is disabled", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
@@ -265,17 +273,75 @@ describe("PortfolioView", () => {
         },
       });
 
+      expect(screen.getByTestId("portfolio-balance")).toBeVisible();
       const balanceElement = screen.getByTestId("portfolio-total-balance");
       // TODO: Update once lumen releases a fix for the DisplayAmount animation
       // See LIVE-26796
       expect(balanceElement).toHaveAttribute("aria-label", "$ 1,000.00");
       expect(balanceElement).not.toHaveTextContent("••••"); // Ensure no placeholders
     });
+
+    it("should not show loading when countervalues are polling but balance is already available", () => {
+      mockUseCountervaluesPolling.mockReturnValue({
+        ...defaultPollingMock,
+        pending: true,
+      });
+
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+            lastSeenDevice: MOCK_LAST_SEEN_DEVICE,
+            overriddenFeatureFlags: {
+              ...INITIAL_STATE.overriddenFeatureFlags,
+              lwdWallet40: {
+                enabled: true,
+                params: { balanceRefreshRework: true },
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-balance")).toBeVisible();
+    });
+
+    it("should display loading state when balance is not yet available", () => {
+      mockUsePortfolioThrottled.mockReturnValue({
+        ...defaultPortfolioMock,
+        balanceAvailable: false,
+      });
+
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+            lastSeenDevice: MOCK_LAST_SEEN_DEVICE,
+            overriddenFeatureFlags: {
+              ...INITIAL_STATE.overriddenFeatureFlags,
+              lwdWallet40: {
+                enabled: true,
+                params: { balanceRefreshRework: true },
+              },
+            },
+          },
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-balance")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-trend")).toBeNull();
+    });
   });
 
   describe("Trend", () => {
     it("should render Trend with positive percentage and display separator with Today label", () => {
-      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0.0542, value: 5000 }));
+      mockUsePortfolioThrottled.mockReturnValue(
+        createPortfolioMock({ percentage: 0.0542, value: 5000 }),
+      );
 
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
@@ -294,7 +360,9 @@ describe("PortfolioView", () => {
     });
 
     it("should render Trend with negative percentage", () => {
-      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: -0.0315, value: -3000 }));
+      mockUsePortfolioThrottled.mockReturnValue(
+        createPortfolioMock({ percentage: -0.0315, value: -3000 }),
+      );
 
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
@@ -312,7 +380,7 @@ describe("PortfolioView", () => {
     });
 
     it("should show 0% when percentage is zero", () => {
-      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
+      mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
 
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
         initialState: {
@@ -460,13 +528,9 @@ describe("PortfolioView", () => {
     });
   });
 
-  it("should not render FeaturedButtons", () => {
+  it("should not render legacy dashboard components (FeaturedButtons, BalanceSummary)", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.queryByTestId("featured-buttons")).toBeNull();
-  });
-
-  it("should not render BalanceSummary", () => {
-    render(<PortfolioView {...defaultProps} />);
     expect(screen.queryByTestId("balance-summary")).toBeNull();
   });
 

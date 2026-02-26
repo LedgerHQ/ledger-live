@@ -29,7 +29,6 @@ describe("useTopBarViewModel", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
       handleSync: mockHandleSync,
-      isDisabled: false,
       isRotating: false,
       isError: false,
       tooltip: "Refresh",
@@ -79,7 +78,6 @@ describe("useTopBarViewModel", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: false,
       handleSync: mockHandleSync,
-      isDisabled: false,
       isRotating: false,
       isError: false,
       tooltip: "Refresh",
@@ -98,11 +96,10 @@ describe("useTopBarViewModel", () => {
     expect(slotLabels).toEqual(["notification", "discreet", "settings", "my ledger"]);
   });
 
-  it("passes isDisabled from useActivityIndicator as isInteractive false on sync action", () => {
+  it("passes isRotating from useActivityIndicator as isInteractive false on sync action", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
       handleSync: mockHandleSync,
-      isDisabled: true,
       isRotating: true,
       isError: true,
       tooltip: "Error",

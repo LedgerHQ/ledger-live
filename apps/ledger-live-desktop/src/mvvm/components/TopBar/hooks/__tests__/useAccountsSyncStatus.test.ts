@@ -11,6 +11,7 @@ const createAccountWithUpToDateCheck = (
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   account: {
     id,
+    type: "Account" as const,
     currency: { ticker },
     lastSyncDate: new Date(),
   } as AccountWithUpToDateCheck["account"],
