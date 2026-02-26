@@ -68,9 +68,8 @@ import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import backgroundImg from "~/renderer/images/background.png";
-import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
-
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -270,10 +269,11 @@ export const MainAppLayout = () => {
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
   } = useWalletFeaturesConfig("desktop");
+  const shouldShowDeferredModals = useShouldShowDeferredModals();
 
   //TODO: Remove this once testing is done
   const walletFeatureFlag = useFeature("lwdWallet40");
-  const walletParams = walletFeatureFlag?.params as WalletFeatureParams | undefined;
+  const walletParams = walletFeatureFlag?.params;
   const shouldDisplayBackground =
     isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
 
@@ -281,9 +281,13 @@ export const MainAppLayout = () => {
 
   return (
     <>
-      <IsNewVersion />
-      <IsSystemLanguageAvailable />
-      <IsTermOfUseUpdated />
+      {shouldShowDeferredModals && (
+        <>
+          <IsNewVersion />
+          <IsSystemLanguageAvailable />
+          <IsTermOfUseUpdated />
+        </>
+      )}
       <SyncNewAccounts priority={2} />
 
       {useWallet40Layout ? (
@@ -484,7 +488,9 @@ export default function Default() {
                       }
                     />
 
-                    {!hasCompletedOnboarding ? (
+                    {hasCompletedOnboarding ? (
+                      <Route path="/*" element={<MainAppLayout />} />
+                    ) : (
                       <>
                         <Route
                           path="/settings/*"
@@ -495,8 +501,6 @@ export default function Default() {
                           element={<RecoverPlayerWithFeatureToggle />}
                         />
                       </>
-                    ) : (
-                      <Route path="/*" element={<MainAppLayout />} />
                     )}
                   </Routes>
                 </ContextMenuWrapper>
