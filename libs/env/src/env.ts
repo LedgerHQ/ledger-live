@@ -277,6 +277,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Thirdweb API for Hedera",
   },
+  API_HEDERA_HGRAPH: {
+    def: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
+    parser: stringParser,
+    desc: "Hgraph API for Hedera (ERC20 data source)",
+  },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,
