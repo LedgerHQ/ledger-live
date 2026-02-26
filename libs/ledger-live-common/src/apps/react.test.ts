@@ -10,8 +10,8 @@ import {
   useAppInstallProgress,
   useAppsSections,
   useAppUninstallNeedsDeps,
+  useNotEnoughMemoryToInstall,
 } from "./react";
-import { useNotEnoughMemoryToInstall } from "./react";
 import { AppType, SortOptions } from "./filtering";
 import { calculateDependencies } from "./polyfill";
 

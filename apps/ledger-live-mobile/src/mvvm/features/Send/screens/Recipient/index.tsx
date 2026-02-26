@@ -1,26 +1,49 @@
-import React, { useCallback } from "react";
-import { View, Button } from "react-native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
-import { Text } from "@ledgerhq/lumen-ui-rnative";
+import React, { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
-import { SendFlowLayout } from "../../components/SendFlowLayout";
-import type { SendFlowNavigationProp } from "../../types";
+import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
+import { SendFlowNavigationProp } from "../../types";
+import { RecipientScreenView } from "./components/RecipientScreenView";
 
 export function RecipientScreen() {
+  const { state, uiConfig, recipientSearch } = useSendFlowData();
+  const { transaction } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
 
-  const handleContinue = useCallback(() => {
-    navigation.navigate(ScreenName.SendFlowAmount);
-  }, [navigation]);
+  const account = state.account.account;
+  const parentAccount = state.account.parentAccount;
+
+  const currency: CryptoOrTokenCurrency | null = useMemo(() => {
+    if (state.account.currency) return state.account.currency;
+    return account ? getAccountCurrency(account) : null;
+  }, [state.account.currency, account]);
+
+  const handleAddressSelected = useCallback(
+    (address: string, ensName?: string) => {
+      transaction.setRecipient({
+        address,
+        ensName,
+      });
+
+      recipientSearch.clear();
+      navigation.navigate(ScreenName.SendFlowAmount);
+    },
+    [transaction, recipientSearch, navigation],
+  );
+
+  if (!account || !currency) {
+    return null;
+  }
 
   return (
-    <SendFlowLayout>
-      <View style={{ flex: 1 }}>
-        <Text typography="body2" lx={{ color: "muted", marginBottom: "s24" }}>
-          {"Recipient screen"}
-        </Text>
-        <Button title="Continue" onPress={handleContinue} />
-      </View>
-    </SendFlowLayout>
+    <RecipientScreenView
+      account={account}
+      parentAccount={parentAccount}
+      currency={currency}
+      onAddressSelected={handleAddressSelected}
+      recipientSupportsDomain={uiConfig.recipientSupportsDomain}
+    />
   );
 }

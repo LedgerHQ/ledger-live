@@ -42,10 +42,31 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
     ],
   };
   const buttonsToRender = buttonConfig[status] || [];
+  const getButtonTestId = (currentStatus: FlowStatus, index: number) => {
+    if (currentStatus === FLOW_STATUS.SUCCESS && index === 0) {
+      return "send-confirmation-view-details-button";
+    }
+    if (currentStatus === FLOW_STATUS.SUCCESS && index === 1) {
+      return "send-confirmation-close-button";
+    }
+    if (currentStatus === FLOW_STATUS.IDLE && index === 0) {
+      return "send-confirmation-retry-button";
+    }
+    if (currentStatus === FLOW_STATUS.IDLE && index === 1) {
+      return "send-confirmation-close-button";
+    }
+    if (currentStatus === FLOW_STATUS.ERROR && index === 0) {
+      return "send-confirmation-close-button";
+    }
+    if (currentStatus === FLOW_STATUS.ERROR && index === 1) {
+      return "send-confirmation-retry-button";
+    }
+    return "send-confirmation-action-button";
+  };
 
   return (
-    <DialogFooter className="px-6">
-      <div className="mb-12 flex w-full flex-col">
+    <DialogFooter className="px-24">
+      <div className="flex w-full flex-col">
         {buttonsToRender.map(({ label, onClick, appearance }, index) => (
           <Button
             key={index}
@@ -54,6 +75,7 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
             size="lg"
             isFull
             onClick={onClick}
+            data-testid={getButtonTestId(status, index)}
           >
             {label}
           </Button>

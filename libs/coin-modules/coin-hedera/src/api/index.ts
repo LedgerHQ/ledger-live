@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
-import { HEDERA_OPERATION_TYPES } from "../constants";
+import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
@@ -70,12 +70,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlock: height => getBlock(height),
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
-    listOperations: async (address, pagination) => {
+    listOperations: async (address, { cursor, limit, order }) => {
+      // FIXME This listOperations implementation ignores the required minHeight option entirely.
+      //  Implementations must error when minHeight != 0 is not supported, this should either filter
+      //  by minHeight or explicitly throw a "not supported" error when minHeight is non-zero.
       const mirrorTokens = await apiClient.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
         address,
-        pagination,
+        cursor,
+        limit,
+        order,
         mirrorTokens,
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -91,7 +96,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
       const sortedLiveOperations = [...liveOperations].sort((a, b) => {
         const aTime = a.date.getTime();
         const bTime = b.date.getTime();
-        return pagination.order === "desc" ? bTime - aTime : aTime - bTime;
+        return order === "desc" ? bTime - aTime : aTime - bTime;
       });
 
       const alpacaOperations = sortedLiveOperations.map(liveOp => {
@@ -123,8 +128,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             fees: BigInt(liveOp.fee.toFixed(0)),
             date: liveOp.date,
             block: {
-              height: liveOp.blockHeight ?? 10,
-              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? 10),
+              height: liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT,
+              hash: liveOp.blockHash ?? getBlockHash(liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT),
               time: liveOp.date,
             },
             failed: liveOp.hasFailed ?? false,
@@ -132,7 +137,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
         } satisfies Operation;
       });
 
-      return [alpacaOperations, latestAccountOperations.nextCursor ?? ""];
+      return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,

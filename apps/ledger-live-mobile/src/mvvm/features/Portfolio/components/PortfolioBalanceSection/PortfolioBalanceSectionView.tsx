@@ -15,8 +15,6 @@ import { AnalyticPill } from "./AnalyticPill";
 const containerStyle: LumenViewStyle = {
   alignItems: "center",
   justifyContent: "center",
-  paddingTop: "s56",
-  paddingBottom: "s64",
 };
 
 export const PortfolioBalanceSectionView = ({
@@ -41,14 +39,14 @@ export const PortfolioBalanceSectionView = ({
   );
 
   const getTestId = (): string => {
-    if (state === "noSigner" || state === "noFund") {
+    if (state === "noSigner" || state === "noAccounts") {
       return `portfolio-balance-${state}`;
     }
     return isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading";
   };
 
   const renderContent = () => {
-    if (state === "noSigner" || state === "noFund") {
+    if (state === "noSigner" || state === "noAccounts") {
       return (
         <Text
           typography="heading1SemiBold"

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 
 import React, { useCallback, useState } from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv, getAllEnvs } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
 import { deserializeError } from "@ledgerhq/errors";
@@ -22,7 +22,6 @@ import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
-import { getAllEnvs } from "@ledgerhq/live-env";
 import { ipcRenderer } from "electron";
 import { memoryLogger } from "~/renderer/logger";
 import { getJSONStringifyReplacer } from "~/helpers/saveLogs";

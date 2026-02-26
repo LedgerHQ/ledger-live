@@ -6,6 +6,7 @@ import cardano from "@ledgerhq/coin-cardano/specs";
 import casper from "@ledgerhq/coin-casper/specs";
 import canton from "@ledgerhq/coin-canton/specs";
 import celo from "@ledgerhq/coin-celo/specs";
+import concordium from "@ledgerhq/coin-concordium/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
 import evm from "@ledgerhq/coin-evm/specs";
 import hedera from "@ledgerhq/coin-hedera/specs";
@@ -34,6 +35,7 @@ export default {
   casper,
   canton,
   celo,
+  concordium,
   cosmos,
   evm,
   hedera,

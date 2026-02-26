@@ -29,9 +29,8 @@
   "types": "lib/Concordium.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
-    "bip32-path": "^0.4.2",
-    "bs58check": "^3.0.1"
+    "@ledgerhq/concordium-core": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/errors": "workspace:^",

@@ -1,15 +1,17 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
-import { useTranslation } from "~/context/Locale";
 import { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { default as QueuedDrawerBottomSheet } from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ProgressIndicator } from "./components/ProgressIndicator";
+import { TrackScreen } from "~/analytics";
+import { PAGE_TRACKING_WALLET_V4_TOUR } from "./const";
 
 export const useWalletV4TourDrawer = () => {
   return useWalletV4TourDrawerViewModel();
@@ -17,65 +19,73 @@ export const useWalletV4TourDrawer = () => {
 
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
-interface WalletV4TourDrawerProps {
-  readonly isDrawerOpen: boolean;
-  readonly handleCloseDrawer: () => void;
-}
+type WalletV4TourDrawerProps = Omit<
+  ReturnType<typeof useWalletV4TourDrawerViewModel>,
+  "handleOpenDrawer"
+>;
 
 export const WalletV4TourDrawer = ({
   isDrawerOpen,
   handleCloseDrawer,
+  closeDrawer,
+  onSlideChange,
+  slides,
 }: WalletV4TourDrawerProps) => {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
-  const { t } = useTranslation();
-  const SLIDES = useMemo(
-    () => [
-      {
-        title: t("walletV4Tour.slides.portfolio.title"),
-        description: t("walletV4Tour.slides.portfolio.description"),
-      },
-      {
-        title: t("walletV4Tour.slides.navigation.title"),
-        description: t("walletV4Tour.slides.navigation.description"),
-      },
-      {
-        title: t("walletV4Tour.slides.actions.title"),
-        description: t("walletV4Tour.slides.actions.description"),
-      },
-    ],
-    [t],
-  );
+  if (!isDrawerOpen) {
+    return null;
+  }
 
   return (
-    <QueuedDrawerGorhom
+    <QueuedDrawerBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
-      onClose={handleCloseDrawer}
+      onClose={closeDrawer}
       snapPoints={["92%"]}
-      noCloseButton={false}
     >
-      <Slides as={AnimatedGestureHandlerFlatList} testID="walletv4-tour-slides-container">
-        <Slides.Content>
-          {SLIDES.map((slide, index) => (
-            <Slides.Content.Item key={slide.title + slide.description}>
-              <SlideItem title={slide.title} description={slide.description} index={index} />
-            </Slides.Content.Item>
-          ))}
-        </Slides.Content>
+      <View style={styles.content}>
+        <BottomSheetHeader />
+        <TrackScreen page={PAGE_TRACKING_WALLET_V4_TOUR} source="Wallet" />
+        <Slides
+          bounces={false}
+          as={AnimatedGestureHandlerFlatList}
+          testID="walletv4-tour-slides-container"
+          initialNumToRender={1}
+          maxToRenderPerBatch={1}
+          onSlideChange={onSlideChange}
+        >
+          <Slides.Content>
+            {slides.map((slide, index) => (
+              <Slides.Content.Item key={slide.title + slide.description}>
+                <SlideItem
+                  title={slide.title}
+                  description={slide.description}
+                  index={index}
+                  lottieSrc={slide.lottieSrc}
+                  speed={slide.speed}
+                />
+              </Slides.Content.Item>
+            ))}
+          </Slides.Content>
 
-        <Slides.ProgressIndicator style={styles.progressIndicator}>
-          <ProgressIndicator />
-        </Slides.ProgressIndicator>
+          <Slides.ProgressIndicator style={styles.progressIndicator}>
+            <ProgressIndicator />
+          </Slides.ProgressIndicator>
 
-        <Slides.Footer style={{ marginBottom: bottomInset + 60 }}>
-          <SlideFooterButton onClose={handleCloseDrawer} />
-        </Slides.Footer>
-      </Slides>
-    </QueuedDrawerGorhom>
+          <Slides.Footer style={{ marginBottom: bottomInset + 60 }}>
+            <SlideFooterButton onClose={handleCloseDrawer} />
+          </Slides.Footer>
+        </Slides>
+      </View>
+    </QueuedDrawerBottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
   progressIndicator: {
     marginTop: 40,
     marginBottom: 32,

@@ -65,9 +65,7 @@ if (!gotLock) {
           SUPPORTED_SCHEMES.some(scheme => arg.startsWith(`${scheme}://`)),
         );
         if (uri.length) {
-          if ("send" in w.webContents) {
-            w.webContents.send("deep-linking", uri[0]);
-          }
+          sendDeepLink(w, uri[0]);
         }
       }
     }
@@ -87,9 +85,7 @@ app.on("will-finish-launching", () => {
       .then(w => {
         if (w) {
           show(w);
-          if ("send" in w.webContents) {
-            w.webContents.send("deep-linking", url);
-          }
+          sendDeepLink(w, url);
         }
       })
       .catch((err: unknown) => console.log(err));
@@ -234,9 +230,7 @@ app.on("ready", async () => {
           .then(w => {
             if (w) {
               show(w);
-              if ("send" in w.webContents) {
-                w.webContents.send("deep-linking", url);
-              }
+              sendDeepLink(w, url);
             }
           })
           .catch((err: unknown) => console.log(err));
@@ -276,7 +270,7 @@ ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
 
 ipcMain.on("deep-linking", (_, l) => {
   const win = getMainWindow();
-  if (win) win.webContents.send("deep-linking", l);
+  if (win) sendDeepLink(win, l);
 });
 
 ipcMain.on("app-reload", () => {
@@ -308,9 +302,7 @@ ipcMain.on("ready-to-show", () => {
       );
       if (uri.length) {
         show(w);
-        if ("send" in w.webContents) {
-          w.webContents.send("deep-linking", uri[0]);
-        }
+        sendDeepLink(w, uri[0]);
       }
     }
   }
@@ -352,4 +344,21 @@ function clearSessionCache(session: Electron.Session): Promise<void> {
 function show(win: BrowserWindow) {
   win.show();
   setImmediate(() => win.focus());
+}
+
+/**
+ * Sends a deep-link URL to the renderer process.
+ * Waits for the webContents to finish loading if it's still initializing,
+ * preventing the message from being lost during cold start.
+ */
+function sendDeepLink(win: BrowserWindow, url: string) {
+  if (!("send" in win.webContents)) return;
+
+  if (win.webContents.isLoading()) {
+    win.webContents.once("did-finish-load", () => {
+      win.webContents.send("deep-linking", url);
+    });
+  } else {
+    win.webContents.send("deep-linking", url);
+  }
 }

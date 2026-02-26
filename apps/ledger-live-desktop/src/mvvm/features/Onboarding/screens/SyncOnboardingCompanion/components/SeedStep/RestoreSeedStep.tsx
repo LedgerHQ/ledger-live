@@ -14,7 +14,6 @@ const RestoreSeedStep = ({ productName, deviceIcon }: Props) => {
 
   return (
     <SeedStepWrapper testId="restore-seed-step">
-      {/* @ts-expect-error weird props issue with React 18 */}
       <StepText>{t("syncOnboarding.manual.seedContent.restoreSeed", { productName })}</StepText>
       <ContinueOnDevice
         Icon={deviceIcon}

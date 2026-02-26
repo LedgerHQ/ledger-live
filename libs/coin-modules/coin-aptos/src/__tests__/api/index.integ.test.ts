@@ -249,7 +249,7 @@ describe("createApi", () => {
     it("returns operations from account", async () => {
       const block = await api.lastBlock();
 
-      const [operations] = await api.listOperations(sender.freshAddress, {
+      const { items: operations } = await api.listOperations(sender.freshAddress, {
         minHeight: block.height,
         order: "asc",
       });
@@ -295,7 +295,7 @@ describe("createApi", () => {
     it("returns operations from account", async () => {
       const block = await api.lastBlock();
 
-      const [operations] = await api.listOperations(tokenAccount.freshAddress, {
+      const { items: operations } = await api.listOperations(tokenAccount.freshAddress, {
         minHeight: block.height,
         order: "asc",
       });

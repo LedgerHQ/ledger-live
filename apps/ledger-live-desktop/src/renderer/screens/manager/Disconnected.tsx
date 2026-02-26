@@ -104,9 +104,10 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
     navigate("/");
   }, [navigate]);
   useEffect(() => {
-    setTimeout(() => {
+    const timerRef = setTimeout(() => {
       setReadyToDecide(true);
     }, 3000);
+    return () => clearTimeout(timerRef);
   }, []);
   useEffect(() => {
     let sub: Subscription;

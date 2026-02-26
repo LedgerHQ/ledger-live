@@ -23,6 +23,7 @@ export function TimeBasedProgressBar({ duration, onComplete, nonce = 1 }: Props)
     };
   }, [duration, onComplete, nonce]);
 
+  const AnimatedDiv = animated.div as React.ComponentType<{ style?: React.CSSProperties }>;
   return (
     <div
       style={{
@@ -30,7 +31,7 @@ export function TimeBasedProgressBar({ duration, onComplete, nonce = 1 }: Props)
         height: 5,
       }}
     >
-      <animated.div
+      <AnimatedDiv
         style={{
           ...style,
           height: 5,

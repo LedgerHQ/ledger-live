@@ -58,6 +58,16 @@ const defaultModularDrawerState = {
   dialogParams: { currencies: mockCurrencies, onAccountSelected: mockOnAccountSelected },
 };
 
+const createFilteredModularDrawerState = (currencies: string[]) => ({
+  searchedValue: undefined,
+  isOpen: true,
+  dialogParams: {
+    currencies,
+    onAccountSelected: mockOnAccountSelected,
+    areCurrenciesFiltered: true,
+  },
+});
+
 describe("ModularDialogFlowManager - Select Account Flow", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -132,32 +142,21 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [ethereumCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id]),
       },
     });
 
-    await waitFor(() => expect(screen.getByText(/ethereum 2/i)).toBeVisible());
+    await waitFor(() =>
+      expect(screen.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")).toBeVisible(),
+    );
+    expect(await screen.findByText(/ethereum 2/i)).toBeVisible();
   });
 
   it("should navigate directly to networkSelection step", async () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [ethereumCurrency.id, arbitrumCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id, arbitrumCurrency.id]),
       },
     });
 
@@ -170,14 +169,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [bitcoinCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([bitcoinCurrency.id]),
       },
     });
 
@@ -193,14 +185,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [bitcoinCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([bitcoinCurrency.id]),
       },
     });
 
@@ -269,14 +254,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [ethereumCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id]),
       },
     });
 
@@ -288,14 +266,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [ethereumCurrency.id, arbitrumCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id, arbitrumCurrency.id]),
       },
     });
 
@@ -409,14 +380,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT_WITH_USDC],
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [usdcToken.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([usdcToken.id]),
       },
     });
 
@@ -430,14 +394,11 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [BASE_ACCOUNT, ARB_ACCOUNT, BTC_ACCOUNT],
-        modularDrawer: {
-          isOpen: true,
-          dialogParams: {
-            currencies: [baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id],
-            onAccountSelected: mockOnAccountSelected,
-            areCurrenciesFiltered: true,
-          },
-        },
+        modularDrawer: createFilteredModularDrawerState([
+          baseCurrency.id,
+          scrollCurrency.id,
+          bitcoinCurrency.id,
+        ]),
       },
     });
 

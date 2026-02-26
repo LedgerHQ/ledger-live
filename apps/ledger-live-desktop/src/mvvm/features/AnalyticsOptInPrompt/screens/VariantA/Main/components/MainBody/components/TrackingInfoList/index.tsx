@@ -1,7 +1,6 @@
 import React from "react";
 import { Flex, Icons, Text } from "@ledgerhq/react-ui";
-import styled from "styled-components";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 const Field = styled(Text)`
   flex: 1;

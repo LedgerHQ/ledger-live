@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { Operation, DailyOperationsSection } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import SectionHeader from "~/components/SectionHeader";
 import { ViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
@@ -22,6 +23,7 @@ export function OperationsHistoryList({
   goToAnalyticsOperations,
 }: ViewProps) {
   const { t } = useTranslation();
+  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
 
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
@@ -62,6 +64,7 @@ export function OperationsHistoryList({
           size="large"
           outline
           mt={6}
+          mb={isWallet40Enabled ? 6 : undefined}
           onPress={goToAnalyticsOperations}
           testID="portfolio-seeAll-transaction"
         >

@@ -130,6 +130,8 @@ export enum ScreenName {
   SendFlowRecipient = "SendFlowRecipient",
   SendFlowAmount = "SendFlowAmount",
   SendFlowConfirmation = "SendFlowConfirmation",
+  SendFlowCustomFees = "SendFlowCustomFees",
+  SendFlowCoinControl = "SendFlowCoinControl",
   SendFlowSignature = "SendFlowSignature",
   TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",
@@ -551,7 +553,6 @@ export enum ScreenName {
   // Web3Hub
   Web3HubMain = "Web3HubMain",
   Web3HubSearch = "Web3HubSearch",
-  Web3HubTabs = "Web3HubTabs",
   Web3HubApp = "Web3HubApp",
 
   // Add Accountv2 / Receive shared screens

@@ -1,11 +1,12 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";
+import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type {
   AddressSearchResult,
   AddressValidationError as AddressValidationErrorType,
   RecentAddress,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/recipient/types";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";
@@ -83,7 +84,7 @@ export function RecipientAddressModalView({
       showBridgeRecipientWarning);
 
   return (
-    <>
+    <DialogBody className="py-16">
       {isLoading && <LoadingState />}
 
       {showInitialState && (
@@ -137,6 +138,6 @@ export function RecipientAddressModalView({
           )}
         </div>
       )}
-    </>
+    </DialogBody>
   );
 }

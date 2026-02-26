@@ -11,7 +11,18 @@ import {
   NoSuchAppOnProvider,
   OutdatedApp,
 } from "@ledgerhq/live-common/errors";
-import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
+import {
+  LatestFirmwareVersionRequired,
+  ManagerNotEnoughSpaceError,
+  TransportRaceCondition,
+  UnresponsiveDeviceError,
+  UpdateYourApp,
+  UserRefusedAddress,
+  UserRefusedAllowManager,
+  UserRefusedDeviceNameChange,
+  UserRefusedFirmwareUpdate,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -29,17 +40,6 @@ import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import TransactionRawConfirm from "~/renderer/components/TransactionRawConfirm";
 import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
-import {
-  ManagerNotEnoughSpaceError,
-  TransportRaceCondition,
-  UnresponsiveDeviceError,
-  UpdateYourApp,
-  UserRefusedAddress,
-  UserRefusedAllowManager,
-  UserRefusedDeviceNameChange,
-  UserRefusedFirmwareUpdate,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
 import {
   DeviceNotOnboardedErrorComponent,
   InstallingApp,

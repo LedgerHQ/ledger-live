@@ -113,7 +113,7 @@ describe("TopBar", () => {
         <TopBar {...defaultProps} manifest={{ ...mockManifest, id: "" }} />
       </MemoryRouter>,
     );
-    expect(screen.getByText("common.backToMatchingURL")).toBeInTheDocument();
+    expect(screen.getByText("common.back")).toBeInTheDocument();
     expect(screen.getByText("common.sync.refresh")).toBeInTheDocument();
     expect(screen.queryByText("common.sync.devTools")).toBeNull();
   });

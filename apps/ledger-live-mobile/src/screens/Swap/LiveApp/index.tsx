@@ -23,6 +23,7 @@ import { useSwapNavigationHelper } from "./navigationHandlers/useSwapNavigationH
 import { useNavigation } from "@react-navigation/native";
 import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
 import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavigation";
+import TrackScreen from "~/analytics/TrackScreen";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -30,15 +31,26 @@ import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavig
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-const isDefaultAccountSwapParamsList = (
+const SWAP_PARAM_KEYS: string[] = [
+  "defaultAccount",
+  "defaultCurrency",
+  "affiliate",
+  "fromPath",
+  "toTokenId",
+  "fromTokenId",
+  "amountFrom",
+  "toCurrencyId",
+  "fromCurrencyId",
+];
+
+function isDefaultAccountSwapParamsList(
   params: DefaultAccountSwapParamList | unknown,
-): params is DefaultAccountSwapParamList =>
-  params != null &&
-  typeof params === "object" &&
-  (("defaultAccount" in params && params.defaultAccount !== undefined) ||
-    ("defaultCurrency" in params && params.defaultCurrency !== undefined) ||
-    ("currency" in params && params.currency !== undefined) ||
-    ("affiliate" in params && params.affiliate !== undefined));
+): params is DefaultAccountSwapParamList {
+  if (params == null || typeof params !== "object") return false;
+  return SWAP_PARAM_KEYS.some(
+    key => key in params && Object.getOwnPropertyDescriptor(params, key)?.value !== undefined,
+  );
+}
 
 export function SwapLiveApp({
   route,
@@ -119,6 +131,7 @@ export function SwapLiveApp({
 
   return (
     <Flex flex={1} testID="swap-form-tab">
+      <TrackScreen name="Swap" />
       {manifest && (
         <WebView
           ref={webviewRef}

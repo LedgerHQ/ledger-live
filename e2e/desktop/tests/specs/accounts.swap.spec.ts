@@ -101,6 +101,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       await app.layout.goToAccounts();
+      await app.accounts.expectAccountsTitleVisibility();
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
       await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);

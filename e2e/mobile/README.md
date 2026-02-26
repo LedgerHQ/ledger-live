@@ -88,6 +88,18 @@ pnpm e2e:mobile test:android:debug <testFileName>
 For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
 [Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
 
+### Skipping Tests from CI
+
+To temporarily exclude a test file from CI runs, rename it with a `.skip.spec.ts` suffix instead of `.spec.ts`. For example:
+
+```bash
+# This test will run:
+myFeature.spec.ts
+
+# This test will be skipped:
+myFeature.skip.spec.ts
+```
+
 ### Notes
 
 - Use Page Object Model (POM) for writing tests

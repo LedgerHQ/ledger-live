@@ -92,6 +92,7 @@ const commonConfig = {
 };
 
 module.exports = {
+  workerIdleMemoryLimit: "1GB",
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",

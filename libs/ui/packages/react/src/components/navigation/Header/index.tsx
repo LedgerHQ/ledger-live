@@ -10,7 +10,12 @@ export type Props = {
   children?: React.ReactNode;
 } & React.ComponentProps<typeof FlexBox>;
 
-export default function ({ left, right, children, ...rest }: Props): JSX.Element {
+export default function Header({
+  left,
+  right,
+  children,
+  ...rest
+}: Readonly<Props>): React.JSX.Element {
   return (
     <FlexBox justifyContent="space-between" {...rest}>
       {left}

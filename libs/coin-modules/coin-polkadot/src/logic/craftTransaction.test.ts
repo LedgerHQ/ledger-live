@@ -24,7 +24,6 @@ jest.mock("../network", () => {
       }),
     getTransactionParams: (currency?: CryptoCurrency, { force } = { force: false }) =>
       mockGetTransactionParams(currency, force),
-    metadataHash: () => "0x12345678",
   };
 });
 
@@ -95,7 +94,7 @@ describe("craftTransaction", () => {
       transactionVersion: "HexCodec 4 u32",
       specVersion: "HexCodec 4 u32",
       version: 4,
-      metadataHash: new Uint8Array([1, 0, 18, 52, 86, 120]),
+      metadataHash: new Uint8Array([1, ...new Array(32).fill(0)]),
       mode: 1,
     };
     expect(result).toEqual(expectedResult);

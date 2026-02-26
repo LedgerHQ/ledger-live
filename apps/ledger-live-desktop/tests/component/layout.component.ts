@@ -57,6 +57,7 @@ export class Layout extends Component {
 
   @step("Open Accounts")
   async goToAccounts() {
+    await this.drawerAccountsButton.waitFor({ state: "visible" });
     await this.drawerAccountsButton.click();
   }
 

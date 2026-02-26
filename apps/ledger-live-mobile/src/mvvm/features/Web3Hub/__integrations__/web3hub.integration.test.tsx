@@ -205,59 +205,6 @@ describe("Web3Hub integration test", () => {
     expect(screen.getByRole("searchbox")).toBeDisabled();
   });
 
-  it("Should go to tabs from main, search and app pages", async () => {
-    const { user } = render(<Web3HubTest />);
-
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
-
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
-
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
-
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeDisabled();
-    await user.press(screen.getByRole("searchbox"));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
-
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
-
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
-
-    expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
-    await user.press(screen.getAllByText("Wallet API Tools")[0]);
-    expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
-    expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
-
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
-
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
-    expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeDisabled();
-  });
-
   it("Should be able to see Clear Signing section and label on disclaimer", async () => {
     const { user } = render(<Web3HubTest />);
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();

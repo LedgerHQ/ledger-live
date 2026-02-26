@@ -1,27 +1,25 @@
 import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
-import { isRecipientValid } from "../common-logic";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("../common-logic");
-
 describe("validateAddress", () => {
-  const mockedIsRecipientValid = jest.mocked(isRecipientValid);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const parameters = {} as unknown as AddressValidationCurrencyParameters;
 
-  beforeEach(() => {
-    mockedIsRecipientValid.mockClear();
+  it("should return true for a valid Concordium address", async () => {
+    const result = await validateAddress(
+      "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+      parameters,
+    );
+    expect(result).toBe(true);
   });
 
-  it.each([true, false])(
-    "should return the correcu result from isRecipientValid",
-    async (expectedValue: boolean) => {
-      mockedIsRecipientValid.mockReturnValueOnce(expectedValue);
+  it("should return false for an invalid address", async () => {
+    const result = await validateAddress("not-a-valid-address", parameters);
+    expect(result).toBe(false);
+  });
 
-      const address = "some random address";
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const parameters = {} as unknown as AddressValidationCurrencyParameters;
-      const result = await validateAddress(address, parameters);
-
-      expect(result).toEqual(expectedValue);
-    },
-  );
+  it("should return false for an empty string", async () => {
+    const result = await validateAddress("", parameters);
+    expect(result).toBe(false);
+  });
 });

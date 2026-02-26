@@ -1,2 +1,0 @@
-export const ZCASH_ACTIVATION_DATE = new Date("2016-10-28");
-export const ZCASH_ACTIVATION_DATE_STRING = "2016-10-28";

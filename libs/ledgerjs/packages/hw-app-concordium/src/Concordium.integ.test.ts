@@ -1,9 +1,7 @@
 import SpeculosTransportHttp, { SpeculosButton } from "@ledgerhq/hw-transport-node-speculos-http";
 import Concordium from "./Concordium";
-import { AccountAddress } from "./address";
-import { TransactionType } from "./types";
-import type { Transaction, SigningResult } from "./types";
-import { encodeMemoToCbor } from "./cbor";
+import { AccountAddress, TransactionType, encodeMemoToCbor } from "@ledgerhq/concordium-core";
+import type { Transaction, SigningResult } from "@ledgerhq/concordium-core";
 
 const PATH = "44'/919'/0'/0/0";
 const EXPECTED_PUBLIC_KEY = "e31d69e500b0f83983fb6080aaa46129cf7c70e27d59b1aae9820b1d03f98402";
@@ -88,7 +86,7 @@ describe("Concordium", () => {
       };
 
       // WHEN
-      const signPromise = app.signTransfer(txn, PATH);
+      const signPromise = app.signTransaction(txn, PATH);
 
       // Screen flow: Review → Sender (1/2) → Sender (2/2) → Amount → Recipient → Sign
       const delay = (ms: number): Promise<void> => new Promise(f => setTimeout(f, ms));
@@ -135,7 +133,7 @@ describe("Concordium", () => {
       };
 
       // WHEN
-      const signPromise = app.signTransferWithMemo(txn, PATH);
+      const signPromise = app.signTransaction(txn, PATH);
 
       // Screen flow: Review → Sender (1/2) → Sender (2/2) → Amount → Recipient → Memo → Sign
       // Device decodes CBOR and displays memo as UTF-8 text

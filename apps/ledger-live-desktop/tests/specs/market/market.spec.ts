@@ -182,6 +182,7 @@ test("Market", async ({ page, electronApp }) => {
 
   await test.step("buy bitcoin from market page", async () => {
     await marketPage.openBuyPage("btc");
+    await page.locator("webview").waitFor({ state: "attached" });
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
@@ -210,6 +211,7 @@ test("Market", async ({ page, electronApp }) => {
 
   await test.step("buy bitcoin from coin page", async () => {
     await marketCoinPage.openBuyPage();
+    await page.locator("webview").waitFor({ state: "attached" });
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });

@@ -16,6 +16,8 @@ type AmountFooterProps = Readonly<{
   fiatByPreset: FeeFiatMap;
   legendByPreset: FeePresetLegendMap;
   onSelectFeeStrategy: (strategy: string) => void;
+  onSelectCustomFees: () => void;
+  onSelectCoinControl: () => void;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -33,6 +35,8 @@ export function AmountFooter({
   fiatByPreset,
   legendByPreset,
   onSelectFeeStrategy,
+  onSelectCustomFees,
+  onSelectCoinControl,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -47,8 +51,11 @@ export function AmountFooter({
   if (!account || !transaction) {
     return null;
   }
+
+  const ctaTestId = reviewShowIcon ? "send-review-button" : "send-get-funds-button";
+
   return (
-    <div className="mt-56 pt-12">
+    <div className="mt-56 pt-12" data-testid="send-amount-footer">
       <div className="border-t border-muted-subtle" />
       <NetworkFeesMenu
         display={{
@@ -65,6 +72,10 @@ export function AmountFooter({
           fiatByPreset,
           legendByPreset,
         }}
+        actions={{
+          onSelectCustomFees: onSelectCustomFees,
+          onSelectCoinControl: onSelectCoinControl,
+        }}
       />
       <Button
         appearance="base"
@@ -74,6 +85,7 @@ export function AmountFooter({
         disabled={reviewDisabled}
         loading={reviewLoading}
         icon={reviewShowIcon ? LedgerLogo : undefined}
+        data-testid={ctaTestId}
         className="rounded-full"
       >
         {reviewLoading ? "" : reviewLabel}
