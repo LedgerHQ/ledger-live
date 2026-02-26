@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { formatTimeAgo } from "@ledgerhq/live-common/utils/timeAgo";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
-import { selectIsRefreshing, selectLastRefreshTimestamp } from "~/reducers/portfolioRefresh";
+import { selectIsRefreshing, selectLastSyncTimestamp } from "~/reducers/portfolioRefresh";
 
 export const UP_TO_DATE_VISIBLE_DURATION_MS = 3_000;
 
@@ -17,7 +17,7 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
   const { t } = useTranslation();
   const { locale } = useLocale();
   const isRefreshing = useSelector(selectIsRefreshing);
-  const lastRefreshTimestamp = useSelector(selectLastRefreshTimestamp);
+  const lastRefreshTimestamp = useSelector(selectLastSyncTimestamp);
 
   const [showUpToDate, setShowUpToDate] = useState(false);
   const prevIsRefreshing = useRef(isRefreshing);

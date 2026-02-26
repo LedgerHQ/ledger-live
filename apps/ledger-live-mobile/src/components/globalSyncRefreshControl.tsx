@@ -62,7 +62,7 @@ function globalSyncRefreshControl<P>(
 
     useEffect(() => {
       if (!isFocused && refreshingRef.current) {
-        dispatch(setRefreshCompleted(Date.now()));
+        dispatch(setRefreshCompleted());
       }
       setRefreshing(false);
     }, [isFocused, dispatch]);
@@ -75,7 +75,7 @@ function globalSyncRefreshControl<P>(
 
       const timer = setTimeout(() => {
         setRefreshing(false);
-        dispatch(setRefreshCompleted(Date.now()));
+        dispatch(setRefreshCompleted());
       }, SYNC_DELAY);
       return () => {
         clearTimeout(timer);

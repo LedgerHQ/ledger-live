@@ -1,13 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { createSelector } from "~/context/selectors";
 import { State } from "~/reducers/types";
 
 export interface PortfolioRefreshState {
-  lastRefreshTimestamp: number | null;
   isRefreshing: boolean;
 }
 
 export const INITIAL_STATE: PortfolioRefreshState = {
-  lastRefreshTimestamp: null,
   isRefreshing: false,
 };
 
@@ -18,9 +17,8 @@ const portfolioRefreshSlice = createSlice({
     setRefreshStarted: state => {
       state.isRefreshing = true;
     },
-    setRefreshCompleted: (state, action: PayloadAction<number>) => {
+    setRefreshCompleted: state => {
       state.isRefreshing = false;
-      state.lastRefreshTimestamp = action.payload;
     },
   },
 });
@@ -28,7 +26,14 @@ const portfolioRefreshSlice = createSlice({
 export const { setRefreshStarted, setRefreshCompleted } = portfolioRefreshSlice.actions;
 
 export const selectIsRefreshing = (state: State) => state.portfolioRefresh.isRefreshing;
-export const selectLastRefreshTimestamp = (state: State) =>
-  state.portfolioRefresh.lastRefreshTimestamp;
+
+export const selectLastSyncTimestamp = createSelector(
+  (state: State) => state.accounts.active,
+  (accounts): number | null => {
+    if (accounts.length === 0) return null;
+    const max = Math.max(...accounts.map(a => a.lastSyncDate.getTime()));
+    return max > 0 ? max : null;
+  },
+);
 
 export default portfolioRefreshSlice.reducer;
