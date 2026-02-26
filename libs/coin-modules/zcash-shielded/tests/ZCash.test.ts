@@ -239,7 +239,6 @@ describe("syncShielded", () => {
     try {
       await syncedShieldedObs.forEach(step => steps.push(step));
     } catch (error) {
-      console.log(error);
       expect(error).toMatchObject({ message: "Network error" });
     }
 
