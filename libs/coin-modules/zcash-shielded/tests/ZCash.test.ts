@@ -210,11 +210,17 @@ describe("syncShielded", () => {
         viewingKey: "abc456",
         ...args,
       });
+
       const steps: SyncedShielded[] = [];
 
-      await syncedShieldedObs.forEach(step => steps.push(step));
+      try {
+        await syncedShieldedObs.forEach(step => steps.push(step));
+      } catch (error) {
+        expect(error).toMatch(/^error: invalid negative/);
+      }
 
       expect(steps).toEqual([]);
+      expect.assertions(2);
     },
   );
 

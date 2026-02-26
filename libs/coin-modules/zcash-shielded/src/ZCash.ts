@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
-import { from, Observable } from "rxjs";
+import { Observable, Subscriber } from "rxjs";
 import { LOG_TYPE } from "./constants";
 
 /**
@@ -174,111 +174,6 @@ export default class ZCash {
   }
 
   /**
-   * Private method for parsing the blocks in the provided range and, after each iteration,
-   * it returns a synced shielded context including aggregate information
-   * like the computed balance and processing progress.
-   *
-   * ### As observable
-   * The iterator can be converted to an observable.
-   *
-   * Example:
-   * ```typescript
-   * const syncShieldedGenerator = zcash.syncShieldedGenerator({
-   *   startBlockHeight: blockWithMyTx.height,
-   *   viewingKey: testAccount1.viewingKey,
-   *   maxBatchSize: 3,
-   * });
-   * const syncShieldedObs = rxjs.from(syncShieldedGenerator);
-   * ```
-   *
-   * ### Stop the iterator
-   * The sync operation can be gracefully stopped by calling with the stop
-   * argument set to true.
-   *
-   * Example:
-   * ```typescript
-   * const syncedShielded = zcash.syncShielded({
-   *   startBlockHeight: 3697074,
-   *   viewingKey: testAccount1.viewingKey,
-   * });
-   * await syncedShielded.next(true)
-   * ```
-   *
-   * @param {{
-   *    startBlockHeight: number
-   *    viewingKey: string
-   *    maxBatchSize: number
-   * }} args, Block, the UFVK - unified full viewing key, and max batch size.
-   * @returns {AsyncGenerator<SyncedShielded>} the current synced shielded context.
-   */
-  private async *syncShieldedGenerator(
-    args: SyncShieldedArgs,
-  ): AsyncGenerator<SyncedShielded, SyncedShielded, boolean | undefined> {
-    const { startBlockHeight, viewingKey, maxBatchSize } = args;
-    const syncedShielded: SyncedShielded = {
-      balance: new BigNumber(0),
-      processedBlocks: 0,
-      remainingBlocks: 0,
-      lastProcessed: undefined,
-    };
-
-    // 0. validate args
-    if (startBlockHeight < 0) {
-      log(LOG_TYPE, "error: invalid negative arg startBlockHeight");
-      return syncedShielded;
-    }
-
-    if (maxBatchSize <= 0) {
-      log(LOG_TYPE, "error: invalid negative or zero arg maxBatchSize");
-      return syncedShielded;
-    }
-
-    // 1. get end block height
-    let endBlockHeight = await this.jsonRpcClient.getBlockCount();
-    if (endBlockHeight === undefined) {
-      log(LOG_TYPE, "error: could not retrieve the last block");
-      return syncedShielded;
-    }
-
-    for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
-      // 2. on the last iteration, update the end block height and process until the end
-      if (blockHeight === endBlockHeight) {
-        endBlockHeight = await this.jsonRpcClient.getBlockCount();
-        if (endBlockHeight === undefined) {
-          log(LOG_TYPE, "error: could not retrieve the last block");
-          break;
-        }
-      }
-
-      // 3. get current block
-      const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
-      if (!block) {
-        log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
-        break;
-      }
-
-      // 4. find shielded tx in block
-      const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
-
-      // 5. update syncedShielded's balance and counters
-      syncedShielded.balance = syncedShielded.balance.plus(calculateShieldedBalance(shieldedTxs));
-      syncedShielded.processedBlocks++;
-      syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
-      syncedShielded.lastProcessed = block.height;
-
-      if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
-        const stop = yield syncedShielded;
-
-        if (stop) {
-          break;
-        }
-      }
-    }
-
-    return syncedShielded;
-  }
-
-  /**
    * Parses the blocks in the provided range and, after each iteration,
    * it returns a synced shielded context including aggregate information
    * like the computed balance and processing progress.
@@ -295,7 +190,79 @@ export default class ZCash {
    * @returns {Observable<SyncedShielded>} the current synced shielded context.
    */
   syncShielded(args: SyncShieldedArgs): Observable<SyncedShielded> {
-    return from(this.syncShieldedGenerator(args));
+    return new Observable(subscriber => {
+      this.syncShieldedObsFunc(args)(subscriber).then(
+        () => subscriber.complete(),
+        error => subscriber.error(error),
+      );
+    });
+  }
+
+  private syncShieldedObsFunc(args: SyncShieldedArgs) {
+    return async (subscriber: Subscriber<SyncedShielded>) => {
+      const { startBlockHeight, viewingKey, maxBatchSize } = args;
+      const syncedShielded: SyncedShielded = {
+        balance: new BigNumber(0),
+        processedBlocks: 0,
+        remainingBlocks: 0,
+        lastProcessed: undefined,
+      };
+
+      // 0. validate args
+      if (startBlockHeight < 0) {
+        log(LOG_TYPE, "error: invalid negative arg startBlockHeight");
+        subscriber.error("error: invalid negative arg startBlockHeight");
+      }
+
+      if (maxBatchSize <= 0) {
+        log(LOG_TYPE, "error: invalid negative or zero arg maxBatchSize");
+        subscriber.error("error: invalid negative or zero arg maxBatchSize");
+      }
+
+      // 1. get end block height before the start of the cycle
+      let endBlockHeight = await this.jsonRpcClient.getBlockCount();
+
+      if (endBlockHeight === undefined) {
+        log(LOG_TYPE, "error: could not retrieve the last block");
+        subscriber.error("error: could not retrieve the last block");
+      } else {
+        for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
+          // 2. on the last iteration, update the end block height and process until the end
+          if (blockHeight === endBlockHeight) {
+            endBlockHeight = await this.jsonRpcClient.getBlockCount();
+            if (endBlockHeight === undefined) {
+              log(LOG_TYPE, "error: could not retrieve the last block");
+              subscriber.error("error: could not retrieve the last block");
+              break;
+            }
+          }
+
+          // 3. get current block
+          const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
+          if (!block) {
+            log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
+            break;
+          }
+
+          // 4. find shielded tx in block
+          const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
+
+          // 5. update syncedShielded's balance and counters
+          syncedShielded.balance = syncedShielded.balance.plus(
+            calculateShieldedBalance(shieldedTxs),
+          );
+          syncedShielded.processedBlocks++;
+          syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
+          syncedShielded.lastProcessed = block.height;
+
+          if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
+            subscriber.next(syncedShielded);
+          }
+        }
+      }
+
+      subscriber.complete();
+    };
   }
 }
 
