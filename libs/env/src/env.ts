@@ -328,7 +328,7 @@ const envDefinitions = {
     desc: "Cardano API url",
   },
   CARDANO_TESTNET_API_ENDPOINT: {
-    def: "https://testnet-ledger.cardanoscan.io/api",
+    def: "https://ledger-preprod.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
   },
