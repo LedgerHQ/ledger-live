@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.143.0-next.1
+
+### Minor Changes
+
+- [#14850](https://github.com/LedgerHQ/ledger-live/pull/14850) [`cdd856e`](https://github.com/LedgerHQ/ledger-live/commit/cdd856eff6ede4421e76377916e6fcbf34381afc) Thanks [@lewisd5](https://github.com/lewisd5)! - Revert build changes related to dependency graph anomalies
+
 ## 2.143.0-next.0
 
 ### Minor Changes
