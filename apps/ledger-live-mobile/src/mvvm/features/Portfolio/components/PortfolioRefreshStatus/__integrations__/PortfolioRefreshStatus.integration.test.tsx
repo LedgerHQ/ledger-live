@@ -6,6 +6,7 @@ jest.mock("react-native-reanimated", () => {
     __esModule: true,
     useSharedValue: (init: unknown) => ({ value: init }),
     useAnimatedStyle: () => ({}),
+    useAnimatedReaction: () => {},
     withTiming: (toValue: unknown) => toValue,
     withDelay: (_delay: number, animation: unknown) => animation,
     default: {
@@ -20,16 +21,14 @@ jest.mock("react-native-reanimated", () => {
 
 import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
-import { MINUTE_MS } from "@ledgerhq/live-common/utils/timeAgo";
+import { MINUTE_MS, HOUR_MS, DAY_MS } from "@ledgerhq/live-common/utils/timeAgo";
 import { UP_TO_DATE_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
 import { PortfolioRefreshStatus } from "../index";
 import { setRefreshCompleted } from "~/reducers/portfolioRefresh";
 import { State } from "~/reducers/types";
 
-const HOUR_MS = 60 * MINUTE_MS;
-const DAY_MS = 24 * HOUR_MS;
-
 const FIXED_NOW = new Date("2025-08-15T12:00:00Z").getTime();
+const TEST_LOCALE = "en";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -89,24 +88,40 @@ describe("PortfolioRefreshStatus", () => {
       expect(screen.getByText("Refreshing...")).toBeVisible();
     });
 
-    it("should show 'just now' for a timestamp < 1 minute ago", () => {
+    it("should show relative time for a timestamp < 1 minute ago", () => {
       renderRefreshing(Date.now() - 30_000);
-      expect(screen.getByText("Refreshing - Last update just now")).toBeVisible();
+      const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
+        -30,
+        "second",
+      );
+      expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
-    it("should show 'Xm ago' for a timestamp < 1 hour ago", () => {
+    it("should show relative time for a timestamp < 1 hour ago", () => {
       renderRefreshing(Date.now() - 3 * MINUTE_MS);
-      expect(screen.getByText("Refreshing - Last update 3m ago")).toBeVisible();
+      const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
+        -3,
+        "minute",
+      );
+      expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
-    it("should show 'Xh ago' for a timestamp < 24 hours ago", () => {
+    it("should show relative time for a timestamp < 24 hours ago", () => {
       renderRefreshing(Date.now() - 2 * HOUR_MS);
-      expect(screen.getByText("Refreshing - Last update 2h ago")).toBeVisible();
+      const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
+        -2,
+        "hour",
+      );
+      expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
-    it("should show 'X days ago' for a timestamp < 7 days ago", () => {
+    it("should show relative time for a timestamp < 7 days ago", () => {
       renderRefreshing(Date.now() - 3 * DAY_MS);
-      expect(screen.getByText("Refreshing - Last update 3d ago")).toBeVisible();
+      const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
+        -3,
+        "day",
+      );
+      expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
     it("should show absolute date without year for a timestamp >= 7 days ago in the same year", () => {
@@ -114,7 +129,7 @@ describe("PortfolioRefreshStatus", () => {
       renderRefreshing(timestamp);
       const label = screen.getByTestId("portfolio-refresh-status-refreshing");
       expect(label).toBeVisible();
-      const expected = new Intl.DateTimeFormat(undefined, {
+      const expected = new Intl.DateTimeFormat(TEST_LOCALE, {
         day: "numeric",
         month: "short",
       }).format(new Date(timestamp));
@@ -126,7 +141,7 @@ describe("PortfolioRefreshStatus", () => {
       renderRefreshing(timestamp);
       const label = screen.getByTestId("portfolio-refresh-status-refreshing");
       expect(label).toBeVisible();
-      const expected = new Intl.DateTimeFormat(undefined, {
+      const expected = new Intl.DateTimeFormat(TEST_LOCALE, {
         day: "numeric",
         month: "short",
         year: "2-digit",

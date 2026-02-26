@@ -1,35 +1,34 @@
+export const SECOND_MS = 1_000;
 export const MINUTE_MS = 60_000;
-const HOUR_MS = 60 * MINUTE_MS;
-const DAY_MS = 24 * HOUR_MS;
+export const HOUR_MS = 3_600_000;
+export const DAY_MS = 86_400_000;
 export const WEEK_MS = 7 * DAY_MS;
 
-export type TimeAgoResult =
-  | { key: "justNow" }
-  | { key: "minutesAgo"; count: number }
-  | { key: "hoursAgo"; count: number }
-  | { key: "daysAgo"; count: number }
-  | { key: "dateInYear"; timestamp: number }
-  | { key: "dateAcrossYears"; timestamp: number };
-
 /**
- * Returns a structured time-ago result from a timestamp.
- * Pure function with no i18n dependency — consumers are responsible for formatting.
+ * Formats a timestamp into a human-readable relative or absolute time label
+ * using native Intl APIs (RelativeTimeFormat for < 7 days, DateTimeFormat for older dates).
  *
  * @param timestamp - The past timestamp in milliseconds.
+ * @param locale - BCP 47 locale string used for formatting (e.g. "en", "fr").
  * @param now - Current time in milliseconds (defaults to Date.now(), injectable for testing).
  */
-export function getTimeAgo(timestamp: number, now: number = Date.now()): TimeAgoResult {
+export function formatTimeAgo(timestamp: number, locale: string, now: number = Date.now()): string {
   const elapsed = now - timestamp;
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "always" });
 
-  if (elapsed < MINUTE_MS) return { key: "justNow" };
-  if (elapsed < HOUR_MS) return { key: "minutesAgo", count: Math.floor(elapsed / MINUTE_MS) };
-  if (elapsed < DAY_MS) return { key: "hoursAgo", count: Math.floor(elapsed / HOUR_MS) };
-  if (elapsed < WEEK_MS) return { key: "daysAgo", count: Math.floor(elapsed / DAY_MS) };
+  if (elapsed < MINUTE_MS) return rtf.format(-Math.floor(elapsed / 1000), "second");
+  if (elapsed < HOUR_MS) return rtf.format(-Math.floor(elapsed / MINUTE_MS), "minute");
+  if (elapsed < DAY_MS) return rtf.format(-Math.floor(elapsed / HOUR_MS), "hour");
+  if (elapsed < WEEK_MS) return rtf.format(-Math.floor(elapsed / DAY_MS), "day");
 
-  const timestampDate = new Date(timestamp);
+  const date = new Date(timestamp);
   const nowDate = new Date(now);
-  if (timestampDate.getFullYear() === nowDate.getFullYear()) {
-    return { key: "dateInYear", timestamp };
+  if (date.getFullYear() === nowDate.getFullYear()) {
+    return new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" }).format(date);
   }
-  return { key: "dateAcrossYears", timestamp };
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+    year: "2-digit",
+  }).format(date);
 }

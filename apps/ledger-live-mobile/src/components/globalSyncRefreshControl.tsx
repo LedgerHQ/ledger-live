@@ -11,7 +11,6 @@ import { useDispatch } from "~/context/hooks";
 import { setRefreshStarted, setRefreshCompleted } from "~/reducers/portfolioRefresh";
 
 type Props = {
-  error?: Error;
   isError?: boolean;
   forwardedRef?: React.Ref<unknown>;
   /** Override or extend refresh control options per render (e.g. progressViewOffset). Merged with defaultRefreshControlProps. */
@@ -25,7 +24,6 @@ function globalSyncRefreshControl<P>(
     forwardedRef,
     overrideRefreshControlProps,
     isError,
-    error: _error,
     ...scrollListLikeProps
   }: Props & P) {
     const { colors, dark } = useTheme();
@@ -33,7 +31,7 @@ function globalSyncRefreshControl<P>(
     const setSyncBehavior = useBridgeSync();
     const { onUserRefresh } = useWalletSyncUserState();
     const { poll } = useCountervaluesPolling();
-    const IsFocused = useIsFocused();
+    const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
     const route = useRoute();
@@ -41,7 +39,6 @@ function globalSyncRefreshControl<P>(
     refreshingRef.current = refreshing;
 
     function onRefresh() {
-      if (refreshingRef.current) return;
       poll();
       setSyncBehavior({
         type: "SYNC_ALL_ACCOUNTS",
@@ -58,12 +55,17 @@ function globalSyncRefreshControl<P>(
       onUserRefresh();
     }
 
+    function handleRefresh() {
+      if (refreshingRef.current) return;
+      onRefresh();
+    }
+
     useEffect(() => {
-      if (!IsFocused && refreshingRef.current) {
+      if (!isFocused && refreshingRef.current) {
         dispatch(setRefreshCompleted(Date.now()));
       }
       setRefreshing(false);
-    }, [IsFocused, dispatch]);
+    }, [isFocused, dispatch]);
 
     useEffect(() => {
       if (!refreshing) {
@@ -95,7 +97,7 @@ function globalSyncRefreshControl<P>(
             colors={shouldDisplayBalanceRefreshRework ? ["transparent"] : [colors.live]}
             tintColor={shouldDisplayBalanceRefreshRework ? "transparent" : colors.live}
             refreshing={shouldDisplayBalanceRefreshRework ? false : refreshing}
-            onRefresh={onRefresh}
+            onRefresh={handleRefresh}
             {...mergedRefreshControlProps}
           />
         }

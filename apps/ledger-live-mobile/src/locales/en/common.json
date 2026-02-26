@@ -2761,13 +2761,7 @@
     "refreshStatus": {
       "refreshing": "Refreshing - Last update {{timeAgo}}",
       "refreshingInitial": "Refreshing...",
-      "upToDate": "You're up to date",
-      "timeAgo": {
-        "justNow": "just now",
-        "minutesAgo": "{{count}}m ago",
-        "hoursAgo": "{{count}}h ago",
-        "daysAgo": "{{count}}d ago"
-      }
+      "upToDate": "You're up to date"
     }
   },
   "addAccountsModal": {

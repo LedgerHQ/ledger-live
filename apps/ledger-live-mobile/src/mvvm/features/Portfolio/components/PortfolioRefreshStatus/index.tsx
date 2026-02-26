@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useAnimatedReaction,
   withTiming,
   withDelay,
 } from "react-native-reanimated";
@@ -35,22 +36,27 @@ export const PortfolioRefreshStatus = () => {
   const height = useSharedValue(0);
   const contentOpacity = useSharedValue(1);
 
-  useEffect(() => {
-    if (isVisible) {
-      height.value = withDelay(32, withTiming(VISIBLE_HEIGHT, { duration: FADE_DURATION_MS }));
-      opacity.value = withDelay(32, withTiming(1, { duration: FADE_DURATION_MS }));
-    } else {
-      opacity.value = withTiming(0, { duration: FADE_DURATION_MS });
-      height.value = withTiming(0, { duration: FADE_DURATION_MS });
-    }
-  }, [isVisible, opacity, height]);
+  useAnimatedReaction(
+    () => isVisible,
+    visible => {
+      if (visible) {
+        height.value = withDelay(32, withTiming(VISIBLE_HEIGHT, { duration: FADE_DURATION_MS }));
+        opacity.value = withDelay(32, withTiming(1, { duration: FADE_DURATION_MS }));
+      } else {
+        opacity.value = withTiming(0, { duration: FADE_DURATION_MS });
+        height.value = withTiming(0, { duration: FADE_DURATION_MS });
+      }
+    },
+  );
 
-  // When isRefreshing changes, snap content to invisible so the incoming
-  // content fades in rather than appearing abruptly.
-  useEffect(() => {
-    contentOpacity.value = 0;
-    contentOpacity.value = withDelay(50, withTiming(1, { duration: CONTENT_FADE_MS }));
-  }, [isRefreshing, contentOpacity]);
+  useAnimatedReaction(
+    () => isRefreshing,
+    (_current, previous) => {
+      if (previous === null) return;
+      contentOpacity.value = 0;
+      contentOpacity.value = withDelay(50, withTiming(1, { duration: CONTENT_FADE_MS }));
+    },
+  );
 
   const animatedStyle = useAnimatedStyle(
     () => ({
