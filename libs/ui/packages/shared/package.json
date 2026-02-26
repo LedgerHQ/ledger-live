@@ -31,7 +31,6 @@
   ],
   "scripts": {
     "build": "tsc && node scripts/transpile",
-    "prepublishOnly": "npm run build",
     "clean": "rimraf lib",
     "unimported": "unimported"
   },
