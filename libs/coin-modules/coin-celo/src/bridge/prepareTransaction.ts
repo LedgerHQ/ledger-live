@@ -6,6 +6,7 @@ import { CeloAccount, Transaction } from "../types";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { CELO_STABLE_TOKENS } from "../constants";
 import { celoKit } from "../network/sdk";
+import { isSameTokenAsFee } from "./utils";
 
 export const prepareTransaction: AccountBridge<
   Transaction,
@@ -29,8 +30,30 @@ export const prepareTransaction: AccountBridge<
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
-  const amount =
-    transaction.useAllAmount && isTokenTransaction ? tokenAccount.balance : transaction.amount;
+  let amount = transaction.amount;
+  if (transaction.useAllAmount) {
+    if (isTokenTransaction) {
+      // Check if fee token matches send token
+      const shouldSubtractFee = isSameTokenAsFee(
+        isTokenTransaction,
+        tokenAccount.token.contractAddress,
+        transaction.feeCurrency,
+      );
+      amount = shouldSubtractFee
+        ? BigNumber.max(0, tokenAccount.balance.minus(fees))
+        : tokenAccount.balance;
+    } else {
+      // Native CELO transfer
+      const shouldSubtractFee = isSameTokenAsFee(
+        isTokenTransaction,
+        undefined,
+        transaction.feeCurrency,
+      );
+      amount = shouldSubtractFee
+        ? BigNumber.max(0, account.spendableBalance.minus(fees))
+        : account.spendableBalance;
+    }
+  }
 
   let token;
   if (isTokenTransaction) {

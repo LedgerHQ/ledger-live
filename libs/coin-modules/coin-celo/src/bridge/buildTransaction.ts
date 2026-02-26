@@ -9,7 +9,7 @@ import {
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
 } from "../constants";
-import { valueToHex } from "./utils";
+import { valueToHex, isSameTokenAsFee } from "./utils";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
@@ -181,7 +181,27 @@ const transactionValue = (account: CeloAccount, transaction: Transaction): BigNu
       const revoke = getVote(account, transaction.recipient, transaction.index);
       if (revoke?.amount) value = revoke.amount;
     } else {
-      value = BigNumber.max(0, account.spendableBalance.minus(transaction.fees || 0));
+      // For send operations, check if fee token matches send token
+      const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
+      const isTokenTransaction = tokenAccount?.type === "TokenAccount";
+      const tokenContractAddress = tokenAccount?.token?.contractAddress;
+
+      const shouldSubtractFee = isSameTokenAsFee(
+        isTokenTransaction,
+        tokenContractAddress,
+        transaction.feeCurrency,
+      );
+
+      if (shouldSubtractFee) {
+        // Fee is paid in same token - subtract fee from balance
+        const balance = isTokenTransaction
+          ? tokenAccount.spendableBalance
+          : account.spendableBalance;
+        value = BigNumber.max(0, balance.minus(transaction.fees || 0));
+      } else {
+        // Fee is paid in different token - can send full balance
+        value = isTokenTransaction ? tokenAccount.spendableBalance : account.spendableBalance;
+      }
     }
   }
 

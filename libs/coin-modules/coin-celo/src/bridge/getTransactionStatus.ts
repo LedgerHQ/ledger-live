@@ -14,6 +14,7 @@ import { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { CeloAllFundsWarning } from "../errors";
 import { celoKit } from "../network/sdk";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { isSameTokenAsFee } from "./utils";
 
 const kit = celoKit();
 
@@ -121,12 +122,18 @@ export const getTransactionStatus: AccountBridge<
     }
 
     if (isTokenTransaction) {
+      const shouldSumFeeForTotalSpent = isSameTokenAsFee(
+        isTokenTransaction,
+        tokenAccount?.token?.contractAddress,
+        transaction.feeCurrency,
+      );
+
       return {
         errors,
         warnings,
         estimatedFees,
         amount,
-        totalSpent: amount,
+        totalSpent: shouldSumFeeForTotalSpent ? amount.plus(estimatedFees) : totalSpent,
       };
     }
   }
