@@ -39,8 +39,8 @@ function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
 }
 
 function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
-  if (asset.type === "token") {
-    return asset.parent?.hasFailed ?? false;
+  if (asset.type === "token" && asset.parent) {
+    return asset.parent.hasFailed ?? false;
   }
 
   return op.hasFailed ?? false;
