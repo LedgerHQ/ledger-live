@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
-import { TFunction } from "i18next";
+import i18next from "i18next";
 import PortfolioPage from "../index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type {
@@ -15,6 +15,7 @@ import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
@@ -87,6 +88,24 @@ const defaultPollingMock = {
   stop: jest.fn(),
   wipe: jest.fn(),
 };
+jest.mock("LLD/hooks/useCategorizedAssets", () => ({
+  useCategorizedAssetsFromPortfolio: () => ({
+    categorizedAssets: createMockCategorizedAssets(),
+    isLoadingStablecoinTickers: false,
+  }),
+}));
+
+jest.mock("~/renderer/hooks/usePrice", () => ({
+  usePrice: () => ({
+    counterValue: null,
+    counterValueCurrency: { units: [{ name: "USD", code: "USD", magnitude: 2 }] },
+  }),
+}));
+
+jest.mock("@ledgerhq/live-countervalues-react", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+  useCalculate: () => undefined,
+}));
 
 const createPortfolioMock = (countervalueChange: {
   percentage: number | null;
@@ -116,11 +135,11 @@ describe("PortfolioView", () => {
     shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
+    shouldDisplayAssetSection: true,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    t: jest.fn((key: string) => key) as unknown as TFunction,
+    t: i18next.t,
   };
 
   beforeEach(() => {
@@ -532,6 +551,25 @@ describe("PortfolioView", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.queryByTestId("featured-buttons")).toBeNull();
     expect(screen.queryByTestId("balance-summary")).toBeNull();
+  });
+
+  describe("AssetSection", () => {
+    it("should render Assets section when shouldDisplayAssetSection is true", async () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={true} />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Bitcoin")).toBeVisible();
+      });
+
+      expect(screen.queryByText("Cryptos")).toBeVisible();
+      expect(screen.queryByText("Stablecoins")).toBeVisible();
+    });
+
+    it("should render AssetDistribution when shouldDisplayAssetSection is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
+
+      expect(screen.queryByText("Cryptos")).not.toBeInTheDocument();
+    });
   });
 
   describe("AddAccount CTA", () => {
