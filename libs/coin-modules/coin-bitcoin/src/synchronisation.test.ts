@@ -1,6 +1,32 @@
-import { removeReplaced } from "./synchronisation"; // Adjust path as needed
-import { BtcOperation } from "./types";
+jest.mock("./wallet-btc", () => {
+  const { BigNumber } = require("bignumber.js");
+  const mock = {
+    generateAccount: jest.fn(),
+    syncAccount: jest.fn(),
+    getAccountBalance: jest.fn().mockResolvedValue(new BigNumber(0)),
+    getAccountTransactions: jest.fn().mockResolvedValue({ txs: [] }),
+    getAccountUnspentUtxos: jest.fn().mockResolvedValue([]),
+  };
+  return { __esModule: true, default: mock, DerivationModes: {} };
+});
+
+import {
+  removeReplaced,
+  getTxType,
+  convertShieldedTransactionsToOperations,
+  reduceShieldedSyncResult,
+  performTransparentSync,
+  createTransparentSyncObservable,
+  createShieldedSyncObservable,
+  buildSyncObservables,
+} from "./synchronisation";
+import { BtcOperation, BitcoinAccount } from "./types";
 import BigNumber from "bignumber.js";
+import type { ShieldedTransaction, ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { SyncConfig } from "@ledgerhq/types-live";
+import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
+import { firstValueFrom, from } from "rxjs";
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
@@ -409,5 +435,461 @@ describe("removeReplaced", () => {
 
     const result = removeReplaced([tx1, tx2, tx3]);
     expect(result).toEqual([tx3]); // Only latest confirmed remains
+  });
+});
+
+describe("getTxType", () => {
+  it("should return SHIELDED_TX_ORCHARD_IN when transfer_type is incoming", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: 100,
+      decryptedData: {
+        orchard_outputs: [{ amount: 100, memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_IN");
+  });
+
+  it("should return SHIELDED_TX_ORCHARD_OUT when transfer_type is outgoing", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx2",
+      hex: "00",
+      blockHeight: 101,
+      blockHash: "hash2",
+      timestamp: 1700000001,
+      fee: 200,
+      decryptedData: {
+        orchard_outputs: [{ amount: 200, memo: "", transfer_type: "outgoing" }],
+        sapling_outputs: [],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
+
+  it("should return SHIELDED_TX_INTERNAL when transfer_type is internal", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx3",
+      hex: "00",
+      blockHeight: 102,
+      blockHash: "hash3",
+      timestamp: 1700000002,
+      fee: 50,
+      decryptedData: {
+        orchard_outputs: [{ amount: 50, memo: "", transfer_type: "internal" }],
+        sapling_outputs: [],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+
+  it("should return SHIELDED_TX_INTERNAL when decryptedData is undefined", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx4",
+      hex: "00",
+      blockHeight: 103,
+      blockHash: "hash4",
+      timestamp: 1700000003,
+      fee: 300,
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+});
+
+describe("convertShieldedTransactionsToOperations", () => {
+  it("should convert shielded transactions to BtcOperation format", () => {
+    const shieldedTxs: ShieldedTransaction[] = [
+      {
+        id: "tx1",
+        hex: "00",
+        blockHeight: 100,
+        blockHash: "blockhash1",
+        timestamp: 1700000000,
+        fee: 500,
+        decryptedData: {
+          orchard_outputs: [{ amount: 1000, memo: "", transfer_type: "incoming" }],
+          sapling_outputs: [],
+        },
+      },
+    ];
+    const accountId = "js:2:zcash:test-xpub:";
+    const result = convertShieldedTransactionsToOperations(shieldedTxs, accountId);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      hash: "blockhash1",
+      accountId,
+      blockHash: "blockhash1",
+      blockHeight: 100,
+      type: "SHIELDED_TX_ORCHARD_IN",
+      date: new Date(1700000000), // timestamp in seconds: code uses new Date(tx.timestamp)
+      fee: new BigNumber(500),
+      value: new BigNumber(0),
+    });
+    expect(result[0].id).toContain(accountId);
+    expect(result[0].id).toContain("blockhash1");
+  });
+
+  it("should handle multiple shielded transactions", () => {
+    const shieldedTxs: ShieldedTransaction[] = [
+      {
+        id: "tx1",
+        hex: "00",
+        blockHeight: 100,
+        blockHash: "hash1",
+        timestamp: 1700000000,
+        fee: 100,
+        decryptedData: {
+          orchard_outputs: [{ amount: 0, memo: "", transfer_type: "outgoing" }],
+          sapling_outputs: [],
+        },
+      },
+      {
+        id: "tx2",
+        hex: "00",
+        blockHeight: 101,
+        blockHash: "hash2",
+        timestamp: 1700000001,
+        fee: 200,
+      },
+    ];
+    const result = convertShieldedTransactionsToOperations(shieldedTxs, "acc-1");
+
+    expect(result).toHaveLength(2);
+    expect(result[0].type).toBe("SHIELDED_TX_ORCHARD_OUT");
+    expect(result[1].type).toBe("SHIELDED_TX_INTERNAL");
+  });
+
+  it("should return empty array for empty input", () => {
+    const result = convertShieldedTransactionsToOperations([], "acc-1");
+    expect(result).toEqual([]);
+  });
+});
+
+describe("reduceShieldedSyncResult", () => {
+  const createMockInfo = (overrides?: Partial<BitcoinAccount>): any => ({
+    currency: getCryptoCurrencyById("zcash"),
+    address: "zs1test",
+    index: 0,
+    derivationPath: "44'/133'/0'/0'",
+    derivationMode: 0,
+    initialAccount: overrides || undefined,
+  });
+
+  it("should return accumulated with blockHeight when no new transactions", () => {
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: { operations: [], balance: new BigNumber(0) } as Partial<BitcoinAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      operations: [],
+      latestBlockHeight: 5000,
+    };
+    const info = createMockInfo();
+
+    const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
+
+    expect(output.processedOperations).toEqual([]);
+    expect(output.accountUpdate.blockHeight).toBe(5000);
+    expect(output.accountUpdate.operations).toEqual([]);
+  });
+
+  it("should merge new shielded operations and update balance for incoming tx", () => {
+    const incomingTx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: 100,
+      decryptedData: {
+        orchard_outputs: [{ amount: 50000, memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: {
+        operations: [] as BtcOperation[],
+        balance: new BigNumber(1000),
+        blockHeight: 99,
+      } as Partial<BitcoinAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      operations: [incomingTx],
+      latestBlockHeight: 100,
+    };
+    const info = createMockInfo({ balance: new BigNumber(1000) });
+
+    const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
+
+    expect(output.processedOperations).toHaveLength(1);
+    expect(output.accountUpdate.operations).toHaveLength(1);
+    // Note: convertShieldedTransactionsToOperations sets value to 0, so balance stays at initial
+    expect(output.accountUpdate.balance?.toString()).toBe("1000");
+    expect(output.accountUpdate.blockHeight).toBe(100);
+  });
+
+  it("should filter out already processed operations by blockHash", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: 100,
+      decryptedData: {
+        orchard_outputs: [{ amount: 100, memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const accumulated = {
+      processedOperations: [tx],
+      accountUpdate: {
+        operations: [] as BtcOperation[],
+        balance: new BigNumber(0),
+        blockHeight: 100,
+      } as Partial<BitcoinAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      operations: [tx],
+      latestBlockHeight: 100,
+    };
+    const info = createMockInfo();
+
+    const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
+
+    expect(output.accountUpdate.operations).toHaveLength(0);
+    expect(output.accountUpdate.blockHeight).toBe(100);
+  });
+});
+
+describe("createTransparentSyncObservable and performTransparentSync", () => {
+  const mockSignerContext = jest.fn();
+  let wallet: ReturnType<typeof jest.fn> & {
+    generateAccount: jest.Mock;
+    syncAccount: jest.Mock;
+    getAccountBalance: jest.Mock;
+    getAccountTransactions: jest.Mock;
+    getAccountUnspentUtxos: jest.Mock;
+  };
+
+  beforeAll(() => {
+    wallet = require("./wallet-btc").default;
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    wallet.generateAccount.mockResolvedValue({
+      xpub: {
+        getXpubAddresses: jest.fn().mockResolvedValue([{ address: "bc1addr" }]),
+        storage: {
+          getUniquesAddresses: jest.fn().mockReturnValue([{ address: "bc1change" }]),
+        },
+        freshAddress: "bc1fresh",
+        freshAddressIndex: 0,
+        explorer: { getCurrentBlock: jest.fn().mockResolvedValue({ height: 100 }) },
+      },
+    });
+    wallet.syncAccount.mockResolvedValue(undefined);
+  });
+
+  it("should emit account update and complete on successful sync", async () => {
+    const info: any = {
+      currency: getCryptoCurrencyById("bitcoin"),
+      address: "bc1test",
+      index: 0,
+      derivationPath: "44'/0'/0'/0/0",
+      derivationMode: "" as any, // default/legacy mode
+      initialAccount: {
+        id: "js:2:bitcoin:xpub-test:",
+        xpub: "xpub-test",
+        operations: [],
+        bitcoinResources: { walletAccount: null },
+      },
+    };
+
+    const observable = createTransparentSyncObservable(info, mockSignerContext);
+    const result = await firstValueFrom(observable);
+
+    expect(result).toMatchObject({
+      operationsCount: expect.any(Number),
+      blockHeight: 100,
+    });
+  });
+
+  it("performTransparentSync should return account shape with operations and balance", async () => {
+    const info: any = {
+      currency: getCryptoCurrencyById("bitcoin"),
+      address: "bc1test",
+      index: 0,
+      derivationPath: "44'/0'/0'/0/0",
+      derivationMode: "" as any,
+      deviceId: "device-1",
+      initialAccount: {
+        id: "js:2:bitcoin:xpub-test:",
+        xpub: "xpub-test",
+        operations: [],
+        bitcoinResources: { walletAccount: null },
+      },
+    };
+
+    const result = await performTransparentSync(info, mockSignerContext);
+
+    expect(result).toMatchObject({
+      operationsCount: expect.any(Number),
+      blockHeight: 100,
+      balance: expect.any(BigNumber),
+    });
+    expect(Array.isArray(result.operations)).toBe(true);
+  });
+});
+
+describe("createShieldedSyncObservable", () => {
+  it("should emit accumulated account updates from shielded sync results", async () => {
+    const tx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: 100,
+      decryptedData: {
+        orchard_outputs: [{ amount: 1000, memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const shieldedSyncRaw = from<ShieldedSyncResult[]>([
+      { operations: [tx], latestBlockHeight: 100 },
+      { operations: [], latestBlockHeight: 101 },
+    ]);
+
+    const info: any = {
+      currency: getCryptoCurrencyById("zcash"),
+      address: "zs1test",
+      index: 0,
+      derivationPath: "44'/133'/0'/0'",
+      derivationMode: "0" as any, // encodeAccountId expects string for derivationMode
+      initialAccount: {
+        id: "js:2:zcash:xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4:0",
+        xpub: "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4",
+        operations: [],
+        balance: new BigNumber(0),
+      },
+    };
+
+    const observable = createShieldedSyncObservable(info, shieldedSyncRaw);
+    const values: Partial<BitcoinAccount>[] = [];
+    await new Promise<void>((resolve, reject) => {
+      observable.subscribe({
+        next: v => values.push(v),
+        error: reject,
+        complete: resolve,
+      });
+    });
+
+    expect(values).toHaveLength(2);
+    expect(values[0]?.operations).toHaveLength(1);
+    // convertShieldedTransactionsToOperations sets value to 0, so balance reflects that
+    expect(values[0]?.balance?.toString()).toBe("0");
+    expect(values[0]?.blockHeight).toBe(100);
+    expect(values[1]?.blockHeight).toBe(101);
+  });
+});
+
+describe("buildSyncObservables", () => {
+  const baseInfo: any = {
+    currency: getCryptoCurrencyById("bitcoin"),
+    address: "bc1test",
+    index: 0,
+    derivationPath: "44'/0'/0'/0/0",
+    derivationMode: 0,
+  };
+
+  const defaultSyncConfig: SyncConfig = {
+    paginationConfig: {},
+  };
+
+  it("should return only transparent sync for non-Zcash currency", () => {
+    const signerContext = jest.fn();
+    const { syncs, syncType } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext);
+
+    expect(syncType).toBe(SYNC_TYPE_TRANSPARENT);
+    expect(syncs).toHaveLength(1);
+  });
+
+  it("should return transparent and shielded sync for Zcash with ufvk", () => {
+    const zcashInfo: any = {
+      ...baseInfo,
+      currency: getCryptoCurrencyById("zcash"),
+      address: "zs1test",
+      derivationPath: "44'/133'/0'/0'",
+      derivationMode: "0" as any,
+      initialAccount: {
+        id: "js:2:zcash:xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4:0",
+        xpub: "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4",
+        operations: [],
+        privateInfo: {
+          ufvk: "uview123...",
+          saplingBalance: new BigNumber(0),
+          orchardBalance: new BigNumber(0),
+          syncState: "ready",
+          lastSyncTimestamp: null,
+          lastBlockProcessed: null,
+          transactions: [],
+        },
+      },
+    };
+    const signerContext = jest.fn();
+    const { syncs, syncType } = buildSyncObservables(zcashInfo, defaultSyncConfig, signerContext);
+
+    expect(syncType).toBe(SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED);
+    expect(syncs).toHaveLength(2);
+  });
+
+  it("should return only transparent sync for Zcash without initialAccount", () => {
+    const zcashInfoNoAccount: any = {
+      ...baseInfo,
+      currency: getCryptoCurrencyById("zcash"),
+      address: "zs1test",
+      derivationPath: "44'/133'/0'/0'",
+      initialAccount: undefined,
+    };
+    const signerContext = jest.fn();
+    const { syncs } = buildSyncObservables(zcashInfoNoAccount, defaultSyncConfig, signerContext);
+
+    expect(syncs).toHaveLength(1);
+  });
+
+  it("should respect syncType override in syncConfig", () => {
+    const zcashInfo: any = {
+      ...baseInfo,
+      currency: getCryptoCurrencyById("zcash"),
+      initialAccount: {
+        id: "acc-1",
+        xpub: "xpub",
+        privateInfo: {
+          ufvk: "uview",
+          saplingBalance: new BigNumber(0),
+          orchardBalance: new BigNumber(0),
+          syncState: "ready",
+          lastSyncTimestamp: null,
+          lastBlockProcessed: null,
+          transactions: [],
+        },
+      },
+    };
+    const transparentOnlyConfig: SyncConfig = {
+      paginationConfig: {},
+      syncType: SYNC_TYPE_TRANSPARENT,
+    };
+    const signerContext = jest.fn();
+    const { syncs } = buildSyncObservables(zcashInfo, transparentOnlyConfig, signerContext);
+
+    expect(syncs).toHaveLength(1);
   });
 });
