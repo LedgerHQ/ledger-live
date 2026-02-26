@@ -1,5 +1,21 @@
 # @ledgerhq/zcash-shielded
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#14354](https://github.com/LedgerHQ/ledger-live/pull/14354) [`91450b8`](https://github.com/LedgerHQ/ledger-live/commit/91450b87ab99edf0ebb062802b2f2a21d0a5deb5) Thanks [@semeano](https://github.com/semeano)! - ZCash sync account update
+
+- [#13927](https://github.com/LedgerHQ/ledger-live/pull/13927) [`cab6ad5`](https://github.com/LedgerHQ/ledger-live/commit/cab6ad52c1eefa2d4af3ee002e5ffbf866d84234) Thanks [@alevito](https://github.com/alevito)! - Exposes a new method findShieldedTxsInBlock for finding shielded transactions in block
+
+- [#14182](https://github.com/LedgerHQ/ledger-live/pull/14182) [`b696228`](https://github.com/LedgerHQ/ledger-live/commit/b696228f631aa9371f8d607ce5081abb389af912) Thanks [@pvoliveira](https://github.com/pvoliveira)! - Add findBlockHeight implementation
+
+### Patch Changes
+
+- Updated dependencies [[`91450b8`](https://github.com/LedgerHQ/ledger-live/commit/91450b87ab99edf0ebb062802b2f2a21d0a5deb5), [`17149ee`](https://github.com/LedgerHQ/ledger-live/commit/17149ee26eeef8a600d650a6f4903c52320a0d8d), [`b7dec5c`](https://github.com/LedgerHQ/ledger-live/commit/b7dec5c2a41520114593701c82192ff8ae8ce06f), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8)]:
+  - @ledgerhq/coin-bitcoin@0.32.0-next.0
+  - @ledgerhq/live-network@2.3.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

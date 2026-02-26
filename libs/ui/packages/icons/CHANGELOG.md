@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
+
 ## 0.19.0
 
 ### Minor Changes

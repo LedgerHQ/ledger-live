@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#14604](https://github.com/LedgerHQ/ledger-live/pull/14604) [`b16f564`](https://github.com/LedgerHQ/ledger-live/commit/b16f564dbdd61c0e85e0280ba049d737395251aa) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Bump wallet api packages
+
 ## 0.22.0
 
 ### Minor Changes

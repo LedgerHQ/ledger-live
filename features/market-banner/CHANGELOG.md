@@ -1,5 +1,15 @@
 # @features/market-banner
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
+
+- [#14742](https://github.com/LedgerHQ/ledger-live/pull/14742) [`85e3e3e`](https://github.com/LedgerHQ/ledger-live/commit/85e3e3ed96e6298a6fa7dd162d19226b99012647) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix import duplicates eslint rule
+
+- [#14135](https://github.com/LedgerHQ/ledger-live/pull/14135) [`9d5c4c6`](https://github.com/LedgerHQ/ledger-live/commit/9d5c4c6a0baec0292720d522b3d827a9c2c55247) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): update lwd and dependent libs to react 19
+
 ## 0.2.0
 
 ### Minor Changes
