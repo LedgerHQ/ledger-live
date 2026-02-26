@@ -209,7 +209,11 @@
       "BURN" : "Verbrannt",
       "ASSOCIATE_TOKEN" : "Token zuordnen",
       "CONTRACT_CALL" : "Vertragsaufruf",
-      "UPDATE_ACCOUNT" : "Aktualisiertes Konto"
+      "UPDATE_ACCOUNT" : "Aktualisiertes Konto",
+      "SHIELDED_TX_SAPLING_IN" : "Empfangen",
+      "SHIELDED_TX_SAPLING_OUT" : "Gesendet",
+      "SHIELDED_TX_ORCHARD_IN" : "Empfangen",
+      "SHIELDED_TX_ORCHARD_OUT" : "Gesendet"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -268,6 +272,8 @@
     "minute" : "Minute",
     "minute_other" : "Minuten",
     "minute_short" : "Min.",
+    "second" : "Sekunde",
+    "second_other" : "Sekunden",
     "second_short" : "Sek.",
     "hour" : "Stunde",
     "hour_other" : "Stunden",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "Die Netzwerkgebühren können nicht neu geladen werden",
       "warningDescription" : "Möglicherweise sind die Gebühren-Presets veraltet."
+    },
+    "customFees" : {
+      "title" : "Angepasste Gebühren",
+      "confirm" : "Bestätigen",
+      "maxFee" : "Max. Gebühr ({{unit}})",
+      "maxPriorityFee" : "Max. Prioritätsgebühr ({{unit}})",
+      "gasLimit" : "Gaslimit ({{unit}})",
+      "feePerByte" : "Gebührenbetrag ({{unit}})",
+      "suggested" : "Empfohlen",
+      "nextBlock" : "Nächster Block",
+      "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
+      "invalidValue" : "Enter a valid number",
+      "belowMinimum" : "Minimum is {{min}}",
+      "maxFeeBelowPriorityFee" : "Max fee must be greater than or equal to max priority fee"
+    },
+    "coinControl" : {
+      "title" : "Coin-Kontrolle"
     }
   },
   "releaseNotes" : {
-    "title" : "Informationen zur Version",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Versionshinweise",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Verstanden"
   },
   "troubleshootNetwork" : {
     "title" : "Fehlersuche im Netzwerk",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Concordium-Konto hinzufügen",
+        "acknowledge" : {
+          "title" : "Bestätigung",
+          "description" : "Concordium verlangt eine externe Identitätsprüfung. Bitte beachte die folgenden wichtigen Sicherheitshinweise:",
+          "list" : {
+            "1" : "<0>Keine Adressverifizierung</0>: Dein Ledger-Gerät kann Concordium-Empfangsadressen nicht verifizieren. Bitte verifiziere Adressen manuell, bevor du Geld empfängst.",
+            "2" : "<0>Die Concordium ID-App verwendet einen separaten Seed</0>: Du wirst in der Concordium-App 24 NEUE Wörter erstellen. Verwende KEINESFALLS deine Ledger-Seedphrase.",
+            "3" : "<0>Du wirst nach außerhalb von Ledger Wallet weitergeleitet</0>: Die Identitätsverifizierung erfolgt in der externen Concordium Wallet-App. Dies ist gemäß dem Blockchain-Protokoll von Concordium zwingend.",
+            "4" : "<0>Die Signierung der Transaktion bleibt sicher</0>: Nur dein Ledger-Gerät kann Transaktionen signieren und Konten erstellen."
+          },
+          "allow" : "Zustimmen"
+        },
+        "identity" : {
+          "title" : "Verbinden",
+          "account" : "Konto",
+          "newAccount" : "Neues Konto",
+          "init" : "Durch die Auswahl von „Zustimmen“ gibst du zum Ausdruck, mit der für die Verifizierung deines Kontos erforderlichen KYC-Identitätsprüfung fortfahren zu wollen.",
+          "scanQRCode" : "Scanne den QR-Code mit deinem Mobilgerät, um deine Concordium ID-App zu verbinden. <0>Weitere Informationen</0>",
+          "ledgerSeedWarning" : "<0>KEINESFALLS</0> deine Ledger-Seedphrase für die Concordium ID-App verwenden.",
+          "downloadApp" : "Concordium ID-App herunterladen",
+          "connecting" : "Die Verbindung mit der Concordium ID-App wird hergestellt …",
+          "onboarded" : "Eingerichtete Konten",
+          "success" : "Die Verbindung mit der Concordium ID-App wurde erfolgreich hergestellt.",
+          "error" : "Das Einrichten des neuen Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "status" : {
+            "prepare" : "Die Kontoeinrichtung wird vorbereitet …",
+            "submit" : "Konto wird eingerichtet …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "create" : {
+          "title" : "Konto erstellen",
+          "init" : {
+            "title" : "Die Verbindung mit der Concordium ID-App wurde erfolgreich hergestellt"
+          },
+          "prepare" : {
+            "title" : "Zum Erstellen eines Kontos gib den folgenden Code in die Concordium ID-App ein",
+            "resendButton" : "Bestätigung erneut senden",
+            "resendDescription" : "Die Bestätigung kann in <0>{{count}} {{unit}}</0> erneut gesendet werden"
+          },
+          "success" : "Dein Concordium-Konto wurde erfolgreich erstellt.",
+          "error" : "Das Erstellen des Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "error429" : "Zu viele Anfragen. Bitte warte und versuche es später noch einmal.",
+          "button" : "Erstellen",
+          "processing" : "In Bearbeitung …",
+          "status" : {
+            "prepare" : "Die Kontoerstellung wird vorbereitet …",
+            "submit" : "Das Konto wird erstellt …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "finish" : {
+          "title" : "Bestätigung"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "Deine Concordium-Adresse kann zurzeit nicht verifiziert werden. Bitte überprüfe dies, indem du deine Adresse in den Concordium-Explorer einfügst.",
+        "verifyLink" : "Bestätigen"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "Ungültige Memolänge; zulässig sind maximal 64 Zeichen",
       "description" : "Für Cardano-Memos gilt eine Längenbeschränkung. Bitte reduziere die Memolänge."
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo überschreitet zulässige Länge",
+      "description" : "Dein Memo hat eine Länge von {{memoLength}} Byte. Zulässig ist jedoch nur eine Länge von {{maxLength}} Byte. Bitte reduziere die Memogröße."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Saldo zeigen",
-        "pausedAt" : "Pausiert bei ",
+        "startSync" : "Synchronisierung starten",
+        "stopSync" : "Synchronisierung anhalten",
+        "lastProcessedBlock" : "Zuletzt verarbeiteter Block: {{block}}. {{missing}} Blöcke fehlen.",
         "lastSync" : "Letzte Synchronisierung: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Wiederherstellungshöhe",
+        "tooltip" : "Die Wiederherstellungshöhe ist der Punkt auf der Blockchain, an dem deine Wallet mit der Suche nach deinem Guthaben beginnt."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "Synchronisierung starten",
-      "datepicker" : {
-        "label" : "Wiederherstellungshöhe",
-        "tooltip" : "Die Wiederherstellungshöhe ist der Punkt auf der Blockchain, an dem deine Wallet mit der Suche nach deinem Guthaben beginnt."
       }
+    },
+    "operationDetails" : {
+      "txType" : "Transaction type",
+      "transparentTx" : "Transparent",
+      "shieldedSaplingTx" : "🛡 Private (Sapling)",
+      "shieldedOrchardTx" : "🛡 Private (Orchard)"
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "Guthaben, das öffentlich einsehbar ist",
       "privateBalance" : "Privater Saldo",
       "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Öffentlich",
+        "private" : "Privat"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Neues Update verfügbar",
+    "downloadProgress" : "{{progress}} %",
+    "errorTryAgain" : "Fehler beim Update, bitte wiederholen",
+    "installAndRelaunch" : "Update installieren und neu starten"
   }
 }
