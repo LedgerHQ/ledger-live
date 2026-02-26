@@ -79,6 +79,7 @@ describe("NotificationsPrompt Integration", () => {
     dateOfNextAllowedRequest,
     alreadyDelayedToLater,
     variant = ABTestingVariants.variantB,
+    skipStorageSetup = false,
   }: {
     actionSource?: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">;
     osPermission: AuthorizationStatusType;
@@ -87,14 +88,17 @@ describe("NotificationsPrompt Integration", () => {
     dateOfNextAllowedRequest?: Date;
     alreadyDelayedToLater?: boolean;
     variant?: ABTestingVariants;
+    skipStorageSetup?: boolean;
   }) {
     mockHasPermission.mockResolvedValue(osPermission);
     mockRequestPermission.mockResolvedValue(osPermission);
-    await setPushNotificationsDataOfUserInStorage({
-      lastActionAt,
-      dateOfNextAllowedRequest,
-      alreadyDelayedToLater,
-    });
+    if (!skipStorageSetup) {
+      await setPushNotificationsDataOfUserInStorage({
+        lastActionAt,
+        dateOfNextAllowedRequest,
+        alreadyDelayedToLater,
+      });
+    }
 
     function SetupComponent() {
       const [isReady, setIsReady] = useState(false);
@@ -853,6 +857,21 @@ describe("NotificationsPrompt Integration", () => {
         act(() => jest.runOnlyPendingTimers());
         expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
       });
+    });
+  });
+
+  describe("protected onboarding flow", () => {
+    it("should skip permissions sync and show notifications drawer after an action", async () => {
+      const { tryTriggerDrawer } = await setup({
+        skipStorageSetup: true,
+        osPermission: AuthorizationStatus.NOT_DETERMINED,
+        appNotifications: true,
+        actionSource: "onboarding",
+      });
+
+      await tryTriggerDrawer();
+
+      expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
     });
   });
 
