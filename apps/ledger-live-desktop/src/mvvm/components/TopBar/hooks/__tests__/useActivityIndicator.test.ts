@@ -5,84 +5,37 @@ import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 const mockTriggerRefresh = jest.fn();
 
+const defaultPortfolioBalanceSync = {
+  isBalanceLoading: false,
+  stableSyncPending: false,
+  hasCvOrBridgeError: false,
+  hasWalletSyncError: false,
+  triggerRefresh: mockTriggerRefresh,
+};
+
+jest.mock("LLD/hooks/usePortfolioBalanceSync", () => ({
+  usePortfolioBalanceSync: jest.fn(() => defaultPortfolioBalanceSync),
+}));
+
+const mockUsePortfolioBalanceSync = jest.requireMock(
+  "LLD/hooks/usePortfolioBalanceSync",
+).usePortfolioBalanceSync;
+
 // Bridge: useActivityIndicator + useAccountsSyncStatus both use this package
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
-  useBridgeSync: jest.fn(() => mockBridgeSync),
+  useBridgeSync: jest.fn(),
   useGlobalSyncState: jest.fn(() => ({ pending: false, error: null })),
   useBatchAccountsSyncState: jest.fn(({ accounts }: { accounts: { id: string }[] }) =>
     accounts.map(account => ({ syncState: { pending: false, error: null }, account })),
   ),
 }));
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual<typeof import("@ledgerhq/live-countervalues-react")>(
-    "@ledgerhq/live-countervalues-react",
-  ),
-  useCountervaluesPolling: jest.fn(() => ({
-    pending: false,
-    error: null,
-    poll: mockCvPoll,
-    start: jest.fn(),
-    stop: jest.fn(),
-    wipe: jest.fn(),
-  })),
-}));
-
-jest.mock("LLD/features/WalletSync/components/WalletSyncContext", () => ({
-  useWalletSyncUserState: jest.fn(() => ({
-    visualPending: false,
-    walletSyncError: null,
-    onUserRefresh: mockOnUserRefresh,
-  })),
-}));
-jest.mock("LLD/hooks/usePortfolioSyncStatus", () => ({
-  usePortfolioSyncStatus: jest.fn(),
-}));
-
-jest.mock("LLD/hooks/usePortfolioSyncStatus", () => ({
-  usePortfolioSyncStatus: jest.fn(() => ({ isColdStart: false })),
-}));
-
-const mockUseGlobalSyncState = jest.requireMock(
-  "@ledgerhq/live-common/bridge/react/index",
-).useGlobalSyncState;
-const mockUseCountervaluesPolling = jest.requireMock(
-  "@ledgerhq/live-countervalues-react",
-).useCountervaluesPolling;
-const mockUseWalletSyncUserState = jest.requireMock(
-  "LLD/features/WalletSync/components/WalletSyncContext",
-).useWalletSyncUserState;
-const mockUsePortfolioSyncStatus = jest.requireMock(
-  "LLD/hooks/usePortfolioSyncStatus",
-).usePortfolioSyncStatus;
-
 const defaultInitialState: { accounts: unknown[] } = { accounts: [] };
-
-const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
-const mockAccount = genAccount("btc-1", { currency: bitcoinCurrency });
-
-function setDefaultMocks() {
-  mockUsePortfolioBalanceSync.mockReturnValue(defaultPortfolioBalanceSync);
-}
 
 describe("useActivityIndicator", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseGlobalSyncState.mockReturnValue({ pending: false, error: null });
-    mockUseCountervaluesPolling.mockReturnValue({
-      pending: false,
-      error: null,
-      poll: mockCvPoll,
-      start: jest.fn(),
-      stop: jest.fn(),
-      wipe: jest.fn(),
-    });
-    mockUseWalletSyncUserState.mockReturnValue({
-      visualPending: false,
-      walletSyncError: null,
-      onUserRefresh: mockOnUserRefresh,
-    });
-    mockUsePortfolioSyncStatus.mockReturnValue({ isColdStart: false });
+    mockUsePortfolioBalanceSync.mockReturnValue(defaultPortfolioBalanceSync);
   });
 
   it("returns hasAccounts, handleSync, isError, isRotating, tooltip, icon", () => {
@@ -94,6 +47,7 @@ describe("useActivityIndicator", () => {
       hasAccounts: true,
       isError: false,
       isRotating: false,
+      isDisabled: false,
     });
     expect(result.current.tooltip).toBeDefined();
     expect(typeof result.current.tooltip).toBe("string");
@@ -101,8 +55,11 @@ describe("useActivityIndicator", () => {
     expect(result.current.icon).toBe(Refresh);
   });
 
-  it("returns isRotating true when countervalues polling is pending", () => {
-    mockUseCountervaluesPolling.mockReturnValue({ ...defaultCVPolling, pending: true });
+  it("returns isRotating and isDisabled true when balance is loading (e.g. countervalues polling)", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      isBalanceLoading: true,
+    });
 
     const { result } = renderHook(() => useActivityIndicator(), {
       initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
@@ -113,7 +70,10 @@ describe("useActivityIndicator", () => {
   });
 
   it("returns isRotating true on cold start when portfolio balance is not available", () => {
-    mockUsePortfolioSyncStatus.mockReturnValue({ isColdStart: true });
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      isBalanceLoading: true,
+    });
 
     const { result } = renderHook(() => useActivityIndicator(), {
       initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
@@ -123,21 +83,11 @@ describe("useActivityIndicator", () => {
     expect(result.current.tooltip).toBeNull();
   });
 
-  it("returns isRotating true when global sync state is pending", () => {
-    mockUseGlobalSyncState.mockReturnValue({ pending: true, error: null });
-
-    const { result } = renderHook(() => useActivityIndicator(), {
-      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
-    });
-
-    expect(result.current.isRotating).toBe(true);
-  });
-
-  it("returns isRotating true when wallet sync visualPending is true (even without user click)", () => {
-    mockUseWalletSyncUserState.mockReturnValue({
-      visualPending: true,
-      walletSyncError: null,
-      onUserRefresh: mockOnUserRefresh,
+  it("returns isRotating true when sync is pending", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      stableSyncPending: true,
+      isBalanceLoading: true,
     });
 
     const { result } = renderHook(() => useActivityIndicator(), {
@@ -147,12 +97,18 @@ describe("useActivityIndicator", () => {
     expect(result.current.isRotating).toBe(true);
   });
 
-  it("returns isRotating true after user click even when sync is not pending", () => {
+  it("returns isRotating true after user click when sync is pending", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      stableSyncPending: true,
+      isBalanceLoading: true,
+    });
+
     const { result } = renderHook(() => useActivityIndicator(), {
       initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
     });
 
-    expect(result.current.isRotating).toBe(false);
+    expect(result.current.isRotating).toBe(true);
 
     act(() => {
       result.current.handleSync();

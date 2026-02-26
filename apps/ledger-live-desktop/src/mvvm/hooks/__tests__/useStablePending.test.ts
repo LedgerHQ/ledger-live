@@ -1,6 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { useStablePending } from "../useStablePending";
-import { POLLING_FINISHED_DELAY_MS } from "LLD/features/Portfolio/utils/constants";
+import { POLLING_FINISHED_DELAY_MS } from "LLD/utils/constants";
 
 function renderStablePending(initialPending: boolean, delayMs: number = POLLING_FINISHED_DELAY_MS) {
   return renderHook((props: { pending: boolean }) => useStablePending(props.pending, delayMs), {

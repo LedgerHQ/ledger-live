@@ -10,6 +10,7 @@ export const BalanceView = ({
   valueChange,
   navigateToAnalytics,
   handleKeyDown,
+  isLoading,
   isColdStart,
   shouldDisplayBalanceRefreshRework,
 }: BalanceViewProps) => {
@@ -27,7 +28,7 @@ export const BalanceView = ({
         formatter={formatter}
         hidden={discreet}
         animate={shouldDisplayBalanceRefreshRework}
-        loading={shouldDisplayBalanceRefreshRework && isColdStart}
+        loading={shouldDisplayBalanceRefreshRework && isLoading}
         data-testid="portfolio-total-balance"
       />
       {!isColdStart && <Trend valueChange={valueChange} />}

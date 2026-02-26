@@ -9,6 +9,7 @@ export interface BalanceViewProps {
   readonly navigateToAnalytics: () => void;
   readonly handleKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
   readonly isColdStart: boolean;
+  readonly isLoading: boolean;
   readonly shouldDisplayBalanceRefreshRework: boolean;
 }
 

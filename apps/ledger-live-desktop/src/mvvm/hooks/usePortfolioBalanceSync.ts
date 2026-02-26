@@ -5,15 +5,15 @@ import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
-import { usePortfolio } from "@ledgerhq/live-countervalues-react/portfolio";
+import { usePortfolioThrottled } from "@ledgerhq/live-countervalues-react/portfolio";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
-import { NEW_FLOW_RANGE, POLLING_FINISHED_DELAY_MS } from "LLD/features/Portfolio/utils/constants";
 import { useStablePending } from "LLD/hooks/useStablePending";
+import { DEFAULT_PORTFOLIO_RANGE, POLLING_FINISHED_DELAY_MS } from "LLD/utils/constants";
 
 export interface UsePortfolioBalanceSyncOptions {
-  /** When true, use the user's selected time range instead of NEW_FLOW_RANGE (e.g. for legacy Portfolio views). */
+  /** When true, use the user's selected time range instead of DEFAULT_PORTFOLIO_RANGE (e.g. for legacy Portfolio views). */
   readonly legacyRange?: boolean;
 }
 
@@ -21,7 +21,8 @@ export interface UsePortfolioBalanceSyncOptions {
  * Single source for portfolio balance and all sync state that affects it or the TopBar indicator.
  * Used by Balance (loading shimmer) and TopBar activity indicator (rotate, error, refresh).
  *
- * - Portfolio: accounts, range, counterValue → balanceAvailable, isColdStart
+ * - Portfolio: accounts, range, counterValue → balanceAvailable, isColdStart.
+ *   Uses usePortfolioThrottled to limit recomputation frequency and avoid heavy work on every render.
  * - Sync state: CV polling + bridge sync + wallet sync → isSyncPending, stableSyncPending, errors
  * - isBalanceLoading = cold start or any sync pending (CV, bridge, wallet) so Balance shows loading
  *   whenever the data that drives it is being refreshed.
@@ -33,9 +34,9 @@ export function usePortfolioBalanceSync(options: UsePortfolioBalanceSyncOptions 
   const counterValue = useSelector(counterValueCurrencySelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
-  const range = legacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
+  const range = legacyRange ? selectedTimeRange : DEFAULT_PORTFOLIO_RANGE;
 
-  const portfolio = usePortfolio({
+  const portfolio = usePortfolioThrottled({
     accounts,
     range,
     to: counterValue,

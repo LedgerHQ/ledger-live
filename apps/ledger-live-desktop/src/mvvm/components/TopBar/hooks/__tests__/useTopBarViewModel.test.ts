@@ -33,6 +33,7 @@ describe("useTopBarViewModel", () => {
       isError: false,
       tooltip: "Refresh",
       icon: Refresh,
+      isDisabled: false,
     });
     mockUseSettings.mockReturnValue({
       handleSettings: mockHandleSettings,
@@ -82,6 +83,7 @@ describe("useTopBarViewModel", () => {
       isError: false,
       tooltip: "Refresh",
       icon: Refresh,
+      isDisabled: false,
     });
 
     const { result } = renderHook(() => useTopBarViewModel());
@@ -104,6 +106,7 @@ describe("useTopBarViewModel", () => {
       isError: true,
       tooltip: "Error",
       icon: Refresh,
+      isDisabled: true,
     });
 
     const { result } = renderHook(() => useTopBarViewModel());

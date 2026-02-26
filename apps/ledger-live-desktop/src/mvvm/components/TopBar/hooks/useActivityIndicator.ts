@@ -70,6 +70,7 @@ export const useActivityIndicator = () => {
     handleSync,
     isError,
     isRotating,
+    isDisabled: isRotating,
     tooltip,
     icon,
   };

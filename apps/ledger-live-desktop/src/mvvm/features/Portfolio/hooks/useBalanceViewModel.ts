@@ -13,7 +13,6 @@ import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
-import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -32,7 +31,7 @@ export const useBalanceViewModel = (
   const discreet = useSelector(discreetModeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
-  const { portfolio, counterValue, isBalanceLoading } = usePortfolioBalanceSync({
+  const { portfolio, counterValue, isBalanceLoading, isColdStart } = usePortfolioBalanceSync({
     legacyRange,
   });
 

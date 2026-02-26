@@ -358,7 +358,6 @@ describe("PortfolioView", () => {
 
   describe("Trend", () => {
     it("should render Trend with positive percentage and display separator with Today label", () => {
-      mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: 0.0542, value: 5000 }));
       mockUsePortfolioThrottled.mockReturnValue(
         createPortfolioMock({ percentage: 0.0542, value: 5000 }),
       );
@@ -380,7 +379,6 @@ describe("PortfolioView", () => {
     });
 
     it("should render Trend with negative percentage", () => {
-      mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: -0.0315, value: -3000 }));
       mockUsePortfolioThrottled.mockReturnValue(
         createPortfolioMock({ percentage: -0.0315, value: -3000 }),
       );
