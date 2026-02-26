@@ -12,16 +12,6 @@ import IsTermOfUseUpdated from "~/renderer/components/IsTermOfUseUpdated";
 import ModalsLayer from "~/renderer/ModalsLayer";
 import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 
-jest.mock("~/renderer/store", () => ({}));
-jest.mock("@braze/web-sdk", () => ({}));
-// Only load TermOfUseUpdate modal to avoid ModularDrawer/families/asset-aggregation chain
-jest.mock("~/renderer/modals", () => {
-  const TermOfUseUpdate = require("~/renderer/modals/TermOfUseUpdate").default;
-  return {
-    __esModule: true,
-    default: { MODAL_TERM_OF_USE_UPDATE: TermOfUseUpdate },
-  };
-});
 // Test in Wallet V4 layout (route "/" with lwdWallet40 enabled uses the V4 branch in MainAppLayout).
 // Include vaultSigner and devicesModelList so selectors used by the full layout (LiveAppDrawer, NotificationIndicator) don't crash.
 const vaultSigner = { enabled: false, host: "", token: "", workspace: "" };
