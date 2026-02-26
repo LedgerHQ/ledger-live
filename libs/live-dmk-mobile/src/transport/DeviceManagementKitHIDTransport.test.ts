@@ -1,5 +1,4 @@
 import { BehaviorSubject, Observable, Subject } from "rxjs";
-import { waitFor } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   ConnectedDevice,
@@ -17,9 +16,7 @@ import {
   DeviceManagementKitHIDTransport,
   activeDeviceSessionSubject,
 } from "./DeviceManagementKitHIDTransport";
-import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { getDeviceModel } from "@ledgerhq/devices";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 
 function createMockDMK(): DeviceManagementKit {
@@ -225,99 +222,6 @@ describe("DeviceManagementKitHIDTransport", () => {
         device: mockedDiscoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
-    });
-  });
-
-  describe("listen", () => {
-    let subscription: TransportSubscription | undefined = undefined;
-
-    beforeEach(() => {
-      jest.resetAllMocks();
-      if (subscription) {
-        subscription.unsubscribe();
-        subscription = undefined;
-      }
-    });
-
-    it("should listen to available devices", async () => {
-      // given
-      const mockDMK = createMockDMK();
-      const staticTransport = DeviceManagementKitHIDTransport;
-      const observer = new Subject();
-      const mockedDiscoveredDevice = createMockDiscoveredDevice({ id: "deviceId" });
-      const discoveredDevices: DiscoveredDevice[] = [mockedDiscoveredDevice];
-      jest.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
-        new Observable(subscriber => {
-          subscriber.next(discoveredDevices);
-        }),
-      );
-      jest.spyOn(observer, "next");
-
-      // when
-      subscription = staticTransport.listen(observer, undefined, mockDMK);
-
-      // then
-      expect(observer.next).toHaveBeenCalledWith({
-        type: "add",
-        descriptor: "deviceId",
-        device: mockedDiscoveredDevice,
-        deviceModel: getDeviceModel(DeviceModelId.europa),
-      });
-    });
-
-    it("should emit one add and one remove", async () => {
-      // given
-      const mockDMK = createMockDMK();
-      const staticTransport = DeviceManagementKitHIDTransport;
-      const observer = new Subject();
-      const discoveredDevice = createMockDiscoveredDevice({ id: "deviceId" });
-
-      const discoveredDevicesSubject = new Subject<DiscoveredDevice[]>();
-
-      jest
-        .mocked(mockDMK.listenToAvailableDevices)
-        .mockReturnValue(discoveredDevicesSubject.asObservable());
-      jest.spyOn(observer, "next");
-      // when
-      subscription = staticTransport.listen(observer, undefined, mockDMK);
-
-      discoveredDevicesSubject.next([discoveredDevice]);
-      discoveredDevicesSubject.next([]);
-
-      // then
-      await waitFor(() => {
-        expect(observer.next).toHaveBeenNthCalledWith(1, {
-          type: "add",
-          descriptor: "deviceId",
-          device: discoveredDevice,
-          deviceModel: getDeviceModel(DeviceModelId.europa),
-        });
-        expect(observer.next).toHaveBeenNthCalledWith(2, {
-          type: "remove",
-          descriptor: "deviceId",
-          device: discoveredDevice,
-        });
-      });
-    });
-
-    it("should emit error if dmk listenToAvailableDevices throws", async () => {
-      // given
-      const mockDMK = createMockDMK();
-      const staticTransport = DeviceManagementKitHIDTransport;
-      const observer = new Subject();
-      const error = new Error("error");
-      jest.mocked(mockDMK.listenToAvailableDevices).mockReturnValue(
-        new Observable(subscriber => {
-          subscriber.error(error);
-        }),
-      );
-      jest.spyOn(observer, "error");
-
-      // when
-      subscription = staticTransport.listen(observer, undefined, mockDMK);
-
-      // then
-      expect(observer.error).toHaveBeenCalledWith(error);
     });
   });
 

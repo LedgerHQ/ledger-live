@@ -1,52 +1,33 @@
 import Config from "react-native-config";
-import { Observable, timer } from "rxjs";
-import { map, debounce } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { registerTransportModule, type TransportModule } from "@ledgerhq/live-common/hw/index";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import getBLETransport from "~/react-native-hw-transport-ble";
-import { getHIDTransport } from "~/services/getHidTransport";
+import getBLETransport from "~/transport/bleTransport";
+import { DeviceManagementKitHIDTransport } from "@ledgerhq/live-dmk-mobile";
 
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug).
  *
- * @param {boolean} isLDMKEnabled - Flag to enable or disable LDMK support.
  */
-export const registerTransports = (isLDMKEnabled: boolean) => {
+export const registerTransports = () => {
   if (Config.BLE_LOG_LEVEL) {
     getBLETransport().setLogLevel(Config.BLE_LOG_LEVEL);
   }
-  const hidTransport = getHIDTransport({ isLDMKEnabled });
 
   registerTransportModule({
     id: "hid",
-    // eslint-disable-next-line consistent-return
     open: (id, timeoutMs, traceContext) => {
       if (id.startsWith("usb|")) {
         const devicePath = JSON.parse(id.slice(4));
-        return hidTransport.open(devicePath, timeoutMs, traceContext);
+        return DeviceManagementKitHIDTransport.open(devicePath, timeoutMs, traceContext);
       }
       return null;
     },
-    disconnect: id =>
-      id.startsWith("usb|") && hidTransport.disconnect
-        ? hidTransport.disconnect()
-        : Promise.resolve(),
-    discovery: new Observable<DescriptorEvent<string>>(o => hidTransport.listen(o)).pipe(
-      map(({ type, descriptor, deviceModel }) => {
-        const name = deviceModel?.productName ?? "";
-        return {
-          type,
-          id: `usb|${JSON.stringify(descriptor)}`,
-          deviceModel,
-          wired: true,
-          name,
-        };
-      }),
-      debounce(e => timer(e.type === "remove" ? 2000 : 0)),
-    ),
+    disconnect: () => Promise.resolve(),
   });
 
   // Add dev mode support of an http proxy
