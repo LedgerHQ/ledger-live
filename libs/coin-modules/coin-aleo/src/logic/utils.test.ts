@@ -6,7 +6,7 @@ import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
 import {
   getMockedEnrichedTransaction,
   getMockedEnrichedPrivateRecord,
@@ -476,11 +476,10 @@ describe("calculateAmount", () => {
 
   it("should calculate max amount when useAllAmount is true", () => {
     const estimatedFees = new BigNumber(5000);
-    const transparentBalance = new BigNumber(1000000);
+    const transparentBalance = new BigNumber(100000);
     const mockAccount = getMockedAccount({
       balance: transparentBalance,
-      // @ts-expect-error - only transparentBalance is required for this test
-      aleoResources: { transparentBalance },
+      aleoResources: { ...mockAleoResources, transparentBalance },
     });
     const mockTransaction = getMockedTransaction({
       amount: new BigNumber(0),
@@ -493,10 +492,8 @@ describe("calculateAmount", () => {
       estimatedFees,
     });
 
-    expect(result).toMatchObject({
-      amount: transparentBalance.minus(estimatedFees),
-      totalSpent: transparentBalance,
-    });
+    expect(result.amount.toString()).toEqual(transparentBalance.minus(estimatedFees).toString());
+    expect(result.totalSpent).toEqual(transparentBalance);
   });
 
   it("should return zero amount when balance is less than fees with useAllAmount", () => {
