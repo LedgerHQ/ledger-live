@@ -119,19 +119,38 @@ export function RemoteLiveAppProvider({
     allowExperimentalApps && branches.push("experimental");
     allowDebugApps && branches.push("debug");
 
-    try {
-      const allManifests = await api.fetchLiveAppManifests(providerURL);
+    const result = await api
+      .fetchLiveAppManifests(providerURL)
+      .then(allManifests =>
+        api
+          .fetchLiveAppManifests(providerURL, {
+            apiVersion,
+            branches,
+            platform,
+            private: false,
+            llVersion,
+            lang: lang ? lang : "en",
+          })
+          .then(catalogManifests => ({ allManifests, catalogManifests })),
+      )
+      .then(
+        (manifests): { manifests: typeof manifests; fetchError: null } => ({
+          manifests,
+          fetchError: null,
+        }),
+        (e): { manifests: null; fetchError: unknown } => ({ manifests: null, fetchError: e }),
+      );
 
-      const catalogManifests = await api.fetchLiveAppManifests(providerURL, {
-        apiVersion,
-        branches,
-        platform,
-        private: false,
-        llVersion,
-        lang: lang ? lang : "en",
-      });
+    if (!isMounted()) return;
 
-      if (!isMounted()) return;
+    if (result.manifests === null) {
+      setState(currentState => ({
+        ...currentState,
+        isLoading: false,
+        error: result.fetchError,
+      }));
+    } else {
+      const { allManifests, catalogManifests } = result.manifests;
       setState(() => ({
         isLoading: false,
         value: {
@@ -147,13 +166,6 @@ export function RemoteLiveAppProvider({
           }, {}),
         },
         error: null,
-      }));
-    } catch (error) {
-      if (!isMounted()) return;
-      setState(currentState => ({
-        ...currentState,
-        isLoading: false,
-        error,
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
