@@ -160,82 +160,80 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
-    const exchangeHandlersArgs = {
-      accounts,
-      tracking,
-      manifest,
-      flags,
-      uiHooks: {
-        "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
-          dispatch(
-            openExchangeDrawer({
-              type: "EXCHANGE_START",
-              ...exchangeParams,
-              exchangeType: ExchangeType[exchangeParams.exchangeType],
-              onResult: result => {
-                onSuccess(result.nonce, result.device);
-              },
-              onCancel: cancelResult => {
-                onCancel(cancelResult.error, cancelResult.device);
-              },
-            }),
-          );
-        },
-        "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-          dispatch(
-            openExchangeDrawer({
-              type: "EXCHANGE_COMPLETE",
-              ...exchangeParams,
-              onResult: (operation: Operation) => {
-                onSuccess(operation.hash);
-              },
-              onCancel: (error: Error) => {
-                console.error(error);
-                onCancel(error);
-              },
-            }),
-          );
-        },
-        "custom.exchange.error": ({ error }) => {
-          dispatch(closePlatformAppDrawer());
-          setDrawer(WebviewErrorDrawer, error);
-          return Promise.resolve();
-        },
-        "custom.isReady": async () => {
-          console.info("Earn Live App Loaded");
-        },
-        "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-          let cancelCalled = false;
-          const safeOnCancel = (error: Error) => {
-            if (!cancelCalled) {
-              console.error(error);
-              cancelCalled = true;
-              onCancel(error);
-            }
-          };
-
-          dispatch(
-            openExchangeDrawer({
-              type: "EXCHANGE_COMPLETE",
-              ...exchangeParams,
-              onResult: operation => {
-                if (operation && exchangeParams.swapId) {
-                  // return success to swap live app
-                  onSuccess({
-                    operationHash: operation.hash,
-                    swapId: exchangeParams.swapId,
-                  });
-                }
-              },
-              onCancel: safeOnCancel,
-            }),
-          );
-        },
-      },
-    } as Parameters<typeof exchangeHandlers>[0];
-
     return {
-      ...exchangeHandlers(exchangeHandlersArgs),
+      ...exchangeHandlers({
+        accounts,
+        tracking,
+        manifest,
+        flags,
+        uiHooks: {
+          "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+            dispatch(
+              openExchangeDrawer({
+                type: "EXCHANGE_START",
+                ...exchangeParams,
+                exchangeType: ExchangeType[exchangeParams.exchangeType],
+                onResult: result => {
+                  onSuccess(result.nonce, result.device);
+                },
+                onCancel: cancelResult => {
+                  onCancel(cancelResult.error, cancelResult.device);
+                },
+              }),
+            );
+          },
+          "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+            dispatch(
+              openExchangeDrawer({
+                type: "EXCHANGE_COMPLETE",
+                ...exchangeParams,
+                onResult: (operation: Operation) => {
+                  onSuccess(operation.hash);
+                },
+                onCancel: (error: Error) => {
+                  console.error(error);
+                  onCancel(error);
+                },
+              }),
+            );
+          },
+          "custom.exchange.error": ({ error }) => {
+            dispatch(closePlatformAppDrawer());
+            setDrawer(WebviewErrorDrawer, error);
+            return Promise.resolve();
+          },
+          "custom.isReady": async () => {
+            console.info("Earn Live App Loaded");
+          },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            let cancelCalled = false;
+            const safeOnCancel = (error: Error) => {
+              if (!cancelCalled) {
+                console.error(error);
+                cancelCalled = true;
+                onCancel(error);
+              }
+            };
+
+            dispatch(
+              openExchangeDrawer({
+                type: "EXCHANGE_COMPLETE",
+                ...exchangeParams,
+                onResult: operation => {
+                  if (operation && exchangeParams.swapId) {
+                    // return success to swap live app
+                    onSuccess({
+                      operationHash: operation.hash,
+                      swapId: exchangeParams.swapId,
+                    });
+                  }
+                },
+                onCancel: safeOnCancel,
+              }),
+            );
+          },
+        },
+      }),
       "custom.navigate": async request => {
         const { action } = request.params || {};
 

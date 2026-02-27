@@ -52,4 +52,16 @@ describe("postSwapState wallet40 header", () => {
     const request = mockedNetwork.mock.calls[0][0] as { headers?: Record<string, string> };
     expect(request.headers?.["x-ledger-client-v4-ux"]).toBeUndefined();
   });
+
+  it("does not add x-ledger-client-v4-ux when wallet40Ux flag is false", async () => {
+    await postSwapAccepted({
+      provider: "changelly",
+      swapId: "swap-id",
+      transactionId: "tx-id",
+      flags: { wallet40Ux: false },
+    });
+
+    const request = mockedNetwork.mock.calls[0][0] as { headers?: Record<string, string> };
+    expect(request.headers?.["x-ledger-client-v4-ux"]).toBeUndefined();
+  });
 });

@@ -58,4 +58,14 @@ describe("retrieveSwapPayload", () => {
       undefined,
     );
   });
+
+  it("does not send request headers when wallet40Ux flag is false", async () => {
+    await retrieveSwapPayload({ ...payloadData, flags: { wallet40Ux: false } });
+
+    expect(post).toHaveBeenCalledWith(
+      "https://swap.ledger.com/v5/swap",
+      expect.any(Object),
+      undefined,
+    );
+  });
 });
