@@ -141,7 +141,7 @@ describe("genericPrepareTransaction", () => {
       gasLimit: new BigNumber(21000),
       customGasLimit: new BigNumber(22000),
     };
-    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
     const result = await prepareTransaction(account, txWithoutCustomFees);
 
     expect(result).toEqual(
