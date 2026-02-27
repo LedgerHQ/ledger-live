@@ -8044,6 +8044,18 @@
     "connect": "Connect",
     "buyALedger": "Buy a Ledger"
   },
+  "assets": {
+    "cryptos": "Cryptos",
+    "stablecoins": "Stablecoins",
+    "columns": {
+      "name": "Name",
+      "price": "Price",
+      "balance": "Balance",
+      "value": "Value",
+      "trend": "1D Trend",
+      "trendTooltip": "Price evolution of the last 24 hours"
+    }
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
