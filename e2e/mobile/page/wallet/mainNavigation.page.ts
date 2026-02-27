@@ -2,12 +2,11 @@ import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
+type Wallet40TabName = "home" | "swap" | "earn" | "card";
+
 export default class MainNavigationPage {
   // --- Wallet 4.0 bottom tabs ---
-  wallet40HomeTab = () => element(by.id("w40-tab-home"));
-  wallet40SwapTab = () => element(by.id("w40-tab-swap"));
-  wallet40EarnTab = () => element(by.id("w40-tab-earn"));
-  wallet40CardTab = () => element(by.id("w40-tab-card"));
+  wallet40Tab = (tabName: Wallet40TabName) => element(by.id(`w40-tab-${tabName}`));
 
   // --- Wallet 4.0 top bar buttons ---
   topBarMyLedgerId = "topbar-myledger";
@@ -23,8 +22,7 @@ export default class MainNavigationPage {
   legacyMyLedgerTabId = "TabBarManager";
 
   // --- Destination page verification IDs ---
-  portfolioAccountsListId = "PortfolioAccountsList";
-  portfolioEmptyListId = "PortfolioEmptyList";
+  portfolioScreenId = "portfolio-screen";
   swapFormId = "swap-form-tab";
   earnScreenId = "earn-screen";
   cardScreenId = "card-landing-screen";
@@ -39,36 +37,21 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready() {
-    await waitForElementById(this.topBarSettingsId, 120000);
+    await waitForElementById(this.topBarSettingsId);
   }
 
   @Step("Wait for Legacy navigation to be ready")
   async waitForLegacyReady() {
-    await waitForElementById(this.legacyMyLedgerTabId, 120000);
+    await waitForElementById(this.legacyMyLedgerTabId);
   }
 
   // =====================
   // Wallet 4.0 Tab Actions
   // =====================
 
-  @Step("Tap Home tab (Wallet 4.0)")
-  async tapWallet40HomeTab() {
-    await this.wallet40HomeTab().tap();
-  }
-
-  @Step("Tap Swap tab (Wallet 4.0)")
-  async tapWallet40SwapTab() {
-    await this.wallet40SwapTab().tap();
-  }
-
-  @Step("Tap Earn tab (Wallet 4.0)")
-  async tapWallet40EarnTab() {
-    await this.wallet40EarnTab().tap();
-  }
-
-  @Step("Tap Card tab (Wallet 4.0)")
-  async tapWallet40CardTab() {
-    await this.wallet40CardTab().tap();
+  @Step("Tap W40 tab")
+  async tapWallet40Tab(tabName: Wallet40TabName) {
+    await this.wallet40Tab(tabName).tap();
   }
 
   // =====================
@@ -125,10 +108,10 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 bottom tabs to be visible")
   async expectWallet40BottomTabsVisible() {
-    await detoxExpect(this.wallet40HomeTab()).toBeVisible();
-    await detoxExpect(this.wallet40SwapTab()).toBeVisible();
-    await detoxExpect(this.wallet40EarnTab()).toBeVisible();
-    await detoxExpect(this.wallet40CardTab()).toBeVisible();
+    await detoxExpect(this.wallet40Tab("home")).toBeVisible();
+    await detoxExpect(this.wallet40Tab("swap")).toBeVisible();
+    await detoxExpect(this.wallet40Tab("earn")).toBeVisible();
+    await detoxExpect(this.wallet40Tab("card")).toBeVisible();
   }
 
   @Step("Expect Wallet 4.0 top bar to be visible")
@@ -175,11 +158,7 @@ export default class MainNavigationPage {
 
   @Step("Expect Portfolio page visible")
   async expectPortfolioPageVisible() {
-    try {
-      await waitForElementById(this.portfolioAccountsListId, 5000);
-    } catch {
-      await waitForElementById(this.portfolioEmptyListId, 5000);
-    }
+    await waitForElementById(this.portfolioScreenId);
   }
 
   @Step("Expect Swap page visible")

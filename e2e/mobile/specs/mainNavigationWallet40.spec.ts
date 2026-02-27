@@ -34,25 +34,25 @@ describe("Wallet 4.0 Main Navigation", () => {
   });
 
   it("should navigate to Swap via bottom tab and show Swap page", async () => {
-    await app.mainNavigation.tapWallet40SwapTab();
+    await app.mainNavigation.tapWallet40Tab("swap");
     await app.mainNavigation.expectSwapPageVisible();
     await app.mainNavigation.expectWallet40BottomTabsVisible();
   });
 
   it("should navigate to Earn via bottom tab and show Earn page", async () => {
-    await app.mainNavigation.tapWallet40EarnTab();
+    await app.mainNavigation.tapWallet40Tab("earn");
     await app.mainNavigation.expectEarnPageVisible();
     await app.mainNavigation.expectWallet40BottomTabsVisible();
   });
 
   it("should navigate to Card via bottom tab and show Card page", async () => {
-    await app.mainNavigation.tapWallet40CardTab();
+    await app.mainNavigation.tapWallet40Tab("card");
     await app.mainNavigation.expectCardPageVisible();
     await app.mainNavigation.expectWallet40BottomTabsVisible();
   });
 
   it("should navigate back to Portfolio via Home tab", async () => {
-    await app.mainNavigation.tapWallet40HomeTab();
+    await app.mainNavigation.tapWallet40Tab("home");
     await app.mainNavigation.expectPortfolioPageVisible();
     await app.mainNavigation.expectWallet40BottomTabsVisible();
     await app.mainNavigation.expectWallet40TopBarVisible();
