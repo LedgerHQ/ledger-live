@@ -8053,7 +8053,7 @@
       "balance": "Balance",
       "value": "Value",
       "trend": "1D Trend",
-      "trendTooltip": "Price evolution of the last 24 hours"
+      "trendTooltip": "24h balance change"
     }
   },
   "nftEntryPoint": {

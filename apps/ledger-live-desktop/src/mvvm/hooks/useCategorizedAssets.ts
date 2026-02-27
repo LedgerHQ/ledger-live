@@ -4,13 +4,9 @@ import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategoriz
 
 export function useCategorizedAssetsFromPortfolio() {
   const distribution = useDistribution({ hideEmptyTokenAccount: true });
-  const marketData: Record<string, { price?: number; priceChangePercentage24h?: number }> = {
-    bitcoin: { price: 97000, priceChangePercentage24h: 2.3 },
-    ethereum: { price: 2700, priceChangePercentage24h: -1.17 },
-  };
   const { tickers: stablecoinTickers, isLoading: isLoadingStablecoinTickers } =
     useStablecoinTickers("lld");
-  const categorizedAssets = useCategorizedAssets(distribution, marketData, stablecoinTickers);
+  const categorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
   return {
     categorizedAssets,
     isLoadingStablecoinTickers,
