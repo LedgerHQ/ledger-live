@@ -33,7 +33,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
-import { ExchangeSwap } from "../../exchange/swap/types";
+import { ExchangeSwap, FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../generated/types";
 import {
@@ -142,10 +142,6 @@ type ExchangeUiHooks = {
   }) => void;
 };
 
-type ExchangeFeatureFlags = {
-  wallet40Ux?: boolean;
-};
-
 export const handlers = ({
   accounts,
   tracking,
@@ -162,7 +158,7 @@ export const handlers = ({
   accounts: AccountLike[];
   tracking: TrackingAPI;
   manifest: AppManifest;
-  flags?: ExchangeFeatureFlags;
+  flags?: FeatureFlags;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({

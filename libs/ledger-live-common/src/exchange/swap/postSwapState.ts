@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import network from "@ledgerhq/live-network";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
-import type { PostSwapAccepted, PostSwapCancelled, SwapRequestFlags } from "./types";
+import type { PostSwapAccepted, PostSwapCancelled, FeatureFlags } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
@@ -47,7 +47,7 @@ function createSwapIntentHashes({
   return { swapIntentWithProvider, swapIntentWithoutProvider };
 }
 
-const getWallet40Header = (flags?: SwapRequestFlags): Record<string, string> =>
+const getWallet40Header = (flags?: FeatureFlags): Record<string, string> =>
   flags?.wallet40Ux ? { "x-ledger-client-v4-ux": "true" } : {};
 
 export const postSwapAccepted: PostSwapAccepted = async ({
