@@ -17,7 +17,7 @@ const config: PlaywrightTestConfig = {
     trace: "on",
   },
   forbidOnly: !!process.env.CI,
-  preserveOutput: process.env.CI ? "failures-only" : "always",
+  preserveOutput: "always",
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
