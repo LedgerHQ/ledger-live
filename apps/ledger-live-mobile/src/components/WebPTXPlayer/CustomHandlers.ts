@@ -358,8 +358,11 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
 
-                    navigation.navigate(ScreenName.SwapCustomError, {
-                      error: result.error,
+                    navigation.navigate(NavigatorName.SwapSubScreens, {
+                      screen: ScreenName.SwapCustomError,
+                      params: {
+                        error: result.error,
+                      },
                     });
                   }
 
@@ -380,8 +383,11 @@ export function useCustomExchangeHandlers({
               navigation.pop();
             }
 
-            navigation.navigate(ScreenName.SwapCustomError, {
-              error: error ?? unknownSwapError,
+            navigation.navigate(NavigatorName.SwapSubScreens, {
+              screen: ScreenName.SwapCustomError,
+              params: {
+                error: error ?? unknownSwapError,
+              },
             });
           },
           "custom.isReady": async () => {

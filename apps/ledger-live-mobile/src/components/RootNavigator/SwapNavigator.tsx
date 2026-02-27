@@ -1,6 +1,9 @@
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackHeaderRightProps,
+} from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import SwapHistory from "~/screens/Swap/History";
@@ -13,6 +16,7 @@ import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/index";
 import { SwapLiveApp } from "~/screens/Swap/LiveApp";
+import { SwapLiveAppWallet40 } from "~/screens/Swap/LiveApp/SwapLiveAppWallet40";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
@@ -35,17 +39,54 @@ const getTrackingSource = (routeName: string) => {
 
 const Stack = createNativeStackNavigator<SwapNavigatorParamList>();
 
+const NullHeader = () => null;
+
+function BackButton() {
+  return <NavigationHeaderBackButton />;
+}
+
+function SwapHistoryHeaderRight({
+  onPress,
+}: Readonly<{
+  onPress: () => void;
+}>) {
+  return (
+    <Flex p={6}>
+      <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={onPress}>
+        <Icons.Clock color={"neutral.c100"} />
+      </Touchable>
+    </Flex>
+  );
+}
+
+function createSwapHistoryHeaderRight(onPress: () => void) {
+  return function SwapHistoryHeaderRightRenderer(
+    _props: Readonly<NativeStackHeaderRightProps>,
+  ): React.JSX.Element {
+    return <SwapHistoryHeaderRight onPress={onPress} />;
+  };
+}
+
+function getInitialSwapTabParams(
+  swapParams: BaseNavigatorStackParamList[NavigatorName.Swap] | undefined,
+): Partial<SwapNavigatorParamList[ScreenName.SwapTab]> | undefined {
+  if (!swapParams || swapParams.screen !== ScreenName.SwapTab) return undefined;
+
+  return swapParams.params;
+}
+
 export default function SwapNavigator(
   props: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.Swap> | undefined,
 ) {
-  const params = props?.route?.params?.params || {};
+  const initialSwapParams = getInitialSwapTabParams(props?.route?.params);
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const track = useTrack();
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+  const { isEnabled: isLwm40Enabled, shouldDisplayWallet40MainNav } =
+    useWalletFeaturesConfig("mobile");
 
   const goToSwapHistory = useCallback(() => {
     track("button_clicked", {
@@ -89,34 +130,42 @@ export default function SwapNavigator(
     }
   }, [trackButtonClick, navigation]);
 
-  const options = useMemo(
+  // Old design header options
+  const oldDesignOptions = useMemo(
     () => ({
       ...("options" in noNanoBuyNanoWallScreenOptions
         ? noNanoBuyNanoWallScreenOptions.options
         : {}),
       headerTitle: t("transfer.swap2.form.title"),
-      headerLeft: () => <NavigationHeaderBackButton />,
-      headerRight: () => (
-        <Flex p={6}>
-          <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={goToSwapHistory}>
-            <Icons.Clock color={"neutral.c100"} />
-          </Touchable>
-        </Flex>
-      ),
+      headerLeft: BackButton,
+      headerRight: createSwapHistoryHeaderRight(goToSwapHistory),
     }),
     [goToSwapHistory, noNanoBuyNanoWallScreenOptions, t],
   );
 
   const shouldDisplayHeader = !shouldDisplayWallet40MainNav;
+  // Wallet 4.0 design: header is handled by MainNavigator tab, hide it here
+  const wallet40Options = useMemo(
+    () => ({
+      ...("options" in noNanoBuyNanoWallScreenOptions
+        ? noNanoBuyNanoWallScreenOptions.options
+        : {}),
+      headerShown: false,
+    }),
+    [noNanoBuyNanoWallScreenOptions],
+  );
+
+  const swapComponent = isLwm40Enabled ? SwapLiveAppWallet40 : SwapLiveApp;
+  const swapOptions = isLwm40Enabled ? wallet40Options : oldDesignOptions;
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: shouldDisplayHeader }}>
       <Stack.Screen
         name={ScreenName.SwapTab}
-        component={SwapLiveApp}
+        component={swapComponent}
         {...noNanoBuyNanoWallScreenOptions}
-        options={options}
-        initialParams={params as Partial<SwapNavigatorParamList[ScreenName.SwapTab]>}
+        options={swapOptions}
+        initialParams={initialSwapParams}
       />
 
       <Stack.Screen
@@ -124,7 +173,7 @@ export default function SwapNavigator(
         component={PendingOperation}
         options={{
           headerTitle: t("transfer.swap.title"),
-          headerLeft: () => null,
+          headerLeft: NullHeader,
         }}
       />
 
@@ -133,8 +182,8 @@ export default function SwapNavigator(
         component={OperationDetails}
         options={{
           headerTitle: t("transfer.swap2.history.title"),
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerRight: () => null,
+          headerLeft: BackButton,
+          headerRight: NullHeader,
         }}
       />
 
@@ -151,7 +200,7 @@ export default function SwapNavigator(
         component={SwapLoading}
         options={{
           headerShown: false,
-          headerLeft: () => null, // Prevent going back while loading
+          headerLeft: NullHeader, // Prevent going back while loading
         }}
       />
 
@@ -160,7 +209,7 @@ export default function SwapNavigator(
         component={SwapHistory}
         options={{
           headerTitle: t("transfer.swap2.history.title"),
-          headerRight: () => null,
+          headerRight: NullHeader,
         }}
       />
     </Stack.Navigator>
