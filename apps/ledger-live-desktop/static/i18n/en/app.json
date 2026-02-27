@@ -7557,7 +7557,8 @@
     },
     "selectAccount": {
       "title": "choose account",
-      "addAccount": "Add new or existing account"
+      "addAccount": "Add new or existing account",
+      "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain."
     }
   },
   "customImage": {

@@ -11,6 +11,7 @@ export function ModularDrawerWrapper() {
     assetsConfiguration,
     networksConfiguration,
     useCase,
+    uiUseCase,
     areCurrenciesFiltered,
   } = useModularDrawerController();
 
@@ -23,6 +24,7 @@ export function ModularDrawerWrapper() {
       networksConfiguration={networksConfiguration}
       onAccountSelected={handleAccountSelected}
       useCase={useCase}
+      uiUseCase={uiUseCase}
       areCurrenciesFiltered={areCurrenciesFiltered}
     />
   );

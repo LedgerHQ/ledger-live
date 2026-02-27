@@ -8338,6 +8338,7 @@
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
+    "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",
