@@ -23,7 +23,10 @@ export async function retrieveSwapPayload(
     rateId: data.quoteId,
   };
 
-  const res = await swapAxiosClient.post(`${SWAP_API_BASE}/swap`, request);
+  const requestConfig = data.flags?.wallet40Ux
+    ? { headers: { "x-ledger-client-v4-ux": "true" } }
+    : undefined;
+  const res = await swapAxiosClient.post(`${SWAP_API_BASE}/swap`, request, requestConfig);
 
   return {
     binaryPayload: res.data?.binaryPayload,

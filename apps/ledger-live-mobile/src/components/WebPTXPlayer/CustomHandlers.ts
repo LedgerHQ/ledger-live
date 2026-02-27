@@ -41,6 +41,7 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -69,6 +70,8 @@ export function useCustomExchangeHandlers({
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
   const dispatch = useDispatch();
+  const { isEnabled } = useWalletFeaturesConfig("mobile");
+  const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -291,6 +294,7 @@ export function useCustomExchangeHandlers({
         accounts,
         tracking,
         manifest,
+        flags,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -475,6 +479,7 @@ export function useCustomExchangeHandlers({
     onCompleteError,
     onCompleteResult,
     handleLoaderDrawer,
+    flags,
     sendAppReady,
     syncAccountById,
     tracking,
