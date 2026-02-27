@@ -119,7 +119,7 @@ jest.mock("react-native-config", () => {
   const config = {
     DETOX: undefined,
     ANALYTICS_TOKEN: "test-token",
-    ANALYTICS_LOGS: false,
+    ANALYTICS_LOGS: "false",
   };
   return {
     __esModule: true,
@@ -128,13 +128,6 @@ jest.mock("react-native-config", () => {
     },
   };
 });
-
-jest.mock("~/user", () => ({
-  __esModule: true,
-  default: jest.fn(() =>
-    Promise.resolve({ user: { id: "test-user-id" }, created: false }),
-  ),
-}));
 
 export const mockSimulateBarcodeScanned = jest.fn();
 export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
