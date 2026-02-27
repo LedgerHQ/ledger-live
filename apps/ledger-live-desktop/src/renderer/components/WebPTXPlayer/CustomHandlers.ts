@@ -47,10 +47,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
   const lwdWallet40 = useFeature("lwdWallet40");
-  const lwmWallet40 = useFeature("lwmWallet40");
   const flags = useMemo(
-    () => ({ wallet40Ux: Boolean(lwdWallet40?.enabled || lwmWallet40?.enabled) }),
-    [lwdWallet40?.enabled, lwmWallet40?.enabled],
+    () => ({ wallet40Ux: Boolean(lwdWallet40?.enabled) }),
+    [lwdWallet40?.enabled],
   );
 
   // Helper to get manifest by ID - checks local first, then remote

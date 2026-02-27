@@ -52,6 +52,10 @@ describe("retrieveSwapPayload", () => {
   it("does not send request headers when wallet40Ux flag is missing", async () => {
     await retrieveSwapPayload(payloadData);
 
-    expect(post).toHaveBeenCalledWith("https://swap.ledger.com/v5/swap", expect.any(Object), undefined);
+    expect(post).toHaveBeenCalledWith(
+      "https://swap.ledger.com/v5/swap",
+      expect.any(Object),
+      undefined,
+    );
   });
 });

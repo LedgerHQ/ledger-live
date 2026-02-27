@@ -70,11 +70,10 @@ export function useCustomExchangeHandlers({
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
   const dispatch = useDispatch();
-  const lwdWallet40 = useFeature("lwdWallet40");
   const lwmWallet40 = useFeature("lwmWallet40");
   const flags = useMemo(
-    () => ({ wallet40Ux: Boolean(lwdWallet40?.enabled || lwmWallet40?.enabled) }),
-    [lwdWallet40?.enabled, lwmWallet40?.enabled],
+    () => ({ wallet40Ux: Boolean(lwmWallet40?.enabled) }),
+    [lwmWallet40?.enabled],
   );
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
@@ -294,178 +293,178 @@ export function useCustomExchangeHandlers({
     };
 
     const exchangeHandlersArgs = {
-        accounts,
-        tracking,
-        manifest,
-        flags,
-        uiHooks: {
-          "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
-            const promiseId = `start-${Date.now()}`;
+      accounts,
+      tracking,
+      manifest,
+      flags,
+      uiHooks: {
+        "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+          const promiseId = `start-${Date.now()}`;
 
-            navigation.navigate(NavigatorName.PlatformExchange, {
-              screen: ScreenName.PlatformStartExchange,
-              params: {
-                request: {
-                  ...exchangeParams,
-                  exchangeType: ExchangeType[exchangeParams.exchangeType],
-                },
-                onResult: result => {
-                  // Clean up promise tracking
-                  activePromises.current.delete(promiseId);
-
-                  if (result.startExchangeError) {
-                    onCancel(
-                      result.startExchangeError.error,
-                      result.startExchangeError.device || device,
-                    );
-                  }
-
-                  if (result.startExchangeResult) {
-                    setDevice(result.device);
-                    deviceRef.current = result.device;
-                    onSuccess(
-                      result.startExchangeResult.nonce,
-                      result.startExchangeResult.device || result.device,
-                    );
-                  }
-                  navigation.pop();
-                  handleLoaderDrawer?.();
-                },
-                onClose: () => onCancel(drawerClosedError),
+          navigation.navigate(NavigatorName.PlatformExchange, {
+            screen: ScreenName.PlatformStartExchange,
+            params: {
+              request: {
+                ...exchangeParams,
+                exchangeType: ExchangeType[exchangeParams.exchangeType],
               },
-            });
+              onResult: result => {
+                // Clean up promise tracking
+                activePromises.current.delete(promiseId);
 
-            // Track the promise
-            activePromises.current.set(promiseId, {
-              reject: onCancel,
-            });
-          },
-          "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-            if (handleLoaderDrawer) {
-              navigation.pop();
-            }
-            navigation.navigate(NavigatorName.PlatformExchange, {
-              screen: ScreenName.PlatformCompleteExchange,
-              params: {
-                request: {
-                  exchangeType: exchangeParams.exchangeType,
-                  provider: exchangeParams.provider,
-                  exchange: exchangeParams.exchange,
-                  transaction: exchangeParams.transaction,
-                  binaryPayload: exchangeParams.binaryPayload,
-                  signature: exchangeParams.signature,
-                  feesStrategy: exchangeParams.feesStrategy,
-                  amountExpectedTo: exchangeParams.amountExpectedTo,
-                  sponsored: exchangeParams.sponsored,
-                },
-                device,
-                onResult: result => {
-                  navigation.pop();
+                if (result.startExchangeError) {
+                  onCancel(
+                    result.startExchangeError.error,
+                    result.startExchangeError.device || device,
+                  );
+                }
 
-                  if (result.error) {
-                    onCancel(result.error);
-
-                    navigation.navigate(ScreenName.SwapCustomError, {
-                      error: result.error,
-                    });
-                  }
-
-                  if (result.operation) {
-                    const operationHash = result.operation.hash;
-                    onCompleteResult?.(exchangeParams, operationHash);
-                    onSuccess(result.operation.hash);
-                  }
-                  setDevice(undefined);
-                  deviceRef.current = undefined;
-                },
-                onClose: () => onCancel(drawerClosedError),
+                if (result.startExchangeResult) {
+                  setDevice(result.device);
+                  deviceRef.current = result.device;
+                  onSuccess(
+                    result.startExchangeResult.nonce,
+                    result.startExchangeResult.device || result.device,
+                  );
+                }
+                navigation.pop();
+                handleLoaderDrawer?.();
               },
-            });
-          },
-          "custom.exchange.error": ({ error }) => {
-            if (handleLoaderDrawer) {
-              navigation.pop();
-            }
+              onClose: () => onCancel(drawerClosedError),
+            },
+          });
 
-            navigation.navigate(ScreenName.SwapCustomError, {
-              error: error ?? unknownSwapError,
-            });
-          },
-          "custom.isReady": async () => {
-            if (Config.DETOX) {
-              sendAppReady();
-            }
-          },
-          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            if (handleLoaderDrawer) {
-              navigation.pop();
-            }
-            let cancelCalled = false;
-
-            const safeOnCancel = (error: Error) => {
-              if (!cancelCalled) {
-                cancelCalled = true;
-                onCancel(error);
-              }
-            };
-
-            const currentDevice = deviceRef.current || device;
-
-            navigation.navigate(NavigatorName.PlatformExchange, {
-              screen: ScreenName.PlatformCompleteExchange,
-              params: {
-                request: {
-                  exchangeType: exchangeParams.exchangeType,
-                  provider: exchangeParams.provider,
-                  exchange: exchangeParams.exchange,
-                  transaction: exchangeParams.transaction,
-                  binaryPayload: exchangeParams.binaryPayload,
-                  signature: exchangeParams.signature,
-                  feesStrategy: exchangeParams.feesStrategy,
-                  amountExpectedTo: exchangeParams.amountExpectedTo,
-                  sponsored: exchangeParams.sponsored,
-                },
-                device: currentDevice,
-                onResult: result => {
-                  if (result.error) {
-                    safeOnCancel(result.error);
-                    navigation.pop();
-                    onCompleteError?.(result.error);
-                  }
-                  if (result.operation && exchangeParams.swapId) {
-                    syncAccountById(exchangeParams.exchange.fromAccount.id);
-                    const operationHash = result.operation.hash;
-
-                    onCompleteResult?.(exchangeParams, operationHash);
-
-                    const params = getUpdateAccountWithUpdaterParams({
-                      result: { operation: result.operation, swapId: exchangeParams.swapId },
-                      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                      exchange: exchangeParams.exchange as ExchangeSwap,
-                      transaction: exchangeParams.transaction,
-                      magnitudeAwareRate: exchangeParams.magnitudeAwareRate!,
-                      provider: exchangeParams.provider,
-                    });
-
-                    if (!params.length) return;
-                    const dispatchAction = updateAccountWithUpdater({
-                      accountId: params[0],
-                      updater: params[1],
-                    });
-                    dispatch(dispatchAction);
-
-                    // return success to swap live app
-                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
-                  }
-                  setDevice(undefined);
-                  deviceRef.current = undefined;
-                },
-                onClose: () => safeOnCancel(drawerClosedError),
-              },
-            });
-          },
+          // Track the promise
+          activePromises.current.set(promiseId, {
+            reject: onCancel,
+          });
         },
-      } as Parameters<typeof exchangeHandlers>[0];
+        "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+          if (handleLoaderDrawer) {
+            navigation.pop();
+          }
+          navigation.navigate(NavigatorName.PlatformExchange, {
+            screen: ScreenName.PlatformCompleteExchange,
+            params: {
+              request: {
+                exchangeType: exchangeParams.exchangeType,
+                provider: exchangeParams.provider,
+                exchange: exchangeParams.exchange,
+                transaction: exchangeParams.transaction,
+                binaryPayload: exchangeParams.binaryPayload,
+                signature: exchangeParams.signature,
+                feesStrategy: exchangeParams.feesStrategy,
+                amountExpectedTo: exchangeParams.amountExpectedTo,
+                sponsored: exchangeParams.sponsored,
+              },
+              device,
+              onResult: result => {
+                navigation.pop();
+
+                if (result.error) {
+                  onCancel(result.error);
+
+                  navigation.navigate(ScreenName.SwapCustomError, {
+                    error: result.error,
+                  });
+                }
+
+                if (result.operation) {
+                  const operationHash = result.operation.hash;
+                  onCompleteResult?.(exchangeParams, operationHash);
+                  onSuccess(result.operation.hash);
+                }
+                setDevice(undefined);
+                deviceRef.current = undefined;
+              },
+              onClose: () => onCancel(drawerClosedError),
+            },
+          });
+        },
+        "custom.exchange.error": ({ error }) => {
+          if (handleLoaderDrawer) {
+            navigation.pop();
+          }
+
+          navigation.navigate(ScreenName.SwapCustomError, {
+            error: error ?? unknownSwapError,
+          });
+        },
+        "custom.isReady": async () => {
+          if (Config.DETOX) {
+            sendAppReady();
+          }
+        },
+        "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+          if (handleLoaderDrawer) {
+            navigation.pop();
+          }
+          let cancelCalled = false;
+
+          const safeOnCancel = (error: Error) => {
+            if (!cancelCalled) {
+              cancelCalled = true;
+              onCancel(error);
+            }
+          };
+
+          const currentDevice = deviceRef.current || device;
+
+          navigation.navigate(NavigatorName.PlatformExchange, {
+            screen: ScreenName.PlatformCompleteExchange,
+            params: {
+              request: {
+                exchangeType: exchangeParams.exchangeType,
+                provider: exchangeParams.provider,
+                exchange: exchangeParams.exchange,
+                transaction: exchangeParams.transaction,
+                binaryPayload: exchangeParams.binaryPayload,
+                signature: exchangeParams.signature,
+                feesStrategy: exchangeParams.feesStrategy,
+                amountExpectedTo: exchangeParams.amountExpectedTo,
+                sponsored: exchangeParams.sponsored,
+              },
+              device: currentDevice,
+              onResult: result => {
+                if (result.error) {
+                  safeOnCancel(result.error);
+                  navigation.pop();
+                  onCompleteError?.(result.error);
+                }
+                if (result.operation && exchangeParams.swapId) {
+                  syncAccountById(exchangeParams.exchange.fromAccount.id);
+                  const operationHash = result.operation.hash;
+
+                  onCompleteResult?.(exchangeParams, operationHash);
+
+                  const params = getUpdateAccountWithUpdaterParams({
+                    result: { operation: result.operation, swapId: exchangeParams.swapId },
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                    exchange: exchangeParams.exchange as ExchangeSwap,
+                    transaction: exchangeParams.transaction,
+                    magnitudeAwareRate: exchangeParams.magnitudeAwareRate!,
+                    provider: exchangeParams.provider,
+                  });
+
+                  if (!params.length) return;
+                  const dispatchAction = updateAccountWithUpdater({
+                    accountId: params[0],
+                    updater: params[1],
+                  });
+                  dispatch(dispatchAction);
+
+                  // return success to swap live app
+                  onSuccess({ operationHash, swapId: exchangeParams.swapId });
+                }
+                setDevice(undefined);
+                deviceRef.current = undefined;
+              },
+              onClose: () => safeOnCancel(drawerClosedError),
+            },
+          });
+        },
+      },
+    } as Parameters<typeof exchangeHandlers>[0];
 
     return {
       ...exchangeHandlers(exchangeHandlersArgs),
