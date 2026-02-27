@@ -9,9 +9,9 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 const ethereum = getCryptoCurrencyById("ethereum");
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const usdc = { parentCurrency: { family: "evm" } } as TokenCurrency;
-const cardano = getCryptoCurrencyById("cardano");
+const bitcoin = getCryptoCurrencyById("bitcoin");
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const lobster = { parentCurrency: { family: "cardano" } } as TokenCurrency;
+const fakeToken = { parentCurrency: { family: "bitcoin" } } as TokenCurrency;
 
 describe("Operation.ts", () => {
   describe("isPoisoningAddressOperation", () => {
@@ -27,8 +27,8 @@ describe("Operation.ts", () => {
     });
 
     it("shouldn't detect a token operation with 0 amount with the wrong currency", () => {
-      const account = genAccount("myAccount", { currency: cardano });
-      const tokenAccount = genTokenAccount(0, account, lobster);
+      const account = genAccount("myAccount", { currency: bitcoin });
+      const tokenAccount = genTokenAccount(0, account, fakeToken);
       const operation = {
         ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(0),
@@ -49,8 +49,8 @@ describe("Operation.ts", () => {
     });
 
     it("shouldn't detect a token operation with more than 0 amount with the wrong currency", () => {
-      const account = genAccount("myAccount", { currency: cardano });
-      const tokenAccount = genTokenAccount(0, account, lobster);
+      const account = genAccount("myAccount", { currency: bitcoin });
+      const tokenAccount = genTokenAccount(0, account, fakeToken);
       const operation = {
         ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(1),
@@ -61,7 +61,7 @@ describe("Operation.ts", () => {
 
     it("shouldn't break if the account provided isn't a tokenAccount", () => {
       const account = genAccount("myAccount", { currency: ethereum });
-      const tokenAccount = genTokenAccount(0, account, lobster);
+      const tokenAccount = genTokenAccount(0, account, fakeToken);
       const operation = {
         ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(1),
@@ -72,7 +72,7 @@ describe("Operation.ts", () => {
 
     it("shouldn't filter operation if it's a Account at 0 value", () => {
       const account = genAccount("myAccount", { currency: ethereum });
-      const tokenAccount = genTokenAccount(0, account, lobster);
+      const tokenAccount = genTokenAccount(0, account, fakeToken);
       const operation = {
         ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(0),

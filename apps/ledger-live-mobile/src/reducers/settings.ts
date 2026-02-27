@@ -77,6 +77,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetFilterTokenOperationsThresholdPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -106,6 +107,7 @@ export const INITIAL_STATE: SettingsState = {
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
   filterTokenOperationsZeroAmount: true,
+  filterTokenOperationsThreshold: 1,
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
@@ -376,6 +378,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
     ).payload,
   }),
+  [SettingsActionTypes.SETTINGS_SET_FILTER_TOKEN_OPERATIONS_THRESHOLD]: (state, action) => {
+    const threshold = (action as Action<SettingsSetFilterTokenOperationsThresholdPayload>).payload;
+
+    return {
+      ...state,
+      filterTokenOperationsThreshold: Number.isFinite(threshold) ? Math.max(0, threshold) : 0,
+    };
+  },
 
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
     const ids = state.blacklistedTokenIds;
@@ -794,6 +804,8 @@ export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const filterTokenOperationsThresholdSelector = (state: State) =>
+  state.settings.filterTokenOperationsThreshold;
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) => state.settings.hasAvailableUpdate;
 export const dismissedDynamicCardsSelector = (state: State) => state.settings.dismissedDynamicCards;

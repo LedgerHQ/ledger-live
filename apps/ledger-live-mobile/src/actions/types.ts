@@ -271,6 +271,7 @@ export enum SettingsActionTypes {
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
+  SETTINGS_SET_FILTER_TOKEN_OPERATIONS_THRESHOLD = "SETTINGS_SET_FILTER_TOKEN_OPERATIONS_THRESHOLD",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
@@ -338,6 +339,8 @@ export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"
 export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
+export type SettingsSetFilterTokenOperationsThresholdPayload =
+  SettingsState["filterTokenOperationsThreshold"];
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
 export type SettingsDismissBannerPayload = string;
@@ -429,6 +432,8 @@ export type SettingsPayload =
   | SettingsSetHasInstalledAnyAppPayload
   | SettingsSetReadOnlyModePayload
   | SettingsHideEmptyTokenAccountsPayload
+  | SettingsFilterTokenOperationsZeroAmountPayload
+  | SettingsSetFilterTokenOperationsThresholdPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload
   | SettingsDismissBannerPayload

@@ -15,6 +15,7 @@ import {
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
+  filterTokenOperationsThresholdSelector,
   selectedTimeRangeSelector,
   SettingsState,
   VaultSigner,
@@ -156,6 +157,27 @@ export function useFilterTokenOperationsZeroAmount(): [
           }),
         );
       }
+    },
+    [dispatch],
+  );
+  return [value, setter];
+}
+export function useFilterTokenOperationsThreshold(): [
+  number,
+  (filterTokenOperationsThreshold: number) => void,
+] {
+  const dispatch = useDispatch();
+  const value = useSelector(filterTokenOperationsThresholdSelector);
+  const setter = useCallback(
+    (filterTokenOperationsThreshold: number) => {
+      const normalizedThreshold = Number.isFinite(filterTokenOperationsThreshold)
+        ? Math.max(0, filterTokenOperationsThreshold)
+        : 0;
+      dispatch(
+        saveSettings({
+          filterTokenOperationsThreshold: normalizedThreshold,
+        }),
+      );
     },
     [dispatch],
   );
