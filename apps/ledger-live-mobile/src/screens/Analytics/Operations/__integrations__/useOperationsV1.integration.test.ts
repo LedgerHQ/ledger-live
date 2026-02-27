@@ -86,7 +86,7 @@ const initialStateWithFilterEnabled = (state: State): State => ({
   },
 });
 
-const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
+const initialStateWithFilterEnabledButFeatureWithoutEvmFamily = (state: State): State => ({
   ...state,
   settings: {
     ...state.settings,
@@ -96,6 +96,20 @@ const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
       addressPoisoningOperationsFilter: {
         enabled: true,
         params: { families: ["algorand"] },
+      },
+    },
+  },
+});
+
+const initialStateWithFilterEnabledAndFeatureDisabled = (state: State): State => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    filterTokenOperationsZeroAmount: true,
+    overriddenFeatureFlags: {
+      ...state.settings.overriddenFeatureFlags,
+      addressPoisoningOperationsFilter: {
+        enabled: false,
       },
     },
   },
@@ -117,13 +131,24 @@ describe("useOperationsV1 integration", () => {
     expect(result.current.sections[0].data[0].id).toBe("non-zero-value-token-op-id");
   });
 
-  it("should not filter zero-value token operations when families do not include the token family", () => {
+  it("should not filter zero-value token operations when FF families do not include evm", () => {
     const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
 
     const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
-      overrideInitialState: initialStateWithFilterEnabledButNoEvmFamily,
+      overrideInitialState: initialStateWithFilterEnabledButFeatureWithoutEvmFamily,
     });
 
     expect(result.current.sections[0].data.length).toBe(2);
+  });
+
+  it("should fallback to env families when FF is disabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithFilterEnabledAndFeatureDisabled,
+    });
+
+    expect(result.current.sections[0].data.length).toBe(1);
+    expect(result.current.sections[0].data[0].id).toBe("non-zero-value-token-op-id");
   });
 });

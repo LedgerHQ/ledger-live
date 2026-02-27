@@ -14,6 +14,7 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import { TrackScreen } from "~/analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmountRow";
+import FilterTokenOperationsThresholdRow from "./FilterTokenOperationsThresholdRow";
 import Close from "~/icons/Close";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -92,6 +93,7 @@ export default function AccountsSettings({
         )}
         <HideEmptyTokenAccountsRow />
         <FilterTokenOperationsZeroAmountRow />
+        <FilterTokenOperationsThresholdRow />
       </>
     ),
     [currencies.length, t, navigation],

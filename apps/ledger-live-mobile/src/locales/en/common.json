@@ -2951,7 +2951,8 @@
   },
   "operationList": {
     "noOperations": "No Operations",
-    "noMoreTransactions": "No other transactions"
+    "noMoreTransactions": "No other transactions",
+    "showHiddenSmallValueTransactions": "Show hidden small-value transactions"
   },
   "selectableAccountsList": {
     "deselectAll": "Deselect all",
@@ -3302,8 +3303,10 @@
       },
       "hideEmptyTokenAccounts": "Hide empty token accounts",
       "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden.",
-      "filterTokenOperationsZeroAmount": "Hide token transactions when value is 0",
-      "filterTokenOperationsZeroAmountDesc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron...",
+      "filterTokenOperationsZeroAmount": "Hide suspicious small-value incoming transactions",
+      "filterTokenOperationsZeroAmountDesc": "Hide incoming transactions below your custom fiat threshold to reduce dusting attempts and history clutter.",
+      "filterTokenOperationsThreshold": "Small-value threshold",
+      "filterTokenOperationsThresholdDesc": "Incoming transactions below this amount ({{ticker}}) are hidden.",
       "DateFormatModal": {
         "title": "Date format",
         "default": "Default",

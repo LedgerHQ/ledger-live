@@ -4,6 +4,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionRow as Row, SettingsSectionBody as Body } from "../../SettingsSection";
 import HideEmptyTokenAccountsToggle from "./HideEmptyTokenAccountsToggle";
 import FilterTokenOperationsZeroAmount from "./FilterTokenOperationsZeroAmount";
+import FilterTokenOperationsThreshold from "./FilterTokenOperationsThreshold";
 import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
@@ -23,6 +24,7 @@ export default function SectionAccounts() {
         <HideEmptyTokenAccountsToggle />
       </Row>
       <FilterTokenOperationsZeroAmount />
+      <FilterTokenOperationsThreshold />
       <DoNotAskAgainSkipMemo />
       <BlacklistedTokens />
       <Currencies />

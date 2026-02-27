@@ -1,20 +1,15 @@
-import { groupAccountsOperationsByDay } from "@ledgerhq/coin-framework/lib/account/groupOperations";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/helpers";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { useCallback } from "react";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import { useCallback } from "react";
-import { useSelector } from "~/context/hooks";
+import { useSelector } from "LLD/hooks/redux";
 import {
-  counterValueCurrencySelector,
-  filterTokenOperationsThresholdSelector,
-  filterTokenOperationsZeroAmountEnabledSelector,
-} from "~/reducers/settings";
-
-type UseOperationsV1Options = {
-  showHiddenSmallValueOperations?: boolean;
-};
+  useFilterTokenOperationsThreshold,
+  useFilterTokenOperationsZeroAmount,
+} from "~/renderer/actions/settings";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 
 function getAccountFamily(account: AccountLike): string {
   return account.type === "TokenAccount"
@@ -22,27 +17,18 @@ function getAccountFamily(account: AccountLike): string {
     : account.currency.family;
 }
 
-export function useOperationsV1(
-  accounts: AccountLike[],
-  opCount: number,
-  options: UseOperationsV1Options = {},
-) {
-  const { showHiddenSmallValueOperations = false } = options;
-  const shouldFilterTokenOpsZeroAmount = useSelector(
-    filterTokenOperationsZeroAmountEnabledSelector,
-  );
-  const smallValueThreshold = useSelector(filterTokenOperationsThresholdSelector);
+export function useSmallValueOperationsFilter(showHiddenSmallValueOperations = false) {
+  const [isSmallValueFilterEnabled] = useFilterTokenOperationsZeroAmount();
+  const [smallValueThreshold] = useFilterTokenOperationsThreshold();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const countervaluesState = useCountervaluesState();
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: shouldFilterTokenOpsZeroAmount,
+    shouldFilter: isSmallValueFilterEnabled,
   });
 
-  const filterOperation = useCallback(
+  const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      if (showHiddenSmallValueOperations || !shouldFilterTokenOpsZeroAmount) {
-        return true;
-      }
+      if (showHiddenSmallValueOperations || !isSmallValueFilterEnabled) return true;
       if (account.type !== "TokenAccount") return true;
 
       const family = getAccountFamily(account);
@@ -79,21 +65,15 @@ export function useOperationsV1(
     [
       counterValueCurrency,
       countervaluesState,
-      shouldFilterTokenOpsZeroAmount,
+      isSmallValueFilterEnabled,
       showHiddenSmallValueOperations,
       smallValueThreshold,
       addressPoisoningFamilies,
     ],
   );
 
-  const { sections, completed } = groupAccountsOperationsByDay(accounts, {
-    count: opCount,
-    withSubAccounts: true,
-    filterOperation,
-  });
-
   return {
-    sections,
-    completed,
+    filterOperations,
+    isSmallValueFilterEnabled,
   };
 }

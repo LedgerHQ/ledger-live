@@ -42,6 +42,7 @@ import {
   SettingsSetFeatureFlagsBannerVisiblePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsSetFilterTokenOperationsThresholdPayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
@@ -140,6 +141,10 @@ export const setHideEmptyTokenAccounts = createAction<SettingsHideEmptyTokenAcco
 export const setFilterTokenOperationsZeroAmount =
   createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
     SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
+  );
+export const setFilterTokenOperationsThreshold =
+  createAction<SettingsSetFilterTokenOperationsThresholdPayload>(
+    SettingsActionTypes.SETTINGS_SET_FILTER_TOKEN_OPERATIONS_THRESHOLD,
   );
 export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,

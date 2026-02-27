@@ -1,15 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import uniq from "lodash/uniq";
 import { useTranslation } from "react-i18next";
-import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
-import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
-import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import { useSmallValueOperationsFilter } from "~/renderer/hooks/useSmallValueOperationsFilter";
 
 export interface PortfolioViewModelResult {
   readonly totalAccounts: number;
@@ -22,6 +20,9 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayAssetSection: boolean;
   readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
+  readonly isSmallValueFilterEnabled: boolean;
+  readonly showHiddenSmallValueOperations: boolean;
+  readonly setShowHiddenSmallValueOperations: (value: boolean) => void;
   readonly accounts: AccountLike[];
   readonly t: TFunction;
   readonly isClearCacheBannerVisible: boolean;
@@ -38,24 +39,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
-  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: shouldFilterTokenOpsZeroAmount,
-  });
-
-  const filterOperations = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      const isOperationPoisoned = isAddressPoisoningOperation(
-        operation,
-        account,
-        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-      );
-
-      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
-
-      return shouldFilterOperation;
-    },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
+  const [showHiddenSmallValueOperations, setShowHiddenSmallValueOperations] = useState(false);
+  const { filterOperations, isSmallValueFilterEnabled } = useSmallValueOperationsFilter(
+    showHiddenSmallValueOperations,
   );
 
   const totalAccounts = accounts.length;
@@ -81,6 +67,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayAssetSection,
     isWallet40Enabled,
     filterOperations,
+    isSmallValueFilterEnabled,
+    showHiddenSmallValueOperations,
+    setShowHiddenSmallValueOperations,
     accounts,
     t,
     isClearCacheBannerVisible,

@@ -5,6 +5,7 @@ import PageHeader from "LLD/components/PageHeader";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
 import OperationsList from "~/renderer/components/OperationsList";
+import ShowHiddenSmallValueOperationsToggle from "~/renderer/components/ShowHiddenSmallValueOperationsToggle";
 import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
 import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
@@ -28,6 +29,9 @@ export const PortfolioView = memo(function PortfolioView({
   isWallet40Enabled,
   accounts,
   filterOperations,
+  isSmallValueFilterEnabled,
+  showHiddenSmallValueOperations,
+  setShowHiddenSmallValueOperations,
   t,
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
@@ -65,15 +69,25 @@ export const PortfolioView = memo(function PortfolioView({
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
 
           {totalOperations > 0 && (
-            <OperationsList
-              accounts={accounts}
-              title={t("dashboard.recentActivity")}
-              withAccount
-              withSubAccounts
-              filterOperation={filterOperations}
-              t={t}
-              isWallet40={isWallet40Enabled}
-            />
+            <>
+              {isSmallValueFilterEnabled && (
+                <div className="mb-12 flex justify-end">
+                  <ShowHiddenSmallValueOperationsToggle
+                    isChecked={showHiddenSmallValueOperations}
+                    onChange={setShowHiddenSmallValueOperations}
+                  />
+                </div>
+              )}
+              <OperationsList
+                accounts={accounts}
+                title={t("dashboard.recentActivity")}
+                withAccount
+                withSubAccounts
+                filterOperation={filterOperations}
+                t={t}
+                isWallet40={isWallet40Enabled}
+              />
+            </>
           )}
         </div>
       </div>
