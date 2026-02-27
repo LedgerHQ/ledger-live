@@ -17,6 +17,7 @@ interface CardLandingScreenViewProps {
   readonly ctas: readonly CardLandingCta[];
   readonly pageName: string;
   readonly topInset: number;
+  readonly bottomInset: number;
   readonly backgroundColor: string;
   readonly isWallet40DarkMode: boolean;
   readonly imageLoaded: boolean;
@@ -29,6 +30,7 @@ const CardLandingScreenView = ({
   ctas,
   pageName,
   topInset,
+  bottomInset,
   backgroundColor,
   isWallet40DarkMode,
   imageLoaded,
@@ -70,12 +72,22 @@ const CardLandingScreenView = ({
         </Box>
       )}
 
-      <Box style={{ paddingTop: topInset }}>
+      <Box style={{ flex: 1, paddingTop: topInset }}>
         <ScreenHeroSectionView ctas={<CardActions ctas={ctas} />}>
           <CardTitle title={title} subtitle={subtitle} />
         </ScreenHeroSectionView>
 
-        <CardImageDisplay />
+        <Box
+          style={{
+            paddingBottom: bottomInset,
+            marginLeft: 16,
+            marginRight: 16,
+            flex: 1,
+            height: "100%",
+          }}
+        >
+          <CardImageDisplay />
+        </Box>
       </Box>
     </SafeAreaView>
   );
