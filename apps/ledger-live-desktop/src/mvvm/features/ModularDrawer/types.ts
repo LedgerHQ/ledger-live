@@ -21,6 +21,7 @@ export type ModularDrawerFlowManagerProps = {
   currencies: string[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
+  uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;

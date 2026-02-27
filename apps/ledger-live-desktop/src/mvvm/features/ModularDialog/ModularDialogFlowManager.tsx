@@ -12,6 +12,7 @@ import {
   modularDialogIsOpenSelector,
   modularDialogConfigurationSelector,
   modularDialogOnAccountSelectedSelector,
+  modularDialogUiUseCaseSelector,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
@@ -30,6 +31,7 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
   const isOpen = useSelector(modularDialogIsOpenSelector);
   const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
   const dialogConfiguration = useSelector(modularDialogConfigurationSelector);
+  const uiUseCase = useSelector(modularDialogUiUseCaseSelector);
 
   const handleClose = () => {
     track("button_clicked", {
@@ -101,7 +103,13 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
         );
       case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
+          return (
+            <AccountSelector
+              asset={selectedAsset}
+              onAccountSelected={onAccountSelected}
+              uiUseCase={uiUseCase}
+            />
+          );
         }
         return null;
       default:
