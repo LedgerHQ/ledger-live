@@ -19,7 +19,7 @@ import invariant from "invariant";
 import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
 import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
-import { AleoTransactionIntentData } from "../types";
+import type { AleoTransactionIntentData } from "../types";
 
 export function createApi(config: AleoConfig, currencyId: string): Api {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };

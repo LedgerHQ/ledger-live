@@ -1,23 +1,25 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { sdkClient } from "../network/sdk";
+import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { craftTransaction } from "./craftTransaction";
 import { mapTransactionIntentToSdkIntent, serializeTransaction } from "./utils";
 
 jest.mock("../network/sdk");
 jest.mock("./utils");
 
-const mockCurrency: CryptoCurrency = getCryptoCurrencyById("aleo");
+const mockCurrency = getMockedCurrency();
 const mockViewKey = "AViewKey1mockviewkey";
 const mockIntent: TransactionIntent = {
+  intentType: "transaction",
+  asset: { type: "native" },
   type: "transfer_public",
   amount: BigInt(1000),
-  to: "aleo1recipient",
+  sender: "aleo1sender",
+  recipient: "aleo1recipient",
 };
 const mockMappedIntent = { mapped: "intent" };
 const mockSdkResponse = { foo: "bar" };
-const mockSerializedTx = { tx: "serialized" };
+const mockSerializedTx = "7b227478223a2273657269616c697a6564227d";
 
 describe("craftTransaction", () => {
   beforeEach(() => {

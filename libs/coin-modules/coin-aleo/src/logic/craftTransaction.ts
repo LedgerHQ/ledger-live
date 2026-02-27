@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { sdkClient } from "../network/sdk";
-import { AleoTransactionIntentData } from "../types";
+import type { AleoTransactionIntentData } from "../types";
 import { mapTransactionIntentToSdkIntent, serializeTransaction } from "./utils";
 
 export async function craftTransaction({

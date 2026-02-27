@@ -344,6 +344,8 @@ export function mapTransactionIntentToSdkIntent(
         priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
       };
     }
+    // NOTE: transfer_private, transfer_private_to_public, and fee_private are intentionally not supported here.
+    // These are part of a separate task for "private send/receive" functionality and will be implemented later.
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }

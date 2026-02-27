@@ -1,7 +1,10 @@
 import network from "@ledgerhq/live-network";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { getNetworkConfig } from "../logic/utils";
-import type { AleoEncryptedRegistrationResponse } from "../types/sdk";
+import type {
+  AleoEncryptedRegistrationResponse,
+  Intent,
+  PreparedRequestResponse,
+} from "../types/sdk";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "./sdk";
 
@@ -213,16 +216,19 @@ describe("sdkClient", () => {
   });
 
   describe("createRequestFromIntent", () => {
-    const mockIntent: TransactionIntent = {
-      type: "transfer",
-      from: "aleo1fromaddress",
-      to: "aleo1toaddress",
-      amount: BigInt(1000),
+    const mockIntent: Intent = {
+      type: "transfer_public",
+      amount: "1000",
+      to: "aleo1recipient",
     };
     const mockViewKey = "AViewKey1mock_view_key_data";
     const mockPreparedRequestResponse = {
-      request: "mock_prepared_request",
-      metadata: { foo: "bar" },
+      is_root: true,
+      network_id: 1,
+      program_id: "credits.aleo",
+      function_name: "transfer_public",
+      inputs: ["aleo1toaddress", "1000u64"],
+      input_types: ["address", "u64"],
     };
 
     beforeEach(() => {
@@ -273,11 +279,10 @@ describe("sdkClient", () => {
     });
 
     it("should handle intent with BigInt amount correctly", async () => {
-      const largeAmountIntent: TransactionIntent = {
-        type: "transfer",
-        from: "aleo1fromaddress",
+      const largeAmountIntent: Intent = {
+        type: "transfer_public",
+        amount: "1000000000000000000",
         to: "aleo1toaddress",
-        amount: BigInt("1000000000000000000"),
       };
 
       await sdkClient.createRequestFromIntent({
@@ -325,14 +330,14 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
     });
 
-    it("should return the complete response with metadata", async () => {
-      const responseWithMetadata = {
-        request: "mock_prepared_request",
-        metadata: {
-          fee: "1000",
-          inputs: ["record1"],
-          outputs: ["record2"],
-        },
+    it("should return the complete response with data", async () => {
+      const responseWithMetadata: PreparedRequestResponse = {
+        is_root: true,
+        network_id: 1,
+        program_id: "credits.aleo",
+        function_name: "transfer_public",
+        inputs: ["aleo1toaddress", "1000u64"],
+        input_types: ["address", "u64"],
       };
       jest.mocked(network).mockResolvedValue({ data: responseWithMetadata });
 
@@ -343,9 +348,12 @@ describe("sdkClient", () => {
       });
 
       expect(result).toEqual(responseWithMetadata);
-      expect(result.metadata).toHaveProperty("fee");
-      expect(result.metadata).toHaveProperty("inputs");
-      expect(result.metadata).toHaveProperty("outputs");
+      expect(result).toHaveProperty("is_root");
+      expect(result).toHaveProperty("network_id");
+      expect(result).toHaveProperty("program_id");
+      expect(result).toHaveProperty("function_name");
+      expect(result).toHaveProperty("inputs");
+      expect(result).toHaveProperty("input_types");
     });
   });
 });

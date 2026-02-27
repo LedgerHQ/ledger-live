@@ -936,6 +936,7 @@ describe("mapTransactionIntentToSdkIntent", () => {
   });
 
   it("should throw for unsupported intent type", () => {
+    // @ts-expect-error - testing unsupported intent type
     const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
       ...baseIntent,
       type: "custom_intent",
