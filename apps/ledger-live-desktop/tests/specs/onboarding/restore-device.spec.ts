@@ -39,7 +39,6 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.waitForDeviceToBeVisible(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
-          animations: "disabled",
         });
       });
 
@@ -62,13 +61,11 @@ test.describe.parallel("Onboarding", () => {
 
         await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-1.png`], {
           mask: [onboardingPage.roleAnimation],
-          animations: "disabled",
         });
         await onboardingPage.acceptPrivatePinCode();
 
         await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-2.png`], {
           mask: [onboardingPage.roleAnimation],
-          animations: "disabled",
         });
         await onboardingPage.continueTutorial();
 

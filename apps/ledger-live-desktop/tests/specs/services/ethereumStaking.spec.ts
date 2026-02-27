@@ -113,9 +113,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   };
 
   const maskPartOfItemsInMarket = {
-    mask: [
-      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
-    ],
+    mask: [page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") })],
   };
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
