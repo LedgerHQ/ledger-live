@@ -910,6 +910,86 @@
       },
       {
         "data": {
+          "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+          "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+          "used": true,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+          "freshAddressPath": "44'/118'/0'/0/0",
+          "blockHeight": 1615299,
+          "creationDate": "2026-02-18T15:00:00.000Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "cosmos",
+          "balance": "2180673",
+          "spendableBalance": "2180673",
+          "balanceHistoryCache": {
+            "HOUR": { "latestDate": null, "balances": [] },
+            "DAY": { "latestDate": null, "balances": [] },
+            "WEEK": { "latestDate": null, "balances": [] }
+          },
+          "xpub": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+          "cosmosResources": {
+            "delegations": [],
+            "redelegations": [],
+            "unbondings": [],
+            "delegatedBalance": "0",
+            "pendingRewardsBalance": "0",
+            "unbondingBalance": "0",
+            "withdrawAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+            "sequence": 0
+          },
+          "subAccounts": [],
+          "swapHistory": [],
+          "name": "Cosmos 1",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+          "seedIdentifier": "02624ac83690d5ef627927104767d679aef73d3d3c9544abe4206b1d0c463c94ff",
+          "used": true,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+          "freshAddressPath": "44'/118'/1'/0/0",
+          "blockHeight": 1615299,
+          "creationDate": "2026-02-18T15:00:00.000Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "cosmos",
+          "balance": "1000000",
+          "spendableBalance": "1000000",
+          "balanceHistoryCache": {
+            "HOUR": { "latestDate": null, "balances": [] },
+            "DAY": { "latestDate": null, "balances": [] },
+            "WEEK": { "latestDate": null, "balances": [] }
+          },
+          "xpub": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+          "cosmosResources": {
+            "delegations": [],
+            "redelegations": [],
+            "unbondings": [],
+            "delegatedBalance": "0",
+            "pendingRewardsBalance": "0",
+            "unbondingBalance": "0",
+            "withdrawAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+            "sequence": 0
+          },
+          "subAccounts": [],
+          "swapHistory": [],
+          "name": "Cosmos 2",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
           "id": "js:2:bitcoin:xpub6DT7THMT8AHEqG4wscGvmakS67Lva7a5q9YiTtwXh61ZUQAZA3bGfRmsoGhUZmfa3KbQakccLC7oPk6YxbbJSNpnYCGvjiQgppkE45inSsJ:native_segwit",
           "seedIdentifier": "048cf8f9ea3ce32cde80c3c8ff66b9b3c55d7f23759f7596dd11e9ce99cce04d1a626d7516e01c352f4e15dcedc3bfc44629dca2e33d3bad9ec1620a5443efb73e",
           "used": true,

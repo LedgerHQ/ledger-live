@@ -35,8 +35,9 @@ const MemoTypeField = ({
     [onChange, bridge, transaction],
   );
   return (
-    <div style={{ width: "156px" }}>
+    <div style={{ width: "156px" }} data-testid="stellar-memo-type-container">
       <Select
+        data-testid="stellar-memo-type-select"
         isSearchable={false}
         onChange={onMemoTypeChange}
         value={selectedMemoType}

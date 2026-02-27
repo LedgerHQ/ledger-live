@@ -34,7 +34,7 @@ const Root = ({
       <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
         <MemoTypeField onChange={onChange} account={account} transaction={transaction} />
         {memoActivated ? (
-          <Box ml={20} grow={1}>
+          <Box ml={20} grow={1} data-testid="stellar-memo-value-container">
             <MemoValueField
               onChange={onChange}
               account={account}

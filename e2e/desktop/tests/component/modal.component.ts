@@ -21,7 +21,13 @@ export class Modal extends Component {
 
   @step("Close modal")
   async close() {
-    await this.closeButton.click();
+    // New modular flow: aria-label="Close"; legacy: modal-close-button
+    const dialogClose = this.page.locator('[aria-label="Close"]').first();
+    if (await dialogClose.isVisible()) {
+      await dialogClose.click();
+    } else {
+      await this.closeButton.click();
+    }
   }
 
   @step("Toggle Max Amount")

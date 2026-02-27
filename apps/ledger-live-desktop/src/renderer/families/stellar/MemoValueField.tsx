@@ -28,6 +28,7 @@ const MemoValueField = ({
   // on the ledger-live mobile
   return (
     <Input
+      data-testid="stellar-memo-value-input"
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.memoValue || ""}

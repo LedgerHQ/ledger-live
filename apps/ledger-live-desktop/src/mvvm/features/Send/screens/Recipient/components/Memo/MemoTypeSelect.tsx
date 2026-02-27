@@ -19,20 +19,22 @@ function MemoTypeSelectComponent({ currencyId, options, value, onChange }: MemoT
   const { t } = useTranslation();
 
   return (
-    <Select onValueChange={onChange} value={value}>
-      <SelectTrigger data-testid="send-memo-options-select" />
-      <SelectContent>
-        {options.map(optionValue => (
-          <SelectItem
-            key={optionValue}
-            value={optionValue}
-            data-testid={`send-memo-select-option-${optionValue}`}
-          >
-            <SelectItemText>{t(`families.${currencyId}.memoType.${optionValue}`)}</SelectItemText>
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div data-testid="stellar-memo-dropdown">
+      <Select onValueChange={onChange} value={value}>
+        <SelectTrigger data-testid="stellar-memo-dropdown-trigger" aria-label="Memo type" />
+        <SelectContent data-testid="stellar-memo-dropdown-content">
+          {options.map(optionValue => (
+            <SelectItem
+              key={optionValue}
+              value={optionValue}
+              data-testid={`stellar-memo-option-${optionValue.toLowerCase().replace("_", "-")}`}
+            >
+              <SelectItemText>{t(`families.${currencyId}.memoType.${optionValue}`)}</SelectItemText>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
 

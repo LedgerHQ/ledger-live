@@ -93,3 +93,37 @@ export const liveDataWithRecipientAddressCommand = (
     return address;
   };
 };
+
+export const liveDataWithMemoTagRecipientAddressCommand = (
+  fromAccount: Account,
+  toAccount: Account,
+  options?: LiveDataCommandOptions,
+) => {
+  return async (appjsonPath: string) => {
+    // Load both accounts via CLI (like ledgerSync / swap tests).
+    // Use currency.id (e.g. "ripple", "cardano") - required for XRP; Cardano works with either.
+    await CLI.liveData({
+      currency: fromAccount.currency.id,
+      index: fromAccount.index,
+      ...(options?.useScheme && fromAccount.derivationMode
+        ? { scheme: fromAccount.derivationMode }
+        : {}),
+      add: true,
+      appjson: appjsonPath,
+    });
+
+    await CLI.liveData({
+      currency: toAccount.currency.id,
+      index: toAccount.index,
+      ...(options?.useScheme && toAccount.derivationMode
+        ? { scheme: toAccount.derivationMode }
+        : {}),
+      add: true,
+      appjson: appjsonPath,
+    });
+
+    const address = await getAccountAddress(toAccount);
+    toAccount.address = address;
+    return address;
+  };
+};

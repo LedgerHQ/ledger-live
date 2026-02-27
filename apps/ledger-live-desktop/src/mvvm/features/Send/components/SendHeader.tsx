@@ -114,7 +114,7 @@ export function SendHeader() {
           }
         />
         {showMemoControls && currencyId ? (
-          <div className="mb-24 px-24">
+          <div className="mb-24 px-24" data-testid="stellar-memo-section">
             <div className="flex flex-col gap-12">
               {hasMemoTypeOptions ? (
                 <MemoTypeSelect

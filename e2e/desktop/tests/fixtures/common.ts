@@ -26,6 +26,8 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
+  /** When set, filter data.accounts to only include accounts matching this currencyId (e.g. "stellar", "ripple") */
+  userdataCurrencyFilter?: string;
   extraUserdataFiles?: Record<string, string>;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
@@ -81,6 +83,7 @@ export const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
+  userdataCurrencyFilter: undefined,
   settings: { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
@@ -111,6 +114,7 @@ export const test = base.extend<TestFixtures>({
       theme,
       userdataDestinationPath,
       userdataOriginalFile,
+      userdataCurrencyFilter,
       settings,
       env,
       featureFlags,
@@ -126,9 +130,22 @@ export const test = base.extend<TestFixtures>({
     // create userdata path
     await mkdir(userdataDestinationPath, { recursive: true });
 
-    const fileUserData = userdataOriginalFile
+    let fileUserData = userdataOriginalFile
       ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
+
+    if (userdataCurrencyFilter && fileUserData?.data?.accounts) {
+      fileUserData = {
+        ...fileUserData,
+        data: {
+          ...fileUserData.data,
+          accounts: fileUserData.data.accounts.filter(
+            (acc: { data?: { currencyId?: string } }) =>
+              acc?.data?.currencyId === userdataCurrencyFilter,
+          ),
+        },
+      };
+    }
 
     const userData = merge({ data: { settings } }, fileUserData);
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
