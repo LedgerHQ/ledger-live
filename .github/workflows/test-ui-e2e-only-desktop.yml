@@ -263,6 +263,13 @@ jobs:
           name: xray-reports
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
+      - name: Upload HTML report for trace
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: playwright-report
+          path: e2e/desktop/playwright-report/
+
   report-to-allure:
     name: "Create Allure Report"
     runs-on: [ledger-live-medium]
