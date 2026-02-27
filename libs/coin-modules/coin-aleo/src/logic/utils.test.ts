@@ -476,7 +476,12 @@ describe("calculateAmount", () => {
 
   it("should calculate max amount when useAllAmount is true", () => {
     const estimatedFees = new BigNumber(5000);
-    const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
+    const transparentBalance = new BigNumber(1000000);
+    const mockAccount = getMockedAccount({
+      balance: transparentBalance,
+      // @ts-expect-error - only transparentBalance is required for this test
+      aleoResources: { transparentBalance },
+    });
     const mockTransaction = getMockedTransaction({
       amount: new BigNumber(0),
       useAllAmount: true,
@@ -489,8 +494,8 @@ describe("calculateAmount", () => {
     });
 
     expect(result).toMatchObject({
-      amount: mockAccount.balance.minus(estimatedFees),
-      totalSpent: mockAccount.balance,
+      amount: transparentBalance.minus(estimatedFees),
+      totalSpent: transparentBalance,
     });
   });
 

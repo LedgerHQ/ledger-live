@@ -21,6 +21,7 @@ import type {
   TransactionType,
   ProvableApi,
   TransactionSelfTransfer,
+  AleoAccount,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -232,14 +233,15 @@ export function calculateAmount({
   transaction,
   estimatedFees,
 }: {
-  account: Account;
+  account: AleoAccount;
   transaction: Transaction;
   estimatedFees: BigNumber;
 }) {
   let amount = transaction.amount;
 
   if (transaction.useAllAmount) {
-    amount = BigNumber.max(0, account.balance.minus(estimatedFees));
+    const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
+    amount = BigNumber.max(0, transparentBalance.minus(estimatedFees));
   }
 
   const totalSpent = amount.plus(estimatedFees);
