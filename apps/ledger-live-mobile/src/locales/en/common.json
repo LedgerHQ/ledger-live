@@ -2757,6 +2757,11 @@
       "connectDevice": {
         "title": "Access to your wallet is not backed up yet"
       }
+    },
+    "refreshStatus": {
+      "refreshing": "Refreshing - Last update {{timeAgo}}",
+      "refreshingInitial": "Refreshing...",
+      "upToDate": "You're up to date"
     }
   },
   "addAccountsModal": {

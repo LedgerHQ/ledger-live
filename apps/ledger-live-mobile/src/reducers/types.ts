@@ -38,6 +38,7 @@ import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
+import type { PortfolioRefreshState } from "./portfolioRefresh";
 
 // === ACCOUNT STATE ===
 
@@ -397,4 +398,5 @@ export type State = LLMRTKApiState & {
   wallet: WalletState;
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;
+  portfolioRefresh: PortfolioRefreshState;
 };
