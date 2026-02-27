@@ -736,6 +736,17 @@ export const DEFAULT_FEATURES: Features = {
       vitalsUpdateFrequency: "AVERAGE",
     },
   },
+  lldDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      sessionSamplingRate: 100,
+      sessionReplaySampleRate: 0,
+      defaultPrivacyLevel: "mask-user-input",
+      traceSampleRate: 100,
+      allowedTracingUrls: ["/^https:\\/\\/[^/]+\\.ledger\\.com(\\/|$)/"],
+      profilingSampleRate: 25,
+    },
+  },
   llmSentry: { enabled: true },
   onboardingIgnoredOsUpdates: {
     ...DEFAULT_FEATURE,
