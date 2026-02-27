@@ -9,11 +9,12 @@ let configDir = (() => {
 
   // we load in async the user data. there is a short period where this will be "" but then it becomes the real path
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("electron")
-    .ipcRenderer.invoke("getPathUserData")
-    .then((path: string) => {
+  const invoke = require("electron")?.ipcRenderer?.invoke;
+  if (typeof invoke === "function") {
+    invoke("getPathUserData").then((path: string) => {
       configDir = path;
     });
+  }
   return "";
 })();
 
@@ -27,11 +28,12 @@ let homeDir = (() => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("electron")
-    .ipcRenderer.invoke("getPathHome")
-    .then((path: string) => {
+  const invoke = require("electron")?.ipcRenderer?.invoke;
+  if (typeof invoke === "function") {
+    invoke("getPathHome").then((path: string) => {
       homeDir = path;
     });
+  }
   return "";
 })();
 
@@ -44,12 +46,15 @@ function filepathReplace(path: string): string {
 
   if (!homeDir || !configDir) return ""; // empty everything because we don't know the paths yet
   if (!path || path.startsWith("app://")) return path;
+  const normalizedPath = (p: string) => p.replaceAll("\\", "/");
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const replaced = (Object.keys(basePaths) as (keyof typeof basePaths)[]).reduce((path, name) => {
     const p: string = basePaths[name];
+    const norm = normalizedPath(p);
     return path
-      .replaceAll(p, name) // normal replace of the path
-      .replaceAll(encodeURI(p.replace(/\\/g, "/")), name); // replace of the URI version of the path (that are in file:///)
+      .replaceAll(p, name) // raw path
+      .replaceAll(encodeURI(norm), name) // URI form (e.g. file://, encodeURI leaves / as /)
+      .replaceAll(encodeURIComponent(norm), name); // query-param form (e.g. ?appDirname=%2FUsers%2F...)
   }, path);
   return replaced;
 }
