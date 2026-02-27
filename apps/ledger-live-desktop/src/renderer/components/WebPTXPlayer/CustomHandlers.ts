@@ -43,14 +43,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const { setDrawer } = React.useContext(context);
   const { getRouteToPlatformApp } = useStake();
   const navigate = useNavigate();
+  const lwdWallet40 = useFeature("lwdWallet40");
   const walletState = useSelector(walletSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
-  const lwdWallet40 = useFeature("lwdWallet40");
-  const flags = useMemo(
-    () => ({ wallet40Ux: Boolean(lwdWallet40?.enabled) }),
-    [lwdWallet40?.enabled],
-  );
 
   // Helper to get manifest by ID - checks local first, then remote
   const getManifestById = useCallback(
@@ -89,6 +85,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           ),
       ),
     [],
+  );
+  const flags = useMemo(
+    () => ({ wallet40Ux: Boolean(lwdWallet40?.enabled) }),
+    [lwdWallet40?.enabled],
   );
 
   const getAccount = useCallback(
