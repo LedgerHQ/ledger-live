@@ -2,7 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Operation } from "@ledgerhq/types-live";
 import { postSwapAccepted, postSwapCancelled } from "./index";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { TradeMethod } from "./types";
+import { SwapRequestFlags, TradeMethod } from "./types";
 
 export const setBroadcastTransaction = ({
   result,
@@ -15,6 +15,7 @@ export const setBroadcastTransaction = ({
   fromAccountAddress,
   toAccountAddress,
   fromAmount,
+  flags,
 }: {
   result: { operation: Operation | string; swapId: string };
   provider: string;
@@ -26,6 +27,7 @@ export const setBroadcastTransaction = ({
   fromAccountAddress?: string;
   toAccountAddress?: string;
   fromAmount?: string;
+  flags?: SwapRequestFlags;
 }) => {
   const { operation, swapId } = result;
 
@@ -48,6 +50,7 @@ export const setBroadcastTransaction = ({
       fromAccountAddress,
       toAccountAddress,
       fromAmount,
+      flags,
     });
   } else {
     postSwapAccepted({
@@ -62,6 +65,7 @@ export const setBroadcastTransaction = ({
       fromAccountAddress,
       toAccountAddress,
       fromAmount,
+      flags,
     });
   }
 };

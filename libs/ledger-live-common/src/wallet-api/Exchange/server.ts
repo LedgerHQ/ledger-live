@@ -142,10 +142,15 @@ type ExchangeUiHooks = {
   }) => void;
 };
 
+type ExchangeFeatureFlags = {
+  wallet40Ux?: boolean;
+};
+
 export const handlers = ({
   accounts,
   tracking,
   manifest,
+  flags,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -157,6 +162,7 @@ export const handlers = ({
   accounts: AccountLike[];
   tracking: TrackingAPI;
   manifest: AppManifest;
+  flags?: ExchangeFeatureFlags;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -496,6 +502,7 @@ export const handlers = ({
           amountInAtomicUnit: fromAmountAtomic,
           quoteId,
           toNewTokenId,
+          flags,
         }).catch((error: Error) => {
           const wrappedError = createStepError({
             error: get(error, "response.data.error", error),
@@ -621,6 +628,7 @@ export const handlers = ({
                 fromAccountAddress,
                 toAccountAddress,
                 fromAmount,
+                flags,
               });
 
               resolve({ operationHash, swapId });
@@ -661,6 +669,7 @@ export const handlers = ({
                 data: (transaction as EvmTransaction).data
                   ? `0x${padHexString((transaction as EvmTransaction).data?.toString("hex") || "")}`
                   : "0x",
+                flags,
               });
 
               reject(completeExchangeError);

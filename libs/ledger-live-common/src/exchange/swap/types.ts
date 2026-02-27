@@ -183,6 +183,10 @@ export type SwapStatus = {
 // -----
 // Related to Swap state API call (accepted or cancelled)
 
+export type SwapRequestFlags = {
+  wallet40Ux?: boolean;
+};
+
 type SwapStateRequest = {
   provider: string;
   swapId: string;
@@ -203,6 +207,7 @@ type SwapStateRequest = {
   refundAddress?: string;
   payoutAddress?: string;
   sponsored?: boolean;
+  flags?: SwapRequestFlags;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {
@@ -326,6 +331,7 @@ export type SwapPayloadRequestData = {
   amountInAtomicUnit: BigNumber;
   quoteId?: string;
   toNewTokenId?: string;
+  flags?: SwapRequestFlags;
 };
 export type SwapPayloadResponse = {
   binaryPayload: string;
