@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
-import { store } from "~/context/store";
+import { store } from "~/state-manager/configureStore";
 import {
   importSettings,
   setLastConnectedDevice,
