@@ -41,6 +41,7 @@ const config: PlaywrightTestConfig = {
           },
         ],
         ["./tests/utils/customJsonReporter.ts"],
+        ["html"],
       ]
     : [["allure-playwright"]],
 };
