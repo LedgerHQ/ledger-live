@@ -128,6 +128,31 @@ describe("genericPrepareTransaction", () => {
     },
   );
 
+  it("does not propagate the custom gas limit", async () => {
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: 100000n,
+        parameters: { gasLimit: 22000n }, // custom gasLimit in parameter
+      }),
+    });
+
+    const txWithoutCustomFees = {
+      ...baseTransaction,
+      gasLimit: new BigNumber(21000),
+      customGasLimit: new BigNumber(22000),
+    };
+    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const result = await prepareTransaction(account, txWithoutCustomFees);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        fees: new BigNumber(100000),
+        gasLimit: new BigNumber(21000),
+        customGasLimit: new BigNumber(22000),
+      }),
+    );
+  });
+
   it("estimates using the token account spendable balance when sending all amount", async () => {
     const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(50) });
     (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({

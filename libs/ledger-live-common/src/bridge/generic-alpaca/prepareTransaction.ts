@@ -112,8 +112,9 @@ export function genericPrepareTransaction(
       const fieldsToPropagate = [
         "type",
         "storageLimit",
-        "gasLimit",
         "gasPrice",
+        // gas limit must not change in case it is custom
+        ...(transaction.customGasLimit ? [] : ["gasLimit"]),
         "maxFeePerGas",
         "maxPriorityFeePerGas",
         "additionalFees",
