@@ -5,7 +5,7 @@ import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategoriz
 export function useCategorizedAssetsFromPortfolio() {
   const distribution = useDistribution({ hideEmptyTokenAccount: true });
   const { tickers: stablecoinTickers, isLoading: isLoadingStablecoinTickers } =
-    useStablecoinTickers("lld");
+    useStablecoinTickers("lld", __APP_VERSION__);
   const categorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
   return {
     categorizedAssets,
