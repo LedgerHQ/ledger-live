@@ -8,7 +8,7 @@ import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import { default as QueuedDrawerBottomSheet } from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { ProgressIndicator } from "./components/ProgressIndicator";
 import { TrackScreen } from "~/analytics";
 import { PAGE_TRACKING_WALLET_V4_TOUR } from "./const";
@@ -51,7 +51,7 @@ export const WalletV4TourDrawer = ({
           as={AnimatedGestureHandlerFlatList}
           testID="walletv4-tour-slides-container"
           initialNumToRender={1}
-          maxToRenderPerBatch={1}
+          maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
           onSlideChange={onSlideChange}
         >
           <Slides.Content>
