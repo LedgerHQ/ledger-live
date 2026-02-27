@@ -438,14 +438,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
       segmentClient.reset();
     }
     await updateIdentify();
-    let lastReadOnlyMode: boolean = readOnlyModeEnabledSelector(store.getState());
-    store.subscribe(() => {
-      const current = readOnlyModeEnabledSelector(store.getState());
-      if (lastReadOnlyMode !== current) {
-        lastReadOnlyMode = current;
-        updateIdentify();
-      }
-    });
   }
   await track("Start", { isDeeplinkSession });
 

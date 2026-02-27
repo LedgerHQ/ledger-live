@@ -1,6 +1,6 @@
 /**
- * Tests for readOnlyMode analytics: identify includes readOnlyMode,
- * and identify is called again when readOnlyMode changes (store.subscribe).
+ * Tests for readOnlyMode analytics: readOnlyMode is included in track()
+ * extraProperties at runtime via getMandatoryProperties → readOnlyModeEnabledSelector(state).
  */
 import { configureStore } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
@@ -10,10 +10,9 @@ import * as segment from "../segment";
 
 jest.unmock("../segment");
 
-const { _identifyMock: mockIdentify } = require("@segment/analytics-react-native") as {
-  _identifyMock: jest.Mock;
+const { _trackMock: mockTrack } = require("@segment/analytics-react-native") as {
+  _trackMock: jest.Mock;
 };
-const MOCK_USER_ID = "test-user-id";
 
 describe("segment readOnlyMode", () => {
   jest.setTimeout(15000);
@@ -48,48 +47,48 @@ describe("segment readOnlyMode", () => {
       .then(() => new Promise<void>(r => setImmediate(r)))
       .then(() => new Promise<void>(r => setImmediate(r)));
 
-  it("calls identify when start(store) runs and again when readOnlyMode changes via store.subscribe", async () => {
+  it("track() includes readOnlyMode from state at runtime (default true)", async () => {
     await segment.start(store);
+    mockTrack.mockClear();
 
-    expect(mockIdentify).toHaveBeenCalledTimes(1);
-    expect(mockIdentify).toHaveBeenLastCalledWith(
-      MOCK_USER_ID,
-      expect.objectContaining({ readOnlyMode: true }),
-    );
-
-    store.dispatch(setReadOnlyMode(false));
+    await segment.track("TestEvent", {});
     await flushAsync();
 
-    expect(mockIdentify).toHaveBeenCalledTimes(2);
-    expect(mockIdentify).toHaveBeenLastCalledWith(
-      MOCK_USER_ID,
-      expect.objectContaining({ readOnlyMode: false }),
-    );
-
-    store.dispatch(setReadOnlyMode(true));
-    await flushAsync();
-
-    expect(mockIdentify).toHaveBeenCalledTimes(3);
-    expect(mockIdentify).toHaveBeenLastCalledWith(
-      MOCK_USER_ID,
+    expect(mockTrack).toHaveBeenCalledWith(
+      "TestEvent",
       expect.objectContaining({ readOnlyMode: true }),
     );
   });
 
-  it("does not call identify again when readOnlyMode value does not change", async () => {
+  it("track() includes readOnlyMode from state at runtime after setReadOnlyMode(false)", async () => {
     await segment.start(store);
+    store.dispatch(setReadOnlyMode(false));
+    await flushAsync();
+    mockTrack.mockClear();
 
-    expect(mockIdentify).toHaveBeenCalledTimes(1);
+    await segment.track("TestEvent", {});
+    await flushAsync();
 
+    expect(mockTrack).toHaveBeenCalledWith(
+      "TestEvent",
+      expect.objectContaining({ readOnlyMode: false }),
+    );
+  });
+
+  it("track() includes readOnlyMode from state at runtime after setReadOnlyMode(true)", async () => {
+    await segment.start(store);
+    store.dispatch(setReadOnlyMode(false));
+    await flushAsync();
     store.dispatch(setReadOnlyMode(true));
     await flushAsync();
+    mockTrack.mockClear();
 
-    expect(mockIdentify).toHaveBeenCalledTimes(1);
-
-    store.dispatch(setReadOnlyMode(false));
-    store.dispatch(setReadOnlyMode(false));
+    await segment.track("TestEvent", {});
     await flushAsync();
 
-    expect(mockIdentify).toHaveBeenCalledTimes(2);
+    expect(mockTrack).toHaveBeenCalledWith(
+      "TestEvent",
+      expect.objectContaining({ readOnlyMode: true }),
+    );
   });
 });

@@ -44,10 +44,11 @@ NativeModules.RNAnalytics = {};
 jest.mock("@segment/analytics-react-native", () => {
   const actual = jest.requireActual("@segment/analytics-react-native");
   const mockSegmentIdentify = jest.fn();
+  const mockSegmentTrack = jest.fn();
   const mockSegmentClient = {
     add: jest.fn(),
     identify: mockSegmentIdentify,
-    track: jest.fn(),
+    track: mockSegmentTrack,
     flush: jest.fn(),
     reset: jest.fn(),
   };
@@ -55,6 +56,7 @@ jest.mock("@segment/analytics-react-native", () => {
     ...actual,
     createClient: jest.fn(() => mockSegmentClient),
     _identifyMock: mockSegmentIdentify,
+    _trackMock: mockSegmentTrack,
   };
 });
 
