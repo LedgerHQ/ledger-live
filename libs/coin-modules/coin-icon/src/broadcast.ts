@@ -1,5 +1,5 @@
-import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 
 import { broadcastTransaction } from "./api/node";
 

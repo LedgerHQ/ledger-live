@@ -86,6 +86,7 @@
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
+    "@ledgerhq/coin-casper": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",

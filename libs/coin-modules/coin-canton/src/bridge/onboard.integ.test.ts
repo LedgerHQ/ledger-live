@@ -1,6 +1,10 @@
-import { firstValueFrom, toArray } from "rxjs";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { firstValueFrom, toArray } from "rxjs";
 import coinConfig from "../config";
+import {
+  isTopologyChangeRequiredCached,
+  clearIsTopologyChangeRequiredCache,
+} from "../network/gateway";
 import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
 import { createMockAccount, createMockCantonCurrency } from "../test/fixtures";
 import {
@@ -12,10 +16,6 @@ import {
   OnboardStatus,
 } from "../types/onboard";
 import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } from "./onboard";
-import {
-  isTopologyChangeRequiredCached,
-  clearIsTopologyChangeRequiredCache,
-} from "../network/gateway";
 
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
@@ -101,9 +101,8 @@ describe("onboard (devnet)", () => {
           "isAccountOnboarded lookup by public key failed after retries - this may be due to API eventual consistency",
         );
         // Still verify that onboarding itself worked
-        expect(onboardResult.partyId).toBeDefined();
+        expect(onboardResult.partyId).toEqual(expect.any(String));
       } else {
-        expect(result.partyId).toBeDefined();
         expect(result.partyId).toBe(onboardResult.partyId);
       }
     }, 60000);
@@ -162,8 +161,7 @@ describe("onboard (devnet)", () => {
       // Check final result
       expect(resultValues.length).toBeGreaterThan(0);
       const finalResult = resultValues[resultValues.length - 1];
-      expect(finalResult.partyId).toBeDefined();
-      expect(typeof finalResult.partyId).toBe("string");
+      expect(finalResult.partyId).toEqual(expect.any(String));
 
       expect(mockSignerContext).toHaveBeenCalled();
     }, 30000);
@@ -182,9 +180,9 @@ describe("onboard (devnet)", () => {
       );
 
       // THEN
-      expect(secondResult).toBeDefined();
-      expect(secondResult!.partyId).toBe(firstResult.partyId);
-      expect(typeof secondResult!.partyId).toBe("string");
+      expect(secondResult).toMatchObject({
+        partyId: firstResult.partyId,
+      });
     }, 30000);
   });
 
@@ -223,7 +221,8 @@ describe("onboard (devnet)", () => {
   });
 
   describe("TopologyChangeError", () => {
-    it("should require topology change and complete re-onboarding when accessing account from different node", async () => {
+    // TODO unskip when backend issues are solved
+    it.skip("should require topology change and complete re-onboarding when accessing account from different node", async () => {
       // GIVEN
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
@@ -247,7 +246,7 @@ describe("onboard (devnet)", () => {
       }
 
       const partyId = onboardResult.partyId;
-      expect(partyId).toBeDefined();
+      expect(partyId).toEqual(expect.any(String));
 
       // Verify account is accessible on devnet node
       const isTopologyChangeRequiredOnDevnet = await isTopologyChangeRequiredCached(
@@ -288,8 +287,7 @@ describe("onboard (devnet)", () => {
       // Check final result
       expect(resultValues.length).toBeGreaterThan(0);
       const finalResult = resultValues[resultValues.length - 1];
-      expect(finalResult.partyId).toBeDefined();
-      expect(typeof finalResult.partyId).toBe("string");
+      expect(finalResult.partyId).toEqual(expect.any(String));
 
       if (originalNodeId) {
         setEnv("CANTON_NODE_ID_OVERRIDE", originalNodeId);

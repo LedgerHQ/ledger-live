@@ -1,5 +1,5 @@
-import { isRecipientValid, validateTag } from "./utils";
 import BigNumber from "bignumber.js";
+import { isRecipientValid, validateTag } from "./utils";
 
 describe("utils", () => {
   describe("isRecipientValid", () => {

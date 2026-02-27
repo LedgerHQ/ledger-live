@@ -12,17 +12,17 @@ import cantonCoinConfig, { type CantonCoinConfig } from "../config";
 import resolver from "../signer";
 import { CantonCurrencyBridge, CantonSigner, CantonAccount } from "../types";
 import type { Transaction } from "../types";
+import { buildTransferInstruction } from "./acceptOffer";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
 import { prepareTransaction } from "./prepareTransaction";
+import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
-import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
-import { buildTransferInstruction } from "./acceptOffer";
-import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 import { validateAddress } from "./validateAddress";
 
 export function createBridges(

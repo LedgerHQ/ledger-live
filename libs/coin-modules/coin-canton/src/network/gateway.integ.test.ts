@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
 import { generateMockKeyPair } from "../test/cantonTestUtils";
 import {
@@ -14,7 +15,6 @@ import {
   submitPreApprovalTransaction,
   type OnboardingPrepareResponse,
 } from "./gateway";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockCurrency = {
   id: "canton_network",
@@ -62,15 +62,14 @@ describe("gateway (devnet)", () => {
       const response = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
 
       // THEN
-      expect(response).toHaveProperty("party_id");
-      expect(response).toHaveProperty("party_name");
-      expect(response).toHaveProperty("public_key_fingerprint");
-      expect(response).toHaveProperty("transactions");
-      expect(response.transactions).toHaveProperty("combined_hash");
-      expect(response.party_name).toBeDefined();
-      expect(typeof response.party_name).toBe("string");
-
-      expect(response.public_key_fingerprint).toBe(keyPair.fingerprint);
+      expect(response).toMatchObject({
+        party_id: expect.any(String),
+        party_name: expect.any(String),
+        public_key_fingerprint: keyPair.fingerprint,
+        transactions: expect.objectContaining({
+          combined_hash: expect.any(String),
+        }),
+      });
     });
   });
 
@@ -176,7 +175,9 @@ describe("gateway (devnet)", () => {
         mockCurrency,
         "ldg::12208b12fa34be8a079bcbb68bba828e58313046c4208855b39885fab48661322e68",
       );
-      expect(party).toBeDefined();
+      expect(party).toMatchObject({
+        party_id: "ldg::12208b12fa34be8a079bcbb68bba828e58313046c4208855b39885fab48661322e68",
+      });
     });
   });
 
@@ -186,7 +187,9 @@ describe("gateway (devnet)", () => {
         mockCurrency,
         "c5cdb19624833f9a929a0125978c886ec4297320c14cea6bf667dc1d23a8e650",
       );
-      expect(party).toBeDefined();
+      expect(party).toMatchObject({
+        public_key: "c5cdb19624833f9a929a0125978c886ec4297320c14cea6bf667dc1d23a8e650",
+      });
     });
   });
 

@@ -797,6 +797,9 @@ importers:
       '@ledgerhq/coin-canton':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-canton
+      '@ledgerhq/coin-casper':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-casper
       '@ledgerhq/coin-concordium':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-concordium
@@ -1413,6 +1416,9 @@ importers:
       '@ledgerhq/coin-canton':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-canton
+      '@ledgerhq/coin-casper':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-casper
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
@@ -18841,7 +18847,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

@@ -1,9 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getAccountShape } from "./synchronisation";
 import { setCoinConfig, EvmCoinConfig } from "@ledgerhq/coin-evm/config";
-import BigNumber from "bignumber.js";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getAccountShape } from "./synchronisation";
 
 const defaultInfo = {
   address: "0xC6aE6b3678EA9617f690B76126522a3d103E66a9",

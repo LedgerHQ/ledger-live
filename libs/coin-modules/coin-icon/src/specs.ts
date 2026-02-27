@@ -1,18 +1,18 @@
-import invariant from "invariant";
 import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
-import { acceptTransaction } from "./speculos-deviceActions";
+import invariant from "invariant";
 import {
   EXISTENTIAL_DEPOSIT,
   EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
   convertICXtoLoop,
 } from "./logic";
+import { acceptTransaction } from "./speculos-deviceActions";
 import { Transaction } from "./types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const maxAccounts = 6;
 const currency = getCryptoCurrencyById("icon");

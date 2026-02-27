@@ -1,6 +1,8 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
@@ -10,7 +12,7 @@
     ],
     "exactOptionalPropertyTypes": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "bundler"
   },
   "include": [
     "src/**/*"

@@ -1,10 +1,10 @@
-import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
 import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
 import {
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
@@ -24,13 +24,13 @@ jest.mock("../preload-data", () => ({
 import * as preloadData from "../preload-data";
 
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
-import { getMockedOperation } from "../test/fixtures/operation.fixture";
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
-import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
+import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import type {
   HederaAccount,
   HederaMemo,

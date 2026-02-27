@@ -1,5 +1,5 @@
-import { createApi } from "./index";
 import coinConfig from "../config";
+import { createApi } from "./index";
 
 describe("createApi", () => {
   it("should set the coin config value", () => {

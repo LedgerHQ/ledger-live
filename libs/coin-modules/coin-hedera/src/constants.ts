@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import type { OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 /**
  * Internal types to distinguish custom Hedera transaction behaviors.

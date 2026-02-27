@@ -1,9 +1,9 @@
-import type BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
-import type { HederaOperationExtra } from "./bridge";
+import type BigNumber from "bignumber.js";
 import type { HEDERA_OPERATION_TYPES } from "../constants";
+import type { HederaOperationExtra } from "./bridge";
 import type { HederaMirrorContractCallResult, HederaMirrorTransaction } from "./mirror";
 import type { HederaThirdwebTransaction } from "./thirdweb";
 

@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import type { AccountRaw, Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type {
   HederaAccount,
   HederaAccountRaw,

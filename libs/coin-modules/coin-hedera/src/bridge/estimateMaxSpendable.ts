@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
-import type { AccountBridge } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import type { Transaction } from "../types";

@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 type FreezeStatus = "NOT_APPLICABLE" | "FROZEN" | "UNFROZEN";
 

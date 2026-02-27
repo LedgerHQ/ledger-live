@@ -1,12 +1,12 @@
+import querystring from "querystring";
 import network from "@ledgerhq/live-network/network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { fetchOperationList } from "../../api";
 import { IconTransactionType } from "../../api/api-type";
-import { isTestnet } from "../../logic";
 import { getCoinConfig } from "../../config";
-import querystring from "querystring";
 import * as _constants from "../../constants";
+import { isTestnet } from "../../logic";
 
 // Mock the necessary modules and functions
 jest.mock("@ledgerhq/live-network/network");

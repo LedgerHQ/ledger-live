@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   getDerivationModesForCurrency,
@@ -7,6 +6,7 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Account, Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
@@ -64,19 +64,13 @@ describe.skip("sync (devnet)", () => {
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-        expect(result).toBeDefined();
-        expect(result.id).toBeDefined();
+        expect(result.id).toEqual(expect.any(String));
         expect(result.xpub).toBe(TEST_ADDRESS);
         expect(result.blockHeight).toBeGreaterThan(0);
-        expect(result.balance).toBeDefined();
-        expect(result.spendableBalance).toBeDefined();
-        expect(result.operations).toBeDefined();
+        expect(result.balance?.toNumber()).toBeGreaterThanOrEqual(0);
+        expect(result.spendableBalance?.toNumber()).toBeGreaterThanOrEqual(0);
+        expect(result.operations).toBeInstanceOf(Array);
         expect(result.operationsCount).toBeGreaterThanOrEqual(0);
-
-        expect(result.balance).toBeInstanceOf(Object);
-        expect(result.balance?.toNumber).toBeDefined();
-        expect(result.spendableBalance).toBeInstanceOf(Object);
-        expect(result.spendableBalance?.toNumber).toBeDefined();
 
         expect(result.spendableBalance?.toNumber()).toBeLessThanOrEqual(
           result.balance?.toNumber() || 0,
@@ -128,10 +122,10 @@ describe.skip("sync (devnet)", () => {
           { paginationConfig: {} },
         );
 
-        expect(result.operations).toBeDefined();
         expect(result.operationsCount).toBeGreaterThanOrEqual(1);
-        const initialOp = result.operations?.find(op => op.id === "test-op-1");
-        expect(initialOp).toBeDefined();
+        expect(result.operations?.find(op => op.id === "test-op-1")).toMatchObject({
+          id: "test-op-1",
+        });
       },
       TIMEOUT,
     );
@@ -201,7 +195,6 @@ describe.skip("sync (devnet)", () => {
           cursor: (operation.blockHeight || 0) + 1,
           limit: 100,
         });
-        expect(result.operations).toBeDefined();
         expect(result.operationsCount).toBeGreaterThan(1);
       },
       TIMEOUT,
@@ -215,7 +208,6 @@ describe.skip("sync (devnet)", () => {
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-        expect(result.operations).toBeDefined();
         expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
         expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {

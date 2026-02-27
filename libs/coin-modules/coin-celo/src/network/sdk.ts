@@ -1,8 +1,8 @@
-import { ContractKit, newKit } from "@celo/contractkit";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { getEnv } from "@ledgerhq/live-env";
-import { CeloVote } from "../types/types";
 import { CeloTx } from "@celo/connect";
+import { ContractKit, newKit } from "@celo/contractkit";
+import { getEnv } from "@ledgerhq/live-env";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { CeloVote } from "../types/types";
 
 let kit: ContractKit;
 export const celoKit = () => {

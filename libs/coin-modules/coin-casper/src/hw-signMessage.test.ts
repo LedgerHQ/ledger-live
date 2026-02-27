@@ -37,7 +37,7 @@ describe("hw-signMessage", () => {
   };
 
   // Mock signerContext function
-  const mockSignerContext: SignerContext<CasperSigner> = jest.fn((deviceId, callback) =>
+  const mockSignerContext: SignerContext<CasperSigner> = jest.fn((_deviceId, callback) =>
     callback(mockSigner),
   );
 
@@ -112,7 +112,7 @@ describe("hw-signMessage", () => {
       sign: jest.fn().mockRejectedValue(new Error("Device disconnected")),
     };
 
-    const errorSignerContext: SignerContext<CasperSigner> = jest.fn((deviceId, callback) =>
+    const errorSignerContext: SignerContext<CasperSigner> = jest.fn((_deviceId, callback) =>
       callback(errorSigner),
     );
 

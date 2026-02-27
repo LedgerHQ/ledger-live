@@ -1,3 +1,5 @@
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type {
   HederaAccount,
@@ -5,8 +7,6 @@ import type {
   HederaResources,
   HederaResourcesRaw,
 } from "../../types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TokenAccount } from "@ledgerhq/types-live";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();

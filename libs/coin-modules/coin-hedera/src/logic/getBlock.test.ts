@@ -1,8 +1,8 @@
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
-import { getBlock } from "./getBlock";
-import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
 import type { StakingAnalysis } from "../types";
+import { getBlock } from "./getBlock";
+import { getBlockInfo } from "./getBlockInfo";
 import { analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
 
 jest.mock("./getBlockInfo");

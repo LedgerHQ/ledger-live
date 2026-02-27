@@ -2,6 +2,7 @@
   "entry": [
     "src/api/index.ts",
     "src/bridge/index.ts",
+    "src/bridge/deviceTransactionConfig.ts",
     "src/common-logic/index.ts",
     "src/signer/index.ts",
     "src/test/index.ts",

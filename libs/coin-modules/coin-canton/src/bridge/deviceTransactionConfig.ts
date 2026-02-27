@@ -1,10 +1,10 @@
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
 // This method adds additional fields that need to be reviewed when signing a transaction on the device.
 async function getDeviceTransactionConfig({
-  transaction: {},
+  transaction: _,
   status: { amount, estimatedFees },
 }: {
   account: AccountLike;

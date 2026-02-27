@@ -1,15 +1,15 @@
-import network from "@ledgerhq/live-network/network";
-import { BigNumber } from "bignumber.js";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import querystring from "querystring";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import network from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { getCoinConfig } from "../config";
 import { LIMIT } from "../constants";
 import { isTestnet } from "../logic";
-import { AccountType, IconTransactionType } from "./api-type";
-import { log } from "@ledgerhq/logs";
 import { IconOperation } from "../types/index";
-import querystring from "querystring";
-import { getCoinConfig } from "../config";
+import { AccountType, IconTransactionType } from "./api-type";
 
 /**
  * Returns Testnet API URL if the current network is testnet
