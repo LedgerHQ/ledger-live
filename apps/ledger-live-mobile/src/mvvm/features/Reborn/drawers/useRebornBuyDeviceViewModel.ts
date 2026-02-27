@@ -14,6 +14,7 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import { ScreenName, NavigatorName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import useBuyDeviceAction from "../hooks/useBuyDeviceAction";
+import { REBORN_BUY_DRAWER_ANALYTICS_PAGE } from "../consts/analytics";
 
 type NavigationProp = BaseNavigationComposite<
   | StackNavigatorNavigation<BuyDeviceNavigatorParamList, ScreenName.GetDevice>
@@ -52,15 +53,19 @@ function useRebornBuyDeviceViewModel() {
     });
 
     if (readOnlyModeEnabled) {
-      track("message_clicked", {
-        message: "I already have a device, set it up now",
-        page: "Upsell Flex",
+      track("button_clicked", {
+        button: "Connect",
+        page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
       });
     }
     closeDrawer();
   }, [isInOnboarding, dispatch, navigation, readOnlyModeEnabled, closeDrawer]);
 
   const buyLedger = useCallback(() => {
+    track("button_clicked", {
+      button: "buy a ledger device",
+      page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
+    });
     handleBuyAction();
     closeDrawer();
   }, [handleBuyAction, closeDrawer]);
