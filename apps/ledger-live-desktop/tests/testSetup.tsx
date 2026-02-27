@@ -51,6 +51,7 @@ interface RenderReturn {
   container: HTMLElement;
   i18n: typeof i18n;
   rerender: (ui: React.ReactElement) => void;
+  unmount: () => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type DeepPartial<T> = T extends Function

@@ -56,6 +56,7 @@
     "test-deep-links": "ws --spa ledger-live-desktop-deeplinks.html"
   },
   "dependencies": {
+    "@datadog/browser-rum": "6.28.1",
     "@braze/web-sdk": "6.4.0",
     "@electron/fuses": "2.0.0",
     "@features/market-banner": "workspace:^",

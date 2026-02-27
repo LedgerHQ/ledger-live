@@ -15,11 +15,12 @@ export const app: jest.Mocked<{ getPath: () => unknown }> = {
 export const ipcRenderer: jest.Mocked<{
   on: () => unknown;
   send: () => unknown;
-  invoke: () => unknown;
+  invoke: (channel: string) => Promise<unknown>;
 }> = {
   on: jest.fn(),
   send: jest.fn(),
-  invoke: jest.fn(),
+  // Return a resolved Promise so load-time code (e.g. sentry/anonymizer) that does invoke(...).then(...) does not throw
+  invoke: jest.fn().mockResolvedValue(""),
 };
 
 const electron: jest.Mocked<{

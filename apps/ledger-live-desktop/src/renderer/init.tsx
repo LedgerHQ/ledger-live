@@ -152,6 +152,7 @@ async function init() {
   // Initialize identities before Sentry so Sentry user id (datadogId) is set correctly
   await initIdentities(store);
   sentry(() => sentryLogsSelector(store.getState()), store);
+
   let notifiedSentryLogs = false;
   store.subscribe(() => {
     const next = sentryLogsSelector(store.getState());

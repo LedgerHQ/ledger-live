@@ -26,6 +26,7 @@ import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppPro
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
+import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
@@ -37,7 +38,7 @@ import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
-    window.api?.reloadRenderer();
+    globalThis.window.api?.reloadRenderer();
   }
 };
 
@@ -59,8 +60,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
         reloadApp(e);
       }
     };
-    window.addEventListener("keydown", reload);
-    return () => window.removeEventListener("keydown", reload);
+    globalThis.window.addEventListener("keydown", reload);
+    return () => globalThis.window.removeEventListener("keydown", reload);
   }, [reloadEnabled]);
 
   const selectedPalette = useSelector(themeSelector) || "light";
@@ -78,6 +79,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           <FirebaseRemoteConfigProvider>
             <FirebaseFeatureFlagsProvider getFeature={getFeature}>
               <ConnectEnvsToSentry />
+              <ConnectEnvsToDatadog />
               <UpdaterProvider>
                 <AppDataStorageProvider>
                   <DeviceManagementKitProvider>

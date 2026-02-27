@@ -24,9 +24,10 @@ import {
 import db from "./db";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
-import sentry, { setTags } from "~/sentry/main";
+import { setTags } from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import type { User } from "~/renderer/storage";
+import { initSentryAndDatadogFromDb } from "./initSentryAndDatadog";
 import {
   installExtension,
   REDUX_DEVTOOLS,
@@ -120,11 +121,13 @@ app.on("ready", async () => {
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
   const user: User = (await db.getKey("app", "user")) as User;
+  const identities = (await db.getKey("app", "identities")) as Parameters<
+    typeof initSentryAndDatadogFromDb
+  >[2];
   console.timeEnd("T-db");
-  const userId = user?.id;
-  if (userId) {
-    sentry(() => settings?.sentryLogs, userId);
-  }
+  // Cache so getShouldSend() always reads current value (updated on setKey below)
+  let latestSettings: SettingsState | null = settings;
+  initSentryAndDatadogFromDb(() => !!latestSettings?.sentryLogs, user, identities);
 
   // Set up transport handlers for Speculos and HTTP proxy in main process
   setupTransportHandlers();
@@ -141,6 +144,9 @@ app.on("ready", async () => {
     return db.getKey(ns, keyPath, defaultValue);
   });
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
+    if (ns === "app" && keyPath === "settings") {
+      latestSettings = value as SettingsState;
+    }
     return db.setKey(ns, keyPath, value);
   });
   ipcMain.handle("hasEncryptionKey", () => {

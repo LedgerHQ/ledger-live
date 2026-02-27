@@ -24,8 +24,14 @@
   },
   "libs/client-ids/src/ids/DatadogId.ts": {
     "exportDatadogIdForPersistence": ["libs/client-ids/src/store/persistence.ts"],
-    "exportDatadogIdForSentry": ["apps/ledger-live-desktop/src/sentry/renderer.ts"],
-    "exportDatadogIdForRumUser": ["apps/ledger-live-desktop/src/datadog/renderer.ts"]
+    "exportDatadogIdForSentry": [
+      "apps/ledger-live-desktop/src/sentry/renderer.ts",
+      "apps/ledger-live-desktop/src/main/initSentryAndDatadog.ts"
+    ],
+    "exportDatadogIdForRumUser": [
+      "apps/ledger-live-desktop/src/datadog/renderer.ts",
+      "apps/ledger-live-desktop/src/main/initSentryAndDatadog.ts"
+    ]
   },
   "libs/client-ids/src/store/persistence.ts": {
     "exportIdentitiesForPersistence": [

@@ -12,7 +12,7 @@ describe("sentry anonymizer", () => {
   });
 
   describe("filepath", () => {
-    it("should return path unchanged when env paths are not set", () => {
+    it("should return empty string when env paths are not set", () => {
       process.env.LEDGER_CONFIG_DIRECTORY = "";
       process.env.HOME_DIRECTORY = "";
       const anonymizer = require("~/sentry/anonymizer").default;

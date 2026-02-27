@@ -79,7 +79,7 @@ export type SettingsState = {
   developerMode: boolean;
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
-  sentryLogs: boolean;
+  sentryLogs: boolean; // now used for datadog
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
