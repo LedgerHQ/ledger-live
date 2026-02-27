@@ -15,7 +15,15 @@ const { _trackMock: mockTrack } = require("@segment/analytics-react-native") as 
   _trackMock: jest.Mock;
 };
 
-jest.setTimeout(15000);
+const makeStore = (): AppStore =>
+  configureStore({
+    reducer: reducers,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+        immutableCheck: false,
+      }),
+  }) as AppStore;
 
 describe("segment readOnlyMode", () => {
   beforeEach(() => {
@@ -25,16 +33,6 @@ describe("segment readOnlyMode", () => {
   afterEach(() => {
     jest.useFakeTimers();
   });
-
-  const makeStore = (): AppStore =>
-    configureStore({
-      reducer: reducers,
-      middleware: getDefaultMiddleware =>
-        getDefaultMiddleware({
-          serializableCheck: false,
-          immutableCheck: false,
-        }),
-    }) as AppStore;
 
   let store: AppStore;
 
