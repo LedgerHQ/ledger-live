@@ -22,7 +22,7 @@ import { useTransferDrawerController } from "../../hooks/useTransferDrawerContro
 import { QuickActionCta, UserQuickActionsState } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
-import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
 
 interface UseQuickActionsCtasViewModelProps {
   sourceScreenName?: string;
@@ -49,7 +49,7 @@ export const useQuickActionsCtasViewModel = ({
   const isExchangeEnabled = ptxServiceCtaExchangeDrawer?.enabled ?? true;
 
   const { openDrawer: openTransferDrawer } = useTransferDrawerController();
-  const { navigateToRebornFlow } = useRebornFlow();
+  const handleBuyDeviceAction = useBuyDeviceAction();
 
   // Determine user state
   const userState: UserQuickActionsState = useMemo(() => {
@@ -116,8 +116,8 @@ export const useQuickActionsCtasViewModel = ({
       flow: "buy_ledger",
       page: pageName,
     });
-    navigateToRebornFlow();
-  }, [navigateToRebornFlow, pageName]);
+    handleBuyDeviceAction();
+  }, [handleBuyDeviceAction, pageName]);
 
   // CTAs for no-signer state
   const noSignerActions: readonly QuickActionCta[] = useMemo(

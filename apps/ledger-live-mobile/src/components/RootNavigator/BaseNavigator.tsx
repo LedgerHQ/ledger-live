@@ -339,7 +339,6 @@ export default function BaseNavigator() {
           name={NavigatorName.Card}
           component={CardLiveAppNavigator}
           options={{ headerShown: false }}
-          {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
