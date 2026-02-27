@@ -1,14 +1,20 @@
-import { renderHook } from "tests/testSetup";
-import { useAccountsSyncStatus } from "../useAccountsSyncStatus";
-import type { AccountWithUpToDateCheck } from "../useAccountsSyncStatus";
+/**
+ * @jest-environment jsdom
+ */
+
+import { renderHook } from "@testing-library/react";
+import {
+  createTriggerSync,
+  getAggregateSyncState,
+  useAccountsSyncStatus,
+  type AccountWithUpToDateCheck,
+} from "../useAccountsSyncStatus";
 
 const createAccountWithUpToDateCheck = (
   id: string,
   ticker: string,
   isUpToDate: boolean,
 ): AccountWithUpToDateCheck => ({
-  // Minimal account mock for tests; hook only reads id and currency.ticker
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   account: {
     id,
     type: "Account" as const,
@@ -18,13 +24,12 @@ const createAccountWithUpToDateCheck = (
   isUpToDate,
 });
 
-jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+jest.mock("../useAccountSyncState", () => ({
   useBatchAccountsSyncState: jest.fn(),
 }));
 
-const mockUseBatchAccountsSyncState = jest.requireMock(
-  "@ledgerhq/live-common/bridge/react/index",
-).useBatchAccountsSyncState;
+const mockUseBatchAccountsSyncState =
+  jest.requireMock("../useAccountSyncState").useBatchAccountsSyncState;
 
 describe("useAccountsSyncStatus", () => {
   beforeEach(() => {
@@ -50,11 +55,13 @@ describe("useAccountsSyncStatus", () => {
     const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
     expect(result.current.allAccounts).toHaveLength(2);
-    expect(result.current.listOfErrorAccountNames).toBe("");
+    expect(result.current.accountsWithError).toHaveLength(0);
     expect(result.current.areAllAccountsUpToDate).toBe(true);
+    expect(typeof result.current.lastSyncMs).toBe("number");
+    expect(result.current.lastSyncMs).toBeGreaterThanOrEqual(0);
   });
 
-  it("returns listOfErrorAccountNames and areAllAccountsUpToDate false when some accounts have sync problems", () => {
+  it("returns accountsWithError and areAllAccountsUpToDate false when some accounts have sync problems", () => {
     const accountsWithUpToDateCheck = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "ETH", true),
@@ -72,11 +79,12 @@ describe("useAccountsSyncStatus", () => {
 
     const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
-    expect(result.current.listOfErrorAccountNames).toBe("BTC");
+    expect(result.current.accountsWithError).toHaveLength(1);
+    expect(result.current.accountsWithError[0].id).toBe("a1");
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
-  it("joins multiple error account tickers with /", () => {
+  it("returns all accounts with error when multiple have sync problems", () => {
     const accountsWithUpToDateCheck = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "ETH", false),
@@ -94,11 +102,11 @@ describe("useAccountsSyncStatus", () => {
 
     const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
-    expect(result.current.listOfErrorAccountNames).toBe("BTC/ETH");
+    expect(result.current.accountsWithError).toHaveLength(2);
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
-  it("de-duplicates tickers when multiple accounts of the same currency have sync problems", () => {
+  it("returns all out-of-sync accounts when multiple of same currency have sync problems", () => {
     const accountsWithUpToDateCheck = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "BTC", false),
@@ -116,7 +124,7 @@ describe("useAccountsSyncStatus", () => {
 
     const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
-    expect(result.current.listOfErrorAccountNames).toBe("BTC");
+    expect(result.current.accountsWithError).toHaveLength(2);
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
@@ -131,7 +139,65 @@ describe("useAccountsSyncStatus", () => {
 
     const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
-    expect(result.current.listOfErrorAccountNames).toBe("");
+    expect(result.current.accountsWithError).toHaveLength(0);
     expect(result.current.areAllAccountsUpToDate).toBe(true);
+  });
+});
+
+describe("getAggregateSyncState", () => {
+  it("returns isError true when accounts are not all up to date", () => {
+    const { isPending, isError } = getAggregateSyncState({
+      areAllAccountsUpToDate: false,
+      bridgeOrCvPending: false,
+      bridgeOrCvError: false,
+      walletSyncPending: false,
+      walletSyncError: false,
+    });
+    expect(isPending).toBe(false);
+    expect(isError).toBe(true);
+  });
+
+  it("returns isPending true when bridge or wallet is pending", () => {
+    const { isPending } = getAggregateSyncState({
+      areAllAccountsUpToDate: true,
+      bridgeOrCvPending: true,
+      bridgeOrCvError: false,
+      walletSyncPending: false,
+      walletSyncError: false,
+    });
+    expect(isPending).toBe(true);
+  });
+
+  it("returns isError true when walletSyncError is true", () => {
+    const { isError } = getAggregateSyncState({
+      areAllAccountsUpToDate: true,
+      bridgeOrCvPending: false,
+      bridgeOrCvError: false,
+      walletSyncPending: false,
+      walletSyncError: true,
+    });
+    expect(isError).toBe(true);
+  });
+});
+
+describe("createTriggerSync", () => {
+  it("calls onUserRefresh, poll, and bridgeSync with SYNC_ALL_ACCOUNTS", () => {
+    const onUserRefresh = jest.fn();
+    const poll = jest.fn();
+    const bridgeSync = jest.fn();
+    const trigger = createTriggerSync({
+      onUserRefresh,
+      poll,
+      bridgeSync,
+      reason: "user-click",
+    });
+    trigger();
+    expect(onUserRefresh).toHaveBeenCalledTimes(1);
+    expect(poll).toHaveBeenCalledTimes(1);
+    expect(bridgeSync).toHaveBeenCalledWith({
+      type: "SYNC_ALL_ACCOUNTS",
+      priority: 5,
+      reason: "user-click",
+    });
   });
 });

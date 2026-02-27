@@ -75,4 +75,27 @@ describe("TopBar navigation", () => {
       button: "Settings",
     });
   });
+
+  it("should show sync button and open drawer with account names when user has accounts and presses sync", async () => {
+    const minimalAccount = {
+      id: "mock-account",
+      type: "Account" as const,
+      currency: { ticker: "BTC", id: "bitcoin", blockAvgTime: 60 },
+      lastSyncDate: new Date(),
+    };
+    const stateWithAccounts = (state: import("~/reducers/types").State) => ({
+      ...state,
+      accounts: {
+        ...state.accounts,
+        active: [minimalAccount],
+      },
+    });
+    const { user, getByTestId, getByText } = renderWithReactQuery(<TopBar />, {
+      overrideInitialState: stateWithAccounts,
+    });
+
+    await user.press(getByTestId("topbar-sync"));
+
+    expect(getByText("Sync Error")).toBeOnTheScreen();
+  });
 });

@@ -17,6 +17,11 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     onNotificationsPress,
     onSettingsPress,
     hasUnreadNotifications,
+    hasAccounts,
+    isSyncError,
+    isSyncPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
   } = useTopBarViewModel(navigation, screenName);
 
   return (
@@ -26,6 +31,11 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
       onNotificationsPress={onNotificationsPress}
       onSettingsPress={onSettingsPress}
       hasUnreadNotifications={hasUnreadNotifications}
+      hasAccounts={hasAccounts}
+      isSyncError={isSyncError}
+      isSyncPending={isSyncPending}
+      listOfErrorAccountNames={listOfErrorAccountNames}
+      syncAccessibilityLabel={syncAccessibilityLabel}
     />
   );
 }

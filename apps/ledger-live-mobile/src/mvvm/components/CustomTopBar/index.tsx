@@ -24,6 +24,7 @@ type CustomTopBarProps = {
 
 export function CustomTopBar({ onMyLedgerPress, customIcons }: Readonly<CustomTopBarProps>) {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   const deviceIcon: IconComponent = useCallback(
     ({ size, style }) => {

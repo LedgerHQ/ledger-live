@@ -11,6 +11,16 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
+jest.mock("../hooks/useSyncIndicator", () => ({
+  useSyncIndicator: () => ({
+    hasAccounts: false,
+    isError: false,
+    isPending: false,
+    listOfErrorAccountNames: "",
+    syncAccessibilityLabel: "Synchronize",
+  }),
+}));
+
 const mockNavigation = { navigate: mockNavigate };
 
 const withWeb3Hub = (enabled: boolean) => (state: State) => ({

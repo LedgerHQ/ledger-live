@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import {
-  useBatchAccountsSyncState,
+  useAccountsSyncStatus,
   useBridgeSync,
   useGlobalSyncState,
 } from "@ledgerhq/live-common/bridge/react/index";
@@ -30,21 +30,12 @@ const ActivityIndicatorInner = () => {
   const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
   const cvPolling = useCountervaluesPolling();
 
-  const allAccounts = accountsWithUpToDateCheck.map(ojb => ojb.account);
-  const allAccountsWithSyncProblem = useBatchAccountsSyncState({ accounts: allAccounts }).filter(
-    ({ syncState, account }) =>
-      !syncState.pending &&
-      (syncState.error ||
-        !accountsWithUpToDateCheck.find(obj => obj.account.id === account.id)?.isUpToDate),
-  );
-  const allMaybeAccountNames = useBatchMaybeAccountName(
-    allAccountsWithSyncProblem.map(ojb => ojb.account),
-  );
+  const { areAllAccountsUpToDate, accountsWithError } =
+    useAccountsSyncStatus(accountsWithUpToDateCheck);
+  const allMaybeAccountNames = useBatchMaybeAccountName(accountsWithError);
   const allAccountNamesWithSyncError = allMaybeAccountNames.map(
-    (name, index) => name ?? getDefaultAccountName(allAccountsWithSyncProblem[index].account),
+    (name, index) => name ?? getDefaultAccountName(accountsWithError[index]),
   );
-
-  const areAllAccountsUpToDate = allAccountNamesWithSyncError.length === 0;
 
   const isPending = cvPolling.pending || globalSyncState.pending || wsUserState.visualPending;
   const syncError =
