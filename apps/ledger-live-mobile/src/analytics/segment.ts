@@ -41,6 +41,7 @@ import {
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
   mevProtectionSelector,
+  readOnlyModeEnabledSelector,
   seenDevicesSelector,
   isRebornSelector,
   isOnboardingFlowSelector,
@@ -184,6 +185,7 @@ const getMandatoryProperties = async (store: AppStore) => {
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+  const readOnlyMode = readOnlyModeEnabledSelector(state);
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
 
   return {
@@ -193,6 +195,7 @@ const getMandatoryProperties = async (store: AppStore) => {
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
+    readOnlyMode,
   };
 };
 
@@ -435,6 +438,14 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
       segmentClient.reset();
     }
     await updateIdentify();
+    let lastReadOnlyMode: boolean = readOnlyModeEnabledSelector(store.getState());
+    store.subscribe(() => {
+      const current = readOnlyModeEnabledSelector(store.getState());
+      if (lastReadOnlyMode !== current) {
+        lastReadOnlyMode = current;
+        updateIdentify();
+      }
+    });
   }
   await track("Start", { isDeeplinkSession });
 
