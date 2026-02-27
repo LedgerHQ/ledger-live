@@ -68,6 +68,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.1.0",
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^9.1.2",
+    "rxjs": "catalog:"
   }
 }

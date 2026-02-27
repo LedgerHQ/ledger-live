@@ -110,6 +110,8 @@ export type RawTransaction = {
   blocktime: number;
 };
 
+type JsonRpcResponseData<T> = JsonRpcResponseOk<T> | JsonRpcResponseError;
+
 export class JsonRpcClient {
   serverUrl: string;
 
@@ -120,39 +122,39 @@ export class JsonRpcClient {
   private async jsonRpcRequest<ResponseResult>(
     args: JsonRpcRequestArgs,
   ): Promise<ResponseResult | undefined> {
-    const { data } = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
-      url: this.serverUrl,
-      method: "POST",
-      data: {
-        jsonrpc: "2.0",
-        ...args,
-        id: 1,
-      },
-    });
+    let data: JsonRpcResponseData<ResponseResult>;
 
-    if (data.error) {
+    try {
+      const response = await network<JsonRpcResponseData<ResponseResult>>({
+        url: this.serverUrl,
+        method: "POST",
+        data: {
+          jsonrpc: "2.0",
+          ...args,
+          id: 1,
+        },
+      });
+
+      data = response.data;
+    } catch (err) {
+      log(LOG_TYPE, "error: Network error");
+      throw err;
+    }
+
+    if ("error" in data) {
       const message = data.error.message ?? "unknown error";
       log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
-      return undefined;
-    }
-    if (data.result === undefined || data.result === null) {
+    } else if (data.result === undefined || data.result === null) {
       log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
-      return undefined;
+    } else {
+      return data.result;
     }
-    return data.result;
   }
 
-  getBlock(blockHash: string) {
+  getBlock(blockHashOrHeight: string) {
     return this.jsonRpcRequest<Block>({
       method: "getblock",
-      params: [blockHash, 1],
-    });
-  }
-
-  getBlockByHeight(blockHeight: number) {
-    return this.jsonRpcRequest<Block>({
-      method: "getblock",
-      params: [blockHeight.toString()],
+      params: [blockHashOrHeight, 1],
     });
   }
 
@@ -161,10 +163,16 @@ export class JsonRpcClient {
       method: "getblockcount",
       params: [],
     });
-    if (typeof result !== "number") {
-      log(LOG_TYPE, `error: Zcash RPC getblockcount returned unexpected type: ${typeof result}`);
+
+    if (result === undefined) {
       return undefined;
     }
+
+    if (typeof result !== "number") {
+      log(LOG_TYPE, "error: Zcash RPC getblockcount returned non-numeric result");
+      return undefined;
+    }
+
     return result;
   }
 

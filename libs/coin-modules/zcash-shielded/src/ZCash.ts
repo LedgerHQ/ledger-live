@@ -1,7 +1,9 @@
+import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
+import { Observable, Subscriber, TeardownLogic } from "rxjs";
 import { LOG_TYPE } from "./constants";
 
 /**
@@ -11,6 +13,19 @@ import { LOG_TYPE } from "./constants";
 export type SyncEstimatedTime = {
   hours: number;
   minutes: number;
+};
+
+export type SyncedShielded = {
+  balance: BigNumber;
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessed: number | undefined;
+};
+
+type SyncShieldedArgs = {
+  startBlockHeight: number;
+  viewingKey: string;
+  maxBatchSize: number;
 };
 
 export default class ZCash {
@@ -113,7 +128,7 @@ export default class ZCash {
    * Finds the lowest block height correspondent to a given timestamp.
    *
    * @param {number} timestamp
-   * @return {Promise<number>} a block height
+   * @returns {Promise<number>} a block height
    */
   async findBlockHeight(timestamp: number): Promise<number | undefined> {
     if (timestamp < 0 || !Number.isFinite(timestamp)) {
@@ -140,7 +155,7 @@ export default class ZCash {
 
     while (low <= high) {
       const mid = Math.floor((low + high) / 2);
-      const block = await this.jsonRpcClient.getBlockByHeight(mid);
+      const block = await this.jsonRpcClient.getBlock(mid.toString());
 
       if (!block) {
         log(LOG_TYPE, `Block ${mid} not found.`);
@@ -157,4 +172,123 @@ export default class ZCash {
 
     return candidate;
   }
+
+  /**
+   * Parses the blocks in the provided range and, after each iteration,
+   * it returns a synced shielded context including aggregate information
+   * like the computed balance and processing progress.
+   *
+   * ### Stop the iterator
+   * The sync operation can be gracefully stopped by calling unsubscribe on the
+   * observable subscription.
+   *
+   * @param {{
+   *    startBlockHeight: number
+   *    viewingKey: string
+   *    maxBatchSize: number
+   * }} args, Block, the UFVK - unified full viewing key, and max batch size.
+   * @returns {Observable<SyncedShielded>} the current synced shielded context.
+   */
+  syncShielded(args: SyncShieldedArgs): Observable<SyncedShielded> {
+    return new Observable((subscriber): TeardownLogic => {
+      this.syncShieldedObsFunc(args)(subscriber).then(
+        () => subscriber.complete(),
+        error => subscriber.error(error),
+      );
+    });
+  }
+
+  private syncShieldedObsFunc(args: SyncShieldedArgs) {
+    return async (subscriber: Subscriber<SyncedShielded>) => {
+      const { startBlockHeight, viewingKey, maxBatchSize } = args;
+      const syncedShielded: SyncedShielded = {
+        balance: new BigNumber(0),
+        processedBlocks: 0,
+        remainingBlocks: 0,
+        lastProcessed: undefined,
+      };
+
+      // 0. validate args
+      if (startBlockHeight < 0) {
+        log(LOG_TYPE, "error: invalid negative arg startBlockHeight");
+        subscriber.error("error: invalid negative arg startBlockHeight");
+        return;
+      }
+
+      if (maxBatchSize <= 0) {
+        log(LOG_TYPE, "error: invalid negative or zero arg maxBatchSize");
+        subscriber.error("error: invalid negative or zero arg maxBatchSize");
+        return;
+      }
+
+      // 1. get end block height before the start of the cycle
+      let endBlockHeight = await this.jsonRpcClient.getBlockCount();
+      if (endBlockHeight === undefined) {
+        log(LOG_TYPE, "error: could not retrieve the last block");
+        subscriber.error("error: could not retrieve the last block");
+        return;
+      }
+
+      for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
+        if (subscriber.closed) {
+          break;
+        }
+
+        // 2. on the last iteration, update the end block height and process until the end
+        if (blockHeight === endBlockHeight) {
+          endBlockHeight = await this.jsonRpcClient.getBlockCount();
+          if (endBlockHeight === undefined) {
+            log(LOG_TYPE, "error: could not retrieve the last block");
+            subscriber.error("error: could not retrieve the last block");
+            break;
+          }
+        }
+
+        // 3. get current block
+        const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
+        if (!block) {
+          log(LOG_TYPE, `error: invalid block height ${blockHeight}`);
+          break;
+        }
+
+        // 4. find shielded tx in block
+        const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
+
+        // 5. update syncedShielded's balance and counters
+        syncedShielded.balance = syncedShielded.balance.plus(calculateShieldedBalance(shieldedTxs));
+        syncedShielded.processedBlocks++;
+        syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
+        syncedShielded.lastProcessed = block.height;
+
+        if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
+          subscriber.next(syncedShielded);
+        }
+      }
+
+      subscriber.complete();
+      return;
+    };
+  }
 }
+
+const calculateShieldedBalance = (shieldedTxs: ShieldedTransaction[]): BigNumber => {
+  let shieldedBalance = new BigNumber(0);
+
+  for (const shieldedTx of shieldedTxs) {
+    const orchard_outputs = shieldedTx.decryptedData?.orchard_outputs || [];
+
+    // NOTE: sapling_outputs are purposely excluded because we are not implementing sapling yet
+    for (const output of orchard_outputs) {
+      if (output.transfer_type === "incoming") {
+        shieldedBalance = shieldedBalance.plus(output.amount);
+      } else if (output.transfer_type === "outgoing") {
+        shieldedBalance = shieldedBalance.minus(output.amount);
+      } else if (output.transfer_type === "internal") {
+        // NOTE: ignore internal tx
+        log(LOG_TYPE, `warn: skipped internal orchard output`);
+      }
+    }
+  }
+
+  return shieldedBalance;
+};

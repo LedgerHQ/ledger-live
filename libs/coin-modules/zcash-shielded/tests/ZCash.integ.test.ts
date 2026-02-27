@@ -19,10 +19,10 @@ describe("ZCash integration (real RPC)", () => {
     });
   });
 
-  describe("getBlockByHeight", () => {
+  describe("getBlock", () => {
     test("returns block with height, time, hash for height 0", async () => {
       const client = new JsonRpcClient(nodeUrl);
-      const block = await client.getBlockByHeight(0);
+      const block = await client.getBlock("0");
       expect(block).toBeDefined();
       if (!block) return;
       expect(block.height).toBe(0);
