@@ -110,7 +110,7 @@ export type RawTransaction = {
   blocktime: number;
 };
 
-type JsonRpcResponseData<T> = JsonRpcResponseOk<T> & JsonRpcResponseError;
+type JsonRpcResponseData<T> = JsonRpcResponseOk<T> | JsonRpcResponseError;
 
 export class JsonRpcClient {
   serverUrl: string;
@@ -141,7 +141,7 @@ export class JsonRpcClient {
       throw err;
     }
 
-    if (data.error) {
+    if ("error" in data) {
       const message = data.error.message ?? "unknown error";
       log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
     } else if (data.result === undefined || data.result === null) {
