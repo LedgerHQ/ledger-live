@@ -12,8 +12,6 @@ export const BITCOIN_ASSET: CategorizedAssetItem = {
   value: 97000,
   distribution: 0.7,
   accounts: [],
-  price: 97000,
-  priceChangePercentage24h: 2.3,
 };
 
 export const ETHEREUM_ASSET: CategorizedAssetItem = {
@@ -22,8 +20,6 @@ export const ETHEREUM_ASSET: CategorizedAssetItem = {
   value: 2700,
   distribution: 0.3,
   accounts: [],
-  price: 2700,
-  priceChangePercentage24h: -1.17,
 };
 
 export const STABLECOIN_ASSET: CategorizedAssetItem = {
@@ -32,8 +28,6 @@ export const STABLECOIN_ASSET: CategorizedAssetItem = {
   value: 1000,
   distribution: 0.1,
   accounts: [],
-  price: 1,
-  priceChangePercentage24h: 0.01,
 };
 
 export const createMockCategorizedAssets = (

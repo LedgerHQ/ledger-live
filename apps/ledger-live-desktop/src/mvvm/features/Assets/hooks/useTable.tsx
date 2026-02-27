@@ -59,12 +59,10 @@ export const useTable = (assets: CategorizedAssetItem[]) => {
         meta: { align: "end" },
       },
       {
-        accessorKey: "priceChangePercentage24h",
+        accessorKey: "trend",
         header: t("assets.columns.trend"),
         enableSorting: false,
-        cell: ({ row }) => (
-          <TrendCell priceChangePercentage24h={row.original.priceChangePercentage24h} />
-        ),
+        cell: ({ row }) => <TrendCell currency={row.original.currency} />,
         meta: {
           align: "end",
           headerTrailingContent: (
