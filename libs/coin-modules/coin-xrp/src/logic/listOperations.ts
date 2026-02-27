@@ -60,44 +60,64 @@ export async function listOperations(
     };
   }
 
-  async function getPaymentTransactions(
+  /**
+   * Fetches one page of account_tx and splits results into:
+   * - Payment transactions (OUT/IN)
+   * - Non-Payment transactions sent by this account (fee-only, no XRP transferred)
+   *
+   * tx_type node RPC filter is unreliable (see LIVE-16705), so we filter client-side.
+   */
+  async function getAccountTransactions(
     address: string,
-    options: GetTransactionsOptions,
-  ): Promise<[boolean, GetTransactionsOptions, XrplOperation[]]> {
-    const response = await getTransactions(address, options);
+    opts: GetTransactionsOptions,
+  ): Promise<[boolean, GetTransactionsOptions, XrplOperation[], XrplOperation[]]> {
+    const response = await getTransactions(address, opts);
     const txs = response.transactions;
     const responseMarker = response.marker;
-    // Filter out the transactions that are not "Payment" type because the filter on "tx_type" of the node RPC is not working as expected.
+
     const paymentTxs = txs.filter(tx => tx.tx_json.TransactionType === "Payment");
-    const shortage = (options.limit && txs.length < options.limit) || false;
-    const { marker, ...nextOptions } = options;
+    // Non-Payment transactions sent by this account: the account paid fees but transferred no XRP.
+    const feeOnlyTxs = txs.filter(
+      tx => tx.tx_json.TransactionType !== "Payment" && tx.tx_json.Account === address,
+    );
+
+    const shortage = (opts.limit && txs.length < opts.limit) || false;
+    const { marker: _marker, ...restOpts } = opts;
+    const nextOpts: GetTransactionsOptions = { ...restOpts };
 
     if (responseMarker) {
-      (nextOptions as GetTransactionsOptions).marker = responseMarker;
-      if (nextOptions.limit) nextOptions.limit -= paymentTxs.length;
+      nextOpts.marker = responseMarker;
+      if (nextOpts.limit) nextOpts.limit -= paymentTxs.length;
     }
-    return [shortage, nextOptions, paymentTxs];
+    return [shortage, nextOpts, paymentTxs, feeOnlyTxs];
   }
 
-  let [txShortage, nextOptions, transactions] = await getPaymentTransactions(address, options);
+  let [txShortage, nextOptions, transactions, feeOnlyTxs] = await getAccountTransactions(
+    address,
+    options,
+  );
   const isEnough = () => txShortage || (limit && transactions.length >= limit);
   // We need to call the node RPC multiple times to get the desired number of transactions by the limiter.
   while (nextOptions.limit && !isEnough()) {
-    const [newTxShortage, newNextOptions, newTransactions] = await getPaymentTransactions(
-      address,
-      nextOptions,
-    );
+    const [newTxShortage, newNextOptions, newTransactions, newFeeOnlyTxs] =
+      await getAccountTransactions(address, nextOptions);
     txShortage = newTxShortage;
     nextOptions = newNextOptions;
     transactions = transactions.concat(newTransactions);
+    feeOnlyTxs = feeOnlyTxs.concat(newFeeOnlyTxs);
   }
 
   // the order is reversed so that the results are always sorted by newest tx first element of the list
-  if (order === "asc") transactions.reverse();
+  if (order === "asc") {
+    transactions.reverse();
+    feeOnlyTxs.reverse();
+  }
 
   // the next index to start the pagination from
   const next = nextOptions.marker ? JSON.stringify(nextOptions.marker) : "";
-  return [transactions.map(convertToCoreOperation(address)), next];
+  const paymentOps = transactions.map(convertToCoreOperation(address));
+  const feeOps = feeOnlyTxs.map(convertFeeToCoreOperation);
+  return [[...paymentOps, ...feeOps], next];
 }
 
 const convertToCoreOperation =
@@ -198,3 +218,45 @@ const convertToCoreOperation =
 
     return op;
   };
+
+/**
+ * Converts a non-Payment transaction sent by this account into a FEES-type Operation.
+ * These transactions (OfferCreate, OfferCancel, TrustSet, AccountSet, etc.) do not
+ * transfer XRP to a recipient — they only consume the network fee paid by the sender.
+ */
+const convertFeeToCoreOperation = (operation: XrplOperation): Operation => {
+  const {
+    ledger_hash,
+    hash,
+    close_time_iso,
+    tx_json: { TransactionType, Fee, date, Account, ledger_index, Sequence, SigningPubKey },
+  } = operation;
+
+  const toEpochDate = (RIPPLE_EPOCH + date) * 1000;
+  const failed = operation.meta.TransactionResult !== "tesSUCCESS";
+
+  return {
+    id: hash,
+    asset: { type: "native" },
+    tx: {
+      hash,
+      fees: BigInt(Fee),
+      date: new Date(toEpochDate),
+      block: {
+        time: new Date(close_time_iso),
+        hash: ledger_hash,
+        height: ledger_index,
+      },
+      failed,
+    },
+    type: "FEES",
+    value: BigInt(0),
+    senders: [Account],
+    recipients: [],
+    details: {
+      xrpTxType: TransactionType,
+      sequence: Sequence,
+      signingPubKey: SigningPubKey,
+    },
+  };
+};

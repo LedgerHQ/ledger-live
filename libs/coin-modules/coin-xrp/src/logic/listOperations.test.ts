@@ -81,7 +81,26 @@ describe("listOperations", () => {
       SigningPubKey: "DEADBEEF",
     },
   };
+  // Non-Payment tx whose Account does NOT match the queried address ("any address")
   const otherTx = { ...paymentTx, tx_json: { ...paymentTx.tx_json, TransactionType: "Other" } };
+
+  // Non-Payment tx sent by "sender" — used to verify FEES operation generation
+  const offerCreateTx = {
+    ledger_hash: "HASH_VALUE_BLOCK",
+    hash: "OFFER_HASH",
+    validated: true,
+    close_time_iso: "2000-01-01T00:00:01Z",
+    meta: { TransactionResult: "tesSUCCESS" },
+    tx_json: {
+      TransactionType: "OfferCreate",
+      Fee: "5",
+      ledger_index: 2,
+      date: 1000,
+      Account: "sender",
+      Sequence: 2,
+      SigningPubKey: "DEADBEEF",
+    },
+  };
 
   it("should only list operations of type payment", async () => {
     // Given
@@ -169,6 +188,84 @@ describe("listOperations", () => {
 
     expect(results.length).toEqual(1);
     expect(JSON.parse(token)).toEqual(someMarker);
+  });
+
+  it("should include a FEES operation for a non-Payment tx sent by the queried address", async () => {
+    // Given
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([offerCreateTx]));
+
+    // When
+    const [results] = await listOperations("sender", { minHeight: 0, order: "asc" });
+
+    // Then
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject<Partial<Operation>>({
+      id: "OFFER_HASH",
+      type: "FEES",
+      value: BigInt(0),
+      senders: ["sender"],
+      recipients: [],
+      tx: expect.objectContaining({
+        hash: "OFFER_HASH",
+        fees: BigInt(5),
+        failed: false,
+        block: {
+          hash: "HASH_VALUE_BLOCK",
+          height: 2,
+          time: new Date("2000-01-01T00:00:01Z"),
+        },
+      }),
+      details: {
+        xrpTxType: "OfferCreate",
+        sequence: 2,
+        signingPubKey: "DEADBEEF",
+      },
+    });
+  });
+
+  it("should exclude non-Payment txs sent by other accounts from FEES operations", async () => {
+    // Given — offerCreateTx has Account: "sender", but we query "other_address"
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([offerCreateTx]));
+
+    // When
+    const [results] = await listOperations("other_address", { minHeight: 0, order: "asc" });
+
+    // Then — no Payment and no matching Account, so nothing returned
+    expect(results).toHaveLength(0);
+  });
+
+  it("should return both Payment ops and FEES ops when txs contain both types", async () => {
+    // Given — paymentTx (Payment from "sender") + offerCreateTx (OfferCreate from "sender")
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([paymentTx, offerCreateTx]));
+
+    // When — query as "sender" to match both
+    const [results] = await listOperations("sender", { minHeight: 0, order: "asc" });
+
+    // Then
+    expect(results).toHaveLength(2);
+    expect(results.some(op => op.type === "OUT")).toBe(true);
+    expect(results.some(op => op.type === "FEES")).toBe(true);
+  });
+
+  it("should mark a failed non-Payment tx as a failed FEES operation", async () => {
+    // Given
+    const failedOfferTx = {
+      ...offerCreateTx,
+      hash: "FAILED_OFFER_HASH",
+      meta: { TransactionResult: "tecINSUF_RESERVE_OFFER" },
+    };
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([failedOfferTx]));
+
+    // When
+    const [results] = await listOperations("sender", { minHeight: 0, order: "asc" });
+
+    // Then
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject({
+      id: "FAILED_OFFER_HASH",
+      type: "FEES",
+      tx: expect.objectContaining({ failed: true }),
+    });
   });
 
   it.each([
