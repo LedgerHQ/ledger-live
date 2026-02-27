@@ -1,15 +1,15 @@
 import { renderHook } from "tests/testSetup";
 import { useBalanceViewModel } from "../useBalanceViewModel";
-import * as portfolioModule from "@ledgerhq/live-countervalues-react/portfolio";
+import * as usePortfolioBalanceSyncModule from "LLD/hooks/usePortfolioBalanceSync";
 import { Portfolio } from "@ledgerhq/types-live";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
-jest.mock("@ledgerhq/live-countervalues-react/portfolio", () => ({
-  usePortfolioThrottled: jest.fn(),
-}));
+jest.mock("LLD/hooks/usePortfolioBalanceSync");
 
-const mockUsePortfolioThrottled = jest.mocked(portfolioModule.usePortfolioThrottled);
+const mockUsePortfolioBalanceSync = jest.mocked(
+  usePortfolioBalanceSyncModule.usePortfolioBalanceSync,
+);
 
 const mockCounterValue = {
   type: "FiatCurrency" as const,
@@ -39,6 +39,18 @@ const wallet40WithBalanceRefreshRework = {
   },
 };
 
+const defaultBalanceSyncReturn = {
+  portfolio: mockPortfolio,
+  counterValue: mockCounterValue,
+  balanceAvailable: true,
+  isColdStart: false,
+  isBalanceLoading: false,
+  stableSyncPending: false,
+  hasCvOrBridgeError: false,
+  hasWalletSyncError: false,
+  triggerRefresh: jest.fn(),
+};
+
 const initialState = {
   settings: {
     ...INITIAL_STATE,
@@ -52,7 +64,7 @@ const initialState = {
 describe("useBalanceViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolioThrottled.mockReturnValue(mockPortfolio);
+    mockUsePortfolioBalanceSync.mockReturnValue(defaultBalanceSyncReturn);
   });
 
   it("returns balance data and flags when balance is available", () => {
@@ -69,7 +81,10 @@ describe("useBalanceViewModel", () => {
   });
 
   it("returns balance 0 when balance history is empty", () => {
-    mockUsePortfolioThrottled.mockReturnValue({ ...mockPortfolio, balanceHistory: [] });
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      portfolio: { ...mockPortfolio, balanceHistory: [] },
+    });
 
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
@@ -77,12 +92,10 @@ describe("useBalanceViewModel", () => {
     expect(result.current.formatter(result.current.balance).integerPart).toContain("0");
   });
 
-  it("uses day range by default", () => {
+  it("uses day range by default (legacyRange false)", () => {
     renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(portfolioModule.usePortfolioThrottled).toHaveBeenCalledWith(
-      expect.objectContaining({ range: "day" }),
-    );
+    expect(mockUsePortfolioBalanceSync).toHaveBeenCalledWith({ legacyRange: false });
   });
 
   it("uses selected time range when legacyRange is true", () => {
@@ -92,13 +105,27 @@ describe("useBalanceViewModel", () => {
       },
     });
 
-    expect(portfolioModule.usePortfolioThrottled).toHaveBeenCalledWith(
-      expect.objectContaining({ range: "month" }),
-    );
+    expect(mockUsePortfolioBalanceSync).toHaveBeenCalledWith({ legacyRange: true });
   });
 
-  it("returns isColdStart true on cold start when portfolio balance is not yet available", () => {
-    mockUsePortfolioThrottled.mockReturnValue({ ...mockPortfolio, balanceAvailable: false });
+  it("returns isLoading true when isBalanceLoading is true (e.g. countervalues polling)", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useBalanceViewModel(), { initialState });
+
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  it("returns isLoading true on cold start when portfolio balance is not yet available", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isColdStart: true,
+      isBalanceLoading: true,
+      balanceAvailable: false,
+    });
 
     const { result } = renderHook(() => useBalanceViewModel(), {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT] },

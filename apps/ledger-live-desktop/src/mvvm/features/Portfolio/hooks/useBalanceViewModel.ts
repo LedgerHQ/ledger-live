@@ -6,7 +6,7 @@ import {
   discreetModeSelector,
 } from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { usePortfolioSyncStatus } from "LLD/hooks/usePortfolioSyncStatus";
+import { usePortfolioBalanceSync } from "LLD/hooks/usePortfolioBalanceSync";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
@@ -31,7 +31,7 @@ export const useBalanceViewModel = (
   const discreet = useSelector(discreetModeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
-  const { portfolio, counterValue, isColdStart } = usePortfolioSyncStatus({
+  const { portfolio, counterValue, isBalanceLoading, isColdStart } = usePortfolioBalanceSync({
     legacyRange,
   });
 
@@ -80,5 +80,6 @@ export const useBalanceViewModel = (
     hasOnboardedDevice,
     isColdStart,
     shouldDisplayBalanceRefreshRework,
+    isLoading: isBalanceLoading,
   };
 };

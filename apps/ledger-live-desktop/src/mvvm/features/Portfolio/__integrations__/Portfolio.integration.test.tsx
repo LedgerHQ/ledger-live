@@ -300,7 +300,7 @@ describe("PortfolioView", () => {
       expect(balanceElement).not.toHaveTextContent("••••"); // Ensure no placeholders
     });
 
-    it("should not show loading when countervalues are polling but balance is already available", () => {
+    it("should display loading state when countervalues are being polled", () => {
       mockUseCountervaluesPolling.mockReturnValue({
         ...defaultPollingMock,
         pending: true,

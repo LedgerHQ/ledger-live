@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { hasAccountsSelector, isUpToDateSelector } from "~/renderer/reducers/accounts";
-import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
-import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
 
-import { usePortfolioSyncStatus } from "LLD/hooks/usePortfolioSyncStatus";
+import { usePortfolioBalanceSync } from "LLD/hooks/usePortfolioBalanceSync";
 import { useAccountsSyncStatus } from "./useAccountsSyncStatus";
 import { useActivityIndicatorTooltip } from "./useActivityIndicatorTooltip";
 import { getActivityIndicatorIcon } from "../utils/getActivityIndicatorIcon";
@@ -17,14 +14,20 @@ import {
   USER_CLICK_SPIN_DURATION_MS,
 } from "../utils/constants";
 
+/**
+ * Activity indicator state for the TopBar sync button.
+ * When isRotating is true, the sync action should be non-interactive (disabled).
+ */
 export const useActivityIndicator = () => {
   const hasAccounts = useSelector(hasAccountsSelector);
   const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
-  const wsUserState = useWalletSyncUserState();
-  const cvPolling = useCountervaluesPolling();
-  const { isColdStart } = usePortfolioSyncStatus();
-  const bridgeSync = useBridgeSync();
-  const globalSyncState = useGlobalSyncState();
+  const {
+    isBalanceLoading,
+    stableSyncPending,
+    hasCvOrBridgeError,
+    hasWalletSyncError,
+    triggerRefresh,
+  } = usePortfolioBalanceSync();
   const [lastClickTime, setLastClickTime] = useState(0);
   const [, forceTooltipUpdate] = useReducer((tick: number) => tick + 1, 0);
 
@@ -40,16 +43,13 @@ export const useActivityIndicator = () => {
     return () => clearInterval(id);
   }, [needsTooltipUpdates]);
 
-  const isPending = cvPolling.pending || globalSyncState.pending || wsUserState.visualPending;
-  const hasWalletSyncError = !!wsUserState.walletSyncError;
-  const hasBridgeOrCvSyncError = !isPending && (!!cvPolling.error || !!globalSyncState.error);
-  const isError = hasBridgeOrCvSyncError || !areAllAccountsUpToDate || hasWalletSyncError;
+  const isError = hasCvOrBridgeError || !areAllAccountsUpToDate || hasWalletSyncError;
   const isPlaywrightRun = getEnv("PLAYWRIGHT_RUN");
   const userClickSpinMs = isPlaywrightRun
     ? PLAYWRIGHT_CLICK_SPIN_DURATION_MS
     : USER_CLICK_SPIN_DURATION_MS;
   const isUserClick = Date.now() - lastClickTime < userClickSpinMs;
-  const isRotating = isColdStart || (isUserClick && isPending);
+  const isRotating = isBalanceLoading || (isUserClick && stableSyncPending);
 
   const icon = getActivityIndicatorIcon(isError, isRotating);
   const tooltip = useActivityIndicatorTooltip({
@@ -60,22 +60,17 @@ export const useActivityIndicator = () => {
   });
 
   const handleSync = useCallback(() => {
-    wsUserState.onUserRefresh();
-    cvPolling.poll();
-    bridgeSync({
-      type: "SYNC_ALL_ACCOUNTS",
-      priority: 5,
-      reason: "user-click",
-    });
+    triggerRefresh();
     setLastClickTime(Date.now());
     track("SyncRefreshClick");
-  }, [wsUserState, cvPolling, bridgeSync]);
+  }, [triggerRefresh]);
 
   return {
     hasAccounts,
     handleSync,
     isError,
     isRotating,
+    isDisabled: isRotating,
     tooltip,
     icon,
   };
