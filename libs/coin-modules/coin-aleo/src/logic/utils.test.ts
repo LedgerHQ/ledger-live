@@ -27,6 +27,7 @@ import {
   getTransactionType,
   calculateAmount,
   isProvableApiConfigured,
+  isRecordScannerReady,
   getOperationTransactionType,
   splitPrivateAndPublicOperations,
 } from "./utils";
@@ -560,6 +561,36 @@ describe("isProvableApiConfigured", () => {
     const api: ProvableApi = { ...validProvableApi, jwt: { token: "", exp: 123456789 } };
 
     expect(isProvableApiConfigured(api)).toBe(false);
+  });
+});
+
+describe("isRecordScannerReady", () => {
+  const baseProvableApi: ProvableApi = {
+    apiKey: "test-api-key",
+    consumerId: "test-consumer-id",
+    uuid: "test-uuid",
+    jwt: { token: "test-token", exp: 123456789 },
+    scannerStatus: { synced: true, percentage: 100 },
+  };
+
+  it("should return true when scannerStatus.synced is true", () => {
+    expect(isRecordScannerReady(baseProvableApi)).toBe(true);
+  });
+
+  it("should return false when scannerStatus.synced is false", () => {
+    const api: ProvableApi = {
+      ...baseProvableApi,
+      scannerStatus: { synced: false, percentage: 50 },
+    };
+
+    expect(isRecordScannerReady(api)).toBe(false);
+  });
+
+  it("should return false when scannerStatus is undefined", () => {
+    const { scannerStatus: _, ...rest } = baseProvableApi;
+    const api: ProvableApi = rest;
+
+    expect(isRecordScannerReady(api)).toBe(false);
   });
 });
 

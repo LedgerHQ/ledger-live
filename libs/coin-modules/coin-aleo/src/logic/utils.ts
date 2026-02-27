@@ -256,6 +256,10 @@ export const isProvableApiConfigured = (
   return !!provableApi?.uuid && !!provableApi?.apiKey && !!provableApi?.jwt?.token;
 };
 
+export const isRecordScannerReady = (provableApi: ProvableApi): boolean => {
+  return provableApi.scannerStatus?.synced === true;
+};
+
 export function getOperationTransactionType(transactionType: TransactionType): AleoTransactionType {
   switch (transactionType) {
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:

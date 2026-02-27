@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { LedgerAPI5xx } from "@ledgerhq/errors";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
@@ -9,12 +10,14 @@ import {
   getMockedTransactionDetails,
 } from "../__tests__/fixtures/transaction.fixture";
 import * as logicUtils from "../logic/utils";
+import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
   enrichTransaction,
   enrichPrivateRecord,
+  patchPublicOperations,
 } from "./utils";
 
 jest.mock("./api");
@@ -1180,6 +1183,477 @@ describe("network/utils", () => {
       expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx_with_spaces");
       expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("patchPublicOperations", () => {
+    const patchAddress = "aleo1patchowner123";
+    const ledgerAccountId = "js:2:aleo:aleo1patchowner123::AViewKey123";
+    const patchViewKey = "AViewKey1testviewkey";
+
+    it("should pass fully public operations through unchanged", async () => {
+      const publicOp = getMockedOperation({
+        id: "pub_op",
+        hash: "at1pub",
+        extra: { functionId: "transfer_public", transactionType: "public" },
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(publicOp);
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should patch PUBLIC_TO_PRIVATE op and create clone when matching private record exists", async () => {
+      const txHash = "at1match_pub_to_priv";
+      const senderAddress = "aleo1original_sender";
+      const publicOp = getMockedOperation({
+        id: "pub_to_priv_op",
+        hash: txHash,
+        type: "OUT",
+        date: new Date("2024-01-01T00:00:00.000Z"),
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const matchingRecord = getMockedRecord({
+        transaction_id: txHash,
+        sender: senderAddress,
+        function_name: "transfer_public_to_private",
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [matchingRecord],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: "pub_to_priv_op",
+            type: "OUT",
+            senders: [senderAddress],
+            recipients: [patchAddress],
+            extra: expect.objectContaining({ patched: true }),
+          }),
+          expect.objectContaining({
+            type: "IN",
+            senders: [patchAddress],
+            recipients: [patchAddress],
+            extra: expect.objectContaining({ patched: true }),
+          }),
+        ]),
+      );
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should patch PRIVATE_TO_PUBLIC op and create clone when matching private record exists", async () => {
+      const txHash = "at1match_priv_to_pub";
+      const senderAddress = "aleo1priv_sender";
+      const publicOp = getMockedOperation({
+        id: "priv_to_pub_op",
+        hash: txHash,
+        type: "IN",
+        date: new Date("2024-02-01T00:00:00.000Z"),
+        extra: { functionId: "transfer_private_to_public", transactionType: "public" },
+      });
+      const matchingRecord = getMockedRecord({
+        transaction_id: txHash,
+        sender: senderAddress,
+        function_name: "transfer_private_to_public",
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [matchingRecord],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: "priv_to_pub_op",
+            type: "IN",
+            senders: [senderAddress],
+            recipients: [patchAddress],
+            extra: expect.objectContaining({ patched: true }),
+          }),
+          expect.objectContaining({
+            type: "OUT",
+            senders: [patchAddress],
+            recipients: [patchAddress],
+            extra: expect.objectContaining({ patched: true }),
+          }),
+        ]),
+      );
+    });
+
+    it("should give cloned operation a date 1ms after the original", async () => {
+      const txHash = "at1clone_date";
+      const opDate = new Date("2024-05-01T12:00:00.000Z");
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        date: opDate,
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const matchingRecord = getMockedRecord({
+        transaction_id: txHash,
+        function_name: "transfer_public_to_private",
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [matchingRecord],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      const clone = result.find(op => op.type === "IN");
+
+      expect(clone?.date.getTime()).toBe(opDate.getTime() + 1);
+    });
+
+    it("should not match fee_private records", async () => {
+      const txHash = "at1fee";
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const feeRecord = getMockedRecord({
+        transaction_id: txHash,
+        function_name: "fee_private", // should be excluded
+        block_height: 200,
+      });
+      const mockDetails = getMockedTransactionDetails(txHash, {
+        block_height: 100,
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk_fee",
+              inputs: [{ id: "in0", type: "public", value: "cipher_recipient" }],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_public_to_private",
+            },
+          ],
+        },
+      });
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1decrypted_recipient" });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [feeRecord],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          recipients: ["aleo1decrypted_recipient"],
+          extra: expect.objectContaining({ patched: true }),
+        }),
+      ]);
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(1);
+    });
+
+    it("should decrypt recipient for PUBLIC_TO_PRIVATE and not mark as patched when scanner hasn't reached the block", async () => {
+      const txHash = "at1no_match";
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const mockDetails = getMockedTransactionDetails(txHash, {
+        block_height: 100,
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk1",
+              inputs: [{ id: "in0", type: "public", value: "cipher_addr" }],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_public_to_private",
+            },
+          ],
+        },
+      });
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1external_recipient" });
+
+      // no private records -> latestScannedBlockHeight = 0, which is less than tx block 100
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          recipients: ["aleo1external_recipient"],
+          extra: expect.not.objectContaining({ patched: true }),
+        }),
+      ]);
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, txHash);
+      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(1);
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ciphertext: "cipher_addr",
+          tpk: "tpk1",
+          viewKey: patchViewKey,
+          programId: "credits.aleo",
+          functionName: "transfer_public_to_private",
+          outputIndex: 0,
+        }),
+      );
+    });
+
+    it("should decrypt recipient for PUBLIC_TO_PRIVATE and mark as patched when scanner has passed the block", async () => {
+      const txHash = "at1no_match_synced";
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const mockDetails = getMockedTransactionDetails(txHash, {
+        block_height: 100,
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk1",
+              inputs: [{ id: "in0", type: "public", value: "cipher_addr" }],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_public_to_private",
+            },
+          ],
+        },
+      });
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1external_recipient" });
+
+      // fee_private record at block 200 acts as scanner watermark - scanner has definitely passed block 100
+      const scannerWatermarkRecord = getMockedRecord({
+        transaction_id: "at1other",
+        function_name: "fee_private",
+        block_height: 200,
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [scannerWatermarkRecord],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          recipients: ["aleo1external_recipient"],
+          extra: expect.objectContaining({ patched: true }),
+        }),
+      ]);
+    });
+
+    it("should skip already patched operations without making backend calls", async () => {
+      const patchedOp = getMockedOperation({
+        id: "already_patched_op",
+        hash: "at1already_patched",
+        type: "OUT",
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+          patched: true,
+        },
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [patchedOp],
+        privateRecords: [],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual([patchedOp]);
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should pass PRIVATE_TO_PUBLIC through as-is when no matching private record", async () => {
+      const txHash = "at1priv_to_pub_no_match";
+      const publicOp = getMockedOperation({
+        id: "priv_to_pub_no_match",
+        hash: txHash,
+        type: "IN",
+        extra: { functionId: "transfer_private_to_public", transactionType: "public" },
+      });
+      const mockDetails = getMockedTransactionDetails(txHash, {
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk1",
+              inputs: [],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_private_to_public",
+            },
+          ],
+        },
+      });
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual([publicOp]);
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should rethrow when decryptCiphertext throws a non-4xx error", async () => {
+      const txHash = "at1decrypt_5xx";
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const mockDetails = getMockedTransactionDetails(txHash, {
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk1",
+              inputs: [{ id: "in0", type: "public", value: "cipher_addr" }],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_public_to_private",
+            },
+          ],
+        },
+      });
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+      mockDecryptCiphertext.mockRejectedValueOnce(new LedgerAPI5xx("Internal Server Error"));
+
+      await expect(
+        patchPublicOperations({
+          currency: mockCurrency,
+          publicOperations: [publicOp],
+          privateRecords: [],
+          address: patchAddress,
+          ledgerAccountId,
+          viewKey: patchViewKey,
+        }),
+      ).rejects.toThrow(LedgerAPI5xx);
+    });
+
+    it("should match private record by trimmed transaction_id", async () => {
+      const txHash = "at1trim_match";
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const recordWithSpaces = getMockedRecord({
+        transaction_id: `  ${txHash}  `,
+        sender: "aleo1trim_sender",
+        function_name: "transfer_public_to_private",
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [recordWithSpaces],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      // matched via trim → 2 ops (original patch + clone), no decrypt call
+      expect(result).toHaveLength(2);
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should handle mix of public and semi-public operations correctly", async () => {
+      const fullyPublicOp = getMockedOperation({
+        id: "fully_pub",
+        hash: "at1full_pub",
+        extra: { functionId: "transfer_public", transactionType: "public" },
+      });
+      const semiPublicOp = getMockedOperation({
+        id: "semi_pub",
+        hash: "at1semi",
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const matchingRecord = getMockedRecord({
+        transaction_id: "at1semi",
+        sender: "aleo1semi_sender",
+        function_name: "transfer_public_to_private",
+      });
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [fullyPublicOp, semiPublicOp],
+        privateRecords: [matchingRecord],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      // 1 fully public + 2 from semi-public (original + clone)
+      expect(result).toHaveLength(3);
+      expect(result).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: "fully_pub" })]),
+      );
     });
   });
 });
