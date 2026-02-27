@@ -388,8 +388,7 @@ export const DEFAULT_FEATURES: Features = {
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
-          supportLinkURI:
-            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
+          supportLinkURI: "https://support.ledger.com",
         },
       },
       protectId: "protect-simu",
