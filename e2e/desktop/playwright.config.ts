@@ -14,6 +14,7 @@ const config: PlaywrightTestConfig = {
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",
+    trace: "on",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
@@ -39,6 +40,7 @@ const config: PlaywrightTestConfig = {
             },
           },
         ],
+        ["github"],
         ["./tests/utils/customJsonReporter.ts"],
       ]
     : [["allure-playwright"]],
