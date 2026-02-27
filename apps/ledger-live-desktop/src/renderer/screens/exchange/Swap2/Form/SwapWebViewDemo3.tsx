@@ -53,6 +53,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
+import { captureException as datadogCaptureException } from "~/datadog/renderer";
 import {
   transformToBigNumbers,
   useGetSwapTrackingProperties,
@@ -537,11 +538,11 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     setWebviewState(state);
 
     if (!state?.loading && state?.isAppUnavailable && !isOffline) {
-      captureException(
-        new UnableToLoadSwapLiveError(
-          '"Failed to load swap live app using WebPlatformPlayer in SwapWeb",',
-        ),
+      const err = new UnableToLoadSwapLiveError(
+        '"Failed to load swap live app using WebPlatformPlayer in SwapWeb",',
       );
+      captureException(err);
+      datadogCaptureException(err);
     }
   };
 

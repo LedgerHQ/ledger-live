@@ -1,9 +1,10 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
+import { captureExceptionMain } from "~/datadog/main";
 import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
-import fs from "fs/promises";
+import * as fs from "node:fs/promises";
 import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
@@ -20,7 +21,9 @@ for (const k in process.env) {
 }
 
 ipcMain.on("mainCrashTest", () => {
-  captureException(new Error("CrashTestMain"));
+  const err = new Error("CrashTestMain");
+  captureException(err);
+  captureExceptionMain(err);
 });
 
 ipcMain.on("updater", (e, type) => {
@@ -95,7 +98,7 @@ ipcMain.handle("activate-keep-screen-awake", () => {
 
 ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
   if (id !== undefined && !Number.isNaN(id)) {
-    powerSaveBlocker.stop(id as number);
+    powerSaveBlocker.stop(id);
   }
 });
 
@@ -113,7 +116,6 @@ if (!__DEV__) {
 contextMenu({
   showInspectElement: __DEV__,
   showCopyImageAddress: false,
-  // TODO: i18n for labels
   labels: {
     cut: "Cut",
     copy: "Copy",

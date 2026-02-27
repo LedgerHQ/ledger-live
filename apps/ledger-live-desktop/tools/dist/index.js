@@ -18,6 +18,7 @@ const prereleaseSentryDSN =
   "https://5514716222674afd816b0961d7b4378c@o118392.ingest.sentry.io/6488659";
 
 const rootFolder = "../../";
+const defaultDatadogSite = "datadoghq.eu";
 let verbose = false;
 
 const exec = async (file, args, options = {}) => {
@@ -71,13 +72,30 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
-      await exec("pnpm", ["run", "build:js"], {
-        env: args.release
-          ? { SENTRY_URL: releaseSentryDSN }
-          : args.pre
-            ? { SENTRY_URL: prereleaseSentryDSN }
-            : {},
-      });
+      if (args.release || args.pre) {
+        const envFile = args.release ? ".env.production" : ".env.staging";
+        require("dotenv").config({
+          path: path.resolve(__dirname, rootFolder, envFile),
+        });
+      }
+      const baseEnv = args.release
+        ? {
+            SENTRY_URL: releaseSentryDSN,
+            DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
+            DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
+            DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
+            DATADOG_ENV: "production",
+          }
+        : args.pre
+          ? {
+              SENTRY_URL: prereleaseSentryDSN,
+              DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
+              DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
+              DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
+              DATADOG_ENV: "staging",
+            }
+          : {};
+      await exec("pnpm", ["run", "build:js"], { env: { ...process.env, ...baseEnv } });
     },
   },
   {

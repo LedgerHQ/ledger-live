@@ -11,6 +11,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
 import { captureException } from "~/sentry/renderer";
+import { captureException as datadogCaptureException } from "~/datadog/renderer";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
@@ -30,11 +31,11 @@ const Swap = () => {
       shouldLogAsSentryException: true,
       shouldGoBack: true,
     });
-    captureException(
-      new UnableToLoadSwapLiveError(
-        "Failed to load swap live app using WebPlatformPlayer in SwapWeb",
-      ),
+    const err = new UnableToLoadSwapLiveError(
+      "Failed to load swap live app using WebPlatformPlayer in SwapWeb",
     );
+    captureException(err);
+    datadogCaptureException(err);
     navigate(-1);
   }, 500);
 

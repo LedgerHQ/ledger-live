@@ -785,6 +785,9 @@ importers:
       '@braze/web-sdk':
         specifier: 6.4.0
         version: 6.4.0
+      '@datadog/browser-rum':
+        specifier: 6.28.1
+        version: 6.28.1
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -13405,6 +13408,20 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@datadog/browser-core@6.28.1':
+    resolution: {integrity: sha512-h5y6aEyMTBZ091Y1mVLe2ta2YHiBa1qEEHliIp7+lb7rMZ1uWzYUzAu83bmTfvgI/yEZdHcVeTjxMucAncwK3g==}
+
+  '@datadog/browser-rum-core@6.28.1':
+    resolution: {integrity: sha512-/Eu2YuQkpdZk4GvQi4AV1/dt60qrEt0HTQC53PXoWav7SGx2UNWlTCxO6wio6kzgmlkyqa/gCscWqnUsQPWWXg==}
+
+  '@datadog/browser-rum@6.28.1':
+    resolution: {integrity: sha512-7KwMvhVsvTdt6OtB3dnSW8KZDycne3hAI96+CcWUII6Wg9Xv+UH1dbIW1skDHp9ANmLl1DZrSs9XdWCYR7rqSQ==}
+    peerDependencies:
+      '@datadog/browser-logs': 6.28.1
+    peerDependenciesMeta:
+      '@datadog/browser-logs':
+        optional: true
 
   '@datadog/datadog-api-client-synthetics@0.0.1-beta.1':
     resolution: {integrity: sha512-pI56YQ4YnptOFl8REv2QHiSl1UuKGxdAotzO15W4Mgr22AMIwJrOL584UU0SqY6egjkyHwIZ1UCKdrXzBKY0uA==}
@@ -39072,6 +39089,17 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@datadog/browser-core@6.28.1': {}
+
+  '@datadog/browser-rum-core@6.28.1':
+    dependencies:
+      '@datadog/browser-core': 6.28.1
+
+  '@datadog/browser-rum@6.28.1':
+    dependencies:
+      '@datadog/browser-core': 6.28.1
+      '@datadog/browser-rum-core': 6.28.1
 
   '@datadog/datadog-api-client-synthetics@0.0.1-beta.1':
     dependencies:

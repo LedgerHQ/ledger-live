@@ -25,6 +25,7 @@ import db from "./db";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import sentry, { setTags } from "~/sentry/main";
+import { initDatadogMain } from "~/datadog/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import type { User } from "~/renderer/storage";
 import {
@@ -119,10 +120,19 @@ app.on("ready", async () => {
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
   const user: User = (await db.getKey("app", "user")) as User;
+  const identities = (await db.getKey("app", "identities")) as
+    | { datadogId?: string; userId?: string; deviceIds?: string[] }
+    | undefined;
+  const datadogIdFromDb =
+    identities?.datadogId ?? (user as { datadogId?: string } | undefined)?.datadogId;
   console.timeEnd("T-db");
-  const userId = user?.id;
-  if (userId) {
-    sentry(() => settings?.sentryLogs, userId);
+  // Use same user id as renderer (datadogId) so Sentry events are under one user
+  const sentryUserId = datadogIdFromDb ?? user?.id;
+  if (sentryUserId) {
+    sentry(() => settings?.sentryLogs, sentryUserId);
+  }
+  if (datadogIdFromDb) {
+    initDatadogMain(() => settings?.sentryLogs, datadogIdFromDb);
   }
 
   // Set up transport handlers for Speculos and HTTP proxy in main process

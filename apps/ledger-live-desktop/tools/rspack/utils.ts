@@ -27,8 +27,6 @@ if (parsed) {
   CHANNEL = String(parsed[0]);
 }
 
-const SENTRY_URL = process.env.SENTRY_URL;
-
 /**
  * Determines which .env file to use based on environment
  */
@@ -39,6 +37,15 @@ export const DOTENV_FILE = process.env.TESTING
     : process.env.NODE_ENV === "production"
       ? ".env.production"
       : ".env";
+
+// Load .env so SENTRY_URL / DATADOG_* are available for local builds (build:staging, build:js in production)
+dotenv.config({ path: path.resolve(lldRoot, DOTENV_FILE) });
+
+const SENTRY_URL = process.env.SENTRY_URL;
+const DATADOG_APPLICATION_ID = process.env.DATADOG_APPLICATION_ID;
+const DATADOG_CLIENT_TOKEN = process.env.DATADOG_CLIENT_TOKEN;
+const DATADOG_SITE = process.env.DATADOG_SITE ?? "datadoghq.eu";
+const DATADOG_ENV = process.env.DATADOG_ENV;
 
 /**
  * Reads and parses a dotenv file, returning define entries
@@ -72,6 +79,10 @@ export function buildMainEnv(
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
+    __DATADOG_APPLICATION_ID__: JSON.stringify(DATADOG_APPLICATION_ID || null),
+    __DATADOG_CLIENT_TOKEN__: JSON.stringify(DATADOG_CLIENT_TOKEN || null),
+    __DATADOG_SITE__: JSON.stringify(DATADOG_SITE || null),
+    __DATADOG_ENV__: JSON.stringify(DATADOG_ENV || null),
     // See: https://github.com/node-formidable/formidable/issues/337
     "global.GENTLY": JSON.stringify(false),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
@@ -94,6 +105,10 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
+    __DATADOG_APPLICATION_ID__: JSON.stringify(DATADOG_APPLICATION_ID || null),
+    __DATADOG_CLIENT_TOKEN__: JSON.stringify(DATADOG_CLIENT_TOKEN || null),
+    __DATADOG_SITE__: JSON.stringify(DATADOG_SITE || null),
+    __DATADOG_ENV__: JSON.stringify(DATADOG_ENV || null),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
     "process.env.NODE_ENV": JSON.stringify(mode),
