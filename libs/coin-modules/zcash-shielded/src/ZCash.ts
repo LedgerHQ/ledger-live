@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
-import { Observable, Subscriber } from "rxjs";
+import { Observable, Subscriber, TeardownLogic } from "rxjs";
 import { LOG_TYPE } from "./constants";
 
 /**
@@ -190,7 +190,7 @@ export default class ZCash {
    * @returns {Observable<SyncedShielded>} the current synced shielded context.
    */
   syncShielded(args: SyncShieldedArgs): Observable<SyncedShielded> {
-    return new Observable(subscriber => {
+    return new Observable((subscriber): TeardownLogic => {
       this.syncShieldedObsFunc(args)(subscriber).then(
         () => subscriber.complete(),
         error => subscriber.error(error),
@@ -230,6 +230,10 @@ export default class ZCash {
       }
 
       for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
+        if (subscriber.closed) {
+          break;
+        }
+
         // 2. on the last iteration, update the end block height and process until the end
         if (blockHeight === endBlockHeight) {
           endBlockHeight = await this.jsonRpcClient.getBlockCount();

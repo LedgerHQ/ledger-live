@@ -51,6 +51,8 @@ describe("jsonRpcClient", () => {
       } catch (error) {
         expect(error.message).toMatch(/^API HTTP 500 /);
       }
+
+      expect.assertions(1);
     });
   });
 
