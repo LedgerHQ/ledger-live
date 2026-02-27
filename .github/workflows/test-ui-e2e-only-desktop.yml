@@ -110,7 +110,7 @@ jobs:
   e2e-tests:
     name: "Desktop E2E"
     runs-on: [ledger-live-linux-e2e-speculos-32CPU-128RAM]
-    timeout-minutes: 90
+    timeout-minutes: 40
     env:
       NODE_OPTIONS: "--max-old-space-size=14336"
       INSTRUMENT_BUILD: true
