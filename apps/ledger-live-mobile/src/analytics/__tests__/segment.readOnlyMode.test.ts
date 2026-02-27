@@ -23,7 +23,6 @@ describe("segment readOnlyMode", () => {
   });
 
   afterEach(() => {
-    // Restore project default (fake timers from jest-setup) so other suites aren't affected
     jest.useFakeTimers();
   });
 
