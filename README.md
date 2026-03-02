@@ -11,7 +11,7 @@
   </h4>
 </h3>
 
-THIS IS JUST A TEST
+THIS IS JUST A TEST 2
 
 [![gitpoap badge](https://public-api.gitpoap.io/v1/repo/LedgerHQ/ledger-live/badge)](https://www.gitpoap.io/gh/LedgerHQ/ledger-live)
 
