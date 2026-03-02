@@ -1,8 +1,8 @@
-import { findFreePort, loadConfig, setFeatureFlags } from "../bridge/server";
+import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { isRemoteIos } from "../helpers/commonHelpers";
+import { isSpeculosRemote } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
   launchSpeculos,
@@ -40,7 +40,6 @@ export type InitOptions = {
 type Entry = {
   name: string;
   speculosPort: number;
-  proxyPort: number;
   deviceId: string;
 };
 
@@ -72,13 +71,11 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
   const entries: Entry[] = await Promise.all(
     toStart.map(async app => {
       checkTestFailed();
-      const proxyPort = await findFreePort();
       const device = await launchSpeculos(app.name);
 
       return {
         name: app.name,
         speculosPort: device.port,
-        proxyPort,
         deviceId: device.id,
       };
     }),
@@ -111,14 +108,14 @@ async function executeCliCommandsOnApp(
       attempt++;
 
       try {
-        const { speculosPort, proxyPort, deviceId } = entry;
+        const { speculosPort, deviceId } = entry;
 
         log.info(
           `\n🔄 [${app.name}] Attempt ${attempt}/${maxRetries} - Running ${cmds.length} command(s)`,
         );
 
-        if (isRemoteIos()) await waitForSpeculosReady(entry.deviceId);
-        await registerSpeculos(speculosPort, proxyPort);
+        if (isSpeculosRemote()) await waitForSpeculosReady(entry.deviceId);
+        await registerSpeculos(speculosPort);
 
         for (let i = 0; i < cmds.length; i++) {
           log.info(`  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`);
@@ -143,7 +140,6 @@ async function executeCliCommandsOnApp(
           entryMap[app.name] = {
             name: app.name,
             speculosPort: device.port,
-            proxyPort: entry.proxyPort,
             deviceId: device.id,
           };
         }
@@ -181,9 +177,9 @@ async function setupMainSpeculosApp(
     try {
       log.info(`\n🔄 [${speculosApp.name}] Main setup attempt ${attempt}/${maxRetries}`);
 
-      if (isRemoteIos()) await waitForSpeculosReady(main.deviceId);
-      await registerSpeculos(main.speculosPort, main.proxyPort);
-      await registerKnownSpeculos(main.proxyPort);
+      if (isSpeculosRemote()) await waitForSpeculosReady(main.deviceId);
+      await registerSpeculos(main.speculosPort);
+      await registerKnownSpeculos(main.speculosPort);
       log.info(
         `✅ [${speculosApp.name}] Main Speculos registered successfully on port ${main.speculosPort}`,
       );
@@ -203,7 +199,6 @@ async function setupMainSpeculosApp(
         entryMap[speculosApp.name] = {
           name: main.name,
           speculosPort: device.port,
-          proxyPort: main.proxyPort,
           deviceId: device.id,
         };
       }
@@ -254,7 +249,6 @@ async function executeCliCommands(
         entryMap[speculosApp.name] = {
           name: speculosApp.name,
           speculosPort: device.port,
-          proxyPort: main.proxyPort,
           deviceId: device.id,
         };
         await setupMainSpeculosApp(speculosApp, entryMap);

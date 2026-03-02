@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/triple-slash-reference */
 /* eslint-disable no-var */
 /// <reference path=".//global.d.ts" />
-import type { Subject, Subscription } from "rxjs";
+import type { Subject } from "rxjs";
 import type { Server, WebSocket } from "ws";
 import type { Application } from "../page";
 import type { MessageData, ServerData } from "../bridge/types";
@@ -27,7 +27,6 @@ import { CLI as CLIType } from "../utils/cliUtils";
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<string, number>;
-  var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;
