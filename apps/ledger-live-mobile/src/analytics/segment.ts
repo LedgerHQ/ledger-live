@@ -478,6 +478,8 @@ export type LoggableEvent = {
 };
 export const trackSubject = new ReplaySubject<LoggableEvent>(30);
 
+type EventType = (string & {}) | "button_clicked" | "error_message";
+
 export function getIsTracking(
   state: State | null | undefined,
   mandatory?: boolean | null | undefined,
@@ -495,7 +497,7 @@ export function getIsTracking(
 }
 
 export const track = async (
-  event: string,
+  event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
@@ -534,7 +536,7 @@ export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
-  event: string,
+  event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
@@ -552,7 +554,7 @@ export const flush = () => {
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (event: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
       trackWithRoute(event, route, properties, mandatory),
     [route],
   );
