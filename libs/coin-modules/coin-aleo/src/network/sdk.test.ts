@@ -278,7 +278,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
     });
 
-    it("should handle intent with BigInt amount correctly", async () => {
+    it("should handle intent with large numeric string amount correctly", async () => {
       const largeAmountIntent: Intent = {
         type: "transfer_public",
         amount: "1000000000000000000",

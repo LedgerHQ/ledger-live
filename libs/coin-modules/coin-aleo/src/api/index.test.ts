@@ -17,11 +17,11 @@ describe("createApi", () => {
   > => ({
     intentType: "transaction",
     asset: { type: "native" },
-    type: "transfer_public",
+    type: "fee_public",
     amount: BigInt(1000),
     sender: "aleo1sender1234567890123456789012345678901234567",
     recipient: "aleo1recipient123456789012345678901234567890",
-    data: { type: "fee_public", priorityFee: 0, executionId: "ex1test" },
+    data: { type: "fee_public", priorityFee: 1040, executionId: "ex1test" },
   });
 
   it("should set the coin config value", () => {
