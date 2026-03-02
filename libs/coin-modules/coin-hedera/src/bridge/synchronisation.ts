@@ -193,6 +193,7 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
   };
 };
 
+// TODO: remove once migration to new API is complete
 // it might be necessary to remove pending operations after ERC20 patching done by `integrateERC20Operations`
 export const postSync = (_initial: Account, synced: Account): Account => {
   const erc20Operations = synced.operations.filter(op => op.standard === "erc20");

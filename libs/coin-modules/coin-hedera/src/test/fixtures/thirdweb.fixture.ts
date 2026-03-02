@@ -1,3 +1,4 @@
+// TODO: remove once migration to new API is complete
 import { ERC20_TRANSFER_EVENT_TOPIC } from "../../constants";
 import type { HederaThirdwebTransaction } from "../../types";
 
