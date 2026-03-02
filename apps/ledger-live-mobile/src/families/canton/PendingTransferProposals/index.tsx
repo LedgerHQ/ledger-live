@@ -244,7 +244,7 @@ type RawTransferProposal = {
   receiver: string;
   amount: string;
   instrument_id: string;
-  memo: string;
+  memo?: string;
   expires_at_micros: number;
 };
 
@@ -288,7 +288,7 @@ const processTransferProposals = (
       receiver: proposal.receiver,
       amount: new BigNumber(proposal.amount),
       instrumentId: proposal.instrument_id,
-      memo: proposal.memo,
+      memo: proposal.memo ?? "",
       expiresAtMicros: proposal.expires_at_micros,
       isExpired,
       isIncoming,

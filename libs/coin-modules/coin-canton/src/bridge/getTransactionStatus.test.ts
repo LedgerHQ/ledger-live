@@ -10,7 +10,7 @@ import {
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
-import { createMockAccount } from "../test/fixtures";
+import { createMockCantonAccount } from "../test/fixtures";
 import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
 import { TopologyChangeError } from "../types/errors";
 import {
@@ -26,7 +26,7 @@ const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
 describe("getTransactionStatus", () => {
   const mockAccount: CantonAccount = {
-    ...createMockAccount({
+    ...createMockCantonAccount({
       balance: new BigNumber(1000),
       spendableBalance: new BigNumber(1000),
       freshAddress: "test::33333333333333333333333333333333333333333333333333333333333333333333",

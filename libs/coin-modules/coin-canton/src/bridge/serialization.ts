@@ -20,8 +20,8 @@ function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
     isOnboarded: isOnboarded,
     instrumentUtxoCounts,
     pendingTransferProposals,
-    ...(publicKey !== undefined && { publicKey }),
-    ...(xpub !== undefined && { xpub }),
+    ...(publicKey ? { publicKey } : {}),
+    ...(xpub ? { xpub } : {}),
   };
 }
 
@@ -30,8 +30,8 @@ function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
     isOnboarded: r.isOnboarded,
     instrumentUtxoCounts: r.instrumentUtxoCounts,
     pendingTransferProposals: r.pendingTransferProposals,
-    ...(r.publicKey !== undefined && { publicKey: r.publicKey }),
-    ...(r.xpub !== undefined && { xpub: r.xpub }),
+    ...(r.publicKey ? { publicKey: r.publicKey } : {}),
+    ...(r.xpub ? { xpub: r.xpub } : {}),
   };
 }
 
