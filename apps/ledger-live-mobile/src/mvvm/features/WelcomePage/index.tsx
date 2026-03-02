@@ -11,12 +11,15 @@ import { StoryProgressBar } from "./components/StoryProgressBar";
 import { TappableMask } from "./components/TappableMask";
 import { useWelcomeNavigation } from "./hooks/useWelcomeNavigation";
 import { useWelcomeStories } from "./hooks/useWelcomeStories";
+import { useMarkWalletV4TourSeenAtOnboardingStart } from "LLM/features/WalletV4Tour/hooks/useMarkWalletV4TourSeenAtOnboardingStart";
 import SafeAreaView from "~/components/SafeAreaView";
 
 export default function WelcomePage() {
   const { colors } = useTheme();
   const isAppActive = !useIsAppInBackground();
   const isFocused = useIsFocused();
+
+  useMarkWalletV4TourSeenAtOnboardingStart();
 
   const { welcomeVideos, currentVideoIndex, videoDurations, onLoad, onPrevious, onNext } =
     useWelcomeStories();

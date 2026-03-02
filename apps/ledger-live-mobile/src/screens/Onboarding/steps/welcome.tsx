@@ -18,6 +18,7 @@ import ForceTheme from "~/components/theme/ForceTheme";
 import Button from "~/components/wrappedUi/Button";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { useMarkWalletV4TourSeenAtOnboardingStart } from "LLM/features/WalletV4Tour/hooks/useMarkWalletV4TourSeenAtOnboardingStart";
 
 import videoSources from "../../../../assets/videos";
 import LanguageSelect from "../../SyncOnboarding/LanguageSelect";
@@ -43,6 +44,8 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const { t } = useTranslation();
   const acceptTerms = useAcceptGeneralTerms();
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
+
+  useMarkWalletV4TourSeenAtOnboardingStart();
 
   const {
     i18n: { language: locale },
