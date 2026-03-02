@@ -1,7 +1,11 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "daemon": false,
-  "globalDependencies": ["turbo.json", "tsconfig.base.json"],
+  "globalDependencies": [
+    "turbo.json",
+    "tsconfig.base.json",
+    "sonar-project.properties"
+  ],
   "globalEnv": [
     "ANDROID_HOME",
     "ANDROID_KEYSTORE_FILE",

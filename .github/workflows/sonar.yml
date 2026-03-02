@@ -18,7 +18,7 @@ jobs:
     name: Scan LLM && LLD & Libs
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -32,7 +32,7 @@ jobs:
         id: caches
         with:
           skip-turbo-cache: "false"
-          install-proto: true
+          install-proto: false
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
