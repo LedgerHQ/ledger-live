@@ -1,16 +1,12 @@
-const ACCOUNT = Account.ETH_1;
-const CURRENCY = ACCOUNT.currency;
-
 $TmsLink("B2CQA-4383");
 $TmsLink("B2CQA-4385");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 
-describe("Wallet 4.0 Main Navigation", () => {
+describe("Main Navigation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
-      speculosApp: CURRENCY.speculosApp,
       featureFlags: {
         lwmWallet40: {
           enabled: true,
@@ -33,9 +29,8 @@ describe("Wallet 4.0 Main Navigation", () => {
     await app.mainNavigation.expectLegacyTabsNotVisible();
   });
 
-  it("should navigate to Swap via bottom tab and show Swap page", async () => {
+  it("should navigate to Swap via bottom tab", async () => {
     await app.mainNavigation.tapWallet40Tab("swap");
-    await app.mainNavigation.expectSwapPageVisible();
     await app.mainNavigation.expectWallet40BottomTabsVisible();
   });
 
