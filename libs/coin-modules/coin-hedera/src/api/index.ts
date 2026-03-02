@@ -31,7 +31,7 @@ import {
   getBlockHash,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
-import type { HederaMemo } from "../types";
+import type { EstimateFeesParams, HederaMemo } from "../types";
 
 export function createApi(config: Record<string, never>): Api<HederaMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -60,14 +60,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async transactionIntent => {
-      const operationType = mapIntentToSDKOperation(transactionIntent);
+    estimateFees: async txIntent => {
+      let estimateFeesParams: EstimateFeesParams;
+      const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+        estimateFeesParams = { operationType, txIntent };
+      } else {
+        estimateFeesParams = { currency, operationType };
       }
 
-      const estimatedFee = await logicEstimateFees({ currency, operationType });
+      const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
