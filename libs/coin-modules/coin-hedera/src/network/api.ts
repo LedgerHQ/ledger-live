@@ -304,15 +304,19 @@ async function getTransactionsByTimestampRange({
   address,
   startTimestamp,
   endTimestamp,
+  limit = 100,
+  order = "desc",
 }: {
   address?: string;
   startTimestamp: `${string}:${string}`;
   endTimestamp: `${string}:${string}`;
+  limit?: number;
+  order?: "asc" | "desc";
 }): Promise<HederaMirrorTransaction[]> {
   const transactions: HederaMirrorTransaction[] = [];
   const params = new URLSearchParams({
-    limit: "100",
-    order: "desc",
+    limit: limit.toString(),
+    order,
     ...(address && { "account.id": address }),
   });
 
