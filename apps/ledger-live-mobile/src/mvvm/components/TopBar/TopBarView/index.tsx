@@ -1,8 +1,15 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { IconButton } from "@ledgerhq/lumen-ui-rnative";
-import { Compass, Bell, BellNotification, Settings } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  Compass,
+  Bell,
+  BellNotification,
+  Settings,
+  Warning,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CustomTopBar, TopBarActionIcon } from "LLM/components/CustomTopBar";
 import { ICON_SIZE } from "LLM/components/TopBar/const";
+import { SyncErrorBottomSheet } from "../components/SyncErrorBottomSheet";
 
 type TopBarViewProps = {
   onMyLedgerPress: () => void;
@@ -10,6 +17,11 @@ type TopBarViewProps = {
   onNotificationsPress: () => void;
   onSettingsPress: () => void;
   hasUnreadNotifications: boolean;
+  hasAccounts: boolean;
+  isSyncError: boolean;
+  isSyncPending: boolean;
+  listOfErrorAccountNames: string;
+  syncAccessibilityLabel: string;
 };
 
 export function TopBarView({
@@ -18,19 +30,33 @@ export function TopBarView({
   onNotificationsPress,
   onSettingsPress,
   hasUnreadNotifications,
+  hasAccounts,
+  isSyncError,
+  isSyncPending,
+  listOfErrorAccountNames,
+  syncAccessibilityLabel,
 }: Readonly<TopBarViewProps>) {
-  const notificationIcon: NonNullable<React.ComponentProps<typeof IconButton>["icon"]> =
-    useCallback(
-      ({ size, style }) =>
-        hasUnreadNotifications ? (
-          <BellNotification size={size ?? ICON_SIZE} style={style} color="base" />
-        ) : (
-          <Bell size={size ?? ICON_SIZE} style={style} color="base" />
-        ),
-      [hasUnreadNotifications],
-    );
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
-  const customIcons: readonly TopBarActionIcon[] = useMemo(
+  const openSyncDrawer = useCallback(() => setIsSyncDrawerOpen(true), []);
+  const closeSyncDrawer = useCallback(() => setIsSyncDrawerOpen(false), []);
+
+  const notificationIcon = useCallback<
+    NonNullable<React.ComponentProps<typeof IconButton>["icon"]>
+  >(
+    ({ size, style }) => {
+      const Icon = hasUnreadNotifications ? BellNotification : Bell;
+      return <Icon size={size ?? ICON_SIZE} style={style} color="base" />;
+    },
+    [hasUnreadNotifications],
+  );
+
+  const syncIcon = useCallback<NonNullable<React.ComponentProps<typeof IconButton>["icon"]>>(
+    ({ size, style }) => <Warning size={size ?? ICON_SIZE} style={style} color="base" />,
+    [],
+  );
+
+  const baseIcons = useMemo<TopBarActionIcon[]>(
     () => [
       {
         id: "discover",
@@ -54,8 +80,45 @@ export function TopBarView({
         accessibilityLabel: "Settings",
       },
     ],
-    [onDiscoverPress, onNotificationsPress, onSettingsPress, notificationIcon],
+    [notificationIcon, onDiscoverPress, onNotificationsPress, onSettingsPress],
   );
 
-  return <CustomTopBar onMyLedgerPress={onMyLedgerPress} customIcons={customIcons} />;
+  const customIcons = useMemo(() => {
+    const shouldShowSyncStatus = hasAccounts && isSyncError;
+
+    if (!shouldShowSyncStatus) {
+      return baseIcons;
+    }
+
+    const syncStatusIcon: TopBarActionIcon = {
+      id: "sync",
+      icon: syncIcon,
+      callback: openSyncDrawer,
+      testID: "topbar-sync",
+      accessibilityLabel: syncAccessibilityLabel,
+      loading: isSyncPending,
+    };
+
+    return [syncStatusIcon, ...baseIcons];
+  }, [
+    hasAccounts,
+    isSyncError,
+    syncIcon,
+    openSyncDrawer,
+    syncAccessibilityLabel,
+    isSyncPending,
+    baseIcons,
+  ]);
+
+  return (
+    <>
+      <CustomTopBar onMyLedgerPress={onMyLedgerPress} customIcons={customIcons} />
+
+      <SyncErrorBottomSheet
+        isOpen={isSyncDrawerOpen}
+        onClose={closeSyncDrawer}
+        listOfErrorAccountNames={listOfErrorAccountNames}
+      />
+    </>
+  );
 }

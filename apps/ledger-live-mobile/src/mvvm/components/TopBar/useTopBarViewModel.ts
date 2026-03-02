@@ -4,6 +4,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { track } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSyncIndicator } from "./hooks/useSyncIndicator";
 
 export function useTopBarViewModel(
   navigation: NativeStackNavigationProp<{ [key: string]: object | undefined }>,
@@ -12,6 +13,8 @@ export function useTopBarViewModel(
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
   const page = screenName ?? ScreenName.Portfolio;
+  const { hasAccounts, isError, isPending, listOfErrorAccountNames, syncAccessibilityLabel } =
+    useSyncIndicator();
 
   const hasUnreadNotifications = useMemo(
     () => notificationCards.some(n => !n.viewed),
@@ -61,5 +64,10 @@ export function useTopBarViewModel(
     onNotificationsPress,
     onSettingsPress,
     hasUnreadNotifications,
+    hasAccounts,
+    isSyncError: isError,
+    isSyncPending: isPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
   };
 }

@@ -7,10 +7,6 @@ import { useActivityIndicatorTooltip } from "./useActivityIndicatorTooltip";
 import { getActivityIndicatorIcon } from "../utils/getActivityIndicatorIcon";
 import { TOOLTIP_UPDATE_INTERVAL_MS } from "../utils/constants";
 
-/**
- * Activity indicator state for the TopBar sync button.
- * Derives icon, tooltip, and interactivity from the shared `syncPhase` FSM.
- */
 export const useActivityIndicator = () => {
   const location = useLocation();
   const [, forceTooltipUpdate] = useReducer((tick: number) => tick + 1, 0);

@@ -1,13 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router";
-import { useBatchAccountsSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { Account } from "@ledgerhq/types-live";
+import { useAccountsSyncStatus as useAccountsSyncStatusCommon } from "@ledgerhq/live-common/bridge/react/index";
+import type { AccountWithUpToDateCheck } from "@ledgerhq/live-common/bridge/react/useAccountsSyncStatus";
 import { track } from "~/renderer/analytics/segment";
 
-export interface AccountWithUpToDateCheck {
-  account: Account;
-  isUpToDate?: boolean;
-}
+export type { AccountWithUpToDateCheck };
 
 export interface AccountsSyncStatus {
   allAccounts: AccountWithUpToDateCheck["account"][];
@@ -15,39 +12,28 @@ export interface AccountsSyncStatus {
   areAllAccountsUpToDate: boolean;
 }
 
-/**
- * Derives sync status from accounts with up-to-date check:
- * which accounts have errors and whether all are up to date.
- */
 export function useAccountsSyncStatus(
   accountsWithUpToDateCheck: AccountWithUpToDateCheck[],
 ): AccountsSyncStatus {
   const location = useLocation();
-  const allAccounts = accountsWithUpToDateCheck.map(item => item.account);
-  const isUpToDateByAccountId = new Map(
-    accountsWithUpToDateCheck.map(item => [item.account.id, item.isUpToDate === true]),
-  );
 
-  const batchState = useBatchAccountsSyncState({ accounts: allAccounts });
-  const errorTickers: string[] = [];
-  for (const { syncState, account } of batchState) {
-    if (syncState.pending) continue;
-    const isUpToDate = isUpToDateByAccountId.get(account.id);
-    if (syncState.error || !isUpToDate) {
-      errorTickers.push(account.currency.ticker);
+  const { allAccounts, accountsWithError, areAllAccountsUpToDate } =
+    useAccountsSyncStatusCommon(accountsWithUpToDateCheck);
+
+  const listOfErrorAccountNames = useMemo(() => {
+    const errorTickersSet = new Set<string>();
+    for (const account of accountsWithError) {
+      errorTickersSet.add(account.currency.ticker);
     }
-  }
+    return [...errorTickersSet].join("/");
+  }, [accountsWithError]);
 
-  const listOfErrorAccountNames = [...new Set(errorTickers)].join("/");
-  const areAllAccountsUpToDate = errorTickers.length === 0;
-
-  const errorTickersKey = errorTickers.join("/");
   useEffect(() => {
-    if (!errorTickersKey) return;
-    for (const currency of errorTickersKey.split("/")) {
+    if (!listOfErrorAccountNames) return;
+    for (const currency of listOfErrorAccountNames.split("/")) {
       track("SyncError", { currency, page: location.pathname });
     }
-  }, [errorTickersKey, location.pathname]);
+  }, [listOfErrorAccountNames, location.pathname]);
 
   return {
     allAccounts,
