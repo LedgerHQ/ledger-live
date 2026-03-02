@@ -34,6 +34,7 @@ import {
 } from "electron-devtools-installer";
 import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 import { openURL } from "./openURL";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -176,8 +177,9 @@ app.on("ready", async () => {
 
   // To handle opening new windows from webview
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-  ipcMain.on("webview-dom-ready", (_, id) => {
+  ipcMain.on("webview-dom-ready", (_, id: number, domains?: string[]) => {
     const wc = webContents.fromId(id);
+
     wc?.setWindowOpenHandler(({ url }) => {
       const protocol = new URL(url).protocol;
       if (["https:", "http:"].includes(protocol)) {
@@ -187,6 +189,20 @@ app.on("ready", async () => {
         action: "deny",
       };
     });
+
+    // Remove any previously registered will-navigate listener before (re-)adding one.
+    // dom-ready fires on every reload, so without this listeners would accumulate on
+    // the same WebContents instance, causing a memory leak and duplicate checks.
+    wc?.removeAllListeners("will-navigate");
+
+    // When manifest domains are provided (feature flag on), enforce origin whitelist on navigation
+    if (Array.isArray(domains) && domains.length > 0) {
+      wc?.on("will-navigate", (event, url) => {
+        if (!isUrlAllowedByManifestDomains(url, domains)) {
+          event.preventDefault();
+        }
+      });
+    }
   });
   Menu.setApplicationMenu(menu);
 

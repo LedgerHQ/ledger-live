@@ -254,6 +254,7 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
+  lldWebviewManifestDomainCheck: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;

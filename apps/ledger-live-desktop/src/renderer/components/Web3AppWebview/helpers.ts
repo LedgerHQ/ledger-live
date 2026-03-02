@@ -10,6 +10,7 @@ import {
 } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import {
   CurrentAccountHistDB,
   safeGetRefValue,
@@ -40,6 +41,8 @@ export const initialWebviewState: WebviewState = {
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | boolean | undefined>;
+  /** When true, loadURL only allows URLs matching manifest.domains (same as lldWebviewManifestDomainCheck) */
+  manifestDomainCheckEnabled?: boolean;
 };
 
 type WebviewPartition = {
@@ -62,8 +65,21 @@ export function useWebviewState(
   serverRef?: RefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
-  const { manifest, inputs } = params;
+  const { manifest, inputs, manifestDomainCheckEnabled } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+
+  // Mirror mobile's originWhitelist: if the feature flag is on and the initial URL is not
+  // allowed by manifest.domains, fall back to manifest.url so the first load is also gated.
+  const webviewSrc = useMemo(() => {
+    if (
+      manifestDomainCheckEnabled &&
+      !isUrlAllowedByManifestDomains(initialURL, manifest.domains ?? [])
+    ) {
+      return manifest.url.toString();
+    }
+    return initialURL;
+  }, [initialURL, manifest.domains, manifest.url, manifestDomainCheckEnabled]);
+
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useImperativeHandle(
@@ -91,6 +107,12 @@ export function useWebviewState(
           webview.openDevTools();
         },
         loadURL: (url: string): Promise<void> => {
+          if (
+            manifestDomainCheckEnabled &&
+            !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
+          ) {
+            return Promise.reject(new Error("URL not allowed by manifest domains"));
+          }
           const webview = safeGetRefValue(webviewRef);
 
           return webview.loadURL(url);
@@ -106,9 +128,7 @@ export function useWebviewState(
         },
       };
     },
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [manifest.domains, manifestDomainCheckEnabled, serverRef],
   );
 
   const [isMounted, setMounted] = useState<boolean>(false);
@@ -262,7 +282,7 @@ export function useWebviewState(
   ]);
 
   const props = {
-    src: initialURL,
+    src: webviewSrc,
   };
 
   const webviewPartition = useMemo(() => {

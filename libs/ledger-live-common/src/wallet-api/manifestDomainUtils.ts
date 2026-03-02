@@ -74,3 +74,57 @@ export function applyCustomDappUrl<T extends LiveAppManifest>(
 
   return manifest;
 }
+
+/**
+ * Checks if a URL is allowed by the manifest's domains array (origin-whitelist semantics).
+ * Used on desktop to mirror mobile's originWhitelist={manifest.domains} behavior.
+ * - Only allows schemes that appear in domains (e.g. https:, optionally http:).
+ * - Rejects javascript:, data:, file:, etc.
+ * - Each domain entry is origin-style: "https://*", "https://example.com", "http://".
+ * - Supports trailing "*" for "any host" with that protocol.
+ *
+ * @param url - The URL to check (e.g. navigation target)
+ * @param domains - Array of origin patterns from the manifest (e.g. ["https://*"])
+ * @returns true if the URL's origin is allowed by at least one pattern
+ */
+export function isUrlAllowedByManifestDomains(url: string, domains: string[]): boolean {
+  if (!domains || domains.length === 0) {
+    return false;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+
+  const protocol = parsed.protocol;
+  const origin = `${protocol}//${parsed.hostname}`;
+
+  // Only allow http: or https:; reject javascript:, data:, file:, etc.
+  if (protocol !== "https:" && protocol !== "http:") {
+    return false;
+  }
+
+  for (const pattern of domains) {
+    const trimmed = pattern?.trim();
+    if (!trimmed) continue;
+
+    // Exact origin match
+    if (trimmed === origin) return true;
+
+    // Protocol-only or "protocol://*" style (e.g. "https://", "https://*")
+    if (trimmed === `${protocol}//` || trimmed === `${protocol}//*`) return true;
+
+    // Subdomain wildcard: "https://*.example.com" -> match https://app.example.com
+    if (trimmed.startsWith(`${protocol}//*.`)) {
+      const suffix = trimmed.slice(protocol.length + 4); // "//*." length = 4
+      if (suffix && (parsed.hostname === suffix || parsed.hostname.endsWith("." + suffix))) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
