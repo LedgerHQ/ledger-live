@@ -165,15 +165,18 @@ export function transaction(options?: {
   kind?: Transaction["model"]["kind"];
   subAccountId?: string;
   raw?: string;
+  uiState?: Record<string, unknown>;
 }): Transaction {
   const kind = options?.kind ?? "transfer";
+  const defaultUiState = { subAccountId: options?.subAccountId, memo: "random memo for unit test" };
+  const uiState = options?.uiState ? { ...defaultUiState, ...options.uiState } : defaultUiState;
   return {
     family: "solana",
     amount: new BigNumber(0),
     recipient: "",
     model: {
       kind,
-      uiState: { subAccountId: options?.subAccountId, memo: "random memo for unit test" },
+      uiState,
       commandDescriptor: {
         command: {
           kind,

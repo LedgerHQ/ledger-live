@@ -8,6 +8,7 @@ import walletsync, {
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { v4 as uuid } from "uuid";
 import { Actionable } from "./Actionable";
 import { JsonEditor } from "./JsonEditor";
 import useEnv from "../useEnv";
@@ -122,7 +123,7 @@ export function AppWalletSync({
     const accounts = Array(Math.floor(5 * Math.random()))
       .fill(0)
       .map(() => {
-        const account = genAccount(Math.random().toString());
+        const account = genAccount(uuid());
         let name = getDefaultAccountName(account);
         if (Math.random() > 0.5) {
           name = "Renamed " + name;

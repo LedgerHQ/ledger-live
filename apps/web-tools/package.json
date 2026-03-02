@@ -12,6 +12,7 @@
     "dev": "rsbuild dev",
     "build": "rsbuild build",
     "preview": "rsbuild preview",
+    "test": "jest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -61,7 +62,8 @@
     "styled-components": "catalog:",
     "stylis": "catalog:",
     "typescript": "catalog:",
-    "utf-8-validate": "^6.0.6"
+    "utf-8-validate": "^6.0.6",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:",
@@ -69,7 +71,14 @@
     "@rsbuild/plugin-react": "catalog:",
     "@rsbuild/plugin-styled-components": "catalog:",
     "@rspack/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "14.5.2",
     "@types/invariant": "^2.2.37",
+    "@types/jest": "catalog:",
+    "@types/uuid": "^9.0.0",
     "@types/lodash": "^4.17.21",
     "@types/node": "catalog:",
     "@types/qrcode": "^1.5.6",
@@ -77,6 +86,8 @@
     "@types/react-dom": "catalog:",
     "@types/react-inspector": "^4.0.6",
     "@types/react-table": "^7.7.20",
-    "@types/semver": "catalog:"
+    "@types/semver": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:"
   }
 }
