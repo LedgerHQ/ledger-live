@@ -96,6 +96,7 @@ describe("usePortfolioBalanceSync", () => {
       balanceAvailable: true,
       isColdStart: false,
       isBalanceLoading: false,
+      isManualRefreshLoading: false,
       stableSyncPending: false,
       hasCvOrBridgeError: false,
       hasWalletSyncError: false,
@@ -164,17 +165,42 @@ describe("usePortfolioBalanceSync", () => {
     expect(result.current.isColdStart).toBe(false);
   });
 
-  it("returns isBalanceLoading true when sync is pending", () => {
+  it("returns isBalanceLoading false and isManualRefreshLoading false when sync pending but no recent user click (auto refresh)", () => {
     jest.spyOn(countervaluesReact, "useCountervaluesPolling").mockReturnValue({
       ...defaultPollingReturn,
       pending: true,
     });
 
     const { result } = renderHook(() => usePortfolioBalanceSync(), {
-      initialState: defaultInitialState,
+      initialState: {
+        ...defaultInitialState,
+        syncRefresh: { lastUserSyncClickTimestamp: 0 },
+      },
     });
 
     expect(result.current.stableSyncPending).toBe(true);
+    expect(result.current.isManualRefreshLoading).toBe(false);
+    expect(result.current.isBalanceLoading).toBe(false);
+  });
+
+  it("returns isManualRefreshLoading true and isBalanceLoading true when sync pending and user clicked recently", () => {
+    const now = 10_000;
+    const recentClickTime = now - 100; // 100ms ago within USER_CLICK_SPIN_DURATION_MS (1000)
+    jest.spyOn(Date, "now").mockReturnValue(now);
+    jest.spyOn(countervaluesReact, "useCountervaluesPolling").mockReturnValue({
+      ...defaultPollingReturn,
+      pending: true,
+    });
+
+    const { result } = renderHook(() => usePortfolioBalanceSync(), {
+      initialState: {
+        ...defaultInitialState,
+        syncRefresh: { lastUserSyncClickTimestamp: recentClickTime },
+      },
+    });
+
+    expect(result.current.stableSyncPending).toBe(true);
+    expect(result.current.isManualRefreshLoading).toBe(true);
     expect(result.current.isBalanceLoading).toBe(true);
   });
 

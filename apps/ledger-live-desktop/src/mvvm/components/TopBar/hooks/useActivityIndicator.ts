@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
-import { useSelector } from "LLD/hooks/redux";
+import { useCallback, useEffect, useReducer } from "react";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { hasAccountsSelector, isUpToDateSelector } from "~/renderer/reducers/accounts";
+import {
+  selectLastUserSyncClickTimestamp,
+  setLastUserSyncClickTimestamp,
+} from "~/renderer/reducers/syncRefresh";
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
 
@@ -13,14 +17,17 @@ import {
   TOOLTIP_UPDATE_INTERVAL_MS,
   USER_CLICK_SPIN_DURATION_MS,
 } from "../utils/constants";
+import { isRecentUserSyncClick } from "../utils/syncRefreshUtils";
 
 /**
  * Activity indicator state for the TopBar sync button.
  * When isRotating is true, the sync action should be non-interactive (disabled).
  */
 export const useActivityIndicator = () => {
+  const dispatch = useDispatch();
   const hasAccounts = useSelector(hasAccountsSelector);
   const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
+  const lastUserSyncClickTimestamp = useSelector(selectLastUserSyncClickTimestamp);
   const {
     isBalanceLoading,
     stableSyncPending,
@@ -28,7 +35,6 @@ export const useActivityIndicator = () => {
     hasWalletSyncError,
     triggerRefresh,
   } = usePortfolioBalanceSync();
-  const [lastClickTime, setLastClickTime] = useState(0);
   const [, forceTooltipUpdate] = useReducer((tick: number) => tick + 1, 0);
 
   const { allAccounts, listOfErrorAccountNames, areAllAccountsUpToDate } =
@@ -48,7 +54,7 @@ export const useActivityIndicator = () => {
   const userClickSpinMs = isPlaywrightRun
     ? PLAYWRIGHT_CLICK_SPIN_DURATION_MS
     : USER_CLICK_SPIN_DURATION_MS;
-  const isUserClick = Date.now() - lastClickTime < userClickSpinMs;
+  const isUserClick = isRecentUserSyncClick(lastUserSyncClickTimestamp, userClickSpinMs);
   const isRotating = isBalanceLoading || (isUserClick && stableSyncPending);
 
   const icon = getActivityIndicatorIcon(isError, isRotating);
@@ -60,10 +66,11 @@ export const useActivityIndicator = () => {
   });
 
   const handleSync = useCallback(() => {
+    const now = Date.now();
+    dispatch(setLastUserSyncClickTimestamp(now));
     triggerRefresh();
-    setLastClickTime(Date.now());
     track("SyncRefreshClick");
-  }, [triggerRefresh]);
+  }, [dispatch, triggerRefresh]);
 
   return {
     hasAccounts,
