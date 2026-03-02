@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { craftTransaction } from "../common-logic";
-import { createMockAccount } from "../test/fixtures";
+import { createMockCantonAccount } from "../test/fixtures";
 import prepareTransferMock from "../test/prepare-transfer.json";
 import {
   CantonSigner,
@@ -61,7 +61,7 @@ describe("buildSignOperation", () => {
     mockCraftTransaction.mockReset();
   });
 
-  const mockAccount = createMockAccount({
+  const mockAccount = createMockCantonAccount({
     id: "js:2:canton_network:test-party-id:",
     freshAddress: "test-address",
     freshAddressPath: mockDerivationPath,

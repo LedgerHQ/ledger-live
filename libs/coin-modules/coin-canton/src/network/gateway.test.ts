@@ -2,59 +2,50 @@ import { LedgerAPI4xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
-import { TopologyChangeError } from "../types/errors";
 import {
+  createMockCantonCurrency,
+  createMockInstrumentBalances,
+  createMockOnboardingPrepareResponse,
+  setupMockCoinConfig,
+} from "../test/fixtures";
+import { TopologyChangeError } from "../types/errors";
+import type { GetBalanceResponse } from "../types/gateway";
+import {
+  clearEnabledInstrumentsCache,
   getBalance,
-  isPartyAlreadyExists,
-  submitOnboarding,
   getEnabledInstruments,
   getEnabledInstrumentsCached,
-  clearEnabledInstrumentsCache,
-  type GetBalanceResponse,
-  type InstrumentBalance,
+  isPartyAlreadyExists,
+  submitOnboarding,
   type InstrumentsResponse,
-  type OnboardingPrepareResponse,
 } from "./gateway";
 
-jest.mock("@ledgerhq/live-network", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
+jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
 
-const mockBalances: InstrumentBalance[] = [
+const mockBalances = createMockInstrumentBalances(2, [
   {
+    admin_id: "AmuletAdmin",
     instrument_id: "Amulet",
-    admin_id: "admin-amulet",
     amount: "10000000000000000000000000000000000000000",
     locked: false,
     utxo_count: 1,
   },
   {
-    instrument_id: "LockedAmulet",
-    admin_id: "admin-locked-amulet",
+    admin_id: "LockedAmuletAdmin",
+    instrument_id: "Amulet",
     amount: "5000000000000000000000000000000000000000",
     locked: true,
     utxo_count: 1,
   },
-];
+]);
 
 describe("getBalance", () => {
-  const mockCurrency = {
-    id: "canton_network",
-  } as unknown as CryptoCurrency;
-
+  const mockCurrency = createMockCantonCurrency();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-    }));
+    setupMockCoinConfig();
   });
 
   beforeEach(() => {
@@ -81,36 +72,14 @@ describe("getBalance", () => {
   });
 
   it("should handle PARTY_ALREADY_EXISTS error", async () => {
-    const mockPartyId = "test-party-id-123";
-    const mockPublicKey = "test-public-key-456";
     const error = new LedgerAPI4xx("Party already exists", {
       status: 409,
       url: undefined,
       method: "POST",
     });
-    const mockPrepareResponse: OnboardingPrepareResponse = {
-      party_id: mockPartyId,
-      party_name: "Test Party",
-      public_key_fingerprint: "fingerprint",
-      transactions: {
-        namespace_transaction: {
-          serialized: "",
-          transaction: { operation: "", serial: 0, mapping: {} },
-          hash: "",
-        },
-        party_to_key_transaction: {
-          serialized: "",
-          transaction: { operation: "", serial: 0, mapping: {} },
-          hash: "",
-        },
-        party_to_participant_transaction: {
-          serialized: "",
-          transaction: { operation: "", serial: 0, mapping: {} },
-          hash: "",
-        },
-        combined_hash: "",
-      },
-    };
+    const mockPublicKey = "test-public-key";
+
+    const mockPrepareResponse = createMockOnboardingPrepareResponse();
 
     mockNetwork.mockRejectedValue(error);
 
@@ -119,7 +88,7 @@ describe("getBalance", () => {
     });
 
     expect(isPartyAlreadyExists(error)).toBe(true);
-    expect(result.party).toEqual({ party_id: mockPartyId, public_key: mockPublicKey });
+    expect(result.party).toEqual({ party_id: "test-party-id", public_key: mockPublicKey });
   });
 
   it("should handle PARTY_NOT_FOUND_BY_ID error", async () => {

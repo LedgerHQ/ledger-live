@@ -1,19 +1,19 @@
 import {
   AlpacaApi,
+  Balance,
   Block,
   BlockInfo,
+  CraftedTransaction,
   Cursor,
   FeeEstimation,
+  ListOperationsOptions,
+  Operation,
   Page,
-  Validator,
   Reward,
   Stake,
   TransactionIntent,
-  Operation,
-  Balance,
-  ListOperationsOptions,
-  CraftedTransaction,
   TransactionValidation,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
