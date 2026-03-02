@@ -23,7 +23,7 @@ permissions:
 jobs:
   scan-sonar:
     name: "Sonar Cloud"
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -39,7 +39,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          install-proto: false
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
