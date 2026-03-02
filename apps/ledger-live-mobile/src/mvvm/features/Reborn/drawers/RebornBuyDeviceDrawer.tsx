@@ -3,7 +3,6 @@ import { TrackScreen } from "~/analytics";
 import useRebornBuyDeviceViewModel from "./useRebornBuyDeviceViewModel";
 import {
   Text,
-  ListItem,
   ListItemLeading,
   ListItemContent,
   ListItemTitle,
@@ -11,6 +10,7 @@ import {
   Button,
   BottomSheetView,
   BottomSheetHeader,
+  Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { HandCoins, ShieldLock, Share2 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image } from "react-native";
@@ -64,7 +64,20 @@ function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" |
       </Text>
 
       {items.map(item => (
-        <ListItem key={item.id}>
+        <Box
+          key={item.id}
+          lx={{
+            flexDirection: "row",
+            alignItems: "center",
+            height: "s64",
+            width: "full",
+            gap: "s16",
+            borderRadius: "md",
+            backgroundColor: "baseTransparent",
+            paddingHorizontal: "s8",
+            paddingVertical: "s12",
+          }}
+        >
           <ListItemLeading>
             <item.Icon size={24} />
 
@@ -73,7 +86,7 @@ function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" |
               <ListItemDescription>{t(item.desc)}</ListItemDescription>
             </ListItemContent>
           </ListItemLeading>
-        </ListItem>
+        </Box>
       ))}
 
       <Button
