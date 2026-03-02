@@ -492,7 +492,7 @@ describe("calculateAmount", () => {
       estimatedFees,
     });
 
-    expect(result.amount.toString()).toEqual(transparentBalance.minus(estimatedFees).toString());
+    expect(result.amount).toStrictEqual(transparentBalance.minus(estimatedFees));
     expect(result.totalSpent).toEqual(transparentBalance);
   });
 
