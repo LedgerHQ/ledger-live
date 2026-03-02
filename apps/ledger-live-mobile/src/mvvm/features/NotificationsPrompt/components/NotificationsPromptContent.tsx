@@ -14,7 +14,7 @@ export const NotificationsPromptContent = () => {
 
   return (
     <>
-      <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
+      <Text textAlign="center" variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
         {isVariantB ? t("notifications.prompt.titleVariantB") : t("notifications.prompt.title")}
       </Text>
 
