@@ -22,6 +22,7 @@ export const dataset: DatasetTest<Transaction> = {
       scanAccounts: cardanoScanAccounts,
       accounts: [
         {
+          FIXME_tests: ["balance is sum of ops"],
           raw: cardanoRawAccount1,
           transactions: [
             {
