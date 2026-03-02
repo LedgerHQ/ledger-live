@@ -285,8 +285,10 @@ function useRedirectToPortfolio({
   useCase: OnboardingUseCase;
 }) {
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
+  const hasRedirected = useRef(false);
   useEffect(() => {
-    if (enabled) {
+    if (enabled && !hasRedirected.current) {
+      hasRedirected.current = true;
       /**
        * There is a lag if we call navigate("/") directly.
        * To improve the UX in that situation, we have to first commit a "loading"
