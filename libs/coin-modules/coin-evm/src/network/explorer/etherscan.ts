@@ -128,6 +128,24 @@ function isDone(limitParameter: number | undefined, operationCount: number): boo
   );
 }
 
+function paginationParams(params: FetchOperationsParams): {
+  tag: "latest";
+  page: number;
+  offset?: number;
+  sort: "asc" | "desc";
+  startblock: number;
+  endblock?: number | undefined;
+} {
+  return {
+    tag: "latest",
+    page: params.page ?? 1,
+    ...(params.limit !== undefined && { offset: params.limit }),
+    sort: params.sort,
+    startblock: params.fromBlock,
+    endblock: params.toBlock,
+  };
+}
+
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
   const byHash: Record<string, T[]> = {};
   for (const item of items) {
@@ -228,14 +246,7 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
     url,
-    params: {
-      tag: "latest",
-      page: params.page ?? 1,
-      ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort,
-      startBlock: params.fromBlock,
-      endBlock: params.toBlock,
-    },
+    params: paginationParams(params),
   });
 
   const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
@@ -269,14 +280,7 @@ export const getTokenOperations = async (
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
     url,
-    params: {
-      tag: "latest",
-      page: params.page ?? 1,
-      ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort,
-      startBlock: params.fromBlock,
-      endBlock: params.toBlock,
-    },
+    params: paginationParams(params),
   });
 
   // Why this thing ?
@@ -325,14 +329,7 @@ export const getERC721Operations = async (
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
     url,
-    params: {
-      tag: "latest",
-      page: params.page ?? 1,
-      ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort,
-      startBlock: params.fromBlock,
-      endBlock: params.toBlock,
-    },
+    params: paginationParams(params),
   });
 
   // Why this thing ?
@@ -381,14 +378,7 @@ export const getERC1155Operations = async (
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=token1155tx&address=${params.address}`,
-    params: {
-      tag: "latest",
-      page: params.page ?? 1,
-      ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort,
-      startBlock: params.fromBlock,
-      endBlock: params.toBlock,
-    },
+    params: paginationParams(params),
   });
 
   // Why this thing ?
@@ -471,14 +461,7 @@ export const getInternalOperations = async (
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
-    params: {
-      tag: "latest",
-      page: params.page ?? 1,
-      ...(params.limit !== undefined && { offset: params.limit }),
-      sort: params.sort,
-      startBlock: params.fromBlock,
-      endBlock: params.toBlock,
-    },
+    params: paginationParams(params),
   }).then(ops => ops.map(fixTxHash));
 
   // Why this thing ?
