@@ -41,17 +41,14 @@ const Right = styled.div`
   letter-spacing: 0px;
 `;
 
-export const SplitAddress = ({
-  value,
-  color,
-  ff,
-  fontSize,
-}: {
+export type SplitAddressProps = {
   value: string;
   color?: string;
   ff?: string;
   fontSize?: number;
-}) => {
+};
+
+export const SplitAddress = ({ value, color, ff, fontSize }: SplitAddressProps) => {
   if (!value) {
     return <Box />;
   }

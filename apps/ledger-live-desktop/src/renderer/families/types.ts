@@ -26,6 +26,7 @@ import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 
 export type AddressCellProps<O extends Operation> = {
   operation: O;
@@ -153,6 +154,12 @@ export type LLDCoinFamily<
      * Add custom component at the end in operation details drawer
      */
     OperationDetailsPostAlert?: React.ComponentType<OperationDetailsExtraProps<A, O>>;
+
+    /**
+     * Replace split address component for specific operation type
+     * @default SplitAddress from "~/renderer/components/OperationsList/AddressCellShared"
+     */
+    splitAddress?: Partial<Record<OperationType, React.ComponentType<SplitAddressProps>>>;
   };
 
   accountActions?: {
