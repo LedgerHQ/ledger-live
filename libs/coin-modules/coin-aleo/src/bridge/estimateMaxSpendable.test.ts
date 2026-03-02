@@ -37,7 +37,7 @@ describe("estimateMaxSpendable", () => {
     });
   });
 
-  it("should return balance minus fees", async () => {
+  it("should return the amount from prepared transaction", async () => {
     const result = await estimateMaxSpendable({
       account: mockAccount,
       parentAccount: undefined,
@@ -47,7 +47,7 @@ describe("estimateMaxSpendable", () => {
     expect(result).toEqual(mockPreparedTransaction.amount);
   });
 
-  it("should return zero when fees exceed balance", async () => {
+  it("should return zero when prepared transaction amount is zero", async () => {
     const mockPoorAccount = getMockedAccount({ balance: new BigNumber(3000) });
 
     mockPrepareTransaction.mockResolvedValue({
