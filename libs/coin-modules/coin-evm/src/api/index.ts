@@ -22,6 +22,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
+import { craftTransactionData } from "../logic/craftTransactionData";
 import {
   broadcast,
   combine,
@@ -117,8 +118,6 @@ export function createApi(
     validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
       validateTransaction(currency, { signature }),
     ...(STAKING_CONTRACTS[currencyId] ? { stakingSupported: true } : {}),
-    craftTransactionData: _intent => {
-      throw new Error("Unsupported method");
-    },
+    craftTransactionData,
   };
 }

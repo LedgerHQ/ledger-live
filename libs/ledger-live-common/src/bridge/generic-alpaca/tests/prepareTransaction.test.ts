@@ -68,6 +68,7 @@ describe("genericPrepareTransaction", () => {
       account,
       expect.objectContaining(baseTransaction),
       undefined,
+      undefined,
     );
   });
 
@@ -241,6 +242,7 @@ describe("genericPrepareTransaction", () => {
         assetOwner: "test-account-address",
         assetReference: "usdc",
       },
+      undefined,
       undefined,
     );
   });
