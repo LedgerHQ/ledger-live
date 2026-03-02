@@ -48,7 +48,7 @@
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/uuid": "^9.0.5",
     "documentation": "14.0.2",
     "jest": "catalog:",

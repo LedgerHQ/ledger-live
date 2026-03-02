@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",

@@ -37,7 +37,7 @@
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
     "@typescript-eslint/eslint-plugin": "catalog:",
@@ -45,6 +45,6 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "typescript": "^5.3.3"
+    "typescript": "catalog:"
   }
 }

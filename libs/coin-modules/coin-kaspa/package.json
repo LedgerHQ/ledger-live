@@ -108,6 +108,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",

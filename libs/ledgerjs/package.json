@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "eslint-plugin-react": "^7.33.2",
     "jest": "catalog:",
     "@swc/jest": "catalog:",

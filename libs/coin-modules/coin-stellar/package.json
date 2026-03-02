@@ -140,7 +140,7 @@
     "@faker-js/faker": "^8.4.1",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "nock": "14.0.2",

@@ -128,6 +128,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",
+    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
@@ -138,7 +139,7 @@
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

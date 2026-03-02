@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bs58": "catalog:",
     "@types/invariant": "^2.2.2",
