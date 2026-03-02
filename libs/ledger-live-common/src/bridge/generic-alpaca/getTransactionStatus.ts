@@ -48,7 +48,12 @@ export function genericGetTransactionStatus(
       }
     }
 
-    let intent = transactionToIntent(account, draftTransaction, bridgeApi.computeIntentType);
+    let intent = transactionToIntent(
+      account,
+      draftTransaction,
+      bridgeApi.computeIntentType,
+      alpacaApi.craftTransactionData,
+    );
     intent = applyMemoToIntent(intent, transaction);
 
     const customFees = bigNumberToBigIntDeep({
