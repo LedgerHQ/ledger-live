@@ -32,6 +32,7 @@ export default class SwapLiveAppPage {
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
+    await waitWebElementByTestId(this.fromSelector);
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
