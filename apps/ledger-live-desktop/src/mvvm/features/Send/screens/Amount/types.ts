@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
-import type { FeePresetOption } from "./hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "./hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "./hooks/useFeePresetLegends";
+import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
+import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
+import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
 
 export type AmountScreenMessage = Readonly<{
   type: "error" | "warning" | "info";
@@ -52,6 +52,7 @@ type FeesProps = Readonly<{
   showNetworkFees: boolean;
   selectedFeeStrategy: string | null;
   onSelectFeeStrategy: (strategy: string) => void;
+  onSelectCoinControl: () => void;
 }>;
 
 type QuickActionsProps = Readonly<{

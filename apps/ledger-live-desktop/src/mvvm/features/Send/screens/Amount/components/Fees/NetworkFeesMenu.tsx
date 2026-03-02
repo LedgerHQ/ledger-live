@@ -13,9 +13,9 @@ import { sendFeatures, getSendDescriptor } from "@ledgerhq/live-common/bridge/de
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTranslation } from "react-i18next";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
-import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
+import type { FeePresetOption } from "../../../../hooks/useFeePresetOptions";
+import type { FeeFiatMap } from "../../../../hooks/useFeePresetFiatValues";
+import type { FeePresetLegendMap } from "../../../../hooks/useFeePresetLegends";
 import { FeePresetMenuItems } from "./FeePresetMenuItems";
 
 type FeeOptionDisplay = Readonly<{

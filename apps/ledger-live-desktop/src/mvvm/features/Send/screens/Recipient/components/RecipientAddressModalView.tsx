@@ -99,6 +99,11 @@ export function RecipientAddressModalView({
             currentAccountId={mainAccount.id}
             onSelect={onAccountSelect}
           />
+          <MyAccountsSection
+            currency={currency}
+            currentAccountId={mainAccount.id}
+            onSelect={onAccountSelect}
+          />
         </>
       )}
 

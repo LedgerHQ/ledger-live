@@ -1,11 +1,12 @@
 import React from "react";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
+import { ChangeToReturn } from "./ChangeToReturn";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FeePresetOption } from "../../../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../../../hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "../../../hooks/useFeePresetLegends";
 import { useSendFlowData } from "../../../context/SendFlowContext";
-import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
+import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 
 type AmountFooterProps = Readonly<{
   feesRowLabel: string;
@@ -17,7 +18,6 @@ type AmountFooterProps = Readonly<{
   legendByPreset: FeePresetLegendMap;
   onSelectFeeStrategy: (strategy: string) => void;
   onSelectCustomFees: () => void;
-  onSelectCoinControl: () => void;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -26,7 +26,7 @@ type AmountFooterProps = Readonly<{
   onGetFunds?: () => void;
 }>;
 
-export function AmountFooter({
+export function CoinControlFooter({
   feesRowLabel,
   feesRowValue,
   feesRowStrategyLabel,
@@ -36,7 +36,6 @@ export function AmountFooter({
   legendByPreset,
   onSelectFeeStrategy,
   onSelectCustomFees,
-  onSelectCoinControl,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -55,8 +54,9 @@ export function AmountFooter({
   const ctaTestId = reviewShowIcon ? "send-review-button" : "send-get-funds-button";
 
   return (
-    <div className="mt-56 pt-12" data-testid="send-amount-footer">
+    <DialogFooter data-testid="send-coin-control-footer" className="flex flex-col">
       <div className="border-t border-muted-subtle" />
+      <ChangeToReturn />
       <NetworkFeesMenu
         display={{
           label: feesRowLabel,
@@ -74,7 +74,6 @@ export function AmountFooter({
         }}
         actions={{
           onSelectCustomFees: onSelectCustomFees,
-          onSelectCoinControl: onSelectCoinControl,
         }}
       />
       <Button
@@ -90,6 +89,6 @@ export function AmountFooter({
       >
         {reviewLoading ? "" : reviewLabel}
       </Button>
-    </div>
+    </DialogFooter>
   );
 }

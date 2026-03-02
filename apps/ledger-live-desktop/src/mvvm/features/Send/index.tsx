@@ -12,12 +12,13 @@ import { SendFlowLayout } from "./components/SendFlowLayout";
 import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
 import { AmountScreen } from "./screens/Amount/AmountScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
   [SEND_FLOW_STEP.CUSTOM_FEES]: () => <></>,
-  [SEND_FLOW_STEP.COIN_CONTROL]: () => <></>,
+  [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
 };

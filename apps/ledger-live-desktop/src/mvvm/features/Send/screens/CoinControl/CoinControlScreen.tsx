@@ -1,16 +1,16 @@
 import React from "react";
-import { AmountScreenInner } from "./components/AmountScreenInner";
-import { useAmountScreen } from "./hooks/useAmountScreen";
+import { CoinControlScreenInner } from "./components/CoinControlScreenInner";
+import { useCoinControlScreen } from "./hooks/useCoinControlView";
 
-export function AmountScreen() {
-  const viewModel = useAmountScreen();
+export function CoinControlScreen() {
+  const viewModel = useCoinControlScreen();
 
   if (!viewModel.ready) {
     return null;
   }
 
   return (
-    <AmountScreenInner
+    <CoinControlScreenInner
       account={viewModel.account}
       parentAccount={viewModel.parentAccount}
       transaction={viewModel.transaction}
@@ -21,7 +21,6 @@ export function AmountScreen() {
       transactionActions={viewModel.transactionActions}
       onReview={viewModel.onReview}
       onGetFunds={viewModel.onGetFunds}
-      onSelectCoinControl={viewModel.onSelectCoinControl}
     />
   );
 }
