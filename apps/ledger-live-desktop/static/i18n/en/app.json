@@ -237,7 +237,7 @@
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address."
+        "description": "Sending 0 {{ticker}} to your own address. Cancellation is not guaranteed. If the network processes your original transaction before this cancellation request, the funds will still be sent to the recipient."
       },
       "steps": {
         "method": {
