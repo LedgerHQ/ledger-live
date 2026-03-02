@@ -5901,6 +5901,12 @@
     "information": "To ensure your transaction is deposited correctly to your account, centralized exchanges and sometimes custodial wallets require a Tag/Memo.",
     "instruction": "Copy and paste the Tag/Memo provided by the exchange or custodial wallet."
   },
+  "SelectBalanceField": {
+    "label": "Select balance",
+    "placeholder": "Enter balance",
+    "information": "Choose the account balance you want to use for this transaction.",
+    "instruction": "Select the available balance from your account to proceed with the transaction."
+  },
   "families": {
     "casper": {
       "transferIdPlaceholder": "Optional",

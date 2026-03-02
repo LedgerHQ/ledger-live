@@ -15,6 +15,7 @@ import type { ProvableApi, AleoUnspentRecord } from "./logic";
 export type Transaction = TransactionCommon & {
   family: "aleo";
   fees: BigNumber;
+  selectedBalance?: string | undefined;
 } & (
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
