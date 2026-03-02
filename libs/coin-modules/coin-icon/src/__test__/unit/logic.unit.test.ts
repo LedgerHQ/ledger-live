@@ -1,5 +1,9 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
+import { BERLIN_TESTNET_NID, MAINNET_NID } from "../../constants";
 import {
   convertLoopToIcx,
   convertICXtoLoop,
@@ -12,12 +16,8 @@ import {
   calculateAmount,
   getMinimumBalance,
 } from "../../logic";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IconAccount, Transaction } from "../../types";
-import { BERLIN_TESTNET_NID, MAINNET_NID } from "../../constants";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),

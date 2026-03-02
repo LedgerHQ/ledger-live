@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { extractCompanyFromNodeDescription, getChecksum, sortValidators } from "./logic/utils";
 import { apiClient } from "./network/api";
 import { setHederaPreloadData } from "./preload-data";

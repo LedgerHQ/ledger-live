@@ -1,9 +1,9 @@
-import BigNumber from "bignumber.js";
-import { getCardanoAccountFixture } from "./fixtures/accounts";
-import { Transaction } from "./types";
-import { buildTransaction } from "./buildTransaction";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
+import { buildTransaction } from "./buildTransaction";
+import { getCardanoAccountFixture } from "./fixtures/accounts";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
+import { Transaction } from "./types";
 
 describe("buildTransaction", () => {
   const txPayload: Transaction = {
@@ -136,7 +136,6 @@ describe("buildTransaction", () => {
         | TyphonTypes.StakeKeyDeRegistrationCertificate
         | undefined;
 
-      expect(deregisterCertificate).toBeDefined();
       expect(deregisterCertificate!.cert.deposit.toString()).toBe(
         account.cardanoResources.delegation?.deposit,
       );
@@ -164,7 +163,6 @@ describe("buildTransaction", () => {
         | TyphonTypes.StakeKeyRegistrationCertificate
         | undefined;
 
-      expect(registerCertificate).toBeDefined();
       expect(registerCertificate!.cert.deposit.toString()).toBe(
         transaction.protocolParams.stakeKeyDeposit.toString(),
       );

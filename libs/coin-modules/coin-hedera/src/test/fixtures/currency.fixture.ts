@@ -1,5 +1,5 @@
-import invariant from "invariant";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
 
 export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
   return {

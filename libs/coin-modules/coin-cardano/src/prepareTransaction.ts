@@ -1,11 +1,11 @@
-import { BigNumber } from "bignumber.js";
-import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
-import { CardanoAccount, Transaction } from "./types";
-import { buildTransaction } from "./buildTransaction";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
+import { BigNumber } from "bignumber.js";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
+import { buildTransaction } from "./buildTransaction";
+import { CardanoAccount, Transaction } from "./types";
 
 /**
  * Prepare transaction before checking status

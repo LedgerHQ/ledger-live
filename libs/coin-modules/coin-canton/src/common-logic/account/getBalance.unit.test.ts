@@ -1,8 +1,7 @@
-import { getBalance as getBalanceFromNetwork } from "../../network/gateway";
-import * as coinConfigModule from "../../config";
-import { getBalance } from "./getBalance";
-import { Balance } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import * as coinConfigModule from "../../config";
+import { getBalance as getBalanceFromNetwork } from "../../network/gateway";
+import { getBalance } from "./getBalance";
 
 const mockCurrency = {
   id: "canton_network",

@@ -1,7 +1,7 @@
-import { log } from "@ledgerhq/logs";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { log } from "@ledgerhq/logs";
 import { KeyAlgorithm } from "casper-js-sdk";
 import { casperAddressFromPubKey } from "../bridge/bridgeHelpers/addresses";
 import { CasperSigner } from "../types";

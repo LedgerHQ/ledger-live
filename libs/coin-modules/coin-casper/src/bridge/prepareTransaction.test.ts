@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
-import { prepareTransaction } from "./prepareTransaction";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { BigNumber } from "bignumber.js";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
+import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { prepareTransaction } from "./prepareTransaction";
 
 // Mock dependencies
 jest.mock("./bridgeHelpers/fee", () => ({

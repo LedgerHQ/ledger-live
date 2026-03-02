@@ -1,14 +1,14 @@
-import type { CeloAccount, RevokeTxo, Transaction } from "../types";
 import { CeloTx } from "@celo/connect";
-import { celoKit } from "../network/sdk";
-import { BigNumber } from "bignumber.js";
-import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { BigNumber } from "bignumber.js";
 import {
   CELO_STABLE_TOKENS,
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
 } from "../constants";
+import { getPendingStakingOperationAmounts, getVote } from "../logic";
+import { celoKit } from "../network/sdk";
+import type { CeloAccount, RevokeTxo, Transaction } from "../types";
 import { valueToHex } from "./utils";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
@@ -117,11 +117,6 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     };
   } else if (isTokenTransaction) {
     value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
-
-    const block = await kit.connection.web3.eth.getBlock("latest");
-    const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
-    const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
-    const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
 
     let token;
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {

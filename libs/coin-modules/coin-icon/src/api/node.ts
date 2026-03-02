@@ -1,13 +1,13 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { IcxTransaction, SignedTransaction } from "icon-sdk-js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { isTestnet } from "../logic";
-import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
-import { IconAccount } from "../types/index";
-import { SignedOperation } from "@ledgerhq/types-live";
-import { IconDelegationType } from "./api-type";
 import { getCoinConfig } from "../config";
+import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
+import { isTestnet } from "../logic";
+import { IconAccount } from "../types/index";
+import { IconDelegationType } from "./api-type";
 
 const { HttpProvider } = IconService;
 const { IconBuilder } = IconService;

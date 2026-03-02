@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { getUnit, mapTxToOps } from "./txn";
-import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
-import * as fixtures from "../../test/fixtures";
 import { ITxnHistoryData } from "../../api/types";
+import * as fixtures from "../../test/fixtures";
+import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
+import { getUnit, mapTxToOps } from "./txn";
 import { createNewTransaction as testCreateNewTransaction } from "./txn";
 
 // Import Casper SDK mock for direct access to mocks
@@ -51,10 +51,11 @@ describe("txn", () => {
   describe("getUnit", () => {
     test("should return the first unit of casper currency", () => {
       const unit = getUnit();
-      expect(unit).toBeDefined();
-      expect(unit.name).toBe("CSPR");
-      expect(unit.code).toBe("CSPR");
-      expect(unit.magnitude).toBe(9);
+      expect(unit).toMatchObject({
+        name: "CSPR",
+        code: "CSPR",
+        magnitude: 9,
+      });
     });
   });
 

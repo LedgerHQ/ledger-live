@@ -1,13 +1,13 @@
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { address as TyphonAddress } from "@stricahq/typhonjs";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { getBipPathFromString, getBipPathString } from "./logic";
-import { StakeChain } from "./types";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { address as TyphonAddress } from "@stricahq/typhonjs";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { STAKING_ADDRESS_INDEX } from "./constants";
+import { getBipPathFromString, getBipPathString } from "./logic";
 import { getNetworkParameters } from "./networks";
 import { CardanoSigner } from "./signer";
+import { StakeChain } from "./types";
 
 const resolver = (signerContext: SignerContext<CardanoSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify, currency }: GetAddressOptions) => {

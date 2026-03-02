@@ -1,10 +1,10 @@
-import { BigNumber } from "bignumber.js";
-import type { IconAccount, Transaction } from "./types";
-import { getFees } from "./api/node";
-import { buildTransaction } from "./buildTransaction";
-import { getStepPrice } from "./api/node";
-import { FEES_SAFETY_BUFFER, calculateAmount } from "./logic";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { BigNumber } from "bignumber.js";
+import { getFees } from "./api/node";
+import { getStepPrice } from "./api/node";
+import { buildTransaction } from "./buildTransaction";
+import { FEES_SAFETY_BUFFER, calculateAmount } from "./logic";
+import type { IconAccount, Transaction } from "./types";
 
 /**
  * Fetch the transaction fees for a transaction

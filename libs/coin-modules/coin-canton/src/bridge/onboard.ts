@@ -1,11 +1,12 @@
-import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { log } from "@ledgerhq/logs";
-import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 
+import { signTransaction } from "../common-logic/transaction/sign";
 import {
   getNetworkType,
   prepareOnboarding,
@@ -18,7 +19,8 @@ import {
   getTransferPreApproval,
   clearIsTopologyChangeRequiredCache,
 } from "../network/gateway";
-import { signTransaction } from "../common-logic/transaction/sign";
+import resolver from "../signer";
+import type { CantonSigner } from "../types";
 import {
   OnboardStatus,
   AuthorizeStatus,
@@ -27,8 +29,6 @@ import {
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
 } from "../types/onboard";
-import resolver from "../signer";
-import type { CantonSigner } from "../types";
 
 export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: string) => {
   try {
@@ -39,7 +39,7 @@ export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: st
     } else {
       return { isOnboarded: false };
     }
-  } catch (err) {
+  } catch {
     return { isOnboarded: false };
   }
 };
@@ -180,7 +180,7 @@ export const buildAuthorizePreapproval =
                   signature,
                 });
               }
-            } catch (err) {
+            } catch {
               // Tap request failure should not break the pre-approval flow
             }
           };

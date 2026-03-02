@@ -1,3 +1,8 @@
+import { LedgerAPI4xx } from "@ledgerhq/errors";
+import network from "@ledgerhq/live-network";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../config";
+import { TopologyChangeError } from "../types/errors";
 import {
   getBalance,
   isPartyAlreadyExists,
@@ -10,17 +15,11 @@ import {
   type InstrumentsResponse,
   type OnboardingPrepareResponse,
 } from "./gateway";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import coinConfig from "../config";
-import { TopologyChangeError } from "../types/errors";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 
 jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-
-import network from "@ledgerhq/live-network";
 
 const mockBalances: InstrumentBalance[] = [
   {

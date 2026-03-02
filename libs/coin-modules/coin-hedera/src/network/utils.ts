@@ -1,8 +1,9 @@
-import BigNumber from "bignumber.js";
 import { AccountId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { apiClient } from "./api";
+import BigNumber from "bignumber.js";
+import { SUPPORTED_ERC20_TOKENS } from "../constants";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
@@ -11,8 +12,7 @@ import type {
   OperationERC20,
   HederaERC20TokenBalance,
 } from "../types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SUPPORTED_ERC20_TOKENS } from "../constants";
+import { apiClient } from "./api";
 
 function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
   if (accountId.shard.eq(0) && accountId.realm.eq(0)) {

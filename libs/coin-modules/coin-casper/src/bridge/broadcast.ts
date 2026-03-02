@@ -1,9 +1,9 @@
-import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { Transaction } from "../types";
-import { broadcastTx } from "../api";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
 import invariant from "invariant";
+import { broadcastTx } from "../api";
+import { Transaction } from "../types";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   account,

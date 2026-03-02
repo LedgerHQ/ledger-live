@@ -1,6 +1,6 @@
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
 import { isDefaultValidatorGroup } from "../logic";
 import { CeloValidatorGroup } from "../types/types";
 const getUrl = (route: string): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;

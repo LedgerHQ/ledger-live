@@ -1,9 +1,9 @@
+import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
-import { log } from "@ledgerhq/logs";
 import { PRELOAD_MAX_AGE } from "../logic";
+import { getValidatorGroups } from "../network";
 import type { CeloPreloadData, CeloValidatorGroup } from "../types";
-import { getValidatorGroups } from "../network/validators";
 
 let currentCeloPreloadedData: CeloPreloadData = {
   validatorGroups: [],
