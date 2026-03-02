@@ -195,7 +195,10 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
-    await page.getByTestId("market-eth-stake-button").waitFor({ state: "visible", timeout: 15000 });
+    await page
+      .locator('[data-testid="market-eth-stake-button"]:visible')
+      .first()
+      .waitFor({ state: "visible", timeout: 15000 });
     await expect
       .soft(page)
       .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
