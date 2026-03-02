@@ -30,7 +30,7 @@ import { validateIntent } from "./validateIntent";
 
 jest.mock("./computeGasLimit", () => ({
   ...jest.requireActual("./computeGasLimit"),
-  computeIntrinsicGasLimit: jest.fn(),
+  computeIntrinsicGasLimit: jest.fn().mockReturnValue(0n),
 }));
 
 function legacyIntent(
@@ -111,7 +111,9 @@ describe("validateIntent", () => {
     });
     jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(30);
   });
+
   afterEach(() => {
+    jest.restoreAllMocks();
     jest.clearAllMocks();
   });
 

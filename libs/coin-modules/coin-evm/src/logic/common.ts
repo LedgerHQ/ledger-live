@@ -99,7 +99,7 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
 export function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
   const data = intent.data?.value;
   if (Buffer.isBuffer(data) && data.length) return data;
-  return isNative(intent.asset) || !intent.recipient || !intent.amount
+  return isNative(intent.asset) || !intent.recipient
     ? Buffer.from([])
     : getErc20Data(intent.recipient, intent.amount);
 }
