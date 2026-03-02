@@ -348,12 +348,6 @@ describe("sdkClient", () => {
       });
 
       expect(result).toEqual(responseWithMetadata);
-      expect(result).toHaveProperty("is_root");
-      expect(result).toHaveProperty("network_id");
-      expect(result).toHaveProperty("program_id");
-      expect(result).toHaveProperty("function_name");
-      expect(result).toHaveProperty("inputs");
-      expect(result).toHaveProperty("input_types");
     });
   });
 });

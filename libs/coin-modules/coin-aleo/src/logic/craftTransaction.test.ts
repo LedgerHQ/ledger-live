@@ -29,7 +29,7 @@ describe("craftTransaction", () => {
     jest.mocked(serializeTransaction).mockReturnValue(mockSerializedTx);
   });
 
-  it("should return a crafted transaction with serialized response", async () => {
+  it("should craft transaction by mapping intent, calling SDK and serializing response", async () => {
     const result = await craftTransaction({
       currency: mockCurrency,
       txIntent: mockIntent,
@@ -37,15 +37,6 @@ describe("craftTransaction", () => {
     });
 
     expect(result).toEqual({ transaction: mockSerializedTx });
-  });
-
-  it("should map transaction intent and pass to SDK client", async () => {
-    await craftTransaction({
-      currency: mockCurrency,
-      txIntent: mockIntent,
-      viewKey: mockViewKey,
-    });
-
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledTimes(1);
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockIntent);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
@@ -54,6 +45,8 @@ describe("craftTransaction", () => {
       intent: mockMappedIntent,
       viewKey: mockViewKey,
     });
+    expect(serializeTransaction).toHaveBeenCalledTimes(1);
+    expect(serializeTransaction).toHaveBeenCalledWith(mockSdkResponse);
   });
 
   it("should omit viewKey from request when not provided", async () => {
@@ -67,17 +60,6 @@ describe("craftTransaction", () => {
       currency: mockCurrency,
       intent: mockMappedIntent,
     });
-  });
-
-  it("should serialize the SDK response", async () => {
-    await craftTransaction({
-      currency: mockCurrency,
-      txIntent: mockIntent,
-      viewKey: mockViewKey,
-    });
-
-    expect(serializeTransaction).toHaveBeenCalledTimes(1);
-    expect(serializeTransaction).toHaveBeenCalledWith(mockSdkResponse);
   });
 
   it("should propagate SDK client errors", async () => {

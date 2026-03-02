@@ -949,20 +949,13 @@ describe("mapTransactionIntentToSdkIntent", () => {
 });
 
 describe("serializeTransaction", () => {
-  it("should serialize a transaction to a hex string", () => {
-    const tx = getMockedPreparedRequestResponse();
-
-    const result = serializeTransaction(tx);
-
-    expect(result).toMatch(/^[a-f0-9]+$/);
-  });
-
   it("should produce a hex string that decodes back to the original JSON", () => {
     const tx = getMockedPreparedRequestResponse();
 
     const result = serializeTransaction(tx);
     const decoded = JSON.parse(Buffer.from(result, "hex").toString());
 
+    expect(result).toMatch(/^[a-f0-9]+$/);
     expect(decoded).toEqual(tx);
   });
 
