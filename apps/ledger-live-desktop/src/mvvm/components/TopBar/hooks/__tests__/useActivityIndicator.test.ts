@@ -131,4 +131,20 @@ describe("useActivityIndicator", () => {
     expect(mockTriggerRefresh).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("SyncRefreshClick");
   });
+
+  it("handleSync dispatches setLastUserSyncClickTimestamp", () => {
+    const before = Date.now();
+    const { result, store } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    act(() => {
+      result.current.handleSync();
+    });
+
+    const after = Date.now();
+    const lastUserSyncClickTimestamp = store.getState().syncRefresh.lastUserSyncClickTimestamp;
+    expect(lastUserSyncClickTimestamp).toBeGreaterThanOrEqual(before);
+    expect(lastUserSyncClickTimestamp).toBeLessThanOrEqual(after);
+  });
 });

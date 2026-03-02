@@ -45,6 +45,7 @@ const defaultBalanceSyncReturn = {
   balanceAvailable: true,
   isColdStart: false,
   isBalanceLoading: false,
+  isManualRefreshLoading: false,
   stableSyncPending: false,
   hasCvOrBridgeError: false,
   hasWalletSyncError: false,
@@ -108,7 +109,7 @@ describe("useBalanceViewModel", () => {
     expect(mockUsePortfolioBalanceSync).toHaveBeenCalledWith({ legacyRange: true });
   });
 
-  it("returns isLoading true when isBalanceLoading is true (e.g. countervalues polling)", () => {
+  it("returns isLoading true when isBalanceLoading is true", () => {
     mockUsePortfolioBalanceSync.mockReturnValue({
       ...defaultBalanceSyncReturn,
       isBalanceLoading: true,
