@@ -24,6 +24,7 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polygon",
+  "polygon_amoy",
   "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "ripple",
   "bitcoin_cash",

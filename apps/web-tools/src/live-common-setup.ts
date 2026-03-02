@@ -82,6 +82,7 @@ setSupportedCurrencies([
   "avalanche_c_chain_fuji",
   "bitlayer",
   "klaytn_baobab",
+  "polygon_amoy",
   "shape",
   "story",
 ]);

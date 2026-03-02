@@ -64,6 +64,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
+  currencyPolygonAmoy: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
   currencyQuicksilver: DEFAULT_FEATURE,
