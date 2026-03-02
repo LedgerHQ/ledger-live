@@ -4,6 +4,7 @@ import { Transaction } from "../../generated/types";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
 import { getFeature } from "../../featureFlags";
+import { isSolanaExtraParameters } from "./utils";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -181,23 +182,6 @@ export function bitcoinTransaction({
   return baseTransaction;
 }
 
-type SolanaParams = {
-  data: string;
-  templateId: string;
-};
-
-function isObjectForSolana(params: unknown): params is SolanaParams {
-  return (
-    params !== undefined &&
-    params !== null &&
-    typeof params === "object" &&
-    "data" in params &&
-    typeof params.data === "string" &&
-    "templateId" in params &&
-    typeof params.templateId === "string"
-  );
-}
-
 export function solanaTransaction({
   amount,
   recipient,
@@ -206,9 +190,9 @@ export function solanaTransaction({
 }: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
   let templateId: string | undefined = undefined;
   let raw: string | undefined = undefined;
-  //const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
+  const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
 
-  if (isObjectForSolana(extraTransactionParameters)) {
+  if (lifiSolanaFeature?.enabled && isSolanaExtraParameters(extraTransactionParameters)) {
     templateId = extraTransactionParameters.templateId;
     raw = extraTransactionParameters.data;
   }

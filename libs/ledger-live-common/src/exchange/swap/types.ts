@@ -376,3 +376,8 @@ export type SwapBackendResponse = {
   payinExtraId?: string;
   extraTransactionParameters?: string;
 };
+
+export type SolanaExtraParameters = {
+  data: string;
+  templateId: string;
+};
