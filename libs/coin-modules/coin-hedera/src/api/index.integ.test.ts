@@ -19,7 +19,7 @@ import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
-  const api = createApi({});
+  const api = createApi({ useHgraphForErc20: false }, "hedera");
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)

@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import invariant from "invariant";
-import coinConfig from "../config";
+import coinConfig, { type HederaConfig } from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
@@ -33,9 +33,9 @@ import {
 import { apiClient } from "../network/api";
 import type { EstimateFeesParams, HederaMemo } from "../types";
 
-export function createApi(config: Record<string, never>): Api<HederaMemo> {
+export function createApi(config: HederaConfig, currencyId: string): Api<HederaMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-  const currency = getCryptoCurrencyById("hedera");
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: async tx => {

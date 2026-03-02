@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 import type { EstimateFeesResult } from "../types";
 import { createBridges } from ".";
@@ -9,10 +10,11 @@ import { createBridges } from ".";
 describe("js-estimateMaxSpendable", () => {
   let bridge: ReturnType<typeof createBridges>;
   let estimatedFees: Record<"crypto", EstimateFeesResult>;
+  const mockCoinConfig = () => getMockedConfig();
 
   beforeAll(async () => {
     const signer = jest.fn();
-    bridge = createBridges(signer);
+    bridge = createBridges(signer, mockCoinConfig);
 
     const mockedAccount = getMockedAccount();
     const crypto = await estimateFees({
