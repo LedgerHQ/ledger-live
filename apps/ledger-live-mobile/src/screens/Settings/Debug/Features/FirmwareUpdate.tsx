@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Subject } from "rxjs";
-import { Button, Flex, Slider, Switch, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Switch, Text } from "@ledgerhq/native-ui";
+import Slider from "@react-native-community/slider";
 import { ScrollView } from "react-native-gesture-handler";
 import {
   initialState,
@@ -211,11 +212,11 @@ export default function DebugFirmwareUpdate() {
               Progress:
             </Text>
             <Slider
-              max={100}
-              min={0}
+              maximumValue={100}
+              minimumValue={0}
               step={1}
               value={actionState.progress * 100}
-              onChange={updateProgress}
+              onValueChange={updateProgress}
             />
             <Text variant="h5" mb={2} mt={4}>
               Error:
