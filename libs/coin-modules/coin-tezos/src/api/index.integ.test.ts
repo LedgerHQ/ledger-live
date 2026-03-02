@@ -115,6 +115,7 @@ describe("Tezos Api", () => {
         expect(operation.tx.block.hash).toMatch(/^B[1-9A-HJ-NP-Za-km-z]+/); // "B" + base58
         expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
         expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.feesPayer).toMatch(/^tz[1-3]/);
         expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });

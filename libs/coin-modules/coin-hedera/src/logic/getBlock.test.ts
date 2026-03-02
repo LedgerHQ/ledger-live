@@ -7,7 +7,13 @@ import { analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
 
 jest.mock("./getBlockInfo");
 jest.mock("../network/api");
-jest.mock("./utils");
+// mock all functions in utils except extractFeesPayer
+jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
+  analyzeStakingOperation: jest.fn(),
+  getDateRangeFromBlockHeight: jest.fn(),
+  getMemoFromBase64: jest.fn(),
+}));
 
 describe("getBlock", () => {
   const mockBlockInfo = {

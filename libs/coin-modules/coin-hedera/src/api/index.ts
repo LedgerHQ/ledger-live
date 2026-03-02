@@ -23,7 +23,12 @@ import {
   getStakes,
   getRewards,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue, getBlockHash } from "../logic/utils";
+import {
+  extractFeesPayer,
+  mapIntentToSDKOperation,
+  getOperationValue,
+  getBlockHash,
+} from "../logic/utils";
 import { apiClient } from "../network/api";
 import type { HederaMemo } from "../types";
 
@@ -108,6 +113,10 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             }
           : { type: "native" };
 
+        const feesPayer = liveOp.extra?.transactionId
+          ? extractFeesPayer(liveOp.extra.transactionId)
+          : undefined;
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -126,6 +135,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
           tx: {
             hash: liveOp.hash,
             fees: BigInt(liveOp.fee.toFixed(0)),
+
+            ...(feesPayer && { feesPayer }),
             date: liveOp.date,
             block: {
               height: liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT,

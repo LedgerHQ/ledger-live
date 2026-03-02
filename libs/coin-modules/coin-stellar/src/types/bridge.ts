@@ -122,6 +122,19 @@ export type StellarOperationExtra = {
   memo?: StellarMemo;
   blockTime: Date;
   index: string;
+  /**
+   * The Stellar account (G...) that paid the network fees for this transaction.
+   *
+   * Comes from the Horizon API's `transaction.fee_account` field, introduced in protocol v13 (CAP-0015).
+   * Always present on every transaction record (for pre-v13 transactions, retroactively set to `source_account`).
+   *
+   * - For regular transactions: `fee_account === source_account` (the transaction creator pays the fees).
+   * - For fee bump transactions (CAP-0015): `fee_account` is the bumper account that sponsored the fees,
+   *   which differs from `source_account` (the original transaction creator).
+   * - For multi-operation transactions: all operations share the same transaction-level `fee_account`,
+   *   even though each operation may have its own `source_account`.
+   */
+  feeAccount?: string;
 };
 
 export type StellarAccount = Account;
