@@ -9,6 +9,7 @@ export { getBlockInfo } from "./getBlockInfo";
 export { lastBlock } from "./lastBlock";
 export { lastBlockV2 } from "./lastBlock.v2";
 export { listOperations } from "./listOperations";
+export { listOperationsV2 } from "./listOperations.v2";
 export { getAssetFromToken } from "./getAssetFromToken";
 export { getTokenFromAsset } from "./getTokenFromAsset";
 export { getValidators } from "./getValidators";
