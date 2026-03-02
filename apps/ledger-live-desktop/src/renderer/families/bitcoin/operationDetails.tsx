@@ -8,9 +8,16 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Box from "~/renderer/components/Box";
 import Discreet from "~/renderer/components/Discreet";
-import { Address, Cell } from "~/renderer/components/OperationsList/AddressCellShared";
+import {
+  Address,
+  Cell,
+  SplitAddress,
+  SplitAddressProps,
+} from "~/renderer/components/OperationsList/AddressCellShared";
 import { ZCASH_SHIELDED_TX_TYPES } from "@ledgerhq/zcash-shielded/types";
 import type { AddressCellProps } from "~/renderer/families/types";
+import { discreetModeSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "LLD/hooks/redux";
 
 class AddressCell extends PureComponent<AddressCellProps<Operation>> {
   render() {
@@ -83,6 +90,15 @@ const OperationDetailsExtra = ({
   );
 };
 
+const SplitAddressComponent = (props: SplitAddressProps) => {
+  const useDiscreetMode = useSelector(discreetModeSelector);
+  const newProps: SplitAddressProps = {
+    ...props,
+    value: useDiscreetMode ? "*".repeat(props.value.length) : props.value,
+  };
+  return <SplitAddress {...newProps} />;
+};
+
 export default {
   addressCell: {
     SHIELDED_TX_SAPLING_IN: AddressCell,
@@ -91,4 +107,10 @@ export default {
     SHIELDED_TX_ORCHARD_OUT: AddressCell,
   },
   OperationDetailsExtra,
+  splitAddress: {
+    SHIELDED_TX_SAPLING_IN: SplitAddressComponent,
+    SHIELDED_TX_SAPLING_OUT: SplitAddressComponent,
+    SHIELDED_TX_ORCHARD_IN: SplitAddressComponent,
+    SHIELDED_TX_ORCHARD_OUT: SplitAddressComponent,
+  },
 };
