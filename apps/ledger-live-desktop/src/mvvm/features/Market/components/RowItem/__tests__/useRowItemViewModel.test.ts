@@ -15,8 +15,15 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("LLD/features/Market/hooks/useMarketActions", () => ({
-  Page: { Market: "Page Market" },
-  useMarketActions: jest.fn(),
+  Page: { Market: "Page Market", MarketCoin: "Page Market Coin" },
+  useMarketActions: jest.fn(() => ({
+    onBuy: mockOnBuy,
+    onSwap: mockOnSwap,
+    onStake: mockOnStake,
+    availableOnBuy: false,
+    availableOnSwap: false,
+    availableOnStake: false,
+  })),
 }));
 
 jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({
@@ -61,6 +68,28 @@ describe("useRowItemViewModel", () => {
     const { result } = renderHook(() =>
       useRowItemViewModel({
         currency: null,
+        toggleStar: jest.fn(),
+        range: "24h",
+      }),
+    );
+
+    expect(result.current.actions).toEqual([]);
+    expect(result.current.hasActions).toBe(false);
+  });
+
+  it("returns hasActions=false when all availableOn flags are false", () => {
+    mockedUseMarketActions.mockReturnValue({
+      onBuy: mockOnBuy,
+      onSwap: mockOnSwap,
+      onStake: mockOnStake,
+      availableOnBuy: false,
+      availableOnSwap: false,
+      availableOnStake: false,
+    });
+
+    const { result } = renderHook(() =>
+      useRowItemViewModel({
+        currency: bitcoinCurrency,
         toggleStar: jest.fn(),
         range: "24h",
       }),
@@ -136,6 +165,22 @@ describe("useRowItemViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(`/market/${bitcoinCurrency.id}`, {
       state: bitcoinCurrency,
     });
+  });
+
+  it("does not navigate when currency is null", () => {
+    const { result } = renderHook(() =>
+      useRowItemViewModel({
+        currency: null,
+        toggleStar: jest.fn(),
+        range: "24h",
+      }),
+    );
+
+    act(() => {
+      result.current.onCurrencyClick();
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("onStarClick calls toggleStar and prevents propagation", () => {
