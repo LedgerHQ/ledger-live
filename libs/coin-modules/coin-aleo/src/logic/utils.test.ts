@@ -35,6 +35,7 @@ import {
   deserializeTransaction,
   mapTransactionIntentToSdkIntent,
   hasSpecificIntentData,
+  formatSyncInfo,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -985,5 +986,57 @@ describe("deserializeTransaction", () => {
     const invalidJsonHex = Buffer.from("not json").toString("hex");
 
     expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
+  });
+});
+
+describe("formatSyncInfo", () => {
+  it("returns object with time and date properties as null when date is null", () => {
+    const result = formatSyncInfo(null);
+
+    expect(result).toEqual({
+      time: null,
+      date: null,
+    });
+  });
+
+  it("returns object with time and date properties as null when date is undefined", () => {
+    const result = formatSyncInfo(undefined);
+
+    expect(result).toEqual({
+      time: null,
+      date: null,
+    });
+  });
+
+  it("returns object with formatted time and date strings for valid date", () => {
+    const testDate = new Date("2024-01-15T14:30:45.000Z");
+    const result = formatSyncInfo(testDate);
+
+    expect(result).toHaveProperty("time");
+    expect(result).toHaveProperty("date");
+    expect(typeof result.time).toBe("string");
+    expect(typeof result.date).toBe("string");
+    expect(result.time).not.toBeNull();
+    expect(result.date).not.toBeNull();
+  });
+
+  it("returns different time and date values for different input dates", () => {
+    const date1 = new Date("2024-01-01T09:00:00.000Z");
+    const date2 = new Date("2024-12-31T23:59:59.000Z");
+
+    const result1 = formatSyncInfo(date1);
+    const result2 = formatSyncInfo(date2);
+
+    expect(result1.time).not.toEqual(result2.time);
+    expect(result1.date).not.toEqual(result2.date);
+  });
+
+  it("returns consistent results for the same date input", () => {
+    const testDate = new Date("2024-06-15T12:30:00.000Z");
+
+    const result1 = formatSyncInfo(testDate);
+    const result2 = formatSyncInfo(testDate);
+
+    expect(result1).toEqual(result2);
   });
 });

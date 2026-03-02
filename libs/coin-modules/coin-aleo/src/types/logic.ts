@@ -45,3 +45,8 @@ export type AleoTransactionIntentData =
       priorityFee?: number;
       executionId: string;
     };
+
+export interface FormattedSyncInfo {
+  time: string | null;
+  date: string | null;
+}

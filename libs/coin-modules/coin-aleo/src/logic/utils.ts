@@ -12,7 +12,12 @@ import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/accou
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig, { type AleoCoinConfig } from "../config";
-import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
+import {
+  DATE_FORMAT_OPTIONS,
+  EXPLORER_TRANSFER_TYPES,
+  TIME_FORMAT_OPTIONS,
+  TRANSACTION_TYPE,
+} from "../constants";
 import type {
   AleoOperation,
   AleoTransactionType,
@@ -26,6 +31,7 @@ import type {
   Intent,
   PreparedRequestResponse,
   AleoTransactionIntentData,
+  FormattedSyncInfo,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -359,3 +365,18 @@ export function serializeTransaction(tx: PreparedRequestResponse): string {
 export function deserializeTransaction(txHex: string): PreparedRequestResponse {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
+
+const formatSyncTime = (date: Date | null | undefined): string | null => {
+  if (!date) return null;
+  return date.toLocaleTimeString("en-US", TIME_FORMAT_OPTIONS);
+};
+
+const formatSyncDate = (date: Date | null | undefined): string | null => {
+  if (!date) return null;
+  return date.toLocaleDateString("en-US", DATE_FORMAT_OPTIONS);
+};
+
+export const formatSyncInfo = (date: Date | null | undefined): FormattedSyncInfo => ({
+  time: formatSyncTime(date),
+  date: formatSyncDate(date),
+});

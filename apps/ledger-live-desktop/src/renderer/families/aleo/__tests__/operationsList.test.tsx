@@ -4,6 +4,7 @@ import { render, screen } from "tests/testSetup";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { OperationsList } from "~/renderer/components/OperationsList";
 import type { AleoOperation } from "@ledgerhq/live-common/families/aleo/types";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/contants";
 
 const mockT = jest.fn() as unknown as TFunction;
 
@@ -14,7 +15,8 @@ describe("OperationsList", () => {
       operations: ALEO_ACCOUNT_1.operations.slice(0, 2).map((op, index) => ({
         ...op,
         extra: {
-          functionId: index === 0 ? "transfer_private" : "transfer_public",
+          functionId:
+            index === 0 ? TRANSACTION_TYPE.TRANSFER_PRIVATE : TRANSACTION_TYPE.TRANSFER_PUBLIC,
           transactionType: index === 0 ? "private" : "public",
         } satisfies AleoOperation["extra"],
       })),
@@ -40,7 +42,7 @@ describe("OperationsList", () => {
         {
           ...ALEO_ACCOUNT_1.operations[1],
           extra: {
-            functionId: "transfer_private",
+            functionId: TRANSACTION_TYPE.TRANSFER_PRIVATE,
             transactionType: "invalid",
           },
         },

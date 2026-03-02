@@ -20,3 +20,15 @@ export const TRANSACTION_TYPE = {
 // ref: https://developer.aleo.org/concepts/fundamentals/credits/#transfer_public
 export const RECIPIENT_ARG_INDEX = 1;
 export const AMOUNT_ARG_INDEX = 2;
+
+export const TIME_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+};
+
+export const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+};
