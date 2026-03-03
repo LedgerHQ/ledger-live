@@ -1,5 +1,25 @@
 # @ledgerhq/coin-tron
 
+## 5.14.0
+
+### Minor Changes
+
+- [#14664](https://github.com/LedgerHQ/ledger-live/pull/14664) [`daf30ba`](https://github.com/LedgerHQ/ledger-live/commit/daf30ba12429dba6e92e6413f4fdfbd865191f34) Thanks [@jprudent](https://github.com/jprudent)! - Tron coin-module now returns failed trc20 transfers
+
+- [#14727](https://github.com/LedgerHQ/ledger-live/pull/14727) [`d361880`](https://github.com/LedgerHQ/ledger-live/commit/d3618803a6f47ff67bf02545f586e5608bd641f0) Thanks [@jprudent](https://github.com/jprudent)! - Fix amount precision loss on Tron
+
+- [#14555](https://github.com/LedgerHQ/ledger-live/pull/14555) [`af09069`](https://github.com/LedgerHQ/ledger-live/commit/af09069d84bc79c1a4d601990528b2e91c6072cc) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): update `tronweb`
+
+- [#13986](https://github.com/LedgerHQ/ledger-live/pull/13986) [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Alpaca API cleanup and documentation
+
+### Patch Changes
+
+- Updated dependencies [[`a96dc83`](https://github.com/LedgerHQ/ledger-live/commit/a96dc83916684e22c041904c479c615a3095303b), [`e954c1e`](https://github.com/LedgerHQ/ledger-live/commit/e954c1e0f0e45efe3b0e8c3fda9e6d5b22b5bc01), [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77), [`17149ee`](https://github.com/LedgerHQ/ledger-live/commit/17149ee26eeef8a600d650a6f4903c52320a0d8d), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0), [`b7dec5c`](https://github.com/LedgerHQ/ledger-live/commit/b7dec5c2a41520114593701c82192ff8ae8ce06f), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8), [`5f1c644`](https://github.com/LedgerHQ/ledger-live/commit/5f1c644fd5f757f48618b62e976faac274ced40d), [`c7ed360`](https://github.com/LedgerHQ/ledger-live/commit/c7ed36086280d60631e235d375cc2db5f60e8aab), [`cc4c8f5`](https://github.com/LedgerHQ/ledger-live/commit/cc4c8f57e38586d77b89f32d359e65cc700912af)]:
+  - @ledgerhq/types-live@6.99.0
+  - @ledgerhq/cryptoassets@13.40.0
+  - @ledgerhq/coin-framework@6.18.0
+  - @ledgerhq/live-network@2.3.0
+
 ## 5.14.0-next.0
 
 ### Minor Changes
