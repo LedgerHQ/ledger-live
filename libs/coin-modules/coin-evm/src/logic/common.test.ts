@@ -50,14 +50,13 @@ describe("common", () => {
         recipient: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
         amount: 1n,
       } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;
+      const expectedResult = Buffer.from(
+        "a9059cbb00000000000000000000000066c4371ae8ffed2ec1c2ebbbccfb7e494181e1e30000000000000000000000000000000000000000000000000000000000000001",
+        "hex",
+      );
 
       const result = getCallData(intent);
-      expect(result).toEqual(
-        Buffer.from(
-          "a9059cbb00000000000000000000000066c4371ae8ffed2ec1c2ebbbccfb7e494181e1e30000000000000000000000000000000000000000000000000000000000000001",
-          "hex",
-        ),
-      );
+      expect(result).toEqual(expectedResult);
     });
   });
 
