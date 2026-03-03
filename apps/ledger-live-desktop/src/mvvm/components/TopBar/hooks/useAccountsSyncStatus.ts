@@ -1,5 +1,6 @@
 import { useBatchAccountsSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { Account } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
 
 export interface AccountWithUpToDateCheck {
   account: Account;
@@ -30,7 +31,11 @@ export function useAccountsSyncStatus(
     if (syncState.pending) continue;
     const isUpToDate = isUpToDateByAccountId.get(account.id);
     if (syncState.error || !isUpToDate) {
-      errorTickersSet.add(account.currency.ticker);
+      const currency = account.currency.ticker;
+      errorTickersSet.add(currency);
+      track("SyncError", {
+        currency,
+      });
     }
   }
 

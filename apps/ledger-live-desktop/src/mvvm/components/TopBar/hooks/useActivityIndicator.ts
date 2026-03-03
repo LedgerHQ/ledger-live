@@ -69,8 +69,20 @@ export const useActivityIndicator = () => {
     const now = Date.now();
     dispatch(setLastUserSyncClickTimestamp(now));
     triggerRefresh();
-    track("SyncRefreshClick");
-  }, [dispatch, triggerRefresh]);
+    track("SyncRefreshClick", {
+      triggered_after_sync_error: isError,
+    });
+  }, [dispatch, triggerRefresh, isError]);
+
+  const onTooltipShow = useCallback(() => {
+    if (isError) {
+      track("SyncErrorList", {
+        currencies: listOfErrorAccountNames
+          ? listOfErrorAccountNames.split("/").filter(Boolean)
+          : [],
+      });
+    }
+  }, [isError, listOfErrorAccountNames]);
 
   return {
     hasAccounts,
@@ -80,5 +92,6 @@ export const useActivityIndicator = () => {
     isDisabled: isRotating,
     tooltip,
     icon,
+    onTooltipShow: isError ? onTooltipShow : undefined,
   };
 };

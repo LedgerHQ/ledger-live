@@ -34,6 +34,7 @@ describe("useTopBarViewModel", () => {
       tooltip: "Refresh",
       icon: Refresh,
       isDisabled: false,
+      onTooltipShow: undefined,
     });
     mockUseSettings.mockReturnValue({
       handleSettings: mockHandleSettings,
@@ -84,6 +85,7 @@ describe("useTopBarViewModel", () => {
       tooltip: "Refresh",
       icon: Refresh,
       isDisabled: false,
+      onTooltipShow: undefined,
     });
 
     const { result } = renderHook(() => useTopBarViewModel());
@@ -99,6 +101,7 @@ describe("useTopBarViewModel", () => {
   });
 
   it("passes isRotating from useActivityIndicator as isInteractive false on sync action", () => {
+    const mockOnTooltipShow = jest.fn();
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
       handleSync: mockHandleSync,
@@ -107,6 +110,7 @@ describe("useTopBarViewModel", () => {
       tooltip: "Error",
       icon: Refresh,
       isDisabled: true,
+      onTooltipShow: mockOnTooltipShow,
     });
 
     const { result } = renderHook(() => useTopBarViewModel());

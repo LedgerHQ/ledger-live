@@ -11,12 +11,13 @@ export function TopBarActionButton({
   isInteractive,
   onClick,
   icon,
+  onTooltipShow,
 }: TopBarActionButtonProps) {
   const testId = `topbar-action-button-${label.replace(/\s+/g, "-").toLowerCase()}`;
 
   return (
     <div className="flex items-center gap-12">
-      <Tooltip content={tooltip} placement="bottom">
+      <Tooltip content={tooltip} placement="bottom" onShow={onTooltipShow}>
         <IconButton
           appearance="gray"
           size="sm"
