@@ -430,8 +430,6 @@ export const makeScanAccounts =
         const accountShape$: Observable<Partial<Account>> =
           normalizeToObservable(accountShapeResult);
 
-        if (finished) return of(null);
-
         function accountShapePipe(accountShape: Partial<Account>): Account {
           const freshAddress = address;
           const operations = accountShape.operations || [];
