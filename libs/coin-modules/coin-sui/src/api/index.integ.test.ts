@@ -127,14 +127,18 @@ describe("Sui Api", () => {
       expect(checkSet.size).toBeLessThanOrEqual(txs.length);
     });
 
-    it("at least operation should be IN", async () => {
+    it("at least one operation should be IN", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
       expect(txs.some(t => t.type === "IN")).toBe(true);
     });
 
-    it("at least operation should be OUT", async () => {
+    it("at least one operation should be OUT", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "OUT")).toBe(true);
+      const outTxs = txs.filter(t => t.type === "OUT");
+      expect(outTxs.length).toBeGreaterThanOrEqual(1);
+      expect(outTxs.every(t => t.tx.feesPayer !== undefined)).toBe(true);
+      // this expectation holds unless all txs are "sponsored"
+      expect(outTxs.some(t => t.tx.feesPayer === SENDER)).toBe(true);
     });
 
     it("uses the minHeight to filter", async () => {
