@@ -15,7 +15,7 @@ export const INSTRUCTION_TYPE_MAP: Record<TransferProposalAction, TransferInstru
 
 const startOfDay = (date: Date): Date => {
   const d = new Date(date);
-  d.setUTCHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
   return d;
 };
 
@@ -31,9 +31,9 @@ export const processTransferProposals = (
   // within each day group after groupByDay sorts descending.
   for (let i = proposals.length - 1; i >= 0; i--) {
     const proposal = proposals[i];
-    const expiresAtTimestamp = proposal.expires_at_micros / 1000;
-    const expiresAt = new Date(expiresAtTimestamp);
-    const isExpired = currentTime > expiresAtTimestamp;
+    const expiresAtMs = proposal.expires_at_micros / 1000;
+    const expiresAt = new Date(expiresAtMs);
+    const isExpired = currentTime > expiresAtMs;
     const isIncoming = proposal.sender !== accountXpub;
 
     const processed: ProcessedProposal = {

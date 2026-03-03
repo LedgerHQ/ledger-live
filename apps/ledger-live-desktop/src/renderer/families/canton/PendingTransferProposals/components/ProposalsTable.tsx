@@ -25,7 +25,7 @@ type ProposalsTableProps = {
   onOpenModal: (contractId: string, action: TransferProposalAction) => void;
 };
 
-const ProposalsTable: React.FC<ProposalsTableProps> = ({
+function ProposalsTable({
   proposals,
   count,
   titleKey,
@@ -33,7 +33,7 @@ const ProposalsTable: React.FC<ProposalsTableProps> = ({
   unit,
   onRowClick,
   onOpenModal,
-}) => {
+}: ProposalsTableProps) {
   const { t } = useTranslation();
 
   if (count === 0) return null;
@@ -122,6 +122,6 @@ const ProposalsTable: React.FC<ProposalsTableProps> = ({
       ))}
     </TableContainer>
   );
-};
+}
 
 export default ProposalsTable;

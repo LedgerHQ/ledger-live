@@ -2,26 +2,24 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { View } from "../index";
+import type { GroupedProposals } from "../types";
 import type { PendingTransferProposalsViewModel } from "../usePendingTransferProposalsViewModel";
-import { groupByDay, processTransferProposals } from "../utils/transferProposals";
-import { ACCOUNT_XPUB, createRawProposal } from "./test-utils";
+import { createProcessedProposal } from "./test-utils";
 
 const unit: Unit = { code: "CANTON", magnitude: 38, name: "Canton" };
 
-const buildIncoming = (contractId = "contract-123") => {
-  const { incoming } = processTransferProposals(
-    [createRawProposal(contractId, "sender-address", ACCOUNT_XPUB)],
-    ACCOUNT_XPUB,
-  );
-  return { grouped: groupByDay(incoming), count: incoming.length };
+const buildIncoming = (
+  contractId = "contract-123",
+): { grouped: GroupedProposals; count: number } => {
+  const proposal = createProcessedProposal({ contractId, isIncoming: true });
+  return { grouped: [{ day: proposal.day, proposals: [proposal] }], count: 1 };
 };
 
-const buildOutgoing = (contractId = "contract-456") => {
-  const { outgoing } = processTransferProposals(
-    [createRawProposal(contractId, ACCOUNT_XPUB, "receiver-address")],
-    ACCOUNT_XPUB,
-  );
-  return { grouped: groupByDay(outgoing), count: outgoing.length };
+const buildOutgoing = (
+  contractId = "contract-456",
+): { grouped: GroupedProposals; count: number } => {
+  const proposal = createProcessedProposal({ contractId, isIncoming: false });
+  return { grouped: [{ day: proposal.day, proposals: [proposal] }], count: 1 };
 };
 
 const buildViewModel = (

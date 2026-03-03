@@ -162,18 +162,12 @@ export function View({
                   {t("families.canton.pendingTransactions.accept")}
                 </Button>
               )}
-              <Button
-                style={{ borderColor: "neutral.c100", borderWidth: 1 }}
-                onClick={handleRejectClick}
-              >
+              <Button outline outlineColor="neutral.c100" onClick={handleRejectClick}>
                 {t("families.canton.pendingTransactions.reject")}
               </Button>
             </>
           ) : (
-            <Button
-              style={{ borderColor: "neutral.c100", borderWidth: 1 }}
-              onClick={handleWithdrawClick}
-            >
+            <Button outline outlineColor="neutral.c100" onClick={handleWithdrawClick}>
               {t("common.cancel")}
             </Button>
           )}

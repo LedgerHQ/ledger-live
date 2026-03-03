@@ -97,7 +97,7 @@ export function View({
                   style={{ whiteSpace: "pre-wrap" }}
                 >
                   {t("families.canton.pendingTransactions.deviceAppModal.processing", {
-                    action,
+                    action: actionTitle,
                   })}
                 </Text>
               </Box>
