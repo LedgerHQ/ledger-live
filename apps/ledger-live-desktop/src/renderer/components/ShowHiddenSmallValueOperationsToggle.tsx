@@ -1,8 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Box from "~/renderer/components/Box";
-import Switch from "~/renderer/components/Switch";
-import Text from "~/renderer/components/Text";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 
 type Props = Readonly<{
   isChecked: boolean;
@@ -13,11 +11,15 @@ export default function ShowHiddenSmallValueOperationsToggle({ isChecked, onChan
   const { t } = useTranslation();
 
   return (
-    <Box horizontal alignItems="center" flow={2}>
-      <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c70">
+    <div className="flex items-center justify-end gap-8">
+      <span className="body-3 text-muted">
         {t("operationList.showHiddenSmallValueTransactions")}
-      </Text>
-      <Switch isChecked={isChecked} onChange={onChange} />
-    </Box>
+      </span>
+      <Switch
+        name="show-hidden-small-value-operations"
+        selected={isChecked}
+        onChange={onChange}
+      />
+    </div>
   );
 }
