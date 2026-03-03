@@ -1,15 +1,16 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
-import { CompositeScreenProps } from "@react-navigation/native";
 import React from "react";
 import { ScreenName } from "~/const";
 import perFamily from "../generated/SendRowsFee";
-import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
-import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
+
+const isSupportedFamily = (family: string): family is keyof typeof perFamily =>
+  Object.prototype.hasOwnProperty.call(perFamily, family);
 
 type Props = {
   transaction: Transaction;
@@ -20,11 +21,10 @@ type Props = {
   transactionToUpdate?: Transaction;
   disabledStrategies?: Array<string>;
   shouldPrefillEvmGasOptions?: boolean;
-} & CompositeScreenProps<
+} & BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
 export default ({
@@ -38,14 +38,10 @@ export default ({
   ...props
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const family = mainAccount.currency.family;
 
-  const hasFamilyProperty = Object.prototype.hasOwnProperty.call(
-    perFamily,
-    mainAccount.currency.family,
-  );
-
-  if (hasFamilyProperty) {
-    const Component = perFamily[mainAccount.currency.family as keyof typeof perFamily];
+  if (isSupportedFamily(family)) {
+    const Component = perFamily[family];
     return (
       <Component
         {...props}

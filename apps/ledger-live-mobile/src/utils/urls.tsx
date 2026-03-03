@@ -277,7 +277,7 @@ export const urls = {
   },
   editBitcoinTx: {
     learnMore:
-      "https://support.ledger.com/fr/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
+      "https://support.ledger.com/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
   },
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
