@@ -51,11 +51,11 @@ const useQueuedDrawerGorhom = ({
   }, []);
 
   const handleClose = useCallback(() => {
-    if (isClosedRef.current) return;
-
-    logDrawer("Closing drawer");
-    isClosedRef.current = true;
-    bottomSheetRef.current?.dismiss();
+    if (!isClosedRef.current) {
+      logDrawer("Closing drawer");
+      isClosedRef.current = true;
+      bottomSheetRef.current?.dismiss();
+    }
     cleanupQueue();
     onCloseRef.current?.();
   }, [cleanupQueue]);
