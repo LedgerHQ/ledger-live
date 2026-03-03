@@ -6,17 +6,17 @@ const LOCALE = "en";
 const rtf = new Intl.RelativeTimeFormat(LOCALE, { numeric: "always" });
 
 describe("formatTimeAgo", () => {
-  describe("seconds (< 1 minute)", () => {
-    it("should format 0 seconds ago", () => {
-      expect(formatTimeAgo(NOW, LOCALE, NOW)).toBe(rtf.format(-0, "second"));
+  describe("up to date (< 1 minute)", () => {
+    it("should return null for 0 seconds ago", () => {
+      expect(formatTimeAgo(NOW, LOCALE, NOW)).toBeNull();
     });
 
-    it("should format 30 seconds ago", () => {
-      expect(formatTimeAgo(NOW - 30 * SECOND_MS, LOCALE, NOW)).toBe(rtf.format(-30, "second"));
+    it("should return null for 30 seconds ago", () => {
+      expect(formatTimeAgo(NOW - 30 * SECOND_MS, LOCALE, NOW)).toBeNull();
     });
 
-    it("should format 59 seconds ago", () => {
-      expect(formatTimeAgo(NOW - 59 * SECOND_MS, LOCALE, NOW)).toBe(rtf.format(-59, "second"));
+    it("should return null for 59 seconds ago", () => {
+      expect(formatTimeAgo(NOW - 59 * SECOND_MS, LOCALE, NOW)).toBeNull();
     });
   });
 

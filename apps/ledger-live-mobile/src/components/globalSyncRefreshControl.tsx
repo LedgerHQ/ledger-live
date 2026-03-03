@@ -7,8 +7,12 @@ import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
-import { useDispatch } from "~/context/hooks";
-import { setRefreshStarted, setRefreshCompleted } from "~/reducers/portfolioRefresh";
+import { useDispatch, useStore } from "~/context/hooks";
+import {
+  setRefreshStarted,
+  setRefreshCompleted,
+  selectLastSyncTimestamp,
+} from "~/reducers/portfolioRefresh";
 
 type Props = {
   isError?: boolean;
@@ -33,6 +37,7 @@ function globalSyncRefreshControl<P>(
     const { poll } = useCountervaluesPolling();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    const store = useStore();
     const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
     const route = useRoute();
     const refreshingRef = useRef(refreshing);
@@ -46,7 +51,7 @@ function globalSyncRefreshControl<P>(
         reason: "user-pull-to-refresh",
       });
       setRefreshing(true);
-      dispatch(setRefreshStarted());
+      dispatch(setRefreshStarted(selectLastSyncTimestamp(store.getState())));
       track("button_clicked", {
         button: "pull to refresh",
         page: route.name,

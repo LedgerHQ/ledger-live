@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { formatTimeAgo } from "@ledgerhq/live-common/utils/timeAgo";
+import { formatTimeAgo, MINUTE_MS } from "@ledgerhq/live-common/utils/timeAgo";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
-import { selectIsRefreshing, selectLastSyncTimestamp } from "~/reducers/portfolioRefresh";
+import { selectIsRefreshing, selectLastSyncTimestampSnapshot } from "~/reducers/portfolioRefresh";
 
 export const UP_TO_DATE_VISIBLE_DURATION_MS = 3_000;
 
@@ -17,7 +17,7 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
   const { t } = useTranslation();
   const { locale } = useLocale();
   const isRefreshing = useSelector(selectIsRefreshing);
-  const lastRefreshTimestamp = useSelector(selectLastSyncTimestamp);
+  const lastSyncTimestampSnapshot = useSelector(selectLastSyncTimestampSnapshot);
 
   const [showUpToDate, setShowUpToDate] = useState(false);
   const prevIsRefreshing = useRef(isRefreshing);
@@ -32,12 +32,18 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
     prevIsRefreshing.current = isRefreshing;
   }, [isRefreshing]);
 
+  const isStale =
+    lastSyncTimestampSnapshot !== null && Date.now() - lastSyncTimestampSnapshot >= MINUTE_MS;
+
+  const timeAgo =
+    isStale && lastSyncTimestampSnapshot !== null
+      ? formatTimeAgo(lastSyncTimestampSnapshot, locale)
+      : null;
+
   const refreshingLabel =
-    lastRefreshTimestamp === null
+    timeAgo === null
       ? t("portfolio.refreshStatus.refreshingInitial")
-      : t("portfolio.refreshStatus.refreshing", {
-          timeAgo: formatTimeAgo(lastRefreshTimestamp, locale),
-        });
+      : t("portfolio.refreshStatus.refreshing", { timeAgo });
 
   return {
     isVisible: isRefreshing || showUpToDate,
