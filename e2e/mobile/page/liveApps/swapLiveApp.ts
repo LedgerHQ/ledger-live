@@ -81,6 +81,7 @@ export default class SwapLiveAppPage {
   @Step("Wait for quotes")
   async waitForQuotes() {
     await waitWebElementByTestId(this.numberOfQuotes);
+    await this.waitForQuotesStable();
   }
 
   @Step("verify quotes are displayed")
@@ -100,13 +101,12 @@ export default class SwapLiveAppPage {
     });
     for (const providerName of providersWithoutKYC) {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (provider && provider.isNative) {
+      if (provider?.isNative) {
         await waitWebElementByTestId(this.specificQuoteCardProviderName(provider.name));
         const selectedProvider = getWebElementsByIdAndText(
           this.specificQuoteCardProviderName(provider.name),
           provider.uiName,
         );
-        await this.waitForQuotesStable();
         await tapWebElementByElement(selectedProvider);
 
         return provider;
@@ -175,7 +175,6 @@ export default class SwapLiveAppPage {
     const provider: string = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
     await waitWebElementByTestId(baseProviderLocator + "amount-label");
-    await this.waitForQuotesStable();
     await tapWebElementByTestId(baseProviderLocator + "amount-label");
 
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
@@ -318,7 +317,6 @@ export default class SwapLiveAppPage {
     const providerName = Provider.getNameByUiName(provider);
     const providerTestId = this.specificQuoteCardProviderName(providerName);
     await waitWebElementByTestId(providerTestId);
-    await this.waitForQuotesStable();
     await tapWebElementByTestId(providerTestId);
   }
 
