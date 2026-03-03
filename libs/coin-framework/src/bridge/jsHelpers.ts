@@ -103,7 +103,12 @@ type AccountUpdater<A extends Account = Account> = (account: A) => A;
  */
 function normalizeToObservable<T>(value: Promise<T> | Observable<T>): Observable<T> {
   // Check if it's already an Observable by checking for the subscribe method
-  if (value && typeof (value as Observable<T>).subscribe === "function") {
+  if (
+    value instanceof Observable ||
+    (value &&
+      typeof (value as any).subscribe === "function" &&
+      typeof (value as any).pipe === "function")
+  ) {
     return value as Observable<T>;
   }
   // Otherwise, it's a Promise, wrap it with from()
@@ -229,6 +234,7 @@ export const makeSync =
   (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<AccountUpdater<A>>) => {
       let innerSub: { unsubscribe: () => void } | null = null;
+      let cancelled = false;
 
       async function main() {
         const customData = getCustomDataFromAccountId(initial.id);
@@ -301,19 +307,33 @@ export const makeSync =
             };
 
           const observer: Observer<Partial<A>> = {
-            next: shape => o.next(updater(shape)),
-            complete: () => o.complete(),
-            error: e => o.error(e),
+            next: shape => {
+              if (!cancelled) o.next(updater(shape));
+            },
+            complete: () => {
+              if (!cancelled) o.complete();
+            },
+            error: e => {
+              if (!cancelled) o.error(e);
+            },
           };
 
+          if (cancelled) return;
           innerSub = shape$.subscribe(observer);
+          if (cancelled) {
+            innerSub.unsubscribe();
+            return;
+          }
         } catch (e) {
-          o.error(e);
+          if (!cancelled) o.error(e);
         }
       }
 
       main();
-      return () => innerSub?.unsubscribe();
+      return () => {
+        cancelled = true;
+        innerSub?.unsubscribe();
+      };
     });
 
 const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
