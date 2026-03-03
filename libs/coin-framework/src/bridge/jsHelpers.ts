@@ -405,6 +405,7 @@ export const makeScanAccounts =
 
         const { address, path: freshAddressPath, ...rest } = res;
 
+        if (finished) return of(null);
         const accountShapeResult = getAccountShape(
           {
             currency,
