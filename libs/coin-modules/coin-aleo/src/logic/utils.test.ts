@@ -14,7 +14,7 @@ import {
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
-import type { ProvableApi, AleoTransactionIntentData } from "../types";
+import type { AleoOperationExtra, ProvableApi, AleoTransactionIntentData } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -35,6 +35,7 @@ import {
   deserializeTransaction,
   mapTransactionIntentToSdkIntent,
   hasSpecificIntentData,
+  getOperationDetailsExtraFields,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -972,5 +973,19 @@ describe("deserializeTransaction", () => {
     const invalidJsonHex = Buffer.from("not json").toString("hex");
 
     expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
+  });
+});
+
+describe("getOperationDetailsExtraFields", () => {
+  it("should return only the functionId field", () => {
+    const extra = {
+      functionId: "transfer_private_to_public",
+      transactionType: "private",
+      patched: true,
+    } satisfies AleoOperationExtra;
+
+    const result = getOperationDetailsExtraFields(extra);
+
+    expect(result).toEqual([{ key: "functionId", value: "transfer_private_to_public" }]);
   });
 });

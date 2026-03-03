@@ -84,6 +84,11 @@ export type AleoOperationExtra = {
   patched?: boolean;
 };
 
+export type OperationDetailsExtraField = {
+  key: keyof AleoOperationExtra;
+  value: string | number;
+};
+
 export type AleoOperation = Operation<AleoOperationExtra>;
 
 export type TransactionTransfer = Extract<

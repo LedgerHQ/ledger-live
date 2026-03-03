@@ -17,6 +17,7 @@ import type {
   AleoOperation,
   AleoTransactionType,
   EnrichedPrivateRecord,
+  OperationDetailsExtraField,
   Transaction,
   TransactionType,
   ProvableApi,
@@ -26,6 +27,7 @@ import type {
   PreparedRequestResponse,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoOperationExtra,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -356,3 +358,9 @@ export function serializeTransaction(tx: PreparedRequestResponse): string {
 export function deserializeTransaction(txHex: string): PreparedRequestResponse {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
+// this function is used to extract the fields that should be displayed in the operation details
+export const getOperationDetailsExtraFields = (
+  extra: AleoOperationExtra,
+): OperationDetailsExtraField[] => {
+  return [{ key: "functionId", value: extra.functionId }];
+};
