@@ -1,5 +1,6 @@
 import React from "react";
 import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
+import { cn } from "LLD/utils/cn";
 import { BalanceViewProps } from "./types";
 import { Trend } from "../Trend";
 
@@ -17,7 +18,10 @@ export const BalanceView = ({
   return (
     <button
       type="button"
-      className="flex cursor-pointer items-baseline gap-12 border-0 bg-transparent p-0 text-inherit"
+      className={cn(
+        "flex cursor-pointer items-baseline gap-12 border-0 bg-transparent p-0 text-inherit",
+        shouldDisplayBalanceRefreshRework && "group",
+      )}
       data-testid="portfolio-balance"
       onClick={navigateToAnalytics}
       onKeyDown={handleKeyDown}
