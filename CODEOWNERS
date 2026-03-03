@@ -190,6 +190,8 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/earn.handler
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler.ts     @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Card/                                         @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
