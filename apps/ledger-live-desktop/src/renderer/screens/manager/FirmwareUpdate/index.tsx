@@ -7,17 +7,19 @@ import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import UpdateModal, { Props as UpdateModalProps } from "~/renderer/modals/UpdateFirmwareModal";
 import { StepId } from "~/renderer/modals/UpdateFirmwareModal/types";
-import Text from "~/renderer/components/Text";
-import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
-import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { openURL } from "~/renderer/linking";
+import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
+import Text from "~/renderer/components/Text";
+import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import Box from "~/renderer/components/Box";
+import { Button as NewButton } from "@ledgerhq/lumen-ui-react";
 import { Button } from "@ledgerhq/react-ui";
 
 type Props = {
@@ -63,9 +65,11 @@ const FirmwareUpdate = (props: Props) => {
     error,
     onReset,
   } = props;
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
   const firmwareUpdateCompletedRef = useRef(false);
+  const openedFromOsUpdateRequestedRef = useRef(false);
   const [autoOpened, setAutoOpened] = useState(false);
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
@@ -84,6 +88,7 @@ const FirmwareUpdate = (props: Props) => {
   }, []);
 
   const onRequestClose = useCallback(() => {
+    openedFromOsUpdateRequestedRef.current = false;
     setPreventResetOnDeviceChange(false);
     setDrawer();
     setKeepScreenAwake(false);
@@ -150,7 +155,7 @@ const FirmwareUpdate = (props: Props) => {
   ]);
 
   useEffect(() => {
-    // NB Open automatically the firmware update drawer if needed
+    // NB Open automatically the firmware update drawer if needed (OSU mode)
     if (firmware && modal === "install" && !autoOpened) {
       track("Manager Firmware Update Auto", {
         firmwareName: firmware.final.name,
@@ -162,15 +167,41 @@ const FirmwareUpdate = (props: Props) => {
     }
   }, [autoOpened, modal, onOpenDrawer, firmware, tracer]);
 
+  useEffect(() => {
+    // Open drawer when OS update was requested from banner (disclaimer flow)
+    if (
+      shouldDisplayWallet40MainNav &&
+      props.openFirmwareUpdate &&
+      firmware &&
+      !deviceInfo.isOSU &&
+      !openedFromOsUpdateRequestedRef.current
+    ) {
+      openedFromOsUpdateRequestedRef.current = true;
+      onOpenDrawer();
+    }
+  }, [
+    shouldDisplayWallet40MainNav,
+    props.openFirmwareUpdate,
+    firmware,
+    deviceInfo.isOSU,
+    onOpenDrawer,
+  ]);
+
   if (!firmware) {
     if (!isDeprecated) return null;
     return (
       <FirmwareUpdateBanner
         old
         right={
-          <Button variant="main" onClick={() => openURL(contactSupportUrl)}>
-            <Trans i18nKey="manager.firmware.banner.old.cta" />
-          </Button>
+          shouldDisplayWallet40MainNav ? (
+            <NewButton appearance="gray" onClick={() => openURL(contactSupportUrl)}>
+              <Trans i18nKey="manager.firmware.banner.old.cta" />
+            </NewButton>
+          ) : (
+            <Button variant="main" onClick={() => openURL(contactSupportUrl)}>
+              <Trans i18nKey="manager.firmware.banner.old.cta" />
+            </Button>
+          )
         }
       />
     );
@@ -194,23 +225,41 @@ const FirmwareUpdate = (props: Props) => {
               </Text>
             </Box>
           )}
-          <Button
-            variant="main"
-            data-testid="manager-update-firmware-button"
-            disabled={!!disableFirmwareUpdate}
-            onClick={() => {
-              track("Manager Firmware Update Click", {
-                firmwareName: firmware.final.name,
-              });
-              onOpenDrawer();
-            }}
-          >
-            <Trans i18nKey="manager.firmware.banner.cta2" />
-          </Button>
+          {shouldDisplayWallet40MainNav ? (
+            <NewButton
+              appearance="gray"
+              size="sm"
+              data-testid="manager-update-firmware-button"
+              disabled={!!disableFirmwareUpdate}
+              onClick={() => {
+                track("button_clicked", {
+                  page: "my ledger",
+                  banner: "OS update",
+                  button: "click(update)",
+                });
+                onOpenDrawer();
+              }}
+            >
+              <Trans i18nKey="manager.firmware.banner.wallet40.cta" />
+            </NewButton>
+          ) : (
+            <Button
+              variant="main"
+              data-testid="manager-update-firmware-button"
+              disabled={!!disableFirmwareUpdate}
+              onClick={() => {
+                track("Manager Firmware Update Click", {
+                  firmwareName: firmware.final.name,
+                });
+                onOpenDrawer();
+              }}
+            >
+              <Trans i18nKey="manager.firmware.banner.cta2" />
+            </Button>
+          )}
         </Box>
       }
     />
   );
 };
-
 export default FirmwareUpdate;

@@ -1940,6 +1940,13 @@
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
+        "wallet40": {
+          "warning": {
+            "default": "OS update available",
+            "manager": "Ledger OS update available"
+          },
+          "cta": "Update"
+        },
         "warning": "OS update available",
         "version": "Version {{latestFirmware}}",
         "cta": "Go to My Ledger",
