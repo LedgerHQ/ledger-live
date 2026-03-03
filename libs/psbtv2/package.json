@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/psbtv2",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Partially Signed Bitcoin Transaction version 2 (BIP370) implementation",
   "keywords": [
     "Ledger",

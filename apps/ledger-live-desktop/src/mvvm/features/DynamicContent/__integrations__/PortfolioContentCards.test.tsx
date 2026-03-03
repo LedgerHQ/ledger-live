@@ -28,12 +28,14 @@ const Cards = [
     cta: "Click me",
     tag: "New",
     path: "ledger-live://deep-link",
+    location: "Portfolio",
   },
   {
     id: "1",
     title: "Bar",
     description: "Consectetur adipiscing elit.",
     path: "ledger-live://deep-link",
+    location: "Portfolio",
   },
 ];
 
@@ -98,6 +100,7 @@ describe("PortfolioContentCards", () => {
       card: "1",
       page: "Portfolio",
       type: "portfolio_carousel",
+      location: "Portfolio",
     });
     expect(title1).not.toBeInTheDocument();
     expect(description1).not.toBeInTheDocument();
@@ -117,6 +120,7 @@ describe("PortfolioContentCards", () => {
       campaign: "0",
       page: "Portfolio",
       type: "portfolio_carousel",
+      location: "Portfolio",
     });
   });
 });

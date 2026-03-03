@@ -12,15 +12,11 @@ const ctasContainerStyle: LumenViewStyle = {
   flexDirection: "row",
   gap: "s8",
   width: "full",
-  paddingHorizontal: "s16",
 };
 
 const CardActions = ({ ctas }: CardActionsProps) => {
   return (
-    <Box
-      lx={{ ...ctasContainerStyle, marginTop: "s56" }}
-      testID={CARD_LANDING_TEST_IDS.ctas.container}
-    >
+    <Box lx={ctasContainerStyle} testID={CARD_LANDING_TEST_IDS.ctas.container}>
       {ctas.map(cta => (
         <TileButton
           key={cta.id}

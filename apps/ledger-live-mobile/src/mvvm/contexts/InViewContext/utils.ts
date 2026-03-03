@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { InViewEntry } from "./types";
 
 export async function inViewStatus(
-  target: React.RefObject<View>,
+  target: React.RefObject<View | null>,
   threshold: number,
   window: { width: number; height: number },
 ): Promise<InViewEntry> {

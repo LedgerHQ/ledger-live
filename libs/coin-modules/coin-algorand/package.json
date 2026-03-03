@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "0.18.1",
+  "version": "1.0.0",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -36,6 +36,38 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./bridge": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./config": {
+      "require": "./lib/config.js",
+      "default": "./lib-es/config.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./logic/*": {
+      "require": "./lib/logic/*.js",
+      "default": "./lib-es/logic/*.js"
+    },
+    "./network": {
+      "require": "./lib/network/index.js",
+      "default": "./lib-es/network/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
@@ -53,8 +85,7 @@
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "algo-msgpack-with-bigint": "^2.1.1",
-    "algosdk": "1.13.1",
+    "algosdk": "3.5.2",
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
@@ -82,6 +113,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   }
 }

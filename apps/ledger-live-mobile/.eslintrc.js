@@ -52,7 +52,7 @@ module.exports = {
     __REDUX_DEVTOOLS_EXTENSION__: "readonly",
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks", "i18next", "jsx-a11y"],
+  plugins: ["react", "react-hooks", "import", "i18next", "jsx-a11y"],
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
@@ -83,6 +83,7 @@ module.exports = {
       },
     ],
     "no-unsafe-optional-chaining": "off",
+    "import/no-duplicates": "error",
     "no-restricted-imports": [
       "error",
       {

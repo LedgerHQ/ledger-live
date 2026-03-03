@@ -209,7 +209,11 @@
       "BURN" : "เบิร์น",
       "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน",
       "CONTRACT_CALL" : "การเรียกใช้สัญญา",
-      "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต"
+      "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต",
+      "SHIELDED_TX_SAPLING_IN" : "ได้รับแล้ว",
+      "SHIELDED_TX_SAPLING_OUT" : "ส่งแล้ว",
+      "SHIELDED_TX_ORCHARD_IN" : "ได้รับแล้ว",
+      "SHIELDED_TX_ORCHARD_OUT" : "ส่งแล้ว"
     },
     "edit" : {
       "title" : "Speed Up หรือ ยกเลิก",
@@ -268,6 +272,8 @@
     "minute" : "นาที",
     "minute_other" : "นาที",
     "minute_short" : "นาที",
+    "second" : "วินาที",
+    "second_other" : "วินาที",
     "second_short" : "วินาที",
     "hour" : "ชั่วโมง",
     "hour_other" : "ชั่วโมง",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่าย",
       "warningDescription" : "การตั้งค่าค่าธรรมเนียมล่วงหน้าอาจตกรุ่น"
+    },
+    "customFees" : {
+      "title" : "ค่าธรรมเนียมที่กำหนดเอง",
+      "confirm" : "ยืนยัน",
+      "maxFee" : "ค่าธรรมเนียมสูงสุด ({{unit}})",
+      "maxPriorityFee" : "Priority Fee สูงสุด ({{unit}})",
+      "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
+      "feePerByte" : "ยอดค่าธรรมเนียม {{unit}}",
+      "suggested" : "แนะนำ",
+      "nextBlock" : "บล็อกถัดไป",
+      "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
+      "invalidValue" : "ป้อนตัวเลขที่ถูกต้อง",
+      "belowMinimum" : "ขั้นต่ำคือ {{min}}",
+      "maxFeeBelowPriorityFee" : "Max Fee ต้องมากกว่าหรือเท่ากับ Max Priority Fee"
+    },
+    "coinControl" : {
+      "title" : "Coin Control"
     }
   },
   "releaseNotes" : {
-    "title" : "Release Notes",
-    "version" : "แอป Ledger Wallet {{versionNb}}"
+    "title" : "Release Note",
+    "version" : "แอป Ledger Wallet {{versionNb}}",
+    "gotIt" : "เข้าใจแล้ว"
   },
   "troubleshootNetwork" : {
     "title" : "การแก้ไขปัญหาด้านเครือข่าย",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "เพิ่มบัญชี Concordium",
+        "acknowledge" : {
+          "title" : "การรับทราบ",
+          "description" : "Concordium ต้องมีการยืนยันตัวตนจากภายนอก โปรดอ่านคำเตือนด้านความปลอดภัยที่สำคัญ:",
+          "list" : {
+            "1" : "<0>ไม่มีการตรวจสอบที่อยู่</0> Ledger ของคุณไม่สามารถตรวจสอบที่อยู่ที่ใช้รับ Concordium ได้ ตรวจสอบที่อยู่ด้วยตนเองก่อนยืนยัน",
+            "2" : "<0>แอป Concordium ID ใช้วลีกู้คืนแยกต่างหาก</0> คุณจะต้องสร้างวลีกู้คืน 24 คำในแอป Concordium ห้ามใช้วลีกู้คืนสำหรับ Ledger ของคุณ",
+            "3" : "<0>คุณจะถูกนำออกจากแอป Ledger Wallet</0> การตรวจสอบตัวตนจะเกิดขึ้นในแอป Concordium Wallet ที่อยู่ภายนอก ซึ่งเป็นข้อกำหนดของโพรโตคอลบล็อกเชนของ Concordium",
+            "4" : "<0>การลงนามธุรกรรมจะยังคงปลอดภัย</0> โดยมีเพียงอุปกรณ์ Ledger ของคุณเท่านั้นที่จะสามารถลงนามในธุรกรรมและสร้างบัญชีได้"
+          },
+          "allow" : "ตกลง"
+        },
+        "identity" : {
+          "title" : "เชื่อมต่อ",
+          "account" : "บัญชี",
+          "newAccount" : "บัญชีใหม่",
+          "init" : "การกดปุ่ม 'อนุญาต' หมายความว่าคุณพร้อมที่จะดำเนินการต่อในขั้นตอนการตรวจสอบในระบบ KYC ที่จำเป็นในการยืนยันบัญชีของคุณ",
+          "scanQRCode" : "สแกน QR Code ด้วยอุปกรณ์มือถือเพื่อเชื่อมต่อแอป Concordium ID ของคุณ <0>เรียนรู้เพิ่มเติม</0>",
+          "ledgerSeedWarning" : "<0>ห้าม</0>ใช้วลีกู้คืน Ledger ของคุณกับแอป Concordium ID เด็ดขาด",
+          "downloadApp" : "ดาวน์โหลดแอป Concordium ID",
+          "connecting" : "กำลังเชื่อมต่อกับแอป Concordium ID...",
+          "onboarded" : "บัญชีที่ออนบอร์ดแล้ว",
+          "success" : "เชื่อมต่อกับแอป Concordium ID สำเร็จแล้ว",
+          "error" : "ไม่สามารถออนบอร์ดบัญชีใหม่ได้ โปรดลองอีกครั้ง",
+          "status" : {
+            "prepare" : "กำลังเตรียมออนบอร์ดบัญชี...",
+            "submit" : "กำลังออนบอร์ดบัญชี...",
+            "default" : "กำลังดำเนินการ..."
+          }
+        },
+        "create" : {
+          "title" : "สร้างบัญชี",
+          "init" : {
+            "title" : "เชื่อมต่อกับแอป Concordium ID สำเร็จแล้ว"
+          },
+          "prepare" : {
+            "title" : "ในการสร้างบัญชี ให้จับคู่กับรหัสด้านล่างในแอป Concordium ID",
+            "resendButton" : "ส่งการยืนยันใหม่",
+            "resendDescription" : "สามารถส่งการยืนยันใหม่ในอีก <0>{{count}}</0> {{unit}}"
+          },
+          "success" : "ทำการสร้างบัญชี Concordium ของคุณเรียบร้อยแล้ว",
+          "error" : "ไม่สามารถสร้างบัญชีได้ โปรดลองอีกครั้ง",
+          "error429" : "มีคำขอเข้ามามากเกินไป โปรดรอสักครู่และลองอีกครั้งในภายหลัง",
+          "button" : "สร้าง",
+          "processing" : "กำลังดำเนินการ...",
+          "status" : {
+            "prepare" : "กำลังเตรียมสร้างบัญชี...",
+            "submit" : "กำลังสร้างบัญชี...",
+            "default" : "กำลังดำเนินการ..."
+          }
+        },
+        "finish" : {
+          "title" : "การยืนยัน"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "ไม่สามารถยืนยันที่อยู่ Concordium ของคุณได้ในขณะนี้ โปรดตรวจสอบซ้ำอีกครั้งด้วยการวางที่อยู่ของคุณใน Concordium Explorer",
+        "verifyLink" : "ตรวจสอบ"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 64 ตัวอักษร",
       "description" : "ข้อความ Memo ใน Cardano มีข้อจำกัดของขนาดสูงสุด โปรดลดขนาดของ Memo"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo มีความยาวเกินขีดจำกัด",
+      "description" : "Memo มีขนาด {{memoLength}} ไบต์ แต่ขนาดสูงสุดที่อนุญาตคือ {{maxLength}} ไบต์ โปรดลดขนาด Memo"
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "ขออภัย เงินทุนไม่พอ"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "แสดงยอดคงเหลือในบัญชี",
-        "pausedAt" : "หยุดชั่วคราวเมื่อ ",
+        "startSync" : "เริ่มซิงค์",
+        "stopSync" : "หยุดการซิงค์",
+        "lastProcessedBlock" : "บล็อกที่ประมวลผลล่าสุด: {{block}} ยังขาดอีก {{missing}} บล็อก",
         "lastSync" : "ซิงค์ล่าสุด: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "ระดับบล็อก (Birthday Height)",
+        "tooltip" : "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ"
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "เริ่มซิงค์",
-      "datepicker" : {
-        "label" : "ระดับบล็อก (Birthday Height)",
-        "tooltip" : "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ"
       }
+    },
+    "operationDetails" : {
+      "txType" : "ประเภทธุรกรรม",
+      "transparentTx" : "แบบ Transparent",
+      "shieldedSaplingTx" : "🛡 แบบส่วนตัว (พูล Sapling)",
+      "shieldedOrchardTx" : "🛡 แบบส่วนตัว (พูล Orchard)"
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
       "privateBalance" : "Private Balance",
       "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "สาธารณะ",
+        "private" : "ส่วนตัว"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "มีการอัปเดตใหม่ที่พร้อมใช้งาน",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "เกิดข้อผิดพลาดระหว่างการอัปเดต ลองอีกครั้ง",
+    "installAndRelaunch" : "ติดตั้งการอัปเดตและเปิดใช้งานใหม่"
   }
 }

@@ -27,7 +27,8 @@
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/network/hgraph.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

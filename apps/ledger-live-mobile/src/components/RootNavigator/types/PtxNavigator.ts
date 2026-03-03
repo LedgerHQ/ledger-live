@@ -1,9 +1,10 @@
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 
 type CommonParams = {
   goToURL?: string;
   lastScreen?: string;
   name?: string;
+  path?: string;
   platform?: string;
   referrer?: string;
 };
@@ -23,4 +24,5 @@ export type PtxNavigatorParamList = {
   };
   [ScreenName.ExchangeSell]?: ExchangeParams;
   [ScreenName.Card]?: CommonParams;
+  [NavigatorName.CardTab]?: CommonParams;
 };

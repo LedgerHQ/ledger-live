@@ -10,17 +10,12 @@ declare let detoxConfig: {
     };
   };
   devices: {
-    simulator: {
+    [key: string]: {
       type: string;
       device: {
         type?: string;
-        name: string;
-      };
-    };
-    emulator: {
-      type: string;
-      device: {
-        avdName: string;
+        name?: string;
+        avdName?: string;
       };
     };
   };

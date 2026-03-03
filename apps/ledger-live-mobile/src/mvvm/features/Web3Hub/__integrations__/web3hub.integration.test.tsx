@@ -2,6 +2,8 @@ import * as React from "react";
 import { screen, waitForElementToBeRemoved } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import { getDefaultStore } from "jotai";
+import { dismissedManifestsAtom, recentlyUsedAtom } from "LLM/features/Web3Hub/db";
 import { Web3HubTest } from "./shared";
 import { Text } from "@ledgerhq/native-ui";
 
@@ -38,6 +40,12 @@ async function waitForLoader() {
 }
 
 describe("Web3Hub integration test", () => {
+  beforeEach(() => {
+    const store = getDefaultStore();
+    store.set(recentlyUsedAtom, []);
+    store.set(dismissedManifestsAtom, {});
+  });
+
   it("Should list manifests and navigate to app page", async () => {
     const { user } = render(<Web3HubTest />);
 
@@ -205,57 +213,55 @@ describe("Web3Hub integration test", () => {
     expect(screen.getByRole("searchbox")).toBeDisabled();
   });
 
-  it("Should go to tabs from main, search and app pages", async () => {
+  it("Should manage recently used items (add, remove, clear all)", async () => {
     const { user } = render(<Web3HubTest />);
 
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+    await waitForLoader();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
-
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
-
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeDisabled();
     await user.press(screen.getByRole("searchbox"));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
+    expect(await screen.findByRole("searchbox")).toBeEnabled();
 
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
-
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
-
-    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(screen.queryByTestId("web3hub-recently-used")).not.toBeOnTheScreen();
 
     expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
     await user.press(screen.getAllByText("Wallet API Tools")[0]);
     expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
-    expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
-
-    expect(await screen.findByRole("button", { name: /2/i })).toBeOnTheScreen();
-    await user.press(screen.getByRole("button", { name: /2/i }));
-
-    expect(await screen.findByText("Web3HubTabs")).toBeOnTheScreen();
-    expect(await screen.findByText("N Tabs")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
-    expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
+    expect(await screen.findByRole("searchbox")).toBeEnabled();
+
+    expect(await screen.findByTestId("web3hub-recently-used")).toBeOnTheScreen();
+    expect(await screen.findByTestId("wallet-api-tools-0-recently-used")).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Dummy Wallet App")[0]);
+    expect(await screen.findByText("Open Dummy Wallet App")).toBeOnTheScreen();
+    await user.press(screen.getByText("Open Dummy Wallet App"));
+    expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
+    expect(await screen.findByRole("searchbox")).toBeEnabled();
+
+    expect(await screen.findByTestId("dummy-0-recently-used")).toBeOnTheScreen();
+    expect(await screen.findByTestId("wallet-api-tools-0-recently-used")).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("wallet-api-tools-0-recently-used-remove"));
+    expect(await screen.findByTestId("dummy-0-recently-used")).toBeOnTheScreen();
+    expect(screen.queryByTestId("wallet-api-tools-0-recently-used")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("dummy-0-recently-used"));
+    expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
+    expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeDisabled();
+    expect(await screen.findByRole("searchbox")).toBeEnabled();
+
+    expect(await screen.findByText("Clear All")).toBeOnTheScreen();
+    await user.press(screen.getByText("Clear All"));
+
+    expect(screen.queryByTestId("web3hub-recently-used")).not.toBeOnTheScreen();
+    expect(screen.queryByText("Recently Used")).not.toBeOnTheScreen();
   });
 
   it("Should be able to see Clear Signing section and label on disclaimer", async () => {

@@ -104,6 +104,9 @@ export interface SwapRoute {
   fromToken: string;
   toToken: string;
   affiliate?: string;
+  fromPath?: string;
+  toCurrency?: string;
+  fromCurrency?: string;
 }
 
 export interface BridgeRoute {

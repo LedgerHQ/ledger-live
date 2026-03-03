@@ -28,11 +28,14 @@ import {
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
-import { walletSelector } from "~/reducers/wallet";
+import {
+  walletSelector,
+  latestDistantStateSelector,
+  latestDistantVersionSelector,
+} from "~/reducers/wallet";
 import { State } from "~/reducers/types";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
-import { latestDistantStateSelector, latestDistantVersionSelector } from "~/reducers/wallet";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";

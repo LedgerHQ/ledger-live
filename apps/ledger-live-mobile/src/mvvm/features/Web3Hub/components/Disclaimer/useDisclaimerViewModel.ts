@@ -1,13 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { dismissedManifestsAtom } from "LLM/features/Web3Hub/db";
-import { useAtom } from "jotai";
+import { dismissedManifestsAtom, recentlyUsedAtom } from "LLM/features/Web3Hub/db";
+import { useAtom, useSetAtom } from "jotai";
+import { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
+import goToApp from "LLM/features/Web3Hub/utils/navigation";
 
-export default function useDisclaimerViewModel(goToApp: (manifestId: string) => void) {
+function addToRecentlyUsed(manifest: AppManifest) {
+  return async (state: AppManifest[] | Promise<AppManifest[]>) => {
+    const s = await state;
+    const r = s.filter(item => item.id !== manifest.id);
+    return [manifest, ...r];
+  };
+}
+
+export default function useDisclaimerViewModel(
+  navigation: SearchProps["navigation"] | MainProps["navigation"],
+) {
   const [isChecked, setIsChecked] = useState(false);
   const [disclaimerOpened, setDisclaimerOpened] = useState(false);
   const [disclaimerManifest, setDisclaimerManifest] = useState<AppManifest>();
   const [dismissedManifests, setDismissedManifests] = useAtom(dismissedManifestsAtom);
+  const setRecentlyUsed = useSetAtom(recentlyUsedAtom);
 
   useEffect(() => {
     if (disclaimerManifest && !!dismissedManifests[disclaimerManifest.id]) {
@@ -27,11 +40,11 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
         setDisclaimerManifest(manifest);
         setDisclaimerOpened(true);
       } else {
-        // TODO append recently used
-        goToApp(manifest.id);
+        setRecentlyUsed(addToRecentlyUsed(manifest));
+        goToApp(navigation, manifest.id);
       }
     },
-    [dismissedManifests, goToApp],
+    [dismissedManifests, setRecentlyUsed, navigation],
   );
 
   const toggleCheck = useCallback(() => {
@@ -50,9 +63,10 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
         });
       }
 
-      goToApp(disclaimerManifest.id);
+      setRecentlyUsed(addToRecentlyUsed(disclaimerManifest));
+      goToApp(navigation, disclaimerManifest.id);
     }
-  }, [disclaimerManifest, goToApp, isChecked, setDismissedManifests]);
+  }, [disclaimerManifest, navigation, isChecked, setDismissedManifests, setRecentlyUsed]);
 
   const onClose = useCallback(() => {
     setDisclaimerOpened(false);

@@ -8,6 +8,8 @@ import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { TAB_BAR_HEIGHT, GRADIENT_HEIGHT } from "./shared";
 import BackgroundGradient from "./BackgroundGradient";
 import { useKeyboardVisible } from "~/logic/keyboardVisible";
+import { track } from "~/analytics/segment";
+import { TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "LLM/components/MainTabBar/constants";
 
 type SvgProps = {
   color: string;
@@ -159,6 +161,12 @@ const TabBar = ({ state, descriptors, navigation, colors, insets }: Props): Reac
             target: route.key,
             canPreventDefault: true,
           });
+
+          if (!isFocused) {
+            track(TRACKING_MENUENTRY_EVENT, {
+              entry: TRACKING_LABEL_MAP[route.name],
+            });
+          }
 
           if (!isFocused && !event.defaultPrevented) {
             // The `merge: true` option makes sure that the params inside the tab screen are preserved

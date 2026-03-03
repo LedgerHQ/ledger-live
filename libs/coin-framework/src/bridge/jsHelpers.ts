@@ -600,8 +600,16 @@ export function getSerializedAddressParameters(account: Account): Buffer {
   return bip32asBuffer(account.freshAddressPath);
 }
 
+/**
+ * Parses a BIP32 path string (e.g. "m/84'/0'/0'") into an array of path indices.
+ * Uses the bip32-path library for consistent parsing across the codebase.
+ */
+export function pathStringToArray(path: string): number[] {
+  return path ? bippath.fromString(path).toPathArray() : [];
+}
+
 export function bip32asBuffer(path: string): Buffer {
-  const pathElements = !path ? [] : bippath.fromString(path).toPathArray();
+  const pathElements = pathStringToArray(path);
 
   const buffer = Buffer.alloc(1 + pathElements.length * 4);
   buffer[0] = pathElements.length;

@@ -2,6 +2,7 @@ import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { QueryableConsts } from "@polkadot/api/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
@@ -157,9 +158,9 @@ const fetchStakingInfo = async (
  *
  * @async
  *
- * @returns {Object}
+ * @returns {Promise<QueryableConsts<"promise">>}
  */
-const fetchConstants = async (currency?: CryptoCurrency): Promise<Record<string, any>> => {
+const fetchConstants = async (currency?: CryptoCurrency): Promise<QueryableConsts<"promise">> => {
   return node.fetchConstants(currency);
 };
 
@@ -398,11 +399,9 @@ export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => 
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
   const activeEraStart = Number(activeEra.value?.start || 0);
-  const blockTime = new BigNumber(consts?.babe?.expectedBlockTime || 6000); // 6000 ms
-
-  const epochDuration = new BigNumber(consts?.babe?.epochDuration || 2400); // 2400 blocks
-
-  const sessionsPerEra = new BigNumber(consts?.staking?.sessionsPerEra || 6); // 6 sessions
+  const blockTime = new BigNumber(consts?.babe?.expectedBlockTime?.toNumber() || 6000); // 6000 ms
+  const epochDuration = new BigNumber(consts?.babe?.epochDuration?.toNumber() || 2400); // 2400 blocks
+  const sessionsPerEra = new BigNumber(consts?.staking?.sessionsPerEra?.toNumber() || 6); // 6 sessions
 
   const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
   const unlockings = stakingInfo?.staking.unlocking
@@ -604,8 +603,8 @@ export const getStakingProgress = async (
     activeEra,
     electionClosed: optimisticElectionClosed,
     maxNominatorRewardedPerValidator:
-      Number(consts.staking?.maxNominatorRewardedPerValidator) || 128,
-    bondingDuration: Number(consts.staking?.bondingDuration) || 28,
+      Number(consts?.staking?.maxNominatorRewardedPerValidator?.toString()) || 128,
+    bondingDuration: consts?.staking?.bondingDuration?.toNumber() || 28,
   };
 };
 
@@ -629,6 +628,26 @@ export const getRegistry = async (
   return createRegistryAndExtrinsics(material, spec);
 };
 
+export const getMetadata = async (
+  callData: string,
+  includedInExtrinsic: string,
+  includedInSignedData: string,
+  currency?: CryptoCurrency,
+): Promise<{ metadataBlob: string; metadataHash: string }> => {
+  const { data } = await callSidecar<{ metadataBlob: string; metadataHash: string }>(
+    "/transaction/metadata-blob",
+    currency,
+    "POST",
+    {
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+    },
+  );
+
+  return { metadataBlob: data.metadataBlob, metadataHash: data.metadataHash };
+};
+
 /**
  * Get lastest block info
  */
@@ -649,10 +668,10 @@ export const getLastBlock = async (
  *
  * @async
  *
- * @returns {Promise<Object>} consts
+ * @returns {Promise<QueryableConsts<"promise">>} consts
  */
 const getConstants = makeLRUCache(
-  async (currency: CryptoCurrency | undefined): Promise<Record<string, any>> => {
+  async (currency: CryptoCurrency | undefined): Promise<QueryableConsts<"promise">> => {
     return fetchConstants(currency);
   },
   currency => currency?.id || "polkadot",

@@ -11,10 +11,16 @@ import { getWalletAccount } from "./wallet-btc";
 import { AddressFormat, SignerContext } from "./signer";
 import { feeFromPsbt } from "./psbtFees";
 import { fromAsyncOperation } from "./observable";
+import {
+  buildKnownAddressDerivationsMap,
+  type KnownAddressDerivationsMap,
+} from "./knownAddressDerivations";
 
 type SignPsbtOptions = {
   accountPath: string;
   addressFormat: string;
+  finalizePsbt: boolean;
+  knownAddressDerivations: KnownAddressDerivationsMap;
   onDeviceSignatureRequested?: () => void;
   onDeviceSignatureGranted?: () => void;
   onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
@@ -36,7 +42,8 @@ const signPsbtWithDevice = async (
       accountPath: options.accountPath,
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       addressFormat: options.addressFormat as AddressFormat,
-      finalizePsbt: true,
+      finalizePsbt: options.finalizePsbt,
+      knownAddressDerivations: options.knownAddressDerivations,
       onDeviceSignatureRequested: options.onDeviceSignatureRequested,
       onDeviceSignatureGranted: options.onDeviceSignatureGranted,
       onDeviceStreaming: options.onDeviceStreaming,
@@ -45,7 +52,7 @@ const signPsbtWithDevice = async (
 
 export const buildSignRawOperation =
   (signerContext: SignerContext): AccountBridge<Transaction>["signRawOperation"] =>
-  ({ account, deviceId, transaction: psbt }) =>
+  ({ account, deviceId, transaction: psbt, broadcast }) =>
     fromAsyncOperation(async o => {
       const { currency } = account;
       const walletAccount = getWalletAccount(account);
@@ -60,9 +67,17 @@ export const buildSignRawOperation =
 
       const psbtBuffer = parsePsbt(psbt);
 
+      const accountPath = `${walletAccount.params.path}/${walletAccount.params.index}'`;
+      const knownAddressDerivations = await buildKnownAddressDerivationsMap(
+        walletAccount,
+        accountPath,
+      );
+
       const psbtResult = await signPsbtWithDevice(signerContext, deviceId, currency, psbtBuffer, {
-        accountPath: `${walletAccount.params.path}/${walletAccount.params.index}'`,
+        accountPath,
         addressFormat: getAddressFormatDerivationMode(account.derivationMode),
+        finalizePsbt: broadcast ?? false,
+        knownAddressDerivations,
         onDeviceSignatureRequested: () => o.next({ type: "device-signature-requested" }),
         onDeviceSignatureGranted: () => o.next({ type: "device-signature-granted" }),
         onDeviceStreaming: arg => o.next({ type: "device-streaming", ...arg }),
@@ -90,13 +105,15 @@ export const buildSignRawOperation =
         extra: { psbt: true },
       });
 
+      const base64Psbt = psbtResult.psbt.toString("base64");
+
       o.next({
         type: "signed",
         signedOperation: {
           operation,
-          // Ensure non-empty signature: if not finalized, fall back to the PSBT (base64)
-          signature: psbtResult.tx || psbtResult.psbt.toString("base64"),
-          rawData: { psbtSigned: psbtResult.psbt.toString("base64") },
+          // When finalized, signature is the hex tx; otherwise it's the base64 PSBT
+          signature: psbtResult.tx || base64Psbt,
+          rawData: { psbtSigned: base64Psbt },
         },
       });
     });

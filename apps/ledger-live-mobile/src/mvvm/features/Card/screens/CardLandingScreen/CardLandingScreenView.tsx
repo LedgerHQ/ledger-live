@@ -1,11 +1,10 @@
-import React, { memo, useState } from "react";
+import React, { memo } from "react";
 import { ImageBackground } from "react-native";
-import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import LinearGradient from "react-native-linear-gradient";
 import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
-import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
+import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
 import CardTitle from "../../components/CardTitle";
@@ -18,6 +17,10 @@ interface CardLandingScreenViewProps {
   readonly ctas: readonly CardLandingCta[];
   readonly pageName: string;
   readonly topInset: number;
+  readonly backgroundColor: string;
+  readonly isWallet40DarkMode: boolean;
+  readonly imageLoaded: boolean;
+  readonly onImageLoaded: () => void;
 }
 
 const CardLandingScreenView = ({
@@ -26,13 +29,11 @@ const CardLandingScreenView = ({
   ctas,
   pageName,
   topInset,
+  backgroundColor,
+  isWallet40DarkMode,
+  imageLoaded,
+  onImageLoaded,
 }: CardLandingScreenViewProps) => {
-  const { theme: lumenTheme } = useLumenTheme();
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const { isWallet40DarkMode } = useWallet40Theme("mobile");
-
-  const backgroundColor = lumenTheme.colors.bg.base;
-
   return (
     <SafeAreaView isFlex style={{ backgroundColor }} testID={CARD_LANDING_TEST_IDS.screen}>
       <TrackScreen name={pageName} />
@@ -50,7 +51,7 @@ const CardLandingScreenView = ({
           <ImageBackground
             source={require("~/images/portfolio/v4-dark.webp")}
             style={{ width: "100%", height: "100%" }}
-            onLoad={() => setImageLoaded(true)}
+            onLoad={onImageLoaded}
             fadeDuration={imageLoaded ? 0 : 300}
           />
           <LinearGradient
@@ -69,10 +70,10 @@ const CardLandingScreenView = ({
         </Box>
       )}
 
-      <Box lx={{ flex: 1 }} style={{ paddingTop: topInset }}>
-        <CardTitle title={title} subtitle={subtitle} />
-
-        <CardActions ctas={ctas} />
+      <Box style={{ paddingTop: topInset }}>
+        <ScreenHeroSectionView ctas={<CardActions ctas={ctas} />}>
+          <CardTitle title={title} subtitle={subtitle} />
+        </ScreenHeroSectionView>
 
         <CardImageDisplay />
       </Box>

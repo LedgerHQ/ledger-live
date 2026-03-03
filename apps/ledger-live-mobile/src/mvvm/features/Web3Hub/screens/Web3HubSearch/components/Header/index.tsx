@@ -8,7 +8,6 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import BackButton from "LLM/features/Web3Hub/components/BackButton";
-import TabButton from "LLM/features/Web3Hub/components/TabButton";
 import { SearchProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
 
@@ -45,7 +44,7 @@ export default function Web3HubSearchHeader({ navigation, onSearch, layoutY }: P
       opacityChildren={
         <Flex flex={1} height={SEARCH_HEIGHT} flexDirection="row" alignItems="center">
           <BackButton onPress={navigation.goBack} />
-          <Flex flex={1}>
+          <Flex flex={1} marginRight={8}>
             <TextInput
               autoFocus
               role="searchbox"
@@ -56,7 +55,6 @@ export default function Web3HubSearchHeader({ navigation, onSearch, layoutY }: P
               onChangeText={setSearch}
             />
           </Flex>
-          <TabButton count={2} navigation={navigation} />
         </Flex>
       }
     />

@@ -12,7 +12,11 @@ import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types
 type DataContextValue = Readonly<{
   state: SendFlowState;
   uiConfig: SendFlowUiConfig;
-  recipientSearchValue: string;
+  recipientSearch: Readonly<{
+    value: string;
+    setValue: (value: string) => void;
+    clear: () => void;
+  }>;
 }>;
 
 const SendFlowDataContext = createContext<DataContextValue | null>(null);
@@ -40,9 +44,9 @@ export function SendFlowProvider({ value, onClose, children }: SendFlowProviderP
     () => ({
       state: value.state,
       uiConfig: value.uiConfig,
-      recipientSearchValue: value.recipientSearch.value,
+      recipientSearch: value.recipientSearch,
     }),
-    [value.state, value.uiConfig, value.recipientSearch.value],
+    [value.state, value.uiConfig, value.recipientSearch],
   );
 
   const actionsValue = useMemo<ActionsContextValue>(

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/ui",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "devDependencies": {
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
@@ -15,9 +15,6 @@
   },
   "scripts": {
     "pretest:react": "playwright install",
-    "clean": "pnpm -F ./examples/rspack clean:full",
-    "build-and-test": "pnpm pretest:react && pnpm build-rspack && pnpm e2e",
-    "build-rspack": "pnpm -w -F ./examples/rspack build",
-    "e2e": "cross-env UPDATE_SNAPSHOTS=1 pnpm concurrently -s=first -k \"pnpm -w -F ./examples/rspack serve\" \"playwright test $([ \"$UPDATE_SNAPSHOTS\" = 1 ] && echo \"--update-snapshots\")\""
+    "build-and-test": "pnpm pretest:react"
   }
 }

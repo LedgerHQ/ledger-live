@@ -83,7 +83,6 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "dydx",
-  "onomy",
   "persistence",
   "quicksilver",
   "vechain",

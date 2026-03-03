@@ -19,7 +19,7 @@ export default {
   },
 };
 
-export function Aside(args: Props): JSX.Element {
+export function Aside(args: Props): React.JSX.Element {
   const header = <Log>Header</Log>;
 
   const footer = (

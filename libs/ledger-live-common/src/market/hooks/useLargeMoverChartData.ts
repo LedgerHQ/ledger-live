@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { fetchCurrencyChartData } from "../api";
+import { fetchCurrencyChartData } from "../../cg-client/api";
 import { QUERY_KEY } from "../utils/queryKeys";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 

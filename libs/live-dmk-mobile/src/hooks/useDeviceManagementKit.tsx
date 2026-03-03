@@ -35,19 +35,14 @@ const DeviceManagementKitContext = createContext<DeviceManagementKit | null>(nul
 
 type Props = {
   children: React.ReactNode;
-  dmkEnabled: boolean;
 };
 
-export const DeviceManagementKitProvider: React.FC<Props> = ({ children, dmkEnabled }) => {
-  tracer.trace("DeviceManagementKitProvider render", { dmkEnabled });
+export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
+  tracer.trace("DeviceManagementKitProvider render");
 
   const deviceManagementKit = useMemo(() => {
-    if (!dmkEnabled) {
-      tracer.trace("DMK is disabled inside useMemo, returning null", { dmkEnabled });
-      return null;
-    }
     return getDeviceManagementKit();
-  }, [dmkEnabled]);
+  }, []);
 
   if (deviceManagementKit === null) {
     return <>{children}</>;
@@ -62,8 +57,3 @@ export const DeviceManagementKitProvider: React.FC<Props> = ({ children, dmkEnab
 
 export const useDeviceManagementKit = (): DeviceManagementKit | null =>
   useContext(DeviceManagementKitContext);
-
-export const useDeviceManagementKitEnabled = (): boolean => {
-  const deviceManagementKit = useDeviceManagementKit();
-  return !!deviceManagementKit;
-};

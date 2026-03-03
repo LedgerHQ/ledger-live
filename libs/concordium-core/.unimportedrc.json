@@ -1,0 +1,14 @@
+{
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnimported": [
+    "src/bip32-path.d.ts"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnused": []
+}

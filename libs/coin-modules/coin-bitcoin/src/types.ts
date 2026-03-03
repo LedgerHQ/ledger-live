@@ -147,7 +147,6 @@ export type Transaction = TransactionCommon & {
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
   psbt?: string;
-  finalizePsbt?: boolean;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -174,16 +173,23 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw & {
   changeAddress: string | undefined;
 };
 
-export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources } & {
-  privateInfo?: PrivateInfo;
-};
+export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
 
-export type PrivateInfo = {
-  key: string | null;
-  balance: BigNumber;
-  syncState: "disabled" | "ready" | "running" | "paused" | "complete" | "outdated";
-  progress: number;
+export type ZcashAccount = BitcoinAccount & { privateInfo?: ZcashPrivateInfo };
+
+export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
+
+export type ZcashPrivateInfo = {
+  saplingBalance: BigNumber;
+  orchardBalance: BigNumber;
+  ufvk: string | null;
+  syncState: ZcashSyncState;
   lastSyncTimestamp: number | null;
+  lastBlockProcessed: number | null;
+  transactions: {
+    hash: string;
+    type: "sapling" | "orchard";
+  }[];
 };
 
 export type BitcoinAccountRaw = AccountRaw & {
@@ -194,3 +200,25 @@ export type BtcOperationExtra = {
   inputs?: string[];
 };
 export type BtcOperation = Operation<BtcOperationExtra>;
+
+export type ZcashAccountRaw = BitcoinAccountRaw & { privateInfo?: ZcashPrivateInfoRaw };
+
+export type ZcashPrivateInfoRaw = {
+  orchardBalance: string;
+  saplingBalance: string;
+  ufvk: string | null;
+  syncState: string;
+  lastSyncTimestamp: number | null;
+  lastBlockProcessed: number | null;
+  transactions: {
+    hash: string;
+    type: "sapling" | "orchard";
+  }[];
+};
+
+export const ZCASH_SHIELDED_TX_TYPES = [
+  "SHIELDED_TX_SAPLING_IN",
+  "SHIELDED_TX_SAPLING_OUT",
+  "SHIELDED_TX_ORCHARD_IN",
+  "SHIELDED_TX_ORCHARD_OUT",
+];

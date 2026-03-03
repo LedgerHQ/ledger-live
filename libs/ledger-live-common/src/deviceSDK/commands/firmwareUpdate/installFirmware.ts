@@ -1,8 +1,7 @@
 import { Observable, of, throwError } from "rxjs";
 import URL from "url";
 import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
-import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
-import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
+import type { FinalFirmware, OsuFirmware, DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";

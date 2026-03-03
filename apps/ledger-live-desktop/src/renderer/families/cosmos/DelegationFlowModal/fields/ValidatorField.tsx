@@ -16,6 +16,8 @@ import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+
 type Props = {
   t: TFunction;
   account: Account;
@@ -44,6 +46,11 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       setShowAll(true);
     }
   }, [isPerOrQuickAccount]);
+
+  useEffect(() => {
+    if (validators.length > 0 || account.type !== "Account" || search !== "") return;
+    prepareCurrency(account.currency).catch(() => {});
+  }, [account.type, account.currency, validators.length, search]);
 
   const chosenValidator = useMemo(() => {
     if (validators.length === 0) return [];

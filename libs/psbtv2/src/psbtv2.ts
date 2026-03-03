@@ -272,6 +272,9 @@ export class PsbtV2 {
     const buf = this.getOutput(outputIndex, psbtOut.TAP_BIP32_DERIVATION, pubkey);
     return this.decodeTapBip32Derivation(buf);
   }
+  getOutputKeyDatas(outputIndex: number, keyType: number): Buffer[] {
+    return this.getKeyDatas(this.outputMaps[outputIndex], keyType);
+  }
 
   deleteInputEntries(inputIndex: number, keyTypes: psbtIn[]) {
     const map = this.inputMaps[inputIndex];
@@ -438,7 +441,7 @@ export class PsbtV2 {
   private static addInputsFromV0(psbtv2: PsbtV2, psbtv0: Psbt, tx: Transaction) {
     for (const [index, input] of psbtv0.data.inputs.entries()) {
       // Required fields for PSBTv2 - get from the embedded transaction
-      psbtv2.setInputPreviousTxId(index, Buffer.from(tx.ins[index].hash).reverse());
+      psbtv2.setInputPreviousTxId(index, tx.ins[index].hash);
       psbtv2.setInputOutputIndex(index, tx.ins[index].index);
       psbtv2.setInputSequence(index, tx.ins[index].sequence);
 

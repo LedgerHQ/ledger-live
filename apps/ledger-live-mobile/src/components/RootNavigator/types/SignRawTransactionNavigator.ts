@@ -6,6 +6,7 @@ type SharedParams = {
   accountId: string;
   transaction: string;
   parentId?: string;
+  broadcast?: boolean;
   appName?: string;
   dependencies?: string[];
   onSuccess: (signedOperation: SignedOperation) => void;

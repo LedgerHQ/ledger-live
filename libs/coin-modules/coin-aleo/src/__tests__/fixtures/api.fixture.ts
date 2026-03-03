@@ -1,5 +1,12 @@
+import BigNumber from "bignumber.js";
 import { PROGRAM_ID } from "../../constants";
-import type { AleoPublicTransaction, AleoPublicTransactionDetailsResponse } from "../../types/api";
+import {
+  AleoPrivateRecord,
+  AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
+  EnrichedPrivateRecord,
+  EnrichedTransaction,
+} from "../../types";
 
 export const getMockedTransaction = (
   overrides?: Partial<AleoPublicTransaction>,
@@ -50,5 +57,80 @@ export const getMockedTransactionDetails = (
   block_hash: "ab1mockhash",
   block_timestamp: "1709079312",
   status: "accepted",
+  ...overrides,
+});
+
+export function getMockedEnrichedTransaction(
+  overrides?: Partial<EnrichedTransaction>,
+): EnrichedTransaction {
+  return {
+    rawTx: getMockedTransaction(),
+    details: getMockedTransactionDetails(),
+    ...overrides,
+  };
+}
+
+type EnrichedPrivateRecordOverrides = Omit<
+  Partial<EnrichedPrivateRecord>,
+  "rawRecord" | "details"
+> & {
+  rawRecord?: Partial<AleoPrivateRecord>;
+  details?: Partial<AleoPublicTransactionDetailsResponse>;
+};
+
+export function getMockedEnrichedPrivateRecord(
+  overrides?: EnrichedPrivateRecordOverrides,
+): EnrichedPrivateRecord {
+  const { rawRecord, details, ...rest } = overrides ?? {};
+  return {
+    rawRecord: getMockedRecord(rawRecord),
+    details: getMockedTransactionDetails(details),
+    sender: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
+    recipient: "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px",
+    value: new BigNumber(1000000),
+    ...rest,
+  };
+}
+
+export const testnetViewKey = "AViewKey1tTb4WYnMFnDWjSgTSA5VkiyLKNZH1szDcMyEuzSu1zbk";
+
+// this record has `microcredits: "800000u64.private"` in the decrypted data
+export const testnetPrivateRecord: AleoPrivateRecord = {
+  block_height: 14192647,
+  block_timestamp: 1770127220,
+  commitment: "5577911026701224136131721605774668283349812508334064746703596134075753528694field",
+  function_name: "transfer_public_to_private",
+  output_index: 0,
+  owner: "4061324383530370528773115724536366126386700749943799382889243452721616108297field",
+  program_name: "credits.aleo",
+  record_ciphertext:
+    "record1qvqsps6wqrka73247spvsvdlgwr8qhmn5f4uze4t8zutp4k8mwm3zdgtqyxx66trwfhkxun9v35hguerqqpqzqrpdge64jwzyz32aknuxc800uugfwv52pqse4dk4p32datlzpd8z95td5t0dhdm4dfhtq9w285uj2arltzky4u6hmdv2xpdnkv365l3qg9hn0g",
+  record_name: "credits",
+  sender: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f",
+  spent: false,
+  tag: "4138557248634429596246575371443174357174703200753459213664031563822892655489field",
+  transaction_id: "at144lgzzq73r38hx4jvtecxteg8v32creg2pxpazs9n4xcduu5jsfqv43lx9    ",
+  transition_id: "au1mxddgfe8yl0yadjrm6qaz6wqljtlqth885muwxvrzvpd9852cyqqxhxr76    ",
+  transaction_index: 0,
+  transition_index: 0,
+};
+
+export const getMockedRecord = (overrides?: Partial<AleoPrivateRecord>): AleoPrivateRecord => ({
+  transaction_id: "tx123",
+  block_height: 100,
+  transition_index: 0,
+  function_name: "transfer_public_to_private",
+  sender: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
+  record_ciphertext: "record123",
+  program_name: "credits.aleo",
+  block_timestamp: 1704067200,
+  commitment: "commitment123",
+  output_index: 0,
+  owner: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
+  record_name: "record123",
+  spent: false,
+  tag: "tag123",
+  transition_id: "transition123",
+  transaction_index: 0,
   ...overrides,
 });

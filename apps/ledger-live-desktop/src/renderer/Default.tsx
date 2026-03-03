@@ -66,12 +66,10 @@ import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersio
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
-import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
-import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
+import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import backgroundImg from "~/renderer/images/background.png";
-import type { WalletFeatureParams } from "~/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/types";
-
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -227,7 +225,7 @@ const MainAppContent = ({
 
     <Page>
       <TopBannerContainer>
-        <UpdateBanner />
+        {!shouldDisplayWallet40MainNav && <UpdateBanner />}
         <FirmwareUpdateBanner />
         <VaultSignerBanner />
       </TopBannerContainer>
@@ -262,8 +260,8 @@ const MainAppContent = ({
   </>
 );
 
-// Main app layout component that handles the main navigation after onboarding
-const MainAppLayout = () => {
+// Main app layout component that handles the main navigation after onboarding (exported for testing)
+export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const {
@@ -271,19 +269,25 @@ const MainAppLayout = () => {
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
   } = useWalletFeaturesConfig("desktop");
+  const shouldShowDeferredModals = useShouldShowDeferredModals();
 
   //TODO: Remove this once testing is done
   const walletFeatureFlag = useFeature("lwdWallet40");
-  const walletParams = walletFeatureFlag?.params as WalletFeatureParams | undefined;
+  const walletParams = walletFeatureFlag?.params;
   const shouldDisplayBackground =
     isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+
   return (
     <>
-      <IsNewVersion />
-      <IsSystemLanguageAvailable />
-      <IsTermOfUseUpdated />
+      {shouldShowDeferredModals && (
+        <>
+          <IsNewVersion />
+          <IsSystemLanguageAvailable />
+          <IsTermOfUseUpdated />
+        </>
+      )}
       <SyncNewAccounts priority={2} />
 
       {useWallet40Layout ? (
@@ -446,8 +450,9 @@ export default function Default() {
                       value={process.env.DISABLE_TRANSACTION_BROADCAST}
                     />
                   ) : null}
-                  <ModularDialogRoot />
-                  <SendFlowRoot />
+
+                  <GlobalDialogs />
+
                   <Routes>
                     <Route
                       path="/onboarding/*"
@@ -483,7 +488,9 @@ export default function Default() {
                       }
                     />
 
-                    {!hasCompletedOnboarding ? (
+                    {hasCompletedOnboarding ? (
+                      <Route path="/*" element={<MainAppLayout />} />
+                    ) : (
                       <>
                         <Route
                           path="/settings/*"
@@ -494,8 +501,6 @@ export default function Default() {
                           element={<RecoverPlayerWithFeatureToggle />}
                         />
                       </>
-                    ) : (
-                      <Route path="/*" element={<MainAppLayout />} />
                     )}
                   </Routes>
                 </ContextMenuWrapper>

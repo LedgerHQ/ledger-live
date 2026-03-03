@@ -4,9 +4,9 @@ import {
   Block,
   BlockInfo,
   FeeEstimation,
+  ListOperationsOptions,
   MemoNotSupported,
   Operation,
-  Pagination,
   TransactionIntent,
   Cursor,
   Page,
@@ -82,9 +82,8 @@ export function createApi(
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
-      pagination: Pagination,
-    ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination),
+      options: ListOperationsOptions,
+    ): Promise<Page<Operation<MemoNotSupported>>> => listOperations(currency, address, options),
     getBlock: (height: number): Promise<Block> => getBlock(currency, height),
     getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
     getStakes(_address: string): Promise<Page<Stake>> {

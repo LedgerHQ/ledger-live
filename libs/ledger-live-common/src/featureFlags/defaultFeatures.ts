@@ -61,7 +61,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
-  currencyOnomy: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
@@ -741,7 +740,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
-  llmHomescreen: DEFAULT_FEATURE,
+  llmHomescreen: {
+    enabled: true,
+  },
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
@@ -787,6 +788,7 @@ export const DEFAULT_FEATURES: Features = {
       mainNavigation: true,
       lazyOnboarding: true,
       balanceRefreshRework: true,
+      assetSection: true,
     },
   },
   lwdWallet40: {
@@ -800,6 +802,7 @@ export const DEFAULT_FEATURES: Features = {
       lazyOnboarding: true,
       newReceiveDialog: true,
       balanceRefreshRework: true,
+      assetSection: true,
     },
   },
   addressPoisoningOperationsFilter: {

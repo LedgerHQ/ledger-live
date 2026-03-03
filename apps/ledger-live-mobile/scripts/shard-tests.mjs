@@ -33,7 +33,7 @@ function findTestFiles(dir) {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         results = results.concat(findTestFiles(fullPath));
-      } else if (entry.name.endsWith(".spec.ts")) {
+      } else if (entry.name.endsWith(".spec.ts") && !entry.name.endsWith(".skip.spec.ts")) {
         results.push(fullPath);
       }
     }

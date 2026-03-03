@@ -20,7 +20,6 @@ import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
-import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
@@ -33,6 +32,7 @@ interface UsePortfolioViewModelResult {
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
   shouldDisplayQuickActionCtas: boolean;
+  shouldDisplayWallet40MainNav: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -43,7 +43,6 @@ interface UsePortfolioViewModelResult {
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
   goToAnalyticsAllocations: () => void;
-  shouldDisplayWallet40MainNav: boolean;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -59,7 +58,6 @@ const usePortfolioViewModel = (navigation: {
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
-  useListenToHidDevices();
   const isFocused = useIsFocused();
   const { backgroundColor } = useWallet40Theme("mobile");
 
@@ -139,6 +137,7 @@ const usePortfolioViewModel = (navigation: {
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
+    shouldDisplayWallet40MainNav,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -149,7 +148,6 @@ const usePortfolioViewModel = (navigation: {
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
-    shouldDisplayWallet40MainNav,
   };
 };
 

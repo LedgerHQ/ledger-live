@@ -44,7 +44,7 @@ export const fetchAccounts =
     dispatch(initAccounts(data));
   };
 
-type UpdateAccountAction = {
+export type UpdateAccountAction = {
   type: string;
   payload: { updater: (account: Account) => Account; accountId?: string };
 };

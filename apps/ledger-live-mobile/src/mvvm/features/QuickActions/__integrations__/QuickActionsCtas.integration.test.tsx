@@ -58,7 +58,7 @@ describe("QuickActionsCtas Integration Tests", () => {
       expect(buyButton).toBeVisible();
     });
 
-    it("should enable transfer but disable swap when user has no funds", async () => {
+    it("should enable all buttons when user has no funds", async () => {
       render(<TestQuickActionsWrapper />, {
         overrideInitialState: overrideStateWithoutFunds,
       });
@@ -66,7 +66,7 @@ describe("QuickActionsCtas Integration Tests", () => {
       const { transferButton, swapButton, buyButton } = await getCtaButtons();
 
       expect(transferButton).toBeEnabled();
-      expect(swapButton).toBeDisabled();
+      expect(swapButton).toBeEnabled();
       expect(buyButton).toBeEnabled();
     });
 

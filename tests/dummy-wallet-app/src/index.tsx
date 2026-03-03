@@ -1,14 +1,16 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { TransportProvider } from "./TransportProvider";
 
-ReactDOM.render(
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Root element not found");
+
+createRoot(rootElement).render(
   <TransportProvider>
     <React.StrictMode>
       <App />
     </React.StrictMode>
   </TransportProvider>,
-  document.getElementById("root"),
 );

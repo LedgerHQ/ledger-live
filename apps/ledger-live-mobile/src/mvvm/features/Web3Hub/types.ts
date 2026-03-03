@@ -1,3 +1,4 @@
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BaseComposite, MainComposite } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -12,7 +13,6 @@ export type Web3HubTabScreenProps<T extends keyof Web3HubTabStackParamList> = Ma
 
 export type Web3HubStackParamList = {
   [ScreenName.Web3HubSearch]: undefined;
-  [ScreenName.Web3HubTabs]: undefined;
   [ScreenName.Web3HubApp]: {
     manifestId: string;
     queryParams?: Record<string, string | undefined>;
@@ -29,18 +29,13 @@ export type SearchProps = Web3HubScreenProps<ScreenName.Web3HubSearch>;
 
 export type AppProps = Web3HubScreenProps<ScreenName.Web3HubApp>;
 
-export type TabsProps = Web3HubScreenProps<ScreenName.Web3HubTabs>;
-
 export type Web3HubDB = {
   recentlyUsed: RecentlyUsed[];
   dismissedManifests: DismissedManifests;
   // localLiveApp: LiveAppManifest[];
 };
 
-export type RecentlyUsed = {
-  id: string;
-  usedAt: string;
-};
+export type RecentlyUsed = AppManifest;
 
 export type DismissedManifests = {
   [id: string]: boolean;

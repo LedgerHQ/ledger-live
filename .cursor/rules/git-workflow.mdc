@@ -1,6 +1,6 @@
 ---
 description: Git workflow and commit conventions for Ledger Wallet
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Git Workflow & Commit Conventions

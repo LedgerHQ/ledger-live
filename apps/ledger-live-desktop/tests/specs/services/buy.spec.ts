@@ -69,11 +69,12 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
       .toHaveScreenshot("buy-app-opened.png", { mask: [page.locator("webview")] });
   });
 
-  await test.step("Navigate to Buy app from market", async () => {
+  await test.step("Navigate to Buy app from market with account selection", async () => {
     await layout.goToMarket();
-    await marketPage.openBuyPage("usdt");
+    await marketPage.openBuyPageWithAccountSelection("usdt", "Ethereum 2");
     await liveAppWebview.waitForText("theme: dark");
     await liveAppWebview.waitForText("currency: ethereum/erc20/usd_tether__erc20_");
+    await liveAppWebview.waitForText("account: mock:1:ethereum:true_ethereum_1:");
     await liveAppWebview.waitForText("mode: buy");
     await liveAppWebview.waitForText("lang: en");
     await liveAppWebview.waitForText("locale: en-US");

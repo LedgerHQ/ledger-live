@@ -13,6 +13,8 @@ import {
 import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
+import { track } from "~/analytics";
+import { LABELKEY_MAP, TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "./constants";
 
 type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
 
@@ -29,14 +31,6 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
   [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
 };
-
-const LABELKEY_MAP: Partial<Record<string, string>> = {
-  [NavigatorName.Portfolio]: "mainNavigation.home",
-  [NavigatorName.Swap]: "mainNavigation.swap",
-  [NavigatorName.Earn]: "mainNavigation.earn",
-  [NavigatorName.CardTab]: "mainNavigation.card",
-};
-
 export const useMainTabBarViewModel = ({
   state,
   navigation,
@@ -57,7 +51,16 @@ export const useMainTabBarViewModel = ({
   const onTabPress = useCallback(
     (value: string) => {
       const targetRoute = state.routes.find(route => route.name === value);
+      const currentRoute = state.routes[state.index].name;
       if (!targetRoute) return;
+
+      const trackingLabel = TRACKING_LABEL_MAP[targetRoute.name];
+      const trackingSource = TRACKING_LABEL_MAP[currentRoute];
+
+      track(TRACKING_MENUENTRY_EVENT, {
+        entry: trackingLabel ?? value,
+        page: trackingSource,
+      });
 
       const event = navigation.emit({
         type: "tabPress",
@@ -71,7 +74,7 @@ export const useMainTabBarViewModel = ({
         navigation.navigate(value);
       }
     },
-    [state.routes, navigation, activeRouteName],
+    [state, navigation, activeRouteName],
   );
 
   return { activeRouteName, tabItems, onTabPress };

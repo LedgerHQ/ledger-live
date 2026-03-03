@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Acheter un appareil",
     "setupCta" : "J’ai un appareil Ledger, je le configure"
   },
+  "rebornBuyDevice" : {
+    "title" : "Connectez un appareil Ledger",
+    "desc" : "Libérez toute la puissance de Ledger Wallet en connectant un appareil Ledger.",
+    "0" : {
+      "title" : "Contrôle absolu",
+      "desc" : "Vos clés privées ne quittent jamais votre appareil."
+    },
+    "1" : {
+      "title" : "Opérations sécurisées",
+      "desc" : "Vérifiez les détails de vos transactions sur un écran sécurisé."
+    },
+    "2" : {
+      "title" : "Wallet ultra-puissant",
+      "desc" : "Gérez des milliers d’actifs au même endroit."
+    },
+    "cta" : "Connecter",
+    "buyCta" : "Acheter un appareil"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Avez-vous déjà votre appareil Ledger ?",
     "desc" : "Dès que vous recevez votre Ledger, configurez-le pour découvrir toutes les fonctionnalités de l’application Ledger Wallet.",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "Solde total",
     "balance" : {
       "noSigner" : "Le wallet le plus\nsécurisé",
-      "noFund" : "Sécurisez\nvos cryptos"
+      "noAccounts" : "Sécurisez\nvos cryptos"
     },
     "seeAllAssets" : "Voir tous les actifs",
     "seeAllAccounts" : "Voir tous les comptes",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "Entrer l’adresse",
       "editRecipientAccessibilityLabel" : "Modifier le bénéficiaire",
       "recent" : "Récent",
+      "recentDetail" : "Détails",
       "myAccounts" : "Mes comptes",
+      "account" : "Compte",
       "sendTo" : "Envoyer à {{address}}",
       "addressMatched" : "Adresse correspondante",
       "addressNotFound" : "Adresse introuvable",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "Échec de l’actualisation des frais de réseau",
         "warningDescription" : "Les frais prédéfinis peuvent ne plus être à jour."
+      },
+      "customFees" : {
+        "title" : "Modifier les frais",
+        "confirm" : "Confirmer",
+        "maxFee" : "Frais maximaux ({{unit}})",
+        "maxPriorityFee" : "Frais de priorité maximaux ({{unit}})",
+        "gasLimit" : "Limite de gaz ({{unit}})",
+        "feePerByte" : "Montant des frais ({{unit}})",
+        "suggested" : "Suggéré",
+        "nextBlock" : "Bloc suivant",
+        "networkFeesInFiat" : "Frais de réseau en {{currency}}",
+        "invalidValue" : "Saisissez un nombre valide",
+        "belowMinimum" : "Minimum : {{min}}",
+        "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
+      },
+      "coinControl" : {
+        "title" : "Contrôle des coins"
       }
     },
     "pendingTxWarning" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées.",
@@ -4283,7 +4320,8 @@
       "useMax" : "Maximum",
       "loadingNetwork" : "Chargement des frais de réseau…",
       "noRateProvider" : "Indisponible",
-      "quantityAvailable" : "Quantité disponible"
+      "quantityAvailable" : "Quantité disponible",
+      "toggleCurrency" : "Inverser la monnaie"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "Des frais sont requis.",
       "chooseGas" : "Choisissez un prix de gaz.",
       "higherFaster" : "Un prix de gaz plus élevé se traduit par une confirmation plus rapide.",
+      "medium" : "Moyen",
+      "fast" : "Rapide",
+      "slow" : "Lent",
+      "custom" : "Personnalisé",
+      "customFees" : "Modifier les frais",
+      "coinControl" : "Contrôle des coins",
       "edit" : {
         "title" : "Choisir une unité"
       },
@@ -7241,7 +7285,8 @@
         "website" : "Site"
       },
       "back" : {
-        "card" : "toutes les cartes"
+        "card" : "toutes les cartes",
+        "cardTab" : "Carte"
       }
     }
   },
@@ -8517,21 +8562,21 @@
     "title" : "Découvrez votre nouveau portefeuille",
     "slides" : {
       "portfolio" : {
-        "title" : "Votre portefeuille, réinventé",
-        "description" : "Nous avons simplifié votre écran d’accueil. Vous cherchez vos graphiques ? Appuyez sous votre solde."
+        "title" : "Un vue plus claire de votre portefeuille",
+        "description" : "Consultez votre solde total d’un coup d’œil, et appuyez sur « Aujourd’hui » pour plus d’informations."
       },
       "navigation" : {
-        "title" : "Tout est parfaitement organisé",
-        "description" : "My Ledger et Discover sont désormais en haut. Swap et Carte sont en bas, pour un accès plus rapide."
+        "title" : "Accédez instantanément aux actions clés",
+        "description" : "Échangez, transférez et achetez des actifs en toute simplicité. Les sections Gagner et Carte se trouvent désormais en bas de votre app."
       },
       "actions" : {
-        "title" : "Suivez le rythme du marché",
-        "description" : "Repérez les tendances grâce à la nouvelle bannière et optimisez vos trades sans attendre."
+        "title" : "Suivez l’évolution des marchés",
+        "description" : "Visualisez les tendances au sein de votre portefeuille et agissez sans attendre."
       }
     },
     "cta" : {
-      "continue" : "Continuer",
-      "explore" : "Explorer"
+      "continue" : "Suivant",
+      "explore" : "Découvrir mon nouveau portefeuille"
     }
   },
   "mainNavigation" : {

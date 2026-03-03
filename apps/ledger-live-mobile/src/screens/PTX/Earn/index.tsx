@@ -25,12 +25,10 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { EarnBackground } from "./EarnBackground";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
-import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
+import { EarnV2Webview } from "./EarnV2Webview";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -47,7 +45,6 @@ export const EarnScreen = memo(Earn);
 function Earn({ route }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
-  const insets = useSafeAreaInsets();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
@@ -63,8 +60,6 @@ function Earn({ route }: Props) {
 
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
-  const earnUiFlag = useFeature("ptxEarnUi");
-  const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
   const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("mobile");
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
@@ -92,9 +87,7 @@ function Earn({ route }: Props) {
   if (!remoteLiveAppState.isLoading && !manifest) {
     console.error(appManifestNotFoundError);
   }
-
   const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
-  const isPtxUiV2 = earnUiVersion === "v2" || earnUiVersion === "2";
 
   const webviewInputs = useMemo(
     () => ({
@@ -111,13 +104,7 @@ function Earn({ route }: Props) {
         : undefined,
       OS: Platform.OS,
       ethDepositCohort,
-      uiVersion: earnUiVersion,
-      safeAreaTop: insets.top.toString(),
-      safeAreaBottom: insets.bottom.toString(),
-      safeAreaLeft: insets.left.toString(),
-      safeAreaRight: insets.right.toString(),
-      navigationHeightOffset: TAB_BAR_HEIGHT.toString(),
-      lw40enabled: isLwm40Enabled ? "true" : "false",
+      uiVersion: "v1",
       ...params,
       ...Object.fromEntries(searchParams.entries()),
     }),
@@ -131,14 +118,8 @@ function Earn({ route }: Props) {
       stakeProgramsParam,
       stakeCurrenciesParam,
       ethDepositCohort,
-      earnUiVersion,
       params,
       searchParams,
-      insets.top,
-      insets.bottom,
-      insets.left,
-      insets.right,
-      isLwm40Enabled,
     ],
   );
 
@@ -149,27 +130,13 @@ function Earn({ route }: Props) {
       lastKnownManifest = undefined;
     }
     return (
-      <View style={{ flex: 1, overflow: "visible" }}>
-        {isPtxUiV2 && !hideMainNavigator && <EarnBackground />}
-        <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
-          {displayManifest ? (
-            <Fragment>
-              <TrackScreen category="EarnDashboard" name="Earn" />
-              <EarnWebview
-                manifest={displayManifest}
-                inputs={webviewInputs}
-                isLwm40Enabled={isLwm40Enabled}
-              />
-            </Fragment>
-          ) : (
-            !remoteLiveAppState.isLoading && ( // if the manifest is not found, show the error screen
-              <Flex flex={1} p={10} justifyContent="center" alignItems="center">
-                <GenericErrorView error={appManifestNotFoundError} />
-              </Flex>
-            )
-          )}
-        </View>
-      </View>
+      <EarnV2Webview
+        manifest={displayManifest}
+        inputs={webviewInputs}
+        isLwm40Enabled={isLwm40Enabled}
+        hideMainNavigator={hideMainNavigator}
+        appManifestNotFoundError={appManifestNotFoundError}
+      />
     );
   }
   /** V1: no background */

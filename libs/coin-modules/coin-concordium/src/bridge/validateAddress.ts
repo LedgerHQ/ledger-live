@@ -1,9 +1,9 @@
 import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
-import { isRecipientValid } from "../common-logic";
+import { AccountAddress } from "@ledgerhq/concordium-core";
 
 export async function validateAddress(
   address: string,
   _parameters: Partial<AddressValidationCurrencyParameters>,
 ): Promise<boolean> {
-  return isRecipientValid(address);
+  return AccountAddress.isValid(address);
 }

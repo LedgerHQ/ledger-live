@@ -68,9 +68,9 @@
       "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "babel-plugin-inject-collapsable.js"],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
-        "@react-native/gradle-plugin",
-        "@react-native/metro-config",
         "@react-native/assets-registry",
+        "@react-native/community-cli-plugin",
+        "@react-native/gradle-plugin",
         "asyncstorage-down",
         "buffer",
         "expo-crypto",
@@ -155,6 +155,9 @@
       "ignore": ["scripts/**", "index.js"]
     },
     "./libs/ledgerjs/packages/react-native-hid": {
+      "entry": ["src/index.ts"]
+    },
+    "./libs/asset-aggregation": {
       "entry": ["src/index.ts"]
     }
   }

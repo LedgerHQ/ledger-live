@@ -1,4 +1,5 @@
 import React from "react";
+import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { AmountScreenViewProps } from "../types";
 import { AmountFooter } from "./AmountFooter";
 import { AmountInputSection } from "./AmountInputSection";
@@ -33,40 +34,44 @@ export function AmountScreenView({
   onGetFunds,
 }: AmountScreenViewProps) {
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex flex-1 flex-col gap-24">
-        <AmountInputSection
-          amountValue={amountValue}
-          amountInputMaxDecimalLength={amountInputMaxDecimalLength}
-          currencyText={currencyText}
-          currencyPosition={currencyPosition}
-          isInputDisabled={isInputDisabled}
-          onAmountChange={onAmountChange}
-          onToggleInputMode={onToggleInputMode}
-          toggleLabel={toggleLabel}
-          secondaryValue={secondaryValue}
-          amountMessage={amountMessage}
+    <DialogBody className="py-16">
+      <div className="flex h-full flex-col" data-testid="send-amount-step">
+        <div className="flex flex-1 flex-col gap-24">
+          <AmountInputSection
+            amountValue={amountValue}
+            amountInputMaxDecimalLength={amountInputMaxDecimalLength}
+            currencyText={currencyText}
+            currencyPosition={currencyPosition}
+            isInputDisabled={isInputDisabled}
+            onAmountChange={onAmountChange}
+            onToggleInputMode={onToggleInputMode}
+            toggleLabel={toggleLabel}
+            secondaryValue={secondaryValue}
+            amountMessage={amountMessage}
+          />
+
+          {showQuickActions ? <QuickActionsRow actions={quickActions} /> : null}
+        </div>
+
+        <AmountFooter
+          feesRowLabel={feesRowLabel}
+          feesRowValue={feesRowValue}
+          feesRowStrategyLabel={feesRowStrategyLabel}
+          selectedFeeStrategy={selectedFeeStrategy}
+          feePresetOptions={feePresetOptions}
+          fiatByPreset={fiatByPreset}
+          legendByPreset={legendByPreset}
+          onSelectFeeStrategy={onSelectFeeStrategy}
+          onSelectCustomFees={() => {}}
+          onSelectCoinControl={() => {}}
+          reviewLabel={reviewLabel}
+          reviewShowIcon={reviewShowIcon}
+          reviewDisabled={reviewDisabled}
+          reviewLoading={reviewLoading}
+          onReview={onReview}
+          onGetFunds={onGetFunds}
         />
-
-        {showQuickActions ? <QuickActionsRow actions={quickActions} /> : null}
       </div>
-
-      <AmountFooter
-        feesRowLabel={feesRowLabel}
-        feesRowValue={feesRowValue}
-        feesRowStrategyLabel={feesRowStrategyLabel}
-        selectedFeeStrategy={selectedFeeStrategy}
-        feePresetOptions={feePresetOptions}
-        fiatByPreset={fiatByPreset}
-        legendByPreset={legendByPreset}
-        onSelectFeeStrategy={onSelectFeeStrategy}
-        reviewLabel={reviewLabel}
-        reviewShowIcon={reviewShowIcon}
-        reviewDisabled={reviewDisabled}
-        reviewLoading={reviewLoading}
-        onReview={onReview}
-        onGetFunds={onGetFunds}
-      />
-    </div>
+    </DialogBody>
   );
 }

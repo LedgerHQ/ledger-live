@@ -6,7 +6,7 @@ import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
-import { Linking, StyleSheet, View } from "react-native";
+import { Linking, StyleSheet, View, TouchableOpacity } from "react-native";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { urls } from "~/utils/urls";
@@ -16,7 +16,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useNavigation } from "@react-navigation/core";
 import TokenTransferFeesWarning from "./Token2022/TokenTransferFeesWarning";
-import { TouchableOpacity } from "react-native";
 import TranslatedError from "~/components/TranslatedError";
 
 type Props = {

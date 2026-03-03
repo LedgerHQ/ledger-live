@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTheme } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,12 +8,14 @@ import useScrollHandler from "LLM/features/Web3Hub/hooks/useScrollHandler";
 import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
 import SearchList from "./components/SearchList";
 import Header, { TOTAL_HEADER_HEIGHT } from "./components/Header";
+import RecentlyUsed from "./components/RecentlyUsed";
 import { Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 
 export default function Web3HubSearch({ navigation }: SearchProps) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const { layoutY, scrollHandler } = useScrollHandler(TOTAL_HEADER_HEIGHT);
@@ -44,9 +47,22 @@ export default function Web3HubSearch({ navigation }: SearchProps) {
             onScroll={scrollHandler}
             pt={TOTAL_HEADER_HEIGHT}
             headerComponent={
-              <Text mt={5} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
-                {t("web3hub.components.manifestsList.title")}
-              </Text>
+              <>
+                <RecentlyUsed navigation={navigation} />
+                <Text
+                  borderTopWidth={2}
+                  borderTopColor={colors.lightGrey}
+                  pt={5}
+                  mt={15}
+                  mb={5}
+                  numberOfLines={1}
+                  variant="h5"
+                  px={5}
+                  accessibilityRole="header"
+                >
+                  {t("web3hub.components.manifestsList.title")}
+                </Text>
+              </>
             }
           />
         )}

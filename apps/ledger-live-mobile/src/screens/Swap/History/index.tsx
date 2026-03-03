@@ -17,6 +17,7 @@ import {
   StyleSheet,
   Pressable,
   View,
+  Text,
 } from "react-native";
 import Share from "react-native-share";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -34,7 +35,6 @@ import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 import { getEnv } from "@ledgerhq/live-env";
 import { sendFile } from "../../../../e2e/bridge/client";
-import { Text } from "react-native";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
 import SafeAreaView from "~/components/SafeAreaView";
 

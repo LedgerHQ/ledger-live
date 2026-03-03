@@ -26,7 +26,7 @@ export default {
   },
 };
 
-export function StatusNotifications(args: Props & { active: boolean }): JSX.Element {
+export function StatusNotifications(args: Props & { active: boolean }): React.JSX.Element {
   const { ...props } = args;
 
   const warningBadge = <Icon name="Warning" size={50} color="error.c50" weight="Medium" />;

@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Ledger 구매",
     "setupCta" : "이미 Ledger가 있습니다. 설정을 진행합니다"
   },
+  "rebornBuyDevice" : {
+    "title" : "Ledger 장치를 연결하세요",
+    "desc" : "Ledger 장치를 연결하여 Ledger Wallet의 모든 기능을 온전히 누려보세요.",
+    "0" : {
+      "title" : "완전한 소유권",
+      "desc" : "개인 키는 어떤 경우에도 장치 외부로 유출되지 않습니다."
+    },
+    "1" : {
+      "title" : "안전한 거래",
+      "desc" : "안전한 보안 화면에서 트랜잭션을 명확히 확인하세요."
+    },
+    "2" : {
+      "title" : "가장 강력한 암호화폐 지갑",
+      "desc" : "수천 가지 디지털 자산을 한 곳에서 관리하세요."
+    },
+    "cta" : "연결",
+    "buyCta" : "Ledger 장치 구매하기"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Ledger를 받으셨나요?",
     "desc" : "지금 바로 Ledger를 설정하여 Ledger Wallet 앱의 모든 기능을 사용해 보세요.",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "지갑 잔액",
     "balance" : {
       "noSigner" : "가장 안전한\n지갑",
-      "noFund" : "소중한 암호화폐를 안전하게"
+      "noAccounts" : "소중한 암호화폐를 안전하게"
     },
     "seeAllAssets" : "모든 자산 보기",
     "seeAllAccounts" : "모든 계정 보기",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "주소 입력",
       "editRecipientAccessibilityLabel" : "수령인 변경",
       "recent" : "최근",
+      "recentDetail" : "최근 상세 정보",
       "myAccounts" : "내 계정",
+      "account" : "계정",
       "sendTo" : "{{address}}로 보내기",
       "addressMatched" : "주소 일치함",
       "addressNotFound" : "주소를 찾을 수 없음",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "네트워크 수수료를 새로고침할 수 없습니다",
         "warningDescription" : "수수료 설정이 만료되었을 수 있습니다."
+      },
+      "customFees" : {
+        "title" : "맞춤형 수수료",
+        "confirm" : "확인",
+        "maxFee" : "최대 수수료({{unit}})",
+        "maxPriorityFee" : "최대 우선 수수료({{unit}})",
+        "gasLimit" : "가스 한도({{unit}})",
+        "feePerByte" : "수수료({{unit}})",
+        "suggested" : "추천",
+        "nextBlock" : "다음 블록",
+        "networkFeesInFiat" : "네트워크 수수료 {{currency}}",
+        "invalidValue" : "유효한 숫자를 입력하세요.",
+        "belowMinimum" : "최소값은 {{min}}입니다",
+        "maxFeeBelowPriorityFee" : "최대 수수료는 최대 우선 수수료보다 크거나 같아야 합니다."
+      },
+      "coinControl" : {
+        "title" : "코인 컨트롤"
       }
     },
     "pendingTxWarning" : "대기 중인 수신 트랜잭션이 있습니다. 대기 중 트랜잭션은 취소될 수 있으니 주의하시기 바랍니다.",
@@ -4283,7 +4320,8 @@
       "useMax" : "최대치 사용",
       "loadingNetwork" : "네트워크 수수료 로딩...",
       "noRateProvider" : "이용할 수 없습니다",
-      "quantityAvailable" : "이용 가능한 수량"
+      "quantityAvailable" : "이용 가능한 수량",
+      "toggleCurrency" : "통화 변경"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "수수료가 필요합니다",
       "chooseGas" : "가스 가격을 선택하세요",
       "higherFaster" : "가스 가격이 높으면 승인이 빨라집니다.",
+      "medium" : "Medium",
+      "fast" : "빠름",
+      "slow" : "느림",
+      "custom" : "커스텀",
+      "customFees" : "맞춤형 수수료",
+      "coinControl" : "코인 컨트롤",
       "edit" : {
         "title" : "단위 선택"
       },
@@ -7241,7 +7285,8 @@
         "website" : "웹사이트"
       },
       "back" : {
-        "card" : "모든 카드"
+        "card" : "모든 카드",
+        "cardTab" : "카드"
       }
     }
   },
@@ -8517,20 +8562,20 @@
     "title" : "새로워진 포트폴리오를 만나보세요",
     "slides" : {
       "portfolio" : {
-        "title" : "완전히 재설계된 포트폴리오",
-        "description" : "깔끔해진 홈 화면을 확인하세요. 그래프가 보이지 않나요? 잔액 바로 아래를 탭하세요."
+        "title" : "내 포트폴리오 한눈에 보기",
+        "description" : "전체 잔액을 한눈에 확인하고, \"오늘(Today)\" 탭을 늘러 상세 내역을 살펴보세요."
       },
       "navigation" : {
-        "title" : "모든 기능을 최적의 위치에서",
-        "description" : "My Ledger와 탐색 메뉴는 상단으로, 스왑과 카드 메뉴는 하단으로 이동했습니다."
+        "title" : "핵심 기능을 더 빠르게",
+        "description" : "스왑, 이체, 매수까지, 즉각적으로. 하단 내비게이션 바에서 수익 창출과 카드 탭을 확인하세요."
       },
       "actions" : {
-        "title" : "시장 속도에 맞는 빠르고 간편한 트랜잭션",
-        "description" : "새로운 배너로 시장 트렌드를 포착하고, 누구보다 빠르고 간편하게 거래하세요."
+        "title" : "즉각적인 시장 트렌드 확인",
+        "description" : "포트폴리오에서 시장 동향을 빠르게 확인하고 데이터를 바탕으로 신속하게 대응하세요."
       }
     },
     "cta" : {
-      "continue" : "계속",
+      "continue" : "다음",
       "explore" : "새로워진 포트폴리오 살펴보기"
     }
   },

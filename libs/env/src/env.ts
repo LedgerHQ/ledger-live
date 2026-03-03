@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  JS_THREAD_MONITOR: {
+    def: false,
+    parser: boolParser,
+    desc: "Show JS thread stall monitor overlay",
+  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
@@ -272,6 +277,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Thirdweb API for Hedera",
   },
+  API_HEDERA_HGRAPH: {
+    def: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
+    parser: stringParser,
+    desc: "Hgraph API for Hedera (ERC20 data source)",
+  },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,
@@ -283,7 +293,7 @@ const envDefinitions = {
     desc: "Aleo mainnet node URL",
   },
   ALEO_MAINNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
+    def: "https://aleo-backend.api.live.ledger-test.com/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
   },
@@ -293,7 +303,7 @@ const envDefinitions = {
     desc: "Aleo testnet node URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
+    def: "https://aleo-backend.api.live.ledger-test.com/network/testnet",
     parser: stringParser,
     desc: "Aleo testnet SDK URL",
   },
@@ -323,7 +333,7 @@ const envDefinitions = {
     desc: "Cardano API url",
   },
   CARDANO_TESTNET_API_ENDPOINT: {
-    def: "https://testnet-ledger.cardanoscan.io/api",
+    def: "https://ledger-preprod.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
   },
@@ -903,15 +913,20 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  WALLETCONNECT_PROJECT_ID: {
+    def: "053f3301d5f72cf59dbab8ebeab71f23",
+    parser: stringParser,
+    desc: "WalletConnect Project ID",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
     desc: "true when launched for E2E testing",
   },
-  MARKET_API_URL: {
+  COINGECKO_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
-    desc: "Market data api",
+    desc: "Coingecko API",
   },
   USE_LEARN_STAGING_URL: {
     def: false,

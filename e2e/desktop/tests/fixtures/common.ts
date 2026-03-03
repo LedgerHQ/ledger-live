@@ -10,6 +10,7 @@ import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
+import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
@@ -45,7 +46,7 @@ type TestFixtures = {
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-const SPECULOS_ADDRESS = process.env.SPECULOS_ADDRESS || "http://localhost";
+const getSpeculosAddress = () => process.env.SPECULOS_ADDRESS || "http://localhost";
 
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
@@ -151,7 +152,7 @@ export const test = base.extend<TestFixtures>({
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
             speculos = await launchSpeculos(app.name);
-            CLI.registerSpeculosTransport(speculos.port.toString(), SPECULOS_ADDRESS);
+            CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
             await executeCliCommand(cmd, userdataDestinationPath);
             await killSpeculos(speculos.id);
           }
@@ -160,7 +161,7 @@ export const test = base.extend<TestFixtures>({
         speculos = await launchSpeculos(speculosApp.name, testInfo.title);
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculos.port.toString(), SPECULOS_ADDRESS);
+          CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
           for (const cmd of cliCommands) {
             await executeCliCommand(cmd, userdataDestinationPath);
           }
@@ -184,6 +185,7 @@ export const test = base.extend<TestFixtures>({
           FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          SPECULOS_ADDRESS: IS_NOT_MOCK ? getSpeculosAddress() : undefined,
         },
         env,
       );
@@ -243,6 +245,10 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
+    // capture webview console and network logs for debugging (e.g. swap live app)
+    const webviewCollector = new WebviewLogCollector();
+    webviewCollector.start(electronApp);
+
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
@@ -252,10 +258,10 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      await captureArtifacts(page, testInfo, electronApp);
+      await captureArtifacts(page, testInfo, electronApp, webviewCollector);
     }
 
-    //Remove video if test passed
+    // Remove video if test passed
     if (testInfo.status === "passed") {
       await electronApp.close();
       await page.video()?.delete();

@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import { FAMILIES } from "@ledgerhq/live-app-sdk";
-import { RippleTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
+import { FAMILIES, RippleTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import { Transaction } from "@ledgerhq/coin-xrp/types";
 import xrp from "./platformAdapter";
 

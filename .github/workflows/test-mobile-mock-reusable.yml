@@ -124,8 +124,8 @@ jobs:
           echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-2" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-2" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
           echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
 
       - name: Generate shards matrix and test files
@@ -252,6 +252,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SEED: ${{ vars.SEED_QAA_B2C }}
+      JEST_MAX_WORKERS: ${{ contains(inputs.macos-specificity-runner-label, 'performance-pool') && '2' || '1' }}
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -389,6 +390,7 @@ jobs:
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      JEST_MAX_WORKERS: "2"
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
       status_2: ${{ steps.set-output.outputs.status_2 }}
@@ -550,6 +552,13 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+
+      - name: Duplicate AVDs for parallel testing
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        with:
+          source_avd_name: ${{ env.AVD_NAME }}
+          target_suffixes: "_2"
+          avd_api: ${{ env.AVD_API }}
 
       - name: Run Android Tests
         id: detox

@@ -3,7 +3,7 @@ import { Skeleton } from "@ledgerhq/lumen-ui-react";
 
 export function LoadingState() {
   return (
-    <div className="flex items-center py-12">
+    <div className="flex items-center py-12" data-testid="send-loading-spinner">
       <Skeleton className="mr-14 size-48 rounded-full" />
       <div className="flex flex-1 flex-col gap-8">
         <Skeleton className="h-12 w-176 pb-12" />

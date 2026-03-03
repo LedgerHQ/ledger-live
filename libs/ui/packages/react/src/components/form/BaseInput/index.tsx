@@ -44,8 +44,9 @@ export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> 
   deserialize?: (value: ValueType) => T;
 };
 
-export type InputContainerProps = React.ComponentProps<typeof InputContainer>;
-export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
+type InputContainerStyledProps = Partial<CommonProps> & { focus?: boolean };
+export type InputContainerProps = InputContainerStyledProps & React.HTMLAttributes<HTMLDivElement>;
+export const InputContainer = styled.div<InputContainerStyledProps>`
   display: flex;
   height: 48px;
   border: ${p => `1px solid ${p.theme.colors.neutral.c40}`};
@@ -54,45 +55,43 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
   color: ${p => p.theme.colors.neutral.c100};
 
   ${p =>
-    p.focus &&
-    !p.error &&
-    !p.warning &&
-    css`
-      border: 1px solid ${p.theme.colors.primary.c80};
-      box-shadow: 0 0 0 4px ${rgba(p.theme.colors.primary.c60, 0.4)};
-    `};
+    p.focus && !p.error && !p.warning
+      ? css`
+          border: 1px solid ${p.theme.colors.primary.c80};
+          box-shadow: 0 0 0 4px ${rgba(p.theme.colors.primary.c60, 0.4)};
+        `
+      : undefined};
 
   ${p =>
-    p.error &&
-    !p.disabled &&
-    css`
-      border: 1px solid ${p.theme.colors.error.c50};
-    `};
+    p.error && !p.disabled
+      ? css`
+          border: 1px solid ${p.theme.colors.error.c50};
+        `
+      : undefined};
 
   ${p =>
-    !p.error &&
-    p.warning &&
-    !p.disabled &&
-    css`
-      border: 1px solid ${p.theme.colors.warning.c40};
-    `};
+    !p.error && p.warning && !p.disabled
+      ? css`
+          border: 1px solid ${p.theme.colors.warning.c40};
+        `
+      : undefined};
 
   ${p =>
-    !p.error &&
-    !p.warning &&
-    !p.disabled &&
-    css`
-      &:hover {
-        border: ${!p.disabled && `1px solid ${p.theme.colors.primary.c80}`};
-      }
-    `};
+    !p.error && !p.warning && !p.disabled
+      ? css`
+          &:hover {
+            border: ${!p.disabled && `1px solid ${p.theme.colors.primary.c80}`};
+          }
+        `
+      : undefined};
 
   ${p =>
-    p.disabled &&
-    css`
-      color: ${p.theme.colors.neutral.c60};
-      background: ${p => p.theme.colors.neutral.c20};
-    `};
+    p.disabled
+      ? css`
+          color: ${p.theme.colors.neutral.c60};
+          background: ${p => p.theme.colors.neutral.c20};
+        `
+      : undefined};
 `;
 
 export const BaseInput = styled.input.attrs<
@@ -167,7 +166,7 @@ const IDENTITY = (_: any): any => _;
 function Input<T = ValueType>(
   props: InputProps<T>,
   ref?: React.ForwardedRef<HTMLInputElement>,
-): JSX.Element {
+): React.JSX.Element {
   const { colors } = useTheme();
   const {
     value,

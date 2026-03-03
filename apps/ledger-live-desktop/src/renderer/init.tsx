@@ -1,3 +1,4 @@
+import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
@@ -8,15 +9,11 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
-// We can't use new createRoot for now. We have issues we react-redux 7.x and lazy load of components
-// https://github.com/reduxjs/react-redux/issues/1977
-// eslint-disable-next-line react/no-deprecated
-import { render } from "react-dom";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
 import "~/renderer/styles/global";
-import "~/renderer/live-common-setup";
+import { registerTransportModules } from "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -54,7 +51,6 @@ import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
-import { registerTransportModules } from "~/renderer/live-common-setup";
 import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
@@ -309,10 +305,9 @@ async function init() {
     },
   };
 }
+const root = rootNode ? createRoot(rootNode) : null;
 function r(Comp: React.JSX.Element) {
-  if (rootNode) {
-    render(Comp, rootNode);
-  }
+  root?.render(Comp);
 }
 
 init()
