@@ -341,6 +341,13 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
   return new Date(parseInt(transaction.timestampMs!));
 };
 
+/**
+ * Extract the fees payer from transaction (gasData.owner).
+ * For sponsored transactions this is the sponsor; otherwise it is the sender.
+ */
+export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string | undefined =>
+  transaction.transaction?.data?.gasData?.owner || undefined;
+
 export const getStakesRaw = (owner: string) =>
   withApi(async api => {
     return api.getStakes({ owner });
@@ -449,9 +456,7 @@ export function alpacaTransactionToOp(
   const blockHash =
     checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
-  // SUI supports sponsored transactions where gasData.owner can differ from sender.
-  // If sponsored transactions need to be supported in the future, use gasData.owner instead.
-  const feesPayer = transaction.transaction?.data.sender || undefined;
+  const feesPayer = getFeesPayer(transaction);
 
   const op: Op = {
     id: hash,
@@ -530,7 +535,7 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
         toBlockOperation(transaction, change, operationFee),
       ) || [],
     fees: BigInt(operationFee.toString()),
-    feesPayer: transaction.transaction?.data.sender || "",
+    feesPayer: getFeesPayer(transaction) ?? "",
   };
 }
 
