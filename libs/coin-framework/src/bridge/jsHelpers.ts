@@ -400,7 +400,7 @@ export const makeScanAccounts =
         res: Result,
         derivationMode: DerivationMode,
         seedIdentifier: string,
-      ): Observable<Account | null | undefined> {
+      ): Observable<Account | null> {
         if (finished) return of(null);
 
         const { address, path: freshAddressPath, ...rest } = res;
