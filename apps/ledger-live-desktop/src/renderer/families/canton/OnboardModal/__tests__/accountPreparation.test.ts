@@ -135,7 +135,6 @@ describe("accountPreparation", () => {
 
       const result = prepareAccountsForAdding({
         selectedAccounts: [accountToReonboard],
-        existingAccounts: [],
         editedNames: {},
         isReonboarding: true,
         accountToReonboard,
@@ -153,7 +152,6 @@ describe("accountPreparation", () => {
 
       const result = prepareAccountsForAdding({
         selectedAccounts: [used, unused],
-        existingAccounts: [],
         editedNames: {},
         onboardingResult: { completedAccount: completed },
       });

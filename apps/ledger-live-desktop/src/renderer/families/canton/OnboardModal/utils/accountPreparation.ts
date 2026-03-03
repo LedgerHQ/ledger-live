@@ -4,7 +4,6 @@ import { Account } from "@ledgerhq/types-live";
 
 export type AddAccountsConfig = {
   selectedAccounts: Account[];
-  existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
   isReonboarding?: boolean;
   accountToReonboard?: Account;

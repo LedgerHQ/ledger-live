@@ -82,8 +82,8 @@ export function useOnboardModalViewModel({
   }, [transitionTo]);
 
   const { startOnboarding, authorizePreapproval, unsubscribe } = useCantonBridge({
-    bridge: bridge!,
-    currency: currency!,
+    bridge,
+    currency,
     device,
     accountToOnboard: creatableAccount,
     setOnboardingStatus,
@@ -97,7 +97,7 @@ export function useOnboardModalViewModel({
   });
 
   const { handleAddAccounts, handleAddMore } = useOnboardingNavigation({
-    currency: currency!,
+    currency,
     selectedAccounts,
     existingAccounts,
     editedNames,

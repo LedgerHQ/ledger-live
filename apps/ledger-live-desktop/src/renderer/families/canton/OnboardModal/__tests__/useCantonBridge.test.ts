@@ -67,6 +67,26 @@ describe("useCantonBridge", () => {
       expect(mockBridge.onboardAccount).not.toHaveBeenCalled();
     });
 
+    it("should not start onboarding if bridge is null", () => {
+      const { result } = renderHook(() => useCantonBridge({ ...defaultParams(), bridge: null }));
+
+      act(() => {
+        result.current.startOnboarding();
+      });
+
+      expect(mockSetOnboardingStatus).not.toHaveBeenCalled();
+    });
+
+    it("should not start onboarding if currency is null", () => {
+      const { result } = renderHook(() => useCantonBridge({ ...defaultParams(), currency: null }));
+
+      act(() => {
+        result.current.startOnboarding();
+      });
+
+      expect(mockSetOnboardingStatus).not.toHaveBeenCalled();
+    });
+
     it("should not start onboarding if accountToOnboard is undefined", () => {
       const mockBridge = createMockBridge();
       const { result } = renderHook(() =>
@@ -194,6 +214,30 @@ describe("useCantonBridge", () => {
       });
 
       expect(mockBridge.authorizePreapproval).not.toHaveBeenCalled();
+    });
+
+    it("should not authorize if bridge is null", () => {
+      const onboardingResult = createMockOnboardingResult();
+
+      const { result } = renderHook(() => useCantonBridge({ ...defaultParams(), bridge: null }));
+
+      act(() => {
+        result.current.authorizePreapproval(onboardingResult);
+      });
+
+      expect(mockSetAuthorizeStatus).not.toHaveBeenCalled();
+    });
+
+    it("should not authorize if currency is null", () => {
+      const onboardingResult = createMockOnboardingResult();
+
+      const { result } = renderHook(() => useCantonBridge({ ...defaultParams(), currency: null }));
+
+      act(() => {
+        result.current.authorizePreapproval(onboardingResult);
+      });
+
+      expect(mockSetAuthorizeStatus).not.toHaveBeenCalled();
     });
 
     it("should reset error and set PREPARE status when starting authorization", () => {

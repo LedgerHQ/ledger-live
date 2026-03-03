@@ -382,11 +382,9 @@ export const StepImportFooter = ({
   onCloseModal,
   checkedAccountsIds,
   scannedAccounts,
-  existingAccounts,
   currency,
   t,
   editedNames,
-  device,
 }: StepProps) => {
   const dispatch = useDispatch();
   const willCreateAccount = checkedAccountsIds.some(id => {

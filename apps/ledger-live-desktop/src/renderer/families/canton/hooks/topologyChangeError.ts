@@ -28,7 +28,6 @@ export type NavigationSnapshot = ModalSnapshot | TransferProposalSnapshot;
 type ReonboardingModalConfig = {
   currency: CryptoCurrency;
   device: Device | null;
-  accounts: Account[];
   mainAccount: Account;
   navigationSnapshot?: NavigationSnapshot;
 };

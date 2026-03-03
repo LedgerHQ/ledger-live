@@ -4,6 +4,7 @@ import { Observable, Subscription } from "rxjs";
 interface UseObservableCallbacks<T> {
   onNext: (value: T) => void;
   onError?: (error: Error) => void;
+  onComplete?: () => void;
 }
 
 export function useObservable() {
@@ -22,6 +23,9 @@ export function useObservable() {
         },
         error: (error: Error) => {
           callbacks.onError?.(error);
+        },
+        complete: () => {
+          callbacks.onComplete?.();
         },
       });
 

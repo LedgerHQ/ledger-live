@@ -33,7 +33,6 @@ describe("handleTopologyChangeError", () => {
   const mockDevice = createMockDevice({
     deviceId: "device1",
   });
-  const mockAccounts = [createMockAccount()];
   const cantonCurrency = createMockCantonCurrency();
   const cantonAccount = createMockAccount();
 
@@ -45,7 +44,6 @@ describe("handleTopologyChangeError", () => {
     const result = handleTopologyChangeError(mockDispatch, {
       currency: cantonCurrency,
       device: null,
-      accounts: mockAccounts,
       mainAccount: cantonAccount,
     });
 
@@ -57,7 +55,6 @@ describe("handleTopologyChangeError", () => {
     const result = handleTopologyChangeError(mockDispatch, {
       currency: createNonCantonCurrency(),
       device: mockDevice,
-      accounts: mockAccounts,
       mainAccount: cantonAccount,
     });
 
@@ -75,7 +72,6 @@ describe("handleTopologyChangeError", () => {
     const result = handleTopologyChangeError(mockDispatch, {
       currency: cantonCurrency,
       device: mockDevice,
-      accounts: mockAccounts,
       mainAccount: cantonAccount,
       navigationSnapshot,
     });
@@ -111,7 +107,6 @@ describe("handleTopologyChangeError", () => {
     const result = handleTopologyChangeError(mockDispatch, {
       currency: cantonCurrency,
       device: mockDevice,
-      accounts: mockAccounts,
       mainAccount: cantonAccount,
       navigationSnapshot,
     });

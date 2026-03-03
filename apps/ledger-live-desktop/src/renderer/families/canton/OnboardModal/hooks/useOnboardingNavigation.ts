@@ -9,7 +9,7 @@ import type { OnboardingResult } from "../types";
 import { prepareAccountsForAdding } from "../utils/accountPreparation";
 
 export interface UseOnboardingNavigationParams {
-  currency: CryptoCurrency;
+  currency: CryptoCurrency | null;
   selectedAccounts: Account[];
   existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
@@ -34,7 +34,6 @@ export function useOnboardingNavigation({
   const handleAddAccounts = useCallback(() => {
     const { accounts, renamings } = prepareAccountsForAdding({
       selectedAccounts,
-      existingAccounts,
       editedNames,
       isReonboarding,
       accountToReonboard,
@@ -72,6 +71,7 @@ export function useOnboardingNavigation({
   ]);
 
   const handleAddMore = useCallback(() => {
+    if (!currency) return;
     handleAddAccounts();
     dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency }));
   }, [handleAddAccounts, dispatch, currency]);

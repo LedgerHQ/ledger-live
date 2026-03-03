@@ -43,6 +43,20 @@ describe("useObservable", () => {
     expect(mockOnNext).toHaveBeenNthCalledWith(3, "value3");
   });
 
+  it("should call onComplete when observable completes", () => {
+    const { result } = renderHook(() => useObservable());
+    const mockOnNext = jest.fn();
+    const mockOnComplete = jest.fn();
+    const observable = of("test-value");
+
+    act(() => {
+      result.current.subscribe(observable, { onNext: mockOnNext, onComplete: mockOnComplete });
+    });
+
+    expect(mockOnNext).toHaveBeenCalledWith("test-value");
+    expect(mockOnComplete).toHaveBeenCalledTimes(1);
+  });
+
   it("should call onError when observable errors", () => {
     const { result } = renderHook(() => useObservable());
     const mockOnNext = jest.fn();
