@@ -45,6 +45,11 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
+  test-features:
+    name: "Test Features"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    secrets: inherit
+
   test-design-system:
     name: "Test UI Libs"
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
@@ -69,6 +74,7 @@ jobs:
       - test-mobile
       - build-test-mobile
       - test-libraries
+      - test-features
       - test-design-system
       - build-web-tools
       - test-cli
