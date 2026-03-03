@@ -2,4 +2,4 @@
 "@ledgerhq/coin-framework": minor
 ---
 
-add support to observables for makeSync and makeScanAccounts
+add support for Observables in makeSync and makeScanAccounts
