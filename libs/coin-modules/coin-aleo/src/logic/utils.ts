@@ -5,6 +5,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
   Operation as AlpacaOperation,
+  MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
@@ -22,6 +23,9 @@ import type {
   ProvableApi,
   TransactionSelfTransfer,
   AleoAccount,
+  Intent,
+  PreparedRequestResponse,
+  AleoTransactionIntentData,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -300,4 +304,58 @@ export function splitPrivateAndPublicOperations(
     (isPrivateOperation(operation) ? privateOps : publicOps).push(operation);
   }
   return [privateOps, publicOps];
+}
+
+export function hasSpecificIntentData<Type extends AleoTransactionIntentData["type"]>(
+  txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+  expectedType: Type,
+): txIntent is Extract<
+  TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+  { data: { type: Type } }
+> {
+  return "data" in txIntent && txIntent.data.type === expectedType;
+}
+
+export function mapTransactionIntentToSdkIntent(
+  txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+): Intent {
+  const type = txIntent.type;
+  const to = txIntent.recipient;
+  const amount = txIntent.amount.toString();
+
+  switch (type) {
+    case "transfer_public":
+    case "transfer_public_to_private": {
+      return {
+        type,
+        amount,
+        to,
+      };
+    }
+    case "fee_public": {
+      if (!hasSpecificIntentData(txIntent, type)) {
+        throw new Error(`aleo: intent data is required for ${type}`);
+      }
+
+      return {
+        type,
+        base_fee: txIntent.amount.toString(),
+        execution_id: txIntent.data.executionId,
+        priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
+      };
+    }
+    // NOTE: transfer_private, transfer_private_to_public, and fee_private are intentionally not supported here.
+    // These are part of a separate task for "private send/receive" functionality and will be implemented later.
+    default: {
+      throw new Error(`aleo: unsupported intent type: ${type}`);
+    }
+  }
+}
+
+export function serializeTransaction(tx: PreparedRequestResponse): string {
+  return Buffer.from(JSON.stringify(tx)).toString("hex");
+}
+
+export function deserializeTransaction(txHex: string): PreparedRequestResponse {
+  return JSON.parse(Buffer.from(txHex, "hex").toString());
 }

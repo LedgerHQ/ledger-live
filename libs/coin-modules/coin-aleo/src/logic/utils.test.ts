@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
@@ -12,8 +12,9 @@ import {
   getMockedEnrichedPrivateRecord,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
-import type { ProvableApi } from "../types";
+import type { ProvableApi, AleoTransactionIntentData } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -30,6 +31,10 @@ import {
   isRecordScannerReady,
   getOperationTransactionType,
   splitPrivateAndPublicOperations,
+  serializeTransaction,
+  deserializeTransaction,
+  mapTransactionIntentToSdkIntent,
+  hasSpecificIntentData,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -803,5 +808,182 @@ describe("splitPrivateAndPublicOperations", () => {
 
     expect(publicOps.map(o => o.id)).toEqual(["pub1", "pub2", "pub3"]);
     expect(privateOps.map(o => o.id)).toEqual(["priv1", "priv2"]);
+  });
+});
+
+describe("hasSpecificIntentData", () => {
+  it("should return true when data.type matches expectedType", () => {
+    // @ts-expect-error - only intent.data is required for this test
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      data: {
+        type: "fee_public",
+        executionId: "exec123",
+        priorityFee: 5000,
+      },
+    };
+
+    expect(hasSpecificIntentData(intent, "fee_public")).toBe(true);
+  });
+
+  it("should return false when data.type does not match expectedType", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      data: {
+        // @ts-expect-error - only intent.type is required for this test
+        type: "none",
+      },
+    };
+
+    expect(hasSpecificIntentData(intent, "fee_public")).toBe(false);
+  });
+
+  it("should return false when data property is absent", () => {
+    // @ts-expect-error - testing invalid intent
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {};
+
+    expect(hasSpecificIntentData(intent, "fee_public")).toBe(false);
+  });
+});
+
+describe("mapTransactionIntentToSdkIntent", () => {
+  const baseIntent = {
+    intentType: "transaction" as const,
+    asset: { type: "native" as const },
+    amount: 1000000n,
+    sender: "aleo1sender",
+    recipient: "aleo1recipient",
+  };
+
+  it("should map transfer_public intent to SDK intent with correct fields", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "transfer_public",
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+    });
+  });
+
+  it("should map transfer_public_to_private intent to SDK intent with correct fields", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "transfer_public_to_private",
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+    });
+  });
+
+  it("should map fee_public intent with priorityFee to SDK intent", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "fee_public",
+      data: {
+        type: "fee_public",
+        executionId: "exec123",
+        priorityFee: 5000,
+      },
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      base_fee: intent.amount.toString(),
+      execution_id: intent.data.executionId,
+      priority_fee: intent.data.priorityFee?.toString(),
+    });
+  });
+
+  it("should map fee_public intent without priorityFee defaulting priority_fee to '0'", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "fee_public",
+      data: {
+        type: "fee_public",
+        executionId: "exec456",
+      },
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      base_fee: intent.amount.toString(),
+      execution_id: intent.data.executionId,
+      priority_fee: "0",
+    });
+  });
+
+  it("should throw when fee_public intent has no matching data", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "fee_public",
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: intent data is required for ${intent.type}`,
+    );
+  });
+
+  it("should throw for unsupported intent type", () => {
+    // @ts-expect-error - testing unsupported intent type
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "custom_intent",
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: unsupported intent type: ${intent.type}`,
+    );
+  });
+});
+
+describe("serializeTransaction", () => {
+  it("should produce a hex string that decodes back to the original JSON", () => {
+    const tx = getMockedPreparedRequestResponse();
+
+    const result = serializeTransaction(tx);
+    const decoded = JSON.parse(Buffer.from(result, "hex").toString());
+
+    expect(result).toMatch(/^[a-f0-9]+$/);
+    expect(decoded).toEqual(tx);
+  });
+
+  it("should produce different hex strings for different transactions", () => {
+    const tx1 = getMockedPreparedRequestResponse({ program_id: "custom.aleo" });
+    const tx2 = getMockedPreparedRequestResponse({ program_id: "another.aleo" });
+
+    expect(serializeTransaction(tx1)).not.toBe(serializeTransaction(tx2));
+  });
+});
+
+describe("deserializeTransaction", () => {
+  it("should deserialize a hex string back to the original transaction", () => {
+    const tx = getMockedPreparedRequestResponse();
+    const serialized = serializeTransaction(tx);
+
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(tx);
+  });
+
+  it("should throw when given an invalid hex string", () => {
+    expect(() => deserializeTransaction("not-valid-hex")).toThrow();
+  });
+
+  it("should throw when given a hex string that is not valid JSON", () => {
+    const invalidJsonHex = Buffer.from("not json").toString("hex");
+
+    expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
   });
 });
