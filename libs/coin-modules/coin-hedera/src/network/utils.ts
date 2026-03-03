@@ -37,6 +37,7 @@ function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
 export function parseTransfers(
   mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
   address: string,
+  stakingReward = new BigNumber(0),
 ): Pick<Operation, "type" | "value" | "senders" | "recipients"> {
   let value = new BigNumber(0);
   let type: OperationType = "NONE";
@@ -48,9 +49,11 @@ export function parseTransfers(
     const amount = new BigNumber(transfer.amount);
     const accountId = AccountId.fromString(transfer.account);
 
+    // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
     if (transfer.account === address) {
-      value = amount.abs();
-      type = amount.isNegative() ? "OUT" : "IN";
+      const amountWithoutReward = amount.minus(stakingReward);
+      value = amountWithoutReward.abs();
+      type = amountWithoutReward.isNegative() ? "OUT" : "IN";
     }
 
     if (amount.isNegative()) {

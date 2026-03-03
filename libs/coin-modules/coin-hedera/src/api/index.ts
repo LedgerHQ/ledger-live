@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import invariant from "invariant";
-import coinConfig from "../config";
+import coinConfig, { type HederaConfig } from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
@@ -31,11 +31,11 @@ import {
   getBlockHash,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
-import type { HederaMemo } from "../types";
+import type { EstimateFeesParams, HederaMemo } from "../types";
 
-export function createApi(config: Record<string, never>): Api<HederaMemo> {
+export function createApi(config: HederaConfig, currencyId: string): Api<HederaMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-  const currency = getCryptoCurrencyById("hedera");
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: async tx => {
@@ -60,14 +60,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async transactionIntent => {
-      const operationType = mapIntentToSDKOperation(transactionIntent);
+    estimateFees: async txIntent => {
+      let estimateFeesParams: EstimateFeesParams;
+      const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+        estimateFeesParams = { operationType, txIntent };
+      } else {
+        estimateFeesParams = { currency, operationType };
       }
 
-      const estimatedFee = await logicEstimateFees({ currency, operationType });
+      const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),

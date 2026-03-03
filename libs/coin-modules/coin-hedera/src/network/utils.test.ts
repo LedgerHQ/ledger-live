@@ -189,6 +189,21 @@ describe("network utils", () => {
       expect(result.senders).toEqual(["0.0.5678", "0.0.900"]);
       expect(result.recipients).toEqual([userAddress]);
     });
+
+    it("should subtract staking reward from amount", () => {
+      const userAddress = "0.0.1234";
+      const amount = new BigNumber(30);
+      const stakingReward = new BigNumber(20);
+      const transfers = [createMirrorCoinTransfer(userAddress, amount.toNumber())];
+
+      const expectedAmountWithoutReward = amount.minus(stakingReward);
+      const result = parseTransfers(transfers, userAddress, stakingReward);
+
+      expect(result).toMatchObject({
+        type: "IN",
+        value: expectedAmountWithoutReward,
+      });
+    });
   });
 
   describe("getERC20BalancesForAccount", () => {
