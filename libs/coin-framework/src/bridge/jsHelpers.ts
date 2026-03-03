@@ -580,20 +580,12 @@ export const makeScanAccounts =
               if (!res) break;
 
               const account$ = stepAccount(index, res, derivationMode, seedIdentifier);
-              const result = await Promise.race([
-                lastValueFrom(account$.pipe(defaultIfEmpty(null))).then(account => ({
-                  account,
-                })),
-                firstValueFrom(
-                  teardown$.pipe(
-                    take(1),
-                    map(() => ({ cancelled: true })),
-                  ),
-                ).then(() => ({ cancelled: true as const })),
-              ]);
-              if ("cancelled" in result && result.cancelled) break;
-              const account = "account" in result ? result.account : null;
+              const account = await lastValueFrom(account$.pipe(defaultIfEmpty(null)));
 
+              if (finished) {
+                log("debug", `new account scanning process has been finished`);
+                break;
+              }
               if (account) {
                 const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
