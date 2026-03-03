@@ -156,7 +156,7 @@ describe("proxyClient", () => {
   describe("getTransactionCost", () => {
     it("should return cost estimation for simple transfer", async () => {
       const numSignatures = 1;
-      const result = await getTransactionCost(currency, numSignatures);
+      const result = await getTransactionCost(currency, { numSignatures });
 
       expect(result).toHaveProperty("cost");
       expect(result).toHaveProperty("energy");
@@ -173,8 +173,8 @@ describe("proxyClient", () => {
       const numSignatures = 1;
       const memoSize = 50;
 
-      const resultWithoutMemo = await getTransactionCost(currency, numSignatures);
-      const resultWithMemo = await getTransactionCost(currency, numSignatures, { memoSize });
+      const resultWithoutMemo = await getTransactionCost(currency, { numSignatures });
+      const resultWithMemo = await getTransactionCost(currency, { numSignatures, memoSize });
 
       const costWithoutMemo = BigInt(resultWithoutMemo.cost);
       const costWithMemo = BigInt(resultWithMemo.cost);
@@ -185,10 +185,8 @@ describe("proxyClient", () => {
     it("should scale with memo size", async () => {
       const numSignatures = 1;
 
-      const resultSmallMemo = await getTransactionCost(currency, numSignatures, { memoSize: 10 });
-      const resultLargeMemo = await getTransactionCost(currency, numSignatures, {
-        memoSize: 100,
-      });
+      const resultSmallMemo = await getTransactionCost(currency, { numSignatures, memoSize: 10 });
+      const resultLargeMemo = await getTransactionCost(currency, { numSignatures, memoSize: 100 });
 
       const costSmall = BigInt(resultSmallMemo.cost);
       const costLarge = BigInt(resultLargeMemo.cost);
@@ -199,8 +197,8 @@ describe("proxyClient", () => {
     it("should return consistent results for same parameters", async () => {
       const numSignatures = 1;
 
-      const result1 = await getTransactionCost(currency, numSignatures);
-      const result2 = await getTransactionCost(currency, numSignatures);
+      const result1 = await getTransactionCost(currency, { numSignatures });
+      const result2 = await getTransactionCost(currency, { numSignatures });
 
       expect(result1.cost).toBe(result2.cost);
       expect(result1.energy).toBe(result2.energy);
@@ -209,26 +207,40 @@ describe("proxyClient", () => {
 
   describe("getOperations", () => {
     it("should return operations for account", async () => {
-      const result = await getOperations(currency, ADDRESS_WITH_BALANCE, ACCOUNT_ID);
+      const result = await getOperations(currency, {
+        address: ADDRESS_WITH_BALANCE,
+        accountId: ACCOUNT_ID,
+      });
 
       expect(Array.isArray(result)).toBe(true);
     });
 
     it("should return empty array for pristine account", async () => {
-      const result = await getOperations(currency, ADDRESS_PRISTINE, ACCOUNT_ID);
+      const result = await getOperations(currency, {
+        address: ADDRESS_PRISTINE,
+        accountId: ACCOUNT_ID,
+      });
 
       expect(result).toEqual([]);
     });
 
     it("should respect size parameter", async () => {
       const size = 5;
-      const result = await getOperations(currency, ADDRESS_WITH_BALANCE, ACCOUNT_ID, { size });
+      const result = await getOperations(currency, {
+        address: ADDRESS_WITH_BALANCE,
+        accountId: ACCOUNT_ID,
+        size,
+      });
 
       expect(result.length).toBeLessThanOrEqual(size);
     });
 
     it("should return operations with valid structure", async () => {
-      const result = await getOperations(currency, ADDRESS_WITH_BALANCE, ACCOUNT_ID, { size: 10 });
+      const result = await getOperations(currency, {
+        address: ADDRESS_WITH_BALANCE,
+        accountId: ACCOUNT_ID,
+        size: 10,
+      });
 
       if (result.length > 0) {
         result.forEach(operation => {
@@ -250,7 +262,9 @@ describe("proxyClient", () => {
     });
 
     it("should filter transactions by type", async () => {
-      const result = await getOperations(currency, ADDRESS_WITH_BALANCE, ACCOUNT_ID, {
+      const result = await getOperations(currency, {
+        address: ADDRESS_WITH_BALANCE,
+        accountId: ACCOUNT_ID,
         size: 100,
       });
 
@@ -265,7 +279,10 @@ describe("proxyClient", () => {
     it("should handle network errors gracefully", async () => {
       // Even with invalid address, should return empty array instead of throwing
       const invalidAddress = "invalid-address";
-      const result = await getOperations(currency, invalidAddress, ACCOUNT_ID);
+      const result = await getOperations(currency, {
+        address: invalidAddress,
+        accountId: ACCOUNT_ID,
+      });
 
       expect(Array.isArray(result)).toBe(true);
     });
@@ -273,14 +290,16 @@ describe("proxyClient", () => {
 
   describe("Network connectivity", () => {
     it("should successfully connect to proxy endpoint", async () => {
-      await expect(getTransactionCost(currency, 1)).resolves.toHaveProperty("cost");
+      await expect(getTransactionCost(currency, { numSignatures: 1 })).resolves.toHaveProperty(
+        "cost",
+      );
     });
 
     it("should handle multiple concurrent requests", async () => {
       const promises = [
-        getTransactionCost(currency, 1),
-        getTransactionCost(currency, 1),
-        getTransactionCost(currency, 1),
+        getTransactionCost(currency, { numSignatures: 1 }),
+        getTransactionCost(currency, { numSignatures: 1 }),
+        getTransactionCost(currency, { numSignatures: 1 }),
       ];
 
       const results = await Promise.all(promises);

@@ -6,13 +6,7 @@ jest.mock("../logic", () => ({
   estimateFees: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/concordium-core", () => ({
-  ...jest.requireActual("@ledgerhq/concordium-core"),
-  encodeMemoToCbor: jest.fn().mockReturnValue(Buffer.from("memo")),
-}));
-
 const { estimateFees } = jest.requireMock("../logic");
-const { encodeMemoToCbor } = jest.requireMock("@ledgerhq/concordium-core");
 
 describe("prepareTransaction", () => {
   beforeEach(() => {
@@ -64,7 +58,7 @@ describe("prepareTransaction", () => {
   });
 
   describe("transaction type selection", () => {
-    it("should use Transfer type when no memo", async () => {
+    it("should call estimateFees without memo when no memo", async () => {
       // GIVEN
       const account = createFixtureAccount();
       const tx = createFixtureTransaction({ memo: undefined });
@@ -72,11 +66,11 @@ describe("prepareTransaction", () => {
       // WHEN
       await prepareTransaction(account, tx);
 
-      // THEN - TransactionType.Transfer = 3, no memoSize
-      expect(estimateFees).toHaveBeenCalledWith(account.currency, 3, undefined);
+      // THEN
+      expect(estimateFees).toHaveBeenCalledWith(account.currency, undefined);
     });
 
-    it("should use TransferWithMemo type when memo is present", async () => {
+    it("should call estimateFees with memo when memo is present", async () => {
       // GIVEN
       const account = createFixtureAccount();
       const tx = createFixtureTransaction({ memo: "test memo" });
@@ -84,9 +78,8 @@ describe("prepareTransaction", () => {
       // WHEN
       await prepareTransaction(account, tx);
 
-      // THEN - TransactionType.TransferWithMemo = 22, with memoSize
-      expect(estimateFees).toHaveBeenCalledWith(account.currency, 22, 4);
-      expect(encodeMemoToCbor).toHaveBeenCalledWith("test memo");
+      // THEN
+      expect(estimateFees).toHaveBeenCalledWith(account.currency, "test memo");
     });
   });
 

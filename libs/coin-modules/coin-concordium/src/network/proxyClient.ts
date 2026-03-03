@@ -9,10 +9,12 @@ import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
+  GetOperationsParams,
+  GetTransactionCostParams,
   TransactionsResponse,
   PublicKeyAccountsResponse,
   SubmitCredentialData,
-  SubmitTransferRequest,
+  SubmitTransferData,
   TransactionQueryParams,
   WalletProxyTransaction,
 } from "../types";
@@ -167,17 +169,16 @@ export async function getTransactions(
  */
 export async function getTransactionCost(
   currency: CryptoCurrency,
-  numSignatures: number,
-  options?: { memoSize?: number },
-): Promise<{ cost: string; energy: string }> {
+  { numSignatures, memoSize }: GetTransactionCostParams,
+): Promise<{ cost: string; energy: number }> {
   return withClient(currency, async client =>
-    client.request<{ cost: string; energy: string }>({
+    client.request<{ cost: string; energy: number }>({
       method: "GET",
       url: "/v0/transactionCost",
       params: {
         type: "simpleTransfer",
         numSignatures,
-        ...(options?.memoSize ? { memoSize: options.memoSize } : {}),
+        ...(memoSize ? { memoSize } : {}),
       },
     }),
   );
@@ -188,30 +189,20 @@ export async function getTransactionCost(
  * PUT /v0/submitTransfer/
  *
  * @param currency - The Concordium currency
- * @param transactionBody - The hex-encoded transaction body
- * @param signature - The hex-encoded signature
+ * @param data - The transfer payload (hex-encoded transaction body and signatures)
  * @returns Submission ID
  */
 export async function submitTransfer(
   currency: CryptoCurrency,
-  transactionBody: string,
-  signature: string,
+  data: SubmitTransferData,
 ): Promise<{ submissionId: string }> {
   return withClient(currency, async client => {
-    const request: LiveNetworkRequest<SubmitTransferRequest> = {
+    const request: LiveNetworkRequest<SubmitTransferData> = {
       method: "PUT",
       url: "/v0/submitTransfer/",
-      data: {
-        transaction: transactionBody,
-        signatures: {
-          "0": {
-            // credential index 0
-            "0": signature, // key index 0
-          },
-        },
-      },
+      data,
     };
-    return client.request<{ submissionId: string }, SubmitTransferRequest>(request);
+    return client.request<{ submissionId: string }, SubmitTransferData>(request);
   });
 }
 
@@ -317,13 +308,11 @@ function operationAdapter(
  */
 export async function getOperations(
   currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  params?: { size?: number },
+  { address, accountId, size }: GetOperationsParams,
 ): Promise<ProxyOperation[]> {
   try {
     const proxyParams: TransactionQueryParams = {
-      limit: params?.size || 100,
+      limit: size || 100,
       order: "d",
     };
 

@@ -1,6 +1,7 @@
 import {
   TransactionType,
   AccountAddress,
+  deserializeTransaction,
   serializeTransfer,
   serializeTransferWithMemo,
 } from "@ledgerhq/concordium-core";
@@ -52,6 +53,11 @@ function createSerializedTransferWithMemo(sender: string, nonce: bigint): string
   return serializeTransferWithMemo(tx).toString("hex");
 }
 
+// Helper to deserialize and inspect the crafted result
+function deserialize(hex: string) {
+  return deserializeTransaction(Buffer.from(hex, "hex"));
+}
+
 describe("craftRawTransaction", () => {
   describe("successful cases - Transfer", () => {
     it("should parse and re-serialize a Transfer transaction", async () => {
@@ -59,9 +65,8 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(5));
 
-      expect(result).toHaveProperty("nativeTransaction");
-      expect(result).toHaveProperty("serializedTransaction");
-      expect(typeof result.serializedTransaction).toBe("string");
+      expect(typeof result.transaction).toBe("string");
+      expect(result.transaction).toMatch(/^[0-9a-f]+$/);
     });
 
     it("should update the sequence number", async () => {
@@ -70,7 +75,7 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, newSequence);
 
-      expect(result.nativeTransaction.header.nonce).toBe(42n);
+      expect(deserialize(result.transaction).header.nonce).toBe(42n);
     });
 
     it("should preserve the transaction type", async () => {
@@ -78,7 +83,7 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
 
-      expect(result.nativeTransaction.type).toBe(TransactionType.Transfer);
+      expect(deserialize(result.transaction).type).toBe(TransactionType.Transfer);
     });
 
     it("should preserve the expiry time", async () => {
@@ -86,7 +91,7 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
 
-      expect(result.nativeTransaction.header.expiry).toBe(1700000000n);
+      expect(deserialize(result.transaction).header.expiry).toBe(1700000000n);
     });
 
     it("should preserve the energyAmount", async () => {
@@ -94,7 +99,7 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
 
-      expect(result.nativeTransaction.header.energyAmount).toBe(500n);
+      expect(deserialize(result.transaction).header.energyAmount).toBe(500n);
     });
 
     it("should preserve the payload", async () => {
@@ -102,17 +107,9 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
 
-      expect(result.nativeTransaction.payload).not.toBeUndefined();
-      expect(result.nativeTransaction.payload.amount).toBe(1000000n);
-    });
-
-    it("should return hex-encoded serialized transaction", async () => {
-      const serialized = createSerializedTransfer(VALID_ADDRESS, 1n);
-
-      const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
-
-      expect(typeof result.serializedTransaction).toBe("string");
-      expect(result.serializedTransaction).toMatch(/^[0-9a-f]+$/);
+      const parsed = deserialize(result.transaction);
+      expect(parsed.payload).not.toBeUndefined();
+      expect(parsed.payload.amount).toBe(1000000n);
     });
 
     it("should handle large sequence numbers", async () => {
@@ -126,7 +123,7 @@ describe("craftRawTransaction", () => {
         largeSequence,
       );
 
-      expect(result.nativeTransaction.header.nonce).toBe(999999999n);
+      expect(deserialize(result.transaction).header.nonce).toBe(999999999n);
     });
   });
 
@@ -136,9 +133,8 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(5));
 
-      expect(result).toHaveProperty("nativeTransaction");
-      expect(result).toHaveProperty("serializedTransaction");
-      expect(result.nativeTransaction.type).toBe(TransactionType.TransferWithMemo);
+      expect(typeof result.transaction).toBe("string");
+      expect(deserialize(result.transaction).type).toBe(TransactionType.TransferWithMemo);
     });
 
     it("should preserve the memo", async () => {
@@ -146,9 +142,10 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
 
-      expect("memo" in result.nativeTransaction.payload).toBe(true);
-      if ("memo" in result.nativeTransaction.payload) {
-        expect(result.nativeTransaction.payload.memo.toString("utf-8")).toBe("test memo");
+      const parsed = deserialize(result.transaction);
+      expect("memo" in parsed.payload).toBe(true);
+      if ("memo" in parsed.payload) {
+        expect(parsed.payload.memo.toString("utf-8")).toBe("test memo");
       }
     });
 
@@ -158,7 +155,7 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, newSequence);
 
-      expect(result.nativeTransaction.header.nonce).toBe(99n);
+      expect(deserialize(result.transaction).header.nonce).toBe(99n);
     });
   });
 
@@ -206,7 +203,6 @@ describe("craftRawTransaction", () => {
     });
 
     it("should throw error for unsupported transaction type", async () => {
-      // Create a buffer with an invalid type byte (99 instead of 3 or 22)
       const validTx = createSerializedTransfer(VALID_ADDRESS, 1n);
       const buffer = Buffer.from(validTx, "hex");
       const TYPE_OFFSET = 32 + 8 + 8 + 4 + 8;
@@ -228,8 +224,7 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, 42n);
 
-      // Should produce identical serialization (same nonce, same everything)
-      expect(result.serializedTransaction).toBe(serialized);
+      expect(result.transaction).toBe(serialized);
     });
 
     it("should produce identical output when re-serialized without changes (TransferWithMemo)", async () => {
@@ -237,17 +232,15 @@ describe("craftRawTransaction", () => {
 
       const result = await craftRawTransaction(serialized, VALID_ADDRESS, PUBLIC_KEY, 99n);
 
-      // Should produce identical serialization (same nonce, same everything)
-      expect(result.serializedTransaction).toBe(serialized);
+      expect(result.transaction).toBe(serialized);
     });
 
     it("should only change nonce when re-serializing with different sequence", async () => {
       const originalSerialized = createSerializedTransfer(VALID_ADDRESS, 1n);
       const result = await craftRawTransaction(originalSerialized, VALID_ADDRESS, PUBLIC_KEY, 999n);
 
-      // Parse both to compare
       const originalBuffer = Buffer.from(originalSerialized, "hex");
-      const newBuffer = Buffer.from(result.serializedTransaction, "hex");
+      const newBuffer = Buffer.from(result.transaction, "hex");
 
       // Sender should be same (first 32 bytes)
       expect(newBuffer.subarray(0, 32)).toEqual(originalBuffer.subarray(0, 32));

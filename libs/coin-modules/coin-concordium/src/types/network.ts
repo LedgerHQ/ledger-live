@@ -9,11 +9,22 @@ export interface TransactionQueryParams {
   blockTimeTo?: string; // ISO 8601 timestamp
 }
 
+export interface GetTransactionCostParams {
+  numSignatures: number;
+  memoSize?: number;
+}
+
+export interface GetOperationsParams {
+  address: string;
+  accountId: string;
+  size?: number;
+}
+
 /**
  * Request payload for submitting a transfer transaction
- * POST /v0/submitTransfer
+ * PUT /v0/submitTransfer/
  */
-export interface SubmitTransferRequest {
+export interface SubmitTransferData {
   transaction: string; // hex-encoded transaction body
   signatures: {
     [credentialIndex: string]: {
