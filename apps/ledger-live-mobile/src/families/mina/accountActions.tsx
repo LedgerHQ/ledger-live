@@ -1,12 +1,13 @@
-import React from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
+import React from "react";
 
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { Trans } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
-import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { NavigatorName, ScreenName } from "~/const";
+import { Trans } from "~/context/Locale";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
@@ -28,6 +29,8 @@ const getMainActions = ({
     },
   ];
 
+  const label = getStakeLabelLocaleBased();
+
   return [
     {
       id: "stake",
@@ -35,7 +38,7 @@ const getMainActions = ({
       label: hasDelegation ? (
         <Trans i18nKey="mina.accountHeaderManageActions.changeDelegation" />
       ) : (
-        <Trans i18nKey="mina.accountHeaderManageActions.earn" />
+        <Trans i18nKey={label} />
       ),
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {

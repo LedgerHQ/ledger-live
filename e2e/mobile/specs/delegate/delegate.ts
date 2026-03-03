@@ -1,8 +1,8 @@
-import { setEnv } from "@ledgerhq/live-env";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
+import { setEnv } from "@ledgerhq/live-env";
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
+import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
 
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({
@@ -12,7 +12,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
       stakePrograms: {
         enabled: true,
         params: {
-          list: ["mina"],
+          list: [delegation.account.currency.id],
           redirects: {},
         },
       },
@@ -62,7 +62,12 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
       await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn();
+
+      if (delegation.account.currency.name === Currency.MINA.name) {
+        await app.stake.tapEarnOrChangeDelegation();
+      } else {
+        await app.account.tapEarn();
+      }
 
       await app.stake.dismissDelegationStart(currencyId);
       if (delegation.account.currency.name === Currency.MINA.name) {
