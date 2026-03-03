@@ -27,6 +27,7 @@ export default function ValidatorRow({ validator, onPress, unit }: Props) {
         validatorName: validator.name || validator.address,
       }}
       onPress={onPressT}
+      testID={`provider-row-${validator.name || validator.address}`}
     >
       <View style={styles.validator}>
         <ValidatorImage name={validator.name ?? validator.address} />
