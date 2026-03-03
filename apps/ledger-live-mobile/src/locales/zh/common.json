@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "购买 Ledger 设备",
     "setupCta" : "我已经有一个 Ledger 设备，对该设备进行设置"
   },
+  "rebornBuyDevice" : {
+    "title" : "连接 Ledger 设备",
+    "desc" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
+    "0" : {
+      "title" : "完全所有权",
+      "desc" : "您的私钥永远不会离开设备。"
+    },
+    "1" : {
+      "title" : "安全交易",
+      "desc" : "在安全屏幕上验证交易。"
+    },
+    "2" : {
+      "title" : "使用功能强大的钱包",
+      "desc" : "一站式管理数千种资产。"
+    },
+    "cta" : "连接",
+    "buyCta" : "购买 Ledger 设备"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "拿到您的 Ledger 设备了吗？",
     "desc" : "拿到您的 Ledger 设备后，请完成设置，以解锁 Ledger Wallet 应用程序的所有功能。",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "钱包余额",
     "balance" : {
       "noSigner" : "最安全的\n钱包",
-      "noFund" : "保护您的\n加密货币"
+      "noAccounts" : "保护您的\n加密货币"
     },
     "seeAllAssets" : "查看所有资产",
     "seeAllAccounts" : "查看所有账户",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "输入地址",
       "editRecipientAccessibilityLabel" : "编辑接收方",
       "recent" : "最近",
+      "recentDetail" : "最近详情",
       "myAccounts" : "我的账户",
+      "account" : "账户",
       "sendTo" : "发送到 {{address}}",
       "addressMatched" : "已匹配地址",
       "addressNotFound" : "未找到地址",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "无法刷新网络费用",
         "warningDescription" : "费用预设可能已过期。"
+      },
+      "customFees" : {
+        "title" : "自定义费用",
+        "confirm" : "确认",
+        "maxFee" : "最高费用 ({{unit}})",
+        "maxPriorityFee" : "最高优先费用 ({{unit}})",
+        "gasLimit" : "Gas 限值 ({{unit}})",
+        "feePerByte" : "费用数额 ({{unit}})",
+        "suggested" : "建议",
+        "nextBlock" : "下一个区块",
+        "networkFeesInFiat" : "网络费用为 {{currency}}",
+        "invalidValue" : "输入有效的数字",
+        "belowMinimum" : "最小值为 {{min}}",
+        "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+      },
+      "coinControl" : {
+        "title" : "币控制（UTXO 管理）"
       }
     },
     "pendingTxWarning" : "您有待处理的传入交易。请注意，待处理交易可以撤销。",
@@ -4283,7 +4320,8 @@
       "useMax" : "使用最大值",
       "loadingNetwork" : "正在加载网络费用...",
       "noRateProvider" : "缺货",
-      "quantityAvailable" : "可用数量"
+      "quantityAvailable" : "可用数量",
+      "toggleCurrency" : "切换货币"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "需要费用",
       "chooseGas" : "选择 gas 价格",
       "higherFaster" : "较高的 gas 价格意味着更加快速地确认。",
+      "medium" : "标准",
+      "fast" : "快速",
+      "slow" : "慢速",
+      "custom" : "自定义",
+      "customFees" : "自定义费用",
+      "coinControl" : "交易输入选择",
       "edit" : {
         "title" : "选择单位"
       },
@@ -7241,7 +7285,8 @@
         "website" : "网站"
       },
       "back" : {
-        "card" : "所有卡片"
+        "card" : "所有卡片",
+        "cardTab" : "卡"
       }
     }
   },
@@ -8517,20 +8562,20 @@
     "title" : "探索您的全新资产组合",
     "slides" : {
       "portfolio" : {
-        "title" : "焕然一新的资产组合体验",
-        "description" : "我们已精简优化了主屏幕。找不到图表？点按余额下方即可查看。"
+        "title" : "更清楚地展示您的资产组合",
+        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
       },
       "navigation" : {
-        "title" : "一切井然有序",
-        "description" : "“我的 Ledger”和“探索”现已置于顶部。“互换”和“卡”已移至底部，方便快速访问。"
+        "title" : "更快访问关键操作功能",
+        "description" : "快速访问互换、转账和买入功能。“赚取”和您的\"卡\"位于底部导航栏。"
       },
       "actions" : {
-        "title" : "操作响应，与市场同速",
-        "description" : "通过全新横幅洞察市场趋势，即时交易。"
+        "title" : "快速查看市场趋势",
+        "description" : "快速查看您资产组合中的热门趋势，并从洞察转向行动。"
       }
     },
     "cta" : {
-      "continue" : "继续",
+      "continue" : "下一步",
       "explore" : "探索我的全新资产组合"
     }
   },
