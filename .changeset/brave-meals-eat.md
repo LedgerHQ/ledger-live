@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-fix: flaky tests onboarding
+Reduce flakiness in onboarding E2E screenshot tests by allowing minor pixel diff
