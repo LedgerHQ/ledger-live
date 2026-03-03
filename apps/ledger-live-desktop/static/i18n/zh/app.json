@@ -209,7 +209,11 @@
       "BURN" : "已销毁",
       "ASSOCIATE_TOKEN" : "关联代币",
       "CONTRACT_CALL" : "合约调用",
-      "UPDATE_ACCOUNT" : "已更新的账户"
+      "UPDATE_ACCOUNT" : "已更新的账户",
+      "SHIELDED_TX_SAPLING_IN" : "已接收",
+      "SHIELDED_TX_SAPLING_OUT" : "已发送",
+      "SHIELDED_TX_ORCHARD_IN" : "已接收",
+      "SHIELDED_TX_ORCHARD_OUT" : "已发送"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -268,6 +272,8 @@
     "minute" : "分钟",
     "minute_other" : "分钟",
     "minute_short" : "分钟",
+    "second" : "秒",
+    "second_other" : "秒",
     "second_short" : "秒",
     "hour" : "小时",
     "hour_other" : "小时",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "无法刷新网络费用",
       "warningDescription" : "费用预设可能已过期。"
+    },
+    "customFees" : {
+      "title" : "自定义费用",
+      "confirm" : "确认",
+      "maxFee" : "最高费用 ({{unit}})",
+      "maxPriorityFee" : "最高优先费用 ({{unit}})",
+      "gasLimit" : "Gas 限值 ({{unit}})",
+      "feePerByte" : "费用数额 ({{unit}})",
+      "suggested" : "建议",
+      "nextBlock" : "下一个区块",
+      "networkFeesInFiat" : "网络费用为 {{currency}}",
+      "invalidValue" : "输入有效的数字",
+      "belowMinimum" : "最小值为 {{min}}",
+      "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+    },
+    "coinControl" : {
+      "title" : "币控制（UTXO 管理）"
     }
   },
   "releaseNotes" : {
     "title" : "版本说明",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "知道了"
   },
   "troubleshootNetwork" : {
     "title" : "排除网络故障",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "添加 Concordium 账户",
+        "acknowledge" : {
+          "title" : "确认声明",
+          "description" : "Concordium 需要进行外部身份验证。请阅读以下重要安全提示：",
+          "list" : {
+            "1" : "<0>无法核实地址</0>——Ledger 设备无法核实 Concordium 接收地址。接收资金之前，请人工核实地址。",
+            "2" : "<0>Concordium ID 应用程序使用独立的助记词</0>——您需要在 Concordium 应用程序中创建新的 24 个助记词。切勿使用您的 Ledger 助记词。",
+            "3" : "<0>您将被重定向到 Ledger Wallet 以外</0>——身份验证将在外部 Concordium Wallet 应用程序中完成。这是 Concordium 区块链协议的要求。",
+            "4" : "<0>交易签署始终安全</0>——只有您的 Ledger 设备可以签署交易和创建账户。"
+          },
+          "allow" : "同意"
+        },
+        "identity" : {
+          "title" : "连接",
+          "account" : "账户",
+          "newAccount" : "新账户",
+          "init" : "按“允许”即表示您已准备好继续完成验证账户所需的客户身份核实 (KYC)。",
+          "scanQRCode" : "使用您的移动设备扫描二维码，连接 Concordium ID 应用程序。<0>了解更多</0>",
+          "ledgerSeedWarning" : "<0>请勿</0>将您的 Ledger 助记词用于 Concordium ID 应用程序。",
+          "downloadApp" : "下载 Concordium ID 应用程序",
+          "connecting" : "正在连接 Concordium ID 应用程序……",
+          "onboarded" : "已完成引导流程的账户",
+          "success" : "已成功连接到 Concordium ID 应用程序。",
+          "error" : "新账户引导流程失败。请重试。",
+          "status" : {
+            "prepare" : "正在准备账户引导流程...",
+            "submit" : "正在引导账户设置",
+            "default" : "处理中..."
+          }
+        },
+        "create" : {
+          "title" : "创建账户",
+          "init" : {
+            "title" : "已成功连接到 Concordium ID 应用程序"
+          },
+          "prepare" : {
+            "title" : "要创建账户，请在 Concordium ID 应用程序中匹配以下代码",
+            "resendButton" : "重新发送确认",
+            "resendDescription" : "可在 <0>{{count}}</0> {{unit}}后重新发送确认"
+          },
+          "success" : "您的 Concordium 账户已成功创建。",
+          "error" : "账户创建失败。请重试。",
+          "error429" : "请求次数过多。请稍候再试。",
+          "button" : "创建",
+          "processing" : "处理中...",
+          "status" : {
+            "prepare" : "正在准备创建账户……",
+            "submit" : "正在创建账户……",
+            "default" : "处理中..."
+          }
+        },
+        "finish" : {
+          "title" : "确认"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "目前无法核实您的 Concordium 地址。请务必将地址粘贴到 Concordium 浏览器中进行仔细核对。",
+        "verifyLink" : "验证"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "备忘标签长度无效，最大允许 64 个字符",
       "description" : "Cardano 备忘标签有最大长度限制。请缩减备忘标签的长度"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "备注长度超出最大限制",
+      "description" : "您的的备注长度为 {{memoLength}} 字节，但允许的最大长度为 {{maxLength}} 字节。请缩短备注长度。"
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "抱歉，资金不足"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "显示余额",
-        "pausedAt" : "已暂停于 ",
+        "startSync" : "开始同步",
+        "stopSync" : "停止同步",
+        "lastProcessedBlock" : "最后处理的区块：{{block}}。缺少 {{missing}} 个区块。",
         "lastSync" : "上次同步：{{date}}"
+      },
+      "datepicker" : {
+        "label" : "起始高度",
+        "tooltip" : "起始高度是指您的钱包在区块链上开始扫描您资金的点位。"
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "开始同步",
-      "datepicker" : {
-        "label" : "起始高度",
-        "tooltip" : "起始高度是指您的钱包在区块链上开始扫描您资金的点位。"
       }
+    },
+    "operationDetails" : {
+      "txType" : "交易类型",
+      "transparentTx" : "透明",
+      "shieldedSaplingTx" : "🛡 私密 (Sapling) ",
+      "shieldedOrchardTx" : "🛡 私密 (Orchard) "
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "公开可见的余额",
       "privateBalance" : "私密余额",
       "privateBalanceTooltip" : "对外隐藏的余额"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "公开",
+        "private" : "私密"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "有新的可用更新",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "更新时出错，请重试",
+    "installAndRelaunch" : "安装更新并重新启动"
   }
 }

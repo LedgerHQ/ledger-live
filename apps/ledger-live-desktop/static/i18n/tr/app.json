@@ -209,7 +209,11 @@
       "BURN" : "Yakıldı",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
       "CONTRACT_CALL" : "Sözleşme çağrısı",
-      "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
+      "UPDATE_ACCOUNT" : "Güncellenmiş hesap",
+      "SHIELDED_TX_SAPLING_IN" : "Alındı",
+      "SHIELDED_TX_SAPLING_OUT" : "Gönderildi",
+      "SHIELDED_TX_ORCHARD_IN" : "Alındı",
+      "SHIELDED_TX_ORCHARD_OUT" : "Gönderildi"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -268,6 +272,8 @@
     "minute" : "Dakika",
     "minute_other" : "Dakika",
     "minute_short" : "dk.",
+    "second" : "Saniye",
+    "second_other" : "Saniye",
     "second_short" : "sn.",
     "hour" : "Saat",
     "hour_other" : "Saat",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "Ağ ücretleri yenilenemiyor",
       "warningDescription" : "Önceden belirlenmiş ücretler eski olabilir."
+    },
+    "customFees" : {
+      "title" : "Özel ücretler",
+      "confirm" : "Onayla",
+      "maxFee" : "Ücret Üst Limiti ({{unit}})",
+      "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
+      "gasLimit" : "Gas limiti ({{unit}})",
+      "feePerByte" : "Ücret tutarı ({{unit}})",
+      "suggested" : "Önerilen",
+      "nextBlock" : "Sonraki blok",
+      "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+      "invalidValue" : "Geçerli bir sayı girin.",
+      "belowMinimum" : "Minimum değer: {{min}}",
+      "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır."
+    },
+    "coinControl" : {
+      "title" : "Coin yönetimi"
     }
   },
   "releaseNotes" : {
-    "title" : "Sürüm notları",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Sürüm notu",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Anladım"
   },
   "troubleshootNetwork" : {
     "title" : "Ağ sorunlarını giderin",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Concordium Hesabı Ekleyin",
+        "acknowledge" : {
+          "title" : "Bilgilendirme",
+          "description" : "Concordium, haricî kimlik doğrulaması gerektirir. Lütfen şu önemli güvenlik uyarılarını okuyun:",
+          "list" : {
+            "1" : "<0>Adres doğrulaması yoktur</0> - Ledger cihazınız, Concordium alıcı adreslerini doğrulayamaz. Fonları almadan önce adresleri manuel olarak doğrulayın.",
+            "2" : "<0>Concordium ID Uygulaması ayrı bir anahtar cümle kullanır</0> - Concordium uygulamasında YENİ 24 kelime oluşturacaksınız. Ledger anahtar cümlenizi ASLA kullanmayın.",
+            "3" : "<0>Ledger Wallet’ın dışına yönlendirileceksiniz</0> - Kimlik doğrulama işlemi, haricî Concordium Wallet uygulamasında gerçekleşir. Concordium’un blok zinciri protokolü bunu gerekli kılar.",
+            "4" : "<0>İşlemleri imzalamak hâlâ güvenlidir</0> – Sadece Ledger cihazınız işlemleri imzalayabilir ve hesaplar oluşturabilir."
+          },
+          "allow" : "Kabul Ediyorum"
+        },
+        "identity" : {
+          "title" : "Bağlan",
+          "account" : "Hesap",
+          "newAccount" : "Yeni Hesap",
+          "init" : "İzin Ver seçeneğine tıklamanız, hesabınızı doğrulamak için gereken KYC kimlik kontrolüne devam etmeye hazır olduğunuz anlamına gelir.",
+          "scanQRCode" : "Concordium ID Uygulamanızı bağlamak için mobil cihazınızla karekodu tarayın. <0>Daha fazla bilgi edinin</0>",
+          "ledgerSeedWarning" : "Ledger Kurtarma Kelimelerinizi Concordium ID Uygulaması için <0>KULLANMAYIN</0>.",
+          "downloadApp" : "Concordium ID Uygulamasını indirin",
+          "connecting" : "Concordium ID Uygulamasına bağlanılıyor...",
+          "onboarded" : "Kurulumu yapılmış hesaplar",
+          "success" : "Concordium ID Uygulamasına başarıyla bağlanıldı.",
+          "error" : "Yeni hesabın kurulumu yapılamadı. Lütfen tekrar deneyin.",
+          "status" : {
+            "prepare" : "Hesap kurulumuna hazırlanılıyor...",
+            "submit" : "Hesabın kurulumu yapılıyor...",
+            "default" : "İşleniyor..."
+          }
+        },
+        "create" : {
+          "title" : "Hesap Oluşturun",
+          "init" : {
+            "title" : "Concordium ID Uygulamasına başarıyla bağlanıldı"
+          },
+          "prepare" : {
+            "title" : "Hesap oluşturmak için aşağıdaki kodu Concordium ID Uygulamasında eşleştirin",
+            "resendButton" : "Onayı tekrar gönder",
+            "resendDescription" : "Onay <0>{{count}}</0> {{unit}} sonra yeniden gönderilebilir"
+          },
+          "success" : "Concordium hesabınız başarıyla oluşturuldu.",
+          "error" : "Hesap oluşturulamadı. Lütfen tekrar deneyin.",
+          "error429" : "Çok fazla talep gönderildi. Lütfen bekleyin ve daha sonra tekrar deneyin.",
+          "button" : "Oluştur",
+          "processing" : "İşleniyor...",
+          "status" : {
+            "prepare" : "Hesap oluşturmaya hazırlanılıyor...",
+            "submit" : "Hesap oluşturuluyor...",
+            "default" : "İşleniyor..."
+          }
+        },
+        "finish" : {
+          "title" : "Onaylayın"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "Concordium Adresiniz şu an doğrulanamıyor. Adresinizi Concordium tarayıcısına yapıştırarak mutlaka iki kez kontrol edin.",
+        "verifyLink" : "Doğrula"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "Geçersiz memo boyutu, en fazla 64 karaktere izin verilir",
       "description" : "Cardano memo’sunun boyutu için bir üst sınır vardır. Memo’nun boyutunu lütfen azaltın"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo, azami uzunluğu aşıyor",
+      "description" : "Memo’nuz {{memoLength}} bayt, ancak izin verilen maksimum boyut {{maxLength}} bayttır. Memo boyutunu lütfen küçültün."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Bakiyeyi göster",
-        "pausedAt" : "Duraklatıldı: ",
+        "startSync" : "Senkronizasyonu başlat",
+        "stopSync" : "Senkronizasyonu durdur",
+        "lastProcessedBlock" : "Son işlenen blok: {{block}}. {{missing}} blok eksik.",
         "lastSync" : "Son senkronizasyon: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Doğum günü yüksekliği",
+        "tooltip" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "Senkronizasyonu başlat",
-      "datepicker" : {
-        "label" : "Doğum günü yüksekliği",
-        "tooltip" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır."
       }
+    },
+    "operationDetails" : {
+      "txType" : "İşlem türü",
+      "transparentTx" : "Şeffaf",
+      "shieldedSaplingTx" : "🛡 Özel (Sapling)",
+      "shieldedOrchardTx" : "🛡 Özel (Orchard)"
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
       "privateBalance" : "Gizli bakiye",
       "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Açık",
+        "private" : "Özel"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Yeni güncelleme mevcut",
+    "downloadProgress" : "%{{progress}}",
+    "errorTryAgain" : "Güncelleme sırasında bir hata oluştu, tekrar deneyin",
+    "installAndRelaunch" : "Güncellemeyi yükleyip yeniden başlatın"
   }
 }
