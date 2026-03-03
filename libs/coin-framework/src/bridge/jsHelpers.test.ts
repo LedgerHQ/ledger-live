@@ -64,10 +64,10 @@ describe("makeSync", () => {
     // When
     const accountUpdater = makeSync({
       getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
-      postSync: (initial: Account, acc: Account) => {
-        acc.lastSyncDate = new Date("2024-05-12T17:04:42");
-        return acc;
-      },
+      postSync: (initial: Account, acc: Account) => ({
+        ...acc,
+        lastSyncDate: new Date("2024-05-12T17:04:42"),
+      }),
     })(account, {} as SyncConfig);
     const updater = await firstValueFrom(accountUpdater);
     const newAccount = updater(account);
@@ -619,7 +619,7 @@ describe("makeScanAccounts", () => {
     expect(lastEvent.type).toBe("discovered");
   });
 
-  it("supports getAccountShape returning an Observable", async () => {
+  it("accepts Observable from getAccountShape", async () => {
     const addressResolver = {
       address: "address",
       path: "path",
@@ -645,7 +645,7 @@ describe("makeScanAccounts", () => {
     expect(result.account.id).toBe("obs-acc-id");
   });
 
-  it("errors when getAccountShape returns an Observable that errors", async () => {
+  it("propagates error when getAccountShape Observable errors", async () => {
     const addressResolver = {
       address: "address",
       path: "path",

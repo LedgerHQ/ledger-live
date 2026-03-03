@@ -1,7 +1,20 @@
 import bippath from "bip32-path";
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { Observable, Observer, from, lastValueFrom, map, of } from "rxjs";
+import {
+  Observable,
+  Observer,
+  Subject,
+  defaultIfEmpty,
+  firstValueFrom,
+  from,
+  isObservable,
+  lastValueFrom,
+  map,
+  of,
+  take,
+  takeUntil,
+} from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import {
@@ -102,16 +115,9 @@ type AccountUpdater<A extends Account = Account> = (account: A) => A;
  * @returns An Observable
  */
 function normalizeToObservable<T>(value: Promise<T> | Observable<T>): Observable<T> {
-  // Check if it's already an Observable by checking for the subscribe method
-  if (
-    value instanceof Observable ||
-    (value &&
-      typeof (value as any).subscribe === "function" &&
-      typeof (value as any).pipe === "function")
-  ) {
+  if (isObservable(value)) {
     return value as Observable<T>;
   }
-  // Otherwise, it's a Promise, wrap it with from()
   return from(value as Promise<T>);
 }
 
@@ -388,8 +394,11 @@ export const makeScanAccounts =
       }
 
       let finished = false;
+      const teardown$ = new Subject<void>();
 
       const unsubscribe = () => {
+        teardown$.next();
+        teardown$.complete();
         finished = true;
       };
 
@@ -405,7 +414,6 @@ export const makeScanAccounts =
 
         const { address, path: freshAddressPath, ...rest } = res;
 
-        if (finished) return of(null);
         const accountShapeResult = getAccountShape(
           {
             currency,
@@ -490,7 +498,7 @@ export const makeScanAccounts =
           return account;
         }
 
-        return accountShape$.pipe(map(accountShapePipe));
+        return accountShape$.pipe(takeUntil(teardown$), map(accountShapePipe));
       }
 
       async function main() {
@@ -572,9 +580,19 @@ export const makeScanAccounts =
               if (!res) break;
 
               const account$ = stepAccount(index, res, derivationMode, seedIdentifier);
-              const account = await lastValueFrom(account$);
-
-              if (finished) break;
+              const result = await Promise.race([
+                lastValueFrom(account$.pipe(defaultIfEmpty(null))).then(account => ({
+                  account,
+                })),
+                firstValueFrom(
+                  teardown$.pipe(
+                    take(1),
+                    map(() => ({ cancelled: true })),
+                  ),
+                ).then(() => ({ cancelled: true as const })),
+              ]);
+              if ("cancelled" in result && result.cancelled) break;
+              const account = "account" in result ? result.account : null;
 
               if (account) {
                 const showNewAccount = shouldShowNewAccount(currency, derivationMode);
