@@ -12,11 +12,10 @@ import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/accou
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig, { type AleoCoinConfig } from "../config";
-import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import type {
   AleoOperation,
   AleoTransactionType,
-  EnrichedTransaction,
   EnrichedPrivateRecord,
   Transaction,
   TransactionType,
@@ -26,6 +25,7 @@ import type {
   Intent,
   PreparedRequestResponse,
   AleoTransactionIntentData,
+  AleoPublicTransaction,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -94,52 +94,49 @@ export const determineTransactionType = (
   return "public";
 };
 
-function parseTransactionFields(enrichedTx: EnrichedTransaction, address: string) {
-  const date = new Date(Number(enrichedTx.rawTx.block_timestamp) * 1000);
-  const hasFailed = enrichedTx.rawTx.transaction_status !== "Accepted";
+function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
+  const date = new Date(Number(rawTx.block_timestamp) * 1000);
+  const hasFailed = rawTx.transaction_status !== "Accepted";
   let type: OperationType = "NONE";
-  let fee = 0;
-  let blockHash = "";
+  const fee = rawTx.fee;
+  const blockHash = rawTx.block_hash;
 
-  if (enrichedTx.details) {
-    type = address === enrichedTx.rawTx.recipient_address ? "IN" : "OUT";
-    fee = enrichedTx.details.fee_value;
-    blockHash = enrichedTx.details.block_hash;
+  if (rawTx.program_id === PROGRAM_ID.CREDITS) {
+    type = address === rawTx.recipient_address ? "IN" : "OUT";
   }
 
-  const transactionType = determineTransactionType(enrichedTx.rawTx.function_id, type);
+  const transactionType = determineTransactionType(rawTx.function_id, type);
 
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
 export const toAlpacaOperation = (
-  enrichedTx: EnrichedTransaction,
+  rawTx: AleoPublicTransaction,
   address: string,
 ): AlpacaOperation => {
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    enrichedTx,
+    rawTx,
     address,
   );
-
   return {
-    id: enrichedTx.rawTx.transaction_id,
+    id: rawTx.transaction_id,
     type,
-    recipients: [enrichedTx.rawTx.recipient_address],
-    senders: [enrichedTx.rawTx.sender_address],
-    value: BigInt(enrichedTx.rawTx.amount.toFixed(0)),
+    recipients: [rawTx.recipient_address],
+    senders: [rawTx.sender_address],
+    value: BigInt(rawTx.amount.toFixed(0)),
     asset: { type: "native" },
     details: {
-      functionId: enrichedTx.rawTx.function_id,
+      functionId: rawTx.function_id,
       transactionType,
       ledgerOpType: type,
     },
     tx: {
-      hash: enrichedTx.rawTx.transaction_id,
+      hash: rawTx.transaction_id,
       fees: BigInt(fee.toFixed(0)),
       date: date,
       block: {
         hash: blockHash,
-        height: enrichedTx.rawTx.block_number,
+        height: rawTx.block_number,
         time: date,
       },
       failed: hasFailed ?? false,
@@ -149,29 +146,29 @@ export const toAlpacaOperation = (
 
 export const toBridgeOperation = (
   ledgerAccountId: string,
-  enrichedTx: EnrichedTransaction,
+  rawTx: AleoPublicTransaction,
   address: string,
 ): AleoOperation => {
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    enrichedTx,
+    rawTx,
     address,
   );
 
   return {
-    id: encodeOperationId(ledgerAccountId, enrichedTx.rawTx.transaction_id, type),
-    recipients: [enrichedTx.rawTx.recipient_address],
-    senders: [enrichedTx.rawTx.sender_address],
-    value: new BigNumber(enrichedTx.rawTx.amount),
+    id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
+    recipients: [rawTx.recipient_address],
+    senders: [rawTx.sender_address],
+    value: new BigNumber(rawTx.amount),
     type,
     hasFailed,
-    hash: enrichedTx.rawTx.transaction_id,
+    hash: rawTx.transaction_id,
     fee: new BigNumber(fee),
-    blockHeight: enrichedTx.rawTx.block_number,
+    blockHeight: rawTx.block_number,
     blockHash,
     accountId: ledgerAccountId,
     date,
     extra: {
-      functionId: enrichedTx.rawTx.function_id,
+      functionId: rawTx.function_id,
       transactionType,
     },
   };

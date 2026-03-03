@@ -4,7 +4,6 @@ import type { TRANSACTION_TYPE } from "../constants";
 import type {
   AleoJWT,
   AleoRecordScannerStatusResponse,
-  AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
   AleoPrivateRecord,
 } from "./api";
@@ -14,11 +13,6 @@ export interface AleoUnspentRecord extends AleoPrivateRecord {
   microcredits: string;
   decryptedData: AleoDecryptedRecordResponse;
 }
-
-export type EnrichedTransaction = {
-  rawTx: AleoPublicTransaction;
-  details: AleoPublicTransactionDetailsResponse | null;
-};
 
 export type EnrichedPrivateRecord = {
   rawRecord: AleoPrivateRecord;

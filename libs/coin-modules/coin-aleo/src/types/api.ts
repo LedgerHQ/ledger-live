@@ -35,12 +35,14 @@ export interface AleoPublicTransaction {
   transition_id: string;
   transaction_status: string;
   block_number: number;
+  block_hash: string;
   block_timestamp: string;
   function_id: string;
   amount: number;
   sender_address: string;
   recipient_address: string;
   program_id: string;
+  fee: number;
 }
 
 export interface AleoPublicTransactionDetailsResponse {

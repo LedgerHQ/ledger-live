@@ -15,7 +15,6 @@ import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
-  enrichTransaction,
   enrichPrivateRecord,
   patchPublicOperations,
 } from "./utils";
@@ -341,33 +340,6 @@ describe("network/utils", () => {
           order: "desc",
         });
       });
-    });
-  });
-
-  describe("enrichTransaction", () => {
-    it("should fetch details and return rawTx + details when program is CREDITS", async () => {
-      const rawTx = getMockedPublicTransaction({
-        transaction_id: "at1test123",
-        program_id: PROGRAM_ID.CREDITS,
-      });
-      const mockDetails = getMockedTransactionDetails("at1test123");
-
-      jest.mocked(apiClient.getTransactionById).mockResolvedValueOnce(mockDetails);
-
-      const result = await enrichTransaction({ currency: mockCurrency, rawTx });
-
-      expect(apiClient.getTransactionById).toHaveBeenCalledTimes(1);
-      expect(apiClient.getTransactionById).toHaveBeenCalledWith(mockCurrency, "at1test123");
-      expect(result).toEqual({ rawTx, details: mockDetails });
-    });
-
-    it("should return null details without fetching when program is not CREDITS", async () => {
-      const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
-
-      const result = await enrichTransaction({ currency: mockCurrency, rawTx });
-
-      expect(apiClient.getTransactionById).not.toHaveBeenCalled();
-      expect(result).toEqual({ rawTx, details: null });
     });
   });
 

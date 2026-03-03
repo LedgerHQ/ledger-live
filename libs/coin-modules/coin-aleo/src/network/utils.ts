@@ -12,8 +12,6 @@ import { sdkClient } from "../network/sdk";
 import type {
   ProvableApi,
   AleoPublicTransaction,
-  AleoPublicTransactionDetailsResponse,
-  EnrichedTransaction,
   EnrichedPrivateRecord,
   AleoPrivateRecord,
   AleoOperation,
@@ -114,26 +112,6 @@ export async function fetchAccountTransactionsFromHeight({
 
   // should not be reached, just a type guard
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
-}
-
-// transactions list doesn't include all the details we need to build the operation, so we need to fetch them separately
-export async function enrichTransaction({
-  currency,
-  rawTx,
-}: {
-  currency: CryptoCurrency;
-  rawTx: AleoPublicTransaction;
-}): Promise<EnrichedTransaction> {
-  let details: AleoPublicTransactionDetailsResponse | null = null;
-
-  if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    details = await apiClient.getTransactionById(currency, rawTx.transaction_id);
-  }
-
-  return {
-    rawTx,
-    details,
-  };
 }
 
 /**
