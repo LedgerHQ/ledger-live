@@ -266,6 +266,7 @@ describe("makeSync", () => {
     const nextSpy = jest.fn();
     const completeSpy = jest.fn();
     const errorSpy = jest.fn();
+    // eslint-disable-next-line prefer-const
     let sub: Subscription;
     const sync$ = makeSync({
       getAccountShape: () =>

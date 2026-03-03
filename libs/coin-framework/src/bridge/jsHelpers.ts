@@ -6,13 +6,11 @@ import {
   Observer,
   Subject,
   defaultIfEmpty,
-  firstValueFrom,
   from,
   isObservable,
   lastValueFrom,
   map,
   of,
-  take,
   takeUntil,
 } from "rxjs";
 import { log } from "@ledgerhq/logs";
