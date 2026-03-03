@@ -199,7 +199,7 @@ describe("logic/transaction", () => {
     it("should return fee estimation for simple transfer", async () => {
       const currency = createMockCurrency();
 
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees(currency);
 
       expect(result).toHaveProperty("cost");
       expect(result).toHaveProperty("energy");
@@ -210,7 +210,7 @@ describe("logic/transaction", () => {
     it("should use fixed energy for simple transfer without payload", async () => {
       const currency = createMockCurrency();
 
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees(currency);
 
       // Simple transfer has fixed energy cost
       expect(result.energy).toBe(CONCORDIUM_ENERGY.SIMPLE_TRANSFER);
@@ -219,7 +219,7 @@ describe("logic/transaction", () => {
     it("should calculate energy for transfer with payload", async () => {
       const currency = createMockCurrency();
 
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees(currency);
 
       expect(result.energy).toBeGreaterThan(0n);
     });
@@ -230,22 +230,20 @@ describe("logic/transaction", () => {
 
       const currency = createMockCurrency();
 
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees(currency);
 
-      // Should return defaults for simple transfer
       expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
       expect(result.energy).toBe(CONCORDIUM_ENERGY.DEFAULT);
     });
 
-    it("should return higher default energy for TransferWithMemo when fetch fails", async () => {
+    it("should return higher default energy for memo transfer when fetch fails", async () => {
       const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
       getTransactionCost.mockRejectedValueOnce(new Error("Network error"));
 
       const currency = createMockCurrency();
 
-      const result = await estimateFees(currency, TransactionType.TransferWithMemo);
+      const result = await estimateFees(currency, "some memo");
 
-      // Should return max memo energy for TransferWithMemo to avoid silent failures
       expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
       expect(result.energy).toBe(CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX);
     });
@@ -254,19 +252,18 @@ describe("logic/transaction", () => {
       const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
       const currency = createMockCurrency();
 
-      await estimateFees(currency, TransactionType.Transfer);
+      await estimateFees(currency);
 
-      expect(getTransactionCost).toHaveBeenCalledWith(currency, 1, undefined);
+      expect(getTransactionCost).toHaveBeenCalledWith(currency, { numSignatures: 1 });
     });
 
-    it("should default transaction type to Transfer", async () => {
+    it("should call getTransactionCost with memoSize when memo provided", async () => {
+      const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
       const currency = createMockCurrency();
 
-      // Call without explicit transaction type
-      const result = await estimateFees(currency);
+      await estimateFees(currency, "test");
 
-      expect(result).toHaveProperty("cost");
-      expect(result).toHaveProperty("energy");
+      expect(getTransactionCost).toHaveBeenCalledWith(currency, { numSignatures: 1, memoSize: 5 });
     });
   });
 
@@ -302,7 +299,10 @@ describe("logic/transaction", () => {
       const result = await broadcast(signedTx, currency);
 
       expect(result).toBe("test-submission-id");
-      expect(submitTransfer).toHaveBeenCalledWith(currency, "aabbccdd", "11223344");
+      expect(submitTransfer).toHaveBeenCalledWith(currency, {
+        transaction: "aabbccdd",
+        signatures: { "0": { "0": "11223344" } },
+      });
     });
 
     it("should parse signed transaction JSON correctly", async () => {
@@ -315,7 +315,10 @@ describe("logic/transaction", () => {
 
       await broadcast(signedTx, currency);
 
-      expect(submitTransfer).toHaveBeenCalledWith(currency, "deadbeef", "cafebabe");
+      expect(submitTransfer).toHaveBeenCalledWith(currency, {
+        transaction: "deadbeef",
+        signatures: { "0": { "0": "cafebabe" } },
+      });
     });
 
     it("should throw on invalid JSON", async () => {

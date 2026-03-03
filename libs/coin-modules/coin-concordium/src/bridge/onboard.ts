@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -12,12 +12,13 @@ import {
 } from "../network/utils";
 import { getWalletConnect } from "../network/walletConnect";
 import { getPublicKey, signCredentialDeployment } from "../signer";
-import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import type {
-  ConcordiumSigner,
-  ConcordiumOnboardProgress,
-  ConcordiumOnboardResult,
-  ConcordiumPairingProgress,
+import {
+  type ConcordiumSigner,
+  type ConcordiumOnboardProgress,
+  type ConcordiumOnboardResult,
+  type ConcordiumPairingProgress,
+  AccountOnboardStatus,
+  ConcordiumPairingStatus,
 } from "../types";
 import { submitCredential } from "../network/proxyClient";
 
