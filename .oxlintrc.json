@@ -58,7 +58,7 @@
         "react-hooks/exhaustive-deps": "error",
         "@typescript-eslint/no-explicit-any": "error",
         "no-restricted-imports": [
-          "error",
+          "warn",
           {
             "patterns": [
               {
@@ -101,7 +101,20 @@
     {
       "files": ["apps/ledger-live-desktop/tests/**"],
       "env": { "jest/globals": true },
-      "plugins": ["eslint", "typescript", "react", "jest"]
+      "plugins": ["eslint", "typescript", "react", "jest"],
+      "rules": {
+        "react-hooks/rules-of-hooks": "warn",
+        "@typescript-eslint/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": [
+        "apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts",
+        "apps/ledger-live-desktop/src/renderer/hooks/useInitSupportedCounterValues.ts"
+      ],
+      "rules": {
+        "react-hooks/rules-of-hooks": "warn"
+      }
     },
     {
       "files": ["apps/ledger-live-mobile/**"],

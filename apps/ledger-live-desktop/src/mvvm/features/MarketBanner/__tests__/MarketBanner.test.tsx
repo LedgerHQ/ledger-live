@@ -10,7 +10,7 @@ jest.mock("react-router", () => ({
 }));
 
 const mockNavigate = jest.fn();
-(useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+jest.mocked(useNavigate).mockReturnValue(mockNavigate);
 
 describe("MarketBannerView", () => {
   beforeEach(() => {

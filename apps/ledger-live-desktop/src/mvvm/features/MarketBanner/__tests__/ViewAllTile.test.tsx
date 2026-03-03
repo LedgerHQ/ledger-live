@@ -9,7 +9,7 @@ jest.mock("react-router", () => ({
 }));
 
 const mockNavigate = jest.fn();
-(useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+jest.mocked(useNavigate).mockReturnValue(mockNavigate);
 
 describe("ViewAllTile", () => {
   beforeEach(() => {
@@ -33,9 +33,8 @@ describe("ViewAllTile", () => {
     const { user } = render(<ViewAllTile />);
 
     const tile = screen.getByText("View all").closest("div[role='button']");
-    if (tile) {
-      await user.click(tile);
-      expect(mockNavigate).toHaveBeenCalledWith("/market");
-    }
+    expect(tile).toBeInTheDocument();
+    await user.click(tile!);
+    expect(mockNavigate).toHaveBeenCalledWith("/market");
   });
 });

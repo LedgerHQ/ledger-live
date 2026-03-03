@@ -32,25 +32,22 @@ describe("OnboardError", () => {
   });
 
   describe("rate limit errors (429)", () => {
-    const axiosError = {
+    const axiosError = Object.assign(new Error("Too many requests"), {
       name: "AxiosError",
       isAxiosError: true,
       status: 429,
-      message: "Too many requests",
-    };
+    });
 
     it("should format 429 error in create context", () => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const { container } = render(
-        <OnboardError error={axiosError as unknown as Error} context="create" />,
+        <OnboardError error={axiosError} context="create" />,
       );
       expect(container.textContent).toContain("Too many requests");
     });
 
     it("should not use 429 format in onboard context", () => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const { container } = render(
-        <OnboardError error={axiosError as unknown as Error} context="onboard" />,
+        <OnboardError error={axiosError} context="onboard" />,
       );
       expect(container.textContent).not.toContain("Too many requests");
       expect(container.textContent).toContain("Failed to onboard new account");
