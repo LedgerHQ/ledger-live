@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
-
-import { getLastSyncTooltipDescriptor } from "../utils/getLastSyncTooltipMessage";
+import { useSelector } from "LLD/hooks/redux";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { formatTimeAgo } from "@ledgerhq/live-common/utils/timeAgo";
 
 export interface ActivityIndicatorTooltipParams {
   isRotating: boolean;
@@ -19,6 +20,7 @@ export function useActivityIndicatorTooltip({
   lastSyncMs,
 }: ActivityIndicatorTooltipParams): string | null {
   const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
 
   if (isRotating) {
     return null;
@@ -37,7 +39,9 @@ export function useActivityIndicatorTooltip({
     return t("topBar.activityIndicator.upToDate");
   }
 
-  const elapsedMs = Date.now() - lastSyncMs;
-  const descriptor = getLastSyncTooltipDescriptor(elapsedMs);
-  return "count" in descriptor ? t(descriptor.key, { count: descriptor.count }) : t(descriptor.key);
+  const timeAgo = formatTimeAgo(lastSyncMs, locale);
+  if (timeAgo === null) {
+    return t("topBar.activityIndicator.upToDate");
+  }
+  return t("topBar.activityIndicator.lastSync", { timeAgo });
 }
