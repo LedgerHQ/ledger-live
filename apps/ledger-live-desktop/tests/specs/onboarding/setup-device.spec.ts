@@ -176,8 +176,10 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}]"Device genuine check"`, async () => {
+        await onboardingPage.waitForGenuineCheckPage();
         await expect(page).toHaveScreenshot("v3-genuine-check.png");
         await onboardingPage.checkDevice();
+        await onboardingPage.continueButton.isEnabled({ timeout: 10000 });
         await expect(page).toHaveScreenshot("v3-before-genuine-check.png");
       });
 

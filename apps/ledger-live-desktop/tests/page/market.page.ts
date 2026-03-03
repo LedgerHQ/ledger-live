@@ -63,6 +63,7 @@ export class MarketPage extends AppPage {
 
   @step("Open buy page for $0 with account selection")
   async openBuyPageWithAccountSelection(ticker: string, accountName: string) {
+    await this.waitForLoading();
     await this.buyButton(ticker).click();
     const accountRow = this.page
       .getByRole("button", { name: new RegExp(accountName, "i") })
