@@ -21,7 +21,6 @@ jest.mock("@braze/web-sdk", () => ({
 }));
 
 jest.mock("LLD/features/AppBlockers/components/AppVersionBlocker", () => {
-  const React = require("react");
   return { AppVersionBlocker: ({ children }: { children: React.ReactNode }) => <>{children}</> };
 });
 
