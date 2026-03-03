@@ -52,6 +52,7 @@ export function CoinControlScreenInner({
     <>
       <CoinControlScreenView
         utxoDisplayData={viewModel.utxoDisplayData}
+        changeToReturnFormatted={viewModel.changeToReturnFormatted}
         onSelectStrategy={viewModel.onSelectStrategy}
         amountValue={viewModel.amountValue}
         onAmountChange={viewModel.onAmountChange}

@@ -12,10 +12,7 @@ import {
   Checkbox,
 } from "@ledgerhq/lumen-ui-react";
 import { Check } from "@ledgerhq/lumen-ui-react/symbols";
-import type {
-  BitcoinUtxoDisplayData,
-  UtxoRowDisplayData,
-} from "../hooks/useBitcoinUtxoDisplayData";
+import type { BitcoinUtxoDisplayData } from "../hooks/useBitcoinUtxoDisplayData";
 import { bitcoinPickingStrategy, BitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/lib/types";
 
 type UtxoSelectorProps = Readonly<{
@@ -47,7 +44,7 @@ export const UtxoSelector = ({ utxoDisplayData, strategy }: UtxoSelectorProps) =
                 <ListItemTitle>
                   #{index + 1} {row.utxo.address?.slice(0, 8)}...{row.utxo.address?.slice(-4)}{" "}
                 </ListItemTitle>
-                <ListItemDescription>{row.utxo.value.toFixed()}</ListItemDescription>
+                <ListItemDescription>{row.formattedValue}</ListItemDescription>
               </ListItemContent>
             </ListItemLeading>
             {!isCustomStrategy && row.isUsedInTx && (

@@ -10,6 +10,9 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { BigNumber } from "bignumber.js";
 import { useMemo } from "react";
+import { useSelector } from "LLD/hooks/redux";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 function isBitcoinBasedAccount(account: AccountLike): account is BitcoinAccount {
   return "bitcoinResources" in account && account.bitcoinResources !== undefined;
@@ -30,6 +33,7 @@ export type PickingStrategyOption = Readonly<{
 
 export type UtxoRowDisplayData = Readonly<{
   utxo: BitcoinOutput;
+  formattedValue: string;
   excluded: boolean;
   exclusionReason: "pickPendingUtxo" | "userExclusion" | undefined;
   isUsedInTx: boolean;
@@ -74,6 +78,8 @@ export function useBitcoinUtxoDisplayData({
   transaction,
   status,
 }: UseBitcoinUtxoDisplayDataParams): BitcoinUtxoDisplayData | null {
+  const locale = useSelector(localeSelector);
+
   return useMemo(() => {
     if (!isBitcoinBasedAccount(account)) return null;
     if (!hasUtxoStrategy(transaction)) return null;
@@ -82,6 +88,7 @@ export function useBitcoinUtxoDisplayData({
     const bitcoinResources = account.bitcoinResources;
     if (!bitcoinResources?.utxos?.length) return null;
 
+    const accountUnit = account.currency.units[0];
     const { utxoStrategy } = transaction;
     const utxos = bitcoinResources.utxos;
     const blockHeight = account.blockHeight ?? 0;
@@ -102,8 +109,15 @@ export function useBitcoinUtxoDisplayData({
       const disabled = unconfirmed || isLastSelected;
       const confirmations = utxo.blockHeight ? blockHeight - utxo.blockHeight : 0;
 
+      const formattedValue = formatCurrencyUnit(accountUnit, utxo.value, {
+        showCode: true,
+        disableRounding: true,
+        locale,
+      });
+
       return {
         utxo,
+        formattedValue,
         excluded: s.excluded,
         exclusionReason,
         isUsedInTx,
@@ -121,5 +135,5 @@ export function useBitcoinUtxoDisplayData({
       totalSpent: status.totalSpent ?? new BigNumber(0),
       utxoRows,
     };
-  }, [account, status, transaction]);
+  }, [account, locale, status, transaction]);
 }

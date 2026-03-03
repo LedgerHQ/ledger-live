@@ -6,7 +6,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { processRawInput } from "../../../utils/amountInput";
+import { formatAmountForInput, processRawInput } from "../../../utils/amountInput";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;
@@ -30,10 +30,18 @@ export function useAmountInput({
     [account, parentAccount],
   );
 
-  const [inputValue, setInputValue] = useState<string>("");
-
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
+
+  const initialFormattedValue = useMemo(() => {
+    const amount =
+      transaction.useAllAmount && status.amount != null
+        ? status.amount
+        : transaction.amount ?? null;
+    return amount ? formatAmountForInput(accountUnit, amount, locale) : null;
+  }, [accountUnit, locale, status.amount, transaction.amount, transaction.useAllAmount]);
+
+  const [inputValue, setInputValue] = useState<string | null>(initialFormattedValue);
 
   // When useAllAmount is true, the bridge calculates the actual amount (balance - fees)
   // This calculated amount is available in status.amount

@@ -9,6 +9,7 @@ import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 
 type AmountFooterProps = Readonly<{
+  changeToReturnFormatted: string;
   feesRowLabel: string;
   feesRowValue: string;
   feesRowStrategyLabel: string;
@@ -27,6 +28,7 @@ type AmountFooterProps = Readonly<{
 }>;
 
 export function CoinControlFooter({
+  changeToReturnFormatted,
   feesRowLabel,
   feesRowValue,
   feesRowStrategyLabel,
@@ -56,7 +58,7 @@ export function CoinControlFooter({
   return (
     <DialogFooter data-testid="send-coin-control-footer" className="flex flex-col">
       <div className="border-t border-muted-subtle" />
-      <ChangeToReturn />
+      <ChangeToReturn value={changeToReturnFormatted} />
       <NetworkFeesMenu
         display={{
           label: feesRowLabel,

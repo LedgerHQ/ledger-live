@@ -1,5 +1,6 @@
 import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import type {
   SendFlowTransactionActions,
@@ -10,10 +11,29 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "LLD/hooks/redux";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { useAmountInput } from "./useAmountInput";
 import { useBitcoinUtxoDisplayData } from "./useBitcoinUtxoDisplayData";
+
+type StatusWithTxOutputs = TransactionStatus & {
+  txOutputs?: ReadonlyArray<{ isChange: boolean; value: BigNumber }>;
+};
+
+function hasTxOutputs(status: TransactionStatus): status is StatusWithTxOutputs {
+  return "txOutputs" in status;
+}
+
+/** Bitcoin status includes txOutputs with change; generic status may not. */
+function getChangeToReturn(status: TransactionStatus): BigNumber {
+  const outputs = hasTxOutputs(status) ? status.txOutputs ?? [] : [];
+  return outputs
+    .filter((o): o is { isChange: true; value: BigNumber } => o.isChange)
+    .reduce((sum, o) => sum.plus(o.value), new BigNumber(0));
+}
 
 type UseCoinControlScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -43,6 +63,8 @@ export function useCoinControlScreenViewModel({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
+  const locale = useSelector(localeSelector);
 
   const updateTransactionWithPatch = useCallback(
     (patch: Partial<Transaction>) => {
@@ -114,6 +136,18 @@ export function useCoinControlScreenViewModel({
     status,
   });
 
+  const changeToReturnFormatted = useMemo(() => {
+    const hasAmount =
+      transaction.useAllAmount || (transaction.amount != null && transaction.amount.gt(0));
+    if (!hasAmount) return "";
+    const changeAmount = getChangeToReturn(status);
+    return formatCurrencyUnit(accountUnit, changeAmount, {
+      showCode: true,
+      disableRounding: true,
+      locale,
+    });
+  }, [accountUnit, locale, status, transaction.amount, transaction.useAllAmount]);
+
   const onSelectStrategy = useCallback(
     (value: string) => {
       const strategy = parseInt(value, 10);
@@ -139,6 +173,7 @@ export function useCoinControlScreenViewModel({
     amountValue: amountInput.amountValue,
     onAmountChange: amountInput.onAmountChange,
     utxoDisplayData,
+    changeToReturnFormatted,
     onSelectStrategy,
     reviewLabel,
     reviewShowIcon: !hasInsufficientFundsError,

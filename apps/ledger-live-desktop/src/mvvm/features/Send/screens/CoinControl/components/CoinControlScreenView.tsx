@@ -11,8 +11,9 @@ import type { BitcoinUtxoDisplayData } from "../hooks/useBitcoinUtxoDisplayData"
 
 type CoinControlScreenViewProps = Readonly<{
   utxoDisplayData: BitcoinUtxoDisplayData | null;
+  changeToReturnFormatted: string;
   onSelectStrategy: (value: string) => void;
-  amountValue: string;
+  amountValue: string | null;
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   feesRowLabel: string;
   feesRowValue: string;
@@ -32,6 +33,7 @@ type CoinControlScreenViewProps = Readonly<{
 
 export function CoinControlScreenView({
   utxoDisplayData,
+  changeToReturnFormatted,
   onSelectStrategy,
   amountValue,
   onAmountChange,
@@ -66,6 +68,7 @@ export function CoinControlScreenView({
       </DialogBody>
 
       <CoinControlFooter
+        changeToReturnFormatted={changeToReturnFormatted}
         feesRowLabel={feesRowLabel}
         feesRowValue={feesRowValue}
         feesRowStrategyLabel={feesRowStrategyLabel}

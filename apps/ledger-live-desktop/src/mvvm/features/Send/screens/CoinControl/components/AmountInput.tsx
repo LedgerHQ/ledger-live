@@ -3,7 +3,7 @@ import { Subheader, SubheaderRow, SubheaderTitle, TextInput } from "@ledgerhq/lu
 
 type AmountInputProps = Readonly<{
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  amount: string;
+  amount: string | null;
 }>;
 
 export const AmountInput = ({ onAmountChange, amount }: AmountInputProps) => {
@@ -14,7 +14,12 @@ export const AmountInput = ({ onAmountChange, amount }: AmountInputProps) => {
           <SubheaderTitle>Amount to send in BTC</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <TextInput label="Amount to send" onChange={onAmountChange} value={amount} type="string" />
+      <TextInput
+        label="Amount to send"
+        onChange={onAmountChange}
+        value={amount ?? ""}
+        type="string"
+      />
     </div>
   );
 };
