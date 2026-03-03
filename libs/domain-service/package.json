@@ -80,7 +80,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "cross-env": "^7.0.3",
     "eslint-plugin-jest": "^27.4.2",
     "jest": "catalog:",

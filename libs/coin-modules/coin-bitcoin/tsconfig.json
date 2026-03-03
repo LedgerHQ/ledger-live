@@ -5,6 +5,7 @@
     "declarationMap": true,
     "downlevelIteration": true,
     "lib": ["es2021", "dom"],
+    "types": ["node", "jest"],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true,
     "typeRoots": ["./types", "./node_modules/@types"]

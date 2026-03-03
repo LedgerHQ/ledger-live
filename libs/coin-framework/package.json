@@ -108,6 +108,7 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/imurmurhash": "^0.1.4",
+    "@types/node": "catalog:",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",

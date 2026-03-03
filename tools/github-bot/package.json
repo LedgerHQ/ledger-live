@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "nock": "13.5.4",
     "nodemon": "3.1.0",

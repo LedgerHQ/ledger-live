@@ -38,7 +38,7 @@
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@noble/curves": "1.9.7",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "bip32-path": "^0.4.2",
     "documentation": "14.0.2",
     "jest": "catalog:",

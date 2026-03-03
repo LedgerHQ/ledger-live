@@ -10,6 +10,7 @@
       "es2020",
       "dom"
     ],
+    "types": ["node", "jest"],
     "exactOptionalPropertyTypes": true,
     "module": "esnext",
     "moduleResolution": "bundler"

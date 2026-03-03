@@ -38,7 +38,6 @@ export default {
         mergeMap(deviceInfo =>
           listAppsUseCase(t, deviceInfo).pipe(
             filter(e => e.type === "result"),
-            // @ts-expect-error we need better typings and safe guard to infer types
             map(e => e.result),
             repeat(benchmark ? 5 : 1),
           ),

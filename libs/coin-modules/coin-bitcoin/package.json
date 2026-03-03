@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@types/node": "catalog:",
     "@types/bchaddrjs": "^0.4.3",
     "@types/bs58": "catalog:",
     "@types/bs58check": "catalog:",

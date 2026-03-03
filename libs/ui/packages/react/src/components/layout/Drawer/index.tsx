@@ -159,11 +159,9 @@ const DrawerContent = React.forwardRef(
                       )}
                     </>
                   )}
-                  {(
-                    <Text variant={"h3"} flex={1} textAlign="center">
-                      {title}
-                    </Text>
-                  ) || <div />}
+                  <Text variant={"h3"} flex={1} textAlign="center">
+                    {title}
+                  </Text>
                   <FlexBox alignSelf="flex-start">
                     <Button variant="neutral" onClick={onClose} Icon={Close} />
                   </FlexBox>

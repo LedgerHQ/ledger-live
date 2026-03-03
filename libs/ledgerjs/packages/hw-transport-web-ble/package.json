@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/web-bluetooth": "^0.0.20",
     "documentation": "14.0.2",
     "jest": "catalog:",

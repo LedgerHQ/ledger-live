@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
+    "@types/node": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
