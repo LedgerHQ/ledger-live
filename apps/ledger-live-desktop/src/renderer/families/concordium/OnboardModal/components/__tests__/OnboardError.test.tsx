@@ -39,16 +39,12 @@ describe("OnboardError", () => {
     });
 
     it("should format 429 error in create context", () => {
-      const { container } = render(
-        <OnboardError error={axiosError} context="create" />,
-      );
+      const { container } = render(<OnboardError error={axiosError} context="create" />);
       expect(container.textContent).toContain("Too many requests");
     });
 
     it("should not use 429 format in onboard context", () => {
-      const { container } = render(
-        <OnboardError error={axiosError} context="onboard" />,
-      );
+      const { container } = render(<OnboardError error={axiosError} context="onboard" />);
       expect(container.textContent).not.toContain("Too many requests");
       expect(container.textContent).toContain("Failed to onboard new account");
     });
