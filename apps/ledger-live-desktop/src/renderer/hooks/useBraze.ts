@@ -5,8 +5,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { getBrazeConfig } from "~/braze-setup";
-import getUser from "~/helpers/user";
 import {
   ActionContentCard,
   ContentCard as LedgerContentCard,
@@ -95,15 +95,15 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
 /**
  * TODO put this effectful logic into a provider instead
  */
-export async function useBraze() {
+export function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
   const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
+  const userId = useSelector(userIdSelector);
 
   const initBraze = useCallback(async () => {
-    const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
@@ -130,7 +130,7 @@ export async function useBraze() {
       return;
     }
 
-    if (user) braze.changeUser(isTrackedUser ? user.id : anonymousBrazeId.current);
+    braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : anonymousBrazeId.current);
 
     braze.requestContentCardsRefresh();
 
@@ -167,7 +167,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
+  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId, userId]);
 
   useEffect(() => {
     initBraze();
