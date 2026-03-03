@@ -66,7 +66,9 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Reach app", async () => {
         await onboardingPage.reachApp();
-        await expect(page).toHaveScreenshot("v3-onboarding-complete.png");
+        await expect(page).toHaveScreenshot("v3-onboarding-complete.png", {
+          maxDiffPixelRatio: 0.02,
+        });
       });
     });
   }

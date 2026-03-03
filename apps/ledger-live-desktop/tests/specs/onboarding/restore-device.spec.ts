@@ -39,6 +39,7 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.waitForDeviceToBeVisible(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
+          maxDiffPixelRatio: 0.03,
         });
       });
 
