@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
@@ -9,10 +9,26 @@ import { TourProgressIndicator } from "./components/TourProgressIndicator";
 interface WalletV4TourDialogProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onComplete: () => void;
+  readonly onSlideChange?: (index: number) => void;
 }
 
-export const WalletV4TourDialog = ({ isOpen, onClose }: WalletV4TourDialogProps) => {
+export const WalletV4TourDialog = ({
+  isOpen,
+  onClose,
+  onComplete,
+  onSlideChange,
+}: WalletV4TourDialogProps) => {
   const { t } = useTranslation();
+  const prevOpenRef = useRef(false);
+
+  useEffect(() => {
+    const justOpened = isOpen && !prevOpenRef.current;
+    prevOpenRef.current = isOpen;
+    if (justOpened) {
+      onSlideChange?.(0);
+    }
+  }, [isOpen, onSlideChange]);
 
   const slides = useMemo(
     () => [
@@ -42,7 +58,7 @@ export const WalletV4TourDialog = ({ isOpen, onClose }: WalletV4TourDialogProps)
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="flex h-screen min-h-0 flex-col">
         <DialogHeader appearance="compact" onClose={onClose} />
-        <Slides initialSlideIndex={0}>
+        <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
           <Slides.Content>
             {slides.map(slide => (
               <Slides.Content.Item key={slide.title}>
@@ -56,7 +72,7 @@ export const WalletV4TourDialog = ({ isOpen, onClose }: WalletV4TourDialogProps)
           </Slides.ProgressIndicator>
 
           <Slides.Footer>
-            <SlideFooterButton onClose={onClose} />
+            <SlideFooterButton onComplete={onComplete} />
           </Slides.Footer>
         </Slides>
       </DialogContent>

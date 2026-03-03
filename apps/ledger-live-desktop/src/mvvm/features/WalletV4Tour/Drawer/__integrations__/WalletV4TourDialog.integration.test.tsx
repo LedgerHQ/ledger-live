@@ -21,7 +21,7 @@ const SLIDES = [
 describe("WalletV4TourDialog", () => {
   it("should render dialog with first slide content", () => {
     const onClose = jest.fn();
-    render(<WalletV4TourDialog isOpen onClose={onClose} />);
+    render(<WalletV4TourDialog isOpen onClose={onClose} onComplete={onClose} />);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText(SLIDES[0].title)).toBeInTheDocument();
@@ -31,7 +31,7 @@ describe("WalletV4TourDialog", () => {
 
   it("should switch CTA from continue to explore on last slide", async () => {
     const onClose = jest.fn();
-    const { user } = render(<WalletV4TourDialog isOpen onClose={onClose} />);
+    const { user } = render(<WalletV4TourDialog isOpen onClose={onClose} onComplete={onClose} />);
 
     for (let index = 0; index < SLIDES.length - 1; index++) {
       await user.click(screen.getByRole("button", { name: "Continue" }));
@@ -42,7 +42,7 @@ describe("WalletV4TourDialog", () => {
 
   it("should call onClose when clicking explore on last slide", async () => {
     const onClose = jest.fn();
-    const { user } = render(<WalletV4TourDialog isOpen onClose={onClose} />);
+    const { user } = render(<WalletV4TourDialog isOpen onClose={onClose} onComplete={onClose} />);
 
     for (let index = 0; index < SLIDES.length - 1; index++) {
       await user.click(screen.getByRole("button", { name: "Continue" }));
