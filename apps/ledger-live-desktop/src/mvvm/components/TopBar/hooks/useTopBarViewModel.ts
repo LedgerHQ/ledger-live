@@ -12,6 +12,7 @@ const useTopBarViewModel = () => {
     isRotating,
     icon: activityIndicatorIcon,
     tooltip: activityIndicatorTooltip,
+    onTooltipShow: activityIndicatorOnTooltipShow,
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
   const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
@@ -27,6 +28,7 @@ const useTopBarViewModel = () => {
               icon: activityIndicatorIcon,
               isInteractive: !isRotating,
               onClick: handleSync,
+              onTooltipShow: activityIndicatorOnTooltipShow,
             },
           },
         ]

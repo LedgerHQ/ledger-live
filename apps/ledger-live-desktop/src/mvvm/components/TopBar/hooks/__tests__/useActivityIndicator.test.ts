@@ -2,6 +2,7 @@ import { Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook, act } from "tests/testSetup";
 import { useActivityIndicator } from "../useActivityIndicator";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import * as segment from "~/renderer/analytics/segment";
 
 const mockTriggerRefresh = jest.fn();
 
@@ -38,7 +39,7 @@ describe("useActivityIndicator", () => {
     mockUsePortfolioBalanceSync.mockReturnValue(defaultPortfolioBalanceSync);
   });
 
-  it("returns hasAccounts, handleSync, isError, isRotating, tooltip, icon", () => {
+  it("returns correct values", () => {
     const { result } = renderHook(() => useActivityIndicator(), {
       initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
     });
@@ -53,6 +54,45 @@ describe("useActivityIndicator", () => {
     expect(typeof result.current.tooltip).toBe("string");
     expect(result.current.handleSync).toBeDefined();
     expect(result.current.icon).toBe(Refresh);
+    expect(result.current.onTooltipShow).toBeUndefined();
+  });
+
+  it("returns onTooltipShow when isError is true", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      hasWalletSyncError: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isError).toBe(true);
+    expect(typeof result.current.onTooltipShow).toBe("function");
+  });
+
+  it("onTooltipShow tracks SyncErrorList with currencies as array", () => {
+    const trackSpy = jest.spyOn(segment, "track");
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      hasWalletSyncError: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    act(() => {
+      result.current.onTooltipShow?.();
+    });
+
+    expect(trackSpy).toHaveBeenCalledWith(
+      "SyncErrorList",
+      expect.objectContaining({
+        currencies: expect.any(Array),
+      }),
+    );
+    trackSpy.mockRestore();
   });
 
   it("returns isRotating and isDisabled true when balance is loading (e.g. countervalues polling)", () => {
@@ -129,7 +169,9 @@ describe("useActivityIndicator", () => {
     });
 
     expect(mockTriggerRefresh).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("SyncRefreshClick");
+    expect(track).toHaveBeenCalledWith("SyncRefreshClick", {
+      triggered_after_sync_error: false,
+    });
   });
 
   it("handleSync dispatches setLastUserSyncClickTimestamp", () => {

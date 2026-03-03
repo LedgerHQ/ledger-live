@@ -17,6 +17,8 @@ type TopBarAction = {
   isInteractive: boolean;
   onClick: () => void;
   icon: IconComponent;
+  /** Called when the tooltip is shown (e.g. on hover). Used for analytics when showing error tooltip. */
+  onTooltipShow?: () => void;
 };
 
 /** A slot is either a generic action (button) or the notification indicator (button + drawer). */
