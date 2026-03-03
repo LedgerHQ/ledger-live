@@ -11,6 +11,7 @@ import {
   lastValueFrom,
   map,
   of,
+  takeLast,
   takeUntil,
 } from "rxjs";
 import { log } from "@ledgerhq/logs";
@@ -277,7 +278,7 @@ export const makeSync =
             (acc: A): A => {
               let a = acc; // a is a immutable version of Account, based on acc
 
-              if (needClear) {
+              if (needClear && acc.id !== accountId) {
                 a = clearAccount(acc);
               }
 
@@ -322,7 +323,6 @@ export const makeSync =
             },
           };
 
-          if (cancelled) return;
           innerSub = shape$.subscribe(observer);
           if (cancelled) {
             innerSub.unsubscribe();
@@ -576,7 +576,7 @@ export const makeScanAccounts =
               if (!res) break;
 
               const account$ = stepAccount(index, res, derivationMode, seedIdentifier);
-              const account = await lastValueFrom(account$.pipe(defaultIfEmpty(null)));
+              const account = await lastValueFrom(account$.pipe(takeLast(1), defaultIfEmpty(null)));
 
               if (finished) {
                 log("debug", `new account scanning process has been finished`);
