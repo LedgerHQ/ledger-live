@@ -7,7 +7,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { firstValueFrom, of } from "rxjs";
+import { firstValueFrom, of, throwError } from "rxjs";
 import {
   AccountShapeInfo,
   bip32asBuffer,
@@ -225,6 +225,19 @@ describe("makeSync", () => {
       getAccountShape: () => Promise.reject(new Error("getAccountShape failed")),
     })(account, {} as SyncConfig);
     await expect(firstValueFrom(sync$)).rejects.toThrow("getAccountShape failed");
+  });
+
+  it("errors when getAccountShape returns an Observable that errors", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const sync$ = makeSync({
+      getAccountShape: (_accountShape, _config) =>
+        throwError(() => new Error("Observable shape error")),
+    })(account, {} as SyncConfig);
+    await expect(firstValueFrom(sync$)).rejects.toThrow("Observable shape error");
   });
 });
 
@@ -572,7 +585,7 @@ describe("makeScanAccounts", () => {
     });
   });
 
-  it("emits all discovered events before complete (event order)", async () => {
+  it("emits discovered event before complete (event order)", async () => {
     const addressResolver = {
       address: "address",
       path: "path",
@@ -630,6 +643,28 @@ describe("makeScanAccounts", () => {
     );
     expect(result.type).toBe("discovered");
     expect(result.account.id).toBe("obs-acc-id");
+  });
+
+  it("errors when getAccountShape returns an Observable that errors", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () => throwError(() => new Error("Observable shape error")),
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    await expect(
+      firstValueFrom(
+        scanAccounts({
+          currency,
+          deviceId: "deviceId",
+          syncConfig: { paginationConfig: {} },
+        }),
+      ),
+    ).rejects.toThrow("Observable shape error");
   });
 
   it("when empty account skip is hit, continues to next derivation mode and still emits accounts", async () => {
