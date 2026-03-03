@@ -26,6 +26,16 @@ When a PR adds or updates dependencies in any `package.json`:
 - The dependency must be justified (not duplicating an existing capability).
 - Peer dependency compatibility must be verified.
 
+## Lockfile (pnpm-lock.yaml) Review
+
+When a PR touches `pnpm-lock.yaml`, check that the diff is **scoped to what the PR author actually changed** (e.g. the packages they added/updated in `package.json`). Flag the PR if the lockfile diff:
+
+- **Unrelated version bumps** — Resolutions or versions of packages that were not added, removed, or updated in this PR’s `package.json` changes.
+- **Large accidental rewrites** — Big reformatting, reordering, or mass version changes that go beyond the intended dependency change (e.g. running `pnpm install` in a different environment or with different pnpm/node).
+- **Unwanted bundle or duplicate entries** — New lockfile entries (packages or versions) that don’t correspond to the PR’s stated dependency changes, or duplicate/conflicting entries that suggest lockfile corruption or merge issues.
+
+If in doubt, the lockfile diff should be explainable by the set of `package.json` edits in the same PR; otherwise ask the author to regenerate the lockfile from a clean `pnpm install` and ensure only the intended dependency changes remain.
+
 ## Coin-specific logic and families contract
 
 **Do not add coin-specific branches in generic UI.** Flag PRs that introduce `if (family === "evm")` (or similar) or coin-specific hooks in shared screens/ViewModels. Coin-specific behavior must live in **families/** and be exposed through the **families contract**:
