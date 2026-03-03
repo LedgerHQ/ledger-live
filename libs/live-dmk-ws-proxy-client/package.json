@@ -1,0 +1,59 @@
+{
+  "name": "@ledgerhq/live-dmk-ws-proxy-client",
+  "version": "0.1.0",
+  "description": "WebSocket proxy transport for Ledger Device Management Kit — enables LLM running in emulators to communicate with physical Ledger devices via a CLI proxy",
+  "private": true,
+  "license": "Apache-2.0",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-dmk-ws-proxy-client",
+  "main": "./lib-es/index.js",
+  "types": "./lib-es/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib-es",
+    "build": "tsc --project tsconfig.build.json",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "pnpm watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-dmk-ws-proxy-shared": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
+    "purify-ts": "^2.1.0",
+    "uuid": "8.3.2"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/uuid": "8.3.4",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "rxjs": "catalog:"
+  }
+}

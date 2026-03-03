@@ -154,6 +154,8 @@
     "live-dmk-shared": "pnpm --filter live-dmk-shared",
     "live-dmk-mobile": "pnpm --filter live-dmk-mobile",
     "live-dmk-desktop": "pnpm --filter live-dmk-desktop",
+    "live-dmk-ws-proxy-server": "pnpm --filter live-dmk-ws-proxy-server",
+    "live-dmk-ws-proxy-client": "pnpm --filter live-dmk-ws-proxy-client",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
     "ljs:errors": "pnpm --filter errors",
