@@ -64,7 +64,7 @@ export function View({
             <Text variant="small" color="neutral.c70" mr={2}>
               {formattedTime}
             </Text>
-            {!isExpired && timeRemaining && (
+            {!isExpired && !!timeRemaining && (
               <Text variant="small" color="neutral.c70">
                 • {timeRemaining}
               </Text>

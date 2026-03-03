@@ -79,9 +79,9 @@ export const createProcessedProposal = (
   overrides: Partial<ProcessedProposal> = {},
 ): ProcessedProposal => {
   const futureMicros = (Date.now() + 3600000) * 1000;
-  const expiresAt = new Date(futureMicros / 1000);
+  const expiresAt = overrides.expiresAt ?? new Date(futureMicros / 1000);
   const day = new Date(expiresAt);
-  day.setUTCHours(0, 0, 0, 0);
+  day.setHours(0, 0, 0, 0);
   return {
     contractId: "contract-1",
     sender: "sender-xpub",

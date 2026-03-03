@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
 import {
   processTransferProposals,
@@ -6,26 +5,10 @@ import {
   isValidRestoreModalState,
   INSTRUCTION_TYPE_MAP,
 } from "../utils/transferProposals";
-import type { ProcessedProposal, RawTransferProposal } from "../types";
+import type { RawTransferProposal } from "../types";
+import { ACCOUNT_XPUB, createRawProposal, createProcessedProposal } from "./test-utils";
 
-const ACCOUNT_XPUB = "account-xpub";
 const OTHER_XPUB = "other-xpub";
-
-const buildRawProposal = (overrides: {
-  contract_id: string;
-  sender: string;
-  receiver: string;
-  expires_at_micros?: number;
-  memo?: string;
-}) => ({
-  amount: "1000000",
-  instrument_id: "instrument-1",
-  instrument_admin: "",
-  update_id: "",
-  expires_at_micros: Date.now() * 1000 + 3600000000,
-  memo: "",
-  ...overrides,
-});
 
 describe("processTransferProposals", () => {
   it("should return empty incoming and outgoing arrays when given no proposals", () => {
@@ -35,12 +18,7 @@ describe("processTransferProposals", () => {
   });
 
   it("should classify a proposal as incoming when sender differs from accountXpub", () => {
-    const raw = buildRawProposal({
-      contract_id: "contract-1",
-      sender: OTHER_XPUB,
-      receiver: ACCOUNT_XPUB,
-    });
-
+    const raw = createRawProposal("contract-1", OTHER_XPUB, ACCOUNT_XPUB);
     const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB);
 
     expect(incoming).toHaveLength(1);
@@ -49,12 +27,7 @@ describe("processTransferProposals", () => {
   });
 
   it("should classify a proposal as outgoing when sender matches accountXpub", () => {
-    const raw = buildRawProposal({
-      contract_id: "contract-2",
-      sender: ACCOUNT_XPUB,
-      receiver: OTHER_XPUB,
-    });
-
+    const raw = createRawProposal("contract-2", ACCOUNT_XPUB, OTHER_XPUB);
     const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB);
 
     expect(outgoing).toHaveLength(1);
@@ -64,9 +37,9 @@ describe("processTransferProposals", () => {
 
   it("should correctly split a mixed list into incoming and outgoing", () => {
     const proposals = [
-      buildRawProposal({ contract_id: "in-1", sender: OTHER_XPUB, receiver: ACCOUNT_XPUB }),
-      buildRawProposal({ contract_id: "out-1", sender: ACCOUNT_XPUB, receiver: OTHER_XPUB }),
-      buildRawProposal({ contract_id: "in-2", sender: OTHER_XPUB, receiver: ACCOUNT_XPUB }),
+      createRawProposal("in-1", OTHER_XPUB, ACCOUNT_XPUB),
+      createRawProposal("out-1", ACCOUNT_XPUB, OTHER_XPUB),
+      createRawProposal("in-2", OTHER_XPUB, ACCOUNT_XPUB),
     ];
 
     const { incoming, outgoing } = processTransferProposals(proposals, ACCOUNT_XPUB);
@@ -77,10 +50,7 @@ describe("processTransferProposals", () => {
 
   it("should mark a proposal as expired when its expiry timestamp is in the past", () => {
     const pastMicros = (Date.now() - 10000) * 1000;
-    const raw = buildRawProposal({
-      contract_id: "expired-1",
-      sender: OTHER_XPUB,
-      receiver: ACCOUNT_XPUB,
+    const raw = createRawProposal("expired-1", OTHER_XPUB, ACCOUNT_XPUB, {
       expires_at_micros: pastMicros,
     });
 
@@ -91,10 +61,7 @@ describe("processTransferProposals", () => {
 
   it("should mark a proposal as not expired when its expiry timestamp is in the future", () => {
     const futureMicros = (Date.now() + 3600000) * 1000;
-    const raw = buildRawProposal({
-      contract_id: "active-1",
-      sender: OTHER_XPUB,
-      receiver: ACCOUNT_XPUB,
+    const raw = createRawProposal("active-1", OTHER_XPUB, ACCOUNT_XPUB, {
       expires_at_micros: futureMicros,
     });
 
@@ -105,10 +72,7 @@ describe("processTransferProposals", () => {
 
   it("should correctly map raw field names to the ProcessedProposal shape", () => {
     const futureMicros = (Date.now() + 3600000) * 1000;
-    const raw = buildRawProposal({
-      contract_id: "contract-map",
-      sender: OTHER_XPUB,
-      receiver: ACCOUNT_XPUB,
+    const raw = createRawProposal("contract-map", OTHER_XPUB, ACCOUNT_XPUB, {
       expires_at_micros: futureMicros,
       memo: "test memo",
     });
@@ -127,14 +91,9 @@ describe("processTransferProposals", () => {
   });
 
   it("should default memo to an empty string when it is null or undefined", () => {
-    const raw = {
-      ...buildRawProposal({
-        contract_id: "no-memo",
-        sender: OTHER_XPUB,
-        receiver: ACCOUNT_XPUB,
-      }),
+    const raw = createRawProposal("no-memo", OTHER_XPUB, ACCOUNT_XPUB, {
       memo: undefined,
-    };
+    });
 
     const { incoming } = processTransferProposals(
       [raw as unknown as RawTransferProposal],
@@ -146,33 +105,20 @@ describe("processTransferProposals", () => {
 });
 
 describe("groupByDay", () => {
-  const makeProposal = (contractId: string, expiresAt: Date): ProcessedProposal => {
-    const day = new Date(expiresAt);
-    day.setUTCHours(0, 0, 0, 0);
-    return {
-      contractId,
-      sender: OTHER_XPUB,
-      receiver: ACCOUNT_XPUB,
-      amount: new BigNumber("1000000"),
-      instrumentId: "instrument-1",
-      memo: "",
-      expiresAtMicros: expiresAt.getTime() * 1000,
-      isExpired: false,
-      isIncoming: true,
-      expiresAt,
-      day,
-    };
-  };
-
   it("should return an empty array when given no proposals", () => {
     expect(groupByDay([])).toEqual([]);
   });
 
   it("should return a single group for proposals that all expire on the same day", () => {
-    const date = new Date("2025-06-15T10:00:00Z");
     const proposals = [
-      makeProposal("contract-1", date),
-      makeProposal("contract-2", new Date("2025-06-15T14:00:00Z")),
+      createProcessedProposal({
+        contractId: "contract-1",
+        expiresAt: new Date("2025-06-15T10:00:00Z"),
+      }),
+      createProcessedProposal({
+        contractId: "contract-2",
+        expiresAt: new Date("2025-06-15T14:00:00Z"),
+      }),
     ];
 
     const result = groupByDay(proposals);
@@ -182,9 +128,16 @@ describe("groupByDay", () => {
   });
 
   it("should return multiple groups for proposals that expire on different days", () => {
-    const day1 = new Date("2025-06-15T10:00:00Z");
-    const day2 = new Date("2025-06-16T10:00:00Z");
-    const proposals = [makeProposal("contract-1", day1), makeProposal("contract-2", day2)];
+    const proposals = [
+      createProcessedProposal({
+        contractId: "contract-1",
+        expiresAt: new Date("2025-06-15T10:00:00Z"),
+      }),
+      createProcessedProposal({
+        contractId: "contract-2",
+        expiresAt: new Date("2025-06-16T10:00:00Z"),
+      }),
+    ];
 
     const result = groupByDay(proposals);
 
@@ -192,9 +145,16 @@ describe("groupByDay", () => {
   });
 
   it("should sort day groups in descending order so the latest day appears first", () => {
-    const earlier = new Date("2025-06-14T10:00:00Z");
-    const later = new Date("2025-06-16T10:00:00Z");
-    const proposals = [makeProposal("contract-old", earlier), makeProposal("contract-new", later)];
+    const proposals = [
+      createProcessedProposal({
+        contractId: "contract-old",
+        expiresAt: new Date("2025-06-14T10:00:00Z"),
+      }),
+      createProcessedProposal({
+        contractId: "contract-new",
+        expiresAt: new Date("2025-06-16T10:00:00Z"),
+      }),
+    ];
 
     const result = groupByDay(proposals);
 
@@ -234,6 +194,10 @@ describe("isValidRestoreModalState", () => {
 
   it("should return false when contractId is not a string", () => {
     expect(isValidRestoreModalState({ action: "accept", contractId: 123 })).toBe(false);
+  });
+
+  it("should return false for prototype-chain property names like toString", () => {
+    expect(isValidRestoreModalState({ action: "toString", contractId: "contract-1" })).toBe(false);
   });
 });
 

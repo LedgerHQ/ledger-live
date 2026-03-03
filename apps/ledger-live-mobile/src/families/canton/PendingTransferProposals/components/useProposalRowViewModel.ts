@@ -1,7 +1,7 @@
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import type { BigNumber } from "bignumber.js";
 import { useCallback } from "react";
 import { hoursAndMinutesOptionsSelector } from "~/components/DateFormat/FormatDate";
 import { useSelector } from "~/context/hooks";

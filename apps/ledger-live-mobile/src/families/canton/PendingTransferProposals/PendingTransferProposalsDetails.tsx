@@ -120,7 +120,7 @@ export function View({
           </Text>
         </Flex>
 
-        {!isExpired && timeRemaining && (
+        {!isExpired && !!timeRemaining && (
           <Flex mb={8}>
             <Text variant="paragraph" color="neutral.c70" mb={2}>
               {t("canton.pendingTransactions.expiresIn")}

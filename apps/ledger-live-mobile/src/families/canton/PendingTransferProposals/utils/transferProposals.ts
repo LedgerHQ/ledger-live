@@ -16,7 +16,7 @@ export const INSTRUCTION_TYPE_MAP: Record<TransferProposalAction, TransferInstru
 
 const startOfDay = (date: Date): Date => {
   const d = new Date(date);
-  d.setUTCHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
   return d;
 };
 
@@ -90,5 +90,5 @@ export const isValidRestoreModalState = (value: unknown): value is RestoreModalS
   if (typeof value !== "object" || value === null) return false;
   if (!("action" in value) || !("contractId" in value)) return false;
   if (typeof value.action !== "string" || typeof value.contractId !== "string") return false;
-  return value.action in INSTRUCTION_TYPE_MAP;
+  return Object.prototype.hasOwnProperty.call(INSTRUCTION_TYPE_MAP, value.action);
 };
