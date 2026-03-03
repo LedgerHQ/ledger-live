@@ -62,6 +62,7 @@ export class AccountPage extends AppPage {
     const tokenRow = this.page.getByTestId(tokenTestId);
     await tokenRow.waitFor({ state: "attached" });
     await tokenRow.click();
+    await tokenRow.waitFor({ state: "detached" });
     await this.page.locator("id=operation-list").waitFor({ state: "visible" });
   }
 
