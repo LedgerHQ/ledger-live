@@ -6,11 +6,12 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import UpdateBanner from ".";
 import { makeOverrideInitialState } from "./__mocks__/makeOverrideInitialState";
 
-// Mock react-navigation's useRoute and useNavigation
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn().mockReturnValue({ params: {} }),
   useNavigation: jest.fn().mockReturnValue({ navigate: jest.fn() }),
+  useIsFocused: jest.fn().mockReturnValue(true),
+  useFocusEffect: jest.fn().mockImplementation((cb: () => void) => cb()),
 }));
 
 // Mock useLatestFirmware
@@ -90,8 +91,10 @@ const newUpdateFlowSupportedDataSet: Array<{
   { ...NANO_SP_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: true },
   { ...NANO_S_DATA, version: "1.6.1", fwVersion: "1.7.2", wired: true },
 ];
-
-describe("<UpdateBanner />", () => {
+describe.each([
+  { lwmWallet40: { enabled: true, params: { mainNavigation: true } } },
+  { lwmWallet40: { enabled: false, params: { mainNavigation: false } } },
+])("<UpdateBanner /> when lwmWallet40 is $lwmWallet40", ({ lwmWallet40 }) => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
     // Use clearAllMocks instead of restoreAllMocks to avoid restoring global mocks
@@ -104,13 +107,19 @@ describe("<UpdateBanner />", () => {
     PlatformSpy?.mockRestore();
   });
 
+  const makeOverride = (args: Parameters<typeof makeOverrideInitialState>[0]) =>
+    makeOverrideInitialState({
+      ...args,
+      lwmWallet40: { enabled: lwmWallet40.enabled, params: lwmWallet40.params },
+    });
+
   it("should not display the firmware update banner if there is no update", async () => {
     useLatestFirmware.mockReturnValue(null);
 
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         deviceModelId: mockDeviceModelId,
         version: mockDeviceVersion,
         hasCompletedOnboarding: true,
@@ -135,7 +144,7 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         deviceModelId: mockDeviceModelId,
         version: mockDeviceVersion,
         hasCompletedOnboarding: false, // Onboarding has not been completed
@@ -160,7 +169,7 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         deviceModelId: mockDeviceModelId,
         version: mockDeviceVersion,
         hasCompletedOnboarding: true,
@@ -186,7 +195,7 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoX;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         deviceModelId: mockDeviceModelId,
         version: mockDeviceVersion,
         hasCompletedOnboarding: true,
@@ -197,9 +206,11 @@ describe("<UpdateBanner />", () => {
 
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-    expect(
-      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
-    ).toBeOnTheScreen();
+    if (!lwmWallet40.enabled) {
+      expect(
+        await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+      ).toBeOnTheScreen();
+    }
 
     // Press the banner
     await user.press(screen.getByTestId("fw-update-banner"));
@@ -227,16 +238,18 @@ describe("<UpdateBanner />", () => {
     });
 
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         ...nanoX,
       }),
     });
 
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-    expect(
-      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
-    ).toBeOnTheScreen();
+    if (!lwmWallet40.enabled) {
+      expect(
+        await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+      ).toBeOnTheScreen();
+    }
 
     // Press the banner
     await user.press(screen.getByTestId("fw-update-banner"));
@@ -264,16 +277,18 @@ describe("<UpdateBanner />", () => {
     });
 
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         ...nanoX,
       }),
     });
 
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-    expect(
-      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
-    ).toBeOnTheScreen();
+    if (!lwmWallet40.enabled) {
+      expect(
+        await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+      ).toBeOnTheScreen();
+    }
 
     // Press the banner
     await user.press(screen.getByTestId("fw-update-banner"));
@@ -302,7 +317,7 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
+      overrideInitialState: makeOverride({
         deviceModelId: mockDeviceModelId,
         version: mockDeviceVersion,
         hasCompletedOnboarding: true,
@@ -313,9 +328,11 @@ describe("<UpdateBanner />", () => {
 
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-    expect(
-      await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
-    ).toBeOnTheScreen();
+    if (!lwmWallet40.enabled) {
+      expect(
+        await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
+      ).toBeOnTheScreen();
+    }
 
     // Press the banner
     await user.press(screen.getByTestId("fw-update-banner"));
@@ -342,7 +359,7 @@ describe("<UpdateBanner />", () => {
       });
 
       const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-        overrideInitialState: makeOverrideInitialState({
+        overrideInitialState: makeOverride({
           deviceModelId,
           version,
           hasCompletedOnboarding: true,
@@ -353,9 +370,11 @@ describe("<UpdateBanner />", () => {
 
       // Check that the banner is displayed with the correct wording
       expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-      expect(
-        await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
-      ).toBeOnTheScreen();
+      if (!lwmWallet40.enabled) {
+        expect(
+          await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
+        ).toBeOnTheScreen();
+      }
 
       // Press the banner
       await user.press(screen.getByTestId("fw-update-banner"));
@@ -385,7 +404,7 @@ describe("<UpdateBanner />", () => {
         });
 
         const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-          overrideInitialState: makeOverrideInitialState({
+          overrideInitialState: makeOverride({
             deviceModelId,
             version,
             hasCompletedOnboarding: true,
@@ -396,9 +415,11 @@ describe("<UpdateBanner />", () => {
 
         // Check that the banner is displayed with the correct wording
         expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-        expect(
-          await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
-        ).toBeOnTheScreen();
+        if (!lwmWallet40.enabled) {
+          expect(
+            await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
+          ).toBeOnTheScreen();
+        }
 
         // Press the banner and check that the entrypoint to the new update flow is called
         await user.press(screen.getByTestId("fw-update-banner"));

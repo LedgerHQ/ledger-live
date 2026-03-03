@@ -5044,6 +5044,14 @@
   },
   "FirmwareUpdate": {
     "banner": {
+      "wallet40": {
+          "title": {
+            "default": "OS update available",
+            "manager": "Ledger OS update available"
+          },
+          "version": "Version {{firmwareVersion}}",
+          "cta": "Update"
+        },
       "title": "OS update available",
       "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
