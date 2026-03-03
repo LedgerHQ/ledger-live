@@ -2,8 +2,14 @@
 // not on animated opacity/height transitions.
 jest.mock("react-native-reanimated", () => {
   const RN = require("react-native");
+  const Easing = {
+    ease: {},
+    inOut: (e: unknown) => e,
+    bezier: () => ({}),
+  };
   return {
     __esModule: true,
+    Easing,
     useSharedValue: (init: unknown) => ({ value: init }),
     useAnimatedStyle: () => ({}),
     useAnimatedReaction: () => {},
