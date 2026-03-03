@@ -8,7 +8,7 @@ import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
 import {
-  getMockedEnrichedTransaction,
+  getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
@@ -239,79 +239,68 @@ describe("toAlpacaOperation", () => {
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
   it("should set type to IN when address is the recipient", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.type).toBe("IN");
   });
 
   it("should set type to OUT when address is the sender", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, senderAddress);
+    const result = toAlpacaOperation(rawTx, senderAddress);
 
     expect(result.type).toBe("OUT");
   });
 
-  it("should set type to NONE when there are no details", () => {
-    const enriched = getMockedEnrichedTransaction({ details: null });
+  it("should set type to NONE when program_id is not CREDITS", () => {
+    const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.type).toBe("NONE");
   });
 
   it("should map core fields from rawTx", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
-    expect(result.id).toBe(enriched.rawTx.transaction_id);
-    expect(result.senders).toEqual([enriched.rawTx.sender_address]);
-    expect(result.recipients).toEqual([enriched.rawTx.recipient_address]);
-    expect(result.value).toBe(BigInt(enriched.rawTx.amount));
+    expect(result.id).toBe(rawTx.transaction_id);
+    expect(result.senders).toEqual([rawTx.sender_address]);
+    expect(result.recipients).toEqual([rawTx.recipient_address]);
+    expect(result.value).toBe(BigInt(rawTx.amount));
     expect(result.asset).toEqual({ type: "native" });
-    expect(result.tx.hash).toBe(enriched.rawTx.transaction_id);
-    expect(result.tx.block.height).toBe(enriched.rawTx.block_number);
+    expect(result.tx.hash).toBe(rawTx.transaction_id);
+    expect(result.tx.block.height).toBe(rawTx.block_number);
     expect(result.tx.failed).toBe(false);
   });
 
-  it("should derive fees and blockHash from details", () => {
-    const enriched = getMockedEnrichedTransaction();
+  it("should derive fees and blockHash from rawTx", () => {
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
-    expect(result.tx.fees).toBe(BigInt(enriched.details!.fee_value));
-    expect(result.tx.block.hash).toBe(enriched.details!.block_hash);
-  });
-
-  it("should use empty string for fees and blockHash when details are null", () => {
-    const enriched = getMockedEnrichedTransaction({ details: null });
-
-    const result = toAlpacaOperation(enriched, recipientAddress);
-
-    expect(result.tx.fees).toBe(0n);
-    expect(result.tx.block.hash).toBe("");
+    expect(result.tx.fees).toBe(BigInt(rawTx.fee));
+    expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
   it("should set failed to true when transaction_status is not Accepted", () => {
-    const enriched = getMockedEnrichedTransaction({
-      rawTx: { ...getMockedEnrichedTransaction().rawTx, transaction_status: "Rejected" },
-    });
+    const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.tx.failed).toBe(true);
   });
 
   it("should include functionId, transactionType, and ledgerOpType in details", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.details).toMatchObject({
-      functionId: enriched.rawTx.function_id,
+      functionId: rawTx.function_id,
       ledgerOpType: "IN",
     });
   });
@@ -323,37 +312,37 @@ describe("toBridgeOperation", () => {
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
   it("should produce an operation with encoded id and accountId", () => {
-    const enriched = getMockedEnrichedTransaction();
-    const expectedId = encodeOperationId(ledgerAccountId, enriched.rawTx.transaction_id, "IN");
+    const rawTx = getMockedPublicTransaction();
+    const expectedId = encodeOperationId(ledgerAccountId, rawTx.transaction_id, "IN");
 
-    const result = toBridgeOperation(ledgerAccountId, enriched, recipientAddress);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
     expect(result.id).toBe(expectedId);
     expect(result.accountId).toBe(ledgerAccountId);
   });
 
-  it("should derive all operation fields from rawTx and details", () => {
-    const enriched = getMockedEnrichedTransaction();
+  it("should derive all operation fields from rawTx", () => {
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toBridgeOperation(ledgerAccountId, enriched, recipientAddress);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
-    expect(result.hash).toBe(enriched.rawTx.transaction_id);
+    expect(result.hash).toBe(rawTx.transaction_id);
     expect(result.type).toBe("IN");
-    expect(result.value).toEqual(new BigNumber(enriched.rawTx.amount));
-    expect(result.fee).toEqual(new BigNumber(enriched.details!.fee_value));
-    expect(result.senders).toEqual([enriched.rawTx.sender_address]);
-    expect(result.recipients).toEqual([enriched.rawTx.recipient_address]);
-    expect(result.blockHeight).toBe(enriched.rawTx.block_number);
-    expect(result.blockHash).toBe(enriched.details!.block_hash);
+    expect(result.value).toEqual(new BigNumber(rawTx.amount));
+    expect(result.fee).toEqual(new BigNumber(rawTx.fee));
+    expect(result.senders).toEqual([rawTx.sender_address]);
+    expect(result.recipients).toEqual([rawTx.recipient_address]);
+    expect(result.blockHeight).toBe(rawTx.block_number);
+    expect(result.blockHash).toBe(rawTx.block_hash);
     expect(result.hasFailed).toBe(false);
   });
 
   it("should generate different ids for different account ids", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
     const otherId = "js:2:aleo:aleo1other:";
 
-    const result1 = toBridgeOperation(ledgerAccountId, enriched, recipientAddress);
-    const result2 = toBridgeOperation(otherId, enriched, recipientAddress);
+    const result1 = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+    const result2 = toBridgeOperation(otherId, rawTx, recipientAddress);
 
     expect(result1.id).not.toBe(result2.id);
     expect(result1.accountId).toBe(ledgerAccountId);
@@ -361,14 +350,12 @@ describe("toBridgeOperation", () => {
   });
 
   it("should set type to OUT when address is the sender", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toBridgeOperation(ledgerAccountId, enriched, senderAddress);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.id).toBe(
-      encodeOperationId(ledgerAccountId, enriched.rawTx.transaction_id, "OUT"),
-    );
+    expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "OUT"));
   });
 });
 
