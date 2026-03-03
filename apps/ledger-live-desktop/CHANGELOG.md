@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.143.0-next.2
+
+### Minor Changes
+
+- [#14966](https://github.com/LedgerHQ/ledger-live/pull/14966) [`15ddbbf`](https://github.com/LedgerHQ/ledger-live/commit/15ddbbf07775e5fb57b324895ee28af52814e048) Thanks [@cfloume](https://github.com/cfloume)! - fix: double trigger of recover upsell navigation
+
 ## 2.143.0-next.1
 
 ### Minor Changes
