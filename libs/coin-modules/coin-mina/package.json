@@ -137,8 +137,7 @@
     "expect": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "@ledgerhq/disable-network-setup": "workspace:^"
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
