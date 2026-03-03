@@ -422,11 +422,9 @@ export const StepImportFooter = ({
     dispatch(
       openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
         currency: mainCurrency,
-        device: device,
         selectedAccounts: checkedAccountsIds
           .map(id => scannedAccounts.find(a => a.id === id))
           .filter((account): account is Account => Boolean(account)),
-        existingAccounts,
         editedNames,
       }),
     );

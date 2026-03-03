@@ -34,7 +34,7 @@ type ReonboardingModalConfig = {
 };
 
 function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConfig): void {
-  const { currency, device, accounts, mainAccount, navigationSnapshot } = config;
+  const { currency, mainAccount, navigationSnapshot } = config;
 
   if (navigationSnapshot?.type === "modal") {
     dispatch(closeModal(navigationSnapshot.modalName));
@@ -43,9 +43,7 @@ function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConf
   dispatch(
     openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
       currency,
-      device,
       selectedAccounts: [],
-      existingAccounts: accounts,
       editedNames: {},
       isReonboarding: true,
       accountToReonboard: mainAccount,
