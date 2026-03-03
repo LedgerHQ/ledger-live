@@ -22,6 +22,7 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
 
   return (
     <Animated.View
+      testID="w40-tab-bar"
       entering={FadeInDown}
       exiting={FadeOutDown}
       pointerEvents="box-none"
@@ -50,6 +51,7 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
             label={item.label}
             icon={item.icon}
             activeIcon={item.activeIcon}
+            testID={item.testID}
           />
         ))}
       </TabBar>

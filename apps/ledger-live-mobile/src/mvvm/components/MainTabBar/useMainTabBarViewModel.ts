@@ -31,6 +31,14 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
   [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
 };
+
+const TAB_TEST_IDS: Partial<Record<string, string>> = {
+  [NavigatorName.Portfolio]: "w40-tab-home",
+  [NavigatorName.Swap]: "w40-tab-swap",
+  [NavigatorName.Earn]: "w40-tab-earn",
+  [NavigatorName.CardTab]: "w40-tab-card",
+};
+
 export const useMainTabBarViewModel = ({
   state,
   navigation,
@@ -43,6 +51,7 @@ export const useMainTabBarViewModel = ({
       state.routes.map(route => ({
         value: route.name,
         label: t(LABELKEY_MAP[route.name] ?? route.name),
+        testID: TAB_TEST_IDS[route.name],
         ...TAB_ICONS[route.name],
       })),
     [state.routes, t],

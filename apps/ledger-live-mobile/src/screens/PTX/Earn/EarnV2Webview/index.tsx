@@ -55,7 +55,7 @@ export const EarnV2Webview = ({
   };
 
   return (
-    <View style={{ flex: 1, overflow: "visible" }}>
+    <View testID="earn-screen" style={{ flex: 1, overflow: "visible" }}>
       {isPtxUiV2 && !hideMainNavigator && <EarnBackground scrollY={scrollY} />}
       <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
         {manifest ? (
