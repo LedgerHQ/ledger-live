@@ -45,7 +45,7 @@ export default class CommonPage {
   async selectAccount(account: Account) {
     const accountId = this.accountId(account);
     await waitForElementById(accountId);
-    await tapById(accountId);
+    await tapByIdAndAwaitDisappearance(accountId);
   }
 
   @Step("Expect search")

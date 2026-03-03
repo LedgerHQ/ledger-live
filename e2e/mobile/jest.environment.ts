@@ -82,6 +82,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       scrollToText: NativeElementHelpers.scrollToText,
       tapByElement: NativeElementHelpers.tapByElement,
       tapById: NativeElementHelpers.tapById,
+      tapByIdAndAwaitDisappearance: NativeElementHelpers.tapByIdAndAwaitDisappearance,
       tapByText: NativeElementHelpers.tapByText,
       typeTextByElement: NativeElementHelpers.typeTextByElement,
       typeTextById: NativeElementHelpers.typeTextById,

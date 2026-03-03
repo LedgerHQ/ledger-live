@@ -4,6 +4,7 @@ import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 import { isIos } from "../../helpers/commonHelpers";
 
+
 export default class ModularDrawer {
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
@@ -91,7 +92,7 @@ export default class ModularDrawer {
       await getElementById(this.networkBasedTitleIdMAD).swipe("up");
       await this.swipeToNetworkItem(id);
     }
-    await tapById(id, 0);
+    await tapByIdAndAwaitDisappearance(id, { index: 0 });
   }
 
   private async swipeToNetworkItem(id: string | RegExp, maxAttempts = 5): Promise<void> {

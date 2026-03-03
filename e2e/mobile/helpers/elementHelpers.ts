@@ -171,6 +171,37 @@ export const NativeElementHelpers = {
     return await NativeElementHelpers.getElementById(id, index).tap();
   },
 
+  /**
+   * Taps an element by ID and retries until an element disappears
+   *
+   *
+   * @param id - Test ID of the element to tap
+   * @param opts.index - Element index when multiple matches exist (default: 0)
+   * @param opts.timeout - Max time to keep retrying (default: 10000ms)
+   * @param opts.visibilityTimeout - Time to wait for disappearance after each tap (default: 2000ms)
+   * @param opts.disappearanceId - Test ID of the element to check for disappearance (defaults to `id`)
+   */
+  async tapByIdAndAwaitDisappearance(
+    id: string | RegExp,
+    opts: {
+      index?: number;
+      timeout?: number;
+      visibilityTimeout?: number;
+      disappearanceId?: string | RegExp;
+    } = {},
+  ) {
+    const { index = 0, timeout = 10000, visibilityTimeout = 2000, disappearanceId } = opts;
+    const checkId = disappearanceId ?? id;
+    await retryUntilTimeout(async () => {
+      console.log(`Tapping element with id: ${id} and waiting for disappearance of element with id: ${checkId}`);
+      await NativeElementHelpers.getElementById(id, index).tap();
+      const disappeared = await NativeElementHelpers.waitForElementNotVisible(checkId, visibilityTimeout);
+      if (!disappeared) {
+        throw new Error(`Element ${checkId} still visible after tap — retrying`);
+      }
+    }, timeout);
+  },
+
   async tapByText(text: string | RegExp, index = 0) {
     return await NativeElementHelpers.getElementByText(text, index).tap();
   },
