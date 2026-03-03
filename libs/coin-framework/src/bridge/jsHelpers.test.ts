@@ -7,7 +7,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { firstValueFrom, of, throwError } from "rxjs";
+import { firstValueFrom, Observable, of, Subscription, throwError } from "rxjs";
 import {
   AccountShapeInfo,
   bip32asBuffer,
@@ -213,6 +213,75 @@ describe("makeSync", () => {
     await new Promise(r => setImmediate(r));
     expect(nextSpy).not.toHaveBeenCalled();
     expect(completeSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not forward observer error when unsubscribed before shape errors", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    let rejectShape: (reason: unknown) => void;
+    const shapePromise = new Promise<Partial<Account>>((_, reject) => {
+      rejectShape = reject;
+    });
+    const errorSpy = jest.fn();
+    const sync$ = makeSync({
+      getAccountShape: () => shapePromise,
+    })(account, {} as SyncConfig);
+    const sub = sync$.subscribe({ error: errorSpy });
+    sub.unsubscribe();
+    rejectShape!(new Error("shape error"));
+    await new Promise(r => setImmediate(r));
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not forward getAccountShape rejection when already unsubscribed", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    let rejectGetAccountShape: (reason: unknown) => void;
+    const getAccountShapePromise = new Promise<Partial<Account>>((_, reject) => {
+      rejectGetAccountShape = reject;
+    });
+    const errorSpy = jest.fn();
+    const sync$ = makeSync({
+      getAccountShape: () => getAccountShapePromise,
+    })(account, {} as SyncConfig);
+    const sub = sync$.subscribe({ error: errorSpy });
+    sub.unsubscribe();
+    rejectGetAccountShape!(new Error("getAccountShape failed"));
+    await new Promise(r => setImmediate(r));
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("unsubscribes inner subscription when cancelled during shape subscribe", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const nextSpy = jest.fn();
+    const completeSpy = jest.fn();
+    const errorSpy = jest.fn();
+    let sub: Subscription;
+    const sync$ = makeSync({
+      getAccountShape: () =>
+        new Observable<Partial<Account>>(() => {
+          setImmediate(() => sub?.unsubscribe());
+        }),
+    })(account, {} as SyncConfig);
+    sub = sync$.subscribe({
+      next: nextSpy,
+      complete: completeSpy,
+      error: errorSpy,
+    });
+    await new Promise(r => setImmediate(r));
+    expect(nextSpy).not.toHaveBeenCalled();
+    expect(completeSpy).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 
   it("errors when getAccountShape rejects", async () => {
