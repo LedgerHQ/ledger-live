@@ -2,9 +2,6 @@
 applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
 
-<!-- Source: .cursor/rules/testing.mdc -->
-<!-- Last synced: 2026-02-13 -->
-
 # Testing
 
 ## Stack
@@ -19,50 +16,42 @@ applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 - **Test behavior, not implementation** — assert on user-visible outcomes, not internal state.
 - Tests must be **deterministic** — no flaky timing, no reliance on external services.
 - Keep mocks **minimal** — favor realistic wiring over extensive mocking.
-- Use `async/await` with `waitFor` for asynchronous assertions.
 - Prefer **integration tests** for complex features to validate complete behavior.
+
+## Test Isolation
+
+- Always restore spies in `afterEach` or call `mockRestore()` on specific spies.
+- Never use `jest.restoreAllMocks()` — it breaks global mocks from jest-setup.
+- Reset module-level state (e.g., `initialized` flags) between tests using `jest.resetModules()`.
+- Store computed values (like timestamps) in local constants and reuse them in assertions.
+
+## Fake Timers
+
+- Use `jest.useFakeTimers()` and `jest.setSystemTime()` for any time-dependent logic.
+- Always restore real timers in `afterEach` with `jest.useRealTimers()` or reset system time.
+- Prefer `await waitFor(...)` over `advanceTimersByTimeAsync` for async assertions.
+
+## Feature Flags in Tests
+
+- Never mock feature flags directly — use `overriddenFeatureFlags` option in render.
+- Always set required feature flags when testing flag-gated behavior.
+
+## Assertions
+
+- Use `expect.assertions(n)` or `await expect(...).rejects` for error-path tests.
+- Never use `toBeDefined()` alone — assert on specific expected values.
+- Ensure test names match what is actually being asserted.
 
 ## File Structure
 
 - Tests live next to source files: `MyComponent.test.tsx` alongside `MyComponent.tsx`.
-- Use `__tests__/` for grouped unit tests.
-- Use `__integrations__/` for integration tests.
-- Test data goes in `__fixtures__/` — use factories and builders, avoid hardcoded or unrealistic values.
+- Use `__tests__/` for grouped unit tests and `__integrations__/` for integration tests.
 
 ## Query Priority
 
-When selecting elements in tests, follow this order:
+1. `ByRole` (preferred), 2. `ByLabelText`, 3. `ByText`, 4. `ByTestId` (last resort).
 
-1. `ByRole` (preferred — matches accessibility tree)
-2. `ByLabelText`
-3. `ByText`
-4. `ByTestId` (last resort)
+## Platform-Specific
 
-## Desktop Testing
-
-- **Render**: import the render function from `tests/testSetup`.
-- **MSW server**: `apps/ledger-live-desktop/tests/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-desktop`.
-
-## Mobile Testing
-
-- **Render**: import the render function from `@tests/test-renderer`.
-- **MSW server**: `apps/ledger-live-mobile/__tests__/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-mobile`.
-
-## MSW Patterns
-
-- Define handlers alongside tests or in shared handler files.
-- Follow the existing patterns from the desktop and mobile server files referenced above.
-- Mock at the network boundary — do not mock React components or hooks directly.
-
-## Test Naming
-
-- Use descriptive names: `it("should <behavior> when <condition>")`.
-- One behavior per test — avoid testing multiple concerns in a single `it` block.
-
-## Redux in Tests
-
-- Desktop: pass `initialState` to the render function.
-- Mobile: use `overrideInitialState`.
-- Never mock feature flags directly — use `overriddenFeatureFlags`.
+- **Desktop render**: import from `tests/testSetup`; **MSW**: `tests/server.ts`.
+- **Mobile render**: import from `@tests/test-renderer`; **MSW**: `__tests__/server.ts`.
