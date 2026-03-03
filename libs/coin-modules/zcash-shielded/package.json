@@ -16,8 +16,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/ZCash.js",
-  "module": "lib-es/ZCash.js",
   "types": "lib/types.d.ts",
   "typesVersions": {
     "*": {
@@ -38,7 +36,7 @@
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
+      "import": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },

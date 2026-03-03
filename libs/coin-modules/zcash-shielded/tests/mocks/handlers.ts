@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { blocks, LAST_BLOCK_COUNT, transactions } from "../../tests/testAccounts";
-import { JSON_RPC_SERVER } from "../../src/constants";
+import { ZCASH_JSON_RPC_SERVER_TESTNET } from "../../src/constants";
 
 const ERROR_CODE = -5;
 
@@ -13,7 +13,7 @@ export const resetLastBlockCount = () => {
 };
 
 export const handlers = [
-  http.post(`${JSON_RPC_SERVER}`, async ({ request }) => {
+  http.post(`${ZCASH_JSON_RPC_SERVER_TESTNET}`, async ({ request }) => {
     const body = await request.clone().json();
 
     switch (body.method) {

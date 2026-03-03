@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { JSON_RPC_SERVER } from "../../src/constants";
+import { ZCASH_JSON_RPC_SERVER_TESTNET } from "../../src/constants";
 
 export type BlockAtHeight = {
   height: number;
@@ -65,7 +65,7 @@ export function createFindBlockHeightHandlers(
   scenario: FindBlockHeightScenario,
 ): ReturnType<typeof http.post>[] {
   return [
-    http.post(`${JSON_RPC_SERVER}`, async ({ request }) => {
+    http.post(`${ZCASH_JSON_RPC_SERVER_TESTNET}`, async ({ request }) => {
       const body = (await request.clone().json()) as {
         method?: string;
         params?: unknown[];

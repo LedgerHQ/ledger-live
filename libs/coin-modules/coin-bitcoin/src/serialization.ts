@@ -93,7 +93,22 @@ function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoRaw {
     ufvk: info.ufvk,
     syncState: info.syncState,
     lastBlockProcessed: info.lastBlockProcessed,
-    transactions: info.transactions,
+    transactions: info.transactions.map(tx => ({
+      ...tx,
+      fee: tx.fee.toString(),
+      decryptedData: {
+        orchard_outputs:
+          tx.decryptedData?.orchard_outputs.map(output => ({
+            ...output,
+            amount: output.amount.toString(),
+          })) || [],
+        sapling_outputs:
+          tx.decryptedData?.sapling_outputs.map(output => ({
+            ...output,
+            amount: output.amount.toString(),
+          })) || [],
+      },
+    })),
   };
 }
 
@@ -105,7 +120,22 @@ function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
     ufvk: info.ufvk,
     syncState: info.syncState as ZcashSyncState,
     lastBlockProcessed: info.lastBlockProcessed,
-    transactions: info.transactions,
+    transactions: info.transactions.map(tx => ({
+      ...tx,
+      fee: new BigNumber(tx.fee),
+      decryptedData: {
+        orchard_outputs:
+          tx.decryptedData?.orchard_outputs.map(output => ({
+            ...output,
+            amount: new BigNumber(output.amount),
+          })) || [],
+        sapling_outputs:
+          tx.decryptedData?.sapling_outputs.map(output => ({
+            ...output,
+            amount: new BigNumber(output.amount),
+          })) || [],
+      },
+    })),
   };
 }
 
