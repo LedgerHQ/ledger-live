@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Comprar uma Ledger",
     "setupCta" : "Já tenho uma Ledger, configurar agora"
   },
+  "rebornBuyDevice" : {
+    "title" : "Conectar um dispositivo Ledger",
+    "desc" : "Para aproveitar todo o potencial da sua Ledger Wallet, conecte sua Ledger.",
+    "0" : {
+      "title" : "Propriedade total",
+      "desc" : "Suas chaves privadas permanecem sempre no dispositivo."
+    },
+    "1" : {
+      "title" : "Faça suas negociações com segurança",
+      "desc" : "Confirme suas transações em uma tela segura."
+    },
+    "2" : {
+      "title" : "Tenha acesso à carteira mais poderosa",
+      "desc" : "Gerencie todos os seus ativos em um único lugar."
+    },
+    "cta" : "Conectar",
+    "buyCta" : "Compre seu dispositivo Ledger"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Você já recebeu sua Ledger?",
     "desc" : "Depois de receber sua Ledger, configure-a para poder usar tudo o que o aplicativo Ledger Wallet tem a oferecer.",
@@ -2692,7 +2710,7 @@
     "walletBalance" : "Saldo da carteira",
     "balance" : {
       "noSigner" : "A carteira mais segura",
-      "noFund" : "Proteja sua cripto"
+      "noAccounts" : "Proteja sua cripto"
     },
     "seeAllAssets" : "Ver todos os ativos",
     "seeAllAccounts" : "Ver todas as contas",
@@ -4163,7 +4181,9 @@
       "placeholderNoENS" : "Digite o endereço",
       "editRecipientAccessibilityLabel" : "Editar destinatário",
       "recent" : "Recentes",
+      "recentDetail" : "Detalhe recente",
       "myAccounts" : "Minhas contas",
+      "account" : "Conta",
       "sendTo" : "Enviar para {{address}}",
       "addressMatched" : "O endereço correspondeu",
       "addressNotFound" : "Endereço não encontrado",
@@ -4229,6 +4249,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "Não foi possível atualizar as taxas de rede",
         "warningDescription" : "As configurações de taxa podem estar desatualizadas."
+      },
+      "customFees" : {
+        "title" : "Taxas personalizadas",
+        "confirm" : "Confirmar",
+        "maxFee" : "Taxa máxima ({{unit}})",
+        "maxPriorityFee" : "Taxa de Prioridade Máxima ({{unit}})",
+        "gasLimit" : "Limite de gás ({{unit}})",
+        "feePerByte" : "Quantia da taxa ({{unit}})",
+        "suggested" : "Sugerido",
+        "nextBlock" : "Próximo bloco",
+        "networkFeesInFiat" : "Taxas de rede em {{currency}}",
+        "invalidValue" : "Insira um número válido.",
+        "belowMinimum" : "O mínimo é {{min}}",
+        "maxFeeBelowPriorityFee" : "A taxa máxima deve ser maior ou igual à taxa de prioridade máxima."
+      },
+      "coinControl" : {
+        "title" : "Controle de moedas"
       }
     },
     "pendingTxWarning" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas.",
@@ -4283,7 +4320,8 @@
       "useMax" : "Usar o máximo",
       "loadingNetwork" : "Carregando taxas de rede...",
       "noRateProvider" : "Indisponível",
-      "quantityAvailable" : "Quantidade Disponível"
+      "quantityAvailable" : "Quantidade Disponível",
+      "toggleCurrency" : "Alternar moeda"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4381,12 @@
       "required" : "Taxas Necessárias",
       "chooseGas" : "Escolha um preço de gás",
       "higherFaster" : "Maior preço de gás significa uma confirmação mais rápida.",
+      "medium" : "Médio",
+      "fast" : "Rápido",
+      "slow" : "Lento",
+      "custom" : "Personalizado",
+      "customFees" : "Taxas personalizadas",
+      "coinControl" : "Controle de moedas",
       "edit" : {
         "title" : "Escolha a unidade"
       },
@@ -7241,7 +7285,8 @@
         "website" : "website"
       },
       "back" : {
-        "card" : "todos os cartões"
+        "card" : "todos os cartões",
+        "cardTab" : "Cartão"
       }
     }
   },
@@ -8517,21 +8562,21 @@
     "title" : "Descubra o seu novo portfólio",
     "slides" : {
       "portfolio" : {
-        "title" : "Seu portfólio, reinventado",
-        "description" : "Organizamos sua tela inicial. Sentindo falta do seu gráfico? Basta tocar abaixo do seu saldo."
+        "title" : "Uma visão mais clara do seu portfólio",
+        "description" : "Veja seu saldo total rapidamente e toque em “Hoje” para obter mais detalhes."
       },
       "navigation" : {
-        "title" : "Tudo em seu devido lugar",
-        "description" : "Minha Ledger e Explorar agora estão em cima. Trocar e Cartão foram para a parte inferior, para um acesso mais rápido."
+        "title" : "Acesse as ações principais mais rapidamente",
+        "description" : "Acesse Trocar, Transferir e Comprar instantaneamente. Encontre Ganhar e Cartão no menu de navegação inferior."
       },
       "actions" : {
-        "title" : "Ações na velocidade do mercado",
-        "description" : "Identifique tendências do mercado à vista com o novo banner e negocie na hora."
+        "title" : "Veja as tendências do mercado instantaneamente",
+        "description" : "Veja rapidamente as tendências diretamente em seu portfólio e passe da análise para a ação."
       }
     },
     "cta" : {
-      "continue" : "Continuar",
-      "explore" : "Explorar meu novo portfólio"
+      "continue" : "Próximo",
+      "explore" : "Descobrir meu novo portfólio"
     }
   },
   "mainNavigation" : {
