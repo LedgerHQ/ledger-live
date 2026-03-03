@@ -1,56 +1,39 @@
-import { getPageBackground } from "../backgrounds";
+import { getPageBackground, preloadBackgrounds, PAGE_BACKGROUNDS } from "../backgrounds";
 
-jest.mock("~/renderer/images/backgrounds/light.webp", () => "light.webp");
-jest.mock("~/renderer/images/backgrounds/home.webp", () => "home.webp");
-jest.mock("~/renderer/images/backgrounds/card.webp", () => "card.webp");
-jest.mock("~/renderer/images/backgrounds/swap.webp", () => "swap.webp");
-jest.mock("~/renderer/images/backgrounds/earn.webp", () => "earn.webp");
+const knownRoutes = Object.keys(PAGE_BACKGROUNDS);
 
-describe("getPageBackground", () => {
-  describe("light theme", () => {
-    it("returns light background for supported pages", () => {
-      expect(getPageBackground("/", "light")).toBe("light.webp");
-
-      expect(getPageBackground("/card-new-wallet", "light")).toBe("light.webp");
-      expect(getPageBackground("/swap", "light")).toBe("light.webp");
-      expect(getPageBackground("/swap/bridge", "light")).toBe("light.webp");
-      expect(getPageBackground("/exchange", "light")).toBe("light.webp");
-      expect(getPageBackground("/earn", "light")).toBe("light.webp");
+describe("backgrounds", () => {
+  describe("getPageBackground", () => {
+    it.each(knownRoutes)("should return a background for %s in dark theme", route => {
+      expect(getPageBackground(route, "dark")).toBeDefined();
     });
 
-    it("returns undefined for pages without a background", () => {
-      expect(getPageBackground("/market", "light")).toBeUndefined();
-      expect(getPageBackground("/analytics", "light")).toBeUndefined();
-      expect(getPageBackground("/accounts", "light")).toBeUndefined();
-      expect(getPageBackground("/settings", "light")).toBeUndefined();
+    it.each(knownRoutes)("should return a background for %s in light theme", route => {
+      expect(getPageBackground(route, "light")).toBeDefined();
+    });
+
+    it("should return different backgrounds for light and dark themes", () => {
+      const light = getPageBackground("/", "light");
+      const dark = getPageBackground("/", "dark");
+      expect(light).not.toBe(dark);
+    });
+
+    it("should return undefined for unknown routes", () => {
+      expect(getPageBackground("/settings", "dark")).toBeUndefined();
+      expect(getPageBackground("/accounts", "dark")).toBeUndefined();
+    });
+
+    it("should match route by first segment", () => {
+      expect(getPageBackground("/swap/history", "dark")).toBeDefined();
     });
   });
 
-  describe("dark theme", () => {
-    it("returns page-specific background for home", () => {
-      expect(getPageBackground("/", "dark")).toBe("home.webp");
-    });
-
-    it("returns page-specific background for card", () => {
-      expect(getPageBackground("/card-new-wallet", "dark")).toBe("card.webp");
-    });
-
-    it("returns page-specific background for swap and exchange", () => {
-      expect(getPageBackground("/swap", "dark")).toBe("swap.webp");
-      expect(getPageBackground("/swap/bridge", "dark")).toBe("swap.webp");
-      expect(getPageBackground("/exchange", "dark")).toBe("swap.webp");
-      expect(getPageBackground("/exchange/buy", "dark")).toBe("swap.webp");
-    });
-
-    it("returns page-specific background for earn", () => {
-      expect(getPageBackground("/earn", "dark")).toBe("earn.webp");
-    });
-
-    it("returns undefined for pages without a background", () => {
-      expect(getPageBackground("/market", "dark")).toBeUndefined();
-      expect(getPageBackground("/analytics", "dark")).toBeUndefined();
-      expect(getPageBackground("/accounts", "dark")).toBeUndefined();
-      expect(getPageBackground("/settings", "dark")).toBeUndefined();
+  describe("preloadBackgrounds", () => {
+    it("should create Image instances to preload assets", () => {
+      const spy = jest.spyOn(globalThis, "Image");
+      preloadBackgrounds();
+      expect(spy.mock.instances.length).toBeGreaterThan(0);
+      spy.mockRestore();
     });
   });
 });

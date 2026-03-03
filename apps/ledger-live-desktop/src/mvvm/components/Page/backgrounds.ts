@@ -4,7 +4,7 @@ import cardBg from "~/renderer/images/backgrounds/card.webp";
 import swapBg from "~/renderer/images/backgrounds/swap.webp";
 import earnBg from "~/renderer/images/backgrounds/earn.webp";
 
-const PAGE_BACKGROUNDS: Record<string, string> = {
+export const PAGE_BACKGROUNDS: Record<string, string> = {
   "/": homeBg,
   "/earn": earnBg,
   "/card-new-wallet": cardBg,
