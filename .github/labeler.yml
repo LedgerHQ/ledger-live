@@ -36,3 +36,48 @@ coin-modules-api:
 coin-modules:
  - libs/coin-framework/**/*
  - libs/coin-modules/**/*
+
+shared-lib:
+  - libs/asset-aggregation/**/*
+  - libs/client-ids/**/*
+  - libs/coin-modules-monitoring/**/*
+  - libs/coin-tester/**/*
+  - libs/coin-tester-modules/**/*
+  - libs/concordium-core/**/*
+  - libs/deeplink-module/**/*
+  - libs/device-core/**/*
+  - libs/device-react/**/*
+  - libs/disable-network-setup/**/*
+  - libs/domain-service/**/*
+  - libs/env/**/*
+  - libs/ethereum-provider/**/*
+  - libs/evm-tools/**/*
+  - libs/exchange-module/**/*
+  - libs/feature-flag-module/**/*
+  - libs/hw-ledger-key-ring-protocol/**/*
+  - libs/ledger-key-ring-protocol/**/*
+  - libs/ledger-services/**/*
+  - libs/live-config/**/*
+  - libs/live-countervalues/**/*
+  - libs/live-countervalues-react/**/*
+  - libs/live-currency-format/**/*
+  - libs/live-dmk-shared/**/*
+  - libs/live-dmk-speculos/**/*
+  - libs/live-hooks/**/*
+  - libs/live-network/**/*
+  - libs/live-signer-aleo/**/*
+  - libs/live-signer-canton/**/*
+  - libs/live-signer-evm/**/*
+  - libs/live-signer-solana/**/*
+  - libs/live-wallet/**/*
+  - libs/promise/**/*
+  - libs/psbtv2/**/*
+  - libs/speculos-transport/**/*
+  - libs/test-utils/**/*
+  - libs/wallet-api-acre-module/**/*
+
+desktop-lib:
+  - libs/live-dmk-desktop/**/*
+
+mobile-lib:
+  - libs/live-dmk-mobile/**/*
