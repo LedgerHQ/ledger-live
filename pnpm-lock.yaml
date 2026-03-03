@@ -412,7 +412,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-oFPDBJXygat0iMzkO4oGwhSi6BtY54eC5dgXuFjN6jk=
 
-pnpmfileChecksum: sha256-fLNC0tdYYXJ7hehQQ+dFF/gcWYeM1CyHq7+BtFetUro=
+pnpmfileChecksum: sha256-WizsKK+XY4tzYGFYz2IjQ3NcaxUnMgMAxQXmfGYtEqA=
 
 patchedDependencies:
   '@callstack/repack@5.2.3':
@@ -10119,9 +10119,6 @@ importers:
       color:
         specifier: ^4.0.0
         version: 4.2.3
-      rn-range-slider:
-        specifier: 2.1.1
-        version: 2.1.1(prop-types@15.8.1)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       styled-system:
         specifier: 'catalog:'
         version: 5.1.5
@@ -31692,20 +31689,6 @@ packages:
 
   rn-host-detect@1.2.0:
     resolution: {integrity: sha512-btNg5kzHcjZZ7t7mvvV/4wNJ9e3MPgrWivkRgWURzXL0JJ0pwWlU4zrbmdlz3HHzHOxhBhHB4D+/dbMFfu4/4A==}
-
-  rn-range-slider@2.1.1:
-    resolution: {integrity: sha512-tDfH8G4e/k+waGMMd+HaYTlpOqyh1dd3aWdDmqKo0WGh1BfHB+NXy0X2REyr1ZJDvsrq7WEeFZ+PBTdD6cisbw==}
-    peerDependencies:
-      prop-types: '*'
-      react: 19.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      prop-types:
-        optional: true
-      react:
-        optional: true
-      react-native:
-        optional: true
 
   roarr@2.15.4:
     resolution: {integrity: sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A==}
@@ -66583,12 +66566,6 @@ snapshots:
       lodash: 4.17.21
 
   rn-host-detect@1.2.0: {}
-
-  rn-range-slider@2.1.1(prop-types@15.8.1)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0):
-    optionalDependencies:
-      prop-types: 15.8.1
-      react: 19.0.0
-      react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
 
   roarr@2.15.4:
     dependencies:
