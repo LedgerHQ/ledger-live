@@ -19,7 +19,7 @@ export const BalanceView = ({
     <button
       type="button"
       className={cn(
-        "flex cursor-pointer items-baseline gap-12 border-0 bg-transparent p-0 text-inherit",
+        "flex cursor-pointer border-0 bg-transparent p-0 text-inherit",
         shouldDisplayBalanceRefreshRework && "group",
       )}
       data-testid="portfolio-balance"
@@ -27,15 +27,17 @@ export const BalanceView = ({
       onKeyDown={handleKeyDown}
       aria-label="View portfolio analytics"
     >
-      <AmountDisplay
-        value={balance}
-        formatter={formatter}
-        hidden={discreet}
-        animate={shouldDisplayBalanceRefreshRework}
-        loading={shouldDisplayBalanceRefreshRework && isLoading}
-        data-testid="portfolio-total-balance"
-      />
-      {!isColdStart && <Trend valueChange={valueChange} />}
+      <span className="flex items-baseline gap-12 transition-[filter] duration-200 group-hover:brightness-85">
+        <AmountDisplay
+          value={balance}
+          formatter={formatter}
+          hidden={discreet}
+          animate={shouldDisplayBalanceRefreshRework}
+          loading={shouldDisplayBalanceRefreshRework && isLoading}
+          data-testid="portfolio-total-balance"
+        />
+        {!isColdStart && <Trend valueChange={valueChange} />}
+      </span>
     </button>
   );
 };
