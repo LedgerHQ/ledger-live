@@ -6,7 +6,7 @@ const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
 const withRefreshing = (state: State): State => ({
   ...state,
-  portfolioRefresh: { isRefreshing: true },
+  portfolioRefresh: { isRefreshing: true, lastSyncTimestampSnapshot: null },
 });
 
 describe("usePortfolioBalanceSectionViewModel", () => {

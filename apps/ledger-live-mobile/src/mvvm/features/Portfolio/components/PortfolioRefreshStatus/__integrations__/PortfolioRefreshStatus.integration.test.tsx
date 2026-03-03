@@ -25,7 +25,8 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { MINUTE_MS, HOUR_MS, DAY_MS } from "@ledgerhq/live-common/utils/timeAgo";
 import { UP_TO_DATE_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
 import { PortfolioRefreshStatus } from "../index";
-import { setRefreshCompleted } from "~/reducers/portfolioRefresh";
+import { setRefreshStarted, setRefreshCompleted } from "~/reducers/portfolioRefresh";
+import { AccountsActionTypes } from "~/actions/types";
 import { State } from "~/reducers/types";
 
 const FIXED_NOW = new Date("2025-08-15T12:00:00Z").getTime();
@@ -39,17 +40,13 @@ const makeAccount = (lastSyncDate: Date) => ({
 });
 
 const withRefreshing =
-  (lastSyncDate?: Date): ((state: State) => State) =>
+  (snapshotTimestamp: number | null = null): ((state: State) => State) =>
   state => ({
     ...state,
-    accounts: {
-      ...state.accounts,
-      active: lastSyncDate ? [makeAccount(lastSyncDate)] : [],
-    },
-    portfolioRefresh: { isRefreshing: true },
+    portfolioRefresh: { isRefreshing: true, lastSyncTimestampSnapshot: snapshotTimestamp },
   });
 
-const withCompleted =
+const withIdle =
   (lastSyncDate: Date): ((state: State) => State) =>
   state => ({
     ...state,
@@ -57,12 +54,12 @@ const withCompleted =
       ...state.accounts,
       active: [makeAccount(lastSyncDate)],
     },
-    portfolioRefresh: { isRefreshing: false },
+    portfolioRefresh: { isRefreshing: false, lastSyncTimestampSnapshot: null },
   });
 
-const renderRefreshing = (lastSyncDate?: Date) =>
+const renderRefreshing = (snapshotTimestamp: number | null = null) =>
   render(<PortfolioRefreshStatus />, {
-    overrideInitialState: withRefreshing(lastSyncDate),
+    overrideInitialState: withRefreshing(snapshotTimestamp),
   });
 
 const completeRefresh = (store: ReturnType<typeof renderRefreshing>["store"]) =>
@@ -88,31 +85,27 @@ describe("PortfolioRefreshStatus", () => {
 
     it("should not show up-to-date when mounted with a completed timestamp but no prior refresh", () => {
       render(<PortfolioRefreshStatus />, {
-        overrideInitialState: withCompleted(new Date(Date.now() - 30_000)),
+        overrideInitialState: withIdle(new Date(Date.now() - 30_000)),
       });
       expect(screen.queryByTestId("portfolio-refresh-status-up-to-date")).toBeNull();
     });
   });
 
   describe("refreshing state", () => {
-    it("should show spinner and 'Refreshing...' when no accounts", () => {
+    it("should show spinner and 'Refreshing...' when no snapshot timestamp", () => {
       renderRefreshing();
       expect(screen.getByTestId("portfolio-refresh-status-spinner")).toBeVisible();
       expect(screen.getByTestId("portfolio-refresh-status-refreshing")).toBeVisible();
       expect(screen.getByText("Refreshing...")).toBeVisible();
     });
 
-    it("should show relative time for a timestamp < 1 minute ago", () => {
-      renderRefreshing(new Date(Date.now() - 30_000));
-      const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
-        -30,
-        "second",
-      );
-      expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
+    it("should show 'Refreshing...' when snapshot is < 1 minute ago", () => {
+      renderRefreshing(Date.now() - 30_000);
+      expect(screen.getByText("Refreshing...")).toBeVisible();
     });
 
-    it("should show relative time for a timestamp < 1 hour ago", () => {
-      renderRefreshing(new Date(Date.now() - 3 * MINUTE_MS));
+    it("should show relative time for a snapshot < 1 hour ago", () => {
+      renderRefreshing(Date.now() - 3 * MINUTE_MS);
       const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
         -3,
         "minute",
@@ -120,8 +113,8 @@ describe("PortfolioRefreshStatus", () => {
       expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
-    it("should show relative time for a timestamp < 24 hours ago", () => {
-      renderRefreshing(new Date(Date.now() - 2 * HOUR_MS));
+    it("should show relative time for a snapshot < 24 hours ago", () => {
+      renderRefreshing(Date.now() - 2 * HOUR_MS);
       const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
         -2,
         "hour",
@@ -129,8 +122,8 @@ describe("PortfolioRefreshStatus", () => {
       expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
-    it("should show relative time for a timestamp < 7 days ago", () => {
-      renderRefreshing(new Date(Date.now() - 3 * DAY_MS));
+    it("should show relative time for a snapshot < 7 days ago", () => {
+      renderRefreshing(Date.now() - 3 * DAY_MS);
       const expected = new Intl.RelativeTimeFormat(TEST_LOCALE, { numeric: "always" }).format(
         -3,
         "day",
@@ -138,9 +131,9 @@ describe("PortfolioRefreshStatus", () => {
       expect(screen.getByText(`Refreshing - Last update ${expected}`)).toBeVisible();
     });
 
-    it("should show absolute date without year for a timestamp >= 7 days ago in the same year", () => {
+    it("should show absolute date without year for a snapshot >= 7 days ago in the same year", () => {
       const lastSyncDate = new Date(2025, 0, 12);
-      renderRefreshing(lastSyncDate);
+      renderRefreshing(lastSyncDate.getTime());
       const label = screen.getByTestId("portfolio-refresh-status-refreshing");
       expect(label).toBeVisible();
       const expected = new Intl.DateTimeFormat(TEST_LOCALE, {
@@ -150,9 +143,9 @@ describe("PortfolioRefreshStatus", () => {
       expect(label.props.children).toContain(expected);
     });
 
-    it("should show absolute date with year for a timestamp in a previous year", () => {
+    it("should show absolute date with year for a snapshot in a previous year", () => {
       const lastSyncDate = new Date(2024, 0, 12);
-      renderRefreshing(lastSyncDate);
+      renderRefreshing(lastSyncDate.getTime());
       const label = screen.getByTestId("portfolio-refresh-status-refreshing");
       expect(label).toBeVisible();
       const expected = new Intl.DateTimeFormat(TEST_LOCALE, {
@@ -161,6 +154,39 @@ describe("PortfolioRefreshStatus", () => {
         year: "2-digit",
       }).format(lastSyncDate);
       expect(label.props.children).toContain(expected);
+    });
+  });
+
+  describe("snapshot stability during refresh", () => {
+    it("should keep showing the snapshot timestamp even when accounts sync mid-refresh", () => {
+      const oldSyncDate = new Date(Date.now() - 3 * MINUTE_MS);
+      const { store } = render(<PortfolioRefreshStatus />, {
+        overrideInitialState: withIdle(oldSyncDate),
+      });
+
+      const expectedLabel = new Intl.RelativeTimeFormat(TEST_LOCALE, {
+        numeric: "always",
+      }).format(-3, "minute");
+
+      act(() => {
+        store.dispatch(setRefreshStarted(oldSyncDate.getTime()));
+      });
+
+      expect(screen.getByText(`Refreshing - Last update ${expectedLabel}`)).toBeVisible();
+
+      act(() => {
+        store.dispatch({
+          type: AccountsActionTypes.SET_ACCOUNTS,
+          payload: [makeAccount(new Date())],
+        });
+      });
+
+      expect(screen.getByText(`Refreshing - Last update ${expectedLabel}`)).toBeVisible();
+    });
+
+    it("should show 'Refreshing...' when snapshot is < 1 minute old", () => {
+      renderRefreshing(Date.now() - 30_000);
+      expect(screen.getByText("Refreshing...")).toBeVisible();
     });
   });
 
