@@ -244,7 +244,12 @@ export default class Kaspa {
     return { version: `${major}.${minor}.${patch}` };
   }
 
-  async sendToDevice(instruction, p1, payload = Buffer.alloc(0), p2 = P2_LAST) {
+  async sendToDevice(
+    instruction: number,
+    p1: number,
+    payload: Buffer<ArrayBufferLike> = Buffer.alloc(0),
+    p2 = P2_LAST,
+  ) {
     const acceptStatusList = [StatusCodes.OK];
 
     const reply = await this.transport.send(

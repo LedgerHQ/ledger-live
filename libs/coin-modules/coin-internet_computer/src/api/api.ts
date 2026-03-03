@@ -56,7 +56,7 @@ export const broadcastTxn = async (
 ) => {
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
   const res = await fetch(`${ICP_NETWORK_URL}/api/v3/canister/${canisterId}/${type}`, {
-    body: payload,
+    body: payload as unknown as BodyInit,
     method: "POST",
     headers: {
       "Content-Type": "application/cbor",
