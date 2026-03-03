@@ -209,7 +209,11 @@
       "BURN" : "محروق",
       "ASSOCIATE_TOKEN" : "ربط رمز التوكن",
       "CONTRACT_CALL" : "استدعاء عقد",
-      "UPDATE_ACCOUNT" : "الحساب المحدث"
+      "UPDATE_ACCOUNT" : "الحساب المحدث",
+      "SHIELDED_TX_SAPLING_IN" : "تم التلقي",
+      "SHIELDED_TX_SAPLING_OUT" : "تم الإرسال",
+      "SHIELDED_TX_ORCHARD_IN" : "تم التلقي",
+      "SHIELDED_TX_ORCHARD_OUT" : "تم الإرسال"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -268,6 +272,8 @@
     "minute" : "دقيقة",
     "minute_other" : "دقائق",
     "minute_short" : "دقيقة",
+    "second" : "ثانية",
+    "second_other" : "ثانية",
     "second_short" : "ثانية",
     "hour" : "ساعة",
     "hour_other" : "ساعات",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "تعذر تحديث رسوم الشبكة",
       "warningDescription" : "الإعدادات المسبقة للرسوم قد تكون غير حديثة."
+    },
+    "customFees" : {
+      "title" : "رسوم مخصصة",
+      "confirm" : "تأكيد",
+      "maxFee" : "الحد الأقصى للرسوم ({{unit}})",
+      "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unit}})",
+      "gasLimit" : "حد الغاز ({{unit}})",
+      "feePerByte" : "مبلغ الرسوم ({{unit}})",
+      "suggested" : "مُقترح",
+      "nextBlock" : "الكتلة التالية",
+      "networkFeesInFiat" : "رسوم الشبكة بعملة {{currency}}",
+      "invalidValue" : "أدخل رقم صالح",
+      "belowMinimum" : "الحد الأدنى هو {{min}}",
+      "maxFeeBelowPriorityFee" : "يجب أن يكون الحد الأقصى للرسوم أكبر من أو يساوي الحد الأقصى لرسوم الأولوية"
+    },
+    "coinControl" : {
+      "title" : "التحكم في العملات"
     }
   },
   "releaseNotes" : {
-    "title" : "ملاحظات الإصدار",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "ملحوظة الإصدار",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "فهمت ذلك"
   },
   "troubleshootNetwork" : {
     "title" : "استكشاف أخطاء الشبكة وإصلاحها",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "إضافة حساب Concordium",
+        "acknowledge" : {
+          "title" : "إقرار",
+          "description" : "Concordium يتطلب تحقق خارجي من الهويّة. يُرجى قراءة تحذيرات الأمان الهامة هذه:",
+          "list" : {
+            "1" : "<0>لا تأكيد صحة العنوان</0> – جهازك Ledger لا يمكنه تأكيد صحة عناوين تلقي Concordium. تأكد من صحة العناوين يدوياً قبل تلقي الأموال.",
+            "2" : "<0>تطبيق Concordium ID يستخدم بذرةً منفصلةً</0> – ستقوم بإنشاء 24 كلمة جديدة في تطبيق Concordium. لا تستخدم بذرة Ledger الخاصة بك أبداً.",
+            "3" : "<0>سيعاد توجيهك خارج Ledger Wallet</0> – التحقق من الهويّة يحدث في تطبيق محفظة Concordium الخارجي. هذا مطلوب بواسطة بروتوكول سلسلة الكتل (بلوكتشين) الخاص بـ Concordium.",
+            "4" : "<0>توقيع المعاملة يظل آمناً</0> – فقط جهازك Ledger يمكنه توقيع المعاملات وإنشاء الحسابات."
+          },
+          "allow" : "موافقة"
+        },
+        "identity" : {
+          "title" : "اتصال",
+          "account" : "الحساب",
+          "newAccount" : "حساب جديد",
+          "init" : "الضغط على Allow (سماح) يعني أنك مُستعد للمتابعة إلى تحقق هويّة اعرف عميلك (KYC) المطلوب للتحقق من حسابك.",
+          "scanQRCode" : "امسح كود QR ضوئياً عن طريق جهازك الجوّال للاتصال بتطبيق Concordium ID الخاص بك. <0>تعرّف على المزيد</0>",
+          "ledgerSeedWarning" : "<0>لا</0> تستخدم بذرة Ledger الخاصة بك في تطبيق Concordium ID.",
+          "downloadApp" : "تنزيل تطبيق Concordium ID",
+          "connecting" : "جارٍ الاتصال بتطبيق Concordium ID...",
+          "onboarded" : "حسابات مُهيّأة",
+          "success" : "تم الاتصال بتطبيق Concordium ID بنجاح.",
+          "error" : "فشلت تهيئة الحساب الجديد. يُرجى إعادة المحاولة.",
+          "status" : {
+            "prepare" : "جارٍ إعداد تهيئة الحساب...",
+            "submit" : "جارٍ تهيئة الحساب...",
+            "default" : "جارٍ المعالجة..."
+          }
+        },
+        "create" : {
+          "title" : "إنشاء حساب",
+          "init" : {
+            "title" : "تم الاتصال بتطبيق Concordium ID بنجاح"
+          },
+          "prepare" : {
+            "title" : "لإنشاء حساب، طابق الكود أدناه في تطبيق Concordium ID",
+            "resendButton" : "إعادة إرسال التأكيد",
+            "resendDescription" : "يمكن إعادة إرسال التأكيد خلال <0>{{count}}</0> {{unit}}"
+          },
+          "success" : "تمّ إنشاء حساب Concordium الخاص بك بنجاح.",
+          "error" : "فشل إنشاء الحساب. يُرجى إعادة المحاولة.",
+          "error429" : "طلبات كثيرة جداً. يُرجى الانتظار وإعادة المحاولة لاحقاً.",
+          "button" : "إنشاء",
+          "processing" : "جارٍ المعالجة...",
+          "status" : {
+            "prepare" : "جارٍ إعداد إنشاء الحساب...",
+            "submit" : "جارٍ إنشاء حساب...",
+            "default" : "جارٍ المعالجة..."
+          }
+        },
+        "finish" : {
+          "title" : "تأكيد"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "لا يمكن تأكيد صحة عنوان Concordium الخاص بك في الوقت الحالي. يُرجى التأكد جيداً من خلال لصق عنوانك في مستكشف Concordium.",
+        "verifyLink" : "تحقق"
+      }
+    },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "حجم ملاحظة غير صالح، الحد الأقصى المسموح هو 64 حرفاً",
       "description" : "ملاحظة Cardano لها حد أقصى محدود للحجم. يُرجى تقليل حجم الملاحظة"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) تتجاوز الحد الأقصى للطول",
+      "description" : "ملاحظتك يبلغ طولها {{memoLength}} بايت، لكن الحد الأقصى المسموح به هو {{maxLength}} بايت. يُرجى تقليل حجم الملاحظة."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "عفواً، الأموال المتوفرة غير كافية"
     },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "عرض الرصيد",
-        "pausedAt" : "تم الإيقاف مؤقتاً في ",
+        "startSync" : "بدء المزامنة",
+        "stopSync" : "إيقاف المزامنة",
+        "lastProcessedBlock" : "آخر كتلة تمت معالجتها: {{block}}. {{missing}} كتلة مفقودة.",
         "lastSync" : "آخر مزامنة: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "طول يوم الميلاد",
+        "tooltip" : "طول يوم الميلاد هو النقطة على سلسلة الكتل (بلوكتشين) التي تبدأ فيها محفظتك المسح بحثاً عن أموالك."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "بدء المزامنة",
-      "datepicker" : {
-        "label" : "طول يوم الميلاد",
-        "tooltip" : "طول يوم الميلاد هو النقطة على سلسلة الكتل (بلوكتشين) التي تبدأ فيها محفظتك المسح بحثاً عن أموالك."
       }
+    },
+    "operationDetails" : {
+      "txType" : "نوع المعاملة",
+      "transparentTx" : "شفاف",
+      "shieldedSaplingTx" : "🛡 خاص (شتلة)",
+      "shieldedOrchardTx" : "🛡 خاص (أوركارد)"
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "الرصيد المرئي للعامة",
       "privateBalance" : "الرصيد الخاص",
       "privateBalanceTooltip" : "الرصيد المخفي عن العامة"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "عام",
+        "private" : "خاص"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "متاح تحديث جديد",
+    "downloadProgress" : "%{{progress}}",
+    "errorTryAgain" : "حدث خطأ أثناء التحديث، أعد المحاولة",
+    "installAndRelaunch" : "قم بتثبيت التحديث وإعادة التشغيل"
   }
 }
