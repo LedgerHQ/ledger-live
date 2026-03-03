@@ -25,6 +25,7 @@ import i18n from "~/renderer/i18n/init";
 import dbMiddleware from "~/renderer/middlewares/db";
 import { type State } from "~/renderer/reducers";
 import StyleProvider from "~/renderer/styles/StyleProvider";
+import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
@@ -40,6 +41,7 @@ interface ExtraOptions {
   initialRoute?: string;
   userEventOptions?: Parameters<typeof userEvent.setup>[0];
   skipRouter?: boolean;
+  withRampCatalog?: boolean;
 }
 
 interface RenderReturn {
@@ -97,6 +99,7 @@ function Providers({
   store,
   minimal = false,
   withLiveApp = false,
+  withRampCatalog = false,
   initialCountervalues,
   skipRouter = false,
   initialRoute,
@@ -105,6 +108,7 @@ function Providers({
   store: ReduxStore;
   minimal?: boolean;
   withLiveApp?: boolean;
+  withRampCatalog?: boolean;
   initialCountervalues?: CounterValuesStateRaw;
   skipRouter?: boolean;
   initialRoute?: string;
@@ -113,9 +117,21 @@ function Providers({
 
   const content = minimal ? <>{children}</> : <EnhancedProviders>{children}</EnhancedProviders>;
 
+  const liveAppContent = withLiveApp ? (
+    <CustomLiveAppProvider>{content}</CustomLiveAppProvider>
+  ) : (
+    content
+  );
+
+  const rampCatalogContent = withRampCatalog ? (
+    <RampCatalogProvider updateFrequency={999999}>{liveAppContent}</RampCatalogProvider>
+  ) : (
+    liveAppContent
+  );
+
   const routerContent = (
     <CountervaluesProviders savedState={initialCountervalues}>
-      {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+      {rampCatalogContent}
     </CountervaluesProviders>
   );
 
@@ -206,6 +222,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     userEventOptions = {},
     skipRouter = false,
     initialRoute,
+    withRampCatalog = false,
     ...renderOptions
   } = options;
 
@@ -215,7 +232,12 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
-        <Providers store={store} skipRouter={skipRouter} initialRoute={initialRoute}>
+        <Providers
+          store={store}
+          skipRouter={skipRouter}
+          initialRoute={initialRoute}
+          withRampCatalog={withRampCatalog}
+        >
           {children}
         </Providers>
       ),

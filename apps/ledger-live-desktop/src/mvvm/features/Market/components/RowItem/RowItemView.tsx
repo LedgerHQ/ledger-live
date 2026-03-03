@@ -15,13 +15,14 @@ import {
   ActionsIconOnly,
 } from "./styles";
 import { RowItemViewProps, MarketActionType } from "./types";
-import { Star, StarFill, Plus, Exchange, Chart5 } from "@ledgerhq/lumen-ui-react/symbols";
+import { Star, StarFill, Plus, Exchange, Chart5, Minus } from "@ledgerhq/lumen-ui-react/symbols";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 const ACTION_ICONS: Record<MarketActionType, typeof Plus> = {
   buy: Plus,
   swap: Exchange,
   stake: Chart5,
+  sell: Minus,
 };
 
 export const RowItemView = memo<RowItemViewProps>(function RowItemView({

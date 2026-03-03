@@ -5,6 +5,8 @@ import CounterValuesHandlers from "./countervalues";
 import AssetsHandlers from "./assets";
 import FearAndGreedHandlers from "./fearAndGreed";
 import ConcordiumHandlers from "./concordium";
+import RampHandlers from "./ramp";
+import SwapHandlers from "./swap";
 
 export default [
   ...MarketHandlers,
@@ -14,4 +16,6 @@ export default [
   ...CounterValuesHandlers,
   ...AssetsHandlers,
   ...FearAndGreedHandlers,
+  ...RampHandlers,
+  ...SwapHandlers,
 ];
