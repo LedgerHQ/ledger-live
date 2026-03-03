@@ -1,23 +1,22 @@
 import { http, HttpResponse } from "msw";
 
-// Ramp catalog mock - bitcoin, ethereum, solana available for buy/sell
-const rampCatalogResponse = {
-  onRamp: {
-    moonpay: ["bitcoin", "ethereum", "solana"],
-    transak: ["bitcoin", "ethereum", "solana"],
-  },
-  offRamp: {
-    moonpay: ["bitcoin", "ethereum", "solana"],
-    transak: ["bitcoin", "ethereum", "solana"],
-  },
+const onRampCurrenciesPerProvider = {
+  moonpay: ["bitcoin", "ethereum", "solana"],
+  transak: ["bitcoin", "ethereum", "solana"],
+};
+const buyRampCatalogResponse = {
+  onRamp: onRampCurrenciesPerProvider,
+};
+const sellRampCatalogResponse = {
+  offRamp: onRampCurrenciesPerProvider,
 };
 
 const handlers = [
   http.get("https://buy.api.live.ledger.com/buy/v1/provider/currencies", () =>
-    HttpResponse.json(rampCatalogResponse),
+    HttpResponse.json(buyRampCatalogResponse),
   ),
   http.get("https://buy.api.live.ledger.com/sell/v1/provider/currencies", () =>
-    HttpResponse.json(rampCatalogResponse.offRamp),
+    HttpResponse.json(sellRampCatalogResponse),
   ),
 ];
 

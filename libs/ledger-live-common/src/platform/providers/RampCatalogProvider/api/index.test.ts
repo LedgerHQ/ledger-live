@@ -22,7 +22,6 @@ const network = jest.requireMock("@ledgerhq/live-network").default;
 
 const buyCatalog: RampCatalog = {
   onRamp: { moonpay: ["bitcoin", "ethereum"] },
-  offRamp: { moonpay: ["bitcoin"] },
 };
 
 const sellCatalog: CurrenciesPerProvider = {
