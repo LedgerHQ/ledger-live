@@ -22,7 +22,7 @@ export const ListSkeleton = memo(function ListSkeleton() {
           }}
           className="px-20"
         >
-          <TablePlaceholder size={7} />
+          <TablePlaceholder size={8} />
         </div>
       ))}
     </div>
