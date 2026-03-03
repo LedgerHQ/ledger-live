@@ -88,10 +88,12 @@ export class OnboardingPage extends AppPage {
   }
 
   async continueRecoverySeedDrawer() {
-    await this.recoverySeedDrawer.click();
+    await this.recoverySeedDrawer.waitFor({ state: "visible" });
+    await this.recoverySeedDrawer.click({ position: { x: 20, y: 20 } });
   }
 
   async continueHideSeedDrawer() {
+    await this.hideSeedDrawer.waitFor({ state: "visible" });
     await this.hideSeedDrawer.click();
   }
 
@@ -131,6 +133,10 @@ export class OnboardingPage extends AppPage {
     await this.stepperEndButton.click();
   }
 
+  async waitForGenuineCheckPage() {
+    await this.checkMyNanoButton.waitFor({ state: "visible" });
+  }
+
   async checkDevice() {
     await this.checkMyNanoButton.click();
   }
@@ -145,6 +151,6 @@ export class OnboardingPage extends AppPage {
 
   async reachApp() {
     await this.continue();
-    await this.page.waitForTimeout(500);
+    await this.tutorialContinueButton.waitFor({ state: "detached" });
   }
 }

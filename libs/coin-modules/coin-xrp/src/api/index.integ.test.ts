@@ -49,6 +49,7 @@ describe("Xrp Api (testnet)", () => {
         expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
         expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
         expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.feesPayer).toBe(SENDER);
         expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
@@ -218,6 +219,7 @@ describe("Xrp Api (testnet)", () => {
 
 describe("Xrp Api (mainnet)", () => {
   const SENDER = "rn5BQvhksnPfbo277LtFks4iyYStPKGrnJ";
+  const SENDER_WITH_FEES = "r4aYLkMk2yzULLpLfXtJyznFPnHKZozKip";
   const api = createApi({ node: "https://xrp.coin.ledger.com" });
 
   describe("estimateFees", () => {
@@ -258,9 +260,12 @@ describe("Xrp Api (mainnet)", () => {
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);
       ops.forEach(operation => {
-        const isSenderOrReceipt =
-          operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBe(true);
+        if (operation.type === "IN") {
+          expect(operation.recipients).toContain(SENDER);
+        } else if (operation.type === "OUT") {
+          expect(operation.senders).toContain(SENDER);
+        }
+        expect(operation.tx.feesPayer).toBe(operation.senders[0]);
         expect(operation.value).toBeGreaterThanOrEqual(0);
         expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
         expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -287,6 +292,7 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.senders).toContain(inTx.sender);
       expect(op.type).toEqual(inTx.type);
       expect(op.tx.fees).toEqual(BigInt(inTx.fees * 1e6));
+      expect(op.tx.feesPayer).toBe(inTx.sender);
     });
 
     it("returns OUT operation", async () => {
@@ -303,6 +309,30 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.tx.hash).toEqual(outTx.hash);
       expect(op.value).toEqual(BigInt(outTx.amount * 1e6));
       expect(op.recipients).toContain(outTx.recipient);
+      expect(op.senders).toContain(outTx.sender);
+      expect(op.type).toEqual(outTx.type);
+      expect(op.tx.fees).toEqual(BigInt(outTx.fees * 1e6));
+      expect(op.tx.feesPayer).toBe(SENDER);
+    });
+
+    it("returns FEES operation", async () => {
+      const resp = await api.listOperations(SENDER_WITH_FEES, { minHeight: 0 });
+      const feesOps = resp.items;
+
+      // https://xrpscan.com/tx/BEA8B9E4D2A8351417E862D41C8BE1F0013DEFBF6A8893771FE6991E6B20E19C
+      const outTx = {
+        hash: "BEA8B9E4D2A8351417E862D41C8BE1F0013DEFBF6A8893771FE6991E6B20E19C",
+        amount: 0,
+        recipient: [],
+        sender: SENDER_WITH_FEES,
+        type: "FEES",
+        fees: 0.00001,
+      };
+      const op = feesOps.find(o => o.tx.hash === outTx.hash) as Operation;
+
+      expect(op.tx.hash).toEqual(outTx.hash);
+      expect(op.value).toEqual(BigInt(outTx.amount * 1e6));
+      expect(op.recipients).toEqual([]);
       expect(op.senders).toContain(outTx.sender);
       expect(op.type).toEqual(outTx.type);
       expect(op.tx.fees).toEqual(BigInt(outTx.fees * 1e6));

@@ -1,8 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { lockedGold, nonVoting, electionConfig } from "./__mocks__/celokit.mock";
-import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/operations-list.mock";
 import { mockGetCoinBalance, mockTokenEvmLogic } from "./__mocks__/evm.mock";
+import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/operations-list.mock";
 import { getAccountShape } from "./synchronisation";
 
 const defaultInfo = {

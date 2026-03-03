@@ -235,8 +235,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
-          endBlock: undefined,
+          startblock: 0,
+          endblock: undefined,
         },
       });
     });
@@ -272,8 +272,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: undefined,
+          startblock: 50,
+          endblock: undefined,
         },
       });
     });
@@ -310,8 +310,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -469,8 +469,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
-          endBlock: undefined,
+          startblock: 0,
+          endblock: undefined,
         },
       });
     });
@@ -508,8 +508,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: undefined,
+          startblock: 50,
+          endblock: undefined,
         },
       });
     });
@@ -548,8 +548,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -707,7 +707,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
+          startblock: 0,
         },
       });
     });
@@ -745,7 +745,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
+          startblock: 50,
         },
       });
     });
@@ -784,8 +784,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -943,7 +943,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
+          startblock: 0,
         },
       });
     });
@@ -981,7 +981,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
+          startblock: 50,
         },
       });
     });
@@ -1020,8 +1020,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -1312,8 +1312,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
-          endBlock: undefined,
+          startblock: 0,
+          endblock: undefined,
         },
       });
     });
@@ -1351,8 +1351,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: undefined,
+          startblock: 50,
+          endblock: undefined,
         },
       });
     });
@@ -1391,8 +1391,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -1600,8 +1600,8 @@ describe("EVM Family", () => {
       return async (config: any) => {
         const url = config.url as string;
         const params = config.params;
-        const startBlock = params.startBlock ?? 0;
-        const endBlock = params.endBlock ?? Infinity;
+        const startBlock = params.startblock ?? 0;
+        const endBlock = params.endblock ?? Infinity;
         const pageLimit = params.offset ?? limit;
         const endpointType = getEndpointType(url);
 

@@ -104,7 +104,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       navigationParams: [
         NavigatorName.Swap,
         {
-          screen: ScreenName.Swap,
+          screen: ScreenName.SwapTab,
           params: {
             defaultAccount: account,
             defaultCurrency: currency,

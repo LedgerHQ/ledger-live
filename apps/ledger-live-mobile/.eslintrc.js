@@ -139,19 +139,6 @@ module.exports = {
   },
   overrides: [
     {
-      // Allow direct react-redux imports in hooks.ts/store.ts where typed hooks are defined
-      files: ["src/context/hooks.ts", "src/context/store.ts", "src/context/selectors.ts"],
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            patterns: commonImportRestrictions,
-            paths: lodashImportRestriction,
-          },
-        ],
-      },
-    },
-    {
       files: [
         "src/**/*.test.{ts,tsx}",
         "src/screens/Settings/Debug/**/*",

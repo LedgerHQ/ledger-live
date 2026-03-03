@@ -1,9 +1,9 @@
+import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../api/index";
-import { mapTxToOps } from "./txn";
-import { getAccountShape } from "./accountShape";
 import { createMockAccountShapeData } from "../../test/fixtures";
-import { SyncConfig } from "@ledgerhq/types-live";
+import { getAccountShape } from "./accountShape";
+import { mapTxToOps } from "./txn";
 
 // Mock dependencies
 jest.mock("../../api/index");

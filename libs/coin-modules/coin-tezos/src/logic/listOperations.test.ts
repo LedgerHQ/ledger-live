@@ -120,6 +120,7 @@ describe("listOperations", () => {
                 (operation.bakerFee ?? 0) +
                 (operation.storageFee ?? 0),
             ),
+            feesPayer: someSenderAddress,
           },
           type: expectedType,
           value: expectedAmount,
@@ -215,5 +216,68 @@ describe("listOperations", () => {
     mockNetworkGetTransactions.mockResolvedValue([op1, op2]);
     const [results, _] = await listOperations("any address", options);
     expect(results.map(op => op.tx.block.height)).toEqual(["2", "1"]);
+  });
+
+  describe("feesPayer", () => {
+    it("uses initiator as feesPayer when present (internal transaction)", async () => {
+      const initiatorAddress = "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV";
+      const contractAddress = "KT1WPEis2WhAc2FciM2tZVn8qe6pCBe9HkDp";
+      const internalTx: APITransactionType = {
+        ...transfer,
+        id: 555,
+        initiator: { address: initiatorAddress },
+        sender: { address: contractAddress },
+        target: { address: someDestinationAddress },
+      };
+      mockNetworkGetTransactions.mockResolvedValue([internalTx]);
+      const [results] = await listOperations("any address", options);
+      expect(results[0]).toMatchObject({
+        tx: {
+          feesPayer: initiatorAddress,
+        },
+        senders: [contractAddress],
+        recipients: [someDestinationAddress],
+      });
+    });
+
+    it("omits feesPayer when both sender and initiator are null", async () => {
+      const txNoSender: APITransactionType = {
+        ...transfer,
+        id: 557,
+        initiator: null,
+        sender: null,
+      };
+      mockNetworkGetTransactions.mockResolvedValue([txNoSender]);
+      const [results] = await listOperations("any address", options);
+      expect(results[0].tx.feesPayer).toBeUndefined();
+      expect(results[0]).toMatchObject({
+        senders: [],
+        recipients: [someDestinationAddress],
+      });
+    });
+
+    it("uses sender as feesPayer for delegation (no initiator field)", async () => {
+      mockNetworkGetTransactions.mockResolvedValue([delegate]);
+      const [results] = await listOperations("any address", options);
+      expect(results[0]).toMatchObject({
+        tx: {
+          feesPayer: someSenderAddress,
+        },
+        senders: [someSenderAddress],
+        recipients: [someDestinationAddress],
+      });
+    });
+
+    it("uses sender as feesPayer for reveal", async () => {
+      mockNetworkGetTransactions.mockResolvedValue([reveal]);
+      const [results] = await listOperations("any address", options);
+      expect(results[0]).toMatchObject({
+        tx: {
+          feesPayer: someSenderAddress,
+        },
+        senders: [someSenderAddress],
+        recipients: [],
+      });
+    });
   });
 });

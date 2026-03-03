@@ -29,11 +29,12 @@ describe("useTopBarViewModel", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
       handleSync: mockHandleSync,
-      isDisabled: false,
       isRotating: false,
       isError: false,
       tooltip: "Refresh",
       icon: Refresh,
+      isDisabled: false,
+      onTooltipShow: undefined,
     });
     mockUseSettings.mockReturnValue({
       handleSettings: mockHandleSettings,
@@ -79,11 +80,12 @@ describe("useTopBarViewModel", () => {
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: false,
       handleSync: mockHandleSync,
-      isDisabled: false,
       isRotating: false,
       isError: false,
       tooltip: "Refresh",
       icon: Refresh,
+      isDisabled: false,
+      onTooltipShow: undefined,
     });
 
     const { result } = renderHook(() => useTopBarViewModel());
@@ -98,15 +100,17 @@ describe("useTopBarViewModel", () => {
     expect(slotLabels).toEqual(["notification", "discreet", "settings", "my ledger"]);
   });
 
-  it("passes isDisabled from useActivityIndicator as isInteractive false on sync action", () => {
+  it("passes isRotating from useActivityIndicator as isInteractive false on sync action", () => {
+    const mockOnTooltipShow = jest.fn();
     mockUseActivityIndicator.mockReturnValue({
       hasAccounts: true,
       handleSync: mockHandleSync,
-      isDisabled: true,
       isRotating: true,
       isError: true,
       tooltip: "Error",
       icon: Refresh,
+      isDisabled: true,
+      onTooltipShow: mockOnTooltipShow,
     });
 
     const { result } = renderHook(() => useTopBarViewModel());

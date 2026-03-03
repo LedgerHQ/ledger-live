@@ -1,7 +1,7 @@
-import type { CeloTx, RLPEncodedTx, LegacyEncodedTx } from "../types";
 import { EvmSignature, EvmAddress } from "@ledgerhq/coin-evm/types/signer";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { EIP712Message } from "@ledgerhq/types-live";
+import type { CeloTx, RLPEncodedTx, LegacyEncodedTx } from "../types";
 
 // TODO: this should use EvmSigner
 export interface CeloSigner {

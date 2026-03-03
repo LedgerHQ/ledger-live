@@ -161,7 +161,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     navigationParams: [
                       NavigatorName.Swap,
                       {
-                        screen: ScreenName.Swap,
+                        screen: ScreenName.SwapTab,
                         params: {
                           defaultAccount,
                           defaultCurrency: currency,

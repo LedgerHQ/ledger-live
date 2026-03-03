@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "semver": "catalog:",

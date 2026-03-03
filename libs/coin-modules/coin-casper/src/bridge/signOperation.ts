@@ -1,13 +1,13 @@
-import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { KeyAlgorithm } from "casper-js-sdk";
+import { Observable } from "rxjs";
 import { getAddress } from "../bridge/bridgeHelpers/addresses";
 import { createNewTransaction } from "../bridge/bridgeHelpers/txn";
 import { Transaction } from "../types";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { CasperSigner } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { KeyAlgorithm } from "casper-js-sdk";
 
 export const buildSignOperation =
   (

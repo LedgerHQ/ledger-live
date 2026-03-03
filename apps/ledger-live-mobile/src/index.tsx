@@ -34,7 +34,7 @@ import LocaleProvider, { i18n } from "~/context/Locale";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { store } from "~/context/store";
+import { store } from "~/state-manager/configureStore";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";

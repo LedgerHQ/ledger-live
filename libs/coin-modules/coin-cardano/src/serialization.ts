@@ -1,3 +1,4 @@
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type {
   BipPath,
@@ -17,7 +18,6 @@ import type {
   Token,
   TokenRaw,
 } from "./types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 function toTokenRaw({ assetName, policyId, amount }: Token): TokenRaw {
   return {

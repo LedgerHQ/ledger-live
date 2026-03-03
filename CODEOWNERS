@@ -139,14 +139,12 @@ libs/coin-modules/coin-near/                                             @ledger
 libs/coin-modules/coin-cardano/                                          @ledgerhq/coin-integration @ledgerhq/blockchain-support
 libs/coin-modules/coin-tezos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
 libs/coin-modules/coin-vechain/                                          @ledgerhq/coin-integration @ledgerhq/blockchain-support
-
-## Zondax
-libs/coin-modules/coin-casper/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
-libs/coin-modules/coin-filecoin/                                         @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
-libs/coin-modules/coin-internet_computer/                                @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
-libs/coin-modules/coin-mina/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
-libs/coin-modules/coin-stacks/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
-libs/coin-modules/coin-ton/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-casper/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-filecoin/                                         @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-internet_computer/                                @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-mina/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-stacks/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-ton/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support
 
 ## Hoodies
 libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
@@ -192,6 +190,8 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/earn.handler
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler.ts     @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Card/                                         @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration

@@ -78,7 +78,15 @@ export type AleoAccountRaw = AccountRaw & {
 
 export type AleoOperationExtra = {
   functionId: string;
+  // this field is used to determine the type of balance that is related to the operation
   transactionType: AleoTransactionType;
+  // this field is used to indicate that semi-public operation has been patched with private data after private sync
+  patched?: boolean;
+};
+
+export type OperationDetailsExtraField = {
+  key: keyof AleoOperationExtra;
+  value: string | number;
 };
 
 export type AleoOperation = Operation<AleoOperationExtra>;

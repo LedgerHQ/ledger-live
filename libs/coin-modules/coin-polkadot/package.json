@@ -146,6 +146,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",
@@ -160,6 +161,6 @@
     "jest-expect-message": "^1.1.3",
     "msw": "catalog:",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   }
 }

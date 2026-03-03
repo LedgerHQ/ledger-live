@@ -11,9 +11,11 @@ export class MarketPage extends AppPage {
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
   private starButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-star-button`);
   private buyButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-buy-button`).first();
-  readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
-  private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
+    this.page.locator(`[data-testid="market-${ticker}-buy-button"]:visible`).first();
+  readonly swapButton = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-swap-button"]:visible`).first();
+  private stakeButton = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-stake-button"]:visible`).first();
 
   @step("Search for $0")
   async search(query: string) {
@@ -61,6 +63,7 @@ export class MarketPage extends AppPage {
 
   @step("Open buy page for $0 with account selection")
   async openBuyPageWithAccountSelection(ticker: string, accountName: string) {
+    await this.waitForLoading();
     await this.buyButton(ticker).click();
     const accountRow = this.page
       .getByRole("button", { name: new RegExp(accountName, "i") })

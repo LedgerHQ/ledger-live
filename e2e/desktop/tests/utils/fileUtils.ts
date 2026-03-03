@@ -1,4 +1,5 @@
-import { access, appendFile, stat } from "fs/promises";
+import { access, appendFile, mkdir, rename, stat } from "fs/promises";
+import * as path from "path";
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 
@@ -37,5 +38,22 @@ export class FileUtils {
     }
 
     return false;
+  }
+
+  @step("Wait for file to exist and move to target path")
+  static async waitForFileAndMove(
+    sourcePath: string,
+    targetPath: string,
+    timeout: number = 10000,
+  ): Promise<void> {
+    const fileExists = await FileUtils.waitForFileToExist(sourcePath, timeout);
+    expect(
+      fileExists,
+      `Export file was not created at ${sourcePath} within ${timeout}ms`,
+    ).toBeTruthy();
+
+    const targetDir = path.dirname(targetPath);
+    await mkdir(targetDir, { recursive: true });
+    await rename(sourcePath, targetPath);
   }
 }

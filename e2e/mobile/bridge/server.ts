@@ -185,16 +185,16 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
   });
 }
 
-export async function addKnownSpeculos(proxyAddress: string) {
+export async function addKnownSpeculos(address: string) {
   postMessage({
     type: "addKnownSpeculos",
     id: uniqueId(),
-    payload: JSON.stringify({ address: proxyAddress, model: getSpeculosModel() }),
+    payload: JSON.stringify({ address, model: getSpeculosModel() }),
   });
 }
 
-export async function removeKnownSpeculos(id: string) {
-  postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
+export async function removeKnownSpeculos(address: string) {
+  postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: address });
 }
 
 function onMessage(messageStr: string) {

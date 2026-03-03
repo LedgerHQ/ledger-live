@@ -41,7 +41,24 @@ afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
 
-const mockAnalytics = jest.createMockFromModule("@segment/analytics-react-native");
+jest.mock("@segment/analytics-react-native", () => {
+  const actual = jest.requireActual("@segment/analytics-react-native");
+  const mockSegmentIdentify = jest.fn();
+  const mockSegmentTrack = jest.fn();
+  const mockSegmentClient = {
+    add: jest.fn(),
+    identify: mockSegmentIdentify,
+    track: mockSegmentTrack,
+    flush: jest.fn(),
+    reset: jest.fn(),
+  };
+  return {
+    ...actual,
+    createClient: jest.fn(() => mockSegmentClient),
+    _identifyMock: mockSegmentIdentify,
+    _trackMock: mockSegmentTrack,
+  };
+});
 
 // Overriding the default RNGH mocks
 // to replace TouchableNativeFeedback with TouchableOpacity
@@ -73,8 +90,6 @@ jest.mock("react-native-haptic-feedback", () => ({
   },
 }));
 
-jest.mock("@segment/analytics-react-native", () => mockAnalytics);
-
 jest.mock("react-native-launch-arguments", () => ({}));
 
 NativeModules.BluetoothHelperModule = {
@@ -101,7 +116,11 @@ jest.mock("lottie-react-native", () => {
 // Mirror runtime: react-native-config exposes env as strings (e.g. "1"/"true" for DETOX).
 // Use undefined so (1) DETOX_ENABLED stays false and (2) truthiness checks (Config.DETOX) are falsy in unit tests.
 jest.mock("react-native-config", () => {
-  const config = { DETOX: undefined };
+  const config = {
+    DETOX: undefined,
+    ANALYTICS_TOKEN: "test-token",
+    ANALYTICS_LOGS: "false",
+  };
   return {
     __esModule: true,
     get default() {
@@ -201,6 +220,13 @@ jest.mock("~/analytics", () => ({
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({
+  AuthorizationStatus: {
+    AUTHORIZED: 1,
+    DENIED: 0,
+    NOT_DETERMINED: -1,
+    PROVISIONAL: 2,
+    EPHEMERAL: 3,
+  },
   getMessaging: jest.fn(() => ({
     hasPermission: jest.fn(() => Promise.resolve(true)),
     subscribeToTopic: jest.fn(),

@@ -42,6 +42,7 @@ setSupportedCurrencies([
   "decred",
   "digibyte",
   "algorand",
+  "adi",
   "qtum",
   "bitcoin_gold",
   "komodo",
@@ -81,6 +82,7 @@ setSupportedCurrencies([
   "avalanche_c_chain_fuji",
   "bitlayer",
   "klaytn_baobab",
+  "polygon_amoy",
   "shape",
   "story",
 ]);

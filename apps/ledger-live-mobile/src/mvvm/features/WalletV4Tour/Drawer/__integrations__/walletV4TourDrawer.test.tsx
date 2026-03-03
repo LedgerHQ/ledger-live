@@ -55,7 +55,6 @@ describe("WalletV4TourDrawer integration", () => {
         ...state,
         settings: {
           ...state.settings,
-          hasCompletedOnboarding: true,
           hasSeenWalletV4Tour: hasSeenTour,
         },
       }),

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from "react";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
 import { useTranslation } from "~/context/Locale";
-import { DefaultAccountSwapParamList, DetailsSwapParamList } from "~/screens/Swap/types";
+import { SwapLiveAppNavigationParams } from "~/screens/Swap/types";
 import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
 import { useIsSwapTab } from "./useIsSwapTab";
@@ -32,6 +32,10 @@ function getScreenTitle({
   }
 }
 
+function hasSwapNavigationParams(params: unknown): params is SwapLiveAppNavigationParams {
+  return typeof params === "object" && params !== null && "swapNavigationParams" in params;
+}
+
 export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI | null>) {
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -46,7 +50,9 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
       swapVersion: SWAP_VERSION,
     });
 
-    navigation.navigate(ScreenName.SwapHistory);
+    navigation.navigate(NavigatorName.SwapSubScreens, {
+      screen: ScreenName.SwapHistory,
+    });
   }, [navigation, track]);
 
   const goBackWebView = useCallback(
@@ -91,17 +97,13 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
   useEffect(() => {
     if (!isSwapTabScreen) return;
 
-    const webviewParams = swapTabScreen?.params;
+    const swapNavigationParams = hasSwapNavigationParams(swapTabScreen?.params)
+      ? swapTabScreen.params.swapNavigationParams
+      : undefined;
 
-    const webviewCanGoBack = (webviewParams as DetailsSwapParamList | DefaultAccountSwapParamList)
-      ?.swapNavigationParams?.canGoBack;
-
-    const webviewCurrentPage = (webviewParams as DetailsSwapParamList | DefaultAccountSwapParamList)
-      ?.swapNavigationParams?.page;
-
-    const isTransactionComplete = (
-      webviewParams as DetailsSwapParamList | DefaultAccountSwapParamList
-    )?.swapNavigationParams?.isTransactionComplete;
+    const webviewCanGoBack = swapNavigationParams?.canGoBack;
+    const webviewCurrentPage = swapNavigationParams?.page;
+    const isTransactionComplete = swapNavigationParams?.isTransactionComplete;
 
     const isTwoStepApproval = webviewCurrentPage === SwapWebviewAllowedPageNames.TwoStepApproval;
 

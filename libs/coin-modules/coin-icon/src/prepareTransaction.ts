@@ -1,6 +1,6 @@
-import type { IconAccount, Transaction } from "./types";
-import getEstimatedFees from "./getFeesForTransaction";
 import BigNumber from "bignumber.js";
+import getEstimatedFees from "./getFeesForTransaction";
+import type { IconAccount, Transaction } from "./types";
 
 const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a.eq(b));
 

@@ -59,6 +59,7 @@ describe("Stellar Api", () => {
         expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
         expect(operation.tx.fees).toBeGreaterThan(0);
         expect(operation.tx.date).toBeInstanceOf(Date);
+        expect(operation.tx.feesPayer).toMatch(/^G[A-Z2-7]{55}$/);
       });
     });
 

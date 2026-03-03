@@ -1,8 +1,30 @@
-import type { CraftedTransaction } from "@ledgerhq/coin-framework/api/types";
+import type {
+  CraftedTransaction,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { sdkClient } from "../network/sdk";
+import type { AleoTransactionIntentData } from "../types";
+import { mapTransactionIntentToSdkIntent, serializeTransaction } from "./utils";
 
-export async function craftTransaction(
-  _account: unknown,
-  _transaction: unknown,
-): Promise<CraftedTransaction> {
-  throw new Error("craftTransaction is not supported");
+export async function craftTransaction({
+  currency,
+  txIntent,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
+  viewKey?: string;
+}): Promise<CraftedTransaction> {
+  const intent = mapTransactionIntentToSdkIntent(txIntent);
+  const response = await sdkClient.createRequestFromIntent({
+    currency,
+    intent,
+    ...(viewKey !== undefined && { viewKey }),
+  });
+
+  const transaction = serializeTransaction(response);
+
+  return { transaction };
 }

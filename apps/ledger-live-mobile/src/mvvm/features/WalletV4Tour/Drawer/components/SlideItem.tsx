@@ -1,5 +1,5 @@
 import React, { useCallback, useDeferredValue, useState } from "react";
-import { type LayoutChangeEvent } from "react-native";
+import { Platform, type LayoutChangeEvent } from "react-native";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import Animated, {
@@ -55,7 +55,10 @@ export function SlideItem({ title, description, index, lottieSrc, speed }: Slide
     const translateX = interpolate(
       progress,
       [index - THRESHOLD, index, index + THRESHOLD],
-      [-slideWidth * 0.2, 0, slideWidth * 0.2],
+      Platform.OS === "android"
+        ? // android needs to be more subtle to avoid the animation to appear laggy
+          [-slideWidth * 0.05, 0, slideWidth * 0.05]
+        : [-slideWidth * 0.2, 0, slideWidth * 0.2],
       Extrapolation.CLAMP,
     );
 

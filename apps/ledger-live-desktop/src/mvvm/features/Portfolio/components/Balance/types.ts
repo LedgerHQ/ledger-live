@@ -7,7 +7,10 @@ export interface BalanceViewProps {
   readonly discreet: boolean;
   readonly valueChange: ValueChange;
   readonly navigateToAnalytics: () => void;
-  readonly handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  readonly handleKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
+  readonly isColdStart: boolean;
+  readonly isLoading: boolean;
+  readonly shouldDisplayBalanceRefreshRework: boolean;
 }
 
 export type BalanceViewModelResult = BalanceViewProps & {

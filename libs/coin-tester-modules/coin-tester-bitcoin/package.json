@@ -84,6 +84,6 @@
     "jest": "catalog:",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   }
 }

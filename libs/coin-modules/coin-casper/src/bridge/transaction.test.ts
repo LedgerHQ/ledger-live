@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import transaction, { fromTransactionRaw, formatTransaction } from "./transaction";
-import { TransactionRaw } from "../types";
 import {
   createMockAccount,
   createMockTransaction,
   TEST_ADDRESSES,
   TEST_TRANSFER_IDS,
 } from "../test/fixtures";
+import { TransactionRaw } from "../types";
+import transaction, { fromTransactionRaw, formatTransaction } from "./transaction";
 
 describe("transaction", () => {
   // Using the createMockAccount function from fixtures

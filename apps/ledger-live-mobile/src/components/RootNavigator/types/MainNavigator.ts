@@ -12,9 +12,9 @@ export type MainNavigatorParamList = {
   [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList> | undefined;
   [NavigatorName.Earn]: NavigatorScreenParams<EarnLiveAppNavigatorParamList> | undefined;
   [ScreenName.Transfer]: undefined;
+  [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
   [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList> | undefined;
   [NavigatorName.Web3HubTab]: NavigatorScreenParams<Web3HubTabStackParamList> | undefined;
   [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
   [NavigatorName.CardTab]: NavigatorScreenParams<CardLandingNavigatorParamList> | undefined;
-  [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
 };

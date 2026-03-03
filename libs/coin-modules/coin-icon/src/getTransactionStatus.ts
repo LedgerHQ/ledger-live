@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -7,9 +7,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
+import { BigNumber } from "bignumber.js";
 
-import type { IconAccount, Transaction, TransactionStatus } from "./types";
-
+import { IconAllFundsWarning, IconDoMaxSendInstead } from "./errors";
 import {
   EXISTENTIAL_DEPOSIT,
   EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
@@ -19,8 +19,7 @@ import {
   isSelfTransaction,
   isValidAddress,
 } from "./logic";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { IconAllFundsWarning, IconDoMaxSendInstead } from "./errors";
+import type { IconAccount, Transaction, TransactionStatus } from "./types";
 
 export const getSendTransactionStatus = async (
   account: IconAccount,

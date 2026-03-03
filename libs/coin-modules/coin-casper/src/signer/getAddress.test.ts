@@ -1,15 +1,15 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { KeyAlgorithm } from "casper-js-sdk";
-import getAddressResolver from "./getAddress";
-import { CasperSigner, CasperGetAddrResponse } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { KeyAlgorithm } from "casper-js-sdk";
+import * as addressHelpers from "../bridge/bridgeHelpers/addresses";
+import { CasperSigner, CasperGetAddrResponse } from "../types";
+import getAddressResolver from "./getAddress";
 
 jest.mock("../bridge/bridgeHelpers/addresses", () => ({
   ...jest.requireActual("../bridge/bridgeHelpers/addresses"),
   casperAddressFromPubKey: jest.fn(),
 }));
 
-import * as addressHelpers from "../bridge/bridgeHelpers/addresses";
 const mockCasperAddressFromPubKey = addressHelpers.casperAddressFromPubKey as jest.Mock;
 
 describe("getAddress resolver", () => {
@@ -45,7 +45,7 @@ describe("getAddress resolver", () => {
       sign: jest.fn(),
     };
 
-    mockSignerContext = jest.fn((deviceId, callback) => callback(mockSigner));
+    mockSignerContext = jest.fn((_deviceId, callback) => callback(mockSigner));
 
     // Mock address derivation function
     mockCasperAddressFromPubKey.mockReturnValue(mockDerivedAddress);

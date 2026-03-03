@@ -313,7 +313,7 @@ function hashNodes(damlTx: any, nodes: Uint8Array[]): Buffer {
     const isRootNode = damlTx.roots?.includes(node.nodeId);
 
     // Hash the node (encode_node_id_hash)
-    const nodeHash = hashNodeId(node, isRootNode, damlTx.nodeSeeds || []);
+    const nodeHash = hashNodeId(node, damlTx.nodeSeeds || []);
 
     if (isRootNode) {
       // For root nodes, add directly to the hash
@@ -329,7 +329,7 @@ function hashNodes(damlTx: any, nodes: Uint8Array[]): Buffer {
  * Hash a single node
  * Implements encode_node_id_hash from canonical_hash.c
  */
-function hashNodeId(node: any, isRootNode: boolean, nodeSeeds: any[]): Buffer {
+function hashNodeId(node: any, nodeSeeds: any[]): Buffer {
   // Create separate hash writer for the node
   const nodeHash = crypto.createHash("sha256");
 

@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_MODES } from "./constants";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
-import type { TransactionStatus } from "./types";
 import { getMockedAccount } from "./test/fixtures/account.fixture";
 import { getMockedTransaction } from "./test/fixtures/transaction.fixture";
+import type { TransactionStatus } from "./types";
 
 describe("getDeviceTransactionConfig", () => {
   const mockAccount = getMockedAccount({ id: "mock-account-id" });

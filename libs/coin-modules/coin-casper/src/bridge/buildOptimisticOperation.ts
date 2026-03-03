@@ -1,7 +1,7 @@
-import { OperationType } from "@ledgerhq/types-live";
-import { getAddress } from "./bridgeHelpers/addresses";
-import { CasperAccount, CasperOperation, Transaction } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { OperationType } from "@ledgerhq/types-live";
+import { CasperAccount, CasperOperation, Transaction } from "../types";
+import { getAddress } from "./bridgeHelpers/addresses";
 
 export const buildOptimisticOperation = (
   account: CasperAccount,

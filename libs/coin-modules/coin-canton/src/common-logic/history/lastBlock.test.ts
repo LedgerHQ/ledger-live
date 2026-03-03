@@ -1,7 +1,8 @@
-import { lastBlock } from "./lastBlock";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../../config";
 import { getLedgerEnd as gatewayGetLedgerEnd } from "../../network/gateway";
 import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { lastBlock } from "./lastBlock";
 
 jest.mock("../../network/gateway", () => ({
   getLedgerEnd: jest.fn(),
@@ -16,8 +17,6 @@ jest.mock("../../config", () => ({
     getCoinConfig: jest.fn(),
   },
 }));
-
-import coinConfig from "../../config";
 
 const mockCurrency = {
   id: "canton_network",

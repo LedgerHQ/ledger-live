@@ -1,9 +1,9 @@
-import BigNumber from "bignumber.js";
-import { encodeFunctionData, erc20Abi } from "viem";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-env";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import BigNumber from "bignumber.js";
+import { encodeFunctionData, erc20Abi } from "viem";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import type {
@@ -201,6 +201,7 @@ async function getContractCallResult(
   return res.data;
 }
 
+// TODO: remove once migration to new API is complete
 async function findTransactionByContractCall(
   timestamp: string,
   contractId: string,
@@ -217,6 +218,42 @@ async function findTransactionByContractCall(
   return relatedTx ?? null;
 }
 
+async function findTransactionByContractCallV2({
+  timestamp,
+  payerAddress,
+}: {
+  timestamp: string;
+  payerAddress: string;
+}): Promise<HederaMirrorTransaction | null> {
+  // Hgraph API returns timestamp as number and nanoseconds precision is lost during parsing
+  // instead of using `timestamp=eq:${timestamp}`, we need to fetch transactions in a small range
+  // +-10 microseconds is used to bypass hgraph precision issue
+  const timestampAsNumber = new BigNumber(timestamp).multipliedBy(10 ** 9);
+  const timestampDiffNs = new BigNumber(10_000);
+  const from = new BigNumber(timestampAsNumber).minus(timestampDiffNs).dividedBy(10 ** 9);
+  const to = new BigNumber(timestampAsNumber).plus(timestampDiffNs).dividedBy(10 ** 9);
+
+  const params = new URLSearchParams({ limit: "100", order: "desc" });
+  params.append("timestamp", `gte:${from.toFixed(9)}`);
+  params.append("timestamp", `lte:${to.toFixed(9)}`);
+
+  const res = await network<HederaMirrorTransactionsResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/transactions?${params.toString()}`,
+  });
+
+  // try to find the CONTRACT_CALL transaction related to the given address
+  const relatedTx = res.data.transactions.find(tx => {
+    return (
+      tx.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
+      tx.transaction_id.startsWith(payerAddress)
+    );
+  });
+
+  return relatedTx ?? null;
+}
+
+// TODO: remove once migration to new API is complete
 async function getERC20Balance(
   accountEvmAddress: string,
   contractEvmAddress: string,
@@ -267,15 +304,19 @@ async function getTransactionsByTimestampRange({
   address,
   startTimestamp,
   endTimestamp,
+  limit = 100,
+  order = "desc",
 }: {
   address?: string;
   startTimestamp: `${string}:${string}`;
   endTimestamp: `${string}:${string}`;
+  limit?: number;
+  order?: "asc" | "desc";
 }): Promise<HederaMirrorTransaction[]> {
   const transactions: HederaMirrorTransaction[] = [];
   const params = new URLSearchParams({
-    limit: "100",
-    order: "desc",
+    limit: limit.toString(),
+    order,
     ...(address && { "account.id": address }),
   });
 
@@ -359,6 +400,7 @@ export const apiClient = {
   getNetworkFees,
   getContractCallResult,
   findTransactionByContractCall,
+  findTransactionByContractCallV2,
   getERC20Balance,
   estimateContractCallGas,
   getTransactionsByTimestampRange,

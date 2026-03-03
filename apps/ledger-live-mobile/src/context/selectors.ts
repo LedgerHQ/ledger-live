@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import {
   createStructuredSelector as createStructuredSelectorBase,
   createSelector as createSelectorBase,

@@ -62,6 +62,7 @@
     "@ledgerhq/client-ids": "workspace:*",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
+    "@ledgerhq/coin-casper": "workspace:^",
     "@ledgerhq/coin-concordium": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
@@ -206,6 +207,7 @@
     "@types/color": "3.0.6",
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/lodash": "4.17.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -256,7 +258,7 @@
     "storybook-react-rsbuild": "3.2.2",
     "tailwindcss": "catalog:",
     "ts-node": "10.9.2",
-    "typescript": "5.4.3",
+    "typescript": "catalog:",
     "yargs": "17.7.2"
   }
 }

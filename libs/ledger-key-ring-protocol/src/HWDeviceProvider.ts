@@ -65,7 +65,7 @@ export class HWDeviceProvider {
         case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
           throw new UserRefusedOnDevice();
 
-        case StatusCodes.TRUSTCHAIN_WRONG_SEED:
+        case StatusCodes.SW_BAD_STATE:
           this.clearJwt();
           throw new TrustchainNotAllowed();
 

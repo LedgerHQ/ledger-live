@@ -1,10 +1,10 @@
 import { log } from "@ledgerhq/logs";
-import getDeviceTransactionConfig from "./deviceTransactionConfig";
-import { createMockAccount, createMockTransaction } from "../test/fixtures";
-import { CASPER_NETWORK } from "../consts";
-import { methodToString } from "../common-logic";
-import { TransactionStatus, Transaction } from "../types";
 import BigNumber from "bignumber.js";
+import { methodToString } from "../common-logic";
+import { CASPER_NETWORK } from "../consts";
+import { createMockAccount, createMockTransaction } from "../test/fixtures";
+import { TransactionStatus, Transaction } from "../types";
+import getDeviceTransactionConfig from "./deviceTransactionConfig";
 
 // Mock the log function to prevent console output during tests
 jest.mock("@ledgerhq/logs", () => ({
@@ -141,7 +141,6 @@ describe("getDeviceTransactionConfig", () => {
 
     // Verify amount field has zero value
     const amountField = fields.find(field => field.label === "Amount");
-    expect(amountField).toBeDefined();
     expect(amountField).toEqual({
       type: "casper.extendedAmount",
       label: "Amount",

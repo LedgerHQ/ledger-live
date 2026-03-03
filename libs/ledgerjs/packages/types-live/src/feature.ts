@@ -106,6 +106,7 @@ export type CurrencyFeatures = {
   currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
   currencyCoreum: DefaultFeature;
+  currencyPolygonAmoy: DefaultFeature;
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
@@ -157,6 +158,7 @@ export type CurrencyFeatures = {
   currencyZeroGravity: DefaultFeature;
   currencyConcordium: DefaultFeature;
   currencyConcordiumTestnet: DefaultFeature;
+  currencyAdi: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
   currencyUnichain: DefaultFeature;
@@ -278,6 +280,17 @@ export type Features = CurrencyFeatures & {
       trackWatchdogTerminations: boolean;
       uploadFrequency: "AVERAGE" | "FREQUENT" | "RARE";
       vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
+    }>;
+  };
+  lldDatadog: {
+    enabled: boolean;
+    params: Partial<{
+      sessionSamplingRate: number;
+      sessionReplaySampleRate: number;
+      defaultPrivacyLevel: string;
+      traceSampleRate: number;
+      allowedTracingUrls: string[];
+      profilingSampleRate: number;
     }>;
   };
   llmSentry: DefaultFeature;

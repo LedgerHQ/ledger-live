@@ -1,15 +1,28 @@
 import React, { memo } from "react";
-import { Flex, Text, Tooltip } from "@ledgerhq/react-ui";
+import { Text, Tooltip } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { SmallMarketItemChart } from "~/renderer/screens/market/MarketList/components/MarketItemChart";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Button, IconButton } from "@ledgerhq/lumen-ui-react";
 import { TableRow, TableCell } from "~/renderer/screens/market/components/Table";
 import { formatPercentage, formatPrice } from "~/renderer/screens/market/utils";
-import { CryptoCurrencyIconWrapper, EllipsisText, TooltipContainer } from "./styles";
-import { RowItemViewProps } from "./types";
-import { Star, StarFill } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  CryptoCurrencyIconWrapper,
+  CryptoNameContainer,
+  EllipsisText,
+  TooltipContainer,
+  ActionsFullWidth,
+  ActionsIconOnly,
+} from "./styles";
+import { RowItemViewProps, MarketActionType } from "./types";
+import { Star, StarFill, Plus, Exchange, Chart5 } from "@ledgerhq/lumen-ui-react/symbols";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+
+const ACTION_ICONS: Record<MarketActionType, typeof Plus> = {
+  buy: Plus,
+  swap: Exchange,
+  stake: Chart5,
+};
 
 export const RowItemView = memo<RowItemViewProps>(function RowItemView({
   style,
@@ -18,24 +31,16 @@ export const RowItemView = memo<RowItemViewProps>(function RowItemView({
   locale,
   isStarred,
   hasActions,
+  actions,
   currentPriceChangePercentage,
-  earnStakeLabelCoin,
-  availableOnBuy,
-  availableOnSwap,
-  availableOnStake,
-  buyLabel,
-  swapLabel,
   onCurrencyClick,
   onStarClick,
-  onBuy,
-  onSwap,
-  onStake,
 }: RowItemViewProps) {
   return (
     <div style={{ ...style }} className="px-20">
       <TableRow data-testid={`market-${currency.ticker}-row`} onClick={onCurrencyClick} role="row">
         <TableCell>{currency.marketcapRank ?? "-"}</TableCell>
-        <TableCell mr={3}>
+        <TableCell>
           <CryptoCurrencyIconWrapper>
             {currency.ledgerIds && currency.ledgerIds.length > 0 && currency.ticker ? (
               <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size="32px" />
@@ -43,59 +48,51 @@ export const RowItemView = memo<RowItemViewProps>(function RowItemView({
               <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
             )}
           </CryptoCurrencyIconWrapper>
-          <Tooltip
-            content={<TooltipContainer>{currency.name}</TooltipContainer>}
-            placement="top"
-            arrow={false}
-          >
-            <Flex
-              alignItems="left"
-              justifyContent="center"
-              flexDirection="column"
-              mr={2}
-              pl={3}
-              {...(hasActions ? { width: 86 } : {})}
-              overflow="hidden"
+          <CryptoNameContainer>
+            <Tooltip
+              content={<TooltipContainer>{currency.name}</TooltipContainer>}
+              placement="top"
+              arrow={false}
             >
               <EllipsisText variant="body">{currency.name}</EllipsisText>
-              <EllipsisText variant="small" color="neutral.c60">
-                {currency.ticker.toUpperCase()}
-              </EllipsisText>
-            </Flex>
-          </Tooltip>
+            </Tooltip>
+            <EllipsisText variant="small" color="neutral.c60">
+              {currency.ticker.toUpperCase()}
+            </EllipsisText>
+          </CryptoNameContainer>
+        </TableCell>
+        <TableCell>
           {hasActions ? (
-            <div className="flex flex-1 gap-8">
-              {availableOnBuy && (
-                <Button
-                  size="sm"
-                  data-testid={`market-${currency.ticker}-buy-button`}
-                  appearance="base"
-                  onClick={onBuy}
-                >
-                  {buyLabel}
-                </Button>
-              )}
-              {availableOnSwap && (
-                <Button
-                  size="sm"
-                  data-testid={`market-${currency.ticker}-swap-button`}
-                  appearance="base"
-                  onClick={onSwap}
-                >
-                  {swapLabel}
-                </Button>
-              )}
-              {availableOnStake && (
-                <Button
-                  size="sm"
-                  data-testid={`market-${currency.ticker}-stake-button`}
-                  appearance="base"
-                  onClick={onStake}
-                >
-                  {earnStakeLabelCoin}
-                </Button>
-              )}
-            </div>
+            <>
+              <ActionsFullWidth>
+                {actions.map(action => (
+                  <Button
+                    key={action.type}
+                    size="sm"
+                    data-testid={`market-${currency.ticker}-${action.type}-button`}
+                    appearance="base"
+                    onClick={action.onClick}
+                  >
+                    {action.label}
+                  </Button>
+                ))}
+              </ActionsFullWidth>
+              <ActionsIconOnly>
+                {actions.map(action => (
+                  <IconButton
+                    key={action.type}
+                    size="sm"
+                    data-testid={`market-${currency.ticker}-${action.type}-button-icon`}
+                    appearance="base"
+                    aria-label={action.label}
+                    icon={ACTION_ICONS[action.type]}
+                    tooltip
+                    tooltipText={action.label}
+                    onClick={action.onClick}
+                  />
+                ))}
+              </ActionsIconOnly>
+            </>
           ) : null}
         </TableCell>
         <TableCell data-testid={"market-coin-price"}>

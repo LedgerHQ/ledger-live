@@ -283,6 +283,102 @@ describe("exportCountervalues", () => {
     expect(exported["USD bitcoin"]).toEqual({ "2024-01-01": 55000 });
   });
 
+  describe("status.oldestDateRequested correlation with selectedTimeRange cut", () => {
+    test("when data is cut by selectedTimeRange, exported status.oldestDateRequested is at least the cut date (dailyLimit)", () => {
+      const selectedTimeRange = "month"; // 30 days
+      const cutDate = new Date(Date.now() - 30 * DAY);
+      const dailyLimitKey = formatCounterValueDay(cutDate);
+      const oldDailyKey = formatCounterValueDay(new Date(Date.now() - 35 * DAY));
+      const recentDailyKey = formatCounterValueDay(new Date(Date.now() - 15 * DAY));
+
+      const state: CounterValuesState = {
+        data: {
+          "USD bitcoin": new Map([
+            [oldDailyKey, 45000],
+            [recentDailyKey, 50000],
+          ]),
+        },
+        status: {
+          "USD bitcoin": {
+            timestamp: 1234567890,
+            oldestDateRequested: "2020-01-01", // older than cut: we no longer persist that range
+          },
+        },
+        cache: {},
+      };
+
+      const exported = exportCountervalues(state, defaultTrackingPairs, selectedTimeRange);
+
+      expect(exported["USD bitcoin"]).toEqual({ [recentDailyKey]: 50000 });
+      expect(exported.status["USD bitcoin"].oldestDateRequested).toBe(dailyLimitKey);
+    });
+
+    test("when data is cut, status.oldestDateRequested is max(previous, dailyLimit) so we never claim older than persisted", () => {
+      const selectedTimeRange = "week"; // 7 days
+      const cutDate = new Date(Date.now() - 7 * DAY);
+      const dailyLimitKey = formatCounterValueDay(cutDate);
+      const recentDailyKey = formatCounterValueDay(new Date(Date.now() - 3 * DAY));
+
+      const state: CounterValuesState = {
+        data: {
+          "USD bitcoin": new Map([[recentDailyKey, 50000]]),
+        },
+        status: {
+          "USD bitcoin": {
+            timestamp: 1234567890,
+            oldestDateRequested: "2024-06-01", // older than cut
+          },
+        },
+        cache: {},
+      };
+
+      const exported = exportCountervalues(state, defaultTrackingPairs, selectedTimeRange);
+
+      expect(exported.status["USD bitcoin"].oldestDateRequested).toBe(dailyLimitKey);
+    });
+
+    test("when data is not cut (no selectedTimeRange), status.oldestDateRequested is unchanged", () => {
+      const state: CounterValuesState = {
+        data: {
+          "USD bitcoin": new Map([["2024-01-01", 55000]]),
+        },
+        status: {
+          "USD bitcoin": {
+            timestamp: 1234567890,
+            oldestDateRequested: "2024-01-01",
+          },
+        },
+        cache: {},
+      };
+
+      const exported = exportCountervalues(state, defaultTrackingPairs, undefined);
+
+      expect(exported.status["USD bitcoin"].oldestDateRequested).toBe("2024-01-01");
+    });
+
+    test("when data is cut but status.oldestDateRequested is already >= dailyLimit, it is left unchanged", () => {
+      const selectedTimeRange = "year"; // 365 days
+      const recentDailyKey = formatCounterValueDay(new Date(Date.now() - 100 * DAY));
+
+      const state: CounterValuesState = {
+        data: {
+          "USD bitcoin": new Map([[recentDailyKey, 50000]]),
+        },
+        status: {
+          "USD bitcoin": {
+            timestamp: 1234567890,
+            oldestDateRequested: recentDailyKey, // already within range
+          },
+        },
+        cache: {},
+      };
+
+      const exported = exportCountervalues(state, defaultTrackingPairs, selectedTimeRange);
+
+      expect(exported.status["USD bitcoin"].oldestDateRequested).toBe(recentDailyKey);
+    });
+  });
+
   function createState(data: Record<string, unknown>) {
     return { data, status: {}, cache: {} } as CounterValuesState;
   }

@@ -41,6 +41,7 @@ type Props = {
   arrow?: boolean;
   hideOnClick?: boolean;
   containerStyle?: React.CSSProperties;
+  onShow?: () => void;
 };
 
 const ToolTip = ({
@@ -54,6 +55,7 @@ const ToolTip = ({
   arrow = true,
   hideOnClick = true,
   containerStyle,
+  onShow,
 }: Props) => {
   const colors = useTheme().colors;
   const bg = tooltipBg === "error-strong" ? colors.error.c50 : colors.neutral.c100;
@@ -67,6 +69,7 @@ const ToolTip = ({
       disabled={!(!!content && enabled)}
       placement={placement}
       hideOnClick={hideOnClick}
+      onShow={onShow}
       // eslint-disable-next-line better-tailwindcss/no-unknown-classes
       className={tooltipBg ? `bg-${tooltipBg}` : "bg-base"}
     >
