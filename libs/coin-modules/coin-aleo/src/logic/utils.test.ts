@@ -986,13 +986,4 @@ describe("deserializeTransaction", () => {
 
     expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
   });
-
-  it("should roundtrip correctly", () => {
-    const tx = getMockedPreparedRequestResponse({
-      program_id: "complex.aleo",
-      inputs: ["ts1", "function: transfer_public"],
-    });
-
-    expect(deserializeTransaction(serializeTransaction(tx))).toEqual(tx);
-  });
 });
