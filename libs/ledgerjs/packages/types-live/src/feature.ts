@@ -282,6 +282,17 @@ export type Features = CurrencyFeatures & {
       vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
     }>;
   };
+  lldDatadog: {
+    enabled: boolean;
+    params: Partial<{
+      sessionSamplingRate: number;
+      sessionReplaySampleRate: number;
+      defaultPrivacyLevel: string;
+      traceSampleRate: number;
+      allowedTracingUrls: string[];
+      profilingSampleRate: number;
+    }>;
+  };
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   llmHomescreen: DefaultFeature;
