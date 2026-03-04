@@ -129,7 +129,9 @@ export default function Web3HubAppHeader({
         <Box style={styles.barRow}>
           {shouldDisplaySelectAccount ? (
             <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
-          ) : null}
+          ) : (
+            <View style={{ width: 24 }} />
+          )}
 
           <View style={styles.urlBar}>
             {initialLoad ? null : (
@@ -177,6 +179,9 @@ export default function Web3HubAppHeader({
             size="sm"
             icon={Close}
             accessibilityLabel="Close"
+            aria-label="close"
+            accessible
+            accessibilityRole="button"
             onPress={navigation.goBack}
           />
         </Box>
