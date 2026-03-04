@@ -36,13 +36,15 @@ export default class PortfolioPage {
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
   tabBarEarnButton = "tab-bar-earn";
+  accountsList = "portfolio-assets-layout";
+
+  // WALLET 4.0
   marketBannerList = "market-banner-list";
   marketBannerTileBase = "market-banner-tile-";
   marketBannerViewAll = "market-banner-view-all";
   fearAndGreedCard = "fear-and-greed-card";
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
-  accountsList = "portfolio-assets-layout";
   marketBannerTitle = "market-banner-title";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
@@ -53,6 +55,7 @@ export default class PortfolioPage {
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
+  topBarSettingsButton = "topbar-settings";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -82,6 +85,11 @@ export default class PortfolioPage {
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad() {
     await waitForElementById(this.portfolioSettingsButtonId, 120000);
+  }
+
+  @Step("Wait for Wallet 4.0 portfolio page to load")
+  async waitForWallet40PortfolioPageToLoad() {
+    await waitForElementById(this.topBarSettingsButton, 120000);
   }
 
   @Step("Expect Portfolio read only")
@@ -162,6 +170,19 @@ export default class PortfolioPage {
   async goToAccounts(currencyName: string) {
     await waitForElementById(this.accountsListView, 10000);
     await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
+
+    if (await IsIdVisible(this.assetItemId(currencyName))) {
+      await tapById(this.assetItemId(currencyName));
+    } else {
+      await tapById(this.showAllAssetsButton);
+      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+      await tapById(this.assetItemId(currencyName));
+    }
+  }
+
+  @Step("Go to asset's accounts from portfolio (Wallet 4.0)")
+  async goToAccountsWallet40(currencyName: string) {
+    await waitForElementById(this.accountsListView, 10000);
 
     if (await IsIdVisible(this.assetItemId(currencyName))) {
       await tapById(this.assetItemId(currencyName));

@@ -103,7 +103,8 @@ const config: Config = {
   transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/)`],
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
-  testMatch: ["<rootDir>/specs/**/*.spec.ts"],
+  //   testMatch: ["<rootDir>/specs/**/*.spec.ts", "<rootDir>/wallet40/specs/addAccount/*.spec.ts"],
+  testMatch: ["<rootDir>/specs/**/*.spec.ts", "<rootDir>/wallet40/specs/**/*.spec.ts"],
   testTimeout: 300_000,
   reporters: [
     "detox/runners/jest/reporter",

@@ -1,3 +1,4 @@
+import { WALLET40_FEATURE_FLAGS } from "../../featureFlags";
 const testConfig = {
   tmsLinks: ["B2CQA-4345", "B2CQA-4339", "B2CQA-4346", "B2CQA-4343", "B2CQA-4341", "B2CQA-4340"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
@@ -12,12 +13,8 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: CURRENCY.speculosApp,
-      // to-do remove when wallet 4.0 is default
       featureFlags: {
-        lwmWallet40: {
-          enabled: true,
-          params: { marketBanner: true, graphRework: true, quickActionCtas: true },
-        },
+        ...WALLET40_FEATURE_FLAGS,
         llmAccountListUI: {
           enabled: true,
         },

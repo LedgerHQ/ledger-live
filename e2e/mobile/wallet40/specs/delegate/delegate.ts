@@ -1,0 +1,166 @@
+import { setEnv } from "@ledgerhq/live-env";
+import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
+import {
+  verifyAppValidationStakeInfo,
+  verifyStakeOperationDetailsInfo,
+} from "../../../models/stake";
+import { device } from "detox";
+import { getCurrencyManagerApp } from "../../../models/currencies";
+import { WALLET40_FEATURE_FLAGS } from "../../featureFlags";
+
+const beforeAllFunction = async (delegation: DelegateType) => {
+  await app.init({
+    speculosApp: delegation.account.currency.speculosApp,
+    featureFlags: {
+      ...WALLET40_FEATURE_FLAGS,
+      llmAccountListUI: { enabled: true },
+    },
+    cliCommands: [
+      async (userdataPath?: string) => {
+        await CLI.liveData({
+          currency: delegation.account.currency.speculosApp.name,
+          index: delegation.account.index,
+          add: true,
+          appjson: userdataPath,
+        });
+
+        const { address } = await CLI.getAddress({
+          currency: delegation.account.currency.speculosApp.name,
+          path: delegation.account.accountPath,
+          derivationMode: delegation.account.derivationMode,
+        });
+
+        delegation.account.address = address;
+
+        return address;
+      },
+    ],
+  });
+
+  await app.portfolio.waitForPortfolioPageToLoad();
+};
+
+export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Delegate", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Delegate on ${delegation.account.currency.name}`, async () => {
+      let fees;
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const currencyId =
+        getCurrencyManagerApp(delegation.account.currency.id) ?? delegation.account.currency.id;
+
+      if (delegation.account.currency.name == Currency.INJ.name) {
+        await app.speculos.activateExpertMode();
+      }
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.stake.dismissDelegationStart(currencyId);
+      if (delegation.account.currency.name !== Currency.ADA.name) {
+        await app.stake.setAmount(currencyId, delegation.amount);
+        await app.stake.validateAmount(currencyId);
+      } else {
+        await app.stake.selectValidator(currencyId, delegation.provider);
+        await app.stake.verifyFeesVisible(currencyId);
+        fees = await app.stake.getDisplayedFees(currencyId);
+      }
+      await app.stake.expectProvider(currencyId, delegation.provider);
+      await app.stake.summaryContinue(currencyId);
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode, fees);
+      await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.common.successViewDetails();
+
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, fees);
+    });
+  });
+}
+
+export async function runDelegateCelo(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe(`Delegate flow on CELO`, () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Delegate on CELO`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const currencyId = delegation.account.currency.id;
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.celoManageAssets.checkManagePage();
+      await app.celoManageAssets.clickLock();
+      await app.stake.setCeloLockAmount(delegation.amount);
+      await app.stake.validateAmount(currencyId);
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
+
+      await app.common.successViewDetails();
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+    });
+  });
+}
+
+export async function runDelegateTezos(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    `@tezos`,
+    `@family-tezos`,
+  ],
+) {
+  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  tags.forEach(tag => $Tag(tag));
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  describe(`Delegate flow on TEZOS`, () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Delegate on TEZOS`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const currencyId = delegation.account.currency.id;
+
+      await app.speculos.goToSettings();
+      await app.speculos.activateExpertMode();
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.stake.dismissDelegationStart(currencyId);
+      await app.stake.summaryContinue(currencyId);
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
+
+      await app.common.successViewDetails();
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+    });
+  });
+}
