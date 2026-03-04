@@ -3,6 +3,7 @@ export * from "./combine";
 export * from "./craftTransaction";
 export * from "./estimateFees";
 export * from "./getBalance";
+export * from "./getBlock";
 export * from "./listOperations";
 export * from "./lastBlock";
 export * from "./getAccount";

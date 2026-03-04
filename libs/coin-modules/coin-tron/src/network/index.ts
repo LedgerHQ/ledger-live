@@ -38,6 +38,7 @@ import {
 import {
   AccountTronAPI,
   Block,
+  BlockWithTransactionsAPI,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -393,6 +394,12 @@ export async function getBlock(blockNumber: number): Promise<Block> {
     ret.height = blockNumber;
   }
   return ret;
+}
+
+export async function getBlockWithTransactions(
+  blockNumber: number,
+): Promise<BlockWithTransactionsAPI> {
+  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true });
 }
 
 function toBlock(data: any): Block {

@@ -76,7 +76,7 @@ export type TransactionTronAPI<T = TransactionContract> = {
 };
 
 type Ret = {
-  contractRet: string; // Better to have an exhaustive list: "STRING" + ?
+  contractRet: string;
   fee?: number;
 };
 
@@ -106,7 +106,7 @@ type Vote = {
 type TransactionContract = {
   owner_address: string;
   votes?: Vote[];
-  resource: any;
+  resource?: any;
   frozen_balance?: number;
   amount?: number;
   to_address?: string;
@@ -184,6 +184,34 @@ export type Block = {
   height: number;
   hash: string;
   time?: Date;
+};
+
+export type BlockHeaderRawData = {
+  number: number;
+  txTrieRoot: string;
+  witness_address: string;
+  parentHash: string;
+  version?: number;
+  timestamp?: number;
+};
+
+export type BlockHeaderAPI = {
+  raw_data: BlockHeaderRawData;
+  witness_signature: string;
+};
+
+export type BlockTransactionAPI = {
+  txID: TransactionTronAPI["txID"];
+  raw_data: TransactionTronAPI["raw_data"];
+  raw_data_hex: TransactionTronAPI["raw_data_hex"];
+  signature?: TransactionTronAPI["signature"];
+  ret?: TransactionTronAPI["ret"];
+};
+
+export type BlockWithTransactionsAPI = {
+  blockID: string;
+  block_header: BlockHeaderAPI;
+  transactions?: BlockTransactionAPI[];
 };
 
 export function isMalformedTransactionTronAPI(
