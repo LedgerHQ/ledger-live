@@ -221,7 +221,7 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
   aleo: {
-    viewKeyLearnMore: "", // TODO: waiting for https://ledgerhq.atlassian.net/browse/LIVE-26269
+    viewKeyLearnMore: "https://support.ledger.com/article/Aleo-ALEO",
   },
   concordium: {
     learnMore: "https://support.ledger.com/article/Concordium-CCD",
