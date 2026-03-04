@@ -1,6 +1,8 @@
 import React from "react";
 import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
+import { useSelector } from "LLD/hooks/redux";
 import { cn } from "LLD/utils/cn";
+import { themeSelector } from "~/renderer/actions/general";
 import { BalanceViewProps } from "./types";
 import { Trend } from "../Trend";
 
@@ -15,6 +17,8 @@ export const BalanceView = ({
   isColdStart,
   shouldDisplayBalanceRefreshRework,
 }: BalanceViewProps) => {
+  const theme = useSelector(themeSelector);
+
   return (
     <button
       type="button"
@@ -27,7 +31,13 @@ export const BalanceView = ({
       onKeyDown={handleKeyDown}
       aria-label="View portfolio analytics"
     >
-      <span className="flex items-baseline gap-12 transition-[filter] duration-200 group-hover:brightness-85">
+      <span
+        className={cn(
+          "flex items-baseline gap-12 transition-[filter,opacity] duration-200",
+          theme === "light" && "group-hover:opacity-85",
+          theme === "dark" && "group-hover:brightness-85",
+        )}
+      >
         <AmountDisplay
           value={balance}
           formatter={formatter}
