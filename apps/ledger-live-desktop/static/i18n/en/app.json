@@ -8045,6 +8045,8 @@
     "title": "Explore market",
     "genericError": "Connection failed",
     "cta": "View all",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
     "fearAndGreed": {
       "title": "Mood"
     }
