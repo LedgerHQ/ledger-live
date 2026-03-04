@@ -1,9 +1,11 @@
 import * as React from "react";
+import { Text, Pressable } from "react-native";
 import { screen, waitForElementToBeRemoved } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { getDefaultStore } from "jotai";
 import { dismissedManifestsAtom, recentlyUsedAtom } from "LLM/features/Web3Hub/db";
+import { AppProps } from "LLM/features/Web3Hub/types";
 import { Web3HubTest } from "./shared";
 // Mock useScrollHandler which uses useAnimatedScrollHandler (requires worklet transformation)
 jest.mock("LLM/features/Web3Hub/hooks/useScrollHandler", () => ({
@@ -19,26 +21,28 @@ jest.mock("LLM/features/Web3Hub/hooks/useScrollHandler", () => ({
 }));
 
 // Need to fix some stuff if we want to test the player too
-jest.mock(
-  "LLM/features/Web3Hub/screens/Web3HubApp/components/Web3Player",
-  () => {
-    const { Text, Pressable } = require("react-native");
-    return ({ manifest, navigation }: { manifest: AppManifest; navigation: any }) => (
-      <>
-        <Text>{manifest.id}</Text>
-        <Text>{manifest.name}</Text>
-        <Pressable
-          accessible
-          accessibilityRole="button"
-          accessibilityLabel="Close"
-          onPress={() => navigation.goBack()}
-        >
-          <Text>Close</Text>
-        </Pressable>
-      </>
-    );
-  },
-);
+jest.mock("LLM/features/Web3Hub/screens/Web3HubApp/components/Web3Player", () => {
+  return ({
+    manifest,
+    navigation,
+  }: {
+    manifest: AppManifest;
+    navigation: AppProps["navigation"];
+  }) => (
+    <>
+      <Text>{manifest.id}</Text>
+      <Text>{manifest.name}</Text>
+      <Pressable
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel="Close"
+        onPress={() => navigation.goBack()}
+      >
+        <Text>Close</Text>
+      </Pressable>
+    </>
+  );
+});
 
 async function waitForLoader() {
   expect(await screen.findByRole("progressbar")).toBeOnTheScreen();

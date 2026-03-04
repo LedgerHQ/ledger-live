@@ -15,7 +15,7 @@ import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import { AppProps } from "LLM/features/Web3Hub/types";
 import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
-import { AppManifest } from "@ledgerhq/live-common/lib-es/wallet-api/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import SelectAccountButton from "../Web3Player/SelectAccountButton";
 
 const BAR_HEIGHT = 60;
