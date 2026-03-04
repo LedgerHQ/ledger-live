@@ -73,6 +73,7 @@ describe("useBalanceViewModel", () => {
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
     expect(result.current.balance).toBe(1500);
+    expect(result.current.balanceAvailable).toBe(true);
     expect(result.current.formatter).toBeDefined();
     expect(result.current.formatter(result.current.balance).integerPart).toContain("15");
     expect(result.current.valueChange).toEqual(mockPortfolio.countervalueChange);
