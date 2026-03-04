@@ -1,13 +1,13 @@
 ---
-"@ledgerhq/coin-cardano": patch
-"@ledgerhq/coin-canton": patch
-"@ledgerhq/coin-casper": patch
-"@ledgerhq/coin-hedera": patch
-"@ledgerhq/coin-celo": patch
-"@ledgerhq/coin-icon": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-cardano": minor
+"@ledgerhq/coin-canton": minor
+"@ledgerhq/coin-casper": minor
+"@ledgerhq/coin-hedera": minor
+"@ledgerhq/coin-celo": minor
+"@ledgerhq/coin-icon": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 refactor: align `eslint` and `tsconfig`
