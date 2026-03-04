@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import CollapsibleStep from "./CollapsibleStep";
+import CollapsibleStep from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";
 import { useTranslation } from "~/context/Locale";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
