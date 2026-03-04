@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { useSelector } from "LLD/hooks/redux";
+import { useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   counterValueCurrencySelector,
@@ -10,9 +10,12 @@ import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
 import { useStablePending } from "LLD/hooks/useStablePending";
-import { USER_CLICK_SPIN_DURATION_MS } from "LLD/components/TopBar/utils/constants";
-import { isRecentUserSyncClick } from "LLD/components/TopBar/utils/syncRefreshUtils";
-import { selectLastUserSyncClickTimestamp } from "~/renderer/reducers/syncRefresh";
+import { useManualRefreshLoading } from "LLD/hooks/useManualRefreshLoading";
+import {
+  selectLastUserSyncClickTimestamp,
+  selectHasCompletedInitialSync,
+  setHasCompletedInitialSync,
+} from "~/renderer/reducers/syncRefresh";
 import { DEFAULT_PORTFOLIO_RANGE, POLLING_FINISHED_DELAY_MS } from "LLD/utils/constants";
 
 export interface UsePortfolioBalanceSyncOptions {
@@ -27,11 +30,13 @@ export interface UsePortfolioBalanceSyncOptions {
  * - Portfolio: accounts, range, counterValue → balanceAvailable, isColdStart.
  *   Uses usePortfolioThrottled to limit recomputation frequency and avoid heavy work on every render.
  * - Sync state: CV polling + bridge sync + wallet sync → isSyncPending, stableSyncPending, errors
- * - isBalanceLoading = cold start or manual refresh loading (so Balance shows loading only on cold start or after user click when rework is on). TopBar uses this for rotation.
- * - isManualRefreshLoading = stableSyncPending and user clicked refresh recently (Redux syncRefresh slice).
+ * - isBalanceLoading = cold start OR initial loading (first sync not done) OR manual refresh.
+ *   TopBar uses this for rotation and to suppress error state during loading.
+ * - isManualRefreshLoading = latched on user click, released when sync actually completes.
  * - triggerRefresh = run wallet refresh + CV poll + bridge SYNC_ALL_ACCOUNTS (TopBar calls this on click).
  */
 export function usePortfolioBalanceSync(options: UsePortfolioBalanceSyncOptions = {}) {
+  const dispatch = useDispatch();
   const { legacyRange = false } = options;
   const accounts = useSelector(accountsSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
@@ -50,17 +55,31 @@ export function usePortfolioBalanceSync(options: UsePortfolioBalanceSyncOptions 
   const wsUserState = useWalletSyncUserState();
   const bridgeSync = useBridgeSync();
   const lastUserSyncClickTimestamp = useSelector(selectLastUserSyncClickTimestamp);
+  const hasCompletedInitialSync = useSelector(selectHasCompletedInitialSync);
 
   const isSyncPending = cvPolling.pending || globalSyncState.pending || wsUserState.visualPending;
   const stableSyncPending = useStablePending(isSyncPending, POLLING_FINISHED_DELAY_MS);
 
+  const prevStablePending = useRef(false);
+
+  useEffect(() => {
+    const wasPending = prevStablePending.current;
+    prevStablePending.current = stableSyncPending;
+
+    if (!hasCompletedInitialSync && wasPending && !stableSyncPending) {
+      dispatch(setHasCompletedInitialSync(true));
+    }
+  }, [stableSyncPending, hasCompletedInitialSync, dispatch]);
+
   const balanceAvailable = portfolio.balanceAvailable;
   const isColdStart = hasAccounts && !balanceAvailable;
-  const isManualRefreshLoading =
-    stableSyncPending &&
-    isRecentUserSyncClick(lastUserSyncClickTimestamp, USER_CLICK_SPIN_DURATION_MS);
+  const isInitialLoading = hasAccounts && !hasCompletedInitialSync;
+  const isManualRefreshLoading = useManualRefreshLoading(
+    stableSyncPending,
+    lastUserSyncClickTimestamp,
+  );
 
-  const isBalanceLoading = isColdStart || isManualRefreshLoading;
+  const isBalanceLoading = isColdStart || isInitialLoading || isManualRefreshLoading;
 
   const hasCvOrBridgeError = !isSyncPending && (!!cvPolling.error || !!globalSyncState.error);
   const hasWalletSyncError = !!wsUserState.walletSyncError;
@@ -80,6 +99,7 @@ export function usePortfolioBalanceSync(options: UsePortfolioBalanceSyncOptions 
     counterValue,
     balanceAvailable,
     isColdStart,
+    isInitialLoading,
     isBalanceLoading,
     isManualRefreshLoading,
     stableSyncPending,

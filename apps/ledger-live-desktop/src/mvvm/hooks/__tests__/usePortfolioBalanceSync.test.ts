@@ -3,11 +3,12 @@ import { usePortfolioBalanceSync } from "../usePortfolioBalanceSync";
 import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import * as walletSyncContext from "LLD/features/WalletSync/components/WalletSyncContext";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { DEFAULT_PORTFOLIO_RANGE } from "LLD/utils/constants";
+import { DEFAULT_PORTFOLIO_RANGE, POLLING_FINISHED_DELAY_MS } from "LLD/utils/constants";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
 import * as bridgeReact from "@ledgerhq/live-common/bridge/react/index";
+import { setLastUserSyncClickTimestamp } from "~/renderer/reducers/syncRefresh";
 
 const dayRange: PortfolioRange = "day";
 
@@ -165,6 +166,80 @@ describe("usePortfolioBalanceSync", () => {
     expect(result.current.isColdStart).toBe(false);
   });
 
+  it("returns isInitialLoading true when hasAccounts and initial sync not completed", () => {
+    jest.spyOn(countervaluesReact, "useCountervaluesPolling").mockReturnValue({
+      ...defaultPollingReturn,
+      pending: true,
+    });
+
+    const { result } = renderHook(() => usePortfolioBalanceSync(), {
+      initialState: {
+        ...defaultInitialState,
+        accounts: [BTC_ACCOUNT],
+        syncRefresh: { lastUserSyncClickTimestamp: 0, hasCompletedInitialSync: false },
+      },
+    });
+
+    expect(result.current.isInitialLoading).toBe(true);
+    expect(result.current.isBalanceLoading).toBe(true);
+  });
+
+  it("returns isInitialLoading false after initial sync completes (after stableSyncPending delay)", () => {
+    jest.useFakeTimers();
+    const pollingMock = jest
+      .spyOn(countervaluesReact, "useCountervaluesPolling")
+      .mockReturnValue({ ...defaultPollingReturn, pending: true });
+
+    const { result, rerender } = renderHook(() => usePortfolioBalanceSync(), {
+      initialState: {
+        ...defaultInitialState,
+        accounts: [BTC_ACCOUNT],
+        syncRefresh: { lastUserSyncClickTimestamp: 0, hasCompletedInitialSync: false },
+      },
+    });
+
+    expect(result.current.isInitialLoading).toBe(true);
+
+    pollingMock.mockReturnValue({ ...defaultPollingReturn, pending: false });
+    mockUseGlobalSyncState.mockReturnValue({ pending: false, error: null });
+
+    act(() => {
+      rerender();
+    });
+
+    expect(result.current.isInitialLoading).toBe(true);
+
+    act(() => {
+      jest.advanceTimersByTime(POLLING_FINISHED_DELAY_MS);
+    });
+
+    expect(result.current.isInitialLoading).toBe(false);
+    jest.useRealTimers();
+  });
+
+  it("returns isBalanceLoading true during initial loading even with cached balance", () => {
+    jest.spyOn(portfolioReact, "usePortfolioThrottled").mockReturnValue({
+      ...defaultPortfolio,
+      balanceAvailable: true,
+    });
+    jest.spyOn(countervaluesReact, "useCountervaluesPolling").mockReturnValue({
+      ...defaultPollingReturn,
+      pending: true,
+    });
+
+    const { result } = renderHook(() => usePortfolioBalanceSync(), {
+      initialState: {
+        ...defaultInitialState,
+        accounts: [BTC_ACCOUNT],
+        syncRefresh: { lastUserSyncClickTimestamp: 0, hasCompletedInitialSync: false },
+      },
+    });
+
+    expect(result.current.isColdStart).toBe(false);
+    expect(result.current.isInitialLoading).toBe(true);
+    expect(result.current.isBalanceLoading).toBe(true);
+  });
+
   it("returns isBalanceLoading false and isManualRefreshLoading false when sync pending but no recent user click (auto refresh)", () => {
     jest.spyOn(countervaluesReact, "useCountervaluesPolling").mockReturnValue({
       ...defaultPollingReturn,
@@ -174,7 +249,7 @@ describe("usePortfolioBalanceSync", () => {
     const { result } = renderHook(() => usePortfolioBalanceSync(), {
       initialState: {
         ...defaultInitialState,
-        syncRefresh: { lastUserSyncClickTimestamp: 0 },
+        syncRefresh: { lastUserSyncClickTimestamp: 0, hasCompletedInitialSync: true },
       },
     });
 
@@ -183,20 +258,23 @@ describe("usePortfolioBalanceSync", () => {
     expect(result.current.isBalanceLoading).toBe(false);
   });
 
-  it("returns isManualRefreshLoading true and isBalanceLoading true when sync pending and user clicked recently", () => {
-    const now = 10_000;
-    const recentClickTime = now - 100; // 100ms ago within USER_CLICK_SPIN_DURATION_MS (1000)
-    jest.spyOn(Date, "now").mockReturnValue(now);
+  it("returns isManualRefreshLoading true and isBalanceLoading true when user clicks refresh while sync is pending", () => {
     jest.spyOn(countervaluesReact, "useCountervaluesPolling").mockReturnValue({
       ...defaultPollingReturn,
       pending: true,
     });
 
-    const { result } = renderHook(() => usePortfolioBalanceSync(), {
+    const { result, store } = renderHook(() => usePortfolioBalanceSync(), {
       initialState: {
         ...defaultInitialState,
-        syncRefresh: { lastUserSyncClickTimestamp: recentClickTime },
+        syncRefresh: { lastUserSyncClickTimestamp: 0, hasCompletedInitialSync: true },
       },
+    });
+
+    expect(result.current.isManualRefreshLoading).toBe(false);
+
+    act(() => {
+      store.dispatch(setLastUserSyncClickTimestamp(Date.now()));
     });
 
     expect(result.current.stableSyncPending).toBe(true);
