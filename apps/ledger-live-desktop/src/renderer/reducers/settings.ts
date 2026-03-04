@@ -770,7 +770,6 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
     return null;
   return lastSeenDevice;
 };
-export const hasOnboardedDeviceSelector = (state: State) => lastSeenDeviceSelector(state) !== null;
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
@@ -801,3 +800,8 @@ export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.al
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+
+// Last onboarded device is the device set when a user goes through the onboarding flow.
+// Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
+export const hasOnboardedDeviceSelector = (state: State) =>
+  !!lastOnboardedDeviceSelector(state) || lastSeenDeviceSelector(state) !== null;
