@@ -1,0 +1,77 @@
+name: "[CI] - PR Title - Auto Populate from Branch Name"
+run-name: "@PR • Title populate triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  populate-title:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-22.04
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Populate PR Title from Branch Name
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+
+            // Map branch prefixes to conventional commit types
+            const typeMap = {
+              feat: 'feat',
+              bugfix: 'fix',
+              support: 'chore',
+              chore: 'chore',
+            };
+
+            // Pattern: <type>/<optional-scope>-<JIRA-ISSUE>-<description>
+            // Examples:
+            //   feat/lwd-LIVE-123-add-dark-mode
+            //   bugfix/LIVE-456-fix-crash
+            //   feat/lwdm-LIVE-789-add-feature
+            //   support/lwd-LIVE-012-update-deps
+            const match = branch.match(
+              /^(feat|bugfix|support|chore)\/(?:([a-z0-9]+)-)?([A-Z]+-\d+)-(.+)$/
+            );
+
+            if (!match) {
+              console.log(`Branch "${branch}" does not match expected pattern, skipping.`);
+              return;
+            }
+
+            const [, branchType, scope, issue, rawDescription] = match;
+            const commitType = typeMap[branchType];
+            const description = rawDescription.replace(/-/g, ' ');
+
+            // Build title: <type>(<scope>) [ISSUE]: <description>
+            let newTitle = commitType;
+            if (scope) {
+              newTitle += `(${scope})`;
+            }
+            newTitle += ` [${issue}]: ${description}`;
+
+            const currentTitle = context.payload.pull_request.title;
+            if (newTitle !== currentTitle) {
+              try {
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.payload.pull_request.number,
+                  title: newTitle,
+                });
+                console.log(`Updated PR title to: "${newTitle}"`);
+              } catch (error) {
+                core.error(`Failed to update PR title for #${context.payload.pull_request.number}: ${error.message || error}`);
+                core.setFailed(`Failed to update PR title for #${context.payload.pull_request.number}`);
+              }
+            }
