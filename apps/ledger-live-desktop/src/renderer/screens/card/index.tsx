@@ -79,7 +79,6 @@ export type ComponentParams = {
 const CardDapp = () => {
   const { appId } = useParams<ComponentParams>();
   const ptxCardFlag = useFeature("ptxCard");
-  console.log(">> CardDapp :: ptxCardFlag", ptxCardFlag);
   if (ptxCardFlag?.enabled) {
     return <LiveAppCard appId={appId || CARD_APP_ID} />;
   } else {
