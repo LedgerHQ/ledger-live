@@ -186,7 +186,7 @@ describe("sync", () => {
       });
 
       // THEN
-      expect(getAccountsByPublicKey).toHaveBeenCalledWith(currency, PUBLIC_KEY);
+      expect(getAccountsByPublicKey).toHaveBeenCalledWith(currency.id, PUBLIC_KEY);
     });
 
     it("should merge operations with existing operations", async () => {

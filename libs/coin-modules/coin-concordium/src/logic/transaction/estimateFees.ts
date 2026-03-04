@@ -1,4 +1,3 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { memoEncodedSize } from "@ledgerhq/concordium-core";
 import { CONCORDIUM_ENERGY } from "../../constants";
@@ -9,12 +8,9 @@ export interface FeeEstimation {
   energy: bigint;
 }
 
-export async function estimateFees(
-  currency: CryptoCurrency,
-  memo?: string,
-): Promise<FeeEstimation> {
+export async function estimateFees(currencyId: string, memo?: string): Promise<FeeEstimation> {
   try {
-    const result = await getTransactionCost(currency, {
+    const result = await getTransactionCost(currencyId, {
       numSignatures: 1,
       ...(memo ? { memoSize: memoEncodedSize(memo) } : {}),
     });
