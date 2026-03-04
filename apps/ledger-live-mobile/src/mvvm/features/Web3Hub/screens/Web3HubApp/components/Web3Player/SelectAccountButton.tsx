@@ -1,12 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { Trans } from "~/context/Locale";
-import { Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import { useTheme } from "@react-navigation/native";
 import Button from "~/components/Button";
-import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
-import { useMaybeAccountName } from "~/reducers/wallet";
 import SelectAccountModal from "./SelectAccountModal";
 
 type SelectAccountButtonProps = {
@@ -19,9 +17,7 @@ export default function SelectAccountButton({
   currentAccountHistDb,
 }: SelectAccountButtonProps) {
   const { currentAccount } = useDappCurrentAccount(manifest.id, currentAccountHistDb);
-
-  const currentAccountName = useMaybeAccountName(currentAccount);
-
+  const { dark } = useTheme();
   const [modalOpened, setModalOpened] = useState(false);
 
   const onSelectAccount = useCallback(() => {
@@ -31,6 +27,13 @@ export default function SelectAccountButton({
   const onClose = useCallback(() => {
     setModalOpened(false);
   }, []);
+
+  const currency =
+    currentAccount?.type === "TokenAccount" ? currentAccount.token : currentAccount?.currency;
+  const ledgerId = currency?.id;
+  const tickerProp = currency?.ticker;
+  const network = currency?.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const iconTheme = dark ? "dark" : "light";
 
   return (
     <>
@@ -44,29 +47,20 @@ export default function SelectAccountButton({
       <Button
         Icon={
           !currentAccount ? undefined : (
-            <CircleCurrencyIcon
-              size={24}
-              currency={
-                currentAccount.type === "TokenAccount"
-                  ? currentAccount.token
-                  : currentAccount.currency
-              }
+            <CryptoIcon
+              ledgerId={ledgerId}
+              ticker={tickerProp}
+              size={32}
+              theme={iconTheme}
+              backgroundColor="dark"
+              overridesRadius={12}
+              {...(network && { network })}
             />
           )
         }
-        iconPosition={"left"}
-        type="primary"
         onPress={onSelectAccount}
         isNewIcon
-      >
-        {!currentAccount ? (
-          <Text>
-            <Trans i18nKey="common.selectAccount" />
-          </Text>
-        ) : (
-          <Text color={"neutral.c20"}>{currentAccountName}</Text>
-        )}
-      </Button>
+      ></Button>
     </>
   );
 }

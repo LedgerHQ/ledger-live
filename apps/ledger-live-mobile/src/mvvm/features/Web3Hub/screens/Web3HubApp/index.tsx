@@ -1,12 +1,12 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { AppProps } from "LLM/features/Web3Hub/types";
 import { useWebviewScrollHandler } from "LLM/features/Web3Hub/hooks/useScrollHandler";
 import WebPlatformPlayer from "./components/Web3Player";
 import GenericErrorView from "~/components/GenericErrorView";
 import useWeb3HubAppViewModel from "./useWeb3HubAppViewModel";
-import Header, { TOTAL_HEADER_HEIGHT } from "./components/Header";
+import { TOTAL_HEADER_HEIGHT } from "./components/Header";
 import { TrackScreen } from "~/analytics";
 
 const appManifestNotFoundError = new Error("App not found");
@@ -31,27 +31,24 @@ export default function Web3HubApp({ navigation, route }: AppProps) {
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
       <TrackScreen category="Web3Hub" page="App" appId={manifest?.id} />
-      <Header
-        navigation={navigation}
-        layoutY={layoutY}
-        initialLoad={initialLoad}
-        secure={secure}
-        baseUrl={baseUrl}
-      />
 
       {manifest ? (
         <WebPlatformPlayer
+          navigation={navigation}
           manifest={manifest}
           inputs={inputs}
           onScroll={onScroll}
           layoutY={layoutY}
           webviewState={webviewState}
           setWebviewState={setWebviewState}
+          initialLoad={initialLoad}
+          secure={secure}
+          baseUrl={baseUrl}
         />
       ) : (
-        <Flex flex={1} p={10} justifyContent="center" alignItems="center">
-          {isLoading ? <InfiniteLoader /> : <GenericErrorView error={appManifestNotFoundError} />}
-        </Flex>
+        <Box lx={{ flex: 1, padding: "s16", justifyContent: "center", alignItems: "center" }}>
+          {isLoading ? <Spinner /> : <GenericErrorView error={appManifestNotFoundError} />}
+        </Box>
       )}
     </SafeAreaView>
   );
