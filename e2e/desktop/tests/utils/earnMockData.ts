@@ -143,13 +143,20 @@ export function buildStakesResponse(
 export async function interceptEarnStakes(
   electronApp: ElectronApplication,
   mockResponse: BatchedView[],
+  timeoutMs = 30_000,
 ): Promise<Page> {
-  return new Promise<Page>(resolve => {
+  return new Promise<Page>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      electronApp.off("window", handler);
+      reject(new Error(`interceptEarnStakes timed out after ${timeoutMs}ms waiting for webview window`));
+    }, timeoutMs);
+
     const handler = async (page: Page) => {
       const windows = electronApp.windows();
       // The webview is the second window
       if (windows.length <= 1) return;
 
+      clearTimeout(timeout);
       electronApp.off("window", handler);
 
       // Intercept POST /v1/stakes on both production and staging earn API hosts

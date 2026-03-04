@@ -1,11 +1,12 @@
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
-
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
 export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
-  ...(useLocalEarnManifest && { ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } } }),
+  ...(useLocalEarnManifest && {
+    ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
+  }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
   lwdWallet40: {
     enabled: true,
@@ -63,4 +64,3 @@ export const EARN_LOCAL_MANIFEST: LiveAppManifest = {
   ],
   domains: ["http://localhost:3000", "https://*"],
 };
-
