@@ -168,8 +168,14 @@ describe("useAmountScreenViewModel", () => {
         amount: new BigNumber(0),
         useAllAmount: false,
         feesStrategy: "custom" as const,
+        customGasLimit: new BigNumber(21000),
+        gasPrice: new BigNumber(100),
+        maxFeePerGas: new BigNumber(200),
+        maxPriorityFeePerGas: new BigNumber(10),
         customFeeRate: new BigNumber(10),
         feePerByte: new BigNumber(5),
+        fees: new BigNumber(1234),
+        customFees: { mock: true },
       } as unknown as Transaction;
       const status = {
         errors: {},
@@ -206,15 +212,17 @@ describe("useAmountScreenViewModel", () => {
       const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
       const patched = updater(transaction);
 
-      expect(patched.feesStrategy).toBe("medium");
-      expect(patched.customGasLimit).toBeUndefined();
-      expect(patched.gasPrice).toBeUndefined();
-      expect(patched.maxFeePerGas).toBeUndefined();
-      expect(patched.maxPriorityFeePerGas).toBeUndefined();
-      expect(patched.feePerByte).toBeUndefined();
-      expect(patched.customFeeRate).toBeUndefined();
-      expect(patched.fees).toBeUndefined();
-      expect(patched.customFees).toBeUndefined();
+      expect(patched).toMatchObject({
+        feesStrategy: "medium",
+        customGasLimit: undefined,
+        gasPrice: undefined,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+        feePerByte: undefined,
+        customFeeRate: undefined,
+        fees: undefined,
+        customFees: undefined,
+      });
     });
 
     it("does not clear custom fee overrides when selecting the custom strategy", () => {
@@ -222,8 +230,6 @@ describe("useAmountScreenViewModel", () => {
       const txWithCustomFees = {
         ...transaction,
         feesStrategy: "medium" as const,
-        customFeeRate: new BigNumber(10),
-        feePerByte: new BigNumber(5),
       } as unknown as Transaction;
 
       const { result } = renderHook(
@@ -247,10 +253,17 @@ describe("useAmountScreenViewModel", () => {
       const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
       const patched = updater(txWithCustomFees);
 
-      expect(patched.feesStrategy).toBe("custom");
-      // Custom fee fields must NOT be cleared
-      expect(patched.customFeeRate).toEqual(new BigNumber(10));
-      expect(patched.feePerByte).toEqual(new BigNumber(5));
+      expect(patched).toMatchObject({
+        feesStrategy: "custom",
+        customGasLimit: new BigNumber(21000),
+        gasPrice: new BigNumber(100),
+        maxFeePerGas: new BigNumber(200),
+        maxPriorityFeePerGas: new BigNumber(10),
+        feePerByte: new BigNumber(5),
+        customFeeRate: new BigNumber(10),
+        fees: new BigNumber(1234),
+        customFees: { mock: true },
+      });
     });
   });
 

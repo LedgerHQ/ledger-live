@@ -279,6 +279,24 @@ describe("sendFeatures", () => {
     expect(typeof config?.buildTransactionPatch).toBe("function");
   });
 
+  it("should use customGasLimit in ethereum custom fee initial values", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const config = sendFeatures.getCustomFeeConfig(ethereum);
+    expect(config).not.toBeNull();
+
+    const values = config?.getInitialValues({
+      type: 2,
+      gasLimit: new BigNumber(21_000),
+      customGasLimit: new BigNumber(42_000),
+      maxFeePerGas: new BigNumber("1000000000"),
+      maxPriorityFeePerGas: new BigNumber("500000000"),
+    });
+
+    expect(values).toMatchObject({
+      gasLimit: "42000",
+    });
+  });
+
   it("should return custom fee config for stellar", () => {
     const stellar = getCryptoCurrencyById("stellar");
     const config = sendFeatures.getCustomFeeConfig(stellar);
