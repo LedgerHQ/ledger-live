@@ -17,6 +17,27 @@ function getFeesStrategyForPreset(presetId: string): Transaction["feesStrategy"]
   return null;
 }
 
+function buildPresetEstimationPatch(
+  feesStrategy: Transaction["feesStrategy"],
+): Partial<Transaction> {
+  const patch: Partial<Transaction> = { feesStrategy };
+
+  if (feesStrategy && feesStrategy !== "custom") {
+    Object.assign(patch, {
+      customGasLimit: undefined,
+      gasPrice: undefined,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+      feePerByte: undefined,
+      customFeeRate: undefined,
+      fees: undefined,
+      customFees: undefined,
+    } as Partial<Transaction>);
+  }
+
+  return patch;
+}
+
 function formatCountervalueAsFiat(
   fiatUnit: Unit,
   countervalue: BigNumber | null | undefined,
@@ -60,9 +81,10 @@ async function estimateFiatValuesForPresets(params: {
     const entries = await Promise.all(
       params.presetIds.map(async presetId => {
         const feesStrategy = getFeesStrategyForPreset(presetId);
-        const txWithStrategy = params.bridge.updateTransaction(params.transaction, {
-          feesStrategy,
-        });
+        const txWithStrategy = params.bridge.updateTransaction(
+          params.transaction,
+          buildPresetEstimationPatch(feesStrategy),
+        );
         const preparedTx = await params.bridge.prepareTransaction(
           params.mainAccount,
           txWithStrategy,
