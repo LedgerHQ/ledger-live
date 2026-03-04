@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { ArrowLeft } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import {
   TOP_BAR_CONTENT_HEIGHT,
@@ -13,12 +13,19 @@ import {
 
 type SwapOpaqueHeaderProps = {
   onBackPress: () => void;
+  onClosePress?: () => void;
+  showBackButton?: boolean;
   titleKey: string | null;
 };
 
 const ICON_PLACEHOLDER_SIZE = 40;
 
-export function SwapOpaqueHeader({ onBackPress, titleKey }: Readonly<SwapOpaqueHeaderProps>) {
+export function SwapOpaqueHeader({
+  onBackPress,
+  onClosePress,
+  showBackButton = true,
+  titleKey,
+}: Readonly<SwapOpaqueHeaderProps>) {
   const insets = useSafeAreaInsets();
   const { theme: lumenTheme } = useLumenTheme();
   const { t } = useTranslation();
@@ -36,20 +43,35 @@ export function SwapOpaqueHeader({ onBackPress, titleKey }: Readonly<SwapOpaqueH
   return (
     <Box style={containerStyle}>
       <Box lx={rowLx}>
-        <IconButton
-          appearance="no-background"
-          size="md"
-          icon={ArrowLeft}
-          testID="swap-topbar-back"
-          accessibilityLabel={t("common.back")}
-          onPress={onBackPress}
-        />
+        {showBackButton ? (
+          <IconButton
+            appearance="no-background"
+            size="md"
+            icon={ArrowLeft}
+            testID="swap-topbar-back"
+            accessibilityLabel={t("common.back")}
+            onPress={onBackPress}
+          />
+        ) : (
+          <Box style={styles.iconPlaceholder} />
+        )}
 
         <Text typography="body1SemiBold" lx={{ color: "base", textAlign: "center", flex: 1 }}>
           {titleKey ? t(titleKey) : ""}
         </Text>
 
-        <Box style={styles.iconPlaceholder} />
+        {onClosePress ? (
+          <IconButton
+            appearance="no-background"
+            size="md"
+            icon={Close}
+            testID="swap-topbar-close"
+            accessibilityLabel={t("common.close")}
+            onPress={onClosePress}
+          />
+        ) : (
+          <Box style={styles.iconPlaceholder} />
+        )}
       </Box>
     </Box>
   );
