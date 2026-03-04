@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
@@ -15,13 +14,11 @@ import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "./AssetDistribution";
-import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { useSelector } from "LLD/hooks/redux";
 import uniq from "lodash/uniq";
 import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInstalledApps";
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
 import FeaturedButtons from "~/renderer/screens/dashboard/components/FeaturedButtons";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { Flex, Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
@@ -30,7 +27,7 @@ import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
 import { PerpsEntryPoint } from "LLD/features/Portfolio/components/PerpsEntryPoint";
 import BannerSection from "./components/Banners/BannerSection";
-import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import { useSmallValueOperationsFilter } from "~/renderer/hooks/useSmallValueOperationsFilter";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -54,25 +51,7 @@ export default function DashboardPage() {
     () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
     [accounts],
   );
-  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: shouldFilterTokenOpsZeroAmount,
-  });
-
-  const filterOperations = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      const isOperationPoisoned = isAddressPoisoningOperation(
-        operation,
-        account,
-        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-      );
-
-      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
-
-      return shouldFilterOperation;
-    },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
-  );
+  const { filterOperations } = useSmallValueOperationsFilter();
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
