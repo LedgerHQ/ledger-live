@@ -12,22 +12,21 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
-import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
-
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
+import { useOpenSwap } from "LLM/features/Swap";
 
 type Props = {
   account: AccountLike;
   parentAccount?: Account;
-  colors?: DefaultTheme["colors"];
+  colors?: Record<string, string>;
 };
 
 const iconBuy = IconsLegacy.PlusMedium;
@@ -81,6 +80,12 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const { data: currenciesAll } = useFetchCurrencyAll();
   const availableOnSwap = currency && currenciesAll.includes(currency.id);
+  const { handleOpenSwap } = useOpenSwap({
+    currency,
+    sourceScreenName: route.name,
+    defaultAccount: account,
+    defaultParentAccount: parentAccount,
+  });
 
   const extraSendActionParams = useMemo(
     () =>
@@ -101,24 +106,17 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const actionButtonSwap: ActionButtonEvent = useMemo(
     () => ({
       id: "swap",
-      navigationParams: [
-        NavigatorName.Swap,
-        {
-          screen: ScreenName.SwapTab,
-          params: {
-            defaultAccount: account,
-            defaultCurrency: currency,
-            defaultParentAccount: parentAccount,
-          },
-        },
-      ],
+      customHandler: handleOpenSwap,
       label: t("account.swap", { currency: currency.name }),
       Icon: iconSwap,
-      disabled: false,
+      disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
+      modalOnDisabledClick: {
+        component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
+      },
       event: "Swap Crypto Account Button",
       eventProperties: { currencyName: currency.name },
     }),
-    [currency, account, parentAccount, t],
+    [currency.name, handleOpenSwap, isPtxServiceCtaScreensDisabled, isZeroBalance, t],
   );
 
   const actionButtonBuy: ActionButtonEvent = useMemo(
@@ -279,7 +277,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       ...(!readOnlyModeEnabled
         ? familySpecificMainActions.filter(
             action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
-          ) // filter out family stake action if we cannot stake using ledger Wallet or if account can be staked with a third-party platform app
+          )
         : []),
       ...(!readOnlyModeEnabled ? [SendAction] : []),
       ReceiveAction,

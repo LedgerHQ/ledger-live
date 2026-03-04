@@ -81,7 +81,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       : getRouteParamsForPlatformApp(stakeAccount, walletState, parentAccount);
 
   const canBeRecovered = recoverEntryPoint?.enabled;
-
   const whitelistedCurrencies = useMemo(
     () => Array.from(new Set([...enabledCurrencies, ...partnerSupportedAssets])),
     [enabledCurrencies, partnerSupportedAssets],

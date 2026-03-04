@@ -24,6 +24,7 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { useOpenSwap } from "LLM/features/Swap";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -70,6 +71,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
+  const { handleOpenSwap } = useOpenSwap({
+    currency,
+    sourceScreenName: "asset_action",
+    defaultAccount,
+    defaultParentAccount: parentAccount,
+  });
 
   const { getCanStakeCurrency } = useStake();
   const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
@@ -158,17 +165,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                       ...sharedSwapTracking,
                       button: "swap",
                     },
-                    navigationParams: [
-                      NavigatorName.Swap,
-                      {
-                        screen: ScreenName.SwapTab,
-                        params: {
-                          defaultAccount,
-                          defaultCurrency: currency,
-                          defaultParentAccount: parentAccount,
-                        },
-                      },
-                    ] as const,
+                    customHandler: handleOpenSwap,
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
                       component: isPtxServiceCtaScreensDisabled
@@ -252,11 +249,11 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     readOnlyModeEnabled,
     availableOnSwap,
     defaultAccount,
-    parentAccount,
     canStakeCurrency,
     assetId,
     stakeLabel,
     accountCurrency?.ticker,
+    handleOpenSwap,
     handleOpenStakeDrawer,
     handleOpenReceiveDrawer,
     handleOpenAddAccountDrawer,
