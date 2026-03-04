@@ -30,17 +30,16 @@ docker pull ghcr.io/ledgerhq/speculos:latest
 
 ### 2. Environment Variables
 
-Set the following environment variables before running tests:
+To get started, copy the environment examples file:
 
 ```bash
-export MOCK=0
-export COINAPPS="/path/to/coin-apps"
-export SEED="your 24 word ledger recovery phrase here"
-export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
-export SPECULOS_DEVICE=nanoSP       # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
+cd e2e/desktop
+cp .env.e2e.desktop.example .env.e2e.desktop
 ```
 
-> ⚠️ Replace placeholders with your local paths and credentials.
+> ⚠️ Please replace placeholders with your local paths and credentials!
+
+Please ensure the example file is kept up to date when variables are added, removed or changed.
 
 ### 3. Build
 

@@ -2,3 +2,4 @@ tests/artifacts/*
 !tests/artifacts/.gitkeep
 node_modules/
 allure-*
+.env.e2e.desktop

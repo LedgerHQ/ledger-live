@@ -15,7 +15,7 @@
   },
   "scripts": {
     "bump": "changeset version",
-    "clean": "git clean -fdX",
+    "clean": "git clean -fdX -e !.env.e2e.desktop",
     "changelog": "changeset add",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",

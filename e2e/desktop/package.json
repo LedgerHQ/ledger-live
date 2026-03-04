@@ -26,7 +26,6 @@
     "allure-js-commons": "catalog:",
     "allure-playwright": "catalog:",
     "axios": "catalog:",
-    "dotenv": "^16.4.7",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "rxjs": "catalog:"

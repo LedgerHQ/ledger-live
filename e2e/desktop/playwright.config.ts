@@ -1,4 +1,13 @@
 import { PlaywrightTestConfig } from "@playwright/test";
+import { existsSync } from "node:fs";
+import { loadEnvFile } from "node:process";
+import path from "node:path";
+
+const ENV_FILE_PATH = path.resolve(__dirname, ".env.e2e.desktop");
+
+if (existsSync(ENV_FILE_PATH)) {
+  loadEnvFile(ENV_FILE_PATH);
+}
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
