@@ -35,6 +35,7 @@ for (const currency of currencies) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: currency.currency.speculosApp,
+      // TODO: this can be removed once Aleo is released on production
       ...(currency.currency === Currency.ALEO && {
         featureFlags: {
           currencyAleo: {
@@ -50,7 +51,7 @@ for (const currency of currencies) {
       `[${currency.currency.name}] Add account`,
       {
         tag: [
-          // Aleo app is still in development and only available on Nano SP and Flex for now
+          // TODO: this can be removed once Aleo app is released on all devices (still in development, available only on NanoSP and Flex for now)
           ...(currency.currency === Currency.ALEO
             ? ["@NanoSP", "@Flex"]
             : ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"]),
@@ -81,11 +82,11 @@ for (const currency of currencies) {
             await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
             await app.speculos.shareViewKey();
             await app.scanAccountsDrawer.expectSuccessStepVisibility();
-            await app.scanAccountsDrawer.clickCloseButton();
           } else {
             await app.scanAccountsDrawer.selectFirstAccount();
-            await app.scanAccountsDrawer.clickCloseButton();
           }
+
+          await app.scanAccountsDrawer.clickCloseButton();
         } else {
           await app.addAccount.expectModalVisibility();
           await app.addAccount.selectCurrency(currency.currency);
