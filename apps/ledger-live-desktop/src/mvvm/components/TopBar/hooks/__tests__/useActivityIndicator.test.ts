@@ -89,6 +89,7 @@ describe("useActivityIndicator", () => {
     expect(trackSpy).toHaveBeenCalledWith(
       "SyncErrorList",
       expect.objectContaining({
+        page: "/",
         currencies: expect.any(Array),
       }),
     );
