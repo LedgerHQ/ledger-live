@@ -1,0 +1,529 @@
+---
+description: Playwright E2E testing conventions for Ledger Live Desktop (Electron + Speculos)
+globs:
+  - e2e/desktop/**
+---
+
+# Playwright E2E Testing Conventions — Ledger Live Desktop
+
+> For shell permission requirements, see the `e2e-shell-permissions` skill.
+
+## Write Boundary (CRITICAL)
+
+**You MUST only write/modify files under these paths:**
+
+- `e2e/desktop/` — test specs, page objects, fixtures, utils, userdata
+- `libs/ledger-live-common/src/e2e/` — shared e2e enums, models, families, Speculos helpers
+
+**You MUST NEVER modify application source code under `apps/`** with one exception:
+
+- You MAY add `data-testid` attributes to React components in `apps/ledger-live-desktop/src/` when an element needed by a test has no testid. This is the **only** allowed modification to app source code.
+
+Any other change to `apps/` (logic, styling, routing, state, etc.) is **strictly forbidden**.
+
+## Design Principles
+
+All E2E code must follow:
+
+- **POM (Page Object Model)** — locators and interactions encapsulated in page objects, specs are thin orchestrators
+- **DRY** — no duplicated locators, assertions, or setup logic; shared code goes in base classes, components, or fixtures
+- **SOLID** — single responsibility per page object, open for extension via composition/inheritance, depend on abstractions (base classes)
+- **Separation of Concerns** — specs contain only test flow orchestration; page objects contain only UI interactions and assertions; utils contain only infrastructure
+
+## XRAY Ticket Requirement
+
+Every E2E test **must** be linked to a Jira/Xray ticket (e.g., `B2CQA-XXXX`). Tests without a ticket reference are not accepted.
+
+- The ticket key is passed via the `annotation` field: `{ type: "TMS", description: "B2CQA-XXXX" }`
+- `addTmsLink(...)` must be called at the start of each test body
+- After generating a test, the Jira ticket must be updated with a clear description of what the test validates
+
+## Project Structure
+
+All test code lives under `e2e/desktop/`. Shared e2e enums and models live in `libs/ledger-live-common/src/e2e/`.
+
+```
+e2e/desktop/
+├── playwright.config.ts            # Playwright configuration (testDir: ./tests/specs)
+├── package.json                    # Dependencies (Playwright, Allure, Electron, etc.)
+├── tsconfig.json                   # baseUrl: "." — enables bare "tests/..." imports
+├── tests/
+│   ├── specs/                      # Test specification files (*.spec.ts)
+│   ├── fixtures/
+│   │   └── common.ts               # Custom Playwright fixture (exports `test`)
+│   ├── page/                       # Page Object Model classes
+│   │   ├── abstractClasses.ts      # Base: PageHolder, Component, AppPage
+│   │   ├── index.ts                # Application facade aggregating all page objects
+│   │   ├── *.page.ts               # Page-level objects (one per page/view)
+│   │   ├── speculos.page.ts        # Speculos device interaction wrapper
+│   │   ├── modal/                  # Modal-based page objects
+│   │   ├── drawer/                 # Drawer-based page objects
+│   │   └── dialog/                 # Dialog-based page objects
+│   ├── component/                  # Shared cross-cutting UI components
+│   │   ├── layout.component.ts     # App layout (sidebar, topbar navigation)
+│   │   ├── modal.component.ts      # Base modal interactions
+│   │   ├── drawer.component.ts     # Base drawer interactions
+│   │   └── dialog.component.ts     # Base dialog interactions
+│   ├── utils/                      # Shared utilities
+│   │   ├── speculosUtils.ts        # Speculos device lifecycle (launch/kill)
+│   │   ├── electronUtils.ts        # Electron app launcher
+│   │   ├── cliUtils.ts             # CLI SDK wrapper (liveData, sync, keyRing)
+│   │   ├── cliCommandsUtils.ts     # CLI command builders for test setup
+│   │   ├── allureUtils.ts          # Allure TMS/BUG link helpers
+│   │   ├── customJsonReporter.ts   # Xray JSON reporter for Jira
+│   │   ├── modularSelectorUtils.ts # Dialog/Drawer selector detection
+│   │   └── ...                     # Other utilities
+│   ├── misc/reporters/
+│   │   └── step.ts                 # @step decorator for Allure reporting
+│   ├── userdata/                   # Pre-built JSON state fixtures
+│   │   ├── skip-onboarding.json
+│   │   ├── 1AccountBTC1AccountETH.json
+│   │   └── ...
+│   └── testdata/                   # Test data files
+│
+libs/ledger-live-common/src/e2e/    # Shared e2e enums/models (monorepo-wide)
+├── enum/
+│   ├── Currency.ts                 # Currency enum with speculosApp, id, name, ticker
+│   ├── Account.ts                  # Account enum (ETH_1, BTC_NATIVE_SEGWIT_1, etc.)
+│   ├── AppInfos.ts                 # Speculos app metadata
+│   ├── Fee.ts                      # Fee levels (SLOW, MEDIUM, FAST)
+│   ├── Network.ts                  # Network enum
+│   └── Addresses.ts                # Test addresses
+├── models/
+│   ├── Transaction.ts              # Send transaction model
+│   ├── Delegate.ts                 # Delegation model
+│   └── Swap.ts                     # Swap model
+├── families/                       # Per-family device signing flows
+├── speculos.ts                     # Speculos interaction functions
+└── speculosCI.ts                   # CI-specific Speculos helpers
+```
+
+## File & Naming
+
+- Spec files: `kebab-case` with `.spec.ts` suffix — `add.account.spec.ts`, `send.tx.spec.ts`
+- Page objects: `kebab-case` with role suffix — `account.page.ts`, `send.modal.ts`, `operation.drawer.ts`, `modular.dialog.ts`
+- Components: `kebab-case` with `.component.ts` suffix — `layout.component.ts`, `drawer.component.ts`
+- Fixture files: `common.ts` in `tests/fixtures/`
+- Userdata fixtures: `kebab-case` JSON in `tests/userdata/` — `skip-onboarding.json`, `1AccountBTC1AccountETH.json`
+
+## TypeScript Paths
+
+`tsconfig.json` has `baseUrl: "."` so imports resolve from `e2e/desktop/`:
+
+- Use bare `"tests/..."` imports: `import { test } from "tests/fixtures/common"`
+- `~/*` maps to `apps/ledger-live-desktop/src/*`
+- Shared e2e code: `import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency"`
+
+## Fixture System (`tests/fixtures/common.ts`)
+
+Tests import `test` from `"tests/fixtures/common"` — **never** from `@playwright/test` directly.
+
+The custom `test` extends `@playwright/test` with:
+
+| Fixture            | Type                      | Default                          | Purpose                                             |
+| ------------------ | ------------------------- | -------------------------------- | --------------------------------------------------- |
+| `lang`             | `string`                  | `"en-US"`                        | Locale                                              |
+| `theme`            | `"light" \| "dark"`       | `"dark"`                         | Color scheme                                        |
+| `userdata`         | `string?`                 | `undefined`                      | Name of JSON in `tests/userdata/` (without `.json`) |
+| `speculosApp`      | `AppInfos?`               | `undefined`                      | Speculos nano app to launch                         |
+| `settings`         | `Record<string, unknown>` | `{ shareAnalytics: false, ... }` | Settings merged into userdata                       |
+| `featureFlags`     | `OptionalFeatureMap?`     | `undefined`                      | Feature flag overrides                              |
+| `env`              | `Record<string, string>?` | `undefined`                      | Extra Electron env vars                             |
+| `cliCommands`      | `CliCommand[]?`           | `[]`                             | CLI commands before test                            |
+| `cliCommandsOnApp` | `{ app, cmd }[]?`         | `[]`                             | CLI commands requiring a specific Speculos app      |
+| `simulateCamera`   | `string?`                 | `undefined`                      | Fake video for camera sim                           |
+| `electronApp`      | `ElectronApplication`     | —                                | Launched Electron app                               |
+| `page`             | `Page`                    | —                                | First Electron window                               |
+| `app`              | `Application`             | —                                | Application facade (all page objects)               |
+| `userdataFile`     | `string`                  | —                                | Path to the test's `app.json`                       |
+
+The fixture chain is: `electronApp` → `page` → `app`.
+
+Configure fixtures per `test.describe` block via `test.use({...})`:
+
+```ts
+test.describe("Add Accounts", () => {
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: currency.currency.speculosApp,
+  });
+
+  test(`[${currency.currency.name}] Add account`, async ({ app }) => {
+    // ...
+  });
+});
+```
+
+## Page Object Model (POM)
+
+All locators, interaction methods, and assertion methods live in page object classes.
+Specs should **never** contain raw locators or direct `page.getByTestId(...)` calls.
+
+### Base Classes (`tests/page/abstractClasses.ts`)
+
+```ts
+export abstract class PageHolder {
+  constructor(
+    protected page: Page,
+    protected readonly electronApp?: ElectronApplication,
+  ) {}
+}
+
+export abstract class Component extends PageHolder {
+  // Shared dropdown/loader locators, waitForPageDomContentLoadedState()
+}
+
+export abstract class AppPage extends Component {}
+```
+
+### Page Object Pattern
+
+- One page object class per page/view/modal/drawer/dialog
+- Place under `tests/page/` (or `tests/page/modal/`, `tests/page/drawer/`, `tests/page/dialog/`)
+- Private locators using `getByTestId` as primary strategy
+- Public methods for actions and assertions
+- Every public method **must** be decorated with `@step(...)` from `tests/misc/reporters/step`
+
+```ts
+import { expect } from "@playwright/test";
+import { step } from "tests/misc/reporters/step";
+import { AppPage } from "./abstractClasses";
+
+export class PortfolioPage extends AppPage {
+  private readonly balanceContainer = this.page.getByTestId("portfolio-balance");
+
+  @step("Check portfolio balance is visible")
+  async expectBalanceVisibility() {
+    await expect(this.balanceContainer).toBeVisible();
+  }
+
+  @step("Open add account modal")
+  async openAddAccountModal() {
+    await this.page.getByTestId("portfolio-add-account-button").click();
+  }
+}
+```
+
+### Shared Components (`tests/component/`)
+
+Cross-cutting UI elements (Layout, Modal, Drawer, Dialog) live in `Component` classes:
+
+- `Layout` — sidebar and topbar navigation (`app.layout.goToAccounts()`, `app.layout.goToSettings()`)
+- `Modal` — base modal interactions (`app.modal.close()`, `app.modal.continue()`)
+- `Drawer` — base drawer interactions (`app.drawer.closeDrawer()`)
+- `Dialog` — base dialog interactions (`app.modularDialog.closeDialog()`)
+
+Specs call these directly via the `app` fixture.
+
+### Application Facade (`tests/page/index.ts`)
+
+Aggregates all page objects and components so specs access them via `app.<name>`:
+
+```ts
+export class Application extends PageHolder {
+  public account = new AccountPage(this.page);
+  public accounts = new AccountsPage(this.page);
+  public layout = new Layout(this.page);
+  public send = new SendModal(this.page);
+  public speculos = new SpeculosPage(this.page);
+  // ... 30+ page objects
+}
+```
+
+Key properties: `portfolio`, `account`, `accounts`, `layout`, `send`, `addAccount`,
+`receive`, `speculos`, `swap`, `settings`, `market`, `onboarding`, `drawer`, `modal`,
+`modularDrawer`, `modularDialog`, `scanAccountsDrawer`, `operationDrawer`, `sendDrawer`,
+`delegate`, `delegateDrawer`, `earnDashboard`, `liveApp`, `buyAndSell`, `ledgerSync`,
+`password`, `settingsModal`, `assetDrawer`, `assetPage`, `analytics`, `swapDrawer`,
+`marketBanner`, `fearAndGreedDialog`, `privateBalance`, `mainNavigation`, `redux`.
+
+## Allure Reporting
+
+### `@step()` Decorator (`tests/misc/reporters/step.ts`)
+
+Every public method on a page object **must** be decorated with `@step(...)`. This wraps the method in `test.step()` for Allure reporting.
+
+```ts
+import { step } from "tests/misc/reporters/step";
+```
+
+### Static vs Dynamic Descriptions
+
+- **Static** — for methods with no parameters or where params don't add context:
+
+```ts
+@step("Click Continue button")
+async continue() { ... }
+```
+
+- **Dynamic** — use `$0`, `$1` positional placeholders for parameters:
+
+```ts
+@step("Select currency $0")
+async selectCurrency(currency: Currency) { ... }
+```
+
+### Rules
+
+- Every page object method **must** have a `@step(...)` decorator.
+- Step descriptions are human-readable sentences describing intent (not implementation).
+- When a method has basic-type parameters, use `$0`, `$1` positional placeholders.
+
+## Selectors (Priority Order)
+
+1. **`getByTestId`** — primary selector strategy. Rely on `data-testid` attributes.
+2. `getByRole` — when testId is not available and element has clear ARIA role.
+3. `getByText` / `getByPlaceholder` / `getByLabel` — last resort.
+4. CSS/XPath — only when absolutely required (legacy selectors in existing code).
+
+## Wait Strategy
+
+- Default timeout is 120s per action (Electron + Speculos startup is slow).
+- Use `await expect(locator).toBeVisible()` for element appearance.
+- Use `locator.waitFor({ state: "visible" })` for dynamic content.
+- **Never** use `page.waitForTimeout()` — no hardcoded timeouts.
+- **Never** use `networkidle` or other deprecated Playwright APIs.
+
+## Test Structure
+
+### Data-Driven Tests
+
+Tests are data-driven using arrays of test data with `for...of` loops:
+
+```ts
+const currencies = [
+  { currency: Currency.BTC, xrayTicket: "B2CQA-2499" },
+  { currency: Currency.ETH, xrayTicket: "B2CQA-2503" },
+];
+
+for (const currency of currencies) {
+  test.describe("Add Accounts", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: currency.currency.speculosApp,
+    });
+
+    test(
+      `[${currency.currency.name}] Add account`,
+      {
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        annotation: { type: "TMS", description: currency.xrayTicket },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        // Test body using app.<page>.<method>() calls
+      },
+    );
+  });
+}
+```
+
+### Tags
+
+- **Device compatibility**: `@NanoSP`, `@LNS`, `@NanoX`, `@Stax`, `@Flex`, `@NanoGen5`
+- **Currency**: `@ethereum`, `@bitcoin`, `@<currency_id>`
+- **Family**: `@family-evm`, `@family-bitcoin`, `@family-<family>`
+- **Priority**: `@smoke`
+
+### Annotations
+
+- Jira/Xray TMS: `{ type: "TMS", description: "B2CQA-XXXX, B2CQA-YYYY" }`
+- Always call `addTmsLink(...)` at the start of each test
+
+### Spec Conventions
+
+- Specs are thin orchestrators: they call page object methods, never raw Playwright APIs.
+- Access everything via the `app` fixture: `app.portfolio`, `app.layout`, `app.send`, etc.
+- One `test(...)` or multiple data-driven `test(...)` inside `test.describe` blocks.
+- `test.describe` names the feature area (e.g., `"Add Accounts"`, `"Send flows"`).
+- `test(...)` describes the specific scenario (e.g., `` `[${name}] Add account` ``).
+
+## Speculos Integration
+
+All tests in `e2e/desktop/` run with the Speculos device simulator (`MOCK=0`). There is no mock mode — every test exercises the full E2E flow including device interaction.
+
+**Always set `MOCK=0`** when running tests.
+
+Key files:
+
+- `tests/utils/speculosUtils.ts` — `launchSpeculos(appName)` / `killSpeculos(deviceId)`
+- `tests/page/speculos.page.ts` — Wraps `@ledgerhq/live-common/e2e/speculos` functions (signing, address verification)
+- `libs/ledger-live-common/src/e2e/families/` — Per-family device interaction flows
+
+## Electron App
+
+- Launched via `tests/utils/electronUtils.ts`
+- Points to the webpack bundle at `apps/ledger-live-desktop/.webpack/main.bundle.js`
+- Each test gets an isolated user data directory under `tests/artifacts/userdata/<uuid>/`
+- Artifacts on failure: screenshots (app + Speculos device), video, console logs, network logs
+
+## Userdata Fixtures (`tests/userdata/`)
+
+Pre-built JSON files seed app state. Common fixtures:
+
+- `skip-onboarding` — bypasses onboarding flow (no device info persisted)
+- `skip-onboarding-with-last-seen-device` — bypasses onboarding **and** persists device info (`hasOnboardedDevice = true`)
+- `1AccountBTC1AccountETH` — pre-loaded with BTC + ETH accounts
+- `1AccountDOT` — pre-loaded with DOT account
+- `speculos-tests-app`, `speculos-subAccount`, `speculos-x-other-account`
+
+### Choosing the Right Userdata Fixture
+
+| Scenario                                          | Fixture                                  | Why                                                                                                                                                                         |
+| ------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Legacy portfolio (no feature flags)               | `skip-onboarding`                        | Legacy portfolio has no device-presence check                                                                                                                               |
+| Wallet 4.0 (`lwdWallet40` enabled)                | `skip-onboarding-with-last-seen-device`  | The MVVM `Balance` component checks `hasOnboardedDevice`; without device info it renders `NoDeviceView` instead of `BalanceView`, and `portfolio-balance` will never appear |
+| Tests that start from scratch (add account, etc.) | Match the portfolio variant being tested | See above                                                                                                                                                                   |
+| Tests with pre-loaded accounts                    | Use a fixture that already has accounts  | `1AccountBTC1AccountETH`, etc.                                                                                                                                              |
+
+## Wallet 4.0 (Feature Flag `lwdWallet40`)
+
+Wallet 4.0 uses the MVVM architecture under `apps/ledger-live-desktop/src/mvvm/`. When `lwdWallet40` is enabled, several UI and navigation patterns change. Tests targeting Wallet 4.0 **must** account for these differences.
+
+### Feature Flag Shape
+
+```ts
+featureFlags: {
+  lwdWallet40: {
+    enabled: true,
+    params: {
+      marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
+      mainNavigation: true,
+    },
+  },
+},
+```
+
+### Key Differences from Legacy
+
+| Aspect                      | Legacy                             | Wallet 4.0 (`mainNavigation: true`)                           |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------- |
+| Sidebar navigation          | `app.layout.goToAccounts()`        | `app.mainNavigation.openTargetFromMainNavigation("accounts")` |
+| Portfolio balance rendering | Always renders `portfolio-balance` | Only renders when `hasOnboardedDevice && hasAccount`          |
+| Userdata fixture            | `skip-onboarding` works            | **Must** use `skip-onboarding-with-last-seen-device`          |
+| Add account flow            | Legacy modal (`app.addAccount`)    | May use modular dialog/drawer (`getModularSelector()`)        |
+
+### Portfolio `Balance` Component Rendering (MVVM)
+
+The `Balance` component (`apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/Balance/index.tsx`) uses a three-way conditional:
+
+1. `!hasOnboardedDevice` → renders `NoDeviceView` (no `portfolio-balance` testid)
+2. `!hasAccount` → renders `NoBalanceView` (no `portfolio-balance` testid)
+3. Both true → renders `BalanceView` (contains `portfolio-balance` testid)
+
+**Pitfall**: Using `skip-onboarding` (which does NOT set `hasOnboardedDevice`) with `lwdWallet40` causes `portfolio-balance` to never appear, resulting in timeout failures.
+
+### Modular Selector Pattern
+
+In Wallet 4.0, the "add account" flow may use a modular dialog or drawer instead of the legacy modal. Use the `getModularSelector` utility to detect which variant is present:
+
+```ts
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
+
+const selector = await getModularSelector(app, "ASSET");
+if (selector) {
+  await selector.validateItems();
+  await selector.selectAssetByTicker(currency.currency);
+  await selector.selectNetwork(currency.currency);
+  await app.scanAccountsDrawer.selectFirstAccount();
+  await app.scanAccountsDrawer.clickCloseButton();
+} else {
+  await app.addAccount.expectModalVisibility();
+  await app.addAccount.selectCurrency(currency.currency);
+  await app.addAccount.addAccounts();
+  await app.addAccount.done();
+}
+```
+
+## Shared Models (`@ledgerhq/live-common/e2e/`)
+
+- `Currency` — enum with `speculosApp`, `id`, `name`, `ticker`, `networks`
+- `Account` — enum with `currency`, `accountName`, `index`, `derivationPath`, `address`
+- `AppInfos` — Speculos app name metadata
+- `Transaction` — `new Transaction(accountToDebit, accountToCredit, amount, fee?, memo?)`
+- `Fee` — `Fee.SLOW`, `Fee.MEDIUM`, `Fee.FAST`
+- `Delegate` — staking model
+- `Swap` — swap model
+
+## CLI Commands
+
+CLI commands run before tests to seed accounts and state:
+
+- `CLI.liveData(...)` — add account to `app.json`
+- `liveDataWithRecipientAddressCommand(tx)` — add debit + credit accounts
+- `getAccountAddress(account)` — resolve account address
+
+## Code Quality
+
+- Use `@step` decorator on every page object method.
+- Use proper TypeScript types — no `any`.
+- Extract likely-to-change strings into constants in page object files.
+- Assertions must be specific: prefer `toHaveText` / `toBeVisible` / `toBeEnabled` over generic `toBeTruthy`.
+- No unused imports or dead code.
+- When fixing or adding code, run ESLint: `pnpm --filter ledger-live-desktop-e2e-tests lint`.
+- Run typecheck: `pnpm --filter ledger-live-desktop-e2e-tests typecheck`.
+
+## Commands
+
+### Build Chain (required before running tests)
+
+Tests run against a webpack bundle of the desktop app. The full build chain must be executed before the first test run (or after any source code change):
+
+```bash
+pnpm i                         # 1. Install all monorepo deps
+pnpm build:lld:deps            # 2. Build LLD's internal dependencies
+pnpm desktop build:testing     # 3. Build the Electron app in testing mode
+```
+
+All three steps are mandatory. Skipping `build:lld:deps` may cause missing module errors; skipping `desktop build:testing` means the test runner cannot find the Electron bundle.
+
+### Running Tests
+
+```bash
+# Run a specific spec
+MOCK=0 pnpm e2e:desktop test:playwright e2e/desktop/tests/specs/<file>.spec.ts
+
+# Run all specs
+MOCK=0 pnpm e2e:desktop test:playwright
+
+# Debug mode (pauses on each action)
+MOCK=0 PWDEBUG=1 pnpm e2e:desktop test:playwright e2e/desktop/tests/specs/<file>.spec.ts
+```
+
+`MOCK=0` is **always required** — all `e2e/desktop` tests use the Speculos device simulator.
+
+**Important**: pass the full path from the workspace root (`e2e/desktop/tests/specs/<file>.spec.ts`), not just `specs/<file>.spec.ts`.
+
+### CI Validation
+
+```bash
+pnpm --filter ledger-live-desktop-e2e-tests lint       # Lint e2e code
+pnpm --filter ledger-live-desktop-e2e-tests typecheck   # Type-check e2e code
+pnpm --filter ledger-live-desktop lint                  # Lint desktop app (if data-testid was added)
+```
+
+## Environment Variables
+
+| Variable                         | Purpose                                  | Example                            |
+| -------------------------------- | ---------------------------------------- | ---------------------------------- |
+| `MOCK`                           | Must be `0` — all e2e/desktop tests use Speculos | `MOCK=0`                           |
+| `COINAPPS`                       | Path to Speculos coin apps               | `/path/to/coin-apps`               |
+| `SEED`                           | 24-word seed for Speculos                | `abandon abandon ...`              |
+| `SPECULOS_IMAGE_TAG`             | Speculos Docker image                    | `ghcr.io/ledgerhq/speculos:latest` |
+| `SPECULOS_DEVICE`                | Target device model                      | `nanoSP`                           |
+| `DISABLE_TRANSACTION_BROADCAST`  | Skip real broadcast                      | `1`                                |
+| `PWDEBUG`                        | Playwright debug mode                    | `1`                                |
+| `PLAYWRIGHT_CPU_THROTTLING_RATE` | CPU throttle rate                        | `4`                                |
+
+## Device Models
+
+| Tag         | Model ID   | Description        |
+| ----------- | ---------- | ------------------ |
+| `@LNS`      | `nanoS`    | Ledger Nano S      |
+| `@NanoSP`   | `nanoSP`   | Ledger Nano S Plus |
+| `@NanoX`    | `nanoX`    | Ledger Nano X      |
+| `@Stax`     | `stax`     | Ledger Stax        |
+| `@Flex`     | `flex`     | Ledger Flex        |
+| `@NanoGen5` | `nanoGen5` | Ledger NG5         |
