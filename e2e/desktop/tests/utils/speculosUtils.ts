@@ -5,7 +5,6 @@ import {
   stopSpeculos,
   type SpeculosDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
-import invariant from "invariant";
 import * as allure from "allure-js-commons";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
@@ -29,12 +28,38 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
     (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
   );
 
-  const device = await startSpeculos(
-    testTitle ?? "cli_speculos",
-    specs[appName.replace(/ /g, "_")],
+  const specKey = appName.replace(/ /g, "_");
+  const spec = specs[specKey];
+
+  if (!spec) {
+    const availableSpecs = Object.keys(specs).join(", ");
+    throw new Error(
+      `[E2E Setup] No spec found for "${specKey}" (appName="${appName}"). Available specs: [${availableSpecs}]`,
+    );
+  }
+
+  const testLabel = testTitle ?? "cli_speculos";
+
+  console.warn(
+    `[E2E Setup] Starting Speculos for "${specKey}" (test="${testLabel}", port=${speculosPort}, ` +
+      `remote=${process.env.REMOTE_SPECULOS ?? "false"}, model=${spec.appQuery.model}, ` +
+      `appName=${spec.appQuery.appName}, COINAPPS=${process.env.COINAPPS ?? "unset"})`,
   );
 
-  invariant(device, "[E2E Setup] Speculos not started");
+  const device = await startSpeculos(testLabel, spec);
+
+  if (!device) {
+    throw new Error(
+      `[E2E Setup] Speculos not started — startSpeculos returned undefined. ` +
+        `specKey="${specKey}", test="${testLabel}", port=${speculosPort}, ` +
+        `model=${spec.appQuery.model}, appQueryName=${spec.appQuery.appName}, ` +
+        `REMOTE_SPECULOS=${process.env.REMOTE_SPECULOS ?? "false"}, ` +
+        `SPECULOS_ADDRESS=${process.env.SPECULOS_ADDRESS ?? "unset"}, ` +
+        `COINAPPS=${process.env.COINAPPS ?? "unset"}, ` +
+        `SEED=${process.env.SEED ? "set" : "unset"}. ` +
+        `Check logs above for the underlying error from startSpeculos.`,
+    );
+  }
 
   if (process.env.REMOTE_SPECULOS === "true") {
     await waitForSpeculosReady(device.id);
