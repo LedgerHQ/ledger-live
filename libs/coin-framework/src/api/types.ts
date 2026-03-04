@@ -699,6 +699,7 @@ export type BridgeApi<
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
+  validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
 };
 
 export type Api<

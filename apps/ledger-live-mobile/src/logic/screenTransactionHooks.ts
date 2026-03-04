@@ -54,6 +54,8 @@ type Navigation =
     >
   | StackNavigatorNavigation<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
+const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
+
 type Route =
   | StackNavigatorRoute<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorRoute<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
@@ -295,6 +297,9 @@ export function useSignedTxHandler({
         }
 
         const operation = await broadcast(signedOperation).catch((err: Error) => {
+          if (shouldRestartFlow(err)) {
+            throw err;
+          }
           const currency = mainAccount.currency;
           throw createTransactionBroadcastError(err, urls, {
             network: currency.name,

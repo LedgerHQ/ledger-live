@@ -24,6 +24,7 @@ describe.each([
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
       validateIntent: expect.any(Function),
+      validateTransaction: expect.any(Function),
     },
   ],
   [
@@ -48,6 +49,7 @@ describe.each([
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
       validateIntent: expect.any(Function),
+      validateTransaction: expect.any(Function),
       refreshOperations: expect.any(Function),
     },
   ],

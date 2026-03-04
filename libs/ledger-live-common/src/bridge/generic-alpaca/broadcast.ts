@@ -9,10 +9,14 @@ export const genericBroadcast: (
 ) => AccountBridge<GenericTransaction>["broadcast"] =
   (_network, kind) =>
   async ({ signedOperation: { signature, operation }, account, broadcastConfig }) => {
-    const hash = await getAlpacaApi(account.currency.id, kind).broadcast(
-      signature,
-      broadcastConfig,
-    );
+    const api = getAlpacaApi(account.currency.id, kind);
+    if (api.validateTransaction) {
+      const validation = await api.validateTransaction(signature);
+      if (validation.error !== undefined) {
+        throw validation.error;
+      }
+    }
+    const hash = await api.broadcast(signature, broadcastConfig);
 
     return patchOperationWithHash(operation, hash);
   };

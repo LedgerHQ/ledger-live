@@ -1,10 +1,31 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
-import { StepConfirmationFooter } from "./StepConfirmation";
+import StepConfirmation, { StepConfirmationFooter } from "./StepConfirmation";
 import BigNumber from "bignumber.js";
 import { TFunction } from "i18next";
+import { AccountLike } from "@ledgerhq/types-live";
+
+jest.mock("./Confirmation/NodeError", () => ({
+  __esModule: true,
+  default: () => <div data-testid="node-error" />,
+}));
+
+jest.mock("~/renderer/components/ErrorDisplay", () => ({
+  __esModule: true,
+  default: () => <div data-testid="error-display" />,
+}));
 
 const mockT: TFunction = jest.fn((k: string) => k) as unknown as TFunction;
+
+const mockAccount = {
+  type: "Account",
+  id: "mock-account-id",
+  currency: {
+    ticker: "ETH",
+    name: "Ethereum",
+    family: "evm",
+  },
+} as unknown as AccountLike;
 
 const baseProps = {
   t: mockT,
@@ -52,6 +73,35 @@ const baseProps = {
   onFailHandler: jest.fn(),
   currencyName: "Bitcoin",
 };
+
+describe("StepConfirmation", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it.each([
+    {
+      caseName: "is InvalidTransactionError",
+      error: Object.assign(new Error("InvalidTransactionError"), {
+        name: "InvalidTransactionError",
+      }),
+    },
+    {
+      caseName: "wraps InvalidTransactionError in cause",
+      error: Object.assign(new Error("broadcast failed"), {
+        cause: Object.assign(new Error("root cause"), { name: "InvalidTransactionError" }),
+      }),
+    },
+  ])(
+    "renders ErrorDisplay instead of NodeError when signed=true and error $caseName",
+    ({ error }) => {
+      render(<StepConfirmation {...baseProps} signed error={error} account={mockAccount} />);
+
+      expect(screen.getByTestId("error-display")).toBeInTheDocument();
+      expect(screen.queryByTestId("node-error")).not.toBeInTheDocument();
+    },
+  );
+});
 
 describe("StepConfirmationFooter", () => {
   beforeEach(() => {

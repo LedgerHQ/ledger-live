@@ -6685,6 +6685,10 @@
       "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
     },
+    "InvalidTransactionError": {
+      "title": "Invalid transaction",
+      "description": "The transaction doesn't match the blockchain state anymore. Please start the flow again."
+    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"

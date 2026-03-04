@@ -20,6 +20,13 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import AbortButton from "~/renderer/components/AbortButton";
 
+const isInvalidTransactionError = (error: Error) =>
+  error.name === "InvalidTransactionError" ||
+  error.message === "InvalidTransactionError" ||
+  ((error as Error & { cause?: unknown }).cause instanceof Error &&
+    ((error as Error & { cause: Error }).cause.name === "InvalidTransactionError" ||
+      (error as Error & { cause: Error }).cause.message === "InvalidTransactionError"));
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -67,6 +74,10 @@ function StepConfirmation({
       }
     }
 
+    const normalizedError = isInvalidTransactionError(error)
+      ? Object.assign(new Error("InvalidTransactionError"), { name: "InvalidTransactionError" })
+      : error;
+
     const getTicker = (account: AccountLike): string => {
       if (account.type === "TokenAccount") {
         return account.token.ticker;
@@ -75,23 +86,24 @@ function StepConfirmation({
     };
 
     const ticker = getTicker(account as AccountLike);
+    const shouldRenderAsBroadcastError = signed && !isInvalidTransactionError(normalizedError);
 
     return (
-      <Container shouldSpace={signed}>
+      <Container shouldSpace={shouldRenderAsBroadcastError}>
         <TrackPage
           category="Send Flow"
           name="Step Confirmation Error"
           currencyName={currencyName}
         />
-        {signed ? (
+        {shouldRenderAsBroadcastError ? (
           <NodeError
-            error={createTransactionBroadcastError(error, urls, {
+            error={createTransactionBroadcastError(normalizedError, urls, {
               coin: ticker,
               network: String(mainAccount?.currency.name),
             })}
           />
         ) : (
-          <ErrorDisplay error={error} withExportLogs />
+          <ErrorDisplay error={normalizedError} withExportLogs />
         )}
       </Container>
     );
