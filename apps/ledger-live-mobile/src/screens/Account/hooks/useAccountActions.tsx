@@ -23,6 +23,7 @@ import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
+import { useOpenSwap } from "LLM/features/Swap";
 
 type Props = {
   account: AccountLike;
@@ -81,6 +82,12 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const { data: currenciesAll } = useFetchCurrencyAll();
   const availableOnSwap = currency && currenciesAll.includes(currency.id);
+  const { handleOpenSwap } = useOpenSwap({
+    currency,
+    sourceScreenName: route.name,
+    defaultAccount: account,
+    defaultParentAccount: parentAccount,
+  });
 
   const extraSendActionParams = useMemo(
     () =>
@@ -101,24 +108,14 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const actionButtonSwap: ActionButtonEvent = useMemo(
     () => ({
       id: "swap",
-      navigationParams: [
-        NavigatorName.Swap,
-        {
-          screen: ScreenName.SwapTab,
-          params: {
-            defaultAccount: account,
-            defaultCurrency: currency,
-            defaultParentAccount: parentAccount,
-          },
-        },
-      ],
+      customHandler: handleOpenSwap,
       label: t("account.swap", { currency: currency.name }),
       Icon: iconSwap,
       disabled: false,
       event: "Swap Crypto Account Button",
       eventProperties: { currencyName: currency.name },
     }),
-    [currency, account, parentAccount, t],
+    [currency, handleOpenSwap, t],
   );
 
   const actionButtonBuy: ActionButtonEvent = useMemo(
