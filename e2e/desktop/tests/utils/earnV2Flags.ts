@@ -1,7 +1,11 @@
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
+
+export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
+
 export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
+  ...(useLocalEarnManifest && { ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } } }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
   lwdWallet40: {
     enabled: true,
@@ -17,7 +21,7 @@ export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
  * Usage: USE_LOCAL_EARN_MANIFEST=1 pnpm e2e:desktop ...
  */
 export const EARN_LOCAL_MANIFEST: LiveAppManifest = {
-  id: "earn-stg-eks",
+  id: "earn-local-manifest",
   name: "Earn",
   url: "http://localhost:3000",
   homepageUrl: "http://localhost:3000",
@@ -57,7 +61,6 @@ export const EARN_LOCAL_MANIFEST: LiveAppManifest = {
     "custom.navigate",
     "custom.getAccountIdFormats",
   ],
-  domains: ["http://localhost:3000", "http://*", "https://*"],
+  domains: ["http://localhost:3000", "https://*"],
 };
 
-export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";

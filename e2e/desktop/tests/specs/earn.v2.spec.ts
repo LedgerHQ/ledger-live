@@ -32,10 +32,10 @@ function setupEnv(disableBroadcast?: boolean) {
     if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
   test.afterAll(async () => {
-    if (originalBroadcastValue !== undefined) {
-      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
-    } else {
+    if (originalBroadcastValue === undefined) {
       delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    } else {
+      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
     }
   });
 }
@@ -363,7 +363,7 @@ test.describe("Earn [v2]", () => {
         const mockResponse = buildStakesResponse(
           [mockEthNativeStake],
           "ethereum",
-          account.address!,
+          account.address,
         );
         const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
@@ -398,7 +398,7 @@ test.describe("Earn [v2]", () => {
         const mockResponse = buildStakesResponse(
           [mockUsdtMorphoStake],
           "ethereum",
-          account.address!,
+          account.address,
         );
         const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
