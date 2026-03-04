@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import { isEvmTransaction } from "../../utils/isEvmTransaction";
+import { isEvmTransaction } from "../../../../utils/isEvmTransaction";
 import { useEvmGasOptions } from "../../hooks/useEvmGasOptions";
 import { EvmGasOptionsSyncPluginEvm } from "./EvmGasOptionsSyncPluginEvm";
 
