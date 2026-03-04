@@ -79,7 +79,7 @@ const beforeAllFunction = async (swap: SwapType) => {
       },
     ],
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
   const readyPromise = waitSwapReady();
   await app.swap.openViaDeeplink();
   await swapSetup();

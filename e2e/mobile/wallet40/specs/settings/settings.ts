@@ -19,7 +19,7 @@ async function initApp(options: ApplicationOptions) {
     speculosApp: options.speculosApp,
     featureFlags: WALLET40_FEATURE_FLAGS,
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 }
 
 export function runUserClearApplicationCacheTest(
@@ -47,7 +47,7 @@ export function runUserClearApplicationCacheTest(
       await app.settingsHelp.clickOnClearCacheRow();
       await app.settingsHelp.checkClearCacheModalIsDisplayed();
       await app.settingsHelp.clickOnClearCacheButton();
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.portfolio.waitForWallet40PortfolioPageToLoad();
       const countAfterClearingCache = await app.portfolio.countAccounts();
       await app.portfolio.compareAccountsCount(countBeforeClearingCache, countAfterClearingCache);
     });
@@ -110,7 +110,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
       await app.settingsGeneral.changeCounterValue("Euro - EUR");
       await app.settingsGeneral.expectCounterValue("EUR");
       await app.portfolio.openViaDeeplink();
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.portfolio.waitForWallet40PortfolioPageToLoad();
       await app.portfolio.expectTotalBalanceCounterValue("€");
       await app.portfolio.expectBalanceDiffCounterValue("€");
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
@@ -134,7 +134,7 @@ async function initPasswordTest() {
       },
     ],
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 }
 
 async function setupPasswordAndLock(password: string) {

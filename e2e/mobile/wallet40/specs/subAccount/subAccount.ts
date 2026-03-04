@@ -65,7 +65,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
     featureFlags: WALLET40_FEATURE_FLAGS,
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 };
 
 export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
@@ -172,7 +172,7 @@ export function runAddSubAccountTest(testConfig: {
         userdata: "skip-onboarding",
         speculosApp: asset.currency.speculosApp,
       });
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.portfolio.waitForWallet40PortfolioPageToLoad();
     });
 
     tmslinks.forEach(tmsLink => $TmsLink(tmsLink));

@@ -37,7 +37,7 @@ describe("DeepLinks Tests", () => {
         },
       },
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   (isSmokeTestRun ? it.skip : it)("should open My Ledger page", async () => {
@@ -106,7 +106,7 @@ describe("DeepLinks Tests", () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
     await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
     await app.send.sendViaDeeplink(ethereumLong);
     await app.send.expectFirstStep();
     await app.common.expectSearch(ethereumLong);
@@ -143,7 +143,7 @@ describe("DeepLinks Tests", () => {
 
     it("should open from Receive in a selected account", async () => {
       await app.portfolio.openViaDeeplink();
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.portfolio.waitForWallet40PortfolioPageToLoad();
       await app.receive.receiveViaDeeplink(ethereumLong);
       await app.modularDrawer.validateAccountsScreen([Account.ETH_1.accountName]);
     });

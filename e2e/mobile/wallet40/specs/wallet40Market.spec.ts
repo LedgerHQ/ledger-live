@@ -28,7 +28,7 @@ describe("Market page for user with no device", () => {
       ],
       featureFlags: WALLET40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-1880");

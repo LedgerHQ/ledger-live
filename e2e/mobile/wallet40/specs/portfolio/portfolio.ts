@@ -9,7 +9,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
     cliCommands: options.cliCommands,
     featureFlags: WALLET40_FEATURE_FLAGS,
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 }
 export function runPortfolioTransactionsHistoryTest(
   currency: CurrencyType,

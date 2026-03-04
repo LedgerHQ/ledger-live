@@ -18,7 +18,7 @@ describe("Verify Address warnings", () => {
         },
       ],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-1551");

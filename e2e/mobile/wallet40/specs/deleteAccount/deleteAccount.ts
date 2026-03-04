@@ -20,7 +20,7 @@ export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], t
             }),
         ],
       });
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.portfolio.waitForWallet40PortfolioPageToLoad();
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));

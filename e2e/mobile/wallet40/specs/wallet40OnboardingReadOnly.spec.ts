@@ -8,7 +8,7 @@ describe("Onboarding - Read Only", () => {
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseNoLedgerYet();
     await app.onboarding.chooseToExploreApp();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
     await app.portfolio.expectPortfolioReadOnly();
   });
 });

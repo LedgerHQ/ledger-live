@@ -35,7 +35,7 @@ describe.skip("Account name change", () => {
         },
       ],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   it("should persist Account name change after app restart", async () => {
@@ -49,7 +49,7 @@ describe.skip("Account name change", () => {
     await app.common.expectAccountName(newAccountName);
     await device.terminateApp();
     await launchApp();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
     await app.accounts.openViaDeeplink();
     await app.common.expectAccountName(newAccountName);
   });

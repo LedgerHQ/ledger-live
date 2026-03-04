@@ -65,7 +65,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
     },
     cliCommandsOnApp: options.cliCommandsOnApp,
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
   const readyPromise = waitSwapReady();
   await app.swap.openViaDeeplink();
   await swapSetup();

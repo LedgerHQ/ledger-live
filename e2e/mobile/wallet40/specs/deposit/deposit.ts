@@ -31,7 +31,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
     featureFlags: WALLET40_FEATURE_FLAGS,
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 }
 
 export async function runCreateNewAccountAndDepositTest(

@@ -1,5 +1,5 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { verifyAppValidationSendInfo } from "../../models/send";
+import { verifyAppValidationSendInfo } from "../../../models/send";
 
 import { device } from "detox";
 import invariant from "invariant";
@@ -40,7 +40,7 @@ const beforeAllFunction = async (transaction: TransactionType) => {
     ],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 };
 
 const beforeAllInvalidAddressFunction = async (
@@ -80,7 +80,7 @@ const beforeAllInvalidAddressFunction = async (
     ],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 };
 
 export function runSendTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {

@@ -10,7 +10,7 @@ describe("Wallet Page", () => {
       userdata: "speculos-tests-app",
       featureFlags: WALLET40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   testConfig.tmsLinks.forEach(link => $TmsLink(link));

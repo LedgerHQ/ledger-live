@@ -20,7 +20,7 @@ describe("Wallet 4.0 - Portfolio", () => {
         },
       },
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
@@ -64,7 +64,7 @@ describe("Wallet 4.0 - Portfolio", () => {
 
   it("navigates to the swap screen", async () => {
     await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
 
     await app.portfolio.pressQuickActionSwapButton();
     await app.swapLiveApp.expectSwapLiveApp();
@@ -72,7 +72,7 @@ describe("Wallet 4.0 - Portfolio", () => {
 
   it("performs the transfer bottom sheet actions", async () => {
     await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
     await app.portfolio.pressQuickActionTransferButton();
     await app.portfolio.checkTransferBottomSheetReceiveButtonVisibility();
     await app.portfolio.checkTransferBottomSheetSendButtonVisibility();

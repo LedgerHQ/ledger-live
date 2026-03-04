@@ -20,12 +20,12 @@ describe("Receive Flow", () => {
       },
     });
 
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   beforeEach(async () => {
     await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
     await app.portfolio.tapQuickActionReceiveButton();
     await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
   });

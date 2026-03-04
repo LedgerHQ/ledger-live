@@ -103,7 +103,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
         llmAccountListUI: { enabled: true },
       },
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   async function goToLedgerSync(disableSync = false) {

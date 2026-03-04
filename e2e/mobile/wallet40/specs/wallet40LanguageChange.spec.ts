@@ -74,7 +74,7 @@ describe("Change Language", () => {
       ],
       featureFlags: WALLET40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForWallet40PortfolioPageToLoad();
   });
 
   it("should go to General Settings", async () => {

@@ -37,7 +37,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
     ],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.portfolio.waitForWallet40PortfolioPageToLoad();
 };
 
 export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
