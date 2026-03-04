@@ -195,7 +195,9 @@ export const descriptor: CoinDescriptor = {
           if (!isRecord(transaction)) return empty;
 
           const is1559 = isEip1559(transaction);
-          const gasLimit = transaction.gasLimit;
+          const gasLimit = isBigNumber(transaction.customGasLimit)
+            ? transaction.customGasLimit
+            : transaction.gasLimit;
 
           if (is1559) {
             // Try to get from transaction first (if custom values were set)

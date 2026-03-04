@@ -2458,14 +2458,17 @@
       "confirm": "Confirm",
       "maxFee": "Max fee ({{unit}})",
       "maxPriorityFee": "Max priority fee ({{unit}})",
-      "gasLimit": "Gas limit ({{unit}})",
+      "gasLimit": "Gas limit",
       "feePerByte": "Fees amount ({{unit}})",
       "suggested": "Suggested",
       "nextBlock": "Next block",
       "networkFeesInFiat": "Network fees in {{currency}}",
       "invalidValue": "Enter a valid number",
       "belowMinimum": "Minimum is {{min}}",
-      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee",
+      "feeAsset": "Fee asset",
+      "feesAmount": "Fees amount ({{unit}})",
+      "payFeesIn": "Pay fees in"
     },
     "coinControl": {
       "title": "Coin control"
