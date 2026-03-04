@@ -58,6 +58,7 @@ export default class PortfolioPage {
   topBarSettingsButton = "topbar-settings";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
+  wallet40TopBarSettingsButton = async () => getElementById(this.topBarSettingsButton);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
@@ -80,6 +81,11 @@ export default class PortfolioPage {
   @Step("Navigate to Settings")
   async navigateToSettings() {
     await tapByElement(await this.portfolioSettingsButton());
+  }
+
+  @Step("Navigate to Settings (Wallet 4.0)")
+  async navigateToSettingsWallet40() {
+    await tapByElement(await this.wallet40TopBarSettingsButton());
   }
 
   @Step("Wait for portfolio page to load")

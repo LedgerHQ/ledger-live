@@ -237,7 +237,8 @@ jobs:
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
-          test_directory: e2e/mobile
+          test_directory: e2e/mobile/wallet40
+          artifacts_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.filter }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}

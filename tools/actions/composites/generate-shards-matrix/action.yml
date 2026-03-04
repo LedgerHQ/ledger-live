@@ -2,9 +2,13 @@ name: "Generate Shards Matrix"
 description: "Generates iOS and Android test file lists and sharding matrices for E2E tests with pre-computed shard assignments"
 inputs:
   test_directory:
-    description: "Directory containing test files (default: e2e/mobile)"
+    description: "Directory containing test files (default: e2e/mobile/wallet40)"
     required: false
-    default: "e2e/mobile"
+    default: "e2e/mobile/wallet40"
+  artifacts_directory:
+    description: "Directory containing timing artifacts for cache (default: same as test_directory)"
+    required: false
+    default: ""
   test_filter:
     description: "Test name filter (space-separated, optional)"
     required: false
@@ -98,7 +102,7 @@ runs:
       continue-on-error: true
       uses: tespkg/actions-cache/restore@v1
       with:
-        path: ${{ inputs.test_directory }}/artifacts/e2e-test-results-ios.json
+        path: ${{ inputs.artifacts_directory || inputs.test_directory }}/artifacts/e2e-test-results-ios.json
         key: "${{ inputs.ios_timing_cache_key }}"
         accessKey: ${{ inputs.aws_access_key_id }}
         secretKey: ${{ inputs.aws_secret_access_key }}
@@ -113,7 +117,7 @@ runs:
       continue-on-error: true
       uses: tespkg/actions-cache/restore@v1
       with:
-        path: ${{ inputs.test_directory }}/artifacts/e2e-test-results-android.json
+        path: ${{ inputs.artifacts_directory || inputs.test_directory }}/artifacts/e2e-test-results-android.json
         key: "${{ inputs.android_timing_cache_key }}"
         accessKey: ${{ inputs.aws_access_key_id }}
         secretKey: ${{ inputs.aws_secret_access_key }}
