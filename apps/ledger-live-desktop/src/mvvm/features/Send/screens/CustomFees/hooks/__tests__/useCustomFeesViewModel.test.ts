@@ -52,29 +52,49 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCalculate: () => 100,
 }));
 
+const mockCustomFeeConfigs: Record<string, ReturnType<() => unknown>> = {
+  ethereum: {
+    inputs: [
+      { key: "maxPriorityFeePerGas", type: "number", unitLabel: "Gwei" },
+      { key: "maxFeePerGas", type: "number", unitLabel: "Gwei" },
+    ],
+    getInitialValues: () => ({
+      maxPriorityFeePerGas: "2",
+      maxFeePerGas: "10",
+    }),
+    buildTransactionPatch: (values: Record<string, string>) => ({
+      maxPriorityFeePerGas: new BigNumber(values.maxPriorityFeePerGas).times("1e9"),
+      maxFeePerGas: new BigNumber(values.maxFeePerGas).times("1e9"),
+    }),
+  },
+  celo: {
+    inputs: [{ key: "fees", type: "number", unitLabel: "Gwei" }],
+    getInitialValues: () => ({
+      fees: "10",
+    }),
+    buildTransactionPatch: (values: Record<string, string>) => ({
+      fees: new BigNumber(values.fees).times("1e9"),
+    }),
+  },
+};
+
+const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
+  celo: {
+    defaultId: "celo",
+    options: [
+      { id: "celo", ticker: "CELO", label: "Celo", unitLabel: "Gwei" },
+      { id: "cusd", ticker: "cUSD", label: "cUSD", unitLabel: "cUSD" },
+    ],
+  },
+};
+
 jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
   sendFeatures: {
-    getCustomFeeConfig: (currency: CryptoOrTokenCurrency) => {
-      if (currency.id === "ethereum") {
-        return {
-          inputs: [
-            { key: "maxPriorityFeePerGas", type: "number", unitLabel: "Gwei" },
-            { key: "maxFeePerGas", type: "number", unitLabel: "Gwei" },
-          ],
-          getInitialValues: () => ({
-            maxPriorityFeePerGas: "2",
-            maxFeePerGas: "10",
-          }),
-          buildTransactionPatch: (values: Record<string, string>) => ({
-            maxPriorityFeePerGas: new BigNumber(values.maxPriorityFeePerGas).times("1e9"),
-            maxFeePerGas: new BigNumber(values.maxFeePerGas).times("1e9"),
-          }),
-        };
-      }
-      return null;
-    },
+    getCustomFeeConfig: (currency: CryptoOrTokenCurrency) =>
+      mockCustomFeeConfigs[currency.id] ?? null,
     hasCustomAssets: () => false,
-    getCustomAssetsConfig: () => null,
+    getCustomAssetsConfig: (currency: CryptoOrTokenCurrency) =>
+      mockCustomAssetsConfigs[currency.id] ?? null,
   },
 }));
 
@@ -143,6 +163,34 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
       "maxPriorityFeePerGas",
       "maxFeePerGas",
     ]);
+  });
+
+  it("should expose custom fee assets when descriptor provides them", () => {
+    const account = createMockAccount();
+    const transaction = createMockTransaction();
+    const status = createMockStatus();
+    const currency = {
+      id: "celo",
+      name: "Celo",
+      type: "CryptoCurrency",
+    } as unknown as CryptoOrTokenCurrency;
+    const transactionActions = createMockTransactionActions();
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModel({
+        account,
+        parentAccount: null,
+        transaction,
+        status,
+        currency,
+        transactionActions,
+        onConfirm: jest.fn(),
+      }),
+    );
+
+    expect(result.current.hasCustomAssets).toBe(true);
+    expect(result.current.selectedAssetId).toBe("celo");
+    expect(result.current.assetOptions.map(option => option.id)).toEqual(["celo", "cusd"]);
   });
 
   it("should disable confirm when maxFeePerGas is less than maxPriorityFeePerGas", () => {
@@ -311,6 +359,34 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
 
     expect(maxPriorityInput?.error).toBeNull();
     expect(maxFeeInput?.error).toBe("newSendFlow.insufficientBalanceFees");
+  });
+
+  it("should prefer customGasLimit over gasLimit for local fee validation", () => {
+    const account = createMockAccount();
+    const transaction = {
+      ...createMockTransaction(),
+      customGasLimit: new BigNumber("1000000000"),
+    } as Transaction;
+    const status = createMockStatus();
+    const currency = createMockCurrency();
+    const transactionActions = createMockTransactionActions();
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModel({
+        account,
+        parentAccount: null,
+        transaction,
+        status,
+        currency,
+        transactionActions,
+        onConfirm: jest.fn(),
+      }),
+    );
+
+    const maxFeeInput = result.current.inputs.find(input => input.key === "maxFeePerGas");
+
+    expect(maxFeeInput?.error).toBe("newSendFlow.insufficientBalanceFees");
+    expect(result.current.isConfirmDisabled).toBe(true);
   });
 
   it("should not flag insufficient balance in max mode when fees fit the balance", () => {
