@@ -4,14 +4,21 @@ import { Subheader, SubheaderRow, SubheaderTitle, TextInput } from "@ledgerhq/lu
 type AmountInputProps = Readonly<{
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   amount: string | null;
+  errorMessage?: string | null;
+  amountToSendLabel: string;
 }>;
 
-export const AmountInput = ({ onAmountChange, amount }: AmountInputProps) => {
+export const AmountInput = ({
+  onAmountChange,
+  amount,
+  errorMessage,
+  amountToSendLabel,
+}: AmountInputProps) => {
   return (
     <div className="flex flex-col gap-12">
       <Subheader>
         <SubheaderRow>
-          <SubheaderTitle>Amount to send in BTC</SubheaderTitle>
+          <SubheaderTitle>{amountToSendLabel}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
       <TextInput
@@ -19,6 +26,7 @@ export const AmountInput = ({ onAmountChange, amount }: AmountInputProps) => {
         onChange={onAmountChange}
         value={amount ?? ""}
         type="string"
+        errorMessage={errorMessage ?? undefined}
       />
     </div>
   );

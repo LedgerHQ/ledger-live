@@ -133,10 +133,10 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
         data-testid="send-network-fees-row"
       >
         <span className="flex items-center gap-8">
-          <span className="body-2">{feesLabel}</span>
+          <span className="body-3">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="body-2 text-base">{feesValue}</span>
+        <span className="body-3 text-base">{feesValue}</span>
       </div>
     );
   }
@@ -147,7 +147,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
       data-testid="send-network-fees-row"
     >
       <span className="flex items-center gap-8">
-        <span className="body-2">{feesLabel}</span>
+        <span className="body-3">{feesLabel}</span>
         {informationIcon}
       </span>
       <Menu>
@@ -157,7 +157,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
             className="flex items-center gap-8 transition-colors hover:opacity-70"
             data-testid="send-network-fees-menu-trigger"
           >
-            <span className="body-2 text-base">
+            <span className="body-3 text-base">
               {feesValue} • {feesStrategyLabel}
             </span>
             <ChevronUpDown size={16} className="text-muted" />

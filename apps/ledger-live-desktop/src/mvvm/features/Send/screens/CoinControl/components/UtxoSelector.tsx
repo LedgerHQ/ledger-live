@@ -18,9 +18,10 @@ import { bitcoinPickingStrategy, BitcoinPickingStrategy } from "@ledgerhq/coin-b
 type UtxoSelectorProps = Readonly<{
   utxoDisplayData: BitcoinUtxoDisplayData | null;
   strategy?: BitcoinPickingStrategy;
+  coinToSendLabel: string;
 }>;
 
-export const UtxoSelector = ({ utxoDisplayData, strategy }: UtxoSelectorProps) => {
+export const UtxoSelector = ({ utxoDisplayData, strategy, coinToSendLabel }: UtxoSelectorProps) => {
   const rows = utxoDisplayData?.utxoRows ?? [];
 
   const isCustomStrategy = strategy === bitcoinPickingStrategy.CUSTOM;
@@ -29,21 +30,16 @@ export const UtxoSelector = ({ utxoDisplayData, strategy }: UtxoSelectorProps) =
     <div className="flex flex-col gap-12">
       <Subheader>
         <SubheaderRow>
-          <SubheaderTitle>Coin to send</SubheaderTitle>
+          <SubheaderTitle>{coinToSendLabel}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
       <div>
-        {rows.map((row, index) => (
-          <ListItem
-            key={`${row.utxo.hash}-${row.utxo.outputIndex}`}
-            className={row.disabled ? undefined : "cursor-pointer"}
-          >
+        {rows.map(row => (
+          <ListItem key={`${row.utxo.hash}-${row.utxo.outputIndex}`} disabled={row.disabled}>
             <ListItemLeading>
               {isCustomStrategy ? <Checkbox checked={false} /> : null}
               <ListItemContent>
-                <ListItemTitle>
-                  #{index + 1} {row.utxo.address?.slice(0, 8)}...{row.utxo.address?.slice(-4)}{" "}
-                </ListItemTitle>
+                <ListItemTitle>{row.titleLabel}</ListItemTitle>
                 <ListItemDescription>{row.formattedValue}</ListItemDescription>
               </ListItemContent>
             </ListItemLeading>

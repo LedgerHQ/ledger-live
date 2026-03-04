@@ -52,10 +52,18 @@ export function CoinControlScreenInner({
     <>
       <CoinControlScreenView
         utxoDisplayData={viewModel.utxoDisplayData}
+        strategyOptionsWithLabels={viewModel.strategyOptionsWithLabels}
         changeToReturnFormatted={viewModel.changeToReturnFormatted}
         onSelectStrategy={viewModel.onSelectStrategy}
         amountValue={viewModel.amountValue}
         onAmountChange={viewModel.onAmountChange}
+        amountError={viewModel.amountError}
+        strategyLabel={viewModel.strategyLabel}
+        learnMoreLabel={viewModel.learnMoreLabel}
+        coinToSendLabel={viewModel.coinToSendLabel}
+        changeToReturnLabel={viewModel.changeToReturnLabel}
+        enterAmountPlaceholder={viewModel.enterAmountPlaceholder}
+        amountToSendLabel={viewModel.amountToSendLabel}
         feesRowLabel={viewModel.feesRowLabel}
         feesRowValue={viewModel.feesRowValue}
         feesRowStrategyLabel={viewModel.feesRowStrategyLabel}

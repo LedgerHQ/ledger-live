@@ -9,12 +9,22 @@ import { UtxoSelector } from "./UtxoSelector";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { BitcoinUtxoDisplayData } from "../hooks/useBitcoinUtxoDisplayData";
 
+type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
+
 type CoinControlScreenViewProps = Readonly<{
   utxoDisplayData: BitcoinUtxoDisplayData | null;
+  strategyOptionsWithLabels: readonly StrategyOptionWithLabel[];
   changeToReturnFormatted: string;
   onSelectStrategy: (value: string) => void;
   amountValue: string | null;
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  amountError: string | undefined;
+  strategyLabel: string;
+  learnMoreLabel: string;
+  coinToSendLabel: string;
+  changeToReturnLabel: string;
+  enterAmountPlaceholder: string;
+  amountToSendLabel: string;
   feesRowLabel: string;
   feesRowValue: string;
   feesRowStrategyLabel: string;
@@ -33,10 +43,18 @@ type CoinControlScreenViewProps = Readonly<{
 
 export function CoinControlScreenView({
   utxoDisplayData,
+  strategyOptionsWithLabels,
   changeToReturnFormatted,
   onSelectStrategy,
   amountValue,
   onAmountChange,
+  amountError,
+  strategyLabel,
+  learnMoreLabel,
+  coinToSendLabel,
+  changeToReturnLabel,
+  enterAmountPlaceholder,
+  amountToSendLabel,
   feesRowLabel,
   feesRowValue,
   feesRowStrategyLabel,
@@ -57,18 +75,28 @@ export function CoinControlScreenView({
       <DialogBody scrollbarWidth="auto" className="flex flex-col gap-12">
         <StrategySelect
           value={utxoDisplayData?.pickingStrategyValue?.toString() ?? ""}
-          options={utxoDisplayData?.pickingStrategyOptions ?? []}
+          options={strategyOptionsWithLabels}
           onValueChange={onSelectStrategy}
+          strategyLabel={strategyLabel}
+          learnMoreLabel={learnMoreLabel}
         />
-        <AmountInput onAmountChange={onAmountChange} amount={amountValue} />
+        <AmountInput
+          onAmountChange={onAmountChange}
+          amount={amountValue}
+          errorMessage={amountError}
+          amountToSendLabel={amountToSendLabel}
+        />
         <UtxoSelector
           utxoDisplayData={utxoDisplayData}
           strategy={utxoDisplayData?.pickingStrategyValue}
+          coinToSendLabel={coinToSendLabel}
         />
       </DialogBody>
 
       <CoinControlFooter
         changeToReturnFormatted={changeToReturnFormatted}
+        changeToReturnLabel={changeToReturnLabel}
+        enterAmountPlaceholder={enterAmountPlaceholder}
         feesRowLabel={feesRowLabel}
         feesRowValue={feesRowValue}
         feesRowStrategyLabel={feesRowStrategyLabel}

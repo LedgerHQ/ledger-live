@@ -10,8 +10,6 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { BigNumber } from "bignumber.js";
 import { useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { localeSelector } from "~/renderer/reducers/settings";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 function isBitcoinBasedAccount(account: AccountLike): account is BitcoinAccount {
@@ -33,6 +31,7 @@ export type PickingStrategyOption = Readonly<{
 
 export type UtxoRowDisplayData = Readonly<{
   utxo: BitcoinOutput;
+  titleLabel: string;
   formattedValue: string;
   excluded: boolean;
   exclusionReason: "pickPendingUtxo" | "userExclusion" | undefined;
@@ -47,6 +46,7 @@ export type UseBitcoinUtxoDisplayDataParams = Readonly<{
   account: AccountLike;
   transaction: Transaction;
   status: TransactionStatus;
+  locale: string;
 }>;
 
 export type BitcoinUtxoDisplayData = Readonly<{
@@ -68,6 +68,53 @@ const pickingStrategyOptions: readonly PickingStrategyOption[] = pickingStrategy
   labelKey: `bitcoin.pickingStrategyLabels.${key}`,
 }));
 
+function utxoToRowDisplayData(
+  utxo: BitcoinOutput,
+  context: Readonly<{
+    rowIndex: number;
+    utxoStrategy: BitcoinTransaction["utxoStrategy"];
+    txInputs: BitcoinTransactionStatus["txInputs"];
+    totalExcludedUTXOS: number;
+    utxosLength: number;
+    blockHeight: number;
+    accountUnit: BitcoinAccount["currency"]["units"][0];
+    locale: string;
+  }>,
+): UtxoRowDisplayData {
+  const s = getUTXOStatus(utxo, context.utxoStrategy);
+  const exclusionReason = s.excluded ? s.reason : undefined;
+  const isUsedInTx = (context.txInputs ?? []).some(
+    input => input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
+  );
+  const unconfirmed = exclusionReason === "pickPendingUtxo";
+  const isLastSelected = !s.excluded && context.totalExcludedUTXOS + 1 === context.utxosLength;
+  const disabled = unconfirmed || isLastSelected;
+  const confirmations = utxo.blockHeight ? context.blockHeight - utxo.blockHeight : 0;
+
+  const formattedValue = formatCurrencyUnit(context.accountUnit, utxo.value, {
+    showCode: true,
+    disableRounding: true,
+    locale: context.locale,
+  });
+
+  const address = utxo.address ?? "";
+  const titleLabel =
+    `#${context.rowIndex + 1} ${address ? `${address.slice(0, 8)}...${address.slice(-4)}` : ""}`.trim();
+
+  return {
+    utxo,
+    titleLabel,
+    formattedValue,
+    excluded: s.excluded,
+    exclusionReason,
+    isUsedInTx,
+    unconfirmed,
+    isLastSelected,
+    disabled,
+    confirmations,
+  };
+}
+
 /**
  * Fetches all parameters needed to display Bitcoin UTXO rows and the picking strategy selector,
  * derived from account bitcoin resources, transaction utxoStrategy, and status.
@@ -77,9 +124,8 @@ export function useBitcoinUtxoDisplayData({
   account,
   transaction,
   status,
+  locale,
 }: UseBitcoinUtxoDisplayDataParams): BitcoinUtxoDisplayData | null {
-  const locale = useSelector(localeSelector);
-
   return useMemo(() => {
     if (!isBitcoinBasedAccount(account)) return null;
     if (!hasUtxoStrategy(transaction)) return null;
@@ -97,36 +143,18 @@ export function useBitcoinUtxoDisplayData({
 
     const txInputs = status.txInputs ?? [];
 
-    const utxoRows: UtxoRowDisplayData[] = utxos.map(utxo => {
-      const s = getUTXOStatus(utxo, utxoStrategy);
-      const exclusionReason = s.excluded ? s.reason : undefined;
-      const isUsedInTx = txInputs.some(
-        input =>
-          input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
-      );
-      const unconfirmed = exclusionReason === "pickPendingUtxo";
-      const isLastSelected = !s.excluded && totalExcludedUTXOS + 1 === utxos.length;
-      const disabled = unconfirmed || isLastSelected;
-      const confirmations = utxo.blockHeight ? blockHeight - utxo.blockHeight : 0;
-
-      const formattedValue = formatCurrencyUnit(accountUnit, utxo.value, {
-        showCode: true,
-        disableRounding: true,
+    const utxoRows: UtxoRowDisplayData[] = utxos.map((utxo, rowIndex) =>
+      utxoToRowDisplayData(utxo, {
+        rowIndex,
+        utxoStrategy,
+        txInputs,
+        totalExcludedUTXOS,
+        utxosLength: utxos.length,
+        blockHeight,
+        accountUnit,
         locale,
-      });
-
-      return {
-        utxo,
-        formattedValue,
-        excluded: s.excluded,
-        exclusionReason,
-        isUsedInTx,
-        unconfirmed,
-        isLastSelected,
-        disabled,
-        confirmations,
-      };
-    });
+      }),
+    );
 
     return {
       pickingStrategyOptions,

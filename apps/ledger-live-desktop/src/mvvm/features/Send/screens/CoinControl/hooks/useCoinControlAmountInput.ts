@@ -2,10 +2,8 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/acc
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { localeSelector } from "~/renderer/reducers/settings";
 import { formatAmountForInput, processRawInput } from "../../../utils/amountInput";
 
 type UseAmountInputParams = Readonly<{
@@ -14,17 +12,17 @@ type UseAmountInputParams = Readonly<{
   transaction: Transaction;
   status: TransactionStatus;
   onUpdateTransaction: (patch: Partial<Transaction>) => void;
+  locale: string;
 }>;
 
-export function useAmountInput({
+export function useCoinControlAmountInput({
   account,
   parentAccount,
   transaction,
   status,
   onUpdateTransaction,
+  locale,
 }: UseAmountInputParams) {
-  const locale = useSelector(localeSelector);
-
   const mainAccount = useMemo(
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],

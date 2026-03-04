@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -12,24 +11,32 @@ import {
   SubheaderAction,
   Link,
 } from "@ledgerhq/lumen-ui-react";
-import type { PickingStrategyOption } from "../hooks/useBitcoinUtxoDisplayData";
+
+type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 
 type StrategySelectProps = Readonly<{
   onValueChange: (value: string) => void;
-  options: readonly PickingStrategyOption[];
+  options: readonly StrategyOptionWithLabel[];
   value: string;
+  strategyLabel: string;
+  learnMoreLabel: string;
 }>;
 
-export const StrategySelect = ({ onValueChange, options, value }: StrategySelectProps) => {
-  const { t } = useTranslation();
+export const StrategySelect = ({
+  onValueChange,
+  options,
+  value,
+  strategyLabel,
+  learnMoreLabel,
+}: StrategySelectProps) => {
   return (
     <div className="flex flex-col gap-12">
       <Subheader>
         <SubheaderRow className="px-8">
-          <SubheaderTitle>Strategy</SubheaderTitle>
+          <SubheaderTitle>{strategyLabel}</SubheaderTitle>
           <SubheaderAction onClick={() => {}}>
             <Link href="#" appearance="accent" underline={false} size="md">
-              Learn more
+              {learnMoreLabel}
             </Link>
           </SubheaderAction>
         </SubheaderRow>
@@ -39,7 +46,7 @@ export const StrategySelect = ({ onValueChange, options, value }: StrategySelect
         <SelectContent>
           {options.map(option => (
             <SelectItem key={option.value} value={String(option.value)}>
-              <SelectItemText>{t(option.labelKey)}</SelectItemText>
+              <SelectItemText>{option.label}</SelectItemText>
             </SelectItem>
           ))}
         </SelectContent>

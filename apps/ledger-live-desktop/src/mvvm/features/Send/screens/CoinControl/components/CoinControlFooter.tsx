@@ -10,6 +10,8 @@ import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 
 type AmountFooterProps = Readonly<{
   changeToReturnFormatted: string;
+  changeToReturnLabel: string;
+  enterAmountPlaceholder: string;
   feesRowLabel: string;
   feesRowValue: string;
   feesRowStrategyLabel: string;
@@ -29,6 +31,8 @@ type AmountFooterProps = Readonly<{
 
 export function CoinControlFooter({
   changeToReturnFormatted,
+  changeToReturnLabel,
+  enterAmountPlaceholder,
   feesRowLabel,
   feesRowValue,
   feesRowStrategyLabel,
@@ -58,7 +62,11 @@ export function CoinControlFooter({
   return (
     <DialogFooter data-testid="send-coin-control-footer" className="flex flex-col">
       <div className="border-t border-muted-subtle" />
-      <ChangeToReturn value={changeToReturnFormatted} />
+      <ChangeToReturn
+        value={changeToReturnFormatted}
+        changeToReturnLabel={changeToReturnLabel}
+        enterAmountPlaceholder={enterAmountPlaceholder}
+      />
       <NetworkFeesMenu
         display={{
           label: feesRowLabel,

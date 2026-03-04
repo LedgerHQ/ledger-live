@@ -11,12 +11,13 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBridgeError";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
-import { useAmountInput } from "./useAmountInput";
+import { useCoinControlAmountInput } from "./useCoinControlAmountInput";
 import { useBitcoinUtxoDisplayData } from "./useBitcoinUtxoDisplayData";
 
 type StatusWithTxOutputs = TransactionStatus & {
@@ -98,6 +99,11 @@ export function useCoinControlScreenViewModel({
     transactionActions,
   });
 
+  const amountErrorTranslated = useTranslatedBridgeError(status.errors?.amount);
+  const isAmountRequiredError = status.errors?.amount?.name === "AmountRequired";
+  const amountError =
+    amountErrorTranslated && !isAmountRequiredError ? amountErrorTranslated.title : undefined;
+
   const hasInsufficientFundsError = useMemo(() => {
     if (!status.errors?.amount) return false;
     const errorName = status.errors.amount.name;
@@ -122,18 +128,20 @@ export function useCoinControlScreenViewModel({
     ? t("newSendFlow.getCta", { currency: accountCurrency?.ticker ?? "CRYPTO" })
     : t("newSendFlow.reviewCta");
 
-  const amountInput = useAmountInput({
+  const amountInput = useCoinControlAmountInput({
     account,
     parentAccount,
     transaction,
     status,
     onUpdateTransaction: updateTransactionWithPatch,
+    locale,
   });
 
   const utxoDisplayData = useBitcoinUtxoDisplayData({
     account,
     transaction,
     status,
+    locale,
   });
 
   const changeToReturnFormatted = useMemo(() => {
@@ -169,16 +177,31 @@ export function useCoinControlScreenViewModel({
     [transaction, updateTransactionWithPatch],
   );
 
+  const strategyOptionsWithLabels = useMemo(() => {
+    const options = utxoDisplayData?.pickingStrategyOptions ?? [];
+    return options.map(opt => ({ value: opt.value, label: t(opt.labelKey) }));
+  }, [utxoDisplayData?.pickingStrategyOptions, t]);
+
   return {
     amountValue: amountInput.amountValue,
     onAmountChange: amountInput.onAmountChange,
+    amountError,
     utxoDisplayData,
+    strategyOptionsWithLabels,
     changeToReturnFormatted,
     onSelectStrategy,
     reviewLabel,
     reviewShowIcon: !hasInsufficientFundsError,
     reviewDisabled,
     reviewLoading: amountComputationPending,
+    strategyLabel: t("newSendFlow.coinControl.strategy"),
+    learnMoreLabel: t("newSendFlow.coinControl.learnMore"),
+    coinToSendLabel: t("newSendFlow.coinControl.coinToSend"),
+    changeToReturnLabel: t("newSendFlow.coinControl.changeToReturn"),
+    enterAmountPlaceholder: t("newSendFlow.coinControl.enterAmount"),
+    amountToSendLabel: t("newSendFlow.coinControl.amountToSendInCurrency", {
+      ticker: accountCurrency?.ticker ?? "CRYPTO",
+    }),
     ...networkFees,
   };
 }
