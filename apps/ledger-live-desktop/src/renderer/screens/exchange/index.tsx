@@ -122,6 +122,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
         }}
       >
         <WebPTXPlayer
+          basePath="/exchange"
           manifest={manifest}
           inputs={{
             theme: themeType,

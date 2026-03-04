@@ -33,7 +33,12 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
 
-export default function WebPTXPlayer({ manifest, inputs, Loader }: WebviewProps) {
+export type WebPTXPlayerProps = WebviewProps & {
+  /** Base route path for this player (e.g. "/card", "/exchange"). Used for redirect navigation. */
+  basePath: string;
+};
+
+export default function WebPTXPlayer({ manifest, inputs, Loader, basePath }: WebPTXPlayerProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const { mobileView, setMobileView } = useMobileView();
@@ -58,6 +63,7 @@ export default function WebPTXPlayer({ manifest, inputs, Loader }: WebviewProps)
           webviewState={webviewState}
           mobileView={mobileView}
           setMobileView={setMobileView}
+          basePath={basePath}
         />
         <WebViewWrapper mobileView={mobileView}>
           <Web3AppWebview
