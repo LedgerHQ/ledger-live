@@ -8,8 +8,8 @@ import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import ERC20ABI from "../abis/erc20.abi.json";
 import { getNodeApi } from "../network/node";
+import { getErc20Data } from "./getErc20Data";
 import { buildStakingTransactionParams } from "../staking";
 import {
   ApiFeeData,
@@ -90,11 +90,7 @@ export function isEip55Address(address: string): boolean {
   }
 }
 
-export function getErc20Data(recipient: string, amount: bigint): Buffer {
-  const contract = new ethers.Interface(ERC20ABI);
-  const data = contract.encodeFunctionData("transfer", [recipient, amount]);
-  return Buffer.from(data.slice(2), "hex");
-}
+export { getErc20Data } from "./getErc20Data";
 
 export function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
   const data = intent.data?.value;
