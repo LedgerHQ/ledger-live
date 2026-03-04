@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import type { FeePresetOption } from "../hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "../hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "../hooks/useFeePresetLegends";
+import type { FeePresetOption } from "../../../hooks/useFeePresetOptions";
+import type { FeeFiatMap } from "../../../hooks/useFeePresetFiatValues";
+import type { FeePresetLegendMap } from "../../../hooks/useFeePresetLegends";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
 
