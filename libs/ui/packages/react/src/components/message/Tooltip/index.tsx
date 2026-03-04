@@ -1,5 +1,4 @@
-import React, { forwardRef } from "react";
-import { isForwardRef } from "react-is";
+import React, { useRef } from "react";
 import Tippy, { TippyProps } from "@tippyjs/react";
 import Text from "../../asorted/Text";
 
@@ -27,45 +26,24 @@ export interface Props extends TippyProps {
   placement?: Placement;
 }
 
-// Tippyjs need the ref to be forwarded to the DOM element wrapping the children.
-// This component has been created to add a wrapping span and use its ref when needed.
-// See: https://github.com/atomiks/tippyjs-react#component-children
-const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRef(
-  (props, ref: React.LegacyRef<HTMLElement>) => {
-    const childrenCount = React.Children.count(props.children);
-
-    try {
-      const child = React.Children.only(props.children);
-      const isValidElement = React.isValidElement(child);
-      const isForwardingRef = isForwardRef(child);
-      const isDomElement = isValidElement && typeof child.type === "string";
-
-      if (isForwardingRef || isDomElement) {
-        return React.cloneElement(child, { ref } as React.Attributes & {
-          ref?: React.Ref<HTMLElement>;
-        });
-      } else {
-        return <span ref={ref}>{props.children}</span>;
-      }
-    } catch {
-      return childrenCount < 1 ? null : <span ref={ref}>{props.children}</span>;
-    }
-  },
-);
-
 export default function Tooltip(props: Readonly<Props>): React.JSX.Element | null {
   const { content, placement = "auto", children, ...rest } = props;
+  const triggerRef = useRef<HTMLSpanElement>(null);
   return (
-    <Tippy
-      {...rest}
-      placement={placement}
-      content={
-        <Text fontWeight="medium" variant={"paragraph"} color="neutral.c00">
-          {content}
-        </Text>
-      }
-    >
-      <Wrapper children={children} />
-    </Tippy>
+    <>
+      <span ref={triggerRef} style={{ display: "inline-flex" }}>
+        {children}
+      </span>
+      <Tippy
+        {...rest}
+        reference={triggerRef as React.RefObject<Element>}
+        placement={placement}
+        content={
+          <Text fontWeight="medium" variant={"paragraph"} color="neutral.c00">
+            {content}
+          </Text>
+        }
+      />
+    </>
   );
 }
