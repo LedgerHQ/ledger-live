@@ -1,6 +1,13 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import { counterValueFormatter } from ".";
+import {
+  counterValueFormatter,
+  getDateFormatter,
+  getAnalyticsProperties,
+  isDataStale,
+  getCurrentPage,
+} from ".";
+import { Order } from "@ledgerhq/live-common/market/utils/types";
 import en from "~/locales/en/common.json";
 
 beforeAll(async () => {
@@ -233,5 +240,151 @@ describe("counterValueFormatter", () => {
       });
       expect(result).toBeDefined();
     });
+  });
+});
+
+describe("getDateFormatter", () => {
+  it("should return a DateTimeFormat for 24h interval", () => {
+    const formatter = getDateFormatter("en-US", "24h");
+    expect(formatter).toBeInstanceOf(Intl.DateTimeFormat);
+    const parts = formatter.formatToParts(new Date(2024, 0, 15, 14, 30));
+    const partTypes = parts.map(p => p.type);
+    expect(partTypes).toContain("hour");
+    expect(partTypes).toContain("minute");
+  });
+
+  it("should return a DateTimeFormat for 7d interval", () => {
+    const formatter = getDateFormatter("en-US", "7d");
+    const parts = formatter.formatToParts(new Date(2024, 0, 15, 14, 30));
+    const partTypes = parts.map(p => p.type);
+    expect(partTypes).toContain("year");
+    expect(partTypes).toContain("month");
+    expect(partTypes).toContain("day");
+    expect(partTypes).toContain("hour");
+  });
+
+  it("should return a DateTimeFormat for 30d interval", () => {
+    const formatter = getDateFormatter("en-US", "30d");
+    const parts = formatter.formatToParts(new Date(2024, 0, 15));
+    const partTypes = parts.map(p => p.type);
+    expect(partTypes).toContain("month");
+    expect(partTypes).toContain("day");
+  });
+
+  it("should fall back to default formatter for unknown intervals", () => {
+    const formatter = getDateFormatter("en-US", "unknown");
+    const defaultFormatter = getDateFormatter("en-US", "default");
+    expect(formatter).toBe(defaultFormatter);
+  });
+
+  it("should cache formatters per locale", () => {
+    const first = getDateFormatter("en-US", "24h");
+    const second = getDateFormatter("en-US", "24h");
+    expect(first).toBe(second);
+  });
+
+  it("should create separate formatters for different locales", () => {
+    const usFormatter = getDateFormatter("en-US", "24h");
+    const frFormatter = getDateFormatter("fr-FR", "24h");
+    expect(usFormatter).not.toBe(frFormatter);
+  });
+});
+
+describe("getAnalyticsProperties", () => {
+  it("should return correct shape with order and range", () => {
+    const result = getAnalyticsProperties({
+      order: Order.MarketCapDesc,
+      range: "24h",
+      counterCurrency: "usd",
+      liveCompatible: false,
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        access: false,
+        sort: expect.any(String),
+        "%change": "24h",
+        countervalue: "usd",
+        view: "All coins",
+      }),
+    );
+  });
+
+  it("should set view to 'Only Live Supported' when liveCompatible is true", () => {
+    const result = getAnalyticsProperties({
+      order: Order.MarketCapDesc,
+      range: "24h",
+      counterCurrency: "usd",
+      liveCompatible: true,
+    });
+
+    expect(result.view).toBe("Only Live Supported");
+  });
+
+  it("should not include sort when order is missing", () => {
+    const result = getAnalyticsProperties({
+      range: "24h",
+      counterCurrency: "usd",
+    });
+
+    expect(result).not.toHaveProperty("sort");
+  });
+
+  it("should not include sort when range is missing", () => {
+    const result = getAnalyticsProperties({
+      order: Order.MarketCapDesc,
+      counterCurrency: "usd",
+    });
+
+    expect(result).not.toHaveProperty("sort");
+  });
+
+  it("should merge otherProperties into the result", () => {
+    const result = getAnalyticsProperties(
+      { order: Order.MarketCapDesc, range: "24h", counterCurrency: "usd" },
+      { currencies: ["bitcoin", "ethereum"] },
+    );
+
+    expect(result).toHaveProperty("currencies", ["bitcoin", "ethereum"]);
+  });
+});
+
+describe("isDataStale", () => {
+  it("should return true when elapsed time exceeds refreshRate", () => {
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+    const threeMinuteRate = 3 * 60 * 1000;
+    expect(isDataStale(fiveMinutesAgo, threeMinuteRate)).toBe(true);
+  });
+
+  it("should return false when elapsed time is within refreshRate", () => {
+    const oneMinuteAgo = Date.now() - 1 * 60 * 1000;
+    const threeMinuteRate = 3 * 60 * 1000;
+    expect(isDataStale(oneMinuteAgo, threeMinuteRate)).toBe(false);
+  });
+
+  it("should return false when lastUpdate is now", () => {
+    expect(isDataStale(Date.now(), 60000)).toBe(false);
+  });
+});
+
+describe("getCurrentPage", () => {
+  it("should return page 1 for index 0", () => {
+    expect(getCurrentPage(0, 50)).toBe(1);
+  });
+
+  it("should return page 1 for index 49 with pageSize 50", () => {
+    expect(getCurrentPage(49, 50)).toBe(1);
+  });
+
+  it("should return page 2 for index 50 with pageSize 50", () => {
+    expect(getCurrentPage(50, 50)).toBe(2);
+  });
+
+  it("should return page 3 for index 100 with pageSize 50", () => {
+    expect(getCurrentPage(100, 50)).toBe(3);
+  });
+
+  it("should handle pageSize of 10", () => {
+    expect(getCurrentPage(25, 10)).toBe(3);
   });
 });
