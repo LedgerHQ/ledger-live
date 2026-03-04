@@ -157,7 +157,7 @@ export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
   ...getInitialLanguageAndLocale(),
-  theme: null,
+  theme: "dark",
   region: null,
   orderAccounts: "balance|desc",
   countervalueFirst: false,
