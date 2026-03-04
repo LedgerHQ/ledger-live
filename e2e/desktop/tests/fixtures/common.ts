@@ -138,10 +138,12 @@ export const test = base.extend<TestFixtures>({
       ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
 
-    const localManifestData = localManifestOverride?.length
-      ? { data: { discover: { localLiveApp: localManifestOverride } } }
-      : {};
-    const userData = merge({ data: { settings } }, fileUserData, localManifestData);
+    const userData = merge({ data: { settings } }, fileUserData);
+    if (localManifestOverride?.length) {
+      userData.data = userData.data || {};
+      userData.data.discover = userData.data.discover || {};
+      userData.data.discover.localLiveApp = localManifestOverride;
+    }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     if (extraUserdataFiles) {
       await Promise.all(

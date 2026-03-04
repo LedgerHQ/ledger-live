@@ -26,7 +26,8 @@ export class EarnPage extends WebViewAppPage {
   private readonly rewardsSummary = "rewards-summary";
   private readonly tokensToEarnBanner = "tokens-to-earn-banner";
   private readonly footerDisclaimer = "footer-disclaimer";
-  private readonly assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker.toLowerCase()}`;
+  private readonly assetItemTicker = (ticker: string) =>
+    `asset-item-ticker-${ticker.toLowerCase()}`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDrawer = new ModularDrawer(this.page);

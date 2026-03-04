@@ -360,11 +360,7 @@ test.describe("Earn [v2]", () => {
       { tag: getTags(account) },
       async ({ app, electronApp, page }) => {
         // Mock the earn API to return an ETH native staking position
-        const mockResponse = buildStakesResponse(
-          [mockEthNativeStake],
-          "ethereum",
-          account.address,
-        );
+        const mockResponse = buildStakesResponse([mockEthNativeStake], "ethereum", account.address ?? "");
         const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await interceptReady;
@@ -398,7 +394,7 @@ test.describe("Earn [v2]", () => {
         const mockResponse = buildStakesResponse(
           [mockUsdtMorphoStake],
           "ethereum",
-          account.address,
+          account.address ?? "",
         );
         const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
