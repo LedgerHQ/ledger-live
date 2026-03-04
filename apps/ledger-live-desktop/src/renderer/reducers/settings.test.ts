@@ -239,6 +239,11 @@ describe("filterValidSettings", () => {
 });
 
 describe("FETCH_SETTINGS action", () => {
+  it("should default the desktop small-value filter to OFF with a 0.5 threshold", () => {
+    expect(SETTINGS_INITIAL_STATE.filterTokenOperationsZeroAmount).toBe(false);
+    expect(SETTINGS_INITIAL_STATE.filterTokenOperationsThreshold).toBe(0.5);
+  });
+
   it("should filter out unknown fields when fetching settings", () => {
     const initialState = SETTINGS_INITIAL_STATE;
     const importedSettings = {
@@ -285,6 +290,48 @@ describe("FETCH_SETTINGS action", () => {
     expect(newState.hideEmptyTokenAccounts).toBe(false);
     expect(newState.loaded).toBe(true);
     expect("oldField" in newState).toBe(false);
+  });
+
+  it("should migrate legacy enabled zero-value filter to a zero threshold", () => {
+    const action = {
+      type: "FETCH_SETTINGS" as const,
+      payload: {
+        filterTokenOperationsZeroAmount: true,
+      } as Partial<SettingsState>,
+    };
+
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+
+    expect(newState.filterTokenOperationsZeroAmount).toBe(true);
+    expect(newState.filterTokenOperationsThreshold).toBe(0);
+  });
+
+  it("should keep the default threshold for users without the legacy filter enabled", () => {
+    const action = {
+      type: "FETCH_SETTINGS" as const,
+      payload: {
+        filterTokenOperationsZeroAmount: false,
+      } as Partial<SettingsState>,
+    };
+
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+
+    expect(newState.filterTokenOperationsZeroAmount).toBe(false);
+    expect(newState.filterTokenOperationsThreshold).toBe(0.5);
+  });
+
+  it("should cap persisted thresholds above 0.5 during migration", () => {
+    const action = {
+      type: "FETCH_SETTINGS" as const,
+      payload: {
+        filterTokenOperationsZeroAmount: true,
+        filterTokenOperationsThreshold: 1,
+      } as Partial<SettingsState>,
+    };
+
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+
+    expect(newState.filterTokenOperationsThreshold).toBe(0.5);
   });
 });
 

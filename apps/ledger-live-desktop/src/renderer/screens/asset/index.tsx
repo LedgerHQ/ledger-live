@@ -8,6 +8,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
+import { useSmallValueOperationsFilter } from "~/renderer/hooks/useSmallValueOperationsFilter";
 import AccountDistribution from "./AccountDistribution";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import BalanceSummary from "./BalanceSummary";
@@ -20,6 +21,7 @@ import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+
 export default function AssetPage() {
   const { "*": assetId } = useParams<{ "*": string }>();
   const { t } = useTranslation();
@@ -28,6 +30,7 @@ export default function AssetPage() {
   const counterValue = useSelector(counterValueCurrencySelector);
   const countervalueFirst = useSelector(countervalueFirstSelector);
   const allAccounts = useSelector(accountsSelector);
+  const { filterOperations } = useSmallValueOperationsFilter();
 
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
@@ -68,6 +71,7 @@ export default function AssetPage() {
           accounts={accounts}
           title={t("dashboard.recentActivity")}
           withAccount
+          filterOperation={filterOperations}
           t={t}
         />
       </Box>

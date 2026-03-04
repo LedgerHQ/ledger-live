@@ -1,11 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Navigate, useParams } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -14,15 +13,13 @@ import {
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
 import { findAccountById, findSubAccountByIdWithFallback } from "~/renderer/utils";
-import {
-  setCountervalueFirst,
-  useFilterTokenOperationsZeroAmount,
-} from "~/renderer/actions/settings";
+import { setCountervalueFirst } from "~/renderer/actions/settings";
 import { countervalueFirstSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
+import { useSmallValueOperationsFilter } from "~/renderer/hooks/useSmallValueOperationsFilter";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
 import { AccountWarningBanner, AccountWarningCustomBanner } from "./AccountWarningBanner";
@@ -30,11 +27,10 @@ import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHead
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
-import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
-import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 
 type Params = {
   id?: string;
@@ -91,25 +87,7 @@ const AccountPage = ({
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;
   const bgColor = useTheme().colors.background.card;
-  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: shouldFilterTokenOpsZeroAmount,
-  });
-
-  const filterOperations = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      const isOperationPoisoned = isAddressPoisoningOperation(
-        operation,
-        account,
-        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-      );
-
-      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
-
-      return shouldFilterOperation;
-    },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
-  );
+  const { filterOperations } = useSmallValueOperationsFilter();
 
   const currency = mainAccount?.currency;
 

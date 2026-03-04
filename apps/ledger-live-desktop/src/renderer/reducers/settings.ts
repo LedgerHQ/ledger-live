@@ -86,6 +86,7 @@ export type SettingsState = {
   mevProtection: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  filterTokenOperationsThreshold: number;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
   starredAccountIds?: string[];
@@ -176,7 +177,8 @@ export const INITIAL_STATE: SettingsState = {
   accountsViewMode: "list",
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
-  filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
+  filterTokenOperationsZeroAmount: false,
+  filterTokenOperationsThreshold: 0.5,
   sidebarCollapsed: false,
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
@@ -309,6 +311,34 @@ export function filterValidSettings(
   ) as Partial<SettingsState>;
 }
 
+function migrateSmallValueFilterSettings(settings: Partial<SettingsState>): Partial<SettingsState> {
+  const normalizeThreshold = (threshold: number, fallback: number) =>
+    Number.isFinite(threshold) ? Math.min(0.5, Math.max(0, threshold)) : fallback;
+  const hasThreshold = "filterTokenOperationsThreshold" in settings;
+  const threshold =
+    typeof settings.filterTokenOperationsThreshold === "number"
+      ? settings.filterTokenOperationsThreshold
+      : Number.NaN;
+
+  if (hasThreshold) {
+    return {
+      ...settings,
+      filterTokenOperationsThreshold: normalizeThreshold(
+        threshold,
+        INITIAL_STATE.filterTokenOperationsThreshold,
+      ),
+    };
+  }
+
+  return {
+    ...settings,
+    filterTokenOperationsThreshold: normalizeThreshold(
+      settings.filterTokenOperationsZeroAmount ? 0 : INITIAL_STATE.filterTokenOperationsThreshold,
+      INITIAL_STATE.filterTokenOperationsThreshold,
+    ),
+  };
+}
+
 const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
@@ -324,7 +354,7 @@ const handlers: SettingsHandlers = {
     };
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
-    const filteredSettings = filterValidSettings(settings);
+    const filteredSettings = migrateSmallValueFilterSettings(filterValidSettings(settings));
     return {
       ...state,
       ...filteredSettings,
@@ -762,6 +792,8 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const filterTokenOperationsThresholdSelector = (state: State) =>
+  state.settings.filterTokenOperationsThreshold;
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
