@@ -67,8 +67,7 @@ function getCommonMirrorOperationData(
 function calculateStakingReward(rawTx: HederaMirrorTransaction, address: string): BigNumber {
   return rawTx.staking_reward_transfers.reduce((acc, transfer) => {
     const transferAmount = new BigNumber(transfer.amount);
-    if (transfer.account === address) acc = acc.plus(transferAmount);
-    return acc;
+    return transfer.account === address ? acc.plus(transferAmount) : acc;
   }, new BigNumber(0));
 }
 
@@ -132,6 +131,7 @@ async function processERC20TokenTransfer({
 
   let coinOperation: Operation<HederaOperationExtra> | undefined;
 
+  const senderEvmAddress = enrichedERC20Transfer.transfer.sender_evm_address;
   const senderAddress = enrichedERC20Transfer.transfer.sender_account_id
     ? toEntityId({ num: enrichedERC20Transfer.transfer.sender_account_id })
     : enrichedERC20Transfer.transfer.sender_evm_address;
@@ -141,7 +141,7 @@ async function processERC20TokenTransfer({
 
   const commonFields = {
     ...commonData,
-    type: enrichedERC20Transfer.transfer.sender_evm_address === evmAddress ? "OUT" : "IN",
+    type: senderEvmAddress.toLowerCase() === evmAddress.toLowerCase() ? "OUT" : "IN",
     contract: token.contractAddress,
     standard: "erc20",
     blockHeight: commonData.blockHeight,

@@ -39,7 +39,6 @@ jest.mock("../network/utils", () => ({
 jest.mock("./utils", () => ({
   ...jest.requireActual("./utils"),
   base64ToUrlSafeBase64: jest.fn().mockImplementation(hash => `encoded-${hash}`),
-  toEVMAddress: jest.fn().mockImplementation(async address => `evm-${address}`),
   getMemoFromBase64: jest.fn().mockImplementation(memo => (memo ? `decoded-${memo}` : null)),
   getSyntheticBlock: jest.fn(),
   analyzeStakingOperation: jest.fn(),
