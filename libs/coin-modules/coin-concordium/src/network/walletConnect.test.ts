@@ -263,7 +263,15 @@ describe("walletConnect", () => {
         const params = {
           topic: "test-topic",
           chainId: CONCORDIUM_CHAIN_IDS.mainnet,
-          params: { identityIndex: 0, credNumber: 0, ipIdentity: 1 },
+          params: {
+            message: {
+              identityIndex: 0,
+              credNumber: 0,
+              ipIdentity: 1,
+              publicKey: "aa".repeat(64),
+              reason: "create account",
+            },
+          },
         };
 
         const result = await wc.requestCreateAccount(params);
@@ -274,7 +282,15 @@ describe("walletConnect", () => {
           chainId: CONCORDIUM_CHAIN_IDS.mainnet,
           request: {
             method: "create_account",
-            params: { identityIndex: 0, credNumber: 0, ipIdentity: 1 },
+            params: {
+              message: {
+                identityIndex: 0,
+                credNumber: 0,
+                ipIdentity: 1,
+                publicKey: "aa".repeat(64),
+                reason: "create account",
+              },
+            },
           },
           expiry: 604800,
         });

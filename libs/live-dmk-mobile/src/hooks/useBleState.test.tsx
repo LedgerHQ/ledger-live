@@ -2,8 +2,11 @@ import { renderHook, act } from "@testing-library/react";
 import { useBleState, BleState, UndeterminedBleStates } from "./useBleState";
 
 describe("useBleState", () => {
-  let mockObserveStateFn: ReturnType<typeof jest.fn>;
-  let mockRequestCurrentStateFn: ReturnType<typeof jest.fn>;
+  type ObserveStateFn = NonNullable<Parameters<typeof useBleState>[1]>;
+  type RequestCurrentStateFn = NonNullable<Parameters<typeof useBleState>[2]>;
+
+  let mockObserveStateFn: jest.MockedFunction<ObserveStateFn>;
+  let mockRequestCurrentStateFn: jest.MockedFunction<RequestCurrentStateFn>;
   let mockRemove: ReturnType<typeof jest.fn>;
   let stateListener: ((state: BleState) => void) | null = null;
 
@@ -12,8 +15,10 @@ describe("useBleState", () => {
     mockObserveStateFn = jest.fn().mockImplementation((listener: (state: BleState) => void) => {
       stateListener = listener;
       return { remove: mockRemove };
-    });
-    mockRequestCurrentStateFn = jest.fn();
+    }) as jest.MockedFunction<ObserveStateFn>;
+    mockRequestCurrentStateFn = jest.fn(
+      async () => BleState.Unknown,
+    ) as jest.MockedFunction<RequestCurrentStateFn>;
   });
 
   afterEach(() => {

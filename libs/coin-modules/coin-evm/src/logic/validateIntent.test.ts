@@ -82,6 +82,7 @@ describe("validateIntent", () => {
       lastInternalOperations: [],
       lastNftOperations: [],
       lastTokenOperations: [],
+      nextPagingToken: "",
     });
     jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
       slow: {
@@ -283,6 +284,7 @@ describe("validateIntent", () => {
         lastTokenOperations: [
           { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" } as Operation,
         ],
+        nextPagingToken: "",
       });
 
       const res = await validateIntent(
@@ -765,6 +767,7 @@ describe("validateIntent", () => {
           lastInternalOperations: [],
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          nextPagingToken: "",
         });
 
         const res = await validateIntent(
@@ -800,6 +803,7 @@ describe("validateIntent", () => {
           lastInternalOperations: [],
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          nextPagingToken: "",
         });
         jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
           slow: {
@@ -860,6 +864,7 @@ describe("validateIntent", () => {
           lastInternalOperations: [],
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          nextPagingToken: "",
         });
         const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
           slow: {

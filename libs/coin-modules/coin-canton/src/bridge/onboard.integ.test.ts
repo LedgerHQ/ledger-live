@@ -55,7 +55,7 @@ describe("onboard (devnet)", () => {
       // GIVEN
       const keyPair = generateMockKeyPair();
       const mockSigner = createMockSigner(keyPair);
-      const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
+      const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => {
         return callback(mockSigner);
       });
 
@@ -135,7 +135,7 @@ describe("onboard (devnet)", () => {
       // GIVEN
       const keyPair = generateMockKeyPair();
       const mockSigner = createMockSigner(keyPair);
-      const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
+      const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => {
         return callback(mockSigner);
       });
       const onboardObservable = buildOnboardAccount(mockSignerContext);

@@ -16,7 +16,7 @@ describe("Mina getAddress resolver", () => {
     derivationMode: "minabip44" as DerivationMode,
   };
 
-  const mockSignerContext: SignerContext<MinaSigner> = jest.fn(async (deviceId, callback) => {
+  const mockSignerContext: SignerContext<MinaSigner> = jest.fn(async (_deviceId, callback) => {
     return callback(mockSigner);
   });
 

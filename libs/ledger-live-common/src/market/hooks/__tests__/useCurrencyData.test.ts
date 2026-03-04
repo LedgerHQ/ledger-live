@@ -7,8 +7,8 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useCurrencyData } from "../useMarketDataProvider";
 import { marketApi } from "../../state-manager/marketApi";
-import { server } from "@tests/server";
-import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
+import { server } from "../../../__tests__/server";
+import { createTestStore, createWrapper } from "../../../__tests__/test-helpers/testUtils";
 
 jest.mock("../../utils/timers", () => ({
   ...jest.requireActual("../../utils/timers"),

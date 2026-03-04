@@ -8,7 +8,7 @@
     "downlevelIteration": true,
     "jsx": "react",
     "lib": ["es2022", "dom"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     "outDir": "lib"
   },
   "include": ["src/**/*"]

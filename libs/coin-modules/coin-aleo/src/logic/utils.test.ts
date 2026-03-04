@@ -599,7 +599,7 @@ describe("getOperationTransactionType", () => {
     ["private", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
     ["public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
     ["public", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
-    ["public", "unknown_type"],
+    ["public", "unknown_type" as any],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getOperationTransactionType(transactionType)).toBe(expected);
   });
@@ -779,7 +779,12 @@ describe("splitPrivateAndPublicOperations", () => {
   });
 
   it("should treat operations without extra.transactionType as public", () => {
-    const opNoExtra = getMockedOperation({ id: "no-extra", extra: {} });
+    const opNoExtra = getMockedOperation({
+      id: "no-extra",
+      // Intentionally omit `transactionType` to exercise the defaulting logic.
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      extra: {} as AleoOperationExtra,
+    });
 
     const [privateOps, publicOps] = splitPrivateAndPublicOperations([opNoExtra]);
 
@@ -928,10 +933,9 @@ describe("mapTransactionIntentToSdkIntent", () => {
   });
 
   it("should throw for unsupported intent type", () => {
-    // @ts-expect-error - testing unsupported intent type
     const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
       ...baseIntent,
-      type: "custom_intent",
+      type: "custom_intent" as any,
     };
 
     expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(

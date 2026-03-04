@@ -486,7 +486,7 @@ describe("network/utils", () => {
       expect(Object.keys(result.value.credential.contents.credentialPublicKeys.keys)).toHaveLength(
         2,
       );
-      expect(Object.keys(result.value.credential.contents.arData)).toHaveLength(3);
+      expect(Object.keys(result.value.credential.contents.arData ?? {})).toHaveLength(3);
       expect(result.value.credential.contents.policy.revealedAttributes).toEqual({
         firstName: "John",
       });

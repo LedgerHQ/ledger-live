@@ -33,7 +33,7 @@ describe("getViewKey", () => {
 
     it("retrieves view key for single account", done => {
       const viewKey = "viewkey123";
-      mockViewKeyResolver.mockResolvedValue({ viewKey });
+      mockViewKeyResolver.mockResolvedValue({ path: mockAccount1.freshAddressPath, viewKey });
 
       const request: Request = {
         currency: mockCurrency,
@@ -61,8 +61,8 @@ describe("getViewKey", () => {
 
     it("retrieves view keys for multiple accounts with progress tracking", done => {
       mockViewKeyResolver
-        .mockResolvedValueOnce({ viewKey: "key1" })
-        .mockResolvedValueOnce({ viewKey: "key2" });
+        .mockResolvedValueOnce({ path: mockAccount1.freshAddressPath, viewKey: "key1" })
+        .mockResolvedValueOnce({ path: mockAccount2.freshAddressPath, viewKey: "key2" });
 
       const request: Request = {
         currency: mockCurrency,
@@ -104,7 +104,7 @@ describe("getViewKey", () => {
 
     it("stops processing on first error", done => {
       mockViewKeyResolver
-        .mockResolvedValueOnce({ viewKey: "key1" })
+        .mockResolvedValueOnce({ path: mockAccount1.freshAddressPath, viewKey: "key1" })
         .mockRejectedValueOnce(new Error("Failed"));
 
       const request: Request = {

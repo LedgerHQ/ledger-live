@@ -35,7 +35,8 @@ describe("getBlockInfo", () => {
   });
 
   it("should return consistent data with getBlock for the same ledger", async () => {
-    const { getBlock } = await import("./getBlock");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getBlock } = require("./getBlock");
 
     const blockInfo = await getBlockInfo(14263654);
     const block = await getBlock(14263654);

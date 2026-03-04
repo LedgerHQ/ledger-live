@@ -45,7 +45,7 @@ describe("account persistence predicates", () => {
       const withExtraSub = {
         ...account,
         subAccounts: [...(account.subAccounts ?? []), { ...account, id: account.id + "+token" }],
-      };
+      } as any;
       expect(accountPersistedStateChanged(withOneSub, withExtraSub)).toBe(true);
     });
 

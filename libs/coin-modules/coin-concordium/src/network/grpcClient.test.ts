@@ -21,7 +21,7 @@ jest.mock("@grpc/grpc-js", () => ({
     concordium: {
       v2: {
         Queries: jest.fn().mockImplementation(() => ({
-          GetConsensusInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetConsensusInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetConsensusStatusResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -41,7 +41,7 @@ jest.mock("@grpc/grpc-js", () => ({
               callback(null, { blocks: response });
             }
           },
-          GetBlockInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetBlockInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetBlockInfoResponse();
             if (response instanceof Error) {
               callback(response, null);

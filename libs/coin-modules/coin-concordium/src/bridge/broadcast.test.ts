@@ -1,4 +1,5 @@
 import type { BroadcastArg } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../logic");
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
@@ -16,8 +17,8 @@ const createBroadcastArg = (
       id: "",
       hash: "",
       type: "OUT",
-      value: "0",
-      fee: "0",
+      value: new BigNumber(0),
+      fee: new BigNumber(0),
       senders: [],
       recipients: [],
       blockHeight: null,

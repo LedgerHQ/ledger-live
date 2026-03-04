@@ -1,4 +1,4 @@
-import type { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
+type SPLToken = [string, string, string, string, string, number];
 
 export const jlpDefinition: SPLToken = [
   "solana/spl/27g8mtk7vttcchkpasjsddkwwyfoqt6ggeukidvjidd4",

@@ -215,8 +215,8 @@ describe("genericGetAccountShape", () => {
 
         expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, {
           minHeight: expectedPagination.minHeight,
-          cursor: expectedPagination.cursor,
           order: expectedPagination.order,
+          ...("cursor" in expectedPagination ? { cursor: expectedPagination.cursor } : {}),
         });
 
         const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;

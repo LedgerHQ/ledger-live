@@ -32,11 +32,14 @@ describe("api/craftTransaction", () => {
       },
     });
     const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: BigInt(1000000),
+      asset: { type: "native", ticker: "CCD", id: "ccd" },
       memo: { type: "string" as const, value: "test memo" },
-    };
+    } as any;
 
     const result = await api.craftTransaction(transactionIntent);
 
@@ -72,10 +75,13 @@ describe("api/craftTransaction", () => {
       },
     });
     const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: BigInt(500000),
-    };
+      asset: { type: "native", ticker: "CCD", id: "ccd" },
+    } as any;
 
     const result = await api.craftTransaction(transactionIntent);
 

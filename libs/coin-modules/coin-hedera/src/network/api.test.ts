@@ -246,6 +246,7 @@ describe("getContractCallResult", () => {
     const mockedResults: HederaMirrorContractCallResult = {
       contract_id: "0.0.4321",
       block_gas_used: 100,
+      block_hash: "0xabc",
       gas_consumed: 200,
       gas_limit: 10000,
       gas_used: 150,
@@ -256,6 +257,7 @@ describe("getContractCallResult", () => {
       getMockResponse({
         contract_id: "0.0.4321",
         block_gas_used: 100,
+        block_hash: "0xabc",
         gas_consumed: 200,
         gas_limit: 10000,
         gas_used: 150,

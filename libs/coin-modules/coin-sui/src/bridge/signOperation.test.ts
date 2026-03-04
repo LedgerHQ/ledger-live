@@ -65,7 +65,7 @@ const mockLedgerSigner = {
   signTransaction: jest.fn().mockResolvedValue({ signature: new Uint8Array(64).fill(0x42) }),
 };
 
-LedgerSigner.fromDerivationPath.mockResolvedValue(mockLedgerSigner);
+(LedgerSigner.fromDerivationPath as unknown as jest.Mock).mockResolvedValue(mockLedgerSigner);
 
 beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
@@ -147,13 +147,15 @@ describe("buildSignOperation", () => {
     jest.clearAllMocks();
 
     // Setup default mocks
-    mockCalculateAmount.mockReturnValue(new BigNumber("100000000"));
-    mockBuildTransaction.mockResolvedValue({ unsigned: fakeUnsignedTx });
-    mockMessageWithIntent.mockReturnValue(fakeSignData);
-    mockToSerializedSignature.mockReturnValue(fakeSerializedSignature);
-    mockBuildOptimisticOperation.mockReturnValue(fakeOptimisticOperation);
-    mockVerifyTransactionSignature.mockResolvedValue({ equals: () => true });
-    mockEnsureAddressFormat.mockReturnValue("0x1234567890abcdef");
+    (mockCalculateAmount as unknown as jest.Mock).mockReturnValue(new BigNumber("100000000"));
+    (mockBuildTransaction as unknown as jest.Mock).mockResolvedValue({ unsigned: fakeUnsignedTx });
+    (mockMessageWithIntent as unknown as jest.Mock).mockReturnValue(fakeSignData);
+    (mockToSerializedSignature as unknown as jest.Mock).mockReturnValue(fakeSerializedSignature);
+    (mockBuildOptimisticOperation as unknown as jest.Mock).mockReturnValue(fakeOptimisticOperation);
+    (mockVerifyTransactionSignature as unknown as jest.Mock).mockResolvedValue({
+      equals: () => true,
+    });
+    (mockEnsureAddressFormat as unknown as jest.Mock).mockReturnValue("0x1234567890abcdef");
 
     // Setup signer mocks
     (mockSuiSigner.getPublicKey as jest.Mock).mockResolvedValue({
@@ -165,13 +167,13 @@ describe("buildSignOperation", () => {
     });
 
     // Patch LedgerSigner mock again in case it is reset
-    LedgerSigner.fromDerivationPath.mockResolvedValue(mockLedgerSigner);
+    (LedgerSigner.fromDerivationPath as unknown as jest.Mock).mockResolvedValue(mockLedgerSigner);
     mockLedgerSigner.signTransaction.mockResolvedValue({ signature: fakeSignature });
 
     // Setup signer context
     signerContext = jest
       .fn()
-      .mockImplementation(async (deviceId: string, fn: (signer: SuiSigner) => Promise<any>) => {
+      .mockImplementation(async (_deviceId: string, fn: (signer: SuiSigner) => Promise<any>) => {
         return fn(mockSuiSigner);
       });
 
@@ -329,7 +331,7 @@ describe("buildSignOperation", () => {
 
     it("should propagate errors from buildTransaction", done => {
       const buildError = new Error("Build transaction error");
-      mockBuildTransaction.mockRejectedValue(buildError);
+      (mockBuildTransaction as unknown as jest.Mock).mockRejectedValue(buildError);
 
       signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
         error: error => {
@@ -341,7 +343,7 @@ describe("buildSignOperation", () => {
 
     it("should propagate errors from calculateAmount", done => {
       const calculateError = new Error("Calculate amount error");
-      mockCalculateAmount.mockImplementation(() => {
+      (mockCalculateAmount as unknown as jest.Mock).mockImplementation(() => {
         throw calculateError;
       });
 
@@ -357,7 +359,7 @@ describe("buildSignOperation", () => {
   describe("useAllAmount scenarios", () => {
     it("should calculate amount when useAllAmount is true", done => {
       const transactionWithUseAllAmount = { ...mockTransaction, useAllAmount: true };
-      mockCalculateAmount.mockReturnValue(new BigNumber("500000000"));
+      (mockCalculateAmount as unknown as jest.Mock).mockReturnValue(new BigNumber("500000000"));
 
       signOperation({ account: mockAccount, deviceId, transaction: transactionWithUseAllAmount })
         .pipe(take(3))
@@ -449,7 +451,7 @@ describe("buildSignOperation", () => {
         "9999999999999999999999999999999999999999999999999999999999999999",
       );
       const transactionWithLargeAmount = { ...mockTransaction, amount: largeAmount };
-      mockCalculateAmount.mockReturnValue(largeAmount);
+      (mockCalculateAmount as unknown as jest.Mock).mockReturnValue(largeAmount);
 
       signOperation({ account: mockAccount, deviceId, transaction: transactionWithLargeAmount })
         .pipe(take(3))
@@ -474,7 +476,7 @@ describe("buildSignOperation", () => {
 
     it("should handle zero amount", done => {
       const transactionWithZeroAmount = { ...mockTransaction, amount: new BigNumber("0") };
-      mockCalculateAmount.mockReturnValue(new BigNumber("0"));
+      (mockCalculateAmount as unknown as jest.Mock).mockReturnValue(new BigNumber("0"));
 
       signOperation({ account: mockAccount, deviceId, transaction: transactionWithZeroAmount })
         .pipe(take(3))
