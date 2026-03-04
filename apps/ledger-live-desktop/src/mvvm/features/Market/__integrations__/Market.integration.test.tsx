@@ -14,6 +14,39 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(() => mockNavigate),
 }));
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => ({
+    deactivatedCurrencyIds: new Set<string>(),
+  }),
+}));
+
+const LIST_ITEM_HEIGHT = 73;
+
+jest.mock("~/renderer/screens/market/MarketList/useMarketListVirtualization", () => ({
+  useMarketListVirtualization: ({
+    itemCount,
+    marketData = [],
+  }: {
+    itemCount: number;
+    marketData?: { length: number }[];
+  }) => {
+    const createVirtualizer = () => ({
+      getVirtualItems: () =>
+        Array.from({ length: Math.min(itemCount, marketData?.length ?? 0) }, (_, i) => ({
+          index: i,
+          start: i * LIST_ITEM_HEIGHT,
+          size: LIST_ITEM_HEIGHT,
+          key: i,
+        })),
+      getTotalSize: () => (marketData?.length ?? 0) * LIST_ITEM_HEIGHT,
+    });
+    return {
+      parentRef: { current: null },
+      rowVirtualizer: createVirtualizer(),
+    };
+  },
+}));
+
 const createMarketState = (overrides = {}) => ({
   marketParams: {
     starred: [],
@@ -90,6 +123,7 @@ describe("Market Integration", () => {
     );
 
     render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
@@ -110,6 +144,7 @@ describe("Market Integration", () => {
     );
 
     render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
@@ -131,6 +166,7 @@ describe("Market Integration", () => {
     );
 
     render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
@@ -150,6 +186,7 @@ describe("Market Integration", () => {
     );
 
     render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
@@ -171,6 +208,7 @@ describe("Market Integration", () => {
     );
 
     render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
@@ -198,6 +236,7 @@ describe("Market Integration", () => {
     );
 
     const { user } = render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
@@ -223,6 +262,7 @@ describe("Market Integration", () => {
     );
 
     const { user } = render(<Market />, {
+      withRampCatalog: true,
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(["bitcoin"]),
@@ -235,5 +275,62 @@ describe("Market Integration", () => {
 
     const starButton = screen.getByTestId("market-star-button");
     await user.click(starButton);
+  });
+
+  it("should show sell button when currency is available for selling", async () => {
+    server.use(
+      http.get(MARKET_API_ENDPOINT, () => {
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("market-list-data")).toBeVisible();
+    });
+
+    const sellButton = screen.getByTestId("market-BTC-sell-button");
+    expect(sellButton).toBeInTheDocument();
+    expect(sellButton).toBeVisible();
+  });
+
+  it("should navigate to exchange with sell state when sell button is clicked", async () => {
+    server.use(
+      http.get(MARKET_API_ENDPOINT, () => {
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    const { user } = render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        accounts: [],
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("market-BTC-sell-button")).toBeVisible();
+    });
+
+    const sellButton = screen.getByTestId("market-BTC-sell-button");
+    await user.click(sellButton);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
+        state: expect.objectContaining({
+          currency: "bitcoin",
+          mode: "sell",
+        }),
+      });
+    });
   });
 });

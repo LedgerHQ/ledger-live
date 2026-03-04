@@ -29,13 +29,18 @@ export function formatPercentage(percentage: number, decimals = 2): number {
 
 export function isAvailableOnBuy(
   currency: MarketCurrencyData | null | undefined,
-  isCurrencyAvailable: (
-    currencyId: CryptoCurrency["id"] | string,
-    mode: "onRamp" | "offRamp",
-  ) => boolean,
+  isCurrencyAvailable: (currencyId: CryptoCurrency["id"] | string, mode: "onRamp") => boolean,
 ) {
   if (!currency) return false;
   return currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) || false;
+}
+
+export function isAvailableOnSell(
+  currency: MarketCurrencyData | null | undefined,
+  isCurrencyAvailable: (currencyId: CryptoCurrency["id"] | string, mode: "offRamp") => boolean,
+) {
+  if (!currency) return false;
+  return currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "offRamp")) || false;
 }
 
 export function isAvailableOnSwap(

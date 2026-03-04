@@ -327,6 +327,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Buy crypto API base url - version 1",
   },
+  SELL_API_BASE: {
+    def: "https://buy.api.live.ledger.com/sell/v1",
+    parser: stringParser,
+    desc: "Sell crypto API base url - version 1",
+  },
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,

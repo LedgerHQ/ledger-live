@@ -89,6 +89,7 @@ export default function AssetBalanceSummaryHeader({
   const { isCurrencyAvailable } = useRampCatalog();
 
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const availableOnSell = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
   const startStakeFlow = useStakeFlow();
   const { getCanStakeCurrency } = useStake();
@@ -101,14 +102,34 @@ export default function AssetBalanceSummaryHeader({
   const availableOnSwap = currenciesAll.includes(currency.id);
 
   const onBuy = useCallback(() => {
+    track("button_clicked2", {
+      button: "buy",
+      currency: currency?.ticker,
+      page: "Page Asset",
+    });
     setTrackingSource("asset header actions");
     navigate("/exchange", {
       state: {
         currency: currency?.id,
-        mode: "buy", // buy or sell
+        mode: "buy",
       },
     });
-  }, [currency.id, navigate]);
+  }, [currency.id, navigate, currency?.ticker]);
+
+  const onSell = useCallback(() => {
+    track("button_clicked2", {
+      button: "sell",
+      currency: currency?.ticker,
+      page: "Page Asset",
+    });
+    setTrackingSource("asset header actions");
+    navigate("/exchange", {
+      state: {
+        currency: currency?.id,
+        mode: "sell",
+      },
+    });
+  }, [currency.id, navigate, currency?.ticker]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {
@@ -202,6 +223,12 @@ export default function AssetBalanceSummaryHeader({
         {availableOnBuy && (
           <Button buttonTestId="asset-page-buy-button" variant="color" mr={1} onClick={onBuy}>
             {t("accounts.contextMenu.buy")}
+          </Button>
+        )}
+
+        {availableOnSell && (
+          <Button buttonTestId="asset-page-sell-button" variant="color" mr={1} onClick={onSell}>
+            {t("accounts.contextMenu.sell")}
           </Button>
         )}
 

@@ -1,6 +1,6 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
-export type MarketActionType = "buy" | "swap" | "stake";
+export type MarketActionType = "buy" | "swap" | "stake" | "sell";
 
 export type MarketAction = {
   type: MarketActionType;
