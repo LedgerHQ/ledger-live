@@ -171,8 +171,14 @@ describe("useAmountScreenViewModel", () => {
         amount: new BigNumber(0),
         useAllAmount: false,
         feesStrategy: "custom" as const,
+        customGasLimit: new BigNumber(21000),
+        gasPrice: new BigNumber(100),
+        maxFeePerGas: new BigNumber(200),
+        maxPriorityFeePerGas: new BigNumber(10),
         customFeeRate: new BigNumber(10),
         feePerByte: new BigNumber(5),
+        fees: new BigNumber(1234),
+        customFees: { mock: true },
       } as unknown as Transaction;
       const status = {
         errors: {},
@@ -205,7 +211,21 @@ describe("useAmountScreenViewModel", () => {
 
       result.current.onSelectFeeStrategy("medium");
 
-      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
+      const patched = updater(transaction);
+
+      expect(patched).toMatchObject({
+        feesStrategy: "medium",
+        customGasLimit: undefined,
+        gasPrice: undefined,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+        feePerByte: undefined,
+        customFeeRate: undefined,
+        fees: undefined,
+        customFees: undefined,
+      });
     });
 
     it("does not clear custom fee overrides when selecting the custom strategy", () => {
@@ -213,8 +233,6 @@ describe("useAmountScreenViewModel", () => {
       const txWithCustomFees = {
         ...transaction,
         feesStrategy: "medium" as const,
-        customFeeRate: new BigNumber(10),
-        feePerByte: new BigNumber(5),
       } as unknown as Transaction;
 
       const { result } = renderHook(
@@ -234,7 +252,21 @@ describe("useAmountScreenViewModel", () => {
 
       result.current.onSelectFeeStrategy("custom");
 
-      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
+      const patched = updater(txWithCustomFees);
+
+      expect(patched).toMatchObject({
+        feesStrategy: "custom",
+        customGasLimit: new BigNumber(21000),
+        gasPrice: new BigNumber(100),
+        maxFeePerGas: new BigNumber(200),
+        maxPriorityFeePerGas: new BigNumber(10),
+        feePerByte: new BigNumber(5),
+        customFeeRate: new BigNumber(10),
+        fees: new BigNumber(1234),
+        customFees: { mock: true },
+      });
     });
   });
 
