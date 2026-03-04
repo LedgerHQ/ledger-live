@@ -40,10 +40,6 @@ jest.mock("../useQuickActions", () => ({
   useQuickActions: () => [],
 }));
 
-jest.mock("../useFeeInfo", () => ({
-  useFeeInfo: () => ({ feeSummary: null }),
-}));
-
 jest.mock("../useFeePresetOptions", () => ({
   useFeePresetOptions: () => [],
 }));
