@@ -31,9 +31,10 @@ export const useBalanceViewModel = (
   const discreet = useSelector(discreetModeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
-  const { portfolio, counterValue, isBalanceLoading, isColdStart } = usePortfolioBalanceSync({
-    legacyRange,
-  });
+  const { portfolio, counterValue, isBalanceLoading, isColdStart, balanceAvailable } =
+    usePortfolioBalanceSync({
+      legacyRange,
+    });
 
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
@@ -81,6 +82,7 @@ export const useBalanceViewModel = (
 
   return {
     balance: displayedBalance,
+    balanceAvailable,
     formatter,
     discreet,
     valueChange,
