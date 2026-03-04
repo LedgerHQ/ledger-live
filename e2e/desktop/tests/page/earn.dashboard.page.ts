@@ -22,6 +22,14 @@ export class EarnPage extends WebViewAppPage {
   private loadingSkeleton = "loading-skeleton";
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
+  // V2 selectors
+  private maxPotentialRewards = "max-potential-rewards";
+  private walletHeaderAmount = "wallet-header-amount";
+  private rewardsSummary = "rewards-summary";
+  private tokensToEarnBanner = "tokens-to-earn-banner";
+  private footerDisclaimer = "footer-disclaimer";
+  private assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker.toLowerCase()}`;
+
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
 
@@ -156,5 +164,94 @@ export class EarnPage extends WebViewAppPage {
   @step("Click on learn more button for $0")
   async clickLearnMoreButton(currency: string) {
     await this.clickElement(this.learnMoreButton(currency));
+  }
+
+  // V2 Ice Cold Start
+
+  @step("Verify ice cold start page")
+  async verifyIceColdStartPage() {
+    await this.verifyElementIsVisible(this.footerDisclaimer);
+    await this.verifyElementIsNotVisible(this.maxPotentialRewards);
+    await this.verifyElementIsNotVisible(this.walletHeaderAmount);
+  }
+
+  @step("Click ice cold start earn CTA")
+  async clickIceColdStartEarnCTA() {
+    const webview = await this.getWebView();
+    await webview.getByRole("button", { name: /earn/i }).first().click();
+  }
+
+  // V2 Cold Start
+
+  @step("Verify cold start page")
+  async verifyColdStartPage() {
+    await this.verifyElementIsVisible(this.maxPotentialRewards);
+    await this.verifyElementIsVisible(this.tokensToEarnBanner);
+  }
+
+  @step("Verify asset ready to earn: $0")
+  async verifyAssetReadyToEarn(ticker: string) {
+    await this.verifyElementIsVisible(this.assetItemTicker(ticker));
+  }
+
+  @step("Click asset earn CTA for $0")
+  async clickAssetEarnCta(ticker: string) {
+    const webview = await this.getWebView();
+    const assetRow = webview.getByTestId(this.assetItemTicker(ticker));
+    await assetRow.getByRole("button", { name: /earn/i }).first().click();
+  }
+
+  // V2 Hot Start
+
+  @step("Verify hot start page")
+  async verifyHotStartPage() {
+    await this.verifyElementIsVisible(this.walletHeaderAmount);
+  }
+
+  @step("Verify rewards summary boxes")
+  async verifyRewardsSummaryBoxes() {
+    await this.verifyElementIsVisible(this.rewardsSummary);
+  }
+
+  @step("Verify position row present: $0")
+  async verifyPositionRowPresent(identifier: string) {
+    const webview = await this.getWebView();
+    const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: identifier });
+    await expect(row.first()).toBeVisible();
+  }
+
+  @step("Click position row: $0")
+  async clickPositionRow(identifier: string) {
+    const webview = await this.getWebView();
+    const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: identifier });
+    await row.first().click();
+  }
+
+  @step("Verify navigated away from earn dashboard")
+  async verifyNavigatedFromDashboard() {
+    await this.verifyElementIsNotVisible(this.tokensToEarnBanner);
+    await this.verifyElementIsNotVisible(this.maxPotentialRewards);
+  }
+
+  @step("Verify navigated to deposit flow")
+  async verifyDepositFlowVisible() {
+    const webview = await this.getWebView();
+    await expect(webview).toHaveURL(/\/deposit/);
+  }
+
+  @step("Verify navigated to withdrawal flow")
+  async verifyWithdrawalFlowVisible() {
+    const webview = await this.getWebView();
+    await expect(webview).toHaveURL(/\/redeem|intent=withdraw/);
+  }
+
+  @step("Get stake platform for currency: $0")
+  async getStakePlatform(currencyId: string): Promise<string | null> {
+    const webview = await this.getWebView();
+    const url = webview.url();
+    const param = new URL(url).searchParams.get("stakeProgramsParam");
+    if (!param) return null;
+    const redirects: Record<string, string> = JSON.parse(param);
+    return redirects[currencyId] ?? null;
   }
 }
