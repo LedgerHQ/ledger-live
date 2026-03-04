@@ -655,7 +655,7 @@ describe("makeScanAccounts", () => {
     });
   });
 
-  it("emits discovered event before complete (event order)", async () => {
+  it("emits discovered event before complete", async () => {
     const addressResolver = {
       address: "address",
       path: "path",
