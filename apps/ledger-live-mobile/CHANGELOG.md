@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.1
+
+### Minor Changes
+
+- [#15023](https://github.com/LedgerHQ/ledger-live/pull/15023) [`bbf9c60`](https://github.com/LedgerHQ/ledger-live/commit/bbf9c60b99c16c03f36d6e4b3bc6f8754c76d470) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - fix Android back navigation in Swap web view
+
 ## 3.109.0-next.0
 
 ### Minor Changes
