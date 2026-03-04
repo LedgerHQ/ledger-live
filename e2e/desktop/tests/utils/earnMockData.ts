@@ -110,7 +110,7 @@ interface BatchedView {
 export function buildStakesResponse(
   stakes: Record<string, unknown>[],
   network: string,
-  address: string,
+  address = "",
 ): BatchedView[] {
   return stakes.map(stake => ({
     id: { network, address },

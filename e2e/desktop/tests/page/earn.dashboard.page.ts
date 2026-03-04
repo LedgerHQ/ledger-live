@@ -21,12 +21,12 @@ export class EarnPage extends WebViewAppPage {
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   // V2 selectors
-  private maxPotentialRewards = "max-potential-rewards";
-  private walletHeaderAmount = "wallet-header-amount";
-  private rewardsSummary = "rewards-summary";
-  private tokensToEarnBanner = "tokens-to-earn-banner";
-  private footerDisclaimer = "footer-disclaimer";
-  private assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker.toLowerCase()}`;
+  private readonly maxPotentialRewards = "max-potential-rewards";
+  private readonly walletHeaderAmount = "wallet-header-amount";
+  private readonly rewardsSummary = "rewards-summary";
+  private readonly tokensToEarnBanner = "tokens-to-earn-banner";
+  private readonly footerDisclaimer = "footer-disclaimer";
+  private readonly assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker.toLowerCase()}`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDrawer = new ModularDrawer(this.page);
