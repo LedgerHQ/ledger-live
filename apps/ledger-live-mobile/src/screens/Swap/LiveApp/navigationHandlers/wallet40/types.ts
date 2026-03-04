@@ -26,6 +26,7 @@ export type SwapWallet40ParsedRoute = {
   routeName: SwapWallet40RouteName;
   headerStyle: SwapWallet40HeaderStyle;
   titleKey: SwapWallet40HeaderTitleKey;
+  isTransactionComplete: boolean;
 };
 
 export type SwapWallet40HeaderState = {
@@ -33,4 +34,5 @@ export type SwapWallet40HeaderState = {
   headerStyle: SwapWallet40HeaderStyle;
   titleKey: SwapWallet40HeaderTitleKey;
   canGoBack: boolean;
+  isTransactionComplete: boolean;
 };

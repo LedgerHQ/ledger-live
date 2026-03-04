@@ -6,6 +6,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "home",
       headerStyle: "transparent",
       titleKey: null,
+      isTransactionComplete: false,
     });
   });
 
@@ -14,6 +15,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "quotesList",
       headerStyle: "opaque",
       titleKey: "transfer.swap2.quotesList.title",
+      isTransactionComplete: false,
     });
   });
 
@@ -22,6 +24,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "multiStepTransaction",
       headerStyle: "opaque",
       titleKey: "transfer.swap2.twoStepApproval.title",
+      isTransactionComplete: false,
     });
   });
 
@@ -34,6 +37,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "multiStepTransaction",
       headerStyle: "opaque",
       titleKey: "transfer.swap2.twoStepApproval.completedTitle",
+      isTransactionComplete: true,
     });
   });
 
@@ -42,6 +46,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "devSettings",
       headerStyle: "opaque",
       titleKey: "Dev Settings",
+      isTransactionComplete: false,
     });
   });
 
@@ -50,6 +55,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "unknown",
       headerStyle: "transparent",
       titleKey: null,
+      isTransactionComplete: false,
     });
   });
 
@@ -58,6 +64,7 @@ describe("parseSwapWallet40Route", () => {
       routeName: "unknown",
       headerStyle: "transparent",
       titleKey: null,
+      isTransactionComplete: false,
     });
   });
 });
