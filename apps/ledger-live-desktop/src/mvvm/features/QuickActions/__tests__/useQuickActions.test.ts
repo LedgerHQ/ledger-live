@@ -405,7 +405,11 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: null },
+          settings: {
+            hasCompletedOnboarding: true,
+            lastSeenDevice: null,
+            lastOnboardedDevice: null,
+          },
         },
       });
 
@@ -419,7 +423,11 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: null },
+          settings: {
+            hasCompletedOnboarding: true,
+            lastSeenDevice: null,
+            lastOnboardedDevice: null,
+          },
         },
       });
 
@@ -436,7 +444,11 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: null },
+          settings: {
+            hasCompletedOnboarding: true,
+            lastSeenDevice: null,
+            lastOnboardedDevice: null,
+          },
         },
       });
 
