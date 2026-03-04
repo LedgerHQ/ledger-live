@@ -2,41 +2,50 @@
 applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
 
-<!-- Source: .cursor/rules/jest-mocks.mdc -->
-<!-- Last synced: 2026-02-20 -->
-
 # Jest Mock Review
 
-When reviewing changes to test files, flag these patterns that cause flaky tests and mock cannibalization with parallel workers (`--maxWorkers=50%`).
+Flag these patterns that cause flaky tests and mock cannibalization with parallel workers.
 
-## 1. Duplicate mocks
+## 1. Duplicate Mocks
 
-**Flag:** `jest.mock("module")` in a test file when that module is already mocked in the app's jest-setup.
+**Flag:** `jest.mock("module")` when already mocked in jest-setup.
 
-**Check:** Scan the jest-setup file for the app:
+**Check jest-setup files:**
 - Mobile: `apps/ledger-live-mobile/__tests__/jest-setup.js`
 - Desktop: `apps/ledger-live-desktop/tests/jestSetup.js`
 
-If the module appears in `jest.mock("...")` there, the test should not duplicate it.
+**Preferred:** Use global mock and `jest.mocked(module.export).mockReturnValue(...)` in `beforeEach`.
 
-**Preferred:** Use the global mock and `jest.mocked(module.export).mockReturnValue(...)` in `beforeEach`.
+## 2. Excessive Mocking
 
-## 2. Hooks at describe load time
+**Flag:** Test files where mocks exceed 50 lines or mock more than 5 modules.
 
-**Flag:** `renderHook(...).result.current` or any hook call at the top level of a `describe` block (outside `beforeEach` / `beforeAll` / test callbacks).
+**Flag:** Mocking UI components like `Text`, `View`, `Button`, or design system components.
 
-This can crash Jest workers when running in parallel. Move into `beforeEach` or inside each test.
+**Preferred:** Use the test renderer from `@tests/test-renderer` which handles common mocks.
 
-## 3. `jest.restoreAllMocks()`
+## 3. Hooks at Describe Load Time
+
+**Flag:** `renderHook(...).result.current` at top level of `describe` block.
+
+**Preferred:** Move hook calls into `beforeEach` or inside each test.
+
+## 4. `jest.restoreAllMocks()`
 
 **Flag:** Use of `jest.restoreAllMocks()` in test files.
 
-It restores **all** mocks including global ones from jest-setup, breaking other tests.
-
 **Preferred:** Use `jest.clearAllMocks()` or `mock.mockRestore()` for specific spies only.
 
-## 4. Wrong `beforeEach` order
+## 5. Wrong `beforeEach` Order
 
-**Flag:** `jest.clearAllMocks()` called **after** `mockReturnValue()` or other mock configuration.
+**Flag:** `jest.clearAllMocks()` called after `mockReturnValue()` configuration.
 
-This clears the mock configuration. Call `clearAllMocks` first, then configure mocks.
+**Preferred:** Call `clearAllMocks` first, then configure mocks.
+
+## 6. Implementation-Coupled Tests
+
+**Flag:** Tests that only verify mock calls without asserting user-visible outcomes.
+
+**Flag:** Tests that mock the module under test rather than its dependencies.
+
+**Preferred:** Assert on rendered output, user interactions, or state changes.

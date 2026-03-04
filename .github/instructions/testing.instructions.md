@@ -2,9 +2,6 @@
 applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
 
-<!-- Source: .cursor/rules/testing.mdc -->
-<!-- Last synced: 2026-02-13 -->
-
 # Testing
 
 ## Stack
@@ -16,53 +13,65 @@ applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 
 ## General Rules
 
-- **Test behavior, not implementation** — assert on user-visible outcomes, not internal state.
-- Tests must be **deterministic** — no flaky timing, no reliance on external services.
-- Keep mocks **minimal** — favor realistic wiring over extensive mocking.
+- Test behavior, not implementation — assert on user-visible outcomes, not internal state.
+- Tests must be deterministic — no flaky timing, no reliance on external services.
 - Use `async/await` with `waitFor` for asynchronous assertions.
-- Prefer **integration tests** for complex features to validate complete behavior.
+- Prefer integration tests for complex features to validate complete behavior.
+
+## Mocking Rules
+
+- Keep mocks minimal — favor realistic wiring over extensive mocking.
+- Never mock UI components in integration tests — test what the user sees.
+- Do not duplicate mocks already defined in jest-setup files.
+- Prefer dependency injection over mocking when possible.
+- If the first 50+ lines of a test file are mocks, refactor to reduce mocking.
+- Mock at the network boundary with MSW — do not mock React components or hooks directly.
 
 ## File Structure
 
 - Tests live next to source files: `MyComponent.test.tsx` alongside `MyComponent.tsx`.
-- Use `__tests__/` for grouped unit tests.
+- Use `__tests__/` folders inside `components/`, `hooks/`, or `utils/` directories.
 - Use `__integrations__/` for integration tests.
-- Test data goes in `__fixtures__/` — use factories and builders, avoid hardcoded or unrealistic values.
+- Test data goes in `__fixtures__/` — use factories and builders, avoid hardcoded values.
+- Keep test files focused — split large test files (500+ lines) into separate files per concern.
+
+## Required Test Coverage
+
+- Every new utility function in `utils/` must have unit tests.
+- Every new helper function must be extracted to a testable file with tests.
+- Every new custom hook must have dedicated tests.
+- Every new feature under `src/mvvm/` must include integration tests in `__integrations__/`.
 
 ## Query Priority
-
-When selecting elements in tests, follow this order:
 
 1. `ByRole` (preferred — matches accessibility tree)
 2. `ByLabelText`
 3. `ByText`
-4. `ByTestId` (last resort)
+4. `ByTestId` (last resort — avoid when possible)
 
-## Desktop Testing
+Never use `toJSON()` for assertions when `getByText` or `getByRole` can verify the same behavior.
 
-- **Render**: import the render function from `tests/testSetup`.
-- **MSW server**: `apps/ledger-live-desktop/tests/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-desktop`.
+## Test Renderer Imports
 
-## Mobile Testing
+- Desktop: import render from `tests/testSetup`.
+- Mobile: import render from `@tests/test-renderer`.
 
-- **Render**: import the render function from `@tests/test-renderer`.
-- **MSW server**: `apps/ledger-live-mobile/__tests__/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-mobile`.
+Never import render directly from `@testing-library/react` or `@testing-library/react-native`.
 
 ## MSW Patterns
 
 - Define handlers alongside tests or in shared handler files.
-- Follow the existing patterns from the desktop and mobile server files referenced above.
-- Mock at the network boundary — do not mock React components or hooks directly.
-
-## Test Naming
-
-- Use descriptive names: `it("should <behavior> when <condition>")`.
-- One behavior per test — avoid testing multiple concerns in a single `it` block.
+- Desktop MSW server: `apps/ledger-live-desktop/tests/server.ts`.
+- Mobile MSW server: `apps/ledger-live-mobile/__tests__/server.ts`.
 
 ## Redux in Tests
 
 - Desktop: pass `initialState` to the render function.
 - Mobile: use `overrideInitialState`.
 - Never mock feature flags directly — use `overriddenFeatureFlags`.
+
+## Test Naming
+
+- Use descriptive names: `it("should <behavior> when <condition>")`.
+- One behavior per test — avoid testing multiple concerns in a single `it` block.
+- Always provide explicit error messages in `.toThrow()` assertions.
