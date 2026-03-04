@@ -1,4 +1,5 @@
-import { buildSellNavigationState } from "./sellNavigation";
+import { buildBuyNavigationState } from "../buyNavigation";
+import { buildSellNavigationState } from "../sellNavigation";
 
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   isTokenAccount: jest.fn(),
@@ -6,7 +7,12 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 
 const { isTokenAccount } = jest.requireMock("@ledgerhq/live-common/account/index");
 
-describe("buildSellNavigationState", () => {
+const cases = [
+  { mode: "buy" as const, builder: buildBuyNavigationState },
+  { mode: "sell" as const, builder: buildSellNavigationState },
+] as const;
+
+describe.each(cases)("build${mode}NavigationState ($mode)", ({ mode, builder }) => {
   const mockLedgerCurrency = { id: "ethereum" };
 
   beforeEach(() => {
@@ -14,13 +20,13 @@ describe("buildSellNavigationState", () => {
   });
 
   it("should return state with currency and mode when no account is provided", () => {
-    const result = buildSellNavigationState({
+    const result = builder({
       ledgerCurrency: mockLedgerCurrency as never,
     });
 
     expect(result).toEqual({
       currency: "ethereum",
-      mode: "sell",
+      mode,
     });
     expect(result.account).toBeUndefined();
     expect(isTokenAccount).not.toHaveBeenCalled();
@@ -30,7 +36,7 @@ describe("buildSellNavigationState", () => {
     (isTokenAccount as jest.Mock).mockReturnValue(false);
     const mockAccount = { id: "account-123" };
 
-    const result = buildSellNavigationState({
+    const result = builder({
       ledgerCurrency: mockLedgerCurrency as never,
       account: mockAccount as never,
     });
@@ -38,7 +44,7 @@ describe("buildSellNavigationState", () => {
     expect(result).toEqual({
       currency: "ethereum",
       account: "account-123",
-      mode: "sell",
+      mode,
     });
     expect(isTokenAccount).toHaveBeenCalledWith(mockAccount);
   });
@@ -48,7 +54,7 @@ describe("buildSellNavigationState", () => {
     const mockTokenAccount = { id: "token-account-456", parentId: "parent-789" };
     const mockParentAccount = { id: "parent-789" };
 
-    const result = buildSellNavigationState({
+    const result = builder({
       ledgerCurrency: mockLedgerCurrency as never,
       account: mockTokenAccount as never,
       parentAccount: mockParentAccount as never,
@@ -57,7 +63,7 @@ describe("buildSellNavigationState", () => {
     expect(result).toEqual({
       currency: "ethereum",
       account: "parent-789",
-      mode: "sell",
+      mode,
     });
     expect(isTokenAccount).toHaveBeenCalledWith(mockTokenAccount);
   });
@@ -66,7 +72,7 @@ describe("buildSellNavigationState", () => {
     (isTokenAccount as jest.Mock).mockReturnValue(true);
     const mockTokenAccount = { id: "token-account-456", parentId: "parent-from-token" };
 
-    const result = buildSellNavigationState({
+    const result = builder({
       ledgerCurrency: mockLedgerCurrency as never,
       account: mockTokenAccount as never,
     });
@@ -74,7 +80,7 @@ describe("buildSellNavigationState", () => {
     expect(result).toEqual({
       currency: "ethereum",
       account: "parent-from-token",
-      mode: "sell",
+      mode,
     });
   });
 });
