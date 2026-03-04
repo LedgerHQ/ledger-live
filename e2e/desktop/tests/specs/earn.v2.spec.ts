@@ -69,10 +69,16 @@ test.describe("Earn [v2]", () => {
       featureFlags: EARN_V2_DESKTOP_FLAGS,
     });
 
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
     test(
       "Earn v2 ice cold start page displays correctly",
-      { tag: getTags(account) },
+      {
+        tag: getTags(account),
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+      },
       async ({ app }) => {
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.verifyIceColdStartPage();
         await app.earnDashboard.clickIceColdStartEarnCTA();
@@ -85,10 +91,10 @@ test.describe("Earn [v2]", () => {
   });
 
   const coldStartCurrencies = [
-    { account: Account.ETH_1, xrayTicket: "B2CQA-3679" },
-    { account: Account.SOL_4, xrayTicket: "B2CQA-3680" },
-    { account: Account.ATOM_2, xrayTicket: "B2CQA-3681" },
-    { account: Account.NEAR_2, xrayTicket: "B2CQA-3682" },
+    { account: Account.ETH_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.SOL_4, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.ATOM_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.NEAR_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
   ];
 
   for (const { account, xrayTicket } of coldStartCurrencies) {
@@ -104,10 +110,11 @@ test.describe("Earn [v2]", () => {
         `Earn v2 cold start page shows ${account.currency.ticker} ready to earn`,
         {
           tag: getTags(account),
-          annotation: { type: "TMS", description: xrayTicket },
+          ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (xrayTicket)
+            await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
           await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
           await app.earnDashboard.verifyColdStartPage();
           await app.earnDashboard.verifyAssetReadyToEarn(account.currency.ticker);
@@ -122,8 +129,8 @@ test.describe("Earn [v2]", () => {
   }
 
   const hotStartCurrencies = [
-    { account: Account.NEAR_1, xrayTicket: "B2CQA-3683" },
-    { account: Account.ATOM_1, xrayTicket: "B2CQA-3685" },
+    { account: Account.NEAR_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.ATOM_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
   ];
 
   for (const { account, xrayTicket } of hotStartCurrencies) {
@@ -139,10 +146,11 @@ test.describe("Earn [v2]", () => {
         `Earn v2 hot start page shows ${account.currency.ticker} with rewards`,
         {
           tag: getTags(account),
-          annotation: { type: "TMS", description: xrayTicket },
+          ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (xrayTicket)
+            await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
           await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
           await app.earnDashboard.verifyHotStartPage();
           await app.earnDashboard.verifyPositionRowPresent(account.currency.ticker);
@@ -156,6 +164,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("Inline Add Account", () => {
     const account = Account.ETH_1;
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
 
     test.use({
       userdata: "skip-onboarding",
@@ -167,10 +176,11 @@ test.describe("Earn [v2]", () => {
       "Earn v2 ice cold start allows inline account addition",
       {
         tag: getTags(account),
-        annotation: { type: "TMS", description: "B2CQA-3001" },
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.verifyIceColdStartPage();
         await app.earnDashboard.clickIceColdStartEarnCTA();
@@ -200,6 +210,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("CTA → Native staking (SOL)", () => {
     const account = Account.SOL_4;
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
 
     test.use({
       userdata: "skip-onboarding",
@@ -210,8 +221,13 @@ test.describe("Earn [v2]", () => {
 
     test(
       "Earn v2 CTA opens native staking flow for SOL",
-      { tag: getTags(account) },
+      {
+        tag: getTags(account),
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+      },
       async ({ app, page }) => {
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
         await selectAccountInModularSelector(app, page, account);
@@ -223,6 +239,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("CTA → Partner dapp (ETH)", () => {
     const account = Account.ETH_1;
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
 
     test.use({
       userdata: "skip-onboarding",
@@ -233,8 +250,13 @@ test.describe("Earn [v2]", () => {
 
     test(
       "Earn v2 CTA opens partner dapp flow for ETH",
-      { tag: getTags(account) },
+      {
+        tag: getTags(account),
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+      },
       async ({ app, page }) => {
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
         await selectAccountInModularSelector(app, page, account);
@@ -249,6 +271,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("CTA → Earn staking (USDT)", () => {
     const account = Account.ETH_1;
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
 
     test.use({
       userdata: "skip-onboarding",
@@ -259,8 +282,13 @@ test.describe("Earn [v2]", () => {
 
     test(
       "Earn v2 CTA opens earn deposit flow for USDT",
-      { tag: getTags(account) },
+      {
+        tag: getTags(account),
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+      },
       async ({ app, page }) => {
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.clickAssetEarnCta("USDT");
         await selectAccountInModularSelector(app, page, account);
@@ -273,9 +301,9 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: ETH Provider Staking Flows ---
 
   const ethProviders = [
-    { provider: Provider.LIDO, xrayTicket: "B2CQA-3676, B2CQA-1713" },
-    { provider: Provider.STADER_LABS, xrayTicket: "B2CQA-3677" },
-    { provider: Provider.KILN, xrayTicket: "B2CQA-3678" },
+    { provider: Provider.LIDO, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { provider: Provider.STADER_LABS, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { provider: Provider.KILN, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
   ];
 
   for (const { provider, xrayTicket } of ethProviders) {
@@ -293,10 +321,11 @@ test.describe("Earn [v2]", () => {
         `Earn v2 ETH staking flow - ${provider.name}`,
         {
           tag: getTags(account),
-          annotation: { type: "TMS", description: xrayTicket },
+          ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (xrayTicket)
+            await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
           await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
           await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
           const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
@@ -312,7 +341,12 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: Position Row Flows ---
 
-  for (const account of [Account.NEAR_1, Account.ATOM_1]) {
+  const positionAccountCurrencies = [
+    { account: Account.NEAR_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.ATOM_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+  ];
+
+  for (const { account, xrayTicket } of positionAccountCurrencies) {
     test.describe(`Position → Account (${account.currency.ticker})`, () => {
       test.use({
         userdata: "skip-onboarding",
@@ -323,8 +357,13 @@ test.describe("Earn [v2]", () => {
 
       test(
         `Earn v2 position row navigates to account page for ${account.currency.ticker}`,
-        { tag: getTags(account) },
+        {
+          tag: getTags(account),
+          ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+        },
         async ({ app }) => {
+          if (xrayTicket)
+            await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
           await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
           await app.earnDashboard.verifyHotStartPage();
           await app.earnDashboard.clickPositionRow(account.currency.ticker);
@@ -355,12 +394,22 @@ test.describe("Earn [v2]", () => {
       cliCommands: [liveDataWithAddressCommand(account)],
     });
 
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
     test(
       "Earn v2 position row navigates to dapp for ETH",
-      { tag: getTags(account) },
+      {
+        tag: getTags(account),
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+      },
       async ({ app, electronApp, page }) => {
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         // Mock the earn API to return an ETH native staking position
-        const mockResponse = buildStakesResponse([mockEthNativeStake], "ethereum", account.address ?? "");
+        const mockResponse = buildStakesResponse(
+          [mockEthNativeStake],
+          "ethereum",
+          account.address ?? "",
+        );
         const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await interceptReady;
@@ -386,10 +435,16 @@ test.describe("Earn [v2]", () => {
       cliCommands: [liveDataWithAddressCommand(account)],
     });
 
+    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
     test(
       "Earn v2 position row navigates to withdrawal for USDT",
-      { tag: getTags(account) },
+      {
+        tag: getTags(account),
+        ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
+      },
       async ({ app, electronApp }) => {
+        if (xrayTicket)
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         // Mock the earn API to return a USDT Morpho deposit position
         const mockResponse = buildStakesResponse(
           [mockUsdtMorphoStake],
