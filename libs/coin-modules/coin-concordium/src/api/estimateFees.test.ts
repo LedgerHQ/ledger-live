@@ -24,7 +24,7 @@ describe("api/estimateFees", () => {
   });
 
   it("should estimate fees for transaction with memo", async () => {
-    const api = createApi(mockConfig);
+    const api = createApi(mockConfig, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -49,15 +49,12 @@ describe("api/estimateFees", () => {
 
     const result = await api.estimateFees(transactionIntent);
 
-    expect(estimateFeesMock).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "concordium" }),
-      "fee test",
-    );
+    expect(estimateFeesMock).toHaveBeenCalledWith("concordium_testnet", "fee test");
     expect(result).toEqual({ value: BigInt(1500) });
   });
 
   it("should estimate fees for transaction without memo", async () => {
-    const api = createApi(mockConfig);
+    const api = createApi(mockConfig, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {

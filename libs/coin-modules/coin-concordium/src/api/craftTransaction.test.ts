@@ -24,8 +24,8 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction with memo", async () => {
-    const api = createApi(mockConfig);
-    getNextValidSequenceMock.mockResolvedValue(BigInt(5));
+    const api = createApi(mockConfig, "concordium_testnet");
+    getNextValidSequenceMock.mockResolvedValue(5);
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -51,10 +51,10 @@ describe("api/craftTransaction", () => {
 
     expect(getNextValidSequenceMock).toHaveBeenCalledWith(
       transactionIntent.sender,
-      expect.objectContaining({ id: "concordium" }),
+      "concordium_testnet",
     );
     expect(craftTransactionMock).toHaveBeenCalledWith(
-      { address: transactionIntent.sender, nextSequenceNumber: BigInt(5) },
+      { address: transactionIntent.sender, nextSequenceNumber: 5 },
       expect.objectContaining({
         recipient: transactionIntent.recipient,
         memo: "test memo",
@@ -65,8 +65,8 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction without memo", async () => {
-    const api = createApi(mockConfig);
-    getNextValidSequenceMock.mockResolvedValue(BigInt(10));
+    const api = createApi(mockConfig, "concordium_testnet");
+    getNextValidSequenceMock.mockResolvedValue(10);
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {

@@ -23,11 +23,11 @@ export const CRED_ID = "cc".repeat(48);
 export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "concordium",
+    id: "concordium_testnet",
     name: "Concordium",
     family: "concordium",
     ticker: "CCD",
-    scheme: "concordium",
+    scheme: "concordium_testnet",
     color: "#000000",
     units: [{ name: "CCD", code: "CCD", magnitude: 6 }],
     managerAppName: "Concordium",
@@ -38,7 +38,7 @@ export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): Cryp
 export function createFixtureAccount(overrides?: Partial<Account>): Account {
   return {
     type: "Account",
-    id: "js:2:concordium:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
+    id: "js:2:concordium_testnet:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
     seedIdentifier: PUBLIC_KEY,
     xpub: PUBLIC_KEY,
     derivationMode: "",
@@ -79,7 +79,7 @@ export function createFixtureTransaction(overrides?: Partial<Transaction>): Tran
 
 export function createFixtureOperation(overrides?: Partial<Operation>): Operation {
   return {
-    id: "js:2:concordium:addr:tx-1",
+    id: "js:2:concordium_testnet:addr:tx-1",
     hash: "tx-hash-1",
     type: "OUT",
     value: new BigNumber(1000000),
@@ -88,7 +88,7 @@ export function createFixtureOperation(overrides?: Partial<Operation>): Operatio
     recipients: [VALID_ADDRESS_2],
     blockHeight: 1000,
     blockHash: "block-hash-1",
-    accountId: "js:2:concordium:addr:",
+    accountId: "js:2:concordium_testnet:addr:",
     date: new Date("2024-01-01"),
     extra: {},
     transactionSequenceNumber: new BigNumber(1),
