@@ -327,10 +327,11 @@ describe("PortfolioView", () => {
       expect(screen.getByTestId("portfolio-balance")).toBeVisible();
     });
 
-    it("should display loading state when balance is not yet available", () => {
+    it("should display placeholder when balance is not yet available", () => {
       mockUsePortfolioThrottled.mockReturnValue({
         ...defaultPortfolioMock,
         balanceAvailable: false,
+        balanceHistory: [],
       });
 
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
@@ -352,6 +353,7 @@ describe("PortfolioView", () => {
       });
 
       expect(screen.getByTestId("portfolio-balance")).toBeVisible();
+      expect(screen.getByTestId("portfolio-placeholder-balance")).toBeVisible();
       expect(screen.queryByTestId("portfolio-trend")).toBeNull();
     });
   });
