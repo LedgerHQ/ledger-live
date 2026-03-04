@@ -11,6 +11,7 @@ import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigationParamsType } from "~/components/FabActions";
 import { useModularDrawerController } from "../ModularDrawer";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -60,6 +61,43 @@ export function useOpenSwap({
     if (!currency) return [];
     return getAccountsForCurrency(flattenedAccounts, shallowAccounts, currency);
   }, [currency, flattenedAccounts, shallowAccounts]);
+
+  const swapNavigationParams = useMemo((): NavigationParamsType => {
+    const swapParams: DefaultAccountSwapParamList = {
+      defaultCurrency: currency,
+      fromPath: sourceScreenName,
+      ...(defaultAccount ? { defaultAccount } : {}),
+      ...(defaultParentAccount ? { defaultParentAccount } : {}),
+      ...(!defaultAccount && currency && isTokenCurrency(currency)
+        ? { toTokenId: currency.id }
+        : {}),
+    };
+
+    return shouldDisplayWallet40MainNav
+      ? ([
+          NavigatorName.Main,
+          {
+            screen: NavigatorName.Swap,
+            params: {
+              screen: ScreenName.SwapTab,
+              params: swapParams,
+            },
+          },
+        ] as const)
+      : ([
+          NavigatorName.Swap,
+          {
+            screen: ScreenName.SwapTab,
+            params: swapParams,
+          },
+        ] as const);
+  }, [
+    currency,
+    defaultAccount,
+    defaultParentAccount,
+    shouldDisplayWallet40MainNav,
+    sourceScreenName,
+  ]);
 
   const navigateToSwap = useCallback(
     (account?: AccountLike, parentAccount?: Account) => {
@@ -162,5 +200,5 @@ export function useOpenSwap({
     openAccountSelectionDrawer,
   ]);
 
-  return { handleOpenSwap };
+  return { handleOpenSwap, swapNavigationParams };
 }

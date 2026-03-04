@@ -18,8 +18,8 @@ import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/l
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { useOpenSwap } from "LLM/features/Swap";
 import { useOpenBuy } from "LLM/features/Buy";
+import { useOpenSwap } from "LLM/features/Swap";
 
 export type QuickAction = {
   disabled: boolean;
