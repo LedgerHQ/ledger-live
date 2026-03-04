@@ -123,4 +123,81 @@ describe("useFeePresetFiatValues", () => {
       });
     });
   });
+
+  it("clears custom fee overrides when estimating preset fiat values via bridge", async () => {
+    const bridge = {
+      updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
+        ...tx,
+        ...patch,
+      }),
+      prepareTransaction: async (_account: unknown, tx: Record<string, unknown>) => tx,
+      getTransactionStatus: async (_account: unknown, tx: Record<string, unknown>) => {
+        const strategy = typeof tx.feesStrategy === "string" ? tx.feesStrategy : "";
+        const hasCustomOverrides =
+          tx.customGasLimit !== undefined ||
+          tx.gasPrice !== undefined ||
+          tx.maxFeePerGas !== undefined ||
+          tx.maxPriorityFeePerGas !== undefined ||
+          tx.feePerByte !== undefined ||
+          tx.customFeeRate !== undefined ||
+          tx.fees !== undefined ||
+          tx.customFees !== undefined;
+
+        if (hasCustomOverrides) {
+          return { estimatedFees: new BigNumber(80), errors: {} };
+        }
+
+        const feesByStrategy: Record<string, BigNumber> = {
+          slow: new BigNumber(1),
+          medium: new BigNumber(2),
+          fast: new BigNumber(3),
+        };
+        return { estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0), errors: {} };
+      },
+    };
+    mockedGetAccountBridge.mockReturnValue(bridge as never);
+
+    const mainAccount = createMockAccount({
+      id: "main",
+      currency: getCryptoCurrencyById("ethereum"),
+    });
+    const fiatCurrency = getFiatCurrencyByTicker("USD");
+    const transaction = {
+      family: "evm",
+      recipient: "0xrecipient",
+      amount: new BigNumber(0),
+      useAllAmount: false,
+      feesStrategy: "custom",
+      customGasLimit: new BigNumber(5_000_000),
+      maxFeePerGas: new BigNumber(100_000_000_000),
+      maxPriorityFeePerGas: new BigNumber(50_000_000_000),
+      customFeeRate: new BigNumber(42),
+      feePerByte: new BigNumber(99),
+      fees: new BigNumber(123),
+      customFees: { example: "value" },
+    } as unknown as Transaction;
+
+    const { result } = renderHook(() =>
+      useFeePresetFiatValues({
+        account: mainAccount,
+        parentAccount: null,
+        mainAccount,
+        transaction,
+        feePresetOptions: [],
+        fallbackPresetIds: ["slow", "medium", "fast"],
+        counterValueCurrency: fiatCurrency,
+        fiatUnit: fiatCurrency.units[0],
+        enabled: true,
+        shouldEstimateWithBridge: true,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current).toEqual({
+        slow: "1",
+        medium: "2",
+        fast: "3",
+      });
+    });
+  });
 });
