@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.2
+
+### Minor Changes
+
+- [#15035](https://github.com/LedgerHQ/ledger-live/pull/15035) [`0ce79a6`](https://github.com/LedgerHQ/ledger-live/commit/0ce79a65a356a8c459af414be030b38305f69c5f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add back to quotes logic after successful swap to v4 navigation
+
 ## 3.109.0-next.1
 
 ### Minor Changes
