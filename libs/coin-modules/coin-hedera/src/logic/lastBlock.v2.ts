@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
-import { getSyntheticBlock } from "./utils";
+import { getSyntheticBlock, nanosToSeconds } from "./utils";
 
 /**
  * Gets the latest "block" information for Hedera.
@@ -25,7 +25,7 @@ export async function lastBlockV2(): Promise<BlockInfo> {
 
   // take the smaller of the two timestamps (mirror node vs hgraph) to ensure we only return blocks for which we have all data available
   const lastMirrorTimestamp = latestTransaction.consensus_timestamp;
-  const lastHgraphTimestamp = latestHgraphTimestampNs.dividedBy(10 ** 9).toFixed(9);
+  const lastHgraphTimestamp = nanosToSeconds(latestHgraphTimestampNs);
   const consensusTimestamp = BigNumber.minimum(lastMirrorTimestamp, lastHgraphTimestamp).toFixed(9);
 
   const syntheticBlock = getSyntheticBlock(consensusTimestamp);

@@ -698,7 +698,7 @@ export const mergeTransactionsFromDifferentSources = ({
 }) => {
   let merged: MergedTransaction[] = [];
   let nextCursor: string | null = null;
-  const latestHgraphIndexedTimestampSeconds = latestHgraphIndexedTimestampNs.dividedBy(10 ** 9);
+  const latestHgraphIndexedTimestampSeconds = nanosToSeconds(latestHgraphIndexedTimestampNs);
 
   // merge both transaction sources
   merged.push(
@@ -770,3 +770,15 @@ export const mergeTransactionsFromDifferentSources = ({
 
   return { merged, nextCursor };
 };
+
+export function millisToSeconds(millis: number | BigNumber): BigNumber {
+  return new BigNumber(millis).dividedBy(10 ** 3);
+}
+
+export function secondsToNanos(seconds: number | BigNumber): BigNumber {
+  return new BigNumber(seconds).multipliedBy(10 ** 9);
+}
+
+export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
+  return new BigNumber(nanos).dividedBy(10 ** 9);
+}

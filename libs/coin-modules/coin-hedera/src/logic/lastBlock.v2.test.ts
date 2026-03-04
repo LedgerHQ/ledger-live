@@ -3,7 +3,7 @@ import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { lastBlockV2 } from "./lastBlock.v2";
-import { getSyntheticBlock } from "./utils";
+import { getSyntheticBlock, nanosToSeconds } from "./utils";
 
 jest.mock("../network/api");
 jest.mock("../network/hgraph");
@@ -11,24 +11,23 @@ jest.mock("../network/hgraph");
 const BLOCK_WINDOW_MS = SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000;
 
 describe("lastBlockV2", () => {
-  const mockHgraphTimestampNs = "1625097500000000000";
-  const mockHgraphTimestamp = new BigNumber(mockHgraphTimestampNs).dividedBy(10 ** 9).toFixed(9);
+  const mockHgraphTimestampNs = new BigNumber("1625097500000000000");
+  const mockHgraphTimestamp = nanosToSeconds(mockHgraphTimestampNs);
   const mockTransaction = {
     consensus_timestamp: "1625097600.000000000",
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (apiClient.getLatestTransaction as jest.Mock).mockResolvedValue(mockTransaction);
+    (hgraphClient.getLatestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
+      mockHgraphTimestampNs,
+    );
   });
 
   it("should return the last block info using the smaller timestamp", async () => {
-    (apiClient.getLatestTransaction as jest.Mock).mockResolvedValue(mockTransaction);
-    (hgraphClient.getLatestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
-      new BigNumber(mockHgraphTimestampNs),
-    );
-
     const result = await lastBlockV2();
-    const expectedSyntheticBlock = getSyntheticBlock(mockHgraphTimestamp);
+    const expectedSyntheticBlock = getSyntheticBlock(mockHgraphTimestamp.toFixed(9));
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
     expect(hgraphClient.getLatestIndexedConsensusTimestamp).toHaveBeenCalledTimes(1);
@@ -38,8 +37,6 @@ describe("lastBlockV2", () => {
   });
 
   it("should only query transactions from fully finalized blocks", async () => {
-    (apiClient.getLatestTransaction as jest.Mock).mockResolvedValue(mockTransaction);
-
     const now = Date.now();
     await lastBlockV2();
 

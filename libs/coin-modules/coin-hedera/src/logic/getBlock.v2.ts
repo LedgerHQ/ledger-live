@@ -4,7 +4,6 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/types";
-import BigNumber from "bignumber.js";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
@@ -23,7 +22,20 @@ import {
   getDateRangeFromBlockHeight,
   mergeTransactionsFromDifferentSources,
   toEntityId,
+  extractFeesPayer,
+  millisToSeconds,
+  secondsToNanos,
 } from "./utils";
+
+function isStakingTransactionType(
+  item: MergedTransaction,
+): item is Extract<MergedTransaction, { type: "mirror" }> {
+  return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.UpdateAccount;
+}
+
+function getMirrorTransaction(item: MergedTransaction): HederaMirrorTransaction {
+  return item.type === "mirror" ? item.data : item.data.mirrorTransaction;
+}
 
 function createBlockOperationFromCoinTransfer({
   payerAccount,
@@ -36,20 +48,18 @@ function createBlockOperationFromCoinTransfer({
   transfer: HederaMirrorCoinTransfer;
   rewardTransfers: HederaMirrorTransaction["staking_reward_transfers"];
 }): BlockOperation {
-  let amount = BigInt(transfer.amount);
   const address = transfer.account;
   const reward = rewardTransfers.find(r => r.account === address);
   const asset: AssetInfo = {
     type: "native",
   };
 
-  // exclude fee from payer's operation amount (fees are accounted for separately, so operations must not represent fees)
-  if (payerAccount === address) {
-    amount += BigInt(chargedFee);
-  }
-
-  // subtract staking rewards from the amount as they are represented as separate operations
-  amount -= BigInt(reward?.amount ?? 0);
+  // adjust the transfer amount:
+  // - exclude fee from payer's operation amount (fees are accounted for separately, so operations must not represent fees)
+  // - subtract staking rewards from the amount as they are represented as separate operations
+  const feeAdjustment = payerAccount === address ? BigInt(chargedFee) : BigInt(0);
+  const rewardAdjustment = BigInt(reward?.amount ?? 0);
+  const amount = BigInt(transfer.amount) + feeAdjustment - rewardAdjustment;
 
   return {
     type: "transfer",
@@ -131,9 +141,9 @@ export async function getBlockV2(height: number): Promise<Block> {
   }
 
   const latestHgraphIndexedTimestampNs = await hgraphClient.getLatestIndexedConsensusTimestamp();
-  const startSeconds = new BigNumber(start.getTime()).dividedBy(1000);
-  const endSeconds = new BigNumber(end.getTime()).dividedBy(1000);
-  const endNanos = endSeconds.multipliedBy(10 ** 9);
+  const startSeconds = millisToSeconds(start.getTime());
+  const endSeconds = millisToSeconds(end.getTime());
+  const endNanos = secondsToNanos(endSeconds);
   const limit = 100;
   const order = "desc";
 
@@ -172,22 +182,18 @@ export async function getBlockV2(height: number): Promise<Block> {
   // analyze CRYPTOUPDATEACCOUNT transactions to distinguish staking operations from regular account updates.
   // this creates a map of transaction_hash -> StakingAnalysis to avoid repeated lookups.
   const stakingAnalyses = await Promise.all(
-    mergeResult.merged
-      .filter((item): item is Extract<MergedTransaction, { type: "mirror" }> => {
-        return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.UpdateAccount;
-      })
-      .map(async item => {
-        const payerAccount = item.data.transaction_id.split("-")[0];
-        const analysis = await analyzeStakingOperation(payerAccount, item.data);
+    mergeResult.merged.filter(isStakingTransactionType).map(async item => {
+      const payerAccount = extractFeesPayer(item.data.transaction_id);
+      const analysis = await analyzeStakingOperation(payerAccount, item.data);
 
-        return [item.data.transaction_hash, analysis] as const;
-      }),
+      return [item.data.transaction_hash, analysis] as const;
+    }),
   );
   const stakingAnalysisMap = new Map(stakingAnalyses);
 
   const blockTransactions: BlockTransaction[] = mergeResult.merged.map(item => {
-    const mirrorTx = item.type === "mirror" ? item.data : item.data.mirrorTransaction;
-    const payerAccount = mirrorTx.transaction_id.split("-")[0];
+    const mirrorTx = getMirrorTransaction(item);
+    const payerAccount = extractFeesPayer(mirrorTx.transaction_id);
     const stakingAnalysis = stakingAnalysisMap.get(mirrorTx.transaction_hash);
 
     let operations: BlockOperation[];
