@@ -5068,7 +5068,7 @@
     }
   },
   "theme": {
-    "system": "Select the system theme",
+    "system": "System",
     "light": "Light",
     "dusk": "Dusk",
     "dark": "Dark"
@@ -8263,5 +8263,3 @@
     }
   }
 }
-
-

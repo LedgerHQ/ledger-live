@@ -616,10 +616,10 @@ export const countervalueFirstSelector = createSelector(
 );
 export const developerModeSelector = (state: State): boolean => state.settings.developerMode;
 export const lastUsedVersionSelector = (state: State): string => state.settings.lastUsedVersion;
-export const userThemeSelector = (state: State): "dark" | "light" | undefined | null => {
+export const userThemeSelector = (state: State): "dark" | "light" | null => {
   const savedVal = state.settings.theme;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return ["dark", "light"].includes(savedVal as string) ? (savedVal as "dark" | "light") : "dark";
+  if (savedVal === "dark" || savedVal === "light") return savedVal;
+  return null;
 };
 
 type LanguageAndUseSystemLanguage = {
