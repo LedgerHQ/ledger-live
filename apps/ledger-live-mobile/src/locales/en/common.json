@@ -2951,8 +2951,7 @@
   },
   "operationList": {
     "noOperations": "No Operations",
-    "noMoreTransactions": "No other transactions",
-    "showHiddenSmallValueTransactions": "Show hidden small-value transactions"
+    "noMoreTransactions": "No other transactions"
   },
   "selectableAccountsList": {
     "deselectAll": "Deselect all",

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import Box from "~/renderer/components/Box";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
-import ShowHiddenSmallValueOperationsToggle from "~/renderer/components/ShowHiddenSmallValueOperationsToggle";
 import AssetDistribution from "./AssetDistribution";
 import { useSelector } from "LLD/hooks/redux";
 import uniq from "lodash/uniq";
@@ -52,10 +51,7 @@ export default function DashboardPage() {
     () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
     [accounts],
   );
-  const [showHiddenSmallValueOperations, setShowHiddenSmallValueOperations] = useState(false);
-  const { filterOperations, isSmallValueFilterEnabled } = useSmallValueOperationsFilter(
-    showHiddenSmallValueOperations,
-  );
+  const { filterOperations } = useSmallValueOperationsFilter();
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
@@ -111,24 +107,14 @@ export default function DashboardPage() {
                   <PerpsEntryPoint />
                   <AssetDistribution />
                   {totalOperations > 0 && (
-                    <>
-                      {isSmallValueFilterEnabled && (
-                        <Box mb={3} alignItems="flex-end">
-                          <ShowHiddenSmallValueOperationsToggle
-                            isChecked={showHiddenSmallValueOperations}
-                            onChange={setShowHiddenSmallValueOperations}
-                          />
-                        </Box>
-                      )}
-                      <OperationsList
-                        accounts={accounts}
-                        title={t("dashboard.recentActivity")}
-                        withAccount
-                        withSubAccounts
-                        filterOperation={filterOperations}
-                        t={t}
-                      />
-                    </>
+                    <OperationsList
+                      accounts={accounts}
+                      title={t("dashboard.recentActivity")}
+                      withAccount
+                      withSubAccounts
+                      filterOperation={filterOperations}
+                      t={t}
+                    />
                   )}
                 </>
               ) : (

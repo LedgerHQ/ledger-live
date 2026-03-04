@@ -12,22 +12,13 @@ import {
   filterTokenOperationsZeroAmountEnabledSelector,
 } from "~/reducers/settings";
 
-type UseOperationsV1Options = {
-  showHiddenSmallValueOperations?: boolean;
-};
-
 function getAccountFamily(account: AccountLike): string {
   return account.type === "TokenAccount"
     ? account.token.parentCurrency.family
     : account.currency.family;
 }
 
-export function useOperationsV1(
-  accounts: AccountLike[],
-  opCount: number,
-  options: UseOperationsV1Options = {},
-) {
-  const { showHiddenSmallValueOperations = false } = options;
+export function useOperationsV1(accounts: AccountLike[], opCount: number) {
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
@@ -40,7 +31,7 @@ export function useOperationsV1(
 
   const filterOperation = useCallback(
     (operation: Operation, account: AccountLike) => {
-      if (showHiddenSmallValueOperations || !shouldFilterTokenOpsZeroAmount) {
+      if (!shouldFilterTokenOpsZeroAmount) {
         return true;
       }
       if (account.type !== "TokenAccount") return true;
@@ -80,7 +71,6 @@ export function useOperationsV1(
       counterValueCurrency,
       countervaluesState,
       shouldFilterTokenOpsZeroAmount,
-      showHiddenSmallValueOperations,
       smallValueThreshold,
       addressPoisoningFamilies,
     ],

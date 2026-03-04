@@ -1757,8 +1757,7 @@
     }
   },
   "operationList": {
-    "noMoreOperations": "That's all",
-    "showHiddenSmallValueTransactions": "Show hidden small-value transactions"
+    "noMoreOperations": "That's all"
   },
   "DeviceAction": {
     "allowAppPermission": "Open the {{wording}} app on your device",

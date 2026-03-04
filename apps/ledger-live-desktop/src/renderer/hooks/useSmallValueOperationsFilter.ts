@@ -17,7 +17,7 @@ function getAccountFamily(account: AccountLike): string {
     : account.currency.family;
 }
 
-export function useSmallValueOperationsFilter(showHiddenSmallValueOperations = false) {
+export function useSmallValueOperationsFilter() {
   const [isSmallValueFilterEnabled] = useFilterTokenOperationsZeroAmount();
   const [smallValueThreshold] = useFilterTokenOperationsThreshold();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -28,7 +28,7 @@ export function useSmallValueOperationsFilter(showHiddenSmallValueOperations = f
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
-      if (showHiddenSmallValueOperations || !isSmallValueFilterEnabled) return true;
+      if (!isSmallValueFilterEnabled) return true;
       if (account.type !== "TokenAccount") return true;
 
       const family = getAccountFamily(account);
@@ -66,7 +66,6 @@ export function useSmallValueOperationsFilter(showHiddenSmallValueOperations = f
       counterValueCurrency,
       countervaluesState,
       isSmallValueFilterEnabled,
-      showHiddenSmallValueOperations,
       smallValueThreshold,
       addressPoisoningFamilies,
     ],

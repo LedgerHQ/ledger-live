@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Navigate, useParams } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -19,7 +18,6 @@ import { countervalueFirstSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
-import ShowHiddenSmallValueOperationsToggle from "~/renderer/components/ShowHiddenSmallValueOperationsToggle";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useSmallValueOperationsFilter } from "~/renderer/hooks/useSmallValueOperationsFilter";
 import BalanceSummary from "./BalanceSummary";
@@ -89,13 +87,7 @@ const AccountPage = ({
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;
   const bgColor = useTheme().colors.background.card;
-  const [showHiddenSmallValueOperations, setShowHiddenSmallValueOperations] = useState(false);
-  const { filterOperations, isSmallValueFilterEnabled } = useSmallValueOperationsFilter(
-    showHiddenSmallValueOperations,
-  );
-  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: isSmallValueFilterEnabled,
-  });
+  const { filterOperations } = useSmallValueOperationsFilter();
 
   const currency = mainAccount?.currency;
 
@@ -166,14 +158,6 @@ const AccountPage = ({
           {account.type === "Account" && <NftEntryPoint account={account} />}
 
           {account.type === "Account" ? <TokensList account={account} /> : null}
-          {isSmallValueFilterEnabled && addressPoisoningFamilies?.includes(currency.family) ? (
-            <Box mb={3} alignItems="flex-end">
-              <ShowHiddenSmallValueOperationsToggle
-                isChecked={showHiddenSmallValueOperations}
-                onChange={setShowHiddenSmallValueOperations}
-              />
-            </Box>
-          ) : null}
           <OperationsList
             t={t}
             account={account}

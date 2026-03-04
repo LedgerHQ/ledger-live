@@ -140,9 +140,6 @@ describe("PortfolioView", () => {
     filterOperations: () => true,
     accounts: [],
     t: i18next.t,
-    isSmallValueFilterEnabled: false,
-    showHiddenSmallValueOperations: false,
-    setShowHiddenSmallValueOperations: jest.fn(),
   };
 
   beforeEach(() => {
