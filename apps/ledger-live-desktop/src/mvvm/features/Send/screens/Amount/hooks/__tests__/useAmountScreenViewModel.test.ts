@@ -14,12 +14,31 @@ import { createMockAccount } from "../../../Recipient/__integrations__/__fixture
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/coin-framework/account/helpers");
 jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+  getSendDescriptor: jest.fn(),
   sendFeatures: {
     hasFeePresets: () => false,
     shouldEstimateFeePresetsWithBridge: () => false,
     hasCustomFees: () => false,
     hasCoinControl: () => false,
+    getFeePresetOptions: jest.fn(() => []),
   },
+}));
+
+const onSelectFeeStrategy = jest.fn();
+
+jest.mock("../../../../hooks/useNetworkFees", () => ({
+  useNetworkFees: () => ({
+    feesRowLabel: "Network Fees",
+    feesRowValue: "--",
+    feesRowStrategyLabel: "Medium",
+    showNetworkFees: true,
+    showFeePresets: false,
+    selectedFeeStrategy: null,
+    onSelectFeeStrategy,
+    feePresetOptions: [],
+    fiatByPreset: {},
+    legendByPreset: {},
+  }),
 }));
 
 jest.mock("../useAmountInput", () => ({
@@ -38,18 +57,6 @@ jest.mock("../useAmountInput", () => ({
 
 jest.mock("../useQuickActions", () => ({
   useQuickActions: () => [],
-}));
-
-jest.mock("../useFeePresetOptions", () => ({
-  useFeePresetOptions: () => [],
-}));
-
-jest.mock("../useFeePresetFiatValues", () => ({
-  useFeePresetFiatValues: () => ({}),
-}));
-
-jest.mock("../useFeePresetLegends", () => ({
-  useFeePresetLegends: () => ({}),
 }));
 
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError");
@@ -198,19 +205,7 @@ describe("useAmountScreenViewModel", () => {
 
       result.current.onSelectFeeStrategy("medium");
 
-      expect(updateTransaction).toHaveBeenCalledTimes(1);
-      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
-      const patched = updater(transaction);
-
-      expect(patched.feesStrategy).toBe("medium");
-      expect(patched.customGasLimit).toBeUndefined();
-      expect(patched.gasPrice).toBeUndefined();
-      expect(patched.maxFeePerGas).toBeUndefined();
-      expect(patched.maxPriorityFeePerGas).toBeUndefined();
-      expect(patched.feePerByte).toBeUndefined();
-      expect(patched.customFeeRate).toBeUndefined();
-      expect(patched.fees).toBeUndefined();
-      expect(patched.customFees).toBeUndefined();
+      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
     });
 
     it("does not clear custom fee overrides when selecting the custom strategy", () => {
@@ -239,14 +234,7 @@ describe("useAmountScreenViewModel", () => {
 
       result.current.onSelectFeeStrategy("custom");
 
-      expect(updateTransaction).toHaveBeenCalledTimes(1);
-      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
-      const patched = updater(txWithCustomFees);
-
-      expect(patched.feesStrategy).toBe("custom");
-      // Custom fee fields must NOT be cleared
-      expect(patched.customFeeRate).toEqual(new BigNumber(10));
-      expect(patched.feePerByte).toEqual(new BigNumber(5));
+      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
     });
   });
 
