@@ -4985,8 +4985,12 @@
         "count_other": "{{count}} tokens"
       },
       "filterTokenOperationsZeroAmount": {
-        "title": "Hide token transactions when value is 0",
-        "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
+        "title": "Hide suspicious small-value incoming token transactions",
+        "desc": "Hide incoming token transactions that are below your custom fiat threshold to reduce dusting attempts and history clutter."
+      },
+      "filterTokenOperationsThreshold": {
+        "title": "Small-value threshold",
+        "desc": "Incoming token transactions below this amount ({{ticker}}) are hidden."
       },
       "doNotAskAgainSkipMemo": {
         "title": "Do not ask again skip memo on send",

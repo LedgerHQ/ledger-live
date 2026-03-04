@@ -86,6 +86,7 @@ export type SettingsState = {
   mevProtection: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  filterTokenOperationsThreshold: number;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
   starredAccountIds?: string[];
@@ -177,6 +178,7 @@ export const INITIAL_STATE: SettingsState = {
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
+  filterTokenOperationsThreshold: 1,
   sidebarCollapsed: false,
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
@@ -762,6 +764,8 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const filterTokenOperationsThresholdSelector = (state: State) =>
+  state.settings.filterTokenOperationsThreshold;
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
