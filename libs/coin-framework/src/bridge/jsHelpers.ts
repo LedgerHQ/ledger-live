@@ -1,7 +1,19 @@
 import bippath from "bip32-path";
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { Observable, Observer, from } from "rxjs";
+import {
+  Observable,
+  Observer,
+  Subject,
+  defaultIfEmpty,
+  from,
+  isObservable,
+  lastValueFrom,
+  map,
+  of,
+  takeLast,
+  takeUntil,
+} from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import {
@@ -87,7 +99,26 @@ export type GetAccountShape<A extends Account = Account> = (
   accountShape: AccountShapeInfo<A>,
   config: SyncConfig,
 ) => Promise<Partial<A>>;
+export type GetAccountShapeStream<A extends Account = Account> = (
+  accountShape: AccountShapeInfo<A>,
+  config: SyncConfig,
+) => Observable<Partial<A>>;
 type AccountUpdater<A extends Account = Account> = (account: A) => A;
+
+/**
+ * Normalizes a Promise or Observable to an Observable.
+ * This helper function allows the framework to handle both Promise-based
+ * and Observable-based getAccountShape implementations uniformly.
+ *
+ * @param value - Either a Promise or Observable
+ * @returns An Observable
+ */
+function normalizeToObservable<T>(value: Promise<T> | Observable<T>): Observable<T> {
+  if (isObservable(value)) {
+    return value as Observable<T>;
+  }
+  return from(value as Promise<T>);
+}
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) < 1000 * 60 * 30;
@@ -201,12 +232,15 @@ export const makeSync =
     postSync = (_, a) => a,
     shouldMergeOps = true,
   }: {
-    getAccountShape: GetAccountShape<A>;
+    getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean;
   }): AccountBridge<T, A, U, O, R>["sync"] =>
-  (initial, syncConfig): Observable<AccountUpdater<A>> =>
-    new Observable((o: Observer<(acc: A) => A>) => {
+  (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
+    new Observable((o: Observer<AccountUpdater<A>>) => {
+      let innerSub: { unsubscribe: () => void } | null = null;
+      let cancelled = false;
+
       async function main() {
         const customData = getCustomDataFromAccountId(initial.id);
         const accountId = encodeAccountId({
@@ -225,7 +259,7 @@ export const makeSync =
             initial.derivationMode as DerivationMode,
           );
 
-          const shape = await getAccountShape(
+          const shapeResult = getAccountShape(
             {
               currency: initial.currency,
               index: initial.index,
@@ -237,50 +271,73 @@ export const makeSync =
             syncConfig,
           );
 
-          const updater = (acc: A): A => {
-            let a = acc; // a is a immutable version of Account, based on acc
+          const shape$ = normalizeToObservable(shapeResult);
 
-            if (needClear) {
-              a = clearAccount(acc);
-            }
+          const updater =
+            (shape: Partial<A>) =>
+            (acc: A): A => {
+              let a = acc; // a is a immutable version of Account, based on acc
 
-            // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-            const operations = shouldMergeOps
-              ? mergeOps(a.operations, shape.operations || [])
-              : shape.operations || [];
+              if (needClear && acc.id !== accountId) {
+                a = clearAccount(acc);
+              }
 
-            a = postSync(a, {
-              ...a,
-              id: accountId,
-              spendableBalance: shape.balance || a.balance,
-              operationsCount: shape.operationsCount || operations.length,
-              lastSyncDate: new Date(),
-              creationDate:
-                operations.length > 0 ? operations[operations.length - 1].date : new Date(),
-              ...shape,
-              operations,
-              pendingOperations: a.pendingOperations.filter(op =>
-                shouldRetainPendingOperation(a, op),
-              ),
-            });
+              // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
+              const operations = shouldMergeOps
+                ? mergeOps(a.operations, shape.operations || [])
+                : shape.operations || [];
 
-            a = recalculateAccountBalanceHistories(a, acc);
+              a = postSync(a, {
+                ...a,
+                id: accountId,
+                spendableBalance: shape.balance || a.balance,
+                operationsCount: shape.operationsCount || operations.length,
+                lastSyncDate: new Date(),
+                creationDate:
+                  operations.length > 0 ? operations[operations.length - 1].date : new Date(),
+                ...shape,
+                operations,
+                pendingOperations: a.pendingOperations.filter(op =>
+                  shouldRetainPendingOperation(a, op),
+                ),
+              });
 
-            if (!a.used) {
-              a.used = !isAccountEmpty(a);
-            }
+              a = recalculateAccountBalanceHistories(a, acc);
 
-            return a;
+              if (!a.used) {
+                a.used = !isAccountEmpty(a);
+              }
+
+              return a;
+            };
+
+          const observer: Observer<Partial<A>> = {
+            next: shape => {
+              if (!cancelled) o.next(updater(shape));
+            },
+            complete: () => {
+              if (!cancelled) o.complete();
+            },
+            error: e => {
+              if (!cancelled) o.error(e);
+            },
           };
 
-          o.next(updater);
-          o.complete();
+          innerSub = shape$.subscribe(observer);
+          if (cancelled) {
+            innerSub.unsubscribe();
+            return;
+          }
         } catch (e) {
-          o.error(e);
+          if (!cancelled) o.error(e);
         }
       }
 
       main();
+      return () => {
+        cancelled = true;
+        innerSub?.unsubscribe();
+      };
     });
 
 const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
@@ -323,36 +380,39 @@ export const makeScanAccounts =
     getAddressFn,
     postSync = (_, a) => a,
   }: {
-    getAccountShape: GetAccountShape<A>;
+    getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
-    new Observable((o: Observer<{ type: "discovered"; account: Account }>) => {
+    new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
       if (buildIterateResult === undefined) {
         buildIterateResult = defaultIterateResultBuilder(getAddressFn);
       }
 
       let finished = false;
+      const teardown$ = new Subject<void>();
 
       const unsubscribe = () => {
+        teardown$.next();
+        teardown$.complete();
         finished = true;
       };
 
       const derivationsCache: Record<string, Result> = {};
 
-      async function stepAccount(
+      function stepAccount(
         index: number,
         res: Result,
         derivationMode: DerivationMode,
         seedIdentifier: string,
-      ): Promise<Account | null | undefined> {
-        if (finished) return;
+      ): Observable<Account | null> {
+        if (finished) return of(null);
 
         const { address, path: freshAddressPath, ...rest } = res;
 
-        const accountShape: Partial<Account> = await getAccountShape(
+        const accountShapeResult = getAccountShape(
           {
             currency,
             index,
@@ -364,86 +424,77 @@ export const makeScanAccounts =
           },
           syncConfig,
         );
-        if (finished) return;
 
-        const freshAddress = address;
-        const operations = accountShape.operations || [];
-        const operationsCount = accountShape.operationsCount || operations.length;
-        const creationDate =
-          operations.length > 0 ? operations[operations.length - 1].date : new Date();
-        const balance = accountShape.balance || new BigNumber(0);
-        const spendableBalance = accountShape.spendableBalance || new BigNumber(0);
-        if (!accountShape.id) throw new Error("account ID must be provided");
-        if (balance.isNaN()) throw new Error("invalid balance NaN");
-        const initialAccount: Account = {
-          type: "Account",
-          id: accountShape.id,
-          seedIdentifier,
-          freshAddress,
-          freshAddressPath,
-          derivationMode,
-          used: false,
-          index,
-          currency,
-          operationsCount,
-          operations: [],
-          swapHistory: [],
-          pendingOperations: [],
-          lastSyncDate: new Date(),
-          creationDate,
-          // overrides
-          balance,
-          spendableBalance,
-          blockHeight: 0,
-          balanceHistoryCache: emptyHistoryCache,
-        };
-        let account = { ...initialAccount, ...accountShape };
+        const accountShape$: Observable<Partial<Account>> =
+          normalizeToObservable(accountShapeResult);
 
-        if (account.balanceHistoryCache === emptyHistoryCache) {
-          account.balanceHistoryCache = generateHistoryFromOperations(account);
-        }
+        function accountShapePipe(accountShape: Partial<Account>): Account {
+          const freshAddress = address;
+          const operations = accountShape.operations || [];
+          const operationsCount = accountShape.operationsCount || operations.length;
+          const creationDate =
+            operations.length > 0 ? operations[operations.length - 1].date : new Date();
+          const balance = accountShape.balance || new BigNumber(0);
+          const spendableBalance = accountShape.spendableBalance || new BigNumber(0);
+          if (!accountShape.id) throw new Error("account ID must be provided");
+          if (balance.isNaN()) throw new Error("invalid balance NaN");
+          const initialAccount: Account = {
+            type: "Account",
+            id: accountShape.id,
+            seedIdentifier,
+            freshAddress,
+            freshAddressPath,
+            derivationMode,
+            used: false,
+            index,
+            currency,
+            operationsCount,
+            operations: [],
+            swapHistory: [],
+            pendingOperations: [],
+            lastSyncDate: new Date(),
+            creationDate,
+            // overrides
+            balance,
+            spendableBalance,
+            blockHeight: 0,
+            balanceHistoryCache: emptyHistoryCache,
+          };
+          let account = { ...initialAccount, ...accountShape };
 
-        if (accountShape.used === undefined) {
-          account.used = !isAccountEmpty(account);
-        }
+          if (account.balanceHistoryCache === emptyHistoryCache) {
+            account.balanceHistoryCache = generateHistoryFromOperations(account);
+          }
 
-        // Bitcoin needs to compute the freshAddressPath itself,
-        // so we update it afterwards
-        if (account?.freshAddressPath) {
-          res.address = account.freshAddress;
-          derivationsCache[account.freshAddressPath] = res;
-        }
+          if (accountShape.used === undefined) {
+            account.used = !isAccountEmpty(account);
+          }
 
-        // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
-        // Using the generic doesn't resolve correctly
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        account = postSync(initialAccount as unknown as A, account as unknown as A);
+          // Bitcoin needs to compute the freshAddressPath itself,
+          // so we update it afterwards
+          if (account?.freshAddressPath) {
+            res.address = account.freshAddress;
+            derivationsCache[account.freshAddressPath] = res;
+          }
 
-        log("scanAccounts", "derivationsCache", res);
+          // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
+          // Using the generic doesn't resolve correctly
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          account = postSync(initialAccount as unknown as A, account as unknown as A);
 
-        log(
-          "scanAccounts",
-          `scanning ${currency.id} at ${freshAddressPath}: ${res.address} resulted of ${
-            account ? `Account with ${account.operations.length} txs` : "no account"
-          }`,
-        );
+          log("scanAccounts", "derivationsCache", res);
 
-        if (!account) return;
-
-        const showNewAccount = shouldShowNewAccount(currency, derivationMode);
-
-        if (account.used || showNewAccount) {
           log(
-            "debug",
-            `Emit 'discovered' event for a new account found. AccountUsed: ${account.used} - showNewAccount: ${showNewAccount}`,
+            "scanAccounts",
+            `scanning ${currency.id} at ${freshAddressPath}: ${res.address} resulted of ${
+              account ? `Account with ${account.operations.length} txs` : "no account"
+            }`,
           );
-          o.next({
-            type: "discovered",
-            account,
-          });
+
+          return account;
         }
 
-        return account;
+        return accountShape$.pipe(takeUntil(teardown$), map(accountShapePipe));
       }
 
       async function main() {
@@ -524,18 +575,42 @@ export const makeScanAccounts =
 
               if (!res) break;
 
-              const account = await stepAccount(index, res, derivationMode, seedIdentifier);
+              const account$ = stepAccount(index, res, derivationMode, seedIdentifier);
+              const account = await lastValueFrom(account$.pipe(takeLast(1), defaultIfEmpty(null)));
 
-              if (account && !account.used) {
-                if (emptyCount >= mandatoryEmptyAccountSkip) break;
-                emptyCount++;
+              if (finished) {
+                log("debug", `new account scanning process has been finished`);
+                break;
+              }
+              if (account) {
+                const showNewAccount = shouldShowNewAccount(currency, derivationMode);
+
+                if (account.used || showNewAccount) {
+                  log(
+                    "debug",
+                    `Emit 'discovered' event for a new account found. AccountUsed: ${account.used} - showNewAccount: ${showNewAccount}`,
+                  );
+                  outerObs.next({
+                    type: "discovered",
+                    account,
+                  });
+                }
+
+                if (!account.used) {
+                  if (emptyCount >= mandatoryEmptyAccountSkip) {
+                    break; // stop scanning indices for this derivation mode only
+                  }
+                  emptyCount++;
+                }
               }
             }
           }
 
-          o.complete();
+          if (!finished) {
+            outerObs.complete();
+          }
         } catch (e) {
-          o.error(e);
+          outerObs.error(e);
         }
       }
 
