@@ -1,6 +1,7 @@
 import semver from "semver";
 import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
+import { log } from "@ledgerhq/logs";
 import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
@@ -589,8 +590,10 @@ export default function connectAppFactory(
       deviceName ? { matchDeviceByName: deviceName } : undefined,
     )(transport => {
       if (!isDmkTransport(transport)) {
+        log("dmk-path", "connectApp: legacy path (transport missing dmk/sessionId)");
         return cmd(transport, { deviceId, deviceName, request });
       }
+      log("dmk-path", "connectApp: using DMK ConnectAppDeviceAction");
       const { dmk, sessionId } = transport;
       const deviceAction = new ConnectAppDeviceAction({
         input: {

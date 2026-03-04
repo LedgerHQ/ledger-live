@@ -318,7 +318,9 @@ export class InitializationManager {
           quickActionCtas: isWallet40,
         },
       },
+      ldmkConnectApp: { enabled: true },
     };
+    
     await setFeatureFlags({
       ...defaultFlags,
       ...featureFlags,

@@ -1,4 +1,6 @@
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "../../utils/dmkAssertions";
 
 export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
   describe("Verify Address", () => {
@@ -30,6 +32,9 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
       await app.speculos.expectValidAddressDevice(account, displayedAddress);
       await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
       await app.receive.expectAddressIsCorrect(displayedAddress);
+
+      const family = getFamilyByCurrencyId(account.currency.id);
+      await assertDmkPaths(family);
     });
   });
 }

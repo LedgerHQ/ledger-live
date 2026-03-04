@@ -4,6 +4,7 @@ import { CreateSigner, executeWithSigner } from "../../setup";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Signature } from "ethers";
@@ -28,9 +29,11 @@ const isDmkTransport = (
 
 const createLiveSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
   if (isDmkTransport(transport)) {
+    log("dmk-path", "alpaca/signer/Eth createLiveSigner: using DmkSignerEth");
     return new DmkSignerEth(transport.dmk, transport.sessionId);
   }
 
+  log("dmk-path", "alpaca/signer/Eth createLiveSigner: using LegacySignerEth");
   return new LegacySignerEth(transport);
 };
 

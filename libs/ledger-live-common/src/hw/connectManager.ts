@@ -1,5 +1,6 @@
 import { Observable, concat, concatWith, from, of, throwError } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
+import { log } from "@ledgerhq/logs";
 import {
   TransportStatusError,
   DeviceOnDashboardExpected,
@@ -172,8 +173,10 @@ export default function connectManagerFactory(
       deviceName ? { matchDeviceByName: deviceName } : undefined,
     )(transport => {
       if (!isDmkTransport(transport)) {
+        log("dmk-path", "connectManager: legacy path (transport missing dmk/sessionId)");
         return cmd(transport, { deviceId, deviceName, request });
       }
+      log("dmk-path", "connectManager: using DMK PrepareConnectManagerDeviceAction");
       const { dmk, sessionId } = transport;
       const deviceAction = new PrepareConnectManagerDeviceAction({
         input: {

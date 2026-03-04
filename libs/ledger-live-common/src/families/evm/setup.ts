@@ -6,15 +6,18 @@ import { prepareMessageToSign, signMessage } from "@ledgerhq/coin-evm/hw-signMes
 import { CreateSigner, createMessageSigner, createResolver } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import Transport from "@ledgerhq/hw-transport";
+import { log } from "@ledgerhq/logs";
 import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 
 const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
   if (isDmkTransport(transport)) {
+    log("dmk-path", "evm/setup createSigner: using DmkSignerEth");
     return new DmkSignerEth(transport.dmk, transport.sessionId);
   }
 
+  log("dmk-path", "evm/setup createSigner: using LegacySignerEth");
   return new LegacySignerEth(transport);
 };
 

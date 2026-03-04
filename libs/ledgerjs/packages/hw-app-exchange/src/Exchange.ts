@@ -1,6 +1,7 @@
 import Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
@@ -340,6 +341,7 @@ export default class Exchange {
 
   async signCoinTransaction(): Promise<void> {
     if (isDmkTransport(this.transport)) {
+      log("dmk-path", "Exchange signCoinTransaction: using DMK sendApdu");
       const result: Buffer = await this.transport.dmk
         .sendApdu({
           sessionId: this.transport.sessionId,
@@ -358,6 +360,7 @@ export default class Exchange {
         });
       maybeThrowProtocolError(result);
     } else {
+      log("dmk-path", "Exchange signCoinTransaction: legacy path (transport.send)");
       const result: Buffer = await this.transport.send(
         CLA,
         SIGN_COIN_TRANSACTION,

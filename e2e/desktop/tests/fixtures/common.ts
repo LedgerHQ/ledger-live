@@ -72,6 +72,9 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
   ...(process.env.E2E_ENABLE_WALLET40 === "1"
     ? LWD_WALLET_40_FF_ENABLED
     : LWD_WALLET_40_FF_DISABLED),
+  ldmkConnectApp: {
+    enabled: true,
+  },
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
