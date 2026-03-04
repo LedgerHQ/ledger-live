@@ -50,6 +50,7 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
           onActiveChange={viewModel.handleActiveChange}
           collapsed={viewModel.collapsed}
           onCollapsedChange={viewModel.handleCollapsedChange}
+          className="[&_span]:shrink" // workaround for global flex shrink issue
         >
           <SideBarLeading>
             <SideBarItem value="home" icon={Home} activeIcon={HomeFill} label={t("sidebar.home")} />
