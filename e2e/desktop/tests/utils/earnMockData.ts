@@ -148,7 +148,9 @@ export async function interceptEarnStakes(
   return new Promise<Page>((resolve, reject) => {
     const timeout = setTimeout(() => {
       electronApp.off("window", handler);
-      reject(new Error(`interceptEarnStakes timed out after ${timeoutMs}ms waiting for webview window`));
+      reject(
+        new Error(`interceptEarnStakes timed out after ${timeoutMs}ms waiting for webview window`),
+      );
     }, timeoutMs);
 
     const handler = async (page: Page) => {
