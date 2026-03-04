@@ -108,7 +108,8 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   }
 
   const hasPresets = sendFeatures.hasFeePresets(currency);
-  const hasCustom = sendFeatures.hasCustomFees(currency);
+  const hasCustom =
+    sendFeatures.hasCustomFees(currency) && !!sendFeatures.getCustomFeeConfig(currency);
   const hasCoinControl = sendFeatures.hasCoinControl(currency);
   const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
   const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";

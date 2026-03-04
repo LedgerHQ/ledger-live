@@ -158,6 +158,102 @@ describe("useAmountScreenViewModel", () => {
     });
   });
 
+  describe("onSelectFeeStrategy", () => {
+    function buildBaseParams(currency = getCryptoCurrencyById("bitcoin")) {
+      mockedGetAccountCurrency.mockReturnValue(currency);
+      const account = createMockAccount({ id: "acc", currency });
+      const transaction = {
+        family: "bitcoin",
+        recipient: "bc1q",
+        amount: new BigNumber(0),
+        useAllAmount: false,
+        feesStrategy: "custom" as const,
+        customFeeRate: new BigNumber(10),
+        feePerByte: new BigNumber(5),
+      } as unknown as Transaction;
+      const status = {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      } as TransactionStatus;
+      const updateTransaction = jest.fn();
+      return { account, transaction, status, updateTransaction };
+    }
+
+    it("clears custom fee overrides when switching to a preset strategy", () => {
+      const { account, transaction, status, updateTransaction } = buildBaseParams();
+
+      const { result } = renderHook(
+        () =>
+          useAmountScreenViewModel({
+            account,
+            parentAccount: null,
+            transaction,
+            status,
+            bridgePending: false,
+            bridgeError: null,
+            uiConfig: { hasFeePresets: true } as never,
+            transactionActions: { updateTransaction } as never,
+          }),
+        { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
+      );
+
+      result.current.onSelectFeeStrategy("medium");
+
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
+      const patched = updater(transaction);
+
+      expect(patched.feesStrategy).toBe("medium");
+      expect(patched.customGasLimit).toBeUndefined();
+      expect(patched.gasPrice).toBeUndefined();
+      expect(patched.maxFeePerGas).toBeUndefined();
+      expect(patched.maxPriorityFeePerGas).toBeUndefined();
+      expect(patched.feePerByte).toBeUndefined();
+      expect(patched.customFeeRate).toBeUndefined();
+      expect(patched.fees).toBeUndefined();
+      expect(patched.customFees).toBeUndefined();
+    });
+
+    it("does not clear custom fee overrides when selecting the custom strategy", () => {
+      const { account, transaction, status, updateTransaction } = buildBaseParams();
+      const txWithCustomFees = {
+        ...transaction,
+        feesStrategy: "medium" as const,
+        customFeeRate: new BigNumber(10),
+        feePerByte: new BigNumber(5),
+      } as unknown as Transaction;
+
+      const { result } = renderHook(
+        () =>
+          useAmountScreenViewModel({
+            account,
+            parentAccount: null,
+            transaction: txWithCustomFees,
+            status,
+            bridgePending: false,
+            bridgeError: null,
+            uiConfig: { hasFeePresets: true } as never,
+            transactionActions: { updateTransaction } as never,
+          }),
+        { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
+      );
+
+      result.current.onSelectFeeStrategy("custom");
+
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
+      const patched = updater(txWithCustomFees);
+
+      expect(patched.feesStrategy).toBe("custom");
+      // Custom fee fields must NOT be cleared
+      expect(patched.customFeeRate).toEqual(new BigNumber(10));
+      expect(patched.feePerByte).toEqual(new BigNumber(5));
+    });
+  });
+
   it("shows a BTC dust/minimum error when review is disabled due to dustLimit", () => {
     mockedGetAccountCurrency.mockReturnValue(getCryptoCurrencyById("bitcoin"));
 

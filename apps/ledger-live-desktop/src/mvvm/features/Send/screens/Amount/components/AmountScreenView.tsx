@@ -30,6 +30,7 @@ export function AmountScreenView({
   reviewLoading,
   selectedFeeStrategy,
   onSelectFeeStrategy,
+  onOpenCustomFees,
   onReview,
   onGetFunds,
 }: AmountScreenViewProps) {
@@ -62,7 +63,7 @@ export function AmountScreenView({
           fiatByPreset={fiatByPreset}
           legendByPreset={legendByPreset}
           onSelectFeeStrategy={onSelectFeeStrategy}
-          onSelectCustomFees={() => {}}
+          onSelectCustomFees={onOpenCustomFees}
           onSelectCoinControl={() => {}}
           reviewLabel={reviewLabel}
           reviewShowIcon={reviewShowIcon}
