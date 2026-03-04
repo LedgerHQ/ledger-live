@@ -167,6 +167,17 @@ export const NativeElementHelpers = {
     }
   },
 
+  async isIdPresent(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
+    try {
+      await waitFor(element(by.id(id)))
+        .toExist()
+        .withTimeout(timeout);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
   async tapById(id: string | RegExp, index = 0) {
     return await NativeElementHelpers.getElementById(id, index).tap();
   },
