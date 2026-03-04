@@ -715,6 +715,45 @@ describe("makeScanAccounts", () => {
     expect(result.account.id).toBe("obs-acc-id");
   });
 
+  it("handles multi-emission Observable from getAccountShape", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    const events: Array<{ type: string; account?: Account }> = [];
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: (info: AccountShapeInfo) =>
+        new Observable(subscriber => {
+          subscriber.next({
+            id: `multi-obs-acc-${info.index}-intermediate`,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          subscriber.next({
+            id: `multi-obs-acc-${info.index}-final`,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          subscriber.complete();
+        }),
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    await new Promise<void>((resolve, reject) => {
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).subscribe({
+        next: event => events.push(event),
+        complete: () => resolve(),
+        error: reject,
+      });
+    });
+    const discovered = events.filter(e => e.type === "discovered");
+    expect(discovered.length).toBeGreaterThan(0);
+    const firstDiscovered = discovered[0];
+    expect(firstDiscovered.account?.id).toBe("multi-obs-acc-0-final");
+  });
   it("propagates error when getAccountShape Observable errors", async () => {
     const addressResolver = {
       address: "address",
