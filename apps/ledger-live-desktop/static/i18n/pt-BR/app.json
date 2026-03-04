@@ -209,7 +209,11 @@
       "BURN" : "Queimado",
       "ASSOCIATE_TOKEN" : "Associar token",
       "CONTRACT_CALL" : "Chamada do contrato",
-      "UPDATE_ACCOUNT" : "Conta atualizada"
+      "UPDATE_ACCOUNT" : "Conta atualizada",
+      "SHIELDED_TX_SAPLING_IN" : "Recebido",
+      "SHIELDED_TX_SAPLING_OUT" : "Enviado",
+      "SHIELDED_TX_ORCHARD_IN" : "Recebido",
+      "SHIELDED_TX_ORCHARD_OUT" : "Enviado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -268,6 +272,8 @@
     "minute" : "Minuto",
     "minute_other" : "Minutos",
     "minute_short" : "min",
+    "second" : "Segundo",
+    "second_other" : "Segundos",
     "second_short" : "sec",
     "hour" : "Hora",
     "hour_other" : "Horas",
@@ -2419,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "Não foi possível atualizar as taxas de rede",
       "warningDescription" : "As configurações de taxa podem estar desatualizadas."
+    },
+    "customFees" : {
+      "title" : "Taxas personalizadas",
+      "confirm" : "Confirmar",
+      "maxFee" : "Taxa máxima ({{unit}})",
+      "maxPriorityFee" : "Taxa de Prioridade Máxima ({{unit}})",
+      "gasLimit" : "Limite de gás ({{unit}})",
+      "feePerByte" : "Quantia da taxa ({{unit}})",
+      "suggested" : "Sugerido",
+      "nextBlock" : "Próximo bloco",
+      "networkFeesInFiat" : "Taxas de rede em {{currency}}",
+      "invalidValue" : "Insira um número válido.",
+      "belowMinimum" : "O mínimo é {{min}}",
+      "maxFeeBelowPriorityFee" : "A taxa máxima deve ser maior ou igual à taxa de prioridade máxima."
+    },
+    "coinControl" : {
+      "title" : "Controle de moedas"
     }
   },
   "releaseNotes" : {
     "title" : "Notas de lançamento",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Entendi"
   },
   "troubleshootNetwork" : {
     "title" : "Solucionar problemas de rede",
@@ -5950,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Adicionar conta Concordium",
+        "acknowledge" : {
+          "title" : "Reconhecimento",
+          "description" : "O Concordium exige uma verificação externa de identidade. Leia estas importantes advertências de segurança:",
+          "list" : {
+            "1" : "<0>Sem verificação de endereço</0> – a sua Ledger não consegue verificar os endereços de recebimento Concordium. Verifique manualmente os endereços antes de receber fundos.",
+            "2" : "<0>O aplicativo Concordium ID usa uma seed separada</0> – Você criará NOVAS 24 palavras no aplicativo Concordium. NUNCA use sua seed da Ledger.",
+            "3" : "<0>Você será redirecionado para fora da Ledger Wallet</0> – A verificação de identidade é feita no aplicativo externo Concordium Wallet. Isso é exigido pelo protocolo blockchain da Concordium.",
+            "4" : "<0>A assinatura da transação permanece segura</0> – somente o seu dispositivo Ledger pode assinar transações e criar contas."
+          },
+          "allow" : "Concordo"
+        },
+        "identity" : {
+          "title" : "Conectar",
+          "account" : "Conta",
+          "newAccount" : "Nova Conta",
+          "init" : "Clicar em Concordo significa que você está pronto para continuar com a verificação de identidade KYC necessária para verificar sua conta.",
+          "scanQRCode" : "Escaneie o QR code com seu dispositivo móvel para conectar seu aplicativo Concordium ID. <0>Saiba mais</0>",
+          "ledgerSeedWarning" : "<0>NÃO</0> use sua Ledger Seed para o aplicativo Concordium ID.",
+          "downloadApp" : "Baixe o aplicativo Concordium ID",
+          "connecting" : "Conectando ao aplicativo Concordium ID…",
+          "onboarded" : "Contas integradas",
+          "success" : "Conectado com sucesso ao aplicativo Concordium ID.",
+          "error" : "Falha ao integrar a nova conta. Tente novamente.",
+          "status" : {
+            "prepare" : "Preparando a integração da conta…",
+            "submit" : "Integrando conta…",
+            "default" : "Processando…"
+          }
+        },
+        "create" : {
+          "title" : "Criar conta",
+          "init" : {
+            "title" : "Conectado com sucesso ao aplicativo Concordium ID"
+          },
+          "prepare" : {
+            "title" : "Para criar uma conta, insira o código abaixo no aplicativo Concordium ID",
+            "resendButton" : "Reenviar confirmação",
+            "resendDescription" : "A confirmação pode ser reenviada em <0>{{count}}</0> {{unit}}"
+          },
+          "success" : "Sua conta Concordium foi criada com sucesso.",
+          "error" : "Falha ao criar conta. Tente novamente.",
+          "error429" : "Muitas solicitações. Aguarde e tente novamente mais tarde.",
+          "button" : "Criar",
+          "processing" : "Processando…",
+          "status" : {
+            "prepare" : "Preparando a criação da conta…",
+            "submit" : "Criando conta…",
+            "default" : "Processando…"
+          }
+        },
+        "finish" : {
+          "title" : "Confirmação"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "Não é possível verificar seu endereço Concordium no momento. Certifique-se de verificar novamente colando seu endereço no explorador Concordium.",
+        "verifyLink" : "Verificar"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6846,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "Tamanho do memo inválido, o máximo permitido é 64 caracteres",
       "description" : "O campo de memo da Cardano tem um tamanho máximo limitado. Reduza o tamanho do memo"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "O memo excede o comprimento máximo",
+      "description" : "Seu memo tem {{memoLength}} bytes, mas o máximo permitido é de {{maxLength}} bytes. Reduza o tamanho do memo."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Fundos Insuficientes"
     },
     "StacksMemoTooLong" : {
       "title" : "O memo é muito longo"
@@ -7976,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Mostrar saldo",
-        "pausedAt" : "Pausado em ",
+        "startSync" : "Iniciar sincronização",
+        "stopSync" : "Parar sincronização",
+        "lastProcessedBlock" : "Bloco mais recente processado: {{block}}. {{missing}} blocos ainda não processados.",
         "lastSync" : "Última sincronização: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Altura de nascimento",
+        "tooltip" : "A altura de nascimento é o ponto na blockchain a partir do qual sua carteira começa a escanear seus fundos."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8115,13 @@
             }
           }
         }
-      },
-      "startSync" : "Iniciar sincronização",
-      "datepicker" : {
-        "label" : "Altura de nascimento",
-        "tooltip" : "A altura de nascimento é o ponto na blockchain a partir do qual sua carteira começa a escanear seus fundos."
       }
+    },
+    "operationDetails" : {
+      "txType" : "Tipo de transação",
+      "transparentTx" : "Transparente",
+      "shieldedSaplingTx" : "🛡 Privado (Sapling)",
+      "shieldedOrchardTx" : "🛡 Privado (Orchard)"
     }
   },
   "aleo" : {
@@ -8061,6 +8161,18 @@
       "transparentBalanceTooltip" : "Saldo visível ao público",
       "privateBalance" : "Saldo privado",
       "privateBalanceTooltip" : "Saldo oculto ao público"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Pública",
+        "private" : "Privada"
+      }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Nova atualização disponível",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "Erro durante a atualização, tente novamente",
+    "installAndRelaunch" : "Instale a atualização e reinicie"
   }
 }

@@ -1,5 +1,45 @@
 # @ledgerhq/coin-evm
 
+## 2.45.0
+
+### Minor Changes
+
+- [#14725](https://github.com/LedgerHQ/ledger-live/pull/14725) [`6553406`](https://github.com/LedgerHQ/ledger-live/commit/6553406aced5e36d10679538c175465460ae8016) Thanks [@qperrot](https://github.com/qperrot)! - Fix integration tests Arbitrum
+
+- [#14683](https://github.com/LedgerHQ/ledger-live/pull/14683) [`494ccd1`](https://github.com/LedgerHQ/ledger-live/commit/494ccd12f74b5733844567883d21826bfed0f2c0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove `bridge` folder
+
+- [#13986](https://github.com/LedgerHQ/ledger-live/pull/13986) [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Alpaca API cleanup and documentation
+
+### Patch Changes
+
+- Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77), [`ec8a2d6`](https://github.com/LedgerHQ/ledger-live/commit/ec8a2d619b85117e2d74c595c6eae5cae6fda433), [`2ca4f6c`](https://github.com/LedgerHQ/ledger-live/commit/2ca4f6c337a29cd81874261c697d74c82a312eee), [`3bb5c2e`](https://github.com/LedgerHQ/ledger-live/commit/3bb5c2e335c05945b1a7bc8c77d19d0ea03156a6), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0), [`b7dec5c`](https://github.com/LedgerHQ/ledger-live/commit/b7dec5c2a41520114593701c82192ff8ae8ce06f), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8), [`5f1c644`](https://github.com/LedgerHQ/ledger-live/commit/5f1c644fd5f757f48618b62e976faac274ced40d), [`c7ed360`](https://github.com/LedgerHQ/ledger-live/commit/c7ed36086280d60631e235d375cc2db5f60e8aab), [`cc4c8f5`](https://github.com/LedgerHQ/ledger-live/commit/cc4c8f57e38586d77b89f32d359e65cc700912af)]:
+  - @ledgerhq/cryptoassets@13.40.0
+  - @ledgerhq/live-env@2.29.0
+  - @ledgerhq/coin-framework@6.18.0
+  - @ledgerhq/live-network@2.3.0
+  - @ledgerhq/domain-service@1.6.6
+  - @ledgerhq/evm-tools@1.11.2
+
+## 2.45.0-next.0
+
+### Minor Changes
+
+- [#14725](https://github.com/LedgerHQ/ledger-live/pull/14725) [`6553406`](https://github.com/LedgerHQ/ledger-live/commit/6553406aced5e36d10679538c175465460ae8016) Thanks [@qperrot](https://github.com/qperrot)! - Fix integration tests Arbitrum
+
+- [#14683](https://github.com/LedgerHQ/ledger-live/pull/14683) [`494ccd1`](https://github.com/LedgerHQ/ledger-live/commit/494ccd12f74b5733844567883d21826bfed0f2c0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove `bridge` folder
+
+- [#13986](https://github.com/LedgerHQ/ledger-live/pull/13986) [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Alpaca API cleanup and documentation
+
+### Patch Changes
+
+- Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77), [`ec8a2d6`](https://github.com/LedgerHQ/ledger-live/commit/ec8a2d619b85117e2d74c595c6eae5cae6fda433), [`2ca4f6c`](https://github.com/LedgerHQ/ledger-live/commit/2ca4f6c337a29cd81874261c697d74c82a312eee), [`3bb5c2e`](https://github.com/LedgerHQ/ledger-live/commit/3bb5c2e335c05945b1a7bc8c77d19d0ea03156a6), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0), [`b7dec5c`](https://github.com/LedgerHQ/ledger-live/commit/b7dec5c2a41520114593701c82192ff8ae8ce06f), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8), [`5f1c644`](https://github.com/LedgerHQ/ledger-live/commit/5f1c644fd5f757f48618b62e976faac274ced40d), [`c7ed360`](https://github.com/LedgerHQ/ledger-live/commit/c7ed36086280d60631e235d375cc2db5f60e8aab), [`cc4c8f5`](https://github.com/LedgerHQ/ledger-live/commit/cc4c8f57e38586d77b89f32d359e65cc700912af)]:
+  - @ledgerhq/cryptoassets@13.40.0-next.0
+  - @ledgerhq/live-env@2.29.0-next.0
+  - @ledgerhq/coin-framework@6.18.0-next.0
+  - @ledgerhq/live-network@2.3.0-next.0
+  - @ledgerhq/domain-service@1.6.6-next.0
+  - @ledgerhq/evm-tools@1.11.2-next.0
+
 ## 2.44.0
 
 ### Minor Changes
