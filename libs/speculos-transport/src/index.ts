@@ -121,30 +121,52 @@ async function isPortAvailable(port: number): Promise<boolean> {
   });
 }
 
-async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
-  const BASE_PORT = 30000;
-  const MAX_PORT = 60000;
-  const MAX_PORT_RETRIES = 10;
+const BASE_PORT = 30000;
+const MAX_PORT = 60000;
+const PORTS_PER_WORKER = 1000;
+const MAX_WORKER_SLOTS = Math.floor((65535 - BASE_PORT) / PORTS_PER_WORKER);
+const MAX_PORT_RETRIES = 10;
+let nextPortOffset = 0;
+
+function getWorkerIndex(): number | undefined {
+  const playwright = process.env.TEST_WORKER_INDEX;
+  if (playwright !== undefined) return parseInt(playwright, 10);
+  const jest = process.env.JEST_WORKER_ID;
+  if (jest !== undefined) return parseInt(jest, 10) - 1;
+  return undefined;
+}
+
+async function getNextAvailablePort(exclude: number[] = []): Promise<number> {
+  const workerIndex = getWorkerIndex();
+
+  if (workerIndex !== undefined) {
+    const effectiveIndex = workerIndex % MAX_WORKER_SLOTS;
+    const workerBase = BASE_PORT + effectiveIndex * PORTS_PER_WORKER;
+    for (let i = 0; i < PORTS_PER_WORKER; i++) {
+      const port = workerBase + ((nextPortOffset + i) % PORTS_PER_WORKER);
+      if (exclude.includes(port)) continue;
+      if (await isPortAvailable(port)) {
+        nextPortOffset = nextPortOffset + i + 1;
+        return port;
+      }
+    }
+    throw new Error(
+      `No available port in worker ${workerIndex} (slot ${effectiveIndex}) range [${workerBase}, ${workerBase + PORTS_PER_WORKER - 1}]`,
+    );
+  }
 
   for (let attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
     const port = randomInt(BASE_PORT, MAX_PORT + 1);
-
-    if (exclude.includes(port)) {
-      continue;
-    }
-
-    if (await isPortAvailable(port)) {
-      return port;
-    }
+    if (exclude.includes(port)) continue;
+    if (await isPortAvailable(port)) return port;
   }
-
   throw new Error(`Failed to find an available port after ${MAX_PORT_RETRIES} attempts`);
 }
 
 const getPorts = async (isSpeculosWebsocket?: boolean) => {
   const usedPorts: number[] = [];
   const getPort = async () => {
-    const port = await getRandomAvailablePort(usedPorts);
+    const port = await getNextAvailablePort(usedPorts);
     usedPorts.push(port);
     return port;
   };
