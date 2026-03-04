@@ -28,6 +28,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     floating: true,
     titleKey: "newSendFlow.customFees.title",
     backTarget: SEND_FLOW_STEP.AMOUNT,
+    showAvailable: false,
   },
   [SEND_FLOW_STEP.COIN_CONTROL]: {
     id: SEND_FLOW_STEP.COIN_CONTROL,
