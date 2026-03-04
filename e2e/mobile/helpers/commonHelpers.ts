@@ -12,6 +12,8 @@ const BASE_DEEPLINK = "ledgerlive://";
 
 export const currencyParam = "?currency=";
 
+export const isWallet40 = process.env.E2E_ENABLE_WALLET40 === "1";
+
 /**
  * Waits for a specified amount of time
  * /!\ Do not use it to wait for a specific element, use waitFor instead.

@@ -3,10 +3,14 @@ import {
   ScreenName,
   NavigatorName,
 } from "../../../../apps/ledger-live-mobile/src/const/navigation";
+import { isWallet40 } from "../../helpers/commonHelpers";
 
 export default class WalletTabNavigatorPage {
   portfolioTab = async () => getElementById(`wallet-tab-${ScreenName.Portfolio}`);
-  marketTab = async () => getElementById(`wallet-tab-${NavigatorName.Market}`);
+  marketTab = async () =>
+    isWallet40
+      ? getElementById(app.portfolio.marketBannerTitle)
+      : getElementById(`wallet-tab-${NavigatorName.Market}`);
 
   @Step("Click on Portfolio tab")
   async navigateToPortfolio() {

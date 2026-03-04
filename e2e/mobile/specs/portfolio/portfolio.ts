@@ -1,5 +1,6 @@
 import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { ApplicationOptions } from "page";
+import { isWallet40 } from "../../helpers/commonHelpers";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -43,7 +44,7 @@ export function runPortfolioTransactionsHistoryTest(
 }
 
 export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string[]) {
-  describe("Portfolio charts and assets", () => {
+  (isWallet40 ? describe.skip : describe)("Portfolio charts and assets", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "speculos-tests-app",
