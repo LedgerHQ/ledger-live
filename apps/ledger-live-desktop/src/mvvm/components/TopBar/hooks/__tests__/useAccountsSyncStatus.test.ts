@@ -120,8 +120,14 @@ describe("useAccountsSyncStatus", () => {
     renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
     expect(trackSpy).toHaveBeenCalledTimes(2);
-    expect(trackSpy).toHaveBeenCalledWith("SyncError", { currency: "BTC" });
-    expect(trackSpy).toHaveBeenCalledWith("SyncError", { currency: "ETH" });
+    expect(trackSpy).toHaveBeenCalledWith(
+      "SyncError",
+      expect.objectContaining({ currency: "BTC", page: expect.any(String) }),
+    );
+    expect(trackSpy).toHaveBeenCalledWith(
+      "SyncError",
+      expect.objectContaining({ currency: "ETH", page: expect.any(String) }),
+    );
     trackSpy.mockRestore();
   });
 
@@ -189,8 +195,16 @@ describe("useAccountsSyncStatus", () => {
     renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
 
     expect(trackSpy).toHaveBeenCalledTimes(2);
-    expect(trackSpy).toHaveBeenNthCalledWith(1, "SyncError", { currency: "BTC" });
-    expect(trackSpy).toHaveBeenNthCalledWith(2, "SyncError", { currency: "BTC" });
+    expect(trackSpy).toHaveBeenNthCalledWith(
+      1,
+      "SyncError",
+      expect.objectContaining({ currency: "BTC", page: expect.any(String) }),
+    );
+    expect(trackSpy).toHaveBeenNthCalledWith(
+      2,
+      "SyncError",
+      expect.objectContaining({ currency: "BTC", page: expect.any(String) }),
+    );
     trackSpy.mockRestore();
   });
 

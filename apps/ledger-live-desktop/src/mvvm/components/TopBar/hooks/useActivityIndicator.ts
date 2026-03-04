@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer } from "react";
+import { useLocation } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { hasAccountsSelector, isUpToDateSelector } from "~/renderer/reducers/accounts";
 import {
@@ -25,6 +26,7 @@ import { isRecentUserSyncClick } from "../utils/syncRefreshUtils";
  */
 export const useActivityIndicator = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const hasAccounts = useSelector(hasAccountsSelector);
   const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
   const lastUserSyncClickTimestamp = useSelector(selectLastUserSyncClickTimestamp);
@@ -77,12 +79,13 @@ export const useActivityIndicator = () => {
   const onTooltipShow = useCallback(() => {
     if (isError) {
       track("SyncErrorList", {
+        page: location.pathname,
         currencies: listOfErrorAccountNames
           ? listOfErrorAccountNames.split("/").filter(Boolean)
           : [],
       });
     }
-  }, [isError, listOfErrorAccountNames]);
+  }, [isError, listOfErrorAccountNames, location.pathname]);
 
   return {
     hasAccounts,
