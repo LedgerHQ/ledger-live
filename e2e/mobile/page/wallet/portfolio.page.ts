@@ -116,14 +116,14 @@ export default class PortfolioPage {
     jestExpect(text).toContain(counterValue);
   }
 
-  @Step("Expect balance diff to be visible")
-  async expectBalanceDiffToBeVisible() {
+  @Step("Wait for balance diff to be visible")
+  async waitForBalanceDiffVisible() {
     await waitForElementById(this.graphCardBalanceDiffId);
   }
 
   @Step("Expect balance diff to have the correct counter value")
   async expectBalanceDiffCounterValue(counterValue: string) {
-    await this.expectBalanceDiffToBeVisible();
+    await this.waitForBalanceDiffVisible();
     const text = await getTextOfElement(this.graphCardBalanceDiffId);
     jestExpect(text).toContain(counterValue);
   }

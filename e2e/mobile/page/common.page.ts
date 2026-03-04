@@ -4,6 +4,7 @@ import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Ac
 import { delay, isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
+import { retryUntilTimeout } from "../utils/retry";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -45,7 +46,10 @@ export default class CommonPage {
   async selectAccount(account: Account) {
     const accountId = this.accountId(account);
     await waitForElementById(accountId);
-    await tapById(accountId);
+    await retryUntilTimeout(async () => {
+      await tapById(accountId);
+      await waitForElementNotVisible(accountId, 2000);
+    }, 10000);
   }
 
   @Step("Expect search")
