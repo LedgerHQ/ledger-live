@@ -24,6 +24,7 @@ import DrawerProvider from "~/renderer/drawers/Provider";
 import i18n from "~/renderer/i18n/init";
 import dbMiddleware from "~/renderer/middlewares/db";
 import { type State } from "~/renderer/reducers";
+import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import StyleProvider from "~/renderer/styles/StyleProvider";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
@@ -157,7 +158,9 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): React.J
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
         <StyleProvider selectedPalette="dark">
-          <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          <LiveStyleSheetManager>
+            <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          </LiveStyleSheetManager>
         </StyleProvider>
       </DrawerProvider>
     </I18nextProvider>
