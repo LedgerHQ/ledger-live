@@ -20,4 +20,24 @@ describe("SwapOpaqueHeader", () => {
 
     expect(onBackPress).toHaveBeenCalledTimes(1);
   });
+
+  it("should render close button and hide back button when requested", async () => {
+    const onBackPress = jest.fn();
+    const onClosePress = jest.fn();
+    const { user, queryByTestId, getByTestId } = render(
+      <SwapOpaqueHeader
+        onBackPress={onBackPress}
+        onClosePress={onClosePress}
+        showBackButton={false}
+        titleKey="transfer.swap2.twoStepApproval.completedTitle"
+      />,
+    );
+
+    expect(queryByTestId("swap-topbar-back")).toBeNull();
+
+    await user.press(getByTestId("swap-topbar-close"));
+
+    expect(onBackPress).not.toHaveBeenCalled();
+    expect(onClosePress).toHaveBeenCalledTimes(1);
+  });
 });
