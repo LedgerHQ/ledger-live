@@ -52,6 +52,7 @@ type FeesProps = Readonly<{
   showNetworkFees: boolean;
   selectedFeeStrategy: string | null;
   onSelectFeeStrategy: (strategy: string) => void;
+  onOpenCustomFees: () => void;
 }>;
 
 type QuickActionsProps = Readonly<{

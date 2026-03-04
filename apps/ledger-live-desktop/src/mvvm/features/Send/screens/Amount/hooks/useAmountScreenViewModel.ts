@@ -210,7 +210,23 @@ export function useAmountScreenViewModel({
           ? strategy
           : null;
 
-      updateTransactionWithPatch({ feesStrategy });
+      const patch: Partial<Transaction> = { feesStrategy };
+
+      // When switching from custom back to a preset, clear custom fee overrides
+      if (feesStrategy && feesStrategy !== "custom") {
+        Object.assign(patch, {
+          customGasLimit: undefined,
+          gasPrice: undefined,
+          maxFeePerGas: undefined,
+          maxPriorityFeePerGas: undefined,
+          feePerByte: undefined,
+          customFeeRate: undefined,
+          fees: undefined,
+          customFees: undefined,
+        } as Partial<Transaction>);
+      }
+
+      updateTransactionWithPatch(patch);
     },
     [updateTransactionWithPatch],
   );

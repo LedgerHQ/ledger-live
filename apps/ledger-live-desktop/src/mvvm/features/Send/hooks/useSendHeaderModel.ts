@@ -64,8 +64,11 @@ export function useSendHeaderModel({
   } else {
     title = "";
   }
+  const showAvailable = currentStepConfig?.showAvailable !== false;
   const descriptionText =
-    showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
+    showTitle && showAvailable && availableText
+      ? t("newSendFlow.available", { amount: availableText })
+      : "";
 
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
