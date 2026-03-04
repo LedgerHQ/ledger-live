@@ -4,7 +4,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
-import { toEntityId } from "../logic/utils";
+import { nanosToSeconds, toEntityId } from "../logic/utils";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
@@ -196,9 +196,8 @@ export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[])
   for (const rawTransfer of erc20Transfers) {
     const payerAddress = toEntityId({ num: rawTransfer.payer_account_id });
     const hash = rawTransfer.transaction_hash;
-    const inaccurateConsensusTimestamp = new BigNumber(rawTransfer.consensus_timestamp)
-      .dividedBy(10 ** 9)
-      .toFixed(9);
+    const inaccurateConsensusTimestampNs = new BigNumber(rawTransfer.consensus_timestamp);
+    const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
 
     const [contractCallResult, mirrorTransaction] = await Promise.all([
       apiClient.getContractCallResult(hash),
