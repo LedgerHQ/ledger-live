@@ -1,5 +1,35 @@
 # @ledgerhq/coin-hedera
 
+## 1.24.0-next.0
+
+### Minor Changes
+
+- [#14455](https://github.com/LedgerHQ/ledger-live/pull/14455) [`9f9ae16`](https://github.com/LedgerHQ/ledger-live/commit/9f9ae16843e5db339c1d40c844a66f75fff498fb) Thanks [@jprudent](https://github.com/jprudent)! - Implement feePayer on operations for sui, hedera, xrp, tezos, stellar, tron
+
+- [#14903](https://github.com/LedgerHQ/ledger-live/pull/14903) [`328332d`](https://github.com/LedgerHQ/ledger-live/commit/328332d460fbddab979a5e282990f2d2de1f8bc6) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: hedera feature flag for ERC20 data source
+  feat: hedera support for ERC20 in estimateFees
+
+- [#14900](https://github.com/LedgerHQ/ledger-live/pull/14900) [`c2f73ae`](https://github.com/LedgerHQ/ledger-live/commit/c2f73aeed5bc502dc0ef2467954ce5367acf906f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor: align `eslint` and `tsconfig`
+
+- [#14828](https://github.com/LedgerHQ/ledger-live/pull/14828) [`92603ca`](https://github.com/LedgerHQ/ledger-live/commit/92603ca8a813e12b3cd8c7825c487497988c356d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: hedera utils for new erc20 indexer
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+- [#14951](https://github.com/LedgerHQ/ledger-live/pull/14951) [`8ef1182`](https://github.com/LedgerHQ/ledger-live/commit/8ef1182e9870e48e3b59c52aeffd31dec35ce2a9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: hedera support ERC20 in get balance
+
+### Patch Changes
+
+- Updated dependencies [[`748b933`](https://github.com/LedgerHQ/ledger-live/commit/748b933f3786e48ec9dd434c76263c2c9a642c99), [`920006a`](https://github.com/LedgerHQ/ledger-live/commit/920006a31652af78d3b416bdb8826d1564e91b91), [`0dbbca3`](https://github.com/LedgerHQ/ledger-live/commit/0dbbca3f0226347b5abc034a066fe4ad89bfe462), [`9f9ae16`](https://github.com/LedgerHQ/ledger-live/commit/9f9ae16843e5db339c1d40c844a66f75fff498fb), [`ba4d56f`](https://github.com/LedgerHQ/ledger-live/commit/ba4d56fa223b87b89d621de2d1885c5a55922ef4), [`697f2e6`](https://github.com/LedgerHQ/ledger-live/commit/697f2e6f5b24ff023a46cbbbf5c9f85bac90a4c4), [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/types-live@6.100.0-next.0
+  - @ledgerhq/live-countervalues@0.15.0-next.0
+  - @ledgerhq/errors@6.30.0-next.0
+  - @ledgerhq/coin-framework@6.19.0-next.0
+  - @ledgerhq/cryptoassets@13.41.0-next.0
+  - @ledgerhq/devices@8.11.0-next.0
+  - @ledgerhq/logs@6.15.0-next.0
+  - @ledgerhq/live-network@2.4.0-next.0
+  - @ledgerhq/live-promise@0.2.1-next.0
+
 ## 1.23.0
 
 ### Minor Changes

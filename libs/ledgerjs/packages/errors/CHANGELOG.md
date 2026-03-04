@@ -1,5 +1,13 @@
 # @ledgerhq/errors
 
+## 6.30.0-next.0
+
+### Minor Changes
+
+- [#14823](https://github.com/LedgerHQ/ledger-live/pull/14823) [`0dbbca3`](https://github.com/LedgerHQ/ledger-live/commit/0dbbca3f0226347b5abc034a066fe4ad89bfe462) Thanks [@thesan](https://github.com/thesan)! - Rename TRUSTCHAIN_WRONG_SEED to SW_BAD_STATE and add alt status message for 0xb007
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
 ## 6.29.0
 
 ### Minor Changes

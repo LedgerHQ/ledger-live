@@ -1,5 +1,25 @@
 # @ledgerhq/live-wallet
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#14823](https://github.com/LedgerHQ/ledger-live/pull/14823) [`0dbbca3`](https://github.com/LedgerHQ/ledger-live/commit/0dbbca3f0226347b5abc034a066fe4ad89bfe462) Thanks [@thesan](https://github.com/thesan)! - Rename TRUSTCHAIN_WRONG_SEED to SW_BAD_STATE and add alt status message for 0xb007
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+### Patch Changes
+
+- Updated dependencies [[`0dbbca3`](https://github.com/LedgerHQ/ledger-live/commit/0dbbca3f0226347b5abc034a066fe4ad89bfe462), [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/errors@6.30.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.32.0-next.0
+  - @ledgerhq/types-devices@6.29.0-next.0
+  - @ledgerhq/hw-transport@6.33.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.8.0-next.0
+  - @ledgerhq/logs@6.15.0-next.0
+  - @ledgerhq/speculos-transport@0.6.0-next.0
+  - @ledgerhq/live-network@2.4.0-next.0
+
 ## 0.11.5
 
 ### Patch Changes

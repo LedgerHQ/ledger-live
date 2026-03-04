@@ -1,5 +1,21 @@
 # @ledgerhq/zcash-shielded
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#14584](https://github.com/LedgerHQ/ledger-live/pull/14584) [`48afda0`](https://github.com/LedgerHQ/ledger-live/commit/48afda0b1d11cdb98ba19373155834d820b166b6) Thanks [@alevito](https://github.com/alevito)! - Exposes a new ZCash.syncShielded method for parsing shielded transactions in blocks, starting from a given start block
+
+- [#14825](https://github.com/LedgerHQ/ledger-live/pull/14825) [`4aa6be3`](https://github.com/LedgerHQ/ledger-live/commit/4aa6be378061d7ce9d445e5e31e12753aa856355) Thanks [@semeano](https://github.com/semeano)! - Move zcash types to zcash-shielded
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/logs@6.15.0-next.0
+  - @ledgerhq/live-network@2.4.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

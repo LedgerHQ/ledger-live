@@ -1,5 +1,20 @@
 # @ledgerhq/asset-aggregation
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#14831](https://github.com/LedgerHQ/ledger-live/pull/14831) [`158872e`](https://github.com/LedgerHQ/ledger-live/commit/158872e435155e91b1feea7a925523fe434447c4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add asset section in portfolio
+
+- [#14874](https://github.com/LedgerHQ/ledger-live/pull/14874) [`6ee40fb`](https://github.com/LedgerHQ/ledger-live/commit/6ee40fb9b07f1fe842192aadf54b7230334b9f99) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add assets section logic with empty state slicing, item navigation, and TrendCell MVVM refactor
+
+### Patch Changes
+
+- Updated dependencies [[`748b933`](https://github.com/LedgerHQ/ledger-live/commit/748b933f3786e48ec9dd434c76263c2c9a642c99), [`920006a`](https://github.com/LedgerHQ/ledger-live/commit/920006a31652af78d3b416bdb8826d1564e91b91), [`ba4d56f`](https://github.com/LedgerHQ/ledger-live/commit/ba4d56fa223b87b89d621de2d1885c5a55922ef4), [`697f2e6`](https://github.com/LedgerHQ/ledger-live/commit/697f2e6f5b24ff023a46cbbbf5c9f85bac90a4c4), [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/types-live@6.100.0-next.0
+  - @ledgerhq/live-countervalues@0.15.0-next.0
+  - @ledgerhq/types-cryptoassets@7.34.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

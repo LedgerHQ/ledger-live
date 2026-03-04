@@ -1,5 +1,12 @@
 # @ledgerhq/live-promise
 
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/logs@6.15.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

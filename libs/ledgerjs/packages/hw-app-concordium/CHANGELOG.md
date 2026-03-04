@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-concordium
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/hw-transport@6.33.0-next.0
+  - @ledgerhq/concordium-core@0.3.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

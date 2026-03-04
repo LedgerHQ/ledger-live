@@ -1,5 +1,13 @@
 # @features/market-banner
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+- [#14908](https://github.com/LedgerHQ/ledger-live/pull/14908) [`b4cc7b3`](https://github.com/LedgerHQ/ledger-live/commit/b4cc7b3c80267c45fa70cec5c294b15ef8d2404b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - connect features folder to SonarCloud coverage pipeline
+
 ## 0.3.0
 
 ### Minor Changes
