@@ -2,20 +2,12 @@ import { test } from "tests/fixtures/common";
 import { expect } from "@playwright/test";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { LWD_WALLET_40_FLAGS } from "tests/utils/featureFlagUtils";
 
 test.describe("Market Banner", () => {
   test.use({
     userdata: "speculos-tests-app",
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FLAGS,
   });
 
   test(
@@ -30,7 +22,7 @@ test.describe("Market Banner", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToPortfolio();
+      await app.mainNavigation.openTargetFromMainNavigation("home");
 
       await app.marketBanner.expectMarketBannerToBeVisible();
 
@@ -50,7 +42,7 @@ test.describe("Market Banner", () => {
 
       await expect(app.layout.getPage()).toHaveURL(new RegExp(`/market/${assetId}`));
 
-      await app.layout.goToPortfolio();
+      await app.mainNavigation.openTargetFromMainNavigation("home");
 
       await app.marketBanner.clickExploreMarketHeader();
 
@@ -58,7 +50,7 @@ test.describe("Market Banner", () => {
       await app.market.openCoinPage("BTC");
       await expect(app.layout.getPage()).toHaveURL(new RegExp(`/market/bitcoin`));
 
-      await app.layout.goToPortfolio();
+      await app.mainNavigation.openTargetFromMainNavigation("home");
 
       await app.marketBanner.scrollToAndClickViewAllTile();
 
